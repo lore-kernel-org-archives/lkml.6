@@ -2,120 +2,125 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA434C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCD2C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB812083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB812083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A6322083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:23:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edMvYHB3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6322083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeH2ORD (ORCPT
+        id S1728120AbeH2OTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:17:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51730 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbeH2ORD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:17:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BD2F80D;
-        Wed, 29 Aug 2018 03:20:51 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.Emea.Arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA6B23F5BD;
-        Wed, 29 Aug 2018 03:20:49 -0700 (PDT)
-Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Tyler Baicar <baicar.tyler@gmail.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>, wufan@codeaurora.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        harba@qti.qualcomm.com, mchehab@kernel.org,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org
-References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
- <20180719140102.GB25185@nazgul.tnic>
- <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
- <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
- <b568fdcc-ca39-67ea-2799-8ed246c8ffb6@arm.com>
- <CABo9ajA7SPrVE-oiG=RicH+nL9_pp7fVATCdMugY5fuNAPzHaQ@mail.gmail.com>
- <68a800c7-446e-9b6b-1847-6e45a1d17262@arm.com>
- <20180824120102.GB29751@nazgul.tnic>
- <0a94db2a-2569-ac46-1a79-a05f46a4ea6f@arm.com>
- <20180829073804.GA6843@nazgul.tnic>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <2e7b984a-8f8f-dad7-4ee5-043dd236a9b1@arm.com>
-Date:   Wed, 29 Aug 2018 11:20:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 10:19:23 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38155 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbeH2OTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:19:22 -0400
+Received: by mail-oi0-f65.google.com with SMTP id x197-v6so8222185oix.5;
+        Wed, 29 Aug 2018 03:23:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KzrJP4isoB6FmN9vrxNHMZqkcX8et6IZ/Tw04la4lgU=;
+        b=edMvYHB3Pn/DZPxGveRX5uejCyr/rHxj+GeSMcxCmoohvwoKkTNXaq+NV1Lx3+9dcm
+         NtOqFrCFYpzl7Fi9gNuGfyVvaOF5GfDKE/iaQ1ROr+P/JWjpUKf1QFhW31iLw3XsCPjI
+         sVoWnDrg1czP+zdQGeN/97qPdsJ7QY5RRHXTxjMfEzgj94Okxvm8L06ASNOMpV3U9J/r
+         fhbmBHhYFboGbcSfSUZEW9FH+PnN8LZZpEeJQE9R5tzm51vNTl4iI8cf7VBJkwEE9JYg
+         5rk1GAErQmGPrxLhxSZezntzbRzyLnVhFM51d7Tj47QDQgb+vSk5Nxh/TpFdhlIYX8BX
+         gpkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KzrJP4isoB6FmN9vrxNHMZqkcX8et6IZ/Tw04la4lgU=;
+        b=JrrwL6YUWKErKRB6njbtg+f4ODM5tQVUgK6rdmy3fCj/b8pJ3wPciMkOL6WW1Ib6hy
+         L9qjxfoSku85JWFWMaTP3r/iTpfL5hcaTbqMDTDI5I1a9N0mDnAu4etennIvtuhJ+D17
+         piOpQcaE3/3AB71f/0ST6dCyfYikKgM0ysWkOYrMMLf02PjHEJ/J5KifFbSoJ+oZ+VOh
+         PYDacTdE+8TC3A85mZ0Ms9cwgygjqAUR2NDsYyX92xa5viIgvKa9hO9KY43p4uz2burb
+         pHCOvfnGU8Jr2aID3SDWFIa6xXJeSqmm1lepVY7FwOHGlgTFyw40QJvz5GzdDp6rCJp4
+         LHAw==
+X-Gm-Message-State: APzg51ADvddOqECW9bJjW2VdoT1xOyxl26xSLoeZrf+sDgTFndgA2TkN
+        CzfloAa2B80agoQ+auqLR5Gcn5P9Xfm2lRYatC0=
+X-Google-Smtp-Source: ANB0VdYbFD8gkfYYdYuCyf3VIWbADG947Z9NjhqJzLFUCtRrPzCda0oYNLht+Fw9xr8v+1yFSG7+vSnArYhaGZNiubI=
+X-Received: by 2002:aca:dc82:: with SMTP id t124-v6mr1957066oig.189.1535538190001;
+ Wed, 29 Aug 2018 03:23:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180829073804.GA6843@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1535521943-5547-1-git-send-email-wanpengli@tencent.com>
+ <A523C29C-C3E8-4FEF-8620-96365F774582@oracle.com> <20180829101205.jsp53e2wq7fc6ukd@mwanda>
+ <20180829101822.qo3u7lsmghs3kcuf@mwanda>
+In-Reply-To: <20180829101822.qo3u7lsmghs3kcuf@mwanda>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 29 Aug 2018 18:23:08 +0800
+Message-ID: <CANRm+Cy9n=2Ssy_cEWRtnoQJczjdqB+m-dA6zesz75r0h532iA@mail.gmail.com>
+Subject: Re: [PATCH] KVM: LAPIC: Fix pv ipis out-of-bounds access
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Wed, 29 Aug 2018 at 18:18, Dan Carpenter <dan.carpenter@oracle.com> wrot=
+e:
+>
+> On Wed, Aug 29, 2018 at 01:12:05PM +0300, Dan Carpenter wrote:
+> > On Wed, Aug 29, 2018 at 12:05:06PM +0300, Liran Alon wrote:
+> > > > arch/x86/kvm/lapic.c | 17 +++++++++++++----
+> > > > 1 file changed, 13 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > > index 0cefba2..86e933c 100644
+> > > > --- a/arch/x86/kvm/lapic.c
+> > > > +++ b/arch/x86/kvm/lapic.c
+> > > > @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned=
+ long ipi_bitmap_low,
+> > > >   rcu_read_lock();
+> > > >   map =3D rcu_dereference(kvm->arch.apic_map);
+> > > >
+> > > > + if (unlikely((s32)(map->max_apic_id - __fls(ipi_bitmap_low)) < mi=
+n))
+> > > > +         goto out;
+> > >
+> > > I personally think =E2=80=9Cif ((min + __fls(ipi_bitmap_low)) > map->=
+max_apic_id)=E2=80=9D is more readable.
+> > > But that=E2=80=99s just a matter of taste :)
+> >
+> > That's an integer overflow.
+> >
+> > But I do prefer to put the variable on the left.  The truth is that som=
+e
+> > Smatch checks just ignore code which is backwards written because
+> > otherwise you have to write duplicate code and the most code is written
+> > with the variable on the left.
+> >
+> >       if (min > (s32)(map->max_apic_id - __fls(ipi_bitmap_low))
+>
+> Wait, the (s32) cast doesn't make sense.  We want negative min values to
+> be treated as invalid.
 
-On 29/08/18 08:38, Borislav Petkov wrote:
-> On Tue, Aug 28, 2018 at 06:09:24PM +0100, James Morse wrote:
->> Does x86 have another source of memory-topology information it needs to
->> correlate smbios with?
-> 
-> Bah, pinpointing the DIMM on x86 is a mess. There's no reliable way to
-> say which DIMM it is in certain cases (interleaving, mirrorring, ...)
-> and it is all platform-dependent. So we do the layers to dump a memory
-> location (node, memory controller, ....) so that we can at least limit
-> the number of DIMMs the user needs to replace/try.
+In v2, how about:
 
-Right. I'd like ghes-edac to work in the same way for both architectures.
+if (unlikely(min > map->max_apic_id || (min + __fls(ipi_bitmap_low)) >
+map->max_apic_id))
+    goto out;
 
-I think this is best done by stuffing the dmi-handle in struct dimm_info during
-ghes_edac_dmidecode(), then populating the struct edac_raw_error_desc layers
-from the matching mci->dimms 'location'.
+0xFFFFFFFF is converted to int min =3D -1;
 
-For EDAC_MC_LAYER_ALL_MEM this boils down to a flat index, so pointer arithmetic
-on mci->dimms is an appropriate short cut.
-
-(We should probably 'FIXME: It shouldn't be hard to also fill the DIMM labels'
-at the same time so that no-one is tempted to interpret the edac:dimm-idx)
-
-
-> In an ideal world, I'd like to be able to query the SPD chips on the
-
-(oh, that can be done?)
-
-
-> DIMMs and build the topology and then when an error happens to say,
-> "error in DIMM <silkscreen>" where silkscreen is what is written on the
-> motherboard under the DIMM socket.
-> 
-> But I don't see that happening any time soon...
-
->> For arm there is nothing else describing the memory-topology, so as long as we
->> can correlate the smbios table and ghes:cper records through the handles, we can
->> get this working for all systems.
-> 
-> And then make sure vendors fill in the proper info in smbios. Because that's
-> also a mess on x86.
-
-I got educated by the people who look after specifications last time I touched
-this [0]. SMBIOS tables are required by Arm's 'Server Base Boot Requirements',
-It lists the memory-device and physical-memory-array as required.
-
-I will drop them a note that we will be depending on the handle, and it should
-go on the list too... if its not populated on today's systems we can fall back
-to !e->enable_per_layer_report as we do today.
-
-
-Thanks,
-
-James
-
-[0] https://www.spinics.net/lists/arm-kernel/msg653133.html
+Regards,
+Wanpeng Li
