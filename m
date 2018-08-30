@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BFDC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF230C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6AB204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 982C9205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nzKDfk4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6AB204EC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="orczsWKV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982C9205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeH3FrJ (ORCPT
+        id S1727450AbeH3FrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:47:09 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36106 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbeH3FrI (ORCPT
+        Thu, 30 Aug 2018 01:47:11 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42292 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbeH3FrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:47:08 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e11-v6so3116924plb.3;
-        Wed, 29 Aug 2018 18:47:27 -0700 (PDT)
+        Thu, 30 Aug 2018 01:47:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so3107553pff.9;
+        Wed, 29 Aug 2018 18:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
         bh=P/6K4S4/MCf4PvzZUqxPNwP4rElLsJ7tp0RDtzFeYlQ=;
-        b=nzKDfk4HCXxA6sLL1zFmFjXdXs1EpZ939fN8D/ykhhTBR/MYkrNU7BevgE6XihX7Wv
-         8ro9C3HtTfwMMCZXKoAVdOand6w3hYrm6359+jgwzcWILOP+Y2MFwhsKNxmx0Vrr6ep2
-         AJSEYQtWJ8CR4f+uP72hj79HrpoRsjbbN5LhX9dIclmY/AaRWRHgll2A8+ToybpRHPt5
-         qOu0F0jqpaBsVWhn1HIGY+L13jUnuyKyIZiHE4JuJmGSlXkpGpiLyHxWCug40oeCbRQ8
-         CokEAmywnParmh2bGgVySyxKpAHcwXrrIYWxDUP2jUUTgqWnJ9b9mi4sMA2ztEc9An4Q
-         0Jdg==
+        b=orczsWKVRgZuPvJeEGa/m+ZxOEvcz196T/26JY/4MHs6U+fcmT+xrG777TzOWX7++o
+         33xbnEe7/1cTzHn9kKiNDJz9Ay6qKo5JtsRP5cqqfrH9XJ2xIIkwSNBFwvHcDAuXg/A5
+         oPmaAx6SnFGYGktVSni3AUm+Lux4LFHMZFAr0fRPaeRYYpRlVmhbLBkYSdpSEdkj+ZL/
+         kWqJK9+wKCnrF38cXPwnavwi9SPZtc5PT9BzTQ5eiMbKtpW/2zxYpFX5ugf1ZRjOLaK6
+         qEjHpLNAc9D7uBCXUaeAO0kEg4IMYRRMUI4CB+wnefFdRGaNm9GQb8BVy/RNf1EMA7R4
+         Aj9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
         bh=P/6K4S4/MCf4PvzZUqxPNwP4rElLsJ7tp0RDtzFeYlQ=;
-        b=CYrSk2rNSw66+mFqCyjJzmTfhAfOohN3qyrRd4zRuUbM0TOfGknbzBRfnuptE52g48
-         kPyqflcn60vnF9cYLxnncR0/5CAQ0RMUcF4kTgSNGWJ6+VjfPMQ2mKQgBdftZ1P2rGJd
-         pREdxsihgcI3+pevhPqM+Bd6eXCgEaISi4hpUlBZDZLufFwqRFAvorRjj5PurcyD2P1B
-         VOKoUQNcq2Cd4R6DeVmdnf8bc9r+10rFqbtKzLRj5MNopSqiV2gOdVdt/AJxQkfUTu86
-         ++Vkug/h+DjVtFdmoB7zPfXjuIGDbgkmiFvodKmbop/UChOS9UxFc7TDzSomKNShe2y3
-         DXhg==
-X-Gm-Message-State: APzg51BLZNcGmsvs4L7bJvuLZxpj2J5UH2JWe0fcTWhhp3j21Mb8nIRJ
-        Wv1ReOCTOzxAtBdvyNBQytQ=
-X-Google-Smtp-Source: ANB0VdbEl9qwqobBUdclBmNwRNGOrsvUiwW6gBnQq2nO1/OHBQFeS+lC81T+KGUlkrIaYImQ0VcF8A==
-X-Received: by 2002:a17:902:25ab:: with SMTP id y40-v6mr8005200pla.120.1535593647163;
-        Wed, 29 Aug 2018 18:47:27 -0700 (PDT)
+        b=uGr8JN1tIHVJ9CGAwMwVQBKsGjV8CFCHM//Rq6zIp1rRD33DKY75zs/mF0y8NoUPdS
+         +lWB/NUH7uXPoeRqs0CkqUVXNWG5HqcjUSMAceQGeYU+ld8gx8bn7kJvy1tJy88ISKWt
+         /tMfRAZ/cM1ioJx+Pne13JcOG9htzDQd6EVMFBisezZ/pUBptqYOjgTxzGXk9dM8UyJ3
+         EZMb1lNSPJm6vsIlJRc93Ph/vM/Dgqt4TozUSbv9ZEDZ01cK8vBBvXBkZQfDlaxsXf6O
+         IPQEJW8vm+nOeMPJLH2qFRli9YfSM0MT/ueapTUmLNKA1ZUtIVBjUi6XRwEeTAbuOIJQ
+         C9ag==
+X-Gm-Message-State: APzg51B/PhGsYQKBMkuX/yy73HPmIPZO1jEvwfB6d+C057oNdp60T7zn
+        DNzXxDUXkLWrgcWULdUI6R4=
+X-Google-Smtp-Source: ANB0VdZZF7ibGIdudvM2cc9I88J2CMbGBgPQ3LH/Np5aAojhEpC9++1Y5sq1VIU8u8VJGl8eBcvEJg==
+X-Received: by 2002:a62:435c:: with SMTP id q89-v6mr8383328pfa.135.1535593649045;
+        Wed, 29 Aug 2018 18:47:29 -0700 (PDT)
 Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm8049246pfr.115.2018.08.29.18.47.26
+        by smtp.gmail.com with ESMTPSA id e14-v6sm5922053pgv.48.2018.08.29.18.47.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 18:47:26 -0700 (PDT)
+        Wed, 29 Aug 2018 18:47:28 -0700 (PDT)
 From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
 X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
 To:     johan@kernel.org
 Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
         hpeter+linux_kernel@gmail.com
-Subject: [PATCH V2 3/4] serial: f81232: implement break control
-Date:   Thu, 30 Aug 2018 09:47:12 +0800
-Message-Id: <1535593634-22004-4-git-send-email-hpeter+linux_kernel@gmail.com>
+Subject: [PATCH V2 3/4] USB: serial: f81232: implement break control
+Date:   Thu, 30 Aug 2018 09:47:13 +0800
+Message-Id: <1535593634-22004-5-git-send-email-hpeter+linux_kernel@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535593634-22004-1-git-send-email-hpeter+linux_kernel@gmail.com>
 References: <1535593634-22004-1-git-send-email-hpeter+linux_kernel@gmail.com>
@@ -81,8 +81,8 @@ It's the same with 16550A LCR register layout.
 Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
 ---
 v2:
-	1: Fix f81232_break_ctl() for mis-operated set_mask_register().
-	2: Add set break control bit in f81232_set_termios().
+        1: Fix f81232_break_ctl() for mis-operated set_mask_register().
+        2: Add set break control bit in f81232_set_termios().
 
  drivers/usb/serial/f81232.c | 32 ++++++++++++++++++++++++++------
  1 file changed, 26 insertions(+), 6 deletions(-)
