@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C718DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4708BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80EAF2083C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0144120834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tPsH4Baf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80EAF2083C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqZnPA0R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0144120834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeHaCjw (ORCPT
+        id S1727493AbeHaCjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 22:39:52 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43316 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeHaCjv (ORCPT
+        Thu, 30 Aug 2018 22:39:55 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34524 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeHaCjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 22:39:51 -0400
-Received: by mail-lf1-f65.google.com with SMTP id h64-v6so8448320lfi.10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:26 -0700 (PDT)
+        Thu, 30 Aug 2018 22:39:55 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f8-v6so8571676ljk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c+y/4qDLh4Q3MH4efnGn89I4nTvNhxVoS8FHIzB7G3w=;
-        b=tPsH4BafkT6QVNQAIbmbE3qCxVycHK9DLiGBqR7FGKErQ0DxGy3wEM3UgwUIwnk83d
-         5IXc2qD8m6G/SXcN9K70LOixp/16O6oMdyx/8Z4ayBWoSkn5D8u+XK/8lLhVaQ+1j9QY
-         Uv3HzOmTFONsRf61/TJbx8Hr8fmi4es09kiScaGnECBe9G7Mj8CdPYZlsa+0BTCFBqEv
-         alrInLphhErrTofh3aykDTh8tewQ0AAVMxPi7rG5edl3oqBwmZ13bsjgg4UDYqVjzb/W
-         MgDEPtzaBNtzJaZ75PE4Mn6IpJpTYMX61yyCZQDDkPCRfF7F9OGOj+3O0bx5GgJRxkb8
-         H4Uw==
+        bh=Sa+LRTyejaXQKLKVVoWg55tj517huL+vpGIuXVPQaBQ=;
+        b=dqZnPA0RjgF13lxqtprDvhH5DrmbsKxOu0eT29dXd50eSkSpPLk3fDOOSMGB8LtGju
+         PKuH8x91+M4lGn+Qq0WFCLYl5fFbcLsWoivtoLPVc0hdfn1H8RlncnTwCzNW4qIKZU5f
+         CBFck82xf8/M9P+fPL62hIxLZOh4woHlMhDjniHQd4hSor6+26aYbKXbKUk4nHVlpG7Q
+         2CFpxn7KNS0QmjJF4RQ7rL8wdQnbe10RfzHFHcAon9W568CM4UlJ0hPLXnDcFkUzvqOJ
+         t2PyP196my93lEaUoDp/4mBDAJ0Ly7AX073s6w7/63He2OTobj9MdxpkVdxcdgnUwLvt
+         UgOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=c+y/4qDLh4Q3MH4efnGn89I4nTvNhxVoS8FHIzB7G3w=;
-        b=dmWcFsKngZUDmqox5gb0/j4yvK9+373cMXwzngrQGQrml9ubdkY9n6JaH7b9o9jrzf
-         HELGS4+CL1vWg17T0oCrNly8Pae02SowKkCKXrljdOE+LJI6eTf18YDFeWGDtDR0YjS1
-         ZNO62GdmCSNQwSIxoYC015YcF1bBjZG62zHiPxWJSgVlKqUMiK+y8m0HyGI2pMpPaieG
-         FynwFTXtJEJiFnURLUKy4jO96NQFK76F20Z59fohHf2pdJvrJ06J5PM7Wx49dDgg2FHW
-         aE/7U0ACfhOuMgi6sqBPE5lkkukJkL1CgrOzmb6txh6ciFEk/5LmqkhcocDLDOxluuLr
-         5FPg==
-X-Gm-Message-State: APzg51CGqt2ldncdpYFHoGqVxyTC/At7mR1p6IoKHsgIgU0R7BfVhOx9
-        +swgQiz9+qHQu/6P3Wo7obKtn0pUcdw=
-X-Google-Smtp-Source: ANB0VdZSb8QW7E7gdlkL/HOiuEqQCKrzfzgm75SR28QB/iZynpE1VPjv0rfphmcx1yhN+aduI+Nr8Q==
-X-Received: by 2002:a19:7515:: with SMTP id y21-v6mr8562758lfe.100.1535668525601;
-        Thu, 30 Aug 2018 15:35:25 -0700 (PDT)
+        bh=Sa+LRTyejaXQKLKVVoWg55tj517huL+vpGIuXVPQaBQ=;
+        b=DJOs3U7LdEm7lOx8XJCkRwyw4EvF/f9ivpSOlncG8uJeKlit2V2gXmCPLj2gCv7Rk6
+         FerBsUezPgS3AEUU9nFabQ8pu9QL+iCtEZb//tWEhXbg8Pq92hWIojis0OZMq34G6Rta
+         LqHm6tXOq8QF1rbGivhms/w+3ChRrKHIMxjtibyRsX6V7T8hBiEXPLYZLskkFKpKwPba
+         KLtlAmxriQRumW6QpQ5ATz3yItcILbJf1TrO3OoHIAHqWUO5CkO1nZ/yw98g4Tv6a6wi
+         f/tQLWdYWzEdLbAqyiBqzSl9PG6xy1bjfqsVnesw/7FM9a3vzhNDOdxwGAGfMNiAayNH
+         Fv2A==
+X-Gm-Message-State: APzg51C1puKG5FtyQd4ExOw3QMwm/VT066aB8O2hJA2zGT8XH5vP2cK+
+        84ITsXLg7BUl8bu8kpNOUxfc4m0RiYM=
+X-Google-Smtp-Source: ANB0VdbHBIN+VrBfmb4zO6VUtMJxZUx0ZtwV2EFTtWxTgNT3uOMeUYBwqa5ZAhBBny8QUniK3xvkBA==
+X-Received: by 2002:a2e:4745:: with SMTP id u66-v6mr8377222lja.76.1535668529174;
+        Thu, 30 Aug 2018 15:35:29 -0700 (PDT)
 Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.24
+        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 15:35:24 -0700 (PDT)
+        Thu, 30 Aug 2018 15:35:28 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        Dmitry Safonov <dima@arista.com>, Shuah Khan <shuah@kernel.org>
-Subject: [PATCH 05/23] selftest: vm: add unlikely() to BUG_ON()
-Date:   Fri, 31 Aug 2018 01:34:11 +0300
-Message-Id: <20180830223429.30051-6-igor.stoppa@huawei.com>
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 06/23] virtio: add unlikely() to WARN_ON_ONCE()
+Date:   Fri, 31 Aug 2018 01:34:12 +0300
+Message-Id: <20180830223429.30051-7-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830223429.30051-1-igor.stoppa@huawei.com>
 References: <20180830223429.30051-1-igor.stoppa@huawei.com>
@@ -74,28 +74,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUG_ON() is unlikely() to BUG()
+The condition to test is unlikely() to be true. Add the hint.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Shuah Khan <shuah@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
 ---
- tools/testing/selftests/vm/map_populate.c | 2 +-
+ tools/virtio/linux/kernel.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vm/map_populate.c b/tools/testing/selftests/vm/map_populate.c
-index 6b8aeaa0bf7a..ca3f54765897 100644
---- a/tools/testing/selftests/vm/map_populate.c
-+++ b/tools/testing/selftests/vm/map_populate.c
-@@ -23,7 +23,7 @@
+diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
+index fb22bccfbc8a..2b5e417ea2f0 100644
+--- a/tools/virtio/linux/kernel.h
++++ b/tools/virtio/linux/kernel.h
+@@ -123,7 +123,7 @@ static inline void free_page(unsigned long addr)
+ #define dev_err(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
+ #define dev_warn(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
  
- #define BUG_ON(condition, description)					\
- 	do {								\
--		if (condition) {					\
-+		if (unlikely(condition)) {				\
- 			fprintf(stderr, "[FAIL]\t%s:%d\t%s:%s\n", __func__, \
- 				__LINE__, (description), strerror(errno)); \
- 			exit(1);					\
+-#define WARN_ON_ONCE(cond) ((cond) ? fprintf (stderr, "WARNING\n") : 0)
++#define WARN_ON_ONCE(cond) (unlikely(cond) ? fprintf (stderr, "WARNING\n") : 0)
+ 
+ #define min(x, y) ({				\
+ 	typeof(x) _min1 = (x);			\
 -- 
 2.17.1
 
