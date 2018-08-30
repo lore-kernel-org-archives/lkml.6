@@ -2,210 +2,148 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F54C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF43AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C0C20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:37:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C0C20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A89C920835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89C920835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeH3Vk5 (ORCPT
+        id S1727421AbeH3VlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:40:57 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43943 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeH3Vk5 (ORCPT
+        Thu, 30 Aug 2018 17:41:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47052 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725998AbeH3VlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:40:57 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 130-v6so20734qkd.10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 10:37:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
-         :in-reply-to:references:organization:mime-version
-         :content-transfer-encoding;
-        bh=t86HlEw9xnSZNQgbwp9+A7YLrbb5xQLEzHG0nFS1OVo=;
-        b=bBLSHg40Ukwl6uBA6v8p85IiVeLHc4gIilIz4IP54cFDtN4BJDzqCBLOd0Cat7/VeQ
-         PG7jpKJxln3Cj8UWJdWxHIB/ZuLbb1HuTUqHgk4opQ6L0mZc935kcpccqcKsrzRFa9DY
-         7tzt399StUddsYTLFHuIFPzvdATzNmfSAkHY8K0nBgrnIUrCmTwvTAy9a6tnJIAw2n0D
-         Hw6WF6Z0/6PFHRhCnMMRUHbFqNbI+w7kPp2MKy8eneiqL8JRP18T9YE6feNGWMPFUUbK
-         tfLgtUDqJcxnoLTVghDPvi6zNvFCG3qQZGttxZGMmpXtrlFkJoRB4UBVmzwPOo6hSBM1
-         4wuQ==
-X-Gm-Message-State: APzg51DQ7AyK23hl4h0ZWEPZ975nl178/zSUIPG7sQYaG3EaMzlvqAWO
-        3ofdyF25BGyuWYnQL/7D+BKgpWLYba4=
-X-Google-Smtp-Source: ANB0VdYqXGUUTYjHJ6YDr0d1hsxERDB4rlTLi+xeO2DqOLBymWkuJen2pQBzM+dPtBalc9ryOU8ybQ==
-X-Received: by 2002:a37:a811:: with SMTP id r17-v6mr12486528qke.81.1535650662728;
-        Thu, 30 Aug 2018 10:37:42 -0700 (PDT)
-Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm4373825qka.24.2018.08.30.10.37.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Aug 2018 10:37:42 -0700 (PDT)
-Message-ID: <1070321d947fe290294ab3e838233227590a672c.camel@redhat.com>
-Subject: Re: [PATCH v2] drm/nouveau: Fix nouveau_connector_ddc_detect()
-From:   Lyude Paul <lyude@redhat.com>
-Reply-To: lyude@redhat.com
-To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Thu, 30 Aug 2018 13:37:41 -0400
-In-Reply-To: <20180830173603.GP5565@intel.com>
-References: <20180830171628.23999-1-lyude@redhat.com>
-         <20180830173603.GP5565@intel.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 30 Aug 2018 17:41:01 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7UHXl8o123206
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:37:47 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6m5ntg76-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:37:46 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 30 Aug 2018 13:37:45 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Aug 2018 13:37:41 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7UHber220840494
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 17:37:40 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55DC4B2070;
+        Thu, 30 Aug 2018 13:36:35 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35461B2064;
+        Thu, 30 Aug 2018 13:36:35 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Aug 2018 13:36:35 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2E6B016C1EDF; Thu, 30 Aug 2018 10:37:42 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 10:37:42 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH tip/core/rcu 3/3] srcu: Make early-boot call_srcu() reuse
+ workqueue lists
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829212036.GA22033@linux.vnet.ibm.com>
+ <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
+ <20180829215616.1c10e476@vmware.local.home>
+ <20180830020701.GE4225@linux.vnet.ibm.com>
+ <20180829224609.5ffdc9ec@vmware.local.home>
+ <20180830032315.GG4225@linux.vnet.ibm.com>
+ <20180830124444.6bb9faac@gandalf.local.home>
+ <20180830173509.GL4225@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830173509.GL4225@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18083017-0052-0000-0000-00000328BAC5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009640; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01081123; UDB=6.00557725; IPR=6.00861107;
+ MB=3.00023020; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 17:37:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083017-0053-0000-0000-00005DE863D1
+Message-Id: <20180830173742.GA17677@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 20:36 +0300, Ville Syrjälä wrote:
-> On Thu, Aug 30, 2018 at 01:16:28PM -0400, Lyude Paul wrote:
-> > It looks like that when we moved over to using
-> > drm_connector_for_each_possible_encoder() in nouveau, that one rather
-> > important part of this function got dropped by accident:
+On Thu, Aug 30, 2018 at 10:35:09AM -0700, Paul E. McKenney wrote:
+> On Thu, Aug 30, 2018 at 12:44:44PM -0400, Steven Rostedt wrote:
+> > On Wed, 29 Aug 2018 20:23:15 -0700
+> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 > > 
-> > 	/*          Right   v   here */
-> > 	for (i = 0; nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER; i++) {
-> > 		int id = connector->encoder_ids[i];
-> > 		if (id == 0)
-> > 			break;
+> > > > > Glad you like it!  Does it actually work for you?  ;-)  
+> > > > 
+> > > > Oh, you want me to actually test it too? ;-)  
+> > > 
+> > > ;-) ;-) ;-)
+> > > 
+> > > > I'll try to add that in my todo list tomorrow.  
+> > > 
+> > > Much appreciated!
 > > 
-> > Since it's rather difficult to notice: the conditional in this loop is
-> > actually:
+> > I reverted the change that prevents calling call_srcu() early:
 > > 
-> > 	nv_encoder = NULL, i < DRM_CONNECTOR_MAX_ENCODER
+> > I checked out v4.19-rc1 and applied these three patches, then did:
 > > 
-> > Meaning that all early breaks result in nv_encoder keeping it's value,
-> > otherwise nv_encoder = NULL. Ugh.
+> > git show f8a79d5c7ef47c62d97a30e16064caf2ef91f648 | patch -p1 -R
 > > 
-> > Since this got dropped, nouveau_connector_ddc_detect() now returns an
-> > encoder for every single connector, regardless of whether or not it's
-> > detected:
+> > But still triggered the following:
 > > 
-> >     [ 1780.056185] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for
-> > DP-2
-> > 
-> > So: fix this to ensure we only return an encoder if we actually found
-> > one, and clean up the rest of the function while we're at it since it's
-> > nearly impossible to read properly.
-> > 
-> > Changes since v1:
-> > - Don't skip ddc probing for LVDS if we can't switch DDC through
-> >   vga-switcheroo, just do the DDC probing without calling
-> >   vga_switcheroo_lock_ddc() - skeggsb
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > Fixes: ddba766dd07e ("drm/nouveau: Use
-> > drm_connector_for_each_possible_encoder()")
-> > ---
-> >  drivers/gpu/drm/nouveau/nouveau_connector.c | 49 ++++++++++++---------
-> >  1 file changed, 28 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > index 71c3bd8ff9f8..461111aaedc4 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> > @@ -414,9 +414,10 @@ nouveau_connector_ddc_detect(struct drm_connector
-> > *connector)
-> >  	struct nouveau_connector *nv_connector = nouveau_connector(connector);
-> >  	struct nouveau_drm *drm = nouveau_drm(dev);
-> >  	struct nvkm_gpio *gpio = nvxx_gpio(&drm->client.device);
-> > -	struct nouveau_encoder *nv_encoder = NULL;
-> > +	struct nouveau_encoder *nv_encoder = NULL, *found = NULL;
-> >  	struct drm_encoder *encoder;
-> > -	int i, panel = -ENODEV;
-> > +	int i, ret, panel = -ENODEV;
-> > +	bool switcheroo_ddc = false;
-> >  
-> >  	/* eDP panels need powering on by us (if the VBIOS doesn't default it
-> >  	 * to on) before doing any AUX channel transactions.  LVDS panel power
-> > @@ -433,37 +434,43 @@ nouveau_connector_ddc_detect(struct drm_connector
-> > *connector)
-> >  	drm_connector_for_each_possible_encoder(connector, encoder, i) {
-> >  		nv_encoder = nouveau_encoder(encoder);
-> >  
-> > -		if (nv_encoder->dcb->type == DCB_OUTPUT_DP) {
-> > -			int ret = nouveau_dp_detect(nv_encoder);
-> > +		switch (nv_encoder->dcb->type) {
-> > +		case DCB_OUTPUT_DP:
-> > +			ret = nouveau_dp_detect(nv_encoder);
-> >  			if (ret == NOUVEAU_DP_MST)
-> >  				return NULL;
-> > -			if (ret == NOUVEAU_DP_SST)
-> > -				break;
-> > -		} else
-> > -		if ((vga_switcheroo_handler_flags() &
-> > -		     VGA_SWITCHEROO_CAN_SWITCH_DDC) &&
-> > -		    nv_encoder->dcb->type == DCB_OUTPUT_LVDS &&
-> > -		    nv_encoder->i2c) {
-> > -			int ret;
-> > -			vga_switcheroo_lock_ddc(dev->pdev);
-> > -			ret = nvkm_probe_i2c(nv_encoder->i2c, 0x50);
-> > -			vga_switcheroo_unlock_ddc(dev->pdev);
-> > -			if (ret)
-> > +			else if (ret == NOUVEAU_DP_SST)
-> > +				found = nv_encoder;
-> > +
-> > +			break;
-> > +		case DCB_OUTPUT_LVDS:
-> > +			switcheroo_ddc = !!(vga_switcheroo_handler_flags() &
-> > +					    VGA_SWITCHEROO_CAN_SWITCH_DDC);
-> > +		/* fall-through */
-> > +		default:
-> > +			if (!nv_encoder->i2c)
-> >  				break;
-> > -		} else
-> > -		if (nv_encoder->i2c) {
-> > +
-> > +			if (switcheroo_ddc)
-> > +				vga_switcheroo_lock_ddc(dev->pdev);
-> >  			if (nvkm_probe_i2c(nv_encoder->i2c, 0x50))
-> > -				break;
-> > +				found = nv_encoder;
-> > +			if (switcheroo_ddc)
-> > +				vga_switcheroo_unlock_ddc(dev->pdev);
-> > +
-> > +			break;
-> >  		}
-> > +		if (found)
-> > +			break;
+> >  WARNING: CPU: 0 PID: 0 at /work/git/linux-trace.git/kernel/rcu/srcutree.c:242 check_init_srcu_struct+0x85/0x90
 > 
-> The diff is rather messy due to the change to a switch, but after staring
-> at it for a while it does look correct to me.
-> 
-> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> and sorry for the mess.
-No problem! Honestly, if I was the one who made those changes I expect I would
-have broken this same bit of code as well :P
+> Gah!!!  I needed to have removed that WARN_ON_ONCE(), didn't I?
+> In fact, I should have removed that once I started using workqueues,
+> quite some time back.
 
-> 
-> >  	}
-> >  
-> >  	/* eDP panel not detected, restore panel power GPIO to previous
-> >  	 * state to avoid confusing the SOR for other output types.
-> >  	 */
-> > -	if (!nv_encoder && panel == 0)
-> > +	if (!found && panel == 0)
-> >  		nvkm_gpio_set(gpio, 0, DCB_GPIO_PANEL_POWER, 0xff, panel);
-> >  
-> > -	return nv_encoder;
-> > +	return found;
-> >  }
-> >  
-> >  static struct nouveau_encoder *
-> > -- 
-> > 2.17.1
-> 
-> 
+As in the below patch.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 75571ff09c62..a8846ed7f352 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -239,7 +239,6 @@ static void check_init_srcu_struct(struct srcu_struct *sp)
+ {
+ 	unsigned long flags;
+ 
+-	WARN_ON_ONCE(rcu_scheduler_active == RCU_SCHEDULER_INIT);
+ 	/* The smp_load_acquire() pairs with the smp_store_release(). */
+ 	if (!rcu_seq_state(smp_load_acquire(&sp->srcu_gp_seq_needed))) /*^^^*/
+ 		return; /* Already initialized. */
 
