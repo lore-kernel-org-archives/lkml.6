@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC529C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DCFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A30720658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A30720658
+	by mail.kernel.org (Postfix) with ESMTP id BF17D2082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF17D2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeH3Kdy (ORCPT
+        id S1727879AbeH3Kdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 06:33:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37138 "EHLO mx1.redhat.com"
+        Thu, 30 Aug 2018 06:33:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42516 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727824AbeH3Kdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727379AbeH3Kdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 06:33:54 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DF289807A13F;
-        Thu, 30 Aug 2018 06:33:17 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C8EC87927;
+        Thu, 30 Aug 2018 06:33:19 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C030A9F09;
-        Thu, 30 Aug 2018 06:33:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28D1DA9F09;
+        Thu, 30 Aug 2018 06:33:18 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,154 +38,82 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH 14/43] perf stat: Move perf_stat_synthesize_config into stat.c
-Date:   Thu, 30 Aug 2018 08:32:23 +0200
-Message-Id: <20180830063252.23729-15-jolsa@kernel.org>
+Subject: [PATCH 15/43] perf stat: Add perf_evlist__print_counters function
+Date:   Thu, 30 Aug 2018 08:32:24 +0200
+Message-Id: <20180830063252.23729-16-jolsa@kernel.org>
 In-Reply-To: <20180830063252.23729-1-jolsa@kernel.org>
 References: <20180830063252.23729-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 06:33:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 06:33:17 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 30 Aug 2018 06:33:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 30 Aug 2018 06:33:19 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So it can be used globaly.
+To be in charge of printing out the stat output. It will be
+moved out of stat command in following patches.
 
-Link: http://lkml.kernel.org/n/tip-6iu57r6ts9f0m92hw7f8in1o@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-girva61h4z5vjn9fclc4d2x9@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-stat.c | 42 ---------------------------------------
- tools/perf/util/stat.c    | 42 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/stat.h    |  6 ++++++
- 3 files changed, 48 insertions(+), 42 deletions(-)
+ tools/perf/builtin-stat.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1171d4e00276..54768ec15dbc 100644
+index 54768ec15dbc..db11832bbdbc 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -402,48 +402,6 @@ static void workload_exec_failed_signal(int signo __maybe_unused, siginfo_t *inf
- 	workload_exec_errno = info->si_value.sival_int;
+@@ -1692,7 +1692,10 @@ static void print_footer(void)
+ 			"the same PMU. Try reorganizing the group.\n");
  }
  
--static int perf_stat_synthesize_config(struct perf_stat_config *config,
--				       struct perf_tool *tool,
--				       struct perf_evlist *evlist,
--				       perf_event__handler_t process,
--				       bool attrs)
--{
--	int err;
--
--	if (attrs) {
--		err = perf_event__synthesize_attrs(tool, evlist, process);
--		if (err < 0) {
--			pr_err("Couldn't synthesize attrs.\n");
--			return err;
--		}
--	}
--
--	err = perf_event__synthesize_extra_attr(tool, evlist, process,
--						attrs);
--
--	err = perf_event__synthesize_thread_map2(tool, evlist->threads,
--						 process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize thread map.\n");
--		return err;
--	}
--
--	err = perf_event__synthesize_cpu_map(tool, evlist->cpus,
--					     process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize thread map.\n");
--		return err;
--	}
--
--	err = perf_event__synthesize_stat_config(tool, config, process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize config.\n");
--		return err;
--	}
--
--	return 0;
--}
--
- static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+-static void print_counters(struct timespec *ts, int argc, const char **argv)
++static void
++perf_evlist__print_counters(struct perf_evlist *evlist,
++			    struct timespec *ts,
++			    int argc, const char **argv)
  {
- 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 3bd24255376a..5d3172bcc4ae 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -488,3 +488,45 @@ int create_perf_stat_counter(struct perf_evsel *evsel,
- 
- 	return perf_evsel__open_per_thread(evsel, evsel->threads);
+ 	int interval = stat_config.interval;
+ 	struct perf_evsel *counter;
+@@ -1724,14 +1727,14 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 		print_aggr(prefix);
+ 		break;
+ 	case AGGR_THREAD:
+-		evlist__for_each_entry(evsel_list, counter) {
++		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+ 			print_aggr_thread(counter, prefix);
+ 		}
+ 		break;
+ 	case AGGR_GLOBAL:
+-		evlist__for_each_entry(evsel_list, counter) {
++		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+ 			print_counter_aggr(counter, prefix);
+@@ -1743,7 +1746,7 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 		if (metric_only)
+ 			print_no_aggr_metric(prefix);
+ 		else {
+-			evlist__for_each_entry(evsel_list, counter) {
++			evlist__for_each_entry(evlist, counter) {
+ 				if (is_duration_time(counter))
+ 					continue;
+ 				print_counter(counter, prefix);
+@@ -1761,6 +1764,11 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 	fflush(stat_config.output);
  }
-+
-+int perf_stat_synthesize_config(struct perf_stat_config *config,
-+				struct perf_tool *tool,
-+				struct perf_evlist *evlist,
-+				perf_event__handler_t process,
-+				bool attrs)
-+{
-+	int err;
-+
-+	if (attrs) {
-+		err = perf_event__synthesize_attrs(tool, evlist, process);
-+		if (err < 0) {
-+			pr_err("Couldn't synthesize attrs.\n");
-+			return err;
-+		}
-+	}
-+
-+	err = perf_event__synthesize_extra_attr(tool, evlist, process,
-+						attrs);
-+
-+	err = perf_event__synthesize_thread_map2(tool, evlist->threads,
-+						 process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize thread map.\n");
-+		return err;
-+	}
-+
-+	err = perf_event__synthesize_cpu_map(tool, evlist->cpus,
-+					     process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize thread map.\n");
-+		return err;
-+	}
-+
-+	err = perf_event__synthesize_stat_config(tool, config, process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize config.\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 8fb596641545..da6a706daecc 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -7,6 +7,7 @@
- #include "xyarray.h"
- #include "rblist.h"
- #include "perf.h"
-+#include "event.h"
  
- struct stats {
- 	double n, mean, M2;
-@@ -179,4 +180,9 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
- int create_perf_stat_counter(struct perf_evsel *evsel,
- 			     struct perf_stat_config *config,
- 			     struct target *target);
-+int perf_stat_synthesize_config(struct perf_stat_config *config,
-+				struct perf_tool *tool,
-+				struct perf_evlist *evlist,
-+				perf_event__handler_t process,
-+				bool attrs);
- #endif
++static void print_counters(struct timespec *ts, int argc, const char **argv)
++{
++	perf_evlist__print_counters(evsel_list, ts, argc, argv);
++}
++
+ static volatile int signr = -1;
+ 
+ static void skip_signal(int signo)
 -- 
 2.17.1
 
