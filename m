@@ -2,185 +2,240 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6783AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95104C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A8E20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:03:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyZ9K/mi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A8E20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CC7D20647
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:07:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC7D20647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeH3GDU (ORCPT
+        id S1727228AbeH3GGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 02:03:20 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42225 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbeH3GDT (ORCPT
+        Thu, 30 Aug 2018 02:06:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725844AbeH3GGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 02:03:19 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l9-v6so3125006pff.9;
-        Wed, 29 Aug 2018 19:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZriRi6qAj14t1p4MRdPKPXTSGBiamfNqVcP9ENPbS/M=;
-        b=PyZ9K/miH87VO1ITKdhZ17dZswYPMdQEyVt5OZM6l5MF2f3Hkld46fO5Nw/74K9xiy
-         qicJnBpvsrmIt/iV1PlUjACyHnItPckY7oza6faGVa+FzdRCCX/PjIY6lv9gY/LwAYbd
-         CVywRw6Rq5DHnkk6Kzq2ja8HbN17prafKeUMeW2MQ+KKG16dwHG4O449ujC1siahYOe+
-         ZZpe4qA52HbU/2EnNFUkyqa41A+z3gF+QlE53iRfue6Br9Noz6OnQCKZpmlLbpEVNrAc
-         iAi2Y1dlo7u8axgngP+emXh3HiKBTTvGJ2ka+MDKWWlTZY3+rtWFscmLrkCJXH+Sw4F4
-         u+7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZriRi6qAj14t1p4MRdPKPXTSGBiamfNqVcP9ENPbS/M=;
-        b=S3NWuldwRwDT8OlULek/1sJv1Hde0m9j5TgQsn3CLFrnWMMRExLJwZYDqepkIzdwFE
-         h1TZqN6fs5+YmVXtBh2mVO3id9yQ4qrB6Q+IF8pKzs0yHumFxkyIasYj1kiP4VTCSfrI
-         bn/jraRxuFRzPDCq2btOdPd3s7d+yzJcuaN19O7uSd6H++6K3wL8Vjuj1x1BgrIE0dxa
-         3HoOiTiKQ/7xksz7nuuuvdolk4EvD3/F7YU77OheRf9iH7bhDDK2LJyHyaWPGYi1r0Qy
-         PY2znKG+7Zui9+NOrAePz9AT7UW8dTZOHFIfQgDcH512rDWCM/uGxyty0abkiK6DT4Bd
-         0QDg==
-X-Gm-Message-State: APzg51BFwt/R2rUlsT1e3oldV8li3nn5xbdxFrXJ8eLUypivdPOJ8Pug
-        waSOy+Vum5iYraVm2nIeteg6HAIj
-X-Google-Smtp-Source: ANB0VdYVvbsPDiYJDnSI2UYe4w/kvgLGAPNjH3DwaHtyCImgxuA2SZxbKP5oAAyIbRrisTAP7pzSsw==
-X-Received: by 2002:a63:225f:: with SMTP id t31-v6mr7770713pgm.275.1535594615054;
-        Wed, 29 Aug 2018 19:03:35 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id b18-v6sm11433523pgk.15.2018.08.29.19.03.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 19:03:34 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v2] KVM: LAPIC: Fix pv ipis out-of-bounds access
-Date:   Thu, 30 Aug 2018 10:03:30 +0800
-Message-Id: <1535594610-9095-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 30 Aug 2018 02:06:54 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7U255SC016997
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:07:08 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m629e1v5f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:07:07 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 22:07:07 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 22:07:02 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7U2717438273200
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 02:07:01 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 972A1B2067;
+        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58C6BB2065;
+        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.196.106])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 32ACE16C2ACD; Wed, 29 Aug 2018 19:07:01 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 19:07:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH tip/core/rcu 3/3] srcu: Make early-boot call_srcu() reuse
+ workqueue lists
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829212036.GA22033@linux.vnet.ibm.com>
+ <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
+ <20180829215616.1c10e476@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829215616.1c10e476@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18083002-0060-0000-0000-000002A6A02D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009637; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080813; UDB=6.00557539; IPR=6.00860799;
+ MB=3.00023003; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 02:07:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083002-0061-0000-0000-000046564664
+Message-Id: <20180830020701.GE4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Wed, Aug 29, 2018 at 09:56:16PM -0400, Steven Rostedt wrote:
+> On Wed, 29 Aug 2018 14:23:13 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > Allocating a list_head structure that is almost never used, and, when
+> > used, is used only during early boot (rcu_init() and earlier), is a bit
+> > wasteful.  This commit therefore eliminates that list_head in favor of
+> > the one in the work_struct structure.  This is safe because the work_struct
+> > structure cannot be used until after rcu_init() returns.
+> > 
+> > Reported-by: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Cc: Tejun Heo <tj@kernel.org>
+> > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> > ---
+> >  include/linux/srcutiny.h |  2 --
+> >  include/linux/srcutree.h |  3 +--
+> >  kernel/rcu/srcutiny.c    | 10 +++++-----
+> >  kernel/rcu/srcutree.c    | 11 +++++------
+> >  4 files changed, 11 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+> > index 2b5c0822e683..f41d2fb09f87 100644
+> > --- a/include/linux/srcutiny.h
+> > +++ b/include/linux/srcutiny.h
+> > @@ -36,7 +36,6 @@ struct srcu_struct {
+> >  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
+> >  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
+> >  	struct work_struct srcu_work;	/* For driving grace periods. */
+> > -	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
+> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+> >  	struct lockdep_map dep_map;
+> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+> > @@ -49,7 +48,6 @@ void srcu_drive_gp(struct work_struct *wp);
+> >  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
+> >  	.srcu_cb_tail = &name.srcu_cb_head,				\
+> >  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
+> > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
+> >  	__SRCU_DEP_MAP_INIT(name)					\
+> >  }
+> >  
+> > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+> > index 9cfa4610113a..0ae91b3a7406 100644
+> > --- a/include/linux/srcutree.h
+> > +++ b/include/linux/srcutree.h
+> > @@ -94,7 +94,6 @@ struct srcu_struct {
+> >  						/*  callback for the barrier */
+> >  						/*  operation. */
+> >  	struct delayed_work work;
+> > -	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
+> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+> >  	struct lockdep_map dep_map;
+> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+> > @@ -110,7 +109,7 @@ struct srcu_struct {
+> >  	.sda = &pcpu_name,						\
+> >  	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
+> >  	.srcu_gp_seq_needed = -1UL,					\
+> > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
+> > +	.work = __DELAYED_WORK_INITIALIZER(name.work, NULL, 0),		\
+> 
+> Thanks!
 
-Dan Carpenter reported that the untrusted data returns from kvm_register_read()
-results in the following static checker warning:
-  arch/x86/kvm/lapic.c:576 kvm_pv_send_ipi()
-  error: buffer underflow 'map->phys_map' 's32min-s32max'
+Glad you like it!  Does it actually work for you?  ;-)
 
-KVM guest can easily trigger this by executing the following assembly sequence 
-in Ring0:
+							Thanx, Paul
 
-mov $10, %rax
-mov $0xFFFFFFFF, %rbx
-mov $0xFFFFFFFF, %rdx
-mov $0, %rsi
-vmcall
-
-As this will cause KVM to execute the following code-path:
-vmx_handle_exit() -> handle_vmcall() -> kvm_emulate_hypercall() -> kvm_pv_send_ipi()
-which will reach out-of-bounds access.
-
-This patch fixes it by adding a check to kvm_pv_send_ipi() against map->max_apic_id, 
-ignoring destinations that are not present and delivering the rest. We also check 
-whether or not map->phys_map[min + i] is NULL since the max_apic_id is set to the 
-max apic id, some phys_map maybe NULL when apic id is sparse, especially kvm 
-unconditionally set max_apic_id to 255 to reserve enough space for any xAPIC ID.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v1 -> v2:
- * add min > map->max_apic_id check
- * change min to u32
- * add min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))
-
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/lapic.c            | 23 ++++++++++++++++-------
- 2 files changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 00ddb0c..e6534b3 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1463,7 +1463,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
- void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu);
- 
- int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
--    		    unsigned long ipi_bitmap_high, int min,
-+		    unsigned long ipi_bitmap_high, u32 min,
- 		    unsigned long icr, int op_64_bit);
- 
- u64 kvm_get_arch_capabilities(void);
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 0cefba2..7de605c 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -548,7 +548,7 @@ int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
- }
- 
- int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
--    		    unsigned long ipi_bitmap_high, int min,
-+		    unsigned long ipi_bitmap_high, u32 min,
- 		    unsigned long icr, int op_64_bit)
- {
- 	int i;
-@@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
- 	rcu_read_lock();
- 	map = rcu_dereference(kvm->arch.apic_map);
- 
-+	if (min > map->max_apic_id)
-+		goto out;
- 	/* Bits above cluster_size are masked in the caller.  */
--	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
--		vcpu = map->phys_map[min + i]->vcpu;
--		count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+	for_each_set_bit(i, &ipi_bitmap_low,
-+		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
-+		if (map->phys_map[min + i]) {
-+			vcpu = map->phys_map[min + i]->vcpu;
-+			count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+		}
- 	}
- 
- 	min += cluster_size;
--	for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
--		vcpu = map->phys_map[min + i]->vcpu;
--		count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+	for_each_set_bit(i, &ipi_bitmap_high,
-+		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
-+		if (map->phys_map[min + i]) {
-+			vcpu = map->phys_map[min + i]->vcpu;
-+			count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+		}
- 	}
- 
-+out:
- 	rcu_read_unlock();
- 	return count;
- }
--- 
-2.7.4
+> -- Steve
+> 
+> >  	__SRCU_DEP_MAP_INIT(name)					\
+> >  }
+> >  
+> > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> > index d233f0c63f6f..b46e6683f8c9 100644
+> > --- a/kernel/rcu/srcutiny.c
+> > +++ b/kernel/rcu/srcutiny.c
+> > @@ -48,7 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
+> >  	sp->srcu_gp_waiting = false;
+> >  	sp->srcu_idx = 0;
+> >  	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
+> > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
+> > +	INIT_LIST_HEAD(&sp->srcu_work.entry);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -185,8 +185,8 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
+> >  	if (!READ_ONCE(sp->srcu_gp_running)) {
+> >  		if (likely(srcu_init_done))
+> >  			schedule_work(&sp->srcu_work);
+> > -		else if (list_empty(&sp->srcu_boot_entry))
+> > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
+> > +		else if (list_empty(&sp->srcu_work.entry))
+> > +			list_add(&sp->srcu_work.entry, &srcu_boot_list);
+> >  	}
+> >  }
+> >  EXPORT_SYMBOL_GPL(call_srcu);
+> > @@ -224,8 +224,8 @@ void __init srcu_init(void)
+> >  	srcu_init_done = true;
+> >  	while (!list_empty(&srcu_boot_list)) {
+> >  		sp = list_first_entry(&srcu_boot_list,
+> > -				      struct srcu_struct, srcu_boot_entry);
+> > -		list_del_init(&sp->srcu_boot_entry);
+> > +				      struct srcu_struct, srcu_work.entry);
+> > +		list_del_init(&sp->srcu_work.entry);
+> >  		schedule_work(&sp->srcu_work);
+> >  	}
+> >  }
+> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> > index e79c1929328f..36a2857c84e0 100644
+> > --- a/kernel/rcu/srcutree.c
+> > +++ b/kernel/rcu/srcutree.c
+> > @@ -186,7 +186,6 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
+> >  	mutex_init(&sp->srcu_barrier_mutex);
+> >  	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
+> >  	INIT_DELAYED_WORK(&sp->work, process_srcu);
+> > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
+> >  	if (!is_static)
+> >  		sp->sda = alloc_percpu(struct srcu_data);
+> >  	init_srcu_struct_nodes(sp, is_static);
+> > @@ -709,8 +708,8 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
+> >  		if (likely(srcu_init_done))
+> >  			queue_delayed_work(rcu_gp_wq, &sp->work,
+> >  					   srcu_get_delay(sp));
+> > -		else if (list_empty(&sp->srcu_boot_entry))
+> > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
+> > +		else if (list_empty(&sp->work.work.entry))
+> > +			list_add(&sp->work.work.entry, &srcu_boot_list);
+> >  	}
+> >  	spin_unlock_irqrestore_rcu_node(sp, flags);
+> >  }
+> > @@ -1324,10 +1323,10 @@ void __init srcu_init(void)
+> >  
+> >  	srcu_init_done = true;
+> >  	while (!list_empty(&srcu_boot_list)) {
+> > -		sp = list_first_entry(&srcu_boot_list,
+> > -				      struct srcu_struct, srcu_boot_entry);
+> > +		sp = list_first_entry(&srcu_boot_list, struct srcu_struct,
+> > +				      work.work.entry);
+> >  		check_init_srcu_struct(sp);
+> > -		list_del_init(&sp->srcu_boot_entry);
+> > +		list_del_init(&sp->work.work.entry);
+> >  		queue_work(rcu_gp_wq, &sp->work.work);
+> >  	}
+> >  }
+> 
 
