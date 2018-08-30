@@ -3,32 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7322C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA220C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7816B2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:13:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7816B2054F
+	by mail.kernel.org (Postfix) with ESMTP id 8D1D22054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1D22054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeH3MN4 (ORCPT
+        id S1727873AbeH3MN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:13:56 -0400
+        Thu, 30 Aug 2018 08:13:59 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:7417 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeH3MN4 (ORCPT
+        with ESMTP id S1727238AbeH3MN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:13:56 -0400
+        Thu, 30 Aug 2018 08:13:58 -0400
 Received: from droid10.amlogic.com (10.18.11.213) by mail-sh2.amlogic.com
  (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 30 Aug 2018
- 16:13:24 +0800
+ 16:13:25 +0800
 From:   Hanjie Lin <hanjie.lin@amlogic.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>
-CC:     Hanjie Lin <hanjie.lin@amlogic.com>,
+CC:     Yue Wang <yue.wang@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Rob Herring <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
@@ -40,10 +41,12 @@ CC:     Hanjie Lin <hanjie.lin@amlogic.com>,
         Jianxin Pan <jianxin.pan@amlogic.com>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
         Jian Hu <jian.hu@amlogic.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 0/2] add the Amlogic Meson PCIe controller driver
-Date:   Thu, 30 Aug 2018 16:13:47 +0800
-Message-ID: <1535616829-167936-1-git-send-email-hanjie.lin@amlogic.com>
+Subject: [PATCH v3 1/2] dt-bindings: PCI: meson: add DT bindings for Amlogic Meson PCIe controller
+Date:   Thu, 30 Aug 2018 16:13:48 +0800
+Message-ID: <1535616829-167936-2-git-send-email-hanjie.lin@amlogic.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535616829-167936-1-git-send-email-hanjie.lin@amlogic.com>
+References: <1535616829-167936-1-git-send-email-hanjie.lin@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.18.11.213]
@@ -52,38 +55,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Yue Wang <yue.wang@amlogic.com>
+
 The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
-PCI core. This patchset add the driver and dt-bindings of the controller.
+PCI core. This patch adds documentation for the DT bindings in Meson PCIe
+controller.
 
-Till patch v2, we have a dedicated phy driver which only process reset job.
-It's too overkill so we integrate phy driver into the controller.
-
-Changes since v2: [1]
- - abandon phy driver, move reset to the controller
- - use devm_add_action_or_reset() to use clock res
- - format correcting
-
-Changes since v1: [0]
- - use gpio lib instead open code 
- - move 'apb' and 'port' reset from phy driver
- - format correcting
-
-[0] :  https://lkml.kernel.org/r/1534227522-186798-1-git-send-email-hanjie.lin@amlogic.com
-[1] :  https://lkml.kernel.org/r/1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com 
-
-Yue Wang (2):
-  dt-bindings: PCI: meson: add DT bindings for Amlogic Meson PCIe
-    controller
-  PCI: meson: add the Amlogic Meson PCIe controller driver
-
- .../devicetree/bindings/pci/amlogic,meson-pcie.txt |  70 +++
- drivers/pci/controller/dwc/Kconfig                 |  12 +
- drivers/pci/controller/dwc/Makefile                |   1 +
- drivers/pci/controller/dwc/pci-meson.c             | 617 +++++++++++++++++++++
- 4 files changed, 700 insertions(+)
+Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+---
+ .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 70 ++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
- create mode 100644 drivers/pci/controller/dwc/pci-meson.c
 
+diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+new file mode 100644
+index 0000000..12b18f8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+@@ -0,0 +1,70 @@
++Amlogic Meson AXG DWC PCIE SoC controller
++
++Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
++It shares common functions with the PCIe DesignWare core driver and
++inherits common properties defined in
++Documentation/devicetree/bindings/pci/designware-pci.txt.
++
++Additional properties are described here:
++
++Required properties:
++- compatible:
++	should contain "amlogic,axg-pcie" to identify the core.
++- reg:
++	should contain the configuration address space.
++- reg-names: Must be
++	- "elbi"	External local bus interface registers
++	- "cfg"		Meson specific registers
++	- "phy"		Meson PCIE PHY registers
++	- "config"	PCIe configuration space
++- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
++- clocks: Must contain an entry for each entry in clock-names.
++- clock-names: Must include the following entries:
++	- "pclk"       PCIe GEN 100M PLL clock
++	- "port"       PCIe_x(A or B) RC clock gate
++	- "general"    PCIe Phy clock
++	- "mipi"       PCIe_x(A or B) 100M ref clock gate
++- resets: phandle to the reset lines.
++- reset-names: must contain "phy" "port" and "apb"
++       - "phy"         Share PHY reset
++       - "port"        Port A or B reset
++       - "apb"         Share APB reset
++- device_type:
++	should be "pci". As specified in designware-pcie.txt
++
++
++Example configuration:
++
++	pcie: pcie@f9800000 {
++			compatible = "amlogic,axg-pcie", "snps,dw-pcie";
++			reg = <0x0 0xf9800000 0x0 0x400000
++					0x0 0xff646000 0x0 0x2000
++					0x0 0xff644000 0x0 0x2000
++					0x0 0xf9f00000 0x0 0x100000>;
++			reg-names = "elbi", "cfg", "phy", "config";
++			reset-gpios = <&gpio GPIOX_19 GPIO_ACTIVE_HIGH>;
++			interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
++			bus-range = <0x0 0xff>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			ranges = <0x82000000 0 0 0x0 0xf9c00000 0 0x00300000>;
++
++			clocks = <&clkc CLKID_USB
++					&clkc CLKID_MIPI_ENABLE
++					&clkc CLKID_PCIE_A
++					&clkc CLKID_PCIE_CML_EN0>;
++			clock-names = "general",
++					"mipi",
++					"pclk",
++					"port";
++			resets = <&reset RESET_PCIE_PHY>,
++				<&reset RESET_PCIE_A>,
++				<&reset RESET_PCIE_APB>;
++			reset-names = "phy",
++					"port",
++					"apb";
++	};
 -- 
 2.7.4
 
