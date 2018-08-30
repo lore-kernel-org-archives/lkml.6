@@ -2,93 +2,114 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF01C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B465EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD0120661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rzSmCob4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD0120661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 75CF82083C
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:57:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75CF82083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeHaBAv (ORCPT
+        id S1727532AbeHaBBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 21:00:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:45304 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbeHaBAv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:00:51 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UKtvER072283;
-        Thu, 30 Aug 2018 20:56:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=imZIYTuL+6od1DXxpgvec6AlHdg/mPfRFfDZwYLIU3k=;
- b=rzSmCob436O9O4NQ1Llw4zx9R2iWISU6mlu7rvx+GeBUAZOoKKX8R42Y40AF6bFq/xx1
- +J1E045dqnzfkZFwZDPJXpyQZT8Uyla+OlMQOgjH16yiXK2/Siz92iT9T+C+x7xMaSwf
- r3WIwNBmHl3FSP+d1h9VFOmVYrYzFq4KT6rCuEV6tqD/uArC46d2aDALocqCYjfHz3PV
- fHlz4+IeS8jibllJA7WnCt6v7U5LPdOBO9AnpqNJfzIk1AnIJeNA3qFZWt0zp4uEkOuM
- eyuVbU6E49FCKfp//tE88WLT4YmX7cfXHqdskGf2hwig9o1T3ku03aqo2UT8jSKqigFB fA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2m2xhu7315-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 20:56:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7UKuf6J025549
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 20:56:41 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7UKueKk016649;
-        Thu, 30 Aug 2018 20:56:40 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Aug 2018 13:56:40 -0700
-Subject: Re: KMSAN: uninit-value in rds_bind
-To:     syzbot <syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000010a4d0574ab4743@google.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <355351e8-71fa-6db9-ad2a-43115cc2e80e@oracle.com>
-Date:   Thu, 30 Aug 2018 13:56:38 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <000000000000010a4d0574ab4743@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 30 Aug 2018 21:01:03 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3121 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726690AbeHaBBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 21:01:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 13:57:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,308,1531810800"; 
+   d="scan'208";a="253278023"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga005.jf.intel.com with ESMTP; 30 Aug 2018 13:57:00 -0700
+Message-ID: <1535662366.28781.6.camel@intel.com>
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+Date:   Thu, 30 Aug 2018 13:52:46 -0700
+In-Reply-To: <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
+         <20180830143904.3168-13-yu-cheng.yu@intel.com>
+         <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
+         <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com>
+         <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com>
+         <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
+         <1535649960.26689.15.camel@intel.com>
+         <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
+         <1535651666.27823.6.camel@intel.com>
+         <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
+         <1535660494.28258.36.camel@intel.com>
+         <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9001 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=742
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808300210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/2018 11:31 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    2dca2cbde67a kmsan: fix build warnings with CONFIG_KMSAN=n
-> git tree:       https://github.com/google/kmsan.git/master
+On Thu, 2018-08-30 at 22:44 +0200, Jann Horn wrote:
+> On Thu, Aug 30, 2018 at 10:25 PM Yu-cheng Yu <yu-cheng.yu@intel.com>
+> wrote:
+...
+> > In the flow you described, if C writes to the overflow page before
+> > B
+> > gets in with a 'call', the return address is still correct for
+> > B.  To
+> > make an attack, C needs to write again before the TLB flush.  I
+> > agree
+> > that is possible.
+> > 
+> > Assume we have a guard page, can someone in the short window do
+> > recursive calls in B, move ssp to the end of the guard page, and
+> > trigger the same again?  He can simply take the incssp route.
+> I don't understand what you're saying. If the shadow stack is
+> between
+> guard pages, you should never be able to move SSP past that area's
+> guard pages without an appropriate shadow stack token (not even with
+> INCSSP, since that has a maximum range of PAGE_SIZE/2), and
+> therefore,
+> it shouldn't matter whether memory outside that range is incorrectly
+> marked as shadow stack. Am I missing something?
 
-BTW, can you please fix your git url since this one doesn't work.
-This tree is not vanila kernel.org tree(4.19.0-rc1+ #36), so would be
-good to get the line numbers correct for sources.
+INCSSP has a range of 256, but we can do multiple of that.
+But I realize the key is not to have the transient SHSTK page at all.
+The guard page is !pte_write() and even we have flaws in
+ptep_set_wrprotect(), there will not be any transient SHSTK pages. I
+will add guard pages to both ends.
 
-Regards,
-Snatosh
+Still thinking how to fix ptep_set_wrprotect().
+
+Yu-cheng
+
