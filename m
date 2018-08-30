@@ -2,124 +2,450 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A391CC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F926C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B72F2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B72F2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1C3212073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3212073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbeH3R7U (ORCPT
+        id S1729132AbeH3R7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:59:20 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45311 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728713AbeH3R7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:59:20 -0400
-Received: by mail-qt0-f194.google.com with SMTP id g44-v6so9838366qtb.12;
-        Thu, 30 Aug 2018 06:57:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RYvtCHntOFf39RNiijk78XZLNHtjhDQz6GCS2aHc6Mc=;
-        b=ugK8XhnfLfy8Lp91ND1+KCN6/jkYqJwOU3WvjI/EYMo/QpSa+qEUyiIGq5RfNhJAhM
-         gokoBbK3rOlwhqtFWEYSI0fQrWv/QezUVvs5l+EL57clsSu/EAXaqSaMpC49hkwRrfH0
-         UkWsySif0jB32LER/2RAAbM9xc3TYX2HhgjAcESf2t33emJEQ7qgJLDtTmFo2hkslntw
-         wIUoPA/TsGSjiNnWi968IBrOLdhAKqME6t7S+fm9v9Z32cq/Uv0iziUn94SPhkLU5KTm
-         mD+HioDSD63qGTv7swRYnfdNTbhZHWwSIHU6xji8CcP8MIcRQPlQRsatnaRM3TU6xoQJ
-         1Usw==
-X-Gm-Message-State: APzg51CqYF/Kfk5ZUK0pJmqEQLZU/qj5/bEb6TFOryGJHYyalhyf2mV9
-        Scoe3KY9q4E+ZqtvlEgxZotGo7+/K33OtSbxpDA=
-X-Google-Smtp-Source: ANB0VdYDMQoO6Z7nZJa9nF/MzXvN0FguuHGjDFApAM5yRqrk+nsXyCmRwdBFgcAv9MdJYx1a83WkBaEGYqcn8xd2UGg=
-X-Received: by 2002:a0c:885b:: with SMTP id 27-v6mr11523359qvm.115.1535637423488;
- Thu, 30 Aug 2018 06:57:03 -0700 (PDT)
+        Thu, 30 Aug 2018 13:59:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:41980 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729083AbeH3R7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 13:59:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 725F07A9;
+        Thu, 30 Aug 2018 06:57:38 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 154803F5BC;
+        Thu, 30 Aug 2018 06:57:38 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 50EBE1AE36A1; Thu, 30 Aug 2018 14:57:50 +0100 (BST)
+Date:   Thu, 30 Aug 2018 14:57:50 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Message-ID: <20180830135749.GA13005@arm.com>
+References: <1535567633.4465.23.camel@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
+ <20180830094411.GX24124@hirez.programming.kicks-ass.net>
+ <20180830095148.GB5942@arm.com>
+ <1535629996.4465.44.camel@synopsys.com>
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
- <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
- <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com>
- <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com> <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com>
-In-Reply-To: <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 30 Aug 2018 15:56:47 +0200
-Message-ID: <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
-Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
-To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, amakarov@marvell.com,
-        sgoutham@marvell.com, lbartosik@marvell.com,
-        Networking <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535629996.4465.44.camel@synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 3:23 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
->
-> On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
-> > >
-> > > On Tue, Aug 28, 2018 at 5:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >
-> > > > On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
-> > > > >
-> > > > > From: Aleksey Makarov <amakarov@marvell.com>
-> > > > >
-> > > > > This patch adds mailbox support infrastructure APIs.
-> > > > > Each RVU device has a dedicated 64KB mailbox region
-> > > > > shared with it's peer for communication. RVU AF has
-> > > > > a separate mailbox region shared with each of RVU PFs
-> > > > > and a RVU PF has a separate region shared with each of
-> > > > > it's VF.
-> > > > >
-> > > > > These set of APIs are used by this driver (RVU AF) and
-> > > > > other RVU PF/VF drivers eg netdev, crypto e.t.c.
-> > > > >
-> > > > > Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
-> > > > > Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
-> > > > > Signed-off-by: Lukasz Bartosik <lbartosik@marvell.com>
-> > > >
-> > > > Why does this driver not use the drivers/mailbox/ infrastructure?
-> > > >
-> > > This is a common administrative software driver which will be handling requests
-> > > from kernel drivers and as well as drivers in userspace applications.
-> > > We had to keep mailbox communication infrastructure same across all usages.
-> >
-> > Can you explain more about the usage of userspace applications
-> > and what interface you plan to use into the kernel?
->
-> Any PCI device here irrespective in what domain (kernel or userspace)
-> they are in
-> use common mailbox communication. Which is
-> # Write a mailbox msg (format is agreed between all parties) into
-> shared (between AF and other PF/VFs)
->    memory region and trigger a interrupt to admin function.
-> # Admin function processes the msg and puts reply in the same memory
-> region and trigger
->    IRQ to the requesting device. If the device has a driver instance
-> in kernel then it uses
->    IRQ and userspace applications does polling on the IRQ status bit.
+Hi Eugeniy,
 
-Ok, so the mailbox here is a communication mechanism between
-two device drivers that may run on the same kernel, or in different
-instances (user space, virtual machine, ...), but each driver
-only talks to the mailbox visible in its own device, right?
+On Thu, Aug 30, 2018 at 11:53:17AM +0000, Eugeniy Paltsev wrote:
+> On Thu, 2018-08-30 at 10:51 +0100, Will Deacon wrote:
+> > On Thu, Aug 30, 2018 at 11:44:11AM +0200, Peter Zijlstra wrote:
+> > > On Wed, Aug 29, 2018 at 09:16:43PM +0000, Vineet Gupta wrote:
+> > > > On 08/29/2018 11:33 AM, Eugeniy Paltsev wrote:
+> > > > > Hi Guys,
+> > > > > Since v4.19-rc1 we are getting a serious regression on platforms with ARC architecture.
+> > > > > The kernel have become unstable and spontaneously crashes on LTP tests execution / IO tests or
+> > > > > even on boot.
+> > > > > 
+> > > > > I don't know exactly what breaks but bisect clearly assign the blame to this commit:
+> > > > > 84c6591103db ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
+> > > > > https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_torvalds_linux_commit_84c6591103dbeaf393a092a3fc7b09510825f6b9&d=DwIBAg&c=DPL6
+> > > > > _X_6JkXFx7AXWqB0tg&r=ZlJN1MriPUTkBKCrPSx67GmaplEUGcAEk9yPtCLdUXI&m=6y0FFvkGdIQ6kX2lZ31V99lMfMV-
+> > > > > RyWyYhiUGzh0Bi0&s=GNwmhSynIcWqgZhiOwFEEH_AtbZAH443_L6QH4nw_ls&e=
+> > > > > 
+> > > > > Reverting the commit solves this problem.
+> > > > > 
+> > > > > I tested v4.19-rc1 on ARM (wandboard, i.mx6, 32bit, quard core, ARMv7) which uses same
+> > > > > generic bitops implementation and it works fine.
+> > > > > 
+> > > > > Do you have any ideas what went wrong?
+> > > > 
+> > > > Back in 2016, Peter had fixed this file due to a problem I reported on ARC. See
+> > > > commit f75d48644c56a ("bitops: Do not default to __clear_bit() for
+> > > > __clear_bit_unlock()")
+> > > > That made __clear_bit_unlock() use the atomic clear_bit() vs. non-atomic
+> > > > __clear_bit(), effectively making clear_bit_unlock() and __clear_bit_unlock() same.
+> > > > 
+> > > > This patch undoes that which could explain the issues you see. @Peter, @Will ?
+> > > 
+> > > Right, so the thinking is that on platforms that suffer that issue,
+> > > atomic_set*() should DTRT. And if you look at your spinlock based atomic
+> > > implementation, you'll note that atomic_set() does indeed do the right
+> > > thing.
+> > > 
+> > > arch/arc/include/asm/atomic.h:108
+> > 
+> > Yeah, the bit_spin_lock()/__bit_spin_unlock() race described in f75d48644c56a
+> > boils down to concurrent atomic_long_set_release() vs
+> > atomic_long_fetch_or_acquire(), which really needs to work.
+> > 
+> > I'll keep digging. In the meantime, Vineet, do you have any useful crash
+> > logs and do you only see the crashes in certain configurations (e.g. SMP but
+> > !CONFIG_ARC_HAS_LLSC)?
+> 
+> We don't have such configuration (SMP with !CONFIG_ARC_HAS_LLSC).
 
-What is the purpose of the exported interface then? Is this
-just an abstraction so each of the drivers can talk to its own
-mailbox using a set of common helper functions?
+Ok, thanks for confirming. If you could put your .config somewhere that
+would be helpful, since the build fails for me with defconfig.
 
-      Arnd
+> I can see crashes with LLSC enabled in both SMP running on 4 cores
+> and SMP running on 1 core.
+> 
+> 
+> There are some crash logs (not sure if they are really useful):
+> Crashes are quite spontaneous and mostly happens in IO-related code: 
+
+Aha: arc seems to have separate spinlocks for protecting bitops and atomics.
+This is a seriously bad idea, because you only implement some of the bitops
+API in the architecture and rely on asm-generic to give you bitops/lock.h,
+assuming that it's going to be implemented in terms of the other parts of
+the bitops API (it isn't anymore).
+
+Here's a quick hack (totally untested, since I can't even build an arc kernel)
+which moves arc over to asm-generic for all of the bitops API and ditches
+the bitops lock. You could probably also drop the ffs() stuff, but I'll
+leave that up to you. The "downside" is serialisation between bitops and
+atomics, but I actually think you probably want that for xchg/cmpxchg
+anyway.
+
+Will
+
+--->8
+
+diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
+index 8da87feec59a..50b0d5a56e32 100644
+--- a/arch/arc/include/asm/bitops.h
++++ b/arch/arc/include/asm/bitops.h
+@@ -17,242 +17,6 @@
+ 
+ #include <linux/types.h>
+ #include <linux/compiler.h>
+-#include <asm/barrier.h>
+-#ifndef CONFIG_ARC_HAS_LLSC
+-#include <asm/smp.h>
+-#endif
+-
+-#ifdef CONFIG_ARC_HAS_LLSC
+-
+-/*
+- * Hardware assisted Atomic-R-M-W
+- */
+-
+-#define BIT_OP(op, c_op, asm_op)					\
+-static inline void op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned int temp;						\
+-									\
+-	m += nr >> 5;							\
+-									\
+-	nr &= 0x1f;							\
+-									\
+-	__asm__ __volatile__(						\
+-	"1:	llock       %0, [%1]		\n"			\
+-	"	" #asm_op " %0, %0, %2	\n"				\
+-	"	scond       %0, [%1]		\n"			\
+-	"	bnz         1b			\n"			\
+-	: "=&r"(temp)	/* Early clobber, to prevent reg reuse */	\
+-	: "r"(m),	/* Not "m": llock only supports reg direct addr mode */	\
+-	  "ir"(nr)							\
+-	: "cc");							\
+-}
+-
+-/*
+- * Semantically:
+- *    Test the bit
+- *    if clear
+- *        set it and return 0 (old value)
+- *    else
+- *        return 1 (old value).
+- *
+- * Since ARC lacks a equivalent h/w primitive, the bit is set unconditionally
+- * and the old value of bit is returned
+- */
+-#define TEST_N_BIT_OP(op, c_op, asm_op)					\
+-static inline int test_and_##op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned long old, temp;					\
+-									\
+-	m += nr >> 5;							\
+-									\
+-	nr &= 0x1f;							\
+-									\
+-	/*								\
+-	 * Explicit full memory barrier needed before/after as		\
+-	 * LLOCK/SCOND themselves don't provide any such smenatic	\
+-	 */								\
+-	smp_mb();							\
+-									\
+-	__asm__ __volatile__(						\
+-	"1:	llock       %0, [%2]	\n"				\
+-	"	" #asm_op " %1, %0, %3	\n"				\
+-	"	scond       %1, [%2]	\n"				\
+-	"	bnz         1b		\n"				\
+-	: "=&r"(old), "=&r"(temp)					\
+-	: "r"(m), "ir"(nr)						\
+-	: "cc");							\
+-									\
+-	smp_mb();							\
+-									\
+-	return (old & (1 << nr)) != 0;					\
+-}
+-
+-#elif !defined(CONFIG_ARC_PLAT_EZNPS)
+-
+-/*
+- * Non hardware assisted Atomic-R-M-W
+- * Locking would change to irq-disabling only (UP) and spinlocks (SMP)
+- *
+- * There's "significant" micro-optimization in writing our own variants of
+- * bitops (over generic variants)
+- *
+- * (1) The generic APIs have "signed" @nr while we have it "unsigned"
+- *     This avoids extra code to be generated for pointer arithmatic, since
+- *     is "not sure" that index is NOT -ve
+- * (2) Utilize the fact that ARCompact bit fidding insn (BSET/BCLR/ASL) etc
+- *     only consider bottom 5 bits of @nr, so NO need to mask them off.
+- *     (GCC Quirk: however for constant @nr we still need to do the masking
+- *             at compile time)
+- */
+-
+-#define BIT_OP(op, c_op, asm_op)					\
+-static inline void op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned long temp, flags;					\
+-	m += nr >> 5;							\
+-									\
+-	/*								\
+-	 * spin lock/unlock provide the needed smp_mb() before/after	\
+-	 */								\
+-	bitops_lock(flags);						\
+-									\
+-	temp = *m;							\
+-	*m = temp c_op (1UL << (nr & 0x1f));					\
+-									\
+-	bitops_unlock(flags);						\
+-}
+-
+-#define TEST_N_BIT_OP(op, c_op, asm_op)					\
+-static inline int test_and_##op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned long old, flags;					\
+-	m += nr >> 5;							\
+-									\
+-	bitops_lock(flags);						\
+-									\
+-	old = *m;							\
+-	*m = old c_op (1UL << (nr & 0x1f));				\
+-									\
+-	bitops_unlock(flags);						\
+-									\
+-	return (old & (1UL << (nr & 0x1f))) != 0;			\
+-}
+-
+-#else /* CONFIG_ARC_PLAT_EZNPS */
+-
+-#define BIT_OP(op, c_op, asm_op)					\
+-static inline void op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	m += nr >> 5;							\
+-									\
+-	nr = (1UL << (nr & 0x1f));					\
+-	if (asm_op == CTOP_INST_AAND_DI_R2_R2_R3)			\
+-		nr = ~nr;						\
+-									\
+-	__asm__ __volatile__(						\
+-	"	mov r2, %0\n"						\
+-	"	mov r3, %1\n"						\
+-	"	.word %2\n"						\
+-	:								\
+-	: "r"(nr), "r"(m), "i"(asm_op)					\
+-	: "r2", "r3", "memory");					\
+-}
+-
+-#define TEST_N_BIT_OP(op, c_op, asm_op)					\
+-static inline int test_and_##op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned long old;						\
+-									\
+-	m += nr >> 5;							\
+-									\
+-	nr = old = (1UL << (nr & 0x1f));				\
+-	if (asm_op == CTOP_INST_AAND_DI_R2_R2_R3)			\
+-		old = ~old;						\
+-									\
+-	/* Explicit full memory barrier needed before/after */		\
+-	smp_mb();							\
+-									\
+-	__asm__ __volatile__(						\
+-	"	mov r2, %0\n"						\
+-	"	mov r3, %1\n"						\
+-	"       .word %2\n"						\
+-	"	mov %0, r2"						\
+-	: "+r"(old)							\
+-	: "r"(m), "i"(asm_op)						\
+-	: "r2", "r3", "memory");					\
+-									\
+-	smp_mb();							\
+-									\
+-	return (old & nr) != 0;					\
+-}
+-
+-#endif /* CONFIG_ARC_PLAT_EZNPS */
+-
+-/***************************************
+- * Non atomic variants
+- **************************************/
+-
+-#define __BIT_OP(op, c_op, asm_op)					\
+-static inline void __##op##_bit(unsigned long nr, volatile unsigned long *m)	\
+-{									\
+-	unsigned long temp;						\
+-	m += nr >> 5;							\
+-									\
+-	temp = *m;							\
+-	*m = temp c_op (1UL << (nr & 0x1f));				\
+-}
+-
+-#define __TEST_N_BIT_OP(op, c_op, asm_op)				\
+-static inline int __test_and_##op##_bit(unsigned long nr, volatile unsigned long *m)\
+-{									\
+-	unsigned long old;						\
+-	m += nr >> 5;							\
+-									\
+-	old = *m;							\
+-	*m = old c_op (1UL << (nr & 0x1f));				\
+-									\
+-	return (old & (1UL << (nr & 0x1f))) != 0;			\
+-}
+-
+-#define BIT_OPS(op, c_op, asm_op)					\
+-									\
+-	/* set_bit(), clear_bit(), change_bit() */			\
+-	BIT_OP(op, c_op, asm_op)					\
+-									\
+-	/* test_and_set_bit(), test_and_clear_bit(), test_and_change_bit() */\
+-	TEST_N_BIT_OP(op, c_op, asm_op)					\
+-									\
+-	/* __set_bit(), __clear_bit(), __change_bit() */		\
+-	__BIT_OP(op, c_op, asm_op)					\
+-									\
+-	/* __test_and_set_bit(), __test_and_clear_bit(), __test_and_change_bit() */\
+-	__TEST_N_BIT_OP(op, c_op, asm_op)
+-
+-#ifndef CONFIG_ARC_PLAT_EZNPS
+-BIT_OPS(set, |, bset)
+-BIT_OPS(clear, & ~, bclr)
+-BIT_OPS(change, ^, bxor)
+-#else
+-BIT_OPS(set, |, CTOP_INST_AOR_DI_R2_R2_R3)
+-BIT_OPS(clear, & ~, CTOP_INST_AAND_DI_R2_R2_R3)
+-BIT_OPS(change, ^, CTOP_INST_AXOR_DI_R2_R2_R3)
+-#endif
+-
+-/*
+- * This routine doesn't need to be atomic.
+- */
+-static inline int
+-test_bit(unsigned int nr, const volatile unsigned long *addr)
+-{
+-	unsigned long mask;
+-
+-	addr += nr >> 5;
+-
+-	mask = 1UL << (nr & 0x1f);
+-
+-	return ((mask & *addr) != 0);
+-}
+ 
+ #ifdef CONFIG_ISA_ARCOMPACT
+ 
+@@ -428,6 +192,9 @@ static inline __attribute__ ((const)) int __ffs(unsigned long x)
+ #include <asm-generic/bitops/sched.h>
+ #include <asm-generic/bitops/lock.h>
+ 
++#include <asm-generic/bitops/atomic.h>
++#include <asm-generic/bitops/non-atomic.h>
++
+ #include <asm-generic/bitops/find.h>
+ #include <asm-generic/bitops/le.h>
+ #include <asm-generic/bitops/ext2-atomic-setbit.h>
+diff --git a/arch/arc/include/asm/smp.h b/arch/arc/include/asm/smp.h
+index 0861007d9ef3..8df446c2b299 100644
+--- a/arch/arc/include/asm/smp.h
++++ b/arch/arc/include/asm/smp.h
+@@ -108,7 +108,6 @@ static inline const char *arc_platform_smp_cpuinfo(void)
+ #include <asm/spinlock.h>
+ 
+ extern arch_spinlock_t smp_atomic_ops_lock;
+-extern arch_spinlock_t smp_bitops_lock;
+ 
+ #define atomic_ops_lock(flags)	do {		\
+ 	local_irq_save(flags);			\
+@@ -120,24 +119,11 @@ extern arch_spinlock_t smp_bitops_lock;
+ 	local_irq_restore(flags);		\
+ } while (0)
+ 
+-#define bitops_lock(flags)	do {		\
+-	local_irq_save(flags);			\
+-	arch_spin_lock(&smp_bitops_lock);	\
+-} while (0)
+-
+-#define bitops_unlock(flags) do {		\
+-	arch_spin_unlock(&smp_bitops_lock);	\
+-	local_irq_restore(flags);		\
+-} while (0)
+-
+ #else /* !CONFIG_SMP */
+ 
+ #define atomic_ops_lock(flags)		local_irq_save(flags)
+ #define atomic_ops_unlock(flags)	local_irq_restore(flags)
+ 
+-#define bitops_lock(flags)		local_irq_save(flags)
+-#define bitops_unlock(flags)		local_irq_restore(flags)
+-
+ #endif /* !CONFIG_SMP */
+ 
+ #endif	/* !CONFIG_ARC_HAS_LLSC */
+diff --git a/arch/arc/kernel/smp.c b/arch/arc/kernel/smp.c
+index 21d86c36692b..80c80c540743 100644
+--- a/arch/arc/kernel/smp.c
++++ b/arch/arc/kernel/smp.c
+@@ -32,10 +32,7 @@
+ 
+ #ifndef CONFIG_ARC_HAS_LLSC
+ arch_spinlock_t smp_atomic_ops_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+-arch_spinlock_t smp_bitops_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+-
+ EXPORT_SYMBOL_GPL(smp_atomic_ops_lock);
+-EXPORT_SYMBOL_GPL(smp_bitops_lock);
+ #endif
+ 
+ struct plat_smp_ops  __weak plat_smp_ops;
