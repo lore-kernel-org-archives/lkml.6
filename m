@@ -2,123 +2,109 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFD1C433F4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC86FC433F5
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36FC1205F4
+	by mail.kernel.org (Postfix) with ESMTP id 6EA272082A
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:55:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fYmoyOQR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FC1205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA272082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=coelho.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeH3JzV (ORCPT
+        id S1727555AbeH3Jzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 05:55:21 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53373 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbeH3JzV (ORCPT
+        Thu, 30 Aug 2018 05:55:55 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:45156 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725904AbeH3Jzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 05:55:21 -0400
-Received: by mail-it0-f68.google.com with SMTP id p79-v6so1050923itp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oUDvcb9Exnk+DwTggIYkNboKl4VpBN2wI96GH9WdNGs=;
-        b=fYmoyOQRVztHwlDZQ0w5IDSTjRgsPaIgikg0Y9zFCwbsYmPL/WlmW29ZEBxOqk+R3L
-         7gJuc8P/9C/QY0HHO6o5Q4pjy2ax6tyDypv8z99FP+r0a8HZZoiS4Rg+IDe3rE6FRgh/
-         El5MWjfK1Exws/LxF77hD4CAzSLiduPu7HvCk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oUDvcb9Exnk+DwTggIYkNboKl4VpBN2wI96GH9WdNGs=;
-        b=P12lPkYllVK0SL6evpqMgSNgOPSKVUJUOnL/QHNVhtXuVEkx1HJE9APXy7NTqy54Hz
-         uj+Dp53MD7hcQx28F3r2N/eMBzU2A13e7sudNSyJxGQUEVEzirAe2VXYBYOEQB8Pd8uU
-         X+VOSzP6JVEyYQhn14OANyRGIeP6gNl8BQ1e3Uj9+EDnjGlJJiKSwZ2y+NNAXoVpoWBX
-         py4T9S/iLVQxgAUKtY0eqrTJNnNCNK9R+mGtxTlV9Yq+hBLv3kFELBF9GN5ckSIjnaVS
-         HVUgKT2sNGmze6SFFJ4bfpx9EQ5Npjv+4ql6bE/1/eUEk7veuivlQRZjO5DbpMcUKuYG
-         +IJw==
-X-Gm-Message-State: APzg51BE6V2HeAprf1bHSdaW94808oLQXRn7XUh5rSRIFfCQF5iphsfq
-        o1/8MqT8ejXWdDBIevU05zkcURRIzayoo6gDM0zZJQ==
-X-Google-Smtp-Source: ANB0VdbKR0UveXCRi1ZI9UbcXnFWr02Ck6uud0PkRxpjdxVQQD/bjpKEPOBge0aIqXUhJFarpbZvBsTuV5ADzVOK16U=
-X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr939033ita.148.1535608492784;
- Wed, 29 Aug 2018 22:54:52 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 22:54:52
- -0700 (PDT)
-In-Reply-To: <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
- <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com> <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 30 Aug 2018 07:54:52 +0200
-Message-ID: <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 30 Aug 2018 05:55:55 -0400
+Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <luca@coelho.fi>)
+        id 1fvFvR-0004UY-Fn; Thu, 30 Aug 2018 08:55:26 +0300
+Message-ID: <fa12a23813cf096e217eac27835ed416ca0d1632.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxwifi@intel.com
+Date:   Thu, 30 Aug 2018 08:55:24 +0300
+In-Reply-To: <20180830050632.GB2307@dhcp-128-65.nay.redhat.com>
+References: <20180829065442.GA3488@dhcp-128-65.nay.redhat.com>
+         <6bb91f750e8d37d45da3c2cf1e7e5fc5d453ee8c.camel@coelho.fi>
+         <20180830050632.GB2307@dhcp-128-65.nay.redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.156.4.241
+X-SA-Exim-Mail-From: luca@coelho.fi
+Subject: Re: Intel Wireless 8265/8275 (rev 78) issue
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on farmhouse.coelho.fi)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 August 2018 at 20:59, Scott Branden <scott.branden@broadcom.com> wrote:
-> Hi Olof,
->
->
-> On 18-08-29 11:44 AM, Olof Johansson wrote:
->>
->> Hi,
->>
->> On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
->> <scott.branden@broadcom.com> wrote:
->>>
->>> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
->>> parameter to function with efi loader.
->>>
->>> Required to boot on existing bootloaders that do not support devicetree
->>> provided by the platform or by the bootloader.
->>>
->>> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the
->>> DTB loader")
->>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>
->> Why did Ard create an option for this if it's just going be turned on
->> in default configs? Doesn't make sense to me.
->>
->> It would help to know what firmware still is crippled and how common
->> it is, since it's been a few years that this has been a requirement by
->> now.
->
-> Broadcom NS2 and Stingray in current development and production need this
-> option in the kernel enabled in order to boot.
+On Thu, 2018-08-30 at 13:06 +0800, Dave Young wrote:
+> On 08/30/18 at 07:15am, Luca Coelho wrote:
+> > On Wed, 2018-08-29 at 14:54 +0800, Dave Young wrote:
+> > > [   74.123114] wlp61s0: authenticate with 00:1f:c6:82:0a:57
+> > > [   74.126099] wlp61s0: send auth to 00:1f:c6:82:0a:57 (try 1/3)
+> > > [   74.139740] wlp61s0: authenticated
+> > > [   74.140142] iwlwifi 0000:3d:00.0 wlp61s0: disabling HE/HT/VHT due to WEP/TKIP use
+> > > [   74.140146] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
+> > > [   74.140149] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
+> > 
+> > Your AP seems to be configured to use WEP or TKIP, which is not allowed
+> > by IEEE802.11n, so we disable all the higher rates, as you can see
+> > here.  It should still work, but you will only get very basic rates
+> > (i.e. slow).
+> 
+> Luka, thanks for the suggestion,  moved AP to use WPA2-personal + AES.
+> seems I got only two features disabled this time:
+> [   20.949347] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
+> [   20.949351] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
+> [   20.949622] wlp61s0: associate with 00:1f:c6:82:0a:57 (try 1/3)
 
-And these production systems run mainline kernels in a defconfig configuration?
+There are many interoperability problems with old 11n APs that either
+support a draft version of the specs or simply have bugs in their
+implementations of the 11n specs.  When we detect these problems, we
+disable 11n rates, so connectivity will be slower, but it will at least
+remain connected.  This seems to be the case with your AP. :(
 
-The simply reality is that the DTB loader has been deprecated for a
-good reason: it was only ever intended as a development hack anyway,
-and if we need to treat the EFI stub provided DTB as a first class
-citizen, there are things we need to fix to make things works as
-expected. For instance, GRUB will put a property in the /chosen node
-for the initramfs which will get dropped if you boot with dtb=.
 
-Don't be surprised if some future enhancements of the EFI stub code
-depend on !EFI_ARMSTUB_DTB_LOADER. On UEFI systems, DTBs [or ACPI
-tables] are used by the firmware to describe itself and the underlying
-platform to the OS, and the practice of booting with DTB file images
-(taken from the kernel build as well) conflicts with that view. Note
-that GRUB still permits you to load DTBs from files (and supports more
-sources than just the file system the kernel Image was loaded from).
+> > > [ 2521.068469] wlp61s0: deauthenticating from 00:1f:c6:82:0a:57 by local choice (Reason: 3=DEAUTH_LEAVING)
+> > 
+> > Other than that I can't really see what is going on, except that
+> > something is deciding to disconnect here...
+> > 
+> > So, first thing I'd suggest would be to try to reconfigure your AP to
+> > use something else than WEP or TKIP, just to see if it improves in any
+> > way.
+> 
+> Will observe if it works or not. BTW, my old laptop Thinkpad T440s works
+> well with the same AP.
+
+I hope it improves.  If not, we should debug it further.  It's a good
+thing not to use WEP and TKIP anyway, because they're not very secure
+anyway.
+
+
+> > And BTW, is this a regression in recent kernels or has this always
+> > happened to you with this laptop/AP combination?
+> 
+> From my observation it just always happen, but hmm not 100% sure..
+
+Okay, so we don't have enough information on this.  It doesn't matter. 
+What is the NIC on your old T440s?
+
+--
+Cheers,
+Luca.
+
