@@ -2,240 +2,82 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95104C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7353C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC7D20647
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC7D20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D9D120661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:08:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9D120661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeH3GGy (ORCPT
+        id S1727292AbeH3GI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 02:06:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51764 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725844AbeH3GGy (ORCPT
+        Thu, 30 Aug 2018 02:08:29 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39672 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbeH3GI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 02:06:54 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7U255SC016997
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:07:08 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m629e1v5f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:07:07 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 22:07:07 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 22:07:02 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7U2717438273200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Aug 2018 02:07:01 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 972A1B2067;
-        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58C6BB2065;
-        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.196.106])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 22:05:57 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 32ACE16C2ACD; Wed, 29 Aug 2018 19:07:01 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 19:07:01 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH tip/core/rcu 3/3] srcu: Make early-boot call_srcu() reuse
- workqueue lists
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180829212036.GA22033@linux.vnet.ibm.com>
- <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
- <20180829215616.1c10e476@vmware.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829215616.1c10e476@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18083002-0060-0000-0000-000002A6A02D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009637; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080813; UDB=6.00557539; IPR=6.00860799;
- MB=3.00023003; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 02:07:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083002-0061-0000-0000-000046564664
-Message-Id: <20180830020701.GE4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808300019
+        Thu, 30 Aug 2018 02:08:28 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3AF2F108F43BB;
+        Wed, 29 Aug 2018 19:08:43 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 19:08:39 -0700 (PDT)
+Message-Id: <20180829.190839.1082082323658260994.davem@davemloft.net>
+To:     decui@microsoft.com
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        netdev@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, vkuznets@redhat.com,
+        marcelo.cerri@canonical.com, jopoulso@microsoft.com
+Subject: Re: [PATCH] hv_netvsc: Fix a deadlock by getting rtnl_lock earlier
+ in netvsc_probe()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <PU1P153MB016903725D5E8EF56C07FF69BF080@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB01692432D92B3A726FBDDC68BF300@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        <20180829.174841.833303774555397982.davem@davemloft.net>
+        <PU1P153MB016903725D5E8EF56C07FF69BF080@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 Aug 2018 19:08:43 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 09:56:16PM -0400, Steven Rostedt wrote:
-> On Wed, 29 Aug 2018 14:23:13 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > Allocating a list_head structure that is almost never used, and, when
-> > used, is used only during early boot (rcu_init() and earlier), is a bit
-> > wasteful.  This commit therefore eliminates that list_head in favor of
-> > the one in the work_struct structure.  This is safe because the work_struct
-> > structure cannot be used until after rcu_init() returns.
-> > 
-> > Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > ---
-> >  include/linux/srcutiny.h |  2 --
-> >  include/linux/srcutree.h |  3 +--
-> >  kernel/rcu/srcutiny.c    | 10 +++++-----
-> >  kernel/rcu/srcutree.c    | 11 +++++------
-> >  4 files changed, 11 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-> > index 2b5c0822e683..f41d2fb09f87 100644
-> > --- a/include/linux/srcutiny.h
-> > +++ b/include/linux/srcutiny.h
-> > @@ -36,7 +36,6 @@ struct srcu_struct {
-> >  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
-> >  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
-> >  	struct work_struct srcu_work;	/* For driving grace periods. */
-> > -	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
-> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> >  	struct lockdep_map dep_map;
-> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > @@ -49,7 +48,6 @@ void srcu_drive_gp(struct work_struct *wp);
-> >  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
-> >  	.srcu_cb_tail = &name.srcu_cb_head,				\
-> >  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
-> > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> >  	__SRCU_DEP_MAP_INIT(name)					\
-> >  }
-> >  
-> > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> > index 9cfa4610113a..0ae91b3a7406 100644
-> > --- a/include/linux/srcutree.h
-> > +++ b/include/linux/srcutree.h
-> > @@ -94,7 +94,6 @@ struct srcu_struct {
-> >  						/*  callback for the barrier */
-> >  						/*  operation. */
-> >  	struct delayed_work work;
-> > -	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
-> >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> >  	struct lockdep_map dep_map;
-> >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > @@ -110,7 +109,7 @@ struct srcu_struct {
-> >  	.sda = &pcpu_name,						\
-> >  	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
-> >  	.srcu_gp_seq_needed = -1UL,					\
-> > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> > +	.work = __DELAYED_WORK_INITIALIZER(name.work, NULL, 0),		\
-> 
-> Thanks!
+From: Dexuan Cui <decui@microsoft.com>
+Date: Thu, 30 Aug 2018 00:58:48 +0000
 
-Glad you like it!  Does it actually work for you?  ;-)
-
-							Thanx, Paul
-
-> -- Steve
+>> From: David Miller <davem@davemloft.net>
+>> Sent: Wednesday, August 29, 2018 17:49
+>> 
+>> From: Dexuan Cui <decui@microsoft.com>
+>> Date: Wed, 22 Aug 2018 21:20:03 +0000
+>> 
+>> > ---
+>> >  drivers/net/hyperv/netvsc_drv.c | 11 ++++++++++-
+>> >  1 file changed, 10 insertions(+), 1 deletion(-)
+>> >
+>> >
+>> > FYI: these are the related 3 paths which show the deadlock:
+>> 
+>> This incredibly useful information belongs in the commit log
+>> message, and therefore before the --- and signoffs.
 > 
-> >  	__SRCU_DEP_MAP_INIT(name)					\
-> >  }
-> >  
-> > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > index d233f0c63f6f..b46e6683f8c9 100644
-> > --- a/kernel/rcu/srcutiny.c
-> > +++ b/kernel/rcu/srcutiny.c
-> > @@ -48,7 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
-> >  	sp->srcu_gp_waiting = false;
-> >  	sp->srcu_idx = 0;
-> >  	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
-> > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
-> > +	INIT_LIST_HEAD(&sp->srcu_work.entry);
-> >  	return 0;
-> >  }
-> >  
-> > @@ -185,8 +185,8 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
-> >  	if (!READ_ONCE(sp->srcu_gp_running)) {
-> >  		if (likely(srcu_init_done))
-> >  			schedule_work(&sp->srcu_work);
-> > -		else if (list_empty(&sp->srcu_boot_entry))
-> > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> > +		else if (list_empty(&sp->srcu_work.entry))
-> > +			list_add(&sp->srcu_work.entry, &srcu_boot_list);
-> >  	}
-> >  }
-> >  EXPORT_SYMBOL_GPL(call_srcu);
-> > @@ -224,8 +224,8 @@ void __init srcu_init(void)
-> >  	srcu_init_done = true;
-> >  	while (!list_empty(&srcu_boot_list)) {
-> >  		sp = list_first_entry(&srcu_boot_list,
-> > -				      struct srcu_struct, srcu_boot_entry);
-> > -		list_del_init(&sp->srcu_boot_entry);
-> > +				      struct srcu_struct, srcu_work.entry);
-> > +		list_del_init(&sp->srcu_work.entry);
-> >  		schedule_work(&sp->srcu_work);
-> >  	}
-> >  }
-> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> > index e79c1929328f..36a2857c84e0 100644
-> > --- a/kernel/rcu/srcutree.c
-> > +++ b/kernel/rcu/srcutree.c
-> > @@ -186,7 +186,6 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
-> >  	mutex_init(&sp->srcu_barrier_mutex);
-> >  	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
-> >  	INIT_DELAYED_WORK(&sp->work, process_srcu);
-> > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
-> >  	if (!is_static)
-> >  		sp->sda = alloc_percpu(struct srcu_data);
-> >  	init_srcu_struct_nodes(sp, is_static);
-> > @@ -709,8 +708,8 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
-> >  		if (likely(srcu_init_done))
-> >  			queue_delayed_work(rcu_gp_wq, &sp->work,
-> >  					   srcu_get_delay(sp));
-> > -		else if (list_empty(&sp->srcu_boot_entry))
-> > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> > +		else if (list_empty(&sp->work.work.entry))
-> > +			list_add(&sp->work.work.entry, &srcu_boot_list);
-> >  	}
-> >  	spin_unlock_irqrestore_rcu_node(sp, flags);
-> >  }
-> > @@ -1324,10 +1323,10 @@ void __init srcu_init(void)
-> >  
-> >  	srcu_init_done = true;
-> >  	while (!list_empty(&srcu_boot_list)) {
-> > -		sp = list_first_entry(&srcu_boot_list,
-> > -				      struct srcu_struct, srcu_boot_entry);
-> > +		sp = list_first_entry(&srcu_boot_list, struct srcu_struct,
-> > +				      work.work.entry);
-> >  		check_init_srcu_struct(sp);
-> > -		list_del_init(&sp->srcu_boot_entry);
-> > +		list_del_init(&sp->work.work.entry);
-> >  		queue_work(rcu_gp_wq, &sp->work.work);
-> >  	}
-> >  }
+> Hi David,
+> I was afraid the call-traces are too detailed. :-)
 > 
+> Can you please move the info to before the --- line?
+> 
+> Or, should I resend the patch with the commit log updated?
 
+Please resend.
