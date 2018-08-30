@@ -2,131 +2,200 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B63C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B36AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0582082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0582082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B5462082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:06:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5462082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbeH3XJM (ORCPT
+        id S1727387AbeH3XKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:09:12 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33554 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbeH3XJE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:09:04 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 8-v6so17426828oip.0;
-        Thu, 30 Aug 2018 12:05:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gT6Td7yY5tXHBprHnqiX0q1IaJ6j1fqehgRBLMkuZ2g=;
-        b=N1Gzo9X7auVZ58M84Rar/dWKNQDFUj26T+a9PnrGmpQOEvFBcOqYL4/9l0Xvxyrdeh
-         c9m/QIFDAYK8mAo360Swdg+ZVHBTjP0Tc/wBQ/hzk4j7KCNoSKyy6mKC/XTMnIC9ZcJd
-         kjc54O9otaHr6hGLjyW+9XIFBE/ioIQHwLmooj+B6ppgqeoB6aym1BHutGRlKv10rT0t
-         6s2uR8t3FealiNfEQaVZu7yF7qG/yFhZuuuHnZjjvW/odnxQhryxcQP5XWza4vCBxV+f
-         xwo3yNzTu456GanTVJHP3Vaeh0pYWbJaij1njbnaKcbY27ZqLtehpp3+wk55BgZ0vs4+
-         LPvw==
-X-Gm-Message-State: APzg51CmI+2i7fOTe5GlQu3Bh8GCIdz0VCxJzsKM4yJwru8SVECeBMmk
-        oBevbyHf5HjTCPpc+riG9w==
-X-Google-Smtp-Source: ANB0VdZES4DB4DgpymEnV39+Drnrum9Rblb9QX0scJTCouLc16rgGjjb3cjCjiTmQvFnWpCI0WNDFg==
-X-Received: by 2002:aca:f58f:: with SMTP id t137-v6mr3767451oih.244.1535655927378;
-        Thu, 30 Aug 2018 12:05:27 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id 22-v6sm4200423oix.58.2018.08.30.12.05.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:05:26 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-Subject: [PATCH 3/3] of: make default address and size cells sizes private
-Date:   Thu, 30 Aug 2018 14:05:23 -0500
-Message-Id: <20180830190523.31474-4-robh@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180830190523.31474-1-robh@kernel.org>
-References: <20180830190523.31474-1-robh@kernel.org>
+        Thu, 30 Aug 2018 19:10:23 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:36367 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726959AbeH3XKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 19:10:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 7C960204197;
+        Thu, 30 Aug 2018 21:06:42 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id pTpJe5VOMntz; Thu, 30 Aug 2018 21:06:42 +0200 (CEST)
+Received: from [82.134.31.167] (unknown [82.134.31.167])
+        by smtp.infotech.no (Postfix) with ESMTPA id 4CE42204165;
+        Thu, 30 Aug 2018 21:06:41 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: 4.19.0-rc1 rtsx_pci_sdmmc.0: error: data->host_cookie = 62,
+ host->cookie = 63
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+References: <6c696030-51a5-9ab9-47a9-d6fa3000a8a3@interlog.com>
+ <CAPDyKFqk+K7TOyHoB1-+sguxbS_1s=RwCRiFMdrWOaSVhkpqJQ@mail.gmail.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <221c1dd1-504c-a255-55cf-8d51041f63de@interlog.com>
+Date:   Thu, 30 Aug 2018 21:06:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqk+K7TOyHoB1-+sguxbS_1s=RwCRiFMdrWOaSVhkpqJQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Only some old OpenFirmware implementations rely on default sizes. Any
-FDT and modern implementation should have explicit properties. Make the
-OF_ROOT_NODE_*_CELLS_DEFAULT defines private so we don't get any outside
-users.
+On 2018-08-30 02:03 PM, Ulf Hansson wrote:
+> On 28 August 2018 at 23:47, Douglas Gilbert <dgilbert@interlog.com> wrote:
+>> I usually boot my Lenovo X270 with a SD card in its:
+>>    # lspci
+>> 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS522A PCI
+>> Express Card Reader (rev 01)
+>> ...
+>>
+>> In lk 4.19.0-rc1 the boot locks up solid, almost immediately and nothing in
+>> the logs. If I remove the SD card my machine boots and works okay until I
+>> insert the SD card. Then:
+>>
+>> Aug 28 23:30:38 xtwo70 kernel: mmc0: cannot verify signal voltage switch
+>> Aug 28 23:30:38 xtwo70 kernel: mmc0: new ultra high speed SDR104 SDXC card
+>> at address aaaa
+>> Aug 28 23:30:38 xtwo70 kernel: mmcblk0: mmc0:aaaa ACLCE 59.5 GiB
+>> Aug 28 23:30:38 xtwo70 kernel: mmcblk0: p1 p2
+>> Aug 28 23:30:38 xtwo70 kernel: rtsx_pci_sdmmc rtsx_pci_sdmmc.0: error:
+>> data->host_cookie = 62, host->cookie = 63
+>> Aug 28 23:30:38 xtwo70 kernel: BUG: unable to handle kernel NULL pointer
+>> dereference at 0000000000000018
+>> Aug 28 23:30:38 xtwo70 kernel: PGD 0 P4D 0
+>> Aug 28 23:30:38 xtwo70 kernel: Oops: 0000 [#1] SMP
+>> Aug 28 23:30:38 xtwo70 kernel: CPU: 3 PID: 1571 Comm: kworker/3:2 Not
+>> tainted 4.19.0-rc1 #78
+>> Aug 28 23:30:38 xtwo70 kernel: Hardware name: LENOVO 20HNCTO1WW/20HNCTO1WW,
+>> BIOS R0IET53W (1.31 ) 05/22/2018
+>> Aug 28 23:30:38 xtwo70 kernel: Workqueue: events sd_request [rtsx_pci_sdmmc]
+>> Aug 28 23:30:38 xtwo70 kernel: RIP: 0010:rtsx_pci_dma_transfer+0x6e/0x260
+>> [rtsx_pci]
+>> Aug 28 23:30:38 xtwo70 kernel: Code: 49 89 fe 45 89 c5 c7 87 90 00 00 00 00
+>> 00 00 00 8d 6a ff 81 c9 00 00 00 88 31 d2 41 89 cc 45 31 ff eb 07 41 8b 96
+>> 90 00 00 00 <8b> 78 18 48 63 ca 31 f6 44 39 fd 48 8b 50 10 40 0f 94 c6 41 83
+>> c7
+>> Aug 28 23:30:38 xtwo70 kernel: RSP: 0018:ffffc90000217d78 EFLAGS: 00010202
+>> Aug 28 23:30:38 xtwo70 kernel: RAX: 0000000000000000 RBX: 0000000000000003
+>> RCX: 0000000000000000
+>> Aug 28 23:30:38 xtwo70 kernel: RDX: 0000000000000001 RSI: 0000000000000021
+>> RDI: ffff8801b6328000
+>> Aug 28 23:30:38 xtwo70 kernel: RBP: 0000000000000002 R08: ffff880036000400
+>> R09: 0000000000000000
+>> Aug 28 23:30:38 xtwo70 kernel: R10: 0000000000000000 R11: 0000000000000000
+>> R12: 00000000a8000000
+>> Aug 28 23:30:38 xtwo70 kernel: R13: 0000000000002710 R14: ffff88021fd35400
+>> R15: 0000000000000001
+>> Aug 28 23:30:38 xtwo70 kernel: FS:  0000000000000000(0000)
+>> GS:ffff880227380000(0000) knlGS:0000000000000000
+>> Aug 28 23:30:38 xtwo70 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+>> 0000000080050033
+>> Aug 28 23:30:38 xtwo70 kernel: CR2: 0000000000000018 CR3: 000000000400f006
+>> CR4: 00000000003606e0
+>> Aug 28 23:30:38 xtwo70 kernel: Call Trace:
+>> Aug 28 23:30:38 xtwo70 kernel: ? mark_held_locks+0x50/0x80
+>> Aug 28 23:30:38 xtwo70 kernel: ? _raw_spin_unlock_irqrestore+0x2d/0x40
+>> Aug 28 23:30:38 xtwo70 kernel: sd_request+0x385/0x81a [rtsx_pci_sdmmc]
+>> Aug 28 23:30:38 xtwo70 kernel: process_one_work+0x287/0x5e0
+>> Aug 28 23:30:38 xtwo70 kernel: worker_thread+0x28/0x3d0
+>> Aug 28 23:30:38 xtwo70 kernel: ? process_one_work+0x5e0/0x5e0
+>> Aug 28 23:30:38 xtwo70 kernel: kthread+0x10e/0x130
+>> Aug 28 23:30:38 xtwo70 kernel: ? kthread_park+0x80/0x80
+>> Aug 28 23:30:38 xtwo70 kernel: ret_from_fork+0x3a/0x50
+>> Aug 28 23:30:38 xtwo70 kernel: Modules linked in: mmc_block fuse msr bnep
+>> ccm btusb btrtl btbcm btintel bluetooth squashfs ecdh_generic binfmt_misc
+>> intel_rapl nls_iso8859_1 nls_cp437 x86_pkg_temp_thermal vfat
+>> intel_powerclamp fat coretemp kvm_intel arc4 snd_hda_codec_hdmi kvm
+>> snd_hda_codec_realtek snd_hda_codec_generic irqbypass crct10dif_pclmul
+>> crc32_pclmul ghash_clmulni_intel pcbc iwlmvm aesni_intel aes_x86_64
+>> crypto_simd cryptd glue_helper mac80211 intel_cstate intel_uncore
+>> intel_rapl_perf snd_hda_intel joydev snd_hda_codec mousedev snd_hwdep
+>> iwlwifi snd_hda_core input_leds efi_pstore snd_pcm serio_raw efivars
+>> cfg80211 rtsx_pci_ms memstick mei_me idma64 virt_dma mei intel_lpss_pci
+>> intel_lpss intel_pch_thermal thinkpad_acpi nvram snd_seq_dummy tps6598x
+>> snd_seq_oss typec snd_seq_midi snd_rawmidi snd_seq_midi_event
+>> Aug 28 23:30:38 xtwo70 kernel: snd_seq snd_seq_device snd_timer snd
+>> soundcore rfkill tpm_crb tpm_tis tpm_tis_core tpm evdev mac_hid pcc_cpufreq
+>> ip6t_REJECT nf_reject_ipv6 nf_log_ipv6 xt_hl ip6t_rt ipt_REJECT
+>> nf_reject_ipv4 nf_log_ipv4 nf_log_common xt_LOG xt_limit xt_tcpudp
+>> xt_addrtype xt_conntrack ip6table_filter ip6_tables nf_conntrack_netbios_ns
+>> nf_conntrack_broadcast nf_nat_ftp nf_nat nf_conntrack_ftp nf_conntrack
+>> nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_filter parport_pc ppdev lp
+>> parport efivarfs ip_tables x_tables autofs4 hid_logitech_hidpp
+>> hid_logitech_dj hid_generic usbhid hid rtsx_pci_sdmmc mmc_core i915 nvme
+>> e1000e i2c_algo_bit nvme_core drm_kms_helper syscopyarea sysfillrect
+>> sysimgblt fb_sys_fops xhci_pci drm xhci_hcd video
+>> drm_panel_orientation_quirks usbcore intel_gtt agpgart usb_common rtsx_pci
+>> Aug 28 23:30:38 xtwo70 kernel: CR2: 0000000000000018
+>> Aug 28 23:30:38 xtwo70 kernel: ---[ end trace bb8ce18072d22d51 ]---
+>> Aug 28 23:30:38 xtwo70 dbus-daemon[2110]: [system] Activating via systemd:
+>> service name='org.freedesktop.hostname1'
+>> unit='dbus-org.freedesktop.hostname1.service' requested by ':1.77' (uid=1000
+>> pid=3518 comm="/usr/bin/gnome-shell ")
+>> Aug 28 23:30:38 xtwo70 systemd[1]: Attaching egress BPF program to cgroup
+>> /sys/fs/cgroup/unified/system.slice/systemd-hostnamed.service failed:
+>> Invalid argument
+>> Aug 28 23:30:38 xtwo70 systemd[1]: Starting Hostname Service...
+>> Aug 28 23:30:39 xtwo70 kernel: RIP: 0010:rtsx_pci_dma_transfer+0x6e/0x260
+>> [rtsx_pci]
+>> Aug 28 23:30:39 xtwo70 kernel: Code: 49 89 fe 45 89 c5 c7 87 90 00 00 00 00
+>> 00 00 00 8d 6a ff 81 c9 00 00 00 88 31 d2 41 89 cc 45 31 ff eb 07 41 8b 96
+>> 90 00 00 00 <8b> 78 18 48 63 ca 31 f6 44 39 fd 48 8b 50 10 40 0f 94 c6 41 83
+>> c7
+>> Aug 28 23:30:39 xtwo70 kernel: RSP: 0018:ffffc90000217d78 EFLAGS: 00010202
+>> Aug 28 23:30:39 xtwo70 kernel: RAX: 0000000000000000 RBX: 0000000000000003
+>> RCX: 0000000000000000
+>> Aug 28 23:30:39 xtwo70 kernel: RDX: 0000000000000001 RSI: 0000000000000021
+>> RDI: ffff8801b6328000
+>> Aug 28 23:30:39 xtwo70 kernel: RBP: 0000000000000002 R08: ffff880036000400
+>> R09: 0000000000000000
+>> Aug 28 23:30:39 xtwo70 kernel: R10: 0000000000000000 R11: 0000000000000000
+>> R12: 00000000a8000000
+>> Aug 28 23:30:39 xtwo70 kernel: R13: 0000000000002710 R14: ffff88021fd35400
+>> R15: 0000000000000001
+>> Aug 28 23:30:39 xtwo70 kernel: FS:  0000000000000000(0000)
+>> GS:ffff880227380000(0000) knlGS:0000000000000000
+>> Aug 28 23:30:39 xtwo70 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+>> 0000000080050033
+>> Aug 28 23:30:39 xtwo70 kernel: CR2: 000056531391e498 CR3: 000000000400f006
+>> CR4: 00000000003606e0
+>>
+>>
+>> Doug Gilbert
+> 
+> Thanks for reporting!
+> 
+> I don't fine anything obvious from the mmc host driver point of view.
+> However, there are a few changes in the mmc core layer which we
+> already have fixes for.
+> 
+> You may either try my fixes branch from my mmc tree or use Stephen's
+> tree and the branch pending fixes, to see if that fixes the problem.
+> 
+> git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git fixes
+> 
+> git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git pending-fixes
 
-This also gets us one step closer to removing the asm/prom.h dependency on
-Sparc.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: sparclinux@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- arch/sparc/include/asm/prom.h | 3 ---
- drivers/of/of_private.h       | 8 ++++++++
- include/linux/of.h            | 6 ------
- 3 files changed, 8 insertions(+), 9 deletions(-)
+This patch from your fixes branch:
+     mmc: block: Fix unsupported parallel dispatch of requests
+fixes my boot problem. I also did a remove and re-insertion of
+the SD card and that worked as well.
 
-diff --git a/arch/sparc/include/asm/prom.h b/arch/sparc/include/asm/prom.h
-index d955c8df62d6..1902db27ff4b 100644
---- a/arch/sparc/include/asm/prom.h
-+++ b/arch/sparc/include/asm/prom.h
-@@ -24,9 +24,6 @@
- #include <linux/atomic.h>
- #include <linux/irqdomain.h>
- 
--#define OF_ROOT_NODE_ADDR_CELLS_DEFAULT	2
--#define OF_ROOT_NODE_SIZE_CELLS_DEFAULT	1
--
- #define of_compat_cmp(s1, s2, l)	strncmp((s1), (s2), (l))
- #define of_prop_cmp(s1, s2)		strcasecmp((s1), (s2))
- #define of_node_cmp(s1, s2)		strcmp((s1), (s2))
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index 216175d11d3d..5d1567025358 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -27,6 +27,14 @@ struct alias_prop {
- 	char stem[0];
- };
- 
-+#if defined(CONFIG_SPARC)
-+#define OF_ROOT_NODE_ADDR_CELLS_DEFAULT 2
-+#else
-+#define OF_ROOT_NODE_ADDR_CELLS_DEFAULT 1
-+#endif
-+
-+#define OF_ROOT_NODE_SIZE_CELLS_DEFAULT 1
-+
- extern struct mutex of_mutex;
- extern struct list_head aliases_lookup;
- extern struct kset *of_kset;
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 506beca9588d..49d85f670c75 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -247,12 +247,6 @@ static inline unsigned long of_read_ulong(const __be32 *cell, int size)
- #include <asm/prom.h>
- #endif
- 
--/* Default #address and #size cells.  Allow arch asm/prom.h to override */
--#if !defined(OF_ROOT_NODE_ADDR_CELLS_DEFAULT)
--#define OF_ROOT_NODE_ADDR_CELLS_DEFAULT 1
--#define OF_ROOT_NODE_SIZE_CELLS_DEFAULT 1
--#endif
--
- #define OF_IS_DYNAMIC(x) test_bit(OF_DYNAMIC, &x->_flags)
- #define OF_MARK_DYNAMIC(x) set_bit(OF_DYNAMIC, &x->_flags)
- 
--- 
-2.17.1
+Doug Gilbert
 
+P.S. it's commit 26caddf274cf1e89fd4ce44ab2b8dbc7a7f97681
