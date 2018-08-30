@@ -2,120 +2,111 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB82C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84C3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050CA20644
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4705020661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:04:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DixRIvfP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 050CA20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gzcvMtK4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4705020661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeH3HDL (ORCPT
+        id S1727471AbeH3HEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 03:03:11 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41306 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbeH3HDL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 03:03:11 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so12904792oiw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 20:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pndU0D59aSmSGGiZkPZwDsQJB9gPYKmH5sZX6IPaWe8=;
-        b=DixRIvfP7gHK6tpOwoYXIhf9wbCvijOxlk77p4K+UL5J+vOondTBIA4CBwGiijrxBN
-         YrA6EaqiigCZ1mi8BsAv/wIj8wSKKh8kPR9J47QizGeRWdPQBgAUZs2nzDkQSFfklG3O
-         9c0SerzJfYFg6eiGqNi6njSJNO3q6EEtvr9EU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pndU0D59aSmSGGiZkPZwDsQJB9gPYKmH5sZX6IPaWe8=;
-        b=Lu/2MyuLkpUhAZl6HKUAHEU6XYKWgoXkM7aiVmCCFzX4p/Tw6rmtPaGoRY9SDVbnDy
-         MeUif5KHZdQpA9miq1Om6yILv5Y98k0aJcPVsUImaNnIoGWxVtgNM28a0LTkuEXtCUa6
-         lVKfzxDDxBzqVFQvKbRe1t5zxH7IIclEhqTDyIS1qhWEmLNS2LyLHPHPqqcMwrdXXF90
-         eHbz3zmSff1g4+ALdC5RNc4IC4GeD4U0h8JvBKtv676nBJO5+oNSdDFjZYw8XI8hKhgC
-         1T52Q5ueUD93+Rj+EyHOYe/fa664J3zon0iD1K3WvFfVtJV8jHlFN8MLMhLjMxezk2Vw
-         pjiA==
-X-Gm-Message-State: APzg51C5xYPx1JRRY8RTtWqstV17fZWFNL9UKyAHmv1PGSOvnEJX49N2
-        CPCrfFNSec1OXiFV7eEFXWj2BqIzf4FGdgMXiNTt1Q==
-X-Google-Smtp-Source: ANB0VdYdkM6RkHDjWz30vRz2vutsPoMJyzGKcEJNARDslOCs2bwHVyhH/GXJO7VJfGCxTeD4TYFq1lgEnrEi7n4JPwQ=
-X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr680208oiy.219.1535598195083;
- Wed, 29 Aug 2018 20:03:15 -0700 (PDT)
+        Thu, 30 Aug 2018 03:04:23 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47108 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725844AbeH3HEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 03:04:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=WcXLsm+jiLyHyisc+QVEb1HKqN6ECWPEaaC/NY3Kd+4=;
+        b=gzcvMtK4uTjm8lnG6Q9vBy2BbYXFPWU1xmsGij3eSANvPsYhcG1I0FY2Me2eZYi2C30GT4Ge+UBrzHk7MfiiQGUdmoE0K1St2+G7oPgRd0OXbnXuxWOkKuV7nAL5HMtOhXeLB/i5bXuzpil1qywWx3ZYJ4OM0X5fB2Vpqo7Vkws=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fvDFs-0004nL-SK; Thu, 30 Aug 2018 05:04:20 +0200
+Date:   Thu, 30 Aug 2018 05:04:20 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     davem@davemloft.net, keescook@chromium.org, f.fainelli@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        alex.williams@ni.com
+Subject: Re: [PATCH net-next 1/3] net: nixge: Add support for fixed-link
+ subnodes
+Message-ID: <20180830030420.GB16896@lunn.ch>
+References: <20180830004046.9417-1-mdf@kernel.org>
+ <20180830004046.9417-2-mdf@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:590c:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 20:03:10
- -0700 (PDT)
-In-Reply-To: <CAJKOXPd9-aLYFLBHwUyNecneHA6X+VbnZSK4paXsMcmvobnGhA@mail.gmail.com>
-References: <5fcd93bbbcd55a5c23f1c75effdc3670ce7a811b.1535446321.git.baolin.wang@linaro.org>
- <CAJKOXPd9-aLYFLBHwUyNecneHA6X+VbnZSK4paXsMcmvobnGhA@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 30 Aug 2018 11:03:10 +0800
-Message-ID: <CAMz4kuL8cSkBRb1C779u4gi93TwJ1M0aNV_nkRQoX16=7HK5wA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: power: Add Spreadtrum SC2731 charger documentation
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830004046.9417-2-mdf@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Wed, Aug 29, 2018 at 05:40:44PM -0700, Moritz Fischer wrote:
+> Add support for fixed-link cases where no MDIO is
+> actually required to run the device.
+> In that case no MDIO bus is instantiated since the
+> actual registers are not available in hardware.
 
-On 29 August 2018 at 22:08, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, 28 Aug 2018 at 11:04, Baolin Wang <baolin.wang@linaro.org> wrote:
->>
->> This patch adds the binding documentation for Spreadtrum SC2731 charger
->> device.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->>  .../bindings/power/supply/sc2731_charger.txt       |   14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
->>
->> diff --git a/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt b/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
->> new file mode 100644
->> index 0000000..02b616c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
->> @@ -0,0 +1,14 @@
->> +Spreadtrum SC2731 PMIC battery charger binding
->> +
->> +Required properties:
->> + - compatible: Should be "sprd,sc2731-charger".
->> + - reg: Address offset of charger register.
->> + - phys: Contains a phandle to the USB phy.
->> +
->> +Example:
->> +
->> +       charger@0 {
->> +               compatible = "sprd,sc2731-charger";
->> +               reg = <0x0>;
->
-> Can you include also few lines of parent node? You use this "reg"
-> later as a base address so probably your parent node requires address
-> mapping. It would be nice to see it in example.
->
+Hi Moritz
 
-Sorry that I forgot adding the parent node, and will add it in next
-version. Thanks.
+There are a few different use cases here:
 
--- 
-Baolin Wang
-Best Regards
+The hardware is missing MDIO - You need fixed-link.
+
+The hardware has MDIO, but you don't have a PHY connected on it, and
+use fixed link.
+
+The hardware has MDIO, and it is used e.g. for an Ethernet switch, or
+a PHY for another Ethernet interface. Plus you need fixed link.
+
+The binding typically looks like:
+
+&fec1 {
+        phy-mode = "rmii";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_fec1>;
+        status = "okay";
+
+        fixed-link {
+                speed = <100>;
+                full-duplex;
+        };
+
+        mdio1: mdio {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                status = "okay";
+
+                switch0: switch0@0 {
+                        compatible = "marvell,mv88e6085";
+                        pinctrl-names = "default";
+                        pinctrl-0 = <&pinctrl_switch>;
+                        reg = <0>;
+                        eeprom-length = <512>;
+                        interrupt-parent = <&gpio3>;
+
+It is important you have the mdio subnode, with PHYs and switches as
+children. The driver currently gets this wrong, it uses
+pdev->dev.of_node.
+
+So the first patch should be to extend this behaviour. Look for a
+child node called mdio. If it exists, call nixge_mdio_setup() passing
+that child. Otherwise continue using pdev->dev.of_node, so you don't
+break backwards compatibility.
+
+Then a patch adding support for fixed-link. If the mdio child node
+exists, you still need to register the MDIO bus. If there is no child
+node, but there is a fixed-link, skip registering the mdio bus with
+pdev->dev.of_node.
+
+	Andrew
