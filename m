@@ -4,106 +4,1132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC78C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0E1C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3112120835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F3A20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:42:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nUOugr7J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3112120835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jv+qMdcK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F3A20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbeH3Xmb (ORCPT
+        id S1727326AbeH3Xps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:42:31 -0400
-Received: from mail-sn1nam02on0123.outbound.protection.outlook.com ([104.47.36.123]:26880
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725836AbeH3Xma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:42:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6aXk1fTN1v0G0dCMjcJ/beHgJHnbbeBlz40gwes5dl8=;
- b=nUOugr7J3wuYkTrJ7dpRSRndhD0xNQTTSg03Ff7/rdn+DkUdyZ78N8DMYdvr1a/96vHhpkaBRQPXDh19nVDJAt+4GYtA0QRFpFQ0v9Z/BcmYiRpLKyizEJ7WDY1zJ4Vcd+mV22aq3Q3vAUUhIdWSOKPBjCA+HPFN/m3AkAcnrNc=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0121.namprd21.prod.outlook.com (10.173.173.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.1; Thu, 30 Aug 2018 19:38:43 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1122.009; Thu, 30 Aug 2018
- 19:38:43 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     David Hildenbrand <david@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RFCv2 6/6] memory-hotplug.txt: Add some details about
- locking internals
-Thread-Topic: [PATCH RFCv2 6/6] memory-hotplug.txt: Add some details about
- locking internals
-Thread-Index: AQHUQJkPzdDzVGjSIEmr3/vDaTxSRw==
-Date:   Thu, 30 Aug 2018 19:38:43 +0000
-Message-ID: <b46f358b-8fea-b380-1978-5f3e772130d4@microsoft.com>
-References: <20180821104418.12710-1-david@redhat.com>
- <20180821104418.12710-7-david@redhat.com>
-In-Reply-To: <20180821104418.12710-7-david@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.117.57.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0121;6:3FkTvVYHCoASj2NoAJhXPer96uyBd3iV/k9HNGToAXzsU6Vr4qA3U/9ssBjeGJiS8WjeUBAFLKVHpU7kA4Ub/s8gUjImiJnvlymnUl+H9mAjtSFG5RKwVR5aG08fo04dTzjvKnHa8TZrIkFhmkIuK+fBikhPSrMYknwbrVscY646Dfl5+kf6zlMBZIhvm1iuKLo4tKCeFRDQsYmvoEd8DbP3j+oY31dutBdjgtfkK6hSZUd7qvKAlJqwUl+zB3hFu7XAE5GrzZ6rrXghKxkEi7YwjtP8Fw+HFLDY6IXuV99RuywIlb8/vctif97eSIdFzMgMXXASKpZMdqu0oIBtHR8ChE33w1+Mj/tOju3TnQxICBrFnaJHASrSVlCdEXC7wsygQTeX/B5qh5RUJ4FWMslpHvCABiml3hk+sEQi/yjXw8hIfpDgsh0QDFmU8v3t4KURfc4W6+b0r+v3+9ysXw==;5:/2rNI3M5JMmQqs8LI18ZR9rSsFfgacv8qlZwn6RiqXeCC6Ajeul4td3UTIeHo1x2I2pEmEyuMSB0v9Vd9KXLYPIa3drRpPl7IVVW0Vzj9MQTgizrmOT9FlXcwdoZC5ggQnBoOM+17TMcDsbbE7kgGIXbO6gqtYUJORlXUbBXMj4=;7:hO3H6YwXeALiFTTeuH5uL9iG8pGe9QLbhVaYbp5QAEbnWEshtCY+cxOGMxHBIDKBt4tYt4AOXVczV+rY5bF4uggCduWNfigRVN/ZvTh93qOIZ1RWZ60T781XcUWvTxMrYagMNhTdVhxDavfI3MJeKVgVQGySX/nJjIzbnqymGLlWC8Qz/OOhXSo8UMrGlHBK0P8/YYqP1ColK/WeHyceQFDpmgdDXNkRlyMFjgi0tMM7xQceOkYb0zGV3DmTOwVF
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a438b49c-658f-4fab-9ec6-08d60eb0322e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0121;
-x-ms-traffictypediagnostic: DM5PR21MB0121:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-prvs: <DM5PR21MB01219AD80AFDF3EB8837A1539D080@DM5PR21MB0121.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:DM5PR21MB0121;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0121;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(396003)(136003)(189003)(199004)(81166006)(6246003)(81156014)(54906003)(72206003)(6486002)(2900100001)(14454004)(2906002)(110136005)(66066001)(31686004)(5660300001)(106356001)(478600001)(105586002)(8936002)(10290500003)(6436002)(76176011)(102836004)(4326008)(53936002)(6512007)(99286004)(36756003)(6506007)(256004)(53546011)(14444005)(8676002)(10090500001)(558084003)(7416002)(26005)(7736002)(305945005)(486006)(446003)(11346002)(2616005)(476003)(186003)(68736007)(97736004)(22452003)(316002)(229853002)(2501003)(25786009)(31696002)(3846002)(86612001)(5250100002)(6116002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0121;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: HT4zcTN7Kj4+uPrbBxL8ciA0gLQ6HO5Qzb2eg37ej8fyDU+Mv7qeR43rYmWwujmDs7FQkMOm/zoAWR4GdRVHO6oMH9GXr2gCyMMbBEUWPWRvVgGKnerRBgk9wFkmYms20H7ADCm7ycZTAws7tLtOZx9rffMTVHzz3tJu/i17rGtJG0+EnmPaZJOiWWYnwghzsI1TNoGZhQTDfZmep4W5AcIfGNr+v6ljVq4ZJW+Twb2O6AK2nbhODSySeNnDP1QP3Z4QJ1YXN2RrXLfVizvY99cS5RRjP2m9pjfACaoWfXT8GfB35yIJQgn6Nw8gF3o8XybejVMdRO0obARvO6iqTI42DG+GEMoBZy0KWe3Cs9A=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9F9046A8AD873D478941CC2B49BDEB5E@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 30 Aug 2018 19:45:48 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57326 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbeH3Xpr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 19:45:47 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7UJfUc4112847;
+        Thu, 30 Aug 2018 14:41:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535658090;
+        bh=kwXP5JuqRHeGo3QmAuFSfnuWDhmUC1CfPeIYEDPTAFE=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=jv+qMdcKGmXpHGbjtzfqp/Lt88OlfppOhlt6nBEMZDqBOBTD+Ub8I32Nr2odecWe/
+         Jr8w5THdPjfKbJYfiUqb2KTklSNBXcuCW7E9UEqCDCtiqIfhn5/+eqGfMnPV1H6RnJ
+         nDeFj24qDPOi+gc+qrTysQ4FpJZhL5toNWx5Kc4E=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7UJfUR9003008;
+        Thu, 30 Aug 2018 14:41:30 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 30
+ Aug 2018 14:41:30 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 30 Aug 2018 14:41:30 -0500
+Received: from [172.22.134.218] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7UJfUwV007047;
+        Thu, 30 Aug 2018 14:41:30 -0500
+Subject: Re: [rfc] leds: add TI LMU backlight driver
+To:     Pavel Machek <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
+        <jacek.anaszewski@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>, <sre@kernel.org>,
+        <nekit1000@gmail.com>, <mpartap@gmx.net>, <merlijn@wizzup.org>
+References: <20180829212032.GB15786@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com>
+Date:   Thu, 30 Aug 2018 14:41:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a438b49c-658f-4fab-9ec6-08d60eb0322e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 19:38:43.6951
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0121
+In-Reply-To: <20180829212032.GB15786@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpSZXZpZXdlZC1ieTogUGF2ZWwgVGF0YXNoaW4gPHBhdmVsLnRhdGFzaGluQG1pY3Jvc29mdC5j
-b20+DQoNCk9uIDgvMjEvMTggNjo0NCBBTSwgRGF2aWQgSGlsZGVuYnJhbmQgd3JvdGU6DQo+IExl
-dCdzIGRvY3VtZW50IHRoZSBtYWdpYyBhIGJpdCwgZXNwZWNpYWxseSB3aHkgZGV2aWNlX2hvdHBs
-dWdfbG9jayBpcw0KPiByZXF1aXJlZCB3aGVuIGFkZGluZy9yZW1vdmluZyBtZW1vcnkgYW5kIGhv
-dyBpdCBhbGwgcGxheSB0b2dldGhlciB3aXRoDQo+IHJlcXVlc3RzIHRvIG9ubGluZS9vZmZsaW5l
-IG1lbW9yeSBmcm9tIHVzZXIgc3BhY2UuDQo+IA==
+Pavel
+
+On 08/29/2018 04:20 PM, Pavel Machek wrote:
+> 
+> Here's preview of driver for TI LMU. It controls LEDs on Droid 4
+> smartphone, including keyboard and screen backlights.
+> 
+> This adds backlight support for the following TI LMU
+> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+> 
+> Signed-off-by: Milo Kim <milo.kim@ti.com>
+> [add LED subsystem support for keyboard backlight and rework DT
+> binding according to Rob Herrings feedback]
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> [remove backlight subsystem support for now]
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> ---
+> 
+> Does it looks mostly reasonable? I guess it will need some
+> s/BACKLIGHT/LEDS/ , and I'll need to remove my debugging hacks.
+> 
+> I'd prefer this to be LED driver, first; I'll need to figure out what
+> to do with backlight. I guess something like existing "backlight"
+> trigger should do the trick.
+> 
+
+I looked at this driver from Milo before submitting a specific LM3697 driver.
+
+I do not like this driver.
+I don't like that it smashes numerous devices into some structure with varying register maps.
+
+Not only that but it appears that you just pulled this driver from a repo and posted it without clean up.
+
+If the devices share register maps and can be added to families I would prefer to do it that way.
+
+So if the LM3695 and LM3697 share the same features and register map they should be one driver
+The LM363x series may be able to be a different driver.
+
+I would prefer separated drivers rather then trying to consolidate them.  Otherwise we may have other devices
+trying to be shoe horned into this framework.
+
+Dan
+
+> Best regards,
+> 								Pavel
+> 
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 44097a3..7b0929e 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -756,6 +756,13 @@ config LEDS_NIC78BX
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called leds-nic78bx.
+>  
+> +config BACKLIGHT_TI_LMU
+> +       tristate "Backlight driver for TI LMU"
+> +       depends on BACKLIGHT_CLASS_DEVICE && MFD_TI_LMU
+> +       help
+> +         Say Y to enable the backlight driver for TI LMU devices.
+> +         This supports LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
+> +
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+>  
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 420b5d2..8edb9bf 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -78,6 +78,9 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+>  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+>  obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+> +ti-lmu-backlight-objs                   := ti-lmu-backlight-core.o \
+> +                                           ti-lmu-backlight-data.o
+> +obj-$(CONFIG_BACKLIGHT_TI_LMU)          += ti-lmu-backlight.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+> diff --git a/drivers/leds/ti-lmu-backlight-core.c b/drivers/leds/ti-lmu-backlight-core.c
+> new file mode 100644
+> index 0000000..c9af061
+> --- /dev/null
+> +++ b/drivers/leds/ti-lmu-backlight-core.c
+> @@ -0,0 +1,556 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2015 Texas Instruments
+> + * Copyright 2018 Sebastian Reichel
+> + *
+> + * TI LMU Backlight driver, based on previous work from
+> + * Milo Kim <milo.kim@ti.com>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/ti-lmu.h>
+> +#include <linux/mfd/ti-lmu-register.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "ti-lmu-backlight-data.h"
+> +
+> +enum ti_lmu_bl_ramp_mode {
+> +	BL_RAMP_UP,
+> +	BL_RAMP_DOWN,
+> +};
+> +
+> +#define NUM_DUAL_CHANNEL			2
+> +#define LMU_BACKLIGHT_DUAL_CHANNEL_USED		(BIT(0) | BIT(1))
+> +#define LMU_BACKLIGHT_11BIT_LSB_MASK		(BIT(0) | BIT(1) | BIT(2))
+> +#define LMU_BACKLIGHT_11BIT_MSB_SHIFT		3
+> +
+> +struct ti_lmu_bank {
+> +	struct device *dev;
+> +	int bank_id;
+> +	const struct ti_lmu_bl_cfg *cfg;
+> +	struct ti_lmu *lmu;
+> +	const char *label;
+> +	int leds;
+> +	int current_brightness;
+> +	u32 default_brightness;
+> +	u32 ramp_up_msec;
+> +	u32 ramp_down_msec;
+> +
+> +	struct notifier_block nb;
+> +
+> +	struct backlight_device *backlight;
+> +	struct led_classdev *led;
+> +};
+> +
+> +static int ti_lmu_bl_enable(struct ti_lmu_bank *lmu_bank, bool enable)
+> +{
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	unsigned long enable_time = lmu_bank->cfg->reginfo->enable_usec;
+> +	u8 *reg = lmu_bank->cfg->reginfo->enable;
+> +	u8 mask = BIT(lmu_bank->bank_id);
+> +	u8 val = (enable == true) ? mask : 0;
+> +	int ret;
+> +
+> +	if (!reg)
+> +		return -EINVAL;
+> +
+> +	ret = regmap_update_bits(regmap, *reg, mask, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (enable_time > 0)
+> +		usleep_range(enable_time, enable_time + 100);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_update_brightness_register(struct ti_lmu_bank *lmu_bank,
+> +						       int brightness)
+> +{
+> +	const struct ti_lmu_bl_cfg *cfg = lmu_bank->cfg;
+> +	const struct ti_lmu_bl_reg *reginfo = cfg->reginfo;
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	u8 reg, val;
+> +	int ret;
+> +
+> +	/*
+> +	 * Brightness register update
+> +	 *
+> +	 * 11 bit dimming: update LSB bits and write MSB byte.
+> +	 *		   MSB brightness should be shifted.
+> +	 *  8 bit dimming: write MSB byte.
+> +	 */
+> +	if (cfg->max_brightness == MAX_BRIGHTNESS_11BIT) {
+> +		reg = reginfo->brightness_lsb[lmu_bank->bank_id];
+> +		ret = regmap_update_bits(regmap, reg,
+> +					 LMU_BACKLIGHT_11BIT_LSB_MASK,
+> +					 brightness);
+> +		if (ret)
+> +			return ret;
+> +
+> +		val = brightness >> LMU_BACKLIGHT_11BIT_MSB_SHIFT;
+> +	} else {
+> +		val = brightness;
+> +	}
+> +
+> +	reg = reginfo->brightness_msb[lmu_bank->bank_id];
+> +	return regmap_write(regmap, reg, val);
+> +}
+> +
+> +static int ti_lmu_bl_set_brightness(struct ti_lmu_bank *lmu_bank,
+> +				    int brightness)
+> +{
+> +	bool enable = brightness > 0;
+> +	int ret;
+> +
+> +	ret = ti_lmu_bl_enable(lmu_bank, enable);
+> +	if (ret)
+> +		return ret;
+> +
+> +	lmu_bank->current_brightness = brightness;
+> +
+> +	return ti_lmu_bl_update_brightness_register(lmu_bank, brightness);
+> +}
+> +
+> +static int ti_lmu_bl_set_led_blocking(struct led_classdev *ledc,
+> +					     enum led_brightness value)
+> +{
+> +	struct ti_lmu_bank *lmu_bank = dev_get_drvdata(ledc->dev->parent);
+> +	int brightness = value;
+> +
+> +	return ti_lmu_bl_set_brightness(lmu_bank, brightness);
+> +}
+> +
+> +static int ti_lmu_bl_check_channel(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	const struct ti_lmu_bl_cfg *cfg = lmu_bank->cfg;
+> +	const struct ti_lmu_bl_reg *reginfo = cfg->reginfo;
+> +
+> +	if (!reginfo->brightness_msb)
+> +		return -EINVAL;
+> +
+> +	if (cfg->max_brightness > MAX_BRIGHTNESS_8BIT) {
+> +		if (!reginfo->brightness_lsb)
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_create_channel(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	const struct lmu_bl_reg_data *regdata = lmu_bank->cfg->reginfo->channel;
+> +	int num_channels = lmu_bank->cfg->num_channels;
+> +	unsigned long led_sources = lmu_bank->leds;
+> +	int i, ret;
+> +	u8 shift;
+> +
+> +	/*
+> +	 * How to create backlight output channels:
+> +	 *   Check 'led_sources' bit and update registers.
+> +	 *
+> +	 *   1) Dual channel configuration
+> +	 *     The 1st register data is used for single channel.
+> +	 *     The 2nd register data is used for dual channel.
+> +	 *
+> +	 *   2) Multiple channel configuration
+> +	 *     Each register data is mapped to bank ID.
+> +	 *     Bit shift operation is defined in channel registers.
+> +	 *
+> +	 * Channel register data consists of address, mask, value.
+> +	 */
+> +
+> +	if (num_channels == NUM_DUAL_CHANNEL) {
+> +		if (led_sources == LMU_BACKLIGHT_DUAL_CHANNEL_USED)
+> +			regdata++;
+> +
+> +		return regmap_update_bits(regmap, regdata->reg, regdata->mask,
+> +					  regdata->val);
+> +	}
+> +
+> +	for (i = 0; regdata && i < num_channels; i++) {
+> +		/*
+> +		 * Note that the result of regdata->val is shift bit.
+> +		 * The bank_id should be shifted for the channel configuration.
+> +		 */
+> +		if (test_bit(i, &led_sources)) {
+> +			shift = regdata->val;
+> +			ret = regmap_update_bits(regmap, regdata->reg,
+> +						 regdata->mask,
+> +						 lmu_bank->bank_id << shift);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +
+> +		regdata++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_update_ctrl_mode(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	const struct lmu_bl_reg_data *regdata =
+> +		lmu_bank->cfg->reginfo->mode + lmu_bank->bank_id;
+> +	u8 val = regdata->val;
+> +
+> +	if (!regdata)
+> +		return 0;
+> +
+> +	/*
+> +	 * Update PWM configuration register.
+> +	 * If the mode is register based, then clear the bit.
+> +	 */
+> +	val = 0;
+> +
+> +	return regmap_update_bits(regmap, regdata->reg, regdata->mask, val);
+> +}
+> +
+> +static int ti_lmu_bl_convert_ramp_to_index(struct ti_lmu_bank *lmu_bank,
+> +						  enum ti_lmu_bl_ramp_mode mode)
+> +{
+> +	const int *ramp_table = lmu_bank->cfg->ramp_table;
+> +	const int size = lmu_bank->cfg->size_ramp;
+> +	unsigned int msec;
+> +	int i;
+> +
+> +	if (!ramp_table)
+> +		return -EINVAL;
+> +
+> +	switch (mode) {
+> +	case BL_RAMP_UP:
+> +		msec = lmu_bank->ramp_up_msec;
+> +		break;
+> +	case BL_RAMP_DOWN:
+> +		msec = lmu_bank->ramp_down_msec;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (msec <= ramp_table[0])
+> +		return 0;
+> +
+> +	if (msec > ramp_table[size - 1])
+> +		return size - 1;
+> +
+> +	for (i = 1; i < size; i++) {
+> +		if (msec == ramp_table[i])
+> +			return i;
+> +
+> +		/* Find an approximate index by looking up the table */
+> +		if (msec > ramp_table[i - 1] && msec < ramp_table[i]) {
+> +			if (msec - ramp_table[i - 1] < ramp_table[i] - msec)
+> +				return i - 1;
+> +			else
+> +				return i;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +
+> +static int ti_lmu_bl_set_ramp(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	const struct ti_lmu_bl_reg *reginfo = lmu_bank->cfg->reginfo;
+> +	int offset = reginfo->ramp_reg_offset;
+> +	int i, ret, index;
+> +	struct lmu_bl_reg_data regdata;
+> +
+> +	for (i = BL_RAMP_UP; i <= BL_RAMP_DOWN; i++) {
+> +		index = ti_lmu_bl_convert_ramp_to_index(lmu_bank, i);
+> +		if (index > 0) {
+> +			if (!reginfo->ramp)
+> +				break;
+> +
+> +			regdata = reginfo->ramp[i];
+> +			if (lmu_bank->bank_id != 0)
+> +				regdata.val += offset;
+> +
+> +			/* regdata.val is shift bit */
+> +			ret = regmap_update_bits(regmap, regdata.reg,
+> +						 regdata.mask,
+> +						 index << regdata.val);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_configure(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	int ret;
+> +
+> +	ret = ti_lmu_bl_check_channel(lmu_bank);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ti_lmu_bl_create_channel(lmu_bank);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ti_lmu_bl_update_ctrl_mode(lmu_bank);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ti_lmu_bl_set_ramp(lmu_bank);
+> +}
+> +
+> +static int ti_lmu_bl_register_led(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	int err;
+> +
+> +	printk("lmu: register_led\n");
+> +
+> +	lmu_bank->led = devm_kzalloc(lmu_bank->dev, sizeof(*lmu_bank->led),
+> +				     GFP_KERNEL);
+> +	if (!lmu_bank->led)
+> +		return -ENOMEM;
+> +
+> +	lmu_bank->led->name = lmu_bank->label;
+> +	lmu_bank->led->max_brightness = lmu_bank->cfg->max_brightness;
+> +	lmu_bank->led->brightness_set_blocking =
+> +		ti_lmu_bl_set_led_blocking;
+> +
+> +	printk("lmu: register_led\n");
+> +	
+> +	err = devm_led_classdev_register(lmu_bank->dev, lmu_bank->led);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_add_device(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	return ti_lmu_bl_register_led(lmu_bank);
+> +}
+> +
+> +static int setup_of_node(struct platform_device *pdev)
+> +{
+> +	struct device_node *parent_node = pdev->dev.parent->of_node;
+> +	char *name;
+> +
+> +	if (!parent_node)
+> +		return 0;
+> +
+> +	name = kasprintf(GFP_KERNEL, "bank%d", pdev->id);
+> +//		name = kasprintf(GFP_KERNEL, "lcd_backlight", pdev->id);
+> +	if (!name) {
+> +		printk("No memory?!\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	printk("Searching for device in parent: %pOFn", parent_node);
+> +
+> +	pdev->dev.of_node = of_get_child_by_name(parent_node, name);
+> +	kfree(name);
+> +
+> +	if (!pdev->dev.of_node) {
+> +		printk("No such child: %s\n", name);		
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_parse_led_sources(struct device *dev)
+> +{
+> +	unsigned long mask = 0;
+> +	int ret;
+> +	int size, i;
+> +	u32 *leds;
+> +
+> +	size = device_property_read_u32_array(dev, "ti,led-sources", NULL, 0);
+> +	if (size <= 0) {
+> +		dev_err(dev, "Missing or malformed property led-sources: %d\n",
+> +			size);
+> +		return size < 0 ? size : -EINVAL;
+> +	}
+> +
+> +	leds = kmalloc_array(size, sizeof(u32), GFP_KERNEL);
+> +	if (!leds)
+> +		return -ENOMEM;
+> +
+> +	ret = device_property_read_u32_array(dev, "ti,led-sources", leds, size);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read led-sources property: %d\n", ret);
+> +		goto out;
+> +	}
+> +
+> +	for (i = 0; i < size; i++)
+> +		set_bit(leds[i], &mask);
+> +
+> +	ret = mask;
+> +
+> +out:
+> +	kfree(leds);
+> +	return ret;
+> +}
+> +
+> +static int ti_lmu_bl_init(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	struct regmap *regmap = lmu_bank->lmu->regmap;
+> +	const struct lmu_bl_reg_data *regdata =
+> +		lmu_bank->cfg->reginfo->init;
+> +	int num_init = lmu_bank->cfg->reginfo->num_init;
+> +	int i, ret;
+> +
+> +	if (lmu_bank->lmu->backlight_initialized)
+> +		return 0;
+> +	lmu_bank->lmu->backlight_initialized = true;
+> +
+> +	for (i = 0; regdata && i < num_init; i++) {
+> +		ret = regmap_update_bits(regmap, regdata->reg, regdata->mask,
+> +					 regdata->val);
+> +		if (ret)
+> +			return ret;
+> +
+> +		regdata++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_reload(struct ti_lmu_bank *lmu_bank)
+> +{
+> +	int err;
+> +
+> +	ti_lmu_bl_init(lmu_bank);
+> +
+> +	err = ti_lmu_bl_configure(lmu_bank);
+> +	if (err)
+> +		return err;
+> +
+> +	printk("lmu: set_brightness %d\n", lmu_bank->default_brightness);		
+> +	return ti_lmu_bl_set_brightness(lmu_bank, lmu_bank->current_brightness);
+> +}
+> +
+> +static int ti_lmu_bl_monitor_notifier(struct notifier_block *nb,
+> +					     unsigned long action, void *unused)
+> +{
+> +	struct ti_lmu_bank *lmu_bank = container_of(nb, struct ti_lmu_bank, nb);
+> +
+> +	if (action == LMU_EVENT_MONITOR_DONE) {
+> +		if (ti_lmu_bl_reload(lmu_bank))
+> +			return NOTIFY_STOP;
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static int ti_lmu_bl_probe(struct platform_device *pdev)
+> +{
+> +	struct ti_lmu_bank *lmu_bank;
+> +	int err;
+> +
+> +	printk("lmu: bl probe\n");
+> +	err = setup_of_node(pdev);
+> +	if (err)
+> +		return err;
+> +
+> +	printk("lmu: bank\n");	
+> +	lmu_bank = devm_kzalloc(&pdev->dev, sizeof(*lmu_bank), GFP_KERNEL);
+> +	if (!lmu_bank)
+> +		return -ENOMEM;
+> +	lmu_bank->dev = &pdev->dev;
+> +	dev_set_drvdata(&pdev->dev, lmu_bank);
+> +
+> +	err = device_property_read_string(&pdev->dev, "label",
+> +					  &lmu_bank->label);
+> +	if (err)
+> +		return err;
+> +
+> +	if (!strcmp(lmu_bank->label, "keyboard")) {
+> +		lmu_bank->label = "kbd_backlight";
+> +	} else
+> +		lmu_bank->default_brightness = 255;
+> +
+> +	lmu_bank->leds = ti_lmu_parse_led_sources(&pdev->dev);
+> +	if (lmu_bank->leds < 0)
+> +		return lmu_bank->leds;
+> +	else if (lmu_bank->leds == 0)
+> +		return -EINVAL;
+> +
+> +	device_property_read_u32(&pdev->dev, "default-brightness-level",
+> +				 &lmu_bank->default_brightness);
+> +	device_property_read_u32(&pdev->dev, "ti,ramp-up-ms",
+> +				 &lmu_bank->ramp_up_msec);
+> +	device_property_read_u32(&pdev->dev, "ti,ramp-down-ms",
+> +				 &lmu_bank->ramp_down_msec);
+> +	
+> +	lmu_bank->lmu = dev_get_drvdata(pdev->dev.parent);
+> +	lmu_bank->cfg = &lmu_bl_cfg[lmu_bank->lmu->id];
+> +	lmu_bank->bank_id = pdev->id;
+> +
+> +	ti_lmu_bl_init(lmu_bank);
+> +
+> +	err = ti_lmu_bl_configure(lmu_bank);
+> +	if (err)
+> +		return err;
+> +
+> +	err = ti_lmu_bl_add_device(lmu_bank);
+> +	if (err)
+> +		return err;
+> +
+> +	printk("lmu: brightness\n");		
+> +	err = ti_lmu_bl_set_brightness(lmu_bank,
+> +					      lmu_bank->default_brightness);
+> +	if (err)
+> +		return err;
+> +
+> +	/*
+> +	 * Notifier callback is required because backlight device needs
+> +	 * reconfiguration after fault detection procedure is done by
+> +	 * ti-lmu-fault-monitor driver.
+> +	 */
+> +	if (lmu_bank->cfg->fault_monitor_used) {
+> +		lmu_bank->nb.notifier_call = ti_lmu_bl_monitor_notifier;
+> +		err = blocking_notifier_chain_register(&lmu_bank->lmu->notifier,
+> +						       &lmu_bank->nb);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ti_lmu_bl_remove(struct platform_device *pdev)
+> +{
+> +	struct ti_lmu_bank *lmu_bank = platform_get_drvdata(pdev);
+> +
+> +	if (lmu_bank->cfg->fault_monitor_used)
+> +		blocking_notifier_chain_unregister(&lmu_bank->lmu->notifier,
+> +						   &lmu_bank->nb);
+> +
+> +	ti_lmu_bl_set_brightness(lmu_bank, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver ti_lmu_bl_driver = {
+> +	.probe  = ti_lmu_bl_probe,
+> +	.remove  = ti_lmu_bl_remove,
+> +	.driver = {
+> +		.name = "ti-lmu-led-backlight",
+> +	},
+> +};
+> +module_platform_driver(ti_lmu_bl_driver)
+> +
+> +MODULE_DESCRIPTION("TI LMU Backlight LED Driver");
+> +MODULE_AUTHOR("Sebastian Reichel");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:ti-lmu-led-backlight");
+> diff --git a/drivers/leds/ti-lmu-backlight-data.c b/drivers/leds/ti-lmu-backlight-data.c
+> new file mode 100644
+> index 0000000..583136c
+> --- /dev/null
+> +++ b/drivers/leds/ti-lmu-backlight-data.c
+> @@ -0,0 +1,304 @@
+> +/*
+> + * TI LMU (Lighting Management Unit) Backlight Device Data
+> + *
+> + * Copyright 2015 Texas Instruments
+> + *
+> + * Author: Milo Kim <milo.kim@ti.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include "ti-lmu-backlight-data.h"
+> +
+> +/* LM3532 */
+> +static const struct lmu_bl_reg_data lm3532_init_data[] = {
+> +	{ LM3532_REG_ZONE_CFG_A, LM3532_ZONE_MASK, LM3532_ZONE_0 },
+> +	{ LM3532_REG_ZONE_CFG_B, LM3532_ZONE_MASK, LM3532_ZONE_1 },
+> +	{ LM3532_REG_ZONE_CFG_C, LM3532_ZONE_MASK, LM3532_ZONE_2 },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3532_channel_data[] = {
+> +	{ LM3532_REG_OUTPUT_CFG, LM3532_ILED1_CFG_MASK,
+> +	  LM3532_ILED1_CFG_SHIFT },
+> +	{ LM3532_REG_OUTPUT_CFG, LM3532_ILED2_CFG_MASK,
+> +	  LM3532_ILED2_CFG_SHIFT },
+> +	{ LM3532_REG_OUTPUT_CFG, LM3532_ILED3_CFG_MASK,
+> +	  LM3532_ILED3_CFG_SHIFT },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3532_mode_data[] = {
+> +	{ LM3532_REG_PWM_A_CFG, LM3532_PWM_A_MASK, LM3532_PWM_ZONE_0 },
+> +	{ LM3532_REG_PWM_B_CFG, LM3532_PWM_B_MASK, LM3532_PWM_ZONE_1 },
+> +	{ LM3532_REG_PWM_C_CFG, LM3532_PWM_C_MASK, LM3532_PWM_ZONE_2 },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3532_ramp_data[] = {
+> +	{ LM3532_REG_RAMPUP, LM3532_RAMPUP_MASK, LM3532_RAMPUP_SHIFT },
+> +	{ LM3532_REG_RAMPDN, LM3532_RAMPDN_MASK, LM3532_RAMPDN_SHIFT },
+> +};
+> +
+> +static u8 lm3532_enable_reg = LM3532_REG_ENABLE;
+> +
+> +static u8 lm3532_brightness_regs[] = {
+> +	LM3532_REG_BRT_A,
+> +	LM3532_REG_BRT_B,
+> +	LM3532_REG_BRT_C,
+> +};
+> +
+> +static const struct ti_lmu_bl_reg lm3532_reg_info = {
+> +	.init		= lm3532_init_data,
+> +	.num_init	= ARRAY_SIZE(lm3532_init_data),
+> +	.channel	= lm3532_channel_data,
+> +	.mode		= lm3532_mode_data,
+> +	.ramp		= lm3532_ramp_data,
+> +	.enable		= &lm3532_enable_reg,
+> +	.brightness_msb	= lm3532_brightness_regs,
+> +};
+> +
+> +/* LM3631 */
+> +static const struct lmu_bl_reg_data lm3631_init_data[] = {
+> +	{ LM3631_REG_BRT_MODE, LM3631_MODE_MASK, LM3631_DEFAULT_MODE },
+> +	{ LM3631_REG_BL_CFG, LM3631_MAP_MASK, LM3631_EXPONENTIAL_MAP },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3631_channel_data[] = {
+> +	{ LM3631_REG_BL_CFG, LM3631_BL_CHANNEL_MASK, LM3631_BL_SINGLE_CHANNEL },
+> +	{ LM3631_REG_BL_CFG, LM3631_BL_CHANNEL_MASK, LM3631_BL_DUAL_CHANNEL },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3631_ramp_data[] = {
+> +	{ LM3631_REG_SLOPE, LM3631_SLOPE_MASK, LM3631_SLOPE_SHIFT },
+> +};
+> +
+> +static u8 lm3631_enable_reg = LM3631_REG_DEVCTRL;
+> +static u8 lm3631_brightness_msb_reg = LM3631_REG_BRT_MSB;
+> +static u8 lm3631_brightness_lsb_reg = LM3631_REG_BRT_LSB;
+> +
+> +static const struct ti_lmu_bl_reg lm3631_reg_info = {
+> +	.init		= lm3631_init_data,
+> +	.num_init	= ARRAY_SIZE(lm3631_init_data),
+> +	.channel	= lm3631_channel_data,
+> +	.ramp		= lm3631_ramp_data,
+> +	.enable		= &lm3631_enable_reg,
+> +	.brightness_msb	= &lm3631_brightness_msb_reg,
+> +	.brightness_lsb	= &lm3631_brightness_lsb_reg,
+> +};
+> +
+> +/* LM3632 */
+> +static const struct lmu_bl_reg_data lm3632_init_data[] = {
+> +	{ LM3632_REG_CONFIG1, LM3632_OVP_MASK, LM3632_OVP_25V },
+> +	{ LM3632_REG_CONFIG2, LM3632_SWFREQ_MASK, LM3632_SWFREQ_1MHZ },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3632_channel_data[] = {
+> +	{ LM3632_REG_ENABLE, LM3632_BL_CHANNEL_MASK, LM3632_BL_SINGLE_CHANNEL },
+> +	{ LM3632_REG_ENABLE, LM3632_BL_CHANNEL_MASK, LM3632_BL_DUAL_CHANNEL },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3632_mode_data[] = {
+> +	{ LM3632_REG_IO_CTRL, LM3632_PWM_MASK, LM3632_PWM_MODE },
+> +};
+> +
+> +static u8 lm3632_enable_reg = LM3632_REG_ENABLE;
+> +static u8 lm3632_brightness_msb_reg = LM3632_REG_BRT_MSB;
+> +static u8 lm3632_brightness_lsb_reg = LM3632_REG_BRT_LSB;
+> +
+> +static const struct ti_lmu_bl_reg lm3632_reg_info = {
+> +	.init		= lm3632_init_data,
+> +	.num_init	= ARRAY_SIZE(lm3632_init_data),
+> +	.channel	= lm3632_channel_data,
+> +	.mode		= lm3632_mode_data,
+> +	.enable		= &lm3632_enable_reg,
+> +	.brightness_msb	= &lm3632_brightness_msb_reg,
+> +	.brightness_lsb	= &lm3632_brightness_lsb_reg,
+> +};
+> +
+> +/* LM3633 */
+> +static const struct lmu_bl_reg_data lm3633_init_data[] = {
+> +	{ LM3633_REG_BOOST_CFG, LM3633_OVP_MASK, LM3633_OVP_40V },
+> +	{ LM3633_REG_BL_RAMP_CONF, LM3633_BL_RAMP_MASK, LM3633_BL_RAMP_EACH },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3633_channel_data[] = {
+> +	{ LM3633_REG_HVLED_OUTPUT_CFG, LM3633_HVLED1_CFG_MASK,
+> +	  LM3633_HVLED1_CFG_SHIFT },
+> +	{ LM3633_REG_HVLED_OUTPUT_CFG, LM3633_HVLED2_CFG_MASK,
+> +	  LM3633_HVLED2_CFG_SHIFT },
+> +	{ LM3633_REG_HVLED_OUTPUT_CFG, LM3633_HVLED3_CFG_MASK,
+> +	  LM3633_HVLED3_CFG_SHIFT },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3633_mode_data[] = {
+> +	{ LM3633_REG_PWM_CFG, LM3633_PWM_A_MASK, LM3633_PWM_A_MASK },
+> +	{ LM3633_REG_PWM_CFG, LM3633_PWM_B_MASK, LM3633_PWM_B_MASK },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3633_ramp_data[] = {
+> +	{ LM3633_REG_BL0_RAMP, LM3633_BL_RAMPUP_MASK, LM3633_BL_RAMPUP_SHIFT },
+> +	{ LM3633_REG_BL0_RAMP, LM3633_BL_RAMPDN_MASK, LM3633_BL_RAMPDN_SHIFT },
+> +};
+> +
+> +static u8 lm3633_enable_reg = LM3633_REG_ENABLE;
+> +
+> +static u8 lm3633_brightness_msb_regs[] = {
+> +	LM3633_REG_BRT_HVLED_A_MSB,
+> +	LM3633_REG_BRT_HVLED_B_MSB,
+> +};
+> +
+> +static u8 lm3633_brightness_lsb_regs[] = {
+> +	LM3633_REG_BRT_HVLED_A_LSB,
+> +	LM3633_REG_BRT_HVLED_B_LSB,
+> +};
+> +
+> +static const struct ti_lmu_bl_reg lm3633_reg_info = {
+> +	.init		 = lm3633_init_data,
+> +	.num_init	 = ARRAY_SIZE(lm3633_init_data),
+> +	.channel	 = lm3633_channel_data,
+> +	.mode		 = lm3633_mode_data,
+> +	.ramp		 = lm3633_ramp_data,
+> +	.ramp_reg_offset = 1, /* For LM3633_REG_BL1_RAMPUP/DN */
+> +	.enable		 = &lm3633_enable_reg,
+> +	.brightness_msb	 = lm3633_brightness_msb_regs,
+> +	.brightness_lsb	 = lm3633_brightness_lsb_regs,
+> +};
+> +
+> +/* LM3695 */
+> +static const struct lmu_bl_reg_data lm3695_init_data[] = {
+> +	{ LM3695_REG_GP, LM3695_BRT_RW_MASK, LM3695_BRT_RW_MASK },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3695_channel_data[] = {
+> +	{ LM3695_REG_GP, LM3695_BL_CHANNEL_MASK, LM3695_BL_SINGLE_CHANNEL },
+> +	{ LM3695_REG_GP, LM3695_BL_CHANNEL_MASK, LM3695_BL_DUAL_CHANNEL },
+> +};
+> +
+> +static u8 lm3695_enable_reg = LM3695_REG_GP;
+> +static u8 lm3695_brightness_msb_reg = LM3695_REG_BRT_MSB;
+> +static u8 lm3695_brightness_lsb_reg = LM3695_REG_BRT_LSB;
+> +
+> +static const struct ti_lmu_bl_reg lm3695_reg_info = {
+> +	.init		= lm3695_init_data,
+> +	.num_init	= ARRAY_SIZE(lm3695_init_data),
+> +	.channel	= lm3695_channel_data,
+> +	.enable		= &lm3695_enable_reg,
+> +	.enable_usec	= 600,
+> +	.brightness_msb	= &lm3695_brightness_msb_reg,
+> +	.brightness_lsb	= &lm3695_brightness_lsb_reg,
+> +};
+> +
+> +/* LM3697 */
+> +static const struct lmu_bl_reg_data lm3697_init_data[] = {
+> +	{ LM3697_REG_RAMP_CONF, LM3697_RAMP_MASK, LM3697_RAMP_EACH },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3697_channel_data[] = {
+> +	{ LM3697_REG_HVLED_OUTPUT_CFG, LM3697_HVLED1_CFG_MASK,
+> +	  LM3697_HVLED1_CFG_SHIFT },
+> +	{ LM3697_REG_HVLED_OUTPUT_CFG, LM3697_HVLED2_CFG_MASK,
+> +	  LM3697_HVLED2_CFG_SHIFT },
+> +	{ LM3697_REG_HVLED_OUTPUT_CFG, LM3697_HVLED3_CFG_MASK,
+> +	  LM3697_HVLED3_CFG_SHIFT },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3697_mode_data[] = {
+> +	{ LM3697_REG_PWM_CFG, LM3697_PWM_A_MASK, LM3697_PWM_A_MASK },
+> +	{ LM3697_REG_PWM_CFG, LM3697_PWM_B_MASK, LM3697_PWM_B_MASK },
+> +};
+> +
+> +static const struct lmu_bl_reg_data lm3697_ramp_data[] = {
+> +	{ LM3697_REG_BL0_RAMP, LM3697_RAMPUP_MASK, LM3697_RAMPUP_SHIFT },
+> +	{ LM3697_REG_BL0_RAMP, LM3697_RAMPDN_MASK, LM3697_RAMPDN_SHIFT },
+> +};
+> +
+> +static u8 lm3697_enable_reg = LM3697_REG_ENABLE;
+> +
+> +static u8 lm3697_brightness_msb_regs[] = {
+> +	LM3697_REG_BRT_A_MSB,
+> +	LM3697_REG_BRT_B_MSB,
+> +};
+> +
+> +static u8 lm3697_brightness_lsb_regs[] = {
+> +	LM3697_REG_BRT_A_LSB,
+> +	LM3697_REG_BRT_B_LSB,
+> +};
+> +
+> +static const struct ti_lmu_bl_reg lm3697_reg_info = {
+> +	.init		 = lm3697_init_data,
+> +	.num_init	 = ARRAY_SIZE(lm3697_init_data),
+> +	.channel	 = lm3697_channel_data,
+> +	.mode		 = lm3697_mode_data,
+> +	.ramp		 = lm3697_ramp_data,
+> +	.ramp_reg_offset = 1, /* For LM3697_REG_BL1_RAMPUP/DN */
+> +	.enable		 = &lm3697_enable_reg,
+> +	.brightness_msb	 = lm3697_brightness_msb_regs,
+> +	.brightness_lsb	 = lm3697_brightness_lsb_regs,
+> +};
+> +
+> +static int lm3532_ramp_table[] = { 0, 1, 2, 4, 8, 16, 32, 65 };
+> +
+> +static int lm3631_ramp_table[] = {
+> +	   0,   1,   2,    5,   10,   20,   50,  100,
+> +	 250, 500, 750, 1000, 1500, 2000, 3000, 4000,
+> +};
+> +
+> +static int common_ramp_table[] = {
+> +	   2, 250, 500, 1000, 2000, 4000, 8000, 16000,
+> +};
+> +
+> +#define LM3532_MAX_CHANNELS		3
+> +#define LM3631_MAX_CHANNELS		2
+> +#define LM3632_MAX_CHANNELS		2
+> +#define LM3633_MAX_CHANNELS		3
+> +#define LM3695_MAX_CHANNELS		2
+> +#define LM3697_MAX_CHANNELS		3
+> +
+> +const struct ti_lmu_bl_cfg lmu_bl_cfg[LMU_MAX_ID] = {
+> +	{
+> +		.reginfo		= &lm3532_reg_info,
+> +		.num_channels		= LM3532_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_8BIT,
+> +		.pwm_action		= UPDATE_PWM_AND_BRT_REGISTER,
+> +		.ramp_table		= lm3532_ramp_table,
+> +		.size_ramp		= ARRAY_SIZE(lm3532_ramp_table),
+> +	},
+> +	{
+> +		.reginfo		= &lm3631_reg_info,
+> +		.num_channels		= LM3631_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_11BIT,
+> +		.pwm_action		= UPDATE_PWM_ONLY,
+> +		.ramp_table		= lm3631_ramp_table,
+> +		.size_ramp		= ARRAY_SIZE(lm3631_ramp_table),
+> +	},
+> +	{
+> +		.reginfo		= &lm3632_reg_info,
+> +		.num_channels		= LM3632_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_11BIT,
+> +		.pwm_action		= UPDATE_PWM_ONLY,
+> +	},
+> +	{
+> +		.reginfo		= &lm3633_reg_info,
+> +		.num_channels		= LM3633_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_11BIT,
+> +		.pwm_action		= UPDATE_MAX_BRT,
+> +		.ramp_table		= common_ramp_table,
+> +		.size_ramp		= ARRAY_SIZE(common_ramp_table),
+> +		.fault_monitor_used	= true,
+> +	},
+> +	{
+> +		.reginfo		= &lm3695_reg_info,
+> +		.num_channels		= LM3695_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_11BIT,
+> +		.pwm_action		= UPDATE_PWM_AND_BRT_REGISTER,
+> +	},
+> +	{
+> +		.reginfo		= &lm3697_reg_info,
+> +		.num_channels		= LM3697_MAX_CHANNELS,
+> +		.max_brightness		= MAX_BRIGHTNESS_11BIT,
+> +		.pwm_action		= UPDATE_PWM_AND_BRT_REGISTER,
+> +		.ramp_table		= common_ramp_table,
+> +		.size_ramp		= ARRAY_SIZE(common_ramp_table),
+> +		.fault_monitor_used	= true,
+> +	},
+> +};
+> diff --git a/drivers/leds/ti-lmu-backlight-data.h b/drivers/leds/ti-lmu-backlight-data.h
+> new file mode 100644
+> index 0000000..c64e8e6
+> --- /dev/null
+> +++ b/drivers/leds/ti-lmu-backlight-data.h
+> @@ -0,0 +1,95 @@
+> +/*
+> + * TI LMU (Lighting Management Unit) Backlight Device Data Definitions
+> + *
+> + * Copyright 2015 Texas Instruments
+> + *
+> + * Author: Milo Kim <milo.kim@ti.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __TI_LMU_BACKLIGHT_H__
+> +#define __TI_LMU_BACKLIGHT_H__
+> +
+> +#include <linux/mfd/ti-lmu.h>
+> +#include <linux/mfd/ti-lmu-register.h>
+> +
+> +#define MAX_BRIGHTNESS_8BIT		255
+> +#define MAX_BRIGHTNESS_11BIT		2047
+> +
+> +enum ti_lmu_bl_pwm_action {
+> +	/* Update PWM duty, no brightness register update is required */
+> +	UPDATE_PWM_ONLY,
+> +	/* Update not only duty but also brightness register */
+> +	UPDATE_PWM_AND_BRT_REGISTER,
+> +	/* Update max value in brightness registers */
+> +	UPDATE_MAX_BRT,
+> +};
+> +
+> +struct lmu_bl_reg_data {
+> +	u8 reg;
+> +	u8 mask;
+> +	u8 val;
+> +};
+> +
+> +/**
+> + * struct ti_lmu_bl_reg
+> + *
+> + * @init:		Device initialization registers
+> + * @num_init:		Numbers of initialization registers
+> + * @channel:		Backlight channel configuration registers
+> + * @mode:		Brightness control mode registers
+> + * @ramp:		Ramp registers for lighting effect
+> + * @ramp_reg_offset:	Ramp register offset.
+> + *			Only used for multiple ramp registers.
+> + * @enable:		Enable control register address
+> + * @enable_usec:	Delay time for updating enable register.
+> + *			Unit is microsecond.
+> + * @brightness_msb:	Brightness MSB(Upper 8 bits) registers.
+> + *			Concatenated with LSB in 11 bit dimming mode.
+> + *			In 8 bit dimming, only MSB is used.
+> + * @brightness_lsb:	Brightness LSB(Lower 3 bits) registers.
+> + *			Only valid in 11 bit dimming mode.
+> + */
+> +struct ti_lmu_bl_reg {
+> +	const struct lmu_bl_reg_data *init;
+> +	int num_init;
+> +	const struct lmu_bl_reg_data *channel;
+> +	const struct lmu_bl_reg_data *mode;
+> +	const struct lmu_bl_reg_data *ramp;
+> +	int ramp_reg_offset;
+> +	u8 *enable;
+> +	unsigned long enable_usec;
+> +	u8 *brightness_msb;
+> +	u8 *brightness_lsb;
+> +};
+> +
+> +/**
+> + * struct ti_lmu_bl_cfg
+> + *
+> + * @reginfo:		Device register configuration
+> + * @num_channels:	Number of backlight channels
+> + * @max_brightness:	Max brightness value of backlight device
+> + * @pwm_action:		How to control brightness registers in PWM mode
+> + * @ramp_table:		[Optional] Ramp time table for lighting effect.
+> + *			It's used for searching approximate register index.
+> + * @size_ramp:		[Optional] Size of ramp table
+> + * @fault_monitor_used:	[Optional] Set true if the device needs to handle
+> + *			LMU fault monitor event.
+> + *
+> + * This structure is used for device specific data configuration.
+> + */
+> +struct ti_lmu_bl_cfg {
+> +	const struct ti_lmu_bl_reg *reginfo;
+> +	int num_channels;
+> +	int max_brightness;
+> +	enum ti_lmu_bl_pwm_action pwm_action;
+> +	int *ramp_table;
+> +	int size_ramp;
+> +	bool fault_monitor_used;
+> +};
+> +
+> +extern const struct ti_lmu_bl_cfg lmu_bl_cfg[LMU_MAX_ID];
+> +#endif
+>  
+> 
+
+
+-- 
+------------------
+Dan Murphy
