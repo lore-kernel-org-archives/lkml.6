@@ -2,78 +2,83 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE39C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5F0C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59EEC20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:46:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59EEC20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 18AF820837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:47:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOuMNKCD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AF820837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeH3WuN (ORCPT
+        id S1727482AbeH3Wus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:50:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54928 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726959AbeH3WuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:50:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4CC93ACC2;
-        Thu, 30 Aug 2018 18:46:40 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 20:46:39 +0200
-From:   Joerg Roedel <jroedel@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
-Message-ID: <20180830184639.6iv5itjex6y45w3j@suse.de>
-References: <20180829201659.GA29801@roeck-us.net>
- <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
- <f6d9bdcd-98a6-fcf2-5308-936ffd714ea7@roeck-us.net>
- <20180830113059.qj6yvw4ggktc7yex@suse.de>
- <915dca84-c98a-fc63-3210-b21dd926b3d4@roeck-us.net>
- <20180830180849.nmh646ehnolphq4v@suse.de>
- <CA+55aFzQwC59pkeA+T3E0G4SZe4dQsYcmnf1eKGYnYpcPTKhSQ@mail.gmail.com>
+        Thu, 30 Aug 2018 18:50:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbeH3Wus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:50:48 -0400
+Received: from jouet.infradead.org (unknown [189.43.51.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73BE820661;
+        Thu, 30 Aug 2018 18:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535654836;
+        bh=Dc6Q0KswM/5KLm2tQIMFit/g4Zonhpjn+mrEC5om6qk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VOuMNKCDyL6AX9SWcu6MRqV1URNGuTBCuVIuHB25/AUc72lfBsumsjxza2SeqvBGz
+         XAlFfnVHr9FXpBPz4Tk3VIJSrk6ZZQCScBsvb0W2Z2SUuOYymgKc3BJzPNVmfwfFqw
+         XpYDAnhTP8MOcwr29nr/43WzC1wQ0ZiRiOEH/ODA=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id AC42D141C3F; Thu, 30 Aug 2018 15:47:06 -0300 (-03)
+Date:   Thu, 30 Aug 2018 15:47:06 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Kim Phillips <kim.phillips@arm.com>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Taeung Song <treeze.taeung@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        perf group <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH v2] perf annotate: fix parsing aarch64 branch
+ instructions after objdump update
+Message-ID: <20180830184706.GH6097@kernel.org>
+References: <20180823191047.9260992844205984b75e6721@arm.com>
+ <20180827125049.GD22309@kernel.org>
+ <20180827125340.a2f7e291901d17cea05daba4@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFzQwC59pkeA+T3E0G4SZe4dQsYcmnf1eKGYnYpcPTKhSQ@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180827125340.a2f7e291901d17cea05daba4@arm.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 11:21:49AM -0700, Linus Torvalds wrote:
-> On Thu, Aug 30, 2018 at 11:08 AM Joerg Roedel <jroedel@suse.de> wrote:
-> >
-> > Without a mapped GDT the #PF and #DF handlers also can't be started, so
-> > the machine triple-faults. Below diff fixes it for me, I'll send a
-> > proper patch tomorrow.
-> 
-> Hmm. Is there any reason why this code doesn't just use
-> 
->         load_fixmap_gdt(0);
+Em Mon, Aug 27, 2018 at 12:53:40PM -0500, Kim Phillips escreveu:
+> v2: address acme's comments:
+>     - consolidate into a validate_comma()
+>     - call from an additional couple of places necessary
+>     - don't listen to checkpatch wrt reflowing jump__parse definition
+>       line to less than 80 characters, just rm the __maybe_unused
+>     - re-tested no diff on x86_64 and power arch, arm64 conditional
+>       branches fixed.
 
-No idea, probably the function didn't exist when the code was written?
-I can change that when writing the patch.
+Thanks for taking into account my comments, applied.
 
-> and shouldn't it do it after loading the new %cr3?
-
-That seems more robust, yes. No sure if the old %cr3
-(initial_page_table) has the fixmap gdt mapped at all.
-
-
-	Joerg
+- Arnaldo
