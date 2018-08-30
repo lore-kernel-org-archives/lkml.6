@@ -2,122 +2,105 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06487C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6417205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:14:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6417205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 72E23205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:14:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OPDXgz5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E23205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbeH3QQF (ORCPT
+        id S1728699AbeH3QQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:16:05 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46041 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbeH3QQE (ORCPT
+        Thu, 30 Aug 2018 12:16:20 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:49282 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbeH3QQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:16:04 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r4-v6so6986198lff.12;
-        Thu, 30 Aug 2018 05:14:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=J0L5E5OYhi8ZdpG6+EZRwPDvaxC3WCb+Xvu7A7vbDXU=;
-        b=dqLv9D9KK1ptfghKN8Y8wVT/D3lPIYpb6JKtWdN/ENPO9QE3BCoAJ6p89sdihpsiqX
-         JHe3K6HDZgnJbp9i4dJ/45aL4BSDxQGfdoCAvIx9FfOrKLlFpddjlTrAk5FK9zaNmoD8
-         FEbCtb8RK5pk3mUsuCmJw1U4va963FnuueRif4AsWNcYwKGXVo1HAEpnIJB5zJHUcEUY
-         kxVQCeF2vv7UoeaGDwBI3kgX2UkCCEW3SY4XFjApK4y8Oj7fAUCyjz1adxDzIyTOOkLE
-         QEjVmyRCPAAYQPczrvzmMgR49BYsmojLOVEsSS+ucah/hlK2Y7tibDbPYH8+gutZfisS
-         BWHw==
-X-Gm-Message-State: APzg51DqTq8OAp8VLZ+D6+7T76vEQRzO48xVhwry+2CiMm+lALzc8RZS
-        8twxC2rBigWxieosxgAEsLg=
-X-Google-Smtp-Source: ANB0VdbO5yJovZcYFa2fc0ptSegyfnuteKffptcPj0YucQQnftCU7S4ltEJOapVKwgB7PvYUb+T3tA==
-X-Received: by 2002:a19:11d1:: with SMTP id 78-v6mr7079336lfr.25.1535631251581;
-        Thu, 30 Aug 2018 05:14:11 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm1211253ljh.21.2018.08.30.05.14.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Aug 2018 05:14:11 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 15:13:57 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
-        linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
-        sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
-        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 0/2] clk: Support ROHM BD71837 (BD71847)
-Message-ID: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 30 Aug 2018 12:16:20 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id E7B2B24E0D52;
+        Thu, 30 Aug 2018 05:14:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535631269; bh=pXIIsxuQmSWBCzRdj90PQNroC3iXUdTnDmgVyLaVHw4=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=OPDXgz5DsDI6BMi8/Z3GpM9oPBxcOxTDCVb0Vl7bMt/4tG7uZJkLmG+FrkkCFPz1j
+         9fzSU+GDSAOy28CySq3pdWDwApAGcT2YISNaD91jtIdHNr7oQHv8etMBAPDA2QPuw0
+         /kUUjgwsznVZTUhdQO1eBUdRkj7KXkPg3fUyAZ9GNWMjVRR8kadU/I+fr/gHf4MqBT
+         9u2K4zpw1U3ZZem1fHev/mqHv9Bb82zfwBVK7hWBPFWqx2Wdz4JgHEAfBpupSEy9LG
+         JozbdJ2EmocKOk/AuXozMntLyAnu9vKPWOvWpeUxP+Xq8bZ0j8489mhccm5oN+f7FO
+         sZUgqk4O2URtQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C3F883D13;
+        Thu, 30 Aug 2018 05:14:28 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 30 Aug 2018 05:14:28 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 30 Aug 2018 14:14:26 +0200
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] GPIO: add single-register gpio via creg driver
+Thread-Topic: [PATCH v2 1/2] GPIO: add single-register gpio via creg driver
+Thread-Index: AQHUPsIfY3Cd69zzhkqSf9aKtntySaTVVz2AgAK/fIA=
+Date:   Thu, 30 Aug 2018 12:14:25 +0000
+Message-ID: <1535631219.4465.47.camel@synopsys.com>
+References: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com>
+         <20180828112721.28178-2-Eugeniy.Paltsev@synopsys.com>
+         <024be088-15ff-89ed-3766-09eb64e47342@infradead.org>
+In-Reply-To: <024be088-15ff-89ed-3766-09eb64e47342@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.36]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DDDFDA5BDD648947967BBC318628814F@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds support for clk gate included in ROHM BD71837
-(and BD71847) Power Management ICs. Additionally patch series adds support
-for new managed interfaces for clkdev lookup and parent_of_provider
-registrations.
-
-Please note that the patch has not been tested on BD71847 - I will
-verify the BD71847 part and do appropriate documentation/naming changes
-after verification. Hence only BD71837 support is announced here even
-though the BD71847 should be identical what comes to clk registers.
-
-BD71837 driver in the patch series depends on defines submitted as part of
-this patch set:
-https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com/
-
-The managed interfaces are continuation of discussion started here:
-https://lore.kernel.org/lkml/20180730125550.GD8862@localhost.localdomain/
-Difference to previous patch:
- - dropped devm_clk_register_clkdev
- - added new interfaces to Documentation/driver-model/devres.txt
- - did not rename __clk_register_clkdev
- - simplified IS_ERR - checks/code dublication by dropping checks from
-   devm_clk_hw_register_clkdev.
-   As negative point is this causes devres_alloc to be done before checking
-   for IS_ERR(hw) inside do_clk_register_clkdev.
-
-and BD71837 driver is continuation for patch discussion started here:
-https://lore.kernel.org/lkml/d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com/
-Difference to previous patch:
- - Simply fail out if no parent clock is found from DT. This simplifies
-   driver a lot and encourages proper clk tree modelling in DT.
-
-patch series is based on linux-next tag next-20180823
-
-Patch 1:
-	Add new managed interfaces
-Patch 2:
-	Support BD71837
-
-Matti Vaittinen (2):
-  clk: clkdev/of_clk - add managed lookup and provider registrations
-  clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
-
- Documentation/driver-model/devres.txt |   3 +
- drivers/clk/Kconfig                   |   6 ++
- drivers/clk/Makefile                  |   1 +
- drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
- drivers/clk/clk.c                     |  28 ++++++--
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
- include/linux/clk-provider.h          |   4 ++
- include/linux/clkdev.h                |   4 ++
- 8 files changed, 267 insertions(+), 32 deletions(-)
- create mode 100644 drivers/clk/clk-bd718x7.c
-
--- 
-2.14.3
-
+T24gVHVlLCAyMDE4LTA4LTI4IGF0IDExOjE1IC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6DQo+
+IEhpLA0KPiANCj4gSSBkb24ndCBzZWUgYW55IHVwZGF0ZXMvY29ycmVjdGlvbnMgaGVyZS4gIDoo
+DQoNCk15IGZhdWx0IC0gSSd2ZSBmb3Jnb3R0ZW4gdG8gcmUtZ2VuZXJhdGUgbmV3IHBhdGNoIHZp
+YSBnaXQgZm9ybWF0LXBhdGNoDQphbmQgc2VuZCB5b3UgcHJldmlvdXMgdmVyc2lvbi4NCg0KPiAN
+Cj4gT24gMDgvMjgvMjAxOCAwNDoyNyBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3RlOg0KPiANCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL0tjb25maWcgYi9kcml2ZXJzL2dwaW8vS2NvbmZp
+Zw0KPiA+IGluZGV4IDcxYzBhYjQ2ZjIxNi4uMGY5Y2MxNTgyY2FiIDEwMDY0NA0KPiA+IC0tLSBh
+L2RyaXZlcnMvZ3Bpby9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9ncGlvL0tjb25maWcNCj4g
+PiBAQCAtNDMwLDYgKzQzMCwxNSBAQCBjb25maWcgR1BJT19SRUcNCj4gPiAgCSAgQSAzMi1iaXQg
+c2luZ2xlIHJlZ2lzdGVyIEdQSU8gZml4ZWQgaW4vb3V0IGltcGxlbWVudGF0aW9uLiAgVGhpcw0K
+PiA+ICAJICBjYW4gYmUgdXNlZCB0byByZXByZXNlbnQgYW55IHJlZ2lzdGVyIGFzIGEgc2V0IG9m
+IEdQSU8gc2lnbmFscy4NCj4gPiAgDQo+ID4gK2NvbmZpZyBHUElPX1NOUFNfQ1JFRw0KPiA+ICsJ
+Ym9vbCAiR1BJTyB2aWEgQ1JFRyAoQ29udHJvbCBSRUdpc2VycykgZHJpdmVyIg0KPiA+ICsJc2Vs
+ZWN0IE9GX0dQSU8NCj4gPiArCWhlbHANCj4gPiArCSAgVGhpcyBkcml2ZXIgc3VwcG9ydHMgR1BJ
+T3MgdmlhIENSRUcgb24gdmFyaW91cyBTeW5vcHN5cyBTb0NzLg0KPiA+ICsJICBUaGlzIGlzIGlz
+IHNpbmdsZS1yZWdpc3RlciBNTUlPIGdwaW8gZHJpdmVyIGZvciBjb21wbGV4IGNhc2VzDQo+ID4g
+KwkgIHdoZXJlIG9ubHkgc2V2ZXJhbCBmaWVsZHMgaW4gcmVnaXN0ZXIgYmVsb25nIHRvIEdQSU8g
+YW5kDQo+ID4gKwkgIGVhY2ggR1BJTyBvd25zIGZpZWxkIHdpdGggZGlmZmVyZW50IGxlbmd0aCBh
+bmQgb24vb2ZmIHZhbHVlcy4NCj4gPiArDQo+ID4gIGNvbmZpZyBHUElPX1NQRUFSX1NQSUNTDQo+
+ID4gIAlib29sICJTVCBTUEVBcjEzeHggU1BJIENoaXAgU2VsZWN0IGFzIEdQSU8gc3VwcG9ydCIN
+Cj4gPiAgCWRlcGVuZHMgb24gUExBVF9TUEVBUg0KPiANCj4gDQotLSANCiBFdWdlbml5IFBhbHRz
+ZXY=
