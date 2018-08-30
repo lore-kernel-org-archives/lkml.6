@@ -7,65 +7,68 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37186C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF54DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44C220834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A626F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oofBVPX9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44C220834
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OR7BZzaf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A626F20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHaCj5 (ORCPT
+        id S1727552AbeHaCj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 22:39:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45231 "EHLO
+        Thu, 30 Aug 2018 22:39:59 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34527 "EHLO
         mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeHaCj4 (ORCPT
+        with ESMTP id S1727212AbeHaCj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 22:39:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u83-v6so8525703lje.12
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:31 -0700 (PDT)
+        Thu, 30 Aug 2018 22:39:58 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f8-v6so8571783ljk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cb0i0yY79UsjTmqBkl+c30qpYH2cRVxQD+Siu+u/UGU=;
-        b=oofBVPX94tXFXnYMvyYFf7jRBWL4Oh9SXAh5ohGLQulhz0Iwp6Wom8s4b/O849WEJ+
-         o/Z6On7RhZ94WDUfn/kPwNFpLId+LRi6T5oLveYabwKWzYsWvcFZbG2k3Vrq9JkT4kGV
-         WnH5tB2m1pTzFTjl8G5igIjJUi4hKb+5sS7ihrNQJEOwvdh1oFY9Nc7H6g3aeaFm1/cK
-         yAwK5zFwle/g8XKhA7aHeOmbbRDB90w+bgICDkB3/xAD48R29OsxKy7nBoULgUmcggxy
-         JPr4yX7Jbv7ECJF87DfbiSQVxcLpdQxDhNSYL1P62IL4uxBYUk5I4n3ltCF+Gt074wDt
-         tnsA==
+        bh=q0zmoBAJ0A3Gx+YDb/TCVvHPQO/4qNnwcFIHAZAkEU8=;
+        b=OR7BZzafNnLLto3lJdy5xe5PU6VTD9B7TO9EpDT9MbX2KuobLTEXSyVChvIl6/AdZx
+         f9JQcXOpaOjf+oWD9blFisRzzTpFhaYnMe3V1ooRFNpfWhc01m/DTmJ02tZnEjNAfv1M
+         ua6120YRi4CxUF1an8OXoYaXHFOUEEbzBDlwZngljRzq7u7NJCG8VU9+WTGyBI9kfV10
+         JwWex8O38lCBkqlzw5nJlhKqvdHKTzxKg8Y7s1oZU4MYEUhOdbwgA+IGEzkFdPjRlIlh
+         GEV8QUkScJSBTsL7ZY28+vYkFpW861hfMETQGovW3rmACm4IxuETjw5+md4qrJ0jq9dI
+         eR4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cb0i0yY79UsjTmqBkl+c30qpYH2cRVxQD+Siu+u/UGU=;
-        b=NT2h0111rUPZI8YKRvxvYc7Q6X7rTEsxwsPsKirVNzyKixH4LJo1+aSV4o8u3XgfDz
-         c/r6GHyzYFRISgiJ4tzSvHrngzyvQNWhXeY4WwIRFAWqepTaBEsmzTPnGrGatz7zlAzo
-         DXKt7ZwJwI6zzPyqtVc3soIiq5huRhbIokqyg44kmzDtWmNcRkCrlVD52V3uaTTMiucc
-         joWRATAK8M1do+xw4wEl9rLJc8sYEYiUKwXdolKSPvwX5CEsQ6xS9NGKIxUdlt/qT2IV
-         YHV6X/1W6vJfrG15NxwnID3m33MnfbRYAaqURYLOloe7sO/GwmtXSb2vmlSlrizU6Uii
-         62Mg==
-X-Gm-Message-State: APzg51A/ANJbUcVmo0cf30Dch/3hdEzSVr1MTLhlzKrd03WaaTcNDhIo
-        ZjvTutoBIc9Hhonlm5WQi3KkQoILdyE=
-X-Google-Smtp-Source: ANB0VdZgJQALPXDVQezNnNbu4DxXaTdWDLZt+l/NUfv6KrdQft/34z6gvM0UlDcQ15vx4qm3H86ffA==
-X-Received: by 2002:a2e:5f4f:: with SMTP id t76-v6mr9056846ljb.140.1535668531001;
-        Thu, 30 Aug 2018 15:35:31 -0700 (PDT)
+        bh=q0zmoBAJ0A3Gx+YDb/TCVvHPQO/4qNnwcFIHAZAkEU8=;
+        b=RdUj7kt7rnnnEp1GMUCxIK8ZeDh7oioAPEN2o+qfbAOiRLqzvvP+E2FPGNAJYYD0kY
+         IUpg8qRH26jBHNn0ZpIez3VsqRG5RuIHS9Is36nKs5/qQEiWTyAK2nvlXe+8nGNBEuag
+         PRJKlOkbJSukikYbFot6E42m9J1dXA0eR0YXyyuH+Tm/0qJbv10m90wljlD5AQg212mX
+         MsbGBv5ai0vzwxp3KVZPLnOaK8rEkjtCORFiOr41EMQpINWgyS2xQO/wVPKLFLQJia87
+         UTHduznf5Ah6P+jxzz4c72D9XggGDYJL/cLaPYE0YGTW6kCA8kAlzavuhYdAZPCVecwH
+         Nqfg==
+X-Gm-Message-State: APzg51Dm3Ld8YkCzr1sooCb/1U3OqdqolY04uEDAc2WwmrOnr3HVOsKl
+        3CbKNOzGP+9690SbeWx6QS1v65Nkl6s=
+X-Google-Smtp-Source: ANB0VdbD9ZpVlkXyZxoku72FNM7ItliBBrThN6knbKLOnzkTTMArgMtgmzHhYxnf2Welkh3cKHucOg==
+X-Received: by 2002:a2e:2bd3:: with SMTP id r80-v6mr8924447ljr.57.1535668532707;
+        Thu, 30 Aug 2018 15:35:32 -0700 (PDT)
 Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.30
+        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 15:35:30 -0700 (PDT)
+        Thu, 30 Aug 2018 15:35:32 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 07/23] seccomp: remove unnecessary unlikely()
-Date:   Fri, 31 Aug 2018 01:34:13 +0300
-Message-Id: <20180830223429.30051-8-igor.stoppa@huawei.com>
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Stephane Viau <sviau@codeaurora.org>
+Subject: [PATCH 08/23] drm: remove unnecessary unlikely()
+Date:   Fri, 31 Aug 2018 01:34:14 +0300
+Message-Id: <20180830223429.30051-9-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830223429.30051-1-igor.stoppa@huawei.com>
 References: <20180830223429.30051-1-igor.stoppa@huawei.com>
@@ -78,33 +81,50 @@ WARN_ON() already contains an unlikely(), so it's not necessary to wrap it
 into another.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Kees Cook <keescook@chromium.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Archit Taneja <architt@codeaurora.org>
+Cc: Stephane Viau <sviau@codeaurora.org>
 ---
- kernel/seccomp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c | 4 ++--
+ drivers/gpu/drm/msm/disp/mdp_format.c    | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index fd023ac24e10..5a2a9af4663e 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -195,7 +195,7 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
- 			READ_ONCE(current->seccomp.filter);
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+index f93d5681267c..9e0b3730536d 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+@@ -261,7 +261,7 @@ int mdp5_ctl_set_cursor(struct mdp5_ctl *ctl, struct mdp5_pipeline *pipeline,
+ 	u32 blend_cfg;
+ 	struct mdp5_hw_mixer *mixer = pipeline->mixer;
  
- 	/* Ensure unexpected behavior doesn't result in failing open. */
--	if (unlikely(WARN_ON(f == NULL)))
-+	if (WARN_ON(f == NULL))
- 		return SECCOMP_RET_KILL_PROCESS;
- 
- 	if (!sd) {
-@@ -297,7 +297,7 @@ static inline pid_t seccomp_can_sync_threads(void)
- 		/* Return the first thread that cannot be synchronized. */
- 		failed = task_pid_vnr(thread);
- 		/* If the pid cannot be resolved, then return -ESRCH */
--		if (unlikely(WARN_ON(failed == 0)))
-+		if (WARN_ON(failed == 0))
- 			failed = -ESRCH;
- 		return failed;
+-	if (unlikely(WARN_ON(!mixer))) {
++	if (WARN_ON(!mixer)) {
+ 		dev_err(ctl_mgr->dev->dev, "CTL %d cannot find LM",
+ 			ctl->id);
+ 		return -EINVAL;
+@@ -703,7 +703,7 @@ struct mdp5_ctl_manager *mdp5_ctlm_init(struct drm_device *dev,
+ 		goto fail;
  	}
+ 
+-	if (unlikely(WARN_ON(ctl_cfg->count > MAX_CTL))) {
++	if (WARN_ON(ctl_cfg->count > MAX_CTL)) {
+ 		dev_err(dev->dev, "Increase static pool size to at least %d\n",
+ 				ctl_cfg->count);
+ 		ret = -ENOSPC;
+diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
+index 005760bee708..005f24dcfbdd 100644
+--- a/drivers/gpu/drm/msm/disp/mdp_format.c
++++ b/drivers/gpu/drm/msm/disp/mdp_format.c
+@@ -185,7 +185,7 @@ const struct msm_format *mdp_get_format(struct msm_kms *kms, uint32_t format,
+ 
+ struct csc_cfg *mdp_get_default_csc_cfg(enum csc_type type)
+ {
+-	if (unlikely(WARN_ON(type >= CSC_MAX)))
++	if (WARN_ON(type >= CSC_MAX))
+ 		return NULL;
+ 
+ 	return &csc_convert[type];
 -- 
 2.17.1
 
