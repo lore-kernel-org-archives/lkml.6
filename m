@@ -2,103 +2,98 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C24C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0417C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2257720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 785E320658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBypc8Tz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2257720834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t73M7XEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785E320658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeH3Th4 (ORCPT
+        id S1727295AbeH3Tjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:37:56 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34420 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeH3Thz (ORCPT
+        Thu, 30 Aug 2018 15:39:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36590 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeH3Tjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:37:55 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d19-v6so4061858pgv.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=59YJuTd/P3YlkbKgdzoXos1iq41zGzPiWfFh8Oq0dRU=;
-        b=JBypc8TzxvutiL03VLybhPV/L6bqSZZlD1YvMDqb9Afg2MQIDELO9XxZb4vSSDMeg4
-         JAEEC+QeUTOkBfGFTN8aMkDsCrnHLuCUEWuPfgD6UyET9C7Px4b+B3+txMD4n9zSL2G8
-         AVe7Qa+ja1xhH5s2q5grXnkhO5smtUxfFpbrcQ6vQDh+HrXfrZqcRHEyqQdaRCZTaTlz
-         619IqM0J9RinHJveabdfJwloCvV8ED5h62SkR1RlZ0MaRoe64HGn3JiP47vFDJr4C0J+
-         j3OS1/c/Kt8ucpwOE7fnqofZ7c9l+aIeq8wsdZT7iLrMosJGCMaSs+AeGJfnCUA3oVdo
-         t1hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=59YJuTd/P3YlkbKgdzoXos1iq41zGzPiWfFh8Oq0dRU=;
-        b=EXmeohz/wZJJ10jeVr7+M3y2edlzfd5OYcru9YFAOypoo15hoc3SxPmgBUijnAnhPO
-         fn5qd2BgKmgc6Wa+dpSAMQHmW3WiNG05M8yI6v8gR6qqC5HlLb5SwfYFXHdajZNfKD2v
-         I1rgZAjd2vmMfSUPxgjYQj/bjZYup/mP3q8xWTil092ycmX6+iUfTgwXJk1S4dFgeZbB
-         4DY8qQE82AUR5UZBox3n/NPog/31HvttyMPg26nzhsP8nyb4FgksUh3x/3vl4bMaHHj9
-         ZsXmnOnyyTfFixU/sba9gxbotkLgN48uNvrOvKOaOr6swxhr+0mQcDGdXFxfi12b4UDC
-         AK0g==
-X-Gm-Message-State: APzg51D/HpeizCoPIJ59Hy5bM8YooGRhNmBHb9sPesgTWxp4xmizWjVf
-        mTCT6gyILbbHPpUlP1TIuIs=
-X-Google-Smtp-Source: ANB0VdawHpdM4DWIxbxOzhTXeFXkCe9FfV/jOAILh1e238fm0ycK49thdBEIJZyRSZqhFfAnvMzESQ==
-X-Received: by 2002:a63:4826:: with SMTP id v38-v6mr10308880pga.379.1535643312759;
-        Thu, 30 Aug 2018 08:35:12 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.216.27])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm10715816pgc.86.2018.08.30.08.35.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 30 Aug 2018 08:35:11 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 21:08:13 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: [PATCH] device-dax: Convert variable to vm_fault_t type
-Message-ID: <20180830153813.GA26059@jordon-HP-15-Notebook-PC>
+        Thu, 30 Aug 2018 15:39:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qvLTcBynxe7YytLApWsWiTzPBK6DQmOsHsc5IehBWDw=; b=t73M7XEuoQJCxrPJbRUc3bOad
+        x8JOGZR/Un7nGNItBJClwjO6XcMiAm6MU5VNm+LdKIOHwaMpwXkbkB6Xj6heMyGvJOa38aUKLI3/L
+        wII3FIqIc8kPmKXZiHpBUE7MSnCOa3Y1ZOZpPL2/KrFcwKpuP6OoDe5kn4l9SwGhZmLCrjbVGSaii
+        2qE0G+ILdDGtnVDx/TnLwHc/9Mkr8KP7kphOWGF6DAsNr8vP/MoYLxED1/QMAYulPqBiWdXOhNcr7
+        AZIYkkI8o+KJ5XdzZpJBNJn1UKisYE4/MXUkxf3zsORbU5Qp8lJm8r/EVFDrpN5rFitXFUsddXuJ6
+        qTuWb0iww==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvP0B-0006MF-Vu; Thu, 30 Aug 2018 15:36:56 +0000
+Subject: Re: [PATCH 2/3] iio: adc: Add Xilinx AMS driver
+To:     Manish Narani <manish.narani@xilinx.com>, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
+        leoyang.li@nxp.com, sudeep.holla@arm.com, amit.kucheria@linaro.org,
+        broonie@kernel.org, arnaud.pouliquen@st.com, geert@linux-m68k.org,
+        eugen.hristev@microchip.com, lukas@wunner.de,
+        freeman.liu@spreadtrum.com, vilhelm.gray@gmail.com,
+        tglx@linutronix.de, baolin.wang@linaro.org,
+        gregkh@linuxfoundation.org
+Cc:     sgoud@xilinx.com, anirudh@xilinx.com, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1535624539-7839-1-git-send-email-manish.narani@xilinx.com>
+ <1535624539-7839-3-git-send-email-manish.narani@xilinx.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <378c10f8-9760-b36a-431d-4ce4339d7345@infradead.org>
+Date:   Thu, 30 Aug 2018 08:36:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1535624539-7839-3-git-send-email-manish.narani@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of commit 226ab561075f ("device-dax: Convert to
-vmf_insert_mixed and vm_fault_t") in 4.19-rc1,
-'rc' was not converted to vm_fault_t. Now converted.
+On 08/30/2018 03:22 AM, Manish Narani wrote:
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 4a75492..405ea00 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -941,4 +941,14 @@ config XILINX_XADC
+>  	  The driver can also be build as a module. If so, the module will be called
+>  	  xilinx-xadc.
+>  
+> +config XILINX_AMS
+> +	tristate "Xilinx AMS driver"
+> +	depends on ARCH_ZYNQMP || COMPILE_TEST
+> +	depends on HAS_IOMEM
+> +	help
+> +	  Say yes here to have support for the Xilinx AMS.
+> +
+> +	  The driver can also be build as a module. If so, the module will be called
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/dax/device.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+	                         built
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 6fd4608..bbe4d72 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -392,7 +392,8 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- {
- 	struct file *filp = vmf->vma->vm_file;
- 	unsigned long fault_size;
--	int rc, id;
-+	vm_fault_t rc = VM_FAULT_SIGBUS;
-+	int id;
- 	pfn_t pfn;
- 	struct dev_dax *dev_dax = filp->private_data;
- 
+> +	  xilinx-ams.
+> +
+>  endmenu
+
+
 -- 
-1.9.1
-
+~Randy
