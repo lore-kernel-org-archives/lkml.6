@@ -3,137 +3,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7579FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A47B3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CD320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:31:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5152C20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:32:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="LHULN1qX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14CD320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="trmv4GOX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5152C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=blackhole.kfki.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeH3McJ (ORCPT
+        id S1728058AbeH3Md1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:32:09 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:18079 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727688AbeH3McI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:32:08 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
-  by relmlie2.idc.renesas.com with ESMTP; 30 Aug 2018 17:31:05 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 9EDBD866F8;
-        Thu, 30 Aug 2018 17:31:05 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,306,1531753200"; 
-   d="scan'208";a="291056169"
-Received: from mail-os2jpn01lp0152.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.152])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Aug 2018 17:31:03 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UirDQkwhjpBEeCUFhZPJdrdz6G4yp5jCfmCdXXjn+tQ=;
- b=LHULN1qXiJ9bXtfF0UrDTvyYjUAxHNspZn3+gCkvfolvnQPdDWLkrjVP3P4phTGJ2NLJlgElXR+1yBQCOlXNGhNXcheKeeZU+us9hngZezJqynIOw5+gV/QmpD09WEvqc+e6Dm6wLl3P7A57Dnsoec3eK78mtBFkazn9NOzOhKc=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB0334.jpnprd01.prod.outlook.com (10.161.133.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.13; Thu, 30 Aug 2018 08:31:00 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7c89:e594:b792:97eb]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7c89:e594:b792:97eb%4]) with mapi id 15.20.1080.015; Thu, 30 Aug 2018
- 08:31:00 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
-Thread-Topic: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
-Thread-Index: AQHUKMec3KUQcPGA60W10ctOf+LYP6TXJNuAgAD/sTA=
-Date:   Thu, 30 Aug 2018 08:30:59 +0000
-Message-ID: <TY1PR01MB176960BEDC23EA64095EF6F2F5080@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
- <1533039060-18779-2-git-send-email-phil.edworthy@renesas.com>
- <20180829171039.GD11447@smile.fi.intel.com>
-In-Reply-To: <20180829171039.GD11447@smile.fi.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB0334;20:8t8L7rW2AKMi2ELVzz3rrlq4LBWo2CsaopoJ0Erf2cOMqqfhHBwzuaDqknKmNiHxcfRHqc2yD7E33EnHpHE9vKfXe7O1V9qO6GP3CbtQeFsGstdghVXXaVy0vYqyq5QNUQ2vGvOyI0fR02+EuJtGa8VPMmxw3sYorZir2LYUygM=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4eaca412-80dc-4dc7-5dc2-08d60e52ea56
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0334;
-x-ms-traffictypediagnostic: TY1PR01MB0334:
-x-microsoft-antispam-prvs: <TY1PR01MB03343AE8E52A887129C48693F5080@TY1PR01MB0334.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:TY1PR01MB0334;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0334;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(366004)(39860400002)(51914003)(189003)(199004)(7736002)(256004)(6916009)(446003)(305945005)(14444005)(66066001)(11346002)(74316002)(229853002)(476003)(76176011)(9686003)(5250100002)(55016002)(7696005)(53936002)(6436002)(8676002)(2906002)(8936002)(486006)(81156014)(81166006)(4326008)(25786009)(97736004)(33656002)(44832011)(316002)(54906003)(6246003)(99286004)(105586002)(106356001)(26005)(6506007)(53546011)(2900100001)(478600001)(186003)(6116002)(3846002)(14454004)(102836004)(5660300001)(86362001)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0334;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1ffoV1tO+s54atRTslE1HQKZ7r9irelruxLOKChhjdfY3DKumXxDtm1a0OhSoQU5Pcdw1sbP2uotcgBy/EDo35sLhZgZAbyKsQWMLKYNaHgTGuH+OxZHYf2qTd5Lslwkw84txLJOjbQjO+UleQZ/sPlP6661a+igzS42TGWrU8RsxITD9jUaKeOwjHWP9MXmEn+3qw3mga/Xv0Znn1faVf/WltLhbZjkSPZDwXLatEWXBQehdceWlwgsXEu6FFQbBTymeENJa976JEtZmX/1K8g5HLKIvZ5wFKP5UWcxtrBFxGxSHTV1dxd2bFRA4T8YARPnHWcgMCvNIxteWlENSnICLmDuekBvC5yBZCP08HE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 30 Aug 2018 08:33:27 -0400
+Received: from smtp-in.kfki.hu ([148.6.0.28]:56224 "EHLO smtp2.kfki.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727688AbeH3Md0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 08:33:26 -0400
+X-Greylist: delayed 546 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Aug 2018 08:33:25 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.kfki.hu (Postfix) with ESMTP id 6CADACC00DC;
+        Thu, 30 Aug 2018 10:23:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        blackhole.kfki.hu; h=mime-version:user-agent:references
+        :message-id:in-reply-to:from:from:date:date:received:received
+        :received; s=20151130; t=1535617397; x=1537431798; bh=YtlCXSIAjj
+        xfnJOPZXNg8rooPSKiA71ycVA30yEKtqk=; b=trmv4GOXZUtO8OTK9tp66ut95c
+        rdKMUaD8UsTCsCr8o3yUlvX4FsTQl57PuxP4r95WN1LDnEimtEJyuVgBzWvOTek4
+        bl95zoBAj7v/vkqxqYwaSjvQyndhz416f035UO6pzZzfnjvUVIM5qAjw4DnKFep3
+        mJiZexWQKWrUj9wWk=
+X-Virus-Scanned: Debian amavisd-new at smtp2.kfki.hu
+Received: from smtp2.kfki.hu ([127.0.0.1])
+        by localhost (smtp2.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP; Thu, 30 Aug 2018 10:23:17 +0200 (CEST)
+Received: from blackhole.kfki.hu (blackhole.kfki.hu [148.6.240.2])
+        by smtp2.kfki.hu (Postfix) with ESMTP id B7570CC00D4;
+        Thu, 30 Aug 2018 10:23:16 +0200 (CEST)
+Received: by blackhole.kfki.hu (Postfix, from userid 1000)
+        id 8A443211CC; Thu, 30 Aug 2018 10:23:16 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 10:23:16 +0200 (CEST)
+From:   Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+To:     Eric Westbrook <eric@westbrook.io>
+cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Netfilter Development <netfilter-devel@vger.kernel.org>,
+        Netfilter Core Team <coreteam@netfilter.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trivial Patch Monkey <trivial@kernel.org>
+Subject: Re: [PATCH] netfilter: ipset: actually allow allowable CIDR 0 in
+ hash:net,port,net
+In-Reply-To: <a3d786d6-3608-8575-9901-afcf3a52693a@westbrook.io>
+Message-ID: <alpine.DEB.2.11.1808301022280.588@blackhole.kfki.hu>
+References: <a3d786d6-3608-8575-9901-afcf3a52693a@westbrook.io>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eaca412-80dc-4dc7-5dc2-08d60e52ea56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 08:30:59.9078
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0334
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, 28 Aug 2018, Eric Westbrook wrote:
 
-On 29 August 2018 18:11 Andy Shevchenko wrote:
-> On Tue, Jul 31, 2018 at 01:10:59PM +0100, Phil Edworthy wrote:
-> > Quite a few drivers get an optional clock, e.g. a clock required
-> > to access peripheral's registers that is always enabled on some
-> > devices.
-> >
-> > This function behaves the same as of_clk_get_by_name() except that
-> > it will return NULL instead of -ENOENT.
->=20
-> > +		if (optional && (index =3D=3D -EINVAL || index =3D=3D -ENODATA ||
-> > +		    PTR_ERR(clk) =3D=3D -ENOENT)) {
->=20
-> A nit: I would rather rearrange this to be
->=20
-> if (optional &&
->     (... || ... || ...)) {
->=20
-> (disregard 80 characters limit for second line)
+> Allow /0 as advertised for hash:net,port,net sets.
+> 
+> For "hash:net,port,net", ipset(8) says that "either subnet
+> is permitted to be a /0 should you wish to match port
+> between all destinations."
+> 
+> Make that statement true.
+> 
+> Before:
+> 
+>     # ipset create cidrzero hash:net,port,net
+>     # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+>     ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+> 
+>     # ipset create cidrzero6 hash:net,port,net family inet6
+>     # ipset add cidrzero6 ::/0,12345,::/0
+>     ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+> 
+> After:
+> 
+>     # ipset create cidrzero hash:net,port,net
+>     # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+>     # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
+>     192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
+> 
+>     # ipset create cidrzero6 hash:net,port,net family inet6
+>     # ipset add cidrzero6 ::/0,12345,::/0
+>     # ipset test cidrzero6 fe80::1,12345,ff00::1
+>     fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
+> 
+> See also:
+> 
+>   https://bugzilla.kernel.org/show_bug.cgi?id=200897
+>   https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
+> 
+> Signed-off-by: Eric Westbrook <linux@westbrook.io>
 
-Thanks for the review. I'm not particularly happy with the patch as is, it'=
-s
-pretty messy. I was in rush trying to get things done before holidays - alw=
-ays
-a mistake.
-Would you mind if I sent a v5 that I feel is somewhat clearer?
+Patch is applied, thank you.
 
-Thanks
-Phil
+Best regards,
+Jozsef
+
+> ---
+>  net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
+> index d391485a6acd..613e18e720a4 100644
+> --- a/net/netfilter/ipset/ip_set_hash_netportnet.c
+> +++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
+> @@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
+> 
+>  	if (tb[IPSET_ATTR_CIDR]) {
+>  		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+> -		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
+> +		if (e.cidr[0] > HOST_MASK)
+>  			return -IPSET_ERR_INVALID_CIDR;
+>  	}
+> 
+>  	if (tb[IPSET_ATTR_CIDR2]) {
+>  		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+> -		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
+> +		if (e.cidr[1] > HOST_MASK)
+>  			return -IPSET_ERR_INVALID_CIDR;
+>  	}
+> 
+> @@ -493,13 +493,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
+> 
+>  	if (tb[IPSET_ATTR_CIDR]) {
+>  		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+> -		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
+> +		if (e.cidr[0] > HOST_MASK)
+>  			return -IPSET_ERR_INVALID_CIDR;
+>  	}
+> 
+>  	if (tb[IPSET_ATTR_CIDR2]) {
+>  		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+> -		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
+> +		if (e.cidr[1] > HOST_MASK)
+>  			return -IPSET_ERR_INVALID_CIDR;
+>  	}
+> 
+> -- 
+> 2.18.0
+> 
+> 
+
+-
+E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.mta.hu
+PGP key : http://www.kfki.hu/~kadlec/pgp_public_key.txt
+Address : Wigner Research Centre for Physics, Hungarian Academy of Sciences
+          H-1525 Budapest 114, POB. 49, Hungary
