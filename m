@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB18C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0987C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7252520658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7252520658
+	by mail.kernel.org (Postfix) with ESMTP id 5FAB32082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:33:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FAB32082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeH3Kdo (ORCPT
+        id S1727783AbeH3Kdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 06:33:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47488 "EHLO mx1.redhat.com"
+        Thu, 30 Aug 2018 06:33:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47494 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727700AbeH3Kdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 06:33:43 -0400
+        id S1727721AbeH3Kdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:33:46 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EA5A77DAC2;
-        Thu, 30 Aug 2018 06:33:07 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4434D7A7EF;
+        Thu, 30 Aug 2018 06:33:11 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 873A0B27A5;
-        Thu, 30 Aug 2018 06:33:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D534AA9F09;
+        Thu, 30 Aug 2018 06:33:09 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,176 +38,60 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH 08/43] perf stat: Move create_perf_stat_counter into stat.c
-Date:   Thu, 30 Aug 2018 08:32:17 +0200
-Message-Id: <20180830063252.23729-9-jolsa@kernel.org>
+Subject: [PATCH 10/43] perf stat: Add struct perf_stat_config argument to perf_stat_synthesize_config
+Date:   Thu, 30 Aug 2018 08:32:19 +0200
+Message-Id: <20180830063252.23729-11-jolsa@kernel.org>
 In-Reply-To: <20180830063252.23729-1-jolsa@kernel.org>
 References: <20180830063252.23729-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:08 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:11 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving create_perf_stat_counter to stat object,
-so we could use it globally.
+Adding struct perf_stat_config argument to perf_stat_synthesize_config,
+so we could synthesize arbitrary config.
 
-Link: http://lkml.kernel.org/n/tip-47odtb7otnqlo07h0crk6ftp@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-v84l6fy0d0nrict7jpknscem@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-stat.c | 54 +--------------------------------------
- tools/perf/util/stat.c    | 53 ++++++++++++++++++++++++++++++++++++++
- tools/perf/util/stat.h    |  4 +++
- 3 files changed, 58 insertions(+), 53 deletions(-)
+ tools/perf/builtin-stat.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 45bbd156d496..142cff8eb12b 100644
+index 0a358c2e1a93..d0d19a5ffa85 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -234,58 +234,6 @@ static void perf_stat__reset_stats(void)
- 		perf_stat__reset_shadow_per_stat(&stat_config.stats[i]);
+@@ -402,7 +402,8 @@ static void workload_exec_failed_signal(int signo __maybe_unused, siginfo_t *inf
+ 	workload_exec_errno = info->si_value.sival_int;
  }
  
--static int create_perf_stat_counter(struct perf_evsel *evsel,
--				    struct perf_stat_config *config)
--{
--	struct perf_event_attr *attr = &evsel->attr;
--	struct perf_evsel *leader = evsel->leader;
--
--	if (config->scale) {
--		attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
--				    PERF_FORMAT_TOTAL_TIME_RUNNING;
--	}
--
--	/*
--	 * The event is part of non trivial group, let's enable
--	 * the group read (for leader) and ID retrieval for all
--	 * members.
--	 */
--	if (leader->nr_members > 1)
--		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
--
--	attr->inherit = !config->no_inherit;
--
--	/*
--	 * Some events get initialized with sample_(period/type) set,
--	 * like tracepoints. Clear it up for counting.
--	 */
--	attr->sample_period = 0;
--
--	if (config->identifier)
--		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
--
--	/*
--	 * Disabling all counters initially, they will be enabled
--	 * either manually by us or by kernel via enable_on_exec
--	 * set later.
--	 */
--	if (perf_evsel__is_group_leader(evsel)) {
--		attr->disabled = 1;
--
--		/*
--		 * In case of initial_delay we enable tracee
--		 * events manually.
--		 */
--		if (target__none(&target) && !config->initial_delay)
--			attr->enable_on_exec = 1;
--	}
--
--	if (target__has_cpu(&target) && !target__has_per_thread(&target))
--		return perf_evsel__open_per_cpu(evsel, perf_evsel__cpus(evsel));
--
--	return perf_evsel__open_per_thread(evsel, evsel->threads);
--}
--
- static int process_synthesized_event(struct perf_tool *tool __maybe_unused,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-@@ -568,7 +516,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+-static int perf_stat_synthesize_config(bool attrs)
++static int perf_stat_synthesize_config(struct perf_stat_config *config,
++				       bool attrs)
+ {
+ 	int err;
  
- 	evlist__for_each_entry(evsel_list, counter) {
- try_again:
--		if (create_perf_stat_counter(counter, &stat_config) < 0) {
-+		if (create_perf_stat_counter(counter, &stat_config, &target) < 0) {
+@@ -435,7 +436,7 @@ static int perf_stat_synthesize_config(bool attrs)
+ 		return err;
+ 	}
  
- 			/* Weak group failed. Reset the group. */
- 			if ((errno == EINVAL || errno == EBADF) &&
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index a0061e0b0fad..3bd24255376a 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -435,3 +435,56 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp)
+-	err = perf_event__synthesize_stat_config(NULL, &stat_config,
++	err = perf_event__synthesize_stat_config(NULL, config,
+ 						 process_synthesized_event, NULL);
+ 	if (err < 0) {
+ 		pr_err("Couldn't synthesize config.\n");
+@@ -606,7 +607,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		if (err < 0)
+ 			return err;
  
- 	return ret;
- }
-+
-+int create_perf_stat_counter(struct perf_evsel *evsel,
-+			     struct perf_stat_config *config,
-+			     struct target *target)
-+{
-+	struct perf_event_attr *attr = &evsel->attr;
-+	struct perf_evsel *leader = evsel->leader;
-+
-+	if (config->scale) {
-+		attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
-+				    PERF_FORMAT_TOTAL_TIME_RUNNING;
-+	}
-+
-+	/*
-+	 * The event is part of non trivial group, let's enable
-+	 * the group read (for leader) and ID retrieval for all
-+	 * members.
-+	 */
-+	if (leader->nr_members > 1)
-+		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
-+
-+	attr->inherit = !config->no_inherit;
-+
-+	/*
-+	 * Some events get initialized with sample_(period/type) set,
-+	 * like tracepoints. Clear it up for counting.
-+	 */
-+	attr->sample_period = 0;
-+
-+	if (config->identifier)
-+		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
-+
-+	/*
-+	 * Disabling all counters initially, they will be enabled
-+	 * either manually by us or by kernel via enable_on_exec
-+	 * set later.
-+	 */
-+	if (perf_evsel__is_group_leader(evsel)) {
-+		attr->disabled = 1;
-+
-+		/*
-+		 * In case of initial_delay we enable tracee
-+		 * events manually.
-+		 */
-+		if (target__none(target) && !config->initial_delay)
-+			attr->enable_on_exec = 1;
-+	}
-+
-+	if (target__has_cpu(target) && !target__has_per_thread(target))
-+		return perf_evsel__open_per_cpu(evsel, perf_evsel__cpus(evsel));
-+
-+	return perf_evsel__open_per_thread(evsel, evsel->threads);
-+}
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 918cde064cdc..8fb596641545 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -175,4 +175,8 @@ int perf_event__process_stat_event(struct perf_tool *tool,
- size_t perf_event__fprintf_stat(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_stat_round(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
-+
-+int create_perf_stat_counter(struct perf_evsel *evsel,
-+			     struct perf_stat_config *config,
-+			     struct target *target);
- #endif
+-		err = perf_stat_synthesize_config(is_pipe);
++		err = perf_stat_synthesize_config(&stat_config, is_pipe);
+ 		if (err < 0)
+ 			return err;
+ 	}
 -- 
 2.17.1
 
