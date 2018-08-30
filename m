@@ -2,57 +2,56 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57806C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F0FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1042A20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:50:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1042A20661
+	by mail.kernel.org (Postfix) with ESMTP id 1D12A20661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D12A20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeH3Et0 (ORCPT
+        id S1727336AbeH3Et1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 00:49:26 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43002 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbeH3Et0 (ORCPT
+        Thu, 30 Aug 2018 00:49:27 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42061 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeH3Et1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 00:49:26 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g23-v6so3039742plq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:49:56 -0700 (PDT)
+        Thu, 30 Aug 2018 00:49:27 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so3046556pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:49:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=o6IzGJkykKui6d4lBUMa65Is4NWVCcNClpviZh4VeX0=;
-        b=SEfCXEjx8201d58xh1hkb3RfgUSfeaNKUi3HCUoK1UadlXtmJAtDxqUVkNU1SMGTew
-         yUwe8QGJSoc+pLvvZaNZvxbyFep9s4LLsgich1wMc9juP6nABOs4fz0r3onagoZD+LjC
-         DZxYAnYERtKTVJcUSWEJjeqgbyU4D+NIl9gD4eSUJ5AKpkp7AuuwxYnmjE5ERoYnH5d5
-         UnqWgi8wvoeeKmTRjgWRzEdYyXkvjZK2mLJ2Y7ZOEjiQR9mTRLxy8e5dcwi1+MNnQ/Ff
-         Wyh34sz0GDpjA9OoKlZj6dA/jYl9UTKXU1iIrTyCMsXSb8QPcgcSo3h+/es2EKPMuBMK
-         n54Q==
-X-Gm-Message-State: APzg51BmXFFY2mBl1s62C5MA9L1rXKUydvLxP4hqMVt5mr84pG/bHi+T
-        e3zNZ5B73wijipCbPvvmA/uXdQ==
-X-Google-Smtp-Source: ANB0VdbBKpWf970uY7YQLJbmrmEtCkhtVjUssLSNJjvLH3H+7IEKndZantekjfVZ3u7GT5MUT7PvQA==
-X-Received: by 2002:a17:902:5998:: with SMTP id p24-v6mr8028762pli.36.1535590196136;
-        Wed, 29 Aug 2018 17:49:56 -0700 (PDT)
+        bh=NShTzSlFYlqtga5d7M/J1wLZLiAga3Nbz09nG1fvud0=;
+        b=c5NSCJBreId8Mm6qL3uOcgndmZXy6DDos4v3PmeP22CIbnBHuhYQezckRrQaibWk21
+         ySbLEaVyNGWammRWBeAvxfNbsEs11uSD1LI8KS8xgUb9Cqx+scJX0f5msVJK+XMGn1oL
+         kmRXArT8jb/6sKeDl9uWcuAL1Mu3ICSUjioEb21j/9ZWc/MtOR386807kqld/0NqdyAJ
+         9uJbQsLC/339Aze9PS8e/wqFuRr9K7N5rJGiadl3Chrc9vfP/ypY5MAGy2WRMpGdC4Ln
+         bJ37PdTCkoMgdSsnNBdC+hVzDW3gEaXFkFn9P2/Fbl4Ba3SOATbJq7z20T/Wli2M3Blu
+         QUkQ==
+X-Gm-Message-State: APzg51AKZk1bR4sGazh8hLTmD0jAVKSdhzgO3kJzKxwaALH8ptGYmChe
+        Jo/fjM9CjFNtJzaTXvfGIpJ9tg==
+X-Google-Smtp-Source: ANB0VdYaAvlMtvwEj/UTMyZC0S4pswjiBy76pneVoc3OadgIYggBoKFK5nSe4WhVWbwBUxWDSm5GzQ==
+X-Received: by 2002:a62:858c:: with SMTP id m12-v6mr8159709pfk.173.1535590197251;
+        Wed, 29 Aug 2018 17:49:57 -0700 (PDT)
 Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id y86-v6sm8600130pfk.84.2018.08.29.17.49.55
+        by smtp.gmail.com with ESMTPSA id a15-v6sm8736529pfe.32.2018.08.29.17.49.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 17:49:55 -0700 (PDT)
+        Wed, 29 Aug 2018 17:49:56 -0700 (PDT)
 From:   Moritz Fischer <mdf@kernel.org>
 To:     davem@davemloft.net
 Cc:     keescook@chromium.org, f.fainelli@gmail.com,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         alex.williams@ni.com, Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH net-next 2/3] net: nixge: Add support for having nixge as subdevice
-Date:   Wed, 29 Aug 2018 17:40:45 -0700
-Message-Id: <20180830004046.9417-3-mdf@kernel.org>
+Subject: [PATCH net-next 3/3] net: nixge: Use sysdev instead of ndev->dev.parent for DMA
+Date:   Wed, 29 Aug 2018 17:40:46 -0700
+Message-Id: <20180830004046.9417-4-mdf@kernel.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180830004046.9417-1-mdf@kernel.org>
 References: <20180830004046.9417-1-mdf@kernel.org>
@@ -61,8 +60,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for instantiating nixge as subdevice using
-fixed-link and platform data to configure it.
+Use sysdev instead of ndev->dev.parent for DMA in order to
+enable usecases where an IOMMU might get in the way otherwise.
+In the PCIe wrapper case on x86 the IOMMU group is not inherited
+by the platform device that is created as a subdevice of the
+PCI wrapper driver.
 
 Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
@@ -72,8 +74,11 @@ Hi,
 not this patch is still in the early stages,
 and as the rest of this series goes on top of [1].
 
-The actual platform data might still change since
+The actual parent device might still change since
 the parent device driver is still under development.
+
+If there are clever suggestions on how to generalize
+the assignment of sysdev, I'm all ears.
 
 Thanks for your time,
 
@@ -83,184 +88,188 @@ Moritz
 [1] https://lkml.org/lkml/2018/8/28/1011
 
 ---
- drivers/net/ethernet/ni/nixge.c     | 71 ++++++++++++++++++++++++++---
- include/linux/platform_data/nixge.h | 19 ++++++++
- 2 files changed, 83 insertions(+), 7 deletions(-)
- create mode 100644 include/linux/platform_data/nixge.h
+ drivers/net/ethernet/ni/nixge.c | 50 +++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
-index 670249313ff0..fd8e5b02c459 100644
+index fd8e5b02c459..25fb1642d558 100644
 --- a/drivers/net/ethernet/ni/nixge.c
 +++ b/drivers/net/ethernet/ni/nixge.c
-@@ -7,6 +7,8 @@
- #include <linux/etherdevice.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
-+#include <linux/phy_fixed.h>
-+#include <linux/platform_data/nixge.h>
- #include <linux/of_address.h>
- #include <linux/of_mdio.h>
- #include <linux/of_net.h>
-@@ -167,6 +169,7 @@ struct nixge_priv {
+@@ -16,6 +16,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/skbuff.h>
+ #include <linux/phy.h>
++#include <linux/pci.h>
+ #include <linux/mii.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/ethtool.h>
+@@ -165,6 +166,7 @@ struct nixge_priv {
+ 	struct net_device *ndev;
+ 	struct napi_struct napi;
+ 	struct device *dev;
++	struct device *sysdev;
+ 
  	/* Connection to PHY device */
  	struct device_node *phy_node;
- 	phy_interface_t		phy_mode;
-+	struct phy_device *phydev;
+@@ -250,7 +252,7 @@ static void nixge_hw_dma_bd_release(struct net_device *ndev)
+ 		phys_addr = nixge_hw_dma_bd_get_addr(&priv->rx_bd_v[i],
+ 						     phys);
  
- 	int link;
- 	unsigned int speed;
-@@ -859,15 +862,25 @@ static void nixge_dma_err_handler(unsigned long data)
- static int nixge_open(struct net_device *ndev)
+-		dma_unmap_single(ndev->dev.parent, phys_addr,
++		dma_unmap_single(priv->sysdev, phys_addr,
+ 				 NIXGE_MAX_JUMBO_FRAME_SIZE,
+ 				 DMA_FROM_DEVICE);
+ 
+@@ -261,16 +263,16 @@ static void nixge_hw_dma_bd_release(struct net_device *ndev)
+ 	}
+ 
+ 	if (priv->rx_bd_v)
+-		dma_free_coherent(ndev->dev.parent,
++		dma_free_coherent(priv->sysdev,
+ 				  sizeof(*priv->rx_bd_v) * RX_BD_NUM,
+ 				  priv->rx_bd_v,
+ 				  priv->rx_bd_p);
+ 
+ 	if (priv->tx_skb)
+-		devm_kfree(ndev->dev.parent, priv->tx_skb);
++		devm_kfree(priv->sysdev, priv->tx_skb);
+ 
+ 	if (priv->tx_bd_v)
+-		dma_free_coherent(ndev->dev.parent,
++		dma_free_coherent(priv->sysdev,
+ 				  sizeof(*priv->tx_bd_v) * TX_BD_NUM,
+ 				  priv->tx_bd_v,
+ 				  priv->tx_bd_p);
+@@ -290,19 +292,19 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
+ 	priv->rx_bd_ci = 0;
+ 
+ 	/* Allocate the Tx and Rx buffer descriptors. */
+-	priv->tx_bd_v = dma_zalloc_coherent(ndev->dev.parent,
++	priv->tx_bd_v = dma_zalloc_coherent(priv->sysdev,
+ 					    sizeof(*priv->tx_bd_v) * TX_BD_NUM,
+ 					    &priv->tx_bd_p, GFP_KERNEL);
+ 	if (!priv->tx_bd_v)
+ 		goto out;
+ 
+-	priv->tx_skb = devm_kcalloc(ndev->dev.parent,
++	priv->tx_skb = devm_kcalloc(priv->sysdev,
+ 				    TX_BD_NUM, sizeof(*priv->tx_skb),
+ 				    GFP_KERNEL);
+ 	if (!priv->tx_skb)
+ 		goto out;
+ 
+-	priv->rx_bd_v = dma_zalloc_coherent(ndev->dev.parent,
++	priv->rx_bd_v = dma_zalloc_coherent(priv->sysdev,
+ 					    sizeof(*priv->rx_bd_v) * RX_BD_NUM,
+ 					    &priv->rx_bd_p, GFP_KERNEL);
+ 	if (!priv->rx_bd_v)
+@@ -327,7 +329,7 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
+ 			goto out;
+ 
+ 		nixge_hw_dma_bd_set_offset(&priv->rx_bd_v[i], skb);
+-		phys = dma_map_single(ndev->dev.parent, skb->data,
++		phys = dma_map_single(priv->sysdev, skb->data,
+ 				      NIXGE_MAX_JUMBO_FRAME_SIZE,
+ 				      DMA_FROM_DEVICE);
+ 
+@@ -438,10 +440,10 @@ static void nixge_tx_skb_unmap(struct nixge_priv *priv,
  {
- 	struct nixge_priv *priv = netdev_priv(ndev);
--	struct phy_device *phy;
-+	struct phy_device *phy = NULL;
- 	int ret;
+ 	if (tx_skb->mapping) {
+ 		if (tx_skb->mapped_as_page)
+-			dma_unmap_page(priv->ndev->dev.parent, tx_skb->mapping,
++			dma_unmap_page(priv->sysdev, tx_skb->mapping,
+ 				       tx_skb->size, DMA_TO_DEVICE);
+ 		else
+-			dma_unmap_single(priv->ndev->dev.parent,
++			dma_unmap_single(priv->sysdev,
+ 					 tx_skb->mapping,
+ 					 tx_skb->size, DMA_TO_DEVICE);
+ 		tx_skb->mapping = 0;
+@@ -519,9 +521,9 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 		return NETDEV_TX_OK;
+ 	}
  
- 	nixge_device_reset(ndev);
+-	cur_phys = dma_map_single(ndev->dev.parent, skb->data,
++	cur_phys = dma_map_single(priv->sysdev, skb->data,
+ 				  skb_headlen(skb), DMA_TO_DEVICE);
+-	if (dma_mapping_error(ndev->dev.parent, cur_phys))
++	if (dma_mapping_error(priv->sysdev, cur_phys))
+ 		goto drop;
+ 	nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
  
--	phy = of_phy_connect(ndev, priv->phy_node,
--			     &nixge_handle_link_change, 0, priv->phy_mode);
--	if (!phy)
--		return -ENODEV;
-+	if (priv->dev->of_node) {
-+		phy = of_phy_connect(ndev, priv->phy_node,
-+				     &nixge_handle_link_change, 0,
-+				     priv->phy_mode);
-+		if (!phy)
-+			return -ENODEV;
-+	} else if (priv->phydev) {
-+		ret = phy_connect_direct(ndev, priv->phydev,
-+					 &nixge_handle_link_change,
-+					 priv->phy_mode);
-+		if (ret)
-+			return ret;
-+		phy = priv->phydev;
-+	}
+@@ -539,10 +541,10 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 		tx_skb = &priv->tx_skb[priv->tx_bd_tail];
+ 		frag = &skb_shinfo(skb)->frags[ii];
  
- 	phy_start(phy);
+-		cur_phys = skb_frag_dma_map(ndev->dev.parent, frag, 0,
++		cur_phys = skb_frag_dma_map(priv->sysdev, frag, 0,
+ 					    skb_frag_size(frag),
+ 					    DMA_TO_DEVICE);
+-		if (dma_mapping_error(ndev->dev.parent, cur_phys))
++		if (dma_mapping_error(priv->sysdev, cur_phys))
+ 			goto frag_err;
+ 		nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
  
-@@ -1215,10 +1228,41 @@ static int nixge_of_get_phy(struct nixge_priv *priv, struct device_node *np)
- 	return 0;
- }
+@@ -579,7 +581,7 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 		cur_p = &priv->tx_bd_v[priv->tx_bd_tail];
+ 		cur_p->status = 0;
+ 	}
+-	dma_unmap_single(priv->ndev->dev.parent,
++	dma_unmap_single(priv->sysdev,
+ 			 tx_skb->mapping,
+ 			 tx_skb->size, DMA_TO_DEVICE);
+ drop:
+@@ -611,7 +613,7 @@ static int nixge_recv(struct net_device *ndev, int budget)
+ 		if (length > NIXGE_MAX_JUMBO_FRAME_SIZE)
+ 			length = NIXGE_MAX_JUMBO_FRAME_SIZE;
  
-+static int nixge_pdata_get_phy(struct nixge_priv *priv,
-+			       struct nixge_platform_data *pdata)
-+{
-+	struct phy_device *phy = NULL;
-+
-+	if (!pdata)
-+		return -EINVAL;
-+
-+	if (pdata && pdata->phy_interface == PHY_INTERFACE_MODE_NA) {
-+		struct fixed_phy_status fphy_status = {
-+			.link = 1,
-+			.duplex = pdata->phy_duplex,
-+			.speed = pdata->phy_speed,
-+			.pause = 0,
-+			.asym_pause = 0,
-+		};
-+
-+		/* TODO: Pull out GPIO from pdata */
-+		phy = fixed_phy_register(PHY_POLL, &fphy_status, -1,
-+					 NULL);
-+		if (IS_ERR_OR_NULL(phy)) {
-+			dev_err(priv->dev,
-+				"failed to register fixed PHY device\n");
-+			return -ENODEV;
-+		}
-+	}
-+	priv->phy_mode = pdata->phy_interface;
-+	priv->phydev = phy;
-+
-+	return 0;
-+}
-+
- static int nixge_mdio_setup(struct nixge_priv *priv, struct device_node *np)
- {
- 	struct mii_bus *bus;
--	int err;
+-		dma_unmap_single(ndev->dev.parent,
++		dma_unmap_single(priv->sysdev,
+ 				 nixge_hw_dma_bd_get_addr(cur_p, phys),
+ 				 NIXGE_MAX_JUMBO_FRAME_SIZE,
+ 				 DMA_FROM_DEVICE);
+@@ -636,10 +638,10 @@ static int nixge_recv(struct net_device *ndev, int budget)
+ 		if (!new_skb)
+ 			return packets;
  
- 	bus = devm_mdiobus_alloc(priv->dev);
- 	if (!bus)
-@@ -1254,6 +1298,7 @@ static void *nixge_get_nvmem_address(struct device *dev)
- 
- static int nixge_probe(struct platform_device *pdev)
- {
-+	struct nixge_platform_data *pdata = NULL;
- 	struct nixge_priv *priv;
+-		cur_phys = dma_map_single(ndev->dev.parent, new_skb->data,
++		cur_phys = dma_map_single(priv->sysdev, new_skb->data,
+ 					  NIXGE_MAX_JUMBO_FRAME_SIZE,
+ 					  DMA_FROM_DEVICE);
+-		if (dma_mapping_error(ndev->dev.parent, cur_phys)) {
++		if (dma_mapping_error(priv->sysdev, cur_phys)) {
+ 			/* FIXME: bail out and clean up */
+ 			netdev_err(ndev, "Failed to map ...\n");
+ 		}
+@@ -1303,6 +1305,7 @@ static int nixge_probe(struct platform_device *pdev)
  	struct net_device *ndev;
  	struct resource *dmares;
-@@ -1320,10 +1365,16 @@ static int nixge_probe(struct platform_device *pdev)
- 		err = nixge_of_get_phy(priv, np);
- 		if (err)
- 			goto free_netdev;
-+	} else {
-+		pdata = dev_get_platdata(&pdev->dev);
-+		err = nixge_pdata_get_phy(priv, pdata);
-+		if (err)
-+			goto free_netdev;
+ 	struct device_node *np;
++	struct device *sysdev;
+ 	const u8 *mac_addr;
+ 	int err;
+ 
+@@ -1331,9 +1334,20 @@ static int nixge_probe(struct platform_device *pdev)
+ 		eth_hw_addr_random(ndev);
  	}
  
- 	/* only if it's not a fixed link, do we care about MDIO at all */
--	if (priv->phy_node && !of_phy_is_fixed_link(np)) {
-+	if ((priv->phy_node && !of_phy_is_fixed_link(np)) ||
-+	    (pdata && pdata->phy_interface != PHY_INTERFACE_MODE_NA)) {
- 		err = nixge_mdio_setup(priv, np);
- 		if (err) {
- 			dev_err(&pdev->dev, "error registering mdio bus");
-@@ -1347,6 +1398,9 @@ static int nixge_probe(struct platform_device *pdev)
- 		of_phy_deregister_fixed_link(np);
- 		of_node_put(np);
- 	}
++	sysdev = &pdev->dev;
++#ifdef CONFIG_PCI
++	/* if this is a subdevice of a PCI device we'll have to
++	 * make sure we'll use parent instead of our own platform
++	 * device to make sure  the DMA API if we use an IOMMU
++	 */
++	if (sysdev->parent && sysdev->parent->bus == &pci_bus_type)
++		sysdev = sysdev->parent;
++#endif
 +
-+	if (priv->phydev && phy_is_pseudo_fixed_link(priv->phydev))
-+		fixed_phy_unregister(priv->phydev);
- free_netdev:
- 	free_netdev(ndev);
+ 	priv = netdev_priv(ndev);
+ 	priv->ndev = ndev;
+ 	priv->dev = &pdev->dev;
++	priv->sysdev = sysdev;
  
-@@ -1357,6 +1411,7 @@ static int nixge_remove(struct platform_device *pdev)
- {
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct nixge_priv *priv = netdev_priv(ndev);
-+	struct device_node *np = pdev->dev.of_node;
+ 	netif_napi_add(ndev, &priv->napi, nixge_poll, NAPI_POLL_WEIGHT);
  
- 	unregister_netdev(ndev);
- 
-@@ -1365,6 +1420,8 @@ static int nixge_remove(struct platform_device *pdev)
- 
- 	if (np && of_phy_is_fixed_link(np))
- 		of_phy_deregister_fixed_link(np);
-+	else if (priv->phydev && phy_is_pseudo_fixed_link(priv->phydev))
-+		fixed_phy_unregister(priv->phydev);
- 
- 	free_netdev(ndev);
- 
-diff --git a/include/linux/platform_data/nixge.h b/include/linux/platform_data/nixge.h
-new file mode 100644
-index 000000000000..aa5dd5760074
---- /dev/null
-+++ b/include/linux/platform_data/nixge.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018 National Instruments Corp.
-+ *
-+ * Author: Moritz Fischer <mdf@kernel.org>
-+ */
-+
-+#ifndef __NIXGE_PDATA_H__
-+#define __NIXGE_PDATA_H__
-+
-+#include <linux/phy.h>
-+
-+struct nixge_platform_data {
-+	phy_interface_t phy_interface;
-+	int phy_speed;
-+	int phy_duplex;
-+};
-+
-+#endif /* __NIXGE_PDATA_H__ */
-+
 -- 
 2.18.0
 
