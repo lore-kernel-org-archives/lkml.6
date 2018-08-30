@@ -2,144 +2,140 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9025C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980E7C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F1AC205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51806205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UEFAtDXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1AC205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CRAIUUrW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51806205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeHaAtL (ORCPT
+        id S1727486AbeHaAtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 20:49:11 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:44302 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbeHaAtK (ORCPT
+        Thu, 30 Aug 2018 20:49:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33554 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbeHaAtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 20:49:10 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l82-v6so17884345oih.11
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IP30Y1YhjynsIjlW5YIr2azX4Y9nlVjraWdcjhS3RFg=;
-        b=UEFAtDXbGd4VPyHxaw6oDLz0N3WEQBZHluX5MN9Wwt5OA/Xe80i5CCB5ZreWrEQnfT
-         KHIf5ZROXkN653XoB83aYym4VTCvpd9U5ywV/L8dWL3TZB4CK4VeR5yA6qAbt+A1EnJe
-         ZnvyvsReLBsmae7z3IRRKNYPoonLag6ua8MDc3qCCZ2u3KqhEMZVDAs6HeZocNTTxO9s
-         ZD/5pm+9vxRa/gxrheOcLitnUFac1M6pxa5l9hWt8pTy1ldnuMMBTDFkiftV6pdF+9HC
-         9qsmS/N7gYXZJSvox6hsx2UhQ5LYw3ggKxfqA1lcz+RdYO0CsKeFxTnvE52MbPjMUGkX
-         eYoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IP30Y1YhjynsIjlW5YIr2azX4Y9nlVjraWdcjhS3RFg=;
-        b=uMLiz5XWIEFLZNUIPlEGr5v+VPo/JGXKo57DfHsIKt1Nd7llMcXLoeNcTR/d0HwjdH
-         iWqcKzvT1podYbJjgTimEMnPACpy7mHygHWpu8Q8h/67oHrF+AUKSa3FPfbuRz4J7Mas
-         d8wUOxd+KJjfnfh+Tv+DYuv+QNNFCIVruucADAxvL10H/UFEZ3OXKplfjbsk7v3GkbJi
-         Y6RN4kxNW0CC2pAO1ypsR7/s0Y7v0VuqhaFNAZi98dNqptnvJJkB3VQNuAdofYovnAXH
-         dZoawVxqIVtet1GBUVn+8Ro3tnsO9V8rwt0Ae3NPcAfIyZyKtL7r2LhLAI8rgWh0qJim
-         X2aQ==
-X-Gm-Message-State: APzg51DsZMxVCG/Vet7no2Mg8aBmeXdqPJwRb08BjSkojiTsFstjxd9j
-        A16bi8JaX7iuHQ4ABGGh6QflJyAR93iwf8pr0OXdmg==
-X-Google-Smtp-Source: ANB0VdbZLx6RYiq0Zqll//pCr7nxeIqw4vzMDac+JG1YePUuGhFQAoWahxeo2AvE+PBsTjOYnlJvtRhx6U67GFxDy7k=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr4328731oia.229.1535661910290;
- Thu, 30 Aug 2018 13:45:10 -0700 (PDT)
+        Thu, 30 Aug 2018 20:49:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Cjky/mM1tjSK/MV1yu9uHtt6HigDi4I+7M1zq65dyMg=; b=CRAIUUrWqXf+NZL/BkReCCWUQ
+        jkClMthPDm9mrWlk/LUh/aYKf0xhGtiQlL940iS9VDtI7aymZffu/QolYEfild8n9mGxIjuxh9cZe
+        Vu2GFwYSGZDPXjDmrw3/Y/WV+6K0Bws9zHPlMU5DwBj81rlsAM66/28Udhp83aFuaJTZBAleF+ZEI
+        n+EXKi+fiOVxXkZH/MsVzC+mgQa+OLjFmzKfDuIPwIgqfUOkR+CO/m/6Ojgj0dmKyDSVvfok06iOR
+        qC9KRz+sGrQn0uEmkvUjZf9hJcOtX2QPRQ/d7OqUMUOc2vXrQVuI2AC+GWtrEz3Xh4YjCin8uOz/3
+        pbzpmN6Lw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvTob-0007Ym-Bn; Thu, 30 Aug 2018 20:45:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AF59820255987; Thu, 30 Aug 2018 22:45:15 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 22:45:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Message-ID: <20180830204515.GC24124@hirez.programming.kicks-ass.net>
+References: <1535567633.4465.23.camel@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
+ <20180830094411.GX24124@hirez.programming.kicks-ass.net>
+ <20180830095148.GB5942@arm.com>
+ <1535629996.4465.44.camel@synopsys.com>
+ <20180830141713.GN24082@hirez.programming.kicks-ass.net>
+ <20180830142354.GB13005@arm.com>
+ <20180830142920.GO24082@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090EA4@us01wembx1.internal.synopsys.com>
 MIME-Version: 1.0
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com>
- <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
- <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com> <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com>
- <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com> <1535649960.26689.15.camel@intel.com>
- <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com> <1535651666.27823.6.camel@intel.com>
- <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com> <1535660494.28258.36.camel@intel.com>
-In-Reply-To: <1535660494.28258.36.camel@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 30 Aug 2018 22:44:43 +0200
-Message-ID: <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-To:     yu-cheng.yu@intel.com
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B090EA4@us01wembx1.internal.synopsys.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 10:25 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> On Thu, 2018-08-30 at 19:59 +0200, Jann Horn wrote:
-> > On Thu, Aug 30, 2018 at 7:58 PM Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > wrote:
-> > >
-> > >
-> > > On Thu, 2018-08-30 at 10:33 -0700, Dave Hansen wrote:
-> > > >
-> > > > On 08/30/2018 10:26 AM, Yu-cheng Yu wrote:
-> > > > >
-> > > > >
-> > > > > We don't have the guard page now, but there is a shadow stack
-> > > > > token
-> > > > > there, which cannot be used as a return address.
-> > > > The overall concern is that we could overflow into a page that
-> > > > we
-> > > > did
-> > > > not intend.  Either another actual shadow stack or something
-> > > > that a
-> > > > page
-> > > > that the attacker constructed, like the transient scenario Jann
-> > > > described.
-> > > >
-> > > A task could go beyond the bottom of its shadow stack by doing
-> > > either
-> > > 'ret' or 'incssp'.  If it is the 'ret' case, the token prevents
-> > > it.
-> > >  If it is the 'incssp' case, a guard page cannot prevent it
-> > > entirely,
-> > > right?
-> > I mean the other direction, on "call".
->
-> In the flow you described, if C writes to the overflow page before B
-> gets in with a 'call', the return address is still correct for B.  To
-> make an attack, C needs to write again before the TLB flush.  I agree
-> that is possible.
->
-> Assume we have a guard page, can someone in the short window do
-> recursive calls in B, move ssp to the end of the guard page, and
-> trigger the same again?  He can simply take the incssp route.
+On Thu, Aug 30, 2018 at 08:31:59PM +0000, Vineet Gupta wrote:
+> On 08/30/2018 07:29 AM, Peter Zijlstra wrote:
+> > On Thu, Aug 30, 2018 at 03:23:55PM +0100, Will Deacon wrote:
+> >
+> >> Yes, that would be worth trying. However, I also just noticed that the
+> >> fetch-ops (which are now used to implement test_and_set_bit_lock()) seem
+> >> to be missing the backwards branch in the LL/SC case. Yet another diff
+> >> below.
+> >>
+> >> Will
+> >>
+> >> --->8
+> >>
+> >> diff --git a/arch/arc/include/asm/atomic.h b/arch/arc/include/asm/atomic.h
+> >> index 4e0072730241..f06c5ed672b3 100644
+> >> --- a/arch/arc/include/asm/atomic.h
+> >> +++ b/arch/arc/include/asm/atomic.h
+> >> @@ -84,7 +84,7 @@ static inline int atomic_fetch_##op(int i, atomic_t *v)			\
+> >>  	"1:	llock   %[orig], [%[ctr]]		\n"		\
+> >>  	"	" #asm_op " %[val], %[orig], %[i]	\n"		\
+> >>  	"	scond   %[val], [%[ctr]]		\n"		\
+> >> -	"						\n"		\
+> >> +	"	bnz	1b				\n"		\
+> >>  	: [val]	"=&r"	(val),						\
+> >>  	  [orig] "=&r" (orig)						\
+> >>  	: [ctr]	"r"	(&v->counter),					\
+> > ACK!! sorry about that, no idea how I messed that up.
+> >
+> > Also, once it all works, they should look at switching to _relaxed
+> > atomics for LL/SC.
+> 
+> Indeed this is the mother of all issues, I tried and system is clearly hosed with
+> and works after.
+> What's amazing is the commit 4aef66c8ae9 which introduced it is from 2016 ;-)
+> Back then we had a retry branch with backoff stuff which I'd reverted for new
+> cores and the merge conflict somehow missed it.
+> 
+> @PeterZ I'll create a patch with you as author ? do I need any formal sign offs,
+> acks etc ?
 
-I don't understand what you're saying. If the shadow stack is between
-guard pages, you should never be able to move SSP past that area's
-guard pages without an appropriate shadow stack token (not even with
-INCSSP, since that has a maximum range of PAGE_SIZE/2), and therefore,
-it shouldn't matter whether memory outside that range is incorrectly
-marked as shadow stack. Am I missing something?
+Well, Will spotted it, give authorship to him, you have my ack per the
+above.
+
+> So after this there are 2 other things to be addresses / looked at still while we
+> are still here.
+> 
+> 1. After 84c6591103db __clear_bit_lock() implementation will be broken (or atleast
+> not consistent with what we had after), do we need to reinstate it.
+> 2. Will's proposed change to remove the underlying issue, but the issue in #1
+> remains ?
+
+No, like explained, for spinlock based atomics the issue _should_ not
+exist, and if you look at your atomic_set() implementation for that
+variant, you'll see it does the right thing by taking the lock.
+
+Basically atomic_set() for spinlock based atomics ends up being
+(void)atomic_xchg().
+
+FWIW, also ACK on Will's patch to switch you over to asm-generic bitops
+entirely.
