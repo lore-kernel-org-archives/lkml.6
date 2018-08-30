@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DDBC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3FBC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70BA120837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBB5D2082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PThgoGAP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70BA120837
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUo/q3lB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB5D2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeH3XFN (ORCPT
+        id S1728078AbeH3XFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:05:13 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40861 "EHLO
+        Thu, 30 Aug 2018 19:05:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32854 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbeH3XFK (ORCPT
+        with ESMTP id S1727177AbeH3XFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:05:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n2-v6so9012418wrw.7;
-        Thu, 30 Aug 2018 12:01:34 -0700 (PDT)
+        Thu, 30 Aug 2018 19:05:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v90-v6so9031559wrc.0;
+        Thu, 30 Aug 2018 12:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/+HNfr3I0MzGHGd7Aj3LN1rm33wfTbHxswxtDehlIDw=;
-        b=PThgoGAPiljUk94JizmwB6pajpMFObk5uy970nta1s1e70QjLBSghpncln7/h8OklD
-         7cFkrrNca7sHbPDLGTeA2yaALPF++Syt4fhIbxUuG8rol66lXMQ5FrBCtzjJaugUenFK
-         7VdHho6Z7Nqd28SbUJY/qVafGEC5amkUfipD77lY4EUw7NZXYr4X+cyPq2pUJ0fE6wIe
-         4nhl/lsQJtNEnnNgvNFvh7140iLwhKbKF0x09SM7QflYTL8dk1DPcVJYB0moE5LFDtE/
-         CSKAvOQyvDreFuCGEkmNtBgVAe+pYIjKMRe6UI9nNSCn+wC72DBQ0BmguzOT5cO8IA+P
-         dVZQ==
+        bh=nCUvOR+CglPRSFcIRVKkyPtD7xDCE0J9tFyuoHtZ2Wc=;
+        b=jUo/q3lBYvtwb49VFJf1fEWD56fDG6pi1fggtWxF1H58WqXQiec8vqxqK6EwpY2JRM
+         naXFPqVAn+bu9OzpsJLzZxGYVHEI0JTtI1I+eSD7stUSFTlEhkhvVEddbKmDZ3IMFuf9
+         Ig/IxeWOmJWnHyXhv6jZdhqEmp+xb25kaGn+PqOLu5U8rvURudZDclAQ1SUQjGy069D0
+         Y0F9p14WxKq5qKwtV8dNDbfo8hZv5sK5qQ9rGQYlUVq7cYoxoxzp8AKmQ2SWslMzA31M
+         hZojWGvS01Kvum0aAVVLoabiFzbqNqbbudJf28IRqqG2AW4ReUQ6KKcOza+YRKhxM8la
+         8lgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/+HNfr3I0MzGHGd7Aj3LN1rm33wfTbHxswxtDehlIDw=;
-        b=ihM09bPNvJDBKIVu+TZzHcd2nFTzvonvsSfgVklhTePcbdXU1DlbA+ZZjkPgr6wyI7
-         s9hU/Dze3+ui+kN0rhvvORzXSGZIO4KqET+t3IIX1CMIKBAoOx0QTdhz+hqIk+m8q7ox
-         16h80dgALg23ViDc12t79xWePvupumPVK6TiRPH8AZ0KVh3Hl5T4iC1odavprDxto5PY
-         4RWlXYIYNrFtsQ+/BiuRi3xiHiIyhzLNMbzo+APfUQrQu6niCMKvXGab49hkJ3F2H7Us
-         PjXcL8hepN2AM58CYqrLERj73TtRhkZeq/K/09GscjxHcsZTLdDR5X7HIRs+PHP7y1c6
-         RXWw==
-X-Gm-Message-State: APzg51B5tyexEhiqt8B6D4KKAtQdM8mN4B+M+MAvgSP4MFm9Odx4Y7sh
-        H/xxxVsOTRIpRaI++5AXvhE=
-X-Google-Smtp-Source: ANB0VdaalCsRbYx/Q0GUikEdPntcQpegLLgk7pWIb70v2qIy7lkr8MQIPvRy+o1VDT1E4fhFUQlZgw==
-X-Received: by 2002:adf:fc44:: with SMTP id e4-v6mr8826662wrs.9.1535655693376;
-        Thu, 30 Aug 2018 12:01:33 -0700 (PDT)
+        bh=nCUvOR+CglPRSFcIRVKkyPtD7xDCE0J9tFyuoHtZ2Wc=;
+        b=BsMWyBMV40fEqkuhuUaOWTCsYiQqiCxaOk3hQs4vnG0hgYtIXU19wLEsKWKkOyGvBy
+         1P3PUyjk+gT7+tzXZU0Sv5ENRyByGtgLfo5NsDNt3FQT9/zJOQ60VAQ22ENzynLgCSo/
+         s14IDx1i910VTNppdkrbSAuHfO+ZdTiySQFwwqFGqyxU4kJkTSwjALBfmIbughSAOqaM
+         1sgEJNPeunsNFRSS23nefvdiFPkIY8cBt84sqvBfHdS4KNfyyhGTGZvE4QBN038/mcl4
+         O675yH821mcpA8QcJyeYfUwyE/oLCjqBrPZFCDkZ6oKap6UOLULVTKf9GfRFfdcGsCBO
+         unxQ==
+X-Gm-Message-State: APzg51CdtCONEX5T06cWJiQlhTD6+Jz5Q7a1TSgoyHr4cMzeOe4u63Aa
+        aNkzawbGFOEWnnL1LaQEDJQ=
+X-Google-Smtp-Source: ANB0VdZVFBQIDF4PNrNuD2s4+/LohiAX78RgmjttsDQ8W0DLQUYufhjzOI2rIWuKQbgjhe5fJCUoHg==
+X-Received: by 2002:a5d:488c:: with SMTP id g12-v6mr8636307wrq.0.1535655698019;
+        Thu, 30 Aug 2018 12:01:38 -0700 (PDT)
 Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.31
+        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:01:32 -0700 (PDT)
+        Thu, 30 Aug 2018 12:01:37 -0700 (PDT)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
         mark.rutland@arm.com, maxime.ripard@bootlin.com,
@@ -65,9 +65,9 @@ To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v4 03/13] dt-bindings: ata: ahci-platform: document ahci-supply
-Date:   Thu, 30 Aug 2018 21:01:10 +0200
-Message-Id: <20180830190120.722-4-clabbe.montjoie@gmail.com>
+Subject: [PATCH v4 06/13] dt-bindings: ata: update ahci_sunxi bindings
+Date:   Thu, 30 Aug 2018 21:01:13 +0200
+Message-Id: <20180830190120.722-7-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180830190120.722-1-clabbe.montjoie@gmail.com>
 References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
@@ -76,26 +76,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch document the new optional ahci-supply.
+Since phy code is moved from ahci_sunxi to a dedicated driver, the
+binding need to be updated with the new phy node requirement.
 
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/ata/ahci-platform.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-index b88820b4c01e..f495774c8af9 100644
+index f495774c8af9..aa6f4c745097 100644
 --- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
 +++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-@@ -33,6 +33,7 @@ Optional properties:
+@@ -50,6 +50,14 @@ And at least one of the following properties:
+ - phys		    : reference to the SATA PHY node
  - target-supply     : regulator for SATA target power
- - phys              : reference to the SATA PHY node
- - phy-names         : must be "sata-phy"
-+- ahci-supply       : regulator for AHCI controller
- - ports-implemented : Mask that indicates which ports that the HBA supports
- 		      are available for software to use. Useful if PORTS_IMPL
- 		      is not programmed by the BIOS, which is true with
+ 
++Required properties for:
++* allwinner,sun4i-a10-ahci
++* allwinner,sun8i-r40-ahci
++A port sub-node must be present and linked to a sata_phy.
++
++Required properties for allwinner,sun8i-r40-ahci
++The reset and ahci-supply properties must be present.
++
+ Examples:
+         sata@ffe08000 {
+ 		compatible = "snps,spear-ahci";
 -- 
 2.16.4
 
