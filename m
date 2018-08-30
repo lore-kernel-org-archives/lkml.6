@@ -2,178 +2,131 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A289EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469C5C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC4C20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC4C20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 03D7420837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="o99UDCuf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D7420837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeH3Vhq (ORCPT
+        id S1727713AbeH3Vhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:37:46 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48535 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727129AbeH3VhT (ORCPT
+        Thu, 30 Aug 2018 17:37:53 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41862 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeH3Vhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:37:19 -0400
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 30 Aug 2018 10:33:48 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id AC5B5B05DE;
-        Thu, 30 Aug 2018 13:34:06 -0400 (EDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-arch@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        Thu, 30 Aug 2018 17:37:52 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b12-v6so4149248plr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 10:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=o6QdlW5hbMszqdwMzI9jFkDmdlFLAzwzs4WCxhif6Qg=;
+        b=o99UDCufXoVn48jbi6Z5ptGCA+kZMb6gAyJOFKyvcFTx51bP7EBXSepF48OyJWzlwE
+         5GzKHuqUGvMNjW5ZJ4iM882+5ycQKgtloNP7sj+O1904I7GRBi8v2DFhg5erxL0xxUeY
+         Ozj87Eyh4Nlj3xhFrfQy4a/E3vM/Uear2DnX8Ytk3bw9DCE4zEZD4MA7vUvsgeo8SBps
+         CE3oVG6fMBUNhq+7VR6uBqlUtY9jWf4cFsDf0oovDj8RFaqBZWMh9Yc6TwPY3DyctTPR
+         4JBEl6FZXb32HLdWhUdOw86XMufQZdO+2hzcs4d7kSLVnjCRDIV3TTWsPCcbdsCLXlo/
+         sw+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=o6QdlW5hbMszqdwMzI9jFkDmdlFLAzwzs4WCxhif6Qg=;
+        b=Ata5r99XwJyoZ5XFy6Yh2AbnBQgp1mmlRplYE8C8Lkj54A1lyN6H6y5uMCQSRfqWJM
+         OCy1ZWgA5Uhzd2qg4f1hHIHjdKzfS4o3/L8WAijZS/l0ZcjcmkXYJOCoIIHF/abUuxlU
+         1NNjKgr/5twB3n+gSAnxuH1nLwLfXI+uDGNRu24bHXBuGtmLns4vyrzV52iW4JcEnlpH
+         y/srhnbtnOtz7bR2ioL9Tw0pNLG1fZ5Rglg5xyfadF5KEJ6gRHxpmqwd8L/aAZHl0dkQ
+         L1UdXvLxq4VNRBBs8dO+tTU8PinaKK7ZlaqG33wIyC0o6LJb1XMOlF6mvtwcAuZCWhoD
+         wujw==
+X-Gm-Message-State: APzg51BuhOiRjpKRO5QOv7vI+T8QjORI58RTBkV8R01IQI7A0pAve/3h
+        A5gNqRholttRCMoyxpvMVY1fXg==
+X-Google-Smtp-Source: ANB0VdZf4F93D4oM0oyyea2UsL+45/ek5huX2rtJQEtVSOvLgIxjnyylaSZLVVutzOgdFW+5JT4oiA==
+X-Received: by 2002:a17:902:850c:: with SMTP id bj12-v6mr11403268plb.330.1535650480030;
+        Thu, 30 Aug 2018 10:34:40 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b05a:7d28:c160:33fb:c0e2:e5ad? ([2600:1010:b05a:7d28:c160:33fb:c0e2:e5ad])
+        by smtp.gmail.com with ESMTPSA id b21-v6sm21261248pfm.97.2018.08.30.10.34.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 10:34:38 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and pmdp_set_wrprotect for _PAGE_DIRTY_SW
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
+Date:   Thu, 30 Aug 2018 10:34:37 -0700
+Cc:     Jann Horn <jannh@google.com>, yu-cheng.yu@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4/6] x86/alternatives: initializing temporary mm for patching
-Date:   Thu, 30 Aug 2018 10:32:16 -0700
-Message-ID: <20180830173218.238900-5-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180830173218.238900-1-namit@vmware.com>
-References: <20180830173218.238900-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B2222C69-337B-44F2-9DA6-69E685AA469B@amacapital.net>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com> <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com> <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com> <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com> <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent improper use of the PTEs that are used for text patching, we
-want to use a temporary mm struct. We initailize it by copying the init
-mm.
 
-The address that will be used for patching is taken from the lower area
-that is usually used for the task memory. Doing so prevents the need to
-frequently synchronize the temporary-mm (e.g., when BPF programs are
-installed), since different PGDs are used for the task memory.
 
-Finally, we randomize the address of the PTEs to harden against exploits
-that use these PTEs.
+> On Aug 30, 2018, at 10:19 AM, Dave Hansen <dave.hansen@linux.intel.com> wr=
+ote:
+>=20
+>> On 08/30/2018 09:23 AM, Jann Horn wrote:
+>> Three threads (A, B, C) run with the same CR3.
+>>=20
+>> 1. a dirty+writable PTE is placed directly in front of B's shadow stack.
+>>   (this can happen, right? or is there a guard page?)
+>> 2. C's TLB caches the dirty+writable PTE.
+>> 3. A performs some syscall that triggers ptep_set_wrprotect().
+>> 4. A's syscall calls clear_bit().
+>> 5. B's TLB caches the transient shadow stack.
+>> [now C has write access to B's transiently-extended shadow stack]
+>> 6. B recurses into the transiently-extended shadow stack
+>> 7. C overwrites the transiently-extended shadow stack area.
+>> 8. B returns through the transiently-extended shadow stack, giving
+>>    the attacker instruction pointer control in B.
+>> 9. A's syscall broadcasts a TLB flush.
+>=20
+> Heh, that's a good point.  The shadow stack permissions are *not*
+> strictly reduced because a page getting marked as shadow-stack has
+> *increased* permissions when being used as a shadow stack.  Fun.
+>=20
+> For general hardening, it seems like we want to ensure that there's a
+> guard page at the bottom of the shadow stack.  Yu-cheng, do we have a
+> guard page?
+>=20
+> But, to keep B's TLB from picking up the entry, I think we can just make
+> it !Present for a moment.  No TLB can cache it, and I believe the same
+> "don't set Dirty on a !Writable entry" logic also holds for !Present
+> (modulo a weird erratum or two).
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/pgtable.h       |  3 +++
- arch/x86/include/asm/text-patching.h |  2 ++
- arch/x86/mm/init_64.c                | 29 ++++++++++++++++++++++++++++
- init/main.c                          |  3 +++
- 4 files changed, 37 insertions(+)
-
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e4ffa565a69f..3de9a1fb7a9a 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1022,6 +1022,9 @@ static inline void __meminit init_trampoline_default(void)
- 	/* Default trampoline pgd value */
- 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
- }
-+
-+void __init poking_init(void);
-+
- # ifdef CONFIG_RANDOMIZE_MEMORY
- void __meminit init_trampoline(void);
- # else
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index e85ff65c43c3..ffe7902cc326 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -38,5 +38,7 @@ extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-+extern __ro_after_init struct mm_struct *poking_mm;
-+extern __ro_after_init unsigned long poking_addr;
- 
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index dd519f372169..db33a724a054 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -54,6 +54,7 @@
- #include <asm/init.h>
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
-+#include <asm/text-patching.h>
- 
- #include "mm_internal.h"
- 
-@@ -1389,6 +1390,34 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
- }
- 
-+/*
-+ * Initialize an mm_struct to be used during poking and a pointer to be used
-+ * during patching. If anything fails during initialization, poking will be done
-+ * using the fixmap, which is unsafe, so warn the user about it.
-+ */
-+void __init poking_init(void)
-+{
-+	unsigned long poking_addr;
-+
-+	poking_mm = copy_init_mm();
-+	if (!poking_mm) {
-+		pr_err("x86/mm: error setting a separate poking address space");
-+		return;
-+	}
-+
-+	/*
-+	 * Randomize the poking address, but make sure that the following page
-+	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-+	 * and adjust the address if the PMD ends after the first one.
-+	 */
-+	poking_addr = TASK_UNMAPPED_BASE +
-+		(kaslr_get_random_long("Poking") & PAGE_MASK) %
-+		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-+
-+	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-+		poking_addr += PAGE_SIZE;
-+}
-+
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/init/main.c b/init/main.c
-index 18f8f0140fa0..8c6dd8d88fca 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -496,6 +496,8 @@ void __init __weak thread_stack_cache_init(void)
- 
- void __init __weak mem_encrypt_init(void) { }
- 
-+void __init __weak poking_init(void) { }
-+
- bool initcall_debug;
- core_param(initcall_debug, initcall_debug, bool, 0644);
- 
-@@ -725,6 +727,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	taskstats_init_early();
- 	delayacct_init();
- 
-+	poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
--- 
-2.17.1
+Can we get documentation?  Pretty please?
 
