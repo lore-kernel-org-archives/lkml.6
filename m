@@ -2,131 +2,100 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B5BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD22C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5DD2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36D062073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qSYZczYd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5DD2073D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROW/twvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D062073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbeH3SIB (ORCPT
+        id S1729180AbeH3SIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:08:01 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32805 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728962AbeH3SIA (ORCPT
+        Thu, 30 Aug 2018 14:08:39 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42079 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728962AbeH3SIi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:08:00 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so3951722pfn.0;
-        Thu, 30 Aug 2018 07:05:43 -0700 (PDT)
+        Thu, 30 Aug 2018 14:08:38 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f1-v6so7399457ljc.9;
+        Thu, 30 Aug 2018 07:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fptreHptAAOohSZmFgomIuC4PZXLD7LeMRAOT0hZG/4=;
-        b=qSYZczYdDY6y6fq9E7SBzY1NbQeTzxoVJOnCVCWf7RE0KIh4mEx+K8L8eZ7lxDBojA
-         KyjrBVyvVi8M/JHsPyKcUKKSdzVOwniolCxt0T+fHFAbB1oBfGMSAyKf3bkhZoHQ6lqy
-         Pu7Kr/YptYBynlTQ2WiAY8e3y5Nj/SdCo88qLAg/WrXg4j1U76ign7TDyMhvMNHuQHIf
-         GYEZFvHTk+HOUpZSWbwMIJKAstxCJIs7Tcr2ZyjdOARHFiEePOU0p3V+KAmWmxgbF0Zq
-         MtbnUidplDh2c6YhIqhAqHttiXUTePniGtcR79UslkY77bvdFW4t+Uciz0pIdNNzaROF
-         Ec/g==
+        h=from:to:cc:subject:date:message-id;
+        bh=SWU3YA6rp5Zxn6M8r34q9FmGlg4VWGf6JWI6inQVZVM=;
+        b=ROW/twvBxbYZW4KEplRW8jFQDXI3ejvBSy7eaCVBfBECqmS2V55Ivy47TLq89HRQYZ
+         45UTfd23Dkpg/U0craxCTlpKsMQ6uZYy1fvJ1BM3iaEcGAvbqdHQ0WAs2e9xPL3KiQS6
+         ZPIs3Dl2ZUPHwOU2K5+18X0mVH6iZ7ahAH+KEwqMz5HboAij3ABYUCr1kQUB/svFlrRN
+         tin1kvGbePi7h2lY8/aHcTnKdjaoWCE6LXdm2+Yh8dZIVtgss707OSenDqOfiUtQjCgW
+         meZwffo7vVSE/yx/1+YxtJ4DzePB+JwA7GoSPrVQOftkJAKTeKVUK09msC/CgP4JdEgg
+         +BIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=fptreHptAAOohSZmFgomIuC4PZXLD7LeMRAOT0hZG/4=;
-        b=sTU5Okp298Ujm39BzbqiqXjUTEC6AC4TWTnv80/1ETnG05pmb8lwi9v93rms+iBqd5
-         xrzhnfm4EP7MPgJQz+fG9al8hjpXT2tn8507+1jTVGrgZaL8sKYNDARVR+I2xJqTq51p
-         socI6Ls5v9urMdh4pUUkCHAhCshIWGfkq1vsy/whOBoF2Lb+GTZIyDYGtRF6kkhk3DfB
-         x/Ql0wiSACWIqumxti+N4MVt4tA8spFSN46gCsvXHCFS1f4Yq3/bQqLZjp0+OxUdvBD7
-         MmB0EqKhBS/O6jDvTCyeDczqrdMfB7vD5Jw2M42JAq92fo/ZiZJDNY+hfKvI9Fo0COVL
-         mOpA==
-X-Gm-Message-State: APzg51DHByjreSeZptTNzwmaT7EqcyBnx4Cd7SJt+yYy0GUoLur1LL9m
-        SCd7L+W2vcN/5rgMiV7ENvs=
-X-Google-Smtp-Source: ANB0VdZthBDSk1b5hbz/ylW0QOLM+Xm12I1bUosVDw+fB8RNkqUrK0qIqiQJ8a4xnywKrrIPHz+1sg==
-X-Received: by 2002:a63:dc17:: with SMTP id s23-v6mr10058330pgg.40.1535637942461;
-        Thu, 30 Aug 2018 07:05:42 -0700 (PDT)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id i20-v6sm9975345pfj.82.2018.08.30.07.05.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Aug 2018 07:05:41 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 00:05:38 +1000
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     jglisse@redhat.com
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 2/7] mm/rmap: map_pte() was not handling private
- ZONE_DEVICE page properly
-Message-ID: <20180830140538.GA28695@350D>
-References: <20180824192549.30844-1-jglisse@redhat.com>
- <20180824192549.30844-3-jglisse@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180824192549.30844-3-jglisse@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SWU3YA6rp5Zxn6M8r34q9FmGlg4VWGf6JWI6inQVZVM=;
+        b=RgU9JbuIqdOVi4g2n3pI8wPyGU5jdKS+LNM9bDZXA3DZ2cyC+ayw98IRE42C5NDpnY
+         /pDKNXlxa9YrtwkThMibCXdK7p+2fs8YW3SIujhtKSNDDnYXeADV0JPITwoXfXxTAIY9
+         Y+6gkqRJlqv92nuQQnXg8ozFcBoGTqR+yXQfAwKvKrHxYoS4y1YXMWpMcHSNGaBhgYKm
+         GGoNf3msEkDK4fRgyDhRA11HmQ0gBlYyKqnLwiraFbMakcNBfOJyE6F+OoGJWSutXsgp
+         pBFAZaBWttTX/ERVmAMC1upVUrufmlEHl/lCiQO8BOTduYszmRg1yMlB7/ucZ9v1tJaZ
+         0d9g==
+X-Gm-Message-State: APzg51AnmrF0RBL+cfm/GdBLDFAnknGSi1HSHX64iOeSIPqwf/QsZinl
+        bvJUNDaoN7GWyGQLNkOZZq5Qlns=
+X-Google-Smtp-Source: ANB0VdZcBnPH0wVTi/kmJ0ix6hK6BmoLDw8dOTWK18FTC/NfndMpIp6z4QEaiR1sFJo8Lzw+4Kz1LQ==
+X-Received: by 2002:a2e:9599:: with SMTP id w25-v6mr7344174ljh.6.1535637979272;
+        Thu, 30 Aug 2018 07:06:19 -0700 (PDT)
+Received: from natsu.teplo.pdc (mail2.teploobmennik.ru. [95.79.26.27])
+        by smtp.gmail.com with ESMTPSA id s74-v6sm1312464lfg.79.2018.08.30.07.06.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 07:06:18 -0700 (PDT)
+From:   Aleksei Mamlin <mamlinav@gmail.com>
+To:     Jes Sorensen <Jes.Sorensen@gmail.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksei Mamlin <mamlinav@gmail.com>
+Subject: [PATCH] rtl8xxxu: Add rtl8188ctv support
+Date:   Thu, 30 Aug 2018 17:05:41 +0300
+Message-Id: <20180830140541.31964-1-mamlinav@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 03:25:44PM -0400, jglisse@redhat.com wrote:
-> From: Ralph Campbell <rcampbell@nvidia.com>
-> 
-> Private ZONE_DEVICE pages use a special pte entry and thus are not
-> present. Properly handle this case in map_pte(), it is already handled
-> in check_pte(), the map_pte() part was lost in some rebase most probably.
-> 
-> Without this patch the slow migration path can not migrate back private
-> ZONE_DEVICE memory to regular memory. This was found after stress
-> testing migration back to system memory. This ultimatly can lead the
-> CPU to an infinite page fault loop on the special swap entry.
-> 
-> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> ---
->  mm/page_vma_mapped.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-> index ae3c2a35d61b..1cf5b9bfb559 100644
-> --- a/mm/page_vma_mapped.c
-> +++ b/mm/page_vma_mapped.c
-> @@ -21,6 +21,15 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw)
->  			if (!is_swap_pte(*pvmw->pte))
->  				return false;
->  		} else {
-> +			if (is_swap_pte(*pvmw->pte)) {
-> +				swp_entry_t entry;
-> +
-> +				/* Handle un-addressable ZONE_DEVICE memory */
-> +				entry = pte_to_swp_entry(*pvmw->pte);
-> +				if (is_device_private_entry(entry))
-> +					return true;
-> +			}
-> +
+The Realtek rtl8188ctv (0x0bda:0x018a) is a highly integrated single-chip
+WLAN USB2.0 network interface controller.
 
-This happens just for !PVMW_SYNC && PVMW_MIGRATION? I presume this
-is triggered via the remove_migration_pte() code path? Doesn't
-returning true here imply that we've taken the ptl lock for the
-pvmw?
+Currently rtl8188ctv is supported by rtlwifi driver.
+It is similar to the rtl8188cus(0x0bda:0x818a) and uses the same config.
 
-Balbir
+Signed-off-by: Aleksei Mamlin <mamlinav@gmail.com>
+---
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index 505ab1b055ff..73f6fc0d4a01 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -6231,6 +6231,8 @@ static const struct usb_device_id dev_table[] = {
+ {USB_DEVICE_AND_INTERFACE_INFO(0x2001, 0x3308, 0xff, 0xff, 0xff),
+ 	.driver_info = (unsigned long)&rtl8192cu_fops},
+ /* Currently untested 8188 series devices */
++{USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_REALTEK, 0x018a, 0xff, 0xff, 0xff),
++	.driver_info = (unsigned long)&rtl8192cu_fops},
+ {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_REALTEK, 0x8191, 0xff, 0xff, 0xff),
+ 	.driver_info = (unsigned long)&rtl8192cu_fops},
+ {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_REALTEK, 0x8170, 0xff, 0xff, 0xff),
+-- 
+2.16.4
+
