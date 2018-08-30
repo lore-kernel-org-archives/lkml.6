@@ -6,42 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9606C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B10DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7193120661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7193120661
+	by mail.kernel.org (Postfix) with ESMTP id 595C720661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:57:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 595C720661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeH3F4D (ORCPT
+        id S1727395AbeH3F4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:56:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43068 "EHLO mail.kernel.org"
+        Thu, 30 Aug 2018 01:56:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbeH3F4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:56:02 -0400
+        id S1726169AbeH3F4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:56:46 -0400
 Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10D1A20647;
-        Thu, 30 Aug 2018 01:56:17 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 21:56:16 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id D9E1320647;
+        Thu, 30 Aug 2018 01:57:02 +0000 (UTC)
+Date:   Wed, 29 Aug 2018 21:57:01 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH tip/core/rcu 3/3] srcu: Make early-boot call_srcu()
- reuse workqueue lists
-Message-ID: <20180829215616.1c10e476@vmware.local.home>
-In-Reply-To: <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
-References: <20180829212036.GA22033@linux.vnet.ibm.com>
-        <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [4.14.66-rt40] [report][cpuhotplug] BUG: sleeping function
+ called from invalid context at kernel/locking/rtmutex.c:974
+Message-ID: <20180829215701.5833e815@vmware.local.home>
+In-Reply-To: <3aaebda9-a956-55d6-0b04-f84daa6e4866@ti.com>
+References: <4277080d-fbd1-282c-164d-c07796260c36@ti.com>
+        <20180829140817.7pr5g2aonbp55fjr@linutronix.de>
+        <3aaebda9-a956-55d6-0b04-f84daa6e4866@ti.com>
 X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -51,142 +50,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 14:23:13 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On Wed, 29 Aug 2018 16:28:50 -0500
+Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 
-> Allocating a list_head structure that is almost never used, and, when
-> used, is used only during early boot (rcu_init() and earlier), is a bit
-> wasteful.  This commit therefore eliminates that list_head in favor of
-> the one in the work_struct structure.  This is safe because the work_struct
-> structure cannot be used until after rcu_init() returns.
+> On 08/29/2018 09:08 AM, Sebastian Andrzej Siewior wrote:
+> > On 2018-08-28 18:28:42 [-0500], Grygorii Strashko wrote:  
 > 
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> ---
->  include/linux/srcutiny.h |  2 --
->  include/linux/srcutree.h |  3 +--
->  kernel/rcu/srcutiny.c    | 10 +++++-----
->  kernel/rcu/srcutree.c    | 11 +++++------
->  4 files changed, 11 insertions(+), 15 deletions(-)
+> [...]
 > 
-> diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-> index 2b5c0822e683..f41d2fb09f87 100644
-> --- a/include/linux/srcutiny.h
-> +++ b/include/linux/srcutiny.h
-> @@ -36,7 +36,6 @@ struct srcu_struct {
->  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
->  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
->  	struct work_struct srcu_work;	/* For driving grace periods. */
-> -	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
->  	struct lockdep_map dep_map;
->  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> @@ -49,7 +48,6 @@ void srcu_drive_gp(struct work_struct *wp);
->  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
->  	.srcu_cb_tail = &name.srcu_cb_head,				\
->  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
-> -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
->  	__SRCU_DEP_MAP_INIT(name)					\
->  }
->  
-> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> index 9cfa4610113a..0ae91b3a7406 100644
-> --- a/include/linux/srcutree.h
-> +++ b/include/linux/srcutree.h
-> @@ -94,7 +94,6 @@ struct srcu_struct {
->  						/*  callback for the barrier */
->  						/*  operation. */
->  	struct delayed_work work;
-> -	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
->  	struct lockdep_map dep_map;
->  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> @@ -110,7 +109,7 @@ struct srcu_struct {
->  	.sda = &pcpu_name,						\
->  	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
->  	.srcu_gp_seq_needed = -1UL,					\
-> -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> +	.work = __DELAYED_WORK_INITIALIZER(name.work, NULL, 0),		\
+> >> [    0.912275] [<ffff0000082023cc>] alloc_pages_current+0xcc/0xe0
+> >> [    0.912287] [<ffff00000846bb00>] its_allocate_pending_table+0x60/0xa0
+> >> [    0.912295] [<ffff00000846e5d8>] its_cpu_init+0x2a0/0x380
+> >> [    0.912303] [<ffff00000846b484>] gic_cpu_init.part.6+0x15c/0x170
+> >> [    0.912311] [<ffff00000846b4ac>] gic_starting_cpu+0x14/0x20  
+> > 
+> > This is fixed by
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/irqchip-gic-v3-its-Make-its_lock-a-raw_spin_lock_t.patch?h=linux-4.18.y-rt-patches  
+> [1]
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/irqchip-gic-v3-its-Move-ITS-pend_page-allocation-int.patch?h=linux-4.18.y-rt-patches  
+> [2]
+> > 
+> > in the v4.18 tree. The first patch was merged upstream. The second will
+> > be replaced by the patches Marc Zyngier proposed in
+> >    https://lkml.kernel.org/r/3302f069-8f4e-8d97-5166-0dec01b43c4c@arm.com
+> > 
+> > I plan to test + replace those for the next v4.18 release.  
+> 
+> Thank you. Are there any plans to back port them for 4.14-rt?
+> Patch [1] need to be reworked a bit, [2] - I was able to cherry-pick from 4.18-rt.
+> 
 
-Thanks!
+Next week I plan on looking into the patches that need to be
+backported. There's quite a lot of them.
 
 -- Steve
-
->  	__SRCU_DEP_MAP_INIT(name)					\
->  }
->  
-> diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> index d233f0c63f6f..b46e6683f8c9 100644
-> --- a/kernel/rcu/srcutiny.c
-> +++ b/kernel/rcu/srcutiny.c
-> @@ -48,7 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
->  	sp->srcu_gp_waiting = false;
->  	sp->srcu_idx = 0;
->  	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
-> -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
-> +	INIT_LIST_HEAD(&sp->srcu_work.entry);
->  	return 0;
->  }
->  
-> @@ -185,8 +185,8 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
->  	if (!READ_ONCE(sp->srcu_gp_running)) {
->  		if (likely(srcu_init_done))
->  			schedule_work(&sp->srcu_work);
-> -		else if (list_empty(&sp->srcu_boot_entry))
-> -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> +		else if (list_empty(&sp->srcu_work.entry))
-> +			list_add(&sp->srcu_work.entry, &srcu_boot_list);
->  	}
->  }
->  EXPORT_SYMBOL_GPL(call_srcu);
-> @@ -224,8 +224,8 @@ void __init srcu_init(void)
->  	srcu_init_done = true;
->  	while (!list_empty(&srcu_boot_list)) {
->  		sp = list_first_entry(&srcu_boot_list,
-> -				      struct srcu_struct, srcu_boot_entry);
-> -		list_del_init(&sp->srcu_boot_entry);
-> +				      struct srcu_struct, srcu_work.entry);
-> +		list_del_init(&sp->srcu_work.entry);
->  		schedule_work(&sp->srcu_work);
->  	}
->  }
-> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> index e79c1929328f..36a2857c84e0 100644
-> --- a/kernel/rcu/srcutree.c
-> +++ b/kernel/rcu/srcutree.c
-> @@ -186,7 +186,6 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
->  	mutex_init(&sp->srcu_barrier_mutex);
->  	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
->  	INIT_DELAYED_WORK(&sp->work, process_srcu);
-> -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
->  	if (!is_static)
->  		sp->sda = alloc_percpu(struct srcu_data);
->  	init_srcu_struct_nodes(sp, is_static);
-> @@ -709,8 +708,8 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
->  		if (likely(srcu_init_done))
->  			queue_delayed_work(rcu_gp_wq, &sp->work,
->  					   srcu_get_delay(sp));
-> -		else if (list_empty(&sp->srcu_boot_entry))
-> -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> +		else if (list_empty(&sp->work.work.entry))
-> +			list_add(&sp->work.work.entry, &srcu_boot_list);
->  	}
->  	spin_unlock_irqrestore_rcu_node(sp, flags);
->  }
-> @@ -1324,10 +1323,10 @@ void __init srcu_init(void)
->  
->  	srcu_init_done = true;
->  	while (!list_empty(&srcu_boot_list)) {
-> -		sp = list_first_entry(&srcu_boot_list,
-> -				      struct srcu_struct, srcu_boot_entry);
-> +		sp = list_first_entry(&srcu_boot_list, struct srcu_struct,
-> +				      work.work.entry);
->  		check_init_srcu_struct(sp);
-> -		list_del_init(&sp->srcu_boot_entry);
-> +		list_del_init(&sp->work.work.entry);
->  		queue_work(rcu_gp_wq, &sp->work.work);
->  	}
->  }
-
