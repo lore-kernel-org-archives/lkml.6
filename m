@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375D5C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFC0C43334
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D4D20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D4D20645
+	by mail.kernel.org (Postfix) with ESMTP id 2D6D020645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6D020645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeH3ILX (ORCPT
+        id S1727741AbeH3ILY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 04:11:23 -0400
+        Thu, 30 Aug 2018 04:11:24 -0400
 Received: from mga02.intel.com ([134.134.136.20]:31597 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727694AbeH3ILX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 04:11:23 -0400
+        id S1727698AbeH3ILY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 04:11:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 21:11:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
-   d="scan'208";a="68959991"
+   d="scan'208";a="68959972"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 21:11:10 -0700
+  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 21:11:01 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -44,9 +44,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH v2 09/10] vfio/type1: Determine domain type of an mdev group
-Date:   Thu, 30 Aug 2018 12:09:21 +0800
-Message-Id: <20180830040922.30426-10-baolu.lu@linux.intel.com>
+Subject: [RFC PATCH v2 06/10] iommu/vt-d: Return ID associated with an auxiliary domain
+Date:   Thu, 30 Aug 2018 12:09:18 +0800
+Message-Id: <20180830040922.30426-7-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830040922.30426-1-baolu.lu@linux.intel.com>
 References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
@@ -55,96 +55,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the support to determine the domain type of a group
-of mediated devices according to the domain type attribute of
-each device.
+This adds support to return the default pasid associated with
+an auxiliary domain. The PCI device which is bound with this
+domain should use this value as the pasid for all DMA requests
+of the subset of device which is isolated and protected with
+this domain.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Kevin Tian <kevin.tian@intel.com>
 Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 47 ++++++++++++++++++++++++++++++---
- 1 file changed, 43 insertions(+), 4 deletions(-)
+ drivers/iommu/intel-iommu.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 89e2e6123223..64bf55b91de1 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1390,6 +1390,27 @@ static void vfio_iommu_detach_group(struct vfio_domain *domain,
- 		iommu_detach_group(domain->domain, group->iommu_group);
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 784bd496f316..1ba39f120a38 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5544,6 +5544,14 @@ static void intel_iommu_disable_auxd(struct device *dev)
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
  }
  
-+static int vfio_mdev_domain_type(struct device *dev, void *data)
++static int intel_iommu_auxd_id(struct iommu_domain *domain)
 +{
-+	enum mdev_domain_type new, *old = data;
-+	enum mdev_domain_type (*fn)(struct device *dev);
++	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
 +
-+	fn = symbol_get(mdev_get_domain_type);
-+	if (fn) {
-+		new = fn(dev);
-+		symbol_put(mdev_get_domain_type);
-+
-+		if (*old && *old != new)
-+			return -EINVAL;
-+
-+		*old = new;
-+
-+		return 0;
-+	}
-+
-+	return -EINVAL;
++	return dmar_domain->default_pasid > 0 ?
++			dmar_domain->default_pasid : -EINVAL;
 +}
 +
- static int vfio_iommu_type1_attach_group(void *iommu_data,
- 					 struct iommu_group *iommu_group)
- {
-@@ -1433,9 +1454,19 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ const struct iommu_ops intel_iommu_ops = {
+ 	.capable		= intel_iommu_capable,
+ 	.domain_alloc		= intel_iommu_domain_alloc,
+@@ -5560,6 +5568,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.device_group		= pci_device_group,
+ 	.enable_auxd		= intel_iommu_enable_auxd,
+ 	.disable_auxd		= intel_iommu_disable_auxd,
++	.auxd_id		= intel_iommu_auxd_id,
+ 	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
+ };
  
- 	mdev_bus = symbol_get(mdev_bus_type);
- 
--	if (mdev_bus) {
--		if ((bus == mdev_bus) && !iommu_present(bus)) {
--			symbol_put(mdev_bus_type);
-+	if (mdev_bus && bus == mdev_bus) {
-+		enum mdev_domain_type type = 0;
-+
-+		symbol_put(mdev_bus_type);
-+
-+		/* Determine the domain type: */
-+		ret = iommu_group_for_each_dev(iommu_group, &type,
-+					       vfio_mdev_domain_type);
-+		if (ret)
-+			goto out_free;
-+
-+		switch (type) {
-+		case DOMAIN_TYPE_NO_IOMMU:
- 			if (!iommu->external_domain) {
- 				INIT_LIST_HEAD(&domain->group_list);
- 				iommu->external_domain = domain;
-@@ -1445,11 +1476,19 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 			list_add(&group->next,
- 				 &iommu->external_domain->group_list);
- 			mutex_unlock(&iommu->lock);
-+
- 			return 0;
-+		case DOMAIN_TYPE_ATTACH_PARENT:
-+		/* FALLTHROUGH */
-+		default:
-+			ret = -EINVAL;
-+			goto out_free;
- 		}
--		symbol_put(mdev_bus_type);
- 	}
- 
-+	if (mdev_bus)
-+		symbol_put(mdev_bus_type);
-+
- 	domain->domain = iommu_domain_alloc(bus);
- 	if (!domain->domain) {
- 		ret = -EIO;
 -- 
 2.17.1
 
