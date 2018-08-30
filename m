@@ -2,152 +2,78 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0848CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42C6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC6E2082B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC6E2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 644A52054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644A52054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbeH3PFw (ORCPT
+        id S1728521AbeH3PGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:05:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40083 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbeH3PFw (ORCPT
+        Thu, 30 Aug 2018 11:06:34 -0400
+Received: from zimbra.alphalink.fr ([217.15.80.77]:43657 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeH3PGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:05:52 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7UB3wbU1729174
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 30 Aug 2018 04:03:58 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7UB3w051729168;
-        Thu, 30 Aug 2018 04:03:58 -0700
-Date:   Thu, 30 Aug 2018 04:03:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mukesh Ojha <tipbot@zytor.com>
-Message-ID: <tip-935aad3015fb4afc0b7ef6e6c18175b95461de47@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        mojha@codeaurora.org
-Reply-To: mojha@codeaurora.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-          mingo@kernel.org
-In-Reply-To: <1535439294-31426-1-git-send-email-mojha@codeaurora.org>
-References: <1535439294-31426-1-git-send-email-mojha@codeaurora.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/urgent] cpu/hotplug: Remove skip_onerr field from
- cpuhp_step structure
-Git-Commit-ID: 935aad3015fb4afc0b7ef6e6c18175b95461de47
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 30 Aug 2018 11:06:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 064492B52055;
+        Thu, 30 Aug 2018 13:04:56 +0200 (CEST)
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id T5B8Gqx92cSz; Thu, 30 Aug 2018 13:04:54 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 56A5E2B52071;
+        Thu, 30 Aug 2018 13:04:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Ie5Z-05odUO5; Thu, 30 Aug 2018 13:04:54 +0200 (CEST)
+Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 1FEA52B52055;
+        Thu, 30 Aug 2018 13:04:54 +0200 (CEST)
+Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
+        id 0301C60228; Thu, 30 Aug 2018 13:04:53 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 13:04:53 +0200
+From:   Guillaume Nault <g.nault@alphalink.fr>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     paulus@samba.org, linux-ppp@vger.kernel.org,
+        netdev@vger.kernel.org, mitch@sfgoth.com, mostrows@earthlink.net,
+        jchapman@katalix.com, xeb@mail.ru, davem@davemloft.net,
+        viro@zeniv.linux.org.uk, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/5] pppoe: fix PPPOEIOCSFWD compat handling
+Message-ID: <20180830110453.GC1473@alphalink.fr>
+References: <20180829140409.833488-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180829140409.833488-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  935aad3015fb4afc0b7ef6e6c18175b95461de47
-Gitweb:     https://git.kernel.org/tip/935aad3015fb4afc0b7ef6e6c18175b95461de47
-Author:     Mukesh Ojha <mojha@codeaurora.org>
-AuthorDate: Tue, 28 Aug 2018 12:24:54 +0530
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 30 Aug 2018 12:59:30 +0200
+On Wed, Aug 29, 2018 at 04:03:26PM +0200, Arnd Bergmann wrote:
+> Support for handling the PPPOEIOCSFWD ioctl in compat mode was added in
+> linux-2.5.69 along with hundreds of other commands, but was always broken
+> sincen only the structure is compatible, but the command number is not,
+> due to the size being sizeof(size_t), or at first sizeof(sizeof((struct
+> sockaddr_pppox)), which is different on 64-bit architectures.
+> 
+And the implementation was broken until 2016 (see 29e73269aa4d ("pppoe:
+fix reference counting in PPPoE proxy")), and nobody ever noticed. I
+should probably have removed this ioctl entirely instead of fixing it.
+Clearly, it has never been used.
 
-cpu/hotplug: Remove skip_onerr field from cpuhp_step structure
-
-When notifiers were there, `skip_onerr` was used to avoid calling
-particular step startup/teardown callbacks in the CPU up/down rollback
-path, which made the hotplug asymmetric.
-
-As notifiers are gone now after the full state machine conversion, the
-`skip_onerr` field is no longer required.
-
-Remove it from the structure and its usage.
-
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/1535439294-31426-1-git-send-email-mojha@codeaurora.org
-
-
----
- kernel/cpu.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index ed44d7d34c2d..c544baf75e77 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -102,8 +102,6 @@ static inline void cpuhp_lock_release(bool bringup) { }
-  * @name:	Name of the step
-  * @startup:	Startup function of the step
-  * @teardown:	Teardown function of the step
-- * @skip_onerr:	Do not invoke the functions on error rollback
-- *		Will go away once the notifiers	are gone
-  * @cant_stop:	Bringup/teardown can't be stopped at this step
-  */
- struct cpuhp_step {
-@@ -119,7 +117,6 @@ struct cpuhp_step {
- 					 struct hlist_node *node);
- 	} teardown;
- 	struct hlist_head	list;
--	bool			skip_onerr;
- 	bool			cant_stop;
- 	bool			multi_instance;
- };
-@@ -550,12 +547,8 @@ static int bringup_cpu(unsigned int cpu)
- 
- static void undo_cpu_up(unsigned int cpu, struct cpuhp_cpu_state *st)
- {
--	for (st->state--; st->state > st->target; st->state--) {
--		struct cpuhp_step *step = cpuhp_get_step(st->state);
--
--		if (!step->skip_onerr)
--			cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
--	}
-+	for (st->state--; st->state > st->target; st->state--)
-+		cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
- }
- 
- static int cpuhp_up_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
-@@ -644,12 +637,6 @@ static void cpuhp_thread_fun(unsigned int cpu)
- 
- 	WARN_ON_ONCE(!cpuhp_is_ap_state(state));
- 
--	if (st->rollback) {
--		struct cpuhp_step *step = cpuhp_get_step(state);
--		if (step->skip_onerr)
--			goto next;
--	}
--
- 	if (cpuhp_is_atomic_state(state)) {
- 		local_irq_disable();
- 		st->result = cpuhp_invoke_callback(cpu, state, bringup, st->node, &st->last);
-@@ -916,12 +903,8 @@ void cpuhp_report_idle_dead(void)
- 
- static void undo_cpu_down(unsigned int cpu, struct cpuhp_cpu_state *st)
- {
--	for (st->state++; st->state < st->target; st->state++) {
--		struct cpuhp_step *step = cpuhp_get_step(st->state);
--
--		if (!step->skip_onerr)
--			cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
--	}
-+	for (st->state++; st->state < st->target; st->state++)
-+		cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
- }
- 
- static int cpuhp_down_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
+If you think it's worth fixing (as opposed to dropping this ioctl or
+its compat mode), then,
+Acked-by: Guillaume Nault <g.nault@alphalink.fr>
