@@ -2,97 +2,172 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E547C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D4EC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29CC12073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996582073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1vF7c//5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CC12073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hiDU6GSH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TJPnbHED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 996582073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbeH3QY3 (ORCPT
+        id S1728767AbeH3Q3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbeH3QY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:24:29 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        Thu, 30 Aug 2018 12:29:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37128 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbeH3Q3x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:29:53 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1C43560600; Thu, 30 Aug 2018 12:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535632078;
+        bh=06fvCOjyPJiruOmVA7WLAV/lFYfgk0E2qz1+MuGj1yQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hiDU6GSHFxLVgMgfvFxKD9IzYM7MizMBVuZp8TadUixykcghsP+AsFEaWYMGRjh3N
+         O60gBrkzc94jriGj9WBTx2HIuOTrUhniZNkxLN3jPyM7K8MDKMisWIEEBirBRwzhKT
+         5XzH7mGXAet2Gl2NrO0Cz5/KxTAvmcYL+HvFN5ps=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 550B720835;
-        Thu, 30 Aug 2018 12:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535631755;
-        bh=kx93GrFcBPvCaooof/mjkFoZx15gJ+/IuqHVIGP48tQ=;
-        h=From:Date:Subject:To:From;
-        b=1vF7c//5fxioUm/QpmMwvANq+xD2nAttU+zvdOFfQWfEqAl8ubNAKKl2BkyzmM+dK
-         3Pl+rn8jy4xBh5tJphoKgMJvxYyfozIArV7s+CcVi+us8Et3Ae7XjpaBn+J4/+Go45
-         zom0eVQl9esa0AaSVY+V5xyk41j+RCf6YkpULchc=
-Received: by mail-wr1-f51.google.com with SMTP id j26-v6so7884597wre.2;
-        Thu, 30 Aug 2018 05:22:35 -0700 (PDT)
-X-Gm-Message-State: APzg51Az4OsJSuM13M+EK49oEF0yiH+BjpkVB+YM/pjOpqXFk8+7HogO
-        WPqEA4Hrk8NKvrC2nZ8rw8alYhjwVOECkART31g=
-X-Google-Smtp-Source: ANB0Vda+XXiIR9zbkgr75xvdRf6UIFTx48NRvHJk+MPiW4uODygtpfAx9HBOMoBQEUSerLKEnOzC+f2wlhd0r6lPdAc=
-X-Received: by 2002:adf:cc91:: with SMTP id p17-v6mr7456508wrj.226.1535631753843;
- Thu, 30 Aug 2018 05:22:33 -0700 (PDT)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9DE960540;
+        Thu, 30 Aug 2018 12:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535632077;
+        bh=06fvCOjyPJiruOmVA7WLAV/lFYfgk0E2qz1+MuGj1yQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TJPnbHEDb4ji9CVRqXJ5Ojh8PRl2YnX6Z5VDahAvJbMkzwGc2GkWhcSd8+UD4hI8n
+         XHl/BuEmbF6k078IuqaXjFgy1H4YNN6ZlBD8kAUkKML2ASZsAzQNNb+pJwXiy8Alvw
+         64s38zjNNgOMAnskU8XnOk3qBNJowb9inxl0u+T8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9DE960540
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH] remoteproc: qcom: Rename Hexagon v5 PAS driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20180828051203.22394-1-bjorn.andersson@linaro.org>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <bdfb0ab2-b5f5-086e-3f97-9c2a8758f2e1@codeaurora.org>
+Date:   Thu, 30 Aug 2018 17:57:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 30 Aug 2018 14:22:22 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfVXnazraHq-NCCM+h26FFi1U6Z3OSYOX17XH3bj-UDLQ@mail.gmail.com>
-Message-ID: <CAJKOXPfVXnazraHq-NCCM+h26FFi1U6Z3OSYOX17XH3bj-UDLQ@mail.gmail.com>
-Subject: Locking for HW crypto accelerators
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        smueller@chronox.de
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180828051203.22394-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Thanks Bjorn for posting the patch.
 
-I am trying to figure out necessary locking on the driver side of
-crypto HW accelerator for symmetric hash (actually: CRC). I
-implemented quite simple driver for shash_alg.
 
-I looked at the docs, I looked at the crypto kcapi core code... and
-there is nothing about necessary locking. kcapi does not perform it.
+On 8/28/2018 10:42 AM, Bjorn Andersson wrote:
+> The Hexagon v5 ADSP driver is used for more than only the ADSP and
+> there's an upcoming non-PAS ADSP PIL for SDM845, so rename the driver to
+> qcom_q6v5_pas in order to better suite this.
+>
+> Cc: Rohit kumar <rohitkr@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>   drivers/remoteproc/Kconfig                    | 22 +++++++++----------
+>   drivers/remoteproc/Makefile                   |  2 +-
+>   .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}      |  4 ++--
+>   3 files changed, 14 insertions(+), 14 deletions(-)
+>   rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (98%)
+>
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 052d4dd347f9..c98c0b2a2237 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -84,8 +84,16 @@ config KEYSTONE_REMOTEPROC
+>   	  It's safe to say N here if you're not interested in the Keystone
+>   	  DSPs or just want to use a bare minimum kernel.
+>   
+> -config QCOM_ADSP_PIL
+> -	tristate "Qualcomm ADSP Peripheral Image Loader"
+> +config QCOM_RPROC_COMMON
+> +	tristate
+> +
+> +config QCOM_Q6V5_COMMON
+> +	tristate
+> +	depends on ARCH_QCOM
+> +	depends on QCOM_SMEM
+> +
+> +config QCOM_Q6V5_PAS
+> +	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
+>   	depends on OF && ARCH_QCOM
+>   	depends on QCOM_SMEM
+>   	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+> @@ -98,15 +106,7 @@ config QCOM_ADSP_PIL
+>   	select QCOM_SCM
+>   	help
+>   	  Say y here to support the TrustZone based Peripherial Image Loader
+> -	  for the Qualcomm ADSP remote processors.
+> -
+> -config QCOM_RPROC_COMMON
+> -	tristate
+> -
+> -config QCOM_Q6V5_COMMON
+> -	tristate
+> -	depends on ARCH_QCOM
+> -	depends on QCOM_SMEM
+> +	  for the Qualcomm Hexagon v5 based remote processors.
+>   
+>   config QCOM_Q6V5_PIL
+>   	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 03332fa7e2ee..eb86c8ba5a87 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -14,9 +14,9 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>   obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+>   obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+>   obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+> -obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
+>   obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+>   obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
+> +obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
+>   obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+>   obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
+>   obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
+> diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> similarity index 98%
+> rename from drivers/remoteproc/qcom_adsp_pil.c
+> rename to drivers/remoteproc/qcom_q6v5_pas.c
+> index d4339a6da616..2478ef3cd519 100644
+> --- a/drivers/remoteproc/qcom_adsp_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -364,11 +364,11 @@ static struct platform_driver adsp_driver = {
+>   	.probe = adsp_probe,
+>   	.remove = adsp_remove,
+>   	.driver = {
+> -		.name = "qcom_adsp_pil",
+> +		.name = "qcom_q6v5_pas",
+>   		.of_match_table = adsp_of_match,
+>   	},
+>   };
+>   
+>   module_platform_driver(adsp_driver);
+> -MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996 ADSP Peripherial Image Loader");
+> +MODULE_DESCRIPTION("Qualcomm Hexagon v5 Peripheral Authentication Service driver");
 
-My HW is quite similar to drivers/crypto/stm32/stm32_crc32.c so it has
-only one HW set of registers for dealing with CRC. Or in other words,
-only one queue of one element. :) I implemented all shash_alg
-callbacks - init(), update(), final()... and also finup() (manually
-calling update+final) and digest() (init+update+final).
+Probable, we should make similar change at header comment.
+  * Qualcomm ADSP/SLPI Peripheral Image Loader for MSM8974 and MSM8996
+  *
 
-Now imagine multiple user-space users of this crypto alg where all of
-them call kcapi_md_digest() (so essentially init() -> update() ->
-final()). It seems that kcapi does not perform any locking here so at
-some point updates from different processes might be mixed with
-finals:
+>   MODULE_LICENSE("GPL v2");
 
-Process A:             Process B:
-init()
-                       init()
-update()
-                       update()
-final()
-                       final()
-
-My findings show that the requests are indeed being mixed with each other...
-
-Should driver perform any weird locking here? Or maybe that is the
-case of using ONLY the digest() callback (so no update, no final)
-because my HW cannot track different kcapi requests?
-
-Best regards,
-Krzysztof
