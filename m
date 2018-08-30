@@ -5,117 +5,242 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DC8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE81C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203D420652
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203D420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B31720652
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B31720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeHaBdV (ORCPT
+        id S1727580AbeHaBdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 21:33:21 -0400
-Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:15004 "EHLO
-        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeHaBdV (ORCPT
+        Thu, 30 Aug 2018 21:33:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48140 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727067AbeHaBdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:33:21 -0400
-Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id E4F8D61421;
-        Thu, 30 Aug 2018 21:29:12 +0000 (UTC)
-Received: from G1W8106.americas.hpqcorp.net (g1w8106.austin.hp.com [16.193.72.61])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g2t2353.austin.hpe.com (Postfix) with ESMTPS id AA287AC;
-        Thu, 30 Aug 2018 21:29:11 +0000 (UTC)
-Received: from G9W8666.americas.hpqcorp.net (16.220.49.25) by
- G1W8106.americas.hpqcorp.net (16.193.72.61) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 30 Aug 2018 21:29:06 +0000
-Received: from G4W10205.americas.hpqcorp.net (2002:10cf:520f::10cf:520f) by
- G9W8666.americas.hpqcorp.net (2002:10dc:3119::10dc:3119) with Microsoft SMTP
- Server (TLS) id 15.0.1367.3; Thu, 30 Aug 2018 21:29:05 +0000
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.241.52.11) by
- G4W10205.americas.hpqcorp.net (16.207.82.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Thu, 30 Aug 2018 21:29:05 +0000
-Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
- AT5PR8401MB1091.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.14; Thu, 30 Aug 2018 21:29:04 +0000
-Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::ac4f:ac06:14f9:d283]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::ac4f:ac06:14f9:d283%2]) with mapi id 15.20.1101.007; Thu, 30 Aug 2018
- 21:29:04 +0000
-From:   "Kani, Toshi" <toshi.kani@hpe.com>
-To:     "wufan@codeaurora.org" <wufan@codeaurora.org>,
-        "mchehab@kernel.org" <mchehab@kernel.org>
-CC:     "baicar.tyler@gmail.com" <baicar.tyler@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "john.garry@huawei.com" <john.garry@huawei.com>
-Subject: Re: [PATCH v2] EDAC, ghes: use CPER module handles to locate DIMMs
-Thread-Topic: [PATCH v2] EDAC, ghes: use CPER module handles to locate DIMMs
-Thread-Index: AQHUQJCWZ58rwFSfrESpFeuy7W1Ze6TYyh2A
-Date:   Thu, 30 Aug 2018 21:29:04 +0000
-Message-ID: <a2b7b914120f1c2e7020d18d7c7d824413e06304.camel@hpe.com>
-References: <1535654266-40053-1-git-send-email-wufan@codeaurora.org>
-In-Reply-To: <1535654266-40053-1-git-send-email-wufan@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=toshi.kani@hpe.com; 
-x-originating-ip: [15.203.227.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1091;6:jRjsvJz9C3G77A2c2efdMfck5XujmEhAw8LyJ9RtoD1zay7Cre/ldfg6y73sK7Lq+I8gqyBGlHuEiu+swwqWdRxyZbsoU6MEFoaXPgSCRK5K/ZmgPfTQyYXj5PgGEJzILnkP99HyXUwBwPIvdPfNzDeSCy4gP6Q2RK8CiY8js8XZc0KY9xqtLZWnRXEn8i6kThqs+zj2hcwMzXZ8WJhlKq2u59bNAu1MlepU/5gLCypARIiowYXIfWketRG91fRry5S6QprjiiM8wLrN8cmM0yLAR0a0Tkgoz7fI2p+6/3embwH4/VNt4AWqAtvY3quZdZMIMp63DwrCkntutoEDfoSJSfpMSmQD51o7TYAkF9Vj1Js/NivD2phpFVjirBWNZ1wlX5g6kxQBRUL0OagL4KUID/x4WSlKAlNE6o1TJ3eKIzfCBA3y3ijlNzRXWSBstA1mIuBHm6GGC71n1ed2RA==;5:R/WE41jXs7GQkzFKG+Ixo1vqgyfI455Nyb7/i5g4UWHSmrtc2/E7cu9/cGpXN//utHDMScN5iteL6nbVvrRu4gyuC7kROv3n4l7S8gDNjjFJs4hd9vYg4haGVcrqrsoO4THY5lWF6oYJHWcoWQxNdwopo+gS2Bd5yLEKpgteLkk=;7:xxBJWVV2gdynklHRD7HgHvkGz9jc1vEOQz8RubRYafXHKEMiQMzMTkoRAGXJfHD+ghvKLsnfE2ix5CETDIynGPTTDfuozHnNDg45G7G2/ne8vbC1f0aZuynvxkph4c94jYGheIC+dD601zXpQtOr3YZSSOCMPaU3f2nZ7XHqx40Z3+bBJ4OXJ9HUPuXb3bkVMticqeLdTELyM7gz++R3MZZwa5r8kTCFIoKumpd0E93XAb9sJhcJh3R/rkjkY7EU
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: bc69463e-df17-4c3c-d49d-08d60ebf9c68
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1091;
-x-ms-traffictypediagnostic: AT5PR8401MB1091:
-x-microsoft-antispam-prvs: <AT5PR8401MB1091CC29EEF61E6DC2B3B08482080@AT5PR8401MB1091.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(227479698468861)(222181515654134);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699016);SRVR:AT5PR8401MB1091;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1091;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(136003)(39860400002)(366004)(376002)(189003)(199004)(446003)(81166006)(97736004)(486006)(6246003)(6486002)(6436002)(66066001)(53936002)(229853002)(26005)(118296001)(2906002)(86362001)(4326008)(476003)(8676002)(8936002)(478600001)(39060400002)(2616005)(6512007)(68736007)(36756003)(5660300001)(81156014)(25786009)(11346002)(6506007)(99286004)(54906003)(6116002)(2501003)(3846002)(110136005)(186003)(305945005)(76176011)(256004)(14444005)(5250100002)(316002)(105586002)(106356001)(102836004)(2900100001)(14454004)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1091;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: h8YWaWn9avpWc80XeAuCEd7lpJIXzsoOQN3GXo7nzyd8kEBKvaD3ZISVmrb8Wm9C6QfLDFsk/F3JdL1ISlp8wGr+qqhuPaLNDuElziPQorfW9R56gqAeYb/kwMFM2fi8cDSVGDnzl/zrqou/4mBYROjcVL2peTbUkFJPaJUg4ZZK01CHhQy5WdyLcx1UaYenY8n+kNbysICoXHhYro86ZiON87+0DKyX3goca8OkK6uOuZaFmKmTpFsB0/U2y91HDYaoplBMY0h39DsW0O3sXiaK9l4Y8173LbVZ8zvLnNolMoxaCxeUBH//8L1gVIkuR6Yql2OhduxQS96Wg8X7tMP0ewJ41eSzWDXq4P65tfY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5117E89D6C1951408710673B04A25B29@NAMPRD84.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        Thu, 30 Aug 2018 21:33:45 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7ULTXIx052458
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 17:29:36 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6peqmrc2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 17:29:35 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Thu, 30 Aug 2018 15:29:23 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Aug 2018 15:29:18 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7ULTHk163635512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 14:29:17 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A5AC6A047;
+        Thu, 30 Aug 2018 15:29:17 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8F9936A058;
+        Thu, 30 Aug 2018 15:29:11 -0600 (MDT)
+Received: from oc6728276242.ibm.com (unknown [9.85.221.248])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Aug 2018 15:29:11 -0600 (MDT)
+Subject: Re: [PATCH v4 2/9] Documentation: hwmon: Add OCC documentation
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        jdelvare@suse.com, linux-doc@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, gregkh@linuxfoundation.org,
+        mark.rutland@arm.com
+References: <1531342898-15790-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1531342898-15790-3-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180725163604.GA21332@roeck-us.net>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Thu, 30 Aug 2018 16:29:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc69463e-df17-4c3c-d49d-08d60ebf9c68
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 21:29:04.3755
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1091
-X-OriginatorOrg: hpe.com
+In-Reply-To: <20180725163604.GA21332@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18083021-0036-0000-0000-00000A2E10C4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009640; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01081200; UDB=6.00557771; IPR=6.00861185;
+ MB=3.00023023; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 21:29:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083021-0037-0000-0000-000048C5747D
+Message-Id: <aa1d5818-6b64-2088-ec59-dbe09d6a3902@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA4LTMwIGF0IDE4OjM3ICswMDAwLCBGYW4gV3Ugd3JvdGU6DQo+IEZvciBw
-bGF0Zm9ybXMgd2hvc2UgZmlybXdhcmVzIHByb3ZpZGUgdmFsaWQgbW9kdWxlIGhhbmRsZXMNCj4g
-KFNNQklPUyB0eXBlIDE3KSBpbiBlcnJvciByZWNvcmRzLCB0aGlzIHBhdGNoIHVzZXMgdGhlIG1v
-ZHVsZQ0KPiBoYW5kbGVzIHRvIGxvY2F0ZSBjb3JyZXNwb25kaW5nIERJTU1zIGFuZCBlbmFibGVz
-IHBlci1ESU1NDQo+IGVycm9yIGNvdW50ZXIgdXBkYXRlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
-RmFuIFd1IDx3dWZhbkBjb2RlYXVyb3JhLm9yZz4NCg0KVGVzdGVkIG9uIGFuIEhQRSB4ODYgc2Vy
-dmVyLiBJdCB0dXJucyBvdXQgdGhhdCBtZW1fZXJyLT5tZW1fZGV2X2hhbmRsZQ0Kd2FzIHNldCB0
-byAgMCB3aXRoIHRoaXMgRlcsIGFuZCBnZXRfZGltbV9zbWJpb3NfaW5kZXgoKSByZXR1cm5lZCAt
-MS4gQnV0DQp0aGUgY29kZSBoYW5kbGVzIHRoaXMgY2FzZSBmaW5lLiBkaW1tLT5zbWJpb3NfaGFu
-ZGxlJ3Mgd2VyZSBpbml0aWFsaXplZA0KcHJvcGVybHkuIFNvOg0KDQpUZXN0ZWQtYnk6IFRvc2hp
-IEthbmkgPHRvc2hpLmthbmlAaHBlLmNvbT4NCg0KVGhhbmtzLA0KLVRvc2hpDQoNCg==
+
+
+On 07/25/2018 11:36 AM, Guenter Roeck wrote:
+> On Wed, Jul 11, 2018 at 04:01:31PM -0500, Eddie James wrote:
+>> Document the hwmon interface for the OCC.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+>> ---
+>>   Documentation/hwmon/occ | 73 +++++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 73 insertions(+)
+>>   create mode 100644 Documentation/hwmon/occ
+>>
+>> diff --git a/Documentation/hwmon/occ b/Documentation/hwmon/occ
+>> new file mode 100644
+>> index 0000000..465fa1a
+>> --- /dev/null
+>> +++ b/Documentation/hwmon/occ
+>> @@ -0,0 +1,73 @@
+>> +Kernel driver occ-hwmon
+>> +=======================
+>> +
+>> +Supported chips:
+>> +  * POWER8
+>> +  * POWER9
+>> +
+>> +Author: Eddie James <eajames@linux.vnet.ibm.com>
+>> +
+>> +Description
+>> +-----------
+>> +
+>> +This driver supports hardware monitoring for the On-Chip Controller (OCC)
+>> +embedded on POWER processors. The OCC is a device that collects and aggregates
+>> +sensor data from the processor and the system. The OCC can provide the raw
+>> +sensor data as well as perform thermal and power management on the system.
+>> +
+>> +The P8 version of this driver is a client driver of I2C. It may be probed
+>> +manually if an "ibm,p8-occ-hwmon" compatible device is found under the
+>> +appropriate I2C bus node in the device-tree.
+>> +
+>> +The P9 version of this driver is a client driver of the FSI-based OCC driver.
+>> +It will be probed automatically by the FSI-based OCC driver.
+>> +
+>> +Sysfs entries
+>> +-------------
+>> +
+>> +The following attributes are supported. All attributes are read-only unless
+>> +specified.
+>> +
+>> +temp[1-n]_label		OCC sensor id.
+>> +temp[1-n]_input		Measured temperature in millidegrees C.
+>> +[with temperature sensor version 2+]
+>> +    temp[1-n]_fru_type		Given FRU (Field Replaceable Unit) type.
+> What is this ? An integer ? A string ?
+>
+>> +    temp[1-n]_fault		Temperature sensor fault.
+>> +
+>> +freq[1-n]_label		OCC sensor id.
+>> +freq[1-n]_input		Measured frequency.
+> What does that have to do with hardware monitoring, and what exactly does it
+> measure ? AC voltage frequency ? Frequency of rainstorms in the surrounding
+> area ?
+>
+>> +
+>> +power[1-n]_label	OCC sensor id.
+>> +power[1-n]_input	Measured power in microwatts.
+>> +power[1-n]_update_tag	Number of 250us samples represented in accumulator.
+> update_tag to represent number of samples ? Odd choice for
+> an attribute name. Why not "_samples" ? Also, if each sample
+> represents a specific amount of time, why not report a time ?
+>
+>> +power[1-n]_accumulator	Accumulation of 250us power readings.
+> There is no explanation of "accumulation". Is this the energy ?
+> If so, why not use energy attributes ? And what is the unit of
+> this measurement ?
+>
+>> +[with power sensor version 2+]
+>> +    power[1-n]_function_id	Identifies what the power reading is for.
+> String ? Number ? Slot index ?  Bitmap ? And why isn't that reported
+> in the label ? After all, that is what the label is supposed to be
+> used for.
+>
+>> +    power[1-n]_apss_channel	Indicates APSS channel.
+>> +
+> Does that provide any value to the user ?
+>
+>> +[power version 0xa0 only]
+>> +power1_id			OCC sensor id.
+> This is inconsistent with the other attributes and even with itself.
+>
+>> +power[1-n]_label		Sensor type, "system", "proc", "vdd", or "vdn".
+>> +power[1-n]_input		Most recent power reading in microwatts.
+> Overall I am left with no idea what
+> 	_id
+> 	_label
+> 	_function_id
+> 	_apps_channel
+> are and how they relate to each other, except that it all looks quite
+> inconsistent. You might want to consider merging all those attributes into
+> the label in some consistent way.
+>
+>> +power[1-n]_update_tag		Number of samples in the accumulator.
+>> +power[1-n]_accumulator		Accumulation of power readings.
+> Same as above.
+>
+>> +[with sensor type "system" and "proc" only]
+>> +    power[1-n]_update_time	Time in us that the power value is read.
+>> +
+>> +caps1_current		Current OCC power cap in watts.
+>> +caps1_reading		Current system output power in watts.
+>> +caps1_norm		Power cap without redundant power.
+>> +caps1_max		Maximum power cap.
+> Why do those have to be non-standard attributes ? Please explain why you can not
+> use power[1-n]_cap attributes.
+>
+>> +[caps version 1 and 2 only]
+>> +    caps1_min		Minimum power cap.
+>> +[caps version 3+]
+>> +    caps1_min_hard		Hard minimum cap that can be set and held.
+>> +    caps1_min_soft		Soft minimum cap below hard, not guaranteed.
+>> +caps1_user		The powercap specified by the user. Will be 0 if no
+>> +			user powercap exists. This attribute is read-write.
+>> +[caps version 1+]
+>> +    caps1_user_source	Indicates how the user power limit was set.
+>> +
+>> +extn[1-n]_label		ASCII id or sensor id.
+>> +extn[1-n]_flags		Indicates type of label attribute.
+>> +extn[1-n]_input		Data.
+> Great non-explanation.
+>
+> Not reviewing the series further. I am sure I asked that each non-standard
+> attribute is explained. There is neither an explanation why the attributes
+> are needed nor, in many cases, why non-standard attributes were chosen
+> instead of standard ones. On top of that, the non-standard attributes are
+> not even documented properly, leaving the reader wondering not only why
+> they are needed, but what they are used for in the first place.
+
+Hi,
+
+Thanks for the feedback Guenter. I am about to put up a new patch set 
+with fixes for many of the issues you indicated and better descriptions. 
+Now all the attributes except two should conform to standard hwmon 
+attributes. The exceptions are for the user power cap and user power cap 
+source. These are needed in order to make decisions about power 
+management while controlling the system. Please look at their 
+documentation to see if they're acceptable.
+
+Let me know what you think!
+Thanks,
+Eddie
+
+>
+> Guenter
+>
+
