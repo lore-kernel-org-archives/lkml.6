@@ -2,92 +2,101 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFBAC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233D0C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0598D2082C
+	by mail.kernel.org (Postfix) with ESMTP id D73F82082C
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:42:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tt98Oi0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0598D2082C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73F82082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeH3So2 (ORCPT
+        id S1729449AbeH3Soa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:44:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41372 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbeH3So2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:44:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NFku9iHEzzrk/KE6L1FWj11aQOyWr/lqpqJsf5EBcSg=; b=Tt98Oi0QD+XMmVhifPAgmjYCd
-        VWr/V1Tfz2D26lBFDvNblDJbaLz4zZwh1ZZEXF2995ihPOvRdcOlPz7zWpLlofQrMMZ/Xu01/dfg0
-        vBhBuo5qKJwBL1WApXd3am/4YVSzDOWTUpYKxpnIMYCtw9ljvZWliU0QXq5dza2VY5wEVgJdsPLt6
-        1hptBV/+YcK+IanWMLr+S2uKJZUgTC1d60W0kJXlKYfejkGS9Hn4jnWii/vULIzvsHGIzi3P4WeEd
-        1GlofwfOQ3A2AyEtCXbk4LkbOzGq6+6KpuCgIS06f17wpaH2mGxyx+7IJ1/yNtvCJ0QEqhL4crJec
-        YNKcsyXcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvO8x-0007Wx-SI; Thu, 30 Aug 2018 14:41:55 +0000
-Date:   Thu, 30 Aug 2018 07:41:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     linux-riscv@lists.infradead.org, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        dmitriy@oss-tech.org, jeremy.linton@arm.com,
-        linux-kernel@vger.kernel.org, atish.patra@wdc.com,
-        aou@eecs.berkeley.edu, Greg KH <gregkh@linuxfoundation.org>,
-        tglx@linutronix.de
-Subject: Re: [PATCH 6/8] RISC-V: Use mmgrab()
-Message-ID: <20180830144155.GB27233@infradead.org>
-References: <20180827184243.25344-1-palmer@sifive.com>
- <20180827184243.25344-7-palmer@sifive.com>
+        Thu, 30 Aug 2018 14:44:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729048AbeH3So3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:44:29 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4259F804B9F4;
+        Thu, 30 Aug 2018 14:42:00 +0000 (UTC)
+Received: from localhost.localdomain.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E9C9563F25;
+        Thu, 30 Aug 2018 14:41:59 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Balbir Singh <bsingharora@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH 3/7] mm/rmap: map_pte() was not handling private ZONE_DEVICE page properly v2
+Date:   Thu, 30 Aug 2018 10:41:56 -0400
+Message-Id: <20180830144156.7226-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827184243.25344-7-palmer@sifive.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180824192549.30844-3-jglisse@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 14:42:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 14:42:00 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#include <linux/sched/mm.h>
->  #include <asm/irq.h>
->  #include <asm/mmu_context.h>
->  #include <asm/tlbflush.h>
-> @@ -79,8 +80,8 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
->  	 * the spinning harts that they can continue the boot process.
->  	 */
->  	smp_mb();
-> -	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
-> -	__cpu_up_task_pointer[cpu] = tidle;
-> +	WRITE_ONCE(__cpu_up_stack_pointer[cpu], task_stack_page(tidle) + THREAD_SIZE);
-> +	WRITE_ONCE(__cpu_up_task_pointer[cpu], tidle);
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-This looks unrelated.
+Private ZONE_DEVICE pages use a special pte entry and thus are not
+present. Properly handle this case in map_pte(), it is already handled
+in check_pte(), the map_pte() part was lost in some rebase most probably.
 
-> @@ -100,7 +101,7 @@ asmlinkage void __init smp_callin(void)
->  	struct mm_struct *mm = &init_mm;
->  
->  	/* All kernel threads share the same mm context.  */
-> -	atomic_inc(&mm->mm_count);
-> +	mmgrab(mm);
->  	current->active_mm = mm;
+Without this patch the slow migration path can not migrate back private
+ZONE_DEVICE memory to regular memory. This was found after stress
+testing migration back to system memory. This ultimatly can lead the
+CPU to an infinite page fault loop on the special swap entry.
 
-This part looks fine to me:
+Changes since v1:
+    - properly lock pte directory in map_pte()
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ mm/page_vma_mapped.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+index ae3c2a35d61b..bd67e23dce33 100644
+--- a/mm/page_vma_mapped.c
++++ b/mm/page_vma_mapped.c
+@@ -21,7 +21,14 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw)
+ 			if (!is_swap_pte(*pvmw->pte))
+ 				return false;
+ 		} else {
+-			if (!pte_present(*pvmw->pte))
++			if (is_swap_pte(*pvmw->pte)) {
++				swp_entry_t entry;
++
++				/* Handle un-addressable ZONE_DEVICE memory */
++				entry = pte_to_swp_entry(*pvmw->pte);
++				if (!is_device_private_entry(entry))
++					return false;
++			} else if (!pte_present(*pvmw->pte))
+ 				return false;
+ 		}
+ 	}
+-- 
+2.17.1
 
