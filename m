@@ -2,172 +2,164 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D4EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F0EC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996582073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 701DC205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:30:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hiDU6GSH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TJPnbHED"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 996582073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjeZMTvr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701DC205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbeH3Q3x (ORCPT
+        id S1728803AbeH3QcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:29:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbeH3Q3x (ORCPT
+        Thu, 30 Aug 2018 12:32:19 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34540 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbeH3QcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:29:53 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1C43560600; Thu, 30 Aug 2018 12:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535632078;
-        bh=06fvCOjyPJiruOmVA7WLAV/lFYfgk0E2qz1+MuGj1yQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hiDU6GSHFxLVgMgfvFxKD9IzYM7MizMBVuZp8TadUixykcghsP+AsFEaWYMGRjh3N
-         O60gBrkzc94jriGj9WBTx2HIuOTrUhniZNkxLN3jPyM7K8MDKMisWIEEBirBRwzhKT
-         5XzH7mGXAet2Gl2NrO0Cz5/KxTAvmcYL+HvFN5ps=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9DE960540;
-        Thu, 30 Aug 2018 12:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535632077;
-        bh=06fvCOjyPJiruOmVA7WLAV/lFYfgk0E2qz1+MuGj1yQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TJPnbHEDb4ji9CVRqXJ5Ojh8PRl2YnX6Z5VDahAvJbMkzwGc2GkWhcSd8+UD4hI8n
-         XHl/BuEmbF6k078IuqaXjFgy1H4YNN6ZlBD8kAUkKML2ASZsAzQNNb+pJwXiy8Alvw
-         64s38zjNNgOMAnskU8XnOk3qBNJowb9inxl0u+T8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9DE960540
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: Rename Hexagon v5 PAS driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20180828051203.22394-1-bjorn.andersson@linaro.org>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <bdfb0ab2-b5f5-086e-3f97-9c2a8758f2e1@codeaurora.org>
-Date:   Thu, 30 Aug 2018 17:57:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 12:32:19 -0400
+Received: by mail-io0-f195.google.com with SMTP id c22-v6so7401818iob.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 05:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=y+ti2KZ69iZTKM3pLlD6GjINKXLsWissg8Rv9bx1P7g=;
+        b=FjeZMTvrng5bXBRQkRItQmNcVWx9+nTQH+zLaJNTHSmDdk/z59LFnFW+hmkz+8Y97e
+         U+kMhj9FAiVOTNNs41FecEq5BvnieVM97DPAmcCKW5UsB9/gIiDmDkOFUhjWYJ+h+mt6
+         iYpGXzlZPCcYBToOL4aTouDDlcobm1MTRYBzA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=y+ti2KZ69iZTKM3pLlD6GjINKXLsWissg8Rv9bx1P7g=;
+        b=sWmrtzgMj6BJj6/mv1mEKH4V58xBIBkhiM87Ovc5bu1r4e2cKQ1vUzSv9xbi5t7XP8
+         8MI0KZK+HSkYXgayxQ5B9GJkb+PUSQgfTp0+Crr+rFs1evZVzOuAxAMwE1oI4ly85b9D
+         doE/a404GQZ2HZ+1mX2yEbbSjJi2VycAW1rsXwjY90q3ocsfmX9pYGLcj1hH+kCY0hsY
+         pb1+KVGyq+3HgN58A/3SgKoTgAOcqAQhXTTueIfIR12Yx9h6RHpREQrkS401Q8GYTt2f
+         yje3I2QTWsM3zZlg+m493/Oj/wa3ejqkW9nK5mQXobie86lnNq8omwJW+/r1rI3TIpZB
+         4egg==
+X-Gm-Message-State: APzg51Aq2erKJfalhr0esS0vHpjBdbT9Kj4oYsoM30yBTYnTyBOV+lVZ
+        5+C22pJ70W3GzOYLT60duSsQI/ESob6RTx1lJrpGZg==
+X-Google-Smtp-Source: ANB0Vdazm0pZYg/n2+aMEloY5fju2DppFRStwmFIQWEV70NBXf2gPx98/rM0VKoJNvpRbzMoWrhp2PUgt3Q6sBf+MH0=
+X-Received: by 2002:a6b:1416:: with SMTP id 22-v6mr8652902iou.218.1535632223607;
+ Thu, 30 Aug 2018 05:30:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180828051203.22394-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 05:30:23
+ -0700 (PDT)
+In-Reply-To: <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com> <1534999460-15111-6-git-send-email-yamada.masahiro@socionext.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 30 Aug 2018 14:30:23 +0200
+Message-ID: <CAPDyKFp-ziw_4zQGAj06YtHZbToiOenWXgxNLpsToPDtuU9tPw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] mmc: renesas_sdhi: merge clk_{start,stop}
+ functions to set_clock
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Bjorn for posting the patch.
-
-
-On 8/28/2018 10:42 AM, Bjorn Andersson wrote:
-> The Hexagon v5 ADSP driver is used for more than only the ADSP and
-> there's an upcoming non-PAS ADSP PIL for SDM845, so rename the driver to
-> qcom_q6v5_pas in order to better suite this.
+On 23 August 2018 at 06:44, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> renesas_sdhi_clk_start() and renesas_sdhi_clk_stop() are now only
+> called from renesas_sdhi_set_clock().  Merge them.
 >
-> Cc: Rohit kumar <rohitkr@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
 > ---
->   drivers/remoteproc/Kconfig                    | 22 +++++++++----------
->   drivers/remoteproc/Makefile                   |  2 +-
->   .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}      |  4 ++--
->   3 files changed, 14 insertions(+), 14 deletions(-)
->   rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (98%)
 >
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 052d4dd347f9..c98c0b2a2237 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -84,8 +84,16 @@ config KEYSTONE_REMOTEPROC
->   	  It's safe to say N here if you're not interested in the Keystone
->   	  DSPs or just want to use a bare minimum kernel.
->   
-> -config QCOM_ADSP_PIL
-> -	tristate "Qualcomm ADSP Peripheral Image Loader"
-> +config QCOM_RPROC_COMMON
-> +	tristate
-> +
-> +config QCOM_Q6V5_COMMON
-> +	tristate
-> +	depends on ARCH_QCOM
-> +	depends on QCOM_SMEM
-> +
-> +config QCOM_Q6V5_PAS
-> +	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
->   	depends on OF && ARCH_QCOM
->   	depends on QCOM_SMEM
->   	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-> @@ -98,15 +106,7 @@ config QCOM_ADSP_PIL
->   	select QCOM_SCM
->   	help
->   	  Say y here to support the TrustZone based Peripherial Image Loader
-> -	  for the Qualcomm ADSP remote processors.
+> Changes in v3: None
+> Changes in v2: None
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++------------------------
+>  1 file changed, 12 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index cb6e889..0e88737 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -155,35 +155,17 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+>         return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+>  }
+>
+> -static void renesas_sdhi_clk_start(struct tmio_mmc_host *host)
+> +static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+> +                                  unsigned int new_clock)
+>  {
+> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+> -               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
 > -
-> -config QCOM_RPROC_COMMON
-> -	tristate
+> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> -               usleep_range(10000, 11000);
+> -}
+> +       u32 clk = 0, clock;
+>
+> -static void renesas_sdhi_clk_stop(struct tmio_mmc_host *host)
+> -{
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+>                 sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+>
+> -       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> -       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> -               usleep_range(10000, 11000);
+> -}
 > -
-> -config QCOM_Q6V5_COMMON
-> -	tristate
-> -	depends on ARCH_QCOM
-> -	depends on QCOM_SMEM
-> +	  for the Qualcomm Hexagon v5 based remote processors.
->   
->   config QCOM_Q6V5_PIL
->   	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 03332fa7e2ee..eb86c8ba5a87 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -14,9 +14,9 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
->   obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
->   obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
->   obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
-> -obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
->   obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
->   obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
-> +obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
->   obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
->   obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
->   obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
-> diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> similarity index 98%
-> rename from drivers/remoteproc/qcom_adsp_pil.c
-> rename to drivers/remoteproc/qcom_q6v5_pas.c
-> index d4339a6da616..2478ef3cd519 100644
-> --- a/drivers/remoteproc/qcom_adsp_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -364,11 +364,11 @@ static struct platform_driver adsp_driver = {
->   	.probe = adsp_probe,
->   	.remove = adsp_remove,
->   	.driver = {
-> -		.name = "qcom_adsp_pil",
-> +		.name = "qcom_q6v5_pas",
->   		.of_match_table = adsp_of_match,
->   	},
->   };
->   
->   module_platform_driver(adsp_driver);
-> -MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996 ADSP Peripherial Image Loader");
-> +MODULE_DESCRIPTION("Qualcomm Hexagon v5 Peripheral Authentication Service driver");
-
-Probable, we should make similar change at header comment.
-  * Qualcomm ADSP/SLPI Peripheral Image Loader for MSM8974 and MSM8996
-  *
-
->   MODULE_LICENSE("GPL v2");
-
+> -static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+> -                                  unsigned int new_clock)
+> -{
+> -       u32 clk = 0, clock;
+> +       if (new_clock == 0)
+> +               goto out;
+>
+> -       if (new_clock == 0) {
+> -               renesas_sdhi_clk_stop(host);
+> -               return;
+> -       }
+>         /*
+>          * Both HS400 and HS200/SD104 set 200MHz, but some devices need to
+>          * set 400MHz to distinguish the CPG settings in HS400.
+> @@ -206,13 +188,17 @@ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+>                         clk &= ~0xff;
+>         }
+>
+> -       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+> -                       sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+>         sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+>         if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+>                 usleep_range(10000, 11000);
+>
+> -       renesas_sdhi_clk_start(host);
+> +       sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+> +               sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> +
+> +out:
+> +       /* HW engineers overrode docs: no sleep needed on R-Car2+ */
+> +       if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> +               usleep_range(10000, 11000);
+>  }
+>
+>  static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+> --
+> 2.7.4
+>
