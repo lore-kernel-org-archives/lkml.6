@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7681FC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9D7C43334
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFCA20837
+	by mail.kernel.org (Postfix) with ESMTP id 6CC6720838
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFCA20837
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC6720838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbeH3VhU (ORCPT
+        id S1727574AbeH3VhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 30 Aug 2018 17:37:20 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14372 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726674AbeH3VhT (ORCPT
+        by vger.kernel.org with ESMTP id S1725836AbeH3VhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:37:19 -0400
+        Thu, 30 Aug 2018 17:37:20 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Thu, 30 Aug 2018 10:33:41 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 96AD7B05D9;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 90A96B05D7;
         Thu, 30 Aug 2018 13:34:06 -0400 (EDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -35,15 +35,14 @@ CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
         <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         <linux-arch@vger.kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 2/6] x86/mm: temporary mm struct
-Date:   Thu, 30 Aug 2018 10:32:14 -0700
-Message-ID: <20180830173218.238900-3-namit@vmware.com>
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH 1/6] x86/alternatives: clarify text_mutex use in text_poke
+Date:   Thu, 30 Aug 2018 10:32:13 -0700
+Message-ID: <20180830173218.238900-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830173218.238900-1-namit@vmware.com>
 References: <20180830173218.238900-1-namit@vmware.com>
@@ -56,68 +55,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+text_mutex is expected to be held before text_poke() is called, but we
+cannot add a lockdep assertion since kgdb does not take it, and instead
+*supposedly* ensures the lock is not taken and will not be acquired by
+any other core while text_poke() is running.
 
-Sometimes we want to set a temporary page-table entries (PTEs) in one of
-the cores, without allowing other cores to use - even speculatively -
-these mappings. There are two benefits for doing so:
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
 
-(1) Security: if sensitive PTEs are set, temporary mm prevents their use
-in other cores. This hardens the security as it prevents exploding a
-dangling pointer to overwrite sensitive data using the sensitive PTE.
+Add a comment to clarify this behavior.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
-
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary PTEs, which will follow, is for poking
-the kernel text.
-
-[ Commit message was written by Nadav ]
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/kernel/alternative.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index eeeb9289c764..96afc8c0cf15 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
- }
- 
-+typedef struct {
-+	struct mm_struct *prev;
-+} temporary_mm_state_t;
-+
-+static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temporary_mm_state_t state;
-+
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
-+}
-+
-+static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 014f214da581..d0c0d8b724e1 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -685,7 +685,10 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+  * in a way that permits an atomic write. It also makes sure we fit on a single
+  * page.
+  *
+- * Note: Must be called under text_mutex.
++ * Context: Must be called under text_mutex. kgdb is an exception: it does not
++ *	    hold the mutex, as it *supposedly* ensures that no other core is
++ *	    holding the mutex and ensures that none of them will acquire the
++ *	    mutex while the code runs.
+  */
+ void *text_poke(void *addr, const void *opcode, size_t len)
+ {
 -- 
 2.17.1
 
