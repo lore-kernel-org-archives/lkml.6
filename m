@@ -2,806 +2,109 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB2DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B897CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 683FC20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="Rt4uusyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683FC20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nic.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7D38D20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D38D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbeH3SrD (ORCPT
+        id S1729748AbeH3SrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:47:03 -0400
-Received: from mail.nic.cz ([217.31.204.67]:39893 "EHLO mail.nic.cz"
+        Thu, 30 Aug 2018 14:47:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18694 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729188AbeH3SrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:47:02 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 424CD600C0;
-        Thu, 30 Aug 2018 16:44:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1535640269; bh=PnY8rUh2xO7+zytTEgMAvtgG4hOY2mU90bJt9tDUPIQ=;
-        h=From:To:Date;
-        b=Rt4uusyu+SSaFgpeTvqPEYZPiy54HqLZSwZs3Ty6VtXS4O/b01ip0+A/IRE+hMTA8
-         DBDoawmQ8Xl/7+gSZrNsWN5kHRnOnj+VLCTOcUlZV8R0kTTNiIUtFWGavYL04iFoDv
-         UK3VehH8MxBAltmrM7qNOCxavu39c+gJ52K2ltHs=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH mfd+gpio 1/2] drivers: mfd: Add support for Moxtet bus
-Date:   Thu, 30 Aug 2018 16:41:50 +0200
-Message-Id: <20180830144151.13417-1-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.16.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.99.2 at mail
-X-Virus-Status: Clean
+        id S1729149AbeH3SrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:47:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 07:44:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
+   d="scan'208";a="228910330"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2018 07:44:29 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v3 0/8] Control Flow Enforcement: Branch Tracking, PTRACE
+Date:   Thu, 30 Aug 2018 07:40:01 -0700
+Message-Id: <20180830144009.3314-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the Turris Mox router there can be connected different modules to
-the main CPU board, currently a module with a SFP cage, a module with
-MiniPCIe connector, a 4-port switch module and a 8-port switch module,
-for example:
-  [CPU]-[PCIe]-[8-port switch]-[8-port switch]-[SFP]
+This set includes CET Indirect Branch Tracking patches and a PTRACE patch.
 
-Each of this modules has an input and output shift register, and these
-are connected via SPI to CPU board.
+Summary of changes from v2:
 
-Via this SPI connection we are able to discover which modules are
-connected and we can also read/write some configuration to the modules.
-Fromi/to each module 8 bits can be read (of which lower 4 bits identify
-the module) and written.
+  Allocate IBT bitmap at the start of a task.
 
-For example from the module with a SFP cage we can read the LOS,
-TX-FAULT and MOD-DEF0 signals, while we can write TX-DISABLE and
-RATE-SELECT signals.
+H.J. Lu (1):
+  x86: Insert endbr32/endbr64 to vDSO
 
-Other modules may support something else.
+Yu-cheng Yu (7):
+  x86/cet/ibt: Add Kconfig option for user-mode Indirect Branch Tracking
+  x86/cet/ibt: User-mode indirect branch tracking support
+  x86/cet/ibt: ELF header parsing for IBT
+  x86/cet/ibt: Add arch_prctl functions for IBT
+  x86/cet/ibt: Add ENDBR to op-code-map
+  mm/mmap: Add IBT bitmap size to address space limit check
+  x86/cet: Add PTRACE interface for CET
 
-This driver creates a new bus type, called "moxtet". For each Mox module
-it finds via SPI, it creates a new device on the moxtet bus so that
-drivers can be written for them, for example a gpio driver for the
-module with a SFP cage.
+ arch/x86/Kconfig                              | 12 +++
+ arch/x86/Makefile                             |  7 ++
+ arch/x86/entry/vdso/.gitignore                |  4 +
+ arch/x86/entry/vdso/Makefile                  | 12 ++-
+ arch/x86/entry/vdso/vdso-layout.lds.S         |  1 +
+ arch/x86/include/asm/cet.h                    |  8 ++
+ arch/x86/include/asm/disabled-features.h      |  8 +-
+ arch/x86/include/asm/fpu/regset.h             |  7 +-
+ arch/x86/include/uapi/asm/elf_property.h      |  1 +
+ arch/x86/include/uapi/asm/prctl.h             |  1 +
+ arch/x86/include/uapi/asm/resource.h          |  5 ++
+ arch/x86/kernel/cet.c                         | 74 +++++++++++++++++++
+ arch/x86/kernel/cet_prctl.c                   | 38 +++++++++-
+ arch/x86/kernel/cpu/common.c                  | 20 ++++-
+ arch/x86/kernel/elf.c                         |  8 +-
+ arch/x86/kernel/fpu/regset.c                  | 41 ++++++++++
+ arch/x86/kernel/process.c                     |  2 +
+ arch/x86/kernel/ptrace.c                      | 16 ++++
+ arch/x86/lib/x86-opcode-map.txt               | 13 +++-
+ include/uapi/asm-generic/resource.h           |  3 +
+ include/uapi/linux/elf.h                      |  1 +
+ mm/mmap.c                                     | 12 ++-
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt | 13 +++-
+ 23 files changed, 294 insertions(+), 13 deletions(-)
 
-The topology of how Mox modules are connected can then be read by
-listing /sys/bus/moxtet/devices.
-
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
----
- Documentation/devicetree/bindings/mfd/moxtet.txt |  36 ++
- MAINTAINERS                                      |   7 +
- drivers/mfd/Kconfig                              |  10 +
- drivers/mfd/Makefile                             |   1 +
- drivers/mfd/moxtet.c                             | 501 +++++++++++++++++++++++
- include/linux/mfd/moxtet.h                       | 103 +++++
- 6 files changed, 658 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/moxtet.txt
- create mode 100644 drivers/mfd/moxtet.c
- create mode 100644 include/linux/mfd/moxtet.h
-
-diff --git a/Documentation/devicetree/bindings/mfd/moxtet.txt b/Documentation/devicetree/bindings/mfd/moxtet.txt
-new file mode 100644
-index 000000000000..02b96fbd5ddd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/moxtet.txt
-@@ -0,0 +1,36 @@
-+Turris Mox module configuration bus (over SPI)
-+
-+Required properties:
-+ - compatible		: Should be "cznic,moxtet".
-+ - #address-cells	: Has to be 1
-+ - #size-cells		: Has to be 0
-+For other required and optional properties of SPI slave
-+nodes please refer to ../spi/spi-bus.txt.
-+
-+Required properties of subnodes:
-+ - reg			: Should be position on the Moxtet bus
-+ - moxtet,id		: Should be ID of the Moxtet device connected
-+
-+The driver finds the devices connected to the bus by itself, but it may be
-+needed to reference some of them from other parts of the device tree. In that
-+case the devices can be defined as subnodes of the moxtet node.
-+
-+Example:
-+
-+	moxtet@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "cznic,moxtet";
-+		reg = <1>;
-+		spi-max-frequency = <1000000>;
-+		spi-cpol;
-+		spi-cpha;
-+
-+		moxtet_sfp: moxtet-sfp@0 {
-+			compatible = "cznic,moxtet-sfp";
-+			gpio-controller;
-+			#gpio-cells;
-+			reg = <0>;
-+			moxtet,id = <1>;
-+		}
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5b256b25905..84e60ee83951 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1412,6 +1412,13 @@ F:	drivers/clocksource/timer-prima2.c
- F:	drivers/clocksource/timer-atlas7.c
- N:	[^a-z]sirf
- 
-+ARM/CZ.NIC TURRIS MOX SUPPORT
-+M:	Marek Behun <marek.behun@nic.cz>
-+W:	http://mox.turris.cz
-+S:	Maintained
-+F:	include/mfd/moxtet.h
-+F:	drivers/mfd/moxtet.c
-+
- ARM/EBSA110 MACHINE SUPPORT
- M:	Russell King <linux@armlinux.org.uk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 11841f4b7b2b..cb401841e2ac 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -814,6 +814,16 @@ config MFD_MAX8998
- 	  additional drivers must be enabled in order to use the functionality
- 	  of the device.
- 
-+config MFD_MOXTET
-+	tristate "CZ.NIC Turris Mox module configuration bus"
-+	depends on SPI_MASTER && OF
-+	help
-+	  Say yes here to add support for the module configuration bus found
-+	  on CZ.NIC's Turris Mox. This is needed for the ability to read
-+	  in what order the modules are connected and to get/set some of
-+	  their settings. For example the GPIOs on Mox SFP module are
-+	  configured through this bus.
-+
- config MFD_MT6397
- 	tristate "MediaTek MT6397 PMIC Support"
- 	select MFD_CORE
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 5856a9489cbd..338ecf311911 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -159,6 +159,7 @@ max8925-objs			:= max8925-core.o max8925-i2c.o
- obj-$(CONFIG_MFD_MAX8925)	+= max8925.o
- obj-$(CONFIG_MFD_MAX8997)	+= max8997.o max8997-irq.o
- obj-$(CONFIG_MFD_MAX8998)	+= max8998.o max8998-irq.o
-+obj-$(CONFIG_MFD_MOXTET)	+= moxtet.o
- 
- pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
- obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
-diff --git a/drivers/mfd/moxtet.c b/drivers/mfd/moxtet.c
-new file mode 100644
-index 000000000000..1cd1a62002e7
---- /dev/null
-+++ b/drivers/mfd/moxtet.c
-@@ -0,0 +1,501 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Turris Mox module configuration bus driver
-+ *
-+ * Copyright (C) 2018 Marek Behun <marek.behun@nic.cz>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of_device.h>
-+#include <linux/spi/spi.h>
-+#include <linux/mfd/moxtet.h>
-+
-+static ssize_t
-+module_id_show(struct device *dev, struct device_attribute *a, char *buf)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+
-+	return sprintf(buf, "0x%x\n", mdev->id);
-+}
-+static DEVICE_ATTR_RO(module_id);
-+
-+static ssize_t
-+module_name_show(struct device *dev, struct device_attribute *a, char *buf)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+
-+	return sprintf(buf, "%s\n", turris_mox_module_name(mdev->id));
-+}
-+static DEVICE_ATTR_RO(module_name);
-+
-+static ssize_t
-+input_value_show(struct device *dev, struct device_attribute *a, char *buf)
-+{
-+	int ret;
-+
-+	ret = moxtet_device_read(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return sprintf(buf, "0x%x\n", ret);
-+}
-+static DEVICE_ATTR_RO(input_value);
-+
-+static ssize_t
-+output_value_show(struct device *dev, struct device_attribute *a, char *buf)
-+{
-+	int ret;
-+
-+	ret = moxtet_device_written(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return sprintf(buf, "0x%x\n", ret);
-+}
-+
-+static ssize_t
-+output_value_store(struct device *dev, struct device_attribute *a,
-+		   const char *buf, size_t count)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (val > 0xff)
-+		return -ERANGE;
-+
-+	ret = moxtet_device_write(dev, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(output_value);
-+
-+static struct attribute *moxtet_dev_attrs[] = {
-+	&dev_attr_module_id.attr,
-+	&dev_attr_module_name.attr,
-+	&dev_attr_input_value.attr,
-+	&dev_attr_output_value.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group moxtet_dev_group = {
-+	.attrs = moxtet_dev_attrs,
-+};
-+
-+static const struct attribute_group *moxtet_dev_groups[] = {
-+	&moxtet_dev_group,
-+	NULL,
-+};
-+
-+static int moxtet_match(struct device *dev, struct device_driver *drv)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+	struct moxtet_driver *tdrv = to_moxtet_driver(drv);
-+	const enum turris_mox_module_id *t;
-+
-+	if (of_driver_match_device(dev, drv))
-+		return 1;
-+
-+	if (!tdrv->id_table)
-+		return 0;
-+
-+	for (t = tdrv->id_table; *t; ++t)
-+		if (*t == mdev->id)
-+			return 1;
-+
-+	return 0;
-+}
-+
-+struct bus_type moxtet_bus_type = {
-+	.name		= "moxtet",
-+	.dev_groups	= moxtet_dev_groups,
-+	.match		= moxtet_match,
-+};
-+EXPORT_SYMBOL_GPL(moxtet_bus_type);
-+
-+int __moxtet_register_driver(struct module *owner,
-+			     struct moxtet_driver *mdrv)
-+{
-+	mdrv->driver.owner = owner;
-+	mdrv->driver.bus = &moxtet_bus_type;
-+	return driver_register(&mdrv->driver);
-+}
-+EXPORT_SYMBOL_GPL(__moxtet_register_driver);
-+
-+static int moxtet_dev_check(struct device *dev, void *data)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+	struct moxtet_device *new_dev = data;
-+
-+	if (mdev->moxtet == new_dev->moxtet && mdev->id == new_dev->id &&
-+	    mdev->idx == new_dev->idx)
-+		return -EBUSY;
-+	return 0;
-+}
-+
-+static void moxtet_dev_release(struct device *dev)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+
-+	put_device(mdev->moxtet->dev);
-+	kfree(mdev);
-+}
-+
-+static struct moxtet_device *
-+moxtet_alloc_device(struct moxtet *moxtet)
-+{
-+	struct moxtet_device *dev;
-+
-+	if (!get_device(moxtet->dev))
-+		return NULL;
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev) {
-+		put_device(moxtet->dev);
-+		return NULL;
-+	}
-+
-+	dev->moxtet = moxtet;
-+	dev->dev.parent = moxtet->dev;
-+	dev->dev.bus = &moxtet_bus_type;
-+	dev->dev.release = moxtet_dev_release;
-+
-+	device_initialize(&dev->dev);
-+
-+	return dev;
-+}
-+
-+static int moxtet_add_device(struct moxtet_device *dev)
-+{
-+	static DEFINE_MUTEX(add_mutex);
-+	int ret;
-+
-+	if (dev->idx >= TURRIS_MOX_MAX_MODULES || dev->id > 0xf)
-+		return -EINVAL;
-+
-+	dev_set_name(&dev->dev, "moxtet-%s.%u",
-+		     turris_mox_module_name(dev->id), dev->idx);
-+
-+	mutex_lock(&add_mutex);
-+
-+	ret = bus_for_each_dev(&moxtet_bus_type, NULL, dev,
-+			       moxtet_dev_check);
-+	if (ret)
-+		goto done;
-+
-+	ret = device_add(&dev->dev);
-+	if (ret < 0)
-+		dev_err(dev->moxtet->dev, "can't add %s, status %d\n",
-+			dev_name(dev->moxtet->dev), ret);
-+
-+done:
-+	mutex_unlock(&add_mutex);
-+	return ret;
-+}
-+
-+static int __unregister(struct device *dev, void *null)
-+{
-+	if (dev->of_node) {
-+		of_node_clear_flag(dev->of_node, OF_POPULATED);
-+		of_node_put(dev->of_node);
-+	}
-+
-+	device_unregister(dev);
-+
-+	return 0;
-+}
-+
-+static struct moxtet_device *
-+of_register_moxtet_device(struct moxtet *moxtet, struct device_node *nc)
-+{
-+	struct moxtet_device *dev;
-+	u32 val;
-+	int ret;
-+
-+	dev = moxtet_alloc_device(moxtet);
-+	if (!dev) {
-+		dev_err(moxtet->dev,
-+			"Moxtet device alloc error for %pOF\n", nc);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	ret = of_property_read_u32(nc, "reg", &val);
-+	if (ret || val >= TURRIS_MOX_MAX_MODULES) {
-+		dev_err(moxtet->dev, "%pOF has no valid 'reg' property (%d)\n",
-+			nc, ret);
-+		goto err_put;
-+	}
-+	dev->idx = val;
-+
-+	ret = of_property_read_u32(nc, "moxtet,id", &val);
-+	if (ret || val > 0xf) {
-+		dev_err(moxtet->dev,
-+			"%pOF has no valid 'moxtet,id' property (%d)\n", nc,
-+			ret);
-+		goto err_put;
-+	}
-+	dev->id = val;
-+
-+	if (moxtet->modules[dev->idx] != dev->id) {
-+		dev_err(moxtet->dev,
-+			"%pOF requested Moxtet device ID 0x%x, 0x%x found\n",
-+			nc, dev->id, moxtet->modules[dev->idx]);
-+		goto err_put;
-+	}
-+
-+	of_node_get(nc);
-+	dev->dev.of_node = nc;
-+
-+	ret = moxtet_add_device(dev);
-+	if (ret) {
-+		dev_err(moxtet->dev,
-+			"Moxtet device register error for %pOF\n", nc);
-+		of_node_put(nc);
-+		goto err_put;
-+	}
-+
-+	return dev;
-+
-+err_put:
-+	put_device(&dev->dev);
-+	return ERR_PTR(ret);
-+}
-+
-+static void of_register_moxtet_devices(struct moxtet *moxtet)
-+{
-+	struct moxtet_device *dev;
-+	struct device_node *nc;
-+
-+	if (!moxtet->dev->of_node)
-+		return;
-+
-+	for_each_available_child_of_node(moxtet->dev->of_node, nc) {
-+		if (of_node_test_and_set_flag(nc, OF_POPULATED))
-+			continue;
-+		dev = of_register_moxtet_device(moxtet, nc);
-+		if (IS_ERR(dev)) {
-+			dev_warn(moxtet->dev,
-+				 "Failed to create Moxtet device for %pOF\n",
-+				 nc);
-+			of_node_clear_flag(nc, OF_POPULATED);
-+		}
-+	}
-+}
-+
-+static void
-+moxtet_register_devices_from_topology(struct moxtet *moxtet)
-+{
-+	struct moxtet_device *dev;
-+	int i, ret;
-+
-+	for (i = 0; i < moxtet->count; ++i) {
-+		dev = moxtet_alloc_device(moxtet);
-+		if (!dev) {
-+			dev_err(moxtet->dev, "Moxtet device %u alloc error\n",
-+				i);
-+			continue;
-+		}
-+
-+		dev->idx = i;
-+		dev->id = moxtet->modules[i];
-+
-+		ret = moxtet_add_device(dev);
-+		if (ret && ret != -EBUSY) {
-+			put_device(&dev->dev);
-+			dev_err(moxtet->dev,
-+				"Moxtet device %u register error: %i\n", i,
-+				ret);
-+		}
-+	}
-+}
-+
-+static int moxtet_find_topology(struct moxtet *moxtet)
-+{
-+	u8 buf[TURRIS_MOX_MAX_MODULES];
-+	int i, ret;
-+
-+	ret = spi_read(to_spi_device(moxtet->dev), buf, TURRIS_MOX_MAX_MODULES);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (buf[0] == TURRIS_MOX_CPU_ID_EMMC) {
-+		dev_info(moxtet->dev, "Found eMMC Turris Mox CPU module\n");
-+	} else if (buf[0] == TURRIS_MOX_CPU_ID_SD) {
-+		dev_info(moxtet->dev, "Found SD Turris Mox CPU module\n");
-+	} else {
-+		dev_err(moxtet->dev, "Invalid Turris Mox CPU module 0x%02x\n",
-+			buf[0]);
-+		return -ENODEV;
-+	}
-+
-+	moxtet->count = 0;
-+
-+	for (i = 1; i < TURRIS_MOX_MAX_MODULES; ++i) {
-+		int module_id;
-+
-+		if (buf[i] == 0xff)
-+			break;
-+
-+		module_id = buf[i] & 0xf;
-+
-+		moxtet->modules[i-1] = module_id;
-+		++moxtet->count;
-+
-+		switch (module_id) {
-+		case TURRIS_MOX_MODULE_SFP:
-+			dev_info(moxtet->dev, "SFP module found\n");
-+			break;
-+		case TURRIS_MOX_MODULE_PCI:
-+			dev_info(moxtet->dev, "PCIe module found\n");
-+			break;
-+		case TURRIS_MOX_MODULE_TOPAZ:
-+			dev_info(moxtet->dev, "Topaz Switch module found\n");
-+			break;
-+		case TURRIS_MOX_MODULE_PERIDOT:
-+			dev_info(moxtet->dev, "Peridot Switch module found\n");
-+			break;
-+		default:
-+			dev_info(moxtet->dev,
-+				 "Unknown Moxtet module found (ID 0x%02x)\n",
-+				 module_id);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int moxtet_device_read(struct device *dev)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+	struct moxtet *moxtet = mdev->moxtet;
-+	u8 buf[TURRIS_MOX_MAX_MODULES];
-+	struct spi_transfer xfer = {
-+		.rx_buf = buf,
-+		.tx_buf = moxtet->tx,
-+		.len = moxtet->count + 1
-+	};
-+	int ret;
-+
-+	if (mdev->idx >= moxtet->count)
-+		return -EINVAL;
-+
-+	mutex_lock(&moxtet->lock);
-+
-+	ret = spi_sync_transfer(to_spi_device(moxtet->dev), &xfer, 1);
-+
-+	mutex_unlock(&moxtet->lock);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return buf[mdev->idx + 1] >> 4;
-+}
-+EXPORT_SYMBOL_GPL(moxtet_device_read);
-+
-+int moxtet_device_write(struct device *dev, u8 val)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+	struct moxtet *moxtet = mdev->moxtet;
-+	int ret;
-+
-+	if (mdev->idx >= moxtet->count)
-+		return -EINVAL;
-+
-+	mutex_lock(&moxtet->lock);
-+
-+	moxtet->tx[moxtet->count - mdev->idx] = val;
-+
-+	ret = spi_write(to_spi_device(moxtet->dev), moxtet->tx,
-+			moxtet->count + 1);
-+
-+	mutex_unlock(&moxtet->lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(moxtet_device_write);
-+
-+int moxtet_device_written(struct device *dev)
-+{
-+	struct moxtet_device *mdev = to_moxtet_device(dev);
-+	struct moxtet *moxtet = mdev->moxtet;
-+
-+	if (mdev->idx >= moxtet->count)
-+		return -EINVAL;
-+
-+	return moxtet->tx[moxtet->count - mdev->idx];
-+}
-+EXPORT_SYMBOL_GPL(moxtet_device_written);
-+
-+static int moxtet_probe(struct spi_device *spi)
-+{
-+	struct moxtet *moxtet;
-+	int ret;
-+
-+	ret = spi_setup(spi);
-+	if (ret < 0)
-+		return ret;
-+
-+	moxtet = devm_kzalloc(&spi->dev, sizeof(struct moxtet),
-+			      GFP_KERNEL);
-+	if (!moxtet)
-+		return -ENOMEM;
-+
-+	moxtet->dev = &spi->dev;
-+	spi_set_drvdata(spi, moxtet);
-+
-+	mutex_init(&moxtet->lock);
-+
-+	ret = moxtet_find_topology(moxtet);
-+	if (ret < 0)
-+		return ret;
-+
-+	of_register_moxtet_devices(moxtet);
-+	moxtet_register_devices_from_topology(moxtet);
-+
-+	return 0;
-+}
-+
-+static int moxtet_remove(struct spi_device *spi)
-+{
-+	struct moxtet *moxtet = spi_get_drvdata(spi);
-+	int dummy;
-+
-+	dummy = device_for_each_child(moxtet->dev, NULL, __unregister);
-+
-+	mutex_destroy(&moxtet->lock);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id moxtet_dt_ids[] = {
-+	{ .compatible = "cznic,moxtet" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, moxtet_dt_ids);
-+
-+static struct spi_driver moxtet_driver = {
-+	.driver = {
-+		.name		= "moxtet",
-+		.of_match_table = moxtet_dt_ids,
-+	},
-+	.probe		= moxtet_probe,
-+	.remove		= moxtet_remove,
-+};
-+module_spi_driver(moxtet_driver);
-+
-+static int __init moxtet_init(void)
-+{
-+	return bus_register(&moxtet_bus_type);
-+}
-+
-+postcore_initcall(moxtet_init);
-+
-+MODULE_AUTHOR("Marek Behun <marek.behun@nic.cz>");
-+MODULE_DESCRIPTION("CZ.NIC's Turris Mox module configuration bus");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/moxtet.h b/include/linux/mfd/moxtet.h
-new file mode 100644
-index 000000000000..f818039c2c2e
---- /dev/null
-+++ b/include/linux/mfd/moxtet.h
-@@ -0,0 +1,103 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Turris Mox module configuration bus driver
-+ *
-+ * Copyright (C) 2018 Marek Behun <marek.behun@nic.cz>
-+ */
-+
-+#ifndef __LINUX_MFD_MOXTET_H
-+#define __LINUX_MFD_MOXTET_H
-+
-+#include <linux/device.h>
-+#include <linux/mutex.h>
-+
-+#define TURRIS_MOX_MAX_MODULES	10
-+
-+enum turris_mox_cpu_module_id {
-+	TURRIS_MOX_CPU_ID_EMMC	= 0x00,
-+	TURRIS_MOX_CPU_ID_SD	= 0x10,
-+};
-+
-+enum turris_mox_module_id {
-+	TURRIS_MOX_MODULE_SFP		= 0x01,
-+	TURRIS_MOX_MODULE_PCI		= 0x02,
-+	TURRIS_MOX_MODULE_TOPAZ		= 0x03,
-+	TURRIS_MOX_MODULE_PERIDOT	= 0x04,
-+};
-+
-+static inline const char *turris_mox_module_name(unsigned int id)
-+{
-+	switch (id) {
-+	case TURRIS_MOX_MODULE_SFP:
-+		return "sfp";
-+	case TURRIS_MOX_MODULE_PCI:
-+		return "pci";
-+	case TURRIS_MOX_MODULE_TOPAZ:
-+		return "topaz";
-+	case TURRIS_MOX_MODULE_PERIDOT:
-+		return "peridot";
-+	default:
-+		return "unknown";
-+	}
-+}
-+
-+extern struct bus_type moxtet_type;
-+
-+struct moxtet {
-+	struct device	*dev;
-+	struct mutex	lock;
-+	u8		modules[TURRIS_MOX_MAX_MODULES];
-+	int		count;
-+	u8		tx[TURRIS_MOX_MAX_MODULES];
-+	char		module_topology[128];
-+};
-+
-+struct moxtet_driver {
-+	const enum turris_mox_module_id	*id_table;
-+	struct device_driver		driver;
-+};
-+
-+static inline struct moxtet_driver *
-+to_moxtet_driver(struct device_driver *drv)
-+{
-+	if (!drv)
-+		return NULL;
-+	return container_of(drv, struct moxtet_driver, driver);
-+}
-+
-+extern int __moxtet_register_driver(struct module *owner,
-+				    struct moxtet_driver *mdrv);
-+
-+static inline void moxtet_unregister_driver(struct moxtet_driver *mdrv)
-+{
-+	if (mdrv)
-+		driver_unregister(&mdrv->driver);
-+}
-+
-+#define moxtet_register_driver(driver) \
-+	__moxtet_register_driver(THIS_MODULE, driver)
-+
-+#define module_moxtet_driver(__moxtet_driver) \
-+	module_driver(__moxtet_driver, moxtet_register_driver, \
-+			moxtet_unregister_driver)
-+
-+struct moxtet_device {
-+	struct device			dev;
-+	struct moxtet			*moxtet;
-+	enum turris_mox_module_id	id;
-+	unsigned int			idx;
-+};
-+
-+extern int moxtet_device_read(struct device *dev);
-+extern int moxtet_device_write(struct device *dev, u8 val);
-+extern int moxtet_device_written(struct device *dev);
-+
-+static inline struct moxtet_device *
-+to_moxtet_device(struct device *dev)
-+{
-+	if (!dev)
-+		return NULL;
-+	return container_of(dev, struct moxtet_device, dev);
-+}
-+
-+#endif /* __LINUX_MFD_MOXTET_H */
 -- 
-2.16.4
+2.17.1
 
