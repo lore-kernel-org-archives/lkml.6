@@ -2,74 +2,120 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE576C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCC1C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487582073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCA202073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="UsknB6Xw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487582073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gj90RiSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA202073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbeH3SP5 (ORCPT
+        id S1729245AbeH3SQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:15:57 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:40046 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbeH3SP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:15:57 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7D4E525B74E;
-        Fri, 31 Aug 2018 00:13:35 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1535638415; bh=LAOLNrGV8TcFse2Mj3tXP7+kgClELYLo+mzjHIoshDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UsknB6XwUuwhVc/5wQMX3rlJa2DvNPiC/Dr/fLYe6GJpQx2jOhRXVUTdPNXq8p2XP
-         vVFWP1+PIOX80UMa/LRwcNPq5KERnfAb0lMMPkuLFXulasY/vl/nRLWav5yUU0n62D
-         Z+Or4PK/NMZlwK7wPpfCCldMBUugmpJIcPnBq3Jw=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 7FFD59403D6; Thu, 30 Aug 2018 16:13:33 +0200 (CEST)
-Date:   Thu, 30 Aug 2018 16:13:33 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig
- symbol
-Message-ID: <20180830141332.4x3hhpt5vbomy7cu@verge.net.au>
-References: <20180828151011.14065-1-geert+renesas@glider.be>
- <20180828151011.14065-2-geert+renesas@glider.be>
+        Thu, 30 Aug 2018 14:16:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728273AbeH3SQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:16:06 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 203912073D;
+        Thu, 30 Aug 2018 14:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535638426;
+        bh=FxrveT0+qffJSy79bnpM1I1zzHMUbP97R+hJ6OIbqTA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gj90RiSO1ZZu+jV7GbDVQfcg8H47AxZwKiLHa9Erzo48KczB6HnrhNFpz3xfqmV4U
+         R0s3c5CHQiZcfZHHnmylgyAVUTIIDDcollRf4ytydYdt07Qk4Lr8qKbek7WLuNvu36
+         Ywyv3uaLqO80GnPwTicaes+5v0V/N1PD3cbmeXWc=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 02/28] selftests/ftrace: Add --console hidden option
+Date:   Thu, 30 Aug 2018 23:13:23 +0900
+Message-Id: <153563840309.29700.18393382534653831079.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <153563834333.29700.11242968505215651399.stgit@devbox>
+References: <153563834333.29700.11242968505215651399.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828151011.14065-2-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 05:10:10PM +0200, Geert Uytterhoeven wrote:
-> All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
-> platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
-> to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
-> 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+Add --console hidden option for debug test cases.
 
-Thanks Geert, applied for v4.20.
+This option allows to put "sh" or something else
+when the test case hits a bug.
+
+For example, if you find a testcase which doesn't
+pass, you can insert sh for interactive debug as below
+
+  -----
+  #!/bin/sh
+  # description: sample test case
+
+  good-command
+  suspicious-wrong-command
+  sh # <- add this for interactive debug
+  -----
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+  Changes in v3
+  - Add an example of this feature in the description
+---
+ tools/testing/selftests/ftrace/ftracetest |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+index c9c7fa8dc440..8debd37038e4 100755
+--- a/tools/testing/selftests/ftrace/ftracetest
++++ b/tools/testing/selftests/ftrace/ftracetest
+@@ -60,11 +60,21 @@ parse_opts() { # opts
+       shift 1
+     ;;
+     --verbose|-v|-vv|-vvv)
++      if [ $VERBOSE -eq -1 ]; then
++	usage "--console can not use with --verbose"
++      fi
+       VERBOSE=$((VERBOSE + 1))
+       [ $1 = '-vv' ] && VERBOSE=$((VERBOSE + 1))
+       [ $1 = '-vvv' ] && VERBOSE=$((VERBOSE + 2))
+       shift 1
+     ;;
++    --console)
++      if [ $VERBOSE -ne 0 ]; then
++	usage "--console can not use with --verbose"
++      fi
++      VERBOSE=-1
++      shift 1
++    ;;
+     --debug|-d)
+       DEBUG=1
+       shift 1
+@@ -283,7 +293,9 @@ run_test() { # testfile
+   testcase $1
+   echo "execute$INSTANCE: "$1 > $testlog
+   SIG_RESULT=0
+-  if [ -z "$LOG_FILE" ]; then
++  if [ $VERBOSE -eq -1 ]; then
++    __run_test $1
++  elif [ -z "$LOG_FILE" ]; then
+     __run_test $1 2>&1
+   elif [ $VERBOSE -ge 3 ]; then
+     __run_test $1 | tee -a $testlog 2>&1
+
