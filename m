@@ -2,200 +2,151 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 114E5C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458A4C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD1C420658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1C420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DB9012082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9012082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbeH3O5y (ORCPT
+        id S1728419AbeH3PDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:57:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59596 "EHLO mx1.suse.de"
+        Thu, 30 Aug 2018 11:03:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33796 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728195AbeH3O5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:57:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 419FFAD2D;
-        Thu, 30 Aug 2018 10:56:17 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 12:56:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Dimitri Sivanich <sivanich@sgi.com>
-Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
- pages
-Message-ID: <20180830105616.GD2656@dhcp22.suse.cz>
-References: <20180823205917.16297-1-mike.kravetz@oracle.com>
- <20180823205917.16297-2-mike.kravetz@oracle.com>
- <20180824084157.GD29735@dhcp22.suse.cz>
- <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
- <20180827074645.GB21556@dhcp22.suse.cz>
- <20180827134633.GB3930@redhat.com>
- <9209043d-3240-105b-72a3-b4cd30f1b1f1@oracle.com>
- <20180829181424.GB3784@redhat.com>
- <20180829183906.GF10223@dhcp22.suse.cz>
- <20180829211106.GC3784@redhat.com>
+        id S1728180AbeH3PDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 11:03:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 618F340216E6;
+        Thu, 30 Aug 2018 11:01:25 +0000 (UTC)
+Received: from flask (unknown [10.40.205.185])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C519010FD283;
+        Thu, 30 Aug 2018 11:01:22 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Thu, 30 Aug 2018 13:01:21 +0200
+Date:   Thu, 30 Aug 2018 13:01:21 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2] KVM: LAPIC: Fix pv ipis out-of-bounds access
+Message-ID: <20180830110121.GB19438@flask>
+References: <1535594610-9095-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180829211106.GC3784@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1535594610-9095-1-git-send-email-wanpengli@tencent.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 30 Aug 2018 11:01:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 30 Aug 2018 11:01:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29-08-18 17:11:07, Jerome Glisse wrote:
-> On Wed, Aug 29, 2018 at 08:39:06PM +0200, Michal Hocko wrote:
-> > On Wed 29-08-18 14:14:25, Jerome Glisse wrote:
-> > > On Wed, Aug 29, 2018 at 10:24:44AM -0700, Mike Kravetz wrote:
-> > [...]
-> > > > What would be the best mmu notifier interface to use where there are no
-> > > > start/end calls?
-> > > > Or, is the best solution to add the start/end calls as is done in later
-> > > > versions of the code?  If that is the suggestion, has there been any change
-> > > > in invalidate start/end semantics that we should take into account?
-> > > 
-> > > start/end would be the one to add, 4.4 seems broken in respect to THP
-> > > and mmu notification. Another solution is to fix user of mmu notifier,
-> > > they were only a handful back then. For instance properly adjust the
-> > > address to match first address covered by pmd or pud and passing down
-> > > correct page size to mmu_notifier_invalidate_page() would allow to fix
-> > > this easily.
-> > > 
-> > > This is ok because user of try_to_unmap_one() replace the pte/pmd/pud
-> > > with an invalid one (either poison, migration or swap) inside the
-> > > function. So anyone racing would synchronize on those special entry
-> > > hence why it is fine to delay mmu_notifier_invalidate_page() to after
-> > > dropping the page table lock.
-> > > 
-> > > Adding start/end might the solution with less code churn as you would
-> > > only need to change try_to_unmap_one().
-> > 
-> > What about dependencies? 369ea8242c0fb sounds like it needs work for all
-> > notifiers need to be updated as well.
+2018-08-30 10:03+0800, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> This commit remove mmu_notifier_invalidate_page() hence why everything
-> need to be updated. But in 4.4 you can get away with just adding start/
-> end and keep around mmu_notifier_invalidate_page() to minimize disruption.
+> Dan Carpenter reported that the untrusted data returns from kvm_register_read()
+> results in the following static checker warning:
+>   arch/x86/kvm/lapic.c:576 kvm_pv_send_ipi()
+>   error: buffer underflow 'map->phys_map' 's32min-s32max'
+> 
+> KVM guest can easily trigger this by executing the following assembly sequence 
+> in Ring0:
+> 
+> mov $10, %rax
+> mov $0xFFFFFFFF, %rbx
+> mov $0xFFFFFFFF, %rdx
+> mov $0, %rsi
+> vmcall
+> 
+> As this will cause KVM to execute the following code-path:
+> vmx_handle_exit() -> handle_vmcall() -> kvm_emulate_hypercall() -> kvm_pv_send_ipi()
+> which will reach out-of-bounds access.
+> 
+> This patch fixes it by adding a check to kvm_pv_send_ipi() against map->max_apic_id, 
+> ignoring destinations that are not present and delivering the rest. We also check 
+> whether or not map->phys_map[min + i] is NULL since the max_apic_id is set to the 
+> max apic id, some phys_map maybe NULL when apic id is sparse, especially kvm 
+> unconditionally set max_apic_id to 255 to reserve enough space for any xAPIC ID.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Liran Alon <liran.alon@oracle.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Liran Alon <liran.alon@oracle.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2:
+>  * add min > map->max_apic_id check
+>  * change min to u32
+>  * add min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> @@ -548,7 +548,7 @@ int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
+>  }
+>  
+>  int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+> -    		    unsigned long ipi_bitmap_high, int min,
+> +		    unsigned long ipi_bitmap_high, u32 min,
+>  		    unsigned long icr, int op_64_bit)
+>  {
+>  	int i;
+> @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+>  	rcu_read_lock();
+>  	map = rcu_dereference(kvm->arch.apic_map);
+>  
+> +	if (min > map->max_apic_id)
+> +		goto out;
+>  	/* Bits above cluster_size are masked in the caller.  */
+> -	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
+> -		vcpu = map->phys_map[min + i]->vcpu;
+> -		count += kvm_apic_set_irq(vcpu, &irq, NULL);
+> +	for_each_set_bit(i, &ipi_bitmap_low,
+> +		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
+> +		if (map->phys_map[min + i]) {
+> +			vcpu = map->phys_map[min + i]->vcpu;
+> +			count += kvm_apic_set_irq(vcpu, &irq, NULL);
+> +		}
+>  	}
+>  
+>  	min += cluster_size;
 
-OK, this is really interesting. I was really worried to change the
-semantic of the mmu notifiers in stable kernels because this is really
-a hard to review change and high risk for anybody running those old
-kernels. If we can keep the mmu_notifier_invalidate_page and wrap them
-into the range scope API then this sounds like the best way forward.
+We need a second
 
-So just to make sure we are at the same page. Does this sounds goo for
-stable 4.4. backport? Mike's hugetlb pmd shared fixup can be applied on
-top. What do you think?
+  if (min > map->max_apic_id)
+  	goto out;
 
+here.  I will add it while applying if there are no other change
+requests.
 
-From 70a2285b058073eeb2971b94b7e6c8067d2d161a Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
-Date: Thu, 31 Aug 2017 17:17:27 -0400
-Subject: [PATCH] mm/rmap: update to new mmu_notifier semantic v2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-commit 369ea8242c0fb5239b4ddf0dc568f694bd244de4 upstrea.
-
-Please note that this patch differs from the mainline because we do not
-really replace mmu_notifier_invalidate_page by mmu_notifier_invalidate_range
-because that requires changes to most of existing mmu notifiers. We also
-do not want to change the semantic of this API in old kernels. Anyway
-Jerome has suggested that it should be sufficient to simply wrap
-mmu_notifier_invalidate_page by *_invalidate_range_start()/end() to fix
-invalidation of larger than pte mappings (e.g. THP/hugetlb pages during
-migration). We need this change to handle large (hugetlb/THP) pages
-migration properly.
-
-Note that because we can not presume the pmd value or pte value we have
-to assume the worst and unconditionaly report an invalidation as
-happening.
-
-Changed since v2:
-  - try_to_unmap_one() only one call to mmu_notifier_invalidate_range()
-  - compute end with PAGE_SIZE << compound_order(page)
-  - fix PageHuge() case in try_to_unmap_one()
-
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Bernhard Held <berny156@gmx.de>
-Cc: Adam Borowski <kilobyte@angband.pl>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: axie <axie@amd.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com> # backport to 4.4
----
- mm/rmap.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 1bceb49aa214..364d245e6411 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1324,6 +1324,7 @@ static int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 	pte_t pteval;
- 	spinlock_t *ptl;
- 	int ret = SWAP_AGAIN;
-+	unsigned long start = address, end;
- 	enum ttu_flags flags = (enum ttu_flags)arg;
- 
- 	/* munlock has nothing to gain from examining un-locked vmas */
-@@ -1356,6 +1357,14 @@ static int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 		}
-   	}
- 
-+	/*
-+	 * We have to assume the worse case ie pmd for invalidation. Note that
-+	 * the page can not be free in this function as call of try_to_unmap()
-+	 * must hold a reference on the page.
-+	 */
-+	end = min(vma->vm_end, start + (PAGE_SIZE << compound_order(page)));
-+	mmu_notifier_invalidate_range_start(vma->vm_mm, start, end);
-+
- 	/* Nuke the page table entry. */
- 	flush_cache_page(vma, address, page_to_pfn(page));
- 	if (should_defer_flush(mm, flags)) {
-@@ -1449,6 +1458,7 @@ static int try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 	pte_unmap_unlock(pte, ptl);
- 	if (ret != SWAP_FAIL && ret != SWAP_MLOCK && !(flags & TTU_MUNLOCK))
- 		mmu_notifier_invalidate_page(mm, address);
-+	mmu_notifier_invalidate_range_end(vma->vm_mm, start, end);
- out:
- 	return ret;
- }
--- 
-2.18.0
-
--- 
-Michal Hocko
-SUSE Labs
+> -	for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
+> -		vcpu = map->phys_map[min + i]->vcpu;
+> -		count += kvm_apic_set_irq(vcpu, &irq, NULL);
+> +	for_each_set_bit(i, &ipi_bitmap_high,
+> +		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
+> +		if (map->phys_map[min + i]) {
+> +			vcpu = map->phys_map[min + i]->vcpu;
+> +			count += kvm_apic_set_irq(vcpu, &irq, NULL);
+> +		}
+>  	}
+>  
+> +out:
+>  	rcu_read_unlock();
+>  	return count;
+>  }
+> -- 
+> 2.7.4
+> 
