@@ -2,96 +2,86 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5082C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4502BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F1E2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FUOfv7LP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F1E2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EDC962073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC962073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeH3NEo (ORCPT
+        id S1728102AbeH3NGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:04:44 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38221 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbeH3NEn (ORCPT
+        Thu, 30 Aug 2018 09:06:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60602 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbeH3NGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:04:43 -0400
-Received: by mail-it0-f66.google.com with SMTP id p129-v6so1691990ite.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 02:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BhjBE9iF06Ss2qBx9xoNeBPT5CxjiYSSTR/cLqAO7E0=;
-        b=FUOfv7LPXsqcHWiA7BnGMRIU/ybTfHqve9Xh8IuEiiZWneDFDZ64rmIXe/S4cTJvrX
-         1GC7n1Za7VXBu12MJjH2S5Ey4T5KhdTt4SbVXvti0Dd3YSqlYeU2FEeXVUzqpJYg9oB/
-         dUp0xPtOYgf3AYdwsd9gCNN+QE2Jfk1t/fIU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BhjBE9iF06Ss2qBx9xoNeBPT5CxjiYSSTR/cLqAO7E0=;
-        b=d4+WRF1NtDhDJx+xMwiNyjKanMKN/KqQY3VwOHbg64elSJ/Gu1diiQlnzHPvewIzXX
-         l1Mp1CAlXwkFe2MqYcqVwx2H4ykJ7axi+Zs1nrDX/F2B+cLcTrD3zK6k44jI4n0ErBbd
-         BODMcqdmDUFFJ9u9fRxwkPuHuvGkVnsKtiSEH/DaPS/vWAwVfv9bysdVQTXOAjycp/k4
-         HtBYpskgmNjxIBKAERqfZKedzJIfvNgxOhsX3XW+sEPipQ2TlEXC2sLnVKNAb2/TrTbv
-         MYax37HN0NH6wgcLZOIREQDaB5XsCObynhFAOx6wbp8xjyTvvRx2ny0i+Nr4PJS3UVrs
-         84Zg==
-X-Gm-Message-State: APzg51AxOGWn5P3OGOJABHRj6M8QPCeivK7aqFqK1UgO5cpxiJWBvjHU
-        EJY/RJHAdeF0bhl9ttwlKg4Qi7ivRyHrQ0N0qx37Hw==
-X-Google-Smtp-Source: ANB0VdaB4byNaqo6NBMJ6kwR2gy+OLKpK28xYLi6KjH0mkEGehMCuDaKUp002/UVvimPnYgEPekTQ+/8lqQ2C59DXT8=
-X-Received: by 2002:a02:13c6:: with SMTP id 189-v6mr8737134jaz.50.1535619815658;
- Thu, 30 Aug 2018 02:03:35 -0700 (PDT)
+        Thu, 30 Aug 2018 09:06:06 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B6DDE804D8; Thu, 30 Aug 2018 11:04:56 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 11:04:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     tomi.valkeinen@ti.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: omap4: support for manually updated display
+Message-ID: <20180830090456.GA17277@amd>
 MIME-Version: 1.0
-References: <CGME20180827083916epcas1p43a3fc8570269411de215254ce0ae4b37@epcas1p4.samsung.com>
- <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
-In-Reply-To: <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 30 Aug 2018 11:03:23 +0200
-Message-ID: <CACRpkdZm8ZOmn0j3ksaaCjKQt+pY032JzR==9V62Lo9+N9FWVA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Preventive patch in the pin control subsystem to
- handle NULL check.
-To:     srikanth.h@samsung.com
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Srikanth, thanks for your patch!
 
-On Mon, Aug 27, 2018 at 10:39 AM Srikanth K H <srikanth.h@samsung.com> wrote:
+--WIyZ46R2i8wDzkSu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- @@ -269,8 +269,9 @@ void pinconf_show_setting(struct seq_file *s,
+Hi!
 
->                 desc = pin_desc_get(setting->pctldev,
->                                     setting->data.configs.group_or_pin);
-> -               seq_printf(s, "pin %s (%d)", desc->name,
-> -                          setting->data.configs.group_or_pin);
-> +               if (desc)
-> +                       seq_printf(s, "pin %s (%d)", desc->name,
-> +                                  setting->data.configs.group_or_pin);
+There's neat series of patches on
 
-Under what circumstances do you expect this to happen?
-Did you provoke it with a real usecase during development?
+https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/?=
+h=3Ddroid4-pending-v4.19
 
-We do not sprinkle NULL or error handling over code that
-will not derail, and since this is in debugfs we are even more
-lax.
+They enable display support for my hardware. As you can imagine,
+display is rather important for a cellphone.
 
-If it annoys users (which would then be developers using
-debugfs during development), then we need to look into it.
+Tomi, can you take the patches? I can resubmit them in email, or
+shuffle them to another branch without mfd changes, or clean them up
+etc...
 
-Yours,
-Linus Walleij
+Thanks,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--WIyZ46R2i8wDzkSu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluHszgACgkQMOfwapXb+vK/9gCfXxilDmU1+vIZL9ZTAxThMjln
+Vw4AnjysOKYrH+FHuxVTT3ucc27FI89L
+=mGNu
+-----END PGP SIGNATURE-----
+
+--WIyZ46R2i8wDzkSu--
