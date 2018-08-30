@@ -2,253 +2,155 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF27C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADFCC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C156A20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39E7520835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmDww0mk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C156A20835
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJGFw/qD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E7520835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbeH3Wk1 (ORCPT
+        id S1728351AbeH3Wke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:40:27 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38663 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728227AbeH3Wk1 (ORCPT
+        Thu, 30 Aug 2018 18:40:34 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41128 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbeH3Wkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:40:27 -0400
-Received: by mail-lf1-f68.google.com with SMTP id i7-v6so8002561lfh.5;
-        Thu, 30 Aug 2018 11:36:56 -0700 (PDT)
+        Thu, 30 Aug 2018 18:40:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z96-v6so8958098wrb.8;
+        Thu, 30 Aug 2018 11:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lgqnBz8Sd4utRBwj3GQtVoWXeG2CSLAzFsG9ONPpTzg=;
-        b=XmDww0mk/ulcnQdeo8sHvGKJM6oF1oBEREKMsxD/esZ6QaQvtwz9jic4EkFScgJxiy
-         UJc2/hyQVD3zO2n7mVooATLxT7O17EANJyXZpNs8xHyJlQaum379Aq3uPlO8j4r52EKi
-         O5WGYC6S7foGxH2ptSA8rNhcLr5SSb0JzaV9vwSuTTzot/7MtRV8Xh6BGHmv+2zDEesb
-         fpVkwLygy+D8OPSKYhARX6UZhrpgvRmd5OPqvUBr71ZOADEhxwpl9Nf4Q38ji4yE1web
-         PEmIwq69Ddp9RNXv8P08V+cLDcoohNLkURc2EuIxQ4XRGg/Y1sfOiC8e7u9EYQi992IF
-         DtkQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jcQ8owcppVEFIYb2YIOo4LepepkxBcVtZIlrtg8OzOA=;
+        b=BJGFw/qD2hlTwvzJyrIIhxbWACxFpZc6H4FfunZmJzTTrQr7JyUvApaV3a28HIEh9U
+         RyOjguUZcT9qOVfvXuBWo5IsgyihaFCuObHisXetB4ZStKO1IstKi9XhZkWZEL9sL0/j
+         xHlyqnFd0yRSyXZS/DnzfWd1mXOrFV4Rk9IIvdjMcH3hzln2LP8uzJZuiUxz9NGOc17H
+         9xhB9b+DBWwDbKdCX11cIakF2AZ46jIZMi+zRkZnZlxj48So0xNso0gFhIxExxQi5hFb
+         1VYHkZMGsF2FBEX7Oqv8xdVQ5cLjGW6M5MuQIudDIA0+k4fDXtSgZiC5WSj+Uh3tRKYl
+         gKLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lgqnBz8Sd4utRBwj3GQtVoWXeG2CSLAzFsG9ONPpTzg=;
-        b=jfqNr0UoyiL19HVJgbWoYCQVn4t2Q0coGlWrWo9aFOEXBqywzojsKKO+Hdl9otUylN
-         0LCE5zYxa2hK03WK4Ue/rKudRzPtfEgMdoDPJGplcCAXqOMaxPxKuLO3mQ+tb/cH9z+J
-         IsNi/ilMGzGPZum/hygVGssX8TaC7F8rEvFYh2jXrKh3dXQT94fQWfBk6uKA6H+AeWtD
-         e564WswyinXjqLqdF2PAI10jjNHPzKbi9/bCPulhv7AEV3pswZBvr5O4zo0GUy9tGqmX
-         VFvsqmT/i0SvXyPcjBmBL89ON24rfLDEAkZRMsXQiLcXGtEtqDR9OVWNKfxf7mIMBfV1
-         /cEg==
-X-Gm-Message-State: APzg51BG6PW4SmZf67Clo3vKVu3E6lEkfjrlceTcOU8MKL3cmNiz/TlO
-        29Z5+arJL3FV2pHMadw9hao=
-X-Google-Smtp-Source: ANB0VdZKY2zyLG1WN30L71sborKcV90RBR5tK9nbboJhPSPOBQfAWSZTFmfkmYkAjTVYgzOS+Jkmwg==
-X-Received: by 2002:a19:cb93:: with SMTP id b141-v6mr7939497lfg.119.1535654216045;
-        Thu, 30 Aug 2018 11:36:56 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id n26-v6sm1325727ljc.7.2018.08.30.11.36.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 11:36:55 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] soc/tegra: pmc: Turn powergates_lock into spinlock
-Date:   Thu, 30 Aug 2018 21:36:34 +0300
-Message-Id: <20180830183635.4474-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jcQ8owcppVEFIYb2YIOo4LepepkxBcVtZIlrtg8OzOA=;
+        b=gtACozguZTs7jiSyFOq5I8aKYAB7+IX6MprjqRa19Y9R4mWZT2/JoP8CZCU73Yem9A
+         Sk5PEZtiMxCUo8SFOksB2ykbNDNOlRnG+VWSKftuGDJRwM483X2+blFWnhuaiyy2DzwS
+         eFOFhJp5QGGRaHRxFkk1ly/rgH9ZPiqm5j5Z6cDT6PDx2nwZ+cTgP00PAVHtKisqQYMs
+         UFZ8eEyKDFN46eK+YD8TLSkQHnD57wQ1es5boJQ7DXwd2oOs+UOS2NFewhVWmd/HK6AC
+         7kf6MeOyJaT+yd/iP00R+eAHKRDuxmVp20qzJhDmZjPA91dh9h/8AKbNT8AbHIjyPn5C
+         AVJA==
+X-Gm-Message-State: APzg51BJRPQCsHPTpYjgugRt1/pRiteVgnGaR3udjFba2O71UasP0BaT
+        EcEB+m9Lh03cuK6WlaFPcdO5IDWuEEjSN2794S8=
+X-Google-Smtp-Source: ANB0VdY8B2QjIlNb/Avp+tnJ4vHVuyNllUsLMsGvx7hsOjepeuPL7l1Rr8Vc8SpW38PVfs5+K0JEhjmQukIei73p97k=
+X-Received: by 2002:a5d:61c1:: with SMTP id q1-v6mr8855124wrv.33.1535654222913;
+ Thu, 30 Aug 2018 11:37:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+ <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
+ <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
+ <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com>
+ <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
+ <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com> <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
+In-Reply-To: <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
+From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Date:   Fri, 31 Aug 2018 00:06:51 +0530
+Message-ID: <CA+sq2CfjJjswOwypNMtro+g8TeHGoBqAeKpFrf2ys-1=Xg+qHw@mail.gmail.com>
+Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, Aleksey Makarov <amakarov@marvell.com>,
+        Sunil Goutham <sgoutham@marvell.com>,
+        Lukasz Bartosik <lbartosik@marvell.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes splats like the one below if CONFIG_DEBUG_ATOMIC_SLEEP=y
-and machine (Tegra30) booted with SMP=n or all secondary CPU's are put
-offline.
+On Thu, Aug 30, 2018 at 7:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Aug 28, 2018 at 3:23 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> >
+> > On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > >
+> > > > On Tue, Aug 28, 2018 at 5:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > >
+> > > > > On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
+> > > > > >
+> > > > > > From: Aleksey Makarov <amakarov@marvell.com>
+> > > > > >
+> > > > > > This patch adds mailbox support infrastructure APIs.
+> > > > > > Each RVU device has a dedicated 64KB mailbox region
+> > > > > > shared with it's peer for communication. RVU AF has
+> > > > > > a separate mailbox region shared with each of RVU PFs
+> > > > > > and a RVU PF has a separate region shared with each of
+> > > > > > it's VF.
+> > > > > >
+> > > > > > These set of APIs are used by this driver (RVU AF) and
+> > > > > > other RVU PF/VF drivers eg netdev, crypto e.t.c.
+> > > > > >
+> > > > > > Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
+> > > > > > Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
+> > > > > > Signed-off-by: Lukasz Bartosik <lbartosik@marvell.com>
+> > > > >
+> > > > > Why does this driver not use the drivers/mailbox/ infrastructure?
+> > > > >
+> > > > This is a common administrative software driver which will be handling requests
+> > > > from kernel drivers and as well as drivers in userspace applications.
+> > > > We had to keep mailbox communication infrastructure same across all usages.
+> > >
+> > > Can you explain more about the usage of userspace applications
+> > > and what interface you plan to use into the kernel?
+> >
+> > Any PCI device here irrespective in what domain (kernel or userspace)
+> > they are in
+> > use common mailbox communication. Which is
+> > # Write a mailbox msg (format is agreed between all parties) into
+> > shared (between AF and other PF/VFs)
+> >    memory region and trigger a interrupt to admin function.
+> > # Admin function processes the msg and puts reply in the same memory
+> > region and trigger
+> >    IRQ to the requesting device. If the device has a driver instance
+> > in kernel then it uses
+> >    IRQ and userspace applications does polling on the IRQ status bit.
+>
+> Ok, so the mailbox here is a communication mechanism between
+> two device drivers that may run on the same kernel, or in different
+> instances (user space, virtual machine, ...), but each driver
+> only talks to the mailbox visible in its own device, right?
 
- BUG: sleeping function called from invalid context at kernel/locking/mutex.c:254
- in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
- CPU: 0 PID: 0 Comm: swapper/0 Tainted: G         C        4.18.0-next-20180821-00180-gc3ebb6544e44-dirty #823
- Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
- [<c01134f4>] (unwind_backtrace) from [<c010db2c>] (show_stack+0x20/0x24)
- [<c010db2c>] (show_stack) from [<c0bd0f3c>] (dump_stack+0x94/0xa8)
- [<c0bd0f3c>] (dump_stack) from [<c0151df8>] (___might_sleep+0x13c/0x174)
- [<c0151df8>] (___might_sleep) from [<c0151ea0>] (__might_sleep+0x70/0xa8)
- [<c0151ea0>] (__might_sleep) from [<c0bec2b8>] (mutex_lock+0x2c/0x70)
- [<c0bec2b8>] (mutex_lock) from [<c0589844>] (tegra_powergate_is_powered+0x44/0xa8)
- [<c0589844>] (tegra_powergate_is_powered) from [<c0581a60>] (tegra30_cpu_rail_off_ready+0x30/0x74)
- [<c0581a60>] (tegra30_cpu_rail_off_ready) from [<c0122244>] (tegra30_idle_lp2+0xa0/0x108)
- [<c0122244>] (tegra30_idle_lp2) from [<c0853438>] (cpuidle_enter_state+0x140/0x540)
- [<c0853438>] (cpuidle_enter_state) from [<c08538a4>] (cpuidle_enter+0x40/0x4c)
- [<c08538a4>] (cpuidle_enter) from [<c01595e0>] (call_cpuidle+0x30/0x48)
- [<c01595e0>] (call_cpuidle) from [<c01599f8>] (do_idle+0x238/0x28c)
- [<c01599f8>] (do_idle) from [<c0159d28>] (cpu_startup_entry+0x28/0x2c)
- [<c0159d28>] (cpu_startup_entry) from [<c0be76c8>] (rest_init+0xd8/0xdc)
- [<c0be76c8>] (rest_init) from [<c1200f50>] (start_kernel+0x41c/0x430)
+Yes.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/soc/tegra/pmc.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+>
+> What is the purpose of the exported interface then? Is this
+> just an abstraction so each of the drivers can talk to its own
+> mailbox using a set of common helper functions?
+>
+>       Arnd
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2d6f3fcf3211..d6bc9f66f1cd 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -186,7 +186,7 @@ struct tegra_pmc_soc {
-  * @lp0_vec_phys: physical base address of the LP0 warm boot code
-  * @lp0_vec_size: size of the LP0 warm boot code
-  * @powergates_available: Bitmap of available power gates
-- * @powergates_lock: mutex for power gate register access
-+ * @powergates_lock: lock for power gate register access
-  */
- struct tegra_pmc {
- 	struct device *dev;
-@@ -215,7 +215,7 @@ struct tegra_pmc {
- 	u32 lp0_vec_size;
- 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
- 
--	struct mutex powergates_lock;
-+	spinlock_t powergates_lock;
- };
- 
- static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-@@ -288,10 +288,10 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
- 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
- 		return -EINVAL;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	if (tegra_powergate_state(id) == new_state) {
--		mutex_unlock(&pmc->powergates_lock);
-+		spin_unlock(&pmc->powergates_lock);
- 		return 0;
- 	}
- 
-@@ -300,7 +300,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
- 	err = readx_poll_timeout(tegra_powergate_state, id, status,
- 				 status == new_state, 10, 100000);
- 
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return err;
- }
-@@ -309,7 +309,7 @@ static int __tegra_powergate_remove_clamping(unsigned int id)
- {
- 	u32 mask;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	/*
- 	 * On Tegra124 and later, the clamps for the GPU are controlled by a
-@@ -336,7 +336,7 @@ static int __tegra_powergate_remove_clamping(unsigned int id)
- 	tegra_pmc_writel(mask, REMOVE_CLAMPING);
- 
- out:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return 0;
- }
-@@ -529,9 +529,9 @@ int tegra_powergate_is_powered(unsigned int id)
- 	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 	status = tegra_powergate_state(id);
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return status;
- }
-@@ -998,7 +998,7 @@ int tegra_io_pad_power_enable(enum tegra_io_pad id)
- 	u32 mask;
- 	int err;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	err = tegra_io_pad_prepare(id, &request, &status, &mask);
- 	if (err < 0) {
-@@ -1017,7 +1017,7 @@ int tegra_io_pad_power_enable(enum tegra_io_pad id)
- 	tegra_io_pad_unprepare();
- 
- unlock:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 	return err;
- }
- EXPORT_SYMBOL(tegra_io_pad_power_enable);
-@@ -1034,7 +1034,7 @@ int tegra_io_pad_power_disable(enum tegra_io_pad id)
- 	u32 mask;
- 	int err;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	err = tegra_io_pad_prepare(id, &request, &status, &mask);
- 	if (err < 0) {
-@@ -1053,7 +1053,7 @@ int tegra_io_pad_power_disable(enum tegra_io_pad id)
- 	tegra_io_pad_unprepare();
- 
- unlock:
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 	return err;
- }
- EXPORT_SYMBOL(tegra_io_pad_power_disable);
-@@ -1071,7 +1071,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
- 	if (pad->voltage == UINT_MAX)
- 		return -ENOTSUPP;
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 
- 	/* write-enable PMC_PWR_DET_VALUE[pad->voltage] */
- 	value = tegra_pmc_readl(PMC_PWR_DET);
-@@ -1088,7 +1088,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
- 
- 	tegra_pmc_writel(value, PMC_PWR_DET_VALUE);
- 
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	usleep_range(100, 250);
- 
-@@ -1436,10 +1436,10 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	mutex_lock(&pmc->powergates_lock);
-+	spin_lock(&pmc->powergates_lock);
- 	iounmap(pmc->base);
- 	pmc->base = base;
--	mutex_unlock(&pmc->powergates_lock);
-+	spin_unlock(&pmc->powergates_lock);
- 
- 	return 0;
- }
-@@ -1919,7 +1919,7 @@ static int __init tegra_pmc_early_init(void)
- 	struct resource regs;
- 	bool invert;
- 
--	mutex_init(&pmc->powergates_lock);
-+	spin_lock_init(&pmc->powergates_lock);
- 
- 	np = of_find_matching_node_and_match(NULL, tegra_pmc_match, &match);
- 	if (!np) {
--- 
-2.18.0
+Yes, that's correct.
 
+In kernel there will be a minimum of 3 drivers which will use this
+mailbox communication.
+So instead of duplicating APIs and structures in every driver, we
+thought of adding them
+in this AF driver and export them to ethernet and crypto drivers.
+
+Thanks,
+Sunil.
