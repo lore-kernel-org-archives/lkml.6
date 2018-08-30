@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CB8C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3584AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64CCF20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5CF20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:36:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gv0f1O/S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64CCF20835
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SMKOPsIn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5CF20835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeH3WkI (ORCPT
+        id S1728287AbeH3WkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:40:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39922 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728231AbeH3WkI (ORCPT
+        Thu, 30 Aug 2018 18:40:10 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35674 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbeH3WkJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:40:08 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so4271656pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 11:36:39 -0700 (PDT)
+        Thu, 30 Aug 2018 18:40:09 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w8-v6so2685131pgs.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 11:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7p3Rca3GRAcPgKvADJaLhWlNpbrxllQ6VJusqqY9EMo=;
-        b=Gv0f1O/SFa72Zw7pm+stVl4mJPonkPHp2F4yRz9wEPW8LMz0PUtbi9ghZ3WgU5azaj
-         nIaDxSL1p8FRNImN0mLN8MryEoU7yOe1btkM/uIQNHnVmRoXRwTKuR1bSuayM1u/kZep
-         rcMfwv9sHhGCpwvg6jjIpbBEMeP+R1JBUQWrY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fHl6La1thHjcLDvSZRxhc58nWU+jWzOoZMZ+wwZO/SA=;
+        b=SMKOPsInOKImvubYm5SamakJaEdwMKME5j5Xk1GMAI1Vy0TtWVrxstVXH540aFHaJd
+         g0RpiFukF/P0GTsAwYXh/q/lnae3yVwfx83lbQwT8CdjExiKYXY6ekxBAONe8isCJo97
+         nIuxtPAOGlmEZZSa4/Jxo7S9wbtE50QvoIIZ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7p3Rca3GRAcPgKvADJaLhWlNpbrxllQ6VJusqqY9EMo=;
-        b=TPDVL50+R1fcQwaDdR0D21NymKh3sHBNFFSiCos+vLSnCdoQJgPJMdb0SKAyWNn6Xf
-         TGrH5kB1CTJz2L9nAQUUazOwjQEhuiuY95viaoG74n041BK7FD2cq3XybjSdmg6zjriC
-         jaIrMj5LtBG4qLLjBtX9ypU75WNSGcTXkcxtlwhZ53yPXWwd+EWMPmjvkzjpmtjK8WqW
-         KR5UCeh1ETHskQ+imDb7j9xZVj9RrQ900KAKFLNHusASmssCutW228q9tKdRuiILYda5
-         8AxTVVPi517xiDBt161UFgbZ6XEvRBTMFbTqQpj27WMnLMZOE8sDnTsy9u+lzgn6wOM3
-         NnXA==
-X-Gm-Message-State: APzg51BTRhlzBDjiphJffXG9SJZrTxFX7Wcwy4F263jISHAcN8M4zjbQ
-        2mZ7ZkeQq4eP9w1nofpwmocz/g==
-X-Google-Smtp-Source: ANB0VdajO1oMN2743qqr7LSG2Vaiuegsasr1N9VjicC4XK9O8QLo88HuxtYXAKcc26NvANk4mNULPg==
-X-Received: by 2002:a63:c702:: with SMTP id n2-v6mr11134084pgg.108.1535654199118;
-        Thu, 30 Aug 2018 11:36:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fHl6La1thHjcLDvSZRxhc58nWU+jWzOoZMZ+wwZO/SA=;
+        b=r2I13crfwIXJin99fhExvwD5vQul6pV9/EIrfLrOXsW4cSmNS77DcmKCbV3NEnavYG
+         GDC0I2mItqDJHSeVFXSYgnZAdxu0gRNvTIBf/t+MJ3SjL3E8qF1iKbYKog/xX/p0BF/f
+         xlbByFBl/ZyTZgensr3T/i7OJTrYy90VV/A7/md9TuhSy72gMP6CCDWDv8v4dwGzBdOz
+         ckMYaTNAXCuG2BXdSMNHcmlpFerF9xR3KFxXW4QYw2jCSXT3ohDUQCw4ICHVt1fZvnu4
+         MKB+M2szEDkvsOcnncr1PSytqcRjMEE688hJjyrCzBhiDtHcFwmne7f0MumSLdH+sOqm
+         uyaQ==
+X-Gm-Message-State: APzg51DqTFTpG+err5tCmveQq6VRnA5ZcC2F7MahInrg2I3TClGlhPGN
+        A1xJii9RljCtBx6mKfL49nb85Q==
+X-Google-Smtp-Source: ANB0Vdb787SsnMIRQnx/MOaEZTOdTeTkoqAQkga+z55P/f/JWgOcQu/W7Ib5oL5xwwQmSlAFzgIZGA==
+X-Received: by 2002:a63:5fc8:: with SMTP id t191-v6mr10881113pgb.183.1535654200487;
+        Thu, 30 Aug 2018 11:36:40 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id c68-v6sm14470946pfj.51.2018.08.30.11.36.37
+        by smtp.gmail.com with ESMTPSA id c68-v6sm14470946pfj.51.2018.08.30.11.36.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 11:36:38 -0700 (PDT)
+        Thu, 30 Aug 2018 11:36:39 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -65,10 +65,12 @@ Cc:     mka@chromium.org, girishm@codeaurora.org, dkota@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] soc: qcom: geni: Don't ignore clk_round_rate() errors in geni_se_clk_tbl_get()
-Date:   Thu, 30 Aug 2018 11:36:11 -0700
-Message-Id: <20180830183612.169572-1-dianders@chromium.org>
+Subject: [PATCH 2/2] soc: qcom: geni: geni_se_clk_freq_match() should always accept multiples
+Date:   Thu, 30 Aug 2018 11:36:12 -0700
+Message-Id: <20180830183612.169572-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
+In-Reply-To: <20180830183612.169572-1-dianders@chromium.org>
+References: <20180830183612.169572-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,47 +78,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function clk_round_rate() is defined to return a "long", not an
-"unsigned long".  That's because it might return a negative error
-code.  Change the call in geni_se_clk_tbl_get() to check for errors.
+The geni_se_clk_freq_match() has some strange semantics.  Specifically
+it is defined with two modes:
+1. It can find a clock that's an exact multiple of the requested rate
+2. If can find a non-exact match but it can't handle multiples then
 
-NOTE: overall the idea that we should iterate over clk_round_rate() to
-try to reconstruct a table already present in the clock driver is
-questionable.  Specifically:
-- This method relies on "clk_round_rate()" rounding up.
-- This method only works if the table is sorted and has no duplicates.
-...this patch doesn't try to fix those problems, it just makes the
-error handling more correct.
+...but callers should always be able to handle a clock that is a
+multiple of the requested clock so mode #2 doesn't really make sense.
+Let's change the semantics so that the non-exact match can also accept
+multiples and then change the code to handle that.
+
+The only caller of this code is the unlanded SPI driver [1] which
+currently passes "exact = True", thus it should be safe to change the
+semantics in this way.  ...and, in fact, the SPI driver should likely
+be modified to pass "exact = False" (with the new semantics) since
+that will allow it to work with SPI devices that request a clock rate
+that doesn't exactly match a rate we can make.
+
+[1] https://lkml.kernel.org/r/1535107336-2214-1-git-send-email-dkota@codeaurora.org
 
 Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
- drivers/soc/qcom/qcom-geni-se.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soc/qcom/qcom-geni-se.c | 37 ++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-index feed3db21c10..1b19b8428c4a 100644
+index 1b19b8428c4a..092b32a315c3 100644
 --- a/drivers/soc/qcom/qcom-geni-se.c
 +++ b/drivers/soc/qcom/qcom-geni-se.c
-@@ -513,7 +513,7 @@ EXPORT_SYMBOL(geni_se_resources_on);
+@@ -544,16 +544,17 @@ EXPORT_SYMBOL(geni_se_clk_tbl_get);
+  * @se:		Pointer to the concerned serial engine.
+  * @req_freq:	Requested clock frequency.
+  * @index:	Index of the resultant frequency in the table.
+- * @res_freq:	Resultant frequency which matches or is closer to the
+- *		requested frequency.
++ * @res_freq:	Resultant frequency of the source clock.
+  * @exact:	Flag to indicate exact multiple requirement of the requested
+  *		frequency.
+  *
+- * This function is called by the protocol drivers to determine the matching
+- * or exact multiple of the requested frequency, as provided by the serial
+- * engine clock in order to meet the performance requirements. If there is
+- * no matching or exact multiple of the requested frequency found, then it
+- * selects the closest floor frequency, if exact flag is not set.
++ * This function is called by the protocol drivers to determine the best match
++ * of the requested frequency as provided by the serial engine clock in order
++ * to meet the performance requirements.
++ *
++ * If we return success:
++ * - if @exact is true  then @res_freq / <an_integer> == @req_freq
++ * - if @exact is false then @res_freq / <an_integer> <= @req_freq
+  *
+  * Return: 0 on success, standard Linux error codes on failure.
   */
- int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
- {
--	unsigned long freq = 0;
-+	long freq = 0;
+@@ -564,6 +565,9 @@ int geni_se_clk_freq_match(struct geni_se *se, unsigned long req_freq,
+ 	unsigned long *tbl;
+ 	int num_clk_levels;
  	int i;
++	unsigned long best_delta;
++	unsigned long new_delta;
++	unsigned int divider;
  
- 	if (se->clk_perf_tbl) {
-@@ -529,7 +529,7 @@ int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
+ 	num_clk_levels = geni_se_clk_tbl_get(se, &tbl);
+ 	if (num_clk_levels < 0)
+@@ -572,18 +576,21 @@ int geni_se_clk_freq_match(struct geni_se *se, unsigned long req_freq,
+ 	if (num_clk_levels == 0)
+ 		return -EINVAL;
  
- 	for (i = 0; i < MAX_CLK_PERF_LEVEL; i++) {
- 		freq = clk_round_rate(se->clk, freq + 1);
--		if (!freq || freq == se->clk_perf_tbl[i - 1])
-+		if (freq <= 0 || freq == se->clk_perf_tbl[i - 1])
- 			break;
- 		se->clk_perf_tbl[i] = freq;
+-	*res_freq = 0;
++	best_delta = 0;
+ 	for (i = 0; i < num_clk_levels; i++) {
+-		if (!(tbl[i] % req_freq)) {
++		divider = DIV_ROUND_UP(tbl[i], req_freq);
++		new_delta = req_freq - tbl[i] / divider;
++		if (!best_delta || new_delta < best_delta) {
++			/* We have a new best! */
+ 			*index = i;
+ 			*res_freq = tbl[i];
+-			return 0;
+-		}
+ 
+-		if (!(*res_freq) || ((tbl[i] > *res_freq) &&
+-				     (tbl[i] < req_freq))) {
+-			*index = i;
+-			*res_freq = tbl[i];
++			/* If the new best is exact then we're done */
++			if (new_delta == 0)
++				return 0;
++
++			/* Record how close we got */
++			best_delta = new_delta;
+ 		}
  	}
+ 
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
