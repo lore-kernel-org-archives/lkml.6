@@ -2,140 +2,73 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2EFC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A4CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BFC20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:50:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TEucg1lQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02BFC20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C517C20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:50:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C517C20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeH3TxI (ORCPT
+        id S1727553AbeH3Txp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:53:08 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33888 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727500AbeH3TxI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:53:08 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so16313739ois.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H5ai69DPPIITZF7j51zG04M+vRUm70fEw2Dq1nAZXTU=;
-        b=TEucg1lQ3k4ZBgBLoFon6Z+b7HlMm8/Y/IMjoDCf1w9nBQgytff9A2B74qA0kQVFXJ
-         cJtQsCPcCRQKfZoWCUXw/xbqEp/Pzoilxg8MtnDvcIrJucMM01tmQJQAh9WW0YgzR8EJ
-         /CDVWWOT/ZeRHYVoLaQqh2r7ndfEe8d+PD5DGsTdVph5RET4lGLKhM2jLkHlcf0bddtQ
-         9IVLsH2nZpcASvtYWUDQdCRpcWShlv1eWrTi20pEXGAgM4sW1cz5AKhVVqEeF6s59aTN
-         lbuVe9EWR/b/Iq8voQJfB0hGITOpPU1bHSZO0aylisclLYwizmSEXKIFef52zfL7j0of
-         rlsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H5ai69DPPIITZF7j51zG04M+vRUm70fEw2Dq1nAZXTU=;
-        b=KJQbaXAZ4B9B/Rt2fVJKaiiH14Xg13CUnSqbAUqZ8xr34Qp734XDWjTjrY/no6/9B8
-         5R39zVgMKI+JuSMWKJf+sQ/bmw3H37sxJzzrI5+/JgTJZi/+K8k2SJrpA+hqPGFbwHWx
-         J66TF2LccBR4mRauOP7O1Oj0z2BOnu8TlJKl2WxFM6Ggx3RhtJrECK6x1R+7LdosBf6m
-         okuu1J7KrvziJWwdqPXyon42DECtBTRvrGjgTI2XNEDxjH9hfIP1GUiwUMjmISok3U6a
-         K5yJhPjwWeA4sGDqZGzkSQjTO/LZEdoYpHNRLJ+e+fmLqd6P/XoodBV0fMEucMorCSq1
-         WhsQ==
-X-Gm-Message-State: APzg51BnJxf2kGhMkPYxEey51fIIy1twhCvJQ1+E0bqPtB/Tgpiamjw4
-        60E96T+YQ4/HvDno7R7Qo/bz+63tILlE65QyxJc+Sw==
-X-Google-Smtp-Source: ANB0VdaXvIK7w/vsEFkRPV0Oazx9Dk9Wqi9NLlznTneeriIA5IvFU+PqID49DO0yHw+P6UulAl7Rfy7mFlgziRfTMCM=
-X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr2929576oih.246.1535644220374;
- Thu, 30 Aug 2018 08:50:20 -0700 (PDT)
+        Thu, 30 Aug 2018 15:53:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727229AbeH3Txp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:53:45 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A4C320645;
+        Thu, 30 Aug 2018 15:50:57 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 11:50:55 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 22/32] selftests/ftrace: Add ringbuffer size changing
+ testcase
+Message-ID: <20180830115055.6a28054c@gandalf.local.home>
+In-Reply-To: <20180830161218.e46affa5a84abd47c9cf2a39@kernel.org>
+References: <153443695002.23257.13628220023468200991.stgit@devbox>
+        <153443757416.23257.9284862385646039929.stgit@devbox>
+        <20180824191836.305ad740@gandalf.local.home>
+        <20180830161218.e46affa5a84abd47c9cf2a39@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com>
-In-Reply-To: <20180830143904.3168-13-yu-cheng.yu@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 30 Aug 2018 17:49:53 +0200
-Message-ID: <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-To:     yu-cheng.yu@intel.com
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 4:43 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> When Shadow Stack is enabled, the read-only and PAGE_DIRTY_HW PTE
-> setting is reserved only for the Shadow Stack.  To track dirty of
-> non-Shadow Stack read-only PTEs, we use PAGE_DIRTY_SW.
->
-> Update ptep_set_wrprotect() and pmdp_set_wrprotect().
->
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  arch/x86/include/asm/pgtable.h | 42 ++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 4d50de77ea96..556ef258eeff 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1203,7 +1203,28 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
->  static inline void ptep_set_wrprotect(struct mm_struct *mm,
->                                       unsigned long addr, pte_t *ptep)
->  {
-> +       pte_t pte;
-> +
->         clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
-> +       pte = *ptep;
-> +
-> +       /*
-> +        * Some processors can start a write, but ending up seeing
-> +        * a read-only PTE by the time they get to the Dirty bit.
-> +        * In this case, they will set the Dirty bit, leaving a
-> +        * read-only, Dirty PTE which looks like a Shadow Stack PTE.
-> +        *
-> +        * However, this behavior has been improved and will not occur
-> +        * on processors supporting Shadow Stacks.  Without this
-> +        * guarantee, a transition to a non-present PTE and flush the
-> +        * TLB would be needed.
-> +        *
-> +        * When change a writable PTE to read-only and if the PTE has
-> +        * _PAGE_DIRTY_HW set, we move that bit to _PAGE_DIRTY_SW so
-> +        * that the PTE is not a valid Shadow Stack PTE.
-> +        */
-> +       pte = pte_move_flags(pte, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW);
-> +       set_pte_at(mm, addr, ptep, pte);
->  }
+On Thu, 30 Aug 2018 16:12:18 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-I don't understand why it's okay that you first atomically clear the
-RW bit, then atomically switch from DIRTY_HW to DIRTY_SW. Doesn't that
-mean that between the two atomic writes, another core can incorrectly
-see a shadow stack?
+> > I'm fine with this, but one day I need to port over some of my other
+> > tests. I have a test that stresses the ring buffer size (basically
+> > checks to see if it can cause an oom). I need to port that to
+> > selftests. But for now...  
+> 
+> Hmm, such stress test is not good for kselftest, since it can cause
+> oom and kill some test process. Maybe we should have such stresstest
+> framework (which allows test to crash kernel)
+
+The point of the test is to make sure that it doesn't kill
+everything :-)  The ring buffer code is suppose to detect that it will
+cause an OOM, and if it does that's considered a failure.
+
+Just like any other test, if it fails, it can crash the kernel. But the
+ring buffer code is suppose to be able to keep the kernel from crashing
+(including triggering OOM) if the buffer size is stressed.
+
+Maybe I'll port that over today :-/
+
+
+-- Steve
