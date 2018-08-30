@@ -2,144 +2,162 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D744EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0B4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85BC6205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BC6205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B3E0204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B3E0204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbeH3Fnv (ORCPT
+        id S1727237AbeH3Fpp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:43:51 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:44612 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725996AbeH3Fnv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:43:51 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 30 Aug 2018 11:13:08 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1fvBzE-00038X-UU; Thu, 30 Aug 2018 11:43:04 +1000
-Date:   Thu, 30 Aug 2018 11:43:04 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 1/2] fs/dcache: Track & report number of negative dentries
-Message-ID: <20180830014304.GD5631@dastard>
-References: <1535476780-5773-1-git-send-email-longman@redhat.com>
- <1535476780-5773-2-git-send-email-longman@redhat.com>
- <20180829001153.GD1572@dastard>
- <e084f670-b279-0f85-404c-9506e329f633@redhat.com>
+        Thu, 30 Aug 2018 01:45:45 -0400
+Received: from mga07.intel.com ([134.134.136.100]:12539 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbeH3Fpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:45:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 18:46:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,305,1531810800"; 
+   d="scan'208";a="228757793"
+Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
+  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2018 18:45:34 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
+ PGSMSX104.gar.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0319.002;
+ Thu, 30 Aug 2018 09:45:30 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QIAAWRmAgACLBTD//37OgIAA0sGQ
+Date:   Thu, 30 Aug 2018 01:45:29 +0000
+Message-ID: <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180829203351.GB7142@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
+ <20180829210901.GA7176@linux.intel.com>
+In-Reply-To: <20180829210901.GA7176@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGU3YjkwMzQtNzg4OC00YzBmLWIxNzUtOGMzMmViMmFiNTgxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieFpkb2UwcUh4TEhsN1cxbCswdlBcL0JGR0VHRUIxNEtXRzl2Z0tjZ0VtMTc0TlJBeENOMGl1eDFDMlwvdWhEdUczIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.205]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e084f670-b279-0f85-404c-9506e329f633@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 01:11:08PM -0400, Waiman Long wrote:
-> On 08/28/2018 08:11 PM, Dave Chinner wrote:
-> > On Tue, Aug 28, 2018 at 01:19:39PM -0400, Waiman Long wrote:
-> >> The current dentry number tracking code doesn't distinguish between
-> >> positive & negative dentries. It just reports the total number of
-> >> dentries in the LRU lists.
-> >>
-> >> As excessive number of negative dentries can have an impact on system
-> >> performance, it will be wise to track the number of positive and
-> >> negative dentries separately.
-> >>
-> >> This patch adds tracking for the total number of negative dentries in
-> >> the system LRU lists and reports it in the /proc/sys/fs/dentry-state
-> >> file. The number, however, does not include negative dentries that are
-> >> in flight but not in the LRU yet.
-> >>
-> >> The number of positive dentries in the LRU lists can be roughly found
-> >> by subtracting the number of negative dentries from the total.
-> >>
-> >> Signed-off-by: Waiman Long <longman@redhat.com>
-> >> ---
-> >>  Documentation/sysctl/fs.txt | 19 +++++++++++++------
-> >>  fs/dcache.c                 | 45 +++++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/dcache.h      |  7 ++++---
-> >>  3 files changed, 62 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
-> >> index 819caf8..118bb93 100644
-> >> --- a/Documentation/sysctl/fs.txt
-> >> +++ b/Documentation/sysctl/fs.txt
-> >> @@ -63,19 +63,26 @@ struct {
-> >>          int nr_unused;
-> >>          int age_limit;         /* age in seconds */
-> >>          int want_pages;        /* pages requested by system */
-> >> -        int dummy[2];
-> >> +        int nr_negative;       /* # of unused negative dentries */
-> >> +        int dummy;
-> >>  } dentry_stat = {0, 0, 45, 0,};
-> > That's not a backwards compatible ABI change. Those dummy fields
-> > used to represent some metric we no longer calculate, and there are
-> > probably still monitoring apps out there that think they still have
-> > the old meaning. i.e. they are still visible to userspace:
+> > > > > Some kind of counter is required to keep track of the power cycle.
+> > > > > When going to sleep the sgx_pm_cnt is increased. sgx_einit()
+> > > > > compares the current value of the global count to the value in
+> > > > > the cache entry to see whether we are in a new power cycle.
+> > > >
+> > > > You mean reset to Intel default? I think we can also just reset
+> > > > the cached MSR values on each power cycle, which would be simpler,
+> IMHO?
+> > >
+> > > Refresh my brain, does hardware reset the MSRs on a transition to S3 or
+> lower?
+
+Sorry I missed this one. To be honest I don't know. I checked the SDM and all I can find is:
+
+"On reset, the default value is the digest of Intel's signing key."
+
+Jarkko may know.
+
+> > >
+> > > > I think we definitely need some code to handle S3-S5, but should
+> > > > be in separate patches, since I think the major impact of S3-S5 is
+> > > > entire EPC being destroyed. I think keeping pm_cnt is not
+> > > > sufficient enough to handle such case?
+> > > > >
+> > > > > This brings up one question though: how do we deal with VM host
+> > > > > going to
+> > > sleep?
+> > > > > VM guest would not be aware of this.
+> > > >
+> > > > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
+> > > > SGX driver and SDK should be able to handle "sudden loss of EPC",
+> > > > ie, co-working together to re-establish the missing enclaves.
+> > > >
+> > > > Actually supporting "sudden loss of EPC" is a requirement to
+> > > > support live migration of VM w/ SGX. Internally long time ago we
+> > > > had a discussion and the decision was we should support SGX live
+> > > > migration given
+> > > two facts:
+> > > >
+> > > > 1) losing platform-dependent is not important. For example, losing
+> > > > sealing key is not a problem, as we could get secrets provisioned
+> > > > again from remote. 2) Both windows & linux driver commit to
+> > > > support "sudden
+> > > loss of EPC".
+> > > >
+> > > > I don't think we have to support in very first upstream driver,
+> > > > but I think we need to support someday.
+> > >
+> > > Actually, we can easily support this in the driver, at least for SGX1 hardware.
 > >
-> > $ cat /proc/sys/fs/dentry-state 
-> > 83090	67661	45	0	0	0
-> > $
+> > That's my guess too. Just want to check whether we are still on the
+> > same page :)
 > >
-> > IOWs, you can add new fields for new metrics to the end of the
-> > structure, but you can't re-use existing fields even if they
-> > aren't calculated anymore.
+> > > SGX2 isn't difficult to handle, but we've intentionally postponed
+> > > those patches until SGX1 support is in mainline[1].
+> > > Accesses to the EPC after it is lost will cause faults.  Userspace EPC accesses,
+> e.g.
+> > > ERESUME, will get a SIGSEGV that the process should interpret as an
+> > > "I should restart my enclave" event.  The SDK already does this.  In
+> > > the driver, we just need to be aware of this potential behavior and
+> > > not freak out.  Specifically, SGX_INVD needs to not WARN on faults that may
+> have been due to a the EPC being nuked.
+> > > I think we can even remove the sgx_encl_pm_notifier() code altogether.
 > >
-> > [....]
+> > Possibly we still need to do some cleanup, ie, all structures of enclaves, upon
+> resume?
 > 
-> I looked up the git history and the state of the dentry_stat structure
-> hadn't changed since it was first put into git in 2.6.12-rc2 on Apr 16,
-> 2005. That was over 13 years ago. Even adding an extra argument can have
-> the potential of breaking old applications depending on how the parsing
-> code was written.
+> Not for functional reasons.  The driver will automatically do the cleanup via
+> SGX_INVD when it next accesses the enclave's pages and takes a fault, e.g.
+> during reclaim.  Proactively reclaiming the EPC pages would probably affect
+> performance, though not necessarily in a good way.  And I think it would be a
+> beneficial to get the driver out of the suspend/hibernate/resume paths, e.g.
+> zapping all enclaves could noticeably impact suspend/resume latency.
 
-I'm pretty we've had this discussion many times before  w.r.t.
-/proc/self/mount* and other multi-field proc files. 
+Sure.
 
-IIRC, The answer has always been that it's OK to extend lines with
-new fields as existing apps /should/ ignore them, but it's not OK to
-remove or redefine existing fields in the line because existing apps
-/will/ misinterpret what that field means.
+Thanks,
+-Kai
 
-> Given that systems that are still using some very old tools are not
-> likely to upgrade to the latest kernel anyway. I don't see that as a big
-> problem.
-
-I don't think that matters when it comes to changing what
-information we expose in proc files.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
