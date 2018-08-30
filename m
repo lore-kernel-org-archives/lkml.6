@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03283C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27791C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57DF2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB6892082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Is3j/ums"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B57DF2082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qi9dUqFQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB6892082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbeH3XFW (ORCPT
+        id S1728328AbeH3XFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:05:22 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50975 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbeH3XFV (ORCPT
+        Thu, 30 Aug 2018 19:05:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32860 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeH3XFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:05:21 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so2999271wmc.0;
-        Thu, 30 Aug 2018 12:01:44 -0700 (PDT)
+        Thu, 30 Aug 2018 19:05:22 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v90-v6so9031855wrc.0;
+        Thu, 30 Aug 2018 12:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fVq+dyrEA8MCEaUSG6+R2JFZagictW0kEMK0uBAAtGE=;
-        b=Is3j/umswbTely8NDeJXc6Ld/wz3HS6kpUDJMjL5/S6IgkLNI25iAb45sJojElciI8
-         1WdteNhHdUipNPzgpvijNRX40X+ooAhYRxfRKKxLFLyd8JwvqA1XZ2oNb7uZdVY+1xXI
-         i4vX6TWqMbi1dGAh7xY8ttM+ZK+JzQ7VjFkbdpyki4PLUZHbBP4eChr6irZkg4kW+vFK
-         3HAl3LXdHxEYtfq7ToE17kDSdvkTtltuBxEmIJdCRvtJiEzLdZvCmxzkErDAI8byCW8t
-         Kg7ChUAfILeMdZN/Axr8QgiP2EHi9IxrBvWK7YRl/n8DpB5WsLVQmHKGPp2/olT7n2he
-         2LOA==
+        bh=lYF4vw+H13TqDhRHDPAO494ldTC/en088YlLmd8H0Lk=;
+        b=qi9dUqFQ0tN5DJbV79V9Kio4t1mQfMyfMCviV1Nr9GRk51JH8S21uNzT+UoVRXvK7S
+         EdG2YCFNWtMJ01um9n/4TztLeqdxY//dsKd+1m17PNIH1pRQLBW60hjQVRC/dnyHMf/I
+         pzWhHymJLuimSDBzx4o7s/GHCXojDNuXzwgo2eI+7+RJsj+VnaRP8w/FiQwexS7AfXVM
+         cTUXI8MWvmumb4CfwwmRVbDBQbwgtV6LihGBELT4NreQLhK1wwdIJueXwK2lef7zxe0J
+         0Tgccu6YnV6W1WGwiZzD0PGfL2Fuwji+zu6rhLxGF69tzdtyW9TQsRKDvrbTnalgIXkY
+         K3Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fVq+dyrEA8MCEaUSG6+R2JFZagictW0kEMK0uBAAtGE=;
-        b=AvbQzOBIT2Ez3hHBPAH0T2SapfJx6mqfCbTPmNcNs8XrrRPMmwsuNw4s1SwRsPS3Yp
-         WWh6eZwxzIZ5wUbTOxEM6jFKO0lw5/QJhlXAbHDcEGZMcyY1N7ld8uYkFIEWr9W8kYVo
-         eYdAfdiURR9nP7wyCmEtoGeDmriazZ2jIulRv98brrS9gl/L7UYKYK+s+/FVtBNfN2JT
-         e7nVb7fFRRAbCmWpsCV+GrYIilM4o1qqlMBf8KkwLh+GMeKBIJNceqHa2oUAygcguinY
-         eqUz/pze/9rjlgfDlqmcjEFCpxdBKmH8JnXwtv1MoF/9s9A33esGFuI35MAYTqrBN2QN
-         9fgw==
-X-Gm-Message-State: APzg51Cmk38fBuUKGHfqQOcDuDeYOf3S6HRl25gxegysmjovsjoeinW4
-        Bx0u8JGMfEs45RPBoVFDSDM=
-X-Google-Smtp-Source: ANB0Vdbq2eOt//DRVHk9YbeHWig/yUK59pYYUnP6O+3/hkUVTHq3d2XAdxyIKgnA3JARSkZHuV3sAw==
-X-Received: by 2002:a1c:c7c3:: with SMTP id x186-v6mr2653722wmf.109.1535655704028;
-        Thu, 30 Aug 2018 12:01:44 -0700 (PDT)
+        bh=lYF4vw+H13TqDhRHDPAO494ldTC/en088YlLmd8H0Lk=;
+        b=nmCa3sPP7cDIi2ttDmjq+fbWBgvFNjnS7oogt6ZEeS/HLcJihBmEwv4j/muwHDsq1d
+         zky9Pq0lbi31E6bQJ+EydTjInTxTQe3WTeRIXKYa9v44eXzhHq6AyZwhej6xx4RAstS9
+         Jr9pzQ02oBeXMB2DuwfwPtnIvORSAOs3sRagB8k6i5klmE0gUbbArfhGV+uPXZ3+W5HR
+         g12h5Swihw91wJAU/yvM/gqNf6zUZsAAVlUZ0PjjpoL0/C9/YxAGmjVqdlWuoXnYXo8b
+         6tDcW4LzuS1AnBXvRMfw2pnbHm2eX6upraHozP+tPbd1mgXb1ljsDiRMsB0rGAw4GLqa
+         TP+Q==
+X-Gm-Message-State: APzg51DAWxic4ii5LBabNQOK4COQoR6pCfrKnsDk50Jb43EjbBPcG9r1
+        ddrgkdIEWjmsJUZq+X1hpB8=
+X-Google-Smtp-Source: ANB0VdZkBUeh5YNoWk6eGEk0v4LP31uLIqZhjPS/6SCQwo6hXW7TvNRnTwspikAs8Unuhl84TlTbwg==
+X-Received: by 2002:adf:9e06:: with SMTP id u6-v6mr8392154wre.51.1535655705436;
+        Thu, 30 Aug 2018 12:01:45 -0700 (PDT)
 Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.42
+        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:01:43 -0700 (PDT)
+        Thu, 30 Aug 2018 12:01:44 -0700 (PDT)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
         mark.rutland@arm.com, maxime.ripard@bootlin.com,
@@ -65,9 +65,9 @@ To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v4 10/13] ARM: dts: sun8i: sun8i-r40-bananapi-m2-ultra: enable AHCI
-Date:   Thu, 30 Aug 2018 21:01:17 +0200
-Message-Id: <20180830190120.722-11-clabbe.montjoie@gmail.com>
+Subject: [PATCH v4 11/13] ARM: dts: sun7i: a20: add sata-port/sata-phy nodes
+Date:   Thu, 30 Aug 2018 21:01:18 +0200
+Message-Id: <20180830190120.722-12-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180830190120.722-1-clabbe.montjoie@gmail.com>
 References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
@@ -76,53 +76,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enable the AHCI controller.
-Since this controller need two regulator, this patch add them.
+This patch convert sun7i-a20 sata to the new binding which use a sata
+phy node.
 
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm/boot/dts/sun7i-a20.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index a891a387e8f1..b991b635c07d 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -105,6 +105,11 @@
- 	};
- };
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 8f7e1e29841f..8ff28f7afa85 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -667,6 +667,19 @@
+ 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&ccu CLK_AHB_SATA>, <&ccu CLK_SATA>;
+ 			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			sata_port: sata-port@0 {
++				reg = <0>;
++				phys = <&sata_phy>;
++			};
++		};
++
++		sata_phy: sata-phy@1c180c0  {
++			compatible = "allwinner,sun4i-a10-sata-phy";
++			reg = <0x1c180c0 0x200>;
++			#phy-cells = <0>;
+ 		};
  
-+&ahci {
-+	ahci-supply = <&reg_dldo4>;
-+	status = "okay";
-+};
-+
- &de {
- 	status = "okay";
- };
-@@ -250,6 +255,22 @@
- 	regulator-name = "vcc-wifi";
- };
- 
-+&reg_dldo4 {
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	regulator-name = "vdd2v5-sata";
-+};
-+
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vdd1v2-sata";
-+};
-+
-+&sata_phy {
-+	phy-supply = <&reg_eldo3>;
-+};
-+
- &tcon_tv0 {
- 	status = "okay";
- };
+ 		ehci1: usb@1c1c000 {
 -- 
 2.16.4
 
