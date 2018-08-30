@@ -6,126 +6,94 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AE8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBF5C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0276120661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:47:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0276120661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
+	by mail.kernel.org (Postfix) with ESMTP id BCFB8205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFB8205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeH3WvM (ORCPT
+        id S1727328AbeH3Wxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:51:12 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:40278 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbeH3WvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:51:12 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 5CDE75C0B55; Thu, 30 Aug 2018 18:45:45 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 18:45:45 +0000
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Gustavo Padovan <gustavo@padovan.org>,
-        Li Philip <philip.li@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] drm: handle error values properly
-Message-ID: <20180830184545.GA5617@osadl.at>
-References: <1531905244-18044-1-git-send-email-hofrat@osadl.org>
+        Thu, 30 Aug 2018 18:53:54 -0400
+Received: from gateway20.websitewelcome.com ([192.185.68.24]:18982 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725836AbeH3Wxy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:53:54 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8D4B4400E035B
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:50:21 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vS1NfaYWskBj6vS1Nfo7Ub; Thu, 30 Aug 2018 13:50:21 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.90.185] (port=48844 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fvS1N-002VFE-0t; Thu, 30 Aug 2018 13:50:21 -0500
+Date:   Thu, 30 Aug 2018 13:50:19 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] i40e: mark expected switch fall-through
+Message-ID: <20180830185019.GA30328@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531905244-18044-1-git-send-email-hofrat@osadl.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.90.185
+X-Source-L: No
+X-Exim-ID: 1fvS1N-002VFE-0t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.90.185]:48844
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 11:14:04AM +0200, Nicholas Mc Guire wrote:
-> drm_legacy_ctxbitmap_next() returns idr_alloc() which can return
-> -ENOMEM, -EINVAL or -ENOSPC none of which are -1. since drm_context_t
-> is an unsigned int an intermediate variable is used to handle the
-> error cases, and then cast to drm_context_t after ensuring that the
-> value is >= 0. The explicit cast is to mark the type conversion as
-> intentional.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-As the first version made it into -stable unfortunately I would ask
-for a review on this V3 so that a correct fix could go into -stabele
-ASAP.
+Addresses-Coverity-ID: 1473099 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-thx!
-hofrat
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+index 94947a8..a6f50f6 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
+@@ -300,9 +300,10 @@ static int i40e_run_xdp_zc(struct i40e_ring *rx_ring, struct xdp_buff *xdp)
+ 		break;
+ 	default:
+ 		bpf_warn_invalid_xdp_action(act);
++		/* fall through */
+ 	case XDP_ABORTED:
+ 		trace_xdp_exception(rx_ring->netdev, xdp_prog, act);
+-		/* fallthrough -- handle aborts by dropping packet */
++		/* fall through -- handle aborts by dropping packet */
+ 	case XDP_DROP:
+ 		result = I40E_XDP_CONSUMED;
+ 		break;
+-- 
+2.7.4
 
-> 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Reported-by: Sean Paul <seanpaul@chromium.org>
-> Fixes: d530b5f1ca0b ("drm: re-enable error handling")
-> Fixes: 62968144e673 ("drm: convert drm context code to use Linux idr")
-> ---
-> 
-> V3: bug in patch - omission to remove old code properly - V3 fixes the
->     original problem as proposed in V2 and drops the excess line.
->     reported by Sean Paul <seanpaul@chromium.org> - thanks!
-> 
-> V2: The proposed fix in d530b5f1ca0b ("drm: re-enable error handling")
->     actually was ineffective as the negative return value check was
->     against a unsigned int and thus always false as reported by
->     kbuild test robot <lkp@intel.com>. The below patch removes that
->     warning and fixes the original problem of missed error handling.
-> 
-> drm_context_t is actually just used in a few placed so the type could be
-> changed but it is also exported via tools/include/uapi/drm/drm.h so
-> changing the typedef of drm_context_t could break applications and thus
-> this is not an option.
-> 
-> Patch was compile tested with: x86_64_defconfig
-> 
-> Patch is against 4.18-rc5 (localversion-next is next-20180718)
-> 
->  drivers/gpu/drm/drm_context.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_context.c b/drivers/gpu/drm/drm_context.c
-> index f973d28..ad268c8 100644
-> --- a/drivers/gpu/drm/drm_context.c
-> +++ b/drivers/gpu/drm/drm_context.c
-> @@ -361,22 +361,25 @@ int drm_legacy_addctx(struct drm_device *dev, void *data,
->  {
->  	struct drm_ctx_list *ctx_entry;
->  	struct drm_ctx *ctx = data;
-> +	int ret;
->  
->  	if (!drm_core_check_feature(dev, DRIVER_KMS_LEGACY_CONTEXT) &&
->  	    !drm_core_check_feature(dev, DRIVER_LEGACY))
->  		return -EINVAL;
->  
-> -	ctx->handle = drm_legacy_ctxbitmap_next(dev);
-> -	if (ctx->handle == DRM_KERNEL_CONTEXT) {
-> +	ret = drm_legacy_ctxbitmap_next(dev);
-> +	if (ret == DRM_KERNEL_CONTEXT) {
->  		/* Skip kernel's context and get a new one. */
-> -		ctx->handle = drm_legacy_ctxbitmap_next(dev);
-> +		ret = drm_legacy_ctxbitmap_next(dev);
->  	}
-> -	DRM_DEBUG("%d\n", ctx->handle);
-> -	if (ctx->handle < 0) {
-> +	DRM_DEBUG("ctxbitmap is error code %d\n", ret);
-> +	if (ret < 0) {
->  		DRM_DEBUG("Not enough free contexts.\n");
->  		/* Should this return -EBUSY instead? */
->  		return -ENOMEM;
->  	}
-> +	/* valid context is >= 0 */
-> +	ctx->handle = (drm_context_t)ret;
->  
->  	ctx_entry = kmalloc(sizeof(*ctx_entry), GFP_KERNEL);
->  	if (!ctx_entry) {
-> -- 
-> 2.1.4
-> 
