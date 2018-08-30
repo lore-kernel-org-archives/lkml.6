@@ -7,179 +7,136 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19048C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5ECC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CDF20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4749B20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UU9ObnT8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CDF20834
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GahXkin8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4749B20836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeH3Tmo (ORCPT
+        id S1727433AbeH3Tmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:42:44 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40941 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbeH3Tmn (ORCPT
+        Thu, 30 Aug 2018 15:42:47 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41833 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbeH3Tmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:42:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s13-v6so4053330pfi.7
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:39:59 -0700 (PDT)
+        Thu, 30 Aug 2018 15:42:46 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k12-v6so16192356oiw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=1UnD9TybNYX87ySsJYQrH8NIUHrrgNSEGob1qymno8A=;
-        b=UU9ObnT8L4/L/fk8rV0DtnhOJEyfFK27LzVGjW2qDcyltNsE16kZxprXeijreMbsps
-         QjbOuaXwTsaFLpY7p16P3Ed/0qWEIGvvuFOKeNGa83cWzXosjo3lix+MnXR73pSsZ/N8
-         6D67LMCfblqYqNyhckTYN+v4M2DHnqOoWG1GP1G1QSb/JV6yBpF6RGjqJfJ7NkP0lub8
-         dZhm5TxVZ4BFJ7gNl1qVU8XUtXqSG4X5IDbyp1Ym0xEiGb0OoWxRL7d4Ihx+m6HFg7lT
-         RuuCJrRyg3M1GXk5ASwPpuLY1PqIA2e1jzWGB1dyDHuY89EvAp+UjYb6vQ71zUpJ31VA
-         XhMg==
+        bh=Kz8MQNPDzN7DpxJUSNa0x2jNVynzAGDge5M0MJqhY20=;
+        b=GahXkin85mYJmrx3gkxXQUSOqfxLsi/S3VnWOXUHAnhj2laosZYLnElcPMFU9jBlcM
+         MpeaAdrPAiq0cIZUu06yCjopY/3JAhnPiFzVo7CzX9/Sa5TBQMYgH5E48wCryCZXWoQY
+         K2OiwrfN+NapCxb6HlqTTc1S1mjkkyi7a5Y1+YRH2UkUpcNfqiAEUzj/oxCZ0TONKgJC
+         gUUYYiUnAmJl2qm99Uz/1rdppwThCn97f79155Vo2tuFLecwQk5drDbdd/fIItHv7RmF
+         xOQe14fJb+0XH2Vuu+UGJKsbhqgBI8qi3NuJ49joiSzqZFxBUQS3GHkn3Dkjps+yxMEf
+         3vlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1UnD9TybNYX87ySsJYQrH8NIUHrrgNSEGob1qymno8A=;
-        b=rN3i8xVgBp+eIA1kUGAZnbbMqEs+zwL3NzZKQo66XTIuH+c3X1xYeSbI73wN9b8wiq
-         qIeVGE8e0MitdeFe9DEs5ypPYHk8j5BZRMr2lPrOZXvXTDIKYF2QK8V5W5VkXGXXzCz/
-         dipXvMFdbPDuZa9WrUHJ09ecPpnem79nPpySkRgq/hF8LvvxTwEPEY0Hl5WSI4uAQqgX
-         a/CK+cm+dJJOAa3rTdKzvIQuCvHwSL7xBv1fHdTqiAav+EtUA/xnepbAq5bZxEHPcGN5
-         +E12NINn842fD5THoMlAYDN2t7n57+DynWQX7+VZI6QJdyJ83H0QEf2HUDQoKejwtJpz
-         Zqug==
-X-Gm-Message-State: APzg51C80KKkCEopI69sF5Qjlm3rlbCm5N73Sgk81bucUfZN4RAjQT+A
-        QNgIAvqaEBTJYSwraj+KG6LZ6IVUhH/EMRHxV/7Kkw==
-X-Google-Smtp-Source: ANB0VdalHRXG4kf7Fwr0DDXtcr7mctGrroUXk3GAR5v6EFgwliOBF+TTaq84JUcjX8/xNL0P27W19LjUo68J3FzdyFM=
-X-Received: by 2002:a63:4702:: with SMTP id u2-v6mr9895480pga.95.1535643598667;
- Thu, 30 Aug 2018 08:39:58 -0700 (PDT)
+        bh=Kz8MQNPDzN7DpxJUSNa0x2jNVynzAGDge5M0MJqhY20=;
+        b=JMhi3jf8br3rQ52Q3EWTfqwhyLNuuLMZzzpQo5BAw0SPdCcch3EZWZgsRcqlBCx2UT
+         jUXFenisJNTIG0vx3jZR4MDM1PyuNiTX/rLV2g9UmOJmlthQwGpY9GS8IsHhCHLU87fZ
+         0gvxHq+PnsQ6D8Uvw4o/hZvY4+7zuz8TUJ+jAj5/j5G2A9aoUsB6Mz5X+tny6/5EhN92
+         Aiw7VdBSpk7aTg7RRA2uyyTe6MV15iVyzFdpNHMD67h+322GkIO3/3WLvUl75654g0Qn
+         VjxkjG7mG+Jl/DMqMnoB9f/qagz/ySYXhE606o219922AxvF0p7A6/dOmnBkf9O7fgp7
+         JPHg==
+X-Gm-Message-State: APzg51B+7EG+kkIURCeQQYz+rD2zl/qJWiBKaFo7JLSjpOwo2/89chGk
+        +Awjww8Bd5CEUDKFf/9dILdE6GyElwp1s6eR2UI1fw==
+X-Google-Smtp-Source: ANB0VdYaBXuBowN4ka7CRUckryC7LCadsYYfFF5hzkra4PeZDW+8Km3yy7+qQSyezootxpeVpbiOv87LI2ozFTl8JS4=
+X-Received: by 2002:aca:4204:: with SMTP id p4-v6mr2836500oia.242.1535643601937;
+ Thu, 30 Aug 2018 08:40:01 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 30 Aug 2018 08:39:38
- -0700 (PDT)
-In-Reply-To: <0000000000003b1c360574a8c31e@google.com>
-References: <0000000000003b1c360574a8c31e@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 30 Aug 2018 08:39:38 -0700
-Message-ID: <CACT4Y+Yuwcm9N-_QwyPzj==xFUuziW24eQzw318Y=VKXQ=8_nw@mail.gmail.com>
-Subject: Re: WARNING in handle_irq (3)
-To:     syzbot <syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, nstange@suse.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-20-yu-cheng.yu@intel.com>
+In-Reply-To: <20180830143904.3168-20-yu-cheng.yu@intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 30 Aug 2018 17:39:35 +0200
+Message-ID: <CAG48ez3uZrC-9uJ0uMoVPTtxRXRN8D+3zs5FknZD2woTT6mazg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 19/24] x86/cet/shstk: Introduce WRUSS instruction
+To:     yu-cheng.yu@intel.com
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 8:31 AM, syzbot
-<syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com> wrote:
-> Hello,
+On Thu, Aug 30, 2018 at 4:44 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
 >
-> syzbot found the following crash on:
+> WRUSS is a new kernel-mode instruction but writes directly
+> to user shadow stack memory.  This is used to construct
+> a return address on the shadow stack for the signal
+> handler.
 >
-> HEAD commit:    58c3f14f86c9 Merge tag 'riscv-for-linus-4.19-rc2' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10be176a400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a58b558e3e62d0604e5c
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> This instruction can fault if the user shadow stack is
+> invalid shadow stack memory.  In that case, the kernel does
+> fixup.
 >
-> Unfortunately, I don't have any reproducer for this crash yet.
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+[...]
+> +static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
+> +{
+> +       int err = 0;
+> +
+> +       asm volatile("1: wrussq %1, (%0)\n"
+> +                    "2:\n"
+> +                    _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_wruss)
+> +                    :
+> +                    : "r" (addr), "r" (val));
+> +
+> +       return err;
+> +}
 
-+bpf maintainers
+What's up with "err"? You set it to zero, and then you return it, but
+nothing can ever set it to non-zero, right?
 
-Looks suspiciously similar to:
-https://groups.google.com/d/msg/syzkaller-bugs/4v7MtbIT1hY/A87hInzyAwAJ
+> +__visible bool ex_handler_wruss(const struct exception_table_entry *fixup,
+> +                               struct pt_regs *regs, int trapnr)
+> +{
+> +       regs->ip = ex_fixup_addr(fixup);
+> +       regs->ax = -1;
+> +       return true;
+> +}
 
-Note this commit seems to already have "bpf, sockmap: fix
-sock_hash_alloc and reject zero-sized keys ".
+And here you just write into regs->ax, but your "asm volatile" doesn't
+reserve that register. This looks wrong to me.
 
-Tentative reproducer from the log is:
+I think you probably want to add something like an explicit
+`"+&a"(err)` output to the asm statements.
 
-14:08:59 executing program 5:
-socketpair(0x20000, 0x0, 0x0, &(0x7f0000000140))
-r0 = socket$inet6_tcp(0xa, 0x1, 0x0)
-r1 = socket$inet6_tcp(0xa, 0x1, 0x0)
-bind$inet6(r1, &(0x7f00000000c0)={0xa, 0x4e22}, 0x1c)
-listen(r1, 0x0)
-sendto$inet6(r0, &(0x7f0000000140), 0x2d6, 0x20000004,
-&(0x7f0000000080)={0xa, 0x100000004e22, 0x0, @loopback}, 0x1c)
-setsockopt$inet6_tcp_TCP_ULP(r0, 0x6, 0x1f, &(0x7f0000000080)='tls\x00', 0x152)
-r2 = bpf$MAP_CREATE(0x0, &(0x7f0000000280)={0xf, 0x4, 0x4, 0x70}, 0x2c)
-bpf$MAP_UPDATE_ELEM(0x2, &(0x7f0000000180)={r2, &(0x7f0000000000),
-&(0x7f0000000140)}, 0x20)
+> @@ -1305,6 +1305,15 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+>                 error_code |= X86_PF_USER;
+>                 flags |= FAULT_FLAG_USER;
+>         } else {
+> +               /*
+> +                * WRUSS is a kernel instrcution and but writes
 
-Which does not create a 0-key map.
-
-
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com
->
-> TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending
-> cookies.  Check SNMP counters.
-> ------------[ cut here ]------------
-> do_IRQ(): syz-executor5 has overflown the kernel stack
-> (cur:ffff88018aec0000,sp:ffff88018aeb0e18,irq stk
-> top-bottom:ffff8801db000080-ffff8801db008000,exception stk
-> top-bottom:fffffe0000007080-fffffe0000011000,ip:lock_is_held_type+0x18b/0x210)
-> WARNING: CPU: 0 PID: 13805 at arch/x86/kernel/irq_64.c:64
-> stack_overflow_check arch/x86/kernel/irq_64.c:61 [inline]
-> WARNING: CPU: 0 PID: 13805 at arch/x86/kernel/irq_64.c:64
-> handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:73
-> Kernel panic - not syncing: panic_on_warn set ...
->
-> CPU: 0 PID: 13805 Comm: syz-executor5 Not tainted 4.19.0-rc1+ #215
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  panic+0x238/0x4e7 kernel/panic.c:184
->  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
->  report_bug+0x252/0x2d0 lib/bug.c:186
->  fixup_bug arch/x86/kernel/traps.c:178 [inline]
->  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
->  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
-> RIP: 0010:stack_overflow_check arch/x86/kernel/irq_64.c:61 [inline]
-> RIP: 0010:handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:73
-> Code: 00 00 ff b6 80 00 00 00 48 c7 c7 80 ca 24 87 41 54 41 55 65 48 8b 04
-> 25 40 ee 01 00 48 05 68 06 00 00 48 89 c6 e8 95 c4 1c 00 <0f> 0b 48 83 c4 18
-> e9 3f ff ff ff 48 89 75 e0 e8 c1 fe 90 00 48 8b
-> RSP: 0018:ffff8801db007f58 EFLAGS: 00010082
-> RAX: 0000000000000000 RBX: ffff8801cee0ad80 RCX: 0000000000000000
-> RDX: 0000000000010000 RSI: ffffffff8163ac01 RDI: 0000000000000001
-> RBP: ffff8801db007fb0 R08: ffff8801c9b4a700 R09: ffffed003b603eca
-> R10: ffffed003b603eca R11: ffff8801db01f657 R12: fffffe0000011000
-> R13: fffffe0000007080 R14: 000000000000002a R15: 0000000000000000
->  do_IRQ+0x80/0x1a0 arch/x86/kernel/irq.c:246
->  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:643
->  </IRQ>
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+Nits: typo ("instrcution"), weird grammar ("and but writes")
