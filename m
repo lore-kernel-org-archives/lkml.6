@@ -2,167 +2,165 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829C0C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF4DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D22F2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:19:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NprYLnHU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D22F2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D9A2B2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:22:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A2B2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeH3HTs (ORCPT
+        id S1727458AbeH3HWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 03:19:48 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45035 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbeH3HTs (ORCPT
+        Thu, 30 Aug 2018 03:22:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727233AbeH3HWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 03:19:48 -0400
-Received: by mail-pl1-f194.google.com with SMTP id ba4-v6so3193458plb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 20:19:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8GxJe4XjU75vV9nw+mwzzmFSWYdJBZmup5I88sXCOsU=;
-        b=NprYLnHU6BcihCoa0R14VHyT0XMYKx31CdsDuzSyGfYyFrS6RdK+TAYsvLtWUoFiPi
-         YXttFjuMMtCS6P/9THn0yTJSaaDXJG1+FnMyJWSNFLIuDl9pIiIGVodg/yt456Puk7q1
-         OuTQMKijffvEAJHkhsQ8uAg1sodpwUcRsPE/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8GxJe4XjU75vV9nw+mwzzmFSWYdJBZmup5I88sXCOsU=;
-        b=FJJ45dOM95UfhCRhkPTWHiH0EM1dHsKPi848i9Js4OGA9Gvnv6rmpQg09pM7EjKeGp
-         5ejhk3dY4kC+4f3XecN5r2UAmMoV3Y/CQeKGGwWRBl27xZqKOFjmHbmdPywuAv6z7uKg
-         PkdqPBzUjBRZu+aS2PxXk2Vb5sjrvQCmoYgDN+UoTD8/r5HzSUFaULg6i7yZI/W/IUvd
-         fcav7KSTmjavCsgZTCVHbnOuoyK1C3gOAtvpj9b4RYEm/AqRPJGrFxLCUnHGeW7vtnEf
-         vyC2km+mFOtMLtxmFuXcbLhXuzMbaEoti7QKcdHpK7AN/N3TnkMe3q1eYkPjxBt0+Kch
-         ZTHw==
-X-Gm-Message-State: APzg51BKy0qLDWOm6TbYAmPo8nJWRh57gI7ideJR9zkdmAtG+itbwS2E
-        qtAxHZtu6TlRVvz1YZpsn6V5
-X-Google-Smtp-Source: ANB0VdZbjOpcEZMXbNbVVtFMcX/m88omUAGNFYZfUDIpu8+F7LGJbybtBy+haN/rLVjh6AJFJBf60g==
-X-Received: by 2002:a17:902:1025:: with SMTP id b34-v6mr8499969pla.291.1535599188824;
-        Wed, 29 Aug 2018 20:19:48 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:7305:2604:758a:c93a:b490:179f])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm8282681pfr.115.2018.08.29.20.19.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 20:19:48 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 08:49:33 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     p.zabel@pengutronix.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
-        sravanhome@gmail.com
-Subject: Re: [PATCH v3 0/9] Add Reset Controller support for Actions Semi Owl
- SoCs
-Message-ID: <20180830031933.GD8565@Mani-XPS-13-9360>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+        Thu, 30 Aug 2018 03:22:23 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7U3IiF2084613
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 23:22:23 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m637ysxvt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 23:22:23 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 23:22:21 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 23:22:17 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7U3MG9W26148876
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 03:22:16 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 43B45B2068;
+        Wed, 29 Aug 2018 23:21:12 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E0CCB205F;
+        Wed, 29 Aug 2018 23:21:12 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.196.106])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 23:21:12 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0ECBE16C8DED; Wed, 29 Aug 2018 20:22:16 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 20:22:16 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 0/52] Remove rcu_state pointers for
+ v4.20/v5.0
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829223830.GA1800@linux.vnet.ibm.com>
+ <20180829220026.3579e9a1@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180829220026.3579e9a1@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18083003-0064-0000-0000-0000034440B7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009637; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080838; UDB=6.00557554; IPR=6.00860822;
+ MB=3.00023004; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 03:22:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083003-0065-0000-0000-00003A78F99B
+Message-Id: <20180830032216.GF4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 03:21:04PM +0530, Manivannan Sadhasivam wrote:
-> This patchset adds Reset Controller (RMU) support for Actions Semi
-> Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-> the clock subsystem in hardware. Hence, in software we integrate RMU
-> support into common clock driver inorder to maintain compatibility. The
-> syscon approach is not taken into account based on the review by Rob.
+On Wed, Aug 29, 2018 at 10:00:26PM -0400, Steven Rostedt wrote:
+> On Wed, 29 Aug 2018 15:38:30 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 > 
-> This patch series depends on the recently posted S700 clk series:
-> "[PATCH v7 0/5] Add clock driver for Actions S700 SoC". For the S700 clk
-> series, driver and bindings patches are applied through the clk tree.
-> But the DTS patches are not yet picked up by the platform maintainer,
-> Andreas.
+> > Hello!
+> > 
+> > This commit does RCU-consolidation cleanups that get rid of pointers to
+> > the sole remaining rcu_state structure:
+> > 
+> > 1-40:	Remove the "rsp" parameter from numerous functions, given that
+> > 	the corresponding argument will always be &rcu_state.
 > 
-> Hence, Andreas is expected to pick the DTS patches in this series once
-> reviewed by the maintainers along with S700 clk DTS patches.
-> 
-> Because of the absence of the S500 SoC clk support, the reset controller
-> registration code is added to both S700 and S900 SoC clk drivers for now.
-> But once S500 clk support is added, the reset controller registration part
-> will be moved to Owl SoCs common clk code.
->
+> Hmm, couldn't 1-40 have been made into a single patch?
 
-Hi Pavel,
+They could.  I separated them to make finding the inevitable typos easier.
+But at this point, it is easy enough to squash them together, though.
 
-Just a ping on this patchset!
+							Thanx, Paul
 
-Thanks,
-Mani
+> -- Steve
+> 
+> > 
+> > 41.	Remove rcu_data structure's ->rsp field, now that it always
+> > 	contains a pointer to rcu_state.
+> > 
+> > 42.	Remove non-flavor-traversal rsp local variable from tree_plugin.h.
+> > 
+> > 43.	Remove the for_each_rcu_flavor() flavor-traversal macro, given
+> > 	that there is now only ever one flavor to traverse.
+> > 
+> > 44.	Simplify rcutorture_get_gp_data() based on there now being only
+> > 	one rcu_state structure.
+> > 
+> > 45.	Restructure rcu_check_gp_kthread_starvation() based on there
+> > 	now being only one rcu_state structure.
+> > 
+> > 46.	Restructure RCU CPU stall warnings based on there now being only
+> > 	one rcu_state structure.
+> > 
+> > 47.	Restructure grace-period management code based on there now being
+> > 	only one rcu_state structure.
+> > 
+> > 48.	Restructure callback registration/invocation code based on there
+> > 	now being only one rcu_state structure.
+> > 
+> > 49.	Restructure quiescent-state and grace-period-nonstart code based
+> > 	on there now being only one rcu_state structure.
+> > 
+> > 50.	Restructure rcu_barrier() based on there now being only one
+> > 	rcu_state structure.
+> > 
+> > 51.	Restructure initialization code based on there now being only
+> > 	one rcu_state structure.
+> > 
+> > 52.	Fix typo in force_qs_rnp()'s parameter's parameter, which was
+> > 	located by searching for "rsp".
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> >  Documentation/RCU/Design/Data-Structures/Data-Structures.html |   23 
+> >  kernel/rcu/rcu.h                                              |   28 
+> >  kernel/rcu/srcutree.c                                         |    4 
+> >  kernel/rcu/tree.c                                             | 1261 ++++------
+> >  kernel/rcu/tree.h                                             |   29 
+> >  kernel/rcu/tree_exp.h                                         |  209 -
+> >  kernel/rcu/tree_plugin.h                                      |  203 -
+> >  7 files changed, 784 insertions(+), 973 deletions(-)
+> 
 
-> Thanks,
-> Mani
-> 
-> Changes in v3:
-> 
-> * Reverted back the syscon approach based on the review by Rob Herring
-> * Dropped the MAINTAINERS patch
-> * Converted reset_map struct definitions to const based on the review by
->   Philipp
-> * Fixed S700 header in DT spotted by Parthiban
-> * Added Reviewed-by tags from Rob for 3 bindings patches
-> 
-> Changes in v2:
-> 
-> * Converted the CMU and RMU drivers to syscon for a more cleaner
->   approach
-> * Declared the owl_reset_map structs to const
-> * Used regmap_update_bits instead of a combined regmap_read and write
-> * Removed unused headers in RMU drivers
-> * Added MAINTAINERS entry for the RMU driver and bindings
-> 
-> Manivannan Sadhasivam (9):
->   clk: actions: Cache regmap info in private clock descriptor
->   dt-bindings: clock: Add reset controller bindings for Actions Semi Owl
->     SoCs
->   dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
->   dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
->   arm64: dts: actions: Add Reset Controller support for S700 SoC
->   arm64: dts: actions: Add Reset Controller support for S900 SoC
->   clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
->   clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
->   clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
-> 
->  .../bindings/clock/actions,owl-cmu.txt        |  2 +
->  arch/arm64/boot/dts/actions/s700.dtsi         |  2 +
->  arch/arm64/boot/dts/actions/s900.dtsi         |  2 +
->  drivers/clk/actions/Kconfig                   |  1 +
->  drivers/clk/actions/Makefile                  |  1 +
->  drivers/clk/actions/owl-common.c              |  3 +-
->  drivers/clk/actions/owl-common.h              |  5 +-
->  drivers/clk/actions/owl-reset.c               | 66 ++++++++++++++
->  drivers/clk/actions/owl-reset.h               | 31 +++++++
->  drivers/clk/actions/owl-s700.c                | 55 +++++++++++-
->  drivers/clk/actions/owl-s900.c                | 86 ++++++++++++++++++-
->  .../dt-bindings/reset/actions,s700-reset.h    | 34 ++++++++
->  .../dt-bindings/reset/actions,s900-reset.h    | 65 ++++++++++++++
->  13 files changed, 347 insertions(+), 6 deletions(-)
->  create mode 100644 drivers/clk/actions/owl-reset.c
->  create mode 100644 drivers/clk/actions/owl-reset.h
->  create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
->  create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
-> 
-> -- 
-> 2.17.1
-> 
