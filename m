@@ -2,920 +2,198 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D36C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817B9C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA9BB20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:08:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="sQi6pF54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA9BB20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nic.cz
+	by mail.kernel.org (Postfix) with ESMTP id 40CF1205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:08:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CF1205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbeH3TKj (ORCPT
+        id S1729927AbeH3TKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:10:39 -0400
-Received: from mail.nic.cz ([217.31.204.67]:40506 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728709AbeH3TKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:10:38 -0400
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 5C8C6600B7;
-        Thu, 30 Aug 2018 17:08:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1535641680; bh=VIsfA+KLWMIjKXIUGpJJY4JhcH56oawvqmCG3P0p4W8=;
-        h=From:To:Date;
-        b=sQi6pF54BztcBQBlZg3TR11c977erqkw255FCT53Vq6aQKI9rIbRJU2CQO/hjbDIg
-         RYqbcrCMCLj8yxMNL1BBQY+qUarHcKSwwmCPak6g0bLFW0i1B3SsEEAvaQVYiQEUNh
-         zPMs2umFTKXIq7vjEBv4TVlAZu/QhBOnPunkzd6g=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     gregory.clement@bootlin.com
-Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH mvebu-dt64] arm64: dts: marvell: armada-37xx: Add DTS file for Turris Mox
-Date:   Thu, 30 Aug 2018 17:05:44 +0200
-Message-Id: <20180830150544.14814-1-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.16.4
+        Thu, 30 Aug 2018 15:10:41 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13542 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728709AbeH3TKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:10:40 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5b8808520000>; Thu, 30 Aug 2018 08:08:02 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 30 Aug 2018 08:08:03 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 30 Aug 2018 08:08:03 -0700
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 30 Aug
+ 2018 15:08:03 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 30 Aug 2018 15:08:03 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b8808500000>; Thu, 30 Aug 2018 08:08:03 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v3 25/38] mmc: tegra: Disable card clock during tuning cmd on Tegra210
+Date:   Thu, 30 Aug 2018 18:06:26 +0300
+Message-ID: <20180830150639.21048-26-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180830150639.21048-1-avienamo@nvidia.com>
+References: <20180830150639.21048-1-avienamo@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.99.2 at mail
-X-Virus-Status: Clean
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the Turris Mox board from CZ.NIC.
+Implement tegra210_sdhci_writew() to disable card clock and issue a
+reset when the tuning command is sent. This is done to prevent an
+intermittent hang with around 10 % failure rate during tuning.
 
-Turris Mox is as modular router based on the Armada 3720 SOC (same as
-EspressoBin).
+Add tegra186_sdhci_ops because this workaround is specific to Tegra210.
 
-The basic module can be extended by different modules.
-When those modules are connected, U-Boot shall patch this device-tree
-by enabling nodes corresponding to those modules.
-
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 ---
- .../arm/marvell/armada-3720-turris-mox.txt         |   6 +
- arch/arm64/boot/dts/marvell/Makefile               |   1 +
- .../boot/dts/marvell/armada-3720-turris-mox.dts    | 817 +++++++++++++++++++++
- 3 files changed, 824 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
- create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
+ drivers/mmc/host/sdhci-tegra.c | 81 ++++++++++++++++++++++++----------
+ 1 file changed, 58 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-new file mode 100644
-index 000000000000..408fc07a9bbf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/marvell/armada-3720-turris-mox.txt
-@@ -0,0 +1,6 @@
-+CZ.NIC's Turris Mox SOHO router Device Tree Bindings
-+----------------------------------------------------
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 0bdce437e752..aa1574b8d96c 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -177,6 +177,50 @@ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ 	}
+ }
+ 
++static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
++{
++	bool status;
++	u32 reg;
 +
-+Required root node property:
++	reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	status = !!(reg & SDHCI_CLOCK_CARD_EN);
 +
-+compatible: must contain "cznic,turris-mox"
-diff --git a/arch/arm64/boot/dts/marvell/Makefile b/arch/arm64/boot/dts/marvell/Makefile
-index ea9d49f2a911..1dd89d1bf8ad 100644
---- a/arch/arm64/boot/dts/marvell/Makefile
-+++ b/arch/arm64/boot/dts/marvell/Makefile
-@@ -2,6 +2,7 @@
- # Mvebu SoC Family
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-db.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-espressobin.dtb
-+dtb-$(CONFIG_ARCH_MVEBU) += armada-3720-turris-mox.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-7040-db.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-db.dtb
- dtb-$(CONFIG_ARCH_MVEBU) += armada-8040-mcbin.dtb
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-new file mode 100644
-index 000000000000..9267ae96f14f
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts
-@@ -0,0 +1,817 @@
-+// SPDX-License-Identifier: GPL-2.0+ or X11
-+/*
-+ * Device Tree file for CZ.NIC Turris Mox Board
-+ * 2018 by Marek Behun <marek.behun@nic.cz>
-+ */
++	if (status == enable)
++		return status;
 +
-+/dts-v1/;
++	if (enable)
++		reg |= SDHCI_CLOCK_CARD_EN;
++	else
++		reg &= ~SDHCI_CLOCK_CARD_EN;
 +
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "armada-372x.dtsi"
++	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
 +
-+/ {
-+	model = "CZ.NIC Turris Mox Board";
-+	compatible = "cznic,turris-mox", "marvell,armada3720",
-+		     "marvell,armada3710";
++	return status;
++}
 +
-+	aliases {
-+		spi0 = &spi0;
-+	};
++static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
++{
++	bool is_tuning_cmd = 0;
++	bool clk_enabled;
++	u8 cmd;
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++	if (reg == SDHCI_COMMAND) {
++		cmd = SDHCI_GET_CMD(val);
++		is_tuning_cmd = cmd == MMC_SEND_TUNING_BLOCK ||
++				cmd == MMC_SEND_TUNING_BLOCK_HS200;
++	}
 +
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
-+	};
++	if (is_tuning_cmd)
++		clk_enabled = tegra_sdhci_configure_card_clk(host, 0);
 +
-+	leds {
-+		compatible = "gpio-leds";
-+		red {
-+			gpios = <&gpiosb 21 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
++	writew(val, host->ioaddr + reg);
 +
-+	gpio_keys {
-+		compatible = "gpio-keys";
++	if (is_tuning_cmd) {
++		udelay(1);
++		tegra_sdhci_configure_card_clk(host, clk_enabled);
++	}
++}
 +
-+		reset_button {
-+			label = "reset";
-+			linux,code = <BTN_MISC>;
-+			gpios = <&gpiosb 20 GPIO_ACTIVE_LOW>;
-+			debounce-interval = <60>;
-+		};
-+	};
-+
-+	exp_usb3_vbus: usb3-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb3-vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		enable-active-high;
-+		regulator-always-on;
-+		gpio = <&gpiosb 0 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	usb3_phy: usb3-phy {
-+		compatible = "usb-nop-xceiv";
-+		vcc-supply = <&exp_usb3_vbus>;
-+	};
-+
-+	vsdc_reg: vsdc_reg {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vsdc";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+
-+		gpios = <&gpiosb 23 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <0>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		enable-active-high;
-+	};
-+
-+	vsdio_reg: vsdio_reg {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vsdio";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+
-+		gpios = <&gpiosb 22 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <0>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		enable-active-high;
-+	};
-+
-+	sfp: sfp {
-+		compatible = "sff,sfp+";
-+		i2c-bus = <&i2c0>;
-+		los-gpio = <&moxtet_sfp 0 GPIO_ACTIVE_HIGH>;
-+		tx-fault-gpio = <&moxtet_sfp 1 GPIO_ACTIVE_HIGH>;
-+		mod-def0-gpio = <&moxtet_sfp 2 GPIO_ACTIVE_LOW>;
-+		tx-disable-gpio = <&moxtet_sfp 3 GPIO_ACTIVE_HIGH>;
-+		rate-select0-gpio = <&moxtet_sfp 4 GPIO_ACTIVE_HIGH>;
-+		status = "disabled";
-+	};
+ static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+ {
+ 	return mmc_gpio_get_ro(host->mmc);
+@@ -215,28 +259,6 @@ static bool tegra_sdhci_is_pad_and_regulator_valid(struct sdhci_host *host)
+ 	return true;
+ }
+ 
+-static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
+-{
+-	bool status;
+-	u32 reg;
+-
+-	reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+-	status = !!(reg & SDHCI_CLOCK_CARD_EN);
+-
+-	if (status == enable)
+-		return status;
+-
+-	if (enable)
+-		reg |= SDHCI_CLOCK_CARD_EN;
+-	else
+-		reg &= ~SDHCI_CLOCK_CARD_EN;
+-
+-	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
+-
+-	return status;
+-}
+-
+-
+ static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -834,6 +856,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+ static const struct sdhci_ops tegra210_sdhci_ops = {
+ 	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
++	.write_w    = tegra210_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
+@@ -861,6 +884,18 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+ 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP,
+ };
+ 
++static const struct sdhci_ops tegra186_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
++	.read_w     = tegra_sdhci_readw,
++	.write_l    = tegra_sdhci_writel,
++	.set_clock  = tegra_sdhci_set_clock,
++	.set_bus_width = sdhci_set_bus_width,
++	.reset      = tegra_sdhci_reset,
++	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
++	.voltage_switch = tegra_sdhci_voltage_switch,
++	.get_max_clock = tegra_sdhci_get_max_clock,
 +};
 +
-+&pinctrl_nb {
-+	spi_cs1_pins: spi-cs1-pins {
-+		groups = "spi_cs1";
-+		function = "spi";
-+	};
-+
-+	sdio0_pins: sdio0-pins {
-+		groups = "sdio0";
-+		function = "sdio";
-+	};
-+};
-+
-+&pinctrl_sb {
-+	sdio_sb_pins: sdio-sb-pins {
-+		groups = "sdio_sb";
-+		function = "sdio";
-+	};
-+
-+	smi_pins: smi-pins {
-+		groups = "smi";
-+		function = "smi";
-+	};
-+
-+	pcie_pins: pcie1-pins {
-+		groups = "pcie1";
-+		function = "gpio";
-+	};
-+};
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+	status = "okay";
-+
-+	rtc@6f {
-+		compatible = "microchip,mcp7940x";
-+		reg = <0x6f>;
-+	};
-+};
-+
-+&pcie0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_pins>;
-+	status = "okay";
-+	max-link-speed = <2>;
-+	reset-gpio = <&gpiosb 3 GPIO_ACTIVE_HIGH>;
-+
-+	/* this shall be enabled by u-boot if the PCIe module is present */
-+	status = "disabled";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&eth0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
-+	phy-mode = "rgmii-id";
-+	phy = <&phy1>;
-+	status = "okay";
-+};
-+
-+&eth1 {
-+	phy-mode = "1000base-x";
-+	managed = "in-band-status";
-+};
-+
-+&mdio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&smi_pins>;
-+	status = "okay";
-+
-+	phy1: ethernet-phy@1 {
-+		reg = <1>;
-+	};
-+
-+	switch0@10 {
-+		compatible = "marvell,mv88e6190";
-+		reg = <0x10 0>;
-+		dsa,member = <0 0>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch0phy1: switch0phy1@1 {
-+				reg = <0x1>;
-+			};
-+
-+			switch0phy2: switch0phy2@2 {
-+				reg = <0x2>;
-+			};
-+
-+			switch0phy3: switch0phy3@3 {
-+				reg = <0x3>;
-+			};
-+
-+			switch0phy4: switch0phy4@4 {
-+				reg = <0x4>;
-+			};
-+
-+			switch0phy5: switch0phy5@5 {
-+				reg = <0x5>;
-+			};
-+
-+			switch0phy6: switch0phy6@6 {
-+				reg = <0x6>;
-+			};
-+
-+			switch0phy7: switch0phy7@7 {
-+				reg = <0x7>;
-+			};
-+
-+			switch0phy8: switch0phy8@8 {
-+				reg = <0x8>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan1";
-+				phy-handle = <&switch0phy1>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan2";
-+				phy-handle = <&switch0phy2>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan3";
-+				phy-handle = <&switch0phy3>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan4";
-+				phy-handle = <&switch0phy4>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "lan5";
-+				phy-handle = <&switch0phy5>;
-+			};
-+
-+			port@6 {
-+				reg = <0x6>;
-+				label = "lan6";
-+				phy-handle = <&switch0phy6>;
-+			};
-+
-+			port@7 {
-+				reg = <0x7>;
-+				label = "lan7";
-+				phy-handle = <&switch0phy7>;
-+			};
-+
-+			port@8 {
-+				reg = <0x8>;
-+				label = "lan8";
-+				phy-handle = <&switch0phy8>;
-+			};
-+
-+			port@9 {
-+				reg = <0x9>;
-+				label = "cpu";
-+				ethernet = <&eth1>;
-+			};
-+
-+			switch0port10: port@a {
-+				reg = <0xa>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch1port9 &switch2port9>;
-+				status = "disabled";
-+			};
-+
-+			port-sfp@a {
-+				reg = <0xa>;
-+				label = "sfp";
-+				sfp = <&sfp>;
-+				phy-mode = "sgmii";
-+				managed = "in-band-status";
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	switch0@2 {
-+		compatible = "marvell,mv88e6085";
-+		reg = <0x2 0>;
-+		dsa,member = <0 0>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch0phy1_topaz: switch0phy1@11 {
-+				reg = <0x11>;
-+			};
-+
-+			switch0phy2_topaz: switch0phy2@12 {
-+				reg = <0x12>;
-+			};
-+
-+			switch0phy3_topaz: switch0phy3@13 {
-+				reg = <0x13>;
-+			};
-+
-+			switch0phy4_topaz: switch0phy4@14 {
-+				reg = <0x14>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan1";
-+				phy-handle = <&switch0phy1_topaz>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan2";
-+				phy-handle = <&switch0phy2_topaz>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan3";
-+				phy-handle = <&switch0phy3_topaz>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan4";
-+				phy-handle = <&switch0phy4_topaz>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "cpu";
-+				ethernet = <&eth1>;
-+			};
-+		};
-+	};
-+
-+	switch1@11 {
-+		compatible = "marvell,mv88e6190";
-+		reg = <0x11 0>;
-+		dsa,member = <0 1>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch1phy1: switch1phy1@1 {
-+				reg = <0x1>;
-+			};
-+
-+			switch1phy2: switch1phy2@2 {
-+				reg = <0x2>;
-+			};
-+
-+			switch1phy3: switch1phy3@3 {
-+				reg = <0x3>;
-+			};
-+
-+			switch1phy4: switch1phy4@4 {
-+				reg = <0x4>;
-+			};
-+
-+			switch1phy5: switch1phy5@5 {
-+				reg = <0x5>;
-+			};
-+
-+			switch1phy6: switch1phy6@6 {
-+				reg = <0x6>;
-+			};
-+
-+			switch1phy7: switch1phy7@7 {
-+				reg = <0x7>;
-+			};
-+
-+			switch1phy8: switch1phy8@8 {
-+				reg = <0x8>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan9";
-+				phy-handle = <&switch1phy1>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan10";
-+				phy-handle = <&switch1phy2>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan11";
-+				phy-handle = <&switch1phy3>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan12";
-+				phy-handle = <&switch1phy4>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "lan13";
-+				phy-handle = <&switch1phy5>;
-+			};
-+
-+			port@6 {
-+				reg = <0x6>;
-+				label = "lan14";
-+				phy-handle = <&switch1phy6>;
-+			};
-+
-+			port@7 {
-+				reg = <0x7>;
-+				label = "lan15";
-+				phy-handle = <&switch1phy7>;
-+			};
-+
-+			port@8 {
-+				reg = <0x8>;
-+				label = "lan16";
-+				phy-handle = <&switch1phy8>;
-+			};
-+
-+			switch1port9: port@9 {
-+				reg = <0x9>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch0port10>;
-+			};
-+
-+			switch1port10: port@a {
-+				reg = <0xa>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch2port9>;
-+				status = "disabled";
-+			};
-+
-+			port-sfp@a {
-+				reg = <0xa>;
-+				label = "sfp";
-+				sfp = <&sfp>;
-+				phy-mode = "sgmii";
-+				managed = "in-band-status";
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	switch1@2 {
-+		compatible = "marvell,mv88e6085";
-+		reg = <0x2 0>;
-+		dsa,member = <0 1>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch1phy1_topaz: switch1phy1@11 {
-+				reg = <0x11>;
-+			};
-+
-+			switch1phy2_topaz: switch1phy2@12 {
-+				reg = <0x12>;
-+			};
-+
-+			switch1phy3_topaz: switch1phy3@13 {
-+				reg = <0x13>;
-+			};
-+
-+			switch1phy4_topaz: switch1phy4@14 {
-+				reg = <0x14>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan9";
-+				phy-handle = <&switch1phy1_topaz>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan10";
-+				phy-handle = <&switch1phy2_topaz>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan11";
-+				phy-handle = <&switch1phy3_topaz>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan12";
-+				phy-handle = <&switch1phy4_topaz>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch0port10>;
-+			};
-+		};
-+	};
-+
-+	switch2@12 {
-+		compatible = "marvell,mv88e6190";
-+		reg = <0x12 0>;
-+		dsa,member = <0 2>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch2phy1: switch2phy1@1 {
-+				reg = <0x1>;
-+			};
-+
-+			switch2phy2: switch2phy2@2 {
-+				reg = <0x2>;
-+			};
-+
-+			switch2phy3: switch2phy3@3 {
-+				reg = <0x3>;
-+			};
-+
-+			switch2phy4: switch2phy4@4 {
-+				reg = <0x4>;
-+			};
-+
-+			switch2phy5: switch2phy5@5 {
-+				reg = <0x5>;
-+			};
-+
-+			switch2phy6: switch2phy6@6 {
-+				reg = <0x6>;
-+			};
-+
-+			switch2phy7: switch2phy7@7 {
-+				reg = <0x7>;
-+			};
-+
-+			switch2phy8: switch2phy8@8 {
-+				reg = <0x8>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan17";
-+				phy-handle = <&switch2phy1>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan18";
-+				phy-handle = <&switch2phy2>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan19";
-+				phy-handle = <&switch2phy3>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan20";
-+				phy-handle = <&switch2phy4>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "lan21";
-+				phy-handle = <&switch2phy5>;
-+			};
-+
-+			port@6 {
-+				reg = <0x6>;
-+				label = "lan22";
-+				phy-handle = <&switch2phy6>;
-+			};
-+
-+			port@7 {
-+				reg = <0x7>;
-+				label = "lan23";
-+				phy-handle = <&switch2phy7>;
-+			};
-+
-+			port@8 {
-+				reg = <0x8>;
-+				label = "lan24";
-+				phy-handle = <&switch2phy8>;
-+			};
-+
-+			switch2port9: port@9 {
-+				reg = <0x9>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch1port10 &switch0port10>;
-+			};
-+
-+			port-sfp@a {
-+				reg = <0xa>;
-+				label = "sfp";
-+				sfp = <&sfp>;
-+				phy-mode = "sgmii";
-+				managed = "in-band-status";
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	switch2@2 {
-+		compatible = "marvell,mv88e6085";
-+		reg = <0x2 0>;
-+		dsa,member = <0 2>;
-+		interrupt-parent = <&gpiosb>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch2phy1_topaz: switch2phy1@11 {
-+				reg = <0x11>;
-+			};
-+
-+			switch2phy2_topaz: switch2phy2@12 {
-+				reg = <0x12>;
-+			};
-+
-+			switch2phy3_topaz: switch2phy3@13 {
-+				reg = <0x13>;
-+			};
-+
-+			switch2phy4_topaz: switch2phy4@14 {
-+				reg = <0x14>;
-+			};
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				reg = <0x1>;
-+				label = "lan17";
-+				phy-handle = <&switch2phy1_topaz>;
-+			};
-+
-+			port@2 {
-+				reg = <0x2>;
-+				label = "lan18";
-+				phy-handle = <&switch2phy2_topaz>;
-+			};
-+
-+			port@3 {
-+				reg = <0x3>;
-+				label = "lan19";
-+				phy-handle = <&switch2phy3_topaz>;
-+			};
-+
-+			port@4 {
-+				reg = <0x4>;
-+				label = "lan20";
-+				phy-handle = <&switch2phy4_topaz>;
-+			};
-+
-+			port@5 {
-+				reg = <0x5>;
-+				label = "dsa";
-+				phy-mode = "2500base-x";
-+				link = <&switch1port10 &switch0port10>;
-+			};
-+		};
-+	};
-+
-+};
-+
-+&sdhci0 {
-+	wp-inverted;
-+	bus-width = <4>;
-+	cd-gpios = <&gpionb 10 GPIO_ACTIVE_HIGH>;
-+	vqmmc-supply = <&vsdc_reg>;
-+	marvell,pad-type = "sd";
-+	status = "okay";
-+};
-+
-+&sdhci1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdio0_pins &sdio_sb_pins>;
-+	non-removable;
-+	bus-width = <4>;
-+	marvell,pad-type = "sd";
-+	vqmmc-supply = <&vsdio_reg>;
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_quad_pins &spi_cs1_pins>;
-+	assigned-clocks = <&nb_periph_clk 7>;
-+	assigned-clock-parents = <&tbg 1>;
-+	assigned-clock-rates = <20000000>;
-+
-+	spi-flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <2000000>;
-+
-+		partition@0 {
-+			label = "u-boot";
-+			reg = <0x0 0x3f0000>;
-+		};
-+
-+		partition@3f0000 {
-+			label = "u-boot-env";
-+			reg = <0x180000 0x10000>;
-+		};
-+
-+		partition@400000 {
-+			label = "Rescue system";
-+			reg = <0x190000 0x670000>;
-+		};
-+	};
-+
-+	moxtet@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "cznic,moxtet";
-+		reg = <1>;
-+		devrst-gpio = <&gpiosb 2 GPIO_ACTIVE_LOW>;
-+		spi-max-frequency = <1000000>;
-+		spi-cpol;
-+		spi-cpha;
-+
-+		moxtet_sfp: moxtet-sfp@0 {
-+			compatible = "cznic,moxtet-gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			reg = <0>;
-+			moxtet,id = <1>;
-+			moxtet,input-mask = <0x7>;
-+			moxtet,output-mask = <0x3>;
-+			status = "disabled";
-+		};
-+	};
-+};
-+
-+&usb3 {
-+	status = "okay";
-+	usb-phy = <&usb3_phy>;
-+};
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+@@ -877,7 +912,7 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+ 		    * But it is not supported as of now.
+ 		    */
+ 		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
+-	.ops  = &tegra210_sdhci_ops,
++	.ops  = &tegra186_sdhci_ops,
+ };
+ 
+ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
 -- 
-2.16.4
+2.18.0
 
