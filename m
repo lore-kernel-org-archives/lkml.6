@@ -2,102 +2,189 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E9AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10ADC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B7820661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64F8320661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 00:43:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByfpIEaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B7820661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnGZzrzH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F8320661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbeH3EmF (ORCPT
+        id S1727200AbeH3EnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 00:42:05 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33568 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbeH3EmF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 00:42:05 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 60-v6so3053350ple.0;
-        Wed, 29 Aug 2018 17:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=95DS5Xl2lw4Vg7jq56jLmKCvVrENUipNuISI1oHlbSw=;
-        b=ByfpIEaq1olorJZpVDo/ZRBNoppwB8fnX1x6Ls3GG1Cpe/k0mwp9x1x6A1FocB++Rr
-         SkWxbzsEHHcHAiGCEhD76+0mefG9e5tFPwjIgFDMGNIj7MxC+xC3e8UZTPwSVEIZMoRl
-         EKde85ZMMvdsqjJ6MlqjN1c+uymEawP5WqB8QLTJgE5sb/jZx8EWJkx3hjZIHeGybtuG
-         fIug0Rk4jg/zmf69qYkOQoD1tQyhCSXh5/hALCzy2/2KqItUonuNQ1hsF7cQQtc6EFle
-         9m7hosfY3B59VzqdvqxisY/+c4Sib5j5TmrBfmssmRYxhMdkhLP5mD6H9vyjwftjuMQE
-         uDaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=95DS5Xl2lw4Vg7jq56jLmKCvVrENUipNuISI1oHlbSw=;
-        b=t6GdnTtKi0WSD6pWW6hqSAY9yunRibpdzQAey3fILS5cpwSzvhfOmdD9RAVpU1g7a6
-         OVvMZfZZ04QTflpHa6chlgiHtgiC2NbLsiUGonfdw6XNsnS7hcv4oUVNu3zfPZdETAME
-         OmDcXH/hsxMQ+AXVynIz9dhM9O3Chm16Q34Zqd/VN0mKi3s4Gixeab7O80aSouPsZ8Py
-         bBNimuBW0ChWvD6AWlS3Zldq7fL3OJjl/HfHGBKrYjvDjStb8aLyTUN7QYqZ/093LQiq
-         CmKoJjgrDjjOihg+pVMqjBkO1f6li7bGUS8hoTX1VPryC18DFn7Zos6NMhLCEqNxuSMh
-         NHAg==
-X-Gm-Message-State: APzg51DG3furhUXBEiBWIhUCdKJSiu8ZXi7K7O/G2C2/zriFwS68o0WB
-        GNWQR1fYnqqDs/fItL0On1bi0UK7
-X-Google-Smtp-Source: ANB0VdZ3k7l7fAQoooO+Fn2xQtwboKKKHBzAl/tDdK/RkXcc69iovfjR4DPVqCeWTHP+jc/MOdhvjQ==
-X-Received: by 2002:a17:902:28eb:: with SMTP id f98-v6mr7914178plb.149.1535589757396;
-        Wed, 29 Aug 2018 17:42:37 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm6867676pfb.0.2018.08.29.17.42.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 17:42:36 -0700 (PDT)
-Subject: Re: [GIT PULL] hwmon fixes for v4.19-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1535574760-11636-1-git-send-email-linux@roeck-us.net>
- <CA+55aFzUVOKJgXpfUEwC2eK7mNhhJktse=Dbrwh0x8AmUxwEcQ@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c8a7c16a-59bc-4e4c-4d2d-2cf8715257ff@roeck-us.net>
-Date:   Wed, 29 Aug 2018 17:42:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 00:43:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbeH3EnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 00:43:11 -0400
+Received: from mail-qk0-f173.google.com (mail-qk0-f173.google.com [209.85.220.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 907B120671;
+        Thu, 30 Aug 2018 00:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535589822;
+        bh=QV1qUjLTkIbnCZc7KpgPp9Y1RE8naddxILOO5lwIOPY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NnGZzrzH2F6/VtO4NIRJAGAhxw/x8rEFmdeVgpd0cZh1DUiQdkBO46Hwr7J9z/j0s
+         ocnVhbvkS32/MuYugsE6+toztR8Rocs+OEOBSbNKrSVvnriDw/TX/eo7UevSl2zowC
+         r0BHkAScle7vzmypyEquYDxc/RLhDCaNrCJe/NhU=
+Received: by mail-qk0-f173.google.com with SMTP id g13-v6so4672918qki.9;
+        Wed, 29 Aug 2018 17:43:42 -0700 (PDT)
+X-Gm-Message-State: APzg51B+CivQoSpvfTwFB+ynQ4/ciCND5TkLhOXMU4a0sUtd+eOI6Rra
+        rH10vMmnpVG22K3iffUn6XeWhRlBfBzby2m2hw==
+X-Google-Smtp-Source: ANB0VdaeQOaXrH82+h4wP20ODQ2PH8+xxeMcyFYDgLT+CTskdNdBUDEgKyYJA3iXpjZLpS2fvvBQb7aByjCRk1C0YGw=
+X-Received: by 2002:a37:f19:: with SMTP id z25-v6mr8985597qkg.147.1535589821768;
+ Wed, 29 Aug 2018 17:43:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzUVOKJgXpfUEwC2eK7mNhhJktse=Dbrwh0x8AmUxwEcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
+ <20180827105551.16346-5-vivek.gautam@codeaurora.org> <20180828203418.GA18366@bogus>
+ <a1e31d1e-aaa4-5951-2261-3169033c636a@codeaurora.org> <CAFp+6iGHus-kZv+Zr5aiYRLct07NCFBL3k44bX=c4eW7J24kZg@mail.gmail.com>
+In-Reply-To: <CAFp+6iGHus-kZv+Zr5aiYRLct07NCFBL3k44bX=c4eW7J24kZg@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 29 Aug 2018 19:43:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKGHC9wCy583CTvAz8-A_M6zyrAX69yN5RUjv7Kbs1wFQ@mail.gmail.com>
+Message-ID: <CAL_JsqKGHC9wCy583CTvAz8-A_M6zyrAX69yN5RUjv7Kbs1wFQ@mail.gmail.com>
+Subject: Re: [Patch v15 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        alex.williamson@redhat.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018 04:07 PM, Linus Torvalds wrote:
-> On Wed, Aug 29, 2018 at 1:32 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> Please pull hwmon fixes for Linux v4.19-rc2 from signed tag:
-> 
-> That actually isn't a signed tag at all, it's just a bare tag (ie just
-> directly points to the commit).
-> 
+On Wed, Aug 29, 2018 at 6:23 AM Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+>
+> On Wed, Aug 29, 2018 at 2:05 PM Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+> >
+> > Hi Rob,
+> >
+> >
+> > On 8/29/2018 2:04 AM, Rob Herring wrote:
+> > > On Mon, Aug 27, 2018 at 04:25:50PM +0530, Vivek Gautam wrote:
+> > >> Add bindings doc for Qcom's smmu-v2 implementation.
+> > >>
+> > >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > >> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> > >> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > >> ---
+> > >>
+> > >> Changes since v14:
+> > >>   - This is a new patch added in v15 after noticing the new
+> > >>     checkpatch warning for separate dt-bindings doc.
+> > >>   - This patch also addresses comments given by Rob and Robin to add
+> > >>     a list of valid values of '<soc>' in "qcom,<soc>-smmu-v2"
+> > >>     compatible string.
+> > >>
+> > >>   .../devicetree/bindings/iommu/arm,smmu.txt         | 47 ++++++++++++++++++++++
+> > >>   1 file changed, 47 insertions(+)
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> > >> index 8a6ffce12af5..52198a539606 100644
+> > >> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> > >> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> > >> @@ -17,10 +17,24 @@ conditions.
+> > >>                           "arm,mmu-401"
+> > >>                           "arm,mmu-500"
+> > >>                           "cavium,smmu-v2"
+> > >> +                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
+> > > The v2 in the compatible string is kind of redundant unless the SoC has
+> > > other SMMU types.
+> >
+> > sdm845 has smmu-v2, and smmu-500 [1].
+> >
+> > >>
+> > >>                     depending on the particular implementation and/or the
+> > >>                     version of the architecture implemented.
+> > >>
+> > >> +                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
+> > >> +                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
+> > >> +                  string that should be present along with the "qcom,smmu-v2"
+> > >> +                  to facilitate SoC specific clocks/power connections and to
+> > >> +                  address specific bug fixes.
+> > >> +                  '<soc>' string in "qcom,<soc>-smmu-v2" should be one of the
+> > >> +                  following:
+> > >> +                  msm8996 - for msm8996 Qcom SoC.
+> > >> +                  sdm845 - for sdm845 Qcom Soc.
+> > > Rather than all this prose, it would be simpler to just add 2 lines with
+> > > the full compatibles rather than <soc>. The <soc> thing is not going to
+> > > work when/if we move bindings to json-schema also.
+> >
+> > then we keep adding
+> >           "qcom,msm8996-smmu-v2", "qcom,smmu-v2"
+> >           "qcom,msm8998-smmu-v2", "qcom,smmu-v2"
+> >           "qcom,sdm845-smmu-v2", "qcom,smmu-v2",
+> > and from [1]
+> >           "qcom,sdm845-smmu-500", "arm,mmu-500", etc.
+> > for each SoCs?
+>
+> How about following diff on top of this patch?
+>
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index 52198a539606..5e6c04876533 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -17,23 +17,18 @@ conditions.
+>                          "arm,mmu-401"
+>                          "arm,mmu-500"
+>                          "cavium,smmu-v2"
+> -                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
+> +                        "qcom,smmu-v2"
+>
+>                    depending on the particular implementation and/or the
+>                    version of the architecture implemented.
+>
+> -                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
+> -                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
+> -                  string that should be present along with the "qcom,smmu-v2"
+> -                  to facilitate SoC specific clocks/power connections and to
+> -                  address specific bug fixes.
+> -                  '<soc>' string in "qcom,<soc>-smmu-v2" should be one of the
+> -                  following:
+> -                  msm8996 - for msm8996 Qcom SoC.
+> -                  sdm845 - for sdm845 Qcom Soc.
+> -
+> -                  An example string would be -
+> -                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
+> +                  Qcom SoCs using qcom,smmu-v2 must have soc specific
+> +                  compatible string attached to "qcom,smmu-v2" to take care
+> +                  of SoC specific clocks/power connections and to address
+> +                  specific bug fixes.
+> +                  Precisely, it should be one of the following:
+> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
+> +                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
 
-Oops, sorry.
+We don't need an explanation of why we need specific compatibles in
+each binding document (though maybe we need a better explanation
+somewhere). We just need to know what are valid values for compatibles
+and this includes any combinations. Generally, this is just a list of
+combinations.
 
-> I guess I don't care *that* much, since it's from kernel.org, but you
-> should check what happened to your workflow. *Normally* you do
-> actually have signed tags.
-> 
+The Renesas folks have figured out how to do this and they have lots
+of SoCs. Yes, it makes for a lot of patches, but they are all mostly 1
+liners and are dead simple to review. With QCom, I'm tired of having
+the same damn discussion with every new binding.
 
-Nothing special, just busy tracking down build/boot failures and such.
-I tag manually, and forgot the "-s".
-
-Guenter
+Rob
