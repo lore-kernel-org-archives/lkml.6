@@ -2,262 +2,577 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B33BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61138C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B132082B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C972073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:40:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kGoT6uBu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7B132082B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IZP3Snoa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C972073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeH3LkF (ORCPT
+        id S1727817AbeH3Llk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 07:40:05 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41663 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeH3LkF (ORCPT
+        Thu, 30 Aug 2018 07:41:40 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40307 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbeH3Llj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 07:40:05 -0400
-Received: by mail-oi0-f68.google.com with SMTP id k12-v6so13786477oiw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 00:39:16 -0700 (PDT)
+        Thu, 30 Aug 2018 07:41:39 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a13-v6so825675pgt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 00:40:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hTyoiYA3NcOxlUcfr6MPOkvgiEW9uAldq12+ZJhYWfo=;
-        b=kGoT6uBuoOlfVBcewdv/3tXCoqsozt0rtPJCdnLu4fwLvPqHSkm5yL05TV74Bqfp8I
-         2BT6n2n7SU9kIjTMiIGa2jP0m+DSpMNekuN81rLGHlDHxtSLM/5XCCy1mPuPhsmlHOZf
-         /8h3nh2FluTKsh5C0i2aS1S2cMqYodXJ/iSos=
+        h=from:to:cc:subject:date:message-id;
+        bh=LAJCRIWPbqlZYjoPFpjtZRu7hRC5PNhroFuNnTsWv0E=;
+        b=IZP3SnoaPRDS87wHJJc3Vq6lrvJTmu2gcBhqGTyOfWU2oC73yptpqpoH+K81ZKdshy
+         ySm7yoKGRwBQ5DUmigy8cCrjjrylhm9Y/h29h+g5kiPTJqrRihs95029XedTyQ0Qd8Ri
+         zSo6Kw9MCTS1j+As56q8QxlHFoHBaDSh1nh80=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hTyoiYA3NcOxlUcfr6MPOkvgiEW9uAldq12+ZJhYWfo=;
-        b=cdPTNjZtovIj9aaCR+NbcT7E8pe6J9ugR8rB6TCWf3JE4v8OtmykhmzM6Vx25XKO9L
-         BOuKj7WeMhMIlvYZpoOzi5czGYN55YcYISBsFyNHu8/+eKt6PXHlmfDhB7N66KcnfEE8
-         KmgZKJKtC+pGnjVsjUmUi4rS4IsmfVAgA1ed88F/gb30Hki1+99GYn6vAxfINA0AM8fQ
-         mfagcbyANOs203KDU7Mr/7L1u4DfX98jrjrR8LVUMXgz5RRvY+I4UVkiR0fxrO7z846t
-         QPXnQRbmE8zk4wyMCXZ2wBI02/FrBM2uS/wvajs3x5JNzGfe6w788/DjMNf1nXVHw8M/
-         KAWA==
-X-Gm-Message-State: APzg51BiesnKxoZoDRJUtP2e07TwHaT/2H7tNF9mmZGuQ+WXSf7o4SBM
-        RHzr9VNAsOUVEW68+tQpjjbht3b6gfYEhhZ6LVmQdQ==
-X-Google-Smtp-Source: ANB0VdbMLYha1oiEVRGkSXy7zNIvai7xhh2zTQFa5GaG6Icq5w+tpBREDzWsi+pD6Ha8VMJw5IDU8jtkTDi7vljBP58=
-X-Received: by 2002:aca:50cf:: with SMTP id e198-v6mr1450028oib.332.1535614755610;
- Thu, 30 Aug 2018 00:39:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 00:39:14 -0700 (PDT)
-In-Reply-To: <CAMz4kuKT=zcH_Kjc5FnvX98vw-5aNQMxMTs4aeqqiM6F4QGEuA@mail.gmail.com>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <20180824101145.GA1510@amd>
- <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com> <20180824201227.GB17146@amd>
- <f5046e2d-9f15-4b7e-083e-e97f7ca0693c@gmail.com> <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
- <52eb7b5f-a405-06d1-2758-f27401a3ce3b@gmail.com> <CAMz4ku+a5QT5CaonW3R6dfKzcpJgyeGLbD5tH-0K1QMLDdQpqQ@mail.gmail.com>
- <6d0881db-e02f-6bf4-2516-448bc4772cb8@gmail.com> <CAMz4kuKT=zcH_Kjc5FnvX98vw-5aNQMxMTs4aeqqiM6F4QGEuA@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LAJCRIWPbqlZYjoPFpjtZRu7hRC5PNhroFuNnTsWv0E=;
+        b=p5QWE5TNc0ozihM4WImGFOgpTDc7mZqboWUB/PgHa7jRjMYB5NetI6qnLrCdsG8Wzv
+         7AOrYVG4wQYvh75jO8iYuC4N9gEwe0nS9hH8y0m+rANVKoEAN4w/p+67Fs6YQj4H6HYy
+         hEJtVj7/nrFnIbIh7p9HDm/HZmGTs645T95A1EoPWAWj6jf2Sv/qPiVV8U/smtHPp5Z/
+         NJOewYZl1+NJdyjVWzig/fdXcaxAHdGM3xUePe8yA4oNqCac94yza2G42e+3ZSX1w1AW
+         SrXDQqnmY8kZjVr3RkoM9MfiHMxCY8/GZKptEJ99OGQ/DZzA7yN9dCQhlR5BfrXRVTza
+         DMBA==
+X-Gm-Message-State: APzg51DTbiVc3vF7N0ZU+ZpPdjt22soufVYwpOj9oC/ev9PaX802FUIq
+        3lSzrGKxgt9ZhUel/JnEEkOmXw==
+X-Google-Smtp-Source: ANB0VdYG1yhytZFem46Lm4D5B2sk0JWSbTBG16HEHF6U6shWWlTdcilARv/AfC7fCTNKhL0qFwpT7A==
+X-Received: by 2002:a62:8208:: with SMTP id w8-v6mr9120733pfd.215.1535614850264;
+        Thu, 30 Aug 2018 00:40:50 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id q6-v6sm12096167pgq.19.2018.08.30.00.40.46
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 30 Aug 2018 00:40:49 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 30 Aug 2018 15:39:14 +0800
-Message-ID: <CAMz4kuL1Wia-dWpqDNwzyLDtTag-Rpd0eXe2KLRPjK4ZGhhVRw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
+        baolin.wang@linaro.org, broonie@kernel.org,
+        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/2] leds: core: Introduce LED pattern trigger
+Date:   Thu, 30 Aug 2018 15:40:39 +0800
+Message-Id: <f8f1439338464103cc9a4b4a93b590a9635c7fcb.1535614434.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+Some LED controllers have support for autonomously controlling
+brightness over time, according to some preprogrammed pattern or
+function.
 
-On 30 August 2018 at 11:26, Baolin Wang <baolin.wang@linaro.org> wrote:
-> Hi Jacek,
->
-> On 30 August 2018 at 03:15, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->> Hi Baolin,
->>
->> On 08/29/2018 11:48 AM, Baolin Wang wrote:
->>> Hi Jacek,
->>>
->>> On 29 August 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>>> On 08/25/2018 09:51 AM, Baolin Wang wrote:
->>>>> On 25 August 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
->>>>>> On 08/24/2018 10:12 PM, Pavel Machek wrote:
->>>>>>> On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
->>>>>>>> Hi Pavel,
->>>>>>>>
->>>>>>>> On 08/24/2018 12:11 PM, Pavel Machek wrote:
->>>>>>>>> Hi!
->>>>>>>>>
->>>>>>>>>> I think that it would be more flexible if software pattern fallback
->>>>>>>>>> was applied in case of pattern_set failure. Otherwise, it would
->>>>>>>>>> lead to the situation where LED class devices that support hardware
->>>>>>>>>> blinking couldn't be applied the same set of patterns as LED class
->>>>>>>>>> devices that don't implement pattern_set. The latter will always have to
->>>>>>>>>> resort to using software pattern engine which will accept far greater
->>>>>>>>>> amount of pattern combinations.
->>>>>>>>>>
->>>>>>>>>> In this case we need to discuss on what basis the decision will be
->>>>>>>>>> made on whether hardware or software engine will be used.
->>>>>>>>>>
->>>>>>>>>> Possible options coming to mind:
->>>>>>>>>> - an interface will be provided to determine max difference between
->>>>>>>>>>   the settings supported by the hardware and the settings requested by
->>>>>>>>>>   the user, that will result in aligning user's setting to the hardware
->>>>>>>>>>   capabilities
->>>>>>>>>> - the above alignment rate will be predefined instead
->>>>>>>>>> - hardware engine will be used only if user requests supported settings
->>>>>>>>>>   on the whole span of the requested pattern
->>>>>>>>>> - in each of the above cases it would be worth to think of the
->>>>>>>>>>   interface to show the scope of the settings supported by hardware
->>>>>>>>>
->>>>>>>>> I'd recommend keeping it simple. We use hardware engine if driver
->>>>>>>>> author thinks pattern is "close enough".
->>>>>>>>
->>>>>>>> The thing is that in the ledtrig-pattern v5 implementation there
->>>>>>>> is no option of using software fallback if pattern_set op
->>>>>>>> is initialized:
->>>>>>>>
->>>>>>>> +    if (led_cdev->pattern_set) {
->>>>>>>> +            return led_cdev->pattern_set(led_cdev, data->patterns,
->>>>>>>> +                                         data->npatterns, data->repeat);
->>>>>>>> +    }
->>>>>>>
->>>>>>> Yeah, that sounds wrong. (Sorry I did not pay enough attention).
->>>>>>>
->>>>>>> It pattern_set() returns special error code, it should just continue
->>>>>>> and use software pattern fallback.
->>>>>>
->>>>>> And now we can get back to the issue I was concerned about in the
->>>>>> email you replied to, i.e. what series of [brightness delta_t] tuples
->>>>>> should be written to the pattern file to enable hardware breathing
->>>>>> engine.
->>>>>
->>>>> OK. So now we've made a consensus to use the software pattern fallback
->>>>> if failed to set hardware pattern. How about introduce one interface
->>>>> to convert hardware patterns to software patterns if necessary?
->>>>>
->>>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
->>>>> b/drivers/leds/trigger/ledtrig-pattern.c
->>>>> index 63b94a2..d46a641 100644
->>>>> --- a/drivers/leds/trigger/ledtrig-pattern.c
->>>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
->>>>> @@ -66,8 +66,15 @@ static int pattern_trig_start_pattern(struct
->>>>> pattern_trig_data *data,
->>>>>                 return 0;
->>>>>
->>>>>         if (led_cdev->pattern_set) {
->>>>> -               return led_cdev->pattern_set(led_cdev, data->patterns,
->>>>> -                                            data->npatterns, data->repeat);
->>>>> +               ret = led_cdev->pattern_set(led_cdev, data->patterns,
->>>>> +                                           data->npatterns, data->repeat);
->>>>> +               if (!ret)
->>>>> +                       return 0;
->>>>> +
->>>>> +               dev_warn(led_cdev->dev, "Failed to set hardware pattern\n");
->>>>> +
->>>>> +               if (led_cdev->pattern_convert)
->>>>> +                       led_cdev->pattern_convert(led_cdev,
->>>>
->>>> I can't see how it could help to assess if hw pattern
->>>> engine can launch given pattern, and with what accuracy.
->>>>
->>>> Instead, I propose to add a means for defining whether the pattern
->>>> to be set is intended for hardware pattern engine or for software
->>>> fallback. It could be either separate sysfs file e.g. hw_pattern,
->>>> or a modifier to the pattern written to the pattern file, e,g,
->>>>
->>>> echo "hw 100 2 200 3 100 2" > pattern
->>>>
->>>> hw format expected by given driver would have to be described
->>>> in the per-driver ABI documentation. All patterns without
->>>> "hw" prefix would enable software pattern engine.
->>>
->>> OK. So I did some optimization based on v5 according to suggestion, if
->>> you think this is okay for you, then I will send out the formal v6
->>> patch set.
->>>
->>> 1. echo "hw 100 2 200 3 100 2" > pattern
->>> Only for hardware pattern, if failed,  we will return error number.
->>
->> After thinking more about it, I'd opt for a separate file
->> dedicated to hardware pattern, e.g. hw_pattern, which would
->> be created only if the LED class driver implemented pattern_set op.
->>
->>> 2. echo "100 2 200 3 100 2" > pattern
->>> Will try to set hardware pattern firstly, if failed, will use software
->>> pattern instead.
->>>
->>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
->>> b/drivers/leds/trigger/ledtrig-pattern.c
->>> index 63b94a2..f08e797 100644
->>> --- a/drivers/leds/trigger/ledtrig-pattern.c
->>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
->>> @@ -26,6 +26,7 @@ struct pattern_trig_data {
->>>       u32 repeat;
->>>       u32 last_repeat;
->>>       bool is_indefinite;
->>> +     bool is_hw_pattern;
->>>       struct timer_list timer;
->>>  };
->>>
->>> @@ -62,12 +63,21 @@ static void pattern_trig_timer_function(struct
->>> timer_list *t)
->>>  static int pattern_trig_start_pattern(struct pattern_trig_data *data,
->>>                                     struct led_classdev *led_cdev)
->>>  {
->>> +     int ret;
->>> +
->>>       if (!data->npatterns)
->>>               return 0;
->>>
->>>       if (led_cdev->pattern_set) {
->>> -             return led_cdev->pattern_set(led_cdev, data->patterns,
->>> +             ret = led_cdev->pattern_set(led_cdev, data->patterns,
->>>                                            data->npatterns, data->repeat);
->>> +             if (!ret)
->>> +                     return 0;
->>> +
->>> +             dev_warn(led_cdev->dev, "Failed to set hardware patterns\n");
->>> +
->>> +             if (data->is_hw_pattern)
->>> +                     return ret;
->>
->> With separate pattern files we could get rid of this ambiguity and
->> attempt calling pattern_set only if requested via hw_pattern file.
->> No software fallback should be employed in case of failure then.
->>
->> Similarly in case of requests originating from pattern file -
->> the software engine should be set up.
->
-> Please correct me if I understood you incorrectly.
->
-> So we should create the hw_pattern file if the LED class driver
-> implemented pattern_set op, then no need use software fallback if it
-> failed to set hardware pattern.
->
-> If the LED class driver did not implement pattern_set op, we just show
-> up pattern file for users, and we always use software pattern now.
->
-> But AFAICT the V5 has implemented the logics, but did not change the
-> pattern file name according to if LED class driver implemented
-> pattern_set op. So now we just change the pattern file to hw_pattern
-> file if pattern_set op is set?
->
+This patch adds pattern trigger that LED device can configure the
+pattern and trigger it.
 
-Sorry for misunderstanding your points, now I realized we will create
-2 files for software pattern and hardware pattern if the pattern_set
-op was implemented. I submitted v6 patch set according to your
-suggestion. Please help to review. Thanks.
+Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v5:
+ - Add one 'hw_pattern' file for hardware patterns.
 
+Changes from v4:
+ - Change the repeat file to return the originally written number.
+ - Improve comments.
+ - Fix some build warnings.
+
+Changes from v3:
+ - Reset pattern number to 0 if user provides incorrect pattern string.
+ - Support one pattern.
+
+Changes from v2:
+ - Remove hardware_pattern boolen.
+ - Chnage the pattern string format.
+
+Changes from v1:
+ - Use ATTRIBUTE_GROUPS() to define attributes.
+ - Introduce hardware_pattern flag to determine if software pattern
+ or hardware pattern.
+ - Re-implement pattern_trig_store_pattern() function.
+ - Remove pattern_get() interface.
+ - Improve comments.
+ - Other small optimization.
+---
+ .../ABI/testing/sysfs-class-led-trigger-pattern    |   41 +++
+ drivers/leds/trigger/Kconfig                       |    7 +
+ drivers/leds/trigger/Makefile                      |    1 +
+ drivers/leds/trigger/ledtrig-pattern.c             |  344 ++++++++++++++++++++
+ include/linux/leds.h                               |   16 +
+ 5 files changed, 409 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+ create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+
+diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+new file mode 100644
+index 0000000..dda8bbc
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+@@ -0,0 +1,41 @@
++What:		/sys/class/leds/<led>/pattern
++Date:		September 2018
++KernelVersion:	4.20
++Description:
++		Specify a software pattern for the LED, that supports altering
++		the brightness for the specified duration with one software
++		timer.
++
++		The pattern is given by a series of tuples, of brightness and
++		duration (ms). The LED is expected to traverse the series and
++		each brightness value for the specified duration. Duration of
++		0 means brightness should immediately change to new value.
++
++		The format of the software pattern values should be:
++		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
++		duration_3 ...".
++
++What:		/sys/class/leds/<led>/hw_pattern
++Date:		September 2018
++KernelVersion:	4.20
++Description:
++		Specify a hardware pattern for the LED, for LED hardware that
++		supports altering the brightness as a function of time.
++
++		The pattern is given by a series of tuples, of brightness and
++		duration (ms). The LED is expected to traverse the series and
++		each brightness value for the specified duration. Duration of
++		0 means brightness should immediately change to new value.
++
++		The format of the hardware pattern values should be:
++		"brightness_1 duration_1 brightness_2 duration_2 brightness_3
++		duration_3 ...".
++
++What:		/sys/class/leds/<led>/repeat
++Date:		September 2018
++KernelVersion:	4.20
++Description:
++		Specify a pattern repeat number. 0 means repeat indefinitely.
++
++		This file will always return the originally written repeat
++		number.
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index 4018af7..b76fc3c 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+ 	  This allows LEDs to be controlled by network device activity.
+ 	  If unsure, say Y.
+ 
++config LEDS_TRIGGER_PATTERN
++	tristate "LED Pattern Trigger"
++	help
++	  This allows LEDs to be controlled by a software or hardware pattern
++	  which is a series of tuples, of brightness and duration (ms).
++	  If unsure, say N
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index f3cfe19..9bcb64e 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
+ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
+ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
+ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
++obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+new file mode 100644
+index 0000000..efbd5ef
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -0,0 +1,344 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * LED pattern trigger
++ *
++ * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
++ * the first version, Baolin Wang simplified and improved the approach.
++ */
++
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/slab.h>
++#include <linux/timer.h>
++
++#define MAX_PATTERNS		1024
++
++struct pattern_trig_data {
++	struct led_classdev *led_cdev;
++	struct led_pattern patterns[MAX_PATTERNS];
++	struct led_pattern *curr;
++	struct led_pattern *next;
++	struct mutex lock;
++	u32 npatterns;
++	u32 repeat;
++	u32 last_repeat;
++	bool is_indefinite;
++	bool is_hw_pattern;
++	struct timer_list timer;
++};
++
++static void pattern_trig_update_patterns(struct pattern_trig_data *data)
++{
++	data->curr = data->next;
++	if (!data->is_indefinite && data->curr == data->patterns)
++		data->repeat--;
++
++	if (data->next == data->patterns + data->npatterns - 1)
++		data->next = data->patterns;
++	else
++		data->next++;
++}
++
++static void pattern_trig_timer_function(struct timer_list *t)
++{
++	struct pattern_trig_data *data = from_timer(data, t, timer);
++
++	mutex_lock(&data->lock);
++
++	if (!data->is_indefinite && !data->repeat) {
++		mutex_unlock(&data->lock);
++		return;
++	}
++
++	led_set_brightness(data->led_cdev, data->curr->brightness);
++	mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
++	pattern_trig_update_patterns(data);
++
++	mutex_unlock(&data->lock);
++}
++
++static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++
++	if (!data->npatterns)
++		return 0;
++
++	if (data->is_hw_pattern) {
++		return led_cdev->pattern_set(led_cdev, data->patterns,
++					     data->npatterns, data->repeat);
++	}
++
++	data->curr = data->patterns;
++	data->next = data->npatterns > 1 ? data->patterns + 1 : data->patterns;
++	data->timer.expires = jiffies;
++	add_timer(&data->timer);
++
++	return 0;
++}
++
++static ssize_t repeat_show(struct device *dev, struct device_attribute *attr,
++			   char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++	u32 repeat;
++
++	mutex_lock(&data->lock);
++
++	repeat = data->last_repeat;
++
++	mutex_unlock(&data->lock);
++
++	return scnprintf(buf, PAGE_SIZE, "%u\n", repeat);
++}
++
++static ssize_t repeat_store(struct device *dev, struct device_attribute *attr,
++			    const char *buf, size_t count)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++	unsigned long res;
++	int err;
++
++	err = kstrtoul(buf, 10, &res);
++	if (err)
++		return err;
++
++	/*
++	 * Clear previous patterns' performence firstly, and remove the timer
++	 * without mutex lock to avoid dead lock.
++	 */
++	del_timer_sync(&data->timer);
++
++	mutex_lock(&data->lock);
++
++	if (data->is_hw_pattern)
++		led_cdev->pattern_clear(led_cdev);
++
++	data->last_repeat = data->repeat = res;
++
++	/* 0 means repeat indefinitely */
++	if (!data->repeat)
++		data->is_indefinite = true;
++	else
++		data->is_indefinite = false;
++
++	err = pattern_trig_start_pattern(led_cdev);
++
++	mutex_unlock(&data->lock);
++	return err < 0 ? err : count;
++}
++
++static DEVICE_ATTR_RW(repeat);
++
++static ssize_t pattern_trig_show_patterns(struct pattern_trig_data *data,
++					  char *buf, bool hw_pattern)
++{
++	ssize_t count = 0;
++	int i;
++
++	mutex_lock(&data->lock);
++
++	if (!data->npatterns || (data->is_hw_pattern ^ hw_pattern))
++		goto out;
++
++	for (i = 0; i < data->npatterns; i++) {
++		count += scnprintf(buf + count, PAGE_SIZE - count,
++				   "%d %d ",
++				   data->patterns[i].brightness,
++				   data->patterns[i].delta_t);
++	}
++
++	buf[count - 1] = '\n';
++
++out:
++	mutex_unlock(&data->lock);
++	return count;
++}
++
++static ssize_t pattern_trig_store_patterns(struct led_classdev *led_cdev,
++					   const char *buf, size_t count,
++					   bool hw_pattern)
++{
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++	int ccount, cr, offset = 0, err = 0;
++
++	/*
++	 * Clear previous patterns' performence firstly, and remove the timer
++	 * without mutex lock to avoid dead lock.
++	 */
++	del_timer_sync(&data->timer);
++
++	mutex_lock(&data->lock);
++
++	if (data->is_hw_pattern)
++		led_cdev->pattern_clear(led_cdev);
++
++	if (hw_pattern)
++		data->is_hw_pattern = true;
++	else
++		data->is_hw_pattern = false;
++
++	data->npatterns = 0;
++	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
++		cr = 0;
++		ccount = sscanf(buf + offset, "%d %d %n",
++				&data->patterns[data->npatterns].brightness,
++				&data->patterns[data->npatterns].delta_t, &cr);
++		if (ccount != 2) {
++			data->npatterns = 0;
++			err = -EINVAL;
++			goto out;
++		}
++
++		offset += cr;
++		data->npatterns++;
++	}
++
++	err = pattern_trig_start_pattern(led_cdev);
++
++out:
++	mutex_unlock(&data->lock);
++	return err < 0 ? err : count;
++}
++
++static ssize_t pattern_show(struct device *dev, struct device_attribute *attr,
++			    char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++
++	return pattern_trig_show_patterns(data, buf, false);
++}
++
++static ssize_t pattern_store(struct device *dev, struct device_attribute *attr,
++			     const char *buf, size_t count)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	return pattern_trig_store_patterns(led_cdev, buf, count, false);
++}
++
++static DEVICE_ATTR_RW(pattern);
++
++static ssize_t hw_pattern_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++
++	return pattern_trig_show_patterns(data, buf, true);
++}
++
++static ssize_t hw_pattern_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	return pattern_trig_store_patterns(led_cdev, buf, count, true);
++}
++
++static DEVICE_ATTR_RW(hw_pattern);
++
++static umode_t pattern_trig_attrs_mode(struct kobject *kobj,
++				       struct attribute *attr, int index)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	if (attr == &dev_attr_repeat.attr || attr == &dev_attr_pattern.attr)
++		return attr->mode;
++	else if (attr == &dev_attr_hw_pattern.attr && led_cdev->pattern_set)
++		return attr->mode;
++
++	return 0;
++}
++
++static struct attribute *pattern_trig_attrs[] = {
++	&dev_attr_pattern.attr,
++	&dev_attr_hw_pattern.attr,
++	&dev_attr_repeat.attr,
++	NULL
++};
++
++static const struct attribute_group pattern_trig_group = {
++	.attrs = pattern_trig_attrs,
++	.is_visible = pattern_trig_attrs_mode,
++};
++
++static const struct attribute_group *pattern_trig_groups[] = {
++	&pattern_trig_group,
++	NULL,
++};
++
++static int pattern_trig_activate(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *data;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	if (!!led_cdev->pattern_set ^ !!led_cdev->pattern_clear) {
++		dev_warn(led_cdev->dev,
++			 "Hardware pattern ops validation failed\n");
++		led_cdev->pattern_set = NULL;
++		led_cdev->pattern_clear = NULL;
++	}
++
++	data->is_indefinite = true;
++	mutex_init(&data->lock);
++	data->led_cdev = led_cdev;
++	led_set_trigger_data(led_cdev, data);
++	timer_setup(&data->timer, pattern_trig_timer_function, 0);
++	led_cdev->activated = true;
++
++	return 0;
++}
++
++static void pattern_trig_deactivate(struct led_classdev *led_cdev)
++{
++	struct pattern_trig_data *data = led_cdev->trigger_data;
++
++	if (!led_cdev->activated)
++		return;
++
++	if (led_cdev->pattern_clear)
++		led_cdev->pattern_clear(led_cdev);
++
++	del_timer_sync(&data->timer);
++
++	led_set_brightness(led_cdev, LED_OFF);
++	kfree(data);
++	led_cdev->activated = false;
++}
++
++static struct led_trigger pattern_led_trigger = {
++	.name = "pattern",
++	.activate = pattern_trig_activate,
++	.deactivate = pattern_trig_deactivate,
++	.groups = pattern_trig_groups,
++};
++
++static int __init pattern_trig_init(void)
++{
++	return led_trigger_register(&pattern_led_trigger);
++}
++
++static void __exit pattern_trig_exit(void)
++{
++	led_trigger_unregister(&pattern_led_trigger);
++}
++
++module_init(pattern_trig_init);
++module_exit(pattern_trig_exit);
++
++MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
++MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org");
++MODULE_DESCRIPTION("LED Pattern trigger");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 834683d..74fc2c6 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -22,6 +22,7 @@
+ #include <linux/workqueue.h>
+ 
+ struct device;
++struct led_pattern;
+ /*
+  * LED Core
+  */
+@@ -88,6 +89,11 @@ struct led_classdev {
+ 				     unsigned long *delay_on,
+ 				     unsigned long *delay_off);
+ 
++	int (*pattern_set)(struct led_classdev *led_cdev,
++			   struct led_pattern *pattern, int len,
++			   unsigned int repeat);
++	int (*pattern_clear)(struct led_classdev *led_cdev);
++
+ 	struct device		*dev;
+ 	const struct attribute_group	**groups;
+ 
+@@ -472,4 +478,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+ 	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+ #endif
+ 
++/**
++ * struct led_pattern - pattern interval settings
++ * @delta_t: pattern interval delay, in milliseconds
++ * @brightness: pattern interval brightness
++ */
++struct led_pattern {
++	int delta_t;
++	int brightness;
++};
++
+ #endif		/* __LINUX_LEDS_H_INCLUDED */
 -- 
-Baolin Wang
-Best Regards
+1.7.9.5
+
