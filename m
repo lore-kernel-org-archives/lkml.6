@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87319C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91117C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501112082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501112082A
+	by mail.kernel.org (Postfix) with ESMTP id 58BB52082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58BB52082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeH3XJD (ORCPT
+        id S1727606AbeH3XJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:09:03 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39816 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbeH3XJC (ORCPT
+        Thu, 30 Aug 2018 19:09:05 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36728 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727550AbeH3XJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:09:02 -0400
-Received: by mail-oi0-f66.google.com with SMTP id c190-v6so17378691oig.6;
-        Thu, 30 Aug 2018 12:05:25 -0700 (PDT)
+        Thu, 30 Aug 2018 19:09:03 -0400
+Received: by mail-oi0-f65.google.com with SMTP id r69-v6so17396898oie.3;
+        Thu, 30 Aug 2018 12:05:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fBMJ862XEEIahgbuSdVZDN7DTE3GVasP4unDCjvFxdc=;
-        b=KuPp9/ijSlclldTTh2zLqZwViGGXIkLzmMbqpj2hZywx7801NocSlNB7IaZhlMvy5R
-         GV9y7u6t5dHU+u+/mq6kujDU4MtjtO89jDLM/+dSRuBFx70WWkQJmwYfSuubvZYPdBXC
-         W0ilOhV8ZsJOutgZCKlbLWAZFGwlS5mrOvKZvyASnBK993KTpwjp/zCRWxpk8FTOyRbz
-         MAfaYhKgyXFQ02yitTAuaOw6pf7p9s/u7+HQPd3kRxKGN1v9HuofJ519cis3Tvi5nGQV
-         9IXH6R++vA00vtCZkJeU4JoyMF1Uew/W1kRCOPOsrZQeCrPrJPhDuTyTDXuwfrAXZ+Xf
-         JpfQ==
-X-Gm-Message-State: APzg51ChGGFSxnX7hAc+1CXO/tJlDV1FjzXYyf0s/+Td0BoNKfPfb55P
-        ZzPANGRIy+9FnRdaYpw02LporK4=
-X-Google-Smtp-Source: ANB0VdbEYg1iS0DI53pRY/ExndBGIi+b8KoKq+zO4BY1Fyew9HHOK4/+2Gp84qhcbL+WmE0ZsNl93A==
-X-Received: by 2002:aca:c141:: with SMTP id r62-v6mr4048910oif.179.1535655925249;
-        Thu, 30 Aug 2018 12:05:25 -0700 (PDT)
+        bh=NFRDAdeXgojs+I7CCW5N+ajSHg8zEmxjFne5PsPUOg0=;
+        b=j+febYY946FONWbzXrB3GCNrKcEwOIQVRWf3xix30WNJZ9iChcK9sh7UU90KxdrqAj
+         bjbJfRLgS8zA+i3qDG0NWSeh1L5nHn0n0oYrUZiqtdGnFZDckl68skNHh9EEFtpdcpm1
+         L1mrzPpHvzB/LVERfvjyIiW6uLq4jnlaE8bzuq58+IW9hkE2qEWO2qE0uZs/dICwcNk5
+         ffmDuF0oMav3fBKRY1T+GJ4zVU9l3s8X46OGVvC5DxqHj/Mr9yjv7DMO045BueGmCO+x
+         jKH7gCLlIamlOcDJsXN9W9HpZonxwG5S/kUDMSL1xuDVFtU9jcSug92yb6stDTqH9glO
+         Fh7g==
+X-Gm-Message-State: APzg51BbcwgE3EEA5/5GHQXEBimBYZEd/Vimx0ZQHM82TvT25E6Pi5lA
+        LIJI4PX3Tf7AcZqOpL7fUMvN+8k=
+X-Google-Smtp-Source: ANB0VdYfHPB7vS5YdVcgx/G46dO8434wyPA4/b9Hfzhao4bijzIoFO9wf5QbwooQDQYswHVgBh2KNg==
+X-Received: by 2002:aca:dec6:: with SMTP id v189-v6mr3622229oig.98.1535655926189;
+        Thu, 30 Aug 2018 12:05:26 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id 22-v6sm4200423oix.58.2018.08.30.12.05.24
+        by smtp.googlemail.com with ESMTPSA id 22-v6sm4200423oix.58.2018.08.30.12.05.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:05:24 -0700 (PDT)
+        Thu, 30 Aug 2018 12:05:25 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] of/fdt: Scan the root node properties earlier
-Date:   Thu, 30 Aug 2018 14:05:21 -0500
-Message-Id: <20180830190523.31474-2-robh@kernel.org>
+Subject: [PATCH 2/3] of/fdt: avoid re-parsing '#{address,size}-cells' in of_fdt_limit_memory
+Date:   Thu, 30 Aug 2018 14:05:22 -0500
+Message-Id: <20180830190523.31474-3-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830190523.31474-1-robh@kernel.org>
 References: <20180830190523.31474-1-robh@kernel.org>
@@ -58,41 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Scan the root node properties (#{size,address}-cells) earlier, so that
-the dt_root_addr_cells and dt_root_size_cells variables are initialized
-and can be used.
+Now that we initialize dt_root_addr_cells and dt_root_size_cells earlier,
+use them and simplify of_fdt_limit_memory.
 
 Cc: Frank Rowand <frowand.list@gmail.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/of/fdt.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/of/fdt.c | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
 
 diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 800ad252cf9c..49abe18f1bde 100644
+index 49abe18f1bde..fef4b2c8a171 100644
 --- a/drivers/of/fdt.c
 +++ b/drivers/of/fdt.c
-@@ -1215,6 +1215,10 @@ bool __init early_init_dt_verify(void *params)
- 	initial_boot_params = params;
- 	of_fdt_crc32 = crc32_be(~0, initial_boot_params,
- 				fdt_totalsize(initial_boot_params));
-+
-+	/* Initialize {size,address}-cells info */
-+	of_scan_flat_dt(early_init_dt_scan_root, NULL);
-+
- 	return true;
- }
- 
-@@ -1224,9 +1228,6 @@ void __init early_init_dt_scan_nodes(void)
- 	/* Retrieve various information from the /chosen node */
- 	of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);
- 
--	/* Initialize {size,address}-cells info */
--	of_scan_flat_dt(early_init_dt_scan_root, NULL);
+@@ -44,28 +44,7 @@ void of_fdt_limit_memory(int limit)
+ 	int memory;
+ 	int len;
+ 	const void *val;
+-	int nr_address_cells = OF_ROOT_NODE_ADDR_CELLS_DEFAULT;
+-	int nr_size_cells = OF_ROOT_NODE_SIZE_CELLS_DEFAULT;
+-	const __be32 *addr_prop;
+-	const __be32 *size_prop;
+-	int root_offset;
+-	int cell_size;
 -
- 	/* Setup memory, calling early_init_dt_add_memory_arch */
- 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
- }
+-	root_offset = fdt_path_offset(initial_boot_params, "/");
+-	if (root_offset < 0)
+-		return;
+-
+-	addr_prop = fdt_getprop(initial_boot_params, root_offset,
+-				"#address-cells", NULL);
+-	if (addr_prop)
+-		nr_address_cells = fdt32_to_cpu(*addr_prop);
+-
+-	size_prop = fdt_getprop(initial_boot_params, root_offset,
+-				"#size-cells", NULL);
+-	if (size_prop)
+-		nr_size_cells = fdt32_to_cpu(*size_prop);
+-
+-	cell_size = sizeof(uint32_t)*(nr_address_cells + nr_size_cells);
++	int cell_size = sizeof(uint32_t)*(dt_root_addr_cells + dt_root_size_cells);
+ 
+ 	memory = fdt_path_offset(initial_boot_params, "/memory");
+ 	if (memory > 0) {
 -- 
 2.17.1
 
