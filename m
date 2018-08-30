@@ -6,95 +6,209 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBC4C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F35C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BC320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BC320645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A68620645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:36:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A68620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeH3MhY (ORCPT
+        id S1728079AbeH3Mh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:37:24 -0400
-Received: from mga09.intel.com ([134.134.136.24]:38766 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727688AbeH3MhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:37:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 01:36:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
-   d="scan'208";a="253109906"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
-  by orsmga005.jf.intel.com with ESMTP; 30 Aug 2018 01:36:19 -0700
-Subject: Re: [PATCH V8 7/9] mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@unisoc.com>,
-        Jason Wu <jason.wu@unisoc.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1535617305-16952-1-git-send-email-zhang.chunyan@linaro.org>
- <1535617305-16952-8-git-send-email-zhang.chunyan@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <4931d113-1af0-26ed-ae96-8ccd1be99334@intel.com>
-Date:   Thu, 30 Aug 2018 11:34:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1535617305-16952-8-git-send-email-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 30 Aug 2018 08:37:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:32934 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbeH3Mh1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 08:37:27 -0400
+Received: from mail-pf1-f200.google.com ([209.85.210.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fvIRC-0003cE-To
+        for linux-kernel@vger.kernel.org; Thu, 30 Aug 2018 08:36:23 +0000
+Received: by mail-pf1-f200.google.com with SMTP id q21-v6so4371019pff.21
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 01:36:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3aE21avEOVo0rb89/e5y4ptR+DKkFzWD27rSXvaREKg=;
+        b=UksGQQ0czaQK2ul6q1hwdtu5N1VRW4Dw614w4uOefR7ydB6/AhGl2Ae+sUSCeB2q5T
+         PyzEsjmq2pzBhGOTqnQMAtmu+XdgNnN+cwSiaqV8SJ5y4j0RT1JJDUKzBrd/+p4XM292
+         dt64DhZQeqyb/gfyf35sXKZuq2yzHeIM0FHbGchZnFpgCbuNCMjjcqZ8tQiK/aZjgHnK
+         lKGj3EC1NE4Y4nFfrghVIkWi9rSUG9HYOMRuFP9rg9WwQqVFElkC+fhMeVBegAKCksxk
+         5hLAjgy80qCR0PwLflPFcXPYsedeBRqSd7Xou3C4NOvNeWheDuhnnpVoEU18bYJ1vyUr
+         p2wA==
+X-Gm-Message-State: APzg51DA9ZI4AZ/vJaIdKAFQHshhXPRgjw+GXYMZCjz9Pj84OfQ5EZ3X
+        Xztpuaktu9sFWm/9YsakF9aaoUuQhbvvVfcgCQez7zWJqHJWT1PF6iCwANVAEwukC99dsfN4kUg
+        rWnEfYNQQQDDtnPN5A1/5r4Etq8Qx6y2csif7PJKqHg==
+X-Received: by 2002:a17:902:8f8c:: with SMTP id z12-v6mr9235395plo.4.1535618181622;
+        Thu, 30 Aug 2018 01:36:21 -0700 (PDT)
+X-Google-Smtp-Source: ANB0VdY+fzi13jWyhk3NkAzCcthcdxbOL+brJPXiqiKOVnQt41kNfqwss5EEgNkGGXNdEsv/CSXthg==
+X-Received: by 2002:a17:902:8f8c:: with SMTP id z12-v6mr9235374plo.4.1535618181326;
+        Thu, 30 Aug 2018 01:36:21 -0700 (PDT)
+Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id v7-v6sm10026401pgh.57.2018.08.30.01.36.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 01:36:20 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH 4/5] memstick: rtsx_usb_ms: Support runtime power
+ management
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAPDyKFqXBMOP+_1h4WVF1Ob_dhBfr1JC+MFfSYdp1uRmzZhZ-Q@mail.gmail.com>
+Date:   Thu, 30 Aug 2018 16:36:16 +0800
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Bauer.Chen" <bauer.chen@realtek.com>, ricky_wu@realtek.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>
 Content-Transfer-Encoding: 7bit
+Message-Id: <3F123073-8A73-4E4C-B4A6-9777022D9927@canonical.com>
+References: <20180731061721.15831-1-kai.heng.feng@canonical.com>
+ <20180731061721.15831-5-kai.heng.feng@canonical.com>
+ <CAPDyKFqv5apJp=zbyoZi-UE8+omu7JauJ5_7+ymY9B2BSS48bA@mail.gmail.com>
+ <E133AFB3-27F6-4DD3-BB85-A85EDB51EE57@canonical.com>
+ <CAPDyKFqXBMOP+_1h4WVF1Ob_dhBfr1JC+MFfSYdp1uRmzZhZ-Q@mail.gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/08/18 11:21, Chunyan Zhang wrote:
-> When Host Version 4 Enable is set to 1, SDMA uses ADMA System Address
-> register (05Fh-058h) instead of using register (000h-004h) to indicate
-> its system address of data location. The register (000h-004h) is
-> re-assigned to 32-bit Block Count and Auto CMD23 argument, so then SDMA
-> may use Auto CMD23.
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+at 14:28, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> On 23 August 2018 at 10:03, Kai-Heng Feng <kai.heng.feng@canonical.com>  
+> wrote:
+>> Hi Ulf,
+>>
+>> Sorry for the late reply.
+>>
+>>
+>> at 21:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>
+>>> On 31 July 2018 at 08:17, Kai-Heng Feng <kai.heng.feng@canonical.com>
+>>> wrote:
+>>>> In order to let host's parent device, rtsx_usb, to use USB remote wake
+>>>> up signaling to do card detection, it needs to be suspended. Hence it's
+>>>> necessary to add runtime PM support for the memstick host.
+>>>>
+>>>> To keep memstick host stays suspended when it's not in use, convert the
+>>>> card detection function from kthread to delayed_work, which can be
+>>>> scheduled when the host is resumed and can be canceled when the host is
+>>>> suspended.
+>>>>
+>>>> Use an idle function check if there's no card and the power mode is
+>>>> MEMSTICK_POWER_OFF. If both criteria are met, put the device to suspend.
+>>>>
+>>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>>>> ---
+>>>>  drivers/memstick/host/rtsx_usb_ms.c | 138 ++++++++++++++--------------
+>>>>  1 file changed, 71 insertions(+), 67 deletions(-)
+>>>>
+>>>> diff --git a/drivers/memstick/host/rtsx_usb_ms.c
+>>>> b/drivers/memstick/host/rtsx_usb_ms.c
+>>>> index cd12f3d1c088..126eb310980a 100644
+>>>> --- a/drivers/memstick/host/rtsx_usb_ms.c
+>>>> +++ b/drivers/memstick/host/rtsx_usb_ms.c
+>>>> @@ -40,15 +40,14 @@ struct rtsx_usb_ms {
+>>>>
+>>>>         struct mutex            host_mutex;
+>>>>         struct work_struct      handle_req;
+>>>> -
+>>>> -       struct task_struct      *detect_ms;
+>>>> -       struct completion       detect_ms_exit;
+>>>> +       struct delayed_work     poll_card;
+>>>>
+>>>>         u8                      ssc_depth;
+>>>>         unsigned int            clock;
+>>>>         int                     power_mode;
+>>>>         unsigned char           ifmode;
+>>>>         bool                    eject;
+>>>> +       bool                    suspend;
+>>>>  };
+>>>>
+>>>>  static inline struct device *ms_dev(struct rtsx_usb_ms *host)
+>>>> @@ -524,7 +523,7 @@ static void rtsx_usb_ms_handle_req(struct  
+>>>> work_struct
+>>>> *work)
+>>>>         int rc;
+>>>>
+>>>>         if (!host->req) {
+>>>> -               pm_runtime_get_sync(ms_dev(host));
+>>>> +               pm_runtime_get_noresume(ms_dev(host));
+>>>
+>>>
+>>> I don't think this is safe.
+>>>
+>>> The memstick core doesn't manage runtime PM, hence there are no
+>>> guarantee that the device is runtime resumed at this point, or is
+>>> there?
+>>
+>>
+>> No guarantees there.
+>> Right now this only gets call when the host is powered on.
+>>
+>>>>               do {
+>>>>                         rc = memstick_next_req(msh, &host->req);
+>>>>                         dev_dbg(ms_dev(host), "next req %d\n", rc);
+>>>> @@ -545,7 +544,7 @@ static void rtsx_usb_ms_handle_req(struct  
+>>>> work_struct
+>>>> *work)
+>>>>                                                 host->req->error);
+>>>>                         }
+>>>>                 } while (!rc);
+>>>> -               pm_runtime_put(ms_dev(host));
+>>>> +               pm_runtime_put_noidle(ms_dev(host));
+>>>
+>>>
+>>> According to the above, I think this should stay as is. Or perhaps you
+>>> want to use pm_runtime_put_sync() instead, as to avoid the device from
+>>> being unnecessary resumed and hence also its parent.
+>>
+>>
+>> The tricky part is that pm_runtime_put_sync() calls  
+>> rtsx_usb_ms_set_param()
+>> which calls pm_runtime_* helpers again
+>
+> Why does a pm_runtime_put_sync() triggers a call to
+> rtsx_usb_ms_set_param()? It should not.
+>
+> Ahh, that's because you have implemented the ->runtime_suspend()
+> callback to wrongly call memstick_suspend_host(). Drop that change,
+> then you should be able to call pm_runtime_put_sync() here and at
+> other places correctly.
 
-> ---
->  drivers/mmc/host/sdhci.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 62d843ac90..606d331 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3834,10 +3834,13 @@ int sdhci_setup_host(struct sdhci_host *host)
->  	if (host->quirks & SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12)
->  		host->flags |= SDHCI_AUTO_CMD12;
->  
-> -	/* Auto-CMD23 stuff only works in ADMA or PIO. */
-> +	/*
-> +	 * For v3 mode, Auto-CMD23 stuff only works in ADMA or PIO.
-> +	 * For v4 mode, SDMA may use Auto-CMD23 as well.
-> +	 */
->  	if ((host->version >= SDHCI_SPEC_300) &&
->  	    ((host->flags & SDHCI_USE_ADMA) ||
-> -	     !(host->flags & SDHCI_USE_SDMA)) &&
-> +	     !(host->flags & SDHCI_USE_SDMA) || host->v4_mode) &&
->  	     !(host->quirks2 & SDHCI_QUIRK2_ACMD23_BROKEN)) {
->  		host->flags |= SDHCI_AUTO_CMD23;
->  		DBG("Auto-CMD23 available\n");
-> 
+Thanks for the catch! I'll address that.
+
+>
+>> So maybe add runtime PM support to memstick core is the only way to  
+>> support
+>> it properly?
+>
+> It shouldn't be needed, and I wonder about if the effort is worth it,
+> especially since it seems that the only memstick driver that using
+> runtime PM is rtsx_usb_ms.
+>
+> BTW, are you testing this change by using a memstick card, since I
+> haven't seen them for ages. :-)
+
+Yes, Realtek borrowed me a MMC/MS combo device to let me work on this.
+
+Kai-Heng
+
+>
+> [...]
+>
+> Kind regards
+> Uffe
+
 
