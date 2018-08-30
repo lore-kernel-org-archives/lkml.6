@@ -2,69 +2,81 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45286C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B63AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F9E2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:39:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K851uWF5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F9E2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1FF752073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:39:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF752073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbeH3Oki (ORCPT
+        id S1728456AbeH3OlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:40:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33348 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbeH3Okh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:40:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7vglJ+NZ4ZmZvWkw+w6q7eF3N8xslbTy/DARKonGKgo=; b=K851uWF5RgWAbj/vPmWA8yYRS
-        MLqzj+iDYTxLYKegi6vyUn74FiNbsLvUp1V58+icaBCCokHTf3jq33o4o22/ubezCPksTu9CLJE/h
-        zFeb+PEpM0DJd25TLKqc+mc82+1zOoPy3ZnyVlrwenR4GSTH4A0cNdwe0lkR6U8m9lOMaiUWPrQux
-        ws9jQuj9lEgABcrxQx7/Lad4pDoHqtbifqZWI3xbbUMTHqY0+XIRs7aVGkZkLJlD0iicMm1tcic8w
-        siCZWE0A3vIPBNS9nltbLKz1BQQVkUjzRrRTtZbzM1crqYP30BVzBGv9TTEtZfjIZMkN7wdB0EUh2
-        WT2yyAv5w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvKLx-00085r-RK; Thu, 30 Aug 2018 10:39:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 877042024EB08; Thu, 30 Aug 2018 12:39:04 +0200 (CEST)
-Date:   Thu, 30 Aug 2018 12:39:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: futex_cmpxchg_enabled breakage
-Message-ID: <20180830103904.GA24160@hirez.programming.kicks-ass.net>
-References: <20180829222221.GA22017@brightrain.aerifal.cx>
+        Thu, 30 Aug 2018 10:41:16 -0400
+Received: from mga01.intel.com ([192.55.52.88]:8679 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728311AbeH3OlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:41:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 03:39:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
+   d="scan'208";a="69279972"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 30 Aug 2018 03:39:34 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1fvKMP-0000b3-5X; Thu, 30 Aug 2018 13:39:33 +0300
+Date:   Thu, 30 Aug 2018 13:39:33 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
+Message-ID: <20180830103933.GJ11447@smile.fi.intel.com>
+References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
+ <1533039060-18779-2-git-send-email-phil.edworthy@renesas.com>
+ <20180829171039.GD11447@smile.fi.intel.com>
+ <TY1PR01MB176960BEDC23EA64095EF6F2F5080@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829222221.GA22017@brightrain.aerifal.cx>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <TY1PR01MB176960BEDC23EA64095EF6F2F5080@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 06:22:21PM -0400, Rich Felker wrote:
-> If there are archs that support SMP but don't provide their own
+On Thu, Aug 30, 2018 at 08:30:59AM +0000, Phil Edworthy wrote:
+> On 29 August 2018 18:11 Andy Shevchenko wrote:
+> > On Tue, Jul 31, 2018 at 01:10:59PM +0100, Phil Edworthy wrote:
 
-Then throw it out the window and drive over it with a tank.
+> Thanks for the review. I'm not particularly happy with the patch as is, it's
+> pretty messy. I was in rush trying to get things done before holidays - always
+> a mistake.
+> Would you mind if I sent a v5 that I feel is somewhat clearer?
 
-Seriously, an SMP architecture that doesn't have native cmpxchg (or
-equivalent) is not worth anybodies time.
+That's definitely preferable!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
