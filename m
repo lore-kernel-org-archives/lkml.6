@@ -2,134 +2,87 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43376C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F992073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:13:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3LjZSaR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F992073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0694520658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0694520658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeH3RPn (ORCPT
+        id S1729010AbeH3RPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:15:43 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33631 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbeH3RPm (ORCPT
+        Thu, 30 Aug 2018 13:15:48 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:12527 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728273AbeH3RPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:15:42 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h9-v6so6502323edr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=shqp801gxGgttkh+vfo02+52v2YI5Uvaa05tuPvvFOI=;
-        b=U3LjZSaRm5zwofF/cG3/KeFEyJEYMSKv21rqdEV+kNTa20LkoWoHuNdyhcpmQEC7ho
-         dkw2M0xAFuJs0tLpY+Ob5Ot6+GGsIGkuaoRFEoqpb7K6GdRHl3/DjW71JiohjnDFXYx1
-         HUZLRkR6LGDtwfJWwuFQRzSlVHoeamFp518sQCcjAcloAy7fKN3vwk6W7+86p6teQjCs
-         VmBnM780hiEPfuIfhBXZ6svvu7WHC3UZ6Gedn4/Knn7arzmQgni/5yFeAGBVzAtG1vSN
-         f1QFI7mgxpPLFpRW5Iih35+3frJFu6zbuPlYrBziD3ck2al71DyFePl2qnFUEY0/21O8
-         VQSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=shqp801gxGgttkh+vfo02+52v2YI5Uvaa05tuPvvFOI=;
-        b=rougvoKADRadK1hpbAIw3Xr5S60bd1jI1m6787Zc99ALr5PVmtX2JsWlsvdOJa9YaI
-         EccW0guxI6MjY883QuSLHedW//8HrkLtB3CJQimLdJXejyPOAfBrNqbxJgGzy35wqEsC
-         T8zVCInsuGwGMdYkp5QOJGLAIWBc8UAC4/gdxbSYRs39gbgWZ24qpsflpOhE94rB0As8
-         ur1N9G0MfDhMxm5St1K7hE6XGPV59oq9+Q2Vp9dReokKwZ3V8/NV0y3wUBQGvMo4XomF
-         8E1C6b8uwXKTPjSapfUCR3Y7zV4+64uRuqoQUDPn2Wz+C5NIdtTxrYyJwqGTN9yQaPz/
-         qhvg==
-X-Gm-Message-State: APzg51ACDMr2mEPyNQd3bh5VpboFEz7U18wYvOJoleYMoPlcMYgyHu34
-        0O3xqnmJzxYuIV/pP7QcRFaPUZY=
-X-Google-Smtp-Source: ANB0VdY3ByWnkqQVLNCWQjsF4zUZIg1K+6R/Hd3TIYRKaoe4N9Nz4fJopdb2w6qhhWh1gqc35cvgzg==
-X-Received: by 2002:aa7:d141:: with SMTP id r1-v6mr13304282edo.83.1535634816063;
-        Thu, 30 Aug 2018 06:13:36 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm2946845ede.5.2018.08.30.06.13.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 06:13:35 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 16:13:33 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/13] proc: convert /proc/self to _print_integer()
-Message-ID: <20180830131333.GA31422@avx2>
-References: <20180827231503.26899-1-adobriyan@gmail.com>
- <20180827231503.26899-6-adobriyan@gmail.com>
- <54cb86c6d96b47bc8017a69be124c105@AcuMS.aculab.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <54cb86c6d96b47bc8017a69be124c105@AcuMS.aculab.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 30 Aug 2018 13:15:47 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie2.idc.renesas.com with ESMTP; 30 Aug 2018 22:13:40 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id D2E3D86BF6;
+        Thu, 30 Aug 2018 22:13:40 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,306,1531753200"; 
+   d="scan'208";a="289528159"
+Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
+  by relmlii1.idc.renesas.com with ESMTP; 30 Aug 2018 22:13:38 +0900
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Date:   Thu, 30 Aug 2018 14:12:55 +0100
+Message-Id: <1535634775-19365-4-git-send-email-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 09:50:50AM +0000, David Laight wrote:
-> From: Alexey Dobriyan
-> > Sent: 28 August 2018 00:15
-> > ---
-> >  fs/proc/self.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/proc/self.c b/fs/proc/self.c
-> > index 127265e5c55f..b2279412237b 100644
-> > --- a/fs/proc/self.c
-> > +++ b/fs/proc/self.c
-> > @@ -14,6 +14,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
-> >  {
-> >  	struct pid_namespace *ns = proc_pid_ns(inode);
-> >  	pid_t tgid = task_tgid_nr_ns(current, ns);
-> > +	char buf[10], *p = buf + sizeof(buf);
-> >  	char *name;
-> > 
-> >  	if (!tgid)
-> > @@ -22,7 +23,11 @@ static const char *proc_self_get_link(struct dentry *dentry,
-> >  	name = kmalloc(10 + 1, dentry ? GFP_KERNEL : GFP_ATOMIC);
-> >  	if (unlikely(!name))
-> >  		return dentry ? ERR_PTR(-ENOMEM) : ERR_PTR(-ECHILD);
-> > -	sprintf(name, "%u", tgid);
-> > +
-> 
-> Best not to 'hide' the initialisation of 'p' at the top of the function.
-> Much easier to see what is going on if it is moved here.
+This provides a pinctrl driver for the Renesas R9A06G032 SoC
 
-It was written that way to have initialization near the buffer,
-so that it is obvious that pointer and buffer are connected and
-making
+Based on a patch originally written by Michel Pollet at Renesas.
 
-	p = _print_integer_uNN(p, x);
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+v2:
+ - Add "renesas,rzn1-pinctrl" compatible fallback string
+ - Register size corrected.
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-standard building block which can be copypasted left and right and
-still be correct.
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 1bc1f36..282ec11 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -165,6 +165,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		pinctrl: pin-controller@40067000 {
++			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
++			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
++			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
++			clock-names = "bus";
++			status = "okay";
++		};
++
+ 		gic: gic@44101000 {
+ 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+ 			interrupt-controller;
+-- 
+2.7.4
 
-> > +	p = _print_integer_u32(p, tgid);
-> 
-> or just:
-> 	p = _print_integer(buf + sizeof(buf), tgid);
-> 
-> (What a horrid interface ...)
-
-It is. The problem is that adding bound checking will get you current
-vsnprintf() and number() and num_to_str().
-
-> > +	memcpy(name, p, buf + sizeof(buf) - p);
-> > +	name[buf + sizeof(buf) - p] = '\0';
-> > +
-> >  	set_delayed_call(done, kfree_link, name);
-> >  	return name;
-> >  }
