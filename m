@@ -2,162 +2,96 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0B4C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8549DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B3E0204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B3E0204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2596620666
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:47:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hz2rV9JX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2596620666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeH3Fpp convert rfc822-to-8bit (ORCPT
+        id S1727270AbeH3FrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:45:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12539 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbeH3Fpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:45:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 18:46:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,305,1531810800"; 
-   d="scan'208";a="228757793"
-Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
-  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2018 18:45:34 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- PGSMSX104.gar.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0319.002;
- Thu, 30 Aug 2018 09:45:30 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QIAAWRmAgACLBTD//37OgIAA0sGQ
-Date:   Thu, 30 Aug 2018 01:45:29 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
- <20180829210901.GA7176@linux.intel.com>
-In-Reply-To: <20180829210901.GA7176@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGU3YjkwMzQtNzg4OC00YzBmLWIxNzUtOGMzMmViMmFiNTgxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieFpkb2UwcUh4TEhsN1cxbCswdlBcL0JGR0VHRUIxNEtXRzl2Z0tjZ0VtMTc0TlJBeENOMGl1eDFDMlwvdWhEdUczIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Thu, 30 Aug 2018 01:47:02 -0400
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:47021 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbeH3FrC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:47:02 -0400
+Received: by mail-pg1-f175.google.com with SMTP id b129-v6so3124033pga.13;
+        Wed, 29 Aug 2018 18:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0fyxd2DJpX0EsYfx8nVNhosdQo1QyE2I72iuKCj+sqw=;
+        b=hz2rV9JXIMBk65JEoeG7rHcZwvXXG/vukVo6yjzqwZ8ZuwXMHFBSZdcxsok+D8T27c
+         zJ23oJtV6FU+kn0H+gOwmloF/N1onGuGGiWZfhK/aC+gRAEybmxMQGvezudwt3lrmOFh
+         wbSOAHOpKrZkz9S+qYfSpaOUTKHMZdk5BPXuyvuLWHJ1twq9k0Zyc8uSg8kVsx/U3EVW
+         mJFI11a2nuklfuhEXN7ePaQAhwOmi6F3O8ERB/DHHDRztN9Y9Y10TnWQn7GzasX/cuQd
+         Cdvj4hFHjiwUlGzbGQJMTDvvGDyN8KRRpU3Rb7E5hfVpIevkQ0utJZ338h9xpm/Dk3Qz
+         MNUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0fyxd2DJpX0EsYfx8nVNhosdQo1QyE2I72iuKCj+sqw=;
+        b=fWn78A1up3UPfNrxT2Msr4HueJp2rm3kNM2JaWdGilfaUHkEU+2i57oNF7b7i3KhtY
+         ZG6y6zkimDT13CU5xCkJVSXPdtQWB+xVyMgf1R6kixs1ZbHuX35aaozRjSyQ/nhhvP8v
+         GYvQmmtq+1PjSvrwyOzh9yCr8KQ9fw8CdVsGNhmwNI8C3Vt5NRioo641OWuaGfFOQ0yh
+         H2vteZYqNArgsv6yWqkPam04OD/9MZfeUFkuclYF3ZMOIE1CUFAtI1QcMna6ifBqlgtj
+         4gQcnNH6mlsduAidtGcOeSb27/cz+hxBWfCDlkgGbMc0MMkB5Vnk5vjhz4iY9F+aBCoo
+         axsA==
+X-Gm-Message-State: APzg51D7lMg2gYlJFhlPl/BOzfYODXPJaWAitl5TegiDjNgM9Y0ugs9N
+        WzkzXqp6VZbC2fKaWiKfWB4=
+X-Google-Smtp-Source: ANB0VdaXVXlpVSflNHAaI01KJV3ff00eMUJMoxyUo8+IbpA90/S+JenRYXL0zRG1PUehO5dbpS05tA==
+X-Received: by 2002:a63:4f64:: with SMTP id p36-v6mr7635780pgl.210.1535593641516;
+        Wed, 29 Aug 2018 18:47:21 -0700 (PDT)
+Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id m26-v6sm18178816pfi.102.2018.08.29.18.47.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 18:47:21 -0700 (PDT)
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+To:     johan@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
+        hpeter+linux_kernel@gmail.com
+Subject: [PATCH V2 0/4] Fintek F81232 driver improve and fix
+Date:   Thu, 30 Aug 2018 09:47:09 +0800
+Message-Id: <1535593634-22004-1-git-send-email-hpeter+linux_kernel@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > > Some kind of counter is required to keep track of the power cycle.
-> > > > > When going to sleep the sgx_pm_cnt is increased. sgx_einit()
-> > > > > compares the current value of the global count to the value in
-> > > > > the cache entry to see whether we are in a new power cycle.
-> > > >
-> > > > You mean reset to Intel default? I think we can also just reset
-> > > > the cached MSR values on each power cycle, which would be simpler,
-> IMHO?
-> > >
-> > > Refresh my brain, does hardware reset the MSRs on a transition to S3 or
-> lower?
+There are 2 patches changed from v1:
+	USB: serial: f81232: clear overrun flag
+		1: flush the lsr_worker when port closed
+		   (noticed by Oliver Neukum).
 
-Sorry I missed this one. To be honest I don't know. I checked the SDM and all I can find is:
+	USB: serial: f81232: implement break control
+		1: Add private is_break to record break status and re-apply
+		   when LCR changed in f81232_set_termios().
+		2: Fix wrong usage for f81232_set_mask_register() in
+		   f81232_break_ctl().
+	
+Ji-Ze Hong (Peter Hong) (4):
+  USB: serial: f81232: clear overrun flag
+  USB: serial: f81232: add high baud rate support
+  USB: serial: f81232: implement break control
+  USB: serial: f81232: fix bulk_in/out size
 
-"On reset, the default value is the digest of Intel's signing key."
+ drivers/usb/serial/f81232.c | 163 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 144 insertions(+), 19 deletions(-)
 
-Jarkko may know.
-
-> > >
-> > > > I think we definitely need some code to handle S3-S5, but should
-> > > > be in separate patches, since I think the major impact of S3-S5 is
-> > > > entire EPC being destroyed. I think keeping pm_cnt is not
-> > > > sufficient enough to handle such case?
-> > > > >
-> > > > > This brings up one question though: how do we deal with VM host
-> > > > > going to
-> > > sleep?
-> > > > > VM guest would not be aware of this.
-> > > >
-> > > > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
-> > > > SGX driver and SDK should be able to handle "sudden loss of EPC",
-> > > > ie, co-working together to re-establish the missing enclaves.
-> > > >
-> > > > Actually supporting "sudden loss of EPC" is a requirement to
-> > > > support live migration of VM w/ SGX. Internally long time ago we
-> > > > had a discussion and the decision was we should support SGX live
-> > > > migration given
-> > > two facts:
-> > > >
-> > > > 1) losing platform-dependent is not important. For example, losing
-> > > > sealing key is not a problem, as we could get secrets provisioned
-> > > > again from remote. 2) Both windows & linux driver commit to
-> > > > support "sudden
-> > > loss of EPC".
-> > > >
-> > > > I don't think we have to support in very first upstream driver,
-> > > > but I think we need to support someday.
-> > >
-> > > Actually, we can easily support this in the driver, at least for SGX1 hardware.
-> >
-> > That's my guess too. Just want to check whether we are still on the
-> > same page :)
-> >
-> > > SGX2 isn't difficult to handle, but we've intentionally postponed
-> > > those patches until SGX1 support is in mainline[1].
-> > > Accesses to the EPC after it is lost will cause faults.  Userspace EPC accesses,
-> e.g.
-> > > ERESUME, will get a SIGSEGV that the process should interpret as an
-> > > "I should restart my enclave" event.  The SDK already does this.  In
-> > > the driver, we just need to be aware of this potential behavior and
-> > > not freak out.  Specifically, SGX_INVD needs to not WARN on faults that may
-> have been due to a the EPC being nuked.
-> > > I think we can even remove the sgx_encl_pm_notifier() code altogether.
-> >
-> > Possibly we still need to do some cleanup, ie, all structures of enclaves, upon
-> resume?
-> 
-> Not for functional reasons.  The driver will automatically do the cleanup via
-> SGX_INVD when it next accesses the enclave's pages and takes a fault, e.g.
-> during reclaim.  Proactively reclaiming the EPC pages would probably affect
-> performance, though not necessarily in a good way.  And I think it would be a
-> beneficial to get the driver out of the suspend/hibernate/resume paths, e.g.
-> zapping all enclaves could noticeably impact suspend/resume latency.
-
-Sure.
-
-Thanks,
--Kai
+-- 
+2.7.4
 
