@@ -2,97 +2,109 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579C0C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B05E8C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C812073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C812073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6A64C20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnPsXFMw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A64C20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbeH3RHi (ORCPT
+        id S1728946AbeH3RHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:07:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50125 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728789AbeH3RHi (ORCPT
+        Thu, 30 Aug 2018 13:07:42 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43535 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728713AbeH3RHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:07:38 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvMdf-0003MV-FB; Thu, 30 Aug 2018 15:05:31 +0200
-Date:   Thu, 30 Aug 2018 15:05:31 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Feng Tang <feng.tang@intel.com>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@elte.hu>,
-        "H . Peter Anvin" <hpa@linux.intel.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
- NO_BOOTMEM
-In-Reply-To: <20180830125909.uq3e76akcmep6j2u@shbuild888>
-Message-ID: <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de>
-References: <20180830090319.985-1-feng.tang@intel.com> <20180830104401.GZ24124@hirez.programming.kicks-ass.net> <20180830111207.GE2656@dhcp22.suse.cz> <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de> <20180830124915.GH2656@dhcp22.suse.cz>
- <20180830125909.uq3e76akcmep6j2u@shbuild888>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 30 Aug 2018 13:07:41 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z27-v6so6454933edb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=i1mvplLlOCL9jwKYBcVYkW35b+HzqAg2bbkR+Jen/mU=;
+        b=MnPsXFMwnjSIEyIC2j1iql7T5TzbgJeB4cbgmYE+TyEYhouXR+Mi5+ddf6gD/yk70K
+         QqV1R7xx80+ynJBG7yb+tIaSUy9BY309cboHJMsbZm44Sam7z7F3kYRR2E9ucUtNiTtp
+         gAaT/dE9V/SCo1X0DbJkVooWyAnLFKbeSGJ+enHSCOHkF0u2ghdbnlaTq4qLwQTC8EaP
+         UNcn7eOHQbItRbxi45lkku41ftNdtjQtI4r/tTFAbJEi+tezOAm3WnYFM4EFqSDFUcEK
+         GSvOn/YcjY8nT5hCoZGGLW+mKyu4mIR6Q2nUMzK1668OJMW2uslf59V7/l2aNS7rTzDR
+         OOfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=i1mvplLlOCL9jwKYBcVYkW35b+HzqAg2bbkR+Jen/mU=;
+        b=DXlVDDOiR0jOdiMd1vVV1SKbeBEWp2CqndOW/i++ckl9pIBbafAx+KZjTsBsScRzIL
+         wcC+lxB/31bycxSsvEKWv6BvbOgXdFTMdZFRAqesAVa6kDYJulj7eX9JmaeTRrwnUoE9
+         Rxk7whH66xPSauFgzMOuevxnYoPv8zOyquMoprz5KEIrBszwB9FCJeWeYY8Vq8uaJcpn
+         ecNteN/ka+7PLVPUN4ZP2T86x7SiViKDvr21/6uox0ttwbvopRddy/+L9eEQALFi5ZGx
+         Vv1MzHdfFbop2vV9v2XczotC8iXsTDMeSkwtbt5PjtCjyx5AhPrV6rZcyCv8FVyivGJg
+         44rw==
+X-Gm-Message-State: APzg51DKBtdcxu2B3mJ6NJyfipFmMbjbUm6ug/Ql+xvEFWKYIlVNitTw
+        dTeJn9d3HTsd+Ns9ctJy5jxmk38=
+X-Google-Smtp-Source: ANB0VdYUgUfQfamrjZTl0IiurAl2+jJs38/ZKMG3ANEYo/YsA+LTFltja3lkTOss4Yc5o1FdHUKD1g==
+X-Received: by 2002:a50:a1c6:: with SMTP id 64-v6mr12503731edk.309.1535634336704;
+        Thu, 30 Aug 2018 06:05:36 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id x22-v6sm2931565edb.8.2018.08.30.06.05.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 06:05:36 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 16:05:34 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     keescook@chromium.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: uNNw: wrapping integer annotations
+Message-ID: <20180830130534.GA31044@avx2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018, Feng Tang wrote:
-> On Thu, Aug 30, 2018 at 02:49:15PM +0200, Michal Hocko wrote:
-> > On Thu 30-08-18 13:54:19, Thomas Gleixner wrote:
-> > > On Thu, 30 Aug 2018, Michal Hocko wrote:
-> > > > On Thu 30-08-18 12:44:02, Peter Zijlstra wrote:
-> > > > > On Thu, Aug 30, 2018 at 05:03:19PM +0800, Feng Tang wrote:
-> > > > > > The root cause is that when CONFIG_NO_BOOTMEM=y,  before
-> > > > > > e820__memblock_setup() is called there is no memory for bootmem
-> > > > > > to allocate,
-> > > > > 
-> > > > > Which you bloody well asked for by using NO_BOOTMEM=y.
-> > > > > 
-> > > > > Going down this route; adding hacks for every little thing that does
-> > > > > want bootmem, completely defeats the purpose.
-> > > > > 
-> > > > > If anything, make the earlycon thing depend on NO_BOOTMEM=n. That also
-> > > > > solves your problem. No earlycon, no panic.
-> > > > 
-> > > > Well, there is endeavor to remove bootmem allocator altogether. So
-> > > > making earlycon depend on NO_BOOTMEM=n doesn't sound like a good fit to
-> > > 
-> > > If we want to remove bootmem, then reintroducing it with a static bootmem
-> > > section doesn't make any sense at all.
-> > 
-> > I have actually checked the code now and see what you mean. I thought it
-> > would be a single allocation that is needed but that is not the case so
-> > the static buffer is not going to fly.
-> 
-> Exactly! I tried several ways for the static allocation, like in data, in bss
-> section, but they all failed, as in the very start of setup_arch():
-> 
-> 	memblock_reserve(__pa_symbol(_text),
-> 		(unsigned long)__bss_stop - (unsigned long)_text);
-> 
-> Those [_text, __bss_stop] is not able to be used by alloc_bootmem(). And I
-> only got this patch, and really appreciate any good suggestions.
+LWN wrote:
+> Marking places where unsigned overflow is expected is needed; it would be
+> nice to get those annotations put into the kernel, Cook said.
 
-And why do you want to use bootmem in the first place? If boot mem is going
-away, why are you not fixing the early console crap to NOT use bootmem at
-all?
+Let's discuss the most important part -- naming :^)
 
-Thanks,
+In my opinion, signed universe should _not_ get anything before specific
+examples are presented where the value is in fact can be negative and
+can overflow.
 
-	tglx
+As for size_t/uintptr_t/..., they can be added as usize_w Rust-style
+or left until someone presents a usecase
+
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -119,6 +119,18 @@ typedef s64			int64_t;
+ #define aligned_be64		__aligned_be64
+ #define aligned_le64		__aligned_le64
+ 
++#ifdef __CHECKER__	// change to sanitizer define
++#define __wrap __attribute__((whatever))
++#else
++#define __wrap
++#endif
++/* wrapping is OK */
++typedef u8 __wrap u8w;
++typedef u16 __wrap u16w;
++typedef u32 __wrap u32w;
++typedef u64 __wrap u64w;
++typedef unsigned long __wrap unsigned_long_w;	// name sucks but consistently so
++
+ /**
+  * The type used for indexing onto a disc or disc partition.
+  *
