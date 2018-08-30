@@ -2,143 +2,177 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D78C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B79C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4F52082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:43:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4F52082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=live.cn
+	by mail.kernel.org (Postfix) with ESMTP id D45A620645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45A620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeH3Lok (ORCPT
+        id S1727755AbeH3LsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 07:44:40 -0400
-Received: from mail-oln040092254073.outbound.protection.outlook.com ([40.92.254.73]:51376
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727466AbeH3Lok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 07:44:40 -0400
-Received: from HK2APC01FT046.eop-APC01.prod.protection.outlook.com
- (10.152.248.53) by HK2APC01HT030.eop-APC01.prod.protection.outlook.com
- (10.152.248.246) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.20.1101.10; Thu, 30
- Aug 2018 07:43:45 +0000
-Received: from HK0PR06MB2561.apcprd06.prod.outlook.com (10.152.248.60) by
- HK2APC01FT046.mail.protection.outlook.com (10.152.249.180) with Microsoft
- SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.1101.10 via
- Frontend Transport; Thu, 30 Aug 2018 07:43:44 +0000
-Received: from HK0PR06MB2561.apcprd06.prod.outlook.com
- ([fe80::5902:da9:e907:fe7d]) by HK0PR06MB2561.apcprd06.prod.outlook.com
- ([fe80::5902:da9:e907:fe7d%5]) with mapi id 15.20.1080.015; Thu, 30 Aug 2018
- 07:43:44 +0000
-From:   Changwei Ge <gechangwei@live.cn>
-To:     Larry Chen <lchen@suse.com>, "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: Re: [Ocfs2-devel] [PATCH v4] fix crash on
- ocfs2_duplicate_clusters_by_page
-Thread-Topic: [Ocfs2-devel] [PATCH v4] fix crash on
- ocfs2_duplicate_clusters_by_page
-Thread-Index: AQHUQDUtksKoRiA7XkiDpbTdwtwk8Q==
-Date:   Thu, 30 Aug 2018 07:43:44 +0000
-Message-ID: <HK0PR06MB25613C564B9204533E7D4801D5080@HK0PR06MB2561.apcprd06.prod.outlook.com>
-References: <20180830030654.20872-1-lchen@suse.com>
-In-Reply-To: <20180830030654.20872-1-lchen@suse.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: PU1PR01CA0040.apcprd01.prod.exchangelabs.com
- (2603:1096:803:16::28) To HK0PR06MB2561.apcprd06.prod.outlook.com
- (2603:1096:203:6f::10)
-x-incomingtopheadermarker: OriginalChecksum:6B2D2549136A25C6B7E9E55E8791E13B158465C35B61D0AA09CB7C866939CD76;UpperCasedChecksum:77DB97C8FEB6AAABE90EE85F540FA21866632E6E38D95237649A4255FD138295;SizeAsReceived:7631;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [tTPKhNwEdZR7/yOMENW55+4VDok05pOQ55ZZowyq7w4=]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2APC01HT030;6:aw/49LZ1Nh7IAr7cblWokW+PpEs48we12h7zx2URchcDFiAw5e0sCgQJf6UB04198pVV2RXhfwDGSni9xIkvCVG/bGVwI9nmo3qf/Uo2OSqRlAhgvUIQfp+qTtABSOZWayRW5Rsrh4sEnrJphf0t4nN4ElwlmFSz7lR4RNvuiHpp22z1OIGgUdBDF9QhwqfrWsDwZhxOSwjRsFJTZMqhpgI23Yc4mrZoZkm9LtBCKd1SUB3wMKjRHwKhfbLt3rPdONROyuQRKjxWrnOAXtyzew3byATAcRCzD/5iHGiazK4nOzLO65dRoWeiXa9KjjUFmXvS6YprzDy7lxs/sgoeomh0iwFnXgQsAzvT3bJDm1GYOR3q4D1IQT2l8wusys87oGrkRk434wb4YFW3zGxbhw6/oHSgQAF4phCF9wcGXhRLPMjPe+WF6hQKwCU74qmyamQeoh19EX+F9jwmkK7r0w==;5:jbcvjGRNL5qn0FvenpAslzAHV3bQk17rYN0UcKrvBaHAv3kROI2c3VCwFAsx+nRt0qAp1OIODFAA5v0UwwBO15BOL6E9VBXDvTOnQh5796EXBPKLohyVMaiEsZ9YVhNrJz9fXfzdXgJ2SJxCyUMjWg7oy44sMI5y3FU7yMQojVg=;7:6rI3gwYDUS1POn0uwTJx9YQkbVv8wpKP6iWxjhxbU7xE/GQ93pPBGDdy0H32XCbFsn2yFlZx/nYouYVPLJGVnsHDmOTzNUoChuEYnz4Gmfi3vYoNbZhs11zNS5b22w5g53mP0ZrRbFpZcwhucikZEgxVfudey0ueVmo4pr6v+vsRiOXJSHpzMAsd1+tgWgKGroMAR+A1O+NQLeHPH5zavOjIbT7ggN092B/GQIkD9d5H0D8jGlNVvHaNCYtStxS7
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:HK2APC01HT030;
-x-ms-traffictypediagnostic: HK2APC01HT030:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HK2APC01HT030;BCL:0;PCL:0;RULEID:;SRVR:HK2APC01HT030;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(7070007)(189003)(199004)(5250100002)(5660300001)(11346002)(446003)(7696005)(2900100001)(14454004)(74482002)(25786009)(6346003)(26005)(102836004)(33656002)(68736007)(486006)(4326008)(97736004)(6506007)(2201001)(386003)(53546011)(9686003)(2501003)(86362001)(6246003)(76176011)(74316002)(56003)(305945005)(104016004)(6436002)(476003)(256004)(81156014)(8936002)(229853002)(54906003)(110136005)(55016002)(105586002)(106356001)(8676002)(15760500003)(99286004)(82202002)(81612004);DIR:OUT;SFP:1901;SCL:1;SRVR:HK2APC01HT030;H:HK0PR06MB2561.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: live.cn does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=gechangwei@live.cn; 
-x-microsoft-antispam-message-info: 092XzkfFKAH8iHkenepCJ9uG0rdtAFe/zQKYZ+AgaONg+GiV5d/C9sCkguMEjhCS0bNA5U/M1ogcbKQCLWEQjuaTBElxNSCE6PAzY13HtbsKRBl6zAY9zcURjNkK63a3azNVPoGw6aPKaLrbyUbSr70B1ugi3CXn8RSSOa/uNN2TUdQ+DQeRbkEc45L2sjpnMav3P1o3dGBCCsONgE5xr4S/Yo8/3z1Vjdmy4QreRME=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <03A1B5578CAC774DBE0967159158336E@apcprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 30 Aug 2018 07:48:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47931 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbeH3LsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 07:48:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8F9E2208C7; Thu, 30 Aug 2018 09:47:15 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4FB8522A3E;
+        Thu, 30 Aug 2018 09:47:05 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 09:47:04 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        Evan Green <evgreen@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] dt-bindings: Introduce interconnect provider
+ bindings
+Message-ID: <20180830074704.56x5xzfhauhd7ncy@flea>
+References: <20180731161340.13000-1-georgi.djakov@linaro.org>
+ <20180731161340.13000-3-georgi.djakov@linaro.org>
+ <CABGGisxq+hf91R18pnZ=VZ9f99GssWWPhpPCjNAROJmKg5-udA@mail.gmail.com>
+ <e114ed83-fd54-4952-f375-e1d94826ac6e@linaro.org>
+ <20180820153207.xx5outviph7ec76p@flea>
+ <672e6c6c-222f-5e7f-5d0c-acc8da68b1ab@linaro.org>
+ <CAL_JsqKMPm=qmfYMQH99_gqSv0-ynUSvbkoNjjeDKtyxfgE1tg@mail.gmail.com>
+ <20180827151140.luysp2kfbcq6patg@flea>
+ <ec22950d-ae18-0cec-3bef-a4840618eb7d@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85f6f1fc-bf51-4187-67db-08d60e4c5007
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 07:43:44.8484
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2APC01HT030
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7643npv2arymjmqd"
+Content-Disposition: inline
+In-Reply-To: <ec22950d-ae18-0cec-3bef-a4840618eb7d@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGFycnksDQoNCkRpZCB5b3UgZm9yZ2V0IHRvIGFkZCBwcmVmaXggJ29jZnMyOiAnIHRvIHlv
-dXIgcGF0Y2ggdGl0bGUgbGluZT8NCg0KDQpPbiAyMDE4LzgvMzAgMTE6MDYsIExhcnJ5IENoZW4g
-d3JvdGU6DQo+IG9jZnMyX2R1cGxpY2F0ZV9jbHVzdGVyc19ieV9wYWdlIG1heSBjcmFzaCBpZiBv
-bmUgb2YgZXh0ZW50J3MgcGFnZXMgaXMgZGlydHkuDQo+IFdoZW4gYSBwYWdlIGhhcyBub3QgYmVl
-biB3cml0dGVuIGJhY2ssIGl0IGlzIHN0aWxsIGluIGRpcnR5IHN0YXRlLiBJZg0KPiBvY2ZzMl9k
-dXBsaWNhdGVfY2x1c3RlcnNfYnlfcGFnZSBpcyBjYWxsZWQgYWdhaW5zdCB0aGUNCj4gZGlydHkg
-cGFnZSwgdGhlIGNyYXNoIGhhcHBlbnMuDQo+DQo+IFRvIGZpeCB0aGlzIGJ1Zywgd2UgY2FuIHdy
-aXRlIGJhY2sgdGhlIHBhZ2UgcmF0aGVyIHRoYW4ganVzdCB3YWl0Lg0KPg0KPiBUaGUgZm9sbG93
-aW5nIGlzIHRoZSBiYWNrIHRyYWNlIGR1bXA6DQo+DQo+IGtlcm5lbCBCVUcgYXQgL3Jvb3QvY29k
-ZS9vY2ZzMi9yZWZjb3VudHRyZWUuYzoyOTYxIQ0KPiAJQlVHX09OKFBhZ2VEaXJ0eShwYWdlKSk7
-DQo+IFtleGNlcHRpb24gUklQOiBvY2ZzMl9kdXBsaWNhdGVfY2x1c3RlcnNfYnlfcGFnZSs4MjJd
-DQo+IF9fb2NmczJfbW92ZV9leHRlbnQrMHg4MC8weDQ1MCBbb2NmczJdDQo+ID8gX19vY2ZzMl9j
-bGFpbV9jbHVzdGVycysweDEzMC8weDI1MCBbb2NmczJdDQo+IG9jZnMyX2RlZnJhZ19leHRlbnQr
-MHg1YjgvMHg1ZTAgW29jZnMyXQ0KPiBfX29jZnMyX21vdmVfZXh0ZW50c19yYW5nZSsweDJhNC8w
-eDQ3MCBbb2NmczJdDQo+IG9jZnMyX21vdmVfZXh0ZW50cysweDE4MC8weDNiMCBbb2NmczJdDQo+
-ID8gb2NmczJfd2FpdF9mb3JfcmVjb3ZlcnkrMHgxMy8weDcwIFtvY2ZzMl0NCj4gb2NmczJfaW9j
-dGxfbW92ZV9leHRlbnRzKzB4MTMzLzB4MmQwIFtvY2ZzMl0NCj4gb2NmczJfaW9jdGwrMHgyNTMv
-MHg2NDAgW29jZnMyXQ0KPiBkb192ZnNfaW9jdGwrMHg5MC8weDVmMA0KPiBTeVNfaW9jdGwrMHg3
-NC8weDgwDQo+IGRvX3N5c2NhbGxfNjQrMHg3NC8weDE0MA0KPiBlbnRyeV9TWVNDQUxMXzY0X2Fm
-dGVyX2h3ZnJhbWUrMHgzZC8weGEyDQo+DQo+DQo+IENoYW5nZS1sb2c6DQo+IDEuIE9uY2Ugd2Ug
-ZmluZCB0aGUgcGFnZSBpcyBkaXJ0eSwgd2UgZG8gbm90IHdhaXQgdW50aWwgaXQncyBjbGVhbiwN
-Cj4gICAgIGJ1dCByYXRoZXIgd2UgdXNlIHdyaXRlX29uZV9wYWdlIHRvIHdyaXRlIGl0IGJhY2sN
-Cj4NCj4gMi4gd3JpdGVfb25lX3BhZ2UgYXJndW1lbnRzIGxpc3QgY2hhbmdlZCwgYWRqdXN0IGFu
-ZCByZXRlc3QgdGhpcyBwYXRjaC4NCj4NCj4gMy4gQ29tbWVudHMgaGFzIGJlZW4gY2hhbmdlZA0K
-Pg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBMYXJyeSBDaGVuIDxsY2hlbkBzdXNlLmNvbT4NCj4gLS0t
-DQo+ICAgZnMvb2NmczIvcmVmY291bnR0cmVlLmMgfCAxNiArKysrKysrKysrKystLS0tDQo+ICAg
-MSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+DQo+IGRp
-ZmYgLS1naXQgYS9mcy9vY2ZzMi9yZWZjb3VudHRyZWUuYyBiL2ZzL29jZnMyL3JlZmNvdW50dHJl
-ZS5jDQo+IGluZGV4IDc4Njk2MjJhZjIyYS4uZWQ4NGQwNWM3ZDAwIDEwMDY0NA0KPiAtLS0gYS9m
-cy9vY2ZzMi9yZWZjb3VudHRyZWUuYw0KPiArKysgYi9mcy9vY2ZzMi9yZWZjb3VudHRyZWUuYw0K
-PiBAQCAtMjk0Niw2ICsyOTQ2LDcgQEAgaW50IG9jZnMyX2R1cGxpY2F0ZV9jbHVzdGVyc19ieV9w
-YWdlKGhhbmRsZV90ICpoYW5kbGUsDQo+ICAgCQlpZiAobWFwX2VuZCAmIChQQUdFX1NJWkUgLSAx
-KSkNCj4gICAJCQl0byA9IG1hcF9lbmQgJiAoUEFHRV9TSVpFIC0gMSk7DQo+ICAgDQo+ICtyZXRy
-eToNCj4gICAJCXBhZ2UgPSBmaW5kX29yX2NyZWF0ZV9wYWdlKG1hcHBpbmcsIHBhZ2VfaW5kZXgs
-IEdGUF9OT0ZTKTsNCj4gICAJCWlmICghcGFnZSkgew0KPiAgIAkJCXJldCA9IC1FTk9NRU07DQo+
-IEBAIC0yOTU0LDExICsyOTU1LDE4IEBAIGludCBvY2ZzMl9kdXBsaWNhdGVfY2x1c3RlcnNfYnlf
-cGFnZShoYW5kbGVfdCAqaGFuZGxlLA0KPiAgIAkJfQ0KPiAgIA0KPiAgIAkJLyoNCj4gLQkJICog
-SW4gY2FzZSBQQUdFX1NJWkUgPD0gQ0xVU1RFUl9TSVpFLCBUaGlzIHBhZ2UNCj4gLQkJICogY2Fu
-J3QgYmUgZGlydGllZCBiZWZvcmUgd2UgQ29XIGl0IG91dC4NCj4gKwkJICogSW4gY2FzZSBQQUdF
-X1NJWkUgPD0gQ0xVU1RFUl9TSVpFLCB3ZSBkbyBub3QgZXhwZWN0IGEgZGlydHkgcGFnZSwNCj4g
-KwkJICogc28gd3JpdGUgaXQgYmFjay4NCj4gICAJCSAqLw0KPiAtCQlpZiAoUEFHRV9TSVpFIDw9
-IE9DRlMyX1NCKHNiKS0+c19jbHVzdGVyc2l6ZSkNCj4gLQkJCUJVR19PTihQYWdlRGlydHkocGFn
-ZSkpOw0KPiArCQlpZiAoUEFHRV9TSVpFIDw9IE9DRlMyX1NCKHNiKS0+c19jbHVzdGVyc2l6ZSkg
-ew0KPiArCQkJaWYgKFBhZ2VEaXJ0eShwYWdlKSkgew0KPiArCQkJCS8qDQo+ICsJCQkJICogd3Jp
-dGVfb25fcGFnZSB3aWxsIHVubG9jayB0aGUgcGFnZSBvbiByZXR1cm4NCj4gKwkJCQkgKi8NCj4g
-KwkJCQlyZXQgPSB3cml0ZV9vbmVfcGFnZShwYWdlKTsNCj4gKwkJCQlnb3RvIHJldHJ5Ow0KPiAr
-CQkJfQ0KPiArCQl9DQo+ICAgDQo+ICAgCQlpZiAoIVBhZ2VVcHRvZGF0ZShwYWdlKSkgew0KPiAg
-IAkJCXJldCA9IGJsb2NrX3JlYWRfZnVsbF9wYWdlKHBhZ2UsIG9jZnMyX2dldF9ibG9jayk7DQoN
-Cg==
+
+--7643npv2arymjmqd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Aug 29, 2018 at 03:33:29PM +0300, Georgi Djakov wrote:
+> On 08/27/2018 06:11 PM, Maxime Ripard wrote:
+> > On Fri, Aug 24, 2018 at 10:35:23AM -0500, Rob Herring wrote:
+> >> On Fri, Aug 24, 2018 at 9:51 AM Georgi Djakov <georgi.djakov@linaro.or=
+g> wrote:
+> >>>
+> >>> Hi Maxime,
+> >>>
+> >>> On 08/20/2018 06:32 PM, Maxime Ripard wrote:
+> >>>> Hi Georgi,
+> >>>>
+> >>>> On Tue, Aug 07, 2018 at 05:54:38PM +0300, Georgi Djakov wrote:
+> >>>>>> There is also a patch series from Maxime Ripard that's addressing =
+the
+> >>>>>> same general area. See "dt-bindings: Add a dma-parent property". We
+> >>>>>> don't need multiple ways to address describing the device to memory
+> >>>>>> paths, so you all had better work out a common solution.
+> >>>>>
+> >>>>> Looks like this fits exactly into the interconnect API concept. I s=
+ee
+> >>>>> MBUS as interconnect provider and display/camera as consumers, that
+> >>>>> report their bandwidth needs. I am also planning to add support for
+> >>>>> priority.
+> >>>>
+> >>>> Thanks for working on this. After looking at your serie, the one thi=
+ng
+> >>>> I'm a bit uncertain about (and the most important one to us) is how =
+we
+> >>>> would be able to tell through which interconnect the DMA are done.
+> >>>>
+> >>>> This is important to us since our topology is actually quite simple =
+as
+> >>>> you've seen, but the RAM is not mapped on that bus and on the CPU's,
+> >>>> so we need to apply an offset to each buffer being DMA'd.
+> >>>
+> >>> Ok, i see - your problem is not about bandwidth scaling but about usi=
+ng
+> >>> different memory ranges by the driver to access the same location. So
+> >>> this is not really the same and your problem is different. Also the
+> >>> interconnect bindings are describing a path and endpoints. However i =
+am
+> >>> open to any ideas.
+> >>
+> >> It may be different things you need, but both are related to the path
+> >> between a bus master and memory. We can't have each 'problem'
+> >> described in a different way. Well, we could as long as each platform
+> >> has different problems, but that's unlikely.
+> >>
+> >> It could turn out that the only commonality is property naming
+> >> convention, but that's still better than 2 independent solutions.
+> >=20
+> > Yeah, I really don't think the two issues are unrelated. Can we maybe
+> > have a particular interconnect-names value to mark the interconnect
+> > being used to perform DMA?
+>=20
+> We can call one of the paths "dma" and use it to perform DMA for the
+> current device. I don't see a problem with this. The name of the path is
+> descriptive and makes sense. And by doing we avoid adding more DT
+> properties, which would be an other option.
+
+That works for me. If Rob is fine with it too, I'll send an updated
+version of my serie based on yours.
+
+Thanks!
+Maxime
+
+
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--7643npv2arymjmqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluHoPcACgkQ0rTAlCFN
+r3ThBg/4mLeazs76XAj3fa7GTLC18Ea9bZiuglPP73B634W8pWzZxT+HHlGGFv+B
+iCPvC/rFk6ne48fG7m62RMvls+/SLZJ6QmMM8MSs5MVaj/w8WKw9pVNMkvRqufcH
+o4lfE6uRlj/RZZGDXApmwBlFgHf70C1u0+v7uuBfQQ5tvJdbkMud0WZywLHvNDeR
+f8+UTQMoMWQC6DLogRMVOicZDeykBMAiNHCk8kJkF9IZzHyhw2RP+Vx1lM8C8Axt
+I92o76XB3mnboZJ4XHAXBmkNjE+uQFvH5hV5uEnzsIPlJAZMUyR8HgmI4lG59e5g
+T0w1aQt/hwa1T8GlMMg4Ci/EMqyjScXQ1JhklWB67u2+uOuRTfuQ3vOO7j29iidQ
+JVq7iYt+kW5HaESlxBO8QpfGqdmG1KM9uqbwd+LCPbuhqHvpIHA+yYduR0ScBsgx
+HfWYL/zhrTCLyJdZR6WDxZsKoMcBQITpz5buhuOQxeSo0ZYaAKiKe60KfhEU2oc3
+2Ce8cegFIxbYyJlV5IgbmG9HhaAVMx4HcoxqXDh7fnxS7dwt/6X2+E6OOtCXNDsv
+UqdEfgmLFsGFUpCxnrLHhWXV7e6dhiDsm+WNowQE39/7J8WaXD9JIXUdKh22GLQh
+DxuA2SB2r0kNiPVDYzSedtKUSnQutCbJ4GyEOJPCBqgKrU/CBA==
+=sdv+
+-----END PGP SIGNATURE-----
+
+--7643npv2arymjmqd--
