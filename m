@@ -2,160 +2,101 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D40FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7909BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B400C2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:58:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B400C2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3797A2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:59:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3797A2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbeH3NAC (ORCPT
+        id S1728083AbeH3NA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:00:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:52785 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbeH3NAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:00:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 01:58:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
-   d="scan'208";a="228840483"
-Received: from shbuild888.sh.intel.com ([10.239.146.239])
-  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2018 01:58:54 -0700
-From:   Feng Tang <feng.tang@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>,
-        "H . Peter Anvin" <hpa@linux.intel.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     Feng Tang <feng.tang@intel.com>
-Subject: [PATCH] x86, mm: Reserver some memory for bootmem allocator for NO_BOOTMEM
-Date:   Thu, 30 Aug 2018 17:03:19 +0800
-Message-Id: <20180830090319.985-1-feng.tang@intel.com>
-X-Mailer: git-send-email 2.14.1
+        Thu, 30 Aug 2018 09:00:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41498 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727720AbeH3NA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 09:00:26 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A4AFF804BAAC;
+        Thu, 30 Aug 2018 08:59:19 +0000 (UTC)
+Received: from krava (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9C35D112D170;
+        Thu, 30 Aug 2018 08:59:18 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 10:59:18 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1 06/10] tools, perf, script: Set user_set/wildcard_set
+ for +- fields in -F
+Message-ID: <20180830085918.GG16691@krava>
+References: <20180829171834.6590-1-andi@firstfloor.org>
+ <20180829171834.6590-7-andi@firstfloor.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829171834.6590-7-andi@firstfloor.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 08:59:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 08:59:19 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We hit a kernel panic when enabling earlycon for a platform, the
-call trace is:
+On Wed, Aug 29, 2018 at 10:18:30AM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> The branch target output relies on the user_set flag to determine
+> if the branch target should be implicitely printed. When
+> modifying the fields with + or - also set user_set,
+> so that ADDR can be removed. We also need to set wildcard_set
+> to make the initial sanity check pass.
+> 
 
-	  panic+0xd2/0x220
-	  __alloc_bootmem+0x31/0x34
-	  spp_getpage+0x60/0x8a
-	  fill_pte+0x71/0x130
-	  __set_pte_vaddr+0x1d/0x50
-	  set_pte_vaddr+0x3c/0x60
-	  __native_set_fixmap+0x23/0x30
-	  native_set_fixmap+0x30/0x40
-	  setup_earlycon+0x1e0/0x32f
-	  param_setup_earlycon+0x13/0x22
-	  do_early_param+0x5b/0x90
-	  parse_args+0x1f7/0x300
-	  parse_early_options+0x24/0x28
-	  parse_early_param+0x65/0x73
-	  setup_arch+0x31e/0x9f1
-	  start_kernel+0x58/0x44e
+please provide examples to changelog,
+also this one breaks the compilation
 
-The root cause is that when CONFIG_NO_BOOTMEM=y,  before
-e820__memblock_setup() is called there is no memory for bootmem
-to allocate, and any alloc_bootmem() in this time window will
-trigger a panic. Seems this is a known issue as already
-mentioned in arch/x86/kernel/setup.c:
-	"
-	/* after early param, so could get panic from serial */
-	memblock_x86_reserve_range_setup_data();
-	"
-By reserving some memory in the linker script, small memory request
-could be fulfilled by bootmem allocator. And this memory region
-is not wasted, but usable after kernel boot.
+thanks,
+jirka
 
-Signed-off-by: Feng Tang <feng.tang@intel.com>
----
- arch/x86/include/asm/sections.h |  5 +++++
- arch/x86/kernel/setup.c         | 12 +++++++++++-
- arch/x86/kernel/vmlinux.lds.S   |  9 +++++++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
-index 4a911a382ade..d568829510e4 100644
---- a/arch/x86/include/asm/sections.h
-+++ b/arch/x86/include/asm/sections.h
-@@ -9,6 +9,11 @@ extern char __brk_base[], __brk_limit[];
- extern struct exception_table_entry __stop___ex_table[];
- extern char __end_rodata_aligned[];
- 
-+#ifdef CONFIG_NO_BOOTMEM
-+extern char __bootmem_start[], __bootmem_end[];
-+#endif
-+
-+
- #if defined(CONFIG_X86_64)
- extern char __end_rodata_hpage_align[];
- extern char __entry_trampoline_start[], __entry_trampoline_end[];
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index b4866badb235..a4e3d9ec1a83 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -829,6 +829,17 @@ void __init setup_arch(char **cmdline_p)
- 	 */
- 	memblock_reserve(0, PAGE_SIZE);
- 
-+#ifdef CONFIG_NO_BOOTMEM
-+	/*
-+	 * There is small time window till e820__memblock_setup() is
-+	 * called, in which __bootmem_alloc() has no available memory
-+	 * to allocate and will trigger panic. Adding this revered bootmem
-+	 * can alleviate the situation.
-+	 */
-+	memblock_add(__pa_symbol(__bootmem_start),
-+			__bootmem_end - __bootmem_start);
-+#endif
-+
- 	early_reserve_initrd();
- 
- 	/*
-@@ -989,7 +1000,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	x86_report_nx();
- 
--	/* after early param, so could get panic from serial */
- 	memblock_x86_reserve_range_setup_data();
- 
- 	if (acpi_mps_check()) {
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 8bde0a419f86..fec1965d668f 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -367,6 +367,15 @@ SECTIONS
- 		__brk_limit = .;
- 	}
- 
-+#ifdef CONFIG_NO_BOOTMEM
-+	. = ALIGN(PAGE_SIZE);
-+	.bootmem : AT(ADDR(.bootmem) - LOAD_OFFSET) {
-+		__bootmem_start = .;
-+		. += 128 * 1024;		/* 128 KB for early boot mem */
-+		__bootmem_end = .;
-+	}
-+#endif
-+
- 	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
- 	_end = .;
- 
--- 
-2.14.1
-
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/builtin-script.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 6a470dd8f2d0..14b19ff43cbd 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -2497,6 +2497,8 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+>  						output[j].fields &= ~all_output_options[i].field;
+>  					else
+>  						output[j].fields |= all_output_options[i].field;
+> +					output[j].user_set = true;
+> +					output[j].wildcard_set = true;
+>  				}
+>  			}
+>  		} else {
+> @@ -2507,7 +2509,8 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+>  				rc = -EINVAL;
+>  				goto out;
+>  			}
+> -			output[type].fields |= all_output_options[i].field;
+> +			output[j].user_set = true;
+> +			output[j].wildcard_set = true;
+>  		}
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
