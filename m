@@ -2,130 +2,98 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25590C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C97C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C20B520658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12B5A20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:15:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BcNJezh2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C20B520658
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hVY7YNen"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B5A20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeH3VSN (ORCPT
+        id S1727251AbeH3VSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:18:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41038 "EHLO
+        Thu, 30 Aug 2018 17:18:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41118 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbeH3VSN (ORCPT
+        with ESMTP id S1725893AbeH3VSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:18:13 -0400
+        Thu, 30 Aug 2018 17:18:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+xa5Dhb70YcwJAZdPES/RuEEFJy18ffurdXijKdpREw=; b=BcNJezh2JbyLD0fK++DkuaBlI
-        87TCRQQpSIncevbiNpza+RccOnvUf13sspgbsUyQSTJ9MefygIPSAop9UA4kcuGs2fGn3iDg5w+l5
-        Kr8N0RO9u8Rvpx+0WLauwIgFzeE04C9vFsxIhmdHVZtN7v2qLLH6gw4arKZhCj6Pd3LQv6RBpS06m
-        +zxQwCkTk0kiyZ0KjPSL9mGlgsYXaJAVlIENJ4yPBxuvSanVqDCfTEvAi4OA+6HsHHx8p8alhsZm4
-        wPI62BJDn/kVxO9C2YTAboONdnVWDHr2Jce9R8GyLLZYQsMl6eqlW62C1BWu0bb6IcDwUfuYcj2fJ
-        2pcOyqubw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+         bh=ibAuDr8ktP8kc2VavoK2sMX9glq0IfQtKZyoqsVAfGU=; b=hVY7YNenpj9YIoAl+jQarf0BF
+        gfsl4Kh2FmDudNsRZ0pXAdA7D2PbluQ5/n0/Jg//5PeISvwzBBGMCcu2CPD01Yoxj8LiRiBESYHK7
+        7J7P86530k2gz4zAq3lNsK0ZHiK5eM+EkZAESdFe07+xbBQlFGrHvF97hHFhA/AlO4axLF1jFYipw
+        f698IvlIIWLPglyrSxbROMC1gXViIx9n7X/AJks/q4QVbfyYQqDJQXr64kXUaZPylRqknt7n/tJLm
+        VkyLUNXsiysL4fTxnolApzf7Gk2zy5kAqSHxpaQPVHVQmRLPA/xg9ufFK1KcFTP9M0VSU1uzKnO7C
+        pOs/+XyRA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvQXB-000206-Fj; Thu, 30 Aug 2018 17:15:05 +0000
-Subject: Re: [PATCH V1] add huawei ibma driver modules The driver is used for
- communication between in-band management agent(iBMA) and out-of-band
- management controller(iBMC) via pcie bus in Huawei V3 server. The driver
- provides character device,VNIC and black box interface for application layer.
-To:     xiongsujuan <xiongsujuan.xiongsujuan@huawei.com>,
-        davem@davemloft.net, zhaochen6@huawei.com,
-        aviad.krawczyk@huawei.com, romain.perier@collabora.com,
-        bhelgaas@google.com, keescook@chromium.org,
-        colin.king@canonical.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1535591472-44997-1-git-send-email-xiongsujuan.xiongsujuan@huawei.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dc265e3c-3836-d954-5de3-d7b8701ce986@infradead.org>
-Date:   Thu, 30 Aug 2018 10:15:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id 1fvQXJ-0002FA-1T; Thu, 30 Aug 2018 17:15:13 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8A1B92024D73F; Thu, 30 Aug 2018 19:15:10 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 19:15:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Message-ID: <20180830171510.GQ24082@hirez.programming.kicks-ass.net>
+References: <1535567633.4465.23.camel@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
+ <20180830094411.GX24124@hirez.programming.kicks-ass.net>
+ <20180830095148.GB5942@arm.com>
+ <1535629996.4465.44.camel@synopsys.com>
+ <20180830141713.GN24082@hirez.programming.kicks-ass.net>
+ <1535640375.4465.68.camel@synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <1535591472-44997-1-git-send-email-xiongsujuan.xiongsujuan@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535640375.4465.68.camel@synopsys.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 30, 2018 at 02:46:16PM +0000, Eugeniy Paltsev wrote:
+> On Thu, 2018-08-30 at 16:17 +0200, Peter Zijlstra wrote:
+> > On Thu, Aug 30, 2018 at 11:53:17AM +0000, Eugeniy Paltsev wrote:
+> > > I can see crashes with LLSC enabled in both SMP running on 4 cores
+> > > and SMP running on 1 core.
+> > 
+> > So you're running on LL/SC enabled hardware; that would make Will's
+> > patch irrelevant (although still a good idea for the hardware that does
+> > care about that spinlocked atomic crud).
+> > 
+> > Does something like the below cure things? That would confirm the
+> > suggestion that the change to __clear_bit_unlock() is the curprit.
+> 
+> I tested it - this doesn't change anything, the problem still reproduces.
 
-Please fix the Subject: and patch description.
+OK, 'good' :-)
 
-(more below)
+> I'll test it with last Will fix.
 
-On 08/29/2018 06:11 PM, xiongsujuan wrote:
-> diff --git a/drivers/net/ethernet/huawei/Kconfig b/drivers/net/ethernet/huawei/Kconfig
-> index c1a95ae..68748e9 100644
-> --- a/drivers/net/ethernet/huawei/Kconfig
-> +++ b/drivers/net/ethernet/huawei/Kconfig
-> @@ -4,7 +4,7 @@
->  
->  config NET_VENDOR_HUAWEI
->  	bool "Huawei devices"
-> -	default y
-> +	default y 
-
-Don't add a space after the 'y'.
-
->  	---help---
->  	  If you have a network (Ethernet) card belonging to this class, say Y.
->  	  Note that the answer to this question doesn't directly affect the
-> @@ -16,4 +16,7 @@ if NET_VENDOR_HUAWEI
->  
->  source "drivers/net/ethernet/huawei/hinic/Kconfig"
->  
-> +source "drivers/net/ethernet/huawei/ibma/Kconfig"
-> +
-> +
->  endif # NET_VENDOR_HUAWEI
-
-> diff --git a/drivers/net/ethernet/huawei/ibma/Kconfig b/drivers/net/ethernet/huawei/ibma/Kconfig
-> new file mode 100644
-> index 0000000..810cc60
-> --- /dev/null
-> +++ b/drivers/net/ethernet/huawei/ibma/Kconfig
-> @@ -0,0 +1,17 @@
-> +#
-> +# Huawei driver configuration
-> +#
-> +
-> +config IBMANIC
-> +	tristate "Huawei IBMA PCIE Network Interface Card"
-> +	depends on (PCI_MSI && X86)
-> +	---help---
-> +	  This driver supports IBMANIC PCIE Ethernet cards.
-> +	  To compile this driver as part of the kernel, choose Y here.
-> +	  If unsure, choose N.
-> +	  The default is compiled as module.
-> +
-> +
-> +
-> +
-> +
-
-Drop those trailing blank lines.
-
-What makes the default be compiled as module?
-
-thanks,
--- 
-~Randy
+Yes, that missing "bnz 1b" is very very suspect.
