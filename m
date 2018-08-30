@@ -2,124 +2,223 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51945C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A72FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB5620835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:26:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB5620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B60E520837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:29:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="br9e3Osg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60E520837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbeH3W3o (ORCPT
+        id S1728145AbeH3WcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:29:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45942 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726732AbeH3W3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:29:43 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7UIOYjr143272
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:26:16 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6nm40hgm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:26:16 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 Aug 2018 14:26:16 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 Aug 2018 14:26:10 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7UIQ9V024117342
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Aug 2018 18:26:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C60EB206B;
-        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15013B2072;
-        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1F8BA16C3EF9; Thu, 30 Aug 2018 11:26:11 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 11:26:11 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 0/52] Remove rcu_state pointers for
- v4.20/v5.0
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180829223830.GA1800@linux.vnet.ibm.com>
- <20180829220026.3579e9a1@vmware.local.home>
- <20180830032216.GF4225@linux.vnet.ibm.com>
- <20180830041017.GA27378@linux.vnet.ibm.com>
- <20180830114452.309e104f@gandalf.local.home>
- <20180830171006.GK4225@linux.vnet.ibm.com>
- <20180830134012.7efc3cce@gandalf.local.home>
+        Thu, 30 Aug 2018 18:32:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727748AbeH3WcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:32:25 -0400
+Received: from jouet.infradead.org (unknown [189.43.51.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 349DE20835;
+        Thu, 30 Aug 2018 18:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535653737;
+        bh=nZXCBhnAYxIvZExdTki87i1+Ypmu1nE4Br9Su32v/C8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=br9e3OsgvTqZe9qvqtqkIxsiRBgowbGJBtxYJ3atkeVRNDPwDuCrAad7mcezLNJD5
+         gvkXcv3cmAWagAe1hFXM2Wxh99jPIIuiDA4CNu9QuhqVw9VRL1N4ZaE7rmM4qVxIBn
+         ItYRTV1Om7x8VJ+2r7VF/nAEMY7Hdg3p7ixRkSkM=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 6A7A7141C3F; Thu, 30 Aug 2018 15:28:48 -0300 (-03)
+Date:   Thu, 30 Aug 2018 15:28:48 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Benjamin Peterson <benjamin@python.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf trace beautify: Beautify flags of mount(2) and
+ umount(2).
+Message-ID: <20180830182848.GE6097@kernel.org>
+References: <20180828035344.31500-1-benjamin@python.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830134012.7efc3cce@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18083018-0060-0000-0000-000002A700D3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009640; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01081138; UDB=6.00557735; IPR=6.00861123;
- MB=3.00023020; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 18:26:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083018-0061-0000-0000-0000465835C9
-Message-Id: <20180830182611.GM4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808300184
+In-Reply-To: <20180828035344.31500-1-benjamin@python.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 01:40:12PM -0400, Steven Rostedt wrote:
-> On Thu, 30 Aug 2018 10:10:06 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+Em Mon, Aug 27, 2018 at 08:53:44PM -0700, Benjamin Peterson escreveu:
+> Example output of perf trace -e mount,umount2:
 > 
+>   6243.930 ( 0.052 ms): mount/30976 mount(dev_name: 0x55dc541bb920, dir_name: 0x55dc541bc960, type: 0x55dc541b9c40, flags: BIND) = 0
+>   7851.821 (26.015 ms): umount/30983 umount2(name: 0x558daa82cf50, flags: MNT_FORCE                        ) = 0
 > 
-> > > I would just keep the documentation patches separate.  
-> > 
-> > Combining yours and Josh's feedback, I will split the documentation
-> > updates out of 4ca0508f7870 ("rcu: Remove rsp parameter from rcu_node tree
-> > accessor macros") and put them into the "doc" series.  Possibly combining
-> > it with 2ea66b6fce61 ("doc: Update documentation for removal of RCU-bh
-> > update machinery") and/or 3f38a4626202 ("doc: Update documentation for
-> > removal of RCU-sched update machinery").  Left to myself, I would merge
-> > it in to the merger of those two documentation commits.  Having them
-> > together is probably more convenient anyway, as it would provide a
-> > summary of the entire RCU-flavor-consolidation change.
-> > 
-> > Fair enough?
+> Signed-off-by: Benjamin Peterson <benjamin@python.org>
+
+So, I tried:
+
+Before your patch:
+
+  # perf trace -e *mount* mount /dev/mapper/fedora-home /s
+     0.000 ( 4.335 ms): mount/3126 mount(dev_name: 0x55deecc4d480, dir_name: 0x55deecc4d4a0, type: 0x55deecc53880, flags: 3236757504) = 0
+  #
+  # perf trace -e *mount* umount /dev/mapper/fedora-home /s
+         ? (         ): umount/3138  ... [continued]: umount2()) = 0
+    11.576 (umount:  0.004 ms): /s: not mounted.umount/
+3138 umount2(arg0: 94501956754656, arg1: 0, arg2: 1, arg3: 140051050083104, arg4: 4, arg5: 94501956755136) = -1 EINVAL Invalid argument
+  #
+
+After:
+
+[root@jouet ~]# perf trace -e *mount* mount /dev/mapper/fedora-home /s
+     0.000 ( 1.213 ms): mount/5244 mount(dev_name: 0x5558c1169480, dir_name: 0x5558c11694a0, type: 0x5558c116f880, flags: ) = 0
+[root@jouet ~]# perf trace -e *mount* umount /s
+     0.000 ( 9.241 ms): umount/5251 umount2(name: 0x55f74a986480                                          ) = 0
+
+The flags for mount got empty? Can you pleaes check that? I.e. using the
+default mount options, not specifying a 'bind' mount like you did.
+
+I'm splitting this patch so that the aliasing of 'umount2' to 'umount'
+gets merged now,
+
+Check my perf/core branch at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+
+- Arnaldo
+
+> ---
+>  tools/perf/builtin-trace.c            |  5 ++
+>  tools/perf/trace/beauty/mount_flags.c | 79 +++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+)
+>  create mode 100644 tools/perf/trace/beauty/mount_flags.c
 > 
-> Go for it ;-)
-
-Done!  ;-)
-
-							Thanx, Paul
-
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 22ab8e67c760..3cffb25d1928 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -603,6 +603,7 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+>  #include "trace/beauty/futex_val3.c"
+>  #include "trace/beauty/mmap.c"
+>  #include "trace/beauty/mode_t.c"
+> +#include "trace/beauty/mount_flags.c"
+>  #include "trace/beauty/msg_flags.c"
+>  #include "trace/beauty/open_flags.c"
+>  #include "trace/beauty/perf_event_open.c"
+> @@ -722,6 +723,8 @@ static struct syscall_fmt {
+>  	  .arg = { [0] = { .scnprintf = SCA_HEX,	/* addr */ },
+>  		   [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ },
+>  		   [3] = { .scnprintf = SCA_MMAP_FLAGS,	/* flags */ }, }, },
+> +	{ .name     = "mount",
+> +	  .arg = { [3] = { .scnprintf = SCA_MOUNT_FLAGS, /* flags */ }, }, },
+>  	{ .name	    = "mprotect",
+>  	  .arg = { [0] = { .scnprintf = SCA_HEX,	/* start */ },
+>  		   [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ }, }, },
+> @@ -830,6 +833,8 @@ static struct syscall_fmt {
+>  	  .arg = { [2] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
+>  	{ .name	    = "tkill",
+>  	  .arg = { [1] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
+> +	{ .name     = "umount2", .alias = "umount",
+> +	  .arg = { [1] = { .scnprintf = SCA_UMOUNT_FLAGS, /* flags */ }, }, },
+>  	{ .name	    = "uname", .alias = "newuname", },
+>  	{ .name	    = "unlinkat",
+>  	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
+> diff --git a/tools/perf/trace/beauty/mount_flags.c b/tools/perf/trace/beauty/mount_flags.c
+> new file mode 100644
+> index 000000000000..86790b82c869
+> --- /dev/null
+> +++ b/tools/perf/trace/beauty/mount_flags.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <sys/mount.h>
+> +
+> +static size_t syscall_arg__scnprintf_mount_flags(char *bf, size_t size, struct syscall_arg *arg)
+> +{
+> +	size_t printed = 0;
+> +	int flags = arg->val;
+> +
+> +	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
+> +		flags &= ~MS_MGC_MSK;
+> +
+> +#define	P_FLAG(n) \
+> +	if (flags & MS_##n) { \
+> +		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
+> +		flags &= ~MS_##n; \
+> +	}
+> +
+> +	P_FLAG(RDONLY);
+> +	P_FLAG(NOSUID);
+> +	P_FLAG(NODEV);
+> +	P_FLAG(NOEXEC);
+> +	P_FLAG(SYNCHRONOUS);
+> +	P_FLAG(REMOUNT);
+> +	P_FLAG(MANDLOCK);
+> +	P_FLAG(DIRSYNC);
+> +	P_FLAG(NOATIME);
+> +	P_FLAG(NODIRATIME);
+> +	P_FLAG(BIND);
+> +	P_FLAG(MOVE);
+> +	P_FLAG(REC);
+> +	P_FLAG(SILENT);
+> +	P_FLAG(POSIXACL);
+> +	P_FLAG(UNBINDABLE);
+> +	P_FLAG(PRIVATE);
+> +	P_FLAG(SLAVE);
+> +	P_FLAG(SHARED);
+> +	P_FLAG(RELATIME);
+> +	P_FLAG(KERNMOUNT);
+> +	P_FLAG(I_VERSION);
+> +	P_FLAG(STRICTATIME);
+> +	P_FLAG(LAZYTIME);
+> +	P_FLAG(ACTIVE);
+> +	P_FLAG(NOUSER);
+> +
+> +#undef P_FLAG
+> +
+> +	if (flags)
+> +		printed += scnprintf(bf + printed, size - printed, "%s%#x", printed ? "|" : "", flags);
+> +
+> +	return printed;
+> +}
+> +
+> +#define SCA_MOUNT_FLAGS syscall_arg__scnprintf_mount_flags
+> +
+> +static size_t syscall_arg__scnprintf_umount_flags(char *bf, size_t size, struct syscall_arg *arg)
+> +{
+> +	size_t printed = 0;
+> +	int flags = arg->val;
+> +
+> +#define	P_FLAG(n) \
+> +	if (flags & n) { \
+> +		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
+> +		flags &= ~n; \
+> +	}
+> +
+> +	P_FLAG(MNT_FORCE);
+> +	P_FLAG(MNT_DETACH);
+> +	P_FLAG(MNT_EXPIRE);
+> +	P_FLAG(UMOUNT_NOFOLLOW);
+> +
+> +#undef P_FLAG
+> +
+> +	if (flags)
+> +		printed += scnprintf(bf + printed, size - printed, "%s%#x", printed ? "|" : "", flags);
+> +
+> +	return printed;
+> +}
+> +
+> +#define SCA_UMOUNT_FLAGS syscall_arg__scnprintf_umount_flags
+> -- 
+> 2.17.1
