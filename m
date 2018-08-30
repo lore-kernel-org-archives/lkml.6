@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2255C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5810CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B2B2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:01:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 162E32082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:02:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q9uev1PI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B2B2082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FEZwUB3M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162E32082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbeH3XF1 (ORCPT
+        id S1728162AbeH3XFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:05:27 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36675 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbeH3XF0 (ORCPT
+        Thu, 30 Aug 2018 19:05:20 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42210 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeH3XFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:05:26 -0400
-Received: by mail-wm0-f68.google.com with SMTP id j192-v6so3079409wmj.1;
-        Thu, 30 Aug 2018 12:01:49 -0700 (PDT)
+        Thu, 30 Aug 2018 19:05:20 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v17-v6so9022741wrr.9;
+        Thu, 30 Aug 2018 12:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oe7h7xIfk8wXHX/0FC9e1cxcaJIngJnxvR4UbXqmMVg=;
-        b=q9uev1PIjkWXxvAYB+XuPf9jmG/C5rOPO9UbUFkMk9LC1q7c00OERutFya7Ett7dCK
-         b8felrkiQocDePiPHvzM8eVOQQGdeB+QHz6z61192uXqDGdQsxNzXlWylLM/ZVVt2qBI
-         SfKEMDy7Y06yF+6n+4I9hzJjV4Pi1BKUqLg2YZE8vWxANnv4b9nxApH3P1i7NDWXErTX
-         /xDlAIaJzNOAjzD/I9ZJXYpyCYN+L1asSoLDJNKSV6mCg6BDN6aeDf56vStIyqWx1CWe
-         BDgcBKU/A2MAq0ZMMRP59BIvsw+v0LBeK06bArreMF8lgXl+j5ndwLJdNc1WGDvUpp1k
-         kJ3Q==
+        bh=uNj/VFnQ8ClUwahEmW/nsQHB3Tb5wCIwIO0nNsAKcxw=;
+        b=FEZwUB3Mxqu3I2HveWXbgjeeLpkCRzAfpH7tKqoRBFDxUFALUdOmJ4mWYpohlzglL1
+         NtEPtxVQfhGjdM/CgpeFwYO8ZSDEvUsU9Z1hJhzfnruafzx8KtC55j1PbodUkPaxxyio
+         //Erxs96nnV61D7JlMgLX601RDgoZ8V0wxuQKdPpX4/C9EUoXS5ByDyyLDnBZwH/Z8pR
+         w16fSJ2+B4KZnXxPHHlKVSbF/D62UlGX12D9upR2ERu+VDYV5hkMxM329J8KOujbGLN/
+         maPOvYaQRyk0huvmRJe2crxeM4aCoNkW3CRCJWN/FhdC6x+/eUakkoRCY1N/mABWU9h0
+         8oUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oe7h7xIfk8wXHX/0FC9e1cxcaJIngJnxvR4UbXqmMVg=;
-        b=fQqVEO2mTo11PCzvO97hYjk+hhU8e4QfRBP1ZVnsZrMKlJeFgy34M4LMzZfjz05Ma6
-         oaiC2MmLaZPkN7/9C6HP2JinjUO2/sqGyugF/frouIKA59+ZeuY6T8gQ2uZGCebsN2Gp
-         zHTlz4iNhxQ+tYaZj7U7epA05rpuVgx5ENcYhSaQM55i9ioA6Sg40kJGp2U29j4vYXjk
-         78rn/sYCEvYjBik2celN/l3SDGYAC9J6sUgaiAHg2bc+AFnGFvbnjCvsjnvPKU83BVPd
-         OAWO1lvw/cV2PV3k5tipTbrYZg/fx8X5Dq6sr+IyL4kQAxwym4mjC61SempLJQex3BTo
-         IaxA==
-X-Gm-Message-State: APzg51Bmtj3iXbOoudW82iTltrMeVUYZg+pGFBjCkkoDy+gl85/3+q2E
-        euk6hfH2fe496BF5vHiDplo=
-X-Google-Smtp-Source: ANB0VdZEluVefV/6s3f5uSVg3ODg+tNOUFKWcNJeVcxI9utgBCGm1zIV3IsZYyB9D0beZnASM514Ww==
-X-Received: by 2002:a1c:dc8b:: with SMTP id t133-v6mr2583188wmg.108.1535655708335;
-        Thu, 30 Aug 2018 12:01:48 -0700 (PDT)
+        bh=uNj/VFnQ8ClUwahEmW/nsQHB3Tb5wCIwIO0nNsAKcxw=;
+        b=uK3SAXtm17QfWR9hJ6x/qSRHdbGmmYIbPutp8MWyLtWjwKJd0oOF9gyi4fXjoP1wdn
+         YI/dI69xF6o9ehzxLgWeUbW/pvdZ9CUhx8MFyISmGhvgFRgHPOZzlacujlAyN+4khWvS
+         LPCULDXigdz8TSVtdRDlMDHB/bcD9EquH4nscoSIaGqAx5ZrvWFFgjPaBx6LhrCAxYU6
+         SZOCyQfcLDkpKT/FP3RfIENyAiRICvNokUlfiC3mPhZjiaTA0P2mRMkhJgTNOeocsDf4
+         n9TtQnLg4pnFUMge3qw2l4nJEgSiY2nf2y7ah4ETNDHfM3lR0sXY5b5TtfpvX9gaKFD/
+         aieg==
+X-Gm-Message-State: APzg51BrxhrYGR2O0hi4mC3/UmZ+yOGlxyTEI/PQSs0SF6XGlI04+DRz
+        Q4YH8C/A6V2TXqfHD1FBFsg=
+X-Google-Smtp-Source: ANB0VdZRAwHfUOZ48d6y6t7O+JRXtmhQU2Kqy9ynLpQWcvfu3YVYEUEfuBNXyRXgKBV5PiWn6SVLkQ==
+X-Received: by 2002:adf:a602:: with SMTP id k2-v6mr7952700wrc.181.1535655701025;
+        Thu, 30 Aug 2018 12:01:41 -0700 (PDT)
 Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.46
+        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:01:47 -0700 (PDT)
+        Thu, 30 Aug 2018 12:01:40 -0700 (PDT)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
         mark.rutland@arm.com, maxime.ripard@bootlin.com,
@@ -65,9 +65,9 @@ To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v4 13/13 DONOTMERGE] ata: ahci_sunxi: remove PHY code
-Date:   Thu, 30 Aug 2018 21:01:20 +0200
-Message-Id: <20180830190120.722-14-clabbe.montjoie@gmail.com>
+Subject: [PATCH v4 08/13] ata: ahci_sunxi: add support for r40
+Date:   Thu, 30 Aug 2018 21:01:15 +0200
+Message-Id: <20180830190120.722-9-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180830190120.722-1-clabbe.montjoie@gmail.com>
 References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
@@ -76,146 +76,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since PHY code is now handled by sun4i-a10-sata-phy, the code in
-ahci_sunxi is useless, remove it.
+This patch add the r40 compatible to the ahci_sunxi's supported list of
+compatible.
+
+Since R40 need ahci_platform to handle the reset controller, we also add
+the new AHCI_PLATFORM_GET_RESETS flag for ahci_platform_get_resources().
+This has no consequence for older platform (a10, a20) since the reset is
+optional.
 
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- drivers/ata/ahci_sunxi.c | 93 ------------------------------------------------
- 1 file changed, 93 deletions(-)
+ drivers/ata/ahci_sunxi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
-index b8cf3a1be80b..af17f8ce65b2 100644
+index a09d189c6dda..b8cf3a1be80b 100644
 --- a/drivers/ata/ahci_sunxi.c
 +++ b/drivers/ata/ahci_sunxi.c
-@@ -58,15 +58,6 @@ MODULE_PARM_DESC(enable_pmp,
- #define AHCI_P0PHYCR	0x0178
- #define AHCI_P0PHYSR	0x017c
- 
--static void sunxi_clrbits(void __iomem *reg, u32 clr_val)
--{
--	u32 reg_val;
--
--	reg_val = readl(reg);
--	reg_val &= ~(clr_val);
--	writel(reg_val, reg);
--}
--
- static void sunxi_setbits(void __iomem *reg, u32 set_val)
- {
- 	u32 reg_val;
-@@ -86,81 +77,6 @@ static void sunxi_clrsetbits(void __iomem *reg, u32 clr_val, u32 set_val)
- 	writel(reg_val, reg);
- }
- 
--static u32 sunxi_getbits(void __iomem *reg, u8 mask, u8 shift)
--{
--	return (readl(reg) >> shift) & mask;
--}
--
--static int ahci_sunxi_phy_init(struct device *dev, void __iomem *reg_base)
--{
--	u32 reg_val;
--	int timeout;
--
--	/*
--	 * When using the new binding, the presence of a sata port node
--	 * means that PHY is handled by the PHY driver.
--	 * */
--	if (of_get_child_count(dev->of_node)) {
--		dev_info(dev, "Bypassing PHY init\n");
--		return 0;
--	}
--
--	/* This magic is from the original code */
--	writel(0, reg_base + AHCI_RWCR);
--	msleep(5);
--
--	sunxi_setbits(reg_base + AHCI_PHYCS1R, BIT(19));
--	sunxi_clrsetbits(reg_base + AHCI_PHYCS0R,
--			 (0x7 << 24),
--			 (0x5 << 24) | BIT(23) | BIT(18));
--	sunxi_clrsetbits(reg_base + AHCI_PHYCS1R,
--			 (0x3 << 16) | (0x1f << 8) | (0x3 << 6),
--			 (0x2 << 16) | (0x6 << 8) | (0x2 << 6));
--	sunxi_setbits(reg_base + AHCI_PHYCS1R, BIT(28) | BIT(15));
--	sunxi_clrbits(reg_base + AHCI_PHYCS1R, BIT(19));
--	sunxi_clrsetbits(reg_base + AHCI_PHYCS0R,
--			 (0x7 << 20), (0x3 << 20));
--	sunxi_clrsetbits(reg_base + AHCI_PHYCS2R,
--			 (0x1f << 5), (0x19 << 5));
--	msleep(5);
--
--	sunxi_setbits(reg_base + AHCI_PHYCS0R, (0x1 << 19));
--
--	timeout = 250; /* Power up takes aprox 50 us */
--	do {
--		reg_val = sunxi_getbits(reg_base + AHCI_PHYCS0R, 0x7, 28);
--		if (reg_val == 0x02)
--			break;
--
--		if (--timeout == 0) {
--			dev_err(dev, "PHY power up failed.\n");
--			return -EIO;
--		}
--		udelay(1);
--	} while (1);
--
--	sunxi_setbits(reg_base + AHCI_PHYCS2R, (0x1 << 24));
--
--	timeout = 100; /* Calibration takes aprox 10 us */
--	do {
--		reg_val = sunxi_getbits(reg_base + AHCI_PHYCS2R, 0x1, 24);
--		if (reg_val == 0x00)
--			break;
--
--		if (--timeout == 0) {
--			dev_err(dev, "PHY calibration failed.\n");
--			return -EIO;
--		}
--		udelay(1);
--	} while (1);
--
--	msleep(15);
--
--	writel(0x7, reg_base + AHCI_RWCR);
--
--	return 0;
--}
--
- static void ahci_sunxi_start_engine(struct ata_port *ap)
- {
- 	void __iomem *port_mmio = ahci_port_base(ap);
-@@ -186,7 +102,6 @@ static struct scsi_host_template ahci_platform_sht = {
- 
- static int ahci_sunxi_probe(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
+@@ -190,7 +190,7 @@ static int ahci_sunxi_probe(struct platform_device *pdev)
  	struct ahci_host_priv *hpriv;
  	int rc;
  
-@@ -200,10 +115,6 @@ static int ahci_sunxi_probe(struct platform_device *pdev)
- 	if (rc)
- 		return rc;
+-	hpriv = ahci_platform_get_resources(pdev, 0);
++	hpriv = ahci_platform_get_resources(pdev, AHCI_PLATFORM_GET_RESETS);
+ 	if (IS_ERR(hpriv))
+ 		return PTR_ERR(hpriv);
  
--	rc = ahci_sunxi_phy_init(dev, hpriv->mmio);
--	if (rc)
--		goto disable_resources;
--
- 	hpriv->flags = AHCI_HFLAG_32BIT_ONLY | AHCI_HFLAG_NO_MSI |
- 		       AHCI_HFLAG_YES_NCQ;
+@@ -259,6 +259,7 @@ static SIMPLE_DEV_PM_OPS(ahci_sunxi_pm_ops, ahci_platform_suspend,
  
-@@ -238,10 +149,6 @@ static int ahci_sunxi_resume(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	rc = ahci_sunxi_phy_init(dev, hpriv->mmio);
--	if (rc)
--		goto disable_resources;
--
- 	rc = ahci_platform_resume_host(dev);
- 	if (rc)
- 		goto disable_resources;
+ static const struct of_device_id ahci_sunxi_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-ahci", },
++	{ .compatible = "allwinner,sun8i-r40-ahci", },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, ahci_sunxi_of_match);
 -- 
 2.16.4
 
