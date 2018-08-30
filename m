@@ -3,117 +3,221 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D991AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AEAC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD8F20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD8F20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ECFB020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFB020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeHaA3p (ORCPT
+        id S1727344AbeHaAbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 20:29:45 -0400
-Received: from mga03.intel.com ([134.134.136.65]:14599 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbeHaA3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 20:29:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 13:25:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,308,1531810800"; 
-   d="scan'208";a="79683215"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by orsmga003.jf.intel.com with ESMTP; 30 Aug 2018 13:25:49 -0700
-Message-ID: <1535660494.28258.36.camel@intel.com>
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Date:   Thu, 30 Aug 2018 13:21:34 -0700
-In-Reply-To: <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-         <20180830143904.3168-13-yu-cheng.yu@intel.com>
-         <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
-         <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com>
-         <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com>
-         <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
-         <1535649960.26689.15.camel@intel.com>
-         <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
-         <1535651666.27823.6.camel@intel.com>
-         <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 30 Aug 2018 20:31:48 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45716 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbeHaAbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 20:31:48 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p52-v6so7465693eda.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:27:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nPet5xR9oNt5ElCeNrQjZB2ZP88N/63XS3qgvoR8Fbo=;
+        b=fsIY2SmVWICwWnQxBFOCtNSAKAHsh5pYdekzSRiJo5GbStaEFgBVhqYS8MKaln7w6p
+         a9NT3UoF8Veo+AW29jaGPz8+eY2lOFDWJ/w7ouSxzhEW7sXwW8SeoWPuGuuSkVnwWAnT
+         nU/q91T8gwgjEUDsIrAg7/ZyPE1ZShwSZsfMBmQadnLjbEMZM/QkxvUWjUnHRthyw3e7
+         pOMEV6ExM9Wjxig94ezttc37uGBubUCwsCPObm3nwb2WiFKI+FaCaGPbAJy2Pdz6/ZDC
+         5Rb2klOmKHZRZqrFxfUw6S5foprdJ1HlAyyuxhYfEd4WgVUfIJppqMQtu56zZrM+V8JQ
+         YtMA==
+X-Gm-Message-State: APzg51DaCtPvVC2psJXNnkFDKYY7sDctWI5Kr4HgtVCXE8B2rRK0HUm9
+        pK7Vbjcck2dZe6sx4dyOtypywyD8ofQ=
+X-Google-Smtp-Source: ANB0VdbTnaTt6p/u74//BYTDa3J2NkDa2IFPr4oL6ofpmb4zEvLRoiwD0LJ7PCBTDZZhY2fN4tjlOw==
+X-Received: by 2002:a50:a623:: with SMTP id d32-v6mr14345256edc.8.1535660870995;
+        Thu, 30 Aug 2018 13:27:50 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id u53-v6sm4491381edm.51.2018.08.30.13.27.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 13:27:50 -0700 (PDT)
+Subject: Re: [PATCH v4 13/13 DONOTMERGE] ata: ahci_sunxi: remove PHY code
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>, axboe@kernel.dk,
+        kishon@ti.com, mark.rutland@arm.com, maxime.ripard@bootlin.com,
+        robh+dt@kernel.org, wens@csie.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+ <20180830190120.722-14-clabbe.montjoie@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <33b1bd21-7bad-2ab9-0606-97d416789066@redhat.com>
+Date:   Thu, 30 Aug 2018 22:27:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180830190120.722-14-clabbe.montjoie@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 19:59 +0200, Jann Horn wrote:
-> On Thu, Aug 30, 2018 at 7:58 PM Yu-cheng Yu <yu-cheng.yu@intel.com>
-> wrote:
-> > 
-> > 
-> > On Thu, 2018-08-30 at 10:33 -0700, Dave Hansen wrote:
-> > > 
-> > > On 08/30/2018 10:26 AM, Yu-cheng Yu wrote:
-> > > > 
-> > > > 
-> > > > We don't have the guard page now, but there is a shadow stack
-> > > > token
-> > > > there, which cannot be used as a return address.
-> > > The overall concern is that we could overflow into a page that
-> > > we
-> > > did
-> > > not intend.  Either another actual shadow stack or something
-> > > that a
-> > > page
-> > > that the attacker constructed, like the transient scenario Jann
-> > > described.
-> > > 
-> > A task could go beyond the bottom of its shadow stack by doing
-> > either
-> > 'ret' or 'incssp'.  If it is the 'ret' case, the token prevents
-> > it.
-> >  If it is the 'incssp' case, a guard page cannot prevent it
-> > entirely,
-> > right?
-> I mean the other direction, on "call".
+HI,
 
-In the flow you described, if C writes to the overflow page before B
-gets in with a 'call', the return address is still correct for B.  To
-make an attack, C needs to write again before the TLB flush.  I agree
-that is possible.
+On 30-08-18 21:01, Corentin Labbe wrote:
+> Since PHY code is now handled by sun4i-a10-sata-phy, the code in
+> ahci_sunxi is useless, remove it.
+> 
+> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> ---
+>   drivers/ata/ahci_sunxi.c | 93 ------------------------------------------------
+>   1 file changed, 93 deletions(-)
+> 
+> diff --git a/drivers/ata/ahci_sunxi.c b/drivers/ata/ahci_sunxi.c
+> index b8cf3a1be80b..af17f8ce65b2 100644
+> --- a/drivers/ata/ahci_sunxi.c
+> +++ b/drivers/ata/ahci_sunxi.c
+> @@ -58,15 +58,6 @@ MODULE_PARM_DESC(enable_pmp,
+>   #define AHCI_P0PHYCR	0x0178
+>   #define AHCI_P0PHYSR	0x017c
+>   
+> -static void sunxi_clrbits(void __iomem *reg, u32 clr_val)
+> -{
+> -	u32 reg_val;
+> -
+> -	reg_val = readl(reg);
+> -	reg_val &= ~(clr_val);
+> -	writel(reg_val, reg);
+> -}
+> -
+>   static void sunxi_setbits(void __iomem *reg, u32 set_val)
+>   {
+>   	u32 reg_val;
+> @@ -86,81 +77,6 @@ static void sunxi_clrsetbits(void __iomem *reg, u32 clr_val, u32 set_val)
+>   	writel(reg_val, reg);
+>   }
+>   
+> -static u32 sunxi_getbits(void __iomem *reg, u8 mask, u8 shift)
+> -{
+> -	return (readl(reg) >> shift) & mask;
+> -}
+> -
+> -static int ahci_sunxi_phy_init(struct device *dev, void __iomem *reg_base)
+> -{
+> -	u32 reg_val;
+> -	int timeout;
+> -
+> -	/*
+> -	 * When using the new binding, the presence of a sata port node
+> -	 * means that PHY is handled by the PHY driver.
+> -	 * */
+> -	if (of_get_child_count(dev->of_node)) {
+> -		dev_info(dev, "Bypassing PHY init\n");
+> -		return 0;
+> -	}
+> -
+> -	/* This magic is from the original code */
+> -	writel(0, reg_base + AHCI_RWCR);
+> -	msleep(5);
+> -
+> -	sunxi_setbits(reg_base + AHCI_PHYCS1R, BIT(19));
+> -	sunxi_clrsetbits(reg_base + AHCI_PHYCS0R,
+> -			 (0x7 << 24),
+> -			 (0x5 << 24) | BIT(23) | BIT(18));
+> -	sunxi_clrsetbits(reg_base + AHCI_PHYCS1R,
+> -			 (0x3 << 16) | (0x1f << 8) | (0x3 << 6),
+> -			 (0x2 << 16) | (0x6 << 8) | (0x2 << 6));
+> -	sunxi_setbits(reg_base + AHCI_PHYCS1R, BIT(28) | BIT(15));
+> -	sunxi_clrbits(reg_base + AHCI_PHYCS1R, BIT(19));
+> -	sunxi_clrsetbits(reg_base + AHCI_PHYCS0R,
+> -			 (0x7 << 20), (0x3 << 20));
+> -	sunxi_clrsetbits(reg_base + AHCI_PHYCS2R,
+> -			 (0x1f << 5), (0x19 << 5));
+> -	msleep(5);
+> -
+> -	sunxi_setbits(reg_base + AHCI_PHYCS0R, (0x1 << 19));
+> -
+> -	timeout = 250; /* Power up takes aprox 50 us */
+> -	do {
+> -		reg_val = sunxi_getbits(reg_base + AHCI_PHYCS0R, 0x7, 28);
+> -		if (reg_val == 0x02)
+> -			break;
+> -
+> -		if (--timeout == 0) {
+> -			dev_err(dev, "PHY power up failed.\n");
+> -			return -EIO;
+> -		}
+> -		udelay(1);
+> -	} while (1);
+> -
+> -	sunxi_setbits(reg_base + AHCI_PHYCS2R, (0x1 << 24));
+> -
+> -	timeout = 100; /* Calibration takes aprox 10 us */
+> -	do {
+> -		reg_val = sunxi_getbits(reg_base + AHCI_PHYCS2R, 0x1, 24);
+> -		if (reg_val == 0x00)
+> -			break;
+> -
+> -		if (--timeout == 0) {
+> -			dev_err(dev, "PHY calibration failed.\n");
+> -			return -EIO;
+> -		}
+> -		udelay(1);
+> -	} while (1);
+> -
+> -	msleep(15);
+> -
+> -	writel(0x7, reg_base + AHCI_RWCR);
+> -
+> -	return 0;
+> -}
+> -
+>   static void ahci_sunxi_start_engine(struct ata_port *ap)
+>   {
+>   	void __iomem *port_mmio = ahci_port_base(ap);
+> @@ -186,7 +102,6 @@ static struct scsi_host_template ahci_platform_sht = {
+>   
+>   static int ahci_sunxi_probe(struct platform_device *pdev)
+>   {
+> -	struct device *dev = &pdev->dev;
+>   	struct ahci_host_priv *hpriv;
+>   	int rc;
+>   
+> @@ -200,10 +115,6 @@ static int ahci_sunxi_probe(struct platform_device *pdev)
+>   	if (rc)
+>   		return rc;
+>   
+> -	rc = ahci_sunxi_phy_init(dev, hpriv->mmio);
+> -	if (rc)
+> -		goto disable_resources;
+> -
+>   	hpriv->flags = AHCI_HFLAG_32BIT_ONLY | AHCI_HFLAG_NO_MSI |
+>   		       AHCI_HFLAG_YES_NCQ;
+>   
+> @@ -238,10 +149,6 @@ static int ahci_sunxi_resume(struct device *dev)
+>   	if (rc)
+>   		return rc;
+>   
+> -	rc = ahci_sunxi_phy_init(dev, hpriv->mmio);
+> -	if (rc)
+> -		goto disable_resources;
+> -
+>   	rc = ahci_platform_resume_host(dev);
+>   	if (rc)
+>   		goto disable_resources;
+> 
 
-Assume we have a guard page, can someone in the short window do
-recursive calls in B, move ssp to the end of the guard page, and
-trigger the same again?  He can simply take the incssp route.
+After this change ahci_sunxi_resume() is the same as ahci_platform_resume,
+so you can drop the entire function and directly refer to
+ahci_platform_resume in ahci_sunxi_pm_ops.
 
+Regards,
+
+Hans
