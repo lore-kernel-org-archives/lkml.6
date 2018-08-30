@@ -2,95 +2,271 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	UPPERCASE_75_100 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9981C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CD6C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ADD920658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:04:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADD920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A3CC02082B
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ns0cEs0n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3CC02082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbeH3OF1 (ORCPT
+        id S1728296AbeH3OMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:05:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38814 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728125AbeH3OF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:05:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF06A7A9;
-        Thu, 30 Aug 2018 03:04:05 -0700 (PDT)
-Received: from e110365-lin.cambridge.arm.com (e110365-lin.cambridge.arm.com [10.1.129.211])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5DC353F721;
-        Thu, 30 Aug 2018 03:04:04 -0700 (PDT)
-From:   vincent.donnefort@arm.com
-To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     john.reitan@arm.com, beata.michalska@arm.com,
-        Vincent Donnefort <vincent.donnefort@arm.com>
-Subject: [PATCH] PM / devfreq: stopping the governor before device_unregister()
-Date:   Thu, 30 Aug 2018 11:02:00 +0100
-Message-Id: <1535623320-28281-1-git-send-email-vincent.donnefort@arm.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 30 Aug 2018 10:12:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35753 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728087AbeH3OMw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:12:52 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so3679402pfh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 03:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language;
+        bh=YMqcO3obcB/CM2SShJ8Ml2H5uuvZgA/ylYVQv+xylCw=;
+        b=ns0cEs0n3n+IcSswQbIj0DbZiNGBlWgdX8kgFh4zFlhLFxgt/VqsaskcYYTUHv955A
+         wd8PpW1Sre6jtbF3H8zHLssUmJ7/h7pjVv9lr1yMZ6PRL23wpGiczTTWk0O+IQ1H0rwn
+         FPx/RNee/fxGbWHWSibobrO0/P3iD509hBPIJA/NgacThGb3QJX4nFlh+8LTZpK6HRlb
+         rSE5b/vJo5TirnEh/+BpM6qY8eXGV14iE1Ju7UHI1xVd6r8FNRXno44i7ENz7XMTnxxF
+         wGJBz0VhwaXsRPpz432349YdMzII4uh2rZk4LExwHn1REw28aCTW0XiOncDAx/iJUFwK
+         VNaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language;
+        bh=YMqcO3obcB/CM2SShJ8Ml2H5uuvZgA/ylYVQv+xylCw=;
+        b=WZm11+CikXilTcpXl+Wt8To/zpnPppokUZz5LkmAcBt+KwpQTJzayUMhY2sa7iN8tX
+         J+GhNVhGYExqZb5e6gQk6D88jRKWndhVa0MWSCqxG10s/5Lx6My8vAF0PqTXxoGegub1
+         gzrVG0BHYuLp5mRXH9AswT2dt1b8rM9KAL44mf76WCBuR6UTWMepEHyEaO+9f2c255w7
+         744CmfMc6jvoWuBicelAekzxeymiQX1vd7MGaizL140fdVUKJj8i3crHBjvB15feC5Sh
+         ub/YKzikHD1Ey3F7ulAzQNeBfmgyyv6gS2E8o8BNh+ETQrXtUW8lFQCjtYElnO29jzTQ
+         Nahg==
+X-Gm-Message-State: APzg51DI4HAYpsy8Ou22thIVioCAT89kXRpd0PvYeNOYKoxYKMzU/WVo
+        wWjCx+DU2ZzPI7Xb22qIfSY=
+X-Google-Smtp-Source: ANB0VdbW0pXX/TpRpGmXskSrzqVGJHHY45wlOb0he0d4FFTb6qGEbpt9Wc7kE/OWdyr9Zn5699z5Lw==
+X-Received: by 2002:a62:9bc9:: with SMTP id e70-v6mr9599068pfk.95.1535623889078;
+        Thu, 30 Aug 2018 03:11:29 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 187-v6sm15776054pfu.184.2018.08.30.03.11.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 03:11:27 -0700 (PDT)
+Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Pavel Machek <pavel@ucw.cz>
+References: <20180829201659.GA29801@roeck-us.net>
+ <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f6d9bdcd-98a6-fcf2-5308-936ffd714ea7@roeck-us.net>
+Date:   Thu, 30 Aug 2018 03:11:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
+Content-Type: multipart/mixed;
+ boundary="------------B3F7858C71285D6F28CFB082"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Donnefort <vincent.donnefort@arm.com>
+This is a multi-part message in MIME format.
+--------------B3F7858C71285D6F28CFB082
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-device_release() is freeing the resources before calling the device
-specific release callback which is, in the case of devfreq, stopping
-the governor.
+On 08/30/2018 12:19 AM, Joerg Roedel wrote:
+> Hey Guenter,
+> 
+> On Wed, Aug 29, 2018 at 01:16:59PM -0700, Guenter Roeck wrote:
+>> I see boot failures on mainline when trying to boot x86 images with an efi
+>> bios on Intel CPUs in qemu. Behavior is quite unusual: qemu dies silently
+>> after the kernel displays "Run /sbin/init as init process". With debugging
+>> enabled, qemu reports a CR3 update followed by a triple fault.
+>> Here is the end of the log file:
+>>
+>> ----------------
+>> IN:
+>> 0xc75f1d1a:  66 90                    nop
+>> 0xc75f1d1c:  0f 20 d8                 movl     %cr3, %eax
+>> 0xc75f1d1f:  0d 00 10 00 00           orl      $0x1000, %eax
+>> 0xc75f1d24:  0f 22 d8                 movl     %eax, %cr3
+>>
+>> CR3 update: CR3=0e39b000
+> 
+> Thanks for the bug report, from a quick glance it looks like the kernel
+> is switching to an empty page-table. But I need to debug that further.
+> 
+>> qemu-system-i386 -kernel arch/x86/boot/bzImage -M q35 -cpu core2duo \
+>> 	-no-reboot -m 256 \
+>> 	-bios OVMF-pure-efi-32.fd \
+>> 	-usb -device usb-storage,drive=d0 \
+>> 	-drive file=rootfs.ext2,if=none,id=d0,format=raw \
+>> 	--append 'root=/dev/sda rw rootwait mem=256M console=ttyS0 console=tty noreboot' \
+>> 	-nographic
+> 
+> Can you please provide the exact OVMF-pure-efi-32.fd image and the
+> .config of the kernel?
+> 
 
-It is a problem as some governors are using the device resources. e.g.
-simpleondemand which is using the devfreq deferrable monitoring work. If it
-is not stopped before the resources are freed, it might lead to a use after
-free.
+OVMF image:
 
-Signed-off-by: Vincent Donnefort <vincent.donnefort@arm.com>
-Reviewed-by: John Einar Reitan <john.reitan@arm.com>
+https://github.com/groeck/linux-build-test/blob/master/rootfs/firmware/OVMF-pure-efi-32.fd
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 4c49bb1..4e43830 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -534,10 +534,6 @@ static void devfreq_dev_release(struct device *dev)
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
--	if (devfreq->governor)
--		devfreq->governor->event_handler(devfreq,
--						 DEVFREQ_GOV_STOP, NULL);
--
- 	if (devfreq->profile->exit)
- 		devfreq->profile->exit(devfreq->dev.parent);
- 
-@@ -672,7 +668,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
--	device_unregister(&devfreq->dev);
-+	devfreq_remove_device(devfreq);
- 	devfreq = NULL;
- err_dev:
- 	if (devfreq)
-@@ -693,6 +689,9 @@ int devfreq_remove_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
-+	if (devfreq->governor)
-+		devfreq->governor->event_handler(devfreq,
-+						 DEVFREQ_GOV_STOP, NULL);
- 	device_unregister(&devfreq->dev);
- 
- 	return 0;
--- 
-1.9.1
+root file system:
 
+https://github.com/groeck/linux-build-test/blob/master/rootfs/x86/rootfs.ext2
+
+Configuration is attached.
+
+Guenter
+
+--------------B3F7858C71285D6F28CFB082
+Content-Type: text/plain; charset=UTF-8;
+ name="defconfig"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="defconfig"
+
+IyBDT05GSUdfTE9DQUxWRVJTSU9OX0FVVE8gaXMgbm90IHNldApDT05GSUdfU1lTVklQQz15
+CkNPTkZJR19QT1NJWF9NUVVFVUU9eQpDT05GSUdfQVVESVQ9eQpDT05GSUdfTk9fSFo9eQpD
+T05GSUdfSElHSF9SRVNfVElNRVJTPXkKQ09ORklHX1BSRUVNUFRfVk9MVU5UQVJZPXkKQ09O
+RklHX0JTRF9QUk9DRVNTX0FDQ1Q9eQpDT05GSUdfVEFTS1NUQVRTPXkKQ09ORklHX1RBU0tf
+REVMQVlfQUNDVD15CkNPTkZJR19UQVNLX1hBQ0NUPXkKQ09ORklHX1RBU0tfSU9fQUNDT1VO
+VElORz15CkNPTkZJR19MT0dfQlVGX1NISUZUPTE4CkNPTkZJR19DR1JPVVBTPXkKQ09ORklH
+X0NHUk9VUF9TQ0hFRD15CkNPTkZJR19DR1JPVVBfRlJFRVpFUj15CkNPTkZJR19DUFVTRVRT
+PXkKQ09ORklHX0NHUk9VUF9DUFVBQ0NUPXkKQ09ORklHX0JMS19ERVZfSU5JVFJEPXkKIyBD
+T05GSUdfQ09NUEFUX0JSSyBpcyBub3Qgc2V0CkNPTkZJR19QUk9GSUxJTkc9eQpDT05GSUdf
+U01QPXkKQ09ORklHX1g4Nl9HRU5FUklDPXkKQ09ORklHX0hQRVRfVElNRVI9eQpDT05GSUdf
+U0NIRURfU01UPXkKQ09ORklHX1g4Nl9SRVJPVVRFX0ZPUl9CUk9LRU5fQk9PVF9JUlFTPXkK
+Q09ORklHX1g4Nl9SRUJPT1RGSVhVUFM9eQpDT05GSUdfTUlDUk9DT0RFX0FNRD15CkNPTkZJ
+R19YODZfTVNSPXkKQ09ORklHX1g4Nl9DUFVJRD15CkNPTkZJR19ISUdIUFRFPXkKQ09ORklH
+X1g4Nl9DSEVDS19CSU9TX0NPUlJVUFRJT049eQojIENPTkZJR19NVFJSX1NBTklUSVpFUiBp
+cyBub3Qgc2V0CkNPTkZJR19FRkk9eQpDT05GSUdfSFpfMTAwMD15CkNPTkZJR19LRVhFQz15
+CkNPTkZJR19DUkFTSF9EVU1QPXkKQ09ORklHX0hJQkVSTkFUSU9OPXkKQ09ORklHX1BNX0RF
+QlVHPXkKQ09ORklHX1BNX1RSQUNFX1JUQz15CkNPTkZJR19BQ1BJX0RPQ0s9eQpDT05GSUdf
+Q1BVX0ZSRVFfREVGQVVMVF9HT1ZfVVNFUlNQQUNFPXkKQ09ORklHX0NQVV9GUkVRX0dPVl9Q
+RVJGT1JNQU5DRT15CkNPTkZJR19DUFVfRlJFUV9HT1ZfT05ERU1BTkQ9eQpDT05GSUdfWDg2
+X0FDUElfQ1BVRlJFUT15CkNPTkZJR19QQ0lFUE9SVEJVUz15CkNPTkZJR19QQ0lfTVNJPXkK
+Q09ORklHX0hPVFBMVUdfUENJPXkKQ09ORklHX1BDQ0FSRD15CkNPTkZJR19ZRU5UQT15CkNP
+TkZJR19FRklfVkFSUz15CkNPTkZJR19LUFJPQkVTPXkKQ09ORklHX0pVTVBfTEFCRUw9eQpD
+T05GSUdfTU9EVUxFUz15CkNPTkZJR19NT0RVTEVfVU5MT0FEPXkKQ09ORklHX01PRFVMRV9G
+T1JDRV9VTkxPQUQ9eQpDT05GSUdfUEFSVElUSU9OX0FEVkFOQ0VEPXkKQ09ORklHX09TRl9Q
+QVJUSVRJT049eQpDT05GSUdfQU1JR0FfUEFSVElUSU9OPXkKQ09ORklHX01BQ19QQVJUSVRJ
+T049eQpDT05GSUdfQlNEX0RJU0tMQUJFTD15CkNPTkZJR19NSU5JWF9TVUJQQVJUSVRJT049
+eQpDT05GSUdfU09MQVJJU19YODZfUEFSVElUSU9OPXkKQ09ORklHX1VOSVhXQVJFX0RJU0tM
+QUJFTD15CkNPTkZJR19TR0lfUEFSVElUSU9OPXkKQ09ORklHX1NVTl9QQVJUSVRJT049eQpD
+T05GSUdfS0FSTUFfUEFSVElUSU9OPXkKQ09ORklHX0JJTkZNVF9NSVNDPXkKQ09ORklHX05F
+VD15CkNPTkZJR19QQUNLRVQ9eQpDT05GSUdfVU5JWD15CkNPTkZJR19YRlJNX1VTRVI9eQpD
+T05GSUdfSU5FVD15CkNPTkZJR19JUF9NVUxUSUNBU1Q9eQpDT05GSUdfSVBfQURWQU5DRURf
+Uk9VVEVSPXkKQ09ORklHX0lQX01VTFRJUExFX1RBQkxFUz15CkNPTkZJR19JUF9ST1VURV9N
+VUxUSVBBVEg9eQpDT05GSUdfSVBfUk9VVEVfVkVSQk9TRT15CkNPTkZJR19JUF9QTlA9eQpD
+T05GSUdfSVBfUE5QX0RIQ1A9eQpDT05GSUdfSVBfUE5QX0JPT1RQPXkKQ09ORklHX0lQX1BO
+UF9SQVJQPXkKQ09ORklHX0lQX01ST1VURT15CkNPTkZJR19JUF9QSU1TTV9WMT15CkNPTkZJ
+R19JUF9QSU1TTV9WMj15CkNPTkZJR19TWU5fQ09PS0lFUz15CiMgQ09ORklHX0lORVRfWEZS
+TV9NT0RFX1RSQU5TUE9SVCBpcyBub3Qgc2V0CiMgQ09ORklHX0lORVRfWEZSTV9NT0RFX1RV
+Tk5FTCBpcyBub3Qgc2V0CiMgQ09ORklHX0lORVRfWEZSTV9NT0RFX0JFRVQgaXMgbm90IHNl
+dAojIENPTkZJR19JTkVUX0RJQUcgaXMgbm90IHNldApDT05GSUdfVENQX0NPTkdfQURWQU5D
+RUQ9eQojIENPTkZJR19UQ1BfQ09OR19CSUMgaXMgbm90IHNldAojIENPTkZJR19UQ1BfQ09O
+R19XRVNUV09PRCBpcyBub3Qgc2V0CiMgQ09ORklHX1RDUF9DT05HX0hUQ1AgaXMgbm90IHNl
+dApDT05GSUdfVENQX01ENVNJRz15CkNPTkZJR19JTkVUNl9BSD15CkNPTkZJR19JTkVUNl9F
+U1A9eQpDT05GSUdfTkVUTEFCRUw9eQpDT05GSUdfTkVURklMVEVSPXkKIyBDT05GSUdfTkVU
+RklMVEVSX0FEVkFOQ0VEIGlzIG5vdCBzZXQKQ09ORklHX05GX0NPTk5UUkFDSz15CkNPTkZJ
+R19ORl9DT05OVFJBQ0tfRlRQPXkKQ09ORklHX05GX0NPTk5UUkFDS19JUkM9eQpDT05GSUdf
+TkZfQ09OTlRSQUNLX1NJUD15CkNPTkZJR19ORl9DVF9ORVRMSU5LPXkKQ09ORklHX05FVEZJ
+TFRFUl9YVF9UQVJHRVRfQ09OTlNFQ01BUks9eQpDT05GSUdfTkVURklMVEVSX1hUX1RBUkdF
+VF9ORkxPRz15CkNPTkZJR19ORVRGSUxURVJfWFRfVEFSR0VUX1NFQ01BUks9eQpDT05GSUdf
+TkVURklMVEVSX1hUX1RBUkdFVF9UQ1BNU1M9eQpDT05GSUdfTkVURklMVEVSX1hUX01BVENI
+X0NPTk5UUkFDSz15CkNPTkZJR19ORVRGSUxURVJfWFRfTUFUQ0hfUE9MSUNZPXkKQ09ORklH
+X05FVEZJTFRFUl9YVF9NQVRDSF9TVEFURT15CkNPTkZJR19JUF9ORl9JUFRBQkxFUz15CkNP
+TkZJR19JUF9ORl9GSUxURVI9eQpDT05GSUdfSVBfTkZfVEFSR0VUX1JFSkVDVD15CkNPTkZJ
+R19JUF9ORl9NQU5HTEU9eQpDT05GSUdfSVA2X05GX0lQVEFCTEVTPXkKQ09ORklHX0lQNl9O
+Rl9NQVRDSF9JUFY2SEVBREVSPXkKQ09ORklHX0lQNl9ORl9GSUxURVI9eQpDT05GSUdfSVA2
+X05GX1RBUkdFVF9SRUpFQ1Q9eQpDT05GSUdfSVA2X05GX01BTkdMRT15CkNPTkZJR19ORVRf
+U0NIRUQ9eQpDT05GSUdfTkVUX0VNQVRDSD15CkNPTkZJR19ORVRfQ0xTX0FDVD15CkNPTkZJ
+R19IQU1SQURJTz15CkNPTkZJR19DRkc4MDIxMT15CkNPTkZJR19NQUM4MDIxMT15CkNPTkZJ
+R19NQUM4MDIxMV9MRURTPXkKQ09ORklHX1JGS0lMTD15CkNPTkZJR19VRVZFTlRfSEVMUEVS
+X1BBVEg9Ii9zYmluL2hvdHBsdWciCkNPTkZJR19ERVZUTVBGUz15CkNPTkZJR19ERVZUTVBG
+U19NT1VOVD15CkNPTkZJR19ERUJVR19ERVZSRVM9eQpDT05GSUdfQ09OTkVDVE9SPXkKQ09O
+RklHX0JMS19ERVZfTE9PUD15CkNPTkZJR19WSVJUSU9fQkxLPXkKQ09ORklHX1ZJUlRJT19C
+TEtfU0NTST15CkNPTkZJR19CTEtfREVWX05WTUU9eQpDT05GSUdfQkxLX0RFVl9TRD15CkNP
+TkZJR19CTEtfREVWX1NSPXkKQ09ORklHX0JMS19ERVZfU1JfVkVORE9SPXkKQ09ORklHX0NI
+Ul9ERVZfU0c9eQpDT05GSUdfU0NTSV9DT05TVEFOVFM9eQpDT05GSUdfTUVHQVJBSURfU0FT
+PXkKQ09ORklHX1NDU0lfU1lNNTNDOFhYXzI9eQpDT05GSUdfU0NTSV9EQzM5NXg9eQpDT05G
+SUdfU0NTSV9BTTUzQzk3ND15CkNPTkZJR19TQ1NJX1ZJUlRJTz15CkNPTkZJR19BVEE9eQpD
+T05GSUdfU0FUQV9BSENJPXkKQ09ORklHX0FUQV9QSUlYPXkKQ09ORklHX1BBVEFfQU1EPXkK
+Q09ORklHX1BBVEFfT0xEUElJWD15CkNPTkZJR19QQVRBX1NDSD15CkNPTkZJR19QQVRBX01Q
+SUlYPXkKQ09ORklHX0FUQV9HRU5FUklDPXkKQ09ORklHX01EPXkKQ09ORklHX0JMS19ERVZf
+TUQ9eQpDT05GSUdfQkxLX0RFVl9ETT15CkNPTkZJR19ETV9NSVJST1I9eQpDT05GSUdfRE1f
+WkVSTz15CkNPTkZJR19GVVNJT049eQpDT05GSUdfRlVTSU9OX1NBUz15CkNPTkZJR19NQUNJ
+TlRPU0hfRFJJVkVSUz15CkNPTkZJR19NQUNfRU1VTU9VU0VCVE49eQpDT05GSUdfTkVUREVW
+SUNFUz15CkNPTkZJR19ORVRDT05TT0xFPXkKQ09ORklHX0JOWDI9eQpDT05GSUdfVElHT04z
+PXkKQ09ORklHX05FVF9UVUxJUD15CkNPTkZJR19FMTAwPXkKQ09ORklHX0UxMDAwPXkKQ09O
+RklHX0UxMDAwRT15CkNPTkZJR19TS1kyPXkKQ09ORklHX05FMktfUENJPXkKQ09ORklHX0ZP
+UkNFREVUSD15CkNPTkZJR184MTM5VE9PPXkKIyBDT05GSUdfODEzOVRPT19QSU8gaXMgbm90
+IHNldApDT05GSUdfUjgxNjk9eQpDT05GSUdfRkREST15CkNPTkZJR19JTlBVVF9QT0xMREVW
+PXkKQ09ORklHX0lOUFVUX0VWREVWPXkKQ09ORklHX0lOUFVUX0pPWVNUSUNLPXkKQ09ORklH
+X0lOUFVUX1RBQkxFVD15CkNPTkZJR19JTlBVVF9UT1VDSFNDUkVFTj15CkNPTkZJR19JTlBV
+VF9NSVNDPXkKIyBDT05GSUdfTEVHQUNZX1BUWVMgaXMgbm90IHNldApDT05GSUdfU0VSSUFM
+X05PTlNUQU5EQVJEPXkKQ09ORklHX1NFUklBTF84MjUwPXkKQ09ORklHX1NFUklBTF84MjUw
+X0NPTlNPTEU9eQpDT05GSUdfU0VSSUFMXzgyNTBfTlJfVUFSVFM9MzIKQ09ORklHX1NFUklB
+TF84MjUwX0VYVEVOREVEPXkKQ09ORklHX1NFUklBTF84MjUwX01BTllfUE9SVFM9eQpDT05G
+SUdfU0VSSUFMXzgyNTBfU0hBUkVfSVJRPXkKQ09ORklHX1NFUklBTF84MjUwX0RFVEVDVF9J
+UlE9eQpDT05GSUdfU0VSSUFMXzgyNTBfUlNBPXkKQ09ORklHX0hXX1JBTkRPTT15CkNPTkZJ
+R19OVlJBTT15CkNPTkZJR19IUEVUPXkKIyBDT05GSUdfSFBFVF9NTUFQIGlzIG5vdCBzZXQK
+Q09ORklHX0kyQ19JODAxPXkKQ09ORklHX1dBVENIRE9HPXkKQ09ORklHX0FHUD15CkNPTkZJ
+R19BR1BfQU1ENjQ9eQpDT05GSUdfQUdQX0lOVEVMPXkKQ09ORklHX0RSTT15CkNPTkZJR19E
+Uk1fSTkxNT15CkNPTkZJR19GQl9NT0RFX0hFTFBFUlM9eQpDT05GSUdfRkJfVElMRUJMSVRU
+SU5HPXkKQ09ORklHX0ZCX0VGST15CiMgQ09ORklHX0xDRF9DTEFTU19ERVZJQ0UgaXMgbm90
+IHNldApDT05GSUdfVkdBQ09OX1NPRlRfU0NST0xMQkFDSz15CkNPTkZJR19MT0dPPXkKIyBD
+T05GSUdfTE9HT19MSU5VWF9NT05PIGlzIG5vdCBzZXQKIyBDT05GSUdfTE9HT19MSU5VWF9W
+R0ExNiBpcyBub3Qgc2V0CkNPTkZJR19TT1VORD15CkNPTkZJR19TTkQ9eQpDT05GSUdfU05E
+X0hSVElNRVI9eQpDT05GSUdfU05EX1NFUVVFTkNFUj15CkNPTkZJR19TTkRfU0VRX0RVTU1Z
+PXkKQ09ORklHX1NORF9IREFfSU5URUw9eQpDT05GSUdfU05EX0hEQV9IV0RFUD15CkNPTkZJ
+R19ISURSQVc9eQpDT05GSUdfSElEX0dZUkFUSU9OPXkKQ09ORklHX0xPR0lURUNIX0ZGPXkK
+Q09ORklHX0hJRF9OVFJJRz15CkNPTkZJR19ISURfUEFOVEhFUkxPUkQ9eQpDT05GSUdfUEFO
+VEhFUkxPUkRfRkY9eQpDT05GSUdfSElEX1BFVEFMWU5YPXkKQ09ORklHX0hJRF9TQU1TVU5H
+PXkKQ09ORklHX0hJRF9TT05ZPXkKQ09ORklHX0hJRF9TVU5QTFVTPXkKQ09ORklHX0hJRF9U
+T1BTRUVEPXkKQ09ORklHX0hJRF9QSUQ9eQpDT05GSUdfVVNCX0hJRERFVj15CkNPTkZJR19V
+U0I9eQpDT05GSUdfVVNCX0FOTk9VTkNFX05FV19ERVZJQ0VTPXkKQ09ORklHX1VTQl9NT049
+eQpDT05GSUdfVVNCX1hIQ0lfSENEPXkKQ09ORklHX1VTQl9FSENJX0hDRD15CkNPTkZJR19V
+U0JfT0hDSV9IQ0Q9eQpDT05GSUdfVVNCX1VIQ0lfSENEPXkKQ09ORklHX1VTQl9QUklOVEVS
+PXkKQ09ORklHX1VTQl9TVE9SQUdFPXkKQ09ORklHX1VTQl9VQVM9eQpDT05GSUdfTU1DPXkK
+Q09ORklHX01NQ19TREhDST15CkNPTkZJR19NTUNfU0RIQ0lfUENJPXkKQ09ORklHX0VEQUM9
+eQpDT05GSUdfUlRDX0NMQVNTPXkKIyBDT05GSUdfUlRDX0hDVE9TWVMgaXMgbm90IHNldApD
+T05GSUdfRE1BREVWSUNFUz15CkNPTkZJR19WSVJUSU9fUENJPXkKQ09ORklHX1ZJUlRJT19C
+QUxMT09OPXkKQ09ORklHX1ZJUlRJT19NTUlPPXkKQ09ORklHX0VFRVBDX0xBUFRPUD15CkNP
+TkZJR19FWFQ0X0ZTPXkKQ09ORklHX0VYVDRfRlNfUE9TSVhfQUNMPXkKQ09ORklHX0VYVDRf
+RlNfU0VDVVJJVFk9eQpDT05GSUdfUVVPVEE9eQpDT05GSUdfUVVPVEFfTkVUTElOS19JTlRF
+UkZBQ0U9eQojIENPTkZJR19QUklOVF9RVU9UQV9XQVJOSU5HIGlzIG5vdCBzZXQKQ09ORklH
+X1FGTVRfVjI9eQpDT05GSUdfQVVUT0ZTNF9GUz15CkNPTkZJR19JU085NjYwX0ZTPXkKQ09O
+RklHX0pPTElFVD15CkNPTkZJR19aSVNPRlM9eQpDT05GSUdfTVNET1NfRlM9eQpDT05GSUdf
+VkZBVF9GUz15CkNPTkZJR19QUk9DX0tDT1JFPXkKQ09ORklHX1RNUEZTX1BPU0lYX0FDTD15
+CkNPTkZJR19IVUdFVExCRlM9eQpDT05GSUdfTkZTX0ZTPXkKQ09ORklHX05GU19WM19BQ0w9
+eQpDT05GSUdfTkZTX1Y0PXkKQ09ORklHX1JPT1RfTkZTPXkKQ09ORklHX05MU19ERUZBVUxU
+PSJ1dGY4IgpDT05GSUdfTkxTX0NPREVQQUdFXzQzNz15CkNPTkZJR19OTFNfQVNDSUk9eQpD
+T05GSUdfTkxTX0lTTzg4NTlfMT15CkNPTkZJR19OTFNfVVRGOD15CkNPTkZJR19TRUNVUklU
+WT15CkNPTkZJR19TRUNVUklUWV9ORVRXT1JLPXkKQ09ORklHX1NFQ1VSSVRZX1NFTElOVVg9
+eQpDT05GSUdfU0VDVVJJVFlfU0VMSU5VWF9CT09UUEFSQU09eQpDT05GSUdfU0VDVVJJVFlf
+U0VMSU5VWF9ESVNBQkxFPXkKQ09ORklHX0NSWVBUT19BRVNfNTg2PXkKQ09ORklHX1BSSU5U
+S19USU1FPXkKIyBDT05GSUdfVU5VU0VEX1NZTUJPTFMgaXMgbm90IHNldApDT05GSUdfTUFH
+SUNfU1lTUlE9eQpDT05GSUdfREVCVUdfS0VSTkVMPXkKQ09ORklHX0RFQlVHX1NUQUNLX1VT
+QUdFPXkKQ09ORklHX0RFQlVHX1NUQUNLT1ZFUkZMT1c9eQojIENPTkZJR19TQ0hFRF9ERUJV
+RyBpcyBub3Qgc2V0CkNPTkZJR19TQ0hFRFNUQVRTPXkKQ09ORklHX0JMS19ERVZfSU9fVFJB
+Q0U9eQpDT05GSUdfUFJPVklERV9PSENJMTM5NF9ETUFfSU5JVD15CkNPTkZJR19FQVJMWV9Q
+UklOVEtfREJHUD15CkNPTkZJR19ERUJVR19CT09UX1BBUkFNUz15CkNPTkZJR19PUFRJTUla
+RV9JTkxJTklORz15Cg==
+--------------B3F7858C71285D6F28CFB082--
