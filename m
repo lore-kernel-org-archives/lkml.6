@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BDDC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2ECEC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E1C20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD7652083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V92Tq2KD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E1C20838
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm1AAAVu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7652083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeH3TsK (ORCPT
+        id S1727559AbeH3TsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:48:10 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55429 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbeH3TsJ (ORCPT
+        Thu, 30 Aug 2018 15:48:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34113 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbeH3TsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:48:09 -0400
-Received: by mail-wm0-f68.google.com with SMTP id f21-v6so2476852wmc.5;
-        Thu, 30 Aug 2018 08:45:22 -0700 (PDT)
+        Thu, 30 Aug 2018 15:48:10 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g33-v6so8531771wrd.1;
+        Thu, 30 Aug 2018 08:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=znNWD4c7xwHHzdKt+r4w+sW2qQCB/x6+Cp4Db3nfkDE=;
-        b=V92Tq2KDAuTOS5ZXCjBYkHKFg44ritecrZ7ZE5O8ofAH/laW5wgzuFHy5iebseuYd2
-         UMiflbVHAilN/P8jgZ12r5Z33fJOFqmsL4031S5dzCt/yLUuyqaCRUvnIsGE3qR+dOws
-         SlYVxfX3DhOvr+oPlqQ4zISSUm/awMlTxnw/cmojhxFMzlGqdOmcEP6/47oa8U2og+jx
-         vXob4+bNCmF9XoBlRD0EGa6KGRnKDEaDpbxBujheuWRMuHxnceL7XXYLWgDZnnoZVBPU
-         hgpLUrjbFe+452AdUNT1DdZSJa/NDd+hug4pGvw2BcRdKgNchVRYzipAsQvLwQDe7NNS
-         wbkw==
+        bh=tHWKgVQ+LP5A64YbmsQPQ4TQy6BjNkjDuA1WjJuVxFc=;
+        b=jm1AAAVuPY9EOrIexteon5sSq6w2VUiphdwBnzPsfyVT6LIAk9QR/qg4M1GELtOviP
+         prOerDSGFrglpAQ8GjsmboVORQgKaEWyNqhlzrNm4FEd8p5IshSNYuWrWDJmiLfL57BO
+         meRhdxxGdTx2glX5HXepaEwqTUj+IeAL3vth3OQlmQel6DitQYhA//5Gc4sJhMecLpIS
+         3uVbJr/k4HC0yGome2RNhFF+lwOd/kvDzLiV3EnULya0ns/Sz7KFrljAjL9dpZBu+vtt
+         kZKwnMYc+i7KJfFswbxm9PdJJoZBTCyOddwFkbmcqK72Hrfni/4896lbD4bUTV6QXhDs
+         NCug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=znNWD4c7xwHHzdKt+r4w+sW2qQCB/x6+Cp4Db3nfkDE=;
-        b=Ai3+TgITTZNnY+pEWGxgx1HzlaMjjiMMTLOQtl2xG738z2ApYVD/vf/FcdpsPI52Pj
-         i0OvmVwRFpmElNtmmw0xHKnTD4EKAsSIOfybguI0W7ou8078XXCwPcrrkr97VMVzZnhI
-         bzsvcZ7ORUn3ql+DD31fg8KYqa52ZRv7bZ5qTuax3Qeqxm5vZEJa0bfDpg5oZf6hLy33
-         X+YoYofuKd6ms81WC/OCbvbdrZMh3K3tz2Vc+iuWKpaV/phE22wikeBWfjPbgr//d7sP
-         f/nRA/7D6bu8KmDQY0CNwwR7VMeKBEa/J1ouTplQAzRVJSuNPiRk0W8/3XNGkOpZ7dwF
-         aDWA==
-X-Gm-Message-State: APzg51BYWc3NwLopvBzAXtiMhpMJVHaFsFNiW4W4Sg8TPzVFBA/PWkU1
-        SfqqMqUHlB67ZZ5S80FcCvw=
-X-Google-Smtp-Source: ANB0VdZuXnaUMR0j5QPHrOlZECbitDpFtxY1nXAYEg80kpo4MiZSe5qr0nk3dEhEG6VGCPHu5ajrlA==
-X-Received: by 2002:a1c:48d:: with SMTP id 135-v6mr2082908wme.106.1535643921740;
-        Thu, 30 Aug 2018 08:45:21 -0700 (PDT)
+        bh=tHWKgVQ+LP5A64YbmsQPQ4TQy6BjNkjDuA1WjJuVxFc=;
+        b=TJE4UO0k+CNywKBK8Ml2Ymkro8lwE6PfWQ2uMLNAkBS2MwgHlXcf7F72N4ZeLqIfTs
+         ys7IOj38d60WP6StBmcYbajegplU5i0goxkFjpF3v6ZMNp8BoBxOSZxrgBJA0Ka/S1HA
+         gEgsRYbF+W4sgdh4/YJvvGjfnae6gkSePeAV49EIBFnJKUGvmJoC6DvuJc5E6AC6jhMO
+         tKi0Tk1gsWwOMFZPFeAxSXojwdTbMUMx9vag5NpAdKmQvRDsQV2AkeEUwHxbIa9gSGE9
+         QJiS7dxjBlczXu7KrJyjbDyjHn/h362fapPfEBOe0gUHxPxFbeiXXpbVMvUvQNcVfkna
+         4Lpg==
+X-Gm-Message-State: APzg51DJH2B7NJhFZ6lij599c7dVKVpM093M7033WMRoCe2Ba0FnmlKa
+        +n/h7vSFuyCkH17copi9f3U=
+X-Google-Smtp-Source: ANB0VdbABIGLqoYMoOjdStNEiEpxSnI4a5wV60mvWIm2iY431vbsOeGYB+GEp93JCTnxaB51r0mu5Q==
+X-Received: by 2002:a5d:6243:: with SMTP id m3-v6mr8147675wrv.179.1535643923775;
+        Thu, 30 Aug 2018 08:45:23 -0700 (PDT)
 Received: from debian-hp.wlan.uni-ulm.de (eduroam170-020.wlan.uni-ulm.de. [134.60.170.20])
-        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.20
+        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 08:45:21 -0700 (PDT)
+        Thu, 30 Aug 2018 08:45:23 -0700 (PDT)
 From:   Philipp Rossak <embed3d@gmail.com>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
@@ -70,9 +70,9 @@ To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 02/30] mfd: Kconfig: Remove MFD_SUN4I_GPADC config option
-Date:   Thu, 30 Aug 2018 17:44:50 +0200
-Message-Id: <20180830154518.29507-3-embed3d@gmail.com>
+Subject: [PATCH v3 04/30] iio: adc: Kconfig: Update Kconfig to new build options
+Date:   Thu, 30 Aug 2018 17:44:52 +0200
+Message-Id: <20180830154518.29507-5-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180830154518.29507-1-embed3d@gmail.com>
 References: <20180830154518.29507-1-embed3d@gmail.com>
@@ -81,43 +81,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are merging the mfd:sun4i-gpadc driver into the
-iio/adc/sun4i-gpadc driver. So we need to remove the MFD_SUN4I_GPADC
-config option.
+Since we are merging the mfd driver into the iio adc driver we need to
+update the Kconfig build options.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- drivers/mfd/Kconfig | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/iio/adc/Kconfig | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5aa194..c7ab57d65610 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -40,23 +40,6 @@ config MFD_ACT8945A
- 	  linear regulators, along with a complete ActivePath battery
- 	  charger.
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 9da79070357c..5d0cffd6d2e4 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -713,13 +713,16 @@ config STX104
+ 	  array module parameter.
  
--config MFD_SUN4I_GPADC
--	tristate "Allwinner sunxi platforms' GPADC MFD driver"
--	select MFD_CORE
--	select REGMAP_MMIO
--	select REGMAP_IRQ
--	depends on ARCH_SUNXI || COMPILE_TEST
--	depends on !TOUCHSCREEN_SUN4I
--	help
--	  Select this to get support for Allwinner SoCs (A10, A13 and A31) ADC.
--	  This driver will only map the hardware interrupt and registers, you
--	  have to select individual drivers based on this MFD to be able to use
--	  the ADC or the thermal sensor. This will try to probe the ADC driver
--	  sun4i-gpadc-iio and the hwmon driver iio_hwmon.
--
--	  To compile this driver as a module, choose M here: the module will be
--	  called sun4i-gpadc.
--
- config MFD_AS3711
- 	bool "AMS AS3711"
- 	select MFD_CORE
+ config SUN4I_GPADC
+-	tristate "Support for the Allwinner SoCs GPADC"
++	tristate "Allwinner sunxi platforms' GPADC/Thermal driver"
++	select REGMAP_MMIO
++	select REGMAP_IRQ
+ 	depends on IIO
+-	depends on MFD_SUN4I_GPADC || MACH_SUN8I
+-	depends on THERMAL || !THERMAL_OF
++	depends on ARCH_SUNXI || MACH_SUN8I
++	depends on THERMAL && THERMAL_OF
+ 	help
+ 	  Say yes here to build support for Allwinner (A10, A13 and A31) SoCs
+-	  GPADC. This ADC provides 4 channels which can be used as an ADC or as
++	  GPADC or newer SOCs (A33, H3, A83T, ...) Thermal sensor driver.
++	  This ADC provides 4 channels which can be used as an ADC or as
+ 	  a touchscreen input and one channel for thermal sensor.
+ 
+ 	  The thermal sensor slows down ADC readings and can be disabled by
 -- 
 2.11.0
 
