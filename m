@@ -2,80 +2,97 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D391C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579C0C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBC620658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QqACMXaN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBC620658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 19C812073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C812073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbeH3RHD (ORCPT
+        id S1728926AbeH3RHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:07:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34844 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728789AbeH3RHD (ORCPT
+        Thu, 30 Aug 2018 13:07:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50125 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728789AbeH3RHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:07:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jwhfN8K0sgEjwa3G9QFiEqUZWEdB1n8YtT3aeeR0nek=; b=QqACMXaNSYvbJWZle91xK4Dj+
-        Y/VxiVSY+TUSNHEHywWv8Sy1Cb5rExzpqWqAeII5ltteTS4xxzFBQlgkjJYASQGjWn22v5CTnMXnF
-        G+biCFmqizjgvy4CAqnYg4SrUYUjCN2f9Tm2aR8iGQtwkSn56vptbf5MZ/UpjgfrOK8u50Mls/bPg
-        OZcbkGeAuUOx0+HRAVWiEU4GfRhU5mXa/bmiKeJknMAy+HxCV0R+/SgiC+312LmqXwnrwDht2cXTT
-        CO3PvOZFrGVi+wwI/6zjPzkWDmp8yc2xZSwG/1d6HhqFvnV/aJwg3+SnQy4pCsC8blIbcQmin6ULo
-        ++9f7mGXw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvMcs-0000M3-I8; Thu, 30 Aug 2018 13:04:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 307332024D73F; Thu, 30 Aug 2018 15:04:39 +0200 (CEST)
-Date:   Thu, 30 Aug 2018 15:04:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Siegfried Metz <frame@mailbox.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        rafael.j.wysocki@intel.com, len.brown@intel.com, rjw@rjwysocki.net,
-        diego.viola@gmail.com, rui.zhang@intel.com,
-        viktor_jaegerskuepper@freenet.de
-Subject: Re: REGRESSION: boot stalls on several old dual core Intel CPUs
-Message-ID: <20180830130439.GM24082@hirez.programming.kicks-ass.net>
-References: <74c5abc8-7430-5bc9-2f8a-a2205608bee7@mailbox.org>
+        Thu, 30 Aug 2018 13:07:38 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fvMdf-0003MV-FB; Thu, 30 Aug 2018 15:05:31 +0200
+Date:   Thu, 30 Aug 2018 15:05:31 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Feng Tang <feng.tang@intel.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+In-Reply-To: <20180830125909.uq3e76akcmep6j2u@shbuild888>
+Message-ID: <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de>
+References: <20180830090319.985-1-feng.tang@intel.com> <20180830104401.GZ24124@hirez.programming.kicks-ass.net> <20180830111207.GE2656@dhcp22.suse.cz> <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de> <20180830124915.GH2656@dhcp22.suse.cz>
+ <20180830125909.uq3e76akcmep6j2u@shbuild888>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74c5abc8-7430-5bc9-2f8a-a2205608bee7@mailbox.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 12:55:30PM +0200, Siegfried Metz wrote:
-> Dear kernel developers,
+On Thu, 30 Aug 2018, Feng Tang wrote:
+> On Thu, Aug 30, 2018 at 02:49:15PM +0200, Michal Hocko wrote:
+> > On Thu 30-08-18 13:54:19, Thomas Gleixner wrote:
+> > > On Thu, 30 Aug 2018, Michal Hocko wrote:
+> > > > On Thu 30-08-18 12:44:02, Peter Zijlstra wrote:
+> > > > > On Thu, Aug 30, 2018 at 05:03:19PM +0800, Feng Tang wrote:
+> > > > > > The root cause is that when CONFIG_NO_BOOTMEM=y,  before
+> > > > > > e820__memblock_setup() is called there is no memory for bootmem
+> > > > > > to allocate,
+> > > > > 
+> > > > > Which you bloody well asked for by using NO_BOOTMEM=y.
+> > > > > 
+> > > > > Going down this route; adding hacks for every little thing that does
+> > > > > want bootmem, completely defeats the purpose.
+> > > > > 
+> > > > > If anything, make the earlycon thing depend on NO_BOOTMEM=n. That also
+> > > > > solves your problem. No earlycon, no panic.
+> > > > 
+> > > > Well, there is endeavor to remove bootmem allocator altogether. So
+> > > > making earlycon depend on NO_BOOTMEM=n doesn't sound like a good fit to
+> > > 
+> > > If we want to remove bootmem, then reintroducing it with a static bootmem
+> > > section doesn't make any sense at all.
+> > 
+> > I have actually checked the code now and see what you mean. I thought it
+> > would be a single allocation that is needed but that is not the case so
+> > the static buffer is not going to fly.
 > 
-> since mainline kernel 4.18 (up to the latest mainline kernel 4.18.5)
-> Intel Core 2 Duo processors are affected by boot stalling early in the
-> boot process. As it is so early there is no dmesg output (or any log).
+> Exactly! I tried several ways for the static allocation, like in data, in bss
+> section, but they all failed, as in the very start of setup_arch():
 > 
-> A few users in the Arch Linux community used git bisect and tracked the
-> issue down to this the bad commit:
-> 7197e77abcb65a71d0b21d67beb24f153a96055e clocksource: Remove kthread
+> 	memblock_reserve(__pa_symbol(_text),
+> 		(unsigned long)__bss_stop - (unsigned long)_text);
+> 
+> Those [_text, __bss_stop] is not able to be used by alloc_bootmem(). And I
+> only got this patch, and really appreciate any good suggestions.
 
-I just dug out my core2duo laptop (Lenovo T500) and build a tip/master
-kernel for it (x86_64 debian distro .config).
+And why do you want to use bootmem in the first place? If boot mem is going
+away, why are you not fixing the early console crap to NOT use bootmem at
+all?
 
-Seems to boot just fine.. 3/3 so far.
+Thanks,
 
-Any other clues?
+	tglx
