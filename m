@@ -2,167 +2,159 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9534C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948F4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 578D720661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34EA62082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:24:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gqM0Zocn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578D720661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mz0j7Bec"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34EA62082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbeH3UZ4 (ORCPT
+        id S1727563AbeH3U1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 16:25:56 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39454 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeH3UZ4 (ORCPT
+        Thu, 30 Aug 2018 16:27:09 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36056 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbeH3U1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 16:25:56 -0400
-Received: by mail-io0-f196.google.com with SMTP id l7-v6so8048396iok.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 09:23:01 -0700 (PDT)
+        Thu, 30 Aug 2018 16:27:09 -0400
+Received: by mail-oi0-f67.google.com with SMTP id r69-v6so16487274oie.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 09:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YiCG75RsxiC4V9bYQLWHLXMbEvVwaSVLMlg36jGwtBY=;
-        b=gqM0ZocnNpIPv7Eqfk3Ymvrn/WEYdbiog9QmtwDjwMuqahvK3wfiXsCPvQbQJjINgb
-         Wakd3w7FSbDKDXU6F16m6MMMwFnXaKkEUaDCoS7q5GhbLeDYghzdh+XrTIjrR4I3fYjr
-         GYq5r3emz/NIgiphAZce9/7jEqsdvnNYW+s0c=
+        bh=KdRJ6iJB9yUBCNR0o7ZDKPQvYsoAYmM+wP9+B/tE6a8=;
+        b=mz0j7Becz6s7PClSUADz25O4B/cjzK38mT/2Aw/w0CrIuhTyD9aD6BaFgqoiSTtnF8
+         b2f74v18x3ny+UGCr48cAhBPqOu1ep0HGDvkoFgt2N1IY/e1YnI2JvxTGC/5EwlPMpBv
+         qhZNGTYl2w7KZgF8sNmH5Fu8rIiBBvVrxFGECdonMkhTTni2MKi0Iw0nfarQmfJnaDcQ
+         tF92I8StTQ4DSP/569VS07Ezud9f33gHeABKcxFrPsCwwLv1uuq70yEJgsew0XpkTkex
+         RCt8Pv7qn5l/3mb66XpZjjZBCKup4EAe0Co40/Ibhfob68QEs36OeIdnYVO3oDNtGgGW
+         ngJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YiCG75RsxiC4V9bYQLWHLXMbEvVwaSVLMlg36jGwtBY=;
-        b=fMoVfA4tukC3BeGL1Y8dTjMvUa5lc5qYhuN0qbM+IbAbNU/YtA9v90GKO4EJRZVWG6
-         uPS45+8jHfvCaE1w85OId0ldYsLt2cI2i7vdtS7eRP4nPczC5lXvGpsCnXjEb8PZJcDY
-         mcfF2W7TB72tCwBo2egT8o7rSGG6Ine38H+huvYEY5y7+xLVvQcZUEM4WBN0wEa8EMv2
-         gDNLa2fSar6BXqrOD8BPMO/6aryqs6jQ02NkwixS7QQX7fNGbyIoh33le4mf/42Q9kKU
-         4FZi1cgAbAqEraXMFIUtmqvANbOed5rSDqmzHs5aPgHBdaIbMLiUP0A1+7s9DyNBJ0nv
-         Sp6g==
-X-Gm-Message-State: APzg51A6fm0xn4fi6mlZ2xppX2OUVvKHh3wlgXkonRu5gHi4nWMGhZWQ
-        d4pb1WB071amJTsGMjkYRWuT68noOP4XRI+klDIU1w==
-X-Google-Smtp-Source: ANB0Vdaam8Qqwbc+m6bnqoB1DhNYAuNnxCSaLGNzHKHQP+pFS/1yxL4L8Rs0kUWReVhDAEwMpJfrAw3UVVgVILSiVZU=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr9608389iof.173.1535646181018;
- Thu, 30 Aug 2018 09:23:01 -0700 (PDT)
+        bh=KdRJ6iJB9yUBCNR0o7ZDKPQvYsoAYmM+wP9+B/tE6a8=;
+        b=fO3BpSuSkeB7vimJ8FxSTC/NOHjVpmwFK8X5NW1G04cKYu+Y+t14pRFsYjc4xZ9Ybg
+         RtWMTDRxWEig46IGlI7zyDT2UfOEaiLPV1jGlRgdyxJiBCdvt3wANJpzbT5ytH56yhd2
+         msOD/TVM0gZrUlT1t7PMFX888sfs/zTdtlNlyXDyOTKGQp8nPELkAE1jqMgHgSlkwyUy
+         N7BoAGf4V+In2XevUewo5I1gawKAATB0JORJbBrfndiK/8hcerlvD65OhSwCd3MnEA+a
+         tkwEdOGJ8W9ogBOzUUi0lA9OzMogcnuSGcjCVa8mekH+1PbNSnbNeOiPHM1J98Fs8Ex+
+         J/wA==
+X-Gm-Message-State: APzg51DgOSe8Y2CFWRZoggEEywiSbPj50w/sJ4hdMzzqseXYwTT3Pq4v
+        yV4jNwYdGlbCA6kpWd2r1tCLeGigqwa8wZHSQi7n/w==
+X-Google-Smtp-Source: ANB0VdZTZCLZ6DphgbyhgNwGAFxehf2yWcZdP1TlDOclsOFAr4fM1yAV+uxVdc+aXARPCXQ4ZyQyy8WdBZZvtDT0kKk=
+X-Received: by 2002:aca:3882:: with SMTP id f124-v6mr3382500oia.195.1535646253707;
+ Thu, 30 Aug 2018 09:24:13 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 09:23:00
- -0700 (PDT)
-In-Reply-To: <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
- <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
- <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com> <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
- <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 30 Aug 2018 18:23:00 +0200
-Message-ID: <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com>
+ <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com> <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com>
+In-Reply-To: <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 30 Aug 2018 18:23:47 +0200
+Message-ID: <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     yu-cheng.yu@intel.com, "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 August 2018 at 17:06, Olof Johansson <olof@lixom.net> wrote:
-> On Wed, Aug 29, 2018 at 10:54 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 29 August 2018 at 20:59, Scott Branden <scott.branden@broadcom.com> wrote:
->>> Hi Olof,
->>>
->>>
->>> On 18-08-29 11:44 AM, Olof Johansson wrote:
->>>>
->>>> Hi,
->>>>
->>>> On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
->>>> <scott.branden@broadcom.com> wrote:
->>>>>
->>>>> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
->>>>> parameter to function with efi loader.
->>>>>
->>>>> Required to boot on existing bootloaders that do not support devicetree
->>>>> provided by the platform or by the bootloader.
->>>>>
->>>>> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the
->>>>> DTB loader")
->>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>>>
->>>> Why did Ard create an option for this if it's just going be turned on
->>>> in default configs? Doesn't make sense to me.
->>>>
->>>> It would help to know what firmware still is crippled and how common
->>>> it is, since it's been a few years that this has been a requirement by
->>>> now.
->>>
->>> Broadcom NS2 and Stingray in current development and production need this
->>> option in the kernel enabled in order to boot.
->>
->> And these production systems run mainline kernels in a defconfig configuration?
->>
->> The simply reality is that the DTB loader has been deprecated for a
->> good reason: it was only ever intended as a development hack anyway,
->> and if we need to treat the EFI stub provided DTB as a first class
->> citizen, there are things we need to fix to make things works as
->> expected. For instance, GRUB will put a property in the /chosen node
->> for the initramfs which will get dropped if you boot with dtb=.
->>
->> Don't be surprised if some future enhancements of the EFI stub code
->> depend on !EFI_ARMSTUB_DTB_LOADER. On UEFI systems, DTBs [or ACPI
->> tables] are used by the firmware to describe itself and the underlying
->> platform to the OS, and the practice of booting with DTB file images
->> (taken from the kernel build as well) conflicts with that view. Note
->> that GRUB still permits you to load DTBs from files (and supports more
->> sources than just the file system the kernel Image was loaded from).
+On Thu, Aug 30, 2018 at 6:09 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
 >
-> Ard,
+> On 08/30/2018 08:49 AM, Jann Horn wrote:
+> >> @@ -1203,7 +1203,28 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+> >>  static inline void ptep_set_wrprotect(struct mm_struct *mm,
+> >>                                       unsigned long addr, pte_t *ptep)
+> >>  {
+> >> +       pte_t pte;
+> >> +
+> >>         clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
+> >> +       pte = *ptep;
+> >> +
+> >> +       /*
+> >> +        * Some processors can start a write, but ending up seeing
+> >> +        * a read-only PTE by the time they get to the Dirty bit.
+> >> +        * In this case, they will set the Dirty bit, leaving a
+> >> +        * read-only, Dirty PTE which looks like a Shadow Stack PTE.
+> >> +        *
+> >> +        * However, this behavior has been improved and will not occur
+> >> +        * on processors supporting Shadow Stacks.  Without this
+> >> +        * guarantee, a transition to a non-present PTE and flush the
+> >> +        * TLB would be needed.
+> >> +        *
+> >> +        * When change a writable PTE to read-only and if the PTE has
+> >> +        * _PAGE_DIRTY_HW set, we move that bit to _PAGE_DIRTY_SW so
+> >> +        * that the PTE is not a valid Shadow Stack PTE.
+> >> +        */
+> >> +       pte = pte_move_flags(pte, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW);
+> >> +       set_pte_at(mm, addr, ptep, pte);
+> >>  }
+> > I don't understand why it's okay that you first atomically clear the
+> > RW bit, then atomically switch from DIRTY_HW to DIRTY_SW. Doesn't that
+> > mean that between the two atomic writes, another core can incorrectly
+> > see a shadow stack?
 >
-> Maybe a WARN() splat would be more useful as a phasing-out method than
-> removing functionality for them that needs to be reinstated through
-> changing the config?
+> Good point.
 >
-
-We don't have any of that in the stub, and inventing new ways to pass
-such information between the stub and the kernel proper seems like a
-cart-before-horse kind of thing to me. The EFI stub diagnostic
-messages you get on the serial console are not recorded in the kernel
-log buffer, so they only appear if you actually look at the serial
-output.
-
-> Once the stub and the boot method is there, it's hard to undo as we
-> can see here. Being loud and warn might be more useful, and set a
-> timeline for hard removal (12 months?).
+> This could result in a spurious shadow-stack fault, or allow a
+> shadow-stack write to the page in the transient state.
 >
+> But, the shadow-stack permissions are more restrictive than what could
+> be in the TLB at this point, so I don't think there's a real security
+> implication here.
 
-The dtb= handling is still there, it is just not enabled by default.
-We can keep it around if people are still using it. But as I pointed
-out, we may decide to make new functionality available only if it is
-disabled, and at that point, we'll have to choose between one or the
-other in defconfig, which is annoying.
+How about this:
 
-> Scott; an alternative for you is to do a boot wrapper that bundles a
-> DT and kernel, and boot that instead of the kernel image (outside of
-> the kernel tree). Some 32-bit platforms from Marvell use that. That
-> way the kernel will just see it as a normally passed in DT.
->
+Three threads (A, B, C) run with the same CR3.
 
-Or use GRUB. It comes wired up in all the distros, and let's you load
-a DT binary from anywhere you can imagine, as opposed to the EFI stub
-which can only load it if it happens to reside in the same file system
-(or even directory - I can't remember) as the kernel image. Note that
-the same reservations apply to doing that - the firmware is no longer
-able to describe itself to the OS via the DT, which is really the only
-conduit it has available on an arm64 system..
+1. a dirty+writable PTE is placed directly in front of B's shadow stack.
+   (this can happen, right? or is there a guard page?)
+2. C's TLB caches the dirty+writable PTE.
+3. A performs some syscall that triggers ptep_set_wrprotect().
+4. A's syscall calls clear_bit().
+5. B's TLB caches the transient shadow stack.
+[now C has write access to B's transiently-extended shadow stack]
+6. B recurses into the transiently-extended shadow stack
+7. C overwrites the transiently-extended shadow stack area.
+8. B returns through the transiently-extended shadow stack, giving
+    the attacker instruction pointer control in B.
+9. A's syscall broadcasts a TLB flush.
+
+Sure, it's not exactly an easy race and probably requires at least
+some black timing magic to exploit, if it's exploitable at all - but
+still. This seems suboptimal.
+
+> The only trouble is handling the spurious shadow-stack fault.  The
+> alternative is to go !Present for a bit, which we would probably just
+> handle fine in the existing page fault code.
