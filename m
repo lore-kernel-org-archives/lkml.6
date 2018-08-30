@@ -2,111 +2,127 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CAFC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462D5C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B583F20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:31:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CwqwWRPy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G/WTucWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B583F20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id EACEA20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EACEA20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeH3KcX (ORCPT
+        id S1727552AbeH3Kda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 06:32:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42374 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbeH3KcW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 06:32:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2539860242; Thu, 30 Aug 2018 06:31:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535610708;
-        bh=fkH0kA/HWLHQasSeFUKIum96DwmoNTaOEwwbXlUQ5Mo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CwqwWRPys2Tv0op3Vdtq6+qccCIWi7owsFgFAJLvPxHBv9dTW3wvWjM+7O7hdsYxt
-         u9YMFAA9NWot7ZXel+H98IbFrZurp3i2OuBr5ar6Cx7QoeKAVgHoR+YJQ8e57Rzly7
-         aUYW5w8C/tgQbgiTaHjmYJABj2DqryoH5YnPdimA=
-Received: from [10.79.128.159] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 30 Aug 2018 06:33:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726169AbeH3Kda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:33:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B0DCA60388;
-        Thu, 30 Aug 2018 06:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535610707;
-        bh=fkH0kA/HWLHQasSeFUKIum96DwmoNTaOEwwbXlUQ5Mo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=G/WTucWUrCBXMXqPwDfuiZUrVJgBmv0ao5KAeNg19jW+IsQk/aojNIDKZHst8DHD1
-         Z41q+8nC1X3QwBF6DiFHsQ06wIeHt1FssskDdgRGX2GI7c8Gwu3nJlkx322k71El6H
-         gb6d7/MoCsM3pndnzi3f7t7h+hpwM3Isv6VbgUI8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B0DCA60388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
- driver bindings
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org,
-        collinsd@codeaurora.org, mka@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180627045234.27403-1-rnayak@codeaurora.org>
- <20180627045234.27403-3-rnayak@codeaurora.org>
- <20180703223554.GA32313@rob-hp-laptop>
- <20180704055757.4li26b6poxllmh2k@vireshk-i7>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
-Date:   Thu, 30 Aug 2018 12:01:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180704055757.4li26b6poxllmh2k@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id A914D7D84D;
+        Thu, 30 Aug 2018 06:32:54 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BA8E5B27A5;
+        Thu, 30 Aug 2018 06:32:52 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: [PATCH 00/43] perf stat: Make some of the stat code generic
+Date:   Thu, 30 Aug 2018 08:32:09 +0200
+Message-Id: <20180830063252.23729-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:32:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:32:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+hi,
+while going for the ability to store/display stat data
+in perf record/top I ended up with bunch of generic
+patches that make some of the stat functions standalone
+and simplify/reduce the builtin-stat.c code.
+
+This patchset mostly separates the display functions
+into separate object, plus several other functions.
+
+Also available in here:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  perf/fixes
+
+thanks,
+jirka
 
 
-On 7/4/2018 11:27 AM, Viresh Kumar wrote:
-> On 03-07-18, 16:35, Rob Herring wrote:
->>> +qcom,level values specified in the OPP tables for RPMh power domains
->>> +should use the RPMH_REGULATOR_LEVEL_* constants from
->>> +<dt-bindings/power/qcom-rpmhpd.h>
->>> +
->>> +	rpmhpd: power-controller {
->>> +		compatible = "qcom,sdm845-rpmhpd";
->>> +		#power-domain-cells = <1>;
->>> +		operating-points-v2 = <&rpmhpd_opp_table>;
->>> +	};
->>> +
->>> +	rpmhpd_opp_table: opp-table {
->>> +		compatible = "operating-points-v2-qcom-level";
->>> +
->>> +		rpmhpd_opp_ret: opp1 {
->>> +			qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
->>> +		};
->>
->> I don't see the point in using the OPP binding here when you aren't
->> using *any* of the properties from it.
-> 
-> Yeah, that's the case for now. But there are cases (as Stephen
-> mentioned earlier [1]) where the voltage values (and maybe other
-> values like current, etc) would be known and filled in DT. And that's
-> why we all agreed to use OPP tables for PM domains as well, as these
-> are really "operating performance points" of these PM domains.
+---
+Jiri Olsa (43):
+      perf stat: Use evsel->threads in create_perf_stat_counter
+      perf stat: Move initial_delay into struct perf_stat_config
+      perf stat: Move no_inherit into struct perf_stat_config
+      perf stat: Use local config arg for scale in create_perf_stat_counter
+      perf stat: Add identifier flag into struct stat_opts
+      perf tools: Switch session argument to evlist in perf_event__synthesize_attrs
+      perf tools: Add perf_evsel__store_ids function
+      perf stat: Move create_perf_stat_counter into stat.c
+      perf stat: Rename is_pipe argument to attrs perf_stat_synthesize_config
+      perf stat: Add struct perf_stat_config argument to perf_stat_synthesize_config
+      perf stat: Add struct perf_tool argument to perf_stat_synthesize_config
+      perf stat: Add struct perf_evlist argument to perf_stat_synthesize_config
+      perf stat: Add perf_event__handler_t argument to perf_stat_synthesize_config
+      perf stat: Move perf_stat_synthesize_config into stat.c
+      perf stat: Add perf_evlist__print_counters function
+      perf stat: Move STAT_RECORD out of perf_evlist__print_counters
+      perf stat: Add stat_config argument to perf_evlist__print_counters
+      perf stat: Pass stat_config argument to local print functions
+      perf stat: Pass stat_config argument to global print functions
+      perf stat: Move csv_* into struct perf_stat_config
+      perf stat: Move interval_clear into struct perf_stat_config
+      perf stat: Move metric_only into struct perf_stat_config
+      perf stat: Move unit_width into struct perf_stat_config
+      perf stat: Add target argument to perf_evlist__print_counters
+      perf stat: Pass evlist argument to print functions
+      perf stat: Use evsel->evlist instead of evsel_list in collect_all_aliases
+      perf stat: Move run_count into struct perf_stat_config
+      perf stat: Move metric_only_len into struct perf_stat_config
+      perf stat: Pass stat_config to first_shadow_cpu
+      perf stat: Pass evlist to aggr_update_shadow
+      perf stat: Add walltime_nsecs_stats pointer into struct perf_stat_config
+      perf stat: Move null_run into struct perf_stat_config
+      perf stat: Move print_free_counters_hint into struct perf_stat_config
+      perf stat: Move print_mixed_hw_group_error into struct perf_stat_config
+      perf stat: Move ru_* data into struct perf_stat_config
+      perf stat: Move *_aggr_* data into struct perf_stat_config
+      perf stat: Do not use glovab evsel_list in print functions
+      perf stat: Move big_num data into struct perf_stat_config
+      perf stat: Move no_merge data into struct perf_stat_config
+      perf stat: Propagate struct target arg to sort_aggr_thread
+      perf stat: Move walltime_* data into struct perf_stat_config
+      perf stat: Move metric_events into struct perf_stat_config
+      perf stat: Move display functions into stat-display.c
 
-Rob, are you fine with these bindings then?
-If so, can we please have your reviewed-by?
+ tools/perf/builtin-record.c    |    2 +-
+ tools/perf/builtin-script.c    |    8 +-
+ tools/perf/builtin-stat.c      | 1440 +++++++++--------------------------------------------------------------------------------------------------------------
+ tools/perf/util/Build          |    1 +
+ tools/perf/util/evsel.c        |   29 +++
+ tools/perf/util/evsel.h        |    1 +
+ tools/perf/util/header.c       |    6 +-
+ tools/perf/util/header.h       |    2 +-
+ tools/perf/util/stat-display.c | 1166 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/stat-shadow.c  |  147 +++++++------
+ tools/perf/util/stat.c         |   95 ++++++++
+ tools/perf/util/stat.h         |   72 +++++-
+ 12 files changed, 1545 insertions(+), 1424 deletions(-)
+ create mode 100644 tools/perf/util/stat-display.c
