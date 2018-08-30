@@ -2,179 +2,112 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E347C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A1CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 190DC2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:05:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUI1Q4eT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190DC2082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3359020645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:10:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3359020645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=moxa.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeH3IFJ (ORCPT
+        id S1727589AbeH3IKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 04:05:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727574AbeH3IFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 04:05:09 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03BEE20645;
-        Thu, 30 Aug 2018 04:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535601900;
-        bh=8jQp5On0iF/ZlX0vmmNtZ7Ulajg0X5u2qBxYhUAu6ak=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=cUI1Q4eTgoG/CHhIjlnid3cqiHv8OVcV+eKU3p9Clak9pHMc30P/ytOQpw2x0395C
-         AOqOHd81nwWK6pGJZZfyeihpKgJ9gEaofbTg7AfBWpBkYd0eZDz56wdKrUeobUygIv
-         ugJLdzbAFwTiB7bfQG697BzHDmUvl6Lut/cNvPqI=
-Date:   Wed, 29 Aug 2018 21:04:58 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid wrong decrypted data from disk
-Message-ID: <20180830040458.GB97850@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180827225226.14272-1-jaegeuk@kernel.org>
- <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
+        Thu, 30 Aug 2018 04:10:09 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42305 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbeH3IKJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 04:10:09 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so3286273pgp.9;
+        Wed, 29 Aug 2018 21:09:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8XYIxWRPDKSuHlQU3oG6e23v6Dyho8yOWVpcpZM6w6Y=;
+        b=iIVE/E6y0sjqQ0ZLVk4NmNppb8lf/xGSnVlDEpi7foCXxvh9D4jqgT/v3+1lzWHTQ4
+         UA2XoUBbjJa1v8OUMaiNJfty8Xc9s3UALXSuy5qM8L2MZeglL6d6+jebWXlUmMcss8qK
+         bCG81ZyOaozSVNsu6zFnRGQqG2C3Ntm0FIun/KrhNtbfqslrSvNfjM2PqJQZxp02BuFn
+         j7J47lLbnHtiNsYeYnoTxVrPaZOijp1F4/QfQ23LWKukgaj0QrzbE1dLpvbiMgXURZQD
+         8RmA6ZzimcdU4LdmXnC+Zm2bOaRHY3fh/svTpZuvGAQktqK33P+gORoBh2/lyLAht4C6
+         bkMw==
+X-Gm-Message-State: APzg51AI0ku3hoPo/w+h5RHFlBYAHzTYpth7Pzpt615P3Uopy4lvA1ia
+        UyBcSTAmIff9+ZajEdnz+/j+Ao7R5gckIlCo
+X-Google-Smtp-Source: ANB0VdZSJxylp2bn/P+ninpMtEqGOkhukRi5EPbdan3jxwYR7reE/Je48+cjuib8XfuVHCG3EfNNCQ==
+X-Received: by 2002:a62:5b85:: with SMTP id p127-v6mr8738152pfb.33.1535602199226;
+        Wed, 29 Aug 2018 21:09:59 -0700 (PDT)
+Received: from szlin-TW ([122.146.92.136])
+        by smtp.gmail.com with ESMTPSA id 143-v6sm7855131pfy.156.2018.08.29.21.09.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Aug 2018 21:09:58 -0700 (PDT)
+Received: from root by szlin-TW with local (Exim 4.91)
+        (envelope-from <root@localhost>)
+        id 1fvEHN-00065b-08; Thu, 30 Aug 2018 12:09:57 +0800
+From:   =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?= 
+        <sz.lin@moxa.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?= 
+        <sz.lin@moxa.com>
+Subject: [PATCH 0/3] ARM: dts: am335x: add support for Moxa UC-2100 series
+Date:   Thu, 30 Aug 2018 12:09:26 +0800
+Message-Id: <20180830040929.23357-1-sz.lin@moxa.com>
+X-Mailer: git-send-email 2.19.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. Create a file in an encrypted directory
-2. Do GC & drop caches
-3. Read stale data before its bio for metapage was not issued yet
+The UC-2100 series open computing platform is designed for industrial embedded 
+data acquisition and processing applications. In order to fulfill various 
+industrial applications, there're many boards with different peripheral
+devices and wireless modules in this series.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-Change log from v2:
- - make it globally consistent
- - should use f2fs_post_read_required()
+The features of UC-2100 series are:
+* eMMC
+* SPI flash
+* {1,2}x LAN (100/1000 Mbps in option)
+* {1,2}x RS-232/422/485 ports, software-selectable
+* EEPROM
+* TPM 2.0
+* Watchdog
+* RTC
+* User gpio-keys
+* User LEDs
+* User button
+* GPS (option)
+* 2x CANBus (option)
+* Cellular module (option)
+* Mini PCIe form factor with USB signal (option)
+* MicroSD slot (option)
 
- fs/f2fs/data.c    | 18 ++++++++++--------
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  3 +--
- fs/f2fs/segment.c |  6 +++++-
- 4 files changed, 17 insertions(+), 12 deletions(-)
+SZ Lin (林上智) (3):
+  ARM: dts: am335x: add common file for UC-2100 series
+  ARM: dts: am335x: add support for Moxa UC-2101 open platform
+  ARM: dts: am335x: add support for Moxa UC-2102 open platform
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 382c1ef9a9e4..8c204f896c22 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -565,9 +565,6 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 		ctx->bio = bio;
- 		ctx->enabled_steps = post_read_steps;
- 		bio->bi_private = ctx;
--
--		/* wait the page to be moved by cleaning */
--		f2fs_wait_on_block_writeback(sbi, blkaddr);
- 	}
- 
- 	return bio;
-@@ -582,6 +579,9 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
- 	if (IS_ERR(bio))
- 		return PTR_ERR(bio);
- 
-+	/* wait for GCed page writeback via META_MAPPING */
-+	f2fs_wait_on_block_writeback(inode, blkaddr);
-+
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
- 		bio_put(bio);
- 		return -EFAULT;
-@@ -1558,6 +1558,12 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 			}
- 		}
- 
-+		/*
-+		 * If the page is under writeback, we need to wait for
-+		 * its completion to see the correct decrypted data.
-+		 */
-+		f2fs_wait_on_block_writeback(inode, block_nr);
-+
- 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 			goto submit_and_realloc;
- 
-@@ -1625,7 +1631,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
- 		return 0;
- 
- 	/* wait for GCed page writeback via META_MAPPING */
--	f2fs_wait_on_block_writeback(fio->sbi, fio->old_blkaddr);
-+	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
- 
- retry_encrypt:
- 	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
-@@ -2382,10 +2388,6 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	f2fs_wait_on_page_writeback(page, DATA, false);
- 
--	/* wait for GCed page writeback via META_MAPPING */
--	if (f2fs_post_read_required(inode))
--		f2fs_wait_on_block_writeback(sbi, blkaddr);
--
- 	if (len == PAGE_SIZE || PageUptodate(page))
- 		return 0;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4e1120f20041..42950d87e91d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2942,7 +2942,7 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			struct f2fs_io_info *fio, bool add_list);
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered);
--void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr);
-+void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
- void f2fs_write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- void f2fs_write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5474aaa274b9..98bb26be3f6f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -112,8 +112,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	f2fs_wait_on_page_writeback(page, DATA, false);
- 
- 	/* wait for GCed page writeback via META_MAPPING */
--	if (f2fs_post_read_required(inode))
--		f2fs_wait_on_block_writeback(sbi, dn.data_blkaddr);
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
- 
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 29a1ee21f396..056ac120305a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3191,10 +3191,14 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	}
- }
- 
--void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
-+void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct page *cpage;
- 
-+	if (!f2fs_post_read_required(inode))
-+		return;
-+
- 	if (!is_valid_data_blkaddr(sbi, blkaddr))
- 		return;
- 
+ .../devicetree/bindings/arm/omap/omap.txt     |   3 +
+ arch/arm/boot/dts/Makefile                    |   2 +
+ .../boot/dts/am335x-moxa-uc-2100-common.dtsi  | 249 ++++++++++++++++++
+ arch/arm/boot/dts/am335x-moxa-uc-2101.dts     |  63 +++++
+ arch/arm/boot/dts/am335x-moxa-uc-2102.dts     | 200 ++++++++++++++
+ 5 files changed, 517 insertions(+)
+ create mode 100644 arch/arm/boot/dts/am335x-moxa-uc-2100-common.dtsi
+ create mode 100644 arch/arm/boot/dts/am335x-moxa-uc-2101.dts
+ create mode 100644 arch/arm/boot/dts/am335x-moxa-uc-2102.dts
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.19.0.rc1
 
