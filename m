@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C14C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92465C43334
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A5E2083C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A6A020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFW929sr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A5E2083C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMVYhxaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6A020834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeHaCkR (ORCPT
+        id S1727795AbeHaCkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 22:40:17 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33579 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeHaCkQ (ORCPT
+        Thu, 30 Aug 2018 22:40:19 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45690 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbeHaCkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 22:40:16 -0400
-Received: by mail-lf1-f68.google.com with SMTP id m26-v6so8481692lfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:51 -0700 (PDT)
+        Thu, 30 Aug 2018 22:40:18 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r4-v6so8461832lff.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LkeLH5ys4Ym/Z4rYm7fEGLM3aBXNN1OdVpZ9tCI/YNw=;
-        b=bFW929srddgkayxiNPmpKVwxQ3UQbXn6hTztET8zSE0Wh9fbI2dh+F6JhVqkNmZ2i8
-         bYuw+refc+8Fv2/YwUl/uB5WQUfZrXcrxXggL7o8tU+hJU6mZBlNop7mdtayatFJWzK3
-         i+vOLZByAig4DjnfRf0Y2A4AFQxM8RB4+uNsM+FAbBzPQOWlhkDmSb30Spgh6K6NBh0S
-         5vAukvmtwypLixw52BpM3jKi+ZJ0lynb+M+UtNuVYKp+3HlONZaSm/zlaElGHck6JkK9
-         e7PjvWaVpQq8D+fln8EKhx0WherkbALj31345b6W4onqsGilJ2uL/DqV/m8b3zJxZea7
-         ov4A==
+        bh=0CoPjnGDX1qnLOkJ5zdzj0Bi0tX3W2cV1jd68oHh3Lw=;
+        b=lMVYhxaUI+0ocJq6Pq6HeZ1dFOGE2SNOUpbtjlT79zBNq8uhYqBwbPPI2LI+0UvyC4
+         9S5AbYmNn0+A5iy0UG11Ho57MVSpclhZwnS1ZJEQoNK/Y/eEm8fSTj5FiDemkYUJtU6D
+         2iny680XttaafN4Q5skSdxfwGZq0byV0aiP+LgxGjiNccWqjfCVtHm0Mv7gweSJEinW+
+         LwHmP6aE65gYxGCuUc68OMvPYtPTg8CtuWt10XWjWZfMcAaBTAAn/gZubf8eXLpgtdYR
+         kzkLPhpOxQ9gtkCNcuXBwvY0+NXVx3MugMcZlFG4ruZxByaBX4Fjplynmtxf4AdiXh9U
+         GcCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LkeLH5ys4Ym/Z4rYm7fEGLM3aBXNN1OdVpZ9tCI/YNw=;
-        b=qf+3U58qAAfERtBYqcgLJEMIVVwPEHkkGMkRr2K4ejVmwtYanmNlLaNoftae/UYKgW
-         PPNeJTmiztqwA+rgqjxaxGs1yzn8GtzCXmgbbjTs5fJdXAEy/XoZ3pgY8B8DP9nbUYz6
-         rBtY0+Wv1/UuKxON2gvNBbCibEpEKGFd4zys+F6kqa1TYW6wNdS0kdSQJWtWSDVO4D1r
-         zQj+NTuZlqZLV/r6Eg8MLUSYqogvmWtEgKZcqhgc3Aq+VPSpqBX3RdofwSw1jO1HYSao
-         43wDR7iD3vXvHnV44+8sK1LlMwmZFtmmw0ftaL3DmvHb4wH6dOzHq6rcbejBtIqBbHY/
-         QFFA==
-X-Gm-Message-State: APzg51ANHG7dcs9cwa+pieaY29X5DVWPmNcpg6wm7uZQ+4qimf/AukBt
-        F5vMCGJqOsbyYDVBZZw848+knmPrrnI=
-X-Google-Smtp-Source: ANB0VdbrCIflsn54OQLuaU/YW0bcoyHX3BiKPpAMF0bErwyqdKQD5tCgChC+n5aHqjLDqP4cfGabug==
-X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr8973403lfa.80.1535668550695;
-        Thu, 30 Aug 2018 15:35:50 -0700 (PDT)
+        bh=0CoPjnGDX1qnLOkJ5zdzj0Bi0tX3W2cV1jd68oHh3Lw=;
+        b=drfj7juOsfKuQe5SJ9q0bx7TodhW9sb/k4ziOWLmEnElvTKyFVvOUqKdDUGmRG6rhp
+         TbW7rDpO7ygQTMBlKpMbJq/3T0Jccr0Hw+wdw9v3vTy2oJb8AMaSuH6uniPKQgDi0yox
+         cZXS5tLLnl7jC5K6oKAKdUfFun11RkTR9AZII1MWyGACJ4/QgfFR1X9Bz8KdSxmXHfcJ
+         qnvIxoVWI+B31J0mu3bIe6zCpPPPWB8JweimYhYHV/2Z+5BUA+OHJh/Vnyi/9Oniaxzy
+         0bcPT6GT8WPwSNUFxV1TkE9UME8Yxo1JUFXgeZFBL8gP/0aTN5RHub0+131qXvW4FtPH
+         40iw==
+X-Gm-Message-State: APzg51DMF4k48TMXo/6he3vraBMuSeKHeZk+k4CX96rOSU63VgiaAlxT
+        yRCGtC7yDmiUi5c4BHyFtyozaZk/1yc=
+X-Google-Smtp-Source: ANB0VdbS7ZA9q8EUkMf47zWdy+Mg4TmcYW0cVFg9Q4Kr6yLSsKyOALnb/PFtghrpcFVEihi4VnzSlQ==
+X-Received: by 2002:a19:1388:: with SMTP id 8-v6mr9073506lft.12.1535668552575;
+        Thu, 30 Aug 2018 15:35:52 -0700 (PDT)
 Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.49
+        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 15:35:50 -0700 (PDT)
+        Thu, 30 Aug 2018 15:35:51 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 19/23] pinctrl: remove unnecessary unlikely()
-Date:   Fri, 31 Aug 2018 01:34:25 +0300
-Message-Id: <20180830223429.30051-20-igor.stoppa@huawei.com>
+        zijun_hu <zijun_hu@htc.com>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: [PATCH 20/23] mm: percpu: remove unnecessary unlikely()
+Date:   Fri, 31 Aug 2018 01:34:26 +0300
+Message-Id: <20180830223429.30051-21-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830223429.30051-1-igor.stoppa@huawei.com>
 References: <20180830223429.30051-1-igor.stoppa@huawei.com>
@@ -79,25 +80,27 @@ WARN_ON() already contains an unlikely(), so it's not necessary to
 wrap it into another.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: zijun_hu <zijun_hu@htc.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Dennis Zhou <dennisszhou@gmail.com>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed.c | 2 +-
+ mm/percpu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index aefe3c33dffd..eb87ab774269 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -715,7 +715,7 @@ int aspeed_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
- 
- 		pmap = find_pinconf_map(param, MAP_TYPE_ARG, arg);
- 
--		if (unlikely(WARN_ON(!pmap)))
-+		if (WARN_ON(!pmap))
- 			return -EINVAL;
- 
- 		val = pmap->val << pconf->bit;
+diff --git a/mm/percpu.c b/mm/percpu.c
+index a749d4d96e3e..f5c2796fe63e 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -2588,7 +2588,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
+ 	BUG_ON(ai->nr_groups != 1);
+ 	upa = ai->alloc_size/ai->unit_size;
+ 	nr_g0_units = roundup(num_possible_cpus(), upa);
+-	if (unlikely(WARN_ON(ai->groups[0].nr_units != nr_g0_units))) {
++	if (WARN_ON(ai->groups[0].nr_units != nr_g0_units)) {
+ 		pcpu_free_alloc_info(ai);
+ 		return -EINVAL;
+ 	}
 -- 
 2.17.1
 
