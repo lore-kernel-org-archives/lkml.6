@@ -2,164 +2,180 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E71C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35E7C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B892082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:22:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mcsTDsdm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YdhOjbp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B892082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A7A5320658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A5320658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbeH3NX3 (ORCPT
+        id S1728250AbeH3NX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 30 Aug 2018 09:23:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33524 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728048AbeH3NX3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mga09.intel.com ([134.134.136.24]:44542 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728039AbeH3NX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 09:23:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9B1E56053D; Thu, 30 Aug 2018 09:22:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535620936;
-        bh=Kf3w/av/yLP3d0By/0vVXzz86NBMVrFNM8h9fShqe2s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mcsTDsdmlRx6Vtcy49yOpcMvHuK/YfVckRU6l7LlZexHCx2yBErsz+HbzYx0eh2Qo
-         0tf+4FoylOUnt1N20sUbs44ZjCnwvu8ffyD8Ew7XeREne4ptjO0elDInSl2+VGf+qM
-         bD3bVcbscCx935B5vOMngZbNTBH7cQVYCEbNcoOY=
-Received: from mail-qt0-f174.google.com (mail-qt0-f174.google.com [209.85.216.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 328B5606FA;
-        Thu, 30 Aug 2018 09:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535620935;
-        bh=Kf3w/av/yLP3d0By/0vVXzz86NBMVrFNM8h9fShqe2s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YdhOjbp6fK8q70lzV1Ltbkp2ITKz6c74+An5iAgCdaZ8jAtOuoyVxcwNXGBByBLM7
-         1zxQ1BEJ6O9239x0amk+YUz+7/j3BkZxBLkPYAm7WW7gZXjDIlv+rVoAF9R8qd8zye
-         ddAswSPHTQdV/yNIcxDZMdiu8hzMiuRvn36rEVKw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 328B5606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f174.google.com with SMTP id j7-v6so9005162qtp.2;
-        Thu, 30 Aug 2018 02:22:15 -0700 (PDT)
-X-Gm-Message-State: APzg51BHbMDP4oUHT6B8YLuhCrVn2SeQV5DWhywH0oKDWPONY65vGrgj
-        wHdc4/fh35sOdWSBAB7LNGVorPl5BgRvbbvLE8c=
-X-Google-Smtp-Source: ANB0VdaPX3qrK0JI4FGSODwqziIV3ffimsR/zUWXy8QwxjvJ9pWbaPOcXtAaYlMnCz4BIM61TiV3tCbC5NYLE0MIrSk=
-X-Received: by 2002:a0c:ada8:: with SMTP id w37-v6mr10497810qvc.107.1535620934270;
- Thu, 30 Aug 2018 02:22:14 -0700 (PDT)
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 02:22:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
+   d="scan'208";a="70259166"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.4]) ([10.239.13.4])
+  by orsmga006.jf.intel.com with ESMTP; 30 Aug 2018 02:21:45 -0700
+From:   Rong Chen <rong.a.chen@intel.com>
+Subject: Re: [lkp-robot] [mm] 15d36fecd0:
+ WARNING:at_kernel/memremap.c:#devm_memremap_pages
+To:     Dave Jiang <dave.jiang@intel.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Robert Elliott <elliott@hpe.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+References: <20180823030558.GE13343@shao2-debian>
+ <e358a00a-5981-97e3-2cec-4beab9064267@intel.com>
+Message-ID: <6c1eb1c3-a46e-8bc8-3647-b4e02d674cc6@intel.com>
+Date:   Thu, 30 Aug 2018 17:22:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-References: <20180827105551.16346-1-vivek.gautam@codeaurora.org> <20180827105551.16346-3-vivek.gautam@codeaurora.org>
-In-Reply-To: <20180827105551.16346-3-vivek.gautam@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Thu, 30 Aug 2018 14:52:01 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGbfHZQjG5oEVKhQ=4rOaaU=5ePykEuwMqYbPTryX6DnA@mail.gmail.com>
-Message-ID: <CAFp+6iGbfHZQjG5oEVKhQ=4rOaaU=5ePykEuwMqYbPTryX6DnA@mail.gmail.com>
-Subject: Re: [Patch v15 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To:     Joerg Roedel <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        alex.williamson@redhat.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e358a00a-5981-97e3-2cec-4beab9064267@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 4:27 PM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
->
-> From: Sricharan R <sricharan@codeaurora.org>
->
-> The smmu device probe/remove and add/remove master device callbacks
-> gets called when the smmu is not linked to its master, that is without
-> the context of the master device. So calling runtime apis in those places
-> separately.
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> [vivek: Cleanup pm runtime calls]
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->
-> Changes since v14:
->  - none.
->
->  drivers/iommu/arm-smmu.c | 101 +++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 93 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index a81224bc6637..23b4a60149b6 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
 
-[snip]
 
-> @@ -2131,6 +2188,26 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->         if (err)
->                 return err;
+On 08/24/2018 12:55 AM, Dave Jiang wrote:
+> I am not able to reproduce when I booted my test system with "mem=8G
+> memmap=4G!8G". I ended up with a single pmem:
+The issue seems to be related to specific machines,
+If you need any other debug log, please tell me.
+
+Best Regards,
+Rong Chen
+
+> [   57.750556] nd_pmem namespace0.0: unable to guarantee persistence of
+> writes
+> [   57.881573] pmem0: detected capacity change from 0 to 4294967296
 >
-> +       /*
-> +        * We want to avoid touching dev->power.lock in fastpaths unless
-> +        * it's really going to do something useful - pm_runtime_enabled()
-> +        * can serve as an ideal proxy for that decision. So, conditionally
-> +        * enable pm_runtime.
-> +        */
-> +       if (dev->pm_domain)
-> +               pm_runtime_enable(dev);
-> +
-> +       err = arm_smmu_rpm_get(smmu);
+> However in the reported kmsg, it appears that memmap is splitting into 2
+> namespaces rather than providing a single one, and the first region
+> ended up ending in the same section as start of the second region and
+> thus triggered the warning and having the second namespace rejected.
+>
+> kern  :warn  : [   76.646531] nd_pmem namespace0.0: unable to guarantee
+> persistence of writes
+> kern  :info  : [   76.661660] pmem0: detected capacity change from 0 to
+> 534773760
+> kern  :warn  : [   76.670129] nd_pmem namespace1.0: unable to guarantee
+> persistence of writes
+> kern  :warn  : [   76.670290] ------------[ cut here ]------------
+> kern  :warn  : [   76.670372] nd_pmem namespace1.0: Conflicting mapping
+> in same section
+>
+>
+> On 08/22/2018 08:05 PM, kernel test robot wrote:
+>> FYI, we noticed the following commit (built with gcc-7):
+>>
+>> commit: 15d36fecd0bdc7510b70a0e5ec6671140b3fce0c ("mm: disallow mappings that conflict for devm_memremap_pages()")
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git  master
+>>
+>> in testcase: ndctl
+>> with following parameters:
+>>
+>>
+>>
+>>
+>> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
+>>
+>> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+>>
+>>
+>> +----------------+------------+------------+
+>> |                | 03758dbbe2 | 15d36fecd0 |
+>> +----------------+------------+------------+
+>> | boot_successes | 4          | 4          |
+>> +----------------+------------+------------+
+>>
+>>
+>>
+>> kern  :warn  : [   76.670496] WARNING: CPU: 2 PID: 213 at kernel/memremap.c:188 devm_memremap_pages+0x9f/0x470
+>> kern  :warn  : [   76.670665] Modules linked in: nd_pmem(O+) dax_pmem(O) device_dax(O) nd_btt(O) x86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_idt kvm_intel snd_hda_codec_generic kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel cryptd nd_e820(O) pcspkr libnvdimm(O) ahci libahci nfit_test_iomap(O) libata snd_hda_intel i915 snd_hda_codec snd_hda_core snd_hwdep snd_pcm drm_kms_helper snd_timer syscopyarea sysfillrect sysimgblt fb_sys_fops snd soundcore drm video pcc_cpufreq ip_tables
+>> kern  :warn  : [   76.671408] CPU: 2 PID: 213 Comm: systemd-udevd Tainted: G           O      4.18.0-rc6-00155-g15d36fe #1
+>> kern  :warn  : [   76.671564] Hardware name: Hewlett-Packard p6-1451cx/2ADA, BIOS 8.15 02/05/2013
+>> kern  :warn  : [   76.671690] RIP: 0010:devm_memremap_pages+0x9f/0x470
+>> kern  :warn  : [   76.671774] Code: c6 74 78 49 8b 5f 50 48 85 db 75 04 49 8b 5f 10 4c 89 ff e8 13 77 42 00 48 89 da 48 89 c6 48 c7 c7 a8 62 0e 82 e8 51 8c eb ff <0f> 0b 49 8b be 80 00 00 00 65 ff 05 f1 59 e4 7e 48 8b 47 08 a8 03
+>> kern  :warn  : [   76.672107] RSP: 0018:ffffc9000125fad8 EFLAGS: 00010282
+>> kern  :warn  : [   76.672197] RAX: 0000000000000000 RBX: ffff8801a969e310 RCX: 0000000000000006
+>> kern  :warn  : [   76.672316] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff8801ffd16950
+>> kern  :warn  : [   76.672434] RBP: ffff8801a98030a0 R08: 000000000000036e R09: 000000000000000a
+>> kern  :warn  : [   76.672555] R10: 0000000000000000 R11: ffffffff82d6434d R12: 00000002ffffffff
+>> kern  :warn  : [   76.672673] R13: 0000000000000000 R14: ffff8801a98024a0 R15: ffff8801aae09808
+>> kern  :warn  : [   76.672793] FS:  00007fae9129e8c0(0000) GS:ffff8801ffd00000(0000) knlGS:0000000000000000
+>> kern  :warn  : [   76.672929] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> kern  :warn  : [   76.673026] CR2: 00007fae9127ec28 CR3: 00000001aafe8003 CR4: 00000000001606e0
+>> kern  :warn  : [   76.673145] Call Trace:
+>> kern  :warn  : [   76.673199]  ? devres_add+0x2f/0x40
+>> kern  :warn  : [   76.673266]  pmem_attach_disk+0x542/0x6a0 [nd_pmem]
+>> kern  :warn  : [   76.673354]  ? kobject_release+0x69/0x1a0
+>> kern  :warn  : [   76.673431]  ? nd_dax_probe+0xfc/0x120 [libnvdimm]
+>> kern  :warn  : [   76.673520]  nvdimm_bus_probe+0x69/0x150 [libnvdimm]
+>> kern  :warn  : [   76.673608]  driver_probe_device+0x2fa/0x470
+>> kern  :warn  : [   76.673685]  __driver_attach+0xdc/0x100
+>> kern  :warn  : [   76.673753]  ? driver_probe_device+0x470/0x470
+>> kern  :warn  : [   76.673831]  bus_for_each_dev+0x76/0xc0
+>> kern  :warn  : [   76.673900]  ? klist_add_tail+0x3b/0x70
+>> kern  :warn  : [   76.673968]  bus_add_driver+0x161/0x260
+>> kern  :warn  : [   76.674035]  ? 0xffffffffa0504000
+>> kern  :warn  : [   76.674096]  driver_register+0x5b/0xe0
+>> kern  :warn  : [   76.674162]  ? 0xffffffffa0504000
+>> kern  :warn  : [   76.674223]  do_one_initcall+0x46/0x1e4
+>> kern  :warn  : [   76.674293]  ? preempt_schedule_common+0x15/0x30
+>> kern  :warn  : [   76.674373]  ? _cond_resched+0x22/0x30
+>> kern  :warn  : [   76.674442]  ? kmem_cache_alloc_trace+0x3e/0x1e0
+>> kern  :warn  : [   76.674525]  do_init_module+0x5b/0x203
+>> kern  :warn  : [   76.674593]  load_module+0x1489/0x1b80
+>> kern  :warn  : [   76.674662]  ? ima_post_read_file+0x102/0x110
+>> kern  :warn  : [   76.674741]  ? __do_sys_finit_module+0xe9/0x110
+>> kern  :warn  : [   76.674820]  __do_sys_finit_module+0xe9/0x110
+>> kern  :warn  : [   76.674901]  do_syscall_64+0x5b/0x180
+>> kern  :warn  : [   76.674967]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> kern  :warn  : [   76.675055] RIP: 0033:0x7fae9011b229
+>> kern  :warn  : [   76.675116] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3f 4c 2b 00 f7 d8 64 89 01 48
+>> kern  :warn  : [   76.675449] RSP: 002b:00007ffeb0452908 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> kern  :warn  : [   76.675576] RAX: ffffffffffffffda RBX: 0000557dd7cccdf0 RCX: 00007fae9011b229
+>> kern  :warn  : [   76.675696] RDX: 0000000000000000 RSI: 00007fae90a34265 RDI: 000000000000000f
+>> kern  :warn  : [   76.675814] RBP: 00007fae90a34265 R08: 0000000000000000 R09: 00007ffeb0452e80
+>> kern  :warn  : [   76.675934] R10: 000000000000000f R11: 0000000000000246 R12: 0000000000000000
+>> kern  :warn  : [   76.676053] R13: 0000557dd7cde3c0 R14: 0000000000020000 R15: 0000557dd5d7dcbc
+>> kern  :warn  : [   76.676175] ---[ end trace 72888cbe8943c229 ]---
+>>
+>>
+>> To reproduce:
+>>
+>>          git clonehttps://github.com/intel/lkp-tests.git
+>>          cd lkp-tests
+>>          bin/lkp install job.yaml  # job file is attached in this email
+>>          bin/lkp run     job.yaml
+>>
+>>
+>>
+>> Thanks,
+>> lkp
+>>
 
-We shouldn't be doing a runtime_get() yet, as this eventually calls
-arm_smmu_device_reset().
-arm_smmu_device_reset() should be called only after arm_smmu_device_cfg_probe().
-So, I plan to replace the pm_runtime_get/put() calls in probe() with
-simple clk_bulk_enable()
-to let the driver initialize smmu, and at the end of the probe we can
-disable the clocks and
-enable runtime pm over the device to let it take care of the device further-on.
-
-> +       if (err < 0)
-> +               return err;
-> +
-> +       /* Enable clocks explicitly if runtime PM is disabled */
-> +       if (!pm_runtime_enabled(dev)) {
-> +               err = clk_bulk_enable(smmu->num_clks, smmu->clks);
-> +               if (err)
-> +                       return err;
-> +       }
-> +
->         err = arm_smmu_device_cfg_probe(smmu);
->         if (err)
->                 return err;
-
-[snip]
-
-Best regards
-Vivek
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
