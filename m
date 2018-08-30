@@ -2,295 +2,114 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06962C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30750C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B596820658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B596820658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id D548620837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:22:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tG473dJy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D548620837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH3VYU (ORCPT
+        id S1727366AbeH3VZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:24:20 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38062 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeH3VYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:24:19 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 2CD8427D4BE
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        "Matwey V . Kornilov" <matwey@sai.msu.ru>,
-        Alan Stern <stern@rowland.harvard.edu>, kernel@collabora.com,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [RFC 2/3] USB: core: Add non-coherent buffer allocation helpers
-Date:   Thu, 30 Aug 2018 14:20:29 -0300
-Message-Id: <20180830172030.23344-3-ezequiel@collabora.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180830172030.23344-1-ezequiel@collabora.com>
-References: <20180830172030.23344-1-ezequiel@collabora.com>
+        Thu, 30 Aug 2018 17:25:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727086AbeH3VZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 17:25:30 -0400
+Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D7E420661;
+        Thu, 30 Aug 2018 17:22:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535649740;
+        bh=+BdmpvZKfMFyyZ44sJbE/x5wDEV4jogU097/uL7VhN0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tG473dJyDytHC+74vOGcAw4jkbdr2ysFS+jd6TBeD+oPfAF1sdhJD/NNxhKG21wCd
+         wttDAQzLmWfHVVU1neo2Thbn5gBlbeAQ+l7QGvhcA9wIxNrHG9JApudZc9MYogJWUC
+         ypPz9f+oWCwDXIw/j+CPDD/lpNbcRClrNNQF9m0k=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2] ARM: tegra: tegra20: Fix mixed tabs-spaces indentation
+Date:   Thu, 30 Aug 2018 19:21:53 +0200
+Message-Id: <20180830172153.20653-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As noted recently by Matwey V. Kornilov, using coherent
-buffers on platforms _without_ hardware coherency results in
-some devices being completely unusable, due to transfers
-being too slow.
+Fix indentation and alignment when spaces were used instead of tabs.
+This fixes checkpatch errors like:
 
-Moreover, using non-coherent buffers on platforms _with_ hardware
-coherency, do not show a significant impact. This has been tested
-by Matwey on PWC USB cameras on x86_64 and ARM platforms.
-Quoting [1] (where kmalloc-ed buffers use streaming mappings):
+    ERROR: code indent should use tabs where possible
+    #306: FILE: arch/arm/boot/dts/tegra20-paz00.dts:306:
+    +^I^I         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;$
 
-"""
-[..] average memcpy() data transfer rate (rate) and handler
-completion time (time) have been measured when running video stream at
-640x480 resolution at 10fps.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-x86_64 based system (Intel Core i5-3470). This platform has hardware
-coherent DMA support and proposed change doesn't make big difference here.
-
- * kmalloc:            rate = (2.0 +- 0.4) GBps
-                       time = (5.0 +- 3.0) usec
- * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
-                       time = (3.5 +- 3.0) usec
-
-armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
-has no hardware coherent DMA support. DMA coherence is implemented via
-disabled page caching that slows down memcpy() due to memory controller
-behaviour.
-
- * kmalloc:            rate =  (114 +- 5) MBps
-                       time =   (84 +- 4) usec
- * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
-                       time =  (341 +- 2) usec
-""
-
-Introduce a pair of usb_{alloc,free}_noncoherent helper functions,
-for drivers that want to use non-coherent transfer buffers.
-
-[1]: https://lkml.org/lkml/2018/8/9/734
-
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 ---
- drivers/usb/core/buffer.c | 29 ++++++++++++--------
- drivers/usb/core/hcd.c    |  5 ++--
- drivers/usb/core/usb.c    | 56 +++++++++++++++++++++++++++++++++++++--
- include/linux/usb.h       |  5 ++++
- include/linux/usb/hcd.h   |  4 +--
- 5 files changed, 82 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-index 77eef8acff94..1bc9df883337 100644
---- a/drivers/usb/core/buffer.c
-+++ b/drivers/usb/core/buffer.c
-@@ -119,7 +119,8 @@ void *hcd_buffer_alloc(
- 	struct usb_bus		*bus,
- 	size_t			size,
- 	gfp_t			mem_flags,
--	dma_addr_t		*dma
-+	dma_addr_t		*dma,
-+	unsigned long		attrs
- )
- {
- 	struct usb_hcd		*hcd = bus_to_hcd(bus);
-@@ -136,18 +137,22 @@ void *hcd_buffer_alloc(
- 		return kmalloc(size, mem_flags);
- 	}
+Changes since v1:
+1. Add Marcel's ack.
+---
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts    | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index e7b9ab09908a..fa1af2dc276c 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -541,7 +541,7 @@
  
--	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
--		if (size <= pool_max[i])
--			return dma_pool_alloc(hcd->pool[i], mem_flags, dma);
-+	/* Only use pools for coherent buffer requests */
-+	if (!attrs) {
-+		for (i = 0; i < HCD_BUFFER_POOLS; i++)
-+			if (size <= pool_max[i])
-+				return dma_pool_alloc(hcd->pool[i],
-+						mem_flags, dma);
- 	}
--	return dma_alloc_coherent(hcd->self.sysdev, size, dma, mem_flags);
-+	return dma_alloc_attrs(hcd->self.sysdev, size, dma, mem_flags, attrs);
- }
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+-			         "nvidia,tegra-audio-wm9712";
++			     "nvidia,tegra-audio-wm9712";
+ 		nvidia,model = "Colibri T20 AC97 Audio";
  
- void hcd_buffer_free(
- 	struct usb_bus		*bus,
- 	size_t			size,
- 	void			*addr,
--	dma_addr_t		dma
-+	dma_addr_t		dma,
-+	unsigned long		attrs
- )
- {
- 	struct usb_hcd		*hcd = bus_to_hcd(bus);
-@@ -163,11 +168,13 @@ void hcd_buffer_free(
- 		return;
- 	}
+ 		nvidia,audio-routing =
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index ef245291924f..7d8aef6ebd3a 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -303,7 +303,7 @@
+ 		request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
+ 		slave-addr = <138>;
+ 		clocks = <&tegra_car TEGRA20_CLK_I2C3>,
+-		         <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
++			 <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
+ 		clock-names = "div-clk", "fast-clk";
+ 		resets = <&tegra_car 67>;
+ 		reset-names = "i2c";
+@@ -599,8 +599,8 @@
+ 			GPIO_ACTIVE_HIGH>;
  
--	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
--		if (size <= pool_max[i]) {
--			dma_pool_free(hcd->pool[i], addr, dma);
--			return;
-+	if (!attrs) {
-+		for (i = 0; i < HCD_BUFFER_POOLS; i++) {
-+			if (size <= pool_max[i]) {
-+				dma_pool_free(hcd->pool[i], addr, dma);
-+				return;
-+			}
- 		}
- 	}
--	dma_free_coherent(hcd->self.sysdev, size, addr, dma);
-+	dma_free_attrs(hcd->self.sysdev, size, addr, dma, attrs);
- }
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 1c21955fe7c0..25303738eb28 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1383,7 +1383,7 @@ static int hcd_alloc_coherent(struct usb_bus *bus,
- 	}
- 
- 	vaddr = hcd_buffer_alloc(bus, size + sizeof(vaddr),
--				 mem_flags, dma_handle);
-+				 mem_flags, dma_handle, 0);
- 	if (!vaddr)
- 		return -ENOMEM;
- 
-@@ -1416,7 +1416,8 @@ static void hcd_free_coherent(struct usb_bus *bus, dma_addr_t *dma_handle,
- 	if (dir == DMA_FROM_DEVICE)
- 		memcpy(vaddr, *vaddr_handle, size);
- 
--	hcd_buffer_free(bus, size + sizeof(vaddr), *vaddr_handle, *dma_handle);
-+	hcd_buffer_free(bus, size + sizeof(vaddr),
-+			*vaddr_handle, *dma_handle, 0);
- 
- 	*vaddr_handle = vaddr;
- 	*dma_handle = 0;
-diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-index 623be3174fb3..234ea5ab4bb7 100644
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -858,6 +858,58 @@ int __usb_get_extra_descriptor(char *buffer, unsigned size,
- }
- EXPORT_SYMBOL_GPL(__usb_get_extra_descriptor);
- 
-+/**
-+ * usb_alloc_noncoherent - allocate dma-non-coherent buffer
-+ * @dev: device the buffer will be used with
-+ * @size: requested buffer size
-+ * @mem_flags: affect whether allocation may block
-+ * @dma: used to return DMA address of buffer
-+ *
-+ * Return: Either null (indicating no buffer could be allocated), or the
-+ * cpu-space pointer to a non-coherent buffer that may be used to perform
-+ * DMA to the specified device. Such cpu-space buffers are returned along
-+ * with the DMA address (through the pointer provided).
-+ *
-+ * Note:
-+ * These non-conherent buffers are used with URB_NO_xxx_DMA_MAP set in
-+ * urb->transfer_flags to avoid using "DMA bounce buffers". When using
-+ * this API, you must have the necessary syncs points. If you are unsure
-+ * about this, you should be using coherent buffers via usb_alloc_coherent.
-+ *
-+ * When the buffer is no longer used, free it with usb_free_noncoherent().
-+ */
-+void *usb_alloc_noncoherent(struct usb_device *dev, size_t size, gfp_t mem_flags,
-+			 dma_addr_t *dma)
-+{
-+	if (!dev || !dev->bus)
-+		return NULL;
-+	return hcd_buffer_alloc(dev->bus, size,
-+			mem_flags, dma, DMA_ATTR_NON_CONSISTENT);
-+}
-+EXPORT_SYMBOL_GPL(usb_alloc_noncoherent);
-+
-+/**
-+ * usb_free_noncoherent - free memory allocated with usb_alloc_noncoherent()
-+ * @dev: device the buffer was used with
-+ * @size: requested buffer size
-+ * @addr: CPU address of buffer
-+ * @dma: DMA address of buffer
-+ *
-+ * This reclaims an I/O buffer, letting it be reused.  The memory must have
-+ * been allocated using usb_alloc_noncoherent(), and the parameters must match
-+ * those provided in that allocation request.
-+ */
-+void usb_free_noncoherent(struct usb_device *dev, size_t size, void *addr,
-+		       dma_addr_t dma)
-+{
-+	if (!dev || !dev->bus)
-+		return;
-+	if (!addr)
-+		return;
-+	hcd_buffer_free(dev->bus, size, addr, dma, DMA_ATTR_NON_CONSISTENT);
-+}
-+EXPORT_SYMBOL_GPL(usb_free_noncoherent);
-+
- /**
-  * usb_alloc_coherent - allocate dma-consistent buffer for URB_NO_xxx_DMA_MAP
-  * @dev: device the buffer will be used with
-@@ -886,7 +938,7 @@ void *usb_alloc_coherent(struct usb_device *dev, size_t size, gfp_t mem_flags,
- {
- 	if (!dev || !dev->bus)
- 		return NULL;
--	return hcd_buffer_alloc(dev->bus, size, mem_flags, dma);
-+	return hcd_buffer_alloc(dev->bus, size, mem_flags, dma, 0);
- }
- EXPORT_SYMBOL_GPL(usb_alloc_coherent);
- 
-@@ -908,7 +960,7 @@ void usb_free_coherent(struct usb_device *dev, size_t size, void *addr,
- 		return;
- 	if (!addr)
- 		return;
--	hcd_buffer_free(dev->bus, size, addr, dma);
-+	hcd_buffer_free(dev->bus, size, addr, dma, 0);
- }
- EXPORT_SYMBOL_GPL(usb_free_coherent);
- 
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index 4cdd515a4385..7fddd6c2a61e 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -1750,6 +1750,11 @@ static inline int usb_urb_dir_out(struct urb *urb)
- 
- int usb_urb_ep_type_check(const struct urb *urb);
- 
-+void *usb_alloc_noncoherent(struct usb_device *dev, size_t size,
-+	gfp_t mem_flags, dma_addr_t *dma);
-+void usb_free_noncoherent(struct usb_device *dev, size_t size,
-+	void *addr, dma_addr_t dma);
-+
- void *usb_alloc_coherent(struct usb_device *dev, size_t size,
- 	gfp_t mem_flags, dma_addr_t *dma);
- void usb_free_coherent(struct usb_device *dev, size_t size,
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 97e2ddec18b1..41dd5f0acaad 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -486,9 +486,9 @@ int hcd_buffer_create(struct usb_hcd *hcd);
- void hcd_buffer_destroy(struct usb_hcd *hcd);
- 
- void *hcd_buffer_alloc(struct usb_bus *bus, size_t size,
--	gfp_t mem_flags, dma_addr_t *dma);
-+	gfp_t mem_flags, dma_addr_t *dma, unsigned long attrs);
- void hcd_buffer_free(struct usb_bus *bus, size_t size,
--	void *addr, dma_addr_t dma);
-+	void *addr, dma_addr_t dma, unsigned long attrs);
- 
- /* generic bus glue, needed for host controllers that don't use PCI */
- extern irqreturn_t usb_hcd_irq(int irq, void *__hcd);
+ 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
+-		         <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
+-		         <&tegra_car TEGRA20_CLK_CDEV1>;
++			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
++			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
 -- 
-2.18.0
+2.14.1
 
