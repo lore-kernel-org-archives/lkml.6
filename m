@@ -2,155 +2,158 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADFCC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E479DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E7520835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9581820835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:37:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJGFw/qD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E7520835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mj6mfJqM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H0lTUcCo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9581820835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbeH3Wke (ORCPT
+        id S1728042AbeH3WlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:40:34 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41128 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbeH3Wkd (ORCPT
+        Thu, 30 Aug 2018 18:41:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47508 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbeH3WlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:40:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z96-v6so8958098wrb.8;
-        Thu, 30 Aug 2018 11:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jcQ8owcppVEFIYb2YIOo4LepepkxBcVtZIlrtg8OzOA=;
-        b=BJGFw/qD2hlTwvzJyrIIhxbWACxFpZc6H4FfunZmJzTTrQr7JyUvApaV3a28HIEh9U
-         RyOjguUZcT9qOVfvXuBWo5IsgyihaFCuObHisXetB4ZStKO1IstKi9XhZkWZEL9sL0/j
-         xHlyqnFd0yRSyXZS/DnzfWd1mXOrFV4Rk9IIvdjMcH3hzln2LP8uzJZuiUxz9NGOc17H
-         9xhB9b+DBWwDbKdCX11cIakF2AZ46jIZMi+zRkZnZlxj48So0xNso0gFhIxExxQi5hFb
-         1VYHkZMGsF2FBEX7Oqv8xdVQ5cLjGW6M5MuQIudDIA0+k4fDXtSgZiC5WSj+Uh3tRKYl
-         gKLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jcQ8owcppVEFIYb2YIOo4LepepkxBcVtZIlrtg8OzOA=;
-        b=gtACozguZTs7jiSyFOq5I8aKYAB7+IX6MprjqRa19Y9R4mWZT2/JoP8CZCU73Yem9A
-         Sk5PEZtiMxCUo8SFOksB2ykbNDNOlRnG+VWSKftuGDJRwM483X2+blFWnhuaiyy2DzwS
-         eFOFhJp5QGGRaHRxFkk1ly/rgH9ZPiqm5j5Z6cDT6PDx2nwZ+cTgP00PAVHtKisqQYMs
-         UFZ8eEyKDFN46eK+YD8TLSkQHnD57wQ1es5boJQ7DXwd2oOs+UOS2NFewhVWmd/HK6AC
-         7kf6MeOyJaT+yd/iP00R+eAHKRDuxmVp20qzJhDmZjPA91dh9h/8AKbNT8AbHIjyPn5C
-         AVJA==
-X-Gm-Message-State: APzg51BJRPQCsHPTpYjgugRt1/pRiteVgnGaR3udjFba2O71UasP0BaT
-        EcEB+m9Lh03cuK6WlaFPcdO5IDWuEEjSN2794S8=
-X-Google-Smtp-Source: ANB0VdY8B2QjIlNb/Avp+tnJ4vHVuyNllUsLMsGvx7hsOjepeuPL7l1Rr8Vc8SpW38PVfs5+K0JEhjmQukIei73p97k=
-X-Received: by 2002:a5d:61c1:: with SMTP id q1-v6mr8855124wrv.33.1535654222913;
- Thu, 30 Aug 2018 11:37:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
- <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
- <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com>
- <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
- <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com> <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
-In-Reply-To: <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Fri, 31 Aug 2018 00:06:51 +0530
-Message-ID: <CA+sq2CfjJjswOwypNMtro+g8TeHGoBqAeKpFrf2ys-1=Xg+qHw@mail.gmail.com>
-Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Aleksey Makarov <amakarov@marvell.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Lukasz Bartosik <lbartosik@marvell.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 30 Aug 2018 18:41:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6F9D36063F; Thu, 30 Aug 2018 18:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535654271;
+        bh=K8GAZT3kkg3J0iJdVGjiqEA+BBBiKPMOzzGAS4x4D5U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mj6mfJqMC3FviP6zUqeBfT58s8njeL7B2cx2/S5YacRmIcLGm0FmEsEz2CYkN7YMS
+         PPcX9uEdG/G81Q0x6isLIfXL8poHX/fBt6z7wfet649sQviYa/+VUTicOZD2MJlWjq
+         Ypckb+UEtRA9Jq9q5htbudCoNCjq9c9gnmHyT0wA=
+Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wufan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED1856038E;
+        Thu, 30 Aug 2018 18:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535654270;
+        bh=K8GAZT3kkg3J0iJdVGjiqEA+BBBiKPMOzzGAS4x4D5U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=H0lTUcCom+OW3VjBLaRwjtbYhcTa/iHnJtKa9Zqouvi34mmxLwbupTPhx84tLx/EW
+         dHbpiEh/zN/9vs/kRP+kcBB8O8QF5/bnNMm+WHpUqdb21bQCJpSnOPN50/NqEOOcVU
+         4tv7Esj64VZ0HOR2TqZJNb8/IpslDuOveQzOBk3k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED1856038E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
+From:   Fan Wu <wufan@codeaurora.org>
+To:     mchehab@kernel.org
+Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
+        toshi.kani@hpe.com, Fan Wu <wufan@codeaurora.org>
+Subject: [PATCH v2] EDAC, ghes: use CPER module handles to locate DIMMs
+Date:   Thu, 30 Aug 2018 18:37:46 +0000
+Message-Id: <1535654266-40053-1-git-send-email-wufan@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 7:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Aug 28, 2018 at 3:23 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
-> >
-> > On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
-> > > >
-> > > > On Tue, Aug 28, 2018 at 5:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > >
-> > > > > On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
-> > > > > >
-> > > > > > From: Aleksey Makarov <amakarov@marvell.com>
-> > > > > >
-> > > > > > This patch adds mailbox support infrastructure APIs.
-> > > > > > Each RVU device has a dedicated 64KB mailbox region
-> > > > > > shared with it's peer for communication. RVU AF has
-> > > > > > a separate mailbox region shared with each of RVU PFs
-> > > > > > and a RVU PF has a separate region shared with each of
-> > > > > > it's VF.
-> > > > > >
-> > > > > > These set of APIs are used by this driver (RVU AF) and
-> > > > > > other RVU PF/VF drivers eg netdev, crypto e.t.c.
-> > > > > >
-> > > > > > Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
-> > > > > > Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
-> > > > > > Signed-off-by: Lukasz Bartosik <lbartosik@marvell.com>
-> > > > >
-> > > > > Why does this driver not use the drivers/mailbox/ infrastructure?
-> > > > >
-> > > > This is a common administrative software driver which will be handling requests
-> > > > from kernel drivers and as well as drivers in userspace applications.
-> > > > We had to keep mailbox communication infrastructure same across all usages.
-> > >
-> > > Can you explain more about the usage of userspace applications
-> > > and what interface you plan to use into the kernel?
-> >
-> > Any PCI device here irrespective in what domain (kernel or userspace)
-> > they are in
-> > use common mailbox communication. Which is
-> > # Write a mailbox msg (format is agreed between all parties) into
-> > shared (between AF and other PF/VFs)
-> >    memory region and trigger a interrupt to admin function.
-> > # Admin function processes the msg and puts reply in the same memory
-> > region and trigger
-> >    IRQ to the requesting device. If the device has a driver instance
-> > in kernel then it uses
-> >    IRQ and userspace applications does polling on the IRQ status bit.
->
-> Ok, so the mailbox here is a communication mechanism between
-> two device drivers that may run on the same kernel, or in different
-> instances (user space, virtual machine, ...), but each driver
-> only talks to the mailbox visible in its own device, right?
+For platforms whose firmwares provide valid module handles
+(SMBIOS type 17) in error records, this patch uses the module
+handles to locate corresponding DIMMs and enables per-DIMM
+error counter update.
 
-Yes.
+Signed-off-by: Fan Wu <wufan@codeaurora.org>
+---
 
->
-> What is the purpose of the exported interface then? Is this
-> just an abstraction so each of the drivers can talk to its own
-> mailbox using a set of common helper functions?
->
->       Arnd
+Changes from v1:
+*  Changed the new function name to get_dimm_smbios_index
+*  Removed unnecessary checks inside get_dimm_smbios_index
+*  Reverted the change of the DMI handle print
+*  Updated commit message
 
-Yes, that's correct.
+---
+ drivers/edac/ghes_edac.c | 25 +++++++++++++++++++++++++
+ include/linux/edac.h     |  2 ++
+ 2 files changed, 27 insertions(+)
 
-In kernel there will be a minimum of 3 drivers which will use this
-mailbox communication.
-So instead of duplicating APIs and structures in every driver, we
-thought of adding them
-in this AF driver and export them to ethernet and crypto drivers.
+diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+index 473aeec..949f603 100644
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -81,6 +81,20 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
+ 		(*num_dimm)++;
+ }
+ 
++static int get_dimm_smbios_index(u16 handle)
++{
++	struct mem_ctl_info *mci;
++	int i;
++
++	mci = ghes_pvt->mci;
++
++	for (i = 0; i < mci->tot_dimms; i++) {
++		if (mci->dimms[i]->smbios_handle == handle)
++			return i;
++	}
++	return -1;
++}
++
+ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+ {
+ 	struct ghes_edac_dimm_fill *dimm_fill = arg;
+@@ -177,6 +191,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+ 				entry->total_width, entry->data_width);
+ 		}
+ 
++		dimm->smbios_handle = entry->handle;
++
+ 		dimm_fill->count++;
+ 	}
+ }
+@@ -327,12 +343,21 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+ 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
+ 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
+ 		const char *bank = NULL, *device = NULL;
++		int index = -1;
++
+ 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
+ 		if (bank != NULL && device != NULL)
+ 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
+ 		else
+ 			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+ 				     mem_err->mem_dev_handle);
++
++		index = get_dimm_smbios_index(mem_err->mem_dev_handle);
++		if (index >= 0) {
++			e->top_layer = index;
++			e->enable_per_layer_report = true;
++		}
++
+ 	}
+ 	if (p > e->location)
+ 		*(p - 1) = '\0';
+diff --git a/include/linux/edac.h b/include/linux/edac.h
+index bffb978..a45ce1f 100644
+--- a/include/linux/edac.h
++++ b/include/linux/edac.h
+@@ -451,6 +451,8 @@ struct dimm_info {
+ 	u32 nr_pages;			/* number of pages on this dimm */
+ 
+ 	unsigned csrow, cschannel;	/* Points to the old API data */
++
++	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
+ };
+ 
+ /**
+-- 
+2.7.4
 
-Thanks,
-Sunil.
