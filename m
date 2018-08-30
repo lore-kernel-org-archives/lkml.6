@@ -2,123 +2,153 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1775C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39716C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F54720837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQss+GGH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F54720837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F25622082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25622082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeH3W7b (ORCPT
+        id S1728039AbeH3W7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:59:31 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35160 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeH3W7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:59:12 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p10-v6so8147091ljg.2;
-        Thu, 30 Aug 2018 11:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BrF6WcV23+vrlKSDi7Wjv+JCrDPaKdChRRpZISs+7No=;
-        b=BQss+GGH3ZI2eMWouFwvIFbDIHw/hhZdcf4J6yLHM2LN8GGa5ZSkDz79xcPOEs2Oeg
-         BqH72sWv7kLVATf+KPSGf8y9rskxRtWe5juvCE8HEMHewcRW9bZ6iRNspbfEi01fx92Q
-         866pMQZCQuxyjzFuQ695idiXCuRE60bS0s/lnj242giL4AnZq8uwLMGX7dh/wpIr42zT
-         B48+J6bCBWRGsvHGVLJPurutXvJaDuA85N6vZ12dqDLxLapLYCxN5tw4WZEnSyfaIBEa
-         SBNYtkQ3ftV0+oxsUHC4x1Nj5YT9cqqCOY1XH8KH6NXhqb/J1/BM9Nt9d+swQhH/2Y6M
-         +y3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BrF6WcV23+vrlKSDi7Wjv+JCrDPaKdChRRpZISs+7No=;
-        b=XNvDmJvmNe6Au/LfvUXcl8cqVAamiEmOO4lRtkDAlJl/5egEZXKmEjC1PcaYpg7wzo
-         7pOGI3FsHXN3/8eY7oqKQBU9A0RgUTgn4w7VJXrUIlhxyTzSzdgOGoUVQfJUpKwT9ZCj
-         EkzdhEJYQOMewfcN/I3I84MOOGfNGH9eKirIy7il27zup9cn4Rovx+YsbTJ+ks5XQIB3
-         Ur2yYm065Kx4ZeUHRKkPnwwiR9zKhJUVOUrUMPLpSJJKI4wjFf9hjETe7yjeEEnTf3uN
-         hpj1aOSCz0hLX0Bzuwxyd0Niq0CYVG5JbfkPxlJC6AMCnQMrTm1QovLoQPpXWPgqvSbG
-         Affw==
-X-Gm-Message-State: APzg51CaGy0uUn95U8xSaxyezLaNlFOb3yunsGArWJHWBr2/dylfzVCR
-        fKpvuLRGaCdVjLcwGXduYR8=
-X-Google-Smtp-Source: ANB0VdZS3MHwkjzy/fMNvDTod4CpXROLpAdNJHpBKOAedkkO5dvAV56AOtVG+Mm0zZHE4B6hQ52nbQ==
-X-Received: by 2002:a2e:1517:: with SMTP id s23-v6mr8538412ljd.73.1535655336523;
-        Thu, 30 Aug 2018 11:55:36 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id u28-v6sm1373087ljd.61.2018.08.30.11.55.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 11:55:36 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
-Date:   Thu, 30 Aug 2018 21:54:04 +0300
-Message-Id: <20180830185404.7224-5-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180830185404.7224-1-digetx@gmail.com>
-References: <20180830185404.7224-1-digetx@gmail.com>
+        Thu, 30 Aug 2018 18:59:46 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40074 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727178AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:57:41 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fvS4u-0006Op-BV; Thu, 30 Aug 2018 12:54:05 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fvS4p-0000ti-4Q; Thu, 30 Aug 2018 12:53:55 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Thu, 30 Aug 2018 12:53:49 -0600
+Message-Id: <20180830185352.3369-11-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v5 10/13] nvme-pci: Add support for P2P memory in requests
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two interrupts are raised on resume from LP1 on Tegra30+: first is the
-clock change completed interrupt which is set after updating timing
-configuration, second is DLL alarm interrupt which is set when DLL
-starts re-calibration after being reset. Clear these two interrupts
-in the end of exiting from the self-refresh mode for consistency, that
-will also allow to not receive spurious interrupts in the EMC driver
-after resume from suspend.
+For P2P requests, we must use the pci_p2pmem_map_sg() function
+instead of the dma_map_sg functions.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+With that, we can then indicate PCI_P2P support in the request queue.
+For this, we create an NVME_F_PCI_P2P flag which tells the core to
+set QUEUE_FLAG_PCI_P2P in the request queue.
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/nvme/host/core.c |  4 ++++
+ drivers/nvme/host/nvme.h |  1 +
+ drivers/nvme/host/pci.c  | 17 +++++++++++++----
+ 3 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 828f6c37afde..78c6e9fb56e7 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -26,6 +26,7 @@
- #include "irammap.h"
- #include "sleep.h"
- 
-+#define EMC_INTSTATUS			0x0
- #define EMC_CFG				0xc
- #define EMC_ADR_CFG			0x10
- #define EMC_TIMING_CONTROL		0x28
-@@ -44,6 +45,9 @@
- #define EMC_XM2VTTGENPADCTRL		0x310
- #define EMC_XM2VTTGENPADCTRL2		0x314
- 
-+#define EMC_CLKCHANGE_COMPLETE_INT	(1 << 4)
-+#define EMC_DLL_ALARM_INT		(1 << 7)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index dd8ec1dd9219..6033ce2fd3e9 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3051,7 +3051,11 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
+ 	ns->queue = blk_mq_init_queue(ctrl->tagset);
+ 	if (IS_ERR(ns->queue))
+ 		goto out_free_ns;
 +
- #define MC_EMEM_ARB_CFG			0x90
- 
- #define PMC_CTRL			0x0
-@@ -539,6 +543,9 @@ zcal_done:
- 
- 	emc_timing_update r1, r0
- 
-+	mov	r1, #(EMC_CLKCHANGE_COMPLETE_INT | EMC_DLL_ALARM_INT)
-+	str	r1, [r0, #EMC_INTSTATUS]	@ clear interrupts
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, ns->queue);
++	if (ctrl->ops->flags & NVME_F_PCI_P2PDMA)
++		blk_queue_flag_set(QUEUE_FLAG_PCI_P2PDMA, ns->queue);
 +
- 	/* Tegra114 had dual EMC channel, now config the other one */
- 	cmp	r10, #TEGRA114
- 	bne	__no_dual_emc_chanl
+ 	ns->queue->queuedata = ns;
+ 	ns->ctrl = ctrl;
+ 
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index bb4a2003c097..4030743c90aa 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -343,6 +343,7 @@ struct nvme_ctrl_ops {
+ 	unsigned int flags;
+ #define NVME_F_FABRICS			(1 << 0)
+ #define NVME_F_METADATA_SUPPORTED	(1 << 1)
++#define NVME_F_PCI_P2PDMA		(1 << 2)
+ 	int (*reg_read32)(struct nvme_ctrl *ctrl, u32 off, u32 *val);
+ 	int (*reg_write32)(struct nvme_ctrl *ctrl, u32 off, u32 val);
+ 	int (*reg_read64)(struct nvme_ctrl *ctrl, u32 off, u64 *val);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 2902585c6ddf..bb2120d30e39 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -737,8 +737,13 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
+ 		goto out;
+ 
+ 	ret = BLK_STS_RESOURCE;
+-	nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents, dma_dir,
+-			DMA_ATTR_NO_WARN);
++
++	if (is_pci_p2pdma_page(sg_page(iod->sg)))
++		nr_mapped = pci_p2pdma_map_sg(dev->dev, iod->sg, iod->nents,
++					  dma_dir);
++	else
++		nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents,
++					     dma_dir,  DMA_ATTR_NO_WARN);
+ 	if (!nr_mapped)
+ 		goto out;
+ 
+@@ -780,7 +785,10 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
+ 			DMA_TO_DEVICE : DMA_FROM_DEVICE;
+ 
+ 	if (iod->nents) {
+-		dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
++		/* P2PDMA requests do not need to be unmapped */
++		if (!is_pci_p2pdma_page(sg_page(iod->sg)))
++			dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
++
+ 		if (blk_integrity_rq(req))
+ 			dma_unmap_sg(dev->dev, &iod->meta_sg, 1, dma_dir);
+ 	}
+@@ -2392,7 +2400,8 @@ static int nvme_pci_get_address(struct nvme_ctrl *ctrl, char *buf, int size)
+ static const struct nvme_ctrl_ops nvme_pci_ctrl_ops = {
+ 	.name			= "pcie",
+ 	.module			= THIS_MODULE,
+-	.flags			= NVME_F_METADATA_SUPPORTED,
++	.flags			= NVME_F_METADATA_SUPPORTED |
++				  NVME_F_PCI_P2PDMA,
+ 	.reg_read32		= nvme_pci_reg_read32,
+ 	.reg_write32		= nvme_pci_reg_write32,
+ 	.reg_read64		= nvme_pci_reg_read64,
 -- 
-2.18.0
+2.11.0
 
