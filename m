@@ -1,273 +1,243 @@
 Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7445C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE288C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6326B20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B20020652
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:36:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="JCEnMzuF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6326B20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=megous.com
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="XSgCUbl5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B20020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeH3UjL (ORCPT
+        id S1727758AbeH3Ujq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 16:39:11 -0400
-Received: from vps.xff.cz ([195.181.215.36]:35568 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbeH3UjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 16:39:10 -0400
-X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Aug 2018 16:39:08 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1535646455; bh=IUGMse/Y2LeSxpVGAb4llLpnSL7MSEBRRTNeAb6thJw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JCEnMzuFKyG8u5CzStKLnTmE0peXaunHTt/w/CZp0aoRg8VJvikFo84UmbD41SAcS
-         eWNrZ9XTSlaHPC7J2fw3X+JG9WOdYJ7WwDytSBUBo104TAm4JMrtVXWqgtcyMXp2wT
-         4e0WKE9hJDXJLfGjoRUBkhrdm2EPtzXZPNmcqVF0=
-Date:   Thu, 30 Aug 2018 18:27:34 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, eugen.hristev@microchip.com,
-        rdunlap@infradead.org, vilhelm.gray@gmail.com,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        geert+renesas@glider.be, lukas@wunner.de, icenowy@aosc.io,
-        arnd@arndb.de, broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 21/30] iio: adc: sun4i-gpadc-iio: add
- support for H3 thermal sensor
-Message-ID: <20180830162734.uq65l6ox6uwrmulo@core>
-Mail-Followup-To: Philipp Rossak <embed3d@gmail.com>, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, maxime.ripard@bootlin.com,
-        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de, broonie@kernel.org,
-        arnaud.pouliquen@st.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-22-embed3d@gmail.com>
+        Thu, 30 Aug 2018 16:39:46 -0400
+Received: from sonic304-49.consmr.mail.gq1.yahoo.com ([98.137.68.231]:34303
+        "EHLO sonic304-49.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727129AbeH3Ujp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 16:39:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535647006; bh=71nPvGxvS5lXbJ5bb11MjqNgbRKD4EIespetdvsJ/k8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=XSgCUbl5822YAyh7JJHqRKkNO8bZWP3iWlr167OF3b08Yqb7kuqA7sCbMNIP0fWma7CPjuWGSABoO5BuqlpJ/iqv0ubcvGkD9g6K1Lsxf1dj4vM6iU8/ijragZymubYxftPvnoT/WChLs4ncLPXnuAfUKuRyOj7XeXIREMZtrcAl/d0ycSW0aTBo/2J1bbAixcCEm+N+mRIFzmCuq5cAx/+3yoyO9WOirWkL3vEnE5H73lZ4I9X7q+o+ILf8bVzaR1pmZ9mFEVepBR8mG4uJnUU/4mSeYWGBNnO+sSRf2SJt+FHRLD6AZfS4Vr1l1XoX3QVbXJvSWuZmhtCcqbFhuw==
+X-YMail-OSG: v7b8L9YVM1lu4UWYfTjmExRgPsanFKbg.LglqKhCzteBIqpHa4E2.lsbmcQ9IkJ
+ tDg6piCBPo27Kbzdak2aAJH0DCJYijCJVuYZ2toxXQdgvdOhoVr0yPYNpR7HBWgPrsdZ9r6.spjk
+ kOxFgySIEcKnwbfbWX05b5o1J2rOcVmZEMnoh4TbgKZGzkN8JRTswMS2sLrWFAgvvwJNVr9ZfqYK
+ 8EFPK1KpHXxquQtHd7GPrUNv4Dr37A1SmOfQC7gI0wFnPTVdvJZRwcNt8GaFkpvbJB0KvmfvtzAK
+ wbI153xkXEC1fOJklnr0HSls.Mb4plHKSya8bJYRGJnHnKrN5xce1CzzdUtKGO10WS347qBYe.lW
+ q1sGpni2HaH_IaOb8mEvbf.LyFE.4NPzgu5.gmINzA_qBFM1zgAQNfyMINiEctlAEviX8f0PDVLg
+ EkYSRYjQtaR8OTBZtMCneBcTiFrzDjuh6pXXU3SbxO3VBS_jfN.bt9bHUZhBE.S_Kg4HoYVazqIo
+ un8w_n.L7Ry.0.iDLl4ZJ3vi5hYq1KBeyOkK5Qd7Z9OD1_81EozzFtLurMApUVS0I_IYfRX50ovK
+ 3hPpeJ6XrOUHoqTuwiVw3pGoOPuNrUN5CyjQvItWhw7dyVjYZcMQfXUGF75Z8QynXRxNJbLmFo1d
+ WStwfBjHy6Gaoxv8gtxlKEKQuCHWZQRxYjBIFpLWtsXJM__Y_vaMpopaXTtXKOiK_GWaI1eaowK1
+ R_hX3k4CXOs1gPgEvlYilpnyQfw2FugSujY8e1OamHt_4Ur6c62s3C2cdVIT4iGgs_ILBPsCHhLB
+ vA1q71ghERqaoh9nKPud0XnKCu7bliB39IzHLcpOn9MApKasWXAT6d_Jx6y.duB_YhWV8cYy.Uqx
+ cL21k6U_e5j5IgqrffEvT5yWVzuHPy3LN_mHEOPub0_v6LHFmPIo5Idwolw0KApwny_taAU.mLkx
+ ADC1JPjjw2N8pcLTMjY87YJfAp_J1KoX4Qve.BsTy84zp.CIchc_GEdqNZIfH8LYp7alP8bOtplS
+ ycYDq
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Thu, 30 Aug 2018 16:36:46 +0000
+Received: from 221.13.70.165 (EHLO [192.168.55.130]) ([221.13.70.165])
+          by smtp430.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7ba8e9111e9667461cb1d6f2d10dd680;
+          Thu, 30 Aug 2018 16:32:45 +0000 (UTC)
+Subject: Re: [PATCH 2/6] staging: erofs: formatting fix to NULL comparison
+To:     Pavel Zemlyanoy <zemlyanoy@ispras.ru>
+Cc:     ldv-project@linuxtesting.org, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
+ <1535642042-5336-2-git-send-email-zemlyanoy@ispras.ru>
+ <747d9c74-02cd-fa39-9870-ae17dbddf366@aol.com>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <44d6e603-fe1d-6853-c474-760c0a2ed4ec@aol.com>
+Date:   Fri, 31 Aug 2018 00:32:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830154518.29507-22-embed3d@gmail.com>
-If-You-Cant-Reach-Me-Try: <https://megous.com/mail-form>
+In-Reply-To: <747d9c74-02cd-fa39-9870-ae17dbddf366@aol.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Thu, Aug 30, 2018 at 05:45:09PM +0200, Philipp Rossak wrote:
-> This patch adds support for the H3 ths sensor.
-> 
-> The H3 supports interrupts. The interrupt is configured to update the
-> the sensor values every second. The calibration data is writen at the
-> begin of the init process.
-> 
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  drivers/iio/adc/sun4i-gpadc-iio.c   | 91 +++++++++++++++++++++++++++++++++++++
->  include/linux/iio/adc/sun4i-gpadc.h | 18 ++++++++
->  2 files changed, 109 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
-> index c7b46c82e3e5..d5c7971b2558 100644
-> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> @@ -72,6 +72,7 @@ struct gpadc_data {
->  	u32		temp_data_base;
->  	int		sensor_count;
->  	bool		supports_nvmem;
-> +	u32		ths_irq_clear;
->  };
->  
->  static irqreturn_t sun4i_gpadc_data_irq_handler(int irq, void *dev_id);
-> @@ -79,6 +80,10 @@ static irqreturn_t sun4i_gpadc_data_irq_handler(int irq, void *dev_id);
->  static int sun4i_ths_resume(struct sun4i_gpadc_iio *info);
->  static int sun4i_ths_suspend(struct sun4i_gpadc_iio *info);
->  
-> +static int sun8i_h3_ths_resume(struct sun4i_gpadc_iio *info);
-> +static int sun8i_h3_ths_suspend(struct sun4i_gpadc_iio *info);
-> +static irqreturn_t sunx8i_h3_irq_thread(int irq, void *data);
-> +
->  static const struct gpadc_data sun4i_gpadc_data = {
->  	.temp_offset = -1932,
->  	.temp_scale = 133,
-> @@ -137,6 +142,22 @@ static const struct gpadc_data sun8i_a33_gpadc_data = {
->  	.sensor_count = 1,
->  };
->  
-> +static const struct gpadc_data sun8i_h3_ths_data = {
-> +	.temp_offset = -1791,
-> +	.temp_scale = -121,
-> +	.temp_data_base = SUN8I_H3_THS_TDATA0,
-> +	.ths_irq_thread = sunx8i_h3_irq_thread,
-> +	.support_irq = true,
-> +	.has_bus_clk = true,
-> +	.has_bus_rst = true,
-> +	.has_mod_clk = true,
-> +	.sensor_count = 1,
-> +	.supports_nvmem = true,
-> +	.ths_resume = sun8i_h3_ths_resume,
-> +	.ths_suspend = sun8i_h3_ths_suspend,
-> +	.ths_irq_clear = SUN8I_H3_THS_INTS_TDATA_IRQ_0,
-> +};
-> +
->  struct sun4i_sensor_tzd {
->  	struct sun4i_gpadc_iio		*info;
->  	struct thermal_zone_device	*tzd;
-> @@ -409,6 +430,31 @@ static irqreturn_t sun4i_gpadc_data_irq_handler(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static irqreturn_t sunx8i_h3_irq_thread(int irq, void *data)
-> +{
-> +	struct sun4i_gpadc_iio *info = data;
-> +	int i;
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_STAT,
-> +			info->data->ths_irq_clear);
-> +
-> +	for (i = 0; i < info->data->sensor_count; i++)
-> +		thermal_zone_device_update(info->tzds[i].tzd,
-> +						THERMAL_EVENT_TEMP_SAMPLE);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int sun8i_h3_calibrate(struct sun4i_gpadc_iio *info)
-> +{
-> +//	regmap_write(info->regmap, SUNXI_THS_CDATA_0_1,
-> +//			info->calibration_data[0]);
-> +//	regmap_write(info->regmap, SUNXI_THS_CDATA_2_3,
-> +//			info->calibration_data[1]);
-
-This should probably be implemented, or left out completely.
-
-regards,
-  o.
-
-> +	return 0;
-> +}
-> +
->  static int sun4i_gpadc_runtime_suspend(struct device *dev)
->  {
->  	struct sun4i_gpadc_iio *info = iio_priv(dev_get_drvdata(dev));
-> @@ -428,6 +474,16 @@ static int sun4i_ths_suspend(struct sun4i_gpadc_iio *info)
->  	return 0;
->  }
->  
-> +static int sun8i_h3_ths_suspend(struct sun4i_gpadc_iio *info)
-> +{
-> +	/* Disable ths interrupt */
-> +	regmap_write(info->regmap, SUN8I_H3_THS_INTC, 0x0);
-> +	/* Disable temperature sensor */
-> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL2, 0x0);
-> +
-> +	return 0;
-> +}
-> +
->  static int sun4i_gpadc_runtime_resume(struct device *dev)
->  {
->  	struct sun4i_gpadc_iio *info = iio_priv(dev_get_drvdata(dev));
-> @@ -454,6 +510,37 @@ static int sun4i_ths_resume(struct sun4i_gpadc_iio *info)
->  	return 0;
->  }
->  
-> +static int sun8i_h3_ths_resume(struct sun4i_gpadc_iio *info)
-> +{
-> +	u32 value;
-> +
-> +	sun8i_h3_calibrate(info);
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL0,
-> +			SUN4I_GPADC_CTRL0_T_ACQ(0xff));
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL2,
-> +			SUN8I_H3_THS_ACQ1(0x3f));
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_STAT,
-> +			SUN8I_H3_THS_INTS_TDATA_IRQ_0);
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_FILTER,
-> +			SUN4I_GPADC_CTRL3_FILTER_EN |
-> +			SUN4I_GPADC_CTRL3_FILTER_TYPE(0x2));
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_INTC,
-> +			SUN8I_H3_THS_INTC_TDATA_IRQ_EN0 |
-> +			SUN8I_H3_THS_TEMP_PERIOD(0x55));
-> +
-> +	regmap_read(info->regmap, SUN8I_H3_THS_CTRL2, &value);
-> +
-> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL2,
-> +			SUN8I_H3_THS_TEMP_SENSE_EN0 | value);
-> +
-> +	return 0;
-> +}
-> +
->  static int sun4i_gpadc_get_temp(void *data, int *temp)
->  {
->  	struct sun4i_sensor_tzd *tzd = data;
-> @@ -497,6 +584,10 @@ static const struct of_device_id sun4i_gpadc_of_id[] = {
->  		.compatible = "allwinner,sun6i-a31-gpadc",
->  		.data = &sun6i_gpadc_data
->  	},
-> +	{
-> +		.compatible = "allwinner,sun8i-h3-ths",
-> +		.data = &sun8i_h3_ths_data,
-> +	},
->  	{ /* sentinel */ }
->  };
->  
-> diff --git a/include/linux/iio/adc/sun4i-gpadc.h b/include/linux/iio/adc/sun4i-gpadc.h
-> index 99feeba28105..169b4de9a34d 100644
-> --- a/include/linux/iio/adc/sun4i-gpadc.h
-> +++ b/include/linux/iio/adc/sun4i-gpadc.h
-> @@ -100,6 +100,24 @@
->  }
->  
->  /* SUNXI_THS COMMON REGISTERS + DEFINES */
-> +#define SUN8I_H3_THS_CTRL0				0x00
-> +
-> +#define SUN8I_H3_THS_CTRL2				0x40
-> +#define SUN8I_H3_THS_ACQ1(x)			(GENMASK(31, 16) & ((x) << 16))
-> +#define SUN8I_H3_THS_TEMP_SENSE_EN0			BIT(0)
-> +
-> +#define SUN8I_H3_THS_INTC				0x44
-> +#define SUN8I_H3_THS_TEMP_PERIOD(x)		(GENMASK(31, 12) & ((x) << 12))
-> +#define SUN8I_H3_THS_INTC_TDATA_IRQ_EN0			BIT(8)
-> +
-> +#define SUN8I_H3_THS_STAT				0x48
-> +#define SUN8I_H3_THS_INTS_TDATA_IRQ_0			BIT(8)
-> +
-> +#define SUN8I_H3_THS_FILTER				0x70
-> +#define SUNXI_THS_CDATA_0_1				0x74
-> +#define SUNXI_THS_CDATA_2_3				0x78
-> +#define SUN8I_H3_THS_TDATA0				0x80
-> +
->  #define MAX_SENSOR_COUNT				4
->  
->  #endif
-> -- 
-> 2.11.0
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+DQoNCk9uIDIwMTgvOC8zMSAwOjA5LCBHYW8gWGlhbmcgdmlhIExpbnV4LWVyb2ZzIHdyb3Rl
+Og0KPiBIaSBQYXZlbCwNCj4gDQo+IE9uIDIwMTgvOC8zMCAyMzoxMywgUGF2ZWwgWmVtbHlh
+bm95IHdyb3RlOg0KPj4gVGhpcyBwYXRjaCBkb2VzIG5vdCBjaGFuZ2UgdGhlIGxvZ2ljLCBp
+dCBvbmx5DQo+PiBjb3JyZWN0cyB0aGUgZm9ybWF0dGluZyBhbmQgY2hlY2twYXRjaCBjaGVj
+a3MgYnkNCj4+IHRvIE5VTEwgY29tcGFyaXNvbi4NCj4+DQo+PiBUaGUgcGF0Y2ggZml4ZXMg
+NSBjaGVja3Mgb2YgdHlwZToNCj4+ICJDb21wYXJpc29uIHRvIE5VTEwgY291bGQgYmUgd3Jp
+dHRlbiIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGF2ZWwgWmVtbHlhbm95IDx6ZW1seWFu
+b3lAaXNwcmFzLnJ1Pg0KPiANCj4gU29ycnkgYWJvdXQgdGhlIGxhdGUgcmVwbHkuIEkgYW0g
+b24gdmFjYXRpb24gbm93Lg0KPiANCj4gUGVyc29uYWxseSwgSSB1c2UgIj09IE5VTEwiIG9y
+ICIhPSBOVUxMIiBvbiBwdXJwb3NlLCBzaW5jZSBpdCBpcyBtb3JlIA0KPiBlbXBoYXNpemVk
+IHRoYW4gdGhlIGNoZWNrcGF0Y2gucGwgc3VnZ2VzdGVkIHdheSwgYW5kIEkgdGVuZCB0byB1
+c2UgdGhlIG51bGxwdHIgZXhwbGljaXRseS4NCj4gDQo+IEJUVywgSXQgc2VlbXMgb3RoZXIg
+ZmlsZXN5c3RlbXMgc3RpbGwgdXNlICI9PSBOVUxMIiBvciAiIT0gTlVMTCIgZXhwbGljaXRs
+eSwgdG9vLCBlZzoNCj4geGZzLCBleHQ0LCBleHQyLCBvY2ZzMiwgZXRjLi4uIFlvdSBjb3Vs
+ZCAnZ3JlcCcgaW4gdGhlIGZzIGRpcmVjdG9yeS4uLiANCj4gDQo+IE90aGVyIGNvbW1pdHMg
+bG9vayBnb29kIGZvciBtZSBhdCBnbGFuY2UuDQo+IA0KDQpwLnMuIEkgcGVyc29uYWxseSB0
+ZW5kIHRvIGRyb3AgdGhpcyBwYXRjaC4gOigNCg0KSGVyZSBhcmUgYnVuY2ggb2YgJ05VTEwg
+Y29tcGFyaXNvbicgdXNhZ2VzIGluIHhmcywgZWcuDQoNCi4uLg0KLi94ZnNfcW1fc3lzY2Fs
+bHMuYzoyMTg6ICAgICAgICBpZiAoaW5vID09IE5VTExGU0lOTykgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3FtX3N5c2NhbGxzLmM6
+NzQ3OiAgICAgICAgICAgICAgICBBU1NFUlQoaXAtPmlfdWRxdW90ID09IE5VTEwpOyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc19xbV9zeXNjYWxscy5jOjc0ODog
+ICAgICAgICAgICAgICAgQVNTRVJUKGlwLT5pX2dkcXVvdCA9PSBOVUxMKTsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfcW1fc3lzY2FsbHMuYzo3NDk6ICAgICAg
+ICAgICAgICAgIEFTU0VSVChpcC0+aV9wZHF1b3QgPT0gTlVMTCk7ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIC4veGZzX3F1b3RhLmg6Mjc6ICAgICAgICgoWEZTX0lTX1VR
+VU9UQV9PTihtcCkgJiYgKGlwKS0+aV91ZHF1b3QgPT0gTlVMTCkgfHwgXCAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAuL3hmc19xdW90YS5oOjI4OiAgICAgICAgKFhGU19JU19HUVVPVEFf
+T04obXApICYmIChpcCktPmlfZ2RxdW90ID09IE5VTEwpIHx8IFwgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgLi94ZnNfcXVvdGEuaDoyOTogICAgICAgIChYRlNfSVNfUFFVT1RBX09OKG1w
+KSAmJiAoaXApLT5pX3BkcXVvdCA9PSBOVUxMKSkgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIC4veGZzX3F1b3Rhb3BzLmM6MzE6ICAgIGlmICghaXAgJiYgaW5vID09IE5VTExGU0lO
+TykgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAu
+L3hmc19yZWZsaW5rLmM6MjEzOiAgICBpZiAoZmJubyA9PSBOVUxMQUdCTE9DSykgeyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNf
+cmVmbGluay5jOjY1MjogICAgaWYgKGNvdW50ID09IE5VTExGSUxFT0ZGKSAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3JlZmxp
+bmsuYzoxNDYyOiAgICAgICAgICAgICAgICAgICBpZiAocmJubyA9PSBOVUxMQUdCTE9DSykg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc19ydGFsbG9jLmM6
+ODM2OiAgICAgICAgICAgICAgICAgICAgaWYgKGJwID09IE5VTEwpIHsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfcnRhbGxvYy5jOjg5OTog
+ICAgaWYgKG1wLT5tX3J0ZGV2X3RhcmdwID09IE5VTEwgfHwgbXAtPm1fcmJtaXAgPT0gTlVM
+TCB8fCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3J0YWxsb2MuYzoxMTY1OiAgIGlm
+IChtcC0+bV9ydGRldl90YXJncCA9PSBOVUxMKSB7ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAuL3hmc19ydGFsbG9jLmM6MTIwOTogICBpZiAoc2Jw
+LT5zYl9yYm1pbm8gPT0gTlVMTEZTSU5PKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnMuYzoxODU6ICAgICAgICAgICAgICAgICAg
+ICAgIEFTU0VSVCh0cC0+dF90aWNrZXQgPT0gTlVMTCk7ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIC4veGZzX3RyYW5zX2FpbC5jOjU5OiAgICAgICAocHJldl9sc24gPT0g
+TlVMTENPTU1JVExTTiB8fCBYRlNfTFNOX0NNUChwcmV2X2xzbiwgbHNuKSA8PSAwKSAmJiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAuL3hmc190cmFuc19haWwuYzo2MDogICAgICAgKG5leHRfbHNuID09IE5VTExD
+T01NSVRMU04gfHwgWEZTX0xTTl9DTVAobmV4dF9sc24sIGxzbikgPj0gMCkpICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLi94ZnNfdHJhbnNfYWlsLmM6NjU6ICAgQVNTRVJUKHByZXZfbHNuID09IE5VTExDT01N
+SVRMU04gfHwgWEZTX0xTTl9DTVAocHJldl9sc24sIGxzbikgPD0gMCk7ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4v
+eGZzX3RyYW5zX2FpbC5jOjY2OiAgIEFTU0VSVChuZXh0X2xzbiA9PSBOVUxMQ09NTUlUTFNO
+IHx8IFhGU19MU05fQ01QKG5leHRfbHNuLCBsc24pID49IDApOyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190
+cmFuc19haWwuYzo0NzU6ICAgICAgICAgIGlmIChsaXAgPT0gTlVMTCkgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNf
+YnVmLmM6NzA6ICAgQVNTRVJUKGJwLT5iX3RyYW5zcCA9PSBOVUxMKTsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2J1Zi5j
+OjE1NTogIGlmIChicCA9PSBOVUxMKSB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19idWYuYzoxODc6
+ICBpZiAodHAgPT0gTlVMTCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfYnVmLmM6MjA3OiAgaWYg
+KGJwID09IE5VTEwpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2J1Zi5jOjM1MDogIGlmICh0cCA9
+PSBOVUxMKSB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19idWYuYzozNTE6ICAgICAgICAgIEFTU0VS
+VChicC0+Yl90cmFuc3AgPT0gTlVMTCk7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgLi94ZnNfdHJhbnNfYnVmLmM6NDk1OiAgQVNTRVJUKGJwLT5iX2lvZG9u
+ZSA9PSBOVUxMIHx8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC4veGZzX3RyYW5zX2RxdW90LmM6MTAzOiAgICAgICAgICAgICAgICAgICAgICAg
+IGlmIChvcWFbaV0ucXRfZHF1b3QgPT0gTlVMTCkgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAuL3hmc190cmFuc19kcXVvdC5jOjE0OTogICAgICAgIGlmICh0cC0+dF9kcWluZm8gPT0g
+TlVMTCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94
+ZnNfdHJhbnNfZHF1b3QuYzoxNzg6ICAgICAgICAgICAgICAgIGlmIChxYVtpXS5xdF9kcXVv
+dCA9PSBOVUxMIHx8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3Ry
+YW5zX2RxdW90LmM6MjA1OiAgICAgICAgaWYgKHRwLT50X2RxaW5mbyA9PSBOVUxMKSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19k
+cXVvdC5jOjIxMzogICAgICAgIGlmIChxdHJ4LT5xdF9kcXVvdCA9PSBOVUxMKSAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfZHF1b3Qu
+YzoyOTU6ICAgICAgICBpZiAocVsxXS5xdF9kcXVvdCA9PSBOVUxMKSB7ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2RxdW90LmM6MzMy
+OiAgICAgICAgICAgICAgICBpZiAocWFbMF0ucXRfZHF1b3QgPT0gTlVMTCkgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19kcXVvdC5jOjM0NjogICAg
+ICAgICAgICAgICAgICAgICAgICBpZiAoKGRxcCA9IHF0cngtPnF0X2RxdW90KSA9PSBOVUxM
+KSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfZHF1b3QuYzo1MTk6ICAgICAgICAg
+ICAgICAgICAgICAgICAgaWYgKChkcXAgPSBxdHJ4LT5xdF9kcXVvdCkgPT0gTlVMTCkgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2RxdW90LmM6NzU3OiAgICAgICAgaWYgKHRw
+ICYmIHRwLT50X2RxaW5mbyA9PSBOVUxMKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAuL3hmc190cmFuc19pbm9kZS5jOjM2OiBpZiAoaXAtPmlfaXRlbXAgPT0g
+TlVMTCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgDQouLi4NCg0KQW5kIGluIGV4dDQsIGVnLg0KLi4uDQouL21iYWxsb2MuYzoyODky
+OiAgICAgICBpZiAoZXh0NF9mcmVlX2RhdGFfY2FjaGVwID09IE5VTEwpIHsNCi4vbWJhbGxv
+Yy5jOjMwNDY6ICAgICAgIEJVR19PTihsZyA9PSBOVUxMKTsNCi4vbWJhbGxvYy5jOjMyODY6
+ICAgICAgIGlmIChwYSA9PSBOVUxMKSB7DQouL21iYWxsb2MuYzozMzc3OiAgICAgICBpZiAo
+Y3BhID09IE5VTEwpIHsNCi4vbWJhbGxvYy5jOjM0NDc6ICAgICAgIGlmIChsZyA9PSBOVUxM
+KQ0KLi9tYmFsbG9jLmM6MzYzNTogICAgICAgaWYgKHBhID09IE5VTEwpDQouL21iYWxsb2Mu
+YzozNzI3OiAgICAgICBCVUdfT04oZXh0NF9wc3BhY2VfY2FjaGVwID09IE5VTEwpOw0KLi9t
+YmFsbG9jLmM6MzcyOTogICAgICAgaWYgKHBhID09IE5VTEwpDQouL21iYWxsb2MuYzozNzU2
+OiAgICAgICBCVUdfT04obGcgPT0gTlVMTCk7DQouL21iYWxsb2MuYzo0NjM3OiAgICAgICBC
+VUdfT04oZTRiLT5iZF9iaXRtYXBfcGFnZSA9PSBOVUxMKTsNCi4vbWJhbGxvYy5jOjQ2Mzg6
+ICAgICAgIEJVR19PTihlNGItPmJkX2J1ZGR5X3BhZ2UgPT0gTlVMTCk7DQouL21vdmVfZXh0
+ZW50LmM6MzQ6ICAgICBpZiAocGF0aFtleHRfZGVwdGgoaW5vZGUpXS5wX2V4dCA9PSBOVUxM
+KSB7DQouL25hbWVpLmM6ODc0OiAgaWYgKGZyYW1lc1swXS5iaCA9PSBOVUxMKQ0KLi9uYW1l
+aS5jOjg3OTogICAgICAgICAgaWYgKGZyYW1lc1tpXS5iaCA9PSBOVUxMKQ0KLi9uYW1laS5j
+OjE0MzI6ICAgICAgICAgaWYgKChiaCA9IGJoX3VzZVtyYV9wdHIrK10pID09IE5VTEwpDQou
+L3BhZ2UtaW8uYzozODogaWYgKGlvX2VuZF9jYWNoZXAgPT0gTlVMTCkNCi4vcGFnZS1pby5j
+OjM5ODogICAgICAgIGlmIChpby0+aW9fYmlvID09IE5VTEwpIHsNCi4vcmVhZHBhZ2UuYzoy
+NDI6ICAgICAgICAgICAgICAgaWYgKGJpbyA9PSBOVUxMKSB7DQouL3Jlc2l6ZS5jOjIwMDog
+aWYgKGZsZXhfZ2QgPT0gTlVMTCkNCi4vcmVzaXplLmM6MjEwOiBpZiAoZmxleF9nZC0+Z3Jv
+dXBzID09IE5VTEwpDQouL3Jlc2l6ZS5jOjIxNTogaWYgKGZsZXhfZ2QtPmJnX2ZsYWdzID09
+IE5VTEwpDQouL3Jlc2l6ZS5jOjI2NTogQlVHX09OKGZsZXhfZ2QtPmNvdW50ID09IDAgfHwg
+Z3JvdXBfZGF0YSA9PSBOVUxMKTsNCi4vcmVzaXplLmM6MTM0NTogICAgICAgIEJVR19PTihm
+bGV4X2dkLT5jb3VudCA9PSAwIHx8IGdyb3VwX2RhdGEgPT0gTlVMTCk7DQouL3Jlc2l6ZS5j
+OjIwMTI6ICAgICAgICBpZiAoZmxleF9nZCA9PSBOVUxMKSB7DQouL3N1cGVyLmM6MzY1OiAg
+cmV0dXJuIGJkaS0+ZGV2ID09IE5VTEw7DQouL3N1cGVyLmM6NTk2OiAgaWYgKGVycm5vID09
+IC1FUk9GUyAmJiBqb3VybmFsX2N1cnJlbnRfaGFuZGxlKCkgPT0gTlVMTCAmJiBzYl9yZG9u
+bHkoc2IpKQ0KLi9zdXBlci5jOjEwODY6IGlmIChleHQ0X2lub2RlX2NhY2hlcCA9PSBOVUxM
+KQ0KLi9zdXBlci5jOjQwNTA6IGlmIChzYmktPnNfZ3JvdXBfZGVzYyA9PSBOVUxMKSB7DQou
+L3N1cGVyLmM6NDYxNzogaWYgKGJkZXYgPT0gTlVMTCkNCi4vc3VwZXIuYzo1Mjg4OiBpZiAo
+c2JpLT5zX2pvdXJuYWwgPT0gTlVMTCAmJiAhKG9sZF9zYl9mbGFncyAmIFNCX1JET05MWSkp
+IHsNCi4veGF0dHIuYzoyODY6ICBpZiAobmFtZSA9PSBOVUxMKQ0KLi94YXR0ci5jOjE5MDU6
+ICAgICAgICAgICAgICAgICBpZiAocy0+YmFzZSA9PSBOVUxMKQ0KLi94YXR0ci5jOjE5NDg6
+ICAgICAgICAgaWYgKHMtPmJhc2UgPT0gTlVMTCkNCi4veGF0dHIuYzoyNjY1OiAgICAgICAg
+IGlmIChlbnRyeSA9PSBOVUxMKSB7DQouL3hhdHRyLmM6MjY2NjogICAgICAgICAgICAgICAg
+IGlmIChzbWFsbF9lbnRyeSA9PSBOVUxMKQ0KLi94YXR0ci5jOjI4MDQ6IGlmICgqZWFfaW5v
+ZGVfYXJyYXkgPT0gTlVMTCkgew0KLi94YXR0ci5jOjI4MTM6ICAgICAgICAgaWYgKCplYV9p
+bm9kZV9hcnJheSA9PSBOVUxMKQ0KLi94YXR0ci5jOjI4MjY6ICAgICAgICAgaWYgKG5ld19h
+cnJheSA9PSBOVUxMKQ0KLi94YXR0ci5jOjI5NDc6IGlmIChlYV9pbm9kZV9hcnJheSA9PSBO
+VUxMKQ0KLi4uDQoNCkFueXdheSwgSSdkIGxpa2UgdG8gbGlzdGVuIHRoZSBHcmVnJ3MgYW5k
+IENoYW8ncyBpZGVhcy4NCg0KVGhhbmtzLA0KDQo+IFRoYW5rcywNCj4gR2FvIFhpYW5nDQo+
+IA0K
