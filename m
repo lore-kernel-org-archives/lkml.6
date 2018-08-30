@@ -2,164 +2,95 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE60BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 818C1C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5846220658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:48:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5846220658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 225D820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:50:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="AuuYl4Ij"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225D820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbeH3Otw (ORCPT
+        id S1728478AbeH3OwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:49:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:39420 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728460AbeH3Otw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:49:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EC4680D;
-        Thu, 30 Aug 2018 03:48:20 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A6123F721;
-        Thu, 30 Aug 2018 03:48:18 -0700 (PDT)
-Subject: Re: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
-To:     Fan Wu <wufan@codeaurora.org>
-Cc:     mchehab@kernel.org, bp@alien8.de, baicar.tyler@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <c70fa799-bc9f-64c8-e151-088ca8c3ed3e@arm.com>
-Date:   Thu, 30 Aug 2018 11:48:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 10:52:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33388 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbeH3OwT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:52:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cR/A1vJH42gG/u/sn/uApFes4Yu/9U9fQPiTTPRb5Y0=; b=AuuYl4Ij3uD6L0f88l/Rx/jpd
+        dN9n0yowAub7Bl92oAnlpr+ssPbcvvC0C5D78vUD9u/fDQxYlzlRUzBwevBR+OrcDk2l+Wv6HUMUb
+        midaWkGNmrGvMysi6R+VY4NGSd/ilPx/X9foBT5xpW32zlq5rOQv+PRIhAe5eLv+Vq08Y=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fvKXB-000248-Sd; Thu, 30 Aug 2018 10:50:41 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 826E1112486A; Thu, 30 Aug 2018 11:50:41 +0100 (BST)
+Date:   Thu, 30 Aug 2018 11:50:41 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microchip.com>
+Subject: Re: [andriy.shevchenko@linux.intel.com: Re: [PATCH] spi: dw-mmio:
+ add MSCC Jaguar2 support]
+Message-ID: <20180830105041.GA7301@sirena.org.uk>
+References: <20180829150955.GB7459@smile.fi.intel.com>
+ <20180829151501.GE27808@sirena.org.uk>
+ <20180829180242.GH16561@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Disposition: inline
+In-Reply-To: <20180829180242.GH16561@piout.net>
+X-Cookie: Hailing frequencies open, Captain.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fan,
 
-On 29/08/18 19:33, Fan Wu wrote:
-> The current ghes_edac driver does not update per-dimm error
-> counters when reporting memory errors, because there is no
-> platform-independent way to find DIMMs based on the error
-> information provided by firmware.
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'd argue there is: its in the CPER records, we just didn't do anything useful
-with the information in the past!
+On Wed, Aug 29, 2018 at 08:02:42PM +0200, Alexandre Belloni wrote:
 
+> Do you want me to send a new version or a patch that you could squash in
+> the second one?
 
-> This patch offers a solution
-> for platforms whose firmwares provide valid module handles
-> (SMBIOS type 17) in error records. In this case ghes_edac will
-> use the module handles to locate DIMMs and thus makes per-dimm
-> error reporting possible.
+A followup would be best given that I applied it.
 
+--liOOAslEiF7prFVr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-> index 473aeec..db527f0 100644
-> --- a/drivers/edac/ghes_edac.c
-> +++ b/drivers/edac/ghes_edac.c
-> @@ -81,6 +81,26 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
->  		(*num_dimm)++;
->  }
->  
-> +static int ghes_edac_dimm_index(u16 handle)
-> +{
-> +	struct mem_ctl_info *mci;
-> +	int i;
-> +
-> +	if (!ghes_pvt)
-> +		return -1;
+-----BEGIN PGP SIGNATURE-----
 
-ghes_edac_report_mem_error() already checked this, as its the only caller there
-is no need to check it again.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluHy/4ACgkQJNaLcl1U
+h9BDEQf/Sg5eEdY++mdA1LKs0fAgW/QtDv2RvWwMtbwcBEUO2wuNeq7VyAANVOuD
+Z6J92qS8/gES01pxny06K9pzGwwTPQMcM05BIqUFQb2GZ9drOxWtt36+WpXzJS0k
+8fhVQaaeXzP97fEMwYklCGaeLhAa/+oCLt9P7AQl4v38wqQGYkIuLejUm5ThSjjp
+I+mIecxcauO4heYwy7b5ScN2W43oEQjHgLOzH7i6iEsuVYFcn3AtjUZjcqEfODzY
+T2ceA91nFvVBsXY+FXOH7TgYILAzwY0jLsPXgj1pTCflHiAL9+k+1214qUv0zmEi
+y0deOslRpejH2Ezvg7n4oDf1zVePGw==
+=USG2
+-----END PGP SIGNATURE-----
 
-
-> +	mci = ghes_pvt->mci;
-> +
-> +	if (!mci)
-> +		return -1;
-
-Can this happen? ghes_edac_report_mem_error() would have dereferenced this already!
-
-If you need the struct mem_ctl_info, you may as well pass it in as the only
-caller has it to hand.
-
-
-> +
-> +	for (i = 0; i < mci->tot_dimms; i++) {
-> +		if (mci->dimms[i]->smbios_handle == handle)
-> +			return i;
-> +	}
-> +	return -1;
-> +}
-> +
->  static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
->  {
->  	struct ghes_edac_dimm_fill *dimm_fill = arg;
-> @@ -177,6 +197,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
->  				entry->total_width, entry->data_width);
->  		}
->  
-> +		dimm->smbios_handle = entry->handle;
-
-We aren't checking for duplicate handles, (e.g. they're all zero). I think this
-is fine as chances are firmware on those systems won't set
-CPER_MEM_VALID_MODULE_HANDLE. If it does, the handle it gives us is ambiguous,
-and we pick a dimm, instead of whine-ing about broken firmware tables.
-
-(I'm just drawing attention to it in case someone disagrees)
-
-
->  		dimm_fill->count++;
->  	}
->  }
-> @@ -327,12 +349,20 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
->  		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
->  	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
->  		const char *bank = NULL, *device = NULL;
-> +		int index = -1;
-> +
->  		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
-
-> +		p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
-> +			     mem_err->mem_dev_handle);
->  		if (bank != NULL && device != NULL)
->  			p += sprintf(p, "DIMM location:%s %s ", bank, device);
-> -		else
-> -			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
-> -				     mem_err->mem_dev_handle);
-
-Why do we now print the handle every time? The handle is pretty meaningless, it
-can only be used to find the location-strings, if we get those we print them
-instead.
-
-
-> +		index = ghes_edac_dimm_index(mem_err->mem_dev_handle);
-> +		if (index >= 0) {
-> +			e->top_layer = index;
-> +			e->enable_per_layer_report = true;
-> +		}
-> +
->  	}
->  	if (p > e->location)
->  		*(p - 1) = '\0';
-
-Looks good to me!
-
-
-Thanks,
-
-James
+--liOOAslEiF7prFVr--
