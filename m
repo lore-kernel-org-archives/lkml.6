@@ -2,99 +2,115 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F72C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EC8C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83A820837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:32:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gD6FWtG1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83A820837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 22A9020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A9020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeH3Vfl (ORCPT
+        id S1727305AbeH3VhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:35:41 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42085 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbeH3Vfk (ORCPT
+        Thu, 30 Aug 2018 17:37:19 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48535 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725836AbeH3VhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:35:40 -0400
-Received: by mail-oi0-f65.google.com with SMTP id k81-v6so10742715oib.9
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 10:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=nRD3tcypqo55z7g9IorPcB7zReB6RcBUxjJv7QVV2rw=;
-        b=gD6FWtG14YBdUy2Y7fJAiR1949ul+0wl8zaOrH0TtFqzTWK9TI0rFK1TKKYV8J6aOG
-         k7F0jcOOFLoj1y0VXOyOTSHPL0djR9Z1mlS/wSxluKOD+tmhYGW135Wq40kKyztSA9FY
-         cRjCJjbJOP4mG/GVv4sqyZwy0/9gO1fnEgtQYXnBlU8Ty7yJ7e34r/GAPfteJ/FiQh7r
-         LfF54a+GlEN24D70Fw5p0oDE5mv0IHxciNv7t0Iv1tFQFqLBBTT9pypEmJ9GmFdodn3g
-         oiXoIDXpigIkFjtKr/MjQo8gtEJHur4wAuAH6il0ztoxT84cuBHeyRAJELBsgNFhYOe7
-         sXCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=nRD3tcypqo55z7g9IorPcB7zReB6RcBUxjJv7QVV2rw=;
-        b=gncxY6SQewCzn7rI5QEBNtp9QDMqq+TwjCxVrHq6U8Iz7pygCL29lKwCn4W6kG9iKX
-         gHjD1iMMmcuxBmoFwhAswYI8mYvpB5KojvVBBX25orLx8pRQFfDk4b8/3yHpnCbZh46t
-         FejKw/TuTMLv1zyweW3X9fPIw+WCEjXq09w86T+BSteZlUEJx0tfz1/I1CM+toDO7YLj
-         Rfz9I6ins6jMBQeNcHPVG6UeL82miHog2O5QrIaLeHKLz+qBbQyFYFZoXiC048YZWPBu
-         +zlxZn+JH5uERBFOx1eof/tYdUJahdXIvmguaqqDjpVg9ts1tUcqy/c9/JaS+LPZT+q8
-         cPTA==
-X-Gm-Message-State: APzg51BKRFgG931gNvkFp9Puj+l/Ouop+qm3Hw0qTUNWPpbyKb1P2vW2
-        rgUKcoTKhXyRfMx61cT5hZ+qoFK+dtwsjp9Q1Nu3nwxb
-X-Google-Smtp-Source: ANB0VdZ9oTO2RQNvTpk6JYTRmIrX/qLDxhxFGiDh1Vi9dfhwTiVHxoarh6BS26CL4SAvPaCa4yKokuPGl03lUeB0k2k=
-X-Received: by 2002:aca:edd8:: with SMTP id l207-v6mr3684363oih.65.1535650348090;
- Thu, 30 Aug 2018 10:32:28 -0700 (PDT)
+        Thu, 30 Aug 2018 17:37:19 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 30 Aug 2018 10:33:48 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 899B0B05D4;
+        Thu, 30 Aug 2018 13:34:06 -0400 (EDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/6] x86/alternatives: text_poke() fixes
+Date:   Thu, 30 Aug 2018 10:32:12 -0700
+Message-ID: <20180830173218.238900-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-From:   Ray Clinton <mr.ray.clinton@gmail.com>
-Date:   Thu, 30 Aug 2018 13:32:24 -0400
-Message-ID: <CAPMnawsv0CYrqEHiWbnUp8uj1zmjPqifsATO=qiQLvQJpO9OWg@mail.gmail.com>
-Subject: [PATCH 4/4] staging: comedi: Correct multiline dereference as per TODO
-To:     Greg Kroah-Hartman <greg@kroah.com>
-Cc:     abbotti@mev.co.uk, hsweeten@visionengravers.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using checkpatch.pl I was able to find a multiline dereference which goes
-again the coding style for the kernel. I'm still working on my email client so
-the indentation looks bad here (in gmail) but the arguments for
-comedi_check_trigger_arg_min should go just under the opening (
+This patch-set addresses some issues that were raised in a recent
+correspondence and might affect the security and the correctness of code
+patching. (Note that patching performance is not addressed by this
+patch-set).
 
+The main issue that the patches deal with is the fact that the fixmap
+PTEs that are used for patching are available for access from other
+cores and might be exploited. They are not even flushed from the TLB in
+remote cores, so the risk is even higher. Address this issue by
+introducing a temporary mm that is only used during patching.
+Unfortunately, due to init ordering, fixmap is still used during
+boot-time patching. Future patches can eliminate the need for it.
 
-Signed-off-by: Ray Clinton <mr.ray.clinton@gmail.com>
----
- drivers/staging/comedi/drivers/rtd520.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The second issue is the missing lockdep assertion to ensure text_mutex
+is taken. It is actually not always taken, so fix the instances that
+were found not to take the lock (although they should be safe even
+without taking the lock).
 
-diff --git a/drivers/staging/comedi/drivers/rtd520.c
-b/drivers/staging/comedi/drivers/rtd520.c
-index bb400e0..b53bf5d 100644
---- a/drivers/staging/comedi/drivers/rtd520.c
-+++ b/drivers/staging/comedi/drivers/rtd520.c
-@@ -815,9 +815,9 @@ static int rtd_ai_cmdtest(struct comedi_device *dev,
+Finally, try to be more conservative and to map a single page, instead
+of two, when possible. This helps both security and performance.
 
-                if (cmd->scan_begin_src == TRIG_TIMER) {
-                        arg = cmd->convert_arg * cmd->scan_end_arg;
--                       err |= comedi_check_trigger_arg_min(&cmd->
--                                                           scan_begin_arg,
--                                                           arg);
-+                       err |= comedi_check_trigger_arg_min(
-+                                                          &cmd->scan_begin_arg,
-+                                                          arg);
-                }
-        }
+In addition, there is some cleanup of the patching code to make it more
+readable.
+
+RFC->v1:
+- Added handling of error in get_locked_pte()
+- Remove lockdep assertion, clarify text_mutex use instead [masami]
+- Comment fix [peterz]
+- Removed remainders of text_poke return value [masami]
+- Use __weak for poking_init instead of macros [masami]
+- Simplify error handling in poking_init [masami]  
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.org/lkml/2018/8/24/586
+
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (5):
+  x86/alternatives: clarify text_mutex use in text_poke
+  fork: provide a function for copying init_mm
+  x86/alternatives: initializing temporary mm for patching
+  x86/alternatives: use temporary mm for text poking
+  x86/alternatives: remove text_poke() return value
+
+ arch/x86/include/asm/mmu_context.h   |  20 ++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/text-patching.h |   4 +-
+ arch/x86/kernel/alternative.c        | 173 +++++++++++++++++++++++----
+ arch/x86/mm/init_64.c                |  29 +++++
+ include/linux/sched/task.h           |   1 +
+ init/main.c                          |   3 +
+ kernel/fork.c                        |  24 +++-
+ 8 files changed, 226 insertions(+), 31 deletions(-)
 
 -- 
-2.7.4
+2.17.1
+
