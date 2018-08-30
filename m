@@ -2,228 +2,291 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D97C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A86C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BC682082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:40:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkaJQUw8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC682082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 45D452082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D452082C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeH3Lln (ORCPT
+        id S1727875AbeH3Llv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 07:41:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35917 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbeH3Llm (ORCPT
+        Thu, 30 Aug 2018 07:41:51 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:42271 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727098AbeH3Llv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 07:41:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1-v6so3523905pgo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 00:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=eZGzryrV9wL2XxWiRsZsZ/FYHU3CIlauTRT5Wm/R1aI=;
-        b=UkaJQUw8AFrqooGBC1k8RAkUzlJyFjkjvF6FI814kBLp8kYJW9uBxtWaOHFDfl/Ur+
-         87MuILQi32OK1IvHNRYBvK48hXaLjBk2WMy6M9nLNamJpbUHbE6PR67w8+wWNBHlLdEs
-         pudpoMqUMSrqTkDeIafkkOnCDggFrCz/TPyT0=
+        Thu, 30 Aug 2018 07:41:51 -0400
+Received: by mail-vk0-f66.google.com with SMTP id t4-v6so3816062vke.9;
+        Thu, 30 Aug 2018 00:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=eZGzryrV9wL2XxWiRsZsZ/FYHU3CIlauTRT5Wm/R1aI=;
-        b=scMyRI8NAJJJhnhr6NLkCsOAotkMIQYHD0GdJ6ETuXs0bmzFcWxUVWUHJHNjbbmOsK
-         xg7C+q7DOou8cgZEpuLdh8WIWQNxLjl0//Z+TGs7tiICEbLb+Yq+r5n7j0QhsCpe6pCk
-         cUPG2xztP49stEN+WuzA7v3YpL151sRkVAcTppJ94uxBmApac3eNH+yWAtEEsOWyZV4T
-         sZEGY8PPLtc1IUobQB8mLz1yfhva/wsW/Hk5u9EgLrAgzrUaSDXQ6c/Glpj1vRLgdgV/
-         CxltRGVgEkFCn6gFliDAUfd3q4RfGvBXw9HKUKYPnamHsO3FzZvDEBApdS5qjfasGiJ9
-         f41g==
-X-Gm-Message-State: APzg51CMb255UuoqBjb2qyUevjlNHQTlOQsOW556zjjK/Uhn8nRTn/EN
-        335MKd9CiTXEu1TCImlz4vzuMQ==
-X-Google-Smtp-Source: ANB0VdasIP1fr9StFfXi0Vau3Glv++n7g3cJW82KLDAGWh4yNJTR05NlAxunQzk5oitiXjNgxeZJDA==
-X-Received: by 2002:a62:d94:: with SMTP id 20-v6mr9233759pfn.202.1535614853229;
-        Thu, 30 Aug 2018 00:40:53 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id q6-v6sm12096167pgq.19.2018.08.30.00.40.50
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 30 Aug 2018 00:40:52 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
-        baolin.wang@linaro.org, broonie@kernel.org,
-        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date:   Thu, 30 Aug 2018 15:40:40 +0800
-Message-Id: <e24f6fa9d785f8402ab1f6ed8148d4e31f4cf7f6.1535614434.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <f8f1439338464103cc9a4b4a93b590a9635c7fcb.1535614434.git.baolin.wang@linaro.org>
-References: <f8f1439338464103cc9a4b4a93b590a9635c7fcb.1535614434.git.baolin.wang@linaro.org>
-In-Reply-To: <f8f1439338464103cc9a4b4a93b590a9635c7fcb.1535614434.git.baolin.wang@linaro.org>
-References: <f8f1439338464103cc9a4b4a93b590a9635c7fcb.1535614434.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=efCK0MvyuRJeCqIEWKlmp0CxxDPL4uAwuhnr8YddIWA=;
+        b=VdN2LHmz1eHIQ2wMo15P4+T5pr0T+a7pACAUMhDcbiKAovE/YJJa4Wh1+vyI9uKdSH
+         MUgVz9NDB6jFO8W9wUTWeBaXnc24vudtHTU8QTr/d8Dsq84lgVsNu0c2oCi39LSOMyfE
+         LiFKt8HkMiacFL1qp+0k07E7/S8GyyvtAGu5TKe33mCvDL3fPtLhn6Z9vEFoPBcZrYYS
+         cWFHMnBmPEEcJWUNRetXNF/KPNPoIvdm0Vv4ZWeP/B5j9we+SMEcpnpzsJcSmmpLwPio
+         vVO/XUJwO2GsUas1jLfAW1slUQWQzouKmJuy9BEoPDa/kL0nrvy6HRIoW/Mh6FsosdX4
+         4emQ==
+X-Gm-Message-State: APzg51A4m3yY5O6+VYPN/T2Z3EaY0QoD3GJMsF94Q7MPm8b+xByRwMAu
+        ygMgZ9nqGbiQbaqgQ6179diIi2uesepck5AsKw4=
+X-Google-Smtp-Source: ANB0VdbqzuGkF3OMAHDQYNQk10DVx7Y6wOHT2BSzGxYYc7yIkD+KjvN9fD7h4a4CqBHy5y9QwsnioXbaa0ou73oRCkA=
+X-Received: by 2002:a1f:9004:: with SMTP id s4-v6mr6090841vkd.10.1535614860657;
+ Thu, 30 Aug 2018 00:41:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180820234341.5271-1-jmkrzyszt@gmail.com> <20180829204900.19390-1-jmkrzyszt@gmail.com>
+ <20180829204900.19390-2-jmkrzyszt@gmail.com>
+In-Reply-To: <20180829204900.19390-2-jmkrzyszt@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 30 Aug 2018 09:40:47 +0200
+Message-ID: <CAMuHMdW4QHuab8xuqNxc-yg_RiH0+Pb4yJryarDq6bgjtGvWsQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
+ get/set array
+To:     jmkrzyszt@gmail.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        peter.korsgaard@barco.com, Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
+        driverdevel <devel@driverdev.osuosl.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+Hi Janusz,
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v5:
- - None.
+On Wed, Aug 29, 2018 at 10:48 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> Most users of get/set array functions iterate consecutive bits of data,
+> usually a single integer, while processing array of results obtained
+> from, or building an array of values to be passed to those functions.
+> Save time wasted on those iterations by changing the functions' API to
+> accept bitmaps.
+>
+> All current users are updated as well.
+>
+> More benefits from the change are expected as soon as planned support
+> for accepting/passing those bitmaps directly from/to respective GPIO
+> chip callbacks if applicable is implemented.
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+> Cc: Peter Korsgaard <peter.korsgaard@barco.com>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Changes from v4:
- - None.
+Thanks for your patch!
 
-Changes from v3:
- - None.
+> --- a/drivers/auxdisplay/hd44780.c
+> +++ b/drivers/auxdisplay/hd44780.c
+> @@ -62,20 +62,19 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
+>  /* write to an LCD panel register in 8 bit GPIO mode */
+>  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
+>  {
+> -       int values[10]; /* for DATA[0-7], RS, RW */
+> -       unsigned int i, n;
+> +       unsigned long value_bitmap[1];  /* for DATA[0-7], RS, RW */
+> +       unsigned int n;
+>
+> -       for (i = 0; i < 8; i++)
+> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
+> -       values[PIN_CTRL_RS] = rs;
+> +       value_bitmap[0] = val;
+> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
 
-Changes from v2:
- - None.
 
-Changes from v1:
- - Remove pattern_get interface.
----
- drivers/leds/leds-sc27xx-bltc.c |   94 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+>         n = 9;
+>         if (hd->pins[PIN_CTRL_RW]) {
+> -               values[PIN_CTRL_RW] = 0;
+> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..297dd43 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +127,91 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +230,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +334,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
+The clearing is not needed, as this has been done by 'value_bitmap[0] = val;'
+
+>                 n++;
+>         }
+
+So the above block can be simplified to:
+
+        n = hd->pins[PIN_CTRL_RW] ? 10 : 9;
+
+>
+>         /* Present the data to the port */
+> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], values);
+> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], value_bitmap);
+>
+>         hd44780_strobe_gpio(hd);
+>  }
+> @@ -83,32 +82,31 @@ static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
+>  /* write to an LCD panel register in 4 bit GPIO mode */
+>  static void hd44780_write_gpio4(struct hd44780 *hd, u8 val, unsigned int rs)
+>  {
+> -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+> -       unsigned int i, n;
+> +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+
+This comment is not correct, as the low bits will be used.
+
+        /* DATA[4-7], RS, RW */
+
+> +       unsigned long value_bitmap[1];
+> +       unsigned int n;
+>
+>         /* High nibble + RS, RW */
+> -       for (i = 4; i < 8; i++)
+> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
+> -       values[PIN_CTRL_RS] = rs;
+> +       value_bitmap[0] = val;
+> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
+>         n = 5;
+>         if (hd->pins[PIN_CTRL_RW]) {
+> -               values[PIN_CTRL_RW] = 0;
+> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
+
+Not needed.
+
+>                 n++;
+>         }
+
+Hence:
+
+        n = hd->pins[PIN_CTRL_RW] ? 6: 5;
+
+> +       value_bitmap[0] >>= PIN_DATA4;
+
+Yuck?!?
+
+Isn't it more readable to just do:
+
+        /* High nibble + RS, RW */
+        value_bitmap[0] = val >> 4;
+        __assign_bit(4, value_bitmap, rs);
+        n = hd->pins[PIN_CTRL_RW] ? 6: 5;
+
+>
+>         /* Present the data to the port */
+> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
+> -                                      &values[PIN_DATA4]);
+> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
+>
+>         hd44780_strobe_gpio(hd);
+>
+>         /* Low nibble */
+> -       for (i = 0; i < 4; i++)
+> -               values[PIN_DATA4 + i] = !!(val & BIT(i));
+> +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
+> +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
+
+... and:
+
+         /* Low nibble */
+        value_bitmap[0] &= ~0x0f;
+        value_bitmap[0] |= val & 0x0f;
+
+>
+>         /* Present the data to the port */
+> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
+> -                                      &values[PIN_DATA4]);
+> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
+>
+>         hd44780_strobe_gpio(hd);
+>  }
+> @@ -155,23 +153,23 @@ static void hd44780_write_cmd_gpio4(struct charlcd *lcd, int cmd)
+>  /* Send 4-bits of a command to the LCD panel in raw 4 bit GPIO mode */
+>  static void hd44780_write_cmd_raw_gpio4(struct charlcd *lcd, int cmd)
+>  {
+> -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+> +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+
+This comment is not correct, as the low bits will be used.
+
+        /* DATA[4-7], RS, RW */
+
+> +       unsigned long value_bitmap[1];
+>         struct hd44780 *hd = lcd->drvdata;
+> -       unsigned int i, n;
+> +       unsigned int n;
+>
+>         /* Command nibble + RS, RW */
+> -       for (i = 0; i < 4; i++)
+> -               values[PIN_DATA4 + i] = !!(cmd & BIT(i));
+> -       values[PIN_CTRL_RS] = 0;
+> +       value_bitmap[0] = cmd << PIN_DATA4;
+> +       __clear_bit(PIN_CTRL_RS, value_bitmap);
+
+Implied by the assignment above.
+
+>         n = 5;
+>         if (hd->pins[PIN_CTRL_RW]) {
+> -               values[PIN_CTRL_RW] = 0;
+> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
+>                 n++;
+>         }
+> +       value_bitmap[0] = value_bitmap[0] >> PIN_DATA4;
+
+Hence:
+
+        /* Command nibble + RS, RW */
+        value_bitmap[0] = cmd;
+        n = hd->pins[PIN_CTRL_RW] ? 6: 5;
+
+
+>
+>         /* Present the data to the port */
+> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
+> -                                      &values[PIN_DATA4]);
+> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
+>
+>         hd44780_strobe_gpio(hd);
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.7.9.5
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
