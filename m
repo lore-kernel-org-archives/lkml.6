@@ -2,141 +2,110 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E201BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFF1C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A27B2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A27B2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0225E2073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:04:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0225E2073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbeH3SFk (ORCPT
+        id S1729128AbeH3SGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:05:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33760 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728962AbeH3SFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:05:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 07:03:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="66339860"
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by fmsmga007.fm.intel.com with ESMTP; 30 Aug 2018 07:03:07 -0700
-Subject: Re: [PATCHv8 7/9] defconfig: enable fpga and service layer
-To:     Dinh Nguyen <dinguyen@kernel.org>, gregkh@linuxfoundation.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
-        arnd@arndb.de, corbet@lwn.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
-        richard.gong@intel.com
-References: <1535464245-11638-1-git-send-email-richard.gong@linux.intel.com>
- <1535464245-11638-8-git-send-email-richard.gong@linux.intel.com>
- <54ccf9d5-1cf4-edf6-47c6-be7cc5badb3e@kernel.org>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <18b2948c-07dc-dc23-6a36-04e8295705f3@linux.intel.com>
-Date:   Thu, 30 Aug 2018 09:05:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 14:06:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728962AbeH3SGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:06:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C38BDAE05;
+        Thu, 30 Aug 2018 14:04:34 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 16:04:34 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Prarit Bhargava <prarit@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH v4] console: Add console=spcr option
+Message-ID: <20180830140434.k7nfdwerv72jlwyi@pathway.suse.cz>
+References: <20180829155618.32359-1-prarit@redhat.com>
+ <20180830123849.26163-1-prarit@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <54ccf9d5-1cf4-edf6-47c6-be7cc5badb3e@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830123849.26163-1-prarit@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 2018-08-30 08:38:49, Prarit Bhargava wrote:
+> ACPI may contain an SPCR table that defines a default system console.
+> On ARM if the table is present then the SPCR console is enabled by default.
+> On x86 the SPCR console is used if 'earlycon' (no parameters) is
+> specified as a kernel parameter and is used only as the early console.
+> To use the SPCR data as a console a user must boot with 'earlycon',
+> grep logs & specify a console= kernel parameter, and then reboot again.
+> 
+> Add 'console=spcr' that enables a firmware or hardware console, and on
+> x86 enable the SPCR console if 'console=spcr' is specified.
 
+> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> index 3b20607d581b..a43a34734f02 100644
+> --- a/arch/x86/kernel/acpi/boot.c
+> +++ b/arch/x86/kernel/acpi/boot.c
+> @@ -1771,3 +1771,17 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+>  	e820__range_add(addr, size, E820_TYPE_ACPI);
+>  	e820__update_table_print();
+>  }
+> +
+> +int __init arch_console_setup(char *str)
+> +{
+> +	int ret;
+> +
+> +	if (strcmp("spcr", str))
+> +		return 1;
+> +
+> +	ret = acpi_parse_spcr(false, true);
+> +	if (ret)
+> +		pr_err(PREFIX "ERROR: SPCR console is not enabled (%d)\n", ret);
+> +
+> +	return 0;
+> +}
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 924e37fb1620..ceee021a37ec 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2107,6 +2112,9 @@ static int __init console_setup(char *str)
+>  	char *s, *options, *brl_options = NULL;
+>  	int idx;
+>  
+> +	if (!arch_console_setup(str))
+> +		return 1;
+> +
+>  	if (_braille_console_setup(&str, &brl_options))
+>  		return 1;
 
-On 08/28/2018 09:11 AM, Dinh Nguyen wrote:
-> 
-> 
-> On 08/28/2018 08:50 AM, richard.gong@linux.intel.com wrote:
->> From: Richard Gong <richard.gong@intel.com>
->>
->> Enable fpga framework, Stratix 10 SoC FPGA manager and Stratix10
->> Service Layer
->>
-> 
-> Please update your commit header be "arm64: defconfig: enable fpga and
-> service layer"
+Sigh, I am still a bit confused by the error handling. Especially
+I am not sure why console_setup() always returns 1.
 
-Ok, I will make update in the next submission.
+It looks like it means an error when called from do_early_param().
+But it means that the option was proceed when called from
+obsolete_checksetup(). Do I get this correctly, please?
 
-> 
-> 
->> Signed-off-by: Richard Gong <richard.gong@intel.com>
->> Signed-off-by: Alan Tull <atull@kernel.org>
->> ---
->> v2: this patch is added in patch set version 2
->> v3: no change
->> v4: s/CONFIG_INTEL_SERVICE/CONFIG_STRATIX10_SERVICE/
->>      add CONFIG_OF_FPGA_REGION=y
->>      s/Intel/Stratix10/ in subject line
->> v5: no change
->> v6: no change
->> v7: no change
->> v8: no change
->> ---
->>   arch/arm64/configs/defconfig | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index f67e8d5..2ad50a5 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -185,6 +185,7 @@ CONFIG_BLK_DEV_LOOP=y
->>   CONFIG_BLK_DEV_NBD=m
->>   CONFIG_VIRTIO_BLK=y
->>   CONFIG_BLK_DEV_NVME=m
->> +CONFIG_STRATIX10_SERVICE=y
-> 
-> Can this be a module?
+If this is true, we should change the logic in arch_console_setup().
+It should return 1 when "spcr" is handled and it should return 0
+otherwise. Also it should be commented.
 
-No, Service layer driver need be compiled as part of kernel image.
+It looks like a historic mess. This is why I do not ask you to do
+any bigger clean up. But the new patch should not make it even
+more confusing by an inverted 0/1 logic.
 
-Service layer driver provides services for service clients, it must be 
-loaded & initialized before service clients (FPGA manager and remote 
-status update drivers).
-
-> 
->>   CONFIG_SRAM=y
->>   CONFIG_EEPROM_AT25=m
->>   # CONFIG_SCSI_PROC_FS is not set
->> @@ -642,6 +643,12 @@ CONFIG_PHY_TEGRA_XUSB=y
->>   CONFIG_HISI_PMU=y
->>   CONFIG_QCOM_L2_PMU=y
->>   CONFIG_QCOM_L3_PMU=y
->> +CONFIG_MESON_EFUSE=m
-> 
-> What does this change have to do with this patch?
-
-My mistake, I will fix in the next submission.
-
-> 
->> +CONFIG_FPGA=y
->> +CONFIG_FPGA_MGR_STRATIX10_SOC=y
->> +CONFIG_FPGA_REGION=y
->> +CONFIG_FPGA_BRIDGE=y
->> +CONFIG_OF_FPGA_REGION=y
-> 
-> Can these be modules?
-
-CONFIG_FPGA_MGR_STRATIX10_SOC could be module, but the remaining 
-components need be compiled as part of kernel image.
-
-> 
-> Dinh
-> 
+Best Regards,
+Petr
