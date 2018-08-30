@@ -2,109 +2,124 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D1AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51945C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54EF420838
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:25:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EF420838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BB5620835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB5620835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeH3W2e (ORCPT
+        id S1728195AbeH3W3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:28:34 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49478 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728106AbeH3W2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:28:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 11:25:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="70381986"
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by orsmga006.jf.intel.com with ESMTP; 30 Aug 2018 11:24:30 -0700
-Received: from orsmsx155.amr.corp.intel.com (10.22.240.21) by
- ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 30 Aug 2018 11:24:29 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.2]) by
- ORSMSX155.amr.corp.intel.com ([169.254.7.64]) with mapi id 14.03.0319.002;
- Thu, 30 Aug 2018 11:24:29 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jannh@google.com" <jannh@google.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] KASLR feature to randomize each loadable module
-Thread-Topic: [PATCH v4 0/3] KASLR feature to randomize each loadable module
-Thread-Index: AQHUP+v93yMqf0bnq0qPnDSGtSat5qTYB2EAgAELowA=
-Date:   Thu, 30 Aug 2018 18:24:28 +0000
-Message-ID: <1535653498.1689.175.camel@intel.com>
-References: <1535583579-6138-1-git-send-email-rick.p.edgecombe@intel.com>
-         <20180830022703.xxl5eolthinicgwp@ast-mbp>
-In-Reply-To: <20180830022703.xxl5eolthinicgwp@ast-mbp>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.168]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <428C3DEADE9E50409548C98A6FE035EE@intel.com>
-Content-Transfer-Encoding: base64
+        Thu, 30 Aug 2018 18:29:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45942 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726732AbeH3W3n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:29:43 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7UIOYjr143272
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:26:16 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6nm40hgm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:26:16 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 30 Aug 2018 14:26:16 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Aug 2018 14:26:10 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7UIQ9V024117342
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 18:26:09 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2C60EB206B;
+        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15013B2072;
+        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Aug 2018 14:25:04 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1F8BA16C3EF9; Thu, 30 Aug 2018 11:26:11 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 11:26:11 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org
+Subject: Re: [PATCH tip/core/rcu 0/52] Remove rcu_state pointers for
+ v4.20/v5.0
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829223830.GA1800@linux.vnet.ibm.com>
+ <20180829220026.3579e9a1@vmware.local.home>
+ <20180830032216.GF4225@linux.vnet.ibm.com>
+ <20180830041017.GA27378@linux.vnet.ibm.com>
+ <20180830114452.309e104f@gandalf.local.home>
+ <20180830171006.GK4225@linux.vnet.ibm.com>
+ <20180830134012.7efc3cce@gandalf.local.home>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830134012.7efc3cce@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18083018-0060-0000-0000-000002A700D3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009640; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01081138; UDB=6.00557735; IPR=6.00861123;
+ MB=3.00023020; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 18:26:14
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083018-0061-0000-0000-0000465835C9
+Message-Id: <20180830182611.GM4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA4LTI5IGF0IDE5OjI3IC0wNzAwLCBBbGV4ZWkgU3Rhcm92b2l0b3Ygd3Jv
-dGU6DQo+IE9uIFdlZCwgQXVnIDI5LCAyMDE4IGF0IDAzOjU5OjM2UE0gLTA3MDAsIFJpY2sgRWRn
-ZWNvbWJlIHdyb3RlOg0KPiA+IENoYW5nZXMgZm9yIFYzOg0KPiA+IMKgLSBDb2RlIGNsZWFudXAg
-YmFzZWQgb24gaW50ZXJuYWwgZmVlZGJhY2suICh0aGFua3MgdG8gRGF2ZSBIYW5zZW4gYW5kDQo+
-ID4gQW5kcml5DQo+ID4gwqDCoMKgU2hldmNoZW5rbykNCj4gPiDCoC0gU2xpZ2h0IHJlZmFjdG9y
-IG9mIGV4aXN0aW5nIGFsZ29yaXRobSB0byBtb3JlIGNsZWFubHkgbGl2ZSBhbG9uZyBzaWRlIG5l
-dw0KPiA+IMKgwqDCoG9uZS4NCj4gPiDCoC0gQlBGIHN5bnRoZXRpYyBiZW5jaG1hcmsNCj4gSSBk
-b24ndCBzZWUgdGhpcyBiZW5jaG1hcmsgaW4gdGhpcyBwYXRjaCBzZXQuDQo+IENvdWxkIHlvdSBw
-cmVwYXJlIGl0IGFzIGEgdGVzdCBpbiB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvID8NCj4g
-c28gd2UgY2FuIGRvdWJsZSBjaGVjayB3aGF0IGlzIGJlaW5nIHRlc3RlZCBhbmQgcnVuIGl0IHJl
-Z3VsYXJseQ0KPiBsaWtlIHdlIGRvIGZvciBhbGwgb3RoZXIgdGVzdHMgaW4gdGhlcmUuDQpTdXJl
-Lg0KDQpUaGVyZSB3ZXJlIHR3byBiZW5jaG1hcmtzIEkgaGFkIHJ1biB3aXRoIEJQRiBpbiBtaW5k
-LCBvbmUgd2FzIHRoZSB0aW1pbmcgdGhlDQptb2R1bGVfYWxsb2MgZnVuY3Rpb24gaW4gZGlmZmVy
-ZW50IHNjZW5hcmlvcywgbG9va2luZyB0byBtYWtlIHN1cmUgdGhlcmUgd2VyZSBubw0Kc2xvd2Rv
-d25zIGZvciBpbnNlcnRpb25zLg0KDQpUaGUgb3RoZXIgd2FzIHRvIGNoZWNrIGlmIHRoZSBmcmFn
-bWVudGF0aW9uIGNhdXNlZCBhbnkgbWVhc3VyYWJsZSBydW50aW1lDQpwZXJmb3JtYW5jZToNCiJG
-b3IgcnVudGltZSBwZXJmb3JtYW5jZSwgYSBzeW50aGV0aWMgYmVuY2htYXJrIHdhcyBydW4gdGhh
-dCBkb2VzIDUwMDAwMDAgQlBGDQpKSVQgaW52b2NhdGlvbnMgZWFjaCwgZnJvbSB2YXJ5aW5nIG51
-bWJlcnMgb2YgcGFyYWxsZWwgcHJvY2Vzc2VzLCB3aGlsZSB0aGUNCmtlcm5lbCBjb21waWxlcyBz
-aGFyaW5nIHRoZSBzYW1lIENQVSB0byBzdGFuZCBpbiBmb3IgdGhlIGNhY2hlIGltcGFjdCBvZiBh
-IHJlYWwNCndvcmtsb2FkLiBUaGUgc2VjY29tcCBmaWx0ZXIgaW52b2NhdGlvbnMgd2VyZSBqdXN0
-IEphbm4gSG9ybidzIHNlY2NvbXAgZmlsdGVyaW5nDQp0ZXN0IGZyb20gdGhpcyB0aHJlYWQgaHR0
-cDovL29wZW53YWxsLmNvbS9saXN0cy9rZXJuZWwtaGFyZGVuaW5nLzIwMTgvMDcvMTgvMiwNCmV4
-Y2VwdCBub24tcmVhbCB0aW1lIHByaW9yaXR5LiBUaGUga2VybmVsIHdhcyBjb25maWd1cmVkIHdp
-dGggS1BUSSBhbmQNCnJldHBvbGluZSwgYW5kIHBjaWQgd2FzIGRpc2FibGVkLiBUaGVyZSB3YXNu
-J3QgYW55IHNpZ25pZmljYW50IGRpZmZlcmVuY2UNCmJldHdlZW4gdGhlIG5ldyBhbmQgdGhlIG9s
-ZC4iDQoNCkZyb20gd2hhdCBJIGtub3cgYWJvdXQgdGhlIGJwZiBrc2VsZnRlc3QsIHRoZSBmaXJz
-dCBvbmUgd291bGQgcHJvYmFibHkgYmUgYQ0KYmV0dGVyIGZpdC4gTm90IHN1cmUgaWYgdGhlIHNl
-Y29uZCBvbmUgd291bGQgZml0LCB3aXRoIHRoZSBrZXJuZWwgY29tcGlsaW5nDQpzaGFyaW5nIHRo
-ZSBzYW1lIENQVSwgYSBzcGVjaWFsIGNvbmZpZywgYW5kIGEgaHVnZSBhbW91bnQgb2YgcHJvY2Vz
-c2VzIGJlaW5nDQpzcGF3bmVkLi4uIEkgY2FuIHRyeSB0byBhZGQgYSBtaWNyby1iZW5jaG1hcmsg
-aW5zdGVhZCBpZiB0aGF0IHNvdW5kcyBnb29kLg0KDQpSaWNr
+On Thu, Aug 30, 2018 at 01:40:12PM -0400, Steven Rostedt wrote:
+> On Thu, 30 Aug 2018 10:10:06 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> 
+> > > I would just keep the documentation patches separate.  
+> > 
+> > Combining yours and Josh's feedback, I will split the documentation
+> > updates out of 4ca0508f7870 ("rcu: Remove rsp parameter from rcu_node tree
+> > accessor macros") and put them into the "doc" series.  Possibly combining
+> > it with 2ea66b6fce61 ("doc: Update documentation for removal of RCU-bh
+> > update machinery") and/or 3f38a4626202 ("doc: Update documentation for
+> > removal of RCU-sched update machinery").  Left to myself, I would merge
+> > it in to the merger of those two documentation commits.  Having them
+> > together is probably more convenient anyway, as it would provide a
+> > summary of the entire RCU-flavor-consolidation change.
+> > 
+> > Fair enough?
+> 
+> Go for it ;-)
+
+Done!  ;-)
+
+							Thanx, Paul
+
