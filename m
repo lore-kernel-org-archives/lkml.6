@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B30C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BC4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C3520837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73FF120658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:05:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbqdchwX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C3520837
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN5QeZqH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FF120658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeH3WIv (ORCPT
+        id S1727746AbeH3WIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:08:51 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43824 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727622AbeH3WIu (ORCPT
+        Thu, 30 Aug 2018 18:08:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:47067 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727622AbeH3WIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:08:50 -0400
-Received: by mail-lf1-f68.google.com with SMTP id h64-v6so7899760lfi.10;
-        Thu, 30 Aug 2018 11:05:28 -0700 (PDT)
+        Thu, 30 Aug 2018 18:08:46 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 203-v6so7979278ljj.13;
+        Thu, 30 Aug 2018 11:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tcKFedpKwPfw1JlfTbqpZJDN1CaZbc+G2vd2PvtCtNc=;
-        b=EbqdchwX8jfqttxqyoqz3SvSqTfR6ixXhWKIzVJajiFsakwjg3L1rVqw21GaVokSb6
-         xbdiw2TD14a6R6gibFyD9R6lmApJA+KYGx29F2Q7zfxkcv9CJ9SLdBTQ82PIqCIrLqs0
-         GIQvgo5wvStudDFYkAIi40lsjEN9VOwKUm6IX4sKYf9T0K+NOboGd1CLBmj+YSOXG6pi
-         llnwGHLL7mFZOc7lb2894+kjgkYzjaMODbZvuG61IYIsMbDbe+c6fEo3Kma9tgxBe9I7
-         /sUyvRok4O0h7qhGxfDM4LrXPR/YKS6A3kpPheNodqEfdLwS0nkYwreqGcs3SimRIIWG
-         Psqg==
+        bh=jiYxzZYlLxYwiCUBX9+009bBH7xfhIzJMM0X4EjQePU=;
+        b=eN5QeZqH0c30fW+dqI1cVGjL5h3cen2L7BX5R/YdiX9e6CjDPp56zIMrBr5vgIUfTE
+         DXKc3smXef3p1HFW5VBOJwhVv9qvgSKNuaI92apbJEXa+wLS09JEvRwD09zTqzY4Sk35
+         v8ljY+1WmR0/ABtUBzul/e6279l5uU2g/CkPlDpDn6Nt11hBku3eAc8UuZxMOc+B17cd
+         izfQAbVZjl1xRzfC+hM28H/49PSoW6HBMeeB5z2iQacRqQjtaWwPICDOIYJNuND2bHKw
+         BHY1DP3FPKb4i/1PYVzuhirkO+dVOflNytZwd7SUrX5AaAaeD9g3K0A7kDRpVqa8yih4
+         XyPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tcKFedpKwPfw1JlfTbqpZJDN1CaZbc+G2vd2PvtCtNc=;
-        b=JWEdG4kSkM2FOjAdURwBwkL/4nUhW8jHQggrPA+jF+J7G9/zAhHQfZVJ6zdxjBLNQF
-         aoeLOATyxMmBmt5XlAwJFhdJf2KAocGFnAlFo5z6iK6uZJrYNitgjrjkyvp5V6vZqEVb
-         dVanLAN/yOhH/MA1chyco1zGdmN5w7o+IuZbkQQH4Og9hsH0+qRAaY59KkE7MQlqjU3Z
-         7krkI3I9dkWmNRBdEtbAZNYhPTJW4YupIAcAAkQc7l2NO9kYIZODvhRmualInbPndJIq
-         rJ4CnHTJzW3aRqKELVpdgqHPgcYAPgh4cZ2GSrM2crTYPSSIyuYbymuD/WmJVM7ocXDA
-         gedQ==
-X-Gm-Message-State: APzg51A2Jc3ai+Z/s/B+TJmTR1B4QracalLQM0gPfnw4gGa+8HsLkJ0o
-        myq70rzxnjD/7sdESr0NMJY=
-X-Google-Smtp-Source: ANB0Vdbxv7aZL4XC/1eeroHssT9Nml9X/ny3YSGiEX30upk8nCv5jMSNUHEVN4pIdrpbNeELdmF46g==
-X-Received: by 2002:a19:c38b:: with SMTP id t133-v6mr8527066lff.7.1535652327705;
-        Thu, 30 Aug 2018 11:05:27 -0700 (PDT)
+        bh=jiYxzZYlLxYwiCUBX9+009bBH7xfhIzJMM0X4EjQePU=;
+        b=BMxce7cHIq8nIsrM/qyEYzdEM1Yrc/REsP8WpoKwG7jFWTJ5lv2hVhm0NgUX+IcUe0
+         iroZC46mznYIke+vEzX9ELr4X/nr949dh1c2M/41btTeFwYY8xR75k/veNnzV8vL46DN
+         5DCJVIwGT8qL/NzUPQGRPuUepyjL2VdICY5fOMPZgfX6qR43KfUiSTihvYfURdFbu5Fu
+         bceD/REuMJQ051ur8HVYtCC0jgGmRx0Y0VfcbAa6sdgA4Fgljkexlxx9cPLsL/nPhVZE
+         A295IUy0BfQ4+RA6b1ye8BYYxxIGBPTReQT2X7UOAo6Lv6K1pNcr7e9quzdmwjf7S25S
+         Kugw==
+X-Gm-Message-State: APzg51ACV/D3jXwaFSCgX8WWRWI1HGeYJbIqvCw4Xby3u9wyg07AIogc
+        dSPGb3eYR1I8rzTBVMO0U/I=
+X-Google-Smtp-Source: ANB0VdYhPafGlqOEdbXy1bmb80xp5zicWVfD2Unzt2ol5lSahKedAC18SzHXQTGtjCbtre2bq5FQUw==
+X-Received: by 2002:a2e:9198:: with SMTP id f24-v6mr7728460ljg.64.1535652324441;
+        Thu, 30 Aug 2018 11:05:24 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id 13-v6sm1420789lfy.87.2018.08.30.11.05.26
+        by smtp.gmail.com with ESMTPSA id 13-v6sm1420789lfy.87.2018.08.30.11.05.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 11:05:27 -0700 (PDT)
+        Thu, 30 Aug 2018 11:05:23 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Russell King <linux@armlinux.org.uk>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/8] ARM: tegra: Always boot CPU in ARM-mode
-Date:   Thu, 30 Aug 2018 21:04:19 +0300
-Message-Id: <20180830180421.6415-7-digetx@gmail.com>
+Subject: [PATCH v3 3/8] ARM: trusted_foundations: Provide information about whether firmware is registered
+Date:   Thu, 30 Aug 2018 21:04:16 +0300
+Message-Id: <20180830180421.6415-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180830180421.6415-1-digetx@gmail.com>
 References: <20180830180421.6415-1-digetx@gmail.com>
@@ -75,60 +75,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU always jumps into reset handler in ARM-mode from the Trusted
-Foundations firmware, hence let's make CPU to always jump into kernel
-in ARM-mode regardless of the firmware presence to support. This is
-required to make  Thumb-2 kernel working with the Trusted Foundations
-firmware on Tegra30.
+Add a helper that provides information about whether Trusted Foundations
+firmware operations have been registered.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/reset-handler.S | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm/firmware/trusted_foundations.c    | 5 +++++
+ arch/arm/include/asm/trusted_foundations.h | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index a9f13230da2f..555c652f5a07 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -20,6 +20,7 @@
- #include <soc/tegra/flowctrl.h>
- #include <soc/tegra/fuse.h>
- 
-+#include <asm/assembler.h>
- #include <asm/asm-offsets.h>
- #include <asm/cache.h>
- 
-@@ -112,10 +113,20 @@ ENTRY(__tegra_cpu_reset_handler_start)
-  * NOTE: This code is copied to IRAM. All code and data accesses
-  *       must be position-independent.
-  */
--
-+	.arm
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler)
- 
-+	/*
-+	 * Tegra30 ignores first bit of the reset vector and always jumps
-+	 * into kernel in .ARM mode from the firmware, hence force the mode
-+	 * switch if kernel is compiled in Thumb-2.
-+	 */
-+ THUMB(	badr	r0, 1f		)
-+ THUMB(	bx	r0		)
-+ THUMB(	.thumb 			)
-+ THUMB(	1: 			)
+diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+index c496f4cc49cb..d795ed83a3cd 100644
+--- a/arch/arm/firmware/trusted_foundations.c
++++ b/arch/arm/firmware/trusted_foundations.c
+@@ -172,3 +172,8 @@ void of_register_trusted_foundations(void)
+ 		panic("Trusted Foundation: missing version-minor property\n");
+ 	register_trusted_foundations(&pdata);
+ }
 +
- 	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
++bool trusted_foundations_registered(void)
++{
++	return firmware_ops == &trusted_foundations_ops;
++}
+diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+index cdd48ab7d191..3f23fa493db6 100644
+--- a/arch/arm/include/asm/trusted_foundations.h
++++ b/arch/arm/include/asm/trusted_foundations.h
+@@ -31,6 +31,7 @@
+ #include <linux/of.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
++#include <linux/types.h>
  
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
-@@ -215,7 +226,7 @@ __no_cpu0_chk:
- 	ldr	lr, [r12, #RESET_DATA(STARTUP_SECONDARY)]
- 	cmp	lr, #0
- 	bleq	__die				@ no secondary startup handler
--	bx	lr
-+	ret	lr
+ #define TF_PM_MODE_LP0			0
+ #define TF_PM_MODE_LP1			1
+@@ -47,6 +48,7 @@ struct trusted_foundations_platform_data {
+ 
+ void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+ void of_register_trusted_foundations(void);
++bool trusted_foundations_registered(void);
+ 
+ #else /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
+@@ -74,6 +76,11 @@ static inline void of_register_trusted_foundations(void)
+ 	if (of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations"))
+ 		register_trusted_foundations(NULL);
+ }
++
++static inline bool trusted_foundations_registered(void)
++{
++	return false;
++}
+ #endif /* CONFIG_TRUSTED_FOUNDATIONS */
+ 
  #endif
- 
- /*
 -- 
 2.18.0
 
