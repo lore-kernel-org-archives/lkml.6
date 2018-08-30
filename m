@@ -7,111 +7,135 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F33AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2EFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1B020658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02BFC20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:50:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kink44Va"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1B020658
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TEucg1lQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02BFC20658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeH3Twk (ORCPT
+        id S1727572AbeH3TxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:52:40 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50643 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbeH3Twk (ORCPT
+        Thu, 30 Aug 2018 15:53:08 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33888 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbeH3TxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:52:40 -0400
-Received: by mail-it0-f65.google.com with SMTP id j81-v6so3237124ite.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:49:53 -0700 (PDT)
+        Thu, 30 Aug 2018 15:53:08 -0400
+Received: by mail-oi0-f65.google.com with SMTP id 13-v6so16313739ois.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PlzLOqrBAIn0ZzDf9bDS9S5Pof2gIH/fkTuJ2GMRdkQ=;
-        b=Kink44VaEN0WpM1tJZk5KYkoFX30KpwtyWVpdFTZyccvw5MOJhW7miuL+lNjFGtZnQ
-         FhXg668+LO1J7h4snm6FY4nxFzVLPEcjo/6EqlwfmiNTbkS7GDbexgaJz1ZxcukrcxZB
-         iCucsdigcC1l3Nkurst4T5+8oIPy1e172bkyYG1ChyD/mu8WP2fp5+Vl7T7XGkJUsl8g
-         KHkWDxSQioSw9CukDfFNQ5Lo64xjFqzFECjThyRgap45Tfe2YalI/3J8njzQwOHop4W1
-         tS11jeqlHM/FtBUS9OUdLmKHox2gqSod2hGoccXnWVKzCoCPpoZL2iNjD+eNJiOVkupu
-         9kMQ==
+        bh=H5ai69DPPIITZF7j51zG04M+vRUm70fEw2Dq1nAZXTU=;
+        b=TEucg1lQ3k4ZBgBLoFon6Z+b7HlMm8/Y/IMjoDCf1w9nBQgytff9A2B74qA0kQVFXJ
+         cJtQsCPcCRQKfZoWCUXw/xbqEp/Pzoilxg8MtnDvcIrJucMM01tmQJQAh9WW0YgzR8EJ
+         /CDVWWOT/ZeRHYVoLaQqh2r7ndfEe8d+PD5DGsTdVph5RET4lGLKhM2jLkHlcf0bddtQ
+         9IVLsH2nZpcASvtYWUDQdCRpcWShlv1eWrTi20pEXGAgM4sW1cz5AKhVVqEeF6s59aTN
+         lbuVe9EWR/b/Iq8voQJfB0hGITOpPU1bHSZO0aylisclLYwizmSEXKIFef52zfL7j0of
+         rlsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PlzLOqrBAIn0ZzDf9bDS9S5Pof2gIH/fkTuJ2GMRdkQ=;
-        b=C2UX2A5HwIkFsQDDLJPMDiZ4/loFj2hqU05SIZPZjcVrchYIWMrNUqJ4vVNRpA+nDQ
-         akgOXQmZRXDh8ildbouLVDzgAVwc6OujO/BUI51JBJvU7b6ucmRNPfXLuhL99V+r9/FL
-         4JreKHA4FEfklun44vTXIq6QEdxC7fZGh70zcgny9zEuxanS//2JZPDi/oEyEI5Muf/C
-         PC9fPcfHsWEtpmze20mm4mRpbXFRveAZFTb09c1VNluoXx74VMyAKj3r8yHl5QQzfUkm
-         RLRJnfRjkcW3AoWphJ3P/n/hnyqpto2u+X6cmayg4vQpVcnbIb+NtZuIhkYxYWHKylYz
-         /ACg==
-X-Gm-Message-State: APzg51Df9EqO2PvonM7wah+A/rnCyxlmn2qSdSYskbQ/UhblS2X+gBaZ
-        fUo2ogkxJlEGcjGKrA3goL1ukNvO89KMn+9gRAiBXQ==
-X-Google-Smtp-Source: ANB0Vda4vcpEwmg6XQlQlc9x8R+vlF9Ot6N2pLbaUmqj0qE8YyMFwpDujJ2TsKnFBATfciRS6aJt91gXROTxGatovE4=
-X-Received: by 2002:a24:dd88:: with SMTP id t130-v6mr2602962itf.129.1535644192353;
- Thu, 30 Aug 2018 08:49:52 -0700 (PDT)
+        bh=H5ai69DPPIITZF7j51zG04M+vRUm70fEw2Dq1nAZXTU=;
+        b=KJQbaXAZ4B9B/Rt2fVJKaiiH14Xg13CUnSqbAUqZ8xr34Qp734XDWjTjrY/no6/9B8
+         5R39zVgMKI+JuSMWKJf+sQ/bmw3H37sxJzzrI5+/JgTJZi/+K8k2SJrpA+hqPGFbwHWx
+         J66TF2LccBR4mRauOP7O1Oj0z2BOnu8TlJKl2WxFM6Ggx3RhtJrECK6x1R+7LdosBf6m
+         okuu1J7KrvziJWwdqPXyon42DECtBTRvrGjgTI2XNEDxjH9hfIP1GUiwUMjmISok3U6a
+         K5yJhPjwWeA4sGDqZGzkSQjTO/LZEdoYpHNRLJ+e+fmLqd6P/XoodBV0fMEucMorCSq1
+         WhsQ==
+X-Gm-Message-State: APzg51BnJxf2kGhMkPYxEey51fIIy1twhCvJQ1+E0bqPtB/Tgpiamjw4
+        60E96T+YQ4/HvDno7R7Qo/bz+63tILlE65QyxJc+Sw==
+X-Google-Smtp-Source: ANB0VdaXvIK7w/vsEFkRPV0Oazx9Dk9Wqi9NLlznTneeriIA5IvFU+PqID49DO0yHw+P6UulAl7Rfy7mFlgziRfTMCM=
+X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr2929576oih.246.1535644220374;
+ Thu, 30 Aug 2018 08:50:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180828160005.90796-1-tkjos@google.com> <20180829070036.GA13718@infradead.org>
-In-Reply-To: <20180829070036.GA13718@infradead.org>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Thu, 30 Aug 2018 08:49:40 -0700
-Message-ID: <CAHRSSExgXbKOYR9HU=+WDaQjHBYB3=YCYXgnAOGwJ0Y3Q3qshw@mail.gmail.com>
-Subject: Re: [PATCH] binder: use standard functions to allocate fds
-To:     hch@infradead.org
-Cc:     Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        ben@decadent.org.uk, torvalds@linux-foundation.org,
-        Al Viro <viro@zeniv.linux.org.uk>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com>
+In-Reply-To: <20180830143904.3168-13-yu-cheng.yu@intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 30 Aug 2018 17:49:53 +0200
+Message-ID: <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+To:     yu-cheng.yu@intel.com
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 12:00 AM Christoph Hellwig <hch@infradead.org> wrote:
+On Thu, Aug 30, 2018 at 4:43 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
 >
-> >  config ANDROID_BINDER_IPC
-> >       bool "Android Binder IPC Driver"
-> > -     depends on MMU
-> > +     depends on MMU && !CPU_CACHE_VIVT
+> When Shadow Stack is enabled, the read-only and PAGE_DIRTY_HW PTE
+> setting is reserved only for the Shadow Stack.  To track dirty of
+> non-Shadow Stack read-only PTEs, we use PAGE_DIRTY_SW.
 >
-> Thats is a purely arm specific symbol which should not be
-> used in common code.  Nevermind that there generally should
-> be no good reason for it.
-
-It is true that the current design (10+ years old) has this flaw. VIVT
-cache support was the rationale for using the non-standard functions
-to allocate file descriptors from the sender context. There are no
-known cases of recent android releases running on a device with
-a VIVT cache architecture, but I did want to call this out.
-
-We're working on refactoring to eliminate this issue.
-
+> Update ptep_set_wrprotect() and pmdp_set_wrprotect().
 >
-> > +     fixup->offset = (uintptr_t)fdp - (uintptr_t)t->buffer->data;
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/asm/pgtable.h | 42 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 >
-> This looks completely broken.  Why would you care at what exact
-> place the fd is placed?  Oh, because you share an array with fds
-> with userspace, which is a hell of a bad idea, and then maninpulate
-> that buffer mapped to userspace from kernel threads.
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 4d50de77ea96..556ef258eeff 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1203,7 +1203,28 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+>  static inline void ptep_set_wrprotect(struct mm_struct *mm,
+>                                       unsigned long addr, pte_t *ptep)
+>  {
+> +       pte_t pte;
+> +
+>         clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
+> +       pte = *ptep;
+> +
+> +       /*
+> +        * Some processors can start a write, but ending up seeing
+> +        * a read-only PTE by the time they get to the Dirty bit.
+> +        * In this case, they will set the Dirty bit, leaving a
+> +        * read-only, Dirty PTE which looks like a Shadow Stack PTE.
+> +        *
+> +        * However, this behavior has been improved and will not occur
+> +        * on processors supporting Shadow Stacks.  Without this
+> +        * guarantee, a transition to a non-present PTE and flush the
+> +        * TLB would be needed.
+> +        *
+> +        * When change a writable PTE to read-only and if the PTE has
+> +        * _PAGE_DIRTY_HW set, we move that bit to _PAGE_DIRTY_SW so
+> +        * that the PTE is not a valid Shadow Stack PTE.
+> +        */
+> +       pte = pte_move_flags(pte, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW);
+> +       set_pte_at(mm, addr, ptep, pte);
+>  }
 
-Well, android apps rely on this behavior (and have for 10+ years) so
-there is no way to avoid the need to manipulate the buffer from
-the kernel. We are working to refactor the driver to do this
-using standard mechanisms instead of relying on low-level internal
-functions.
-
->
-> I think we just need to rm -rf drivers/android/binder*.c and be done
-> with it, as this piece of crap should never have been merged to start
-> with.
+I don't understand why it's okay that you first atomically clear the
+RW bit, then atomically switch from DIRTY_HW to DIRTY_SW. Doesn't that
+mean that between the two atomic writes, another core can incorrectly
+see a shadow stack?
