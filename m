@@ -2,118 +2,153 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F25CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8703CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C765D2082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C765D2082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FB5F20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="x5KvS7Jr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB5F20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeHaBhC (ORCPT
+        id S1727702AbeHaBja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 21:37:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59008 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727232AbeHaBhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:37:01 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7ULTV1g048010
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 17:32:51 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m6q2guh73-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 17:32:51 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Thu, 30 Aug 2018 17:32:50 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 Aug 2018 17:32:47 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7ULWkLT46727178
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Aug 2018 21:32:46 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B90B9124055;
-        Thu, 30 Aug 2018 18:33:23 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D135E124052;
-        Thu, 30 Aug 2018 18:33:22 -0400 (EDT)
-Received: from oc6728276242.ibm.com (unknown [9.85.221.248])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 30 Aug 2018 18:33:22 -0400 (EDT)
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        jdelvare@suse.com, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org,
-        gregkh@linuxfoundation.org, mark.rutland@arm.com,
-        linux@roeck-us.net, joel@jms.id.au, benh@kernel.crashing.org,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v5 01/10] dt-bindings: fsi: Add P9 OCC device documentation
-Date:   Thu, 30 Aug 2018 16:32:32 -0500
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1535664761-86018-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1535664761-86018-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18083021-2213-0000-0000-000002E5BD8C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009640; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01081201; UDB=6.00557772; IPR=6.00861186;
- MB=3.00023023; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 21:32:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083021-2214-0000-0000-00005B630C4D
-Message-Id: <1535664761-86018-2-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=868 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808300216
+        Thu, 30 Aug 2018 21:39:30 -0400
+Received: from imap.thunk.org ([74.207.234.97]:35132 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726690AbeHaBja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 21:39:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+        Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=K7oWBuRmTcJZZ3nbH8W1e5wGtLf2LqsZuqpPKxXorbg=; b=x5KvS7JrtIpDKFDLHZM+WznixG
+        ma40n9JYPyw2fVjcKu5KqW92w300TaPXr9P3vL9kOkQ2uZ+E0LA703rJiuWdWiKknaxNclqKv95P6
+        v3vuHqKV9YZqL/kpGl+AWyri72Tu39WpvTesws1Mz0ZNGaf7zKoZVwOxUQBRbYxZyZ8I=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fvUb1-0008Bu-NI; Thu, 30 Aug 2018 21:35:19 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 523BB7A4BB9; Thu, 30 Aug 2018 17:35:17 -0400 (EDT)
+Date:   Thu, 30 Aug 2018 17:35:17 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Maintainer / Kernel Summit 2018 planning kick-off
+Message-ID: <20180830213517.GA19110@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        linux-block@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings for the FSI-attached POWER9 On-Chip Controller.
+[ Feel free to forward this to other Linux kernel mailing lists as
+  appropriate -- Ted ]
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+This year, the Maintainer and Kernel Summit will be in Vancouver,
+B.C., November 12th -- 15th.  The Maintainer's summit will be held on
+Monday, November 12th, in Vancouver, immediately before the Linux
+Plumber's Conference (LPC) November 13th -- 15th.
 
-diff --git a/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt b/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
-new file mode 100644
-index 0000000..46372f6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
-@@ -0,0 +1,15 @@
-+Device-tree bindings for FSI-attached POWER9 On-Chip Controller (OCC)
-+---------------------------------------------------------------------
-+
-+This is the binding for the P9 On-Chip Controller accessed over FSI from a
-+service processor. See fsi.txt for details on bindings for FSI slave and CFAM
-+nodes.
-+
-+Required properties:
-+ - compatible = "ibm,p9-occ"
-+
-+Examples:
-+
-+    occ {
-+        compatible = "ibm,p9-occ";
-+    };
--- 
-1.8.3.1
+For the past few years, before 2017, we've scheduled mostly management
+and development process issues on the first day.  We then opened up
+the second day of the Kernel Summit to all attendees of the conference
+with which the Kernel Summit has been colocated, and called it the
+"Open Technical Day".  This is something that just made sense in order
+to assure that all of the necessary people needed to discuss a
+particular technical issue could be in the room.
 
+Starting last year in Prague, we took the next logical step, and split
+the Kernel Summit in two.  The "Maintainer's Summit" is an
+invite-only, half-day event, where the primary focus will be process
+issues of Linux Kernel Development.  It will be limited to 30 invitees
+and a handful of sponsored attendees.  This makes it smaller than the
+first few kernel summits (which were limited to around 50 attendees).
+
+The "Kernel Summit" is now organized as a track which is run in
+parallel with the other tracks at the Linux Plumber's Conference, and
+is open to all registered attendees of Plumbers.  Much as how we
+organized the Kernel Summit "open technical day" in 2016 in Santa Fe,
+the Kernel Summit schedule will be synchronized with the other tracks
+at the Plumber's Conference, and it will be open to all registered
+Plumber's attendees.
+
+Linus has suggested the following ten people as the core of the people
+he would like invited to the Maintainer's Summit, which was calculated
+from statistics from his git tree.
+
+	David Miller
+	Dave Airlie
+	Greg KH
+	Arnd Bergmann
+	Ingo Molnar
+	Mauro Carvalho Chehab
+	Takashi Iwai
+	Thomas Gleixner
+	Andrew Morton
+	Olof Johansson
+
+As we did last year, there will be a mini-program committee that will
+be pick enough names to bring the total number of 30 for the
+Maintainer's Summit.  That program committee will consist of Arnd
+Bergmann, Thomas Gleixner, Greg KH, Paul McKenney, and Ted Ts'o.
+
+We will use the rest of names on the list generated by Linus's script
+as a starting point of people to be considered.  People who suggest
+topics that should be discussed on the Maintainer's summit will also
+be added to the list.  To make topic suggestions for the Maintainer's
+Summit, please send e-mail to the ksummit-discuss list with a subject
+prefix of [MAINTAINERS SUMMIT].
+
+
+The other job of the program committee will be to organize the program
+for the Kernel Summit.  The goal of the Kernel Summit track will be to
+provide a forum to discuss specific technical issues that would be
+easier to resolve in person than over e-mail.  The program committee
+will also consider "information sharing" topics if they are clearly of
+interest to the wider development community (i.e., advanced training
+in topics that would be useful to kernel developers).
+
+To suggest a topic for the Kernel Summit, please tag your e-mail with
+[TECH TOPIC].  As before, please use a separate e-mail for each topic,
+and send the topic suggestions to:
+
+	ksummit-discuss@lists.linuxfoundation.org
+
+People who submit topic suggestions before September 21st and which
+are accepted, will be given a free admission to the Linux Plumbers
+Conference.
+
+We will reserving roughly half the Kernel Summit slots for last-minute
+discussions that will be scheduled during the week of Plumber's, in an
+"unconference style".  This was extremely popular in Santa Fe and in
+Prague, since it allowed ideas that came up in hallway discussions,
+and in Plumber's Miniconference, to be given scheduled, dedicated
+times for that discussion.
+
+
+If you were not subscribed on to the kernel-discuss mailing list from
+last year (or if you had removed yourself after the kernel summit),
+you can subscribe to the discuss list using mailman:
+
+   https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
