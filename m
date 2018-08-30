@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2F1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA26C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 801F820658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 801F820658
+	by mail.kernel.org (Postfix) with ESMTP id D28D120658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28D120658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeH3Keh (ORCPT
+        id S1728371AbeH3Kej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 06:34:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44142 "EHLO mx1.redhat.com"
+        Thu, 30 Aug 2018 06:34:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47694 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728296AbeH3Keg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 06:34:36 -0400
+        id S1728296AbeH3Kei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:34:38 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D7BA40201BC;
-        Thu, 30 Aug 2018 06:34:01 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CCAC326352;
+        Thu, 30 Aug 2018 06:34:02 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEF52B27A5;
-        Thu, 30 Aug 2018 06:33:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A0F4A9F09;
+        Thu, 30 Aug 2018 06:34:01 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -38,78 +38,136 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH 40/43] perf stat: Propagate struct target arg to sort_aggr_thread
-Date:   Thu, 30 Aug 2018 08:32:49 +0200
-Message-Id: <20180830063252.23729-41-jolsa@kernel.org>
+Subject: [PATCH 41/43] perf stat: Move walltime_* data into struct perf_stat_config
+Date:   Thu, 30 Aug 2018 08:32:50 +0200
+Message-Id: <20180830063252.23729-42-jolsa@kernel.org>
 In-Reply-To: <20180830063252.23729-1-jolsa@kernel.org>
 References: <20180830063252.23729-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 06:34:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 06:34:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:34:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:34:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Propagate struct target arg to sort_aggr_thread
-so the function does not depend on stat command object
-local target and can be moved out.
+Moving static walltime_* data into struct perf_stat_config,
+so it can be passed around and used outside stat command.
 
-Link: http://lkml.kernel.org/n/tip-1q2zv8p9pwa3vddh2js3s9fo@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-ymexory86fsla7n1yvy8tqfa@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/builtin-stat.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ tools/perf/builtin-stat.c | 22 ++++++++++------------
+ tools/perf/util/stat.h    |  2 ++
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index c4df076f1e54..486b0cf7818d 100644
+index 486b0cf7818d..8a4979748cbb 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -1284,7 +1284,8 @@ static int cmp_val(const void *a, const void *b)
- static struct perf_aggr_thread_value *sort_aggr_thread(
- 					struct perf_evsel *counter,
- 					int nthreads, int ncpus,
--					int *ret)
-+					int *ret,
-+					struct target *_target)
- {
- 	int cpu, thread, i = 0;
- 	double uval;
-@@ -1309,7 +1310,7 @@ static struct perf_aggr_thread_value *sort_aggr_thread(
- 		 * Skip value 0 when enabling --per-thread globally,
- 		 * otherwise too many 0 output.
+@@ -158,13 +158,11 @@ static const char		*post_cmd			= NULL;
+ static bool			sync_run			= false;
+ static bool			forever				= false;
+ static bool			force_metric_only		= false;
+-static bool			walltime_run_table		= false;
+ static struct timespec		ref_time;
+ static bool			append_file;
+ static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+-static u64			*walltime_run;
+ 
+ struct perf_stat {
+ 	bool			 record;
+@@ -604,8 +602,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 	t1 = rdclock();
+ 
+-	if (walltime_run_table)
+-		walltime_run[run_idx] = t1 - t0;
++	if (stat_config.walltime_run_table)
++		stat_config.walltime_run[run_idx] = t1 - t0;
+ 
+ 	update_stats(&walltime_nsecs_stats, t1 - t0);
+ 
+@@ -1646,7 +1644,7 @@ static void print_table(struct perf_stat_config *config,
+ 	fprintf(output, "%*s# Table of individual measurements:\n", indent, "");
+ 
+ 	for (idx = 0; idx < config->run_count; idx++) {
+-		double run = (double) walltime_run[idx] / NSEC_PER_SEC;
++		double run = (double) config->walltime_run[idx] / NSEC_PER_SEC;
+ 		int h, n = 1 + abs((int) (100.0 * (run - avg)/run) / 5);
+ 
+ 		fprintf(output, " %17.*f (%+.*f) ",
+@@ -1694,7 +1692,7 @@ static void print_footer(struct perf_stat_config *config)
  		 */
--		if (uval == 0.0 && target__has_per_thread(&target))
-+		if (uval == 0.0 && target__has_per_thread(_target))
- 			continue;
+ 		int precision = get_precision(sd) + 2;
  
- 		buf[i].counter = counter;
-@@ -1330,6 +1331,7 @@ static struct perf_aggr_thread_value *sort_aggr_thread(
- }
+-		if (walltime_run_table)
++		if (config->walltime_run_table)
+ 			print_table(config, output, precision, avg);
  
- static void print_aggr_thread(struct perf_stat_config *config,
-+			      struct target *_target,
- 			      struct perf_evsel *counter, char *prefix)
- {
- 	FILE *output = config->output;
-@@ -1338,7 +1340,7 @@ static void print_aggr_thread(struct perf_stat_config *config,
- 	int thread, sorted_threads, id;
- 	struct perf_aggr_thread_value *buf;
+ 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
+@@ -1888,7 +1886,7 @@ static const struct option stat_options[] = {
+ 		    "be more verbose (show counter open errors, etc)"),
+ 	OPT_INTEGER('r', "repeat", &stat_config.run_count,
+ 		    "repeat command and print average + stddev (max: 100, forever: 0)"),
+-	OPT_BOOLEAN(0, "table", &walltime_run_table,
++	OPT_BOOLEAN(0, "table", &stat_config.walltime_run_table,
+ 		    "display details about each run (only with -r option)"),
+ 	OPT_BOOLEAN('n', "null", &stat_config.null_run,
+ 		    "null run - dont start any counters"),
+@@ -2802,7 +2800,7 @@ int cmd_stat(int argc, const char **argv)
+ 		goto out;
+ 	}
  
--	buf = sort_aggr_thread(counter, nthreads, ncpus, &sorted_threads);
-+	buf = sort_aggr_thread(counter, nthreads, ncpus, &sorted_threads, _target);
- 	if (!buf) {
- 		perror("cannot sort aggr thread");
- 		return;
-@@ -1754,7 +1756,7 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
- 		evlist__for_each_entry(evlist, counter) {
- 			if (is_duration_time(counter))
- 				continue;
--			print_aggr_thread(config, counter, prefix);
-+			print_aggr_thread(config, _target, counter, prefix);
+-	if (walltime_run_table && stat_config.run_count <= 1) {
++	if (stat_config.walltime_run_table && stat_config.run_count <= 1) {
+ 		fprintf(stderr, "--table is only supported with -r\n");
+ 		parse_options_usage(stat_usage, stat_options, "r", 1);
+ 		parse_options_usage(NULL, stat_options, "table", 0);
+@@ -2870,9 +2868,9 @@ int cmd_stat(int argc, const char **argv)
+ 		stat_config.run_count = 1;
+ 	}
+ 
+-	if (walltime_run_table) {
+-		walltime_run = zalloc(stat_config.run_count * sizeof(walltime_run[0]));
+-		if (!walltime_run) {
++	if (stat_config.walltime_run_table) {
++		stat_config.walltime_run = zalloc(stat_config.run_count * sizeof(stat_config.walltime_run[0]));
++		if (!stat_config.walltime_run) {
+ 			pr_err("failed to setup -r option");
+ 			goto out;
  		}
- 		break;
- 	case AGGR_GLOBAL:
+@@ -3052,7 +3050,7 @@ int cmd_stat(int argc, const char **argv)
+ 	perf_stat__exit_aggr_mode();
+ 	perf_evlist__free_stats(evsel_list);
+ out:
+-	free(walltime_run);
++	free(stat_config.walltime_run);
+ 
+ 	if (smi_cost && smi_reset)
+ 		sysfs__write_int(FREEZE_ON_SMI_PATH, 0);
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 0758107fe56f..5193cbf6e4c6 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -105,6 +105,7 @@ struct perf_stat_config {
+ 	bool			 ru_display;
+ 	bool			 big_num;
+ 	bool			 no_merge;
++	bool			 walltime_run_table;
+ 	FILE			*output;
+ 	unsigned int		 interval;
+ 	unsigned int		 timeout;
+@@ -123,6 +124,7 @@ struct perf_stat_config {
+ 	struct cpu_map		*aggr_map;
+ 	aggr_get_id_t		 aggr_get_id;
+ 	struct cpu_map		*cpus_aggr_map;
++	u64			*walltime_run;
+ };
+ 
+ void update_stats(struct stats *stats, u64 val);
 -- 
 2.17.1
 
