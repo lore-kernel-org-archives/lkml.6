@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BBEC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECE0C43334
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1372083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2925A20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGzk4Nc8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1372083E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzBNCgBX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2925A20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeHaCkI (ORCPT
+        id S1727675AbeHaCkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 22:40:08 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44346 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeHaCkH (ORCPT
+        Thu, 30 Aug 2018 22:40:09 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46426 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeHaCkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 22:40:07 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q127-v6so8553914ljq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:42 -0700 (PDT)
+        Thu, 30 Aug 2018 22:40:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 203-v6so8529881ljj.13
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Rwg3Wa/c+I0slJQi39Rh66Z6GhyqNi3wNbH/a6Rd8S4=;
-        b=OGzk4Nc8lc6Pgzzz+Uo/HRiGg/8bX82dvxLBvez4yd0JEfLLyKRNx0RGac7rkh8Hx+
-         jU4a0EH1Lf1G3RN5tkUvs8McViFs3IbsMEU40YihzbCdzruDAPnVwd68rdXe7/RBp7ll
-         YUEkuCJGZM1YGo0o6ybT8DOa6RhNCEegC/gmTfLFx4cihpWgfW4jgOYb7aOr0TDqyPCy
-         cZ/zGzmo/0RCvrr/mMG0sNCBRmdOaBFfDc68VchmZ9vJqYPohIXyXDmf0MYKj1cE3RDm
-         E/3Gk1Wl+sCwZ9lqbjgMm/TT9QU2cBHDtKLKOOmwBk7si0OG7uI9LQhW7NHo7DgLS8Hg
-         OgKQ==
+        bh=ELrCwb70Eswi1rgH9pKht4m90s8Ue7VvEGevoqh5MT4=;
+        b=tzBNCgBX1luThMBNhKWbCw0/jpKnuxb3OnZmWULtBDFdsuo1YvkDTrgLaEr5iZvGyk
+         ftO/nx9CwOS72fkR6HY9YSV673tKNgaZ2WG1qfWpd7zAR2UZiHZASVPZefLPOnBNHdUG
+         bdeN8J1DKUAsSGiuTAYLhzwIeG/fp+RqA0b/JaPSMr/4e9WanMm7/6o1WQ4LSaH0nJRO
+         YD+cvPa3v3BSaVF42xcZNgZnHYfkMpf/H6+5JlI1Y0UtbwoopQsbNs/7kVLCGJpYGHTj
+         HBkM+v5CFbNqVKSqAr/rxBEVTcbJHrty27p2hlmj1eAPXPmWSLOe89ioOr94L9wy9kbm
+         8+ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Rwg3Wa/c+I0slJQi39Rh66Z6GhyqNi3wNbH/a6Rd8S4=;
-        b=OiSsKb7nK01Lb9N8+28GNaMD+/cJKf7GBn0+OHk8n4xr/IqfkDLy70YaHBF3x8N+Ak
-         nGwn9kD+4PtjXZOZQKu01ERMJ411w7gbBluO4TCCS2YHnt2UMcnZFNKqaSc9P0+xX/xd
-         BpxqotRJiTnD8zHyf4bLc0piWwPc4x74eFz8uQJrdWgZLBqgP6XOuzRbtUqxyaZf3PYS
-         GsGRmCaJx6WJoRf9clQv1Kfsxa62WngnuD4JDSAcOJ1t6rispiic7uJuEdT7NnO8EmOW
-         yWMg7olhlvzLaBCPyY3YeJy74Vyeb82c+CI230cHnDmKV0q2ekqpvp80sflS308NLEPP
-         qOUA==
-X-Gm-Message-State: APzg51DHyaQdutQyLhV6FXtqS3M6KXaxTiJyPiz9ODtAcIJG3r0exJY6
-        lUjfwxPhiY07t4bNhtYkZ9o7HvBdl30=
-X-Google-Smtp-Source: ANB0VdbO50YuMvU1irZ58+OumPMadkl+zR0xvTAHfj7Y/mXvveVlQvgqIcfHg1qggLCwy+TJ2OW8KQ==
-X-Received: by 2002:a2e:1517:: with SMTP id s23-v6mr8939043ljd.73.1535668541050;
-        Thu, 30 Aug 2018 15:35:41 -0700 (PDT)
+        bh=ELrCwb70Eswi1rgH9pKht4m90s8Ue7VvEGevoqh5MT4=;
+        b=AOSt6VwNSTPaclPZeLcpHGZVCxrdRaEjDTzOqY89XVs00TK+dpD9YhJWP3IOwTgHDk
+         AoOsC1ymsYXIcu88fHI3g5Ma2ZTwHfC7bLHe+/Cen80D3tkuQCtBRAxEH3B0ap1IbqNf
+         vm6Xrp4haiMpAy5o3NUePbnpYjVewvuvzFJ7x9q2sMbhiX/IkkhnfxwloTI2HfZ2s0BL
+         k32BuMgmyW+Zm5C6+dkVzB3i8BXtNepUjE3XFFwr7cMuyN2cybbVJ/fh69Ilo4/lYK3k
+         XT6pkZG+jjEuOQY/HuidFtawEc06b44er+kNJcNNVBHu0A9BUI5rEoRkn36iPCGgwfTS
+         Z9wA==
+X-Gm-Message-State: APzg51Cqv14entSspAF/VzN3OBIuBjyOr+x59Yv/nK1lW5I0Fs+iN9mA
+        3glCWvqfO+FttcD/+diX0/bfRAEMYAI=
+X-Google-Smtp-Source: ANB0VdaOlk+zqM8YOCMAUiDPZx0Zev2AJ41PphntEUtEB9s+Sl/liqbnjHrxnAjEqIf1BoCTc+vMkA==
+X-Received: by 2002:a2e:82c9:: with SMTP id n9-v6mr8356446ljh.111.1535668542704;
+        Thu, 30 Aug 2018 15:35:42 -0700 (PDT)
 Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.40
+        by smtp.gmail.com with ESMTPSA id u28-v6sm1455376ljd.61.2018.08.30.15.35.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 15:35:40 -0700 (PDT)
+        Thu, 30 Aug 2018 15:35:42 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH 13/23] freescale: ethernet: remove unnecessary unlikely()
-Date:   Fri, 31 Aug 2018 01:34:19 +0300
-Message-Id: <20180830223429.30051-14-igor.stoppa@huawei.com>
+        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Subject: [PATCH 14/23] wimax: i2400m: remove unnecessary unlikely()
+Date:   Fri, 31 Aug 2018 01:34:20 +0300
+Message-Id: <20180830223429.30051-15-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830223429.30051-1-igor.stoppa@huawei.com>
 References: <20180830223429.30051-1-igor.stoppa@huawei.com>
@@ -74,49 +74,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both WARN_ON() and WARN_ONCE() already contain an unlikely(), so it's not
-necessary to wrap it into another.
+WARN_ON() already contains an unlikely(), so it's not necessary to
+wrap it into another.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/wimax/i2400m/tx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index 65a22cd9aef2..783134f1b779 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -1280,7 +1280,7 @@ static int dpaa_bman_release(const struct dpaa_bp *dpaa_bp,
- 
- 	err = bman_release(dpaa_bp->pool, bmb, cnt);
- 	/* Should never occur, address anyway to avoid leaking the buffers */
--	if (unlikely(WARN_ON(err)) && dpaa_bp->free_buf_cb)
-+	if (WARN_ON(err) && dpaa_bp->free_buf_cb)
- 		while (cnt-- > 0)
- 			dpaa_bp->free_buf_cb(dpaa_bp, &bmb[cnt]);
- 
-@@ -1704,10 +1704,8 @@ static struct sk_buff *contig_fd_to_skb(const struct dpaa_priv *priv,
- 
- 	skb = build_skb(vaddr, dpaa_bp->size +
- 			SKB_DATA_ALIGN(sizeof(struct skb_shared_info)));
--	if (unlikely(!skb)) {
--		WARN_ONCE(1, "Build skb failure on Rx\n");
-+	if (WARN_ONCE(!skb, "Build skb failure on Rx\n"))
- 		goto free_buffer;
--	}
- 	WARN_ON(fd_off != priv->rx_headroom);
- 	skb_reserve(skb, fd_off);
- 	skb_put(skb, qm_fd_get_length(fd));
-@@ -1770,7 +1768,7 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
- 			sz = dpaa_bp->size +
- 				SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
- 			skb = build_skb(sg_vaddr, sz);
--			if (WARN_ON(unlikely(!skb)))
-+			if (WARN_ON(!skb))
- 				goto free_buffers;
- 
- 			skb->ip_summed = rx_csum_offload(priv, fd);
+diff --git a/drivers/net/wimax/i2400m/tx.c b/drivers/net/wimax/i2400m/tx.c
+index f20886ade1cc..59c70d928249 100644
+--- a/drivers/net/wimax/i2400m/tx.c
++++ b/drivers/net/wimax/i2400m/tx.c
+@@ -655,8 +655,7 @@ void i2400m_tx_close(struct i2400m *i2400m)
+ 	padding = aligned_size - tx_msg_moved->size;
+ 	if (padding > 0) {
+ 		pad_buf = i2400m_tx_fifo_push(i2400m, padding, 0, 0);
+-		if (unlikely(WARN_ON(pad_buf == NULL
+-				     || pad_buf == TAIL_FULL))) {
++		if (WARN_ON(!pad_buf || pad_buf == TAIL_FULL)) {
+ 			/* This should not happen -- append should verify
+ 			 * there is always space left at least to append
+ 			 * tx_block_size */
 -- 
 2.17.1
 
