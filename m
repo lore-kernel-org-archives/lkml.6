@@ -2,132 +2,143 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE9C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8C9C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DB720658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DB720658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9973A20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 06:35:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J3bu4Msy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qp5K92Ak"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9973A20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbeH3Kfw (ORCPT
+        id S1728433AbeH3Kf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 06:35:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47618 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728062AbeH3KeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 06:34:16 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 30 Aug 2018 06:35:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43726 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727970AbeH3Kfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:35:55 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 10E8C60600; Thu, 30 Aug 2018 06:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535610920;
+        bh=J5ikX7DG97wn7WR92syvhnXLj1Oj6bms8knGYMFOsTU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=J3bu4Msybn0dBrML2sWDuJISU+fbNgD9BXXexrZrKMJcnOGxg17igUk9/agZyI/hL
+         2p6pB46tx7m1k4sE2Kcbm875coSdo98rbA5k56yqFT2jH6WwS+lCzdFIs5dpNT+Xx5
+         Fg8QM6Fb37LsG1n7qqTUMlQIFmoZBlb7GNBbCqi4=
+Received: from [10.79.128.159] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44D7326352;
-        Thu, 30 Aug 2018 06:33:41 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D5D13A9F09;
-        Thu, 30 Aug 2018 06:33:39 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH 28/43] perf stat: Move metric_only_len into struct perf_stat_config
-Date:   Thu, 30 Aug 2018 08:32:37 +0200
-Message-Id: <20180830063252.23729-29-jolsa@kernel.org>
-In-Reply-To: <20180830063252.23729-1-jolsa@kernel.org>
-References: <20180830063252.23729-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 06:33:41 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 088FB60388;
+        Thu, 30 Aug 2018 06:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535610919;
+        bh=J5ikX7DG97wn7WR92syvhnXLj1Oj6bms8knGYMFOsTU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Qp5K92AknU3WnaI8GpLyzw7isq704fLEpM/TjVZ+IXuqlxiATnYFq6sD1cuQW/QdL
+         t5a9lrkgB+oy/4hf72l1YcNnjEyclkpsMLzcEV8Iief0reCHt3qFhKL8NuJgHf2rS4
+         Iz9H+59P4BKf+4JY/NlZA93qAEOh3Z0jSfrTL9pY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 088FB60388
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v4 0/6] Add power domain driver for corners on
+ msm8996/sdm845
+To:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180627045234.27403-1-rnayak@codeaurora.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <91ece266-025b-0b70-6563-5041b70f84b8@codeaurora.org>
+Date:   Thu, 30 Aug 2018 12:05:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180627045234.27403-1-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving static metric_only_len into struct perf_stat_config,
-so it can be passed around and used outside stat command.
 
-Link: http://lkml.kernel.org/n/tip-brq3qbbb9262ks5f6w8zjm24@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-stat.c | 10 +++++-----
- tools/perf/util/stat.h    |  1 +
- 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1276596840c9..e96cef526ef0 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -176,7 +176,6 @@ static int			print_mixed_hw_group_error;
- static u64			*walltime_run;
- static bool			ru_display			= false;
- static struct rusage		ru_data;
--static unsigned int		metric_only_len			= METRIC_ONLY_LEN;
- 
- struct perf_stat {
- 	bool			 record;
-@@ -200,6 +199,7 @@ static struct perf_stat_config stat_config = {
- 	.scale		= true,
- 	.unit_width	= 4, /* strlen("unit") */
- 	.run_count	= 1,
-+	.metric_only_len = METRIC_ONLY_LEN,
- };
- 
- static bool is_duration_time(struct perf_evsel *evsel)
-@@ -854,14 +854,14 @@ static const char *fixunit(char *buf, struct perf_evsel *evsel,
- 	return unit;
- }
- 
--static void print_metric_only(struct perf_stat_config *config __maybe_unused,
-+static void print_metric_only(struct perf_stat_config *config,
- 			      void *ctx, const char *color, const char *fmt,
- 			      const char *unit, double val)
- {
- 	struct outstate *os = ctx;
- 	FILE *out = os->fh;
- 	char buf[1024], str[1024];
--	unsigned mlen = metric_only_len;
-+	unsigned mlen = config->metric_only_len;
- 
- 	if (!valid_only_metric(unit))
- 		return;
-@@ -902,7 +902,7 @@ static void new_line_metric(struct perf_stat_config *config __maybe_unused,
- {
- }
- 
--static void print_metric_header(struct perf_stat_config *config __maybe_unused,
-+static void print_metric_header(struct perf_stat_config *config,
- 				void *ctx, const char *color __maybe_unused,
- 				const char *fmt __maybe_unused,
- 				const char *unit, double val __maybe_unused)
-@@ -916,7 +916,7 @@ static void print_metric_header(struct perf_stat_config *config __maybe_unused,
- 	if (config->csv_output)
- 		fprintf(os->fh, "%s%s", unit, config->csv_sep);
- 	else
--		fprintf(os->fh, "%*s ", metric_only_len, unit);
-+		fprintf(os->fh, "%*s ", config->metric_only_len, unit);
- }
- 
- static int first_shadow_cpu(struct perf_evsel *evsel, int id)
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 351a36f5f5b0..e70e6d93ee1b 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -99,6 +99,7 @@ struct perf_stat_config {
- 	unsigned int		 timeout;
- 	unsigned int		 initial_delay;
- 	unsigned int		 unit_width;
-+	unsigned int		 metric_only_len;
- 	int			 times;
- 	int			 run_count;
- 	struct runtime_stat	*stats;
--- 
-2.17.1
+On 6/27/2018 10:22 AM, Rajendra Nayak wrote:
+> Changes in v4:
+> * Included the patch to add qcom-opp bindings (dropped accidentally in v3)
+> * merged the patches to add bindings for rpm and rpmh, added consumer binding example
+> * Made the drivers built in, removed .remove
+> * Added better description in changelog for PATCH 6/6
+> * Updated rpmhpd_aggregate_corner() based on Davids feedback
+> * rpmhpd_set_performance_state() returns max corner, in cases where its called
+> with an INT_MAX
+> * Dropped the patch to max vote on all corners at init, the patch did not
+> work anyway, and it shouldn't be needed now
 
+These patches have been out on the list for a while (8 weeks).
+I haven't seen any further comments from anyone, except on PATCH 2/6
+by Rob. I requested Rob to provide his Ack if he is fine with the bindings.
+
+Can we plan to pull these in for 4.20?
+
+> 
+> Changes in v3:
+> * Bindings split into seperate patches
+> * Bindings updated to remove duplicate OPP table phandles
+> * DT headers defining macros for Power domain indexes and OPP levels
+> * Optimisations to use rpmh_write_async() whereever applicable
+> * Fixed up handling of ACTIVE_ONLY/WAKE_ONLY/SLEEP voting for RPMh
+> * Fixed the vlvl to hlvl conversions in set_performance
+> * Other minor fixes based on review of v2
+> * TODO: This series does not handle the case where all VDD_MX votes
+> should be higher than VDD_CX from APPs, as pointed out
+> by David Collins in v2. This needs support at genpd to propogate performance
+> state up the parents, if we model these as Parent/Child to handle the
+> interdependency.
+> 
+> Changes in v2:
+> * added a power domain driver for sdm845 which supports communicating to RPMh
+> * dropped the changes to sdhc driver to move over to using OPP
+> as there is active discussion on using OPP as the interface vs
+> handling all of it in clock drivers
+> * Other minor binding updates based on review of v1
+> 
+> With performance state support for genpd/OPP merged, this is an effort
+> to model a power domain driver to communicate corner/level
+> values for qualcomm platforms to RPM (Remote Power Manager) and RPMh.
+> 
+> Rajendra Nayak (6):
+>    dt-bindings: opp: Introduce qcom-opp bindings
+>    dt-bindings: power: Add qcom rpm power domain driver bindings
+>    soc: qcom: rpmpd: Add a Power domain driver to model corners
+>    soc: qcom: rpmpd: Add support for get/set performance state
+>    arm64: dts: msm8996: Add rpmpd device node
+>    soc: qcom: rpmhpd: Add RPMh Power domain driver
+> 
+>   .../devicetree/bindings/opp/qcom-opp.txt      |  25 ++
+>   .../devicetree/bindings/power/qcom,rpmpd.txt  | 146 +++++++
+>   arch/arm64/boot/dts/qcom/msm8996.dtsi         |  34 ++
+>   drivers/soc/qcom/Kconfig                      |  18 +
+>   drivers/soc/qcom/Makefile                     |   2 +
+>   drivers/soc/qcom/rpmhpd.c                     | 406 ++++++++++++++++++
+>   drivers/soc/qcom/rpmpd.c                      | 340 +++++++++++++++
+>   include/dt-bindings/power/qcom-rpmpd.h        |  39 ++
+>   8 files changed, 1010 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
+>   create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+>   create mode 100644 drivers/soc/qcom/rpmhpd.c
+>   create mode 100644 drivers/soc/qcom/rpmpd.c
+>   create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
+> 
