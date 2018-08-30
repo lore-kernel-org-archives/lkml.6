@@ -2,105 +2,130 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57D8C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF491C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8155A205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8155A205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EB9020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:14:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB9020834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeH3TQh (ORCPT
+        id S1727271AbeH3TQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:16:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36956 "EHLO mx1.redhat.com"
+        Thu, 30 Aug 2018 15:16:46 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:19548 "EHLO smtp.ispras.ru"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725893AbeH3TQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:16:36 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C8C87A7E5;
-        Thu, 30 Aug 2018 15:13:58 +0000 (UTC)
-Received: from krava (ovpn-204-85.brq.redhat.com [10.40.204.85])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E0F3FB27B9;
-        Thu, 30 Aug 2018 15:13:55 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 17:13:55 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, lkp@intel.com, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
- events
-Message-ID: <20180830151355.GA23723@krava>
-References: <20180815170313.455943-1-songliubraving@fb.com>
- <20180815170313.455943-2-songliubraving@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815170313.455943-2-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 15:13:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 30 Aug 2018 15:13:58 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+        id S1725893AbeH3TQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:16:46 -0400
+Received: from ubuntu.intra.ispras.ru (ultra.intra.ispras.ru [10.10.2.144])
+        by smtp.ispras.ru (Postfix) with ESMTP id 6D1DC203B2;
+        Thu, 30 Aug 2018 18:14:05 +0300 (MSK)
+From:   Pavel Zemlyanoy <zemlyanoy@ispras.ru>
+To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>
+Cc:     Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH 1/6] staging: erofs: formatting fix in unzip_vle_lz4.c
+Date:   Thu, 30 Aug 2018 18:13:57 +0300
+Message-Id: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 10:03:13AM -0700, Song Liu wrote:
 
-SNIP
+This patch does not change the logic, it only
+corrects the formatting and checkpatch warnings by
+adding "int" to the unsigned type.
 
->  
-> +	perf_event_remove_dup(event, ctx);
->  	/*
->  	 * We can have double detach due to exit/hot-unplug + close.
->  	 */
-> @@ -1982,6 +2123,92 @@ event_filter_match(struct perf_event *event)
->  	       perf_cgroup_match(event) && pmu_filter_match(event);
->  }
->  
-> +/* PMU sharing aware version of event->pmu->add() */
-> +static int event_pmu_add(struct perf_event *event,
-> +			 struct perf_event_context *ctx)
-> +{
-> +	struct perf_event_dup *dup;
-> +	int ret;
-> +
-> +	/* no sharing, just do event->pmu->add() */
-> +	if (event->dup_id == -1)
-> +		return event->pmu->add(event, PERF_EF_START);
-> +
-> +	dup = &ctx->dup_events[event->dup_id];
-> +
-> +	if (dup->active_event_count) {
-> +		/* already enabled */
-> +		dup->active_event_count++;
-> +		dup->master->pmu->read(dup->master);
-> +		event->dup_base_count = dup_read_count(dup);
-> +		event->dup_base_child_count = dup_read_child_count(dup);
-> +		return 0;
-> +	}
-> +
-> +	/* try add master */
-> +	ret = event->pmu->add(dup->master, PERF_EF_START);
-> +
-> +	if (!ret) {
-> +		dup->active_event_count = 1;
-> +		event->pmu->read(dup->master);
-> +		event->dup_base_count = dup_read_count(dup);
-> +		event->dup_base_child_count = dup_read_child_count(dup);
+The patch fixes 11 warnings of the type:
+"WARNING: Prefer 'unsigned int' to bare use of 'unsigned'"
 
-should you read the base before calling pmu->add ?
-should be same for any dup event not just master
+Signed-off-by: Pavel Zemlyanoy <zemlyanoy@ispras.ru>
+---
+ drivers/staging/erofs/unzip_vle_lz4.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-jirka
+diff --git a/drivers/staging/erofs/unzip_vle_lz4.c b/drivers/staging/erofs/unzip_vle_lz4.c
+index f5b665f..f9e6b78 100644
+--- a/drivers/staging/erofs/unzip_vle_lz4.c
++++ b/drivers/staging/erofs/unzip_vle_lz4.c
+@@ -23,14 +23,14 @@ static struct {
+ } erofs_pcpubuf[NR_CPUS];
+ 
+ int z_erofs_vle_plain_copy(struct page **compressed_pages,
+-			   unsigned clusterpages,
++			   unsigned int clusterpages,
+ 			   struct page **pages,
+-			   unsigned nr_pages,
++			   unsigned int nr_pages,
+ 			   unsigned short pageofs)
+ {
+-	unsigned i, j;
++	unsigned int i, j;
+ 	void *src = NULL;
+-	const unsigned righthalf = PAGE_SIZE - pageofs;
++	const unsigned int righthalf = PAGE_SIZE - pageofs;
+ 	char *percpu_data;
+ 	bool mirrored[Z_EROFS_CLUSTER_MAX_PAGES] = { 0 };
+ 
+@@ -102,14 +102,14 @@ int z_erofs_vle_plain_copy(struct page **compressed_pages,
+ extern int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen);
+ 
+ int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+-				  unsigned clusterpages,
++				  unsigned int clusterpages,
+ 				  struct page **pages,
+-				  unsigned outlen,
++				  unsigned int outlen,
+ 				  unsigned short pageofs,
+ 				  void (*endio)(struct page *))
+ {
+ 	void *vin, *vout;
+-	unsigned nr_pages, i, j;
++	unsigned int nr_pages, i, j;
+ 	int ret;
+ 
+ 	if (outlen + pageofs > EROFS_PERCPU_NR_PAGES * PAGE_SIZE)
+@@ -134,7 +134,7 @@ int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+ 	}
+ 
+ 	for (i = 0; i < nr_pages; ++i) {
+-		j = min((unsigned)PAGE_SIZE - pageofs, outlen);
++		j = min((unsigned int)PAGE_SIZE - pageofs, outlen);
+ 
+ 		if (pages[i] != NULL) {
+ 			if (ret < 0)
+@@ -164,14 +164,14 @@ int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+ }
+ 
+ int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
+-			   unsigned clusterpages,
++			   unsigned int clusterpages,
+ 			   void *vout,
+-			   unsigned llen,
++			   unsigned int llen,
+ 			   unsigned short pageofs,
+ 			   bool overlapped)
+ {
+ 	void *vin;
+-	unsigned i;
++	unsigned int i;
+ 	int ret;
+ 
+ 	if (overlapped) {
+@@ -206,4 +206,3 @@ int z_erofs_vle_unzip_vmap(struct page **compressed_pages,
+ 
+ 	return ret;
+ }
+-
+-- 
+2.7.4
+
