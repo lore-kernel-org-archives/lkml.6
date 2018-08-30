@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF2DC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C50C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E8920837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E8920837
+	by mail.kernel.org (Postfix) with ESMTP id 19E4620837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E4620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeH3W6O (ORCPT
+        id S1727868AbeH3W5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:58:14 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40098 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbeH3W5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 18:57:42 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40064 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727345AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:57:41 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4u-0006Os-Pd; Thu, 30 Aug 2018 12:54:07 -0600
+        id 1fvS4t-0006Og-Nd; Thu, 30 Aug 2018 12:54:04 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4p-0000tr-De; Thu, 30 Aug 2018 12:53:55 -0600
+        id 1fvS4o-0000tH-3t; Thu, 30 Aug 2018 12:53:54 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -46,10 +46,9 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Steve Wise <swise@opengridcomputing.com>
-Date:   Thu, 30 Aug 2018 12:53:52 -0600
-Message-Id: <20180830185352.3369-14-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Thu, 30 Aug 2018 12:53:40 -0600
+Message-Id: <20180830185352.3369-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
 References: <20180830185352.3369-1-logang@deltatee.com>
@@ -57,9 +56,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com, swise@opengridcomputing.com
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v5 13/13] nvmet: Optionally use PCI P2P memory
+Subject: [PATCH v5 01/13] PCI/P2PDMA: Support peer-to-peer memory
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,377 +66,1053 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We create a configfs attribute in each nvme-fabrics target port to
-enable p2p memory use. When enabled, the port will only then use the
-p2p memory if a p2p memory device can be found which is behind the
-same switch hierarchy as the RDMA port and all the block devices in
-use. If the user enabled it and no devices are found, then the system
-will silently fall back on using regular memory.
+Some PCI devices may have memory mapped in a BAR space that's
+intended for use in peer-to-peer transactions. In order to enable
+such transactions the memory must be registered with ZONE_DEVICE pages
+so it can be used by DMA interfaces in existing drivers.
 
-If appropriate, that port will allocate memory for the RDMA buffers
-for queues from the p2pmem device falling back to system memory should
-anything fail.
+Add an interface for other subsystems to find and allocate chunks of P2P
+memory as necessary to facilitate transfers between two PCI peers:
 
-Ideally, we'd want to use an NVME CMB buffer as p2p memory. This would
-save an extra PCI transfer as the NVME card could just take the data
-out of it's own memory. However, at this time, only a limited number
-of cards with CMB buffers seem to be available.
+int pci_p2pdma_add_client();
+struct pci_dev *pci_p2pmem_find();
+void *pci_alloc_p2pmem();
 
-Signed-off-by: Stephen Bates <sbates@raithlin.com>
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-[hch: partial rewrite of the initial code]
+The new interface requires a driver to collect a list of client devices
+involved in the transaction with the pci_p2pmem_add_client*() functions
+then call pci_p2pmem_find() to obtain any suitable P2P memory. Once
+this is done the list is bound to the memory and the calling driver is
+free to add and remove clients as necessary (adding incompatible clients
+will fail). With a suitable p2pmem device, memory can then be
+allocated with pci_alloc_p2pmem() for use in DMA transactions.
+
+Depending on hardware, using peer-to-peer memory may reduce the bandwidth
+of the transfer but can significantly reduce pressure on system memory.
+This may be desirable in many cases: for example a system could be designed
+with a small CPU connected to a PCIe switch by a small number of lanes
+which would maximize the number of lanes available to connect to NVMe
+devices.
+
+The code is designed to only utilize the p2pmem device if all the devices
+involved in a transfer are behind the same PCI bridge. This is because we
+have no way of knowing whether peer-to-peer routing between PCIe Root Ports
+is supported (PCIe r4.0, sec 1.3.1). Additionally, the benefits of P2P
+transfers that go through the RC is limited to only reducing DRAM usage
+and, in some cases, coding convenience. The PCI-SIG may be exploring
+adding a new capability bit to advertise whether this is possible for
+future hardware.
+
+This commit includes significant rework and feedback from Christoph
+Hellwig.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/nvme/target/configfs.c |  36 +++++++++++
- drivers/nvme/target/core.c     | 133 ++++++++++++++++++++++++++++++++++++++++-
- drivers/nvme/target/nvmet.h    |  13 ++++
- drivers/nvme/target/rdma.c     |   2 +
- 4 files changed, 183 insertions(+), 1 deletion(-)
+ drivers/pci/Kconfig        |  17 +
+ drivers/pci/Makefile       |   1 +
+ drivers/pci/p2pdma.c       | 761 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/memremap.h   |   5 +
+ include/linux/mm.h         |  18 ++
+ include/linux/pci-p2pdma.h | 102 ++++++
+ include/linux/pci.h        |   4 +
+ 7 files changed, 908 insertions(+)
+ create mode 100644 drivers/pci/p2pdma.c
+ create mode 100644 include/linux/pci-p2pdma.h
 
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index b37a8e3e3f80..0dfb0e0c3d21 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/stat.h>
- #include <linux/ctype.h>
-+#include <linux/pci.h>
-+#include <linux/pci-p2pdma.h>
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 56ff8f6d31fc..deb68be4fdac 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -132,6 +132,23 @@ config PCI_PASID
  
- #include "nvmet.h"
+ 	  If unsure, say N.
  
-@@ -1094,6 +1096,37 @@ static void nvmet_port_release(struct config_item *item)
- 	kfree(port);
- }
- 
-+#ifdef CONFIG_PCI_P2PDMA
-+static ssize_t nvmet_p2pmem_show(struct config_item *item, char *page)
-+{
-+	struct nvmet_port *port = to_nvmet_port(item);
++config PCI_P2PDMA
++	bool "PCI peer-to-peer transfer support"
++	depends on PCI && ZONE_DEVICE
++	select GENERIC_ALLOCATOR
++	help
++	  Enableѕ drivers to do PCI peer-to-peer transactions to and from
++	  BARs that are exposed in other devices that are the part of
++	  the hierarchy where peer-to-peer DMA is guaranteed by the PCI
++	  specification to work (ie. anything below a single PCI bridge).
 +
-+	return pci_p2pdma_enable_show(page, port->p2p_dev, port->use_p2pmem);
++	  Many PCIe root complexes do not support P2P transactions and
++	  it's hard to tell which support it at all, so at this time,
++	  P2P DMA transations must be between devices behind the same root
++	  port.
++
++	  If unsure, say N.
++
+ config PCI_LABEL
+ 	def_bool y if (DMI || ACPI)
+ 	depends on PCI
+diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+index 1b2cfe51e8d7..85f4a703b2be 100644
+--- a/drivers/pci/Makefile
++++ b/drivers/pci/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_PCI_SYSCALL)	+= syscall.o
+ obj-$(CONFIG_PCI_STUB)		+= pci-stub.o
+ obj-$(CONFIG_PCI_PF_STUB)	+= pci-pf-stub.o
+ obj-$(CONFIG_PCI_ECAM)		+= ecam.o
++obj-$(CONFIG_PCI_P2PDMA)	+= p2pdma.o
+ obj-$(CONFIG_XEN_PCIDEV_FRONTEND) += xen-pcifront.o
+ 
+ # Endpoint library must be initialized before its users
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+new file mode 100644
+index 000000000000..88aaec5351cd
+--- /dev/null
++++ b/drivers/pci/p2pdma.c
+@@ -0,0 +1,761 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PCI Peer 2 Peer DMA support.
++ *
++ * Copyright (c) 2016-2018, Logan Gunthorpe
++ * Copyright (c) 2016-2017, Microsemi Corporation
++ * Copyright (c) 2017, Christoph Hellwig
++ * Copyright (c) 2018, Eideticom Inc.
++ */
++
++#define pr_fmt(fmt) "pci-p2pdma: " fmt
++#include <linux/pci-p2pdma.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/genalloc.h>
++#include <linux/memremap.h>
++#include <linux/percpu-refcount.h>
++#include <linux/random.h>
++#include <linux/seq_buf.h>
++
++struct pci_p2pdma {
++	struct percpu_ref devmap_ref;
++	struct completion devmap_ref_done;
++	struct gen_pool *pool;
++	bool p2pmem_published;
++};
++
++static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
++{
++	struct pci_p2pdma *p2p =
++		container_of(ref, struct pci_p2pdma, devmap_ref);
++
++	complete_all(&p2p->devmap_ref_done);
 +}
 +
-+static ssize_t nvmet_p2pmem_store(struct config_item *item,
-+		const char *page, size_t count)
++static void pci_p2pdma_percpu_kill(void *data)
 +{
-+	struct nvmet_port *port = to_nvmet_port(item);
-+	struct pci_dev *p2p_dev = NULL;
-+	bool use_p2pmem;
++	struct percpu_ref *ref = data;
++
++	if (percpu_ref_is_dying(ref))
++		return;
++
++	percpu_ref_kill(ref);
++}
++
++static void pci_p2pdma_release(void *data)
++{
++	struct pci_dev *pdev = data;
++
++	if (!pdev->p2pdma)
++		return;
++
++	wait_for_completion(&pdev->p2pdma->devmap_ref_done);
++	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
++
++	gen_pool_destroy(pdev->p2pdma->pool);
++	pdev->p2pdma = NULL;
++}
++
++static int pci_p2pdma_setup(struct pci_dev *pdev)
++{
++	int error = -ENOMEM;
++	struct pci_p2pdma *p2p;
++
++	p2p = devm_kzalloc(&pdev->dev, sizeof(*p2p), GFP_KERNEL);
++	if (!p2p)
++		return -ENOMEM;
++
++	p2p->pool = gen_pool_create(PAGE_SHIFT, dev_to_node(&pdev->dev));
++	if (!p2p->pool)
++		goto out;
++
++	init_completion(&p2p->devmap_ref_done);
++	error = percpu_ref_init(&p2p->devmap_ref,
++			pci_p2pdma_percpu_release, 0, GFP_KERNEL);
++	if (error)
++		goto out_pool_destroy;
++
++	percpu_ref_switch_to_atomic_sync(&p2p->devmap_ref);
++
++	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_release, pdev);
++	if (error)
++		goto out_pool_destroy;
++
++	pdev->p2pdma = p2p;
++
++	return 0;
++
++out_pool_destroy:
++	gen_pool_destroy(p2p->pool);
++out:
++	devm_kfree(&pdev->dev, p2p);
++	return error;
++}
++
++/**
++ * pci_p2pdma_add_resource - add memory for use as p2p memory
++ * @pdev: the device to add the memory to
++ * @bar: PCI BAR to add
++ * @size: size of the memory to add, may be zero to use the whole BAR
++ * @offset: offset into the PCI BAR
++ *
++ * The memory will be given ZONE_DEVICE struct pages so that it may
++ * be used with any DMA request.
++ */
++int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
++			    u64 offset)
++{
++	struct dev_pagemap *pgmap;
++	void *addr;
 +	int error;
 +
-+	error = pci_p2pdma_enable_store(page, &p2p_dev, &use_p2pmem);
-+	if (error)
-+		return error;
-+
-+	down_write(&nvmet_config_sem);
-+	port->use_p2pmem = use_p2pmem;
-+	pci_dev_put(port->p2p_dev);
-+	port->p2p_dev = p2p_dev;
-+	up_write(&nvmet_config_sem);
-+
-+	return count;
-+}
-+CONFIGFS_ATTR(nvmet_, p2pmem);
-+#endif /* CONFIG_PCI_P2PDMA */
-+
- static struct configfs_attribute *nvmet_port_attrs[] = {
- 	&nvmet_attr_addr_adrfam,
- 	&nvmet_attr_addr_treq,
-@@ -1101,6 +1134,9 @@ static struct configfs_attribute *nvmet_port_attrs[] = {
- 	&nvmet_attr_addr_trsvcid,
- 	&nvmet_attr_addr_trtype,
- 	&nvmet_attr_param_inline_data_size,
-+#ifdef CONFIG_PCI_P2PDMA
-+	&nvmet_attr_p2pmem,
-+#endif
- 	NULL,
- };
- 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 6a1c8d5f552b..8f20b1e26c69 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/random.h>
- #include <linux/rculist.h>
-+#include <linux/pci-p2pdma.h>
- 
- #include "nvmet.h"
- 
-@@ -365,9 +366,29 @@ static void nvmet_ns_dev_disable(struct nvmet_ns *ns)
- 	nvmet_file_ns_disable(ns);
- }
- 
-+static int nvmet_p2pdma_add_client(struct nvmet_ctrl *ctrl,
-+		struct nvmet_ns *ns)
-+{
-+	int ret;
-+
-+	if (!blk_queue_pci_p2pdma(ns->bdev->bd_queue)) {
-+		pr_err("peer-to-peer DMA is not supported by %s\n",
-+		       ns->device_path);
++	if (!(pci_resource_flags(pdev, bar) & IORESOURCE_MEM))
 +		return -EINVAL;
++
++	if (offset >= pci_resource_len(pdev, bar))
++		return -EINVAL;
++
++	if (!size)
++		size = pci_resource_len(pdev, bar) - offset;
++
++	if (size + offset > pci_resource_len(pdev, bar))
++		return -EINVAL;
++
++	if (!pdev->p2pdma) {
++		error = pci_p2pdma_setup(pdev);
++		if (error)
++			return error;
 +	}
 +
-+	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
-+	if (ret)
-+		pr_err("failed to add peer-to-peer DMA client %s: %d\n",
-+		       ns->device_path, ret);
++	pgmap = devm_kzalloc(&pdev->dev, sizeof(*pgmap), GFP_KERNEL);
++	if (!pgmap)
++		return -ENOMEM;
++
++	pgmap->res.start = pci_resource_start(pdev, bar) + offset;
++	pgmap->res.end = pgmap->res.start + size - 1;
++	pgmap->res.flags = pci_resource_flags(pdev, bar);
++	pgmap->ref = &pdev->p2pdma->devmap_ref;
++	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
++
++	addr = devm_memremap_pages(&pdev->dev, pgmap);
++	if (IS_ERR(addr)) {
++		error = PTR_ERR(addr);
++		goto pgmap_free;
++	}
++
++	error = gen_pool_add_virt(pdev->p2pdma->pool, (unsigned long)addr,
++			pci_bus_address(pdev, bar) + offset,
++			resource_size(&pgmap->res), dev_to_node(&pdev->dev));
++	if (error)
++		goto pgmap_free;
++
++	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_percpu_kill,
++					  &pdev->p2pdma->devmap_ref);
++	if (error)
++		goto pgmap_free;
++
++	pci_info(pdev, "added peer-to-peer DMA memory %pR\n",
++		 &pgmap->res);
++
++	return 0;
++
++pgmap_free:
++	devres_free(pgmap);
++	return error;
++}
++EXPORT_SYMBOL_GPL(pci_p2pdma_add_resource);
++
++static struct pci_dev *find_parent_pci_dev(struct device *dev)
++{
++	struct device *parent;
++
++	dev = get_device(dev);
++
++	while (dev) {
++		if (dev_is_pci(dev))
++			return to_pci_dev(dev);
++
++		parent = get_device(dev->parent);
++		put_device(dev);
++		dev = parent;
++	}
++
++	return NULL;
++}
++
++/*
++ * Check if a PCI bridge has it's ACS redirection bits set to redirect P2P
++ * TLPs upstream via ACS. Returns 1 if the packets will be redirected
++ * upstream, 0 otherwise.
++ */
++static int pci_bridge_has_acs_redir(struct pci_dev *dev)
++{
++	int pos;
++	u16 ctrl;
++
++	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
++	if (!pos)
++		return 0;
++
++	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
++
++	if (ctrl & (PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC))
++		return 1;
++
++	return 0;
++}
++
++static void seq_buf_print_bus_devfn(struct seq_buf *buf, struct pci_dev *dev)
++{
++	if (!buf)
++		return;
++
++	seq_buf_printf(buf, "%04x:%02x:%02x.%x;", pci_domain_nr(dev->bus),
++		       dev->bus->number, PCI_SLOT(dev->devfn),
++		       PCI_FUNC(dev->devfn));
++}
++
++/*
++ * Find the distance through the nearest common upstream bridge between
++ * two PCI devices.
++ *
++ * If the two devices are the same device then 0 will be returned.
++ *
++ * If there are two virtual functions of the same device behind the same
++ * bridge port then 2 will be returned (one step down to the PCIe switch,
++ * then one step back to the same device).
++ *
++ * In the case where two devices are connected to the same PCIe switch, the
++ * value 4 will be returned. This corresponds to the following PCI tree:
++ *
++ *     -+  Root Port
++ *      \+ Switch Upstream Port
++ *       +-+ Switch Downstream Port
++ *       + \- Device A
++ *       \-+ Switch Downstream Port
++ *         \- Device B
++ *
++ * The distance is 4 because we traverse from Device A through the downstream
++ * port of the switch, to the common upstream port, back up to the second
++ * downstream port and then to Device B.
++ *
++ * Any two devices that don't have a common upstream bridge will return -1.
++ * In this way devices on separate PCIe root ports will be rejected, which
++ * is what we want for peer-to-peer seeing each PCIe root port defines a
++ * separate hierarchy domain and there's no way to determine whether the root
++ * complex supports forwarding between them.
++ *
++ * In the case where two devices are connected to different PCIe switches,
++ * this function will still return a positive distance as long as both
++ * switches evenutally have a common upstream bridge. Note this covers
++ * the case of using multiple PCIe switches to achieve a desired level of
++ * fan-out from a root port. The exact distance will be a function of the
++ * number of switches between Device A and Device B.
++ *
++ * If a bridge which has any ACS redirection bits set is in the path
++ * then this functions will return -2. This is so we reject any
++ * cases where the TLPs are forwarded up into the root complex.
++ * In this case, a list of all infringing bridge addresses will be
++ * populated in acs_list (assuming it's non-null) for printk purposes.
++ */
++static int upstream_bridge_distance(struct pci_dev *a,
++				    struct pci_dev *b,
++				    struct seq_buf *acs_list)
++{
++	int dist_a = 0;
++	int dist_b = 0;
++	struct pci_dev *bb = NULL;
++	int acs_cnt = 0;
++
++	/*
++	 * Note, we don't need to take references to devices returned by
++	 * pci_upstream_bridge() seeing we hold a reference to a child
++	 * device which will already hold a reference to the upstream bridge.
++	 */
++
++	while (a) {
++		dist_b = 0;
++
++		if (pci_bridge_has_acs_redir(a)) {
++			seq_buf_print_bus_devfn(acs_list, a);
++			acs_cnt++;
++		}
++
++		bb = b;
++
++		while (bb) {
++			if (a == bb)
++				goto check_b_path_acs;
++
++			bb = pci_upstream_bridge(bb);
++			dist_b++;
++		}
++
++		a = pci_upstream_bridge(a);
++		dist_a++;
++	}
++
++	return -1;
++
++check_b_path_acs:
++	bb = b;
++
++	while (bb) {
++		if (a == bb)
++			break;
++
++		if (pci_bridge_has_acs_redir(bb)) {
++			seq_buf_print_bus_devfn(acs_list, bb);
++			acs_cnt++;
++		}
++
++		bb = pci_upstream_bridge(bb);
++	}
++
++	if (acs_cnt)
++		return -2;
++
++	return dist_a + dist_b;
++}
++
++static int upstream_bridge_distance_warn(struct pci_dev *provider,
++					 struct pci_dev *client)
++{
++	struct seq_buf acs_list;
++	int ret;
++
++	seq_buf_init(&acs_list, kmalloc(PAGE_SIZE, GFP_KERNEL), PAGE_SIZE);
++
++	ret = upstream_bridge_distance(provider, client, &acs_list);
++	if (ret == -2) {
++		pci_warn(client, "cannot be used for peer-to-peer DMA as ACS redirect is set between the client and provider\n");
++		/* Drop final semicolon */
++		acs_list.buffer[acs_list.len-1] = 0;
++		pci_warn(client, "to disable ACS redirect for this path, add the kernel parameter: pci=disable_acs_redir=%s\n",
++			 acs_list.buffer);
++
++	} else if (ret < 0) {
++		pci_warn(client, "cannot be used for peer-to-peer DMA as the client and provider do not share an upstream bridge\n");
++	}
++
++	kfree(acs_list.buffer);
 +
 +	return ret;
 +}
 +
- int nvmet_ns_enable(struct nvmet_ns *ns)
- {
- 	struct nvmet_subsys *subsys = ns->subsys;
-+	struct nvmet_ctrl *ctrl;
- 	int ret;
- 
- 	mutex_lock(&subsys->lock);
-@@ -389,6 +410,14 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
- 	if (ret)
- 		goto out_dev_put;
- 
-+	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-+		if (ctrl->p2p_dev) {
-+			ret = nvmet_p2pdma_add_client(ctrl, ns);
-+			if (ret)
-+				goto out_remove_clients;
-+		}
-+	}
++struct pci_p2pdma_client {
++	struct list_head list;
++	struct pci_dev *client;
++	struct pci_dev *provider;
++};
 +
- 	if (ns->nsid > subsys->max_nsid)
- 		subsys->max_nsid = ns->nsid;
- 
-@@ -417,6 +446,9 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
- out_unlock:
- 	mutex_unlock(&subsys->lock);
- 	return ret;
-+out_remove_clients:
-+	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry)
-+		pci_p2pdma_remove_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
- out_dev_put:
- 	nvmet_ns_dev_disable(ns);
- 	goto out_unlock;
-@@ -425,6 +457,7 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
- void nvmet_ns_disable(struct nvmet_ns *ns)
- {
- 	struct nvmet_subsys *subsys = ns->subsys;
-+	struct nvmet_ctrl *ctrl;
- 
- 	mutex_lock(&subsys->lock);
- 	if (!ns->enabled)
-@@ -450,6 +483,12 @@ void nvmet_ns_disable(struct nvmet_ns *ns)
- 	percpu_ref_exit(&ns->ref);
- 
- 	mutex_lock(&subsys->lock);
-+
-+	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-+		pci_p2pdma_remove_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
-+		nvmet_add_async_event(ctrl, NVME_AER_TYPE_NOTICE, 0, 0);
-+	}
-+
- 	subsys->nr_namespaces--;
- 	nvmet_ns_changed(subsys, ns->nsid);
- 	nvmet_ns_dev_disable(ns);
-@@ -727,6 +766,23 @@ EXPORT_SYMBOL_GPL(nvmet_req_execute);
- 
- int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
- {
-+	struct pci_dev *p2p_dev = NULL;
-+
-+	if (IS_ENABLED(CONFIG_PCI_P2PDMA)) {
-+		if (sq->ctrl)
-+			p2p_dev = sq->ctrl->p2p_dev;
-+
-+		req->p2p_dev = NULL;
-+		if (sq->qid && p2p_dev) {
-+			req->sg = pci_p2pmem_alloc_sgl(p2p_dev, &req->sg_cnt,
-+						       req->transfer_len);
-+			if (req->sg) {
-+				req->p2p_dev = p2p_dev;
-+				return 0;
-+			}
-+		}
-+	}
-+
- 	req->sg = sgl_alloc(req->transfer_len, GFP_KERNEL, &req->sg_cnt);
- 	if (!req->sg)
- 		return -ENOMEM;
-@@ -737,7 +793,11 @@ EXPORT_SYMBOL_GPL(nvmet_req_alloc_sgl);
- 
- void nvmet_req_free_sgl(struct nvmet_req *req)
- {
--	sgl_free(req->sg);
-+	if (req->p2p_dev)
-+		pci_p2pmem_free_sgl(req->p2p_dev, req->sg);
-+	else
-+		sgl_free(req->sg);
-+
- 	req->sg = NULL;
- 	req->sg_cnt = 0;
- }
-@@ -939,6 +999,74 @@ bool nvmet_host_allowed(struct nvmet_req *req, struct nvmet_subsys *subsys,
- 		return __nvmet_host_allowed(subsys, hostnqn);
- }
- 
-+/*
-+ * If allow_p2pmem is set, we will try to use P2P memory for the SGL lists for
-+ * Ι/O commands. This requires the PCI p2p device to be compatible with the
-+ * backing device for every namespace on this controller.
++/**
++ * pci_p2pdma_add_client - allocate a new element in a client device list
++ * @head: list head of p2pdma clients
++ * @dev: device to add to the list
++ *
++ * This adds @dev to a list of clients used by a p2pdma device.
++ * This list should be passed to pci_p2pmem_find(). Once pci_p2pmem_find() has
++ * been called successfully, the list will be bound to a specific p2pdma
++ * device and new clients can only be added to the list if they are
++ * supported by that p2pdma device.
++ *
++ * The caller is expected to have a lock which protects @head as necessary
++ * so that none of the pci_p2p functions can be called concurrently
++ * on that list.
++ *
++ * Returns 0 if the client was successfully added.
 + */
-+static void nvmet_setup_p2pmem(struct nvmet_ctrl *ctrl, struct nvmet_req *req)
++int pci_p2pdma_add_client(struct list_head *head, struct device *dev)
 +{
-+	struct nvmet_ns *ns;
++	struct pci_p2pdma_client *item, *new_item;
++	struct pci_dev *provider = NULL;
++	struct pci_dev *client;
 +	int ret;
 +
-+	if (!req->port->use_p2pmem || !req->p2p_client)
-+		return;
-+
-+	mutex_lock(&ctrl->subsys->lock);
-+
-+	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, req->p2p_client);
-+	if (ret) {
-+		pr_err("failed adding peer-to-peer DMA client %s: %d\n",
-+		       dev_name(req->p2p_client), ret);
-+		goto free_devices;
++	if (IS_ENABLED(CONFIG_DMA_VIRT_OPS) && dev->dma_ops == &dma_virt_ops) {
++		dev_warn(dev, "cannot be used for peer-to-peer DMA because the driver makes use of dma_virt_ops\n");
++		return -ENODEV;
 +	}
 +
-+	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link) {
-+		ret = nvmet_p2pdma_add_client(ctrl, ns);
-+		if (ret)
-+			goto free_devices;
++	client = find_parent_pci_dev(dev);
++	if (!client) {
++		dev_warn(dev, "cannot be used for peer-to-peer DMA as it is not a PCI device\n");
++		return -ENODEV;
 +	}
 +
-+	if (req->port->p2p_dev) {
-+		if (!pci_p2pdma_assign_provider(req->port->p2p_dev,
-+						&ctrl->p2p_clients)) {
-+			pr_info("peer-to-peer memory on %s is not supported\n",
-+				pci_name(req->port->p2p_dev));
-+			goto free_devices;
-+		}
-+		ctrl->p2p_dev = pci_dev_get(req->port->p2p_dev);
-+	} else {
-+		ctrl->p2p_dev = pci_p2pmem_find(&ctrl->p2p_clients);
-+		if (!ctrl->p2p_dev) {
-+			pr_info("no supported peer-to-peer memory devices found\n");
-+			goto free_devices;
++	item = list_first_entry_or_null(head, struct pci_p2pdma_client, list);
++	if (item && item->provider) {
++		provider = item->provider;
++
++		ret = upstream_bridge_distance_warn(provider, client);
++		if (ret < 0) {
++			ret = -EXDEV;
++			goto put_client;
 +		}
 +	}
 +
-+	mutex_unlock(&ctrl->subsys->lock);
++	new_item = kzalloc(sizeof(*new_item), GFP_KERNEL);
++	if (!new_item) {
++		ret = -ENOMEM;
++		goto put_client;
++	}
 +
-+	pr_info("using peer-to-peer memory on %s\n", pci_name(ctrl->p2p_dev));
-+	return;
++	new_item->client = client;
++	new_item->provider = pci_dev_get(provider);
 +
-+free_devices:
-+	pci_p2pdma_client_list_free(&ctrl->p2p_clients);
-+	mutex_unlock(&ctrl->subsys->lock);
++	list_add_tail(&new_item->list, head);
++
++	return 0;
++
++put_client:
++	pci_dev_put(client);
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(pci_p2pdma_add_client);
 +
-+static void nvmet_release_p2pmem(struct nvmet_ctrl *ctrl)
++static void pci_p2pdma_client_free(struct pci_p2pdma_client *item)
 +{
-+	if (!ctrl->p2p_dev)
-+		return;
-+
-+	mutex_lock(&ctrl->subsys->lock);
-+
-+	pci_p2pdma_client_list_free(&ctrl->p2p_clients);
-+	pci_dev_put(ctrl->p2p_dev);
-+	ctrl->p2p_dev = NULL;
-+
-+	mutex_unlock(&ctrl->subsys->lock);
++	list_del(&item->list);
++	pci_dev_put(item->client);
++	pci_dev_put(item->provider);
++	kfree(item);
 +}
 +
- u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
- 		struct nvmet_req *req, u32 kato, struct nvmet_ctrl **ctrlp)
- {
-@@ -980,6 +1108,7 @@ u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
++/**
++ * pci_p2pdma_remove_client - remove and free a p2pdma client
++ * @head: list head of p2pdma clients
++ * @dev: device to remove from the list
++ *
++ * This removes @dev from a list of clients used by a p2pdma device.
++ * The caller is expected to have a lock which protects @head as necessary
++ * so that none of the pci_p2p functions can be called concurrently
++ * on that list.
++ */
++void pci_p2pdma_remove_client(struct list_head *head, struct device *dev)
++{
++	struct pci_p2pdma_client *pos, *tmp;
++	struct pci_dev *pdev;
++
++	pdev = find_parent_pci_dev(dev);
++	if (!pdev)
++		return;
++
++	list_for_each_entry_safe(pos, tmp, head, list) {
++		if (pos->client != pdev)
++			continue;
++
++		pci_p2pdma_client_free(pos);
++	}
++
++	pci_dev_put(pdev);
++}
++EXPORT_SYMBOL_GPL(pci_p2pdma_remove_client);
++
++/**
++ * pci_p2pdma_client_list_free - free an entire list of p2pdma clients
++ * @head: list head of p2pdma clients
++ *
++ * This removes all devices in a list of clients used by a p2pdma device.
++ * The caller is expected to have a lock which protects @head as necessary
++ * so that none of the pci_p2pdma functions can be called concurrently
++ * on that list.
++ */
++void pci_p2pdma_client_list_free(struct list_head *head)
++{
++	struct pci_p2pdma_client *pos, *tmp;
++
++	list_for_each_entry_safe(pos, tmp, head, list)
++		pci_p2pdma_client_free(pos);
++}
++EXPORT_SYMBOL_GPL(pci_p2pdma_client_list_free);
++
++/**
++ * pci_p2pdma_distance - Determive the cumulative distance between
++ *	a p2pdma provider and the clients in use.
++ * @provider: p2pdma provider to check against the client list
++ * @clients: list of devices to check (NULL-terminated)
++ * @verbose: if true, print warnings for devices when we return -1
++ *
++ * Returns -1 if any of the clients are not compatible (behind the same
++ * root port as the provider), otherwise returns a positive number where
++ * the lower number is the preferrable choice. (If there's one client
++ * that's the same as the provider it will return 0, which is best choice).
++ *
++ * For now, "compatible" means the provider and the clients are all behind
++ * the same PCI root port. This cuts out cases that may work but is safest
++ * for the user. Future work can expand this to white-list root complexes that
++ * can safely forward between each ports.
++ */
++int pci_p2pdma_distance(struct pci_dev *provider, struct list_head *clients,
++			bool verbose)
++{
++	struct pci_p2pdma_client *pos;
++	int ret;
++	int distance = 0;
++	bool not_supported = false;
++
++	if (list_empty(clients))
++		return -1;
++
++	list_for_each_entry(pos, clients, list) {
++		if (verbose)
++			ret = upstream_bridge_distance_warn(provider,
++							    pos->client);
++		else
++			ret = upstream_bridge_distance(provider, pos->client,
++						       NULL);
++
++		if (ret < 0)
++			not_supported = true;
++
++		if (not_supported && !verbose)
++			break;
++
++		distance += ret;
++	}
++
++	if (not_supported)
++		return -1;
++
++	return distance;
++}
++EXPORT_SYMBOL_GPL(pci_p2pdma_distance);
++
++/**
++ * pci_p2pdma_assign_provider - Check compatibily (as per pci_p2pdma_distance)
++ *	and assign a provider to a list of clients
++ * @provider: p2pdma provider to assign to the client list
++ * @clients: list of devices to check (NULL-terminated)
++ *
++ * Returns false if any of the clients are not compatible, true if the
++ * provider was successfully assigned to the clients.
++ */
++bool pci_p2pdma_assign_provider(struct pci_dev *provider,
++				struct list_head *clients)
++{
++	struct pci_p2pdma_client *pos;
++
++	if (pci_p2pdma_distance(provider, clients, true) < 0)
++		return false;
++
++	list_for_each_entry(pos, clients, list)
++		pos->provider = provider;
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(pci_p2pdma_assign_provider);
++
++/**
++ * pci_has_p2pmem - check if a given PCI device has published any p2pmem
++ * @pdev: PCI device to check
++ */
++bool pci_has_p2pmem(struct pci_dev *pdev)
++{
++	return pdev->p2pdma && pdev->p2pdma->p2pmem_published;
++}
++EXPORT_SYMBOL_GPL(pci_has_p2pmem);
++
++/**
++ * pci_p2pmem_find - find a peer-to-peer DMA memory device compatible with
++ *	the specified list of clients and shortest distance (as determined
++ *	by pci_p2pmem_dma())
++ * @clients: list of devices to check (NULL-terminated)
++ *
++ * If multiple devices are behind the same switch, the one "closest" to the
++ * client devices in use will be chosen first. (So if one of the providers are
++ * the same as one of the clients, that provider will be used ahead of any
++ * other providers that are unrelated). If multiple providers are an equal
++ * distance away, one will be chosen at random.
++ *
++ * Returns a pointer to the PCI device with a reference taken (use pci_dev_put
++ * to return the reference) or NULL if no compatible device is found. The
++ * found provider will also be assigned to the client list.
++ */
++struct pci_dev *pci_p2pmem_find(struct list_head *clients)
++{
++	struct pci_dev *pdev = NULL;
++	struct pci_p2pdma_client *pos;
++	int distance;
++	int closest_distance = INT_MAX;
++	struct pci_dev **closest_pdevs;
++	int dev_cnt = 0;
++	const int max_devs = PAGE_SIZE / sizeof(*closest_pdevs);
++	int i;
++
++	closest_pdevs = kmalloc(PAGE_SIZE, GFP_KERNEL);
++
++	while ((pdev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pdev))) {
++		if (!pci_has_p2pmem(pdev))
++			continue;
++
++		distance = pci_p2pdma_distance(pdev, clients, false);
++		if (distance < 0 || distance > closest_distance)
++			continue;
++
++		if (distance == closest_distance && dev_cnt >= max_devs)
++			continue;
++
++		if (distance < closest_distance) {
++			for (i = 0; i < dev_cnt; i++)
++				pci_dev_put(closest_pdevs[i]);
++
++			dev_cnt = 0;
++			closest_distance = distance;
++		}
++
++		closest_pdevs[dev_cnt++] = pci_dev_get(pdev);
++	}
++
++	if (dev_cnt)
++		pdev = pci_dev_get(closest_pdevs[prandom_u32_max(dev_cnt)]);
++
++	for (i = 0; i < dev_cnt; i++)
++		pci_dev_put(closest_pdevs[i]);
++
++	if (pdev)
++		list_for_each_entry(pos, clients, list)
++			pos->provider = pdev;
++
++	kfree(closest_pdevs);
++	return pdev;
++}
++EXPORT_SYMBOL_GPL(pci_p2pmem_find);
++
++/**
++ * pci_alloc_p2p_mem - allocate peer-to-peer DMA memory
++ * @pdev: the device to allocate memory from
++ * @size: number of bytes to allocate
++ *
++ * Returns the allocated memory or NULL on error.
++ */
++void *pci_alloc_p2pmem(struct pci_dev *pdev, size_t size)
++{
++	void *ret;
++
++	if (unlikely(!pdev->p2pdma))
++		return NULL;
++
++	if (unlikely(!percpu_ref_tryget_live(&pdev->p2pdma->devmap_ref)))
++		return NULL;
++
++	ret = (void *)gen_pool_alloc(pdev->p2pdma->pool, size);
++
++	if (unlikely(!ret))
++		percpu_ref_put(&pdev->p2pdma->devmap_ref);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_alloc_p2pmem);
++
++/**
++ * pci_free_p2pmem - allocate peer-to-peer DMA memory
++ * @pdev: the device the memory was allocated from
++ * @addr: address of the memory that was allocated
++ * @size: number of bytes that was allocated
++ */
++void pci_free_p2pmem(struct pci_dev *pdev, void *addr, size_t size)
++{
++	gen_pool_free(pdev->p2pdma->pool, (uintptr_t)addr, size);
++	percpu_ref_put(&pdev->p2pdma->devmap_ref);
++}
++EXPORT_SYMBOL_GPL(pci_free_p2pmem);
++
++/**
++ * pci_virt_to_bus - return the PCI bus address for a given virtual
++ *	address obtained with pci_alloc_p2pmem()
++ * @pdev: the device the memory was allocated from
++ * @addr: address of the memory that was allocated
++ */
++pci_bus_addr_t pci_p2pmem_virt_to_bus(struct pci_dev *pdev, void *addr)
++{
++	if (!addr)
++		return 0;
++	if (!pdev->p2pdma)
++		return 0;
++
++	/*
++	 * Note: when we added the memory to the pool we used the PCI
++	 * bus address as the physical address. So gen_pool_virt_to_phys()
++	 * actually returns the bus address despite the misleading name.
++	 */
++	return gen_pool_virt_to_phys(pdev->p2pdma->pool, (unsigned long)addr);
++}
++EXPORT_SYMBOL_GPL(pci_p2pmem_virt_to_bus);
++
++/**
++ * pci_p2pmem_alloc_sgl - allocate peer-to-peer DMA memory in a scatterlist
++ * @pdev: the device to allocate memory from
++ * @sgl: the allocated scatterlist
++ * @nents: the number of SG entries in the list
++ * @length: number of bytes to allocate
++ *
++ * Returns 0 on success
++ */
++struct scatterlist *pci_p2pmem_alloc_sgl(struct pci_dev *pdev,
++					 unsigned int *nents, u32 length)
++{
++	struct scatterlist *sg;
++	void *addr;
++
++	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
++	if (!sg)
++		return NULL;
++
++	sg_init_table(sg, 1);
++
++	addr = pci_alloc_p2pmem(pdev, length);
++	if (!addr)
++		goto out_free_sg;
++
++	sg_set_buf(sg, addr, length);
++	*nents = 1;
++	return sg;
++
++out_free_sg:
++	kfree(sg);
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(pci_p2pmem_alloc_sgl);
++
++/**
++ * pci_p2pmem_free_sgl - free a scatterlist allocated by pci_p2pmem_alloc_sgl()
++ * @pdev: the device to allocate memory from
++ * @sgl: the allocated scatterlist
++ * @nents: the number of SG entries in the list
++ */
++void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl)
++{
++	struct scatterlist *sg;
++	int count;
++
++	for_each_sg(sgl, sg, INT_MAX, count) {
++		if (!sg)
++			break;
++
++		pci_free_p2pmem(pdev, sg_virt(sg), sg->length);
++	}
++	kfree(sgl);
++}
++EXPORT_SYMBOL_GPL(pci_p2pmem_free_sgl);
++
++/**
++ * pci_p2pmem_publish - publish the peer-to-peer DMA memory for use by
++ *	other devices with pci_p2pmem_find()
++ * @pdev: the device with peer-to-peer DMA memory to publish
++ * @publish: set to true to publish the memory, false to unpublish it
++ *
++ * Published memory can be used by other PCI device drivers for
++ * peer-2-peer DMA operations. Non-published memory is reserved for
++ * exlusive use of the device driver that registers the peer-to-peer
++ * memory.
++ */
++void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
++{
++	if (publish && !pdev->p2pdma)
++		return;
++
++	pdev->p2pdma->p2pmem_published = publish;
++}
++EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
+diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+index f91f9e763557..9553370ebdad 100644
+--- a/include/linux/memremap.h
++++ b/include/linux/memremap.h
+@@ -53,11 +53,16 @@ struct vmem_altmap {
+  * wakeup event whenever a page is unpinned and becomes idle. This
+  * wakeup is used to coordinate physical address space management (ex:
+  * fs truncate/hole punch) vs pinned pages (ex: device dma).
++ *
++ * MEMORY_DEVICE_PCI_P2PDMA:
++ * Device memory residing in a PCI BAR intended for use with Peer-to-Peer
++ * transactions.
+  */
+ enum memory_type {
+ 	MEMORY_DEVICE_PRIVATE = 1,
+ 	MEMORY_DEVICE_PUBLIC,
+ 	MEMORY_DEVICE_FS_DAX,
++	MEMORY_DEVICE_PCI_P2PDMA,
+ };
  
- 	INIT_WORK(&ctrl->async_event_work, nvmet_async_event_work);
- 	INIT_LIST_HEAD(&ctrl->async_events);
-+	INIT_LIST_HEAD(&ctrl->p2p_clients);
- 
- 	memcpy(ctrl->subsysnqn, subsysnqn, NVMF_NQN_SIZE);
- 	memcpy(ctrl->hostnqn, hostnqn, NVMF_NQN_SIZE);
-@@ -1041,6 +1170,7 @@ u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
- 		ctrl->kato = DIV_ROUND_UP(kato, 1000);
- 	}
- 	nvmet_start_keep_alive_timer(ctrl);
-+	nvmet_setup_p2pmem(ctrl, req);
- 
- 	mutex_lock(&subsys->lock);
- 	list_add_tail(&ctrl->subsys_entry, &subsys->ctrls);
-@@ -1079,6 +1209,7 @@ static void nvmet_ctrl_free(struct kref *ref)
- 	flush_work(&ctrl->async_event_work);
- 	cancel_work_sync(&ctrl->fatal_err_work);
- 
-+	nvmet_release_p2pmem(ctrl);
- 	ida_simple_remove(&cntlid_ida, ctrl->cntlid);
- 
- 	kfree(ctrl->sqs);
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 7d6cb61021e4..297861064dd8 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -84,6 +84,11 @@ static inline struct nvmet_ns *to_nvmet_ns(struct config_item *item)
- 	return container_of(to_config_group(item), struct nvmet_ns, group);
+ /*
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a61ebe8ad4ca..2055df412a77 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -890,6 +890,19 @@ static inline bool is_device_public_page(const struct page *page)
+ 		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
  }
  
-+static inline struct device *nvmet_ns_dev(struct nvmet_ns *ns)
++#ifdef CONFIG_PCI_P2PDMA
++static inline bool is_pci_p2pdma_page(const struct page *page)
 +{
-+	return disk_to_dev(ns->bdev->bd_disk);
++	return is_zone_device_page(page) &&
++		page->pgmap->type == MEMORY_DEVICE_PCI_P2PDMA;
 +}
++#else /* CONFIG_PCI_P2PDMA */
++static inline bool is_pci_p2pdma_page(const struct page *page)
++{
++	return false;
++}
++#endif /* CONFIG_PCI_P2PDMA */
 +
- struct nvmet_cq {
- 	u16			qid;
- 	u16			size;
-@@ -134,6 +139,8 @@ struct nvmet_port {
- 	void				*priv;
- 	bool				enabled;
- 	int				inline_data_size;
-+	bool				use_p2pmem;
-+	struct pci_dev			*p2p_dev;
- };
- 
- static inline struct nvmet_port *to_nvmet_port(struct config_item *item)
-@@ -182,6 +189,9 @@ struct nvmet_ctrl {
- 	__le32			*changed_ns_list;
- 	u32			nr_changed_ns;
- 
-+	struct pci_dev		*p2p_dev;
-+	struct list_head	p2p_clients;
+ #else /* CONFIG_DEV_PAGEMAP_OPS */
+ static inline void dev_pagemap_get_ops(void)
+ {
+@@ -913,6 +926,11 @@ static inline bool is_device_public_page(const struct page *page)
+ {
+ 	return false;
+ }
 +
- 	char			subsysnqn[NVMF_NQN_FIELD_LEN];
- 	char			hostnqn[NVMF_NQN_FIELD_LEN];
- };
-@@ -294,6 +304,9 @@ struct nvmet_req {
++static inline bool is_pci_p2pdma_page(const struct page *page)
++{
++	return false;
++}
+ #endif /* CONFIG_DEV_PAGEMAP_OPS */
  
- 	void (*execute)(struct nvmet_req *req);
- 	const struct nvmet_fabrics_ops *ops;
+ static inline void get_page(struct page *page)
+diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+new file mode 100644
+index 000000000000..7b2b0f547528
+--- /dev/null
++++ b/include/linux/pci-p2pdma.h
+@@ -0,0 +1,102 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * PCI Peer 2 Peer DMA support.
++ *
++ * Copyright (c) 2016-2018, Logan Gunthorpe
++ * Copyright (c) 2016-2017, Microsemi Corporation
++ * Copyright (c) 2017, Christoph Hellwig
++ * Copyright (c) 2018, Eideticom Inc.
++ *
++ */
 +
-+	struct pci_dev *p2p_dev;
-+	struct device *p2p_client;
- };
- 
- extern struct workqueue_struct *buffered_io_wq;
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index e148dee72ba5..5c9cb752e2ed 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -735,6 +735,8 @@ static void nvmet_rdma_handle_command(struct nvmet_rdma_queue *queue,
- 		cmd->send_sge.addr, cmd->send_sge.length,
- 		DMA_TO_DEVICE);
- 
-+	cmd->req.p2p_client = &queue->dev->device->dev;
++#ifndef _LINUX_PCI_P2PDMA_H
++#define _LINUX_PCI_P2PDMA_H
 +
- 	if (!nvmet_req_init(&cmd->req, &queue->nvme_cq,
- 			&queue->nvme_sq, &nvmet_rdma_ops))
- 		return;
++#include <linux/pci.h>
++
++struct block_device;
++struct scatterlist;
++
++#ifdef CONFIG_PCI_P2PDMA
++int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
++		u64 offset);
++int pci_p2pdma_add_client(struct list_head *head, struct device *dev);
++void pci_p2pdma_remove_client(struct list_head *head, struct device *dev);
++void pci_p2pdma_client_list_free(struct list_head *head);
++int pci_p2pdma_distance(struct pci_dev *provider, struct list_head *clients,
++			bool verbose);
++bool pci_p2pdma_assign_provider(struct pci_dev *provider,
++				struct list_head *clients);
++bool pci_has_p2pmem(struct pci_dev *pdev);
++struct pci_dev *pci_p2pmem_find(struct list_head *clients);
++void *pci_alloc_p2pmem(struct pci_dev *pdev, size_t size);
++void pci_free_p2pmem(struct pci_dev *pdev, void *addr, size_t size);
++pci_bus_addr_t pci_p2pmem_virt_to_bus(struct pci_dev *pdev, void *addr);
++struct scatterlist *pci_p2pmem_alloc_sgl(struct pci_dev *pdev,
++					 unsigned int *nents, u32 length);
++void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
++void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
++#else /* CONFIG_PCI_P2PDMA */
++static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
++		size_t size, u64 offset)
++{
++	return -EOPNOTSUPP;
++}
++static inline int pci_p2pdma_add_client(struct list_head *head,
++		struct device *dev)
++{
++	return 0;
++}
++static inline void pci_p2pdma_remove_client(struct list_head *head,
++		struct device *dev)
++{
++}
++static inline void pci_p2pdma_client_list_free(struct list_head *head)
++{
++}
++static inline int pci_p2pdma_distance(struct pci_dev *provider,
++				      struct list_head *clients,
++				      bool verbose)
++{
++	return -1;
++}
++static inline bool pci_p2pdma_assign_provider(struct pci_dev *provider,
++					      struct list_head *clients)
++{
++	return false;
++}
++static inline bool pci_has_p2pmem(struct pci_dev *pdev)
++{
++	return false;
++}
++static inline struct pci_dev *pci_p2pmem_find(struct list_head *clients)
++{
++	return NULL;
++}
++static inline void *pci_alloc_p2pmem(struct pci_dev *pdev, size_t size)
++{
++	return NULL;
++}
++static inline void pci_free_p2pmem(struct pci_dev *pdev, void *addr,
++		size_t size)
++{
++}
++static inline pci_bus_addr_t pci_p2pmem_virt_to_bus(struct pci_dev *pdev,
++						    void *addr)
++{
++	return 0;
++}
++static inline struct scatterlist *pci_p2pmem_alloc_sgl(struct pci_dev *pdev,
++		unsigned int *nents, u32 length)
++{
++	return NULL;
++}
++static inline void pci_p2pmem_free_sgl(struct pci_dev *pdev,
++		struct scatterlist *sgl)
++{
++}
++static inline void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
++{
++}
++#endif /* CONFIG_PCI_P2PDMA */
++#endif /* _LINUX_PCI_P2P_H */
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index e72ca8dd6241..5d95dbf21f4a 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -281,6 +281,7 @@ struct pcie_link_state;
+ struct pci_vpd;
+ struct pci_sriov;
+ struct pci_ats;
++struct pci_p2pdma;
+ 
+ /* The pci_dev structure describes PCI devices */
+ struct pci_dev {
+@@ -439,6 +440,9 @@ struct pci_dev {
+ #ifdef CONFIG_PCI_PASID
+ 	u16		pasid_features;
+ #endif
++#ifdef CONFIG_PCI_P2PDMA
++	struct pci_p2pdma *p2pdma;
++#endif
+ 	phys_addr_t	rom;		/* Physical address if not from BAR */
+ 	size_t		romlen;		/* Length if not from BAR */
+ 	char		*driver_override; /* Driver name to force a match */
 -- 
 2.11.0
 
