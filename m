@@ -2,260 +2,378 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC7CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832F1C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D1520661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D1520661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D561720666
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 03:26:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d4GlX/NF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D561720666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeH3HXY (ORCPT
+        id S1727480AbeH3H0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 03:23:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37256 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727233AbeH3HXY (ORCPT
+        Thu, 30 Aug 2018 03:26:53 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33178 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbeH3H0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 03:23:24 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7U3IjtI001644
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 23:23:23 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61x8n1gs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 23:23:23 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 23:23:21 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 23:23:17 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7U3NGrj66584668
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Aug 2018 03:23:16 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4A4AB205F;
-        Wed, 29 Aug 2018 23:22:11 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68962B2064;
-        Wed, 29 Aug 2018 23:22:11 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.196.106])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 23:22:11 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5DAD016C8DED; Wed, 29 Aug 2018 20:23:15 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 20:23:15 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH tip/core/rcu 3/3] srcu: Make early-boot call_srcu() reuse
- workqueue lists
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180829212036.GA22033@linux.vnet.ibm.com>
- <20180829212313.22903-3-paulmck@linux.vnet.ibm.com>
- <20180829215616.1c10e476@vmware.local.home>
- <20180830020701.GE4225@linux.vnet.ibm.com>
- <20180829224609.5ffdc9ec@vmware.local.home>
+        Thu, 30 Aug 2018 03:26:53 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 8-v6so13027702oip.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 20:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zWZmr+Er56eRwzqQX77B0CQGPLsV6fN4ues4t8aj+FE=;
+        b=d4GlX/NFjbmPyN916kb+vWTUsNSIA8EUlfjaTgBC0EoPpPxkAzGMj/tvLynlu7cHUg
+         u+b4vR84fFCWF8nDKUrfsL+VeCiyrkIfpfLF1Ird5CyU1NPxqegKvGSUlsZZb8ubViKv
+         7V9eXUbh8FBrMFx/+doBXTR40mjUttoPsyS3w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zWZmr+Er56eRwzqQX77B0CQGPLsV6fN4ues4t8aj+FE=;
+        b=UayTuIM7nSsY+XnW7ZqhUMueJfsJ4S7dDETx+2wiTfqpkguDxciijczHIolYEfHsjl
+         yN2yxIR8cgTPtIXt6kpFsR+g7alCLdYzmM0OLBL0vR0DU2T4Aw1gDjxXFnFR1EcBvFFd
+         J9xj8zT8bHuRDgPKgKi091JWaIyUXQ964yFfrq18+IShldk3fSLs1oLN/I3xPr8UQ3sx
+         +Oiei2Qtv4KrSVI29cQWLz2VZ/LvC0QLWdXzFwOHec51fDs10WId73yO+UDdr2yvMtnw
+         Ak2RVABA/q2/LK13HiN7LjKEdkWyR0CUPY/AF57fxKiXhPr1x3dwbcfpCK0s4coS0ZJe
+         4R4w==
+X-Gm-Message-State: APzg51BEkOdN4psueJd+H16qKbBBMPgFGjAhcWV5cANuiI3WJwPsNB50
+        tvKlFWLb2nUb+FM7WxtkxOkLcgh/fpBo/fhEoDhJ/Q==
+X-Google-Smtp-Source: ANB0VdaJRw4MPtY1TqHomSo7isXuOURQmk9owzpFCtQZFRHRyCpmBEeJBwq8BwORcRsMQqxMzqrr2C+hmKx4eDGtFT4=
+X-Received: by 2002:aca:ef87:: with SMTP id n129-v6mr754485oih.161.1535599611359;
+ Wed, 29 Aug 2018 20:26:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829224609.5ffdc9ec@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18083003-0064-0000-0000-0000034440C3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009637; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080838; UDB=6.00557554; IPR=6.00860822;
- MB=3.00023004; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 03:23:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083003-0065-0000-0000-00003A78FA11
-Message-Id: <20180830032315.GG4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808300032
+Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 20:26:44 -0700 (PDT)
+In-Reply-To: <6d0881db-e02f-6bf4-2516-448bc4772cb8@gmail.com>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <20180824101145.GA1510@amd>
+ <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com> <20180824201227.GB17146@amd>
+ <f5046e2d-9f15-4b7e-083e-e97f7ca0693c@gmail.com> <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
+ <52eb7b5f-a405-06d1-2758-f27401a3ce3b@gmail.com> <CAMz4ku+a5QT5CaonW3R6dfKzcpJgyeGLbD5tH-0K1QMLDdQpqQ@mail.gmail.com>
+ <6d0881db-e02f-6bf4-2516-448bc4772cb8@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 30 Aug 2018 11:26:44 +0800
+Message-ID: <CAMz4kuKT=zcH_Kjc5FnvX98vw-5aNQMxMTs4aeqqiM6F4QGEuA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 10:46:09PM -0400, Steven Rostedt wrote:
-> On Wed, 29 Aug 2018 19:07:01 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > On Wed, Aug 29, 2018 at 09:56:16PM -0400, Steven Rostedt wrote:
-> > > On Wed, 29 Aug 2018 14:23:13 -0700
-> > > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > >   
-> > > > Allocating a list_head structure that is almost never used, and, when
-> > > > used, is used only during early boot (rcu_init() and earlier), is a bit
-> > > > wasteful.  This commit therefore eliminates that list_head in favor of
-> > > > the one in the work_struct structure.  This is safe because the work_struct
-> > > > structure cannot be used until after rcu_init() returns.
-> > > > 
-> > > > Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > > Cc: Tejun Heo <tj@kernel.org>
-> > > > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > > > ---
-> > > >  include/linux/srcutiny.h |  2 --
-> > > >  include/linux/srcutree.h |  3 +--
-> > > >  kernel/rcu/srcutiny.c    | 10 +++++-----
-> > > >  kernel/rcu/srcutree.c    | 11 +++++------
-> > > >  4 files changed, 11 insertions(+), 15 deletions(-)
-> > > > 
-> > > > diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-> > > > index 2b5c0822e683..f41d2fb09f87 100644
-> > > > --- a/include/linux/srcutiny.h
-> > > > +++ b/include/linux/srcutiny.h
-> > > > @@ -36,7 +36,6 @@ struct srcu_struct {
-> > > >  	struct rcu_head *srcu_cb_head;	/* Pending callbacks: Head. */
-> > > >  	struct rcu_head **srcu_cb_tail;	/* Pending callbacks: Tail. */
-> > > >  	struct work_struct srcu_work;	/* For driving grace periods. */
-> > > > -	struct list_head srcu_boot_entry; /* Early-boot callbacks. */
-> > > >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > > >  	struct lockdep_map dep_map;
-> > > >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > > > @@ -49,7 +48,6 @@ void srcu_drive_gp(struct work_struct *wp);
-> > > >  	.srcu_wq = __SWAIT_QUEUE_HEAD_INITIALIZER(name.srcu_wq),	\
-> > > >  	.srcu_cb_tail = &name.srcu_cb_head,				\
-> > > >  	.srcu_work = __WORK_INITIALIZER(name.srcu_work, srcu_drive_gp),	\
-> > > > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> > > >  	__SRCU_DEP_MAP_INIT(name)					\
-> > > >  }
-> > > >  
-> > > > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> > > > index 9cfa4610113a..0ae91b3a7406 100644
-> > > > --- a/include/linux/srcutree.h
-> > > > +++ b/include/linux/srcutree.h
-> > > > @@ -94,7 +94,6 @@ struct srcu_struct {
-> > > >  						/*  callback for the barrier */
-> > > >  						/*  operation. */
-> > > >  	struct delayed_work work;
-> > > > -	struct list_head srcu_boot_entry;	/* Early-boot callbacks. */
-> > > >  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> > > >  	struct lockdep_map dep_map;
-> > > >  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
-> > > > @@ -110,7 +109,7 @@ struct srcu_struct {
-> > > >  	.sda = &pcpu_name,						\
-> > > >  	.lock = __SPIN_LOCK_UNLOCKED(name.lock),			\
-> > > >  	.srcu_gp_seq_needed = -1UL,					\
-> > > > -	.srcu_boot_entry = LIST_HEAD_INIT(name.srcu_boot_entry),	\
-> > > > +	.work = __DELAYED_WORK_INITIALIZER(name.work, NULL, 0),		\  
-> > > 
-> > > Thanks!  
-> > 
-> > Glad you like it!  Does it actually work for you?  ;-)
-> 
-> Oh, you want me to actually test it too? ;-)
+Hi Jacek,
 
-;-) ;-) ;-)
+On 30 August 2018 at 03:15, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> On 08/29/2018 11:48 AM, Baolin Wang wrote:
+>> Hi Jacek,
+>>
+>> On 29 August 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>> On 08/25/2018 09:51 AM, Baolin Wang wrote:
+>>>> On 25 August 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>>> On 08/24/2018 10:12 PM, Pavel Machek wrote:
+>>>>>> On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
+>>>>>>> Hi Pavel,
+>>>>>>>
+>>>>>>> On 08/24/2018 12:11 PM, Pavel Machek wrote:
+>>>>>>>> Hi!
+>>>>>>>>
+>>>>>>>>> I think that it would be more flexible if software pattern fallback
+>>>>>>>>> was applied in case of pattern_set failure. Otherwise, it would
+>>>>>>>>> lead to the situation where LED class devices that support hardware
+>>>>>>>>> blinking couldn't be applied the same set of patterns as LED class
+>>>>>>>>> devices that don't implement pattern_set. The latter will always have to
+>>>>>>>>> resort to using software pattern engine which will accept far greater
+>>>>>>>>> amount of pattern combinations.
+>>>>>>>>>
+>>>>>>>>> In this case we need to discuss on what basis the decision will be
+>>>>>>>>> made on whether hardware or software engine will be used.
+>>>>>>>>>
+>>>>>>>>> Possible options coming to mind:
+>>>>>>>>> - an interface will be provided to determine max difference between
+>>>>>>>>>   the settings supported by the hardware and the settings requested by
+>>>>>>>>>   the user, that will result in aligning user's setting to the hardware
+>>>>>>>>>   capabilities
+>>>>>>>>> - the above alignment rate will be predefined instead
+>>>>>>>>> - hardware engine will be used only if user requests supported settings
+>>>>>>>>>   on the whole span of the requested pattern
+>>>>>>>>> - in each of the above cases it would be worth to think of the
+>>>>>>>>>   interface to show the scope of the settings supported by hardware
+>>>>>>>>
+>>>>>>>> I'd recommend keeping it simple. We use hardware engine if driver
+>>>>>>>> author thinks pattern is "close enough".
+>>>>>>>
+>>>>>>> The thing is that in the ledtrig-pattern v5 implementation there
+>>>>>>> is no option of using software fallback if pattern_set op
+>>>>>>> is initialized:
+>>>>>>>
+>>>>>>> +    if (led_cdev->pattern_set) {
+>>>>>>> +            return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>>>>> +                                         data->npatterns, data->repeat);
+>>>>>>> +    }
+>>>>>>
+>>>>>> Yeah, that sounds wrong. (Sorry I did not pay enough attention).
+>>>>>>
+>>>>>> It pattern_set() returns special error code, it should just continue
+>>>>>> and use software pattern fallback.
+>>>>>
+>>>>> And now we can get back to the issue I was concerned about in the
+>>>>> email you replied to, i.e. what series of [brightness delta_t] tuples
+>>>>> should be written to the pattern file to enable hardware breathing
+>>>>> engine.
+>>>>
+>>>> OK. So now we've made a consensus to use the software pattern fallback
+>>>> if failed to set hardware pattern. How about introduce one interface
+>>>> to convert hardware patterns to software patterns if necessary?
+>>>>
+>>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
+>>>> b/drivers/leds/trigger/ledtrig-pattern.c
+>>>> index 63b94a2..d46a641 100644
+>>>> --- a/drivers/leds/trigger/ledtrig-pattern.c
+>>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>>>> @@ -66,8 +66,15 @@ static int pattern_trig_start_pattern(struct
+>>>> pattern_trig_data *data,
+>>>>                 return 0;
+>>>>
+>>>>         if (led_cdev->pattern_set) {
+>>>> -               return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>> -                                            data->npatterns, data->repeat);
+>>>> +               ret = led_cdev->pattern_set(led_cdev, data->patterns,
+>>>> +                                           data->npatterns, data->repeat);
+>>>> +               if (!ret)
+>>>> +                       return 0;
+>>>> +
+>>>> +               dev_warn(led_cdev->dev, "Failed to set hardware pattern\n");
+>>>> +
+>>>> +               if (led_cdev->pattern_convert)
+>>>> +                       led_cdev->pattern_convert(led_cdev,
+>>>
+>>> I can't see how it could help to assess if hw pattern
+>>> engine can launch given pattern, and with what accuracy.
+>>>
+>>> Instead, I propose to add a means for defining whether the pattern
+>>> to be set is intended for hardware pattern engine or for software
+>>> fallback. It could be either separate sysfs file e.g. hw_pattern,
+>>> or a modifier to the pattern written to the pattern file, e,g,
+>>>
+>>> echo "hw 100 2 200 3 100 2" > pattern
+>>>
+>>> hw format expected by given driver would have to be described
+>>> in the per-driver ABI documentation. All patterns without
+>>> "hw" prefix would enable software pattern engine.
+>>
+>> OK. So I did some optimization based on v5 according to suggestion, if
+>> you think this is okay for you, then I will send out the formal v6
+>> patch set.
+>>
+>> 1. echo "hw 100 2 200 3 100 2" > pattern
+>> Only for hardware pattern, if failed,  we will return error number.
+>
+> After thinking more about it, I'd opt for a separate file
+> dedicated to hardware pattern, e.g. hw_pattern, which would
+> be created only if the LED class driver implemented pattern_set op.
+>
+>> 2. echo "100 2 200 3 100 2" > pattern
+>> Will try to set hardware pattern firstly, if failed, will use software
+>> pattern instead.
+>>
+>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
+>> b/drivers/leds/trigger/ledtrig-pattern.c
+>> index 63b94a2..f08e797 100644
+>> --- a/drivers/leds/trigger/ledtrig-pattern.c
+>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>> @@ -26,6 +26,7 @@ struct pattern_trig_data {
+>>       u32 repeat;
+>>       u32 last_repeat;
+>>       bool is_indefinite;
+>> +     bool is_hw_pattern;
+>>       struct timer_list timer;
+>>  };
+>>
+>> @@ -62,12 +63,21 @@ static void pattern_trig_timer_function(struct
+>> timer_list *t)
+>>  static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>>                                     struct led_classdev *led_cdev)
+>>  {
+>> +     int ret;
+>> +
+>>       if (!data->npatterns)
+>>               return 0;
+>>
+>>       if (led_cdev->pattern_set) {
+>> -             return led_cdev->pattern_set(led_cdev, data->patterns,
+>> +             ret = led_cdev->pattern_set(led_cdev, data->patterns,
+>>                                            data->npatterns, data->repeat);
+>> +             if (!ret)
+>> +                     return 0;
+>> +
+>> +             dev_warn(led_cdev->dev, "Failed to set hardware patterns\n");
+>> +
+>> +             if (data->is_hw_pattern)
+>> +                     return ret;
+>
+> With separate pattern files we could get rid of this ambiguity and
+> attempt calling pattern_set only if requested via hw_pattern file.
+> No software fallback should be employed in case of failure then.
+>
+> Similarly in case of requests originating from pattern file -
+> the software engine should be set up.
 
-> I'll try to add that in my todo list tomorrow.
+Please correct me if I understood you incorrectly.
 
-Much appreciated!
+So we should create the hw_pattern file if the LED class driver
+implemented pattern_set op, then no need use software fallback if it
+failed to set hardware pattern.
 
-							Thanx, Paul
+If the LED class driver did not implement pattern_set op, we just show
+up pattern file for users, and we always use software pattern now.
 
-> -- Steve
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> > > -- Steve
-> > >   
-> > > >  	__SRCU_DEP_MAP_INIT(name)					\
-> > > >  }
-> > > >  
-> > > > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > > > index d233f0c63f6f..b46e6683f8c9 100644
-> > > > --- a/kernel/rcu/srcutiny.c
-> > > > +++ b/kernel/rcu/srcutiny.c
-> > > > @@ -48,7 +48,7 @@ static int init_srcu_struct_fields(struct srcu_struct *sp)
-> > > >  	sp->srcu_gp_waiting = false;
-> > > >  	sp->srcu_idx = 0;
-> > > >  	INIT_WORK(&sp->srcu_work, srcu_drive_gp);
-> > > > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
-> > > > +	INIT_LIST_HEAD(&sp->srcu_work.entry);
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > @@ -185,8 +185,8 @@ void call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
-> > > >  	if (!READ_ONCE(sp->srcu_gp_running)) {
-> > > >  		if (likely(srcu_init_done))
-> > > >  			schedule_work(&sp->srcu_work);
-> > > > -		else if (list_empty(&sp->srcu_boot_entry))
-> > > > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> > > > +		else if (list_empty(&sp->srcu_work.entry))
-> > > > +			list_add(&sp->srcu_work.entry, &srcu_boot_list);
-> > > >  	}
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(call_srcu);
-> > > > @@ -224,8 +224,8 @@ void __init srcu_init(void)
-> > > >  	srcu_init_done = true;
-> > > >  	while (!list_empty(&srcu_boot_list)) {
-> > > >  		sp = list_first_entry(&srcu_boot_list,
-> > > > -				      struct srcu_struct, srcu_boot_entry);
-> > > > -		list_del_init(&sp->srcu_boot_entry);
-> > > > +				      struct srcu_struct, srcu_work.entry);
-> > > > +		list_del_init(&sp->srcu_work.entry);
-> > > >  		schedule_work(&sp->srcu_work);
-> > > >  	}
-> > > >  }
-> > > > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> > > > index e79c1929328f..36a2857c84e0 100644
-> > > > --- a/kernel/rcu/srcutree.c
-> > > > +++ b/kernel/rcu/srcutree.c
-> > > > @@ -186,7 +186,6 @@ static int init_srcu_struct_fields(struct srcu_struct *sp, bool is_static)
-> > > >  	mutex_init(&sp->srcu_barrier_mutex);
-> > > >  	atomic_set(&sp->srcu_barrier_cpu_cnt, 0);
-> > > >  	INIT_DELAYED_WORK(&sp->work, process_srcu);
-> > > > -	INIT_LIST_HEAD(&sp->srcu_boot_entry);
-> > > >  	if (!is_static)
-> > > >  		sp->sda = alloc_percpu(struct srcu_data);
-> > > >  	init_srcu_struct_nodes(sp, is_static);
-> > > > @@ -709,8 +708,8 @@ static void srcu_funnel_gp_start(struct srcu_struct *sp, struct srcu_data *sdp,
-> > > >  		if (likely(srcu_init_done))
-> > > >  			queue_delayed_work(rcu_gp_wq, &sp->work,
-> > > >  					   srcu_get_delay(sp));
-> > > > -		else if (list_empty(&sp->srcu_boot_entry))
-> > > > -			list_add(&sp->srcu_boot_entry, &srcu_boot_list);
-> > > > +		else if (list_empty(&sp->work.work.entry))
-> > > > +			list_add(&sp->work.work.entry, &srcu_boot_list);
-> > > >  	}
-> > > >  	spin_unlock_irqrestore_rcu_node(sp, flags);
-> > > >  }
-> > > > @@ -1324,10 +1323,10 @@ void __init srcu_init(void)
-> > > >  
-> > > >  	srcu_init_done = true;
-> > > >  	while (!list_empty(&srcu_boot_list)) {
-> > > > -		sp = list_first_entry(&srcu_boot_list,
-> > > > -				      struct srcu_struct, srcu_boot_entry);
-> > > > +		sp = list_first_entry(&srcu_boot_list, struct srcu_struct,
-> > > > +				      work.work.entry);
-> > > >  		check_init_srcu_struct(sp);
-> > > > -		list_del_init(&sp->srcu_boot_entry);
-> > > > +		list_del_init(&sp->work.work.entry);
-> > > >  		queue_work(rcu_gp_wq, &sp->work.work);
-> > > >  	}
-> > > >  }  
-> > >   
-> 
+But AFAICT the V5 has implemented the logics, but did not change the
+pattern file name according to if LED class driver implemented
+pattern_set op. So now we just change the pattern file to hw_pattern
+file if pattern_set op is set?
 
+>
+>>       }
+>>
+>>       data->curr = data->patterns;
+>> @@ -106,7 +116,7 @@ static ssize_t repeat_store(struct device *dev,
+>> struct device_attribute *attr,
+>>       if (err)
+>>               return err;
+>>
+>> -     if (!led_cdev->pattern_set)
+>> +     if (!data->is_hw_pattern)
+>>               del_timer_sync(&data->timer);
+>>
+>>       mutex_lock(&data->lock);
+>> @@ -159,19 +169,32 @@ static ssize_t pattern_store(struct device *dev,
+>> struct device_attribute *attr,
+>>  {
+>>       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>       struct pattern_trig_data *data = led_cdev->trigger_data;
+>> -     int ccount, cr, offset = 0, err = 0;
+>> +     int ccount, cr, len, offset = 0, err = 0;
+>> +     const char *s;
+>>
+>> -     if (!led_cdev->pattern_set)
+>> +     if (!data->is_hw_pattern)
+>>               del_timer_sync(&data->timer);
+>>
+>>       mutex_lock(&data->lock);
+>>
+>> +     s = strstr(buf, "hw");
+>> +     if (s && led_cdev->pattern_set) {
+>> +             data->is_hw_pattern = true;
+>> +             s += strlen("hw");
+>> +             len = strlen(s);
+>> +     } else {
+>> +             data->is_hw_pattern = false;
+>> +             s = buf;
+>> +             len = count;
+>> +     }
+>> +
+>>       data->npatterns = 0;
+>> -     while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
+>> +     while (offset < len - 1 && data->npatterns < MAX_PATTERNS) {
+>>               cr = 0;
+>> -             ccount = sscanf(buf + offset, "%d %d %n",
+>> +             ccount = sscanf(s + offset, "%d %d %n",
+>>                               &data->patterns[data->npatterns].brightness,
+>>                               &data->patterns[data->npatterns].delta_t, &cr);
+>>               if (ccount != 2) {
+>>                       data->npatterns = 0;
+>>                       err = -EINVAL;
+>> @@ -232,7 +255,8 @@ static void pattern_trig_deactivate(struct
+>> led_classdev *led_cdev)
+>>
+>>       if (led_cdev->pattern_clear)
+>>               led_cdev->pattern_clear(led_cdev);
+>> -     else
+>> +
+>> +     if (!data->is_hw_pattern)
+>>               del_timer_sync(&data->timer);
+>>
+>>       led_set_brightness(led_cdev, LED_OFF);
+>>
+>>>
+>>>> data->patterns, &data->npatterns);
+>>>>         }
+>>>>
+>>>>         data->curr = data->patterns;
+>>>> @@ -106,8 +113,7 @@ static ssize_t repeat_store(struct device *dev,
+>>>> struct device_attribute *attr,
+>>>>         if (err)
+>>>>                 return err;
+>>>>
+>>>> -       if (!led_cdev->pattern_set)
+>>>> -               del_timer_sync(&data->timer);
+>>>> +       del_timer_sync(&data->timer);
+>>>>
+>>>>         mutex_lock(&data->lock);
+>>>>
+>>>> @@ -161,8 +167,7 @@ static ssize_t pattern_store(struct device *dev,
+>>>> struct device_attribute *attr,
+>>>>         struct pattern_trig_data *data = led_cdev->trigger_data;
+>>>>         int ccount, cr, offset = 0, err = 0;
+>>>>
+>>>> -       if (!led_cdev->pattern_set)
+>>>> -               del_timer_sync(&data->timer);
+>>>> +       del_timer_sync(&data->timer);
+>>>>
+>>>>         mutex_lock(&data->lock);
+>>>>
+>>>> @@ -232,9 +237,8 @@ static void pattern_trig_deactivate(struct
+>>>> led_classdev *led_cdev)
+>>>>
+>>>>         if (led_cdev->pattern_clear)
+>>>>                 led_cdev->pattern_clear(led_cdev);
+>>>> -       else
+>>>> -               del_timer_sync(&data->timer);
+>>>>
+>>>> +       del_timer_sync(&data->timer);
+>>>>         led_set_brightness(led_cdev, LED_OFF);
+>>>>         kfree(data);
+>>>>         led_cdev->activated = false;
+>>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>>> index 74fc2c6..04f3eaf 100644
+>>>> --- a/include/linux/leds.h
+>>>> +++ b/include/linux/leds.h
+>>>> @@ -93,6 +93,8 @@ struct led_classdev {
+>>>>                            struct led_pattern *pattern, int len,
+>>>>                            unsigned int repeat);
+>>>>         int (*pattern_clear)(struct led_classdev *led_cdev);
+>>>> +       int (*pattern_convert)(struct led_classdev *led_cdev,
+>>>> +                              struct led_pattern *pattern, int *len);
+>>>>
+>>>>         struct device           *dev;
+>>>>         const struct attribute_group    **groups;
+>>>>
+>>>
+>
+>
+> --
+> Best regards,
+> Jacek Anaszewski
+
+
+
+-- 
+Baolin Wang
+Best Regards
