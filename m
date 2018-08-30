@@ -2,143 +2,198 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98192C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17077C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF1720645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:45:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="EEwEFurr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF1720645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=earthlink.net
+	by mail.kernel.org (Postfix) with ESMTP id A451820645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A451820645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=coelho.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeH3Iph (ORCPT
+        id S1727251AbeH3IzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 04:45:37 -0400
-Received: from elasmtp-mealy.atl.sa.earthlink.net ([209.86.89.69]:50488 "EHLO
-        elasmtp-mealy.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725904AbeH3Ipg (ORCPT
+        Thu, 30 Aug 2018 04:55:02 -0400
+Received: from paleale.coelho.fi ([176.9.41.70]:45144 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727178AbeH3IzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 04:45:36 -0400
-X-Greylist: delayed 25655 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Aug 2018 04:45:36 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
-        s=dk12062016; t=1535604320; bh=74YuXKyGuIPm6TN2ftzViNxJLd8H0MT9vUcB
-        JdX7oYU=; h=Received:Content-Type:Mime-Version:Subject:From:
-         In-Reply-To:Date:Cc:Content-Transfer-Encoding:Message-Id:
-         References:To:X-Mailer:X-ELNK-Trace:X-Originating-IP; b=EEwEFurrMz
-        UWACT/pD3S7UkGfOM09akG6+0W2/uHhZaOwZ6Oq6HknnptGrTRrjCkWvmoLD2kEEkU7
-        yWIQ/gc1NDa5lE+sOGXgHXGUQLHrecZ65e+79igW2lJxl9sKV8bmrZHLjVi+qMllOO0
-        VQheicBFkny3ib/GJgS4gTMg3tBtDELlnX/yvbRxr1S/awRp5IHhNkw/e/S3wWsczUK
-        JpwPbeXjLFVnCRB7FX3/Plz3t6aZZBVxKE+rcR0EBKe4KDB5pbvfPsZxZpWfM6JI2Or
-        rXbigIzf5TOw28WrE24kNSG1zLz/6XVvghp8U3mzUL1z1Yb0eR7hULWIzuapdhMQ==
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
-  s=dk12062016; d=earthlink.net;
-  b=P2KyHJaGNqRfJLy+gX/7LrfaLtLjzymWJ75PxRy+vURQLJn9+Bteahcjm/5zeZdFpT/8L3BVozzwsInR6dJiQ1uTQdFcdV85DAyx2YDADlrMu7z7WMRONQ4Bfqy2PB6v+P3oSak1BfOtTGCA1Uizcmil5fmqPiwHB5l0ldwwhDfeOWhW/TzlXmNkF8jWqluSay7QVwsY7yBDN/F+wTh41KzGZwKcRrtWhWh5P2ER8NkPGTDciOMLOSSc1AWtMMCgNKIZdRAisRBWY1jIUZ4hud5N6ZYZKq5RskqyOCn/GFeQG1poRsfsAPS9v8lj7FyECIkFVDp2NpCACpuARBir1A==;
-  h=Received:Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:Content-Transfer-Encoding:Message-Id:References:To:X-Mailer:X-ELNK-Trace:X-Originating-IP;
-Received: from [24.6.250.120] (helo=[10.0.0.43])
-        by elasmtp-mealy.atl.sa.earthlink.net with esmtpsa (TLSv1:ECDHE-RSA-AES256-SHA:256)
-        (Exim 4)
-        (envelope-from <erblichs@earthlink.net>)
-        id 1fv8B7-000D0U-H1; Wed, 29 Aug 2018 17:39:05 -0400
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Bug #16626] Machine hangs with EIP at skb_copy_and_csum_dev
-From:   Mitchell Erblich <erblichs@earthlink.net>
-In-Reply-To: <20100831192659.GA3093@del.dom.local>
-Date:   Wed, 29 Aug 2018 14:39:02 -0700
-Cc:     Plamen Petrov <pvp-lsts@fs.uni-ruse.bg>,
-        "Rafael J. Wysocki" <rjw@sisk.pl>,
-        Kernel Testers List <kernel-testers@vger.kernel.org>,
-        Maciej Rutecki <maciej.rutecki@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <10B93621-9D01-4A72-A483-FAC185ACB66A@earthlink.net>
-References: <4LwrqITm-eJ.A.r8G.eFueMB@chimera> <4AUWBNzTkbD.A.ey.cGueMB@chimera> <courier.4C7C99F2.00001F74@fs.ru.acad.bg> <20100831192659.GA3093@del.dom.local>
-To:     Jarek Poplawski <jarkao2@gmail.com>
-X-Mailer: Apple Mail (2.3124)
-X-ELNK-Trace: 074f60c55517ea841aa676d7e74259b7b3291a7d08dfec795a3a43304d9c16bc411c277489a30ffa350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
-X-Originating-IP: 24.6.250.120
+        Thu, 30 Aug 2018 04:55:02 -0400
+X-Greylist: delayed 2380 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Aug 2018 04:55:00 EDT
+Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <luca@coelho.fi>)
+        id 1fvEMM-0004SN-RI; Thu, 30 Aug 2018 07:15:07 +0300
+Message-ID: <6bb91f750e8d37d45da3c2cf1e7e5fc5d453ee8c.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Dave Young <dyoung@redhat.com>, linux-wireless@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linuxwifi@intel.com
+Date:   Thu, 30 Aug 2018 07:15:05 +0300
+In-Reply-To: <20180829065442.GA3488@dhcp-128-65.nay.redhat.com>
+References: <20180829065442.GA3488@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 91.156.4.241
+X-SA-Exim-Mail-From: luca@coelho.fi
+Subject: Re: Intel Wireless 8265/8275 (rev 78) issue
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on farmhouse.coelho.fi)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-						OLD REPLY =E2=80=A6 and =
-Correcting . Suggesting of Corrections of LONG TERM embedded problems=20
+On Wed, 2018-08-29 at 14:54 +0800, Dave Young wrote:
+> Hi,
 
-Summary:
-
-		Due to watermark awareness differences that is =
-problematic in embedded systems, the GFP_ATOMIC which is not memory =
-watermark aware is used in interrupt / atomic context.
-
-		To properly monitor WATERMARK levels at suggested kernel =
-locations, the =E2=80=9CPROPER=E2=80=9D GFP_FLAG SHOULD be GFP_NOWAIT. =
-This is atomic/interupt friendly and is aware of memory watermarks, thus =
-if memory is below the specified watermark level, it will then return a =
-ENOMEM from that location.
-
-					GFP_ATOMIC will not return =
-ENOMEM and by the time the watermarks drop, ALL GFP_KERNEL callers are =
-now SLEEPING.
-
-					Please be embedded friendly with =
-code patches=E2=80=A6
-
-		FYI: Embedded system due to no 2ndary drive can not =
-clean PTEs (page frames), thus callers need to be aware of low memory =
-issues and be able to reduce their memory consumption based on receiving =
-ENOMEMs. GFP_KERNEL callers will just sleep until memory is back above =
-the watermarks.
-
-Mitchell Erblich
-erblichs@earthlink.net
+Hi Dave,
 
 
+> Not sure if this is a known issue, I'm seeing this with latest mainline
+> kernel on Fedora rawhide.
+> 
+> The wireless networking is not stable, I can not access network any more after
+> downloading some big files or just browsing some web pages about some
+> time.  I do not see this when I work in office.  So this maybe relate to
+> wireless router.
+> 
+> "Can not access network" means ping timeout, can not open web pages etc.
+> But the wireless connection looks normal at least from the
+> NetworkManager icon it is still connected.
+> 
+> The router I used at home is an old ASUS WL520gc.  I can confirm I can
+> reproduce this with another ASUA router WL-500gP v2 
+> 
+> My laptop model is Thinkpad T480s.  It is painful I can only use
+> wireless,  any hints how to make it work will be appreciated!
+> 
+> lspci:
+> 3d:00.0 Network controller: Intel Corporation Wireless 8265 / 8275 (rev 78)
+>         Subsystem: Intel Corporation Dual Band Wireless-AC 8265
+>         Flags: bus master, fast devsel, latency 0, IRQ 136
+>         Memory at dc100000 (64-bit, non-prefetchable) [size=8K]
+>         Capabilities: [c8] Power Management version 3
+>         Capabilities: [d0] MSI: Enable+ Count=1/1 Maskable- 64bit+
+>         Capabilities: [40] Express Endpoint, MSI 00
+>         Capabilities: [100] Advanced Error Reporting
+>         Capabilities: [140] Device Serial Number b4-6b-fc-ff-ff-a3-80-d6
+>         Capabilities: [14c] Latency Tolerance Reporting
+>         Capabilities: [154] L1 PM Substates
+>         Kernel driver in use: iwlwifi
+>         Kernel modules: iwlwifi
+> 
+> Part of dmesg:
+> 
+> [    7.892039] Intel(R) Wireless WiFi driver for Linux
+> [    7.892041] Copyright(c) 2003- 2015 Intel Corporation
+> [    7.892168] iwlwifi 0000:3d:00.0: enabling device (0000 -> 0002)
+> [    7.898375] uvcvideo 1-8:1.0: Entity type for entity Extension 4 was not initialized!
+> [    7.899760] uvcvideo 1-8:1.0: Entity type for entity Extension 3 was not initialized!
+> [    7.901297] uvcvideo 1-8:1.0: Entity type for entity Processing 2 was not initialized!
+> [    7.902594] uvcvideo 1-8:1.0: Entity type for entity Camera 1 was not initialized!
+> [    7.904136] input: Integrated Camera: Integrated C as /devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input11
+> [    7.906563] usbcore: registered new interface driver uvcvideo
+> [    7.906565] USB Video Class driver (1.1.1)
+> [    7.914162] iwlwifi 0000:3d:00.0: loaded firmware version 36.e91976c0.0 op_mode iwlmvm
+> [    8.080368] iwlwifi 0000:3d:00.0: Detected Intel(R) Dual Band Wireless AC 8265, REV=0x230
+> [    8.149556] iwlwifi 0000:3d:00.0: base HW address: b4:6b:fc:a3:80:d6
+> [    8.151643] RAPL PMU: API unit is 2^-32 Joules, 5 fixed counters, 655360 ms ovfl timer
+> [    8.151646] RAPL PMU: hw unit of domain pp0-core 2^-14 Joules
+> [    8.151648] RAPL PMU: hw unit of domain package 2^-14 Joules
+> [    8.151650] RAPL PMU: hw unit of domain dram 2^-14 Joules
+> [    8.151651] RAPL PMU: hw unit of domain pp1-gpu 2^-14 Joules
+> [    8.151653] RAPL PMU: hw unit of domain psys 2^-14 Joules
+> [    8.242895] ieee80211 phy0: Selected rate control algorithm 'iwl-mvm-rs'
+> [    8.244972] thermal thermal_zone5: failed to read out thermal zone (-61)
+> [    8.266903] iwlwifi 0000:3d:00.0 wlp61s0: renamed from wlan0
+> [    8.376663] psmouse serio1: elantech: assuming hardware version 4 (with firmware version 0x7f3001)
+> [    8.388476] psmouse serio1: elantech: Synaptics capabilities query result 0x90, 0x18, 0x0f.
+> [    8.404955] psmouse serio1: elantech: Elan sample query result 00, 20, c9
+> [    8.405711] intel_rapl: Found RAPL domain package
+> [    8.405729] intel_rapl: Found RAPL domain core
+> [    8.405732] intel_rapl: Found RAPL domain uncore
+> [    8.405734] intel_rapl: Found RAPL domain dram
+> [    8.417931] psmouse serio1: elantech: Trying to set up SMBus access
+> [    8.427666] elan_i2c 6-0015: 6-0015 supply vcc not found, using dummy regulator
+> [    8.428913] elan_i2c 6-0015: Linked as a consumer to regulator.0
+> [    8.442870] elan_i2c 6-0015: Elan Touchpad: Module ID: 0x0020, Firmware: 0x0001, Sample: 0x0000, IAP: 0x0000
+> [    8.443236] input: Elan Touchpad as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input19
+> [    8.443961] input: Elan TrackPoint as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input20
+> [    8.483396] systemd-udevd (584) used greatest stack depth: 11320 bytes left
+> [    8.534134] EXT4-fs (nvme0n1p4): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.540006] EXT4-fs (nvme0n1p11): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.544692] EXT4-fs (nvme0n1p3): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.556466] EXT4-fs (nvme0n1p5): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.565545] EXT4-fs (nvme0n1p8): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.598930] EXT4-fs (nvme0n1p7): mounted filesystem with ordered data mode. Opts: (null)
+> [    8.620810] usb 1-7: USB disconnect, device number 2
+> [    8.643967] systemd-journald[522]: Received request to flush runtime journal from PID 1
+> [    8.786474] RPC: Registered named UNIX socket transport module.
+> [    8.786481] RPC: Registered udp transport module.
+> [    8.786482] RPC: Registered tcp transport module.
+> [    8.786483] RPC: Registered tcp NFSv4.1 backchannel transport module.
+> [    9.033765] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+> [    9.033767] Bluetooth: BNEP filters: protocol multicast
+> [    9.033774] Bluetooth: BNEP socket layer initialized
+> [    9.295788] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+> [    9.532690] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+> [    9.540906] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+> [    9.760641] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+> [   10.006921] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+> [   10.036910] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+> [   10.131377] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+> [   10.670126] Bluetooth: hci0: command 0xfc09 tx timeout
+> [   18.796221] Bluetooth: hci0: Failed to send firmware data (-110)
+> [   71.273464] fuse init (API version 7.27)
+> [   73.269439] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+> [   74.123114] wlp61s0: authenticate with 00:1f:c6:82:0a:57
+> [   74.126099] wlp61s0: send auth to 00:1f:c6:82:0a:57 (try 1/3)
+> [   74.139740] wlp61s0: authenticated
+> [   74.140142] iwlwifi 0000:3d:00.0 wlp61s0: disabling HE/HT/VHT due to WEP/TKIP use
+> [   74.140146] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
+> [   74.140149] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
 
-> On Aug 31, 2010, at 12:26 PM, Jarek Poplawski <jarkao2@gmail.com> =
-wrote:
->=20
-> On Tue, Aug 31, 2010 at 08:58:10AM +0300, Plamen Petrov wrote:
->> Rafael J. Wysocki ????????????:
->>=20
->>> This message has been generated automatically as a part of a summary =
-report
->>> of recent regressions.
->>>=20
->>> The following bug entry is on the current list of known regressions
->>> from 2.6.35.  Please verify if it still should be listed and let the =
-tracking team
->>> know (either way).
->>>=20
->>>=20
->>> Bug-Entry	: http://bugzilla.kernel.org/show_bug.cgi?id=3D16626
->>> Subject		: Machine hangs with EIP at =
-skb_copy_and_csum_dev
->>> Submitter	: Plamen Petrov <pvp-lsts@fs.uni-ruse.bg>
->>> Date		: 2010-08-19 09:57 (11 days old)
->>> Handled-By	:  Eric Dumazet <eric.dumazet@gmail.com>
->>>=20
->>>=20
->>=20
->> Should "generic receive offload" work on a forwarding setup?
->> If yes - then the bug should remain open.
->> If not - then it's my mistake.
->=20
-> If/since it's on by default it should work and it definitely can't be
-> your mistake. (Unless we can't find the real reason... ;-)
->=20
-> Jarek P.
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Your AP seems to be configured to use WEP or TKIP, which is not allowed
+by IEEE802.11n, so we disable all the higher rates, as you can see
+here.  It should still work, but you will only get very basic rates
+(i.e. slow).
+
+
+> [   74.141838] wlp61s0: associate with 00:1f:c6:82:0a:57 (try 1/3)
+> [   74.149298] wlp61s0: RX AssocResp from 00:1f:c6:82:0a:57 (capab=0x411 status=0 aid=3)
+> [   74.160220] wlp61s0: associated
+> [   74.201707] IPv6: ADDRCONF(NETDEV_CHANGE): wlp61s0: link becomes ready
+> [   79.350950] usb 1-2: new low-speed USB device number 4 using xhci_hcd
+> [   79.482476] usb 1-2: New USB device found, idVendor=17ef, idProduct=6016, bcdDevice= 0.00
+> [   79.482485] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+> [   79.482491] usb 1-2: Product: ThinkPad USB Laser Mouse
+> [   79.482496] usb 1-2: Manufacturer: Lenovo
+> [   79.488601] input: Lenovo ThinkPad USB Laser Mouse as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2:1.0/0003:17EF:6016.0001/input/input21
+> [   79.490030] hid-generic 0003:17EF:6016.0001: input,hidraw0: USB HID v1.11 Mouse [Lenovo ThinkPad USB Laser Mouse] on usb-0000:00:14.0-2/input0
+> [   87.228112] tun: Universal TUN/TAP device driver, 1.6
+> [ 1870.764779] e1000e: enp0s31f6 NIC Link is Up 10 Mbps Full Duplex, Flow Control: Rx/Tx
+> [ 1870.764903] e1000e 0000:00:1f.6 enp0s31f6: 10/100 speed: disabling TSO
+> [ 1870.765098] IPv6: ADDRCONF(NETDEV_CHANGE): enp0s31f6: link becomes ready
+> [ 2521.068469] wlp61s0: deauthenticating from 00:1f:c6:82:0a:57 by local choice (Reason: 3=DEAUTH_LEAVING)
+
+Other than that I can't really see what is going on, except that
+something is deciding to disconnect here...
+
+So, first thing I'd suggest would be to try to reconfigure your AP to
+use something else than WEP or TKIP, just to see if it improves in any
+way.
+
+And BTW, is this a regression in recent kernels or has this always
+happened to you with this laptop/AP combination?
+
+
+--
+Cheers,
+Luca.
 
