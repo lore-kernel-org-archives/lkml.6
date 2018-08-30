@@ -2,218 +2,179 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92999C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FDCC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DCC205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:06:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DCC205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EF59C2073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:23:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="HYnInGnX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF59C2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeH3JHB (ORCPT
+        id S1727212AbeH3JXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 05:07:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53822 "EHLO mx1.redhat.com"
+        Thu, 30 Aug 2018 05:23:31 -0400
+Received: from mail-eopbgr680077.outbound.protection.outlook.com ([40.107.68.77]:49072
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725996AbeH3JHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 05:07:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4840640241CF;
-        Thu, 30 Aug 2018 05:06:40 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-128.pek2.redhat.com [10.72.12.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4FD7E1002945;
-        Thu, 30 Aug 2018 05:06:36 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 13:06:33 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Luca Coelho <luca@coelho.fi>
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxwifi@intel.com
-Subject: Re: Intel Wireless 8265/8275 (rev 78) issue
-Message-ID: <20180830050632.GB2307@dhcp-128-65.nay.redhat.com>
-References: <20180829065442.GA3488@dhcp-128-65.nay.redhat.com>
- <6bb91f750e8d37d45da3c2cf1e7e5fc5d453ee8c.camel@coelho.fi>
+        id S1725836AbeH3JXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 05:23:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H5wiB5OkBavJa96KTgls/tz724UZemo+d7FYAoFj5o0=;
+ b=HYnInGnXagoMWoW1J7Q6NbXqtYn/DYkwkX0uFIR23krVbNT2rY1RQ4yPMRSbmbK7rmJPLu0qdI8bW/rbWTerH85yJZCWJEWZldarZakWp5yBWXgWePugX4dkjgUQ7nrqzskNCOXxr3wK4QZgzuWlpWmcF+NHjYaFSndgVleqZC0=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4744.namprd05.prod.outlook.com (52.135.233.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.7; Thu, 30 Aug 2018 05:23:01 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3%3]) with mapi id 15.20.1101.007; Thu, 30 Aug 2018
+ 05:23:01 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: [RFC PATCH 1/6] x86/alternative: assert text_mutex is taken
+Thread-Topic: [RFC PATCH 1/6] x86/alternative: assert text_mutex is taken
+Thread-Index: AQHUP3AveUOJQxVhiEqJKH9IYmSgsaTWblgAgACJiICAAChdgIAACkwAgAAI04CAAARKAIAAW0iAgAAxGoA=
+Date:   Thu, 30 Aug 2018 05:23:01 +0000
+Message-ID: <A729271C-5646-470D-B200-7C552EB18FC8@vmware.com>
+References: <20180829081147.184610-1-namit@vmware.com>
+ <20180829081147.184610-2-namit@vmware.com>
+ <20180829175936.fb27b3bf13da819a9a971f07@kernel.org>
+ <1F547CEE-B5D9-42A0-8093-2C5555BACE26@vmware.com>
+ <2694AE6F-2212-46C6-A570-6BAF265364FB@vmware.com>
+ <20180829201309.GA7142@linux.intel.com>
+ <58345C1F-8FF3-4F49-AF2F-B4789DF50CC7@vmware.com>
+ <20180829210006.GA7166@linux.intel.com>
+ <20180830112649.4b774f401d99a8b98e12008c@kernel.org>
+In-Reply-To: <20180830112649.4b774f401d99a8b98e12008c@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2601:647:4580:b719:15d3:5cd8:3ca7:51f0]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4744;20:gsDDoHbtcgfyHNCPmyPOQymimw7amtGHwYQW1ibBkTEcRp39n2g07c39NkTiV4Kd39Cv3ypO4RTJ71WA74W/SuAliYieNLygbNBUqEwVpHS+dG8c0fGIREyY4WyIzeIAzxOshG5ajvcxo2AbfbCHsDaaWJAGM4Mue9mJl4nKEKE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d78c8bc0-f4f5-4f25-eb46-08d60e38a7b7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4744;
+x-ms-traffictypediagnostic: BYAPR05MB4744:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB474499F6B00C0C79FE0D8E0ED0080@BYAPR05MB4744.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231340)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:BYAPR05MB4744;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4744;
+x-forefront-prvs: 07807C55DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(346002)(376002)(39860400002)(396003)(136003)(52314003)(43544003)(199004)(189003)(14444005)(256004)(8936002)(2616005)(476003)(99286004)(93886005)(33656002)(54906003)(4326008)(81156014)(2906002)(6246003)(36756003)(11346002)(81166006)(46003)(6512007)(105586002)(53936002)(97736004)(68736007)(8676002)(446003)(2900100001)(229853002)(486006)(76176011)(106356001)(5250100002)(6486002)(6436002)(5660300001)(14454004)(82746002)(6116002)(25786009)(102836004)(305945005)(7736002)(316002)(217873002)(86362001)(478600001)(186003)(6506007)(7416002)(83716003)(110136005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4744;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: KjEvxAxpCxmyGCCUGt8XtIJ4RynK5+H1bh2ZH+OxRf2DUAPID199w205CSTjSvGoIc4VyJ4AUyzB5ljz9Iucxf7tmXsqsKmpBwF7u/jyLHQKWNyfGnRDWrxFu+H84oqXRhuyCgwAutUtBw6pK/yHu9sZTFNkYOrjgimSeSi0LOyzGuX0MpuXuB3vI9YeuvfK4ZoXii0H/S7wqmgkCTJW8s9RpB1CK0FoP79eP4oMfQg8zQ4AyuXsLJypDMilBylexzHcWyNXsVXB8bpvBR7+uKiM4te5PYY2g82qLL08ikRg2OW83rp1wM+QdmopKZc4UKxlauehXtdI64OIcmUB/XV3Lu3OLSWs9uOkQp6rBak=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D8A06A81AAD89B41863DAE788D505729@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6bb91f750e8d37d45da3c2cf1e7e5fc5d453ee8c.camel@coelho.fi>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 30 Aug 2018 05:06:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 30 Aug 2018 05:06:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d78c8bc0-f4f5-4f25-eb46-08d60e38a7b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 05:23:01.2747
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/18 at 07:15am, Luca Coelho wrote:
-> On Wed, 2018-08-29 at 14:54 +0800, Dave Young wrote:
-> > Hi,
-> 
-> Hi Dave,
-> 
-> 
-> > Not sure if this is a known issue, I'm seeing this with latest mainline
-> > kernel on Fedora rawhide.
-> > 
-> > The wireless networking is not stable, I can not access network any more after
-> > downloading some big files or just browsing some web pages about some
-> > time.  I do not see this when I work in office.  So this maybe relate to
-> > wireless router.
-> > 
-> > "Can not access network" means ping timeout, can not open web pages etc.
-> > But the wireless connection looks normal at least from the
-> > NetworkManager icon it is still connected.
-> > 
-> > The router I used at home is an old ASUS WL520gc.  I can confirm I can
-> > reproduce this with another ASUA router WL-500gP v2 
-> > 
-> > My laptop model is Thinkpad T480s.  It is painful I can only use
-> > wireless,  any hints how to make it work will be appreciated!
-> > 
-> > lspci:
-> > 3d:00.0 Network controller: Intel Corporation Wireless 8265 / 8275 (rev 78)
-> >         Subsystem: Intel Corporation Dual Band Wireless-AC 8265
-> >         Flags: bus master, fast devsel, latency 0, IRQ 136
-> >         Memory at dc100000 (64-bit, non-prefetchable) [size=8K]
-> >         Capabilities: [c8] Power Management version 3
-> >         Capabilities: [d0] MSI: Enable+ Count=1/1 Maskable- 64bit+
-> >         Capabilities: [40] Express Endpoint, MSI 00
-> >         Capabilities: [100] Advanced Error Reporting
-> >         Capabilities: [140] Device Serial Number b4-6b-fc-ff-ff-a3-80-d6
-> >         Capabilities: [14c] Latency Tolerance Reporting
-> >         Capabilities: [154] L1 PM Substates
-> >         Kernel driver in use: iwlwifi
-> >         Kernel modules: iwlwifi
-> > 
-> > Part of dmesg:
-> > 
-> > [    7.892039] Intel(R) Wireless WiFi driver for Linux
-> > [    7.892041] Copyright(c) 2003- 2015 Intel Corporation
-> > [    7.892168] iwlwifi 0000:3d:00.0: enabling device (0000 -> 0002)
-> > [    7.898375] uvcvideo 1-8:1.0: Entity type for entity Extension 4 was not initialized!
-> > [    7.899760] uvcvideo 1-8:1.0: Entity type for entity Extension 3 was not initialized!
-> > [    7.901297] uvcvideo 1-8:1.0: Entity type for entity Processing 2 was not initialized!
-> > [    7.902594] uvcvideo 1-8:1.0: Entity type for entity Camera 1 was not initialized!
-> > [    7.904136] input: Integrated Camera: Integrated C as /devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input11
-> > [    7.906563] usbcore: registered new interface driver uvcvideo
-> > [    7.906565] USB Video Class driver (1.1.1)
-> > [    7.914162] iwlwifi 0000:3d:00.0: loaded firmware version 36.e91976c0.0 op_mode iwlmvm
-> > [    8.080368] iwlwifi 0000:3d:00.0: Detected Intel(R) Dual Band Wireless AC 8265, REV=0x230
-> > [    8.149556] iwlwifi 0000:3d:00.0: base HW address: b4:6b:fc:a3:80:d6
-> > [    8.151643] RAPL PMU: API unit is 2^-32 Joules, 5 fixed counters, 655360 ms ovfl timer
-> > [    8.151646] RAPL PMU: hw unit of domain pp0-core 2^-14 Joules
-> > [    8.151648] RAPL PMU: hw unit of domain package 2^-14 Joules
-> > [    8.151650] RAPL PMU: hw unit of domain dram 2^-14 Joules
-> > [    8.151651] RAPL PMU: hw unit of domain pp1-gpu 2^-14 Joules
-> > [    8.151653] RAPL PMU: hw unit of domain psys 2^-14 Joules
-> > [    8.242895] ieee80211 phy0: Selected rate control algorithm 'iwl-mvm-rs'
-> > [    8.244972] thermal thermal_zone5: failed to read out thermal zone (-61)
-> > [    8.266903] iwlwifi 0000:3d:00.0 wlp61s0: renamed from wlan0
-> > [    8.376663] psmouse serio1: elantech: assuming hardware version 4 (with firmware version 0x7f3001)
-> > [    8.388476] psmouse serio1: elantech: Synaptics capabilities query result 0x90, 0x18, 0x0f.
-> > [    8.404955] psmouse serio1: elantech: Elan sample query result 00, 20, c9
-> > [    8.405711] intel_rapl: Found RAPL domain package
-> > [    8.405729] intel_rapl: Found RAPL domain core
-> > [    8.405732] intel_rapl: Found RAPL domain uncore
-> > [    8.405734] intel_rapl: Found RAPL domain dram
-> > [    8.417931] psmouse serio1: elantech: Trying to set up SMBus access
-> > [    8.427666] elan_i2c 6-0015: 6-0015 supply vcc not found, using dummy regulator
-> > [    8.428913] elan_i2c 6-0015: Linked as a consumer to regulator.0
-> > [    8.442870] elan_i2c 6-0015: Elan Touchpad: Module ID: 0x0020, Firmware: 0x0001, Sample: 0x0000, IAP: 0x0000
-> > [    8.443236] input: Elan Touchpad as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input19
-> > [    8.443961] input: Elan TrackPoint as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input20
-> > [    8.483396] systemd-udevd (584) used greatest stack depth: 11320 bytes left
-> > [    8.534134] EXT4-fs (nvme0n1p4): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.540006] EXT4-fs (nvme0n1p11): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.544692] EXT4-fs (nvme0n1p3): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.556466] EXT4-fs (nvme0n1p5): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.565545] EXT4-fs (nvme0n1p8): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.598930] EXT4-fs (nvme0n1p7): mounted filesystem with ordered data mode. Opts: (null)
-> > [    8.620810] usb 1-7: USB disconnect, device number 2
-> > [    8.643967] systemd-journald[522]: Received request to flush runtime journal from PID 1
-> > [    8.786474] RPC: Registered named UNIX socket transport module.
-> > [    8.786481] RPC: Registered udp transport module.
-> > [    8.786482] RPC: Registered tcp transport module.
-> > [    8.786483] RPC: Registered tcp NFSv4.1 backchannel transport module.
-> > [    9.033765] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> > [    9.033767] Bluetooth: BNEP filters: protocol multicast
-> > [    9.033774] Bluetooth: BNEP socket layer initialized
-> > [    9.295788] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
-> > [    9.532690] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
-> > [    9.540906] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
-> > [    9.760641] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
-> > [   10.006921] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
-> > [   10.036910] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
-> > [   10.131377] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
-> > [   10.670126] Bluetooth: hci0: command 0xfc09 tx timeout
-> > [   18.796221] Bluetooth: hci0: Failed to send firmware data (-110)
-> > [   71.273464] fuse init (API version 7.27)
-> > [   73.269439] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
-> > [   74.123114] wlp61s0: authenticate with 00:1f:c6:82:0a:57
-> > [   74.126099] wlp61s0: send auth to 00:1f:c6:82:0a:57 (try 1/3)
-> > [   74.139740] wlp61s0: authenticated
-> > [   74.140142] iwlwifi 0000:3d:00.0 wlp61s0: disabling HE/HT/VHT due to WEP/TKIP use
-> > [   74.140146] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
-> > [   74.140149] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
-> 
-> Your AP seems to be configured to use WEP or TKIP, which is not allowed
-> by IEEE802.11n, so we disable all the higher rates, as you can see
-> here.  It should still work, but you will only get very basic rates
-> (i.e. slow).
-
-Luka, thanks for the suggestion,  moved AP to use WPA2-personal + AES.
-seems I got only two features disabled this time:
-[   20.949347] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
-[   20.949351] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
-[   20.949622] wlp61s0: associate with 00:1f:c6:82:0a:57 (try 1/3)
-
-> 
-> 
-> > [   74.141838] wlp61s0: associate with 00:1f:c6:82:0a:57 (try 1/3)
-> > [   74.149298] wlp61s0: RX AssocResp from 00:1f:c6:82:0a:57 (capab=0x411 status=0 aid=3)
-> > [   74.160220] wlp61s0: associated
-> > [   74.201707] IPv6: ADDRCONF(NETDEV_CHANGE): wlp61s0: link becomes ready
-> > [   79.350950] usb 1-2: new low-speed USB device number 4 using xhci_hcd
-> > [   79.482476] usb 1-2: New USB device found, idVendor=17ef, idProduct=6016, bcdDevice= 0.00
-> > [   79.482485] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-> > [   79.482491] usb 1-2: Product: ThinkPad USB Laser Mouse
-> > [   79.482496] usb 1-2: Manufacturer: Lenovo
-> > [   79.488601] input: Lenovo ThinkPad USB Laser Mouse as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2:1.0/0003:17EF:6016.0001/input/input21
-> > [   79.490030] hid-generic 0003:17EF:6016.0001: input,hidraw0: USB HID v1.11 Mouse [Lenovo ThinkPad USB Laser Mouse] on usb-0000:00:14.0-2/input0
-> > [   87.228112] tun: Universal TUN/TAP device driver, 1.6
-> > [ 1870.764779] e1000e: enp0s31f6 NIC Link is Up 10 Mbps Full Duplex, Flow Control: Rx/Tx
-> > [ 1870.764903] e1000e 0000:00:1f.6 enp0s31f6: 10/100 speed: disabling TSO
-> > [ 1870.765098] IPv6: ADDRCONF(NETDEV_CHANGE): enp0s31f6: link becomes ready
-> > [ 2521.068469] wlp61s0: deauthenticating from 00:1f:c6:82:0a:57 by local choice (Reason: 3=DEAUTH_LEAVING)
-> 
-> Other than that I can't really see what is going on, except that
-> something is deciding to disconnect here...
-> 
-> So, first thing I'd suggest would be to try to reconfigure your AP to
-> use something else than WEP or TKIP, just to see if it improves in any
-> way.
-
-Will observe if it works or not. BTW, my old laptop Thinkpad T440s works
-well with the same AP.
-
-> 
-> And BTW, is this a regression in recent kernels or has this always
-> happened to you with this laptop/AP combination?
-
-From my observation it just always happen, but hmm not 100% sure..
-
-> 
-> --
-> Cheers,
-> Luca.
-> 
-
-Thanks
-Dave
+YXQgNzoyNiBQTSwgTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4gd3JvdGU6
+DQoNCj4gT24gV2VkLCAyOSBBdWcgMjAxOCAxNDowMDowNiAtMDcwMA0KPiBTZWFuIENocmlzdG9w
+aGVyc29uIDxzZWFuLmouY2hyaXN0b3BoZXJzb25AaW50ZWwuY29tPiB3cm90ZToNCj4gDQo+PiBP
+biBXZWQsIEF1ZyAyOSwgMjAxOCBhdCAwODo0NDo0N1BNICswMDAwLCBOYWRhdiBBbWl0IHdyb3Rl
+Og0KPj4+IGF0IDE6MTMgUE0sIFNlYW4gQ2hyaXN0b3BoZXJzb24gPHNlYW4uai5jaHJpc3RvcGhl
+cnNvbkBpbnRlbC5jb20+IHdyb3RlOg0KPj4+IA0KPj4+PiBPbiBXZWQsIEF1ZyAyOSwgMjAxOCBh
+dCAwNzozNjoyMlBNICswMDAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4+Pj4gYXQgMTA6MTEgQU0s
+IE5hZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+IHdyb3RlOg0KPj4+Pj4gDQo+Pj4+Pj4gYXQg
+MTo1OSBBTSwgTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4gd3JvdGU6DQo+
+Pj4+Pj4gDQo+Pj4+Pj4+IE9uIFdlZCwgMjkgQXVnIDIwMTggMDE6MTE6NDIgLTA3MDANCj4+Pj4+
+Pj4gTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4gd3JvdGU6DQo+Pj4+Pj4+IA0KPj4+Pj4+
+Pj4gVXNlIGxvY2tkZXAgdG8gZW5zdXJlIHRoYXQgdGV4dF9tdXRleCBpcyB0YWtlbiB3aGVuIHRl
+eHRfcG9rZSgpIGlzDQo+Pj4+Pj4+PiBjYWxsZWQuDQo+Pj4+Pj4+PiANCj4+Pj4+Pj4+IEFjdHVh
+bGx5IGl0IGlzIG5vdCBhbHdheXMgdGFrZW4sIHNwZWNpZmljYWxseSB3aGVuIGl0IGlzIGNhbGxl
+ZCBieSBrZ2RiLA0KPj4+Pj4+Pj4gc28gdGFrZSB0aGUgbG9jayBpbiB0aGVzZSBjYXNlcy4NCj4+
+Pj4+Pj4gDQo+Pj4+Pj4+IENhbiB3ZSByZWFsbHkgdGFrZSBhIG11dGV4IGluIGtnZGIgY29udGV4
+dD8NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IGtnZGJfYXJjaF9yZW1vdmVfYnJlYWtwb2ludA0KPj4+Pj4+
+PiA8LSBkYmdfZGVhY3RpdmF0ZV9zd19icmVha3BvaW50cw0KPj4+Pj4+PiA8LSBrZ2RiX3JlZW50
+ZXJfY2hlY2sNCj4+Pj4+Pj4gICAgPC0ga2dkYl9oYW5kbGVfZXhjZXB0aW9uDQo+Pj4+Pj4+ICAg
+ICAgIDwtIF9fa2dkYl9ub3RpZnkNCj4+Pj4+Pj4gICAgICAgICA8LSBrZ2RiX2xsX3RyYXANCj4+
+Pj4+Pj4gICAgICAgICAgIDwtIGRvX2ludDMNCj4+Pj4+Pj4gICAgICAgICA8LSBrZ2RiX25vdGlm
+eQ0KPj4+Pj4+PiAgICAgICAgICAgPC0gZGllIG5vdGlmaWVyDQo+Pj4+Pj4+IA0KPj4+Pj4+PiBr
+Z2RiX2FyY2hfc2V0X2JyZWFrcG9pbnQNCj4+Pj4+Pj4gPC0gZGJnX2FjdGl2YXRlX3N3X2JyZWFr
+cG9pbnRzDQo+Pj4+Pj4+IDwtIGtnZGJfcmVlbnRlcl9jaGVjaw0KPj4+Pj4+PiAgICA8LSBrZ2Ri
+X2hhbmRsZV9leGNlcHRpb24NCj4+Pj4+Pj4gICAgICAgIC4uLg0KPj4+Pj4+PiANCj4+Pj4+Pj4g
+Qm90aCBzZWVtcyBjYWxsZWQgaW4gZXhjZXB0aW9uIGNvbnRleHQsIHNvIHdlIGNhbiBub3QgdGFr
+ZSBhIG11dGV4IGxvY2suDQo+Pj4+Pj4+IEkgdGhpbmsga2dkYiBuZWVkcyBhIHNwZWNpYWwgcGF0
+aC4NCj4+Pj4+PiANCj4+Pj4+PiBZb3UgYXJlIGNvcnJlY3QsIGJ1dCBJIGRvbuKAmXQgd2FudCBh
+IHNwZWNpYWwgcGF0aC4gUHJlc3VtYWJseSB0ZXh0X211dGV4IGlzDQo+Pj4+Pj4gZ3VhcmFudGVl
+ZCBub3QgdG8gYmUgdGFrZW4gYWNjb3JkaW5nIHRvIHRoZSBjb2RlLg0KPj4+Pj4+IA0KPj4+Pj4+
+IFNvIEkgZ3Vlc3MgdGhlIG9ubHkgY29uY2VybiBpcyBsb2NrZGVwLiBEbyB5b3Ugc2VlIGFueSBw
+cm9ibGVtIGlmIEkgY2hhbmdlDQo+Pj4+Pj4gbXV0ZXhfbG9jaygpIGludG8gbXV0ZXhfdHJ5bG9j
+aygpPyBJdCBzaG91bGQgYWx3YXlzIHN1Y2NlZWQsIGFuZCBJIGNhbiBhZGQgYQ0KPj4+Pj4+IHdh
+cm5pbmcgYW5kIGEgZmFpbHVyZSBwYXRoIGlmIGl0IGZhaWxzIGZvciBzb21lIHJlYXNvbi4NCj4+
+Pj4+IA0KPj4+Pj4gRXJyLi4gVGhpcyB3aWxsIG5vdCB3b3JrLiBJIHRoaW5rIEkgd2lsbCBkcm9w
+IHRoaXMgcGF0Y2gsIHNpbmNlIEkgY2Fubm90DQo+Pj4+PiBmaW5kIGEgcHJvcGVyIHlldCBzaW1w
+bGUgYXNzZXJ0aW9uLiBDcmVhdGluZyBzcGVjaWFsIHBhdGgganVzdCBmb3IgdGhlDQo+Pj4+PiBh
+c3NlcnRpb24gc2VlbXMgd3JvbmcuDQo+Pj4+IA0KPj4+PiBJdCdzIHByb2JhYmx5IHdvcnRoIGV4
+cGFuZGluZyB0aGUgY29tbWVudCBmb3IgdGV4dF9wb2tlKCkgdG8gY2FsbCBvdXQNCj4+Pj4gdGhl
+IGtnZGIgY2FzZSBhbmQgcmVmZXJlbmNlIGtnZGJfYXJjaF97c2V0LHJlbW92ZX1fYnJlYWtwb2lu
+dCgpLCB3aG9zZQ0KPj4+PiBjb2RlIGFuZCBjb21tZW50cyBtYWtlIGl0IGV4cGxpY2l0bHkgY2xl
+YXIgd2h5IGl0cyBzYWZlIGZvciB0aGVtIHRvDQo+Pj4+IGNhbGwgdGV4dF9wb2tlKCkgd2l0aG91
+dCBhY3F1aXJpbmcgdGhlIGxvY2suICBNaWdodCBwcmV2ZW50IHNvbWVvbmUNCj4+Pj4gZnJvbSBn
+b2luZyBkb3duIHRoaXMgcGF0aCBhZ2FpbiBpbiB0aGUgZnV0dXJlLg0KPj4+IA0KPj4+IEkgdGhv
+dWdodCB0aGF0IHRoZSB3aG9sZSBwb2ludCBvZiB0aGUgcGF0Y2ggd2FzIHRvIGF2b2lkIGNvbW1l
+bnRzLCBhbmQNCj4+PiBpbnN0ZWFkIGVuZm9yY2UgdGhlIHJpZ2h0IGJlaGF2aW9yLiBJIGRvbuKA
+mXQgdW5kZXJzdGFuZCB3ZWxsIGVub3VnaCBrZ2RiDQo+Pj4gY29kZSwgc28gSSBjYW5ub3QgYXR0
+ZXN0IGl0IGRvZXMgdGhlIHJpZ2h0IHRoaW5nLiBXaGF0IGhhcHBlbnMgaWYNCj4+PiBrZ2RiX2Rv
+X3JvdW5kdXA9PTA/DQo+PiANCj4+IEFzIGlzLCB0aGUgY29tbWVudCBpcyB3cm9uZyBiZWNhdXNl
+IHRoZXJlIGFyZSBvYnZpb3VzbHkgY2FzZXMgd2hlcmUNCj4+IHRleHRfcG9rZSgpIGlzIGNhbGxl
+ZCB3aXRob3V0IHRleHRfbXV0ZXggYmVpbmcgaGVsZC4gIEkgY2FuJ3QgYXR0ZXN0DQo+PiB0byB0
+aGUga2dkYiBjb2RlIGVpdGhlci4gIE15IHRob3VnaHQgd2FzIHRvIGRvY3VtZW50IHRoZSBleGNl
+cHRpb24gc28NCj4+IHRoYXQgaWYgc29tZW9uZSBkb2VzIHdhbnQgdG8gdHJ5IGFuZCBlbmZvcmNl
+IHRoZSByaWdodCBiZWhhdmlvciB0aGV5DQo+PiBjYW4gZGl2ZSByaWdodCBpbnRvIHRoZSBwcm9i
+bGVtIGluc3RlYWQgb2YgaGF2aW5nIHRvIGxlYXJuIG9mIHRoZSBrZ2RiDQo+PiBnb3RjaGEgdGhl
+IGhhcmQgd2F5LiAgTWF5YmUgYSBGSVhNRSBpcyB0aGUgcmlnaHQgYXBwcm9hY2g/DQo+IA0KPiBO
+bywga2dkYiBlbnN1cmVzIHRoYXQgdGhlIHRleHRfbXV0ZXggaGFzIG5vdCBiZWVuIGhlbGQgcmln
+aHQgYmVmb3JlDQo+IGNhbGxpbmcgdGV4dF9wb2tlLiBTbyB0aGV5IGFsc28gdGFrZSBjYXJlIHRo
+ZSB0ZXh0X211dGV4LiBJIGd1ZXNzDQo+IGtnZGJfYXJjaF97c2V0LHJlbW92ZX1fYnJlYWtwb2lu
+dCgpIGlzIHN1cHBvc2VkIHRvIGJlIHJ1biB1bmRlcg0KPiBhIHNwZWNpYWwgY2lyY3Vtc3RhbmNl
+LCBsaWtlIHN0b3BwaW5nIGFsbCBvdGhlciB0aHJlYWRzL2NvcmVzLg0KPiBJbiB0aGF0IGNhc2Us
+IHdlIGNhbiBqdXN0IGNoZWNrIHRoZSB0ZXh0X211dGV4IGlzIG5vdCBsb2NrZWQuDQoNCkkgYXNz
+dW1lZCBzbyB0b28sIGJ1dCBhZnRlciBsb29raW5nIGF0IHRoZSBjb2RlLCBJIGFtIG5vdCBzdXJl
+IHRoYXQgdGhpcyBpcw0KdGhlIGNhc2Ugd2hlbiBnZGJfZG9fcm91bmR1cD09MC4NCg0KPiBBbnl3
+YXksIGtnZGIgaXMgYSB2ZXJ5IHJhcmUgY291cm5lciBjYXNlLiBJIHRoaW5rIGlmIENPTkZJR19L
+R0RCIGlzDQo+IGVuYWJsZWQsIGxvY2tkZXAgYW5kIGFueSBhc3NlcnRpb24gc2hvdWxkIGJlIGRp
+c2FibGVkLCBzaW5jZSBrZ2RiDQo+IGNhbiB0d2VhayBhbnl0aGluZyBpbiB0aGUga2VybmVsIHdp
+dGggdW5leHBlY3RlZCB3YXlzLi4uDQoNCkNhbGwgbWUgbGF6eSwgYnV0IEkgcmVhbGx5IGRvIG5v
+dCB3YW50IHRvIGRlYnVnIHN5emthbGxlciBmYWlsdXJlcyBkdWUgdG8NCnRoaXMgaXNzdWUgKG5v
+dyBvciBpbiB0aGUgZnV0dXJlKS4gSWYgdGhlIGFzc2VydGlvbiBpcyBrbm93biB0byBiZQ0KaW5j
+b3JyZWN0LCBldmVuIGluIGEgY29ybmVyIGNhc2UsIEkgc2VlIG5vIHJlYXNvbiB0byBoYXZlIGl0
+IGFuZCBJIGNlcnRhaW5seQ0KZG8gbm90IHdhbnQgdG8gYmUgdGhlIG9uZSB0aGF0IGFkZGVkIGl0
+4oCmDQoNCg==
