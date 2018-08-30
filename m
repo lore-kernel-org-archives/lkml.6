@@ -2,139 +2,113 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8289FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA20FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3968820645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:43:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PWblsL0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3968820645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 748092082B
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:46:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748092082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeH3Mo5 (ORCPT
+        id S1727944AbeH3MrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:44:57 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42661 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbeH3Mo5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:44:57 -0400
-Received: by mail-io0-f194.google.com with SMTP id n18-v6so6858838ioa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 01:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5J1BTzAeVNKsETRKMBuA+D+cqeEwKWTxg5mDg5iOGZ8=;
-        b=PWblsL0SwO6scsD2Zx5st1Wl/R2doSLtXBawxASSinWcUNbboyZV3OrgOiJO5l/ga4
-         IelWcjneyh2WKdBXKI9exUcRRvhh1MVwRHzHMBOv6MACPnjVcHvKiG4Qx7zjxtyp23oL
-         s88uEQogifL0fpXi5aNUt6s04WEmDrz59ybeA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5J1BTzAeVNKsETRKMBuA+D+cqeEwKWTxg5mDg5iOGZ8=;
-        b=Bh3yb5yUdX37vca0fA2u63fbmbki+zs8t60c1ol1ZKvnwtQupyf/u0jf4p3hRMChzf
-         /YezWXF9YZanUrwgRpg9uXmVHyOXy+BQabLTtTjJsoJFkhDs5UbGmSmCvE68xOAQjpyh
-         x/ntYvX7b89IFYCyJi2rq7rycs5ARLhZ+nXtDUuRvQO9StUZlbV6XCmEMSWi9ClG14to
-         ctC0y9Ok+c/3VUStbm4JQtZuOA7dbuDD7Ord/6F7axMCG/c1MVt0wcjyE7mL9cC6CDhs
-         gYNBw3Oyzly2xhPVjTZtIk098a6ci04Ov4SpX6t8dpoFH7KkV+HzycGK2S+D7pswI0ml
-         jxTg==
-X-Gm-Message-State: APzg51DzGjIPqYI3RQd4grBGIAKL+gjyn9YHgPlkWrm3FkIYRE7eLw4Z
-        rn8QW1uHlbQ8Feby79lxXegqXBVSfe+4B4h48vNuWw==
-X-Google-Smtp-Source: ANB0VdZlHWPDAObEPX5M3wkR67Xy3MXCdMW/bJ1ZJ5a8faLYQUrlWAWBqpUDr3GZoZdCYiAfNssOVgrHn0jN17cAL6k=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr7694752ioa.277.1535618634004;
- Thu, 30 Aug 2018 01:43:54 -0700 (PDT)
+        Thu, 30 Aug 2018 08:47:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37834 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727238AbeH3MrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 08:47:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E62747A9;
+        Thu, 30 Aug 2018 01:46:20 -0700 (PDT)
+Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8137C3F5BD;
+        Thu, 30 Aug 2018 01:46:20 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, edubezval@gmail.com,
+        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
+References: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
+Date:   Thu, 30 Aug 2018 09:46:18 +0100
+In-Reply-To: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
+        (Vincent Guittot's message of "Wed, 29 Aug 2018 09:08:38 +0200")
+Message-ID: <87y3co8co5.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com> <20180828112721.28178-3-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20180828112721.28178-3-Eugeniy.Paltsev@synopsys.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 30 Aug 2018 10:43:42 +0200
-Message-ID: <CACRpkdbQryY-R+14GvYAEkLH+7Tr4Pvb6YohWouTwug7qEGbDA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: Document the Synopsys GPIO via CREG bindings
-To:     Eugeniy.Paltsev@synopsys.com
-Cc:     "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 1:27 PM Eugeniy Paltsev
-<Eugeniy.Paltsev@synopsys.com> wrote:
+Hi Vincent,
 
-> +++ b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-> @@ -0,0 +1,49 @@
-> +GPIO via CREG (Control REGisers) driver
+Vincent Guittot <vincent.guittot@linaro.org> writes:
 
-Speling
+> The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
+> its usage in the code assumes that unit is uW/MHz/V^2
+>
+> In drivers/thermal/cpu_cooling.c, the code is :
+>
+> power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
+> do_div(power, 1000000000);
+>
+> which can be summarized as :
+> power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
+> or
+> power (mW) = (capacitance * freq_mhz * (voltage_mv/1000)^2) / 1000
+> then
+> power (mW) = power (uW) / 1000
+> so
+> power (uW) = capacitance * freq_mhz * (voltage_mv/1000)^2
+>
+> Furthermore, if we test basic values like :
+> voltage_mv = 1000mV = 1V
+> freq_mhz = 1000Mhz
+>
+> The minimum possible power, when dynamic-power-coefficient equals 1, will
+> be with current unit:
+> min power = 1 * 1000  * (1000000)^2 = 10^15 mW
+> which is not realistic
+>
+> With the unit used by the code, the min power is
+> min power =  1 * 1000 * 1^2 = 1000uW = 1mW which is far more realistic
+>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Also should be "Synopsys GPIO via CREG" as this is likely just
-for Synopsys and not general purpose.
+Acked-by: Punit Agrawal <punit.agrawal@arm.com>
 
-> +This is is single-register MMIO GPIO driver to control such strangely mapped
-> +outputs:
-> +
-> +31            11        8         7        5         0   < bit number
-> +|              |        |         |        |         |
-> +[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO register
-> +                   ^                  ^
-> +                   |                  |
-> +                   |           write 0x2 == set output to "1" (on)
-> +                   |           write 0x3 == set output to "0" (off)
-> +                   |
-> +            write 0x1 == set output to "1" (on)
-> +            write 0x4 == set output to "0" (off)
+Thanks for fixing the mismatch.
 
-Move this documentation into the driver instead.
-
-> +Required properties:
-> +- compatible : "snps,creg-gpio"
-> +- reg : Exactly one register range with length 0x4.
-> +- #gpio-cells : Should be one - the pin number.
-> +- gpio-controller : Marks the device node as a GPIO controller.
-
-OK
-
-> +- snps,ngpios: Number of GPIO pins.
-
-Use the existing ngpios attribute for this, see gpio.txt
-
-> +- snps,bit-per-line: Number of bits per each gpio line (see picture).
-> +  Array the size of "snps,ngpios"
-> +- snps,shift: Shift (in bits) of the each GPIO field from the previous one in
-> +  register (see picture). Array the size of "snps,ngpios"
-> +- snps,on-val: Value should be set in corresponding field to set
-> +  output to "1" (see picture). Array the size of "snps,ngpios"
-> +- snps,off-val: Value should be set in corresponding field to set
-> +  output to "0" (see picture). Array the size of "snps,ngpios"
-
-Move this into a lookup table in the driver instead, and match
-the lookup table to the compatible string. The format of the
-register is known for a certain compatible, right?
-
-> +Optional properties:
-> +- snps,default-val: default output field values. Array the size of "snps,ngpios"
-
-Default values for different lines can be achieved by hogs
-if it's OK to tie them up perpetually, else work on creating generic
-inialization values in gpio.txt and implement that in
-gpiolib-of.c for everyone. This discussion comes up from time
-to time.
-
-Yours,
-Linus Walleij
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+> index 29e1dc5..71d8cd0 100644
+> --- a/Documentation/devicetree/bindings/arm/cpus.txt
+> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
+> @@ -274,7 +274,7 @@ described below.
+>  		Usage: optional
+>  		Value type: <prop-encoded-array>
+>  		Definition: A u32 value that represents the running time dynamic
+> -			    power coefficient in units of mW/MHz/uV^2. The
+> +			    power coefficient in units of uW/MHz/V^2. The
+>  			    coefficient can either be calculated from power
+>  			    measurements or derived by analysis.
+>  
+> @@ -285,7 +285,7 @@ described below.
+>  
+>  			    Pdyn = dynamic-power-coefficient * V^2 * f
+>  
+> -			    where voltage is in uV, frequency is in MHz.
+> +			    where voltage is in V, frequency is in MHz.
+>  
+>  Example 1 (dual-cluster big.LITTLE system 32-bit):
