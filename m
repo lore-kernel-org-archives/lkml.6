@@ -6,109 +6,122 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA20FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812C7C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 748092082B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:46:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748092082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 30B472054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:47:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B472054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeH3MrZ (ORCPT
+        id S1728011AbeH3Msq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:47:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37834 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727238AbeH3MrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:47:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E62747A9;
-        Thu, 30 Aug 2018 01:46:20 -0700 (PDT)
-Received: from localhost (e105922-lin.Emea.Arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8137C3F5BD;
-        Thu, 30 Aug 2018 01:46:20 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, edubezval@gmail.com,
-        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
-References: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
-Date:   Thu, 30 Aug 2018 09:46:18 +0100
-In-Reply-To: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
-        (Vincent Guittot's message of "Wed, 29 Aug 2018 09:08:38 +0200")
-Message-ID: <87y3co8co5.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Thu, 30 Aug 2018 08:48:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50361 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727238AbeH3Msq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 08:48:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A93C820711; Thu, 30 Aug 2018 10:47:40 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6903A203EC;
+        Thu, 30 Aug 2018 10:47:30 +0200 (CEST)
+Date:   Thu, 30 Aug 2018 10:47:29 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chuanhua Han <chuanhua.han@nxp.com>
+Cc:     broonie@kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5] spi: spi-mem: Adjust op len based on
+ message/transfer size limitations
+Message-ID: <20180830104729.5c7fefad@bbrezillon>
+In-Reply-To: <1535618604-21706-1-git-send-email-chuanhua.han@nxp.com>
+References: <1535618604-21706-1-git-send-email-chuanhua.han@nxp.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+Hi Chuanhua,
 
-Vincent Guittot <vincent.guittot@linaro.org> writes:
+On Thu, 30 Aug 2018 16:43:24 +0800
+Chuanhua Han <chuanhua.han@nxp.com> wrote:
 
-> The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
-> its usage in the code assumes that unit is uW/MHz/V^2
->
-> In drivers/thermal/cpu_cooling.c, the code is :
->
-> power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
-> do_div(power, 1000000000);
->
-> which can be summarized as :
-> power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
-> or
-> power (mW) = (capacitance * freq_mhz * (voltage_mv/1000)^2) / 1000
-> then
-> power (mW) = power (uW) / 1000
-> so
-> power (uW) = capacitance * freq_mhz * (voltage_mv/1000)^2
->
-> Furthermore, if we test basic values like :
-> voltage_mv = 1000mV = 1V
-> freq_mhz = 1000Mhz
->
-> The minimum possible power, when dynamic-power-coefficient equals 1, will
-> be with current unit:
-> min power = 1 * 1000  * (1000000)^2 = 10^15 mW
-> which is not realistic
->
-> With the unit used by the code, the min power is
-> min power =  1 * 1000 * 1^2 = 1000uW = 1mW which is far more realistic
->
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> We need that to adjust the len of the 2nd transfer (called data in
+> spi-mem) if it's too long to fit in a SPI message or SPI transfer.
 
-Acked-by: Punit Agrawal <punit.agrawal@arm.com>
+You already sent this email a few days back. Please wait a bit before
+sending it again. And when you do so and nothing changed in the patch
+please use the [PATCH RESEND vX] prefix and explain why you resend it.
 
-Thanks for fixing the mismatch.
+Thanks,
 
+Boris
+
+> 
+> Fixes: c36ff266dc82 ("spi: Extend the core to ease integration of SPI memory controllers")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 > ---
->  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-> index 29e1dc5..71d8cd0 100644
-> --- a/Documentation/devicetree/bindings/arm/cpus.txt
-> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
-> @@ -274,7 +274,7 @@ described below.
->  		Usage: optional
->  		Value type: <prop-encoded-array>
->  		Definition: A u32 value that represents the running time dynamic
-> -			    power coefficient in units of mW/MHz/uV^2. The
-> +			    power coefficient in units of uW/MHz/V^2. The
->  			    coefficient can either be calculated from power
->  			    measurements or derived by analysis.
+> Changes in v5:
+>   -Add the validation check after the op->data.nbytes assignment
+>   -Assign the "len" variable after defining it
+>   -Remove the brackets on both sides of "opt-> data.nbytes"
+> Changes in v4:
+>   -Rename variable name "opcode_addr_dummy_sum" to "len"
+>   -The comparison of "spi_max_message_size(mem->spi)" and "len" was removed
+>   -Adjust their order when comparing the sizes of "spi_max_message_size(mem->spi)" and "len"
+>   -Changing the "unsigned long" type in the code to "size_t"
+> Changes in v3:
+>   -Rename variable name "val" to "opcode_addr_dummy_sum"
+>   -Place the legitimacy of the transfer size(i.e., "spi_max_message_size(mem->spi)" and
+> "opcode_addr_dummy_sum") into "if (! ctlr - > mem_ops | |! ctlr-> mem_ops->exec_op) {"
+> structure and add "spi_max_transfer_size(mem->spi) and opcode_addr_dummy_sum"
+>   -Adjust the formatting alignment of the code
+>   -"(unsigned long)op->data.nbytes" was modified to "(unsigned long)(op->data.nbytes)"
+> Changes in v2:
+>   -Place the adjusted transfer bytes code in spi_mem_adjust_op_size() and  check
+> spi_max_message_size(mem->spi) value before subtracting opcode, addr and dummy bytes
+>   -Change the code from fsl-espi controller to generic code(The adjustment of spi transmission
+> length was originally modified in the "drivers/spi/spi-fsl-espi.c" file, and now the adjustment
+> of transfer length is made in the "drivers/spi/spi-mem.c" file)
+> 
+>  drivers/spi/spi-mem.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+> index e43842c..eb72dba 100644
+> --- a/drivers/spi/spi-mem.c
+> +++ b/drivers/spi/spi-mem.c
+> @@ -346,10 +346,25 @@ EXPORT_SYMBOL_GPL(spi_mem_get_name);
+>  int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+>  {
+>  	struct spi_controller *ctlr = mem->spi->controller;
+> +	size_t len;
+> +
+> +	len = sizeof(op->cmd.opcode) + op->addr.nbytes + op->dummy.nbytes;
 >  
-> @@ -285,7 +285,7 @@ described below.
+>  	if (ctlr->mem_ops && ctlr->mem_ops->adjust_op_size)
+>  		return ctlr->mem_ops->adjust_op_size(mem, op);
 >  
->  			    Pdyn = dynamic-power-coefficient * V^2 * f
->  
-> -			    where voltage is in uV, frequency is in MHz.
-> +			    where voltage is in V, frequency is in MHz.
->  
->  Example 1 (dual-cluster big.LITTLE system 32-bit):
+> +	if (!ctlr->mem_ops || !ctlr->mem_ops->exec_op) {
+> +		if (len > spi_max_transfer_size(mem->spi))
+> +			return -EINVAL;
+> +
+> +		op->data.nbytes = min3((size_t)op->data.nbytes,
+> +				       spi_max_transfer_size(mem->spi),
+> +				       spi_max_message_size(mem->spi) -
+> +				       len);
+> +		if (!op->data.nbytes)
+> +			return -EINVAL;
+> +	}
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
+
