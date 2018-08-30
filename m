@@ -2,79 +2,93 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66B6C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775D7C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9714420661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:49:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9714420661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E1B420835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:50:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGzOKdWE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1B420835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeH3Uwo (ORCPT
+        id S1727708AbeH3Uxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 16:52:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:43850 "EHLO mga12.intel.com"
+        Thu, 30 Aug 2018 16:53:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbeH3Uwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 16:52:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 09:49:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="253212380"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 30 Aug 2018 09:49:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 5FBF0110; Thu, 30 Aug 2018 19:49:36 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] MAINTAINERS: Add myself as designated reviewer of Intel PMIC GPIO
-Date:   Thu, 30 Aug 2018 19:49:35 +0300
-Message-Id: <20180830164935.42791-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        id S1726652AbeH3Uxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 16:53:37 -0400
+Received: from localhost (unknown [104.132.0.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8090D20661;
+        Thu, 30 Aug 2018 16:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535647835;
+        bh=Yyk6SgKhQDbzCTsTqHVAR9QZuhFfgQl9n7Q8fy2qAAA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=jGzOKdWEbIHmgr55cEA/0LtjxHV0cbvxlApucigyJ9DTkiCzRMBJLA5Ec+CjGEIvP
+         Bo57y0HliT7f6Dkl+qKs2TQFmrgHSPOty7tjFhEdV1R/9Jh5dcQpvTYLVeX8Apd0no
+         EgRQoJ7LyJCrMZtJqGUdG3C3uA/a8DaaPxnYDHzA=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Rob Herring <robh@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+References: <20180828154433.5693-1-robh@kernel.org>
+ <20180828154433.5693-3-robh@kernel.org>
+ <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
+ <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
+Message-ID: <153564783492.129321.1020703197103191812@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
+Date:   Thu, 30 Aug 2018 09:50:34 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are few Intel PMIC GPIO device drivers which I would like
-to review.
+Quoting Rob Herring (2018-08-29 04:13:44)
+> On Tue, Aug 28, 2018 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Rob Herring (2018-08-28 08:44:29)
+> > > In preparation to remove the node name pointer from struct device_nod=
+e,
+> > > convert printf users to use the %pOFn format specifier.
+> > >
+> > > Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: linux-clk@vger.kernel.org
+> > > Cc: linux-arm-kernel@lists.infradead.org
+> > > Cc: linux-renesas-soc@vger.kernel.org
+> > > Cc: linux-omap@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > ---
+> >
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> =
 
-Note, Intel MSIC is old system controller that based mostly on PMIC
-integrated in it. Thus, I included it as well.
+> Please apply to the clock tree. There's no dependencies and removing
+> name will take some time.
+> =
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cbbeee75ebb9..3031d76abaab 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7358,6 +7358,12 @@ T:	git https://github.com/intel/gvt-linux.git
- S:	Supported
- F:	drivers/gpu/drm/i915/gvt/
- 
-+INTEL PMIC GPIO DRIVER
-+R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-+S:	Maintained
-+F:	drivers/gpio/gpio-*cove.c
-+F:	drivers/gpio/gpio-msic.c
-+
- INTEL HID EVENT DRIVER
- M:	Alex Hung <alex.hung@canonical.com>
- L:	platform-driver-x86@vger.kernel.org
--- 
-2.18.0
+Alright. Applied to clk-next. Thanks!
 
