@@ -2,124 +2,119 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6C5C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 509F4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D562082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D562082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 075C920834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075C920834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbeH3T17 (ORCPT
+        id S1727338AbeH3T3Y convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:27:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726122AbeH3T16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:27:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BAF16807A0D0;
-        Thu, 30 Aug 2018 15:25:16 +0000 (UTC)
-Received: from localhost (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E36EE10CD77D;
-        Thu, 30 Aug 2018 15:25:15 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 23:25:12 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        thgarnie@google.com, kirill.shutemov@linux.intel.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
- paging mode
-Message-ID: <20180830152512.GE14702@192.168.1.2>
-References: <20180829021754.21850-1-bhe@redhat.com>
- <20180829021754.21850-2-bhe@redhat.com>
- <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+        Thu, 30 Aug 2018 15:29:24 -0400
+Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:42945 "EHLO
+        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727117AbeH3T3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:29:24 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-65-2HtZPnJ-OzKpCULN597HVw-1; Thu, 30 Aug 2018 16:26:40 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 30 Aug 2018 16:28:18 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 30 Aug 2018 16:28:18 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'cphlipot0@gmail.com'" <cphlipot0@gmail.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>
+CC:     "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] perf event-parse: Use fixed size string for comms
+Thread-Topic: [PATCH] perf event-parse: Use fixed size string for comms
+Thread-Index: AQHUQAhYBLgfg1wcJkWfveOQCqo6d6TYauLQ
+Date:   Thu, 30 Aug 2018 15:28:18 +0000
+Message-ID: <0a4dba94bdbb41929350fe5504ee24bb@AcuMS.aculab.com>
+References: <20180830021950.15563-1-cphlipot0@gmail.com>
+In-Reply-To: <20180830021950.15563-1-cphlipot0@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 15:25:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 30 Aug 2018 15:25:16 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+X-MC-Unique: 2HtZPnJ-OzKpCULN597HVw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kirill,
+From: cphlipot0@gmail.com
+> Sent: 30 August 2018 03:20
+> 
+> Some implementations of libc do not support the 'm' width modifier
+> as part of the scanf string format specifier. This can cause the
+> parsing to fail.  Since the parser never checks if the scanf
+> parsing was successesful, this can result in a crash.
+> 
+> Change the comm string to be allocated as a fixed size instead of
+> dynamically using 'm' scanf width modifier. This can be safely done
+> since comm size is limited to 16 bytes by TASK_COMM_LEN within the
+> kernel.
+> 
+> This change prevents perf from crashing when linked against bionic
+> as well as reduces the total number of heap allocations and frees
+> invoked while accomplishing the same task.
+> 
+> Signed-off-by: Chris Phlipot <cphlipot0@gmail.com>
+> ---
+>  tools/perf/util/trace-event-parse.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+> index 920b1d58a068..e76214f8d596 100644
+> --- a/tools/perf/util/trace-event-parse.c
+> +++ b/tools/perf/util/trace-event-parse.c
+> @@ -164,16 +164,15 @@ void parse_ftrace_printk(struct tep_handle *pevent,
+>  void parse_saved_cmdline(struct tep_handle *pevent,
+>  			 char *file, unsigned int size __maybe_unused)
+>  {
+> -	char *comm;
+> +	char comm[17]; /* Max comm length in the kernel is 16. */
+>  	char *line;
+>  	char *next = NULL;
+>  	int pid;
+> 
+>  	line = strtok_r(file, "\n", &next);
+>  	while (line) {
+> -		sscanf(line, "%d %ms", &pid, &comm);
+> -		tep_register_comm(pevent, comm, pid);
+> -		free(comm);
+> +		if (sscanf(line, "%d %16s", &pid, comm) == 2)
+> +			tep_register_comm(pevent, comm, pid);
+>  		line = strtok_r(NULL, "\n", &next);
 
-I made a new version according to your suggestion, just a little
-different, I didn't make 1TB as default, just calculate with the actual
-size, then align up to 1TB boundary.  Just found kcore is printing more
-entries than before, I thought it's caused by my code, later got it was
-touchde by other people.
+Seems to me that sscanf is the wrong tool for the job (as usual).
+Why not just:
+		pid = strtoul(line, &comm, 10);
+		while (*comm == ' ')
+			comm++;
+		tep_register_comm(pevent, comm, pid);
 
-Any comment about this? I can change accordingly.
+	David
 
-From b19955ec5d439f7cb580331c83a27ad5753b06b6 Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Thu, 30 Aug 2018 11:45:13 +0800
-Subject: [PATCH] x86/mm/KASLR: Calculate the actual size of vmemmap region
-
-Vmemmap region has different maximum size depending on paging mode,
-now its size is hardcoded as 1TB in memory KASLR. This is not
-right for 5-level paging mode. It will cause overflow if vmemmap
-region is randomized to be adjacent to cpu_entry_area region and
-its actual size is bigger than 1TB.
-
-So here calculate how many TB by the actual size of vmemmap region
-and align to 1TB boundary.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- arch/x86/mm/kaslr.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 0988971069c9..1db8e166455e 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -51,7 +51,7 @@ static __initdata struct kaslr_memory_region {
- } kaslr_regions[] = {
- 	{ &page_offset_base, 0 },
- 	{ &vmalloc_base, 0 },
--	{ &vmemmap_base, 1 },
-+	{ &vmemmap_base, 0 },
- };
- 
- /* Get size in bytes used by the memory region */
-@@ -77,6 +77,7 @@ void __init kernel_randomize_memory(void)
- 	unsigned long rand, memory_tb;
- 	struct rnd_state rand_state;
- 	unsigned long remain_entropy;
-+	unsigned long vmemmap_size;
- 
- 	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
- 	vaddr = vaddr_start;
-@@ -108,6 +109,14 @@ void __init kernel_randomize_memory(void)
- 	if (memory_tb < kaslr_regions[0].size_tb)
- 		kaslr_regions[0].size_tb = memory_tb;
- 
-+	/*
-+	 * Calculate how many TB vmemmap region needs, and align to
-+	 * 1TB boundary.
-+	 * */
-+	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-+		sizeof(struct page);
-+	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
-+
- 	/* Calculate entropy available between regions */
- 	remain_entropy = vaddr_end - vaddr_start;
- 	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
--- 
-2.13.6
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
