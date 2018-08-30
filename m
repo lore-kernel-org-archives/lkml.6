@@ -2,459 +2,164 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FCEC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE60BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BB620658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:47:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kbPa9PCf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eLqhjua3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BB620658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5846220658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:48:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5846220658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeH3OtH (ORCPT
+        id S1728547AbeH3Otw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:49:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59480 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728318AbeH3OtG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:49:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8068260709; Thu, 30 Aug 2018 10:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535626054;
-        bh=7BEgjAgD2EQQJh48xpT6pLUAggarWhqx1ZhDpt8XyNY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kbPa9PCfVcqeE7vFxggs4rygFeijhz5ODmCW82RBCL071HVMlnTl7bnqRf1hkFG7R
-         9+a5iUafDi9zMGbjeX1A7E2DsrrmU2pSAPD7kqiU8Y2wsryEt7WgT0BscDobWErDUC
-         x1y2kWz4kny4clNQySDMAaf/Kfap1aCVYdq6W+ZA=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C493060388;
-        Thu, 30 Aug 2018 10:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535626052;
-        bh=7BEgjAgD2EQQJh48xpT6pLUAggarWhqx1ZhDpt8XyNY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eLqhjua3l/wIPyiRlCDpnbRQPibThzOugNrHy6KDj/M++0mgz3MrbFUIbzs9IcmTj
-         KOvomu0xG5fr2ypGW8vMHny2siivwHDgtdg3YpWwmYG3rJMbNlwsrIUqrFdPULMBTR
-         mSGrCVOdi9YidNlQmSx8/x+beMusYnUHTxZwieTg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C493060388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     stummala@codeaurora.org, adrian.hunter@intel.com,
-        jlbec@evilplan.org, linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V12 2/2] scsi: ufs: Add configfs support for UFS provisioning
-Date:   Thu, 30 Aug 2018 16:16:42 +0530
-Message-Id: <1535626003-4966-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1535626003-4966-1-git-send-email-sayalil@codeaurora.org>
-References: <1535626003-4966-1-git-send-email-sayalil@codeaurora.org>
+        Thu, 30 Aug 2018 10:49:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:39420 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728460AbeH3Otw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:49:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3EC4680D;
+        Thu, 30 Aug 2018 03:48:20 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A6123F721;
+        Thu, 30 Aug 2018 03:48:18 -0700 (PDT)
+Subject: Re: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
+To:     Fan Wu <wufan@codeaurora.org>
+Cc:     mchehab@kernel.org, bp@alien8.de, baicar.tyler@gmail.com,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <c70fa799-bc9f-64c8-e151-088ca8c3ed3e@arm.com>
+Date:   Thu, 30 Aug 2018 11:48:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision UFS device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+Hi Fan,
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS and CONFIG_UFS_PROVISION needs to be enabled
-for using this feature.
+On 29/08/18 19:33, Fan Wu wrote:
+> The current ghes_edac driver does not update per-dimm error
+> counters when reporting memory errors, because there is no
+> platform-independent way to find DIMMs based on the error
+> information provided by firmware.
 
-Usage:
-1) To read current configuration descriptor with index X
-   (where index X can be 0/1/2/3) :
-   cat /config/XXXX.ufshc/ufs_config_desc_X
+I'd argue there is: its in the CPER records, we just didn't do anything useful
+with the information in the past!
 
-2) To write configuration descriptor with index X :
-   echo <config_desc_buf> > /config/XXXX.ufshc/ufs_config_desc_X
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  12 ++
- drivers/scsi/ufs/Kconfig                      |  10 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 232 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   3 +-
- drivers/scsi/ufs/ufshcd.h                     |  17 ++
- 6 files changed, 274 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+> This patch offers a solution
+> for platforms whose firmwares provide valid module handles
+> (SMBIOS type 17) in error records. In this case ghes_edac will
+> use the module handles to locate DIMMs and thus makes per-dimm
+> error reporting possible.
 
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..4302d57
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,12 @@
-+What:		/config/*/ufs_config_desc_X
-+Date:		Jun 2018
-+KernelVersion:	4.19
-+Description:
-+		This file shows bytes of the current ufs configuration descriptor
-+		with index X (where X = 0/1/2/3) set in device. This can be used to
-+		provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		table 14-12 - Unit Descriptor configurable parameters from specs for
-+		description and format of each configuration descriptor parameter.
-+		Parameters of Configuration descriptor buffer for respective index
-+		needs to be passed as bytes in space separated format.
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..a9a0a58 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
- 
- 	  Select this if you have UFS controller on QCOM chipset.
- 	  If unsure, say N.
-+
-+config UFS_PROVISION
-+	tristate "Runtime UFS Provisioning support"
-+	depends on SCSI_UFSHCD && CONFIGFS_FS
-+	help
-+	  This enables runtime UFS provisioning support. This can be used
-+	  primarily during assembly line as some devices may be required to
-+	  be configured multiple times during initial development phase.
-+
-+	  If unsure, say N.
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..00110ea 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..a2c09c7
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,232 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return hba;
-+}
-+
-+static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
-+		u8 index)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	int i, ret, curr_len = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, index, 0,
-+		desc_buf, &desc_buf_len);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < desc_buf_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+out:
-+	kfree(desc_buf);
-+	if (ret)
-+		return ret;
-+	return curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct config_item *item,
-+		const char *buf, size_t count, u8 index)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	char *token;
-+	int i, ret;
-+	u8 value;
-+	u32 config_desc_lock = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
-+	if (ret)
-+		goto out;
-+
-+	if (config_desc_lock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, config_desc_lock);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < desc_buf_len; i++) {
-+		token = strsep(&strbuf_copy, " ");
-+		if (!token && i)
-+			break;
-+
-+		ret = kstrtou8(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtou8 failed %d %s\n",
-+				__func__, ret, token);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		desc_buf[i] = value;
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, index, 0,
-+		desc_buf, &desc_buf_len);
-+	if (!ret)
-+		dev_info(hba->dev, "%s: UFS Configuration Descriptor %u written\n",
-+		__func__, index);
-+
-+out:
-+	kfree(strbuf);
-+	kfree(desc_buf);
-+	if (ret)
-+		return ret;
-+	return count;
-+}
-+
-+static ssize_t ufs_config_desc_0_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 0);
-+}
-+
-+static ssize_t ufs_config_desc_0_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 0);
-+}
-+
-+static ssize_t ufs_config_desc_1_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 1);
-+}
-+
-+static ssize_t ufs_config_desc_1_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 1);
-+}
-+
-+static ssize_t ufs_config_desc_2_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 2);
-+}
-+
-+static ssize_t ufs_config_desc_2_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 2);
-+}
-+
-+static ssize_t ufs_config_desc_3_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 3);
-+}
-+
-+static ssize_t ufs_config_desc_3_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 3);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision_0 = {
-+	.ca_name	= "ufs_config_desc_0",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_0_show,
-+	.store		= ufs_config_desc_0_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_1 = {
-+	.ca_name	= "ufs_config_desc_1",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_1_show,
-+	.store		= ufs_config_desc_1_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_2 = {
-+	.ca_name	= "ufs_config_desc_2",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_2_show,
-+	.store		= ufs_config_desc_2_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_3 = {
-+	.ca_name	= "ufs_config_desc_3",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_3_show,
-+	.store		= ufs_config_desc_3_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision_0,
-+	&ufshcd_attr_provision_1,
-+	&ufshcd_attr_provision_2,
-+	&ufshcd_attr_provision_3,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	int ret;
-+	struct config_item *cg_item;
-+	struct configfs_subsystem *subsys;
-+
-+	cg_item = &hba->subsys.su_group.cg_item;
-+	sprintf(cg_item->ci_namebuf, "%s", name);
-+	cg_item->ci_type = &ufscfg_type;
-+
-+	subsys = &hba->subsys;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+}
-+
-+void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+	configfs_unregister_subsystem(&hba->subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index e01cdc0..608e23e 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7711,6 +7711,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit(hba);
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7965,7 +7966,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
--
-+	ufshcd_configfs_init(hba, dev_name(hba->dev));
- 	return 0;
- 
- out_remove_scsi_host:
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 45013b6..a340ca8 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_UFS_PROVISION
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -868,6 +872,19 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifndef CONFIG_UFS_PROVISION
-+static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+}
-+static inline void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+}
-+#else
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-+void ufshcd_configfs_exit(struct ufs_hba *hba);
-+#endif
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
 
+> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+> index 473aeec..db527f0 100644
+> --- a/drivers/edac/ghes_edac.c
+> +++ b/drivers/edac/ghes_edac.c
+> @@ -81,6 +81,26 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
+>  		(*num_dimm)++;
+>  }
+>  
+> +static int ghes_edac_dimm_index(u16 handle)
+> +{
+> +	struct mem_ctl_info *mci;
+> +	int i;
+> +
+> +	if (!ghes_pvt)
+> +		return -1;
+
+ghes_edac_report_mem_error() already checked this, as its the only caller there
+is no need to check it again.
+
+
+> +	mci = ghes_pvt->mci;
+> +
+> +	if (!mci)
+> +		return -1;
+
+Can this happen? ghes_edac_report_mem_error() would have dereferenced this already!
+
+If you need the struct mem_ctl_info, you may as well pass it in as the only
+caller has it to hand.
+
+
+> +
+> +	for (i = 0; i < mci->tot_dimms; i++) {
+> +		if (mci->dimms[i]->smbios_handle == handle)
+> +			return i;
+> +	}
+> +	return -1;
+> +}
+> +
+>  static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+>  {
+>  	struct ghes_edac_dimm_fill *dimm_fill = arg;
+> @@ -177,6 +197,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+>  				entry->total_width, entry->data_width);
+>  		}
+>  
+> +		dimm->smbios_handle = entry->handle;
+
+We aren't checking for duplicate handles, (e.g. they're all zero). I think this
+is fine as chances are firmware on those systems won't set
+CPER_MEM_VALID_MODULE_HANDLE. If it does, the handle it gives us is ambiguous,
+and we pick a dimm, instead of whine-ing about broken firmware tables.
+
+(I'm just drawing attention to it in case someone disagrees)
+
+
+>  		dimm_fill->count++;
+>  	}
+>  }
+> @@ -327,12 +349,20 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>  		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
+>  	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
+>  		const char *bank = NULL, *device = NULL;
+> +		int index = -1;
+> +
+>  		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
+
+> +		p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+> +			     mem_err->mem_dev_handle);
+>  		if (bank != NULL && device != NULL)
+>  			p += sprintf(p, "DIMM location:%s %s ", bank, device);
+> -		else
+> -			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+> -				     mem_err->mem_dev_handle);
+
+Why do we now print the handle every time? The handle is pretty meaningless, it
+can only be used to find the location-strings, if we get those we print them
+instead.
+
+
+> +		index = ghes_edac_dimm_index(mem_err->mem_dev_handle);
+> +		if (index >= 0) {
+> +			e->top_layer = index;
+> +			e->enable_per_layer_report = true;
+> +		}
+> +
+>  	}
+>  	if (p > e->location)
+>  		*(p - 1) = '\0';
+
+Looks good to me!
+
+
+Thanks,
+
+James
