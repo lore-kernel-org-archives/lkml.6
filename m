@@ -2,109 +2,119 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05E8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33493C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A64C20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:05:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnPsXFMw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A64C20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CDF1820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:08:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF1820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbeH3RHm (ORCPT
+        id S1728888AbeH3RK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:07:42 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43535 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728713AbeH3RHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:07:41 -0400
-Received: by mail-ed1-f66.google.com with SMTP id z27-v6so6454933edb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=i1mvplLlOCL9jwKYBcVYkW35b+HzqAg2bbkR+Jen/mU=;
-        b=MnPsXFMwnjSIEyIC2j1iql7T5TzbgJeB4cbgmYE+TyEYhouXR+Mi5+ddf6gD/yk70K
-         QqV1R7xx80+ynJBG7yb+tIaSUy9BY309cboHJMsbZm44Sam7z7F3kYRR2E9ucUtNiTtp
-         gAaT/dE9V/SCo1X0DbJkVooWyAnLFKbeSGJ+enHSCOHkF0u2ghdbnlaTq4qLwQTC8EaP
-         UNcn7eOHQbItRbxi45lkku41ftNdtjQtI4r/tTFAbJEi+tezOAm3WnYFM4EFqSDFUcEK
-         GSvOn/YcjY8nT5hCoZGGLW+mKyu4mIR6Q2nUMzK1668OJMW2uslf59V7/l2aNS7rTzDR
-         OOfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=i1mvplLlOCL9jwKYBcVYkW35b+HzqAg2bbkR+Jen/mU=;
-        b=DXlVDDOiR0jOdiMd1vVV1SKbeBEWp2CqndOW/i++ckl9pIBbafAx+KZjTsBsScRzIL
-         wcC+lxB/31bycxSsvEKWv6BvbOgXdFTMdZFRAqesAVa6kDYJulj7eX9JmaeTRrwnUoE9
-         Rxk7whH66xPSauFgzMOuevxnYoPv8zOyquMoprz5KEIrBszwB9FCJeWeYY8Vq8uaJcpn
-         ecNteN/ka+7PLVPUN4ZP2T86x7SiViKDvr21/6uox0ttwbvopRddy/+L9eEQALFi5ZGx
-         Vv1MzHdfFbop2vV9v2XczotC8iXsTDMeSkwtbt5PjtCjyx5AhPrV6rZcyCv8FVyivGJg
-         44rw==
-X-Gm-Message-State: APzg51DKBtdcxu2B3mJ6NJyfipFmMbjbUm6ug/Ql+xvEFWKYIlVNitTw
-        dTeJn9d3HTsd+Ns9ctJy5jxmk38=
-X-Google-Smtp-Source: ANB0VdYUgUfQfamrjZTl0IiurAl2+jJs38/ZKMG3ANEYo/YsA+LTFltja3lkTOss4Yc5o1FdHUKD1g==
-X-Received: by 2002:a50:a1c6:: with SMTP id 64-v6mr12503731edk.309.1535634336704;
-        Thu, 30 Aug 2018 06:05:36 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id x22-v6sm2931565edb.8.2018.08.30.06.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 06:05:36 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 16:05:34 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: uNNw: wrapping integer annotations
-Message-ID: <20180830130534.GA31044@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 30 Aug 2018 13:10:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55198 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728686AbeH3RK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 13:10:58 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0343840200BA;
+        Thu, 30 Aug 2018 13:08:49 +0000 (UTC)
+Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B99202166B41;
+        Thu, 30 Aug 2018 13:08:45 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Joe Mario <jmario@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH RESEND v3] locking/rwsem: Exit read lock slowpath if queue empty & no writer
+Date:   Thu, 30 Aug 2018 09:08:33 -0400
+Message-Id: <1535634513-8961-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 13:08:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 13:08:54 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LWN wrote:
-> Marking places where unsigned overflow is expected is needed; it would be
-> nice to get those annotations put into the kernel, Cook said.
+It was discovered that a constant stream of readers with occassional
+writers pounding on a rwsem may cause many of the readers to enter the
+slowpath unnecessarily thus increasing latency and lowering performance.
 
-Let's discuss the most important part -- naming :^)
+In the current code, a reader entering the slowpath critical section
+will unconditionally set the WAITING_BIAS, if not set yet, and clear
+its active count even if no one is in the wait queue and no writer
+is present. This causes some incoming readers to observe the presence
+of waiters in the wait queue and hence have to go into the slowpath
+themselves.
 
-In my opinion, signed universe should _not_ get anything before specific
-examples are presented where the value is in fact can be negative and
-can overflow.
+With sufficient numbers of readers and a relatively short lock hold time,
+the WAITING_BIAS may be repeatedly turned on and off and a substantial
+portion of the readers will go into the slowpath sustaining a rather
+long queue in the wait queue spinlock and repeated WAITING_BIAS on/off
+cycle until the logjam is broken opportunistically.
 
-As for size_t/uintptr_t/..., they can be added as usize_w Rust-style
-or left until someone presents a usecase
+To avoid this situation from happening, an additional check is added to
+detect the special case that the reader in the critical section is the
+only one in the wait queue and no writer is present. When that happens,
+it can just exit the slowpath and return immediately as its active count
+has already been set in the lock.  Other incoming readers won't observe
+the presence of waiters and so will not be forced into the slowpath.
 
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -119,6 +119,18 @@ typedef s64			int64_t;
- #define aligned_be64		__aligned_be64
- #define aligned_le64		__aligned_le64
+The issue was found in a customer site where they had an application
+that pounded on the pread64 syscalls heavily on an XFS filesystem. The
+application was run in a recent 4-socket boxes with a lot of CPUs. They
+saw significant spinlock contention in the rwsem_down_read_failed() call.
+With this patch applied, the system CPU usage went down from 85% to 57%,
+and the spinlock contention in the pread64 syscalls was gone.
+
+v3: Revise the commit log and comment again.
+v2: Add customer testing results and remove wording that may cause
+    confusion.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
+Acked-by: Will Deacon <will.deacon@arm.com>
+---
+ kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index 3064c50..01fcb80 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -233,8 +233,19 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 	waiter.type = RWSEM_WAITING_FOR_READ;
  
-+#ifdef __CHECKER__	// change to sanitizer define
-+#define __wrap __attribute__((whatever))
-+#else
-+#define __wrap
-+#endif
-+/* wrapping is OK */
-+typedef u8 __wrap u8w;
-+typedef u16 __wrap u16w;
-+typedef u32 __wrap u32w;
-+typedef u64 __wrap u64w;
-+typedef unsigned long __wrap unsigned_long_w;	// name sucks but consistently so
-+
- /**
-  * The type used for indexing onto a disc or disc partition.
-  *
+ 	raw_spin_lock_irq(&sem->wait_lock);
+-	if (list_empty(&sem->wait_list))
++	if (list_empty(&sem->wait_list)) {
++		/*
++		 * In case the wait queue is empty and the lock isn't owned
++		 * by a writer, this reader can exit the slowpath and return
++		 * immediately as its RWSEM_ACTIVE_READ_BIAS has already
++		 * been set in the count.
++		 */
++		if (atomic_long_read(&sem->count) >= 0) {
++			raw_spin_unlock_irq(&sem->wait_lock);
++			return sem;
++		}
+ 		adjustment += RWSEM_WAITING_BIAS;
++	}
+ 	list_add_tail(&waiter.list, &sem->wait_list);
+ 
+ 	/* we're now waiting on the lock, but no longer actively locking */
+-- 
+1.8.3.1
+
