@@ -2,75 +2,95 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0C6C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C1BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895B32073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:11:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KLL988/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895B32073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9DF8D2073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:12:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF8D2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbeH3SNo (ORCPT
+        id S1729203AbeH3SOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:13:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45194 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729019AbeH3SNo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:13:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zqRnMD7NZlRZkmXYIC+sDRCHE5M4pgkQwJVwlO2acZ0=; b=KLL988/ueL+I/DhUiMDhkURPQ
-        CGkr2AZbNpaI65gKdpDvia4nW5+NdxXu89n9lz7u6lLI1fmUMAENNzZgsHqWETfEqShD/m4T45f1M
-        AFw/86+UkyaYZQ9mcROv8s+x5RaXUBrXbgm22HZyvN4TA0F6UwNFnuJBIajNE4K/CIFCaadwna7Uh
-        CI8JctUPSNotE2HEeH0Uuny9NvwAlwsEPPpthrHQR7axiGG8ik5Bp8sLWg3qnLcl4IK8uHLnD8XqF
-        gt9dYiD4dFMNpFJr32o1p0RVsy1SqJFekFzwdSdNMU6BkMknRh+EBB3m7+JEBwRdaw/jYFrZ/cAkh
-        0Tv2ZCWBA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvNfN-0001qV-19; Thu, 30 Aug 2018 14:11:21 +0000
-Date:   Thu, 30 Aug 2018 07:11:20 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Mark Rutland <mark.rutland@arm.com>, palmer@sifive.com,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 0/3] RISC-V: Add new smp features
-Message-ID: <20180830141120.GA1724@infradead.org>
-References: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
- <CAAhSdy0=ROMqkbgqcKLSdM11TBOeD65GR42s0j_HOYd+y-=jmg@mail.gmail.com>
+        Thu, 30 Aug 2018 14:14:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728970AbeH3SOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:14:38 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A152C40201BD;
+        Thu, 30 Aug 2018 14:12:18 +0000 (UTC)
+Received: from localhost (ovpn-8-29.pek2.redhat.com [10.72.8.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 751332166B41;
+        Thu, 30 Aug 2018 14:12:16 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 22:12:02 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add restrictions for kexec/kdump jumping between
+ 5-level and 4-level kernel
+Message-ID: <20180830141202.GA14702@192.168.1.2>
+References: <20180829141624.13985-1-bhe@redhat.com>
+ <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAhSdy0=ROMqkbgqcKLSdM11TBOeD65GR42s0j_HOYd+y-=jmg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 14:12:18 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 30 Aug 2018 14:12:18 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 09:53:50AM -0400, Anup Patel wrote:
-> > Atish Patra (3):
-> >   RISC-V: Add logical CPU indexing for RISC-V
-> >   RISC-V: Use Linux logical cpu number instead of hartid
-> >   RISC-V: Support cpu hotplug.
-> >
+On 08/30/18 at 04:58pm, Kirill A. Shutemov wrote:
+> On Wed, Aug 29, 2018 at 10:16:21PM +0800, Baoquan He wrote:
+> > This was suggested by Kirill several months ago, I worked out several
+> > patches to fix, then interrupted by other issues. So sort them out
+> > now and post for reviewing.
 > 
-> This series looks good to me.
+> Thanks for doing this.
+> 
+> > The current upstream kernel supports 5-level paging mode and supports
+> > dynamically choosing paging mode during bootup according to kernel
+> > image, hardware and kernel parameter setting. This flexibility brings
+> > several issues for kexec/kdump:
+> > 1)
+> > Switching between paging modes, requires changes into target kernel.
+> > It means you cannot kexec() 4-level paging kernel from 5-level paging
+> > kernel if 4-level paging kernel doesn't include changes. 
+> > 
+> > 2)
+> > Switching from 5-level paging to 4-level paging kernel would fail, if
+> > kexec() put kernel image above 64TiB of memory.
+> 
+> I'm not entirely sure that 64TiB is the limit here. Technically, 4-level
+> paging allows to address 256TiB in 1-to-1 mapping. We just don't have
+> machines with that wide physical address space (which don't support
+> 5-level paging too).
 
-Hmm, that series didn't make it to my inbox, neither directly, nor
-through the linux-riscv list.  Where did you see it?
+Hmm, afaik, the MAX_PHYSMEM_BITS limits the maximum address space
+which physical RAM can mapped to. We have 256TB for the whole address
+space for 4-level paging, that includes user space and kernel space,
+it might not allow 256TB entirely for the direct mapping.
+And the direct mapping is only for physical RAM mapping, and
+kexec/kdump only cares about the physical RAM space and load them
+inside.
+
+# define MAX_PHYSMEM_BITS       (pgtable_l5_enabled() ? 52 : 46)
+
+Not sure if my understanding is right, please correct me if I am wrong.
+
+Thanks
+Baoquan
