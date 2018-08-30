@@ -2,125 +2,444 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCDFC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD1FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36D320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36D320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B58020645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGiUtsRJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B58020645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbeH3Qwi (ORCPT
+        id S1728929AbeH3Qwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:52:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:41336 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728713AbeH3Qwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:52:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD47C7A9;
-        Thu, 30 Aug 2018 05:50:37 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B80023F557;
-        Thu, 30 Aug 2018 05:50:33 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 13:50:31 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 05/14] sched/topology: Reference the Energy Model of
- CPUs when available
-Message-ID: <20180830125031.GV2960@e110439-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-6-quentin.perret@arm.com>
- <20180829162238.GQ2960@e110439-lin>
- <20180829165603.astg32z3ep2qldfu@queper01-lin>
- <20180830100019.GT2960@e110439-lin>
- <20180830104718.lvkkhyi3dtwkfjr7@queper01-lin>
+        Thu, 30 Aug 2018 12:52:53 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43195 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728713AbeH3Qwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:52:53 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z27-v6so6418043edb.10;
+        Thu, 30 Aug 2018 05:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yxTGaHZkrrcNS7zClWbWhTNgJH7XwlBwTOJk4UQ2SFs=;
+        b=fGiUtsRJbst8NYpVJTjy3BCL/fJISVy/+zL7Q2qgV6kgkV65HX6YXoHTiS9TIyCH0l
+         pDJ5XoORb+mh0FfQyT9ltExMtTYhBKJs98dFfF5PUVxXu0TN5Oq8zRyUoD/UVElMJ7md
+         mmQEib6+tcA8I6bgD+0fJJvXerZCKpXjQJegP2Uw1kDrimRfFyCW4bB+aN+QPC1FHjYF
+         cu2UxOzwPiR3g7Q+GfFuDoyvr9I2Nlr2wGoBLW1+BTQEzzw2dWJwmnuNZ2fBpy0XSt6d
+         lxI5y2JgouN93ur3huZMa1Ns8b9U9lHy5vw81qKxwXubUTO7pT+4jwRKvaGcUs5xyMD1
+         p8jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yxTGaHZkrrcNS7zClWbWhTNgJH7XwlBwTOJk4UQ2SFs=;
+        b=o7h8Gej6l1D700jSp6wE1KjVd8TNU0VbXEY97AkBQTOaG+0UXYecyUH/O2N8OArMrZ
+         ImnCQzlH0+oiy3a4g7Wgs23g8EHhbIcv4EiViGCYJP+Vl/rhYehaoF8u00e6Ln7dHrXk
+         W55rlDrbduVbCXGFwgUX0HnoheFyATYYOOSQZtouK7y8ldX0u/qAFHkUlFKznLa4l3LO
+         ZmQWkdlX2edsvNMmU2LYrDnNzA8L+X6In4sCNVISihatmdjmfXvIobWJCnhqZan1N4Ye
+         h/5mUi2C9Sh3sTUnQNkB0LnJWw2ux//bNSQvoTKM3GHc7+XANo45SiQrIDBfRtw6vWND
+         wLdg==
+X-Gm-Message-State: APzg51BmiLlllD5YzFlhhj3vKN2y/J+HWRQgUbSfO9G2GCrqDYr2+5xF
+        qhMtT+cIORdBsWt/+dnh4Ua9fr2qSH9ouQ==
+X-Google-Smtp-Source: ANB0VdbZEeDRKz7qkXTXgYzNm5gtltBVob0gGziKQWwpsl0DwCIwW1gx23XJmEFPyCF7FtQrc4Liyw==
+X-Received: by 2002:aa7:c384:: with SMTP id k4-v6mr3663301edq.270.1535633451421;
+        Thu, 30 Aug 2018 05:50:51 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id m35-v6sm2808507ede.14.2018.08.30.05.50.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 05:50:51 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 14:50:45 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180830125045.GA6936@andrea>
+References: <20180829211018.GA19646@linux.vnet.ibm.com>
+ <20180829211053.20531-1-paulmck@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830104718.lvkkhyi3dtwkfjr7@queper01-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180829211053.20531-1-paulmck@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-Aug 11:47, Quentin Perret wrote:
-> On Thursday 30 Aug 2018 at 11:00:20 (+0100), Patrick Bellasi wrote:
-> > Dunno... but, in any case, probably we don't care about using EAS until
-> > the boot complete, isn't it?
+On Wed, Aug 29, 2018 at 02:10:47PM -0700, Paul E. McKenney wrote:
+> From: Alan Stern <stern@rowland.harvard.edu>
 > 
-> So, as of now, EAS will typically start soon after CPUFreq. I don't see a
-> point in starting before, and I'm not sure if starting it later is
-> really what we want either ... It probably makes sense to start the
-> DVFS-related features (CPUFreq, EAS, ...) together.
+> More than one kernel developer has expressed the opinion that the LKMM
+> should enforce ordering of writes by locking.  In other words, given
+> the following code:
 > 
-> > Just to better understand, what is the most common activation path we expect ?
-> > 
-> >   1. system boot
-> >   2. CPUs online
-> >   3. CPUFreq initialization
-> >   4. EM registered
-> >   X. ???
+> 	WRITE_ONCE(x, 1);
+> 	spin_unlock(&s):
+> 	spin_lock(&s);
+> 	WRITE_ONCE(y, 1);
 > 
-> X is sort of arch dependent (like the EM registration actually). For
-> arm/arm64, the arch topology driver (see drivers/base/arch_topology.c)
-> will rebuild the sched_domains once the capacities of CPU are
-> discovered. In previous versions, I had a patch that did that explicitly:
+> the stores to x and y should be propagated in order to all other CPUs,
+> even though those other CPUs might not access the lock s.  In terms of
+> the memory model, this means expanding the cumul-fence relation.
 > 
-> https://lore.kernel.org/lkml/20180724122521.22109-14-quentin.perret@arm.com/
+> Locks should also provide read-read (and read-write) ordering in a
+> similar way.  Given:
 > 
-> However, I dropped this patch for v6 because I rebased the series on top
-> of Morten's automatic flag detection patches, which happen to already do
-> that for me. More precisely, Morten's patches will rebuild the sched
-> domains if the SD_ASYM_CPUCAPACITY flag needs to be set somewhere in the
-> hierarchy. EAS depends on this flag anyway, so I guess it's fine to rely
-> on this rebuild to start EAS at the same time.
+> 	READ_ONCE(x);
+> 	spin_unlock(&s);
+> 	spin_lock(&s);
+> 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
 > 
-> I have been wondering for a while if such a 'loose' way of starting EAS
-> was alright or not. My conclusion was that it should be OK for now,
-> because that should suit all the users I can see in the short/medium
-> term. An alternative could be to introduce something like a notifier in
-> the EM framework in order to let other subsystems know that the EM is
-> complete or something along those lines. And then we could register a
-> callback on this notifier to rebuild the sched_domains. But that's added
-> complexity, which isn't really needed (yet). If that needs to be done to
-> accomodate the needs of new users/archs, we can still implement that
-> later :-)
+> the load of x should be executed before the load of (or store to) y.
+> The LKMM already provides this ordering, but it provides it even in
+> the case where the two accesses are separated by a release/acquire
+> pair of fences rather than unlock/lock.  This would prevent
+> architectures from using weakly ordered implementations of release and
+> acquire, which seems like an unnecessary restriction.  The patch
+> therefore removes the ordering requirement from the LKMM for that
+> case.
 > 
-> >   N. partition_sched_domains
-> >         build_perf_domains
-> > 
-> > IOW, who do we expect to call build_perf_domains for the first time ?
+> All the architectures supported by the Linux kernel (including RISC-V)
+> do provide this ordering for locks, albeit for varying reasons.
+> Therefore this patch changes the model in accordance with the
+> developers' wishes.
 > 
-> On arm/arm64, when the arch_topology driver calls rebuild_sched_domains.
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Reviewed-by: Will Deacon <will.deacon@arm.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Great, I missed that point, which you actually call out in the cover
-letter. Thanks also for the more comprehensive explanation above!
+Round 2 ;-), I guess...  Let me start from the uncontroversial points:
 
-> Thanks !
-> Quentin
+  1) being able to use the LKMM to reason about generic locking code
+     is useful and desirable (paraphrasing Peter in [1]);
 
-Cheers Patrick
+  2) strengthening the ordering requirements of such code isn't going
+     to boost performance (that's "real maths").
 
--- 
-#include <best/regards.h>
+This patch is taking (1) away from us and it is formalizing (2), with
+almost _no_ reason (no reason at all, if we stick to the commit msg.).
 
-Patrick Bellasi
+In [2], Will wrote:
+
+  "[...] having them [the RMWs] closer to RCsc[/to the semantics of
+   locks] would make it easier to implement and reason about generic
+   locking implementations (i.e. reduce the number of special ordering
+   cases and/or magic barrier macros)"
+
+"magic barrier macros" as in "mmh, if we accept this patch, we _should_
+be auditing the various implementations/code to decide where to place a
+
+  smp_barrier_promote_ordinary_release_acquire_to_unlock_lock()" ;-)
+
+or the like, and "special ordering cases" as in "arrgh, (otherwise) we
+are forced to reason on a per-arch basis while looking at generic code".
+
+(Remark: ordinary release/acquire are building blocks for code such as
+ qspinlock, (q)rwlock, mutex, rwsem, ... and what else??).
+
+To avoid further repetition, I conclude by confirming all the concerns
+and my assessment of this patch as pointed out in [3]; the subsequent
+discussion, although not conclusive, presented several suggestions for
+improvement (IMO).
+
+  Andrea
+
+[1] http://lkml.kernel.org/r/20180712134821.GT2494@hirez.programming.kicks-ass.net
+[2] http://lkml.kernel.org/r/20180713093524.GC32020@arm.com
+[3] http://lkml.kernel.org/r/20180710093821.GA5414@andrea
+    http://lkml.kernel.org/r/20180711161717.GA14635@andrea
+
+
+> ---
+>  .../Documentation/explanation.txt             | 186 ++++++++++++++----
+>  tools/memory-model/linux-kernel.cat           |   8 +-
+>  ...ISA2+pooncelock+pooncelock+pombonce.litmus |   7 +-
+>  3 files changed, 150 insertions(+), 51 deletions(-)
+> 
+> diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
+> index 0cbd1ef8f86d..35bff92cc773 100644
+> --- a/tools/memory-model/Documentation/explanation.txt
+> +++ b/tools/memory-model/Documentation/explanation.txt
+> @@ -28,7 +28,8 @@ Explanation of the Linux-Kernel Memory Consistency Model
+>    20. THE HAPPENS-BEFORE RELATION: hb
+>    21. THE PROPAGATES-BEFORE RELATION: pb
+>    22. RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
+> -  23. ODDS AND ENDS
+> +  23. LOCKING
+> +  24. ODDS AND ENDS
+>  
+>  
+>  
+> @@ -1067,28 +1068,6 @@ allowing out-of-order writes like this to occur.  The model avoided
+>  violating the write-write coherence rule by requiring the CPU not to
+>  send the W write to the memory subsystem at all!)
+>  
+> -There is one last example of preserved program order in the LKMM: when
+> -a load-acquire reads from an earlier store-release.  For example:
+> -
+> -	smp_store_release(&x, 123);
+> -	r1 = smp_load_acquire(&x);
+> -
+> -If the smp_load_acquire() ends up obtaining the 123 value that was
+> -stored by the smp_store_release(), the LKMM says that the load must be
+> -executed after the store; the store cannot be forwarded to the load.
+> -This requirement does not arise from the operational model, but it
+> -yields correct predictions on all architectures supported by the Linux
+> -kernel, although for differing reasons.
+> -
+> -On some architectures, including x86 and ARMv8, it is true that the
+> -store cannot be forwarded to the load.  On others, including PowerPC
+> -and ARMv7, smp_store_release() generates object code that starts with
+> -a fence and smp_load_acquire() generates object code that ends with a
+> -fence.  The upshot is that even though the store may be forwarded to
+> -the load, it is still true that any instruction preceding the store
+> -will be executed before the load or any following instructions, and
+> -the store will be executed before any instruction following the load.
+> -
+>  
+>  AND THEN THERE WAS ALPHA
+>  ------------------------
+> @@ -1766,6 +1745,147 @@ before it does, and the critical section in P2 both starts after P1's
+>  grace period does and ends after it does.
+>  
+>  
+> +LOCKING
+> +-------
+> +
+> +The LKMM includes locking.  In fact, there is special code for locking
+> +in the formal model, added in order to make tools run faster.
+> +However, this special code is intended to be more or less equivalent
+> +to concepts we have already covered.  A spinlock_t variable is treated
+> +the same as an int, and spin_lock(&s) is treated almost the same as:
+> +
+> +	while (cmpxchg_acquire(&s, 0, 1) != 0)
+> +		cpu_relax();
+> +
+> +This waits until s is equal to 0 and then atomically sets it to 1,
+> +and the read part of the cmpxchg operation acts as an acquire fence.
+> +An alternate way to express the same thing would be:
+> +
+> +	r = xchg_acquire(&s, 1);
+> +
+> +along with a requirement that at the end, r = 0.  Similarly,
+> +spin_trylock(&s) is treated almost the same as:
+> +
+> +	return !cmpxchg_acquire(&s, 0, 1);
+> +
+> +which atomically sets s to 1 if it is currently equal to 0 and returns
+> +true if it succeeds (the read part of the cmpxchg operation acts as an
+> +acquire fence only if the operation is successful).  spin_unlock(&s)
+> +is treated almost the same as:
+> +
+> +	smp_store_release(&s, 0);
+> +
+> +The "almost" qualifiers above need some explanation.  In the LKMM, the
+> +store-release in a spin_unlock() and the load-acquire which forms the
+> +first half of the atomic rmw update in a spin_lock() or a successful
+> +spin_trylock() -- we can call these things lock-releases and
+> +lock-acquires -- have two properties beyond those of ordinary releases
+> +and acquires.
+> +
+> +First, when a lock-acquire reads from a lock-release, the LKMM
+> +requires that every instruction po-before the lock-release must
+> +execute before any instruction po-after the lock-acquire.  This would
+> +naturally hold if the release and acquire operations were on different
+> +CPUs, but the LKMM says it holds even when they are on the same CPU.
+> +For example:
+> +
+> +	int x, y;
+> +	spinlock_t s;
+> +
+> +	P0()
+> +	{
+> +		int r1, r2;
+> +
+> +		spin_lock(&s);
+> +		r1 = READ_ONCE(x);
+> +		spin_unlock(&s);
+> +		spin_lock(&s);
+> +		r2 = READ_ONCE(y);
+> +		spin_unlock(&s);
+> +	}
+> +
+> +	P1()
+> +	{
+> +		WRITE_ONCE(y, 1);
+> +		smp_wmb();
+> +		WRITE_ONCE(x, 1);
+> +	}
+> +
+> +Here the second spin_lock() reads from the first spin_unlock(), and
+> +therefore the load of x must execute before the load of y.  Thus we
+> +cannot have r1 = 1 and r2 = 0 at the end (this is an instance of the
+> +MP pattern).
+> +
+> +This requirement does not apply to ordinary release and acquire
+> +fences, only to lock-related operations.  For instance, suppose P0()
+> +in the example had been written as:
+> +
+> +	P0()
+> +	{
+> +		int r1, r2, r3;
+> +
+> +		r1 = READ_ONCE(x);
+> +		smp_store_release(&s, 1);
+> +		r3 = smp_load_acquire(&s);
+> +		r2 = READ_ONCE(y);
+> +	}
+> +
+> +Then the CPU would be allowed to forward the s = 1 value from the
+> +smp_store_release() to the smp_load_acquire(), executing the
+> +instructions in the following order:
+> +
+> +		r3 = smp_load_acquire(&s);	// Obtains r3 = 1
+> +		r2 = READ_ONCE(y);
+> +		r1 = READ_ONCE(x);
+> +		smp_store_release(&s, 1);	// Value is forwarded
+> +
+> +and thus it could load y before x, obtaining r2 = 0 and r1 = 1.
+> +
+> +Second, when a lock-acquire reads from a lock-release, and some other
+> +stores W and W' occur po-before the lock-release and po-after the
+> +lock-acquire respectively, the LKMM requires that W must propagate to
+> +each CPU before W' does.  For example, consider:
+> +
+> +	int x, y;
+> +	spinlock_t x;
+> +
+> +	P0()
+> +	{
+> +		spin_lock(&s);
+> +		WRITE_ONCE(x, 1);
+> +		spin_unlock(&s);
+> +	}
+> +
+> +	P1()
+> +	{
+> +		int r1;
+> +
+> +		spin_lock(&s);
+> +		r1 = READ_ONCE(x);
+> +		WRITE_ONCE(y, 1);
+> +		spin_unlock(&s);
+> +	}
+> +
+> +	P2()
+> +	{
+> +		int r2, r3;
+> +
+> +		r2 = READ_ONCE(y);
+> +		smp_rmb();
+> +		r3 = READ_ONCE(x);
+> +	}
+> +
+> +If r1 = 1 at the end then the spin_lock() in P1 must have read from
+> +the spin_unlock() in P0.  Hence the store to x must propagate to P2
+> +before the store to y does, so we cannot have r2 = 1 and r3 = 0.
+> +
+> +These two special requirements for lock-release and lock-acquire do
+> +not arise from the operational model.  Nevertheless, kernel developers
+> +have come to expect and rely on them because they do hold on all
+> +architectures supported by the Linux kernel, albeit for various
+> +differing reasons.
+> +
+> +
+>  ODDS AND ENDS
+>  -------------
+>  
+> @@ -1831,26 +1951,6 @@ they behave as follows:
+>  	events and the events preceding them against all po-later
+>  	events.
+>  
+> -The LKMM includes locking.  In fact, there is special code for locking
+> -in the formal model, added in order to make tools run faster.
+> -However, this special code is intended to be exactly equivalent to
+> -concepts we have already covered.  A spinlock_t variable is treated
+> -the same as an int, and spin_lock(&s) is treated the same as:
+> -
+> -	while (cmpxchg_acquire(&s, 0, 1) != 0)
+> -		cpu_relax();
+> -
+> -which waits until s is equal to 0 and then atomically sets it to 1,
+> -and where the read part of the atomic update is also an acquire fence.
+> -An alternate way to express the same thing would be:
+> -
+> -	r = xchg_acquire(&s, 1);
+> -
+> -along with a requirement that at the end, r = 0.  spin_unlock(&s) is
+> -treated the same as:
+> -
+> -	smp_store_release(&s, 0);
+> -
+>  Interestingly, RCU and locking each introduce the possibility of
+>  deadlock.  When faced with code sequences such as:
+>  
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index 59b5cbe6b624..882fc33274ac 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -38,7 +38,7 @@ let strong-fence = mb | gp
+>  (* Release Acquire *)
+>  let acq-po = [Acquire] ; po ; [M]
+>  let po-rel = [M] ; po ; [Release]
+> -let rfi-rel-acq = [Release] ; rfi ; [Acquire]
+> +let po-unlock-rf-lock-po = po ; [UL] ; rf ; [LKR] ; po
+>  
+>  (**********************************)
+>  (* Fundamental coherence ordering *)
+> @@ -60,13 +60,13 @@ let dep = addr | data
+>  let rwdep = (dep | ctrl) ; [W]
+>  let overwrite = co | fr
+>  let to-w = rwdep | (overwrite & int)
+> -let to-r = addr | (dep ; rfi) | rfi-rel-acq
+> +let to-r = addr | (dep ; rfi)
+>  let fence = strong-fence | wmb | po-rel | rmb | acq-po
+> -let ppo = to-r | to-w | fence
+> +let ppo = to-r | to-w | fence | (po-unlock-rf-lock-po & int)
+>  
+>  (* Propagation: Ordering from release operations and strong fences. *)
+>  let A-cumul(r) = rfe? ; r
+> -let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
+> +let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-unlock-rf-lock-po
+>  let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+>  
+>  (*
+> diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> index 0f749e419b34..094d58df7789 100644
+> --- a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> +++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+> @@ -1,11 +1,10 @@
+>  C ISA2+pooncelock+pooncelock+pombonce
+>  
+>  (*
+> - * Result: Sometimes
+> + * Result: Never
+>   *
+> - * This test shows that the ordering provided by a lock-protected S
+> - * litmus test (P0() and P1()) are not visible to external process P2().
+> - * This is likely to change soon.
+> + * This test shows that write-write ordering provided by locks
+> + * (in P0() and P1()) is visible to external process P2().
+>   *)
+>  
+>  {}
+> -- 
+> 2.17.1
+> 
