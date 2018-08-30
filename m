@@ -2,116 +2,97 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC2BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB614C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD8022082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C23820839
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:21:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+GjwikR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD8022082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuRxhWtV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C23820839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbeH3XYE (ORCPT
+        id S1727359AbeH3XZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:24:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40312 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbeH3XYD (ORCPT
+        Thu, 30 Aug 2018 19:25:32 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37558 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbeH3XZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:24:03 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n2-v6so9058180wrw.7;
-        Thu, 30 Aug 2018 12:20:22 -0700 (PDT)
+        Thu, 30 Aug 2018 19:25:32 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j8-v6so8099439lfb.4;
+        Thu, 30 Aug 2018 12:21:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=41sfE2PkA8neHir2b08g6PdESvsy1q5Cn6FWnvCfjpo=;
-        b=m+GjwikRQSaxja1HxZxu9o4+I4PkG05PnU1V8ETZtdfIQSSalIOKs6hnlJT+JFTWTB
-         IGVrUPDx+ya29KL1tuYPgDyZuyP4iH+bDmCjwhMkwwtqLYMXl6YhzIlc0GmDJTdQuY/N
-         LierivtwvOsYQpcpRacMFht0Zc9OTVx6eXY8CK1904KLF4jXwN2MJLfhKcwDdaXp8xf9
-         sojZKlY6HuNMOYB5KzJh/CNJnIX5aUjK6jT6HSb2v2oXkZuKCDNyFBO5ENycJ9fjQW7z
-         hLxYM5bOqdGMXuRG6xrRXDpgsi4Z1h52vpi9sSlnhFW8HbPcTR+Goclu0aaXhIKIApuR
-         iHyA==
+        h=from:to:cc:subject:date:message-id;
+        bh=hC7PyoN1h340qjr9/mIrZ1lIvPPivHR/QStPiBJOQ+Y=;
+        b=KuRxhWtVQn2AkxTDiFqq2CCFZWHN/WA+y2KkoMFvFMb50RGAScjlULAoRyVVbYGKMd
+         nPwwZe2gGLGdZDMYkx0qnQGvcd8p72/+RK9npYFxA0j6WPDg3mCbf8OothKaxYqyLWnI
+         Da86xR1ntgO/dV0cInxq7h4MBa1ErNG53Lg/sHUwes23nsDGk0WOAZSgXWPbHPgEafXJ
+         ffzDWa5alf2YAzDxlnB/CsKgPCERvZ83HUfUzRUJ53edRd1MJ2Y4wBIPo4aLwFchHIWq
+         VYOMvnHzYFOsidIxlAzE89HWVsWLwfONAGJZ0Ji9px9a2CdmPfRvNWy19cZcy189XzbD
+         T4Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=41sfE2PkA8neHir2b08g6PdESvsy1q5Cn6FWnvCfjpo=;
-        b=N5ftXbIoAlc4D9pEbyLhoWd5JBCecl4j0Oz/u8clO5kuh2U0mTwgTIgVndZWGdVimV
-         TzP+HMqyyNujZtmLirWQnmGIVs9Hu4Y43lnpNW8w3hmmr/UoCk8WCuhCEqDIyXbFAn1G
-         2Ja7f5Y+ibSsHIWOYeF3ZWZKMb46gyU4WSAWNCLqKix8Xq4MqxP/EZGIKdDrK2zKGwLG
-         5tGBVb3ZIwPTfimKPT8Rz61DYn2hTdHXJE295nPLLW/0dg+Hk6odUnrfkFsgQvy2z2U6
-         hj2p6OhCzIXiqKG+SpcVymVazx+n4wNCUMAvsh5zkyY4xpvsbu+wMzOOUvsvDSJJtHyY
-         Xbyg==
-X-Gm-Message-State: APzg51AY3NB8RCzJdGQkgDdE5bh7BAVuVQp4a9Xxa3pgefu6357GFH9D
-        w81P3XtetJhOH3Wf552wcMg=
-X-Google-Smtp-Source: ANB0VdZBkszzttJYLwE2LAMCxAy+gIBBwWQLWL30B2QYjx1LOxxntYXGNm68YGuc3tEtvLuhiyFxrw==
-X-Received: by 2002:adf:8367:: with SMTP id 94-v6mr8485271wrd.258.1535656821813;
-        Thu, 30 Aug 2018 12:20:21 -0700 (PDT)
-Received: from [192.168.1.18] (bfv134.neoplus.adsl.tpnet.pl. [83.28.59.134])
-        by smtp.gmail.com with ESMTPSA id 66-v6sm4554485wmw.34.2018.08.30.12.20.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hC7PyoN1h340qjr9/mIrZ1lIvPPivHR/QStPiBJOQ+Y=;
+        b=XpXTcYYC2xMfu96b4KoV7VwGk2552lfI7f6sXPC6K9yhIfNTudlQ9WlfrJ7Y3sDkPW
+         wSjGOOD62rYM4khJS4L8wl5fnpoB211x5JmDxXUyuod0kxhlI6PWDiQ9ZXkPrT/9LL1+
+         5a1tuZ5lNRMiqK7oBBPkXKFWaRf7y7jNIC0OXS3UFRcYoiSwpAlRkTGZ5cWtSEZNx/4r
+         zEPgFwjROqIcJzWEKE1XMDiw1NIvriY6zhXPjf/9p7STd5u1MLvPRuFGln+zsK6/8H+i
+         1zYfrVoXBgzViVbY/6zQjzJ7sFF7Z9DklZYvg93b2HJpgm3mW1w9qrgaKNyXrF00Jl5F
+         LcdQ==
+X-Gm-Message-State: APzg51AjK4aI6PlLVQ+W//m8bI/UWJtU/UbPye5FjQ2Fys/bHAgsHT4r
+        wsp/Tr90krmwjTZpEFl+P5Q=
+X-Google-Smtp-Source: ANB0VdZieCk1rPNaFYo77NHUOAl/WS64kvcE3b+2EveAaWUJeBjwWvK1PrYWSxJKrLb4bmbkcxxzmA==
+X-Received: by 2002:a19:ce50:: with SMTP id e77-v6mr6138050lfg.81.1535656909375;
+        Thu, 30 Aug 2018 12:21:49 -0700 (PDT)
+Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id o11-v6sm1403291lfl.1.2018.08.30.12.21.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:20:20 -0700 (PDT)
-Subject: Re: [PATCH] leds: add TI LMU backlight driver
-To:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-References: <20180829212032.GB15786@amd> <20180830082219.GA10133@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <c72eb0ff-b54c-4670-580c-e31625b3c275@gmail.com>
-Date:   Thu, 30 Aug 2018 21:20:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180830082219.GA10133@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 30 Aug 2018 12:21:48 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] CPU clock changes for Tegra20/30
+Date:   Thu, 30 Aug 2018 22:20:42 +0300
+Message-Id: <20180830192045.11017-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+Hello,
 
-Thank you for the patch.
+This series is a prerequisite for the CPUFREQ driver patches, it can be
+applied separately. CPUFREQ will be supported on Tegra30 once this and
+the CPUFREQ patch-series will be applied.
 
-Looking for DT bindings I can find the following
+Dmitry Osipenko (3):
+  clk: tegra: Convert CCLKG mux to mux + clock divider on Tegra30
+  clk: tegra: Add more rates to Tegra30 PLLX frequency table
+  clk: tegra: Poll PLLX lock-status on resume from suspend on Tegra20/30
 
-Documentation/devicetree/bindings/mfd/ti-lmu.txt,
+ drivers/clk/tegra/clk-super.c    |  16 +++-
+ drivers/clk/tegra/clk-tegra20.c  |  51 ++++++++++--
+ drivers/clk/tegra/clk-tegra210.c |   2 +-
+ drivers/clk/tegra/clk-tegra30.c  | 131 +++++++++++++++++++++----------
+ drivers/clk/tegra/clk.h          |   9 ++-
+ 5 files changed, 156 insertions(+), 53 deletions(-)
 
-which for LED bindings redirects to:
-
-"[2] ../leds/leds-lm3633.txt",
-
-but it is not present in the mainline.
-
-Best regards,
-Jacek Anaszewski
-
-On 08/30/2018 10:22 AM, Pavel Machek wrote:
-> 
-> This adds backlight support for the following TI LMU
-> chips: LM3532, LM3631, LM3632, LM3633, LM3695 and LM3697.
-> 
-> It controls LEDs on Droid 4
-> smartphone, including keyboard and screen backlights.
-> 
-> Signed-off-by: Milo Kim <milo.kim@ti.com>
-> [add LED subsystem support for keyboard backlight and rework DT
-> binding according to Rob Herrings feedback]
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> [remove backlight subsystem support for now]
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-[...]
+-- 
+2.18.0
 
