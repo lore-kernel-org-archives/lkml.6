@@ -2,35 +2,35 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E750C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BE9C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB2392073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:57:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2392073D
+	by mail.kernel.org (Postfix) with ESMTP id 659B820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:00:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659B820658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeH3N7O (ORCPT
+        id S1728270AbeH3OBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:59:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38686 "EHLO
+        Thu, 30 Aug 2018 10:01:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38756 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728082AbeH3N7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:59:14 -0400
+        id S1727988AbeH3OBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:01:47 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25A797A9;
-        Thu, 30 Aug 2018 02:57:54 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30BE93F721;
-        Thu, 30 Aug 2018 02:57:50 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 10:57:45 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 895D87A9;
+        Thu, 30 Aug 2018 03:00:26 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 941203F721;
+        Thu, 30 Aug 2018 03:00:22 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 11:00:20 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
 Cc:     peterz@infradead.org, rjw@rjwysocki.net,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         gregkh@linuxfoundation.org, mingo@redhat.com,
@@ -43,66 +43,172 @@ Cc:     peterz@infradead.org, rjw@rjwysocki.net,
         juri.lelli@redhat.com, edubezval@gmail.com,
         srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
         javi.merino@kernel.org
-Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
- static key
-Message-ID: <20180830095723.4qqbpft7gpbtgkhd@queper01-lin>
+Subject: Re: [PATCH v6 05/14] sched/topology: Reference the Energy Model of
+ CPUs when available
+Message-ID: <20180830100019.GT2960@e110439-lin>
 References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-8-quentin.perret@arm.com>
- <20180829165058.GR2960@e110439-lin>
- <20180829172004.afbe2oukprvptqs2@queper01-lin>
- <20180830092329.GS2960@e110439-lin>
+ <20180820094420.26590-6-quentin.perret@arm.com>
+ <20180829162238.GQ2960@e110439-lin>
+ <20180829165603.astg32z3ep2qldfu@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830092329.GS2960@e110439-lin>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180829165603.astg32z3ep2qldfu@queper01-lin>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
-
-On Thursday 30 Aug 2018 at 10:23:29 (+0100), Patrick Bellasi wrote:
-> Yes, dunno if it's just me but perhaps a bit of rephrasing could help.
-
-Ok, so what about something a little bit more explicit like:
-
-/*
- * The complexity of the Energy Model is defined as:
- *
- *		C = nr_pd * (nr_cpus + nr_cs)
- *
- * with parameters defined as:
- *  - nr_pd:	the number of performance domains
- *  - nr_cpus:	the number of CPUs
- *  - nr_cs:	the sum of the number of capacity states of all performance
- *		domains (for example, on a system with 2 performance domains,
- *		with 10 capacity states each, nr_cs = 2 * 10 = 20).
- *
- * It is generally not a good idea to use such a model in the wake-up path on
- * very complex platforms because of the associated scheduling overheads. The
- * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
- * with per-CPU DVFS and less than 8 capacity states each, for example.
- */
-
-> Alternatively, why not having this comment and check after patches
-> 11 and 12 ?
-
-Oh, you don't like it here ? What's wrong with it :-) ?
-
-> Right... I was totally confused by the idea that we don't
-> run EAS if we just have 1 CPU per PD... my bad!
+On 29-Aug 17:56, Quentin Perret wrote:
+> On Wednesday 29 Aug 2018 at 17:22:38 (+0100), Patrick Bellasi wrote:
+> > > +static void build_perf_domains(const struct cpumask *cpu_map)
+> > > +{
+> > > +	struct perf_domain *pd = NULL, *tmp;
+> > > +	int cpu = cpumask_first(cpu_map);
+> > > +	struct root_domain *rd = cpu_rq(cpu)->rd;
+> > > +	int i;
+> > > +
+> > > +	for_each_cpu(i, cpu_map) {
+> > > +		/* Skip already covered CPUs. */
+> > > +		if (find_pd(pd, i))
+> > > +			continue;
+> > > +
+> > > +		/* Create the new pd and add it to the local list. */
+> > > +		tmp = pd_init(i);
+> > > +		if (!tmp)
+> > > +			goto free;
+> > > +		tmp->next = pd;
+> > > +		pd = tmp;
+> > > +	}
+> > > +
+> > > +	perf_domain_debug(cpu_map, pd);
+> > > +
+> > > +	/* Attach the new list of performance domains to the root domain. */
+> > > +	tmp = rd->pd;
+> > > +	rcu_assign_pointer(rd->pd, pd);
+> > > +	if (tmp)
+> > > +		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> > 
+> > We have:
+> > 
+> >   sched_cpu_activate/cpuset_cpu_inactive
+> >     cpuset_cpu_active/sched_cpu_deactivate
+> >       partition_sched_domains
+> >         build_perf_domains
+> > 
+> > thus here we are building new SDs and, specifically, above we are
+> > attaching the local list "pd" to a _new_ root domain... thus, there
+> > cannot be already users of this new SDs and root domain at this stage,
+> > isn't it ?
 > 
-> Although on those systems, since we don't have idle costs, should not
-> be a spreading strategy always the best from an energy efficiency
-> standpoint ?
+> Hmm, actually you can end up here even if the rd isn't new. That would
+> happen if you call rebuild_sched_domains() after the EM has been
+> registered for example.
+> At this point, you might skip
+> detach_destroy_domains() and build_sched_domains() from
+> partition_sched_domains(), but still call build_perf_domains(), which
+> would then attach the pd list to the current rd.
 
-Even with per-CPU DVFS, if you have big and little CPUs it matters
-_where_ you execute a task, and you'll still need an Energy Model to
-make good decisions in a generic way. But yes, there is definitely some
-room for improvement for those platforms. That's something we could
-improve later on top of this series I suppose.
+Ok... then it's just me that need to go back and better study how and
+when SD are rebuilds.
 
-Thanks for looking at the patches !
-Quentin
+> That's one reason why rcu_assign_pointer() is probably a good idea. And
+> it's also nice from a doc standpoint I suppose.
+
+If we can call into build_perf_domains() and reach the assignement
+above with an existing RD, then yes, it makes perfect sense.
+
+> > Do we really need that rcu_assign_pointer ?
+> > Is the rcu_assign_pointer there just to "match" the following call_rcu ?
+> > 
+> > What about this path:
+> > 
+> >   sched_init_domains
+> >      partition_sched_domains
+> > 
+> > in which case we do not call build_perf_domains... is that intended ?
+> 
+> I assume you meant:
+> 
+>    sched_init_domains
+>      build_sched_domains
+> 
+> Is that right ?
+
+Mmm... yes... seems so.
+
+> If yes, I didn't bother calling build_perf_domains() from there because
+> I don't think there is a single platform out there which would have a
+> registered Energy Model that early in the boot process. Or maybe there
+> is one I don't know ?
+
+Dunno... but, in any case, probably we don't care about using EAS until
+the boot complete, isn't it?
+
+Just to better understand, what is the most common activation path we expect ?
+
+  1. system boot
+  2. CPUs online
+  3. CPUFreq initialization
+  4. EM registered
+  X. ???
+  N. partition_sched_domains
+        build_perf_domains
+
+IOW, who do we expect to call build_perf_domains for the first time ?
+
+> Anyway, that is probably easy to fix, if need be.
+> 
+> > > +
+> > > +	return;
+> > > +
+> > > +free:
+> > > +	free_pd(pd);
+> > > +	tmp = rd->pd;
+> > > +	rcu_assign_pointer(rd->pd, NULL);
+> > > +	if (tmp)
+> > > +		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> > > +}
+> > 
+> > All the above functions use different naming conventions:
+> > 
+> >    "_pd" suffix, "pd_" prefix and "perf_domain_" prefix.
+> > 
+> > and you do it like that because it better matches the corresponding
+> > call sites following down the file.
+> 
+> That's right. The functions are supposed to vaguely look like existing
+> functions dealing with sched domains.
+> 
+> > However, since we are into a "CONFIG_ENERGY_MODEL" guarded section,
+> > why not start using a common prefix for all PD related functions?
+> > 
+> > I very like "perf_domain_" (or "pd_") as a prefix and I would try to
+> > use it for all the functions you defined above:
+> > 
+> >    perf_domain_free
+> >    perf_domain_find
+> >    perf_domain_debug
+> >    perf_domain_destroy_rcu
+> >    perf_domain_build
+> 
+> I kinda like the idea of keeping things consistent with the existing
+> code TBH. Especially because I'm terrible at naming things ... But if
+> there is a general agreement that I should rename everything I won't
+> argue.
+
+I've just got the impression that naming in this file is a bit
+fuzzy and it could be worth a cleanup... but of course there is also
+value in minimizing the changes.
+
+Was just wondering if a better file organization in general could help
+to make topology.c more easy to compile for humans... but yes... let's
+keep this for another time ;)
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
