@@ -2,56 +2,81 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0B7C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433BEC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B7420644
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:10:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B7420644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 4E5B620666
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5B620666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeH3FJl (ORCPT
+        id S1727294AbeH3FJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:09:41 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39268 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FJl (ORCPT
+        Thu, 30 Aug 2018 01:09:46 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:22720 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725758AbeH3FJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:09:41 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ECB77108F4391;
-        Wed, 29 Aug 2018 18:10:07 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 18:10:07 -0700 (PDT)
-Message-Id: <20180829.181007.967677259832053608.davem@davemloft.net>
-To:     ivan@de.ibm.com
-Cc:     netdev@vger.kernel.org, chunkeey@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] net/ibm/emac: deletion of unneeded macros
- definitions
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180827164336.8815-2-ivan@de.ibm.com>
-References: <20180827164336.8815-2-ivan@de.ibm.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Thu, 30 Aug 2018 01:09:46 -0400
+X-UUID: af9c8fa33953486cab518cd4528a13c2-20180830
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 34517731; Thu, 30 Aug 2018 09:09:55 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Thu, 30 Aug
+ 2018 09:09:53 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 30 Aug 2018 09:09:53 +0800
+Message-ID: <1535591392.32173.30.camel@mhfsdcap03>
+Subject: Re: [PATCH 1/6] usb: xhci-mtk: resume USB3 roothub first
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 30 Aug 2018 09:09:52 +0800
+In-Reply-To: <f144173b-6131-21cf-1ead-60d938ac289a@cogentembedded.com>
+References: <3bcc220aa54bfebc39cea54cd736388ad37ee0c5.1535510898.git.chunfeng.yun@mediatek.com>
+         <f144173b-6131-21cf-1ead-60d938ac289a@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 Aug 2018 18:10:08 -0700 (PDT)
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Mikhaylov <ivan@de.ibm.com>
-Date: Mon, 27 Aug 2018 19:43:36 +0300
+Hi,
+On Wed, 2018-08-29 at 12:13 +0300, Sergei Shtylyov wrote:
+> On 8/29/2018 5:55 AM, Chunfeng Yun wrote:
+> 
+> > Give USB3 devices a better chance to enumerate at USB3 speeds if
+> > they are connected to a suspended host.
+> > Porting from "671ffdf xhci: resume USB 3 roothub first"
+> 
+>     From commit 671ffdff5b13 ("xhci: resume USB 3 roothub first").
 
-> Signed-off-by: Ivan Mikhaylov <ivan@de.ibm.com>
+Ok, Thanks
 
-Please do not delete these, they could be useful for other
-developers and people reading this driver.
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> [...]
+> 
+> MBR, Sergei
+> 
+
+
