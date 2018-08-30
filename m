@@ -2,477 +2,369 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC580C43334
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD5CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C12C20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C12C20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 339D520834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="xaPdb6DK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339D520834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nic.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbeH3Squ (ORCPT
+        id S1729720AbeH3SrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:46:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38430 "EHLO mga01.intel.com"
+        Thu, 30 Aug 2018 14:47:01 -0400
+Received: from mail.nic.cz ([217.31.204.67]:39894 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbeH3SqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:46:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 07:43:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="67186728"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Aug 2018 07:43:42 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v3 20/24] x86/cet/shstk: Signal handling for shadow stack
-Date:   Thu, 30 Aug 2018 07:39:00 -0700
-Message-Id: <20180830143904.3168-21-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
+        id S1729425AbeH3SrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:47:00 -0400
+Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
+        by mail.nic.cz (Postfix) with ESMTP id 5DF33600EA;
+        Thu, 30 Aug 2018 16:44:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1535640269; bh=wx88YtoiDGYVuZxRRalY4AaNgxymEIbZFzpjGYG29m4=;
+        h=From:To:Date;
+        b=xaPdb6DKCg3yN9wbXD9ikXGcl2PpP8l8UJG0rLN+X9rfS7yzgLYm/3lG/9q9dezhn
+         rd5HFUzIw4yPnp+NfepVDSP9PzDVcPzAmkSz1AehjwC0CaJnklEkVvYYe2rcxJa60l
+         +68DbQblfUOMCtvqdF1lWlA1MJhrkx3AENbLuwwE=
+From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+Subject: [PATCH mfd+gpio 2/2] drivers: gpio: Add support for GPIOs over Moxtet bus
+Date:   Thu, 30 Aug 2018 16:41:51 +0200
+Message-Id: <20180830144151.13417-2-marek.behun@nic.cz>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180830144151.13417-1-marek.behun@nic.cz>
+References: <20180830144151.13417-1-marek.behun@nic.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.99.2 at mail
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When setting up a signal, the kernel creates a shadow stack
-restore token at the current SHSTK address and then stores the
-token's address in the signal frame, right after the FPU state.
-Before restoring a signal, the kernel verifies and then uses the
-restore token to set the SHSTK pointer.
+This adds support for interpreting the input and output bits of one
+device on Moxtet bus as GPIOs.
+This is needed for example by the SFP cage module of Turris Mox.
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
 ---
- arch/x86/ia32/ia32_signal.c            |  13 +++
- arch/x86/include/asm/cet.h             |   5 ++
- arch/x86/include/asm/sighandling.h     |   5 ++
- arch/x86/include/uapi/asm/sigcontext.h |  17 ++++
- arch/x86/kernel/cet.c                  | 115 +++++++++++++++++++++++++
- arch/x86/kernel/signal.c               |  96 +++++++++++++++++++++
- 6 files changed, 251 insertions(+)
+ .../devicetree/bindings/gpio/gpio-moxtet.txt       |  31 +++
+ MAINTAINERS                                        |   1 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-moxtet.c                         | 209 +++++++++++++++++++++
+ 5 files changed, 251 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+ create mode 100644 drivers/gpio/gpio-moxtet.c
 
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 86b1341cba9a..cea28d2a946e 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -34,6 +34,7 @@
- #include <asm/sigframe.h>
- #include <asm/sighandling.h>
- #include <asm/smap.h>
-+#include <asm/cet.h>
- 
- /*
-  * Do a signal return; undo the signal stack.
-@@ -108,6 +109,9 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 
- 	err |= fpu__restore_sig(buf, 1);
- 
-+	if (!err)
-+		err = restore_sigcontext_ext(buf);
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+new file mode 100644
+index 000000000000..64a9a1bfd4cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+@@ -0,0 +1,31 @@
++Turris Mox Moxtet GPIO expander
 +
- 	force_iret();
- 
- 	return err;
-@@ -234,6 +238,10 @@ static void __user *get_sigframe(struct ksignal *ksig, struct pt_regs *regs,
- 	if (fpu->initialized) {
- 		unsigned long fx_aligned, math_size;
- 
-+		/* sigcontext extension */
-+		if (boot_cpu_has(X86_FEATURE_SHSTK))
-+			sp -= (sizeof(struct sc_ext) + 8);
++Required properties:
++ - compatible		: Should be "cznic,moxtet-gpio".
++ - gpio-controller	: Marks the device node as a GPIO controller.
++ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
++ - moxtet,input-mask	: Bitmask. Those bits which correspond to input GPIOs
++			  when read from Moxtet bus should be set here.
++			  For example if bit 0 and bit 3 are input GPIO bits,
++			  this should be set to 0x9.
++			  Since there are only 4 input bits, 0xf is max value.
++ - moxtet,output-mask	: Bitmask. Those bits which correspond to output GPIOs
++			  when written to Moxtet bus should be set here.
++			  For example if bit 1 and bit 6 are output GPIO bits,
++			  this should be set to 0x41.
++			  Since there are at most 8 output bits, 0xff is max
++			  value.
++Other properties are required for a moxtet bus device, please refer to
++Documentation/devicetree/bindings/mfd/moxtet.txt.
 +
- 		sp = fpu__alloc_mathframe(sp, 1, &fx_aligned, &math_size);
- 		*fpstate = (struct _fpstate_32 __user *) sp;
- 		if (copy_fpstate_to_sigframe(*fpstate, (void __user *)fx_aligned,
-@@ -277,6 +285,8 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
- 
- 	if (ia32_setup_sigcontext(&frame->sc, fpstate, regs, set->sig[0]))
- 		return -EFAULT;
-+	if (setup_sigcontext_ext(ksig, fpstate))
-+		return -EFAULT;
- 
- 	if (_COMPAT_NSIG_WORDS > 1) {
- 		if (__copy_to_user(frame->extramask, &set->sig[1],
-@@ -384,6 +394,9 @@ int ia32_setup_rt_frame(int sig, struct ksignal *ksig,
- 				     regs, set->sig[0]);
- 	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
- 
-+	if (!err)
-+		err = setup_sigcontext_ext(ksig, fpstate);
++Example:
 +
- 	if (err)
- 		return -EFAULT;
++	moxtet_sfp: moxtet-sfp@0 {
++		compatible = "cznic,moxtet-gpio";
++		gpio-controller;
++		#gpio-cells;
++		reg = <0>;
++		moxtet,id = <1>;
++		moxtet,input-mask = <0x7>;
++		moxtet,output-mask = <0x3>;
++	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 84e60ee83951..0ca4e5302054 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1417,6 +1417,7 @@ M:	Marek Behun <marek.behun@nic.cz>
+ W:	http://mox.turris.cz
+ S:	Maintained
+ F:	include/mfd/moxtet.h
++F:	drivers/gpio/gpio-moxtet.c
+ F:	drivers/mfd/moxtet.c
  
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index ad278c520414..d9ae3d86cdd7 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -19,10 +19,15 @@ struct cet_status {
- int cet_setup_shstk(void);
- void cet_disable_shstk(void);
- void cet_disable_free_shstk(struct task_struct *p);
-+int cet_restore_signal(unsigned long ssp);
-+int cet_setup_signal(bool ia32, unsigned long rstor, unsigned long *new_ssp);
- #else
- static inline int cet_setup_shstk(void) { return 0; }
- static inline void cet_disable_shstk(void) {}
- static inline void cet_disable_free_shstk(struct task_struct *p) {}
-+static inline int cet_restore_signal(unsigned long ssp) { return 0; }
-+static inline int cet_setup_signal(bool ia32, unsigned long rstor,
-+				   unsigned long *new_ssp) { return 0; }
- #endif
+ ARM/EBSA110 MACHINE SUPPORT
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b8cbf5081389..2c0202aa91d0 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1055,6 +1055,15 @@ config GPIO_MAX77620
+ 	  driver also provides interrupt support for each of the gpios.
+ 	  Say yes here to enable the max77620 to be used as gpio controller.
  
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
-index bd26834724e5..23014b4082de 100644
---- a/arch/x86/include/asm/sighandling.h
-+++ b/arch/x86/include/asm/sighandling.h
-@@ -17,4 +17,9 @@ void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
- int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
- 		     struct pt_regs *regs, unsigned long mask);
- 
-+#ifdef CONFIG_X86_64
-+int setup_sigcontext_ext(struct ksignal *ksig, void __user *fpu);
-+int restore_sigcontext_ext(void __user *fpu);
-+#endif
++config GPIO_MOXTET
++	tristate "Turris Mox Moxtet bus GPIO expander"
++	depends on MFD_MOXTET
++	help
++	  Say yes here if you are building for the Turris Mox router.
++	  This is the driver needed for configuring the GPIOs via the Moxtet
++	  bus. For example the Mox module with SFP cage needs this driver
++	  so that phylink can use corresponding GPIOs.
 +
- #endif /* _ASM_X86_SIGHANDLING_H */
-diff --git a/arch/x86/include/uapi/asm/sigcontext.h b/arch/x86/include/uapi/asm/sigcontext.h
-index 844d60eb1882..74f5ea5dcd24 100644
---- a/arch/x86/include/uapi/asm/sigcontext.h
-+++ b/arch/x86/include/uapi/asm/sigcontext.h
-@@ -196,6 +196,23 @@ struct _xstate {
- 	/* New processor state extensions go here: */
- };
- 
-+#ifdef __x86_64__
+ config GPIO_MSIC
+ 	bool "Intel MSIC mixed signal gpio support"
+ 	depends on (X86 || COMPILE_TEST) && MFD_INTEL_MSIC
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 80d58c2de730..e119b3b87f1f 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
+ obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
+ obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
+ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
++obj-$(CONFIG_GPIO_MOXTET)	+= gpio-moxtet.o
+ obj-$(CONFIG_GPIO_MPC5200)	+= gpio-mpc5200.o
+ obj-$(CONFIG_GPIO_MPC8XXX)	+= gpio-mpc8xxx.o
+ obj-$(CONFIG_GPIO_MSIC)		+= gpio-msic.o
+diff --git a/drivers/gpio/gpio-moxtet.c b/drivers/gpio/gpio-moxtet.c
+new file mode 100644
+index 000000000000..d0b50581118d
+--- /dev/null
++++ b/drivers/gpio/gpio-moxtet.c
+@@ -0,0 +1,209 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Sigcontext extension (struct sc_ext) is located after
-+ * sigcontext->fpstate.  Because currently only the shadow
-+ * stack pointer is saved there and the shadow stack depends
-+ * on XSAVES, we can find sc_ext from sigcontext->fpstate.
++ *  Turris Mox Moxtet GPIO expander
 + *
-+ * The 64-bit fpstate has a size of fpu_user_xstate_size, plus
-+ * FP_XSTATE_MAGIC2_SIZE when XSAVE* is used.  The struct sc_ext
-+ * is located at the end of sigcontext->fpstate, aligned to 8.
++ *  Copyright (C) 2018 Marek Behun <marek.behun@nic.cz>
 + */
-+struct sc_ext {
-+	unsigned long total_size;
-+	unsigned long ssp;
++
++#include <linux/gpio/consumer.h>
++#include <linux/gpio.h>
++#include <linux/mfd/moxtet.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++
++struct moxtet_gpio_chip {
++	struct device		*dev;
++	struct gpio_chip	gpio_chip;
++	u8			in_mask;
++	u8			out_mask;
 +};
-+#endif
 +
- /*
-  * The 32-bit signal frame:
-  */
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index ec256ae27a31..5cc4be6e0982 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -18,6 +18,7 @@
- #include <asm/fpu/types.h>
- #include <asm/compat.h>
- #include <asm/cet.h>
-+#include <asm/special_insns.h>
- 
- static int set_shstk_ptr(unsigned long addr)
- {
-@@ -46,6 +47,69 @@ static unsigned long get_shstk_addr(void)
- 	return ptr;
- }
- 
-+/*
-+ * Verify the restore token at the address of 'ssp' is
-+ * valid and then set shadow stack pointer according to the
-+ * token.
-+ */
-+static int verify_rstor_token(bool ia32, unsigned long ssp,
-+			      unsigned long *new_ssp)
++static int moxtet_gpio_dir_mask(struct gpio_chip *gc, unsigned int offset,
++				int *dir, u8 *mask)
 +{
-+	unsigned long token;
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int i;
 +
-+	*new_ssp = 0;
-+
-+	if (!IS_ALIGNED(ssp, 8))
-+		return -EINVAL;
-+
-+	if (get_user(token, (unsigned long __user *)ssp))
-+		return -EFAULT;
-+
-+	/* Is 64-bit mode flag correct? */
-+	if (ia32 && (token & 3) != 0)
-+		return -EINVAL;
-+	else if ((token & 3) != 1)
-+		return -EINVAL;
-+
-+	token &= ~(1UL);
-+
-+	if ((!ia32 && !IS_ALIGNED(token, 8)) || !IS_ALIGNED(token, 4))
-+		return -EINVAL;
-+
-+	if ((ALIGN_DOWN(token, 8) - 8) != ssp)
-+		return -EINVAL;
-+
-+	*new_ssp = token;
-+	return 0;
-+}
-+
-+/*
-+ * Create a restore token on the shadow stack.
-+ * A token is always 8-byte and aligned to 8.
-+ */
-+static int create_rstor_token(bool ia32, unsigned long ssp,
-+			      unsigned long *new_ssp)
-+{
-+	unsigned long addr;
-+
-+	*new_ssp = 0;
-+
-+	if ((!ia32 && !IS_ALIGNED(ssp, 8)) || !IS_ALIGNED(ssp, 4))
-+		return -EINVAL;
-+
-+	addr = ALIGN_DOWN(ssp, 8) - 8;
-+
-+	/* Is the token for 64-bit? */
-+	if (!ia32)
-+		ssp |= 1;
-+
-+	if (write_user_shstk_64(addr, ssp))
-+		return -EFAULT;
-+
-+	*new_ssp = addr;
-+	return 0;
-+}
-+
- int cet_setup_shstk(void)
- {
- 	unsigned long addr, size;
-@@ -107,3 +171,54 @@ void cet_disable_free_shstk(struct task_struct *tsk)
- 
- 	tsk->thread.cet.shstk_enabled = 0;
- }
-+
-+int cet_restore_signal(unsigned long ssp)
-+{
-+	unsigned long new_ssp;
-+	int err;
-+
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+
-+	err = verify_rstor_token(in_ia32_syscall(), ssp, &new_ssp);
-+
-+	if (err)
-+		return err;
-+
-+	return set_shstk_ptr(new_ssp);
-+}
-+
-+/*
-+ * Setup the shadow stack for the signal handler: first,
-+ * create a restore token to keep track of the current ssp,
-+ * and then the return address of the signal handler.
-+ */
-+int cet_setup_signal(bool ia32, unsigned long rstor_addr,
-+		     unsigned long *new_ssp)
-+{
-+	unsigned long ssp;
-+	int err;
-+
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+
-+	ssp = get_shstk_addr();
-+	err = create_rstor_token(ia32, ssp, new_ssp);
-+
-+	if (err)
-+		return err;
-+
-+	if (ia32) {
-+		ssp = *new_ssp - sizeof(u32);
-+		err = write_user_shstk_32(ssp, (unsigned int)rstor_addr);
-+	} else {
-+		ssp = *new_ssp - sizeof(u64);
-+		err = write_user_shstk_64(ssp, rstor_addr);
-+	}
-+
-+	if (err)
-+		return err;
-+
-+	set_shstk_ptr(ssp);
-+	return 0;
-+}
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 92a3b312a53c..e9a85689143f 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -46,6 +46,7 @@
- 
- #include <asm/sigframe.h>
- #include <asm/signal.h>
-+#include <asm/cet.h>
- 
- #define COPY(x)			do {			\
- 	get_user_ex(regs->x, &sc->x);			\
-@@ -152,6 +153,10 @@ static int restore_sigcontext(struct pt_regs *regs,
- 
- 	err |= fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
- 
-+#ifdef CONFIG_X86_64
-+	err |= restore_sigcontext_ext(buf);
-+#endif
-+
- 	force_iret();
- 
- 	return err;
-@@ -266,6 +271,11 @@ get_sigframe(struct k_sigaction *ka, struct pt_regs *regs, size_t frame_size,
- 	}
- 
- 	if (fpu->initialized) {
-+#ifdef CONFIG_X86_64
-+		/* sigcontext extension */
-+		if (boot_cpu_has(X86_FEATURE_SHSTK))
-+			sp -= sizeof(struct sc_ext) + 8;
-+#endif
- 		sp = fpu__alloc_mathframe(sp, IS_ENABLED(CONFIG_X86_32),
- 					  &buf_fx, &math_size);
- 		*fpstate = (void __user *)sp;
-@@ -493,6 +503,9 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
- 	err |= setup_sigcontext(&frame->uc.uc_mcontext, fp, regs, set->sig[0]);
- 	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
- 
-+	if (!err)
-+		err = setup_sigcontext_ext(ksig, fp);
-+
- 	if (err)
- 		return -EFAULT;
- 
-@@ -576,6 +589,9 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 				regs, set->sig[0]);
- 	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
- 
-+	if (!err)
-+		err = setup_sigcontext_ext(ksig, fpstate);
-+
- 	if (err)
- 		return -EFAULT;
- 
-@@ -707,6 +723,86 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
- 	}
- }
- 
-+#ifdef CONFIG_X86_64
-+static int copy_ext_from_user(struct sc_ext *ext, void __user *fpu)
-+{
-+	void __user *p;
-+
-+	if (!fpu)
-+		return -EINVAL;
-+
-+	p = fpu + fpu_user_xstate_size + FP_XSTATE_MAGIC2_SIZE;
-+	p = (void __user *)ALIGN((unsigned long)p, 8);
-+
-+	if (!access_ok(VERIFY_READ, p, sizeof(*ext)))
-+		return -EFAULT;
-+
-+	if (__copy_from_user(ext, p, sizeof(*ext)))
-+		return -EFAULT;
-+
-+	if (ext->total_size != sizeof(*ext))
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+static int copy_ext_to_user(void __user *fpu, struct sc_ext *ext)
-+{
-+	void __user *p;
-+
-+	if (!fpu)
-+		return -EINVAL;
-+
-+	if (ext->total_size != sizeof(*ext))
-+		return -EINVAL;
-+
-+	p = fpu + fpu_user_xstate_size + FP_XSTATE_MAGIC2_SIZE;
-+	p = (void __user *)ALIGN((unsigned long)p, 8);
-+
-+	if (!access_ok(VERIFY_WRITE, p, sizeof(*ext)))
-+		return -EFAULT;
-+
-+	if (__copy_to_user(p, ext, sizeof(*ext)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+int restore_sigcontext_ext(void __user *fp)
-+{
-+	int err = 0;
-+
-+	if (boot_cpu_has(X86_FEATURE_SHSTK) && fp) {
-+		struct sc_ext ext = {0, 0};
-+
-+		err = copy_ext_from_user(&ext, fp);
-+
-+		if (!err)
-+			err = cet_restore_signal(ext.ssp);
-+	}
-+
-+	return err;
-+}
-+
-+int setup_sigcontext_ext(struct ksignal *ksig, void __user *fp)
-+{
-+	int err = 0;
-+
-+	if (boot_cpu_has(X86_FEATURE_SHSTK) && fp) {
-+		struct sc_ext ext = {0, 0};
-+		unsigned long rstor;
-+
-+		rstor = (unsigned long)ksig->ka.sa.sa_restorer;
-+		err = cet_setup_signal(is_ia32_frame(ksig), rstor, &ext.ssp);
-+		if (!err) {
-+			ext.total_size = sizeof(ext);
-+			err = copy_ext_to_user(fp, &ext);
++	*dir = 0;
++	for (i = 0; i < 4; ++i) {
++		*mask = 1 << i;
++		if (*mask & chip->in_mask) {
++			if (offset == 0)
++				return 0;
++			--offset;
 +		}
 +	}
 +
-+	return err;
-+}
-+#endif
++	*dir = 1;
++	for (i = 0; i < 8; ++i) {
++		*mask = 1 << i;
++		if (*mask & chip->out_mask) {
++			if (offset == 0)
++				return 0;
++		}
++	}
 +
- static void
- handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- {
++	return -EINVAL;
++}
++
++static int moxtet_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
++{
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int ret, dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (dir)
++		ret = moxtet_device_written(chip->dev);
++	else
++		ret = moxtet_device_read(chip->dev);
++
++	if (ret < 0)
++		return ret;
++
++	return (ret & mask) ? 1 : 0;
++}
++
++static void moxtet_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
++				  int val)
++{
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int state, dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return;
++
++	/* cannot change input GPIO */
++	if (!dir)
++		return;
++
++	state = moxtet_device_written(chip->dev);
++	if (state < 0)
++		return;
++
++	if (val)
++		state |= mask;
++	else
++		state &= ~mask;
++
++	moxtet_device_write(chip->dev, state);
++}
++
++static int moxtet_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	return dir;
++}
++
++static int moxtet_gpio_direction_input(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (dir)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int moxtet_gpio_direction_output(struct gpio_chip *gc,
++					unsigned int offset, int val)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (!dir)
++		return -EINVAL;
++
++	moxtet_gpio_set_value(gc, offset, val);
++	return 0;
++}
++
++static int moxtet_gpio_probe(struct device *dev)
++{
++	struct moxtet_gpio_chip *chip;
++	struct device_node *nc = dev->of_node;
++	int ret;
++	u32 val;
++
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->dev = dev;
++	chip->gpio_chip.parent = dev;
++
++	ret = of_property_read_u32(nc, "moxtet,input-mask", &val);
++	if (ret < 0 || val > 0xf) {
++		dev_err(dev,
++			"%pOF has no valid 'moxtet,input-mask' property\n", nc);
++		return ret < 0 ? ret : -ERANGE;
++	}
++	chip->in_mask = val;
++
++	ret = of_property_read_u32(nc, "moxtet,output-mask", &val);
++	if (ret < 0 || val > 0xff) {
++		dev_err(dev,
++			"%pOF has no valid 'moxtet,output-mask' property\n",
++			nc);
++		return ret < 0 ? ret : -ERANGE;
++	}
++	chip->out_mask = val;
++
++	if (!chip->in_mask && !chip->out_mask) {
++		dev_err(dev, "%pOF has zero GPIOs defined\n", nc);
++		return -EINVAL;
++	}
++
++	dev_set_drvdata(dev, chip);
++
++	chip->gpio_chip.label = dev_name(dev);
++	chip->gpio_chip.get_direction = moxtet_gpio_get_direction;
++	chip->gpio_chip.direction_input = moxtet_gpio_direction_input;
++	chip->gpio_chip.direction_output = moxtet_gpio_direction_output;
++	chip->gpio_chip.get = moxtet_gpio_get_value;
++	chip->gpio_chip.set = moxtet_gpio_set_value;
++	chip->gpio_chip.base = -1;
++
++	chip->gpio_chip.ngpio = hweight8(chip->in_mask) +
++				hweight8(chip->out_mask);
++
++	chip->gpio_chip.can_sleep = true;
++	chip->gpio_chip.owner = THIS_MODULE;
++
++	return devm_gpiochip_add_data(dev, &chip->gpio_chip, chip);
++}
++
++static const struct of_device_id moxtet_gpio_dt_ids[] = {
++	{ .compatible = "cznic,moxtet-gpio" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, moxtet_gpio_dt_ids);
++
++static struct moxtet_driver moxtet_gpio_driver = {
++	.driver = {
++		.name		= "moxtet-gpio",
++		.of_match_table	= moxtet_gpio_dt_ids,
++		.probe		= moxtet_gpio_probe,
++	},
++};
++module_moxtet_driver(moxtet_gpio_driver);
++
++MODULE_AUTHOR("Marek Behun <marek.behun@nic.cz>");
++MODULE_DESCRIPTION("Turris Mox Moxtet GPIO expander");
++MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+2.16.4
 
