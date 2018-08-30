@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CED3C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CF8C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307702082B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CDD42082B
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ci2esfNn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307702082B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U5e6xLKl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDD42082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbeH3MX2 (ORCPT
+        id S1728130AbeH3MXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:23:28 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38981 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728068AbeH3MX1 (ORCPT
+        Thu, 30 Aug 2018 08:23:34 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45173 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbeH3MXd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:23:27 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g20-v6so3565829pgv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 01:22:29 -0700 (PDT)
+        Thu, 30 Aug 2018 08:23:33 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so3537443pfo.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 01:22:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ah8c1s4NQMeDLK8VDxuLb0Way+MTHYiFrnLMxjLrOic=;
-        b=Ci2esfNnkrultBR2JC8oOpP8798ra5xy2lQVamINyr0vxNV8Va0QyFMobOXx5BrTzh
-         6AYTQroAWBjY4/dEK9n5xbBTh1ejAtr+e3CihREeL95NRivmUT87sZVVp+HWAHO8tLJb
-         gQM80n7RDnruyd9l43yPB0goqCGQYGKbd3n5M=
+        bh=lbl2Ol4tvWCqEUXMHrsdzYUUWBHhSaEGpsPmSSMCa9U=;
+        b=U5e6xLKlsyUqFLXzooBRE+GxRzP0erC+T24dMQYq8N6UT5UfCFqDpL3b2wPFGCMY+M
+         p1qcrcZd70H8ODoftcMjrf+9KQ+u3M1T2cf9N0be60nlN3Jj0DqNFrOH+fePVUMQgMq3
+         kLBXAxujopIyTZZmjsHzHzgADA5cSOaa3qCQc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Ah8c1s4NQMeDLK8VDxuLb0Way+MTHYiFrnLMxjLrOic=;
-        b=liml2WMh12h40TF8sjpuPpoTFNwCjsIRoP2OHsyqDUq5wO7Y2MuZYLKT/4o9U2cZDH
-         stESk/krcJyeUE36qLbh4iDkvKMBEFIlHG2gRI+ztaTsg12bBh4/bdHd0Ot3+9ikIgob
-         rZinNp64dkU0UMaLMfEayqILP56bX0Do2VIZ6t8VeCScNI6TXPHePv91wA+dnF5LAc9h
-         OF4kyG6ODn9MMDy/jzTTJUx2+wk9gBS29QJVSaOkRLzqFW0RGJwL06bo6ZTbsYDmSpKu
-         HvFlkHv6iAj+2AjubpgIEyxw1gweUkvvwHTmCoWuSiXycYtqJSBfpKZadse6BP9313jx
-         qgKQ==
-X-Gm-Message-State: APzg51C2bcczmlcGMHFSmYnEMwQ6YRbkaE4OFY2vAKT1YXNi20wUKgjy
-        blHuaPvPsJjQlx9RVbzcvK1s/A==
-X-Google-Smtp-Source: ANB0VdZWBTJncpy1V6TzMRLY09UI0jsGKsfJJUJOENWY9BCVBqUYzIaws57rmTIUpRm0yRuyWySlqg==
-X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr9499481pfo.160.1535617349542;
-        Thu, 30 Aug 2018 01:22:29 -0700 (PDT)
+        bh=lbl2Ol4tvWCqEUXMHrsdzYUUWBHhSaEGpsPmSSMCa9U=;
+        b=otTQ6TgmtBt1PyzHK0cOUAH1GmNBOkCECEOu13+nKvBBza6Tq+q582B4atbhA48+Of
+         ZqRUKIm0itC5WuJBar4GOCJM02mVn423i2wKpI4xABdpdeQ3rc4s7DqJE4TzFoq8PDKf
+         nBvhIek0T1j863vfQfS+AV6gWogtaekKAMUlfH/P2cUpM9/fJEszVBYmDP+JSrJ61FaS
+         pN1Eft85VWm5ReVbatWfl1mkmRwewUngzCXAYJ3MCLhBlKGBHROYteXQW7lDdj8xuxX9
+         ywFSynEUqkrlZUVZF+HaZ2N4vTz++xtO4aT5VVH5jPRoTyhv0BmT5uXqDGSgs2Fpo3ln
+         NnaA==
+X-Gm-Message-State: APzg51D3A/1J2mH4GYaymgGB8/iU2LxUY+Sd7E0YGLDN/ZqCxYyTL6Uw
+        H1+ahLa8KJkNIIIBjQiINQxSag==
+X-Google-Smtp-Source: ANB0VdYTnz5w+CITOYMBd6pZfN418gxTmZmoEBHnmlPBUUxZTxdkSeDbSvu8s6obF5ypqARopaONhQ==
+X-Received: by 2002:a63:5964:: with SMTP id j36-v6mr8777160pgm.222.1535617354811;
+        Thu, 30 Aug 2018 01:22:34 -0700 (PDT)
 Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id j22-v6sm8224885pfh.45.2018.08.30.01.22.24
+        by smtp.gmail.com with ESMTPSA id j22-v6sm8224885pfh.45.2018.08.30.01.22.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 30 Aug 2018 01:22:28 -0700 (PDT)
+        Thu, 30 Aug 2018 01:22:33 -0700 (PDT)
 From:   Chunyan Zhang <zhang.chunyan@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
@@ -65,9 +65,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jason Wu <jason.wu@unisoc.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V8 7/9] mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
-Date:   Thu, 30 Aug 2018 16:21:43 +0800
-Message-Id: <1535617305-16952-8-git-send-email-zhang.chunyan@linaro.org>
+Subject: [PATCH V8 8/9] mmc: sdhci-sprd: Add Spreadtrum's initial host controller
+Date:   Thu, 30 Aug 2018 16:21:44 +0800
+Message-Id: <1535617305-16952-9-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535617305-16952-1-git-send-email-zhang.chunyan@linaro.org>
 References: <1535617305-16952-1-git-send-email-zhang.chunyan@linaro.org>
@@ -76,37 +76,566 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Host Version 4 Enable is set to 1, SDMA uses ADMA System Address
-register (05Fh-058h) instead of using register (000h-004h) to indicate
-its system address of data location. The register (000h-004h) is
-re-assigned to 32-bit Block Count and Auto CMD23 argument, so then SDMA
-may use Auto CMD23.
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+This patch adds the initial support of Secure Digital Host Controller
+Interface compliant controller found in some latest Spreadtrum chipsets.
+This patch has been tested on the version of SPRD-R11 controller.
+
+R11 is a variant based on SD v4.0 specification.
+
+With this driver, R11 mmc can be initialized, can be mounted, read and
+written.
+
+Original-by: Billows Wu <billows.wu@unisoc.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 ---
- drivers/mmc/host/sdhci.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/mmc/host/Kconfig      |  13 ++
+ drivers/mmc/host/Makefile     |   1 +
+ drivers/mmc/host/sdhci-sprd.c | 498 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 512 insertions(+)
+ create mode 100644 drivers/mmc/host/sdhci-sprd.c
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 62d843ac90..606d331 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3834,10 +3834,13 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	if (host->quirks & SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12)
- 		host->flags |= SDHCI_AUTO_CMD12;
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index d09feb6..cf984f0 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -593,6 +593,19 @@ config MMC_SDRICOH_CS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called sdricoh_cs.
  
--	/* Auto-CMD23 stuff only works in ADMA or PIO. */
++config MMC_SDHCI_SPRD
++	tristate "Spreadtrum SDIO host Controller"
++	depends on ARCH_SPRD
++	depends on MMC_SDHCI_PLTFM
++	select MMC_SDHCI_IO_ACCESSORS
++	help
++	  This selects the SDIO Host Controller in Spreadtrum
++	  SoCs, this driver supports R11(IP version: R11P0).
++
++	  If you have a controller with this interface, say Y or M here.
++
++	  If unsure, say N.
++
+ config MMC_TMIO_CORE
+ 	tristate
+ 
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index a835d1a..5363d06 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -92,6 +92,7 @@ obj-$(CONFIG_MMC_SDHCI_ST)		+= sdhci-st.o
+ obj-$(CONFIG_MMC_SDHCI_MICROCHIP_PIC32)	+= sdhci-pic32.o
+ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
+ obj-$(CONFIG_MMC_SDHCI_OMAP)		+= sdhci-omap.o
++obj-$(CONFIG_MMC_SDHCI_SPRD)		+= sdhci-sprd.o
+ obj-$(CONFIG_MMC_CQHCI)			+= cqhci.o
+ 
+ ifeq ($(CONFIG_CB710_DEBUG),y)
+diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+new file mode 100644
+index 0000000..3d5128e
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-sprd.c
+@@ -0,0 +1,498 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Secure Digital Host Controller
++//
++// Copyright (C) 2018 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@unisoc.com>
++
++#include <linux/delay.h>
++#include <linux/dma-mapping.h>
++#include <linux/highmem.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++
++#include "sdhci-pltfm.h"
++
++/* SDHCI_ARGUMENT2 register high 16bit */
++#define SDHCI_SPRD_ARG2_STUFF		GENMASK(31, 16)
++
++#define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
++#define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
++#define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
++#define  SDHCI_SPRD_BIT_POSRD_DLY_INV		BIT(21)
++#define  SDHCI_SPRD_BIT_NEGRD_DLY_INV		BIT(29)
++
++#define SDHCI_SPRD_REG_32_BUSY_POSI		0x250
++#define  SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN	BIT(25)
++#define  SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN	BIT(24)
++
++#define SDHCI_SPRD_REG_DEBOUNCE		0x28C
++#define  SDHCI_SPRD_BIT_DLL_BAK		BIT(0)
++#define  SDHCI_SPRD_BIT_DLL_VAL		BIT(1)
++
++#define  SDHCI_SPRD_INT_SIGNAL_MASK	0x1B7F410B
++
++/* SDHCI_HOST_CONTROL2 */
++#define  SDHCI_SPRD_CTRL_HS200		0x0005
++#define  SDHCI_SPRD_CTRL_HS400		0x0006
++
++/*
++ * According to the standard specification, BIT(3) of SDHCI_SOFTWARE_RESET is
++ * reserved, and only used on Spreadtrum's design, the hardware cannot work
++ * if this bit is cleared.
++ * 1 : normal work
++ * 0 : hardware reset
++ */
++#define  SDHCI_HW_RESET_CARD		BIT(3)
++
++#define SDHCI_SPRD_MAX_CUR		0xFFFFFF
++#define SDHCI_SPRD_CLK_MAX_DIV		1023
++
++#define SDHCI_SPRD_CLK_DEF_RATE		26000000
++
++struct sdhci_sprd_host {
++	u32 version;
++	struct clk *clk_sdio;
++	struct clk *clk_enable;
++	u32 base_rate;
++	int flags; /* backup of host attribute */
++};
++
++#define TO_SPRD_HOST(host) sdhci_pltfm_priv(sdhci_priv(host))
++
++static void sdhci_sprd_init_config(struct sdhci_host *host)
++{
++	u16 val;
++
++	/* set dll backup mode */
++	val = sdhci_readl(host, SDHCI_SPRD_REG_DEBOUNCE);
++	val |= SDHCI_SPRD_BIT_DLL_BAK | SDHCI_SPRD_BIT_DLL_VAL;
++	sdhci_writel(host, val, SDHCI_SPRD_REG_DEBOUNCE);
++}
++
++static inline u32 sdhci_sprd_readl(struct sdhci_host *host, int reg)
++{
++	if (unlikely(reg == SDHCI_MAX_CURRENT))
++		return SDHCI_SPRD_MAX_CUR;
++
++	return readl_relaxed(host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_writel(struct sdhci_host *host, u32 val, int reg)
++{
++	/* SDHCI_MAX_CURRENT is reserved on Spreadtrum's platform */
++	if (unlikely(reg == SDHCI_MAX_CURRENT))
++		return;
++
++	if (unlikely(reg == SDHCI_SIGNAL_ENABLE || reg == SDHCI_INT_ENABLE))
++		val = val & SDHCI_SPRD_INT_SIGNAL_MASK;
++
++	writel_relaxed(val, host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_writew(struct sdhci_host *host, u16 val, int reg)
++{
++	/* SDHCI_BLOCK_COUNT is Read Only on Spreadtrum's platform */
++	if (unlikely(reg == SDHCI_BLOCK_COUNT))
++		return;
++
++	writew_relaxed(val, host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_writeb(struct sdhci_host *host, u8 val, int reg)
++{
 +	/*
-+	 * For v3 mode, Auto-CMD23 stuff only works in ADMA or PIO.
-+	 * For v4 mode, SDMA may use Auto-CMD23 as well.
++	 * Since BIT(3) of SDHCI_SOFTWARE_RESET is reserved according to the
++	 * standard specification, sdhci_reset() write this register directly
++	 * without checking other reserved bits, that will clear BIT(3) which
++	 * is defined as hardware reset on Spreadtrum's platform and clearing
++	 * it by mistake will lead the card not work. So here we need to work
++	 * around it.
 +	 */
- 	if ((host->version >= SDHCI_SPEC_300) &&
- 	    ((host->flags & SDHCI_USE_ADMA) ||
--	     !(host->flags & SDHCI_USE_SDMA)) &&
-+	     !(host->flags & SDHCI_USE_SDMA) || host->v4_mode) &&
- 	     !(host->quirks2 & SDHCI_QUIRK2_ACMD23_BROKEN)) {
- 		host->flags |= SDHCI_AUTO_CMD23;
- 		DBG("Auto-CMD23 available\n");
++	if (unlikely(reg == SDHCI_SOFTWARE_RESET)) {
++		if (readb_relaxed(host->ioaddr + reg) & SDHCI_HW_RESET_CARD)
++			val |= SDHCI_HW_RESET_CARD;
++	}
++
++	writeb_relaxed(val, host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_sd_clk_off(struct sdhci_host *host)
++{
++	u16 ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++
++	ctrl &= ~SDHCI_CLOCK_CARD_EN;
++	sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
++}
++
++static inline void
++sdhci_sprd_set_dll_invert(struct sdhci_host *host, u32 mask, bool en)
++{
++	u32 dll_dly_offset;
++
++	dll_dly_offset = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
++	if (en)
++		dll_dly_offset |= mask;
++	else
++		dll_dly_offset &= ~mask;
++	sdhci_writel(host, dll_dly_offset, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
++}
++
++static inline u32 sdhci_sprd_calc_div(u32 base_clk, u32 clk)
++{
++	u32 div;
++
++	/* select 2x clock source */
++	if (base_clk <= clk * 2)
++		return 0;
++
++	div = (u32) (base_clk / (clk * 2));
++
++	if ((base_clk / div) > (clk * 2))
++		div++;
++
++	if (div > SDHCI_SPRD_CLK_MAX_DIV)
++		div = SDHCI_SPRD_CLK_MAX_DIV;
++
++	if (div % 2)
++		div = (div + 1) / 2;
++	else
++		div = div / 2;
++
++	return div;
++}
++
++static inline void _sdhci_sprd_set_clock(struct sdhci_host *host,
++					unsigned int clk)
++{
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++	u32 div, val, mask;
++
++	div = sdhci_sprd_calc_div(sprd_host->base_rate, clk);
++
++	clk |= ((div & 0x300) >> 2) | ((div & 0xFF) << 8);
++	sdhci_enable_clk(host, clk);
++
++	/* enable auto gate sdhc_enable_auto_gate */
++	val = sdhci_readl(host, SDHCI_SPRD_REG_32_BUSY_POSI);
++	mask = SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN |
++	       SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN;
++	if (mask != (val & mask)) {
++		val |= mask;
++		sdhci_writel(host, val, SDHCI_SPRD_REG_32_BUSY_POSI);
++	}
++}
++
++static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	bool en = false;
++
++	if (clock == 0) {
++		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++	} else if (clock != host->clock) {
++		sdhci_sprd_sd_clk_off(host);
++		_sdhci_sprd_set_clock(host, clock);
++
++		if (clock <= 400000)
++			en = true;
++		sdhci_sprd_set_dll_invert(host, SDHCI_SPRD_BIT_CMD_DLY_INV |
++					  SDHCI_SPRD_BIT_POSRD_DLY_INV, en);
++	} else {
++		_sdhci_sprd_set_clock(host, clock);
++	}
++}
++
++static unsigned int sdhci_sprd_get_max_clock(struct sdhci_host *host)
++{
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	return clk_round_rate(sprd_host->clk_sdio, ULONG_MAX);
++}
++
++static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
++{
++	return 400000;
++}
++
++static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
++					 unsigned int timing)
++{
++	u16 ctrl_2;
++
++	if (timing == host->timing)
++		return;
++
++	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++	/* Select Bus Speed Mode for host */
++	ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
++	switch (timing) {
++	case MMC_TIMING_UHS_SDR12:
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
++		break;
++	case MMC_TIMING_MMC_HS:
++	case MMC_TIMING_SD_HS:
++	case MMC_TIMING_UHS_SDR25:
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
++		break;
++	case MMC_TIMING_UHS_SDR50:
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
++		break;
++	case MMC_TIMING_UHS_SDR104:
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
++		break;
++	case MMC_TIMING_UHS_DDR50:
++	case MMC_TIMING_MMC_DDR52:
++		ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
++		break;
++	case MMC_TIMING_MMC_HS200:
++		ctrl_2 |= SDHCI_SPRD_CTRL_HS200;
++		break;
++	case MMC_TIMING_MMC_HS400:
++		ctrl_2 |= SDHCI_SPRD_CTRL_HS400;
++		break;
++	default:
++		break;
++	}
++
++	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
++}
++
++static void sdhci_sprd_hw_reset(struct sdhci_host *host)
++{
++	int val;
++
++	/*
++	 * Note: don't use sdhci_writeb() API here since it is redirected to
++	 * sdhci_sprd_writeb() in which we have a workaround for
++	 * SDHCI_SOFTWARE_RESET which would make bit SDHCI_HW_RESET_CARD can
++	 * not be cleared.
++	 */
++	val = readb_relaxed(host->ioaddr + SDHCI_SOFTWARE_RESET);
++	val &= ~SDHCI_HW_RESET_CARD;
++	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
++	/* wait for 10 us */
++	usleep_range(10, 20);
++
++	val |= SDHCI_HW_RESET_CARD;
++	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
++	usleep_range(300, 500);
++}
++
++static struct sdhci_ops sdhci_sprd_ops = {
++	.read_l = sdhci_sprd_readl,
++	.write_l = sdhci_sprd_writel,
++	.write_b = sdhci_sprd_writeb,
++	.set_clock = sdhci_sprd_set_clock,
++	.get_max_clock = sdhci_sprd_get_max_clock,
++	.get_min_clock = sdhci_sprd_get_min_clock,
++	.set_bus_width = sdhci_set_bus_width,
++	.reset = sdhci_reset,
++	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
++	.hw_reset = sdhci_sprd_hw_reset,
++};
++
++static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	host->flags |= sprd_host->flags & SDHCI_AUTO_CMD23;
++
++	/*
++	 * From version 4.10 onward, ARGUMENT2 register is also as 32-bit
++	 * block count register which doesn't support stuff bits of
++	 * CMD23 argument on Spreadtrum's sd host controller.
++	 */
++	if (host->version >= SDHCI_SPEC_410 &&
++	    mrq->sbc && (mrq->sbc->arg & SDHCI_SPRD_ARG2_STUFF) &&
++	    (host->flags & SDHCI_AUTO_CMD23))
++		host->flags &= ~SDHCI_AUTO_CMD23;
++
++	sdhci_request(mmc, mrq);
++}
++
++static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
++	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
++	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200 |
++		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT,
++	.ops = &sdhci_sprd_ops,
++};
++
++static int sdhci_sprd_probe(struct platform_device *pdev)
++{
++	struct sdhci_host *host;
++	struct sdhci_sprd_host *sprd_host;
++	struct clk *clk;
++	int ret = 0;
++
++	host = sdhci_pltfm_init(pdev, &sdhci_sprd_pdata, sizeof(*sprd_host));
++	if (IS_ERR(host))
++		return PTR_ERR(host);
++
++	host->dma_mask = DMA_BIT_MASK(64);
++	pdev->dev.dma_mask = &host->dma_mask;
++	host->mmc_host_ops.request = sdhci_sprd_request;
++
++	host->mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
++		MMC_CAP_ERASE | MMC_CAP_CMD23;
++	ret = mmc_of_parse(host->mmc);
++	if (ret)
++		goto pltfm_free;
++
++	sprd_host = TO_SPRD_HOST(host);
++
++	clk = devm_clk_get(&pdev->dev, "sdio");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto pltfm_free;
++	}
++	sprd_host->clk_sdio = clk;
++	sprd_host->base_rate = clk_get_rate(sprd_host->clk_sdio);
++	if (!sprd_host->base_rate)
++		sprd_host->base_rate = SDHCI_SPRD_CLK_DEF_RATE;
++
++	clk = devm_clk_get(&pdev->dev, "enable");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto pltfm_free;
++	}
++	sprd_host->clk_enable = clk;
++
++	ret = clk_prepare_enable(sprd_host->clk_sdio);
++	if (ret)
++		goto pltfm_free;
++
++	clk_prepare_enable(sprd_host->clk_enable);
++	if (ret)
++		goto clk_disable;
++
++	sdhci_sprd_init_config(host);
++	host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
++	sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
++			       SDHCI_VENDOR_VER_SHIFT);
++
++	pm_runtime_get_noresume(&pdev->dev);
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_suspend_ignore_children(&pdev->dev, 1);
++
++	sdhci_enable_v4_mode(host);
++
++	ret = sdhci_setup_host(host);
++	if (ret)
++		goto pm_runtime_disable;
++
++	sprd_host->flags = host->flags;
++
++	ret = __sdhci_add_host(host);
++	if (ret)
++		goto err_cleanup_host;
++
++	pm_runtime_mark_last_busy(&pdev->dev);
++	pm_runtime_put_autosuspend(&pdev->dev);
++
++	return 0;
++
++err_cleanup_host:
++	sdhci_cleanup_host(host);
++
++pm_runtime_disable:
++	pm_runtime_disable(&pdev->dev);
++	pm_runtime_set_suspended(&pdev->dev);
++
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++clk_disable:
++	clk_disable_unprepare(sprd_host->clk_sdio);
++
++pltfm_free:
++	sdhci_pltfm_free(pdev);
++	return ret;
++}
++
++static int sdhci_sprd_remove(struct platform_device *pdev)
++{
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++	struct mmc_host *mmc = host->mmc;
++
++	mmc_remove_host(mmc);
++	clk_disable_unprepare(sprd_host->clk_sdio);
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++	mmc_free_host(mmc);
++
++	return 0;
++}
++
++static const struct of_device_id sdhci_sprd_of_match[] = {
++	{ .compatible = "sprd,sdhci-r11", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sdhci_sprd_of_match);
++
++#ifdef CONFIG_PM
++static int sdhci_sprd_runtime_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	sdhci_runtime_suspend_host(host);
++
++	clk_disable_unprepare(sprd_host->clk_sdio);
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++	return 0;
++}
++
++static int sdhci_sprd_runtime_resume(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++	int ret;
++
++	ret = clk_prepare_enable(sprd_host->clk_enable);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(sprd_host->clk_sdio);
++	if (ret) {
++		clk_disable_unprepare(sprd_host->clk_enable);
++		return ret;
++	}
++
++	sdhci_runtime_resume_host(host);
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops sdhci_sprd_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
++	SET_RUNTIME_PM_OPS(sdhci_sprd_runtime_suspend,
++			   sdhci_sprd_runtime_resume, NULL)
++};
++
++static struct platform_driver sdhci_sprd_driver = {
++	.probe = sdhci_sprd_probe,
++	.remove = sdhci_sprd_remove,
++	.driver = {
++		.name = "sdhci_sprd_r11",
++		.of_match_table = of_match_ptr(sdhci_sprd_of_match),
++		.pm = &sdhci_sprd_pm_ops,
++	},
++};
++module_platform_driver(sdhci_sprd_driver);
++
++MODULE_DESCRIPTION("Spreadtrum sdio host controller r11 driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:sdhci-sprd-r11");
 -- 
 2.7.4
 
