@@ -6,208 +6,76 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A22C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7370C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5538E20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5538E20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D5E42082B
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:25:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5E42082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbeH3NYs (ORCPT
+        id S1728176AbeH3N0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:24:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38270 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727780AbeH3NYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:24:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D8837A9;
-        Thu, 30 Aug 2018 02:23:36 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 294633F721;
-        Thu, 30 Aug 2018 02:23:32 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 10:23:29 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
- static key
-Message-ID: <20180830092329.GS2960@e110439-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-8-quentin.perret@arm.com>
- <20180829165058.GR2960@e110439-lin>
- <20180829172004.afbe2oukprvptqs2@queper01-lin>
+        Thu, 30 Aug 2018 09:26:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47376 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727780AbeH3N0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 09:26:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A55B5AEFC;
+        Thu, 30 Aug 2018 09:25:34 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 11:26:06 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v2 2/3] x86/mm: add .data..decrypted section to hold
+ shared variables
+Message-ID: <20180830092606.GC18459@nazgul.tnic>
+References: <1535494377-25600-1-git-send-email-brijesh.singh@amd.com>
+ <1535494377-25600-3-git-send-email-brijesh.singh@amd.com>
+ <20180829150314.GA32493@linux.intel.com>
+ <0de361d4-1d1e-0584-f9d4-41bf5936e2be@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180829172004.afbe2oukprvptqs2@queper01-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0de361d4-1d1e-0584-f9d4-41bf5936e2be@amd.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-Aug 18:20, Quentin Perret wrote:
-> On Wednesday 29 Aug 2018 at 17:50:58 (+0100), Patrick Bellasi wrote:
-> > > +/*
-> > > + * The complexity of the Energy Model is defined as: nr_pd * (nr_cpus + nr_cs)
-> > > + * with: 'nr_pd' the number of performance domains; 'nr_cpus' the number of
-> > > + * CPUs; and 'nr_cs' the sum of the capacity states numbers of all performance
-> > > + * domains.
-> > > + *
-> > > + * It is generally not a good idea to use such a model in the wake-up path on
-> > > + * very complex platforms because of the associated scheduling overheads. The
-> > > + * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
-> > > + * with per-CPU DVFS and less than 8 capacity states each, for example.
-> > 
-> > According to the formula above, that should give a "complexity value" of:
-> > 
-> >   16 * (16 + 9) = 384
-> > 
-> > while, 2K complexity seems more like a 40xCPUs system with 8 OPPs.
-> > 
-> > Maybe we should update either the example or the constant below ?
-> 
-> Hmm I guess the example isn't really clear. 'nr_cs' is the _sum_ of the
-> number of OPPs of all perf. domains. So, in the example above, if you
-> have 16 CPUs with per-CPU DVFS, and each DVFS island has 8 OPPs, then
-> nr_cs = 16 * 8 = 128.
-> 
-> So if you apply the formula you get C = 16 * (16 + 128) = 2304, which is
-> more than EM_MAX_COMPLEXITY, so EAS cannot start.
-> 
-> If the DVFS island had 7 OPPs instead of 8 (for example) you would get
-> nr_cs = 112, C = 2048, and so EAS could start.
+dropping stable@
 
-Right, I see now.
+On Wed, Aug 29, 2018 at 10:33:24AM -0500, Brijesh Singh wrote:
+> During the initial SEV/SME patch review cycle we had some discussion about
+> using decrypted vs unencrypted. At that time the consensus was
+> that a memory range mapped with C=0 should be referred as 'decrypted'.
 
-> I can try to re-work that comment to explain things a bit better ...
+Yes, the idea was to avoid having "unencrypted" *and* "decrypted" to
+mean pretty much the same thing for ease of understanding just by
+looking at the name.
 
-Yes, dunno if it's just me but perhaps a bit of rephrasing could help.
+Also whether the data was initially unencrypted or was decrypted is
+immaterial - you only need to know how to access it.
 
-Alternatively, why not having this comment and check after patches
-11 and 12 ?
+> Having said so, I do see your point and I am not oppose to calling it
+> 'unencrypted' if others agrees to it.
 
-> > > + */
-> > > +#define EM_MAX_COMPLEXITY 2048
-> > > +
-> > >  static void build_perf_domains(const struct cpumask *cpu_map)
-> > >  {
-> > > +	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
-> > >  	struct perf_domain *pd = NULL, *tmp;
-> > >  	int cpu = cpumask_first(cpu_map);
-> > >  	struct root_domain *rd = cpu_rq(cpu)->rd;
-> > > -	int i;
-> > > +
-> > > +	/* EAS is enabled for asymmetric CPU capacity topologies. */
-> > > +	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
-> > > +		if (sched_debug()) {
-> > > +			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
-> > > +					cpumask_pr_args(cpu_map));
-> > > +		}
-> > > +		goto free;
-> > > +	}
-> > >  
-> > >  	for_each_cpu(i, cpu_map) {
-> > >  		/* Skip already covered CPUs. */
-> > > @@ -288,6 +318,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-> > >  			goto free;
-> > >  		tmp->next = pd;
-> > >  		pd = tmp;
-> > > +
-> > > +		/*
-> > > +		 * Count performance domains and capacity states for the
-> > > +		 * complexity check.
-> > > +		 */
-> > > +		nr_pd++;
-> > 
-> > A special case where EAS is not going to be used is for systems where
-> > nr_pd matches the number of online CPUs, isn't it ?
-> 
-> Well, it depends. Say you have only 4 CPUs with 3 OPPs each. Even with
-> per-CPU DVFS the complexity is low enough to start EAS. I don't really
-> see a good reason for not doing so no ?
-
-Right... I was totally confused by the idea that we don't
-run EAS if we just have 1 CPU per PD... my bad!
-
-Although on those systems, since we don't have idle costs, should not
-be a spreading strategy always the best from an energy efficiency
-standpoint ?
-
-> > If that's the case, then, by caching this nr_pd you can probably check
-> > this condition in the sched_energy_start() and bail out even faster by
-> > avoiding to scan all the doms_new's pd ?
-> > 
-> > 
-> > > +		nr_cs += em_pd_nr_cap_states(pd->obj);
-> > > +	}
-> > > +
-> > > +	/* Bail out if the Energy Model complexity is too high. */
-> > > +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-> > > +		if (sched_debug())
-> > > +			pr_info("rd %*pbl: EM complexity is too high\n ",
-> > > +						cpumask_pr_args(cpu_map));
-> > > +		goto free;
-> > >  	}
-> > >  
-> > >  	perf_domain_debug(cpu_map, pd);
-> > > @@ -307,6 +352,35 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-> > >  	if (tmp)
-> > >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-> > >  }
-> > > +
-> > > +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> > > +{
-> > > +	/*
-> > > +	 * The conditions for EAS to start are checked during the creation of
-> > > +	 * root domains. If one of them meets all conditions, it will have a
-> > > +	 * non-null list of performance domains.
-> > > +	 */
-> > > +	while (ndoms_new) {
-> > > +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-> > > +			goto enable;
-> > > +		ndoms_new--;
-> > > +	}
-> > > +
-> > > +	if (static_branch_unlikely(&sched_energy_present)) {
-> >                           ^^^^^^^^
-> > Is this defined unlikely to reduce overheads on systems which never
-> > satisfy all the conditions above while still rebuild SDs from time to
-> > time ?
-> 
-> Something like that. I just thought that the case where EAS needs to be
-> disabled after being enabled isn't very common. I mean, the most typical
-> use-case is, EAS is enabled at boot and stays enabled forever, or EAS
-> never gets enabled.
-
-Right, if we have EAS compiled in... we are likely to have it enabled.
-
-> Enabling/disabling EAS because of hotplug (for example) can definitely
-> happen, but that shouldn't be the case very often in practice, I think.
-
-Would say yes on sane platform, i.e. where hotplug is not being used
-for power/thermal management... but hopefully EAS should improve on
-that side ;)
-
-> So we can optimize things out a bit I suppose.
-
-Right thanks!
+No, please don't. Let's stick with "decrypted" for everything.
 
 -- 
-#include <best/regards.h>
+Regards/Gruss,
+    Boris.
 
-Patrick Bellasi
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
