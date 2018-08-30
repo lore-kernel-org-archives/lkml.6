@@ -2,95 +2,90 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583F2C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A8DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159172082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159172082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A957C20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="V+Sm+tjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A957C20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeH3XKu (ORCPT
+        id S1727240AbeH3XPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:10:50 -0400
-Received: from mga03.intel.com ([134.134.136.65]:6188 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbeH3XKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:10:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 12:07:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="259449633"
-Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Aug 2018 12:07:11 -0700
-Subject: Re: [PATCH V4 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-To:     Zhang Yi <yi.z.zhang@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pbonzini@redhat.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
-        david@redhat.com, jack@suse.cz, hch@lst.de
-References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
- <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
-        yi.z.zhang@intel.com
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4192066a-79f3-2b3e-386f-c4ec9b6dd8fd@intel.com>
-Date:   Thu, 30 Aug 2018 12:07:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 19:15:01 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:55054 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbeH3XPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 19:15:01 -0400
+Received: by mail-it0-f43.google.com with SMTP id f14-v6so4055220ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 12:11:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g7v8KVcLqnDf+9fgon1CPhLtcLM3PxMlyVE5fEOaYy8=;
+        b=V+Sm+tjU4jJvxkGil6YXxVdlrRSp9QEl9ThCk6xJOptUlf7rcKWJ7QywM9/+d6lgg9
+         Cv2bMEuuW6zPwi6zn1dRmYpPY/sXubUICzIBxrBKZNy2uuJsAdBSqhYUNdgNy6MTdCeu
+         gRnHOW+Jl2J0ClRNlgGwt5L/HlQoSXMvnFGOa7eeTAWMKuvtPO8XPr0HpxMlw4CK7lvu
+         7z7qXzGLMtBUYqMJsy6wSElWea9uf1LnMHM3GhlusIPLLXdVEL/UzY2JYrMltm7Sc0X1
+         tZETb3g76uK7wTQj+fcjWY1NqVNJ1qBu+9hpsS3TCFFMUOybny97iVbmMbI2NKz5KnzV
+         pr1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g7v8KVcLqnDf+9fgon1CPhLtcLM3PxMlyVE5fEOaYy8=;
+        b=YULVnO/FOkVH++LE86Rvl4u1m4W61SOI0dcDCWoPpzgvYxwxttAek0rVi/60Cxcc2c
+         p0xYivPK2Dxjt4qy0iOxbL0ld7aWUHrg7XEsn8RhO0lgTqfnNp+l2yVPBmRke6ndAEI6
+         Jm8QZ3qKm6GtfzVcVAqqUvFLOTJhOR3CTVecdktBtIw6zQftQs6TQZgVTFcelRFDxJWx
+         uLNWrbKpxrltJ5g4vhEHLQDA+tXBNqRbeNwnQp5GqcWvAWmpOVSiFWWEKIHv/JmpUkG+
+         bjMsoQVutsT987b5nzDo2U6jK/AaJAEBddoVt3b502HznGeJZsB4J5KlWBzM4269s+0P
+         Oxsg==
+X-Gm-Message-State: APzg51DIO0fW0/AjAy4vRvlVTEu+5aQlJsEg2+PgV8kC8oCe2QHzaPpv
+        kd0MbKuK4GyNqEB/y8u7MVtGAw==
+X-Google-Smtp-Source: ANB0Vda0Exfhiz84XQu61c86kGqnTxHSzBX9wkNI8HaU9Ht+W9qzUsiL+NZEHukB1XbFEi31AjAscA==
+X-Received: by 2002:a24:9d84:: with SMTP id f126-v6mr3258556itd.130.1535656281718;
+        Thu, 30 Aug 2018 12:11:21 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id w20-v6sm3281113ioa.82.2018.08.30.12.11.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 12:11:20 -0700 (PDT)
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+ <20180830185352.3369-8-logang@deltatee.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
+Date:   Thu, 30 Aug 2018 13:11:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
+In-Reply-To: <20180830185352.3369-8-logang@deltatee.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -99,18 +94,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/22/2018 03:58 AM, Zhang Yi wrote:
->  bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
->  {
-> -	if (pfn_valid(pfn))
-> -		return PageReserved(pfn_to_page(pfn));
-> +	struct page *page;
-> +
-> +	if (pfn_valid(pfn)) {
-> +		page = pfn_to_page(pfn);
-> +		return PageReserved(page) && !is_dax_page(page);
-> +	}
+On 8/30/18 12:53 PM, Logan Gunthorpe wrote:
+> QUEUE_FLAG_PCI_P2P is introduced meaning a driver's request queue
+> supports targeting P2P memory.
+> 
+> When a request is submitted we check if PCI P2PDMA memory is assigned
+> to the first page in the bio. If it is, we ensure the queue it's
+> submitted to supports it, and enforce REQ_NOMERGE.
 
-This is in desperate need of commenting about what it is doing and why.
+I think this belongs in the caller - both the validity check, and
+passing in NOMERGE for this type of request. I don't want to impose
+this overhead on everything, for a pretty niche case.
 
-The changelog alone doesn't cut it.
+-- 
+Jens Axboe
+
