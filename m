@@ -2,114 +2,185 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBFFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6783AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E779F20666
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E779F20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id F2A8E20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:03:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyZ9K/mi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A8E20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeH3GAO (ORCPT
+        id S1727282AbeH3GDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 02:00:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbeH3GAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 02:00:14 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A818C20647;
-        Thu, 30 Aug 2018 02:00:28 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 22:00:26 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 0/52] Remove rcu_state pointers for
- v4.20/v5.0
-Message-ID: <20180829220026.3579e9a1@vmware.local.home>
-In-Reply-To: <20180829223830.GA1800@linux.vnet.ibm.com>
-References: <20180829223830.GA1800@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 30 Aug 2018 02:03:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42225 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbeH3GDT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 02:03:19 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so3125006pff.9;
+        Wed, 29 Aug 2018 19:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZriRi6qAj14t1p4MRdPKPXTSGBiamfNqVcP9ENPbS/M=;
+        b=PyZ9K/miH87VO1ITKdhZ17dZswYPMdQEyVt5OZM6l5MF2f3Hkld46fO5Nw/74K9xiy
+         qicJnBpvsrmIt/iV1PlUjACyHnItPckY7oza6faGVa+FzdRCCX/PjIY6lv9gY/LwAYbd
+         CVywRw6Rq5DHnkk6Kzq2ja8HbN17prafKeUMeW2MQ+KKG16dwHG4O449ujC1siahYOe+
+         ZZpe4qA52HbU/2EnNFUkyqa41A+z3gF+QlE53iRfue6Br9Noz6OnQCKZpmlLbpEVNrAc
+         iAi2Y1dlo7u8axgngP+emXh3HiKBTTvGJ2ka+MDKWWlTZY3+rtWFscmLrkCJXH+Sw4F4
+         u+7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZriRi6qAj14t1p4MRdPKPXTSGBiamfNqVcP9ENPbS/M=;
+        b=S3NWuldwRwDT8OlULek/1sJv1Hde0m9j5TgQsn3CLFrnWMMRExLJwZYDqepkIzdwFE
+         h1TZqN6fs5+YmVXtBh2mVO3id9yQ4qrB6Q+IF8pKzs0yHumFxkyIasYj1kiP4VTCSfrI
+         bn/jraRxuFRzPDCq2btOdPd3s7d+yzJcuaN19O7uSd6H++6K3wL8Vjuj1x1BgrIE0dxa
+         3HoOiTiKQ/7xksz7nuuuvdolk4EvD3/F7YU77OheRf9iH7bhDDK2LJyHyaWPGYi1r0Qy
+         PY2znKG+7Zui9+NOrAePz9AT7UW8dTZOHFIfQgDcH512rDWCM/uGxyty0abkiK6DT4Bd
+         0QDg==
+X-Gm-Message-State: APzg51BFwt/R2rUlsT1e3oldV8li3nn5xbdxFrXJ8eLUypivdPOJ8Pug
+        waSOy+Vum5iYraVm2nIeteg6HAIj
+X-Google-Smtp-Source: ANB0VdYVvbsPDiYJDnSI2UYe4w/kvgLGAPNjH3DwaHtyCImgxuA2SZxbKP5oAAyIbRrisTAP7pzSsw==
+X-Received: by 2002:a63:225f:: with SMTP id t31-v6mr7770713pgm.275.1535594615054;
+        Wed, 29 Aug 2018 19:03:35 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id b18-v6sm11433523pgk.15.2018.08.29.19.03.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 29 Aug 2018 19:03:34 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v2] KVM: LAPIC: Fix pv ipis out-of-bounds access
+Date:   Thu, 30 Aug 2018 10:03:30 +0800
+Message-Id: <1535594610-9095-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 15:38:30 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+From: Wanpeng Li <wanpengli@tencent.com>
 
-> Hello!
-> 
-> This commit does RCU-consolidation cleanups that get rid of pointers to
-> the sole remaining rcu_state structure:
-> 
-> 1-40:	Remove the "rsp" parameter from numerous functions, given that
-> 	the corresponding argument will always be &rcu_state.
+Dan Carpenter reported that the untrusted data returns from kvm_register_read()
+results in the following static checker warning:
+  arch/x86/kvm/lapic.c:576 kvm_pv_send_ipi()
+  error: buffer underflow 'map->phys_map' 's32min-s32max'
 
-Hmm, couldn't 1-40 have been made into a single patch?
+KVM guest can easily trigger this by executing the following assembly sequence 
+in Ring0:
 
--- Steve
+mov $10, %rax
+mov $0xFFFFFFFF, %rbx
+mov $0xFFFFFFFF, %rdx
+mov $0, %rsi
+vmcall
 
-> 
-> 41.	Remove rcu_data structure's ->rsp field, now that it always
-> 	contains a pointer to rcu_state.
-> 
-> 42.	Remove non-flavor-traversal rsp local variable from tree_plugin.h.
-> 
-> 43.	Remove the for_each_rcu_flavor() flavor-traversal macro, given
-> 	that there is now only ever one flavor to traverse.
-> 
-> 44.	Simplify rcutorture_get_gp_data() based on there now being only
-> 	one rcu_state structure.
-> 
-> 45.	Restructure rcu_check_gp_kthread_starvation() based on there
-> 	now being only one rcu_state structure.
-> 
-> 46.	Restructure RCU CPU stall warnings based on there now being only
-> 	one rcu_state structure.
-> 
-> 47.	Restructure grace-period management code based on there now being
-> 	only one rcu_state structure.
-> 
-> 48.	Restructure callback registration/invocation code based on there
-> 	now being only one rcu_state structure.
-> 
-> 49.	Restructure quiescent-state and grace-period-nonstart code based
-> 	on there now being only one rcu_state structure.
-> 
-> 50.	Restructure rcu_barrier() based on there now being only one
-> 	rcu_state structure.
-> 
-> 51.	Restructure initialization code based on there now being only
-> 	one rcu_state structure.
-> 
-> 52.	Fix typo in force_qs_rnp()'s parameter's parameter, which was
-> 	located by searching for "rsp".
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->  Documentation/RCU/Design/Data-Structures/Data-Structures.html |   23 
->  kernel/rcu/rcu.h                                              |   28 
->  kernel/rcu/srcutree.c                                         |    4 
->  kernel/rcu/tree.c                                             | 1261 ++++------
->  kernel/rcu/tree.h                                             |   29 
->  kernel/rcu/tree_exp.h                                         |  209 -
->  kernel/rcu/tree_plugin.h                                      |  203 -
->  7 files changed, 784 insertions(+), 973 deletions(-)
+As this will cause KVM to execute the following code-path:
+vmx_handle_exit() -> handle_vmcall() -> kvm_emulate_hypercall() -> kvm_pv_send_ipi()
+which will reach out-of-bounds access.
+
+This patch fixes it by adding a check to kvm_pv_send_ipi() against map->max_apic_id, 
+ignoring destinations that are not present and delivering the rest. We also check 
+whether or not map->phys_map[min + i] is NULL since the max_apic_id is set to the 
+max apic id, some phys_map maybe NULL when apic id is sparse, especially kvm 
+unconditionally set max_apic_id to 255 to reserve enough space for any xAPIC ID.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+v1 -> v2:
+ * add min > map->max_apic_id check
+ * change min to u32
+ * add min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))
+
+ arch/x86/include/asm/kvm_host.h |  2 +-
+ arch/x86/kvm/lapic.c            | 23 ++++++++++++++++-------
+ 2 files changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 00ddb0c..e6534b3 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1463,7 +1463,7 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
+ void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu);
+ 
+ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+-    		    unsigned long ipi_bitmap_high, int min,
++		    unsigned long ipi_bitmap_high, u32 min,
+ 		    unsigned long icr, int op_64_bit);
+ 
+ u64 kvm_get_arch_capabilities(void);
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 0cefba2..7de605c 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -548,7 +548,7 @@ int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
+ }
+ 
+ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+-    		    unsigned long ipi_bitmap_high, int min,
++		    unsigned long ipi_bitmap_high, u32 min,
+ 		    unsigned long icr, int op_64_bit)
+ {
+ 	int i;
+@@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+ 	rcu_read_lock();
+ 	map = rcu_dereference(kvm->arch.apic_map);
+ 
++	if (min > map->max_apic_id)
++		goto out;
+ 	/* Bits above cluster_size are masked in the caller.  */
+-	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
+-		vcpu = map->phys_map[min + i]->vcpu;
+-		count += kvm_apic_set_irq(vcpu, &irq, NULL);
++	for_each_set_bit(i, &ipi_bitmap_low,
++		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
++		if (map->phys_map[min + i]) {
++			vcpu = map->phys_map[min + i]->vcpu;
++			count += kvm_apic_set_irq(vcpu, &irq, NULL);
++		}
+ 	}
+ 
+ 	min += cluster_size;
+-	for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
+-		vcpu = map->phys_map[min + i]->vcpu;
+-		count += kvm_apic_set_irq(vcpu, &irq, NULL);
++	for_each_set_bit(i, &ipi_bitmap_high,
++		min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
++		if (map->phys_map[min + i]) {
++			vcpu = map->phys_map[min + i]->vcpu;
++			count += kvm_apic_set_irq(vcpu, &irq, NULL);
++		}
+ 	}
+ 
++out:
+ 	rcu_read_unlock();
+ 	return count;
+ }
+-- 
+2.7.4
 
