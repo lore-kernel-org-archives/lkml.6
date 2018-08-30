@@ -2,105 +2,119 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0300C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D62AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF9620644
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF9620644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C94E620644
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:21:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEonScY0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94E620644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeH3GUF (ORCPT
+        id S1727357AbeH3GUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 02:20:05 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11206 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727178AbeH3GUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 02:20:04 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C949956943FFB;
-        Thu, 30 Aug 2018 10:20:14 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Thu, 30 Aug 2018
- 10:20:12 +0800
-Subject: Re: [PATCH v2] f2fs: avoid wrong decrypted data from disk
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180827225226.14272-1-jaegeuk@kernel.org>
- <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <ac310f4d-8ad8-bfd9-97f3-66e786f0f51e@huawei.com>
-Date:   Thu, 30 Aug 2018 10:20:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Thu, 30 Aug 2018 02:20:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33564 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbeH3GUx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 02:20:53 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y3-v6so1952959pgv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 19:21:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=T+gBSLKIWpr6x3+kjJ82C1zDULYqXQvhWmfzJYvBd4M=;
+        b=dEonScY0UY7yfP7Y7zdLkviuk3djkeHLuBllDlPesDb7pzcMD0ZdG1+nM/VRbMTQOi
+         cdTxPRaMDAS6EUCTKYaEuGoDIHpu9+bGL8VRQhQC2cnsxKAEMgsA4KnZxiv/OBxjazu1
+         h0YDBe5iCoOVbglDYE5mxWqmhvCO9NoncI3Pek/hQGKDzngkVY8QhIeuT8Vm69Rfts5x
+         nK0reM/r7Lvx82ZyErh7S3BfQCZNWHh3dxE44v/0/Pc5K23FE5LYPN52p4uJCwOTZh14
+         U6stiKDQCExGTbXzdOWgrVc90EyRHGd65WkichTpkqovXa9aTGx+uF599/95UhO8Oceh
+         B4yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T+gBSLKIWpr6x3+kjJ82C1zDULYqXQvhWmfzJYvBd4M=;
+        b=AmG/n97vq04H+v9eg6gNEmVq2r3+k+N5VZZ7BLzYAtVT96t91GKOjNq3vstyGvrgdN
+         7psXFE9l3/wBOmEQsZku9Me5vcvdEsMXwheGIOTDqslYE0LBtyhQq8dC8WBNuFIbmBxz
+         861s447J/xSjW8AkmiY389QHo6IlqrPv4QqAQc1Q9/FHwPtv16xZ3f0PKTYCumKwSwQ1
+         GD9szIKYwyE5TsmyJqpB0UjmJfVSP1GH+NM822b28kKo8Eb7xNpSVuieqQTzFC6LHbHz
+         oBc7L6nBEe800n6/g4i1cFdYJV9TIfqZ6TpFKnMi6rJhr3aHWo6jJDD/FdPjO+x+bjke
+         wOJg==
+X-Gm-Message-State: APzg51CwmMHj6zmsqcuKmGo6IbWbjL4B5dfi3/55nQA2AyaejGw9xPiK
+        E3CMmnasQNETfF9sCoMicJE=
+X-Google-Smtp-Source: ANB0VdYxFqmd/JlSRCWDfDOjWO1dKmjuBKKc/axavSumERhPTgYebcPZECGZ+JrvrsI5mzB6ndX+xw==
+X-Received: by 2002:a63:5ec1:: with SMTP id s184-v6mr7976984pgb.26.1535595665142;
+        Wed, 29 Aug 2018 19:21:05 -0700 (PDT)
+Received: from chris-XPS-13-9343.localdomain (c-174-62-104-253.hsd1.ca.comcast.net. [174.62.104.253])
+        by smtp.gmail.com with ESMTPSA id o20-v6sm18744725pfj.35.2018.08.29.19.21.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 19:21:04 -0700 (PDT)
+From:   cphlipot0@gmail.com
+To:     namhyung@kernel.org, acme@kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, cphlipot0@gmail.com
+Subject: [PATCH] perf event-parse: Use fixed size string for comms
+Date:   Wed, 29 Aug 2018 19:19:50 -0700
+Message-Id: <20180830021950.15563-1-cphlipot0@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/30 9:48, Jaegeuk Kim wrote:
-> 1. Create a file in an encrypted directory
-> 2. Do GC & drop caches
-> 3. Read stale data before its bio for metapage was not issued yet
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> Change log from v1:
->  - move to bio != NULL
-> 
->  fs/f2fs/data.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 382c1ef9a9e4..159e411785e9 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1556,6 +1556,12 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->  				bio = NULL;
->  				goto set_error_page;
->  			}
-> +		} else if (unlikely(f2fs_encrypted_file(inode))) {
+From: Chris Phlipot <cphlipot0@gmail.com>
 
-For android scenario, encryption becomes a common case now, so I think we can
-remove unlikely here.
+Some implementations of libc do not support the 'm' width modifier
+as part of the scanf string format specifier. This can cause the
+parsing to fail.  Since the parser never checks if the scanf
+parsing was successesful, this can result in a crash.
 
-> +			/*
-> +			 * If the page is under writeback, we need to wait for
-> +			 * its completion to see the correct decrypted data.
-> +			 */
-> +			f2fs_wait_on_block_writeback(F2FS_I_SB(inode), block_nr);
->  		}
+Change the comm string to be allocated as a fixed size instead of
+dynamically using 'm' scanf width modifier. This can be safely done
+since comm size is limited to 16 bytes by TASK_COMM_LEN within the
+kernel.
 
-Look at this again, it seems f2fs_wait_on_block_writeback() is not related to
-f2fs_grab_read_bio(), so we can move it here to make code logic more clear:
+This change prevents perf from crashing when linked against bionic
+as well as reduces the total number of heap allocations and frees
+invoked while accomplishing the same task.
 
-if (f2fs_encrypted_file(inode)) {
-	/* */
-	f2fs_wait_on_block_writeback(F2FS_I_SB(inode), block_nr);
-}
+Signed-off-by: Chris Phlipot <cphlipot0@gmail.com>
+---
+ tools/perf/util/trace-event-parse.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Also, in f2fs_submit_page_read(), we need to adjust to:
-
-- f2fs_grab_read_bio()
-- f2fs_wait_on_block_writeback()
-- bio_add_page()
-
-How do you think?
-
-Thanks,
-
->  
->  		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
-> 
+diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+index 920b1d58a068..e76214f8d596 100644
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -164,16 +164,15 @@ void parse_ftrace_printk(struct tep_handle *pevent,
+ void parse_saved_cmdline(struct tep_handle *pevent,
+ 			 char *file, unsigned int size __maybe_unused)
+ {
+-	char *comm;
++	char comm[17]; /* Max comm length in the kernel is 16. */
+ 	char *line;
+ 	char *next = NULL;
+ 	int pid;
+ 
+ 	line = strtok_r(file, "\n", &next);
+ 	while (line) {
+-		sscanf(line, "%d %ms", &pid, &comm);
+-		tep_register_comm(pevent, comm, pid);
+-		free(comm);
++		if (sscanf(line, "%d %16s", &pid, comm) == 2)
++			tep_register_comm(pevent, comm, pid);
+ 		line = strtok_r(NULL, "\n", &next);
+ 	}
+ }
+-- 
+2.17.1
 
