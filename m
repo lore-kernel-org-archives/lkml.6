@@ -6,155 +6,96 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5462C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A37C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A442073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515E32073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:00:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X05bmN+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A442073D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvkryEsd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515E32073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbeH3SBs (ORCPT
+        id S1729155AbeH3SCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:01:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38578 "EHLO mail.kernel.org"
+        Thu, 30 Aug 2018 14:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728273AbeH3SBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:01:48 -0400
-Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
+        id S1728273AbeH3SCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:02:20 -0400
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA86520837;
-        Thu, 30 Aug 2018 13:59:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 593C420837;
+        Thu, 30 Aug 2018 14:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535637571;
-        bh=NwGv5MOMEk/kYncyPUzRRk51uQVcYw9bZA/AB2YpLYI=;
+        s=default; t=1535637604;
+        bh=1xt5Oju/LA5eT/tMsK8FqwU2jENVEt36up7ILXM8nPk=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=X05bmN+3h6e9UGvMXL+0c5NVbxo3Sej0hUS0QE5cycFopTm28NxVLt6mkoI/w3FpY
-         Q+cqIY+mPQCs/zjqW1bcb3X2HYBoMocN3vsHoocsSx/leK19sNVxC8l2CwvVxusjnP
-         ybvdHKqaNFx7pha+GBmFj/1RFE/pgSBe1vuhRJ2Y=
-Received: by mail-qt0-f178.google.com with SMTP id n6-v6so9897268qtl.4;
-        Thu, 30 Aug 2018 06:59:31 -0700 (PDT)
-X-Gm-Message-State: APzg51B//shgz/GTO1InDr8j356TErsjPR5GA/FugvJ5Bf4LcMrpppNn
-        40tNbk9MgGX0t01m3ZKbTJgpcDBCQ4Ik3yoWuA==
-X-Google-Smtp-Source: ANB0VdbRm86gD+sjO4NX2UAwgzMSeb9yHMUol68u7Lkw/jLenHnT94UXozMpoKbAJOpVns3CnMlpq+PkWY0fKf3Hya4=
-X-Received: by 2002:ac8:148b:: with SMTP id l11-v6mr2131416qtj.27.1535637570855;
- Thu, 30 Aug 2018 06:59:30 -0700 (PDT)
+        b=qvkryEsdNtPq19SmNk6AKoHyAgdTa4uvWWXRykK2XvTXgN+jJ1+Y0IcbnO0IDcGEl
+         YKgjz3M/Th1Jx4D+POGpgBG2d1LCF0kn3g2ZTRyfF+UHd7vMoQ/eiMEZlAyQPNr4tl
+         r0Zk0r4ri61iyXwZjqsgHvQRXGCn2Kjcow820LxI=
+Received: by mail-wr1-f53.google.com with SMTP id k5-v6so8164984wre.10;
+        Thu, 30 Aug 2018 07:00:04 -0700 (PDT)
+X-Gm-Message-State: APzg51Acbq1RZLfZI5z5vjyvSeVWwhNyD4aVf9met+BY3yv0bqHBipVu
+        ZWUHC4jNUHhrfQNRdjpFicN8nXZazV4mURQ3VhY=
+X-Google-Smtp-Source: ANB0VdZ1bF4qYb64dtb8iYRWHo1blv1g6UJ1crBv+4Gh1ehjUn/euiVrK9ZXQKHqFJOvoJxoJM+nEN7qzaF4KJ+OS+Y=
+X-Received: by 2002:adf:b726:: with SMTP id l38-v6mr7344507wre.115.1535637602886;
+ Thu, 30 Aug 2018 07:00:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com>
- <1535096165-45827-2-git-send-email-hanjie.lin@amlogic.com>
- <8c48964151d24758298ba935da336c0829e2b287.camel@baylibre.com>
- <11d7547b-feb4-6ecb-cef3-db46ce8ee2ef@amlogic.com> <20180829004122.GA25928@bogus>
- <84d5399c-67d4-f8a4-3613-00d91f21292f@amlogic.com>
-In-Reply-To: <84d5399c-67d4-f8a4-3613-00d91f21292f@amlogic.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 30 Aug 2018 08:59:19 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJPzfp1OimYXa26tEqTexyiuKMeKszveobHN3rKP8+RYQ@mail.gmail.com>
-Message-ID: <CAL_JsqJPzfp1OimYXa26tEqTexyiuKMeKszveobHN3rKP8+RYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: meson: add DT bindings for
- Amlogic Meson PCIe controller
-To:     Hanjie Lin <hanjie.lin@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, devicetree@vger.kernel.org
+References: <CAJKOXPfVXnazraHq-NCCM+h26FFi1U6Z3OSYOX17XH3bj-UDLQ@mail.gmail.com>
+ <3053033.se6UkFii4W@tauon.chronox.de> <CGME20180830130922epcas1p35b0395da64de59107a805c6b99d770c2@epcas1p3.samsung.com>
+ <CAJKOXPd7JdzM2_PiHkS1ix1yU9hZmMbGDZaL07vbON0XzORH=w@mail.gmail.com> <20180830132732eucas1p12b941ed065276c0cbed6e7b1e01a30dc~PrH1zJtnY2603926039eucas1p1b@eucas1p1.samsung.com>
+In-Reply-To: <20180830132732eucas1p12b941ed065276c0cbed6e7b1e01a30dc~PrH1zJtnY2603926039eucas1p1b@eucas1p1.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 30 Aug 2018 15:59:51 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfNjHRXVic=ycJ3yek-1ufL7v8MkUM9ZBhyOnj0SEaHSw@mail.gmail.com>
+Message-ID: <CAJKOXPfNjHRXVic=ycJ3yek-1ufL7v8MkUM9ZBhyOnj0SEaHSw@mail.gmail.com>
+Subject: Re: Locking for HW crypto accelerators
+To:     k.konieczny@partner.samsung.com
+Cc:     smueller@chronox.de, herbert@gondor.apana.org.au,
+        davem@davemloft.net, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 2:37 AM Hanjie Lin <hanjie.lin@amlogic.com> wrote:
+On Thu, 30 Aug 2018 at 15:27, Kamil Konieczny
+<k.konieczny@partner.samsung.com> wrote:
 >
+> On 30.08.2018 15:09, Krzysztof Kozlowski wrote:
+> > [...]
+> > Thanks Stephan for hints. Let's assume the each of init, update and
+> > final are atomic... but how about the relation between update and
+> > final? I have two concurrent users in user-space but only one HW:
+> >
+> > Process A:             Process B:
+> > init() and set_key()
+> >                        init() and different key
+> > update(some_data)
+> >                        update(different_data)
+> > final()
+> >                        final()
+> >
+> > The final() from process A will now produce the result of hashing/CRC
+> > of some_data and different_data (and even maybe mixed with init() for
+> > different key). All because in the meantime process B added its own
+> > data to the HW.
+> >
+> > Best regards,
+> > Krzysztof
+> Can your hardware do export/import ?
 >
->
-> On 2018/8/29 8:41, Rob Herring wrote:
-> > On Mon, Aug 27, 2018 at 04:55:20PM +0800, Hanjie Lin wrote:
-> >>
-> >>
-> >> On 2018/8/24 16:22, Jerome Brunet wrote:
-> >>> On Fri, 2018-08-24 at 15:36 +0800, Hanjie Lin wrote:
-> >>>> From: Yue Wang <yue.wang@amlogic.com>
-> >>>>
-> >>>> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
-> >>>> PCI core. This patch adds documentation for the DT bindings in Meson PCIe
-> >>>> controller.
-> >>>>
-> >>>> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
-> >>>> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
-> >>>> ---
-> >>>>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 63 ++++++++++++++++++++++
-> >>>>  1 file changed, 63 insertions(+)
-> >>>>  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> >>>> new file mode 100644
-> >>>> index 0000000..8a831d1
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-> >>>> @@ -0,0 +1,63 @@
-> >>>> +Amlogic Meson AXG DWC PCIE SoC controller
-> >>>> +
-> >>>> +Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
-> >>>> +It shares common functions with the PCIe DesignWare core driver and
-> >>>> +inherits common properties defined in
-> >>>> +Documentation/devicetree/bindings/pci/designware-pci.txt.
-> >>>> +
-> >>>> +Additional properties are described here:
-> >>>> +
-> >>>> +Required properties:
-> >>>> +- compatible:
-> >>>> +  should contain "amlogic,axg-pcie" to identify the core.
-> >>>> +- reg:
-> >>>> +  Should contain the configuration address space.
-> >>>> +- reg-names: Must be
-> >>>> +  - "elbi"        External local bus interface registers
-> >>>> +  - "cfg"         Meson specific registers
-> >>>> +  - "config"      PCIe configuration space
-> >>>> +- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
-> >>>> +- clocks: Must contain an entry for each entry in clock-names.
-> >>>> +- clock-names: Must include the following entries:
-> >>>> +  - "pclk"       PCIe GEN 100M PLL clock
-> >>>> +  - "port"       PCIe_x(A or B) RC clock gate
-> >>>> +  - "general"    PCIe Phy clock
-> >>>> +  - "mipi"       PCIe_x(A or B) 100M ref clock gate
-> >>>> +- resets: phandle to the reset lines.
-> >>>> +- reset-names: must contain "phy" and "peripheral"
-> >>>> +       - "port" Port A or B reset
-> >>>> +       - "apb" APB reset
-> >>>
-> >>> The above description is not coherent (phy <=> port)
-> >>>
-> >>
-> >> Yes, this should be port and apb here.
-> >> We'll integrate phy driver into ctrl driver, and move phy reset to here also.
-> >
-> > Why? That's the wrong thing to do if they are separate h/w blocks. You
-> > can do whatever you like in the drivers, but the DT should reflect the
-> > h/w.
-> >
-> > Rob
-> >
-> > .
-> >
->
-> We have the dedicated phy driver which only process reset job,
-> and we consider that it's too overkill to do just these things .
-> So we will integrate phy reset job into the controller driver int the next version.
+> If yes, you can use workqueue and guard HW with spinlock,
+> as in exynos hash in s5p-sss.c (or see other drivers).
 
-What's in the separate register space you had for the phy?
+Yes, workqueue doing all necessary HW initialization would be the
+solution here as well. The point is what later Herbert wrote - I need
+to take care about the HW state because the requests even for shash
+will be coming in random order.
 
-Rob
+Best regards,
+Krzysztof
