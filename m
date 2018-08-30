@@ -2,159 +2,144 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04879C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3933C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA44E20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA44E20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A060205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 02:19:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EGEvzWlX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A060205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeH3GQv (ORCPT
+        id S1727305AbeH3GSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 02:16:51 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:40533 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbeH3GQv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 02:16:51 -0400
-Received: by mail-it0-f69.google.com with SMTP id k143-v6so511386ite.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 19:17:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=0TPlcA1JCJ+DTVkCwAFKf8I70BVZ5yKRRRGhVLrwu5c=;
-        b=X7+HXGJguKU7rqfags/1Bnq5cDlzB1vCuWe5WzLKefBggST5/hZXd00tWrBLy7da7I
-         lN31yoWDFq6AaVk7m8YycuXIzLFwT5/hqcO0Up+m5jaajPSgrkfly7Txr/JE7ev5RR8h
-         tlG7WgpAXs8sFVXK2fdD34/jVHs8R42/h3N+jBuaDlGAqlMhbiCbdMm6Lx3qx+FEPUb9
-         ak2XNpoFhhVZoASwWkAWZfxN8JD/9JgwxKxXMFMhYa+mJ1bfM3naUlmLKN4gXM2j+c9c
-         7bp1dsfX+ogh0VpSmTy7qTHsglw2Mr2yjwieEq/r85tBAapj9mqUAEhqOay1yzdi9u0I
-         vWxA==
-X-Gm-Message-State: APzg51A4Ct9VS4yvyw9iqeXfULbpIm0D+i0NzPC++PQcKp42/7Yy1C/0
-        ER1IQRhYCnjgtxKcJi2L5+4jwnQbbfRqb5s0Zsgb//1Dnuv8
-X-Google-Smtp-Source: ANB0VdY7gJgxaWjqSBzb19Akf6UO9KByisCo8qcds3uMpon37eEu82w/oC4SnmFM5OnClwSWre9Lm8sdrCWz9o7RdsoIun6RrQXN
+        Thu, 30 Aug 2018 02:18:54 -0400
+Received: from mail-eopbgr00069.outbound.protection.outlook.com ([40.107.0.69]:2481
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725844AbeH3GSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 02:18:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A9zwaQqYOI5aC96HxltlL2L4ohj4RI+vM22QY0kSCSw=;
+ b=EGEvzWlX1r2J2i81YYYyN9a0+Gk5bFO8gUHI+hmFU6Yl+nJaB1R1lvOaBQYLnupIQh+2aKjmaqsIizXjlAGV1YN6KQ+3Z4eUb9p8UXXLBD8QHkXxrfVtnQoGUJJMe/VPPfpvxq+uSzxaRAj+iESj2LwKW+ZTGSbkSumCNeBRiqA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ AM0PR0402MB3908.eurprd04.prod.outlook.com (2603:10a6:208:f::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.13; Thu, 30 Aug
+ 2018 02:19:00 +0000
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] thermal: qoriq: add i.mx8mq support
+Date:   Thu, 30 Aug 2018 10:14:46 +0800
+Message-Id: <1535595286-18371-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-Received: by 2002:a6b:9a13:: with SMTP id c19-v6mr3747661ioe.73.1535595423820;
- Wed, 29 Aug 2018 19:17:03 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 19:17:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c178e305749daba4@google.com>
-Subject: WARNING in apparmor_secid_to_secctx
-From:   syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, john.johansen@canonical.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK0PR03CA0024.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::36) To AM0PR0402MB3908.eurprd04.prod.outlook.com
+ (2603:10a6:208:f::28)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ddf16079-ecaf-48df-f82a-08d60e1ef49c
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR0402MB3908;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0402MB3908;3:GFhWG/m35ZzNRzk490dsmB4FA3qH/eIA/5cVGuYwyyawrgNV7FPV/vaNV1nVHQp0AthkHDwRSaP6M0u7/g6aKVj88CnC8qeLCZvrOOkQX0pEKJP0RXxV4ih2zQ9Ra1tlxErCo/2KC9p9JSgd9Htu+/fdX4PyQjUIRyb6ZNu4N9WwC5W5gAwgHMbIDI/UWD51du9DoXnFH9ilI9PjqTueVyH/CA9Assv7rNDioMgg0XdN6jcFqXs5t8Ocf+R2xvHd;25:TEMA6sBcWhbq8SL9rynC6Z0Gb/RjigR+dykdK3DxAqik77XTrc5e+862iU2YhGYrzowPa7eo5qHEDf9QQgN5DGPwLL1uRnEL3aSrqbiG58FOoV9Y3DE4G7d1YIi/PUcdIFhjum2aAUqmg21wRpP1ic69OC3Y4MeDWbHSEorSmIyjLLHSbptyBxQxclKYjlBplCHEwIC+H2THOkl7EdQkYGiDHtPBU5wmoOjjtoXvnaaKf21m2u2lxc6lsVPwIIg1yPUWLYtwioJHPLxPdSlswVUNEbvEosj1ax8lyCLnVXFLy/nV//pnXqkjHECwgrxOCks3SqWSN8TsXO4ZMgaQHA==;31:SzPWJrjXXaKZDsnjHWc5x+eo1URIdiS22REWoWGEsAfd33ebCKkDx8zOvrKYYoUKv0CXZXOXgOQbP8xmrA22omtk34OaIDpPwJuQieUe6KQ7d35HzfzKSo1ltM40EL7AXTy9UFhIoRaxDht/evhR0125Hb9SrjZX/v444AfIIUliNjTs/ixM7GDJrwo07HWeQflhoN4Tq38tB9yuyJd1IEgIn4uIozeElIIaQWpbk0I=
+X-MS-TrafficTypeDiagnostic: AM0PR0402MB3908:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0402MB3908;20:cvs+lW0Y86txRS3rMqHTbTkg5xExIGGsaZvmRMqv/Jimes4J2StJbsoQOevFBe60YP7O1tyhvipzXESHnGL3oYCrowRLCI3BxIFSO7787kvz7WcDDdvf6tiFMD3e/FDjBIB6ot7Q9y5dl5FRN+QDBVTwG3xR9BER5MxAin0WR50yAQkFOoUOlXt1RoUNK4ybZFCROWs9rMDEjhZnp71EjrqgKro1hyF0o1IFD3kNBu/flwR1pIe4Pa9j0eo/E5dIf5Ucu0mdpk+cGiw7ee7HxT+HwtKk39ateRVanqkzeLJky1E8ACts4/6oYvvGnMkoY/BnDqDRVQQ9F8goz4ZQrjbie+3xFO8lOf0We0S3cQnWdQYNkHwPp0tKtOEwA0vXCtdGtjw5eAbTGSyu2lLp+b/2fGYbK5Tyg66ZPOuiq1/D3PZWTXA9cDN3nkVXus1ZsNSreCwMt/UBs6rNOfZB2E4tNjVuph7G3SivCjROesyELSU3lukNSdOlywqxVhJd;4:rQ2oY3BqwfnyQjQv2tddhaBjxJdtEIyuHN0QAuRnKSm2UBsBBmJVT91ZRxXZTuKVZDetMTzFmekV3E4NHZEqnh/nu0MK2faQvu3gqSFGfqn6yTDjK8BgbR3xuxH0HXZJhmrpJNTCdZW25JxTvxdv9rACrZ1eeDMsJeJTrYXK3CpZa8/L8o/FF/uC1YLc/s4IFdVo0742bLE2JSXBOBZQgir9UaO8Z8J5l9KD2saA9fsz+kfIFU9USd98goD8/PVE6ZyoKw6kQPFEM57A5GV+ruso+4we1YViOH+vITwyPg810MAha1JCjZxHjRyz/FPHtfUwQ95yu2ShGfPSyOawKqdtlwzVf724VohhwG0aLH0=
+X-Microsoft-Antispam-PRVS: <AM0PR0402MB3908543424691B73FA015A3CF5080@AM0PR0402MB3908.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72170088055959)(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:AM0PR0402MB3908;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0402MB3908;
+X-Forefront-PRVS: 07807C55DC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(396003)(136003)(366004)(199004)(189003)(86362001)(2616005)(575784001)(956004)(6666003)(486006)(26005)(68736007)(53936002)(16586007)(316002)(3846002)(476003)(52116002)(6116002)(51416003)(6486002)(5660300001)(97736004)(36756003)(6512007)(6506007)(39060400002)(50466002)(8936002)(2906002)(386003)(81166006)(81156014)(4326008)(105586002)(25786009)(47776003)(478600001)(66066001)(1857600001)(186003)(106356001)(7736002)(16526019)(8676002)(305945005)(50226002)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3908;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR0402MB3908;23:Eqr/hE762mGIKJ5R0InvFN4Af7VKbXEiEg8BAeQ?=
+ =?us-ascii?Q?KZYaf3OqmkNBaY1AD0U1YVP/pJjsst6sq5x20syrapFOIMSyxDm46V7vKb3k?=
+ =?us-ascii?Q?8e1GInwDn5TWhPn9TE5/Vy7QdAM8bS3tP9BjAkjaVmNTTyEbS4/NLIoKQHmi?=
+ =?us-ascii?Q?wisF7wzSS8glfsTj9Ew8bIfIp9gFSxtpzcYFRuQ1bvXBg7zI38rJIh5S7Z2A?=
+ =?us-ascii?Q?SOHyR0cokK0EwcrDXP+EzMg6F6chnK2tfr4eDLT3OQp1C1j1nkRCHEdy0QoP?=
+ =?us-ascii?Q?FOsyP9dD2HbdxGSwRbsLDXI+xZicD9x6ZWuYxgtT1M8mNNICtHWic7KXGmgI?=
+ =?us-ascii?Q?KKQ7UI+sZx7d9hVX1erTmis6KCpCUhXC8WzjQJm4reYLcbmZZyut0NGrSQWn?=
+ =?us-ascii?Q?HK2UcqiAhAE443W6PBEw4jmvzgzBmt132/e60wpFB1G4bBDor6ZKzPCEOjrl?=
+ =?us-ascii?Q?spgv0BDxYUM5lcdcnGYr+PU4iyqeeWNQ/BK/TtNvJO+HpnSYAFgDn0nwyZeF?=
+ =?us-ascii?Q?po2Yo9K5qGX4cPCJOO2Rys5QdE3vcfBp3KsWxZvZ6ry2/uvWqVgI+8AHhL3Y?=
+ =?us-ascii?Q?1HCvcKbHDEWiv2DfiJBDNVZkBrBhTtTLrQ2xV25kD3S6BCc11HKVf4h4Uukp?=
+ =?us-ascii?Q?WHs6HQn2zkrCK6R7XPU8q4iLyx9i8xN1t1vWRn8s4Kfs/W/oA/LnozYMtldM?=
+ =?us-ascii?Q?YDy3zRj+nzddISati1I6pVuahrkbHwTgb23Sz4L/8KQEC49nsZp0P9Th/Lva?=
+ =?us-ascii?Q?tTf9eWfLxzLLrONFI/31cfJ79pGIhVwVriNM7l0ZkRYmi1M6mTx6OMswDkOL?=
+ =?us-ascii?Q?PRmjtsDCVVozEFPawT68qcHSugGIWikrS9RCk3iFj9wrZc92uUhmzpVinPxL?=
+ =?us-ascii?Q?asMTaj138g8fLIDIrrgX62MnFg+1eQQeaQWVJVk4A3wOnFoQNPP51wnLZgQX?=
+ =?us-ascii?Q?DC9DPOfj0AEKCo14wLa78hz+ag4wOnQ/3WLz5hEXAZNL+1LkWKD+OIFmn2bE?=
+ =?us-ascii?Q?TiCHT7eAYB6XFeiNyvfb/KTlah4Z0M3gB+GBm2wPy5wxYHQs4iIFRAIK9CB3?=
+ =?us-ascii?Q?uUgU95Lsr/XBiETrKtB2w42qxoDhSQJHCfYdRPjy5s2dMrlQ1HJTGMz4aV3n?=
+ =?us-ascii?Q?w99WX7O0iEjwNBK5dObS6jAq2fkeL91K6VJ5FM3TftfF8DXvZwPTnrA=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: JZF4sb6yPomer0re3tE+1eAeuoOb6a9FM8KlcxYRH8SfVTIsIVGEbRxqn2ZoU+4PCLOfPDTr8aRZ5uFVzhcj9f1tBtxNgNvZkIAa+T1cjXx3+LSx71NVQ9oVrVmclN3gARkdpYPDA+FgXMUbAYd4ad8uWaw1AhvTrry0uXJS3TgNP4K1sl3IeqfIpCSpoCKdtNvrLeOuddBM2CQLRKOyqGtWhk0eoJhQ40FsL5XOF6B/WME5KZxWIFU624er5Z1Mj4ihbAubmbvVuuDWruUF4Goct8ZW5cPqI7FcfpYeMSLQjxlSwdM4SLs1H1IxzBZTSQOOtRNQbrJpm0j1Q8jm5plmnYL0a61dOc4Svd2SHU8=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0402MB3908;6:XyCKFsJELj4tN2k0DsvPktz+voonEv6qf3HjLvbf/8QDkoXUlP0YUHJJOPam1KGvc65XH29yjFtxISTvkKIcdXVx/w+EAW4GGRAi5zC1VZzlX0symlLyT8ZYq4q86ME/zunPgiNLrFN0eSUAcEtngpuQg8uPTrl9HOM/jrCwX9bVGiT5sbDhml7NWAA9Ru5wWsq0SFG5xC6fXVSh29QromZKdH4fFxAjfz6bHv/zQA0RpmqdvxMrps3EKD/E1m0oarUZPrcgn/TZ40TGdF5/GLDIcslaE+hVhJFlQXIoxJOW4qVyNyZuO3sCb3GOnkEs07IWHFa6caeN8pJHxxHLZn5uFSz0P04ZRSbtH9aIpGvFC8eTqMuJ/dHd8Q1xUarhVhu1arDgGMH6iN3Wrt/LSU09kTMDIcbqD2xLAOHm/iMrwNJwfQBDsXZZHvCdUhF6npm9PAn6NQcV1rGntlgycQ==;5:RQrOWJFU+MHBg9ACWWV2GlMnrtMobJOBx05DFJRmek1HbulWNDujRvUXahRRbM2zlR8wyM84LiYkqUuFCIjB7dAtrjp2+p3RzplVIf4+eTGXCX8BGsKWKVcUXerYEkpS9H78pbkbFNZhQ5u29LVGv5qvdAkLQ96j1TnHuCDNBSE=;7:7ZHvlI4AifjZzQrhwYRJhp6joUt0T0O3nIZnwrAmSwIoIZ3hFO5lEh8NbRaCNE1Hv66V7DjXcSCtJzLNyat+VV36uMG93TPYhUqkJsZiMcvLNw32uUSvPywCZmgii0uFQ7LBW14vf94nSbQJIlqj6ahJWG2/KxrqOoQ0eF1OCmQle3CjEGiwVKyr9ZuM0gGlcPlLUK8Gs824/AOXEgAE8NbU7UDty7RKx2zyLwg5oOzNRUaAPt51oQ5NOnOjxQcc
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2018 02:19:00.9145
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddf16079-ecaf-48df-f82a-08d60e1ef49c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3908
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add i.mx8mq specific compatible string.
 
-syzbot found the following crash on:
-
-HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-dashboard link: https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-AppArmor WARN apparmor_secid_to_secctx: ((!secdata)):
-WARNING: CPU: 0 PID: 14826 at security/apparmor/secid.c:82  
-apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 14826 Comm: syz-executor1 Not tainted 4.19.0-rc1+ #193
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
-RIP: 0010:apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
-Code: c7 c7 40 66 58 87 e8 6a 6d 0f fe 0f 0b e9 6c fe ff ff e8 3e aa 44 fe  
-48 c7 c6 80 67 58 87 48 c7 c7 a0 65 58 87 e8 4b 6d 0f fe <0f> 0b e9 3f fe  
-ff ff 48 89 df e8 fc a7 83 fe e9 ed fe ff ff bb f4
-RSP: 0018:ffff8801ba1bed10 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff8801ba1beed0 RCX: ffffc9000227e000
-RDX: 0000000000018482 RSI: ffffffff8163ac01 RDI: 0000000000000001
-RBP: ffff8801ba1bed30 R08: ffff8801b80ec080 R09: ffffed003b603eca
-R10: ffffed003b603eca R11: ffff8801db01f657 R12: 0000000000000001
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801ba1beed0
-  security_secid_to_secctx+0x63/0xc0 security/security.c:1314
-  ctnetlink_secctx_size net/netfilter/nf_conntrack_netlink.c:621 [inline]
-  ctnetlink_nlmsg_size net/netfilter/nf_conntrack_netlink.c:659 [inline]
-  ctnetlink_conntrack_event+0x303/0x1470  
-net/netfilter/nf_conntrack_netlink.c:706
-  nf_conntrack_eventmask_report+0x55f/0x930  
-net/netfilter/nf_conntrack_ecache.c:151
-  nf_conntrack_event_report include/net/netfilter/nf_conntrack_ecache.h:112  
-[inline]
-  nf_ct_delete+0x33c/0x5d0 net/netfilter/nf_conntrack_core.c:601
-  nf_ct_iterate_cleanup+0x48c/0x5e0 net/netfilter/nf_conntrack_core.c:1892
-  nf_ct_iterate_cleanup_net+0x23c/0x2d0  
-net/netfilter/nf_conntrack_core.c:1974
-  ctnetlink_flush_conntrack net/netfilter/nf_conntrack_netlink.c:1226  
-[inline]
-  ctnetlink_del_conntrack+0x66c/0x850  
-net/netfilter/nf_conntrack_netlink.c:1258
-  nfnetlink_rcv_msg+0xd88/0x1070 net/netfilter/nfnetlink.c:228
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
-  nfnetlink_rcv+0x1c0/0x4d0 net/netfilter/nfnetlink.c:560
-  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2114
-  __sys_sendmsg+0x11d/0x290 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f7bc6e03c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7bc6e046d4 RCX: 0000000000457089
-RDX: 0000000000000000 RSI: 0000000020d65000 RDI: 0000000000000003
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d4588 R14: 00000000004c8d5c R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/devicetree/bindings/thermal/qoriq-thermal.txt | 6 +++---
+ drivers/thermal/qoriq_thermal.c                             | 1 +
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt b/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
+index 20ca4ef..04cbb90 100644
+--- a/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/qoriq-thermal.txt
+@@ -1,9 +1,9 @@
+ * Thermal Monitoring Unit (TMU) on Freescale QorIQ SoCs
+ 
+ Required properties:
+-- compatible : Must include "fsl,qoriq-tmu". The version of the device is
+-	determined by the TMU IP Block Revision Register (IPBRR0) at
+-	offset 0x0BF8.
++- compatible : Must include "fsl,qoriq-tmu" or "fsl,imx8mq-tmu". The
++	version of the device is determined by the TMU IP Block Revision
++	Register (IPBRR0) at offset 0x0BF8.
+ 	Table of correspondences between IPBRR0 values and example  chips:
+ 		Value           Device
+ 		----------      -----
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index c866cc1..e0e7356 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -305,6 +305,7 @@ static SIMPLE_DEV_PM_OPS(qoriq_tmu_pm_ops,
+ 
+ static const struct of_device_id qoriq_tmu_match[] = {
+ 	{ .compatible = "fsl,qoriq-tmu", },
++	{ .compatible = "fsl,imx8mq-tmu", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, qoriq_tmu_match);
+-- 
+2.7.4
+
