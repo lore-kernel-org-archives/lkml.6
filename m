@@ -2,119 +2,190 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80280C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB82C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED952082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:59:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="Hiu7BHB/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED952082C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chronox.de
+	by mail.kernel.org (Postfix) with ESMTP id A3C0D20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:59:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C0D20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbeH3RBF (ORCPT
+        id S1728935AbeH3RBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:01:05 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:16610 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728638AbeH3RBF (ORCPT
+        Thu, 30 Aug 2018 13:01:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50112 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728638AbeH3RBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:01:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1535633942;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=3YPU515KjwZS3K4Fkd8NRjgkOQW1EcQEfZybFhiBmFs=;
-        b=Hiu7BHB/jUbCysV1cH/ICkNfqCzD8MM4WKi7AmK9rY8d+/FvqAvXUAaxaYLMvhYqXh
-        mroducwxQ3gA1IOq0vyBM+iCi0T4sINc90G4mB3AowKsZgbYJh/crDVOU2912WT4ye2n
-        qOuytL3fTF6tZC5mDcT96kAw94ONhfPkhl79ZJZ/uyzusg3WRbpzf83kUx6gi8EDw6In
-        zhspR9O8Bfj/hqMUyIBdeUXDfjYoPlgKxCRdAliJ5y5igO3DGDYjZD9eWpBe6cTsb9ed
-        6K43wVoq+eT/U1hkU7wWWUuCp8IFQALPmWdVVA8TieTu9rUS0nsyVUHajz+2jquF3JDI
-        s1WQ==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaIfSfABn3"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 43.21 DYNA|AUTH)
-        with ESMTPSA id e08f60u7UCu2HU6
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 30 Aug 2018 14:56:02 +0200 (CEST)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Locking for HW crypto accelerators
-Date:   Thu, 30 Aug 2018 14:56:01 +0200
-Message-ID: <3053033.se6UkFii4W@tauon.chronox.de>
-In-Reply-To: <CAJKOXPfVXnazraHq-NCCM+h26FFi1U6Z3OSYOX17XH3bj-UDLQ@mail.gmail.com>
-References: <CAJKOXPfVXnazraHq-NCCM+h26FFi1U6Z3OSYOX17XH3bj-UDLQ@mail.gmail.com>
+        Thu, 30 Aug 2018 13:01:22 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fvMXW-0003EC-5a; Thu, 30 Aug 2018 14:59:10 +0200
+Date:   Thu, 30 Aug 2018 14:59:09 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Gu Zhimin <kookoo.gu@intel.com>
+cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Pavel Machek <pavel@ucw.cz>,
+        Yu Chen <yu.c.chen@intel.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] x86, hibernate: Extract the common code of 64/32
+ bit system
+In-Reply-To: <541d9caef16c4a6c6e0ef160f607566c61c081c9.1535361949.git.kookoo.gu@intel.com>
+Message-ID: <alpine.DEB.2.21.1808301445400.1210@nanos.tec.linutronix.de>
+References: <cover.1535361949.git.kookoo.gu@intel.com> <541d9caef16c4a6c6e0ef160f607566c61c081c9.1535361949.git.kookoo.gu@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 30. August 2018, 14:22:22 CEST schrieb Krzysztof Kozlowski:
+On Mon, 27 Aug 2018, Gu Zhimin wrote:
+> diff --git a/arch/x86/power/hibernate.c b/arch/x86/power/hibernate.c
+> new file mode 100644
+> index 0000000..6f91f7b
+> --- /dev/null
+> +++ b/arch/x86/power/hibernate.c
+> @@ -0,0 +1,255 @@
+> +/*
+> + * Hibernation support for x86
+> + *
+> + * Distribute under GPLv2
 
-Hi Krzysztof,
+We have SPDX identifiers for that and not some randomly chosen license
+hint.
 
-> Hi,
-> 
-> I am trying to figure out necessary locking on the driver side of
-> crypto HW accelerator for symmetric hash (actually: CRC). I
-> implemented quite simple driver for shash_alg.
-> 
-> I looked at the docs, I looked at the crypto kcapi core code... and
-> there is nothing about necessary locking. kcapi does not perform it.
-> 
-> My HW is quite similar to drivers/crypto/stm32/stm32_crc32.c so it has
-> only one HW set of registers for dealing with CRC. Or in other words,
-> only one queue of one element. :) I implemented all shash_alg
-> callbacks - init(), update(), final()... and also finup() (manually
-> calling update+final) and digest() (init+update+final).
-> 
-> Now imagine multiple user-space users of this crypto alg where all of
-> them call kcapi_md_digest() (so essentially init() -> update() ->
-> final()). It seems that kcapi does not perform any locking here so at
-> some point updates from different processes might be mixed with
-> finals:
-> 
-> Process A:             Process B:
-> init()
->                        init()
-> update()
->                        update()
-> final()
->                        final()
-> 
-> My findings show that the requests are indeed being mixed with each other...
-> 
-> Should driver perform any weird locking here? Or maybe that is the
-> case of using ONLY the digest() callback (so no update, no final)
-> because my HW cannot track different kcapi requests?
+> +
+> +/*
+> + *	pfn_is_nosave - check if given pfn is in the 'nosave' section
 
-The hashing is performed on a buffer provided by the caller. E.g. it is the 
-buffer pointed to by the ahash request or the shash desc structure. All 
-operations of init/update/final operate on that memory.
+This is a half baken kernel doc header. 
 
-If you have parallel requests, each caller has a private buffer that it 
-provides to the kernel crypto API. This applies also to AF_ALG.
+> + */
+> +
 
-Thus, as long as the individual operations of init/update and final are atomic 
-operations, there should be no locking necessary.
+Random new line.
 
-Thus, all your driver needs to guarantee is the atomicitcy of the init/update/
-final operation in respect to your hardware state.
+> +int pfn_is_nosave(unsigned long pfn)
+> +{
+> +	unsigned long nosave_begin_pfn = __pa_symbol(&__nosave_begin) >> PAGE_SHIFT;
+> +	unsigned long nosave_end_pfn = PAGE_ALIGN(__pa_symbol(&__nosave_end)) >> PAGE_SHIFT;
 
-Ciao
-Stephan
+Instead of blindly copying stuff please fix it so it matches kernel coding
+rules.
 
+> +	return (pfn >= nosave_begin_pfn) && (pfn < nosave_end_pfn);
 
+The brackets are pointless
+
+> +}
+> +
+> +#ifdef CONFIG_X86_64
+> +static int relocate_restore_code(void)
+> +{
+> +	pgd_t *pgd;
+> +	p4d_t *p4d;
+> +	pud_t *pud;
+> +	pmd_t *pmd;
+> +	pte_t *pte;
+> +
+> +	relocated_restore_code = get_safe_page(GFP_ATOMIC);
+> +	if (!relocated_restore_code)
+> +		return -ENOMEM;
+> +
+> +	memcpy((void *)relocated_restore_code, core_restore_code, PAGE_SIZE);
+> +
+> +	/* Make the page containing the relocated code executable */
+> +	pgd = (pgd_t *)__va(read_cr3_pa()) +
+> +		pgd_index(relocated_restore_code);
+> +	p4d = p4d_offset(pgd, relocated_restore_code);
+> +	if (p4d_large(*p4d)) {
+> +		set_p4d(p4d, __p4d(p4d_val(*p4d) & ~_PAGE_NX));
+> +		goto out;
+> +	}
+> +	pud = pud_offset(p4d, relocated_restore_code);
+> +	if (pud_large(*pud)) {
+> +		set_pud(pud, __pud(pud_val(*pud) & ~_PAGE_NX));
+> +		goto out;
+> +	}
+> +	pmd = pmd_offset(pud, relocated_restore_code);
+> +	if (pmd_large(*pmd)) {
+> +		set_pmd(pmd, __pmd(pmd_val(*pmd) & ~_PAGE_NX));
+> +		goto out;
+> +	}
+> +	pte = pte_offset_kernel(pmd, relocated_restore_code);
+> +	set_pte(pte, __pte(pte_val(*pte) & ~_PAGE_NX));
+> +out:
+> +	__flush_tlb_all();
+> +	return 0;
+> +}
+> +
+> +#define MD5_DIGEST_SIZE 16
+> +
+> +struct restore_data_record {
+> +	unsigned long jump_address;
+> +	unsigned long jump_address_phys;
+> +	unsigned long cr3;
+> +	unsigned long magic;
+> +	u8 e820_digest[MD5_DIGEST_SIZE];
+> +};
+> +
+> +#if IS_BUILTIN(CONFIG_CRYPTO_MD5)
+> +/**
+> + * get_e820_md5 - calculate md5 according to given e820 table
+> + *
+> + * @table: the e820 table to be calculated
+> + * @buf: the md5 result to be stored to
+> + */
+> +static int get_e820_md5(struct e820_table *table, void *buf)
+> +{
+> +	struct crypto_shash *tfm;
+> +	struct shash_desc *desc;
+> +	int size;
+> +	int ret = 0;
+> +
+> +	tfm = crypto_alloc_shash("md5", 0, 0);
+> +	if (IS_ERR(tfm))
+> +		return -ENOMEM;
+> +
+> +	desc = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
+> +		       GFP_KERNEL);
+> +	if (!desc) {
+> +		ret = -ENOMEM;
+> +		goto free_tfm;
+> +	}
+> +
+> +	desc->tfm = tfm;
+> +	desc->flags = 0;
+> +
+> +	size = offsetof(struct e820_table, entries) +
+> +		sizeof(struct e820_entry) * table->nr_entries;
+> +
+> +	if (crypto_shash_digest(desc, (u8 *)table, size, buf))
+> +		ret = -EINVAL;
+> +
+> +	kzfree(desc);
+> +
+> +free_tfm:
+> +	crypto_free_shash(tfm);
+> +	return ret;
+> +}
+> +
+> +static void hibernation_e820_save(void *buf)
+> +{
+> +	get_e820_md5(e820_table_firmware, buf);
+
+So if get_e820_md5() fails, then it will hibernate nevertheless. Why is
+that error code not propagated?
+
+Thanks,
+
+	tglx
