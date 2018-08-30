@@ -2,102 +2,122 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A294C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1FCC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E877620658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9284C20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:21:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzkbtvPe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E877620658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C82duvrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9284C20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbeH3QWS (ORCPT
+        id S1728819AbeH3QWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:22:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37413 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbeH3QWS (ORCPT
+        Thu, 30 Aug 2018 12:22:51 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37107 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728743AbeH3QWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:22:18 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 2-v6so3289077pgo.4
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 05:20:25 -0700 (PDT)
+        Thu, 30 Aug 2018 12:22:50 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j8-v6so7017395lfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 05:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h6eY6FjhIFaIwb/lsDYjz4Qar5nyf8S1g1nmAjb6huQ=;
-        b=UzkbtvPe4HlqZe1VE/sfz/HtXMjT9OO7loxbPZ64B1Z/0u80QX0rkCUHPxQMrcYde6
-         5ptmkASmcnIYZPc85M0k3L66dJ4J5bUB4Vgp09f+kv5zwEI+JHy89BwyQyMubIauG1JJ
-         fytj/5a0wvdIpP4cmbyN985paWljiFMdeKgXuX++4YycqPpuhbLeCWQLNqrVnmKBfcT4
-         wVLU4ARJUGfCHdHzSSJn7Oxp4QaZ+YvNRJ4aFaV0eY2SQa/osD65QHivPQFLFgo5MpAj
-         F3L7YTEuZDnkGBlnYdp07uterOVm19P6/PA6NC1H+DMxoMxWHIkpXu2WuWC+fl/V8Pbx
-         mPew==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=kcQZKylmuKTfrl5YbdHzer7IO9giBs6csUI8h84vBI8=;
+        b=C82duvrJQUaPqrXg4V1+SffCtEPApNDYGEJjrlbRgE5ZaXg36pdvhgvNv0fu/csMhn
+         mXQz4vfRUS5tOWz+WFBN9/6tkgRL9oYiOxB8F4fTl8UhZ8V40r6BGsqrxolbx5a89eRJ
+         H+4iDq6AxSg2JrOGj8Bv0M/Ug9E9Ec85WeO+w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=h6eY6FjhIFaIwb/lsDYjz4Qar5nyf8S1g1nmAjb6huQ=;
-        b=IomCzS3R3ir926ltB53SPlnXLgxdhUFrwln1vBJD/OW4SWV8Wxqf+AEEsIdndJwLlS
-         6u+U4x5i9IPsd+JEmJSQ1bEFRWTQf4TtSSzDWlJL4RPTxMPhSnB6J5zQSnIWo5ZITfUv
-         v7M/EZYpW/zmIqjaqW3EDzAZJ/hXBTrgvNhQ4MIXRrZfUCH53sDT3IBq9pHTCnsa7OZB
-         Id+MSLuUK/fS9VijQDuhio9HQ410FmX+8PBlNMxFlvrFbAQ6f/8ToWs7tHiCl7LRWVI6
-         VcKw3ZYrPa0S2sRTXst/EbjlTYqOzGXsr9B5ugGP+un7qYnaMI/IeCo/u16L4EU8Ux+B
-         k0KA==
-X-Gm-Message-State: APzg51DHSLqjkA7xngR0JDeIoVFz7kvppLhJ/WFQE9FEeoLOiIQsG95G
-        MEiLxgDN2ADYly3NuHVM5eE=
-X-Google-Smtp-Source: ANB0Vdb7f8ZInfjpwaPvaJrBkP/2Kej1urjliRea6MrovwxT8yRxL+Kz02FBYxRgeDarxFHTDLaTkg==
-X-Received: by 2002:a63:10c:: with SMTP id 12-v6mr9484223pgb.62.1535631625229;
-        Thu, 30 Aug 2018 05:20:25 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id y85-v6sm10879597pfa.170.2018.08.30.05.20.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kcQZKylmuKTfrl5YbdHzer7IO9giBs6csUI8h84vBI8=;
+        b=ppXNY5/3zapSK3bZR76MuMN13rbZqqrR/NYbE6/3Wx4C52RtPiylhjEORiZRD6/uvA
+         TdrmeMcLyKKifEplSsgoscS/xXr4UmYoImlKMtGgwH3aBRq3YxGAoqwJARx0hX74PrH2
+         4+odLgdGTTRwZN7ZH2+AP4aF+/RYL9RU6AVWGp5gt6gPJvaeLwhTvJa5Jloq8fGV0r54
+         2ziwb+5GVdXlGI1Ax6nypMF/PJNHJJKf+Ln1sW7h2qrujTJJAOzgZAX5UWupqzsfMemA
+         ASYrjRkxaMtffwxqCIuph+T4T+0cb+p1NAUuPh11PXgwhCszlpbvFrNrleNmuzDJW4SY
+         4qeA==
+X-Gm-Message-State: APzg51CPZE5ZZIkfApPoi86puTmnSEj1o/0d88A1KZ8Bc1McLP5pJUiV
+        /LqCO7gGIBJR0HaUcQV6I3YTHg==
+X-Google-Smtp-Source: ANB0VdYqUT7GF7D0EbL15hSt7iMjgRvg1LLjEw6tvnj8YJekuTYtyVKwVBSpkwGeFUv6yHr/hpDgjw==
+X-Received: by 2002:a19:264a:: with SMTP id m71-v6mr1538788lfm.112.1535631655190;
+        Thu, 30 Aug 2018 05:20:55 -0700 (PDT)
+Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id h26-v6sm684493ljg.36.2018.08.30.05.20.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 05:20:24 -0700 (PDT)
-Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pavel Machek <pavel@ucw.cz>
-References: <20180829201659.GA29801@roeck-us.net>
- <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
- <f6d9bdcd-98a6-fcf2-5308-936ffd714ea7@roeck-us.net>
- <20180830113059.qj6yvw4ggktc7yex@suse.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <915dca84-c98a-fc63-3210-b21dd926b3d4@roeck-us.net>
-Date:   Thu, 30 Aug 2018 05:20:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180830113059.qj6yvw4ggktc7yex@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 30 Aug 2018 05:20:54 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Ian W MORRISON <ianwmorrison@gmail.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org
+Subject: [GIT PULL] MMC fixes for v4.19-rc2
+Date:   Thu, 30 Aug 2018 14:20:53 +0200
+Message-Id: <20180830122053.15803-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/2018 04:30 AM, Joerg Roedel wrote:
-> On Thu, Aug 30, 2018 at 03:11:26AM -0700, Guenter Roeck wrote:
->> OVMF image:
->>
->> https://github.com/groeck/linux-build-test/blob/master/rootfs/firmware/OVMF-pure-efi-32.fd
-> 
-> Thanks, with this image I can reproduce the issue. Investigating now...
-> 
+Hi Linus,
 
-Excellent.
+Here's a PR with a couple of MMC fixes intended for v4.19-rc2. Details about the
+highlights are as usual found in the signed tag.
 
-In case it matters: I can use the same 32-bit efi image to boot a 64-bit kernel
-without problems.
+Please pull this in!
 
-Guenter
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 778a33959a8ad4cb1ea2f4c5119f9e1e8b9f9d9b:
+
+  Merge tag 'please-pull-noboot' of git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux (2018-08-20 19:37:09 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.19-2
+
+for you to fetch changes up to d2332f887ddfba50fee93b8e1736376517c2df0c:
+
+  mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts (2018-08-23 10:00:49 +0200)
+
+----------------------------------------------------------------
+MMC core:
+ - Fix unsupported parallel dispatch of requests
+
+MMC host:
+ - atmel-mci/android-goldfish: Fixup logic of sg_copy_{from,to}_buffer
+ - renesas_sdhi_internal_dmac: Prevent IRQ-storm due of DMAC IRQs
+ - renesas_sdhi_internal_dmac: Fixup bad register offset
+
+----------------------------------------------------------------
+Adrian Hunter (1):
+      mmc: block: Fix unsupported parallel dispatch of requests
+
+Ludovic Desroches (2):
+      mmc: atmel-mci: fix bad logic of sg_copy_{from,to}_buffer conversion
+      mmc: android-goldfish: fix bad logic of sg_copy_{from,to}_buffer conversion
+
+Sergei Shtylyov (2):
+      mmc: renesas_sdhi_internal_dmac: fix #define RST_RESERVED_BITS
+      mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
+
+ drivers/mmc/core/queue.c                      | 12 +++++++-----
+ drivers/mmc/core/queue.h                      |  1 +
+ drivers/mmc/host/android-goldfish.c           |  4 ++--
+ drivers/mmc/host/atmel-mci.c                  | 12 ++++++------
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 10 +++++++++-
+ 5 files changed, 25 insertions(+), 14 deletions(-)
