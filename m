@@ -2,93 +2,173 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775D7C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A00BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1B420835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:50:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGzOKdWE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1B420835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C8EB205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:51:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C8EB205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbeH3Uxi (ORCPT
+        id S1727730AbeH3Uyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 16:53:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbeH3Uxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 16:53:37 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8090D20661;
-        Thu, 30 Aug 2018 16:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535647835;
-        bh=Yyk6SgKhQDbzCTsTqHVAR9QZuhFfgQl9n7Q8fy2qAAA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=jGzOKdWEbIHmgr55cEA/0LtjxHV0cbvxlApucigyJ9DTkiCzRMBJLA5Ec+CjGEIvP
-         Bo57y0HliT7f6Dkl+qKs2TQFmrgHSPOty7tjFhEdV1R/9Jh5dcQpvTYLVeX8Apd0no
-         EgRQoJ7LyJCrMZtJqGUdG3C3uA/a8DaaPxnYDHzA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rob Herring <robh@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        Thu, 30 Aug 2018 16:54:39 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11614 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726592AbeH3Uyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 16:54:39 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8D5899BF908BA;
+        Fri, 31 Aug 2018 00:51:06 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Fri, 31 Aug 2018
+ 00:51:00 +0800
+Subject: Re: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
+To:     James Morse <james.morse@arm.com>
+References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
+ <5eab89c6-c063-cbc2-4d02-459faf87698a@arm.com>
+CC:     Zhengqiang <zhengqiang10@huawei.com>,
+        Fan Wu <wufan@codeaurora.org>, <mchehab@kernel.org>,
+        <bp@alien8.de>, <baicar.tyler@gmail.com>,
+        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-References: <20180828154433.5693-1-robh@kernel.org>
- <20180828154433.5693-3-robh@kernel.org>
- <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
- <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Message-ID: <153564783492.129321.1020703197103191812@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
-Date:   Thu, 30 Aug 2018 09:50:34 -0700
+        Linuxarm <linuxarm@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        wanghuiqiang <wanghuiqiang@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <6cc3c5e2-3827-a89c-e37b-09728a34f21f@huawei.com>
+Date:   Thu, 30 Aug 2018 17:50:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <5eab89c6-c063-cbc2-4d02-459faf87698a@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2018-08-29 04:13:44)
-> On Tue, Aug 28, 2018 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Rob Herring (2018-08-28 08:44:29)
-> > > In preparation to remove the node name pointer from struct device_nod=
-e,
-> > > convert printf users to use the %pOFn format specifier.
-> > >
-> > > Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: linux-clk@vger.kernel.org
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: linux-renesas-soc@vger.kernel.org
-> > > Cc: linux-omap@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> >
-> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> =
+On 30/08/2018 17:34, James Morse wrote:
 
-> Please apply to the clock tree. There's no dependencies and removing
-> name will take some time.
-> =
+Hi James,
 
+Zhengqiang no longer works on this topic, so I have cc'ed some more guys 
+who should be able to help.
 
-Alright. Applied to clk-next. Thanks!
+John
+
+> Hi Zhengqiang,
+>
+> On 29/08/18 19:33, Fan Wu wrote:
+>> The current ghes_edac driver does not update per-dimm error
+>> counters when reporting memory errors, because there is no
+>> platform-independent way to find DIMMs based on the error
+>> information provided by firmware. This patch offers a solution
+>> for platforms whose firmwares provide valid module handles
+>> (SMBIOS type 17) in error records. In this case ghes_edac will
+>> use the module handles to locate DIMMs and thus makes per-dimm
+>> error reporting possible.
+>
+> Does your platform set CPER_MEM_VALID_MODULE_HANDLE in GHES Memory errors? If
+> so, any chance you could test this patch on your platform? [0]
+> (original patch: https://lore.kernel.org/patchwork/patch/978928/)
+>
+> Thanks,
+>
+> James
+>
+> [0] https://marc.info/?l=linux-edac&m=152603960002324
+>
+>
+>> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+>> index 473aeec..db527f0 100644
+>> --- a/drivers/edac/ghes_edac.c
+>> +++ b/drivers/edac/ghes_edac.c
+>> @@ -81,6 +81,26 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
+>>  		(*num_dimm)++;
+>>  }
+>>
+>> +static int ghes_edac_dimm_index(u16 handle)
+>> +{
+>> +	struct mem_ctl_info *mci;
+>> +	int i;
+>> +
+>> +	if (!ghes_pvt)
+>> +		return -1;
+>> +
+>> +	mci = ghes_pvt->mci;
+>> +
+>> +	if (!mci)
+>> +		return -1;
+>> +
+>> +	for (i = 0; i < mci->tot_dimms; i++) {
+>> +		if (mci->dimms[i]->smbios_handle == handle)
+>> +			return i;
+>> +	}
+>> +	return -1;
+>> +}
+>> +
+>>  static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+>>  {
+>>  	struct ghes_edac_dimm_fill *dimm_fill = arg;
+>> @@ -177,6 +197,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+>>  				entry->total_width, entry->data_width);
+>>  		}
+>>
+>> +		dimm->smbios_handle = entry->handle;
+>> +
+>>  		dimm_fill->count++;
+>>  	}
+>>  }
+>> @@ -327,12 +349,20 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>>  		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
+>>  	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
+>>  		const char *bank = NULL, *device = NULL;
+>> +		int index = -1;
+>> +
+>>  		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
+>> +		p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+>> +			     mem_err->mem_dev_handle);
+>>  		if (bank != NULL && device != NULL)
+>>  			p += sprintf(p, "DIMM location:%s %s ", bank, device);
+>> -		else
+>> -			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+>> -				     mem_err->mem_dev_handle);
+>> +
+>> +		index = ghes_edac_dimm_index(mem_err->mem_dev_handle);
+>> +		if (index >= 0) {
+>> +			e->top_layer = index;
+>> +			e->enable_per_layer_report = true;
+>> +		}
+>> +
+>>  	}
+>>  	if (p > e->location)
+>>  		*(p - 1) = '\0';
+>> diff --git a/include/linux/edac.h b/include/linux/edac.h
+>> index bffb978..a45ce1f 100644
+>> --- a/include/linux/edac.h
+>> +++ b/include/linux/edac.h
+>> @@ -451,6 +451,8 @@ struct dimm_info {
+>>  	u32 nr_pages;			/* number of pages on this dimm */
+>>
+>>  	unsigned csrow, cschannel;	/* Points to the old API data */
+>> +
+>> +	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
+>>  };
+>>
+>>  /**
+>>
+>
+>
+> .
+>
+
 
