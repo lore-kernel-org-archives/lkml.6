@@ -3,70 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE4AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3B6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9C82054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9C82054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CECA2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CECA2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeH3Nco (ORCPT
+        id S1728159AbeH3Ne5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:32:44 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:41997 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeH3Nco (ORCPT
+        Thu, 30 Aug 2018 09:34:57 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59980 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727782AbeH3Ne4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:32:44 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85b87b96ed0e-628dd; Thu, 30 Aug 2018 17:31:26 +0800 (CST)
-X-RM-TRANSID: 2ee85b87b96ed0e-628dd
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95b87b96d08c-15c2f;
-        Thu, 30 Aug 2018 17:31:26 +0800 (CST)
-X-RM-TRANSID: 2ee95b87b96d08c-15c2f
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        Thu, 30 Aug 2018 09:34:56 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 2F640634C7D;
+        Thu, 30 Aug 2018 12:33:40 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1fvJKd-0000vQ-T5; Thu, 30 Aug 2018 12:33:39 +0300
+Date:   Thu, 30 Aug 2018 12:33:39 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Philippe De Muyter <phdm@macq.eu>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: misc: fix obsolete function
-Date:   Thu, 30 Aug 2018 17:31:18 +0800
-Message-Id: <1535621478-15208-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to
+ DRIVER_NAME
+Message-ID: <20180830093339.4kquhqdi6knrd2kh@valkosipuli.retiisi.org.uk>
+References: <20180824163525.12694-1-luca@lucaceresoli.net>
+ <20180829112936.GA15244@frolo.macqel>
+ <20180829113843.4v63cxf3clvbzbtd@valkosipuli.retiisi.org.uk>
+ <1552922.PBQrL6RDxY@avalon>
+ <20180830065813.GA18916@frolo.macqel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830065813.GA18916@frolo.macqel>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-simple_strtoul is obsolete, and use kstrtoint instead
+On Thu, Aug 30, 2018 at 08:58:13AM +0200, Philippe De Muyter wrote:
+> Hi.
+> 
+> On Thu, Aug 30, 2018 at 12:23:23AM +0300, Laurent Pinchart wrote:
+> > Hello,
+> > 
+> > On Wednesday, 29 August 2018 14:38:43 EEST Sakari Ailus wrote:
+> > > On Wed, Aug 29, 2018 at 01:29:36PM +0200, Philippe De Muyter wrote:
+> > > > On Wed, Aug 29, 2018 at 02:07:21PM +0300, Sakari Ailus wrote:
+> > > >> On Tue, Aug 28, 2018 at 06:02:55PM +0200, Philippe De Muyter wrote:
+> > 
+> > [snip]
+> > 
+> > > >>> Then we should probably also apply the following patch I submitted :
+> > > >>> 
+> > > >>> "media: v4l2-common: v4l2_spi_subdev_init : generate unique name"
+> > > >>> 
+> > > >>> 	https://patchwork.kernel.org/patch/10553035/
+> > > >>> 
+> > > >>> and perhaps
+> > > >>> 
+> > > >>> "media: v4l2-common: simplify v4l2_i2c_subdev_init name generation"
+> > > >>> 
+> > > >>> 	https://patchwork.kernel.org/patch/10553037/
+> > > >> 
+> > > >> The problem with this patch is that the existing naming scheme is very
+> > > >> similar while the new one offers no tangible benefits apart from being
+> > > >> in line with the rest of the kernel. That's still not a benefit for uAPI:
+> > > >> changing the name is certain to break user space applications.
+> > > > 
+> > > > I agree with you on the patch for v4l2_i2c_subdev_init (I wrote
+> > > > 'perhaps'), but you don't say anything on the one about
+> > > > v4l2_spi_subdev_init :), which fixes an actual bug.  I have 2 identical
+> > > > SPI-controlled sensors on the same board, and without my patch they get
+> > > > the same subdev name.  Of course, I could fix that in the sensor driver
+> > > > itself, but that's not what we want, or do we ?
+> > > 
+> > > Good point. I missed the naming of the SPI devices ignored any bus
+> > > information there. I'm rather inclined towards taking the SPI patch. Hans,
+> > > Mauro, Laurent; any opinion on that?
+> > 
+> > I agree that the SPI patch makes sense, I think we should take it.
+> 
+> Do I need to resend https://patchwork.kernel.org/patch/10553035/ "media:
+> v4l2-common: v4l2_spi_subdev_init : generate unique name", adding Sakari's
+> and Laurent's Acked-by ? or will that patch be taken automagically ?
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/usb/misc/trancevibrator.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+No need to.
 
-diff --git a/drivers/usb/misc/trancevibrator.c b/drivers/usb/misc/trancevibrator.c
-index b3e1f55..ac357ce 100644
---- a/drivers/usb/misc/trancevibrator.c
-+++ b/drivers/usb/misc/trancevibrator.c
-@@ -46,7 +46,9 @@ static ssize_t speed_store(struct device *dev, struct device_attribute *attr,
- 	struct trancevibrator *tv = usb_get_intfdata(intf);
- 	int temp, retval, old;
- 
--	temp = simple_strtoul(buf, NULL, 10);
-+	retval = kstrtoint(buf, 10, &temp);
-+	if (retval)
-+		return retval;
- 	if (temp > 255)
- 		temp = 255;
- 	else if (temp < 0)
 -- 
-1.9.1
-
-
-
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
