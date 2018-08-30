@@ -2,137 +2,144 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9330C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12F7C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805BA20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BB0A20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EElcNPiu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805BA20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="YexaT6UA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB0A20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeH3T50 (ORCPT
+        id S1727458AbeH3T6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:57:26 -0400
-Received: from mail-cys01nam02on0113.outbound.protection.outlook.com ([104.47.37.113]:45319
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727098AbeH3T50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:57:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MlV0T/LveRYaoFRFJjBbkV/cS1B7DELahFkctVd7qDk=;
- b=EElcNPiuthnuHcd+dfXR2B9RSRrUXigoMELmC3mmd3h+kNzlXiMwJFirJluwYjuYb/iYVx7TxA+TUDqoWWWxm3JrExZLhlN1w54nPfQArI8sMa/F3l+23Y/m1eKVydfhiyPi9rIjtc9IVjCG+QX6xACJu9qV7FX239q52a0/gNg=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0170.namprd21.prod.outlook.com (10.173.173.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Thu, 30 Aug 2018 15:54:31 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1122.009; Thu, 30 Aug 2018
- 15:54:30 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     David Hildenbrand <david@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        KY Srinivasan <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Subject: Re: [PATCH RFCv2 0/6] mm: online/offline_pages called w.o.
- mem_hotplug_lock
-Thread-Topic: [PATCH RFCv2 0/6] mm: online/offline_pages called w.o.
- mem_hotplug_lock
-Thread-Index: AQHUQHm8B/6idujVk0SgU6qC1BCMWA==
-Date:   Thu, 30 Aug 2018 15:54:30 +0000
-Message-ID: <b9eb96e7-3846-1aaa-d257-895ca142b1ef@microsoft.com>
-References: <20180821104418.12710-1-david@redhat.com>
- <37ea507e-b16d-ae8d-4da8-128b621869f2@redhat.com>
-In-Reply-To: <37ea507e-b16d-ae8d-4da8-128b621869f2@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.117.57.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0170;6:YJylFLJ5IFXq+rVy0IUdgUv30SJ7Kn7m3ik6XQMh2fYiP/cRQ0PaEikZc2SG8KcUReHkYkqhwLySYHRXPjKNVznug45HEe1XQgeEHsyE1EC6JaZ09zK+ynVuVXoh8wpCgohCo+XG55WITsec9f7dHjOJMVUn7TPFGjfIqtJ2xBHMh+jGguCvAriSgKSXog/vHx4uK5ASE3NBzsyJCv/VUfQopeeanVVKYliC0/PF62Ffmk2a7HKLf337qa3gVUt7r8Zo3TjnCrgMapYghPNvnBGQfsPSTO2Mq2UyKc8dALpwlvwCgQ3837hfecp2UX/IQOKJzh2Cb+xEReyw0a/IHgjItnilrmnx/ZNDspxNSXNUo6D6LzaNp6JGHKdOidry6loQfbrROrwCRUy+KO2WXS/3uetwuRau4M0R9xqMAQzsozq+tmX4jlzZFb41Um4lkFrxOvidNMaTAe0KuETgqA==;5:QJYnU41sHdehdo7eguRfvvznE94p0rK7gPXK/itQ8cXQw7AmBRlBpCmcn32Vu6Ox8hteLMlCgeKvc7NyCYQmH7cD0KrlVMd/XE4FYmKWn7vneMon222EaE2ybwZnlA0/TQdqlpw37mhWZfKppBOJVGrW2We23UwzcgB2anzb1No=;7:BuNAjHViWbQsiAIK4K3q6UTdF+03CJaOhDZM9wQyNHbmyGu856zZTUjs2/ykJdJQbL5nyc7H6BL0mhJC8tSvCHW+JLjyoAPkR8IHIWkGUuFr+gkpuk0EHE5uwbK/qMmJy+gdKcqCGEq+j+xyHKUEAYAb5vmr0tjAfBXkm0fuixPzeYNKwuZUnogWm/GpGKdWFwrppPoIT/L9A4VeYP0N049HskEUcGsgu8Tqv6X0hTPRXZG2qdm0zEM182bcK125
-x-ms-office365-filtering-correlation-id: a076ade8-1419-4df1-90be-08d60e90dfa3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0170;
-x-ms-traffictypediagnostic: DM5PR21MB0170:
-x-microsoft-antispam-prvs: <DM5PR21MB0170C1984147EC8A29C212E99D080@DM5PR21MB0170.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(209352067349851);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231340)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:DM5PR21MB0170;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0170;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(376002)(366004)(396003)(199004)(189003)(2501003)(53546011)(6506007)(256004)(97736004)(5250100002)(6346003)(25786009)(26005)(68736007)(2900100001)(478600001)(4326008)(76176011)(3846002)(81156014)(14444005)(186003)(39060400002)(7406005)(7416002)(5660300001)(102836004)(6116002)(305945005)(6246003)(10090500001)(81166006)(7736002)(86362001)(36756003)(8676002)(11346002)(229853002)(446003)(31696002)(6512007)(53936002)(486006)(106356001)(31686004)(54906003)(110136005)(105586002)(316002)(66066001)(22452003)(99286004)(10290500003)(8936002)(2906002)(86612001)(14454004)(6486002)(476003)(6436002)(72206003)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0170;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-message-info: egVaV7kEVOshS7L+JMXuIPxfk0bi68hy5MkSfYUsHjRysa8waQDdyZli90EmYJyovMgpGGkx2GEXg14fjY26k6vuXl2pBNfjTmyjeAa6Xb2NU1rjwxgoTeFx6EzYXX/wCPuG2/ipeGmhjy0I1q/MUYyEErdyx6Vd7jFNTGn+TdCHeGJ7wE3xMtb+rdtpuRI9MZoQHmHFfvTJQhsPrQaS7kbJbT7KHnaupz2hU0jfpXYy8Js8Tp2vN1hEvei2pGLdag6KUKOj2FOV5XSlR6IMcjfupE4sxu9TSuoBS8UlUxYquiVSqzmExYKUDuijKo+iwGhDDcQpyve5TOrEBBo3wiHpW7Y/TVw5/E6sQ7b/cVU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C3DB3B11124F444D8932C0F350E2E1D9@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 30 Aug 2018 15:58:54 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33141 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH3T6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:58:54 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i134-v6so2181235wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=1B9jTJpTxMr9BjTsN5NpKawAR/FkrVdKtbrbRzOGgX8=;
+        b=YexaT6UAt+AOzzePc3Q6kX7ioc1pVcT6K++YtGBngvAS3ugSP0mLTM2H+ACdoqBHJR
+         TqLNtuGMFDmaHMQLG6fA8PUxeG/tQRiOuE8H/eAKinbw5o/cpMqiNruzWwB33R64ecJe
+         KDudkjXMJXsz4GhSqptLgwRy9RxOATl7IA2iF4305bN2kIfk/8rzIfHGcZRSOeF7YyXx
+         49uv7S7dnmNQmTrK9SMZkGumUOm2xLv8vS+efV+H00QkWXzygqDYidPp/rJKr+SD1esG
+         Zt/01ylQvX+fVZ6Ppxqq9egFbQiTNHYP6Pw4z9LsCWgqJI2pLa/TEyfkfiSUUTndVm4z
+         93kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1B9jTJpTxMr9BjTsN5NpKawAR/FkrVdKtbrbRzOGgX8=;
+        b=oZ9Fijx027vIWlGAt5U7/wokRoyZR3NaiKgGoA4UyRGouTdrcYABSoZdKCxcMrGTna
+         Rvl7bcU/6vEiPXcwW22dtIlKc7z8zrrTZ/6bCw2BdSVQ40NPpbyfpSI2WMh2itnxIe6I
+         79MLLwn1qbFDm0IpSXMtO8N6j8bTvExEtY/Z33J8OYqJpJYAl+ow2XdjKdbOLmxK1yay
+         XBoR2xjGe6txhftWDaVRU9Dlul6Fpn5StOTiLAZe/qTVursIhyA2Kx7qYbNG24Jn4txx
+         vn0aj2cPMUg+90OehonDMi1tzekJkkGVL00Y0vwUMCwxHnCdMz5CUkaSLlyhn+hjy/Xy
+         O+4Q==
+X-Gm-Message-State: APzg51Di5r63tPrVCQYcuALIwe47WuC9wSQvDwv8RWJOfJv6aTsjXmc2
+        o2ZsrPbnZP1CBxq49RfUV0FAfwYeMEnPm+EGuBuHHg==
+X-Google-Smtp-Source: ANB0VdZ2AA1funcEltk5U7SYaUsz8ZL30CqhXGpZMP1OMxnN7qZ+B/a097EBJ+O5oCqVMXMRqZMnRpNPH0ZQpoRaL+o=
+X-Received: by 2002:a1c:ef0f:: with SMTP id n15-v6mr2156920wmh.116.1535644564917;
+ Thu, 30 Aug 2018 08:56:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a076ade8-1419-4df1-90be-08d60e90dfa3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 15:54:30.6779
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0170
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 08:55:44 -0700 (PDT)
+In-Reply-To: <CAG48ez3uZrC-9uJ0uMoVPTtxRXRN8D+3zs5FknZD2woTT6mazg@mail.gmail.com>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-20-yu-cheng.yu@intel.com>
+ <CAG48ez3uZrC-9uJ0uMoVPTtxRXRN8D+3zs5FknZD2woTT6mazg@mail.gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Thu, 30 Aug 2018 08:55:44 -0700
+Message-ID: <CALCETrW78UKt6AQJeN8GkhtxjuASnH1PV5QSpzQtDz9-2d3Asw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 19/24] x86/cet/shstk: Introduce WRUSS instruction
+To:     Jann Horn <jannh@google.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDgvMzAvMTggODozMSBBTSwgRGF2aWQgSGlsZGVuYnJhbmQgd3JvdGU6DQo+IE9uIDIx
-LjA4LjIwMTggMTI6NDQsIERhdmlkIEhpbGRlbmJyYW5kIHdyb3RlOg0KPj4gVGhpcyBpcyB0aGUg
-c2FtZSBhcHByb2FjaCBhcyBpbiB0aGUgZmlyc3QgUkZDLCBidXQgdGhpcyB0aW1lIHdpdGhvdXQN
-Cj4+IGV4cG9ydGluZyBkZXZpY2VfaG90cGx1Z19sb2NrIChyZXF1ZXN0ZWQgYnkgR3JlZykgYW5k
-IHdpdGggc29tZSBtb3JlDQo+PiBkZXRhaWxzIGFuZCBkb2N1bWVudGF0aW9uIHJlZ2FyZGluZyBs
-b2NraW5nLiBUZXN0ZWQgb25seSBvbiB4ODYgc28gZmFyLg0KPj4NCj4gDQo+IEknbGwgYmUgb24g
-dmFjYXRpb24gZm9yIHR3byB3ZWVrcyBzdGFydGluZyBvbiBTYXR1cmRheS4gSWYgdGhlcmUgYXJl
-IG5vDQo+IGNvbW1lbnRzIEknbGwgc2VuZCB0aGlzIGFzICFSRkMgb25jZSBJIHJldHVybi4NCj4N
-CkkgYW0gc3R1ZHlpbmcgdGhpcyBzZXJpZXMsIHdpbGwgc2VuZCBteSBjb21tZW50cyBsYXRlciB0
-b2RheS4NCg0KUGF2ZWw=
+On Thu, Aug 30, 2018 at 8:39 AM, Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 30, 2018 at 4:44 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>>
+>> WRUSS is a new kernel-mode instruction but writes directly
+>> to user shadow stack memory.  This is used to construct
+>> a return address on the shadow stack for the signal
+>> handler.
+>>
+>> This instruction can fault if the user shadow stack is
+>> invalid shadow stack memory.  In that case, the kernel does
+>> fixup.
+>>
+>> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> [...]
+>> +static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
+>> +{
+>> +       int err = 0;
+>> +
+>> +       asm volatile("1: wrussq %1, (%0)\n"
+>> +                    "2:\n"
+>> +                    _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_wruss)
+>> +                    :
+>> +                    : "r" (addr), "r" (val));
+>> +
+>> +       return err;
+>> +}
+>
+> What's up with "err"? You set it to zero, and then you return it, but
+> nothing can ever set it to non-zero, right?
+>
+>> +__visible bool ex_handler_wruss(const struct exception_table_entry *fixup,
+>> +                               struct pt_regs *regs, int trapnr)
+>> +{
+>> +       regs->ip = ex_fixup_addr(fixup);
+>> +       regs->ax = -1;
+>> +       return true;
+>> +}
+>
+> And here you just write into regs->ax, but your "asm volatile" doesn't
+> reserve that register. This looks wrong to me.
+>
+> I think you probably want to add something like an explicit
+> `"+&a"(err)` output to the asm statements.
+
+We require asm goto support these days.  How about using that?  You
+won't even need a special exception handler.
+
+Also, please change the BUG to WARN in the you-did-it-wrong 32-bit
+case.  And return -EFAULT.
+
+--Andy
