@@ -2,144 +2,153 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81592C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9580C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D8612082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AEBE20661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1rCiwPP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D8612082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="eBNRXAiC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qph38rXB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEBE20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeH3XZe (ORCPT
+        id S1727378AbeH3X1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:25:34 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37493 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbeH3XZe (ORCPT
+        Thu, 30 Aug 2018 19:27:31 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43935 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbeH3X1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:25:34 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v9-v6so8194133ljk.4;
-        Thu, 30 Aug 2018 12:21:52 -0700 (PDT)
+        Thu, 30 Aug 2018 19:27:31 -0400
+Received: by mail-oi0-f65.google.com with SMTP id b15-v6so17452767oib.10
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 12:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vTHRVdYBlOTPQeHGmgVrxO2BP86zr2jepwF1VICqGpc=;
-        b=g1rCiwPPYarwABy3JoPRPn4jNdrcpvMM6uITbqwfN+BrPrF7tHfQEaPQH/oJGYPlJE
-         6DykYN+ZXWZDZ3dXtm1ZHKIJ0FRn0OjVk7VqPy6tSp9AHRukW0dlita4Xm3zxgwvfp0A
-         LkyhhiBItsaAwthNjZsA+WI6q8iUK7mDWVaBT5dVvLu+Rc1tMfQKNKc5t/9ZhhUdFA2N
-         BDEGdyVV+V5jYbNbM6b2VQSriuTdchrpdWqQtCOW4YVMKu4aoMieLU0OB6lEMfznCqAN
-         rlFHCZT3NJUR+jHywXNfqkK0Bx8+LxtBZZzRDslE0MAQ9vrwPu0SIpHUfg21htbnVpnE
-         5l8A==
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=NsjwPVAhkGtscPoeWBCXZhjt1C6RujmI90oD6SCCW8k=;
+        b=eBNRXAiChv7EpjdSShgIJqQAAhyVlw1bak5oszScSLln5hfoLTq3YOb3vXmAkU8mHs
+         ymLECYs3HmECI0iaoa4J3sK/5JI8H0IKyQGBCc2khF3VKZrSQVP3B1jUR3D9Z0lVO1bV
+         p1bCD4DMSAt2/nLxkaGPCBkioJHfN2piBFvAqO2/Nb9eD5crvk2Qmy8fHr58vqvgNY/X
+         f0zaSg5j1vVe3ut0TBD40BSTUONOmBPywjhYXtJsXlmAraXmaPWr07bBb4XJD8ezrgcT
+         wdDEDZlTDmW/1ebw69lspPXVBHaYCfpDteRyDW+dgJT5BTg3FitmJ3QiiuIOil8BJEox
+         rcDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=NsjwPVAhkGtscPoeWBCXZhjt1C6RujmI90oD6SCCW8k=;
+        b=Qph38rXBNKAUDoAEqy71FOoAOAUD1Fvu+mFhu3hm1wdv1W+CQXrybOZVJ3zUF7JhQ6
+         ObKh+2j7rQbjskckPiQ0NzbLnM7VpNTIcYJwnviunDyvPdI/ywK0YnLnomMDD9mFdpEi
+         fg2JeJiJoPIFLaX+QlEbqYjFkGyPQVuSnrTeg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vTHRVdYBlOTPQeHGmgVrxO2BP86zr2jepwF1VICqGpc=;
-        b=ZsjwARnJi573R93gYTuyFOdrPVQbg5Aejcd31Pw0Nx2roKL8uXcYzb1DVYCHb2t4us
-         TpK1VVkUObFRrZKus1HxgZjMWd24b5yFTfEallx3mr7rhS+9xcSjG4vzQGSSXEmu0VRt
-         +PyJMdMArXcGBBntBUep2uQblvs2mMnqvQ2qRb2bgxVdMoy7LNckudj5BSuRgnUSjTMC
-         tMW85bAinMuu2hc0JxhJmSzkWDUedjCuhjzfD6KoMsOAj4pJZ2eH3RTFq1y1m3RcgtPD
-         zkPtEn8aPVsP6ngqLP1h62fgH+R34ZN7zcVSd4j5RowS/TKBYkeOrACEAZJiTTAFTO8M
-         HMCg==
-X-Gm-Message-State: APzg51ABouTrsHq7yJQR6XcrjpjwS+Jc6fRvcF4Q+91Em15NqmeXS5eu
-        2HPhW35t+ljq/uKx1LTTgMo=
-X-Google-Smtp-Source: ANB0VdZNNOq5HJ1i2qtVwySKsAtFrO74UNwok56udSshsZfe9bI4zF/Ge/DpFpAoZkFS9/Rwgt73GA==
-X-Received: by 2002:a2e:1609:: with SMTP id w9-v6mr8101967ljd.120.1535656911303;
-        Thu, 30 Aug 2018 12:21:51 -0700 (PDT)
-Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
-        by smtp.gmail.com with ESMTPSA id o11-v6sm1403291lfl.1.2018.08.30.12.21.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:21:50 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/3] clk: tegra: Add more rates to Tegra30 PLLX frequency table
-Date:   Thu, 30 Aug 2018 22:20:44 +0300
-Message-Id: <20180830192045.11017-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
-References: <20180830192045.11017-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=NsjwPVAhkGtscPoeWBCXZhjt1C6RujmI90oD6SCCW8k=;
+        b=BcR4an7TdpMO+1KvCzIKEeanjrLxWS35fiHjOxUChDIz16VnhyhxqNo8SGqCUkKVz6
+         9oE1gQM6BJCPabCBO1rwk1UHZr2/9AONHHhywAzs9F76kaBTM2iI6IE6+zDVgnK7KWzl
+         019Kgtl2L/TlCqHocCTk/f4u3CJl1vCSccnhWyTHQUhztSWpeRCuvycn3nbx21rImaqv
+         AOpUpBSBdxGa/2F/Zfo03QjazpDFHgORgsRIsk+Njy2t3oal4K7tYMvYxugOJgtYu8wi
+         ++UiVFQvDLxGTjtAOLGAn0nlEztz3+M4z+IWPLIUaBwe9eqv+L4DpvICCra0kV9GW+R/
+         mlWw==
+X-Gm-Message-State: APzg51CyT0Q9cm+OTFkcYmK5zxdeAA5c+qXrutVYWtjOp0JPfg2SZ2/t
+        nACpTxS+AkQAhZDCKB7KObyo9/0SQiNivfKn4Lp406qfZsw=
+X-Google-Smtp-Source: ANB0Vdb8cdys2vYTxWKiqvCBw13xINl3paDxBSBcCCPd/bHeXsedAk4F/DLmQ6E36g1wMNbAWkkG3dDp/vVzY633Y5Q=
+X-Received: by 2002:aca:b904:: with SMTP id j4-v6mr4166735oif.89.1535657029373;
+ Thu, 30 Aug 2018 12:23:49 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a4a:8eca:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 12:23:48
+ -0700 (PDT)
+In-Reply-To: <35c332750fe1eddfa2eb53750b810256310866bd.1535462942.git.amit.kucheria@linaro.org>
+References: <cover.1535462942.git.amit.kucheria@linaro.org> <35c332750fe1eddfa2eb53750b810256310866bd.1535462942.git.amit.kucheria@linaro.org>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 31 Aug 2018 00:53:48 +0530
+X-Google-Sender-Auth: Duhi_sTyISg_1aIHsPZvq_3jLeI
+Message-ID: <CAHLCerPF0U22XZ8kEBkXZYJHkL73K8_RFkArs9gXvc0Qmufr-g@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] thermal: tsens: Check if the IP is correctly
+ enabled by firmware
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add more predefined rates to the PLLX table, allowing to lower the rate
-down to 312MHz. This gives more variations of frequency selection to the
-CPUFREQ driver.
+On Tue, Aug 28, 2018 at 7:08 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> The SROT registers are initialised by the secure firmware at boot. We
+> don't have write access to the registers. Check if the block is enabled
+> before continuing.
+>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> index 0b8a793f15f4..d250b757d1f0 100644
+> --- a/drivers/thermal/qcom/tsens-common.c
+> +++ b/drivers/thermal/qcom/tsens-common.c
+> @@ -12,6 +12,11 @@
+>  #include <linux/regmap.h>
+>  #include "tsens.h"
+>
+> +/* SROT */
+> +#define CTRL_OFFSET            0x4
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra30.c | 42 +++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+This OFFSET is not constant across the TSENS family and breaks atleast
+one platform in the test below. I have a patch to fix this for all
+platforms, will post it after a bit more testing.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c4b78316ba8a..0f8797ca39e2 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -342,6 +342,48 @@ static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
- 	{ 16800000, 1000000000,  833, 14, 1, 8 }, /* actual: 999.6 MHz */
- 	{ 19200000, 1000000000,  625, 12, 1, 8 },
- 	{ 26000000, 1000000000, 1000, 26, 1, 8 },
-+	/* 912 MHz */
-+	{ 12000000,  912000000,  912, 12, 1, 8 },
-+	{ 13000000,  912000000,  912, 13, 1, 8 },
-+	{ 16800000,  912000000,  760, 14, 1, 8 },
-+	{ 19200000,  912000000,  760, 16, 1, 8 },
-+	{ 26000000,  912000000,  912, 26, 1, 8 },
-+	/* 816 MHz */
-+	{ 12000000,  816000000,  816, 12, 1, 8 },
-+	{ 13000000,  816000000,  816, 13, 1, 8 },
-+	{ 16800000,  816000000,  680, 14, 1, 8 },
-+	{ 19200000,  816000000,  680, 16, 1, 8 },
-+	{ 26000000,  816000000,  816, 26, 1, 8 },
-+	/* 760 MHz */
-+	{ 12000000,  760000000,  760, 12, 1, 8 },
-+	{ 13000000,  760000000,  760, 13, 1, 8 },
-+	{ 16800000,  760000000,  950, 21, 1, 8 },
-+	{ 19200000,  760000000,  950, 24, 1, 8 },
-+	{ 26000000,  760000000,  760, 26, 1, 8 },
-+	/* 750 MHz */
-+	{ 12000000,  750000000,  750, 12, 1, 8 },
-+	{ 13000000,  750000000,  750, 13, 1, 8 },
-+	{ 16800000,  750000000,  625, 14, 1, 8 },
-+	{ 19200000,  750000000,  625, 16, 1, 8 },
-+	{ 26000000,  750000000,  750, 26, 1, 8 },
-+	/* 608 MHz */
-+	{ 12000000,  608000000,  608, 12, 1, 8 },
-+	{ 13000000,  608000000,  608, 13, 1, 8 },
-+	{ 16800000,  608000000,  760, 21, 1, 8 },
-+	{ 19200000,  608000000,  380, 12, 1, 8 },
-+	{ 26000000,  608000000,  608, 26, 1, 8 },
-+	/* 456 MHz */
-+	{ 12000000,  456000000,  456, 12, 1, 8 },
-+	{ 13000000,  456000000,  456, 13, 1, 8 },
-+	{ 16800000,  456000000,  380, 15, 1, 8 },
-+	{ 19200000,  456000000,  380, 14, 1, 8 },
-+	{ 26000000,  456000000,  456, 26, 1, 8 },
-+	/* 312 MHz */
-+	{ 12000000,  312000000,  312, 12, 1, 8 },
-+	{ 13000000,  312000000,  312, 13, 1, 8 },
-+	{ 16800000,  312000000,  260, 14, 1, 8 },
-+	{ 19200000,  312000000,  260, 16, 1, 8 },
-+	{ 26000000,  312000000,  312, 26, 1, 8 },
- 	{        0,          0,    0,  0, 0, 0 },
- };
- 
--- 
-2.18.0
 
+> +#define TSENS_EN               BIT(0)
+> +
+> +/* TM */
+>  #define STATUS_OFFSET          0x30
+>  #define SN_ADDR_OFFSET         0x4
+>  #define SN_ST_TEMP_MASK                0x3ff
+> @@ -119,6 +124,8 @@ int __init init_common(struct tsens_device *tmdev)
+>  {
+>         void __iomem *tm_base, *srot_base;
+>         struct resource *res;
+> +       u32 code;
+> +       int ret;
+>         struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
+>
+>         if (!op)
+> @@ -151,5 +158,15 @@ int __init init_common(struct tsens_device *tmdev)
+>         if (IS_ERR(tmdev->tm_map))
+>                 return PTR_ERR(tmdev->tm_map);
+>
+> +       if (tmdev->srot_map) {
+> +               ret = regmap_read(tmdev->srot_map, CTRL_OFFSET, &code);
+> +               if (ret)
+> +                       return ret;
+> +               if (!(code & TSENS_EN)) {
+> +                       dev_err(tmdev->dev, "tsens device is not enabled\n");
+> +                       return -ENODEV;
+> +               }
+> +       }
+> +
+>         return 0;
+>  }
+> --
+> 2.17.1
+>
