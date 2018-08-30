@@ -2,157 +2,96 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934ABC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470A6205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:13:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470A6205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FC3720666
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC3720666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeH3FMu (ORCPT
+        id S1727220AbeH3FQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:12:50 -0400
-Received: from mx.socionext.com ([202.248.49.38]:29743 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725758AbeH3FMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:12:50 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 30 Aug 2018 10:13:14 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id B61D8600AA;
-        Thu, 30 Aug 2018 10:13:14 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 30 Aug 2018 10:13:14 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 512D94039D;
-        Thu, 30 Aug 2018 10:13:14 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 2B9FD12014A;
-        Thu, 30 Aug 2018 10:13:14 +0900 (JST)
-From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To:     "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        <linux-media@vger.kernel.org>
-Cc:     "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        Thu, 30 Aug 2018 01:16:35 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:56925 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725758AbeH3FQf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:16:35 -0400
+X-UUID: a0752fedbccd446abdd489ff7adb1b67-20180830
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1162640858; Thu, 30 Aug 2018 09:16:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 30 Aug 2018 09:16:52 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 30 Aug 2018 09:16:51 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180808052519.14528-1-suzuki.katsuhiro@socionext.com>
-In-Reply-To: <20180808052519.14528-1-suzuki.katsuhiro@socionext.com>
-Subject: Re: [PATCH v2 0/7] add UniPhier DVB Frontend system support
-Date:   Thu, 30 Aug 2018 10:13:11 +0900
-Message-ID: <000301d43ffe$9e6e9f80$db4bde80$@socionext.com>
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v3] usb: core: phy: fix return value checking about devm_of_phy_get_by_index()
+Date:   Thu, 30 Aug 2018 09:16:40 +0800
+Message-ID: <626cea85395e3a1f002ef0a241bb508d770a33c0.1535536218.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHULtg70UOqpKPTDUWCIir/5H5rqaTXnurg
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mauro,
+Use IS_ERR() instead of IS_ERR_OR_NULL() because devm_of_phy_get_by_index()
+never return NULL value;
+But still need ignore the error of -ENODEV, for more information, please
+refer to:
+[0] https://lkml.org/lkml/2018/4/19/88
+[1] https://patchwork.kernel.org/patch/10160181/
 
-This is ping...
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+V3: abandon the ternary operator suggested by Johan
 
-> -----Original Message-----
-> From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Sent: Wednesday, August 8, 2018 2:25 PM
-> To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
-> linux-media@vger.kernel.org
-> Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi Brar
-> <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; Suzuki, Katsuhiro 
-> <suzuki.katsuhiro@socionext.com>
-> Subject: [PATCH v2 0/7] add UniPhier DVB Frontend system support
-> 
-> This series adds support for DVB Frontend system named HSC support
-> for UniPhier LD11/LD20 SoCs. This driver supports MPEG2-TS serial
-> signal input from external demodulator and DMA MPEG2-TS stream data
-> onto memory.
-> 
-> UniPhier HSC driver provides many ports of TS input. Since the HSC
-> has mixed register map for those ports. It hard to split each register
-> areas.
-> 
-> ---
-> 
-> Changes from v1:
->   DT bindings
->     - Fix mistakes of spelling
->     - Rename uniphier,hsc.txt -> socionext,uniphier-hsc.txt
->   Kconfig, Makefile
->     - Add COMPILE_TEST, REGMAP_MMIO
->     - Add $(srctree) to include path option
->   Headers
->     - Split large patch
->     - Remove more unused definitions
->     - Remove unneeded const
->     - Replace enum that has special value into #define
->     - Remove weird macro from register definitions
->     - Remove field_get/prop inline functions
->   Modules
->     - Split register definitions, function prototypes
->     - Fix include lines
->     - Fix depended config
->     - Remove redundant conditions
->     - Drop adapter patches, and need no patches to build
->     - Merge uniphier-adapter.o into each adapter drivers
->     - Split 3 modules (core, ld11, ld20) to build adapter drivers as
->       module
->     - Fix compile error if build as module
->     - Use hardware spec table to remove weird macro from register
->       definitions
->     - Use usleep_range instead of msleep
->     - Use shift and mask instead of field_get/prop inline functions
-> 
-> Katsuhiro Suzuki (7):
->   media: uniphier: add DT bindings documentation for UniPhier HSC
->   media: uniphier: add DMA common file of HSC
->   media: uniphier: add CSS common file of HSC
->   media: uniphier: add TS common file of HSC
->   media: uniphier: add ucode load common file of HSC
->   media: uniphier: add platform driver module of HSC
->   media: uniphier: add LD11/LD20 HSC support
-> 
->  .../bindings/media/socionext,uniphier-hsc.txt |  38 ++
->  drivers/media/platform/Kconfig                |   1 +
->  drivers/media/platform/Makefile               |   2 +
->  drivers/media/platform/uniphier/Kconfig       |  19 +
->  drivers/media/platform/uniphier/Makefile      |   5 +
->  drivers/media/platform/uniphier/hsc-core.c    | 515 ++++++++++++++++++
->  drivers/media/platform/uniphier/hsc-css.c     | 250 +++++++++
->  drivers/media/platform/uniphier/hsc-dma.c     | 212 +++++++
->  drivers/media/platform/uniphier/hsc-ld11.c    | 273 ++++++++++
->  drivers/media/platform/uniphier/hsc-reg.h     | 272 +++++++++
->  drivers/media/platform/uniphier/hsc-ts.c      | 127 +++++
->  drivers/media/platform/uniphier/hsc-ucode.c   | 416 ++++++++++++++
->  drivers/media/platform/uniphier/hsc.h         | 389 +++++++++++++
->  13 files changed, 2519 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/media/socionext,uniphier-hsc.txt
->  create mode 100644 drivers/media/platform/uniphier/Kconfig
->  create mode 100644 drivers/media/platform/uniphier/Makefile
->  create mode 100644 drivers/media/platform/uniphier/hsc-core.c
->  create mode 100644 drivers/media/platform/uniphier/hsc-css.c
->  create mode 100644 drivers/media/platform/uniphier/hsc-dma.c
->  create mode 100644 drivers/media/platform/uniphier/hsc-ld11.c
->  create mode 100644 drivers/media/platform/uniphier/hsc-reg.h
->  create mode 100644 drivers/media/platform/uniphier/hsc-ts.c
->  create mode 100644 drivers/media/platform/uniphier/hsc-ucode.c
->  create mode 100644 drivers/media/platform/uniphier/hsc.h
-> 
-> --
-> 2.18.0
+V2: keep the -ENODEV check
+---
+ drivers/usb/core/phy.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-
+diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+index 9879767..38b2c77 100644
+--- a/drivers/usb/core/phy.c
++++ b/drivers/usb/core/phy.c
+@@ -23,10 +23,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
+ 				   struct list_head *list)
+ {
+ 	struct usb_phy_roothub *roothub_entry;
+-	struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
++	struct phy *phy;
+ 
+-	if (IS_ERR_OR_NULL(phy)) {
+-		if (!phy || PTR_ERR(phy) == -ENODEV)
++	phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
++	if (IS_ERR(phy)) {
++		if (PTR_ERR(phy) == -ENODEV)
+ 			return 0;
+ 		else
+ 			return PTR_ERR(phy);
+-- 
+1.9.1
 
