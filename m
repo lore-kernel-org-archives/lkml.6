@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68A4C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40194C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90EA520647
+	by mail.kernel.org (Postfix) with ESMTP id EE3D320647
 	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:36:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90EA520647
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3D320647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeH3FgP (ORCPT
+        id S1727305AbeH3FgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:36:15 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5367 "EHLO mga12.intel.com"
+        Thu, 30 Aug 2018 01:36:23 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9350 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeH3FgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:36:14 -0400
+        id S1726457AbeH3FgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:36:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 18:36:37 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 18:36:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,305,1531810800"; 
-   d="scan'208";a="79442223"
+   d="scan'208";a="79442254"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2018 18:36:34 -0700
+  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2018 18:36:42 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -41,31 +41,32 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 01/12] iommu/vt-d: Enumerate the scalable mode capability
-Date:   Thu, 30 Aug 2018 09:35:13 +0800
-Message-Id: <20180830013524.28743-2-baolu.lu@linux.intel.com>
+Subject: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation descriptor support
+Date:   Thu, 30 Aug 2018 09:35:16 +0800
+Message-Id: <20180830013524.28743-5-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830013524.28743-1-baolu.lu@linux.intel.com>
 References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel vt-d spec rev3.0 introduces a new translation
-mode called scalable mode, which enables PASID-granular
-translations for first level, second level, nested and
-pass-through modes. At the same time, the previous
-Extended Context (ECS) mode is deprecated (no production
-ever implements ECS).
+Intel vt-d spec rev3.0 requires software to use 256-bit
+descriptors in invalidation queue. As the spec reads in
+section 6.5.2:
 
-This patch adds enumeration for Scalable Mode and removes
-the deprecated ECS enumeration. It provides a boot time
-option to disable scalable mode even hardware claims to
-support it.
+Remapping hardware supporting Scalable Mode Translations
+(ECAP_REG.SMTS=1) allow software to additionally program
+the width of the descriptors (128-bits or 256-bits) that
+will be written into the Queue. Software should setup the
+Invalidation Queue for 256-bit descriptors before progra-
+mming remapping hardware for scalable-mode translation as
+128-bit descriptors are treated as invalid descriptors
+(see Table 21 in Section 6.5.2.10) in scalable-mode.
+
+This patch adds 256-bit invalidation descriptor support
+if the hardware presents scalable mode capability.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -73,206 +74,383 @@ Cc: Kevin Tian <kevin.tian@intel.com>
 Cc: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 12 ++--
- drivers/iommu/intel-iommu.c                   | 64 +++++--------------
- include/linux/intel-iommu.h                   |  1 +
- 3 files changed, 24 insertions(+), 53 deletions(-)
+ drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
+ drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
+ drivers/iommu/intel_irq_remapping.c |  6 ++-
+ include/linux/intel-iommu.h         |  7 ++-
+ 4 files changed, 113 insertions(+), 59 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9871e649ffef..5b971306a114 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1668,12 +1668,12 @@
- 			By default, super page will be supported if Intel IOMMU
- 			has the capability. With this option, super page will
- 			not be supported.
--		ecs_off [Default Off]
--			By default, extended context tables will be supported if
--			the hardware advertises that it has support both for the
--			extended tables themselves, and also PASID support. With
--			this option set, extended tables will not be used even
--			on hardware which claims to support them.
-+		sm_off [Default Off]
-+			By default, scalable mode will be supported if the
-+			hardware advertises that it has support for the scalable
-+			mode translation. With this option set, scalable mode
-+			will not be used even on hardware which claims to support
-+			it.
- 		tboot_noforce [Default Off]
- 			Do not force the Intel IOMMU enabled under tboot.
- 			By default, tboot will force Intel IOMMU on, which
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 5f3f10cf9d9d..5845edf4dcf9 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -430,38 +430,16 @@ static int dmar_map_gfx = 1;
- static int dmar_forcedac;
- static int intel_iommu_strict;
- static int intel_iommu_superpage = 1;
--static int intel_iommu_ecs = 1;
--static int intel_iommu_pasid28;
-+static int intel_iommu_sm = 1;
- static int iommu_identity_mapping;
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index d9c748b6f9e4..b1429fa2cf29 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu *iommu, int index)
+ 	int head, tail;
+ 	struct q_inval *qi = iommu->qi;
+ 	int wait_index = (index + 1) % QI_LENGTH;
++	int shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
  
- #define IDENTMAP_ALL		1
- #define IDENTMAP_GFX		2
- #define IDENTMAP_AZALIA		4
+ 	if (qi->desc_status[wait_index] == QI_ABORT)
+ 		return -EAGAIN;
+@@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu *iommu, int index)
+ 	 */
+ 	if (fault & DMA_FSTS_IQE) {
+ 		head = readl(iommu->reg + DMAR_IQH_REG);
+-		if ((head >> DMAR_IQ_SHIFT) == index) {
++		if ((head >> shift) == index) {
++			struct qi_desc *desc = qi->desc + head;
++
+ 			pr_err("VT-d detected invalid descriptor: "
+ 				"low=%llx, high=%llx\n",
+-				(unsigned long long)qi->desc[index].low,
+-				(unsigned long long)qi->desc[index].high);
+-			memcpy(&qi->desc[index], &qi->desc[wait_index],
+-					sizeof(struct qi_desc));
++				(unsigned long long)desc->qw0,
++				(unsigned long long)desc->qw1);
++			memcpy(desc, qi->desc + (wait_index << shift),
++			       1 << shift);
+ 			writel(DMA_FSTS_IQE, iommu->reg + DMAR_FSTS_REG);
+ 			return -EINVAL;
+ 		}
+@@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu *iommu, int index)
+ 	 */
+ 	if (fault & DMA_FSTS_ITE) {
+ 		head = readl(iommu->reg + DMAR_IQH_REG);
+-		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
++		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
+ 		head |= 1;
+ 		tail = readl(iommu->reg + DMAR_IQT_REG);
+-		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
++		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
  
--/* Broadwell and Skylake have broken ECS support — normal so-called "second
-- * level" translation of DMA requests-without-PASID doesn't actually happen
-- * unless you also set the NESTE bit in an extended context-entry. Which of
-- * course means that SVM doesn't work because it's trying to do nested
-- * translation of the physical addresses it finds in the process page tables,
-- * through the IOVA->phys mapping found in the "second level" page tables.
-- *
-- * The VT-d specification was retroactively changed to change the definition
-- * of the capability bits and pretend that Broadwell/Skylake never happened...
-- * but unfortunately the wrong bit was changed. It's ECS which is broken, but
-- * for some reason it was the PASID capability bit which was redefined (from
-- * bit 28 on BDW/SKL to bit 40 in future).
-- *
-- * So our test for ECS needs to eschew those implementations which set the old
-- * PASID capabiity bit 28, since those are the ones on which ECS is broken.
-- * Unless we are working around the 'pasid28' limitations, that is, by putting
-- * the device into passthrough mode for normal DMA and thus masking the bug.
-- */
--#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) && \
--			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
--/* PASID support is thus enabled if ECS is enabled and *either* of the old
-- * or new capability bits are set. */
--#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
--			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
-+#define sm_supported(iommu)	(intel_iommu_sm && ecap_smts((iommu)->ecap))
-+#define pasid_supported(iommu)	(sm_supported(iommu) &&			\
-+				 ecap_pasid((iommu)->ecap))
+ 		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
  
- int intel_iommu_gfx_mapped;
- EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
-@@ -541,15 +519,9 @@ static int __init intel_iommu_setup(char *str)
- 		} else if (!strncmp(str, "sp_off", 6)) {
- 			pr_info("Disable supported super page\n");
- 			intel_iommu_superpage = 0;
--		} else if (!strncmp(str, "ecs_off", 7)) {
--			printk(KERN_INFO
--				"Intel-IOMMU: disable extended context table support\n");
--			intel_iommu_ecs = 0;
--		} else if (!strncmp(str, "pasid28", 7)) {
--			printk(KERN_INFO
--				"Intel-IOMMU: enable pre-production PASID support\n");
--			intel_iommu_pasid28 = 1;
--			iommu_identity_mapping |= IDENTMAP_GFX;
-+		} else if (!strncmp(str, "sm_off", 6)) {
-+			pr_info("Intel-IOMMU: disable scalable mode support\n");
-+			intel_iommu_sm = 0;
- 		} else if (!strncmp(str, "tboot_noforce", 13)) {
- 			printk(KERN_INFO
- 				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
-@@ -796,7 +768,7 @@ static inline struct context_entry *iommu_context_addr(struct intel_iommu *iommu
- 	u64 *entry;
+@@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu)
+ {
+ 	int rc;
+ 	struct q_inval *qi = iommu->qi;
+-	struct qi_desc *hw, wait_desc;
++	int offset, shift, length;
++	struct qi_desc wait_desc;
+ 	int wait_index, index;
+ 	unsigned long flags;
  
- 	entry = &root->lo;
--	if (ecs_enabled(iommu)) {
-+	if (sm_supported(iommu)) {
- 		if (devfn >= 0x80) {
- 			devfn -= 0x80;
- 			entry = &root->hi;
-@@ -938,7 +910,7 @@ static void free_context_table(struct intel_iommu *iommu)
- 		if (context)
- 			free_pgtable_page(context);
+ 	if (!qi)
+ 		return 0;
  
--		if (!ecs_enabled(iommu))
-+		if (!sm_supported(iommu))
- 			continue;
+-	hw = qi->desc;
+-
+ restart:
+ 	rc = 0;
  
- 		context = iommu_context_addr(iommu, i, 0x80, 0);
-@@ -1290,8 +1262,6 @@ static void iommu_set_root_entry(struct intel_iommu *iommu)
- 	unsigned long flag;
+@@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu)
  
- 	addr = virt_to_phys(iommu->root_entry);
--	if (ecs_enabled(iommu))
--		addr |= DMA_RTADDR_RTT;
+ 	index = qi->free_head;
+ 	wait_index = (index + 1) % QI_LENGTH;
++	shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
++	length = 1 << shift;
  
- 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
- 	dmar_writeq(iommu->reg + DMAR_RTADDR_REG, addr);
-@@ -1780,7 +1750,7 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- 	free_context_table(iommu);
+ 	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu)) {
-+	if (pasid_supported(iommu)) {
- 		if (ecap_prs(iommu->ecap))
- 			intel_svm_finish_prq(iommu);
- 		intel_svm_exit(iommu);
-@@ -2489,8 +2459,8 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
- 		    dmar_find_matched_atsr_unit(pdev))
- 			info->ats_supported = 1;
+-	hw[index] = *desc;
+-
+-	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
++	offset = index << shift;
++	memcpy(qi->desc + offset, desc, length);
++	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
+ 			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
+-	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
++	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
++	wait_desc.qw2 = 0;
++	wait_desc.qw3 = 0;
  
--		if (ecs_enabled(iommu)) {
--			if (pasid_enabled(iommu)) {
-+		if (sm_supported(iommu)) {
-+			if (pasid_supported(iommu)) {
- 				int features = pci_pasid_features(pdev);
- 				if (features >= 0)
- 					info->pasid_supported = features | 1;
-@@ -3302,7 +3272,7 @@ static int __init init_dmars(void)
- 		 * We need to ensure the system pasid table is no bigger
- 		 * than the smallest supported.
- 		 */
--		if (pasid_enabled(iommu)) {
-+		if (pasid_supported(iommu)) {
- 			u32 temp = 2 << ecap_pss(iommu->ecap);
+-	hw[wait_index] = wait_desc;
++	offset = wait_index << shift;
++	memcpy(qi->desc + offset, &wait_desc, length);
  
- 			intel_pasid_max_id = min_t(u32, temp,
-@@ -3363,7 +3333,7 @@ static int __init init_dmars(void)
- 		if (!ecap_pass_through(iommu->ecap))
- 			hw_pass_through = 0;
- #ifdef CONFIG_INTEL_IOMMU_SVM
--		if (pasid_enabled(iommu))
-+		if (pasid_supported(iommu))
- 			intel_svm_init(iommu);
- #endif
+ 	qi->free_head = (qi->free_head + 2) % QI_LENGTH;
+ 	qi->free_cnt -= 2;
+@@ -1261,7 +1268,7 @@ int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu)
+ 	 * update the HW tail register indicating the presence of
+ 	 * new descriptors.
+ 	 */
+-	writel(qi->free_head << DMAR_IQ_SHIFT, iommu->reg + DMAR_IQT_REG);
++	writel(qi->free_head << shift, iommu->reg + DMAR_IQT_REG);
+ 
+ 	while (qi->desc_status[wait_index] != QI_DONE) {
+ 		/*
+@@ -1298,8 +1305,10 @@ void qi_global_iec(struct intel_iommu *iommu)
+ {
+ 	struct qi_desc desc;
+ 
+-	desc.low = QI_IEC_TYPE;
+-	desc.high = 0;
++	desc.qw0 = QI_IEC_TYPE;
++	desc.qw1 = 0;
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 
+ 	/* should never fail */
+ 	qi_submit_sync(&desc, iommu);
+@@ -1310,9 +1319,11 @@ void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid, u8 fm,
+ {
+ 	struct qi_desc desc;
+ 
+-	desc.low = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
++	desc.qw0 = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
+ 			| QI_CC_GRAN(type) | QI_CC_TYPE;
+-	desc.high = 0;
++	desc.qw1 = 0;
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 
+ 	qi_submit_sync(&desc, iommu);
+ }
+@@ -1331,10 +1342,12 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 	if (cap_read_drain(iommu->cap))
+ 		dr = 1;
+ 
+-	desc.low = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
++	desc.qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
+ 		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
+-	desc.high = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
++	desc.qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
+ 		| QI_IOTLB_AM(size_order);
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 
+ 	qi_submit_sync(&desc, iommu);
+ }
+@@ -1347,15 +1360,17 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
+ 	if (mask) {
+ 		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
+ 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
+-		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
++		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
+ 	} else
+-		desc.high = QI_DEV_IOTLB_ADDR(addr);
++		desc.qw1 = QI_DEV_IOTLB_ADDR(addr);
+ 
+ 	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
+ 		qdep = 0;
+ 
+-	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
++	desc.qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+ 		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 
+ 	qi_submit_sync(&desc, iommu);
+ }
+@@ -1403,16 +1418,24 @@ static void __dmar_enable_qi(struct intel_iommu *iommu)
+ 	u32 sts;
+ 	unsigned long flags;
+ 	struct q_inval *qi = iommu->qi;
++	u64 val = virt_to_phys(qi->desc);
+ 
+ 	qi->free_head = qi->free_tail = 0;
+ 	qi->free_cnt = QI_LENGTH;
+ 
++	/*
++	 * Set DW=1 and QS=1 in IQA_REG when Scalable Mode capability
++	 * is present.
++	 */
++	if (ecap_smts(iommu->ecap))
++		val |= (1 << 11) | 1;
++
+ 	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+ 
+ 	/* write zero to the tail reg */
+ 	writel(0, iommu->reg + DMAR_IQT_REG);
+ 
+-	dmar_writeq(iommu->reg + DMAR_IQA_REG, virt_to_phys(qi->desc));
++	dmar_writeq(iommu->reg + DMAR_IQA_REG, val);
+ 
+ 	iommu->gcmd |= DMA_GCMD_QIE;
+ 	writel(iommu->gcmd, iommu->reg + DMAR_GCMD_REG);
+@@ -1448,8 +1471,12 @@ int dmar_enable_qi(struct intel_iommu *iommu)
+ 
+ 	qi = iommu->qi;
+ 
+-
+-	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC | __GFP_ZERO, 0);
++	/*
++	 * Need two pages to accommodate 256 descriptors of 256 bits each
++	 * if the remapping hardware supports scalable mode translation.
++	 */
++	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC | __GFP_ZERO,
++				     !!ecap_smts(iommu->ecap));
+ 	if (!desc_page) {
+ 		kfree(qi);
+ 		iommu->qi = NULL;
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 6c0bd9ee9602..a06ed098e928 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -161,27 +161,40 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+ 		 * because that's the only option the hardware gives us. Despite
+ 		 * the fact that they are actually only accessible through one. */
+ 		if (gl)
+-			desc.low = QI_EIOTLB_PASID(svm->pasid) | QI_EIOTLB_DID(sdev->did) |
+-				QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) | QI_EIOTLB_TYPE;
++			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
++					QI_EIOTLB_DID(sdev->did) |
++					QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
++					QI_EIOTLB_TYPE;
+ 		else
+-			desc.low = QI_EIOTLB_PASID(svm->pasid) | QI_EIOTLB_DID(sdev->did) |
+-				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) | QI_EIOTLB_TYPE;
+-		desc.high = 0;
++			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
++					QI_EIOTLB_DID(sdev->did) |
++					QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
++					QI_EIOTLB_TYPE;
++		desc.qw1 = 0;
+ 	} else {
+ 		int mask = ilog2(__roundup_pow_of_two(pages));
+ 
+-		desc.low = QI_EIOTLB_PASID(svm->pasid) | QI_EIOTLB_DID(sdev->did) |
+-			QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) | QI_EIOTLB_TYPE;
+-		desc.high = QI_EIOTLB_ADDR(address) | QI_EIOTLB_GL(gl) |
+-			QI_EIOTLB_IH(ih) | QI_EIOTLB_AM(mask);
++		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
++				QI_EIOTLB_DID(sdev->did) |
++				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
++				QI_EIOTLB_TYPE;
++		desc.qw1 = QI_EIOTLB_ADDR(address) |
++				QI_EIOTLB_GL(gl) |
++				QI_EIOTLB_IH(ih) |
++				QI_EIOTLB_AM(mask);
  	}
-@@ -3467,7 +3437,7 @@ static int __init init_dmars(void)
- 		iommu_flush_write_buffer(iommu);
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 	qi_submit_sync(&desc, svm->iommu);
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
--		if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
-+		if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
- 			ret = intel_svm_enable_prq(iommu);
- 			if (ret)
- 				goto free_iommu;
-@@ -4358,7 +4328,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
- 		goto out;
+ 	if (sdev->dev_iotlb) {
+-		desc.low = QI_DEV_EIOTLB_PASID(svm->pasid) | QI_DEV_EIOTLB_SID(sdev->sid) |
+-			QI_DEV_EIOTLB_QDEP(sdev->qdep) | QI_DEIOTLB_TYPE;
++		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
++				QI_DEV_EIOTLB_SID(sdev->sid) |
++				QI_DEV_EIOTLB_QDEP(sdev->qdep) |
++				QI_DEIOTLB_TYPE;
+ 		if (pages == -1) {
+-			desc.high = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) | QI_DEV_EIOTLB_SIZE;
++			desc.qw1 = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
++					QI_DEV_EIOTLB_SIZE;
+ 		} else if (pages > 1) {
+ 			/* The least significant zero bit indicates the size. So,
+ 			 * for example, an "address" value of 0x12345f000 will
+@@ -189,10 +202,13 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+ 			unsigned long last = address + ((unsigned long)(pages - 1) << VTD_PAGE_SHIFT);
+ 			unsigned long mask = __rounddown_pow_of_two(address ^ last);
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu))
-+	if (pasid_supported(iommu))
- 		intel_svm_init(iommu);
- #endif
+-			desc.high = QI_DEV_EIOTLB_ADDR((address & ~mask) | (mask - 1)) | QI_DEV_EIOTLB_SIZE;
++			desc.qw1 = QI_DEV_EIOTLB_ADDR((address & ~mask) |
++					(mask - 1)) | QI_DEV_EIOTLB_SIZE;
+ 		} else {
+-			desc.high = QI_DEV_EIOTLB_ADDR(address);
++			desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
+ 		}
++		desc.qw2 = 0;
++		desc.qw3 = 0;
+ 		qi_submit_sync(&desc, svm->iommu);
+ 	}
+ }
+@@ -237,8 +253,11 @@ static void intel_flush_pasid_dev(struct intel_svm *svm, struct intel_svm_dev *s
+ {
+ 	struct qi_desc desc;
  
-@@ -4375,7 +4345,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
- 	iommu_flush_write_buffer(iommu);
+-	desc.high = 0;
+-	desc.low = QI_PC_TYPE | QI_PC_DID(sdev->did) | QI_PC_PASID_SEL | QI_PC_PASID(pasid);
++	desc.qw0 = QI_PC_TYPE | QI_PC_DID(sdev->did) |
++			QI_PC_PASID_SEL | QI_PC_PASID(pasid);
++	desc.qw1 = 0;
++	desc.qw2 = 0;
++	desc.qw3 = 0;
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
--	if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
-+	if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
- 		ret = intel_svm_enable_prq(iommu);
- 		if (ret)
- 			goto disable_iommu;
+ 	qi_submit_sync(&desc, svm->iommu);
+ }
+@@ -668,24 +687,27 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 	no_pasid:
+ 		if (req->lpig) {
+ 			/* Page Group Response */
+-			resp.low = QI_PGRP_PASID(req->pasid) |
++			resp.qw0 = QI_PGRP_PASID(req->pasid) |
+ 				QI_PGRP_DID((req->bus << 8) | req->devfn) |
+ 				QI_PGRP_PASID_P(req->pasid_present) |
+ 				QI_PGRP_RESP_TYPE;
+-			resp.high = QI_PGRP_IDX(req->prg_index) |
+-				QI_PGRP_PRIV(req->private) | QI_PGRP_RESP_CODE(result);
+-
+-			qi_submit_sync(&resp, iommu);
++			resp.qw1 = QI_PGRP_IDX(req->prg_index) |
++				QI_PGRP_PRIV(req->private) |
++				QI_PGRP_RESP_CODE(result);
+ 		} else if (req->srr) {
+ 			/* Page Stream Response */
+-			resp.low = QI_PSTRM_IDX(req->prg_index) |
+-				QI_PSTRM_PRIV(req->private) | QI_PSTRM_BUS(req->bus) |
+-				QI_PSTRM_PASID(req->pasid) | QI_PSTRM_RESP_TYPE;
+-			resp.high = QI_PSTRM_ADDR(address) | QI_PSTRM_DEVFN(req->devfn) |
++			resp.qw0 = QI_PSTRM_IDX(req->prg_index) |
++				QI_PSTRM_PRIV(req->private) |
++				QI_PSTRM_BUS(req->bus) |
++				QI_PSTRM_PASID(req->pasid) |
++				QI_PSTRM_RESP_TYPE;
++			resp.qw1 = QI_PSTRM_ADDR(address) |
++				QI_PSTRM_DEVFN(req->devfn) |
+ 				QI_PSTRM_RESP_CODE(result);
+-
+-			qi_submit_sync(&resp, iommu);
+ 		}
++		resp.qw2 = 0;
++		resp.qw3 = 0;
++		qi_submit_sync(&resp, iommu);
+ 
+ 		head = (head + sizeof(*req)) & PRQ_RING_MASK;
+ 	}
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 967450bd421a..916391f33ca6 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -145,9 +145,11 @@ static int qi_flush_iec(struct intel_iommu *iommu, int index, int mask)
+ {
+ 	struct qi_desc desc;
+ 
+-	desc.low = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
++	desc.qw0 = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
+ 		   | QI_IEC_SELECTIVE;
+-	desc.high = 0;
++	desc.qw1 = 0;
++	desc.qw2 = 0;
++	desc.qw3 = 0;
+ 
+ 	return qi_submit_sync(&desc, iommu);
+ }
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 28004d74ae04..2173ae35f1dc 100644
+index 41791903a5e3..72aff482b293 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -115,6 +115,7 @@
-  * Extended Capability Register
-  */
+@@ -340,12 +340,15 @@ enum {
+ #define QI_GRAN_PSI_PASID		3
  
-+#define ecap_smts(e)		(((e) >> 43) & 0x1)
- #define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
- #define ecap_pss(e)		((e >> 35) & 0x1f)
+ struct qi_desc {
+-	u64 low, high;
++	u64 qw0;
++	u64 qw1;
++	u64 qw2;
++	u64 qw3;
+ };
+ 
+ struct q_inval {
+ 	raw_spinlock_t  q_lock;
+-	struct qi_desc  *desc;          /* invalidation queue */
++	void		*desc;          /* invalidation queue */
+ 	int             *desc_status;   /* desc status */
+ 	int             free_head;      /* first free entry */
+ 	int             free_tail;      /* last free entry */
 -- 
 2.17.1
 
