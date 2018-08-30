@@ -2,95 +2,71 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD3AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A95EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB1A20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB1A20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3154520658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:58:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D9xCIRrF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3154520658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeH3WCA (ORCPT
+        id S1727459AbeH3WCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:02:00 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45764 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbeH3WB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:01:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 10:58:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="69138882"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by orsmga007.jf.intel.com with ESMTP; 30 Aug 2018 10:58:40 -0700
-Message-ID: <1535651666.27823.6.camel@intel.com>
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Jann Horn <jannh@google.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Date:   Thu, 30 Aug 2018 10:54:26 -0700
-In-Reply-To: <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-         <20180830143904.3168-13-yu-cheng.yu@intel.com>
-         <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com>
-         <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com>
-         <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com>
-         <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
-         <1535649960.26689.15.camel@intel.com>
-         <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 30 Aug 2018 18:02:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbeH3WCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:02:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EBUFnwD8kacWjqjblNy+M7GLSXKKVzmhQiKQKuCF+vY=; b=D9xCIRrFS1M4mbTk1Vqw08S7W
+        w3EB/z8ClBs33+ei4yAPQxL0Go0vh1vupHujsVSGjtkzQXKxvjQzZgI5McqJsxCulBX1pQz2macFP
+        3TOEDDkHsV8gyvxIgF++W+S9UjYMaaFLzedqkzZ+8oad5lCUOffbCoNlvEEYrmCaFa2uczK/+ZcUj
+        exlv9CVl9wXib9myb8hGUHx76gC/i1insSAo6IUG/LbNVzo60r6r36tXt0ImsjX83eyARgTChAnkF
+        tah7sRxFp7eUfETjKW/s4pcI0LBSPJhFkVIo4Mqp3fvVXNeZRkieMdwpSRuRGfp2rIaLGgvBlq1nT
+        BXvbRn7xA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvRDW-0004iS-Fk; Thu, 30 Aug 2018 17:58:50 +0000
+Date:   Thu, 30 Aug 2018 10:58:50 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "Matwey V . Kornilov" <matwey@sai.msu.ru>,
+        Alan Stern <stern@rowland.harvard.edu>, kernel@collabora.com,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Subject: Re: [RFC 2/3] USB: core: Add non-coherent buffer allocation helpers
+Message-ID: <20180830175850.GA11521@infradead.org>
+References: <20180830172030.23344-1-ezequiel@collabora.com>
+ <20180830172030.23344-3-ezequiel@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830172030.23344-3-ezequiel@collabora.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 10:33 -0700, Dave Hansen wrote:
-> On 08/30/2018 10:26 AM, Yu-cheng Yu wrote:
-> > 
-> > We don't have the guard page now, but there is a shadow stack
-> > token
-> > there, which cannot be used as a return address.
-> The overall concern is that we could overflow into a page that we
-> did
-> not intend.  Either another actual shadow stack or something that a
-> page
-> that the attacker constructed, like the transient scenario Jann
-> described.
-> 
-
-A task could go beyond the bottom of its shadow stack by doing either
-'ret' or 'incssp'.  If it is the 'ret' case, the token prevents it.
- If it is the 'incssp' case, a guard page cannot prevent it entirely,
-right?
-
-Yu-cheng
+Please don't introduce new DMA_ATTR_NON_CONSISTENT users, it is
+a rather horrible interface, and I plan to kill it off rather sooner
+than later.  I plan to post some patches for a better interface
+that can reuse the normal dma_sync_single_* interfaces for ownership
+transfers.  I can happily include usb in that initial patch set based
+on your work here if that helps.
