@@ -2,126 +2,96 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711DBC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3927C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18D6520658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD1020658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 16:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J8ojznWC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18D6520658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="YfHc5/My"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD1020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeH3UNh (ORCPT
+        id S1727475AbeH3UOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 16:13:37 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33350 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbeH3UNh (ORCPT
+        Thu, 30 Aug 2018 16:14:17 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:17569 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeH3UOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 16:13:37 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 8-v6so16435944oip.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 09:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rEnUc164i2YQATkUF5pJh5O66ueEUTaHFCxCD73D8Jg=;
-        b=J8ojznWClrn8oTylP5Txwv9bjszqQ8Knvl0cpXwgslSTwBLS2mPofSc8kgD8f5/OC/
-         Kl4IyKNNbIp9KXPhFZWt3QWtLRPjZ797GkL82J7IeszItAr68mJYnmush16u6/bdb1kS
-         C9uGBRCHt8FahA/8xs9KC6dL9eEMDOjZ7Q84qqEaIzZLYtZ6tLqzsTISgDLLmQ3aNBoq
-         oN5alxD/0ADmuqyt/1u10JpZI0P//MLOXlhTuXCIuulk7p/tXcNTbUKXVVPPYgRD+D01
-         X+cIRjyRbntk5DSGPRy6QnBoIWJqOHJRSOYQ7yYlDMokHXdUw7zEjfs34QtClT1xbJAQ
-         6bWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rEnUc164i2YQATkUF5pJh5O66ueEUTaHFCxCD73D8Jg=;
-        b=JVyZ0RAWZfBUcsjhWD52MUxcvCgQFA23y3LD7X9uSQz+/gwMu3sYc+b69ViY/L8lzR
-         MuEE/7l+9OO8BpN2TXfqBuQDlsGw9glu9VcXtkDNY0quyrPoueSjjwlz6PazSRXYDX7S
-         MqvYiQE2d9WBunxDOZFHLc9ELN05L1o3oW9Yhn6Z76IrLntfjmEY8mDt6Bp7PSwdupfI
-         Ha2z2Mjhb/RqQ5WT+ut5dqlW3EYFEaS74qKhyn8OCwwVMSChgl/2b2z73tzVJNe6fO7N
-         WC066l7S8M0JqZMJZqXQFmgZfcxyAe6i2lCTFZl1SU7BG48SiGtbq5Fs2mtScOSnFM8m
-         xU8w==
-X-Gm-Message-State: APzg51Ak0R8nT1lVjoHZWaHSLpmbgBUMUPAZoYYiZiuu46uep3pEY1o7
-        LpxkdFV098z+XTfX5SxeMh2s8hCSek12+LNKY53nvQ==
-X-Google-Smtp-Source: ANB0VdZbACM6vTzySATDxA1muRGssX6eJhuzY9/ax1ixwNqUdDwvp/ouITAoJp4R43xKg+1iIESKkK21Yl19OB97JCI=
-X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr3280022oif.348.1535645444133;
- Thu, 30 Aug 2018 09:10:44 -0700 (PDT)
+        Thu, 30 Aug 2018 16:14:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1535645485; x=1567181485;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=UsFHpu4yAhoGXgR4kvN0CxQ5g8NoPJQROJxiFaGgf+s=;
+  b=YfHc5/My+4d59EOYYFY3jVzIqHo0fTPozzwv8HJvRnH0XfdXhbheO2LD
+   ZzXf3oN+qAYQxr/6KgUO2Sp4ArJFivywEz/BUHBji6KKoCjGIP9GrLYrA
+   +qGdiZbuReaQGYD2d9NT7aVPpG17ASGUJCyztaOXWrZzU2psyM/E57G72
+   v3KEiYq5X9uN4+wMfcBYSZz+WgEX8hxAolm+UlaZs33AX0eex+YuVcuV5
+   4JZ5HTfG3Skr4HGvi8y+fFcHIwIhj8QXLgmfCjliGkAImUFRtFsbMn2z3
+   4Z25Y+HiPa851IO/qT+kvJkUqI4GNpNt86FgXEnxatAgBNON7ud664mSz
+   g==;
+X-IronPort-AV: E=Sophos;i="5.53,307,1531756800"; 
+   d="scan'208";a="89668618"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 31 Aug 2018 00:11:14 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 30 Aug 2018 08:58:17 -0700
+Received: from lpt-kim-271.ad.shared (HELO [10.86.62.101]) ([10.86.62.101])
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Aug 2018 09:11:12 -0700
+Subject: Re: [PATCH 5/8] RISC-V: Rename im_okay_therefore_i_am to
+ found_boot_cpu
+To:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
+        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+References: <20180827184243.25344-1-palmer@sifive.com>
+ <20180827184243.25344-6-palmer@sifive.com>
+ <20180830144118.GA27233@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <30229ef5-ce4e-e78b-32f9-7c563f63827b@wdc.com>
+Date:   Thu, 30 Aug 2018 09:11:11 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-19-yu-cheng.yu@intel.com>
-In-Reply-To: <20180830143904.3168-19-yu-cheng.yu@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 30 Aug 2018 18:10:17 +0200
-Message-ID: <CAG48ez0d8+E_O-9u6ZHZ6dQO55Ui2ydV_kia-EEhyYeB_w4r2g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 18/24] x86/cet/shstk: User-mode shadow stack support
-To:     yu-cheng.yu@intel.com
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180830144118.GA27233@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 4:44 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> This patch adds basic shadow stack enabling/disabling routines.
-> A task's shadow stack is allocated from memory with VM_SHSTK
-> flag set and read-only protection.  The shadow stack is
-> allocated to a fixed size of RLIMIT_STACK.
->
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-[...]
-> +static int set_shstk_ptr(unsigned long addr)
-> +{
-> +       u64 r;
-> +
-> +       if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> +               return -1;
-> +
-> +       if ((addr >= TASK_SIZE_MAX) || (!IS_ALIGNED(addr, 4)))
-> +               return -1;
-> +
-> +       rdmsrl(MSR_IA32_U_CET, r);
-> +       wrmsrl(MSR_IA32_PL3_SSP, addr);
-> +       wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
-> +       return 0;
-> +}
+On 8/30/18 7:41 AM, Christoph Hellwig wrote:
+>>   	struct device_node *dn = NULL;
+>> -	int hart, im_okay_therefore_i_am = 0;
+>> +	int hart, found_boot_cpu = 0;
+> 
+> If you rename this anyway please switch to use a bool.
+> 
 
-Here's a really stupid question: Where is the logic for switching
-those MSRs on task switch? MSR_IA32_PL3_SSP contains a userspace
-pointer, so it has to be switched on task switch, right? I'm sure I'm
-missing something obvious, but grepping for places that set
-MSR_IA32_PL3_SSP to nonzero values through the entire patchset, I only
-see set_shstk_ptr(), which is called from:
+I can address the comment on this patch and fold it in my series to 
+avoid unnecessary conflict.
 
- - cet_setup_shstk() (called from arch_setup_features(), which is
-called from load_elf_binary())
- - cet_restore_signal() (called on signal handler return)
- - cet_setup_signal() (called from signal handling code)
+@Palmer: You can drop this patch.
+
+Regards,
+Atish
