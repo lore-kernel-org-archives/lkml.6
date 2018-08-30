@@ -2,80 +2,125 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A799C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCDFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C772082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:49:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C772082C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A36D320645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36D320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbeH3Qvy (ORCPT
+        id S1728917AbeH3Qwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:51:54 -0400
-Received: from smtprelay0179.hostedemail.com ([216.40.44.179]:37135 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728713AbeH3Qvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:51:54 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 9DBF21801ABF2;
-        Thu, 30 Aug 2018 12:49:53 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: blade11_3918e9aa5bf2b
-X-Filterd-Recvd-Size: 1901
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 30 Aug 2018 12:49:52 +0000 (UTC)
-Message-ID: <a735448b2e7b5b24079a4b6cfc6a3612996484f2.camel@perches.com>
-Subject: Re: [PATCH] staging:fwserial:Fix parentheses alignment in fwserial.c
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Nicholas Krause <xerofoify@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org
-Date:   Thu, 30 Aug 2018 05:49:51 -0700
-In-Reply-To: <20180830082808.ylputgri7oit7jvo@mwanda>
-References: <20180829220326.7447-1-xerofoify@gmail.com>
-         <20180830082808.ylputgri7oit7jvo@mwanda>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 30 Aug 2018 12:52:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:41336 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728713AbeH3Qwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:52:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD47C7A9;
+        Thu, 30 Aug 2018 05:50:37 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B80023F557;
+        Thu, 30 Aug 2018 05:50:33 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 13:50:31 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 05/14] sched/topology: Reference the Energy Model of
+ CPUs when available
+Message-ID: <20180830125031.GV2960@e110439-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-6-quentin.perret@arm.com>
+ <20180829162238.GQ2960@e110439-lin>
+ <20180829165603.astg32z3ep2qldfu@queper01-lin>
+ <20180830100019.GT2960@e110439-lin>
+ <20180830104718.lvkkhyi3dtwkfjr7@queper01-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830104718.lvkkhyi3dtwkfjr7@queper01-lin>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 11:28 +0300, Dan Carpenter wrote:
-> On Wed, Aug 29, 2018 at 06:03:26PM -0400, Nicholas Krause wrote:
-> > Fix a checkpatch warning for the file, fwserial.c that warns about
-> > alignment between parentheses and the line belows code not being
-> > properly aligned with each other.
-> > 
-> > Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-
-Nick Krause?
-
-I wonder if after 4 years he has improved.
-
-> > diff --git a/drivers/staging/fwserial/fwserial.c b/drivers/staging/fwserial/fwserial.c
-[]
-> > @@ -1328,7 +1328,7 @@ static int fwtty_break_ctl(struct tty_struct *tty, int state)
-> >  	if (state == -1) {
-> >  		set_bit(STOP_TX, &port->flags);
-> >  		ret = wait_event_interruptible_timeout(port->wait_tx,
-> > -					       !test_bit(IN_TX, &port->flags),
-> > +						       !test_bit(IN_TX, &port->flags),
-> >  					       10);
+On 30-Aug 11:47, Quentin Perret wrote:
+> On Thursday 30 Aug 2018 at 11:00:20 (+0100), Patrick Bellasi wrote:
+> > Dunno... but, in any case, probably we don't care about using EAS until
+> > the boot complete, isn't it?
 > 
-> Now it goes over 80 characters and the "10);" isn't aligned properly.
-> The original is fine.
+> So, as of now, EAS will typically start soon after CPUFreq. I don't see a
+> point in starting before, and I'm not sure if starting it later is
+> really what we want either ... It probably makes sense to start the
+> DVFS-related features (CPUFreq, EAS, ...) together.
+> 
+> > Just to better understand, what is the most common activation path we expect ?
+> > 
+> >   1. system boot
+> >   2. CPUs online
+> >   3. CPUFreq initialization
+> >   4. EM registered
+> >   X. ???
+> 
+> X is sort of arch dependent (like the EM registration actually). For
+> arm/arm64, the arch topology driver (see drivers/base/arch_topology.c)
+> will rebuild the sched_domains once the capacities of CPU are
+> discovered. In previous versions, I had a patch that did that explicitly:
+> 
+> https://lore.kernel.org/lkml/20180724122521.22109-14-quentin.perret@arm.com/
+> 
+> However, I dropped this patch for v6 because I rebased the series on top
+> of Morten's automatic flag detection patches, which happen to already do
+> that for me. More precisely, Morten's patches will rebuild the sched
+> domains if the SD_ASYM_CPUCAPACITY flag needs to be set somewhere in the
+> hierarchy. EAS depends on this flag anyway, so I guess it's fine to rely
+> on this rebuild to start EAS at the same time.
+> 
+> I have been wondering for a while if such a 'loose' way of starting EAS
+> was alright or not. My conclusion was that it should be OK for now,
+> because that should suit all the users I can see in the short/medium
+> term. An alternative could be to introduce something like a notifier in
+> the EM framework in order to let other subsystems know that the EM is
+> complete or something along those lines. And then we could register a
+> callback on this notifier to rebuild the sched_domains. But that's added
+> complexity, which isn't really needed (yet). If that needs to be done to
+> accomodate the needs of new users/archs, we can still implement that
+> later :-)
+> 
+> >   N. partition_sched_domains
+> >         build_perf_domains
+> > 
+> > IOW, who do we expect to call build_perf_domains for the first time ?
+> 
+> On arm/arm64, when the arch_topology driver calls rebuild_sched_domains.
 
-Perhaps not.
+Great, I missed that point, which you actually call out in the cover
+letter. Thanks also for the more comprehensive explanation above!
 
+> Thanks !
+> Quentin
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
