@@ -2,83 +2,98 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA6CC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3447DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB70620835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:48:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmC2MrW6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB70620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D450D20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:50:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D450D20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeH3Xw3 (ORCPT
+        id S1727395AbeH3Xye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:52:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbeH3Xw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:52:29 -0400
-Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 734D620835;
-        Thu, 30 Aug 2018 19:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535658522;
-        bh=dvXcfjB+pVfG66yrRH0xI+DG7Hnf7VlOAIQfpSMyThY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VmC2MrW6BxRzgbOfk3+LYdn2Kw+1bUAarxJcUEdeYdgLp9y0st7A4XvnTn4OlV37V
-         1qTU4/r6jNiuI00sLMPvMGHjY6xkFcA4ue+qAw5ZuIRhVltgXzXupf61nL0zYpTTHB
-         VnowZfEApG+2SrI6fpmpVPpB175XKVPWcF1XcPuE=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] lib/parser.c: switch match_u64int() over to use match_strdup()
-Date:   Thu, 30 Aug 2018 12:48:14 -0700
-Message-Id: <20180830194814.192880-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
+        Thu, 30 Aug 2018 19:54:34 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48674 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726959AbeH3Xye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 19:54:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F4D17A9;
+        Thu, 30 Aug 2018 12:50:46 -0700 (PDT)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC5B53F5BC;
+        Thu, 30 Aug 2018 12:50:45 -0700 (PDT)
+Subject: Re: [PATCH 2/8] RISC-V: Don't set
+ cacheinfo.{physical_line_partition,attributes}
+To:     Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org
+Cc:     aou@eecs.berkeley.edu, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        atish.patra@wdc.com, dmitriy@oss-tech.org, catalin.marinas@arm.com,
+        ard.biesheuvel@linaro.org, Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20180827184243.25344-1-palmer@sifive.com>
+ <20180827184243.25344-3-palmer@sifive.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <fe5ba627-ab8a-79b1-a46a-1d7213707684@arm.com>
+Date:   Thu, 30 Aug 2018 14:50:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180827184243.25344-3-palmer@sifive.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hi,
 
-This simplifies the code.  No change in behavior.
+On 08/27/2018 01:42 PM, Palmer Dabbelt wrote:
+> These are just hard coded in the RISC-V port, which doesn't make any
+> sense.  We should probably be setting these from device tree entries
+> when they exist, but for now I think it's saner to just leave them all
+> as their default values.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- lib/parser.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Default value here means unset and not visible in /sys.
 
-diff --git a/lib/parser.c b/lib/parser.c
-index 96656a6dd59b..dd70e5e6c9e2 100644
---- a/lib/parser.c
-+++ b/lib/parser.c
-@@ -163,13 +163,10 @@ static int match_u64int(substring_t *s, u64 *result, int base)
- 	char *buf;
- 	int ret;
- 	u64 val;
--	size_t len = s->to - s->from;
- 
--	buf = kmalloc(len + 1, GFP_KERNEL);
-+	buf = match_strdup(s);
- 	if (!buf)
- 		return -ENOMEM;
--	memcpy(buf, s->from, len);
--	buf[len] = '\0';
- 
- 	ret = kstrtoull(buf, base, &val);
- 	if (!ret)
--- 
-2.19.0.rc0.228.g281dcd1b4d0-goog
+Which looks fine to me.
+
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+
+Thanks,
+
+
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> ---
+>   arch/riscv/kernel/cacheinfo.c | 7 -------
+>   1 file changed, 7 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+> index 0bc86e5f8f3f..cb35ffd8ec6b 100644
+> --- a/arch/riscv/kernel/cacheinfo.c
+> +++ b/arch/riscv/kernel/cacheinfo.c
+> @@ -22,13 +22,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+>   {
+>   	this_leaf->level = level;
+>   	this_leaf->type = type;
+> -	/* not a sector cache */
+> -	this_leaf->physical_line_partition = 1;
+> -	/* TODO: Add to DTS */
+> -	this_leaf->attributes =
+> -		CACHE_WRITE_BACK
+> -		| CACHE_READ_ALLOCATE
+> -		| CACHE_WRITE_ALLOCATE;
+>   }
+>   
+>   static int __init_cache_level(unsigned int cpu)
+> 
+
 
