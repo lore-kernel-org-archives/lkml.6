@@ -2,259 +2,184 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BF9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19048C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C54A20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C54A20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B9CDF20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UU9ObnT8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CDF20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeH3Tmj (ORCPT
+        id S1727389AbeH3Tmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:42:39 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40425 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbeH3Tmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:42:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 08:39:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="258532279"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by fmsmga005.fm.intel.com with ESMTP; 30 Aug 2018 08:39:50 -0700
-Subject: Re: [lkp-robot] [mm] 15d36fecd0:
- WARNING:at_kernel/memremap.c:#devm_memremap_pages
-To:     Rong Chen <rong.a.chen@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Robert Elliott <elliott@hpe.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-References: <20180823030558.GE13343@shao2-debian>
- <e358a00a-5981-97e3-2cec-4beab9064267@intel.com>
- <6c1eb1c3-a46e-8bc8-3647-b4e02d674cc6@intel.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
- 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
- o6nmKbYpUAltQObU2w==
-Message-ID: <40f58aed-f435-8a64-c78c-45dc59e3b769@intel.com>
-Date:   Thu, 30 Aug 2018 08:39:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 15:42:44 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40941 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbeH3Tmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:42:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s13-v6so4053330pfi.7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=1UnD9TybNYX87ySsJYQrH8NIUHrrgNSEGob1qymno8A=;
+        b=UU9ObnT8L4/L/fk8rV0DtnhOJEyfFK27LzVGjW2qDcyltNsE16kZxprXeijreMbsps
+         QjbOuaXwTsaFLpY7p16P3Ed/0qWEIGvvuFOKeNGa83cWzXosjo3lix+MnXR73pSsZ/N8
+         6D67LMCfblqYqNyhckTYN+v4M2DHnqOoWG1GP1G1QSb/JV6yBpF6RGjqJfJ7NkP0lub8
+         dZhm5TxVZ4BFJ7gNl1qVU8XUtXqSG4X5IDbyp1Ym0xEiGb0OoWxRL7d4Ihx+m6HFg7lT
+         RuuCJrRyg3M1GXk5ASwPpuLY1PqIA2e1jzWGB1dyDHuY89EvAp+UjYb6vQ71zUpJ31VA
+         XhMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1UnD9TybNYX87ySsJYQrH8NIUHrrgNSEGob1qymno8A=;
+        b=rN3i8xVgBp+eIA1kUGAZnbbMqEs+zwL3NzZKQo66XTIuH+c3X1xYeSbI73wN9b8wiq
+         qIeVGE8e0MitdeFe9DEs5ypPYHk8j5BZRMr2lPrOZXvXTDIKYF2QK8V5W5VkXGXXzCz/
+         dipXvMFdbPDuZa9WrUHJ09ecPpnem79nPpySkRgq/hF8LvvxTwEPEY0Hl5WSI4uAQqgX
+         a/CK+cm+dJJOAa3rTdKzvIQuCvHwSL7xBv1fHdTqiAav+EtUA/xnepbAq5bZxEHPcGN5
+         +E12NINn842fD5THoMlAYDN2t7n57+DynWQX7+VZI6QJdyJ83H0QEf2HUDQoKejwtJpz
+         Zqug==
+X-Gm-Message-State: APzg51C80KKkCEopI69sF5Qjlm3rlbCm5N73Sgk81bucUfZN4RAjQT+A
+        QNgIAvqaEBTJYSwraj+KG6LZ6IVUhH/EMRHxV/7Kkw==
+X-Google-Smtp-Source: ANB0VdalHRXG4kf7Fwr0DDXtcr7mctGrroUXk3GAR5v6EFgwliOBF+TTaq84JUcjX8/xNL0P27W19LjUo68J3FzdyFM=
+X-Received: by 2002:a63:4702:: with SMTP id u2-v6mr9895480pga.95.1535643598667;
+ Thu, 30 Aug 2018 08:39:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <6c1eb1c3-a46e-8bc8-3647-b4e02d674cc6@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 30 Aug 2018 08:39:38
+ -0700 (PDT)
+In-Reply-To: <0000000000003b1c360574a8c31e@google.com>
+References: <0000000000003b1c360574a8c31e@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 30 Aug 2018 08:39:38 -0700
+Message-ID: <CACT4Y+Yuwcm9N-_QwyPzj==xFUuziW24eQzw318Y=VKXQ=8_nw@mail.gmail.com>
+Subject: Re: WARNING in handle_irq (3)
+To:     syzbot <syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, nstange@suse.de,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/2018 02:22 AM, Rong Chen wrote:
-> 
-> 
-> On 08/24/2018 12:55 AM, Dave Jiang wrote:
->> I am not able to reproduce when I booted my test system with "mem=8G
->> memmap=4G!8G". I ended up with a single pmem:
-> The issue seems to be related to specific machines,
-> If you need any other debug log, please tell me.
+On Thu, Aug 30, 2018 at 8:31 AM, syzbot
+<syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    58c3f14f86c9 Merge tag 'riscv-for-linus-4.19-rc2' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10be176a400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a58b558e3e62d0604e5c
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
 
-I'm not so sure it's a valid test as no real pmem would be broken up in
-weird size like this. This is the side effect of using memmap to create
-fake pmem. And I think the patch did it's job by warning and refusing to
-create the conflicting region. We do plan to eventually fix this so
-regions reside within the section can be done.
++bpf maintainers
 
-> 
-> Best Regards,
-> Rong Chen
-> 
->> [   57.750556] nd_pmem namespace0.0: unable to guarantee persistence of
->> writes
->> [   57.881573] pmem0: detected capacity change from 0 to 4294967296
->>
->> However in the reported kmsg, it appears that memmap is splitting into 2
->> namespaces rather than providing a single one, and the first region
->> ended up ending in the same section as start of the second region and
->> thus triggered the warning and having the second namespace rejected.
->>
->> kern  :warn  : [   76.646531] nd_pmem namespace0.0: unable to guarantee
->> persistence of writes
->> kern  :info  : [   76.661660] pmem0: detected capacity change from 0 to
->> 534773760
->> kern  :warn  : [   76.670129] nd_pmem namespace1.0: unable to guarantee
->> persistence of writes
->> kern  :warn  : [   76.670290] ------------[ cut here ]------------
->> kern  :warn  : [   76.670372] nd_pmem namespace1.0: Conflicting mapping
->> in same section
->>
->>
->> On 08/22/2018 08:05 PM, kernel test robot wrote:
->>> FYI, we noticed the following commit (built with gcc-7):
->>>
->>> commit: 15d36fecd0bdc7510b70a0e5ec6671140b3fce0c ("mm: disallow
->>> mappings that conflict for devm_memremap_pages()")
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git  master
->>>
->>> in testcase: ndctl
->>> with following parameters:
->>>
->>>
->>>
->>>
->>> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz
->>> with 8G memory
->>>
->>> caused below changes (please refer to attached dmesg/kmsg for entire
->>> log/backtrace):
->>>
->>>
->>> +----------------+------------+------------+
->>> |                | 03758dbbe2 | 15d36fecd0 |
->>> +----------------+------------+------------+
->>> | boot_successes | 4          | 4          |
->>> +----------------+------------+------------+
->>>
->>>
->>>
->>> kern  :warn  : [   76.670496] WARNING: CPU: 2 PID: 213 at
->>> kernel/memremap.c:188 devm_memremap_pages+0x9f/0x470
->>> kern  :warn  : [   76.670665] Modules linked in: nd_pmem(O+)
->>> dax_pmem(O) device_dax(O) nd_btt(O) x86_pkg_temp_thermal
->>> intel_powerclamp coretemp snd_hda_codec_idt kvm_intel
->>> snd_hda_codec_generic kvm irqbypass crct10dif_pclmul crc32_pclmul
->>> crc32c_intel ghash_clmulni_intel cryptd nd_e820(O) pcspkr
->>> libnvdimm(O) ahci libahci nfit_test_iomap(O) libata snd_hda_intel
->>> i915 snd_hda_codec snd_hda_core snd_hwdep snd_pcm drm_kms_helper
->>> snd_timer syscopyarea sysfillrect sysimgblt fb_sys_fops snd soundcore
->>> drm video pcc_cpufreq ip_tables
->>> kern  :warn  : [   76.671408] CPU: 2 PID: 213 Comm: systemd-udevd
->>> Tainted: G           O      4.18.0-rc6-00155-g15d36fe #1
->>> kern  :warn  : [   76.671564] Hardware name: Hewlett-Packard
->>> p6-1451cx/2ADA, BIOS 8.15 02/05/2013
->>> kern  :warn  : [   76.671690] RIP: 0010:devm_memremap_pages+0x9f/0x470
->>> kern  :warn  : [   76.671774] Code: c6 74 78 49 8b 5f 50 48 85 db 75
->>> 04 49 8b 5f 10 4c 89 ff e8 13 77 42 00 48 89 da 48 89 c6 48 c7 c7 a8
->>> 62 0e 82 e8 51 8c eb ff <0f> 0b 49 8b be 80 00 00 00 65 ff 05 f1 59
->>> e4 7e 48 8b 47 08 a8 03
->>> kern  :warn  : [   76.672107] RSP: 0018:ffffc9000125fad8 EFLAGS:
->>> 00010282
->>> kern  :warn  : [   76.672197] RAX: 0000000000000000 RBX:
->>> ffff8801a969e310 RCX: 0000000000000006
->>> kern  :warn  : [   76.672316] RDX: 0000000000000007 RSI:
->>> 0000000000000086 RDI: ffff8801ffd16950
->>> kern  :warn  : [   76.672434] RBP: ffff8801a98030a0 R08:
->>> 000000000000036e R09: 000000000000000a
->>> kern  :warn  : [   76.672555] R10: 0000000000000000 R11:
->>> ffffffff82d6434d R12: 00000002ffffffff
->>> kern  :warn  : [   76.672673] R13: 0000000000000000 R14:
->>> ffff8801a98024a0 R15: ffff8801aae09808
->>> kern  :warn  : [   76.672793] FS:  00007fae9129e8c0(0000)
->>> GS:ffff8801ffd00000(0000) knlGS:0000000000000000
->>> kern  :warn  : [   76.672929] CS:  0010 DS: 0000 ES: 0000 CR0:
->>> 0000000080050033
->>> kern  :warn  : [   76.673026] CR2: 00007fae9127ec28 CR3:
->>> 00000001aafe8003 CR4: 00000000001606e0
->>> kern  :warn  : [   76.673145] Call Trace:
->>> kern  :warn  : [   76.673199]  ? devres_add+0x2f/0x40
->>> kern  :warn  : [   76.673266]  pmem_attach_disk+0x542/0x6a0 [nd_pmem]
->>> kern  :warn  : [   76.673354]  ? kobject_release+0x69/0x1a0
->>> kern  :warn  : [   76.673431]  ? nd_dax_probe+0xfc/0x120 [libnvdimm]
->>> kern  :warn  : [   76.673520]  nvdimm_bus_probe+0x69/0x150 [libnvdimm]
->>> kern  :warn  : [   76.673608]  driver_probe_device+0x2fa/0x470
->>> kern  :warn  : [   76.673685]  __driver_attach+0xdc/0x100
->>> kern  :warn  : [   76.673753]  ? driver_probe_device+0x470/0x470
->>> kern  :warn  : [   76.673831]  bus_for_each_dev+0x76/0xc0
->>> kern  :warn  : [   76.673900]  ? klist_add_tail+0x3b/0x70
->>> kern  :warn  : [   76.673968]  bus_add_driver+0x161/0x260
->>> kern  :warn  : [   76.674035]  ? 0xffffffffa0504000
->>> kern  :warn  : [   76.674096]  driver_register+0x5b/0xe0
->>> kern  :warn  : [   76.674162]  ? 0xffffffffa0504000
->>> kern  :warn  : [   76.674223]  do_one_initcall+0x46/0x1e4
->>> kern  :warn  : [   76.674293]  ? preempt_schedule_common+0x15/0x30
->>> kern  :warn  : [   76.674373]  ? _cond_resched+0x22/0x30
->>> kern  :warn  : [   76.674442]  ? kmem_cache_alloc_trace+0x3e/0x1e0
->>> kern  :warn  : [   76.674525]  do_init_module+0x5b/0x203
->>> kern  :warn  : [   76.674593]  load_module+0x1489/0x1b80
->>> kern  :warn  : [   76.674662]  ? ima_post_read_file+0x102/0x110
->>> kern  :warn  : [   76.674741]  ? __do_sys_finit_module+0xe9/0x110
->>> kern  :warn  : [   76.674820]  __do_sys_finit_module+0xe9/0x110
->>> kern  :warn  : [   76.674901]  do_syscall_64+0x5b/0x180
->>> kern  :warn  : [   76.674967]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>> kern  :warn  : [   76.675055] RIP: 0033:0x7fae9011b229
->>> kern  :warn  : [   76.675116] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00
->>> 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89
->>> c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3f 4c
->>> 2b 00 f7 d8 64 89 01 48
->>> kern  :warn  : [   76.675449] RSP: 002b:00007ffeb0452908 EFLAGS:
->>> 00000246 ORIG_RAX: 0000000000000139
->>> kern  :warn  : [   76.675576] RAX: ffffffffffffffda RBX:
->>> 0000557dd7cccdf0 RCX: 00007fae9011b229
->>> kern  :warn  : [   76.675696] RDX: 0000000000000000 RSI:
->>> 00007fae90a34265 RDI: 000000000000000f
->>> kern  :warn  : [   76.675814] RBP: 00007fae90a34265 R08:
->>> 0000000000000000 R09: 00007ffeb0452e80
->>> kern  :warn  : [   76.675934] R10: 000000000000000f R11:
->>> 0000000000000246 R12: 0000000000000000
->>> kern  :warn  : [   76.676053] R13: 0000557dd7cde3c0 R14:
->>> 0000000000020000 R15: 0000557dd5d7dcbc
->>> kern  :warn  : [   76.676175] ---[ end trace 72888cbe8943c229 ]---
->>>
->>>
->>> To reproduce:
->>>
->>>          git clonehttps://github.com/intel/lkp-tests.git
->>>          cd lkp-tests
->>>          bin/lkp install job.yaml  # job file is attached in this email
->>>          bin/lkp run     job.yaml
->>>
->>>
->>>
->>> Thanks,
->>> lkp
->>>
-> 
+Looks suspiciously similar to:
+https://groups.google.com/d/msg/syzkaller-bugs/4v7MtbIT1hY/A87hInzyAwAJ
+
+Note this commit seems to already have "bpf, sockmap: fix
+sock_hash_alloc and reject zero-sized keys ".
+
+Tentative reproducer from the log is:
+
+14:08:59 executing program 5:
+socketpair(0x20000, 0x0, 0x0, &(0x7f0000000140))
+r0 = socket$inet6_tcp(0xa, 0x1, 0x0)
+r1 = socket$inet6_tcp(0xa, 0x1, 0x0)
+bind$inet6(r1, &(0x7f00000000c0)={0xa, 0x4e22}, 0x1c)
+listen(r1, 0x0)
+sendto$inet6(r0, &(0x7f0000000140), 0x2d6, 0x20000004,
+&(0x7f0000000080)={0xa, 0x100000004e22, 0x0, @loopback}, 0x1c)
+setsockopt$inet6_tcp_TCP_ULP(r0, 0x6, 0x1f, &(0x7f0000000080)='tls\x00', 0x152)
+r2 = bpf$MAP_CREATE(0x0, &(0x7f0000000280)={0xf, 0x4, 0x4, 0x70}, 0x2c)
+bpf$MAP_UPDATE_ELEM(0x2, &(0x7f0000000180)={r2, &(0x7f0000000000),
+&(0x7f0000000140)}, 0x20)
+
+Which does not create a 0-key map.
+
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a58b558e3e62d0604e5c@syzkaller.appspotmail.com
+>
+> TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending
+> cookies.  Check SNMP counters.
+> ------------[ cut here ]------------
+> do_IRQ(): syz-executor5 has overflown the kernel stack
+> (cur:ffff88018aec0000,sp:ffff88018aeb0e18,irq stk
+> top-bottom:ffff8801db000080-ffff8801db008000,exception stk
+> top-bottom:fffffe0000007080-fffffe0000011000,ip:lock_is_held_type+0x18b/0x210)
+> WARNING: CPU: 0 PID: 13805 at arch/x86/kernel/irq_64.c:64
+> stack_overflow_check arch/x86/kernel/irq_64.c:61 [inline]
+> WARNING: CPU: 0 PID: 13805 at arch/x86/kernel/irq_64.c:64
+> handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:73
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 0 PID: 13805 Comm: syz-executor5 Not tainted 4.19.0-rc1+ #215
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>  panic+0x238/0x4e7 kernel/panic.c:184
+>  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+>  report_bug+0x252/0x2d0 lib/bug.c:186
+>  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+> RIP: 0010:stack_overflow_check arch/x86/kernel/irq_64.c:61 [inline]
+> RIP: 0010:handle_irq+0x1fb/0x2e7 arch/x86/kernel/irq_64.c:73
+> Code: 00 00 ff b6 80 00 00 00 48 c7 c7 80 ca 24 87 41 54 41 55 65 48 8b 04
+> 25 40 ee 01 00 48 05 68 06 00 00 48 89 c6 e8 95 c4 1c 00 <0f> 0b 48 83 c4 18
+> e9 3f ff ff ff 48 89 75 e0 e8 c1 fe 90 00 48 8b
+> RSP: 0018:ffff8801db007f58 EFLAGS: 00010082
+> RAX: 0000000000000000 RBX: ffff8801cee0ad80 RCX: 0000000000000000
+> RDX: 0000000000010000 RSI: ffffffff8163ac01 RDI: 0000000000000001
+> RBP: ffff8801db007fb0 R08: ffff8801c9b4a700 R09: ffffed003b603eca
+> R10: ffffed003b603eca R11: ffff8801db01f657 R12: fffffe0000011000
+> R13: fffffe0000007080 R14: 000000000000002a R15: 0000000000000000
+>  do_IRQ+0x80/0x1a0 arch/x86/kernel/irq.c:246
+>  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:643
+>  </IRQ>
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
