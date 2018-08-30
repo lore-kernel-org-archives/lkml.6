@@ -2,96 +2,145 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEAEC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3C1C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC3720666
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:17:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC3720666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 69B2C20647
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:36:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69B2C20647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeH3FQf (ORCPT
+        id S1727200AbeH3FgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:16:35 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:56925 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FQf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:16:35 -0400
-X-UUID: a0752fedbccd446abdd489ff7adb1b67-20180830
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1162640858; Thu, 30 Aug 2018 09:16:53 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 30 Aug 2018 09:16:52 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 30 Aug 2018 09:16:51 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH v3] usb: core: phy: fix return value checking about devm_of_phy_get_by_index()
-Date:   Thu, 30 Aug 2018 09:16:40 +0800
-Message-ID: <626cea85395e3a1f002ef0a241bb508d770a33c0.1535536218.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Thu, 30 Aug 2018 01:36:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5367 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeH3FgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:36:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 18:36:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,305,1531810800"; 
+   d="scan'208";a="79442207"
+Received: from allen-box.sh.intel.com ([10.239.161.122])
+  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2018 18:36:31 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, peterx@redhat.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 00/12] iommu/vt-d: Add scalable mode support
+Date:   Thu, 30 Aug 2018 09:35:12 +0800
+Message-Id: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use IS_ERR() instead of IS_ERR_OR_NULL() because devm_of_phy_get_by_index()
-never return NULL value;
-But still need ignore the error of -ENODEV, for more information, please
-refer to:
-[0] https://lkml.org/lkml/2018/4/19/88
-[1] https://patchwork.kernel.org/patch/10160181/
+Hi,
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-V3: abandon the ternary operator suggested by Johan
+Intel vt-d rev3.0 [1] introduces a new translation mode called
+'scalable mode', which enables PASID-granular translations for
+first level, second level, nested and pass-through modes. The
+vt-d scalable mode is the key ingredient to enable Scalable I/O
+Virtualization (Scalable IOV) [2] [3], which allows sharing a
+device in minimal possible granularity (ADI - Assignable Device
+Interface). It also includes all the capabilities required to
+enable Shared Virtual Addressing (SVA). As a result, previous
+Extended Context (ECS) mode is deprecated (no production ever
+implements ECS).
 
-V2: keep the -ENODEV check
----
- drivers/usb/core/phy.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Each scalable mode pasid table entry is 64 bytes in length, with
+fields point to the first level page table and the second level
+page table. The PGTT (Pasid Granular Translation Type) field is
+used by hardware to determine the translation type.
 
-diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-index 9879767..38b2c77 100644
---- a/drivers/usb/core/phy.c
-+++ b/drivers/usb/core/phy.c
-@@ -23,10 +23,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
- 				   struct list_head *list)
- {
- 	struct usb_phy_roothub *roothub_entry;
--	struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-+	struct phy *phy;
- 
--	if (IS_ERR_OR_NULL(phy)) {
--		if (!phy || PTR_ERR(phy) == -ENODEV)
-+	phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-+	if (IS_ERR(phy)) {
-+		if (PTR_ERR(phy) == -ENODEV)
- 			return 0;
- 		else
- 			return PTR_ERR(phy);
+
+          A Scalable Mode            .-------------.
+           PASID Entry             .-|             |
+       .------------------.      .-| | 1st Level   |
+      7|                  |      | | | Page Table  |
+       .------------------.      | | |             |
+      6|                  |      | | |             |
+       '------------------'      | | '-------------'
+      5|                  |      | '-------------'
+       '------------------'      '-------------'
+      4|                  |    ^
+       '------------------'   /
+      3|                  |  /       .-------------.
+       .----.-------.-----. /      .-|             |
+      2|    | FLPTR |     |/     .-| | 2nd Level   |
+       .----'-------'-----.      | | | Page Table  |
+      1|                  |      | | |             |
+       .-.-------..------..      | | |             |
+      0| | SLPTR || PGTT ||----> | | '-------------'
+       '-'-------''------''      | '-------------'
+       6             |    0      '-------------'
+       3             v
+             .------------------------------------.
+             | PASID Granular Translation Type    |
+             |                                    |
+             | 001b: 1st level translation only   |
+             | 101b: 2nd level translation only   |
+             | 011b: Nested translation           |
+             | 100b: Pass through                 |
+             '------------------------------------'
+
+This patch series adds the scalable mode support in the Intel
+IOMMU driver. It will make all the Intel IOMMU features work
+in scalable mode. The changes are all constrained within the
+Intel IOMMU driver, as it's purely internal format change.
+
+References:
+[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+
+Change log:
+v1->v2:
+  - Rebase all patches on top of v4.19-rc1;
+  - Add 256-bit invalidation descriptor support;
+  - Reserve a domain id for first level and pass-through
+    usage to make hardware cache entries more efficiently;
+  - Various code refinements.
+
+Lu Baolu (12):
+  iommu/vt-d: Enumerate the scalable mode capability
+  iommu/vt-d: Manage scalalble mode PASID tables
+  iommu/vt-d: Move page table helpers into header
+  iommu/vt-d: Add 256-bit invalidation descriptor support
+  iommu/vt-d: Reserve a domain id for FL and PT modes
+  iommu/vt-d: Add second level page table interface
+  iommu/vt-d: Setup pasid entry for RID2PASID support
+  iommu/vt-d: Pass pasid table to context mapping
+  iommu/vt-d: Setup context and enable RID2PASID support
+  iommu/vt-d: Add first level page table interface
+  iommu/vt-d: Shared virtual address in scalable mode
+  iommu/vt-d: Remove deferred invalidation
+
+ .../admin-guide/kernel-parameters.txt         |  12 +-
+ drivers/iommu/dmar.c                          |  83 ++--
+ drivers/iommu/intel-iommu.c                   | 305 ++++++-------
+ drivers/iommu/intel-pasid.c                   | 409 +++++++++++++++++-
+ drivers/iommu/intel-pasid.h                   |  33 +-
+ drivers/iommu/intel-svm.c                     | 170 +++-----
+ drivers/iommu/intel_irq_remapping.c           |   6 +-
+ include/linux/dma_remapping.h                 |   9 +-
+ include/linux/intel-iommu.h                   |  64 ++-
+ 9 files changed, 764 insertions(+), 327 deletions(-)
+
 -- 
-1.9.1
+2.17.1
 
