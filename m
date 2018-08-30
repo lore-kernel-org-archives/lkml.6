@@ -7,88 +7,95 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADD8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D7AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615DC2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2826920837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jsl6yxUD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615DC2082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liS+Aowp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2826920837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbeH3W7J (ORCPT
+        id S1728228AbeH3W7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:59:09 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45550 "EHLO
+        Thu, 30 Aug 2018 18:59:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38608 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbeH3W7I (ORCPT
+        with ESMTP id S1727387AbeH3W7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:59:08 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u83-v6so8089363lje.12;
-        Thu, 30 Aug 2018 11:55:33 -0700 (PDT)
+        Thu, 30 Aug 2018 18:59:09 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so8135751ljc.5;
+        Thu, 30 Aug 2018 11:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BYvS0O5X6jqdECcgyHa7h20uv2YPuOkJVyKAAqt1BCE=;
-        b=Jsl6yxUDup4y8qtj0Siw+BBVOGT8P22tzEliFf5NYwy39KkOxtdDELmNUMjvdqrwfI
-         x2nmVH0sbLqYfOZ4qU9TMljfAy2qNHHbwLy27BTdgUl3w+bdmrxN5tyC3VaBteVJhy1p
-         PdL6tZPrZVbTeHjhZ2wJg0Zhh2wbHNkqhB78DXKUqZ1TpxrXIkukHgma01ykFKKU/F54
-         a4f2oF/X6kB1uMusqNagU9Fq1pJf0/cDR3hwZZ48/a0vlkb4GpjrOTAsgmhAxy2HS/Hv
-         dzxYC5b3tcJbGFQVLIUFz65dJ1qyrQcbpIiBEpTh7MZA9ysNBU+5jYO7mpWobD47HfVW
-         zTxQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=hKwyYPISVLELVJeH7hc6fBh91n3hDTiNaxE+zqDOE2E=;
+        b=liS+Aowpt8+VGYoiO4cbFMKhosEWZHvmwGkb8LX7E06WfW0lppO/V4ndUYSXZkSAli
+         251UbXfEJL1sBd58g3OiMqcF1FDyBEN1FUNGR4/vLy0/AWKKkcvx0dlmbzEyw9mjXs7z
+         Pv8tMSKdpIOFC8P07GdwRvYVMKpjZkqtC7/b784h/aRSQwb9LAYj+L/+YB/n6EdMyTip
+         xemKiqVzXymY5WH/PrD+uAq/edZ0De0wThCW0AzX/Pa7GB2NIgsWhIQ2D01WRiQxUogv
+         jVSiVp7arA6oIOfCePwqGnVS5iAE+VKT0asOzbRw9RU0xU82j8V3vHX0AFOfcTHVCYBm
+         XcYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BYvS0O5X6jqdECcgyHa7h20uv2YPuOkJVyKAAqt1BCE=;
-        b=Yajurdr2zgZ+byqD4T1UkMZWIFkF8ent/5eOHeHHwwRkvSH14/qBleLZXnn7N6MPff
-         2G1ehsOUp/8g+qWegc5eukSedwrI5HvSGkvZCFQTvJf4c5jBODUchQdBQin0nvxYfCUM
-         DIpsblnOjKXctar32IBmIKMJs2Pw5vpQCCz2dauOA6oZYlA31eFfy45sn6afHPeAQ9As
-         M+fc69ETlTbTZshaUO97gjUg0bJvFgTFsDAgf3rHcFdXS9MR+/NDHMtgc6MUchxljqm5
-         5AGUuXhTm/z+EipQABbdMmE/3wWwntKe4uYOMm7ircC8KQMps6PguaJywGv/qfuoiWbu
-         vLAQ==
-X-Gm-Message-State: APzg51Dp3SYbSgRwv5yG5GyJj5ixZkdx6FHThrKOa1Jg/G45lckyAyo7
-        cy9NMfOPViuY+2EiFJF3pQZzvODq
-X-Google-Smtp-Source: ANB0VdZIuA1xn//SKZcAKX3sE4MAcbqDumW8slG2N7p0o+LBPWqWPbnUYI/bh+J4TQ97wiVAurTBFw==
-X-Received: by 2002:a2e:2bd3:: with SMTP id r80-v6mr8529105ljr.57.1535655332936;
-        Thu, 30 Aug 2018 11:55:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=hKwyYPISVLELVJeH7hc6fBh91n3hDTiNaxE+zqDOE2E=;
+        b=PY8CN7B28eRuyVPNACgcUH+xyvsuyUFf87oVtDeob7TOO41trkzonM1erqvueLdJhf
+         EWNuge9Bf5hvtvPpOOr6XdbZ6jBmKFHCxM3rI/pKvhztutwN/1Ax2fpkSSMVIhfjDI62
+         XjXgTp+NNEjY8l8rUfnzHg8kYjrhD1BIjA8E1Q+r/P9jpZVsaLd6LOHA5ljHL5bN50hC
+         a/olE9WSewevdRJB1K8bstF8cWd6wZR2VcJ5ndPkkRZ8YasvL630tbOFYbe+WLGfzlf1
+         +8wyzbqSnDTO0jPwz7gVVcUSkgwTruq7yGn0o4vpBomMbFs+jkxqYB99YgJcsIKJAyj+
+         SC0A==
+X-Gm-Message-State: APzg51D6L/IATp7/wauZ1tFmjWOztvz4feq1JCNyEjlrV7KK3TdgBhya
+        9v6mKCVK1xACnEq7kvgVTUc=
+X-Google-Smtp-Source: ANB0VdbUVFkJ28oebsUT4iqbNIH+alsARRz5tNtgoxbeyePl4lEPSl+uxOO9gUfskFvSxxeORDALyQ==
+X-Received: by 2002:a2e:9e17:: with SMTP id e23-v6mr7929906ljk.14.1535655333964;
+        Thu, 30 Aug 2018 11:55:33 -0700 (PDT)
 Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
         by smtp.gmail.com with ESMTPSA id u28-v6sm1373087ljd.61.2018.08.30.11.55.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 11:55:32 -0700 (PDT)
+        Thu, 30 Aug 2018 11:55:33 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/4] EMC fixes for Tegra30+
-Date:   Thu, 30 Aug 2018 21:54:00 +0300
-Message-Id: <20180830185404.7224-1-digetx@gmail.com>
+Subject: [PATCH v1 1/4] ARM: tegra: Fix missed EMC registers latching on resume from LP1 on Tegra30+
+Date:   Thu, 30 Aug 2018 21:54:01 +0300
+Message-Id: <20180830185404.7224-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180830185404.7224-1-digetx@gmail.com>
+References: <20180830185404.7224-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The memory interface configuration and re-calibration interval are left
+unassigned on resume from LP1 because these registers are shadowed and
+require latching after being adjusted.
 
-This patch series fixes couple bugs in the memory self-refresh code.
-The EMC / MC state is properly restored after patches being applied,
-please review.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/mach-tegra/sleep-tegra30.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Dmitry Osipenko (4):
-  ARM: tegra: Fix missed EMC registers latching on resume from LP1 on
-    Tegra30+
-  ARM: tegra: Fix DRAM refresh-interval clobbering on resume from LP1 on
-    Tegra30
-  ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
-  ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
-
- arch/arm/mach-tegra/iomap.h         |  9 ++++++++
- arch/arm/mach-tegra/sleep-tegra30.S | 32 +++++++++++++++++++++++++++--
- 2 files changed, 39 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 127fc78365fe..801fe58978ae 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -521,6 +521,8 @@ zcal_done:
+ 	ldr	r1, [r5, #0x0]		@ restore EMC_CFG
+ 	str	r1, [r0, #EMC_CFG]
+ 
++	emc_timing_update r1, r0
++
+ 	/* Tegra114 had dual EMC channel, now config the other one */
+ 	cmp	r10, #TEGRA114
+ 	bne	__no_dual_emc_chanl
 -- 
 2.18.0
 
