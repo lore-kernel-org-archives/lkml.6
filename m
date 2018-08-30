@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64F0C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A72C43334
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F62F2083C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20C1320841
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FrgdPh5T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F62F2083C
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="akbNH9Dh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C1320841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbeH3PnN (ORCPT
+        id S1728612AbeH3PnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:43:13 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:35626 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbeH3PnM (ORCPT
+        Thu, 30 Aug 2018 11:43:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37761 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728476AbeH3PnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:43:12 -0400
-Received: by mail-wm0-f49.google.com with SMTP id o18-v6so1696441wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 04:41:29 -0700 (PDT)
+        Thu, 30 Aug 2018 11:43:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so7743081wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 04:41:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5dvluYXXhbs3bkFHe7bYXbDtGM4AV4lqI04lFKRyGa0=;
-        b=FrgdPh5TBPIr4rtMd7tklQtyRgar4ZAsFHKz1PwEj3+VC5jau9Dry3d3VxRWxcx9DN
-         aM7aeZudTWm7p/kNyIHKV/3zc+Y5VxHMcMOGT00Raehj8yCHK4qQRjbgPVV2KLJMxAqa
-         3Rgdu4UCrXM9AqoS+dFhMRoW3rJ0nq+cpf74SiEB/jzedt9fBg4Hfm/m/pENAIQSu++0
-         oMrCJovZb3IkPM50eWmd/9DzfAZugaZLcIZhmav9Cf0kn8UP4YxUMn9mjnercwABxtdG
-         oWWF4BHN5MPrFvo1HQRM1riSm10AId1VXqNCaVpDU0IN56koQpJ+E8OSG+nLyWo4zchm
-         X6TQ==
+        bh=QaAF7azGCBxdq6iEEzNBoAuvrmN85mP7cm3lHvX0lL0=;
+        b=akbNH9Dh33OFp1Yfxft1/iAWWvJdMIyZlPJJ1bI0TCj69lznWK3PI54Ty8g0gacvcP
+         VTI4KEwgIwjURL8e5z8lVSK5LXhpqWNEr9yq465J29bgrU8yZ1vOIjdWB8SBL55Ktaw+
+         8Adr/XBoiIXlbE4KMMggbcpFWiFvuTQu8b/9+ZEy2JKekcqtBUZQUbpHiHx/F7cdzpHc
+         SCsOWLH9Oo7s3BL0RMzwMg6Pyb7eImoM78fpbnUZafChxGJqjAGAblnQ35NEWyWvHgzx
+         Tucj0Yxt1kjv9ZOtZ2XgP81Y13NrW0z+E5TMYVyvGsqMLpUxSwRAqIkbptaHRxFhZXd9
+         qdow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5dvluYXXhbs3bkFHe7bYXbDtGM4AV4lqI04lFKRyGa0=;
-        b=J21MHMlpmKKtpCFTgDG1ZsdnP7KCabRMrpb+9hMq7n1suWSounDt4PxGysuDdPWCEz
-         6enJ5lGRLo+cDYuGc3OXGekBsukLNH1PIhdEd9WrPAeyDVrAw3YDpWHQn7/OtFW2Va+C
-         Npu33J+UD/dk6aFAgXOg+SMWkNMcyjJIv9XU1FnYDG7U3VJeHf9XO6bsMwWxFQQzYY+Q
-         TVdm6cKFt5You9TDuetKUecQ5F2l4wA97Qkm7T7uQenNFE2CATbnjVTp1JUa3qWCreNr
-         DzT1sMdANsibKPdoM6eZCKxWuok8xVlT2Ch+Mg+bUmnWHeFKFQZ3kC6tx6llx7rZDuyY
-         eE8w==
-X-Gm-Message-State: APzg51C2Z2DMb3AoNpZeE2Rj2+sHmehEL22H5tpd+eMKMeStveSnzq2o
-        3nBLRZzPn4bQ2UYYAU6SdHhg4w==
-X-Google-Smtp-Source: ANB0VdaAurM5wWvTbuaKJB5Eic+D12Dz24+pkaychw8uSDgku8eMYRWKoLaud5DLPVltKXfKUxcYpw==
-X-Received: by 2002:a1c:b143:: with SMTP id a64-v6mr1645342wmf.114.1535629288159;
-        Thu, 30 Aug 2018 04:41:28 -0700 (PDT)
+        bh=QaAF7azGCBxdq6iEEzNBoAuvrmN85mP7cm3lHvX0lL0=;
+        b=FVXKmOpiscDkvak/IH8VjfUIseG8NLq/XNV+LF2LSzJcNnrY50zGFHYy4wk4ejB+Ln
+         TsHQsH7sPmPws5KYL54rmRUP2vb1dq11mPwH4odUrWBlFiXBI/plflg77NbPhoDm0ywg
+         yE3xpWkRq5uPsdhuxsdUNxv3DRUt87Ulis5cGPN4WgZhjrUHqEyJ4379ABZYo/J5PlcT
+         84SlA3cavrSrXZtRGi5jThFbidPbuwKdf6qtF6gy3pbYWjMf2k64i1SVKzcdfVJJ87xC
+         eJOtwYAAFpzZAgn+D0lQZ8akvG/pEZF46UenDELPES4T25Ub9x3kSWTzcbFcpimezo9O
+         6fuQ==
+X-Gm-Message-State: APzg51DYOlozVIGg6AX+lxsCd6aniLP0bDGMy0vYbO3UxKfuOBgIYn+r
+        IgDVSJOlXZAfqylplaKNzScyRA==
+X-Google-Smtp-Source: ANB0Vdaqqjdd90OaOAwZrqHj8elm7AVweBzpTBqr0QeZInQNaIkAj+Q8mqFZIzcP+cnkSEyeBYYIhg==
+X-Received: by 2002:adf:d20a:: with SMTP id g10-v6mr7876598wri.66.1535629289628;
+        Thu, 30 Aug 2018 04:41:29 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id z184-v6sm2175218wmz.0.2018.08.30.04.41.26
+        by smtp.gmail.com with ESMTPSA id z184-v6sm2175218wmz.0.2018.08.30.04.41.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 04:41:27 -0700 (PDT)
+        Thu, 30 Aug 2018 04:41:28 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,9 +84,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v6 05/11] lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
-Date:   Thu, 30 Aug 2018 13:41:10 +0200
-Message-Id: <a31c2ab78925e0df0a9164e7ee402141ca1b0d6b.1535629099.git.andreyknvl@google.com>
+Subject: [PATCH v6 06/11] arm64: untag user address in __do_user_fault
+Date:   Thu, 30 Aug 2018 13:41:11 +0200
+Message-Id: <b0f447bbf035a5b0a6cffa9035f1f922266a9f35.1535629099.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
 In-Reply-To: <cover.1535629099.git.andreyknvl@google.com>
 References: <cover.1535629099.git.andreyknvl@google.com>
@@ -97,44 +97,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-strncpy_from_user and strnlen_user accept user addresses as arguments, and
-do not go through the same path as copy_from_user and others, so here we
-need to handle the case of tagged user addresses separately.
+In __do_user_fault the fault address is being compared to TASK_SIZE to
+find out whether the address lies in the kernel or in user space. Since
+the fault address is coming from a user it can be tagged.
 
-Untag user pointers passed to these functions.
+Untag the pointer before comparing.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- lib/strncpy_from_user.c | 2 ++
- lib/strnlen_user.c      | 2 ++
- 2 files changed, 4 insertions(+)
+ arch/arm64/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index b53e1b5d80f4..97467cd2bc59 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -106,6 +106,8 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
- 	if (unlikely(count <= 0))
- 		return 0;
- 
-+	src = untagged_addr(src);
-+
- 	max_addr = user_addr_max();
- 	src_addr = (unsigned long)src;
- 	if (likely(src_addr < max_addr)) {
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 60d0bbda8f5e..8b5f56466e00 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -108,6 +108,8 @@ long strnlen_user(const char __user *str, long count)
- 	if (unlikely(count <= 0))
- 		return 0;
- 
-+	str = untagged_addr(str);
-+
- 	max_addr = user_addr_max();
- 	src_addr = (unsigned long)str;
- 	if (likely(src_addr < max_addr)) {
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 50b30ff30de4..871fb3c38b23 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -313,7 +313,7 @@ static void __do_user_fault(struct siginfo *info, unsigned int esr)
+ 	 * type", so we ignore this wrinkle and just return the translation
+ 	 * fault.)
+ 	 */
+-	if (current->thread.fault_address >= TASK_SIZE) {
++	if (untagged_addr(current->thread.fault_address) >= TASK_SIZE) {
+ 		switch (ESR_ELx_EC(esr)) {
+ 		case ESR_ELx_EC_DABT_LOW:
+ 			/*
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
