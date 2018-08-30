@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4085DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3224C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C9D2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C9D2082A
+	by mail.kernel.org (Postfix) with ESMTP id 642AC2082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642AC2082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeH3W6e (ORCPT
+        id S1727785AbeH3W5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:58:34 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40058 "EHLO ale.deltatee.com"
+        Thu, 30 Aug 2018 18:57:41 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40076 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726122AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 18:57:41 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4t-0006Of-Nc; Thu, 30 Aug 2018 12:54:02 -0600
+        id 1fvS4t-0006Oh-Nd; Thu, 30 Aug 2018 12:54:05 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4n-0000tF-W1; Thu, 30 Aug 2018 12:53:54 -0600
+        id 1fvS4o-0000tK-AQ; Thu, 30 Aug 2018 12:53:54 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -47,13 +47,15 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 30 Aug 2018 12:53:39 -0600
-Message-Id: <20180830185352.3369-1-logang@deltatee.com>
+Date:   Thu, 30 Aug 2018 12:53:41 -0600
+Message-Id: <20180830185352.3369-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v5 00/13] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Subject: [PATCH v5 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem stats
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,236 +63,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Everyone,
+Add a sysfs group to display statistics about P2P memory that is
+registered in each PCI device.
 
-Now that the patchset which creates a command line option to disable
-ACS redirection has landed it's time to revisit the P2P patchset for
-copy offoad in NVMe fabrics.
+Attributes in the group display the total amount of P2P memory, the
+amount available and whether it is published or not.
 
-I present version 5 wihch no longer does any magic with the ACS bits and
-instead will reject P2P transactions between devices that would be affected
-by them. A few other cleanups were done which are described in the
-changelog below.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ Documentation/ABI/testing/sysfs-bus-pci | 25 +++++++++++++++
+ drivers/pci/p2pdma.c                    | 54 +++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-This version is based on v4.19-rc1 and a git repo is here:
-
-https://github.com/sbates130272/linux-p2pmem pci-p2p-v5
-
-Thanks,
-
-Logan
-
---
-
-Changes in v5:
-
-* Rebased on v4.19-rc1
-
-* Drop changing ACS settings in this patchset. Now, the code
-  will only allow P2P transactions between devices whos
-  downstream ports do not restrict P2P TLPs.
-
-* Drop the REQ_PCI_P2PDMA block flag and instead use
-  is_pci_p2pdma_page() to tell if a request is P2P or not. In that
-  case we check for queue support and enforce using REQ_NOMERGE.
-  Per feedback from Christoph.
-
-* Drop the pci_p2pdma_unmap_sg() function as it was empty and only
-  there for symmetry and compatibility with dma_unmap_sg. Per feedback
-  from Christoph.
-
-* Split off the logic to handle enabling P2P in NVMe fabrics' configfs
-  into specific helpers in the p2pdma code. Per feedback from Christoph.
-
-* A number of other minor cleanups and fixes as pointed out by
-  Christoph and others.
-
-Changes in v4:
-
-* Change the original upstream_bridges_match() function to
-  upstream_bridge_distance() which calculates the distance between two
-  devices as long as they are behind the same root port. This should
-  address Bjorn's concerns that the code was to focused on
-  being behind a single switch.
-
-* The disable ACS function now disables ACS for all bridge ports instead
-  of switch ports (ie. those that had two upstream_bridge ports).
-
-* Change the pci_p2pmem_alloc_sgl() and pci_p2pmem_free_sgl()
-  API to be more like sgl_alloc() in that the alloc function returns
-  the allocated scatterlist and nents is not required bythe free
-  function.
-
-* Moved the new documentation into the driver-api tree as requested
-  by Jonathan
-
-* Add SGL alloc and free helpers in the nvmet code so that the
-  individual drivers can share the code that allocates P2P memory.
-  As requested by Christoph.
-
-* Cleanup the nvmet_p2pmem_store() function as Christoph
-  thought my first attempt was ugly.
-
-* Numerous commit message and comment fix-ups
-
-Changes in v3:
-
-* Many more fixes and minor cleanups that were spotted by Bjorn
-
-* Additional explanation of the ACS change in both the commit message
-  and Kconfig doc. Also, the code that disables the ACS bits is surrounded
-  explicitly by an #ifdef
-
-* Removed the flag we added to rdma_rw_ctx() in favour of using
-  is_pci_p2pdma_page(), as suggested by Sagi.
-
-* Adjust pci_p2pmem_find() so that it prefers P2P providers that
-  are closest to (or the same as) the clients using them. In cases
-  of ties, the provider is randomly chosen.
-
-* Modify the NVMe Target code so that the PCI device name of the provider
-  may be explicitly specified, bypassing the logic in pci_p2pmem_find().
-  (Note: it's still enforced that the provider must be behind the
-   same switch as the clients).
-
-* As requested by Bjorn, added documentation for driver writers.
-
-
-Changes in v2:
-
-* Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
-  as a bunch of cleanup and spelling fixes he pointed out in the last
-  series.
-
-* To address Alex's ACS concerns, we change to a simpler method of
-  just disabling ACS behind switches for any kernel that has
-  CONFIG_PCI_P2PDMA.
-
-* We also reject using devices that employ 'dma_virt_ops' which should
-  fairly simply handle Jason's concerns that this work might break with
-  the HFI, QIB and rxe drivers that use the virtual ops to implement
-  their own special DMA operations.
-
---
-
-This is a continuation of our work to enable using Peer-to-Peer PCI
-memory in the kernel with initial support for the NVMe fabrics target
-subsystem. Many thanks go to Christoph Hellwig who provided valuable
-feedback to get these patches to where they are today.
-
-The concept here is to use memory that's exposed on a PCI BAR as
-data buffers in the NVMe target code such that data can be transferred
-from an RDMA NIC to the special memory and then directly to an NVMe
-device avoiding system memory entirely. The upside of this is better
-QoS for applications running on the CPU utilizing memory and lower
-PCI bandwidth required to the CPU (such that systems could be designed
-with fewer lanes connected to the CPU).
-
-Due to these trade-offs we've designed the system to only enable using
-the PCI memory in cases where the NIC, NVMe devices and memory are all
-behind the same PCI switch hierarchy. This will mean many setups that
-could likely work well will not be supported so that we can be more
-confident it will work and not place any responsibility on the user to
-understand their topology. (We chose to go this route based on feedback
-we received at the last LSF). Future work may enable these transfers
-using a white list of known good root complexes. However, at this time,
-there is no reliable way to ensure that Peer-to-Peer transactions are
-permitted between PCI Root Ports.
-
-In order to enable this functionality, we introduce a few new PCI
-functions such that a driver can register P2P memory with the system.
-Struct pages are created for this memory using devm_memremap_pages()
-and the PCI bus offset is stored in the corresponding pagemap structure.
-
-When the PCI P2PDMA config option is selected the ACS bits in every
-bridge port in the system are turned off to allow traffic to
-pass freely behind the root port. At this time, the bit must be disabled
-at boot so the IOMMU subsystem can correctly create the groups, though
-this could be addressed in the future. There is no way to dynamically
-disable the bit and alter the groups.
-
-Another set of functions allow a client driver to create a list of
-client devices that will be used in a given P2P transactions and then
-use that list to find any P2P memory that is supported by all the
-client devices.
-
-In the block layer, we also introduce a P2P request flag to indicate a
-given request targets P2P memory as well as a flag for a request queue
-to indicate a given queue supports targeting P2P memory. P2P requests
-will only be accepted by queues that support it. Also, P2P requests
-are marked to not be merged seeing a non-homogenous request would
-complicate the DMA mapping requirements.
-
-In the PCI NVMe driver, we modify the existing CMB support to utilize
-the new PCI P2P memory infrastructure and also add support for P2P
-memory in its request queue. When a P2P request is received it uses the
-pci_p2pmem_map_sg() function which applies the necessary transformation
-to get the corrent pci_bus_addr_t for the DMA transactions.
-
-In the RDMA core, we also adjust rdma_rw_ctx_init() and
-rdma_rw_ctx_destroy() to take a flags argument which indicates whether
-to use the PCI P2P mapping functions or not. To avoid odd RDMA devices
-that don't use the proper DMA infrastructure this code rejects using
-any device that employs the virt_dma_ops implementation.
-
-Finally, in the NVMe fabrics target port we introduce a new
-configuration boolean: 'allow_p2pmem'. When set, the port will attempt
-to find P2P memory supported by the RDMA NIC and all namespaces. If
-supported memory is found, it will be used in all IO transfers. And if
-a port is using P2P memory, adding new namespaces that are not supported
-by that memory will fail.
-
-These patches have been tested on a number of Intel based systems and
-for a variety of RDMA NICs (Mellanox, Broadcomm, Chelsio) and NVMe
-SSDs (Intel, Seagate, Samsung) and p2pdma devices (Eideticom,
-Microsemi, Chelsio and Everspin) using switches from both Microsemi
-and Broadcomm.
-
-Logan Gunthorpe (13):
-  PCI/P2PDMA: Support peer-to-peer memory
-  PCI/P2PDMA: Add sysfs group to display p2pmem stats
-  PCI/P2PDMA: Add PCI p2pmem DMA mappings to adjust the bus offset
-  PCI/P2PDMA: Introduce configfs/sysfs enable attribute helpers
-  docs-rst: Add a new directory for PCI documentation
-  PCI/P2PDMA: Add P2P DMA driver writer's documentation
-  block: Add PCI P2P flag for request queue and check support for
-    requests
-  IB/core: Ensure we map P2P memory correctly in
-    rdma_rw_ctx_[init|destroy]()
-  nvme-pci: Use PCI p2pmem subsystem to manage the CMB
-  nvme-pci: Add support for P2P memory in requests
-  nvme-pci: Add a quirk for a pseudo CMB
-  nvmet: Introduce helper functions to allocate and free request SGLs
-  nvmet: Optionally use PCI P2P memory
-
- Documentation/ABI/testing/sysfs-bus-pci    |  25 +
- Documentation/driver-api/index.rst         |   2 +-
- Documentation/driver-api/pci/index.rst     |  21 +
- Documentation/driver-api/pci/p2pdma.rst    | 170 ++++++
- Documentation/driver-api/{ => pci}/pci.rst |   0
- block/blk-core.c                           |  14 +
- drivers/infiniband/core/rw.c               |  11 +-
- drivers/nvme/host/core.c                   |   4 +
- drivers/nvme/host/nvme.h                   |   8 +
- drivers/nvme/host/pci.c                    | 121 ++--
- drivers/nvme/target/configfs.c             |  36 ++
- drivers/nvme/target/core.c                 | 149 +++++
- drivers/nvme/target/nvmet.h                |  15 +
- drivers/nvme/target/rdma.c                 |  22 +-
- drivers/pci/Kconfig                        |  17 +
- drivers/pci/Makefile                       |   1 +
- drivers/pci/p2pdma.c                       | 941 +++++++++++++++++++++++++++++
- include/linux/blkdev.h                     |   3 +
- include/linux/memremap.h                   |   6 +
- include/linux/mm.h                         |  18 +
- include/linux/pci-p2pdma.h                 | 124 ++++
- include/linux/pci.h                        |   4 +
- 22 files changed, 1658 insertions(+), 54 deletions(-)
- create mode 100644 Documentation/driver-api/pci/index.rst
- create mode 100644 Documentation/driver-api/pci/p2pdma.rst
- rename Documentation/driver-api/{ => pci}/pci.rst (100%)
- create mode 100644 drivers/pci/p2pdma.c
- create mode 100644 include/linux/pci-p2pdma.h
-
---
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 44d4b2be92fd..044812c816d0 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -323,3 +323,28 @@ Description:
+ 
+ 		This is similar to /sys/bus/pci/drivers_autoprobe, but
+ 		affects only the VFs associated with a specific PF.
++
++What:		/sys/bus/pci/devices/.../p2pmem/available
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the amount of memory that has not been
++		allocated (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/size
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the total amount of memory that the device
++		provides (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/published
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains a '1' if the memory has been published for
++		use inside the kernel or a '0' if it is only intended
++		for use within the driver that published it.
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index 88aaec5351cd..67c1daf1189e 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -25,6 +25,54 @@ struct pci_p2pdma {
+ 	bool p2pmem_published;
+ };
+ 
++static ssize_t size_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t size = 0;
++
++	if (pdev->p2pdma->pool)
++		size = gen_pool_size(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
++}
++static DEVICE_ATTR_RO(size);
++
++static ssize_t available_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t avail = 0;
++
++	if (pdev->p2pdma->pool)
++		avail = gen_pool_avail(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
++}
++static DEVICE_ATTR_RO(available);
++
++static ssize_t published_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n",
++			pdev->p2pdma->p2pmem_published);
++}
++static DEVICE_ATTR_RO(published);
++
++static struct attribute *p2pmem_attrs[] = {
++	&dev_attr_size.attr,
++	&dev_attr_available.attr,
++	&dev_attr_published.attr,
++	NULL,
++};
++
++static const struct attribute_group p2pmem_group = {
++	.attrs = p2pmem_attrs,
++	.name = "p2pmem",
++};
++
+ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
+ {
+ 	struct pci_p2pdma *p2p =
+@@ -54,6 +102,7 @@ static void pci_p2pdma_release(void *data)
+ 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
+ 
+ 	gen_pool_destroy(pdev->p2pdma->pool);
++	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
+ 	pdev->p2pdma = NULL;
+ }
+ 
+@@ -84,9 +133,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 
+ 	pdev->p2pdma = p2p;
+ 
++	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
++	if (error)
++		goto out_pool_destroy;
++
+ 	return 0;
+ 
+ out_pool_destroy:
++	pdev->p2pdma = NULL;
+ 	gen_pool_destroy(p2p->pool);
+ out:
+ 	devm_kfree(&pdev->dev, p2p);
+-- 
 2.11.0
+
