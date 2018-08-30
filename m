@@ -2,93 +2,133 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCCFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F214C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0481C2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:06:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O2XilP7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0481C2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BA5102073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5102073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeH3NHG (ORCPT
+        id S1727994AbeH3NLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:07:06 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:32888 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbeH3NHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:07:06 -0400
-Received: by mail-it0-f68.google.com with SMTP id j198-v6so1592681ita.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 02:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1D4ilYZA77rojVcK9ZjqdLMmegXI0rnTie5NC2ZBryM=;
-        b=O2XilP7VNF3mglDLTfrUJp/05JKS3gzBb0XSYk45XnUKAnq5WTOEI0udzJkXRmrrbi
-         TeQ2FYydc/9pGm81ZrxuuyoqDphwGk9sFbDfAkEWFakNVf3uNA3SAWrgJjzHKliSgHWS
-         XOW6SPU9i+JF97CBWh9AYI5B++82xxyznJDI0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1D4ilYZA77rojVcK9ZjqdLMmegXI0rnTie5NC2ZBryM=;
-        b=NTpoCK8dep3bbEpovcho80gOc/NB3ZZUlQEdCZBvpvUBj61rwaD9sj9JZVtiVQOesq
-         oWOzW/meA/FkIDNQiVjRzPi28MQjBu7qvvPzsyysMmISILk9tJRhth9YvPHO9aTzNbED
-         ECY7PVxkaiQf3563J5KQ+0f9uiFMhbIVkecpehT78nE8MSCxk1AWAIpU1MREDpu8hAzu
-         UPO9KU8z0y86OVBm70M/nFp5nCJShJvJ87m/p+VQGOTz5gFb1BsOrGXigArPI/jDXyYL
-         rHk8KfqdFbRu4myrb3PyIPgY7x6fINuDeJ4N40+ybcoJg2ugCWk9zty2fh/vBQVR0BS4
-         G76g==
-X-Gm-Message-State: APzg51BGXeqdnJ1VqEzGj76TUrVmFvePgEc9lBGyP877Pcd3ZjmYHE7U
-        U0JzKkw/2YDtXSIbULxCkRneohA/2G0X1M4tAes0Ug==
-X-Google-Smtp-Source: ANB0VdZ+c5K8lgWArfTOfH+Lj9PCfnyorkZ9BCPejq3aeVzRd2JEH+Kz2Nyv7mb9KvTnBUZxqn9eZdutxhjcSn0J0gs=
-X-Received: by 2002:a24:144:: with SMTP id 65-v6mr1298471itk.62.1535619957436;
- Thu, 30 Aug 2018 02:05:57 -0700 (PDT)
+        Thu, 30 Aug 2018 09:11:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11207 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727089AbeH3NLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 09:11:51 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 41F4EEF2349F9;
+        Thu, 30 Aug 2018 17:10:39 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 30 Aug 2018 17:10:34 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <alexander.sverdlin@nokia.com>, <jslaby@suse.com>,
+        <robh@kernel.org>, <joel@jms.id.au>, <kurt@linutronix.de>,
+        <yamada.masahiro@socionext.com>, <linux-serial@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH v2] serial: 8250_of: Fix for lack of interrupt support
+Date:   Thu, 30 Aug 2018 17:08:50 +0800
+Message-ID: <1535620130-199328-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
-In-Reply-To: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 30 Aug 2018 11:05:43 +0200
-Message-ID: <CACRpkdYu8F6hzw4sHsqBbziYSQQK5Ppb+dwi1AqYZXbzAumw6w@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
-To:     justinpopo6@gmail.com
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 18, 2018 at 1:47 AM <justinpopo6@gmail.com> wrote:
+In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
+check was added for the UART driver being probed prior to the parent IRQ
+controller.
 
-> From: Justin Chen <justinpopo6@gmail.com>
->
-> Sometimes we have empty banks within the GPIO block. This commit allows
-> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
-> incrementing the bank and number of GPIOs, but not initializing them.
-> This will mean a call into the non-existent GPIOs will return an error.
->
-> Also remove "GPIO registered" dev print. This information is misleading
-> since the incremented banks and gpio_base do not reflect the actual GPIOs
-> that get initialized. We leave this information out since it is already
-> printed with dev_dbg.
->
-> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+Unfortunately this breaks certain boards which have no interrupt support,
+like Huawei D03.
 
-Patch applied with Florian's ACK.
+Indeed, the 8250 DT bindings state that interrupts should be supported -
+not must.
 
-Yours,
-Linus Walleij
+To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
+does relay whether the IRQ host controller domain is not ready, i.e.
+defer probe, instead of assuming it.
+
+Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+
+Change in v2:
+- fix check on irq value
+
+Note: I think that it would better if we could try to get the interrupt
+	  before clk+pm enabling, so we don't need to disable later when
+	  deferring, but this is not a fix.
+
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+index af8beef..877fd7f 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	struct resource resource;
+ 	struct device_node *np = ofdev->dev.of_node;
+ 	u32 clk, spd, prop;
+-	int ret;
++	int ret, irq;
+ 
+ 	memset(port, 0, sizeof *port);
+ 
+@@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	if (ret >= 0)
+ 		port->line = ret;
+ 
+-	port->irq = irq_of_parse_and_map(np, 0);
+-	if (!port->irq) {
+-		ret = -EPROBE_DEFER;
+-		goto err_unprepare;
++	irq = of_irq_get(np, 0);
++	if (irq < 0) {
++		if (irq == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_unprepare;
++		}
++		/* IRQ support not mandatory */
++		irq = 0;
+ 	}
+ 
++	port->irq = irq;
++
+ 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
+ 	if (IS_ERR(info->rst)) {
+ 		ret = PTR_ERR(info->rst);
+-		goto err_dispose;
++		goto err_unprepare;
+ 	}
+ 
+ 	ret = reset_control_deassert(info->rst);
+ 	if (ret)
+-		goto err_dispose;
++		goto err_unprepare;
+ 
+ 	port->type = type;
+ 	port->uartclk = clk;
+@@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 		port->handle_irq = fsl8250_handle_irq;
+ 
+ 	return 0;
+-err_dispose:
+-	irq_dispose_mapping(port->irq);
+ err_unprepare:
+ 	clk_disable_unprepare(info->clk);
+ err_pmruntime:
+-- 
+1.9.1
+
