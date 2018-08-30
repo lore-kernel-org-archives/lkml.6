@@ -2,121 +2,101 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEE4C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BADCC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C8F20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B687220661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:30:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sp6W5BpO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C8F20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OcUAtAlI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B687220661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeH3X2I (ORCPT
+        id S1727294AbeH3XeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:28:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46070 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727086AbeH3X2I (ORCPT
+        Thu, 30 Aug 2018 19:34:20 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51078 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbeH3XeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:28:08 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m4-v6so4311286pgv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 12:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U5gYJVCPjfaPw+Q9m65wk1/MMdBFa0TfpWiFHXJfdMI=;
-        b=Sp6W5BpONobDBEAX3BSuZGHvWj6CgzaWwLdMo3Y8AGor3o/CxW3EYg0HKAHWxvOSpB
-         1YgG9ysC3X3LmhVMWvMXvDzdQ+cGdb/rPuMIRNJfFoZh+5Co3XZ9Wj+7g6yLfa8jEdNy
-         M4JwwkI4zvhxX4gzMTk/p5/JyQrXureELovdXRhGKubAjLI5OqBojNvVfe4UMwXznrxV
-         8YtpOfik3VVML3ip75X5UDwsdANc0kiKOLZXI3s8R4bo1d5et5cbkSbodUaEabK/dwck
-         qoHNDYI5nHG1HO/P6byK1R1+jdJWHQwPOpEwIDB1ueiwy9xIbuRuw1nWsurZJjIWlOqe
-         00jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U5gYJVCPjfaPw+Q9m65wk1/MMdBFa0TfpWiFHXJfdMI=;
-        b=tfusAhbtmU2EUyR20Wo98MEfHv5/gvLWyynyeo0Uts/uOwYP4L+fKpGa79XWhsGPF1
-         hU9Q7roDJgn6bfNAJDhK2KS23r6kL/pYx7Ebd8zIey0qo4YHw2H5994sQoieNOvgI2+x
-         x/lNE4MmN5pUNhSfuJH/Icr3HF365l3Sqq/BznatIwlutVj/pwcydNn+7GCeGbf9JNg6
-         6rgZnBO69FWZ6y1Ci6iFTPl7Fkdv8ZgUnbH39QxgPx8VFFTgvGUVamk3ieTrCxPzDMtw
-         AX4VI+SkZWxPSn2+SmvrEzVEWpw1Pk9V9oapf7oZhb+32flukmSFM2R08nnsDv8cbZhL
-         T3wg==
-X-Gm-Message-State: APzg51AolmVW13QOw62hW6IdJTj+Ba28iC2HjN3Ilp6yYYAfzKFbUNFU
-        nnxwPzs4oG689VlPqLHeZYI=
-X-Google-Smtp-Source: ANB0VdbBlqW2cn0qDidEIy44nIP9ZmIjSFSplaUPF7VNxa9HVz7qnB/JTzi9e2LNJGRt6v4JlsGxmA==
-X-Received: by 2002:a62:9992:: with SMTP id t18-v6mr11723354pfk.239.1535657066639;
-        Thu, 30 Aug 2018 12:24:26 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id q85-v6sm12601137pfa.151.2018.08.30.12.24.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:24:26 -0700 (PDT)
-Date:   Thu, 30 Aug 2018 12:24:24 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
-Message-ID: <20180830192424.GC6752@roeck-us.net>
-References: <20180829201659.GA29801@roeck-us.net>
- <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
- <f6d9bdcd-98a6-fcf2-5308-936ffd714ea7@roeck-us.net>
- <20180830113059.qj6yvw4ggktc7yex@suse.de>
- <915dca84-c98a-fc63-3210-b21dd926b3d4@roeck-us.net>
- <20180830180849.nmh646ehnolphq4v@suse.de>
- <CA+55aFzQwC59pkeA+T3E0G4SZe4dQsYcmnf1eKGYnYpcPTKhSQ@mail.gmail.com>
- <20180830184639.6iv5itjex6y45w3j@suse.de>
+        Thu, 30 Aug 2018 19:34:19 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UJSgIY034322;
+        Thu, 30 Aug 2018 19:30:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Ba0gvJdQunrL+N3Qj6D42iZOAW4kzW7CWoUnIQoKM10=;
+ b=OcUAtAlILscyKRLdrFnghdUZoCLg1yBKgXZhlr+htnzoG6lN9HdhLEYTaLGIjXIEkjkQ
+ XnpZH4/pS9x31Z3qN8CzeANpGaVZ6zye/m9KQnATg4LaJg2tYiX9Bbd+REJogRRWnm8i
+ XkTPySOKMGMPs58pq4w2dBccsyRlZO8WrQkOkUsr3MR4XeFrBIpMaf9uxM5EUazSqTz5
+ hKQvhW954oJr3XTiSk4DHTjAO8elLk4ndqX11IPpf36Fjc4meLJChETo/LMk+WS+lICa
+ hiuM6+a3ElONW6MOPbUwP5OGhy3ZGsic8yKs5iXO1J7jd2JdyKcuNmZhN82WzfjkKT4l Ug== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2m2y2pxpug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Aug 2018 19:30:31 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7UJUTJl014728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Aug 2018 19:30:29 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7UJUSMf005784;
+        Thu, 30 Aug 2018 19:30:28 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 30 Aug 2018 12:30:28 -0700
+Subject: Re: KMSAN: uninit-value in rds_connect
+To:     syzbot <syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, syzkaller-bugs@googlegroups.com
+References: <00000000000005859b0574ab47e5@google.com>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <d3a92af1-cbdd-b727-bd57-6c1895e72238@oracle.com>
+Date:   Thu, 30 Aug 2018 12:30:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830184639.6iv5itjex6y45w3j@suse.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <00000000000005859b0574ab47e5@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9001 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808300196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 08:46:39PM +0200, Joerg Roedel wrote:
-> On Thu, Aug 30, 2018 at 11:21:49AM -0700, Linus Torvalds wrote:
-> > On Thu, Aug 30, 2018 at 11:08 AM Joerg Roedel <jroedel@suse.de> wrote:
-> > >
-> > > Without a mapped GDT the #PF and #DF handlers also can't be started, so
-> > > the machine triple-faults. Below diff fixes it for me, I'll send a
-> > > proper patch tomorrow.
-> > 
-> > Hmm. Is there any reason why this code doesn't just use
-> > 
-> >         load_fixmap_gdt(0);
+On 8/30/2018 11:31 AM, syzbot wrote:
+> Hello,
 > 
-> No idea, probably the function didn't exist when the code was written?
-> I can change that when writing the patch.
+> syzbot found the following crash on:
 > 
-> > and shouldn't it do it after loading the new %cr3?
+> HEAD commit:    2dca2cbde67a kmsan: fix build warnings with CONFIG_KMSAN=n
+> git tree:       https://github.com/google/kmsan.git/master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1519734a400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=820d6393634b55e3
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=0049bebbf3042dbd2e8f
+> compiler:       clang version 8.0.0 (trunk 339414)
 > 
-> That seems more robust, yes. No sure if the old %cr3
-> (initial_page_table) has the fixmap gdt mapped at all.
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com
+> 
+OK. Will send the fix to address this.
 
-All three variants (hardcoded, call load_fixmap_gdt(0) first, call
-load_fixmap_gdt(0) after load_cr3()) work for me. Feel free to add
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-when you submit the patch.
-
-Thanks a lot for tracking this down!
-
-Guenter
+Regards,
+Santosh
