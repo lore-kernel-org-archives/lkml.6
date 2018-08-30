@@ -2,64 +2,73 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85767C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06372C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499092082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:54:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499092082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C0082082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 22:57:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="akPRnskk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0082082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeHaC6m (ORCPT
+        id S1727233AbeHaDCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 22:58:42 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52478 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbeHaC6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 22:58:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 15:54:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,309,1531810800"; 
-   d="scan'208";a="85936098"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Aug 2018 15:54:06 -0700
-Message-ID: <1535669391.28781.7.camel@intel.com>
-Subject: Re: [RFC PATCH v3 05/24] Documentation/x86: Add CET description
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Thu, 30 Aug 2018 15:49:51 -0700
-In-Reply-To: <20180830203948.GB1936@amd>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-         <20180830143904.3168-6-yu-cheng.yu@intel.com> <20180830203948.GB1936@amd>
+        Thu, 30 Aug 2018 23:02:25 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35238 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbeHaDCZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 23:02:25 -0400
+Received: by mail-ed1-f66.google.com with SMTP id y20-v6so7724216edq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Uh3rUbTA72ffcOfk4+7Wim6CAVUdnooZ3OV3XmFX0ew=;
+        b=akPRnskkWlL0YubPfZjzM6Gac4ybAivfL7vQdxXlpQ05xcII4IDeRVWED/XFa20ONY
+         auE2PQM31MqcSRbwdt3SRPvo5urvMKgk8dGyluG8CvSSUtAKxFPKO3jidaym0AHfoxx1
+         a9g4/MIdC+u6qG+1J9I+KBq/XEjc8iFVN9oTFIBPvgCkijKks6VCY7ClcJ5Aehh6sru7
+         BRYdyvnBF5HtmRnb8nR2HQPdgz7EG0CYsyXddBpjljs+saMaWLT/u0pwrWi8+kqvL4Nj
+         0yUixJWCcVK9tQr10rr8oU6qMY+iTK3up7sQAJnjdGwp3NBItKkNc4U055qf+ybAjiz/
+         8HjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Uh3rUbTA72ffcOfk4+7Wim6CAVUdnooZ3OV3XmFX0ew=;
+        b=PuYNP/0w6+6BYVHUNi9+LnjYf+EI1N8jz7QttqOPHKcsSNFqvbPDKhZ/TeFTfDx2nW
+         BU5w/5ybyPrE5C6C13USdLzNvbIoUbtbAIRHaJgqwTIkSKgrOeakxeM4nZlgrauiwjAf
+         B+ftuDsEYjw11edIXOPT4e56P8VnIO6L2A50gZychTv5FrhDk50XrGv1uNHWJGU9K8tL
+         T6649AHMdJKyiA54TD24TjaNi4eS2adP4rZMisnkEepKHTQK1BZpVJmy8hJsNfRr+BoJ
+         xVe0L4oufX6UJK6t9BDhvfjmOaKz0vndtskbOylPcS80uwWds72RKq18xje0unQlbcQc
+         uVjA==
+X-Gm-Message-State: APzg51AeHliZZKqvrrNPtdGOcfaet6n7e5pF2W16SG154n37NKiA0xeg
+        l4VpftAfO0dNaj+ioW59cWwMqQ==
+X-Google-Smtp-Source: ANB0VdYbMzK24GQSfE9RwLBMpddSh2ldd9s/dz2tn7OEdOwQUBfC7+p7uIK6rydx7hTBwNFF1CL58g==
+X-Received: by 2002:a50:8e09:: with SMTP id 9-v6mr14593840edw.101.1535669874900;
+        Thu, 30 Aug 2018 15:57:54 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id x32-v6sm4289847eda.81.2018.08.30.15.57.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 15:57:54 -0700 (PDT)
+Message-ID: <1535669872.23560.73.camel@arista.com>
+Subject: Re: [PATCH 05/23] selftest: vm: add unlikely() to BUG_ON()
+From:   Dmitry Safonov <dima@arista.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>, Shuah Khan <shuah@kernel.org>
+Date:   Thu, 30 Aug 2018 23:57:52 +0100
+In-Reply-To: <20180830223429.30051-6-igor.stoppa@huawei.com>
+References: <20180830223429.30051-1-igor.stoppa@huawei.com>
+         <20180830223429.30051-6-igor.stoppa@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,80 +76,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 22:39 +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt
-> > b/Documentation/admin-guide/kernel-parameters.txt
-> > index 9871e649ffef..b090787188b4 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2764,6 +2764,12 @@
-> >  			noexec=on: enable non-executable mappings
-> > (default)
-> >  			noexec=off: disable non-executable
-> > mappings
-> >  
-> > +	no_cet_ibt	[X86-64] Disable indirect branch
-> > tracking for user-mode
-> > +			applications
-> > +
-> > +	no_cet_shstk	[X86-64] Disable shadow stack support
-> > for user-mode
-> > +			applications
-> Hmm, not too consistent with "nosmap" below. Would it make sense to
-> have cet=on/off/ibt/shstk instead?
-> 
-> > 
-> > +++ b/Documentation/x86/intel_cet.rst
-> > @@ -0,0 +1,252 @@
-> > +=========================================
-> > +Control Flow Enforcement Technology (CET)
-> > +=========================================
-> > +
-> > +[1] Overview
-> > +============
-> > +
-> > +Control Flow Enforcement Technology (CET) provides protection
-> > against
-> > +return/jump-oriented programing (ROP) attacks.
-> Can you add something like "It attempts to protect process from
-> running arbitrary code even after attacker has control of its stack"
-> -- for people that don't know what ROP is, and perhaps link to
-> wikipedia explaining ROP or something...
-> 
-> > 
-> > It can be implemented
-> > +to protect both the kernel and applications.  In the first phase,
-> > +only the user-mode protection is implemented for the 64-bit
-> > kernel.
-> > +Thirty-two bit applications are supported under the compatibility
-> 32-bit (for consistency).
-> 
-> Ok, so CET stops execution of malicious code before architectural
-> effects are visible, correct? Does it prevent micro-architectural
-> effects of the malicious code? (cache content would be one example;
-> see Spectre).
-> 
-> > 
-> > +[3] Application Enabling
-> > +========================
-> "Enabling CET in applications" ?
-> 
-> > 
-> > +Signal
-> > +------
-> > +
-> > +The main program and its signal handlers use the same
-> > SHSTK.  Because
-> > +the SHSTK stores only return addresses, we can estimate a large
-> > +enough SHSTK to cover the condition that both the program stack
-> > and
-> > +the sigaltstack run out.
-> English? Is it estimate or is it large enough? "a large" -- "a"
-> should
-> be deleted AFAICT.
->  
+Hi Igor,
 
-I will work on these, thanks!
+On Fri, 2018-08-31 at 01:34 +0300, Igor Stoppa wrote:
+> BUG_ON() is unlikely() to BUG()
+
+This selftest runs in userspace..
+So, we should define the macro somehow, as i.e:
+rseq/rseq.h:#define rseq_unlikely(x)    __builtin_expect(!!(x), 0)
+
+Otherwise,
+[selftests]$ make vm/map_populate
+cc     vm/map_populate.c   -o vm/map_populate
+vm/map_populate.c: In function ‘parent_f’:
+vm/map_populate.c:26:7: warning: implicit declaration of function
+‘unlikely’; did you mean ‘unlinkat’? [-Wimplicit-function-declaration]
+   if (unlikely(condition)) {     \
+       ^
+vm/map_populate.c:38:2: note: in expansion of macro ‘BUG_ON’
+  BUG_ON(ret <= 0, "read(sock)");
+  ^~~~~~
+/tmp/cc7evGVG.o: In function `parent_f':
+map_populate.c:(.text+0x3d): undefined reference to `unlikely'
+map_populate.c:(.text+0xbb): undefined reference to `unlikely'
+map_populate.c:(.text+0x135): undefined reference to `unlikely'
+map_populate.c:(.text+0x1b0): undefined reference to `unlikely'
+
+Not sure if we care for this at all for userspace test.
+I don't mind as it runs each time by kbuild robot and cumulatively may
+save something. But it's better be at least compile-tested.
+
+-- 
+            Dima
