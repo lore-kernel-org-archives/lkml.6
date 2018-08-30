@@ -3,24 +3,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E8DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB190C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A9320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:44:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A9320834
+	by mail.kernel.org (Postfix) with ESMTP id ACC4120834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC4120834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbeH3SrP (ORCPT
+        id S1729833AbeH3Src (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:47:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:18700 "EHLO mga09.intel.com"
+        Thu, 30 Aug 2018 14:47:32 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18695 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729188AbeH3SrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729763AbeH3SrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 14:47:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +28,9 @@ Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 07:44:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="228910413"
+   d="scan'208";a="228910414"
 Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2018 07:44:32 -0700
+  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2018 07:44:33 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -52,10 +52,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Peter Zijlstra <peterz@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v3 6/8] mm/mmap: Add IBT bitmap size to address space limit check
-Date:   Thu, 30 Aug 2018 07:40:07 -0700
-Message-Id: <20180830144009.3314-7-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v3 7/8] x86: Insert endbr32/endbr64 to vDSO
+Date:   Thu, 30 Aug 2018 07:40:08 -0700
+Message-Id: <20180830144009.3314-8-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830144009.3314-1-yu-cheng.yu@intel.com>
 References: <20180830144009.3314-1-yu-cheng.yu@intel.com>
@@ -64,99 +63,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The indirect branch tracking legacy bitmap takes a large address
-space.  This causes may_expand_vm() failure on the address limit
-check.  For a IBT-enabled task, add the bitmap size to the
-address limit.
+From: "H.J. Lu" <hjl.tools@gmail.com>
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+When Intel indirect branch tracking is enabled, functions in vDSO which
+may be called indirectly must have endbr32 or endbr64 as the first
+instruction.  Compiler must support -fcf-protection=branch so that it
+can be used to compile vDSO.
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 ---
- arch/x86/include/uapi/asm/resource.h |  5 +++++
- arch/x86/kernel/cet.c                | 10 ++++++++--
- include/uapi/asm-generic/resource.h  |  3 +++
- mm/mmap.c                            | 12 +++++++++++-
- 4 files changed, 27 insertions(+), 3 deletions(-)
+ arch/x86/entry/vdso/.gitignore        |  4 ++++
+ arch/x86/entry/vdso/Makefile          | 12 +++++++++++-
+ arch/x86/entry/vdso/vdso-layout.lds.S |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/uapi/asm/resource.h b/arch/x86/include/uapi/asm/resource.h
-index 04bc4db8921b..0741b2a6101a 100644
---- a/arch/x86/include/uapi/asm/resource.h
-+++ b/arch/x86/include/uapi/asm/resource.h
-@@ -1 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+#ifdef CONFIG_X86_INTEL_CET
-+#define rlimit_as_extra() current->thread.cet.ibt_bitmap_size
-+#endif
+diff --git a/arch/x86/entry/vdso/.gitignore b/arch/x86/entry/vdso/.gitignore
+index aae8ffdd5880..552941fdfae0 100644
+--- a/arch/x86/entry/vdso/.gitignore
++++ b/arch/x86/entry/vdso/.gitignore
+@@ -5,3 +5,7 @@ vdso32-sysenter-syms.lds
+ vdso32-int80-syms.lds
+ vdso-image-*.c
+ vdso2c
++vclock_gettime.S
++vgetcpu.S
++vclock_gettime.asm
++vgetcpu.asm
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index fa3f439f0a92..8694f70c08e6 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -102,13 +102,17 @@ vobjx32s := $(foreach F,$(vobjx32s-y),$(obj)/$F)
+ 
+ # Convert 64bit object file to x32 for x32 vDSO.
+ quiet_cmd_x32 = X32     $@
+-      cmd_x32 = $(OBJCOPY) -O elf32-x86-64 $< $@
++      cmd_x32 = $(OBJCOPY) -R .note.gnu.property -O elf32-x86-64 $< $@
+ 
+ $(obj)/%-x32.o: $(obj)/%.o FORCE
+ 	$(call if_changed,x32)
+ 
+ targets += vdsox32.lds $(vobjx32s-y)
+ 
++ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++    $(obj)/vclock_gettime.o $(obj)/vgetcpu.o $(obj)/vdso32/vclock_gettime.o: KBUILD_CFLAGS += -fcf-protection=branch
++endif
 +
- #include <asm-generic/resource.h>
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 071b9dd5bc5c..f700743f6f48 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -295,20 +295,26 @@ int cet_setup_ibt(void)
- 	if (!cpu_feature_enabled(X86_FEATURE_IBT))
- 		return -EOPNOTSUPP;
+ $(obj)/%.so: OBJCOPYFLAGS := -S
+ $(obj)/%.so: $(obj)/%.so.dbg
+ 	$(call if_changed,objcopy)
+@@ -160,6 +164,12 @@ quiet_cmd_vdso = VDSO    $@
  
-+	/*
-+	 * Calculate size and put in thread header.
-+	 * may_expand_vm() needs this information.
-+	 */
- 	size = TASK_SIZE / PAGE_SIZE / BITS_PER_BYTE;
-+	current->thread.cet.ibt_bitmap_size = size;
- 	bitmap = do_mmap_locked(0, size, PROT_READ | PROT_WRITE,
- 				MAP_ANONYMOUS | MAP_PRIVATE,
- 				VM_DONTDUMP);
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+ 	$(call ld-option, --build-id) -Bsymbolic
++ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++  VDSO_LDFLAGS += $(call ldoption, -z$(comma)ibt)
++endif
++ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++  VDSO_LDFLAGS += $(call ldoption, -z$(comma)shstk)
++endif
+ GCOV_PROFILE := n
  
--	if (bitmap >= TASK_SIZE)
-+	if (bitmap >= TASK_SIZE) {
-+		current->thread.cet.ibt_bitmap_size = 0;
- 		return -ENOMEM;
-+	}
+ #
+diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
+index acfd5ba7d943..cabaeedfed78 100644
+--- a/arch/x86/entry/vdso/vdso-layout.lds.S
++++ b/arch/x86/entry/vdso/vdso-layout.lds.S
+@@ -74,6 +74,7 @@ SECTIONS
+ 	.fake_shstrtab	: { *(.fake_shstrtab) }		:text
  
- 	rdmsrl(MSR_IA32_U_CET, r);
- 	r |= (MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_NO_TRACK_EN);
- 	wrmsrl(MSR_IA32_U_CET, r);
  
- 	current->thread.cet.ibt_bitmap_addr = bitmap;
--	current->thread.cet.ibt_bitmap_size = size;
- 	current->thread.cet.ibt_enabled = 1;
- 	return 0;
- }
-diff --git a/include/uapi/asm-generic/resource.h b/include/uapi/asm-generic/resource.h
-index f12db7a0da64..8a7608a09700 100644
---- a/include/uapi/asm-generic/resource.h
-+++ b/include/uapi/asm-generic/resource.h
-@@ -58,5 +58,8 @@
- # define RLIM_INFINITY		(~0UL)
- #endif
++	.note.gnu.property : { *(.note.gnu.property) }	:text	:note
+ 	.note		: { *(.note.*) }		:text	:note
  
-+#ifndef rlimit_as_extra
-+#define rlimit_as_extra() 0
-+#endif
- 
- #endif /* _UAPI_ASM_GENERIC_RESOURCE_H */
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 5f2b2b184c60..6f6c722c1484 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3228,7 +3228,17 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
-  */
- bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
- {
--	if (mm->total_vm + npages > rlimit(RLIMIT_AS) >> PAGE_SHIFT)
-+	unsigned long as_limit = rlimit(RLIMIT_AS);
-+	unsigned long as_limit_plus = as_limit + rlimit_as_extra();
-+
-+	/* as_limit_plus overflowed */
-+	if (as_limit_plus < as_limit)
-+		as_limit_plus = RLIM_INFINITY;
-+
-+	if (as_limit_plus > as_limit)
-+		as_limit = as_limit_plus;
-+
-+	if (mm->total_vm + npages > as_limit >> PAGE_SHIFT)
- 		return false;
- 
- 	if (is_data_mapping(flags) &&
+ 	.eh_frame_hdr	: { *(.eh_frame_hdr) }		:text	:eh_frame_hdr
 -- 
 2.17.1
 
