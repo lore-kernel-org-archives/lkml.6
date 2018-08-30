@@ -2,110 +2,159 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4060BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5462C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE816205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A442073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="NCCd/sgd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE816205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X05bmN+3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A442073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeH3SBS (ORCPT
+        id S1729099AbeH3SBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:01:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35491 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbeH3SBS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:01:18 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p12-v6so3935316pfh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Opp7/90KgZLyY+6mrs4uBZrkB8MAeRsaRuOg8MZIqwQ=;
-        b=NCCd/sgdULlh0dXy3t3REW2/kPqSugZr7dXRGjL0QyoxO98IDuFLESfG7IgdiVEVWl
-         sjGdGwrZ511GZgPtBFEvFAI3EbRd1MPlBEBsRGqEVrnurLFWpcIDiLu2CEM9DC9KKe7t
-         DXtQU01m3mQuWXwZ3M/ySwV8CjVfX1J2hsgASMSbrbIsVAXxZwgwJwnV6IkmaJxobfOl
-         l3OLpR3GgoSLI5GNKcdMcCiUhWUoD0SPEuuk2goinJn3NTnr30YmO7H6wQCk5Xlmf8et
-         /qxSIdBpDs2jshmbkhrgi/kkdwV5LYCpdMEwrBJ46y1KKWSrfBd0umE2qkHq8XDQI9Un
-         w5Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Opp7/90KgZLyY+6mrs4uBZrkB8MAeRsaRuOg8MZIqwQ=;
-        b=Mh5XluCT0dPNZe5j6pSvSHEY4H+pxrVV5MHkhB5hrMxRJKvZPFcXYYKYkHLd/8rxbG
-         zSUNVi1ZiLBvmPUJl84CsvE8VkWcqz3ZZsTSYS4qR3J1es6NBfI86zqcgosfmgxt2k2H
-         Q1vGO7MK0JaraQixIxkDCobCSsTkpPi0YiRQbopKRq9Jv5tAGR97P1/50RNCiG468nLZ
-         6ikP6DFltGeLK+PtAsqeziAjYJVHggcSa/J/adKxFJlWd3YAgPgRvSji00fMw03pBO1W
-         4CqhlGlK6yZNO3vAaFX5zTGLYhp+UVvkbseDQ2Hy/pw3bN3WyWcPgYWGCMTskWmEBfyv
-         SXpg==
-X-Gm-Message-State: APzg51AqhNc9W3hh9LWAFBCUgiVZVQz5K3tp38TFIxINKAtUxuxUhygN
-        WEqUKHOvpBYSY5II2dqKTFaMQQ==
-X-Google-Smtp-Source: ANB0VdbNwj6Ao+Jm4aJbF8+cismAIByBVysr73DhT1C9pGPgU4QyY5wCbUe8KY3Nbw2nh6irffVzzQ==
-X-Received: by 2002:a62:1bc2:: with SMTP id b185-v6mr10781246pfb.170.1535637541761;
-        Thu, 30 Aug 2018 06:59:01 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id v7-v6sm11739585pgh.57.2018.08.30.06.59.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 06:59:00 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 222EE3001A3; Thu, 30 Aug 2018 16:58:56 +0300 (+03)
-Date:   Thu, 30 Aug 2018 16:58:56 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/3] Add restrictions for kexec/kdump jumping between
- 5-level and 4-level kernel
-Message-ID: <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
-References: <20180829141624.13985-1-bhe@redhat.com>
+        Thu, 30 Aug 2018 14:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38578 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728273AbeH3SBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:01:48 -0400
+Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA86520837;
+        Thu, 30 Aug 2018 13:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535637571;
+        bh=NwGv5MOMEk/kYncyPUzRRk51uQVcYw9bZA/AB2YpLYI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=X05bmN+3h6e9UGvMXL+0c5NVbxo3Sej0hUS0QE5cycFopTm28NxVLt6mkoI/w3FpY
+         Q+cqIY+mPQCs/zjqW1bcb3X2HYBoMocN3vsHoocsSx/leK19sNVxC8l2CwvVxusjnP
+         ybvdHKqaNFx7pha+GBmFj/1RFE/pgSBe1vuhRJ2Y=
+Received: by mail-qt0-f178.google.com with SMTP id n6-v6so9897268qtl.4;
+        Thu, 30 Aug 2018 06:59:31 -0700 (PDT)
+X-Gm-Message-State: APzg51B//shgz/GTO1InDr8j356TErsjPR5GA/FugvJ5Bf4LcMrpppNn
+        40tNbk9MgGX0t01m3ZKbTJgpcDBCQ4Ik3yoWuA==
+X-Google-Smtp-Source: ANB0VdbRm86gD+sjO4NX2UAwgzMSeb9yHMUol68u7Lkw/jLenHnT94UXozMpoKbAJOpVns3CnMlpq+PkWY0fKf3Hya4=
+X-Received: by 2002:ac8:148b:: with SMTP id l11-v6mr2131416qtj.27.1535637570855;
+ Thu, 30 Aug 2018 06:59:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829141624.13985-1-bhe@redhat.com>
-User-Agent: NeoMutt/20180716
+References: <1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com>
+ <1535096165-45827-2-git-send-email-hanjie.lin@amlogic.com>
+ <8c48964151d24758298ba935da336c0829e2b287.camel@baylibre.com>
+ <11d7547b-feb4-6ecb-cef3-db46ce8ee2ef@amlogic.com> <20180829004122.GA25928@bogus>
+ <84d5399c-67d4-f8a4-3613-00d91f21292f@amlogic.com>
+In-Reply-To: <84d5399c-67d4-f8a4-3613-00d91f21292f@amlogic.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 30 Aug 2018 08:59:19 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJPzfp1OimYXa26tEqTexyiuKMeKszveobHN3rKP8+RYQ@mail.gmail.com>
+Message-ID: <CAL_JsqJPzfp1OimYXa26tEqTexyiuKMeKszveobHN3rKP8+RYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+To:     Hanjie Lin <hanjie.lin@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 10:16:21PM +0800, Baoquan He wrote:
-> This was suggested by Kirill several months ago, I worked out several
-> patches to fix, then interrupted by other issues. So sort them out
-> now and post for reviewing.
+On Thu, Aug 30, 2018 at 2:37 AM Hanjie Lin <hanjie.lin@amlogic.com> wrote:
+>
+>
+>
+> On 2018/8/29 8:41, Rob Herring wrote:
+> > On Mon, Aug 27, 2018 at 04:55:20PM +0800, Hanjie Lin wrote:
+> >>
+> >>
+> >> On 2018/8/24 16:22, Jerome Brunet wrote:
+> >>> On Fri, 2018-08-24 at 15:36 +0800, Hanjie Lin wrote:
+> >>>> From: Yue Wang <yue.wang@amlogic.com>
+> >>>>
+> >>>> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+> >>>> PCI core. This patch adds documentation for the DT bindings in Meson PCIe
+> >>>> controller.
+> >>>>
+> >>>> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+> >>>> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+> >>>> ---
+> >>>>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 63 ++++++++++++++++++++++
+> >>>>  1 file changed, 63 insertions(+)
+> >>>>  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> >>>> new file mode 100644
+> >>>> index 0000000..8a831d1
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> >>>> @@ -0,0 +1,63 @@
+> >>>> +Amlogic Meson AXG DWC PCIE SoC controller
+> >>>> +
+> >>>> +Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
+> >>>> +It shares common functions with the PCIe DesignWare core driver and
+> >>>> +inherits common properties defined in
+> >>>> +Documentation/devicetree/bindings/pci/designware-pci.txt.
+> >>>> +
+> >>>> +Additional properties are described here:
+> >>>> +
+> >>>> +Required properties:
+> >>>> +- compatible:
+> >>>> +  should contain "amlogic,axg-pcie" to identify the core.
+> >>>> +- reg:
+> >>>> +  Should contain the configuration address space.
+> >>>> +- reg-names: Must be
+> >>>> +  - "elbi"        External local bus interface registers
+> >>>> +  - "cfg"         Meson specific registers
+> >>>> +  - "config"      PCIe configuration space
+> >>>> +- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
+> >>>> +- clocks: Must contain an entry for each entry in clock-names.
+> >>>> +- clock-names: Must include the following entries:
+> >>>> +  - "pclk"       PCIe GEN 100M PLL clock
+> >>>> +  - "port"       PCIe_x(A or B) RC clock gate
+> >>>> +  - "general"    PCIe Phy clock
+> >>>> +  - "mipi"       PCIe_x(A or B) 100M ref clock gate
+> >>>> +- resets: phandle to the reset lines.
+> >>>> +- reset-names: must contain "phy" and "peripheral"
+> >>>> +       - "port" Port A or B reset
+> >>>> +       - "apb" APB reset
+> >>>
+> >>> The above description is not coherent (phy <=> port)
+> >>>
+> >>
+> >> Yes, this should be port and apb here.
+> >> We'll integrate phy driver into ctrl driver, and move phy reset to here also.
+> >
+> > Why? That's the wrong thing to do if they are separate h/w blocks. You
+> > can do whatever you like in the drivers, but the DT should reflect the
+> > h/w.
+> >
+> > Rob
+> >
+> > .
+> >
+>
+> We have the dedicated phy driver which only process reset job,
+> and we consider that it's too overkill to do just these things .
+> So we will integrate phy reset job into the controller driver int the next version.
 
-Thanks for doing this.
+What's in the separate register space you had for the phy?
 
-> The current upstream kernel supports 5-level paging mode and supports
-> dynamically choosing paging mode during bootup according to kernel
-> image, hardware and kernel parameter setting. This flexibility brings
-> several issues for kexec/kdump:
-> 1)
-> Switching between paging modes, requires changes into target kernel.
-> It means you cannot kexec() 4-level paging kernel from 5-level paging
-> kernel if 4-level paging kernel doesn't include changes. 
-> 
-> 2)
-> Switching from 5-level paging to 4-level paging kernel would fail, if
-> kexec() put kernel image above 64TiB of memory.
-
-I'm not entirely sure that 64TiB is the limit here. Technically, 4-level
-paging allows to address 256TiB in 1-to-1 mapping. We just don't have
-machines with that wide physical address space (which don't support
-5-level paging too).
-
-What is your reasoning about 64TiB limit?
-
--- 
- Kirill A. Shutemov
+Rob
