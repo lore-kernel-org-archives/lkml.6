@@ -2,118 +2,88 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8455C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12472073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12472073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 82CAA205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CAA205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbeH3TDx (ORCPT
+        id S1728815AbeH3TH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:03:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42958 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728449AbeH3TDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:03:53 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7C2C40241CF;
-        Thu, 30 Aug 2018 15:01:18 +0000 (UTC)
-Received: from localhost (ovpn-8-29.pek2.redhat.com [10.72.8.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CA8EE202704E;
-        Thu, 30 Aug 2018 15:01:17 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 23:01:11 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, tglx@linutronix.de,
-        mingo@kernel.org, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/3] Add restrictions for kexec/kdump jumping between
- 5-level and 4-level kernel
-Message-ID: <20180830150035.GD14702@192.168.1.2>
-References: <20180829141624.13985-1-bhe@redhat.com>
- <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
- <20180830141202.GA14702@192.168.1.2>
- <20180830142739.gfpa23nvex7xbkkf@black.fi.intel.com>
- <20180830145751.GC14702@192.168.1.2>
+        Thu, 30 Aug 2018 15:07:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50516 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728449AbeH3TH6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:07:58 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fvOVb-0006Xh-Ls; Thu, 30 Aug 2018 17:05:19 +0200
+Date:   Thu, 30 Aug 2018 17:05:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     John Crispin <john@phrozen.org>
+cc:     Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH stable] tick/nohz: Prevent bogus softirq pending warning
+Message-ID: <alpine.DEB.2.21.1808301702450.1210@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830145751.GC14702@192.168.1.2>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 30 Aug 2018 15:01:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 30 Aug 2018 15:01:18 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/18 at 10:57pm, Baoquan He wrote:
-> On 08/30/18 at 05:27pm, Kirill A. Shutemov wrote:
-> > On Thu, Aug 30, 2018 at 02:12:02PM +0000, Baoquan He wrote:
-> > > On 08/30/18 at 04:58pm, Kirill A. Shutemov wrote:
-> > > > On Wed, Aug 29, 2018 at 10:16:21PM +0800, Baoquan He wrote:
-> > > > > This was suggested by Kirill several months ago, I worked out several
-> > > > > patches to fix, then interrupted by other issues. So sort them out
-> > > > > now and post for reviewing.
-> > > > 
-> > > > Thanks for doing this.
-> > > > 
-> > > > > The current upstream kernel supports 5-level paging mode and supports
-> > > > > dynamically choosing paging mode during bootup according to kernel
-> > > > > image, hardware and kernel parameter setting. This flexibility brings
-> > > > > several issues for kexec/kdump:
-> > > > > 1)
-> > > > > Switching between paging modes, requires changes into target kernel.
-> > > > > It means you cannot kexec() 4-level paging kernel from 5-level paging
-> > > > > kernel if 4-level paging kernel doesn't include changes. 
-> > > > > 
-> > > > > 2)
-> > > > > Switching from 5-level paging to 4-level paging kernel would fail, if
-> > > > > kexec() put kernel image above 64TiB of memory.
-> > > > 
-> > > > I'm not entirely sure that 64TiB is the limit here. Technically, 4-level
-> > > > paging allows to address 256TiB in 1-to-1 mapping. We just don't have
-> > > > machines with that wide physical address space (which don't support
-> > > > 5-level paging too).
-> > > 
-> > > Hmm, afaik, the MAX_PHYSMEM_BITS limits the maximum address space
-> > > which physical RAM can mapped to. We have 256TB for the whole address
-> > > space for 4-level paging, that includes user space and kernel space,
-> > > it might not allow 256TB entirely for the direct mapping.
-> > > And the direct mapping is only for physical RAM mapping, and
-> > > kexec/kdump only cares about the physical RAM space and load them
-> > > inside.
-> > > 
-> > > # define MAX_PHYSMEM_BITS       (pgtable_l5_enabled() ? 52 : 46)
-> > > 
-> > > Not sure if my understanding is right, please correct me if I am wrong.
-> > 
-> > IIRC, we only care about the place kexec puts the kernel before it gets
-> > decompressed. After the decompression kernel will be put into the right
-> > spot.
-> > 
-> > Decompression is done in early boot where we use 1-to-1 mapping (not a
-> > usual kernel virtual memory layout). All 256TiB should be reachable.
-> 
-> My understanding that is although it's 1:1 identity mapping, it still
-                   ~is that~ , sorry, typo
-> has to be inside available physical RAM region. I don't remember what
-> the old code did, now in __startup_64(), you can see that there's a
-> check like below, and at this time, it's still identity mapping.
-> 
->         /* Is the address too large? */
->         if (physaddr >> MAX_PHYSMEM_BITS)
->                 for (;;);
-> 
-> Thanks
-> Baoquan
+Commit 0a0e0829f990 ("nohz: Fix missing tick reprogram when interrupting an
+inline softirq") got backported to stable trees and now causes the NOHZ
+softirq pending warning to trigger. It's not an upstream issue as the NOHZ
+update logic has been changed there.
+
+The problem is when a softirq disabled section gets interrupted and on
+return from interrupt the tick/nohz state is evaluated, which then can
+observe pending soft interrupts. These soft interrupts are legitimately
+pending because they cannot be processed as long as soft interrupts are
+disabled and the interrupted code will correctly process them when soft
+interrupts are reenabled.
+
+Add a check for softirqs disabled to the pending check to prevent the
+warning.
+
+Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Reported-by: John Crispin <john@phrozen.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: John Crispin <john@phrozen.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
+---
+ kernel/time/tick-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -888,7 +888,7 @@ static bool can_stop_idle_tick(int cpu,
+ 	if (unlikely(local_softirq_pending() && cpu_online(cpu))) {
+ 		static int ratelimit;
+ 
+-		if (ratelimit < 10 &&
++		if (ratelimit < 10 && !in_softirq() &&
+ 		    (local_softirq_pending() & SOFTIRQ_STOP_IDLE_MASK)) {
+ 			pr_warn("NOHZ: local_softirq_pending %02x\n",
+ 				(unsigned int) local_softirq_pending());
