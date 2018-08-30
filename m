@@ -2,89 +2,76 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1040C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15B5C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4624120658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DF6D20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:42:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DeVikV9v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4624120658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpbxi6vs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF6D20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeHaBls (ORCPT
+        id S1727762AbeHaBrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 21:41:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:43161 "EHLO ozlabs.org"
+        Thu, 30 Aug 2018 21:47:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727235AbeHaBlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:41:47 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1727181AbeHaBrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 21:47:08 -0400
+Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 421bSG6jksz9s1x;
-        Fri, 31 Aug 2018 07:37:34 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1535665055;
-        bh=/seg1j1D7PgyFmAJ9/BsaEzMj13Qh1XJddcGdloLeI8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DeVikV9vttVk8a3WlaumYj9MxtDyb7ICOerh+j6loLLfVFe3uTse2nIaRpWEyUN5W
-         pd9S3Y1U5W6I97HYMBk6B1ajO3vn5Fa3tSszunmkYG+KlmYZpQW+QFOP5eoPGpv+Bg
-         GSqkmNavKyUDCitf/nitz/fqBHMxpfhvucMmW3jfVA9vDwKvNzpAJQ6WbZiIffS//G
-         Ux+krCFmtZKJzMH/11r5HAMkQo36IO9L2nulcgG8Wa6o8s4ttwet+aBrDICAogE+yK
-         r8/nKvjknH1SwGRjLYDnGquPMRv6iIc42o7IhyLRqAqrZbP6j05rTfnDT4dvsyfWxG
-         DBlumr0n6MRng==
-Date:   Fri, 31 Aug 2018 07:37:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Corey Minyard <cminyard@mvista.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ipmi tree
-Message-ID: <20180831073725.2cf9081d@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id DDC0B20658;
+        Thu, 30 Aug 2018 21:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535665376;
+        bh=DClzwd3pvtnf82MTSvaE0UmSSBhITspTbwIJDm12lLI=;
+        h=From:To:References:In-Reply-To:Subject:Date:From;
+        b=cpbxi6vszXrNvIT6yeyYCNV2A7clYPu7oP4Lq334eyUmvf1N/ppHK9S2RlK+p5wKA
+         J/7oKLfnnasg/jM+Bck5Xkns6kx1XwuivSHp6cJonRiM1hUBew40PI1JqCG+4S5NLF
+         bU5VjJxCHzXAE9gGI0lNP+1ZTLG9yqNd6mc8eW6M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NGhh8HcI6tL4LWDfp+3to7d"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.7
+To:     "David S. Miller" <davem@davemloft.net>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830171539.20008-1-krzk@kernel.org>
+ <20180830171539.20008-3-krzk@kernel.org>
+In-Reply-To: <20180830171539.20008-3-krzk@kernel.org>
+Message-ID: <153566537518.129321.12109490238775167072@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/6] clk: imx: vf610: Add CRC clock
+Date:   Thu, 30 Aug 2018 14:42:55 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NGhh8HcI6tL4LWDfp+3to7d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Quoting Krzysztof Kozlowski (2018-08-30 10:15:35)
+> Add the clock for CRC block allowing it to be enabled by HW CRC driver.
+> =
 
-Hi Corey,
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Commit
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-  6320fd2c65b5 ("ipmi: fix return value of ipmi_set_my_LUN")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NGhh8HcI6tL4LWDfp+3to7d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluIY5UACgkQAVBC80lX
-0Gzdzwf/WAv8tEJUADTfXqJO1qsMGICI+TnFowF69caXT0qqefXeMTKHrvzI30DP
-PG5lmK+D0EKUZ0I3rIWqI0NmwYnV90TB1+A5/nYc1+wAfhmIu5OBc07RivddmdBk
-MQjCxub1NQXrUj31nnXHHe7PutLFA8BCpOpfG91lybL7fS1i/JRdNH8cmelBJe0q
-T+2lshRsexgumGL6AasD9aPQhMy2RStRb6EKv9kKBau20swBhgzFRE8MKCyosAHc
-sotVZ1CgqfWCfv7a/OA49ckRLZemuUOilMeUlpoelcuVxPre8F+WE0hUTQ6Bgr2s
-Cn7cT6u0Uu4JV0nOwo96jgvDLa12zA==
-=r+0o
------END PGP SIGNATURE-----
-
---Sig_/NGhh8HcI6tL4LWDfp+3to7d--
