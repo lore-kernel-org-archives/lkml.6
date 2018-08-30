@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858D0C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAC3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB282073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD29C20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w2r2PHzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB282073D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwGlSoOp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD29C20835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbeH3SS5 (ORCPT
+        id S1729186AbeH3ST0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42394 "EHLO mail.kernel.org"
+        Thu, 30 Aug 2018 14:19:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729083AbeH3SS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:18:57 -0400
+        id S1729080AbeH3STZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:19:25 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6112C2073D;
-        Thu, 30 Aug 2018 14:16:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9F782073D;
+        Thu, 30 Aug 2018 14:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535638596;
-        bh=/GLnsf4QnRa6GHrHxdKREIoRrEDq6hnuvzGZZpvsSuc=;
+        s=default; t=1535638624;
+        bh=RC664nWoPcHwOnUQh+4+LHBof19YDTLD5cz8JkSEDyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w2r2PHzYavw7CCmLQpQFm/QMLUlYLy4wIpXe4LIpJ5dI8N1WHbAKQmQSmwULVuj6Q
-         fZ7zT+uLq4ROf1rtDIk8WL5MA9Xuj5NQY3jPOXQd+tc2DA0MNMknirxOR34lHEjTDo
-         c3TRtd2wUii56iUTAqNfNawI/ciIG+J+1BAGjoa4=
+        b=iwGlSoOpjie7upC+q8rpS4iZk4p18NQKdPybLjRZmjed+9cJkkipq3b0soTst28NP
+         6ir2tcRWJ3YFpSH6toShmVqwWFCcXAY9RymuNy2dti2Bxonz+qoV1PA3PtcS+eFd6c
+         0KxoM1shl26izKnJusd4ddAwEWEwdvtHTyocaPmg=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Ingo Molnar <mingo@redhat.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 08/28] selftests/ftrace: Fix to test kprobe $comm arg only if available
-Date:   Thu, 30 Aug 2018 23:16:13 +0900
-Message-Id: <153563857337.29700.5631759295666790709.stgit@devbox>
+Subject: [PATCH v3 09/28] selftests/ftrace: Fix checkbashisms errors
+Date:   Thu, 30 Aug 2018 23:16:41 +0900
+Message-Id: <153563860167.29700.13365388020478810834.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <153563834333.29700.11242968505215651399.stgit@devbox>
 References: <153563834333.29700.11242968505215651399.stgit@devbox>
@@ -56,30 +56,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test $comm in kprobe-event argument syntax testcase
-only if it is supported on the kernel because
-$comm has been introduced 4.8 kernel.
-So on older stable kernel, it should be skipped.
+Fix a test case to make checkbashisms clean.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |    3 +++
- 1 file changed, 3 insertions(+)
+ .../trigger/trigger-trace-marker-snapshot.tc       |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-index d783a8ce0692..6f0f19953193 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -75,8 +75,11 @@ test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
- echo "r ${PROBEFUNC} \$retval" > kprobe_events
- ! echo "p ${PROBEFUNC} \$retval" > kprobe_events
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+index 79ce7d51350b..df246e505af7 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-snapshot.tc
+@@ -39,10 +39,10 @@ test_trace() {
+ 	fi
+ 	echo "testing $line for >$x<"
+ 	match=`echo $line | sed -e "s/>$x<//"`
+-	if [ "$line" == "$match" ]; then
++	if [ "$line" = "$match" ]; then
+ 	    fail "$line does not have >$x< in it"
+ 	fi
+-	let x=$x+2
++	x=$((x+2))
+     done
+ }
  
-+# $comm was introduced in 4.8, older kernels reject it.
-+if grep -A1 "fetcharg:" README | grep -q '\$comm' ; then
- : "Comm access"
- test_goodarg "\$comm"
-+fi
- 
- : "Indirect memory access"
- test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
 
