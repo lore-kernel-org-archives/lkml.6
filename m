@@ -2,99 +2,76 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93C8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DE1C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88A6720645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:20:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A6720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CC91820658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:20:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC91820658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbeH3NVP (ORCPT
+        id S1728213AbeH3NV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:21:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49712 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeH3NVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:21:15 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvJ7R-0007vd-B7; Thu, 30 Aug 2018 11:20:01 +0200
-Date:   Thu, 30 Aug 2018 11:19:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Rich Felker <dalias@libc.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: futex_cmpxchg_enabled breakage
-In-Reply-To: <20180829222221.GA22017@brightrain.aerifal.cx>
-Message-ID: <alpine.DEB.2.21.1808301109220.1210@nanos.tec.linutronix.de>
-References: <20180829222221.GA22017@brightrain.aerifal.cx>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 30 Aug 2018 09:21:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46732 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727089AbeH3NV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 09:21:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7919CAEF9;
+        Thu, 30 Aug 2018 09:20:43 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 11:21:07 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v2 2/3] x86/mm: add .data..decrypted section to hold
+ shared variables
+Message-ID: <20180830092107.GA18459@nazgul.tnic>
+References: <1535494377-25600-1-git-send-email-brijesh.singh@amd.com>
+ <1535494377-25600-3-git-send-email-brijesh.singh@amd.com>
+ <20180829135949.GF6337@nazgul.tnic>
+ <16738629-2574-69b6-1ce6-0d37fbb18a9c@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16738629-2574-69b6-1ce6-0d37fbb18a9c@amd.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018, Rich Felker wrote:
-
-> I just spent a number of hours helping someone track down a bug that
-> looks like it's some kind of futex_cmpxchg_enabled detection error on
-> powerpc64 (still not sure of the root cause; set_robust_list producing
-> -ENOSYS), and a while back I hit the same problem on sh2 due to lack
-> of EFAULT on nommu, leading to commit 72cc564f16ca. I think the test
-> (introduced way back in commit a0c1e9073ef7) is fundamentally buggy;
-> if anything, it should be checking for !=-ENOSYS, not ==-EFAULT.
-
-Errm? This does a futex_cmpxchg() on NULL which has to return EFAULT if
-it's available. There is nothing fundamentally buggy about it at all.
-
-> Presumably it could also fail to produce -EFAULT if mmap_min_addr is 0
-> and page 0 is mapped (a bad idea, but maybe someone does it...). And
-> of course other nommu archs are possibly still broken.
-
-If NULL is mapped in the kernel then a lot of other things are broken. The
-futex thing is then the least of your worries.
-
-> Ultimately from an API perspective, the functionality that depends on
-> futex_cmpxchg_enabled is non-optional, and the current approach of
-> treating it as something that can be disabled via detection at runtime
-> is fragile and wrong.
-
-The availibility of the interfaces which depend on futex_cmpxchg_enabled
-has been runtime detectable forever and it's documented that way. I have no
-idea why you think it's non-optional. If you made it unconditional in your
-lib, then it's hardly the kernels problem.
-
-> If there are no archs that support SMP but don't provide their own
-> asm/futex.h (as opposed to the asm-generic one that does -ENOSYS on
-> SMP), the detection code should just be removed, and the SMP case in
-> asm-generic/futex.h should be made into #error.
-
-And why so? Just because?
-
-> If there are archs that support SMP but don't provide their own
-> working asm/futex.h, then asm-generic/futex.h's SMP case should be
-> enhanced to perform a stop-the-world IPI and then do the same thing as
-> the non-SMP case (disable preemption[/interrupts?], perform the
-> cmpxchg non-atomically).
+On Wed, Aug 29, 2018 at 09:37:46AM -0500, Brijesh Singh wrote:
+> > > @@ -491,28 +510,69 @@ static void __init remove_workarea_map(struct sme_workarea_data *wa,
+> > >   	native_write_cr3(__native_read_cr3());
+> > >   }
+> > > +static void __init decrypt_data_decrypted_section(struct sme_workarea_data *wa,
+> > 
+> > That function name could use some clarifying change...
 > 
-> Thoughts? Would a patch to do this be acceptable?
+> 
+> How about decrypt_shared_data() ?
 
-No. There is nothing at all in the world which requires that PI futexes and
-robust list are provided and even if you implement that hack in the kernel
-then the user space side still does not work because the user space part of
-those interfaces has a hard dependency on working cmpxchg as well.
+Much better.
 
-Thanks,
+Thx.
 
-	tglx
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
