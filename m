@@ -2,106 +2,113 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F73C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3D4C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4322073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:25:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/kdHnSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4322073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B59AE20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 05:40:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59AE20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeH3JZw (ORCPT
+        id S1727301AbeH3JlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 05:25:52 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45724 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbeH3JZv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 05:25:51 -0400
-Received: by mail-qt0-f194.google.com with SMTP id g44-v6so8453808qtb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 22:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F3CScztbtZ/psEk7sEi67MYjZ5h13KfG6E/erELe5b0=;
-        b=U/kdHnSU3YMAgTz+qFImSxOZzvKH3VsdMJPVNTkOEGJIzb4F03dY20ztVzu6vkS9nX
-         GxR+RM53Q9ulOFABIeEH2r8hVPdY3Ws/83TA62aR72eAcWgvhHAfU94iarvlj/GwYeh5
-         cXcpSsWob4b5Scwh452dv2yau3Dodz04tGcVU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F3CScztbtZ/psEk7sEi67MYjZ5h13KfG6E/erELe5b0=;
-        b=feeDOHML72+YIQNJ5sMSrD4/V799VW88ByeI5Q7mY7WEZD8zOV8f6uo3Gx+fsD355W
-         dw7Ts/EA5T1OUOUDxhwZTN2EPKkUxmH+e8Roo6JlSK6ktyzUYeWJFCcOrzRG+uc9xZ5F
-         XQDBRJ9v2SC9Csw/P5WGYKfCAj9vOz/tc4MxcpXcgktrSCd35khv1R98xWDh15XCNatj
-         8nd1jBP0GHryuITmCEfw0xIVUK6AhUvOQ3SwvY/aY1bkpmqaeNOGfVx0PzMOhtPt5n3q
-         zFg4PoQazawwZuocv+Jzrzm1gevHNAFBlBJGD2WTN/mnh9YQzNREkyUgK4D7tfp7ws9+
-         h1QQ==
-X-Gm-Message-State: APzg51DQPX5j9eBmBxqxzDrUF46Tb84fpjF/6Yr5PFdWg2VV5yCOkyV7
-        AGIfECSc55gQ8g/kV42CzV/U6YOmg3RlkbH/y5bZ1Q==
-X-Google-Smtp-Source: ANB0VdYqvR1hF0kiZe0Heyq6UTrj9weqk88IekRpBCd2NY9EwV10F0Y0BGN8Hu4A/6ye4aJn21BlWtCOzUcP2YyMnIE=
-X-Received: by 2002:ac8:2f24:: with SMTP id j33-v6mr9816308qta.93.1535606728249;
- Wed, 29 Aug 2018 22:25:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1531899325.git.amit.kucheria@linaro.org>
- <b3c25cedfa3a9b8a4b481e714992afe62b84ca3b.1531899325.git.amit.kucheria@linaro.org>
- <f416d38c-b91f-f58e-8cde-d4ad09a0a726@linaro.org>
-In-Reply-To: <f416d38c-b91f-f58e-8cde-d4ad09a0a726@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Thu, 30 Aug 2018 10:55:17 +0530
-Message-ID: <CAP245DX7tBdOBfB-gZ8+MvdF3bsnNVWys4bjaDf0zObWJV38+Q@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: sdm845: enable tsens thermal zones
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Lists LAKML <linux-arm-kernel@lists.infradead.org>
+        Thu, 30 Aug 2018 05:41:12 -0400
+Received: from gate.crashing.org ([63.228.1.57]:58898 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725904AbeH3JlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 05:41:12 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7U5GtDj013461;
+        Thu, 30 Aug 2018 00:16:56 -0500
+Message-ID: <f792d95eda677acaf5b96d54e3863eb91f92fa7b.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
+Date:   Thu, 30 Aug 2018 15:16:55 +1000
+In-Reply-To: <20180829043430.GB13049@jagdpanzerIV>
+References: <20180829022353.23568-1-dima@arista.com>
+         <20180829022353.23568-3-dima@arista.com>
+         <20180829043430.GB13049@jagdpanzerIV>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 3:09 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 18/07/2018 09:49, Amit Kucheria wrote:
-> > One thermal zone per cpu is defined
->
-> The thermal zones are very close, especially when the CPUs belong to the
-> same 'cluster'. Very likely the temperature will propagate from one core
-> to another core, so when one core reaches the trip0, there is good
-> chance the other cores will be close and cross the trip0 threshold too.
+On Wed, 2018-08-29 at 13:34 +0900, Sergey Senozhatsky wrote:
+> Hi,
+> 
+> Cc-ing Benjamin on this.
+> 
+> On (08/29/18 03:23), Dmitry Safonov wrote:
+> > BUG: unable to handle kernel paging request at 0000000000002260
+> > IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+> > Workqueue: events_unbound flush_to_ldisc
+> > Call Trace:
+> >  [..] n_tty_receive_buf2
+> >  [..] tty_ldisc_receive_buf
+> >  [..] flush_to_ldisc
+> >  [..] process_one_work
+> >  [..] worker_thread
+> >  [..] kthread
+> >  [..] ret_from_fork
+> 
+> Seems that you are not the first one to hit this NULL deref.
+> 
+> > I think, tty_ldisc_reinit() should be called with ldisc_sem hold for
+> > writing, which will protect any reader against line discipline changes.
+> 
+> Per https://lore.kernel.org/patchwork/patch/777220/
+> 
+> : Note that we noticed one path that called reinit without the ldisc lock
+> : held for writing, we added that, but it didn't fix the problem.
+> 
+> And I guess that Ben meant the same reinit path which you patched:
 
-Agreed. Once we have all the thermal and cpufreq bits in place, I'd
-like to examine optimisations such as a virtual sensor, using the
-coefficients to add weights, etc.
+This is too old for me to remember buit yes, there definitely was a bug
+there...
 
-> Having multiple thermal zones, one per CPU, may trigger an interrupts
-> storm with the passive polling timer delay.
+> > @@ -1267,15 +1267,20 @@ static int tty_reopen(struct tty_struct *tty)
+> >  	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+> >  		return -EBUSY;
+> >  
+> > -	tty->count++;
+> > +	retval = tty_ldisc_lock(tty, 5 * HZ);
+> > +	if (retval)
+> > +		return retval;
+> >  
+> > +	tty->count++;
+> >  	if (tty->ldisc)
+> > -		return 0;
+> > +		goto out_unlock;
+> >  
+> >  	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+> >  	if (retval)
+> >  		tty->count--;
+> >  
+> > +out_unlock:
+> > +	tty_ldisc_unlock(tty);
+> >  	return retval;
+> >  }
+> 
+> 	-ss
 
-I'm working on irq support for tsens that should alleviate that.
-
-> Does this board have a cooling device per CPU also ?
-
-As Matthias mentioned, DVFS is per cluster (4 cpus to a cluster).
