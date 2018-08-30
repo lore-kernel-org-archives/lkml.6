@@ -2,142 +2,99 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9071C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7A4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC0820838
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:02:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiv8gZKD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC0820838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 541CB20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541CB20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeH3WGD (ORCPT
+        id S1727579AbeH3WGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726878AbeH3WGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:06:03 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0EDA20658;
-        Thu, 30 Aug 2018 18:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535652163;
-        bh=uY1e8MIqbbCOExlB16wcQXYE45K754nnczrbVFIYeB4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iiv8gZKDlYE2CenRZw8a7YWZrIcQN5qfKqAkGnzHhELgPfv+HPHHjLLw41x5qsVYG
-         WQrwtvMUB6MAUMLSSKPOQWltzWVNYvASQHusmp2Mx2jtPUMLa7CVpvLbcsVXpOR/9g
-         K1cGSncyOq583KKF7YtXZ1y8GqXAKPsqIZDNGBxs=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC as unstable
-Date:   Thu, 30 Aug 2018 20:02:05 +0200
-Message-Id: <20180830180205.18121-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Thu, 30 Aug 2018 18:06:24 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:58701 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727471AbeH3WGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:06:24 -0400
+Received: from [192.168.1.2] (unknown [110.184.153.119])
+        by APP-10 (Coremail) with SMTP id tACowAD3wu1KMYhbjPWyBQ--.206S2;
+        Fri, 31 Aug 2018 02:02:51 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 01/16] x86/cpu: create Dhyana init file and register
+ new cpu_dev to system
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <c4610c537e5e5774d8d7486e0867ced8ebf0fba1.1535459012.git.puwen@hygon.cn>
+ <20180830123559.GF20005@nazgul.tnic>
+Message-ID: <c22c3058-6a0b-f043-0263-e9767a54c2f2@hygon.cn>
+Date:   Fri, 31 Aug 2018 02:02:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180830123559.GF20005@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowAD3wu1KMYhbjPWyBQ--.206S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw13WFy8WrWkWrWUAr13Arb_yoW3Arc_Z3
+        WDG39Yk3W8JFWxta4xArnIyrW2vas5ZF40qw1fta4jq3sxta93ZFWrGa4kWr1UGrZ7uFyq
+        vr9YqrnI93yUWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbcxYjsxI4VWkKwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAI
+        w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
+        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+        CI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+        cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU56c_DUUUUU==
+X-Originating-IP: [110.184.153.119]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Samsung Exynos SoCs and boards related bindings evolved since the initial
-introduction, but initially the bindings were minimal and a bit incomplete
-(they never described all the hardware modules available in the SoCs).
-Since then some significant (not fully compatible) changes have been
-already committed a few times (like gpio replaced by pinctrl, display ddc,
-mfc reserved memory, some core clocks added to various hardware modules,
-added more required nodes).
+On 2018-08-30 20:35, Borislav Petkov wrote:
+>> +HYGON PROCESSOR SUPPORT
+>> +M:	Pu Wen <puwen@hygon.cn>
+>> +L:	linux-arch@vger.kernel.org
+>
+>This is probably the wrong ML. You either have your own or use lkml,
+>I'd say.
 
-On the other side there are no boards which have device tree embedded in
-the bootloader. Device tree blob is always compiled from the kernel tree
-and updated together with the kernel image.
+That's all right, I'll use linux-kernel@vger.kernel.org instead.
 
-Thus to avoid further adding a bunch of workarounds for old/missing
-bindings, make development of new platforms easier and allow to make
-cleanup of the existing code and device tree files, lets mark some
-Samsung Exynos SoC platform bindings as unstable. This means that
-bindings can may change at any time and users should use the dtb file
-compiled from the same kernel source tree as the kernel image.
+>> +++ b/arch/x86/kernel/cpu/hygon.c
+>> @@ -0,0 +1,408 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Hygon Processor Support for Linux
+>> + *
+>> + * Copyright (c) Chengdu Haiguang IC Design Co., Ltd.
+>> + *
+>> + * Author: 2018 Pu Wen <puwen@hygon.cn>
+>
+>Year goes with the copyright.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-[krzk: Explicitly list unstable bindings instead of marking entire
-Exynos]
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+OK, will change it as below: (in next version of patches)
++ * Copyright (c) 2018 Chengdu Haiguang IC Design Co., Ltd.
++ * Author: Pu Wen <puwen@hygon.cn>
 
----
+Thanks,
+Pu Wen
 
-Changes since v2:
-1. Add tags.
-
-Changes since v1:
-1. Rebase
-2. Add specific compatibles to mark unstable.
-
-v1 is here:
-https://patchwork.kernel.org/patch/9477963/
-
-Previous tags (not applying due to change in contents):
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- .../devicetree/bindings/arm/samsung/exynos.txt     | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos.txt b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
-new file mode 100644
-index 000000000000..7410cb79e4b2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos.txt
-@@ -0,0 +1,26 @@
-+Samsung Exynos SoC Family Device Tree Bindings
-+---------------------------------------------------------------
-+
-+Work in progress statement:
-+
-+Following Device Tree files and bindings applying to Samsung Exynos SoCs and
-+boards are considered "unstable":
-+
-+ - samsung,exynos5433* (all compatibles related to Exynos5433)
-+ - samsung,exynos7* (all compatibles related to Exynos7)
-+ - samsung,tm2-audio
-+ - samsung,mfc-v10
-+ - samsung,exynos*-mipi-dsi
-+ - samsung,exynos5-dp
-+ - samsung,exynos*-hdmi
-+ - samsung,exynos*-hdmiddc
-+ - samsung,exynos*-hdmiphy
-+ - samsung,exynos*-mixer
-+ - samsung,exynos*-fimd
-+
-+Any Samsung Exynos device tree binding mentioned may change at any time. Be
-+sure to use a device tree binary and a kernel image generated from the same
-+source tree.
-+
-+Please refer to Documentation/devicetree/bindings/ABI.txt for a definition of a
-+stable binding/ABI.
--- 
-2.14.1
+>Otherwise looks ok.
 
