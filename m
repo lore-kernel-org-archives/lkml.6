@@ -2,79 +2,135 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D68C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE4EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9137C20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796B220658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0pJU757n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9137C20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ds6bkfLw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796B220658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbeH3Wmq (ORCPT
+        id S1728262AbeH3Wms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:42:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726592AbeH3Wmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:42:45 -0400
-Received: from jouet.infradead.org (unknown [189.43.51.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6D420658;
-        Thu, 30 Aug 2018 18:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535654355;
-        bh=rItQ1g1LYxPfc5U/7NeIh2zXL+cME4vjTHrombwRmAc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0pJU757nhRJxJCEb9DNWhQ495noNpQ2HT2/nWitnazswkps5CzgZlLbllOamSnnRv
-         3QObI3wAZ6JsXlMTlyfe7RMIXh36wBFJJ+C5tFn+/M22PiWB3RE1wpCG0K1krWD4Hg
-         QA1QjfNZYd/fQ6fR1P8HRHI55Vw4iZj95akYVXxo=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 8107E141C3F; Thu, 30 Aug 2018 15:39:05 -0300 (-03)
-Date:   Thu, 30 Aug 2018 15:39:05 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCHv4 0/5] perf/hw_breakpoint: Fix breakpoint modify
-Message-ID: <20180830183905.GG6097@kernel.org>
-References: <20180827091228.2878-1-jolsa@kernel.org>
+        Thu, 30 Aug 2018 18:42:48 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34455 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeH3Wmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:42:47 -0400
+Received: by mail-wm0-f67.google.com with SMTP id j25-v6so1570828wmc.1;
+        Thu, 30 Aug 2018 11:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r/TK9cJYQEjith+IGSroY3ICqS1J8Z5IrwrdPpRNhJ4=;
+        b=ds6bkfLwOkmMocuE+lTuLNTZ4Cr6yZlTYCX9PbFTX98FkAJTrRYRKbYS9Jr6dUBUio
+         xb2eWiOoKqhTUh2lKyQ+VLs/LeUWyVUUjUVgHOctR15NR1vM6HJ7kCr8ngkaOtV/f+8o
+         OkzFaWDruF8Wt2Mbemimx3KzBt03OZ96Dw+GICgzU/DYR5OWzowzzD+Q+E4u3EMdbtRh
+         SVFlImFuEDm47BOE5i/PwaJz2C1OpANUAihP232hwgBbTYdKF5806WMpHwn0wRC+xOFM
+         P6GtZ4iarL8TCxD3+ZidIpoPhLWtvXPnHahVPQc5Lm9m2+LAG+X0cwBo8zNuIC9Z54Q0
+         1BBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r/TK9cJYQEjith+IGSroY3ICqS1J8Z5IrwrdPpRNhJ4=;
+        b=S/owJwadWIpYgK7CzV7GECk9mnyDj96JuiCnAt8t4Hcq3Rr0NPDtxwSZ+XEbpd17DY
+         2V1Jdn4S3NZ8g17AO6fH4l6h90MRLTkg3F6PQufAVnuP3rH3frBJ2qJH1/ey9R5xLPPN
+         Hjo+oYzmlyj7QHEgEEa9IAQxm+K4DJ3aTVVQjSuo7rX03+btN1WsvrMsPCI0a1+KxsXi
+         CMhDwdceyxqq6jxo6T0BnSndYvWZo1W2Ajw34rLluMrSapjBGIkPKgDyPsZNgxYBu36q
+         K4MOOaJvvCKok75XachgBdDxn6nIhAwEzewMznptvL9cNUUU61IXkMK9LdaV0WQ9Pdrd
+         Tucw==
+X-Gm-Message-State: APzg51A7YxjNErCJmbsjlIdaGZo97g0qqb3t8Wubcjhwjk4Da4I2XBRZ
+        u7kUq8nBwNYIjhuO+aaWbFfOWlXAYdqZNjU8azc=
+X-Google-Smtp-Source: ANB0VdZ6FbzIx4fkx1RAaqTJEcIJvClNIpvfTXyJHvBXZVXXWO3izAErEj1YCtyKjmN6BgjLXZvyOeHQcuB06kaRDPw=
+X-Received: by 2002:a1c:a386:: with SMTP id m128-v6mr2607103wme.139.1535654356181;
+ Thu, 30 Aug 2018 11:39:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827091228.2878-1-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+ <1535453838-12154-11-git-send-email-sunil.kovvuri@gmail.com>
+ <CAK8P3a1Vdy-VsLWJMer-Z96E4Trhi0WJXJ3fTzyOGny2Mn6RAA@mail.gmail.com>
+ <CA+sq2Cf2BLKsV=gY-MPnygV1ufpvmnw6ETh90JX_uKQBk3Sduw@mail.gmail.com>
+ <CAK8P3a0+zJRxEYWZpYShRJo-3oqMaC9TJADugaRTiBnjw7ssPA@mail.gmail.com>
+ <CA+sq2Cfd_jk=JzcLmPYiW1iGqKrJRrv5vrsmeZfY4W+qi5GLgw@mail.gmail.com> <CAK8P3a1BRvhQ9iQWP2hTrJOu+Z+vmmek-Uobw6zX0dM4zFe_gQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a1BRvhQ9iQWP2hTrJOu+Z+vmmek-Uobw6zX0dM4zFe_gQ@mail.gmail.com>
+From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Date:   Fri, 31 Aug 2018 00:09:04 +0530
+Message-ID: <CA+sq2CepUamZzjc8XS7gPALW3=19W2uv3hq=SUa86+i-oGsGnw@mail.gmail.com>
+Subject: Re: [PATCH 10/15] soc: octeontx2: Reconfig MSIX base with IOVA
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, Geetha sowjanya <gakula@marvell.com>,
+        Sunil Goutham <sgoutham@marvell.com>, tglx@linutronix.de,
+        Marc Zyngier <marc.zyngier@arm.com>, jason@lakedaemon.net,
+        linux-pci <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Aug 27, 2018 at 11:12:23AM +0200, Jiri Olsa escreveu:
-> hi,
-> Milind reported that modify_user_hw_breakpoint wouldn't
-> allow the breakpoint changing if the new attr had 'disabled'
-> set to true.
-> 
-> I found a case where it actualy prevents ptrace user interface
-> to change the breakpoint. It's described in patch 1 as perf test,
-> patch 2 is the breakpoint code fix.
-> 
-> I ran strace tests, nothing (new) broken there..
+On Thu, Aug 30, 2018 at 7:23 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Aug 28, 2018 at 3:17 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > On Tue, Aug 28, 2018 at 6:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Tue, Aug 28, 2018 at 2:42 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > > On Tue, Aug 28, 2018 at 5:39 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > On Tue, Aug 28, 2018 at 12:58 PM <sunil.kovvuri@gmail.com> wrote:
+> > > >
+> > > > This admin function is a PCI device which is capable of provisioning
+> > > > HW blocks to other PCIe SRIOV devices in the system. Each HW block
+> > > > (eg memory buffer pools, NIC dewscriptors, crypto engines e.t.c) needs
+> > > > certain no of MSIX vectors. Admin function has a set of 32K MSIX vectors
+> > > > in memory (not on-chip) which based on HW block provisioning to a PCI device
+> > > > attaches the required number of vectors to that device. Some part of this
+> > > > configuration is done by low level firmware.
+> > > >
+> > > > RVU_AF_MSIXTR_BASE points to the memory region allocated for 32K MSIX
+> > > > vectors. If kernel is booted with IOMMU enabled and admin function device
+> > > > is attached to SMMU, HW will go through translation to access this MSIX
+> > > > vector memory region. Hence the mapping done in this patch.
+> > >
+> > > Do you mean this is not a regular PCIe MSI-X interrupt to the GIC, but
+> > > something internal to your device that gets routed through the IOMMU
+> > > back into the device?
+> > >
+> >
+> > This is a regular PCIe MSI-X interrupt, the difference is that the
+> > bunch of PCI devices
+> > here doesn't have a fixed set of MSIX vectors. Admin function has a
+> > memory region with
+> > 32K MSIX vectors which it provisions to PCI devices based on the HW
+> > functional blocks
+> > attached to them. A PCI device which works as a ethernet device needs
+> > X number of vectors
+> > and a crypto device needs Y number of vectors.
+> >
+> > Since the admin function owns the whole MSIX vector region, HW uses
+> > this device's stream ID
+> > to access the vectors. Hence the IOMMU mapping. Once MSIX vectors are
+> > provisioned to
+> > a PCI device they work as normal MSIX interrupt like any other device.
+>
+> Ok, I think I got it now, just to confirm: the MSIX vectors you allocate
+> in the admin device refer to memory backing the BAR that contains
+> the MSI-X entries of the other functions, right?
 
-Thanks, tested and applied.
+Yes, that's correct.
 
-- Arnaldo
+>
+> I was a bit confused here and assumed that you were mapping
+> the MMIO area of an interrupt controller that receives the interupt
+> transactions.
+>
+>          Arnd
