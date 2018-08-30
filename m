@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A275CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C2FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF2820834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09C220834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 20:25:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FwAeDfGR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF2820834
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="y93v5HyO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09C220834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeHaA3B (ORCPT
+        id S1727385AbeHaA26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 20:29:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58710 "EHLO
+        Thu, 30 Aug 2018 20:28:58 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58672 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbeHaA3A (ORCPT
+        with ESMTP id S1727173AbeHaA26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 20:29:00 -0400
+        Thu, 30 Aug 2018 20:28:58 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UKOA4X032167;
-        Thu, 30 Aug 2018 20:24:45 GMT
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UKNY4v031676;
+        Thu, 30 Aug 2018 20:24:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=VpVdmdU76rt3SerFVK34lF/ARdQa/i/ZyGByq309Kpc=;
- b=FwAeDfGRioLKDULrB3fFLRZA7ZgfWfAycVCq74217CaVFS2o9kkc6se7t2yuRTUFfrK1
- xkngagPXeaKP8HRxk1BwlJv4P/+CuGYFqAJb3K2CYnKeuPGSX+eB05D2jBT2FTaXFgG5
- 8DaX2DnyWTHM5lEY97ZJtSoHYAL5n8AIN97wdJ77UiEPH/9e9JoohVzeg1ef2GIGKk83
- 2N/6JtnCrzZ2x9ifZ/ndvpkqVsEw5e/esLawzDivY2W/K+3oEpA0diuaCXTwYumiGDd9
- 0m52Pbbi7HfvyNLGLY8rZtSMTYvZzMFxtRZsqRVRudNcG0pY1gc/vRg9+2mVeRKuoR4i 1w== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2m2yrqptss-1
+ bh=iuQ5spCkYBImoJ5Jc7VISLxVqEoNMIE4pA4GRSdBhrA=;
+ b=y93v5HyONyvRswYshGZ5gRH5OBFYZnbcY+6SGgVDj5w8Rkncd1voYGsjvoYQjg57xhkr
+ xxWudFPsqNzFEshCfh/Ji+UFmqA6Kr9ySkU34oPkALjuQtGgNU2rHfvMH5wmWVzUaaRG
+ AVLHholxd7OdJO19T7hxr0FrU5cthfNnPwaZM8Rzmu65xy+QZfSWyRHw7I6WdF+mYpSr
+ DMUqc0iDJSOhtZvSjB11dugwpy5jbtOf9zSVvOOTULsw+os+aKsPQY6vMF+Ysxu+BLTB
+ K8gwScu5FBykmz7V3RGHgIj4RPALLMDLLAFYwFklpHsNXKLz1Cqz8VH7S2v15ELALJJP Rw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2m2yrqptsq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 20:24:45 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7UKOiBf008901
+        Thu, 30 Aug 2018 20:24:44 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7UKOhiZ031465
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 Aug 2018 20:24:44 GMT
 Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7UKOhlo028458;
-        Thu, 30 Aug 2018 20:24:44 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7UKOh6O005595;
+        Thu, 30 Aug 2018 20:24:43 GMT
 Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.175)
         by default (Oracle Beehive Gateway v4.0)
         with ESMTP ; Thu, 30 Aug 2018 13:24:43 -0700
@@ -55,15 +55,15 @@ From:   subhra mazumdar <subhra.mazumdar@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, dhaval.giani@oracle.com,
         steven.sistare@oracle.com, subhra.mazumdar@oracle.com
-Subject: [RFC PATCH 2/2] pipe: use pipe busy wait
-Date:   Thu, 30 Aug 2018 13:24:58 -0700
-Message-Id: <20180830202458.32579-3-subhra.mazumdar@oracle.com>
+Subject: [RFC PATCH 1/2] pipe: introduce busy wait for pipe
+Date:   Thu, 30 Aug 2018 13:24:57 -0700
+Message-Id: <20180830202458.32579-2-subhra.mazumdar@oracle.com>
 X-Mailer: git-send-email 2.9.3
 In-Reply-To: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
 References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9001 signatures=668708
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=627
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1808300206
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,193 +71,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable busy waiting for pipes. pipe_busy_wait is called if pipe is empty or
-full which spins for specified micro seconds. wake_up_busy_poll is called
-when data is written or read to signal any busy waiting threads. A tunable
-pipe_busy_poll is introduced to enable or disable busy waiting via /proc.
-The value of it specifies the amount of spin in microseconds.
+Introduce pipe_ll_usec field for pipes that indicates the amount of micro
+seconds a thread should spin if pipe is empty or full before sleeping. This
+is similar to network sockets. Workloads like hackbench in pipe mode
+benefits significantly from this by avoiding the sleep and wakeup overhead.
+Other similar usecases can benefit. pipe_wait_flag is used to signal any
+thread busy waiting. pipe_busy_loop_timeout checks if spin time is over.
 
 Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
 ---
- fs/pipe.c                 | 58 +++++++++++++++++++++++++++++++++++++++++++++--
- include/linux/pipe_fs_i.h |  1 +
- kernel/sysctl.c           |  7 ++++++
- 3 files changed, 64 insertions(+), 2 deletions(-)
+ include/linux/pipe_fs_i.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 97e5be8..03ce76a 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -44,6 +44,7 @@ unsigned int pipe_min_size = PAGE_SIZE;
-  */
- unsigned long pipe_user_pages_hard;
- unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
-+unsigned int pipe_busy_poll;
- 
- /*
-  * We use a start+len construction, which provides full use of the 
-@@ -122,6 +123,35 @@ void pipe_wait(struct pipe_inode_info *pipe)
- 	pipe_lock(pipe);
- }
- 
-+void pipe_busy_wait(struct pipe_inode_info *pipe)
-+{
-+	unsigned long wait_flag = pipe->pipe_wait_flag;
-+	unsigned long start_time = pipe_busy_loop_current_time();
-+
-+	pipe_unlock(pipe);
-+	preempt_disable();
-+	for (;;) {
-+		if (pipe->pipe_wait_flag > wait_flag) {
-+			preempt_enable();
-+			pipe_lock(pipe);
-+			return;
-+		}
-+		if (pipe_busy_loop_timeout(pipe, start_time))
-+			break;
-+		cpu_relax();
-+	}
-+	preempt_enable();
-+	pipe_lock(pipe);
-+	if (pipe->pipe_wait_flag > wait_flag)
-+		return;
-+	pipe_wait(pipe);
-+}
-+
-+void wake_up_busy_poll(struct pipe_inode_info *pipe)
-+{
-+	pipe->pipe_wait_flag++;
-+}
-+
- static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
- 				  struct pipe_buffer *buf)
- {
-@@ -254,6 +284,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	struct pipe_inode_info *pipe = filp->private_data;
- 	int do_wakeup;
- 	ssize_t ret;
-+	unsigned int poll = pipe->pipe_ll_usec;
- 
- 	/* Null read succeeds. */
- 	if (unlikely(total_len == 0))
-@@ -331,11 +362,18 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 			break;
- 		}
- 		if (do_wakeup) {
-+			if (poll)
-+				wake_up_busy_poll(pipe);
- 			wake_up_interruptible_sync_poll(&pipe->wait, POLLOUT | POLLWRNORM);
-  			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 		}
--		pipe_wait(pipe);
-+		if (poll)
-+			pipe_busy_wait(pipe);
-+		else
-+			pipe_wait(pipe);
- 	}
-+	if (poll && do_wakeup)
-+		wake_up_busy_poll(pipe);
- 	__pipe_unlock(pipe);
- 
- 	/* Signal writers asynchronously that there is more room. */
-@@ -362,6 +400,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	int do_wakeup = 0;
- 	size_t total_len = iov_iter_count(from);
- 	ssize_t chars;
-+	unsigned int poll = pipe->pipe_ll_usec;
- 
- 	/* Null write succeeds. */
- 	if (unlikely(total_len == 0))
-@@ -467,15 +506,22 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			break;
- 		}
- 		if (do_wakeup) {
-+			if (poll)
-+				wake_up_busy_poll(pipe);
- 			wake_up_interruptible_sync_poll(&pipe->wait, POLLIN | POLLRDNORM);
- 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 			do_wakeup = 0;
- 		}
- 		pipe->waiting_writers++;
--		pipe_wait(pipe);
-+		if (poll)
-+			pipe_busy_wait(pipe);
-+		else
-+			pipe_wait(pipe);
- 		pipe->waiting_writers--;
- 	}
- out:
-+	if (poll && do_wakeup)
-+		wake_up_busy_poll(pipe);
- 	__pipe_unlock(pipe);
- 	if (do_wakeup) {
- 		wake_up_interruptible_sync_poll(&pipe->wait, POLLIN | POLLRDNORM);
-@@ -564,6 +610,7 @@ static int
- pipe_release(struct inode *inode, struct file *file)
- {
- 	struct pipe_inode_info *pipe = file->private_data;
-+	unsigned int poll = pipe->pipe_ll_usec;
- 
- 	__pipe_lock(pipe);
- 	if (file->f_mode & FMODE_READ)
-@@ -572,6 +619,8 @@ pipe_release(struct inode *inode, struct file *file)
- 		pipe->writers--;
- 
- 	if (pipe->readers || pipe->writers) {
-+		if (poll)
-+			wake_up_busy_poll(pipe);
- 		wake_up_interruptible_sync_poll(&pipe->wait, POLLIN | POLLOUT | POLLRDNORM | POLLWRNORM | POLLERR | POLLHUP);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
-@@ -840,6 +889,7 @@ SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
- 	struct file *files[2];
- 	int fd[2];
- 	int error;
-+	struct pipe_inode_info *pipe;
- 
- 	error = __do_pipe_flags(fd, files, flags);
- 	if (!error) {
-@@ -853,6 +903,10 @@ SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
- 			fd_install(fd[0], files[0]);
- 			fd_install(fd[1], files[1]);
- 		}
-+		pipe = files[0]->private_data;
-+		pipe->pipe_ll_usec = pipe_busy_poll;
-+		pipe = files[1]->private_data;
-+		pipe->pipe_ll_usec = pipe_busy_poll;
- 	}
- 	return error;
- }
 diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index fdfd2a2..3b96b05 100644
+index e7497c9..fdfd2a2 100644
 --- a/include/linux/pipe_fs_i.h
 +++ b/include/linux/pipe_fs_i.h
-@@ -188,6 +188,7 @@ void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
- extern unsigned int pipe_max_size, pipe_min_size;
- extern unsigned long pipe_user_pages_hard;
- extern unsigned long pipe_user_pages_soft;
-+extern unsigned int pipe_busy_poll;
- int pipe_proc_fn(struct ctl_table *, int, void __user *, size_t *, loff_t *);
+@@ -1,6 +1,8 @@
+ #ifndef _LINUX_PIPE_FS_I_H
+ #define _LINUX_PIPE_FS_I_H
  
- /* Drop the inode semaphore and wait for a pipe event, atomically */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d9c31bc..823bde1 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1842,6 +1842,13 @@ static struct ctl_table fs_table[] = {
- 		.proc_handler	= proc_doulongvec_minmax,
- 	},
- 	{
-+		.procname	= "pipe-busy-poll",
-+		.data		= &pipe_busy_poll,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+	},
-+	{
- 		.procname	= "mount-max",
- 		.data		= &sysctl_mount_max,
- 		.maxlen		= sizeof(unsigned int),
++#include <linux/sched/clock.h>
++
+ #define PIPE_DEF_BUFFERS	16
+ 
+ #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
+@@ -54,6 +56,8 @@ struct pipe_inode_info {
+ 	unsigned int waiting_writers;
+ 	unsigned int r_counter;
+ 	unsigned int w_counter;
++	unsigned int pipe_ll_usec;
++	unsigned long pipe_wait_flag;
+ 	struct page *tmp_page;
+ 	struct fasync_struct *fasync_readers;
+ 	struct fasync_struct *fasync_writers;
+@@ -157,6 +161,21 @@ static inline int pipe_buf_steal(struct pipe_inode_info *pipe,
+ 	return buf->ops->steal(pipe, buf);
+ }
+ 
++static inline unsigned long pipe_busy_loop_current_time(void)
++{
++	return (unsigned long)(local_clock() >> 10);
++}
++
++static inline bool pipe_busy_loop_timeout(struct pipe_inode_info *pipe,
++					  unsigned long start_time)
++{
++	unsigned long bp_usec = READ_ONCE(pipe->pipe_ll_usec);
++	unsigned long end_time = start_time + bp_usec;
++	unsigned long now = pipe_busy_loop_current_time();
++
++	return time_after(now, end_time);
++}
++
+ /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+    memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+ #define PIPE_SIZE		PAGE_SIZE
 -- 
 2.9.3
 
