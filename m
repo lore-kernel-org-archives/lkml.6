@@ -7,70 +7,71 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D13C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BCBC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879DA2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F4B52073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:25:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jpfKE2rQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879DA2082A
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="v/y4OEl3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4B52073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbeH3PZv (ORCPT
+        id S1728594AbeH3P13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:25:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46676 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbeH3PZv (ORCPT
+        Thu, 30 Aug 2018 11:27:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47612 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeH3P13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:25:51 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UBO3KG156260;
-        Thu, 30 Aug 2018 11:24:03 GMT
+        Thu, 30 Aug 2018 11:27:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UBODxJ139970;
+        Thu, 30 Aug 2018 11:25:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2018-07-02;
- bh=X/jUe6WJU18vGxwy1JztgkSnIS12SQS1c0rmAxipAtk=;
- b=jpfKE2rQaIeFQPyjK6FhXUrrcm8e/mKgPV8CD9hdAkPADf7MABzE80p4Hc5GXkXMSSRM
- ShqQllUfqyKFzNIt5dU1Gg5rvw/fpsMmRB+wcnfrCH4bdRtnniAuEqxNNeyuT+nT37oa
- N5KO4wxzCxWU0tFUUH4dRmUgy4lBQcHFSJL3CVFVsuXCbuEAuZzDJAtL+DLrRpis6yuv
- Aa2mEZq36FuzB+OgX/GQu2V7qhjO8SdC/bLEAvzpdbYTbiZ3D8bCLJQpXZk+mTwg4YSP
- msrM9+Wwy6mfPYyL6cyDDBPdzblFWbZeOFsHLD0mKtkPIq4fjyGBrMYneMgdvjKk0BPB Wg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2m2xhu0ywc-1
+ bh=kGsmpmR8N/cfibv8q0WBLQdCh/nx6GWEOOEefuGMr2I=;
+ b=v/y4OEl32LjdpupMgIfJTfimveppgoEzgM1d7o5coSAImXFVqEdfmxT4myypmAmrhCNd
+ IgvtFuGyUWtuQuL8AvMetA6BDutzPOUBjQaQRMdjf30t82lp6QpmPMdqZ2Ca3ka51W4v
+ 6FCt2ScU1cbCymrOUCyhTjDlJSgw896AmsT53efYUgRe3LeRDzXesmQQFGcbbUvmO7lT
+ i2msHKrZ089Y5h0WoThYiQMDVkLBU9WifEVXqnalbnj35IktrDr/Z/36m4q7536RlN9B
+ gG/LA/q1M6K6VH2RXuEuUgMIujan9oJWjRipD37RD8JX5hCvffimwSRzaVUZMrNxUp++ iQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m2yrqgv96-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 11:24:03 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7UBNvTk004509
+        Thu, 30 Aug 2018 11:25:42 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7UBPfmK018021
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 11:23:57 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7UBNto7004523;
-        Thu, 30 Aug 2018 11:23:55 GMT
+        Thu, 30 Aug 2018 11:25:41 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7UBPe8l030644;
+        Thu, 30 Aug 2018 11:25:40 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Aug 2018 04:23:55 -0700
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org,
+        with ESMTP ; Thu, 30 Aug 2018 04:25:40 -0700
+To:     Colin King <colin.king@canonical.com>
+Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: raid_attrs: fix unused variable warning
+Subject: Re: [PATCH] scsi: aacraid: remove unused variables dev and cpu
 From:   "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <20180813222716.757523-1-arnd@arndb.de>
-Date:   Thu, 30 Aug 2018 07:23:53 -0400
-In-Reply-To: <20180813222716.757523-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Tue, 14 Aug 2018 00:27:10 +0200")
-Message-ID: <yq14lfc5c8m.fsf@oracle.com>
+References: <20180816133320.19682-1-colin.king@canonical.com>
+Date:   Thu, 30 Aug 2018 07:25:37 -0400
+In-Reply-To: <20180816133320.19682-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 16 Aug 2018 14:33:20 +0100")
+Message-ID: <yq1zhx43xla.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=893
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=633
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1808300120
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,16 +80,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Arnd,
+Colin,
 
-> I ran into a new warning on randconfig kernels:
+> Variables dev and cpu are not being used and are redundant and hence
+> can be removed.
 >
-> drivers/scsi/raid_class.c: In function 'raid_match':
-> drivers/scsi/raid_class.c:64:24: error: unused variable 'i' [-Werror=unused-variable]
->
-> This looks like a very old problem that for some reason was very
-> hard to run into, but it is very easy to fix, by replacing the
-> incorrect #ifdef with a simpler IS_ENABLED() check.
+> Cleans up clang warnings:
+> warning: variable 'dev' set but not used [-Wunused-but-set-variable]
+> warning: variable 'cpu' set but not used [-Wunused-but-set-variable]
 
 Applied to 4.20/scsi-queue. Thanks!
 
