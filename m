@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D9BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE06C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 629DA2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49DA320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnVLxEat"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629DA2083B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNWOp0PA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DA320836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeH3TsO (ORCPT
+        id S1727639AbeH3TsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:48:14 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:47060 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbeH3TsN (ORCPT
+        Thu, 30 Aug 2018 15:48:16 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43347 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbeH3TsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:48:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a108-v6so8481997wrc.13;
-        Thu, 30 Aug 2018 08:45:27 -0700 (PDT)
+        Thu, 30 Aug 2018 15:48:15 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k5-v6so8500348wre.10;
+        Thu, 30 Aug 2018 08:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tFfQ9c8YXGxQQwqrjR6oys9dfg5aGNdXZejyyuPf1vg=;
-        b=YnVLxEatWQEYx0jHq0IAvzD9z53G/4ynMvpPRtxkaxEI3G1r7xDvs4lBRl8BKK8sVC
-         D5/DAi1jGWwWcEyBNzp2KrXMslYIwz/nCM/rpdE77V3LZ+YVPFOs8xrO6jvk/axBNTTw
-         MkKG3wT8DM5RE9G3TSon4Jf/EwCE1MGW4cJblbzEUbgBxcJrZYnTGlhzAx5o97g4csS/
-         6ctjYf3028zCgUg9aOdMQrqIudXpw4GRZzkp9JzOry0Hkx4XDWR4vMbEIfnI+BuoyGGp
-         A1UfSjhlocjJ3Pad4GikQ/RED085n+gCm7azaCschaGpWhG+I6cg5GmnV1VqBGAWMNQn
-         qEoA==
+        bh=5XND9vHjfuJCOwJpFz7zMX/u/hpV4Qa0BGP58J/DvOk=;
+        b=TNWOp0PAQHFrUDVCcHK0c4JtKL0NoAr5sk9Sj+OC0whe1rqb0aWUX2gGlSE0Vm+aMp
+         j5Ti6Sc7JwEFNxgodD1mBSZDfxesQvlBe6cqTSBS8eHPj8NkJ4X6gqUUfC4et2Rih3SR
+         TNVIpnaevlZtr2lMfAVo7sGUg/dvjSfUO3V73cTNsDLBctf2ET2j1nth9a05CdtkdlZ9
+         o+U/hl+6+3TM83z0q2vQXzMSen+DzFC10If2E2/1lGhCrZP9kSt4ZRiQc+6E2+3Z1nhL
+         KnIXLIcBGl8+0l4QawJdXQeGcIiZFMz6B+Fj9e0HgsLXQ8ELyS0qruBhznyrSX/cTRpp
+         ddKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tFfQ9c8YXGxQQwqrjR6oys9dfg5aGNdXZejyyuPf1vg=;
-        b=nMnrIWUxWdO34w/x/JT2QnZXnHh0x97CXRIw8Ghsd4aeHONk2+6bZ19UhPr4tiq514
-         igzkgdeG/ntUpu0/CnnCgC28FLNhOkYNsR4zHyITgkZ+RXD1rV1jRoXDpSUoaXXXmVef
-         OoxYUmapVZ017e+d6JhkdNm3t45VzHYB8W/3S2kgJZNJWkwj5WE2O7dlrsm7ykNlPumN
-         BjjefPDLtdX6azcOwEt8NvZUJLJ099hzXKVafpVPp45TbFa3r7KjvAo/2RzOw9psAttP
-         wIKK1fQCvDpG+Jbhp2p16LiairVedA+91D45S5RupAMmwnI4z8itOSNhAc3O4pAHFbQn
-         5Tcw==
-X-Gm-Message-State: APzg51Db+Ca7h5ymOfflMtINw/BI0i5Fms19HE+QGKVwjV2mrEgDTAbn
-        Az/O+YUej8X8D0o1H7mizy4=
-X-Google-Smtp-Source: ANB0Vda7gM6oXRTKYIaCexUkUiShe9Jn2An6YoMbuiIqmF7diafLDl42iCOez3qQIYf63qK/9HpN2A==
-X-Received: by 2002:a5d:4512:: with SMTP id s18-v6mr8486837wrq.82.1535643926751;
-        Thu, 30 Aug 2018 08:45:26 -0700 (PDT)
+        bh=5XND9vHjfuJCOwJpFz7zMX/u/hpV4Qa0BGP58J/DvOk=;
+        b=HrsyCCrQPw01/4lKluHxg8JA0S9lu6s70wXJlV9cpZJI73taE4fFSTJabskN4E+nRz
+         OrwVL6vZ1+pTBmdzUS93mgSoS3Dk7jRSyF056T2tbG+jFdxf4JpsF6qrJCA92FgiI0Xt
+         y2RZ/ztFfFU89pN5U/xJmv5XPelPOLmEySxqFZ+vNxmGL+QhrjEcL8vHK3rI2msjwqQh
+         DucbBKO1Ot5/AY/kcsLi6ZhaCqmfP9/TNXlNkyl+u+/Dhuqf2golqYww5yxcJVZ/C5WW
+         y5YrKkSXKDPEv+wDfYYVAprKidQY5ZX7xFS1J2K6zx+OJaYwgt2fHzeey61vUmSbeHYH
+         +xbA==
+X-Gm-Message-State: APzg51CzCH4JEFgsiAJVFVaG+bFNP/dTaSV25ccK+wW48lQY4NyjBGkm
+        Bmd50UDiPd4nOSXbxekNbms=
+X-Google-Smtp-Source: ANB0VdbimhtaitKvqHvNaGjItKwbG+oI0Tg7BVULZDbnbRdQ/1/LwDiOKY96rI7o/z4NQ0cRTyM6xQ==
+X-Received: by 2002:adf:e648:: with SMTP id b8-v6mr8388682wrn.254.1535643928697;
+        Thu, 30 Aug 2018 08:45:28 -0700 (PDT)
 Received: from debian-hp.wlan.uni-ulm.de (eduroam170-020.wlan.uni-ulm.de. [134.60.170.20])
-        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.25
+        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 08:45:26 -0700 (PDT)
+        Thu, 30 Aug 2018 08:45:28 -0700 (PDT)
 From:   Philipp Rossak <embed3d@gmail.com>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
@@ -70,9 +70,9 @@ To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 07/30] iio: adc: remove mfd_probe & sunwi_irq_init function
-Date:   Thu, 30 Aug 2018 17:44:55 +0200
-Message-Id: <20180830154518.29507-8-embed3d@gmail.com>
+Subject: [PATCH v3 09/30] iio: adc: Threat A33 as thermal sensor and remove non thermal sun4i channel
+Date:   Thu, 30 Aug 2018 17:44:57 +0200
+Message-Id: <20180830154518.29507-10-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180830154518.29507-1-embed3d@gmail.com>
 References: <20180830154518.29507-1-embed3d@gmail.com>
@@ -81,158 +81,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the previous commit we removed the function call, now we remove the
-unused functions.
+We want to use this driver mostly as thermal sensor, that still supports
+the adc for the older chips, thus we threat the A33 as thermal sensor.
+We also remove the adc channel without thermal support.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- drivers/iio/adc/sun4i-gpadc-iio.c | 126 --------------------------------------
- 1 file changed, 126 deletions(-)
+ drivers/iio/adc/sun4i-gpadc-iio.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
 diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
-index d6f00d3b802d..f787442a9e5f 100644
+index ab474ce86fb6..658a7e3e3370 100644
 --- a/drivers/iio/adc/sun4i-gpadc-iio.c
 +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-@@ -431,55 +431,6 @@ static const struct dev_pm_ops sun4i_gpadc_pm_ops = {
- 	.runtime_resume = &sun4i_gpadc_runtime_resume,
+@@ -123,23 +123,6 @@ static const struct iio_chan_spec sun4i_gpadc_channels[] = {
+ 	},
  };
  
--static int sun4i_irq_init(struct platform_device *pdev, const char *name,
--			  irq_handler_t handler, const char *devname,
--			  unsigned int *irq, atomic_t *atomic)
--{
--	int ret;
--	struct sun4i_gpadc_dev *mfd_dev = dev_get_drvdata(pdev->dev.parent);
--	struct sun4i_gpadc_iio *info = iio_priv(dev_get_drvdata(&pdev->dev));
+-static const struct iio_chan_spec sun4i_gpadc_channels_no_temp[] = {
+-	SUN4I_GPADC_ADC_CHANNEL(0, "adc_chan0"),
+-	SUN4I_GPADC_ADC_CHANNEL(1, "adc_chan1"),
+-	SUN4I_GPADC_ADC_CHANNEL(2, "adc_chan2"),
+-	SUN4I_GPADC_ADC_CHANNEL(3, "adc_chan3"),
+-};
 -
--	/*
--	 * Once the interrupt is activated, the IP continuously performs
--	 * conversions thus throws interrupts. The interrupt is activated right
--	 * after being requested but we want to control when these interrupts
--	 * occur thus we disable it right after being requested. However, an
--	 * interrupt might occur between these two instructions and we have to
--	 * make sure that does not happen, by using atomic flags. We set the
--	 * flag before requesting the interrupt and unset it right after
--	 * disabling the interrupt. When an interrupt occurs between these two
--	 * instructions, reading the atomic flag will tell us to ignore the
--	 * interrupt.
--	 */
--	atomic_set(atomic, 1);
+-static const struct iio_chan_spec sun8i_a33_gpadc_channels[] = {
+-	{
+-		.type = IIO_TEMP,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+-				      BIT(IIO_CHAN_INFO_SCALE) |
+-				      BIT(IIO_CHAN_INFO_OFFSET),
+-		.datasheet_name = "temp_adc",
+-	},
+-};
 -
--	ret = platform_get_irq_byname(pdev, name);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "no %s interrupt registered\n", name);
--		return ret;
--	}
--
--	ret = regmap_irq_get_virq(mfd_dev->regmap_irqc, ret);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to get virq for irq %s\n", name);
--		return ret;
--	}
--
--	*irq = ret;
--	ret = devm_request_any_context_irq(&pdev->dev, *irq, handler, 0,
--					   devname, info);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "could not request %s interrupt: %d\n",
--			name, ret);
--		return ret;
--	}
--
--	disable_irq(*irq);
--	atomic_set(atomic, 0);
--
--	return 0;
--}
--
- static const struct of_device_id sun4i_gpadc_of_id[] = {
- 	{
- 		.compatible = "allwinner,sun8i-a33-ths",
-@@ -523,83 +474,6 @@ static int sun4i_gpadc_probe_dt(struct platform_device *pdev,
- 	return 0;
- }
+ static const struct regmap_config sun4i_gpadc_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+@@ -444,8 +427,6 @@ static int sun4i_gpadc_probe_dt(struct platform_device *pdev,
+ 		return -ENODEV;
  
--static int sun4i_gpadc_probe_mfd(struct platform_device *pdev,
--				 struct iio_dev *indio_dev)
--{
--	struct sun4i_gpadc_iio *info = iio_priv(indio_dev);
--	struct sun4i_gpadc_dev *sun4i_gpadc_dev =
--		dev_get_drvdata(pdev->dev.parent);
--	int ret;
--
--	info->no_irq = false;
--	info->regmap = sun4i_gpadc_dev->regmap;
--
--	indio_dev->num_channels = ARRAY_SIZE(sun4i_gpadc_channels);
--	indio_dev->channels = sun4i_gpadc_channels;
--
--	info->data = (struct gpadc_data *)platform_get_device_id(pdev)->driver_data;
--
--	/*
--	 * Since the controller needs to be in touchscreen mode for its thermal
--	 * sensor to operate properly, and that switching between the two modes
--	 * needs a delay, always registering in the thermal framework will
--	 * significantly slow down the conversion rate of the ADCs.
--	 *
--	 * Therefore, instead of depending on THERMAL_OF in Kconfig, we only
--	 * register the sensor if that option is enabled, eventually leaving
--	 * that choice to the user.
--	 */
--
--	if (IS_ENABLED(CONFIG_THERMAL_OF)) {
--		/*
--		 * This driver is a child of an MFD which has a node in the DT
--		 * but not its children, because of DT backward compatibility
--		 * for A10, A13 and A31 SoCs. Therefore, the resulting devices
--		 * of this driver do not have an of_node variable.
--		 * However, its parent (the MFD driver) has an of_node variable
--		 * and since devm_thermal_zone_of_sensor_register uses its first
--		 * argument to match the phandle defined in the node of the
--		 * thermal driver with the of_node of the device passed as first
--		 * argument and the third argument to call ops from
--		 * thermal_zone_of_device_ops, the solution is to use the parent
--		 * device as first argument to match the phandle with its
--		 * of_node, and the device from this driver as third argument to
--		 * return the temperature.
--		 */
--		info->sensor_device = pdev->dev.parent;
--	} else {
--		indio_dev->num_channels =
--			ARRAY_SIZE(sun4i_gpadc_channels_no_temp);
--		indio_dev->channels = sun4i_gpadc_channels_no_temp;
--	}
--
--	if (IS_ENABLED(CONFIG_THERMAL_OF)) {
--		ret = sun4i_irq_init(pdev, "TEMP_DATA_PENDING",
--				     sun4i_gpadc_temp_data_irq_handler,
--				     "temp_data", &info->temp_data_irq,
--				     &info->ignore_temp_data_irq);
--		if (ret < 0)
--			return ret;
--	}
--
--	ret = sun4i_irq_init(pdev, "FIFO_DATA_PENDING",
--			     sun4i_gpadc_fifo_data_irq_handler, "fifo_data",
--			     &info->fifo_data_irq, &info->ignore_fifo_data_irq);
--	if (ret < 0)
--		return ret;
--
--	if (IS_ENABLED(CONFIG_THERMAL_OF)) {
--		ret = iio_map_array_register(indio_dev, sun4i_gpadc_hwmon_maps);
--		if (ret < 0) {
--			dev_err(&pdev->dev,
--				"failed to register iio map array\n");
--			return ret;
--		}
--	}
--
--	return 0;
--}
--
- static int sun4i_gpadc_probe(struct platform_device *pdev)
- {
- 	struct sun4i_gpadc_iio *info;
+ 	info->no_irq = true;
+-	indio_dev->num_channels = ARRAY_SIZE(sun8i_a33_gpadc_channels);
+-	indio_dev->channels = sun8i_a33_gpadc_channels;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, mem);
 -- 
 2.11.0
 
