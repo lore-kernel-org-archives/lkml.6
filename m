@@ -2,105 +2,140 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD51C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E040C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E6CE20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:41:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E6CE20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 3DE2720835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:41:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="L42sDe25"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE2720835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeH3VoP (ORCPT
+        id S1727345AbeH3Voc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:44:15 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:52855 "EHLO cstnet.cn"
+        Thu, 30 Aug 2018 17:44:32 -0400
+Received: from mail-pu1apc01on0108.outbound.protection.outlook.com ([104.47.126.108]:34016
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725998AbeH3VoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:44:14 -0400
-Received: from [192.168.1.2] (unknown [110.184.153.119])
-        by APP-10 (Coremail) with SMTP id tACowAC3vsYWLIhbYUWxBQ--.111S2;
-        Fri, 31 Aug 2018 01:40:39 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v5 01/16] x86/cpu: create Dhyana init file and register
- new cpu_dev to system
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-References: <cover.1535459012.git.puwen@hygon.cn>
- <c4610c537e5e5774d8d7486e0867ced8ebf0fba1.1535459012.git.puwen@hygon.cn>
- <87mut52cf4.fsf@linux.intel.com>
-Message-ID: <65c91fb2-4b57-8ddb-3363-ac6fe69957b9@hygon.cn>
-Date:   Fri, 31 Aug 2018 01:40:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87mut52cf4.fsf@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1725998AbeH3Voc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 17:44:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8WYrYo8gYoHFF4SKlbLwk46/RwWPiXs+mtxaW+Segtw=;
+ b=L42sDe258O7SxlVG7Xkw8/UmrWgrwwPPqsWDukItnSp2QLHmZpfLO4xcsxROb6qAYoLAN8ghzf4NxIEXIiR5WUefK6Le/z4vAI7WogvnZYQPu3NDVbXBuIMn2TqJvD5ZZrVjyDE7qsvUzg5krdj0Rw/s2s7tV1vW5Mma5Nk29l4=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0122.APCP153.PROD.OUTLOOK.COM (10.170.188.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.1; Thu, 30 Aug 2018 17:41:09 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b835:d23a:7cda:c4e1]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::b835:d23a:7cda:c4e1%2]) with mapi id 15.20.1122.009; Thu, 30 Aug 2018
+ 17:41:09 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     KY Srinivasan <kys@microsoft.com>,
+        "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>
+CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'driverdev-devel@linuxdriverproject.org'" 
+        <driverdev-devel@linuxdriverproject.org>,
+        "'olaf@aepfle.de'" <olaf@aepfle.de>,
+        "'apw@canonical.com'" <apw@canonical.com>,
+        "'jasowang@redhat.com'" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>
+Subject: RE: [PATCH] Drivers: hv: vmbus: Use raw_smp_processor_id() in
+ vmbus_connect()
+Thread-Topic: [PATCH] Drivers: hv: vmbus: Use raw_smp_processor_id() in
+ vmbus_connect()
+Thread-Index: AdQ7H/34qAH7zeGBQLegJ1KnxB9zFAFWLlUAAAM1tsAAAE/x8AAAN4Bg
+Date:   Thu, 30 Aug 2018 17:41:09 +0000
+Message-ID: <PU1P153MB016985CD0F24D34445E280C7BF080@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB01694E53D6A6192A46EA3214BF370@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <MW2PR2101MB11138A251E48BC8C6B859BF1A0080@MW2PR2101MB1113.namprd21.prod.outlook.com>
+ <PU1P153MB016943FAF912D00D54F46493BF080@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <MW2PR2101MB1113456E92B548A3405A0E5AA0080@MW2PR2101MB1113.namprd21.prod.outlook.com>
+In-Reply-To: <MW2PR2101MB1113456E92B548A3405A0E5AA0080@MW2PR2101MB1113.namprd21.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowAC3vsYWLIhbYUWxBQ--.111S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7trWxtF15Kr4UJr1xCw1Utrb_yoW8Ww1kpa
-        1UWr1Fyr4ktrWfAr1xu3y8WFy09ws5Jr48C34YgrW8t3yYvw1q9wnagFyfZ343ArsYgay2
-        vrWUXa17t3Z0yaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0Ew4C26cxK6c8Ij28IcwCF04k20xvY0x
-        0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-        7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-        C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-        04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-        CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUj0JPtUUUUU==
-X-Originating-IP: [110.184.153.119]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-08-30T17:41:05.5672530Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2601:600:a27f:df20:5d83:f0e3:72fb:2536]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0122;6:UsWjY2t6Wbue1XPar3PUC/r/ZxOSjWguKJRWqkJffyDuNq9VCwMlAimfQ1G7eV/ZYYY1eO2+Yny5s9+xsNAnu1AA6x2ocwegOeEwnoc9KJ+h7rJB34P0Hvab9U8OsiYPus+3B0YvKYxRduvsIINmJAUqhyjadoKmoS/U6ksa3+hHu9IyaUyrt2kSJwPXGsyIXhpaTi4wAMPbN8djDlTUpqIN9JQtEOxKyxEDhFU5cYftBUtONF8RdmEqWhrGNnLtXxqJ1byAAT4QW4NfxRoy5aIUhQRaZcLcUOrG6WnoKJabGgoISdoVhUCW6BegkUMckGwmhjd/JaPbe/9c/+CQB3dPnZyECWGFopm+z2Ty5tbEZzlsudTRHtkAwkZ3Ct/WwWGYB8RHuD7AeD8DCB7PKQO1E3vh7xMZ12gcmykpnLCqDgj1xpNYuiJmWaktkInZEeWW6jWFF9P4pfNZCyc2SA==;5:IlEKZcEibkHqMcd1JB+OB5F9wAxwkHnoVSZSQsP/T/0nnI1IaPbJa8w9iioqxPhUFrDjMe9mdbjJNCXJRK30xJdBJC24IlpqlZpdQnnrwBovlu6iar7roH94MprqcTHAa5O5iUwTn6VbGrnws16h0D33ZoG21B/0mpUN35aB7Mo=;7:vQT4uCvUiW6YqARRqELXRrgJ79NVW20OMK2ykiRLiqTjOR7Z5yGWDGbkBVKUlEAYtdR68UZ1D8ayy2+zW8ZziqeDyVRkDo0FHNry69EIzs+/lRP+X3V82vUa/F1kJEHjiTd3OA72V2YFR6nogbOT3hudOeKsUqFWXOFXXf36Dmj9X6esDYfcYS1Yu4vl9kdmACdzSa4lvDxeXZuMMEkWzn1AquLBQyqONLlx2gaA4YmtYtHhWCR+V2IUTT7yi9W4
+x-ms-office365-filtering-correlation-id: cdfb51d1-6c3a-485c-5338-08d60e9fc5b4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0122;
+x-ms-traffictypediagnostic: PU1P153MB0122:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <PU1P153MB0122CD90CB60F1FCDB03C409BF080@PU1P153MB0122.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(21532816269658);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:PU1P153MB0122;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0122;
+x-forefront-prvs: 07807C55DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(39860400002)(346002)(376002)(199004)(189003)(81156014)(14454004)(5660300001)(33656002)(76176011)(74316002)(305945005)(7736002)(86612001)(6116002)(106356001)(86362001)(6436002)(46003)(7696005)(8990500004)(68736007)(99286004)(25786009)(97736004)(5250100002)(478600001)(6636002)(8936002)(8676002)(81166006)(256004)(10290500003)(10090500001)(14444005)(2906002)(6506007)(102836004)(110136005)(22452003)(1511001)(55016002)(53936002)(9686003)(54906003)(486006)(2900100001)(105586002)(11346002)(316002)(4326008)(476003)(93886005)(229853002)(446003)(6246003)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0122;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dkjb6bpsnvGNlCBc8LNlypQKBT7fC0aoDCuuzxmMAkOB8vDp1SKa1ZZmeJb67DNbgImEi8SjAmq3VVwSr/YY45izHC3TEepWo+50fdf3X1KI8iWwkbqpI4zWwtN8B6iEHbHVDVvTMdGuokmMT8FvhFY2x+rdriXYqjA7hyEkqyv9gqMPP66pjYYV6s+LuQLRlx1z8iCca7/PUyOtclgnZ7hlhIkLh1I5kCBv2xgDHyfvH/XsOo6fNMhJB54AhmoHGc2GPCOF/2VOcidZfOj70NtH1i4mdD9uklShdcArIxk1/SgnIbcol074YwWt4cmbrZlZtc5Bqp0+XJmB5OwVkXpJ3B4iZ6p99UngQYkkvek=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdfb51d1-6c3a-485c-5338-08d60e9fc5b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 17:41:09.5159
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-30 03:35, Andi Kleen wrote:
->Pu Wen <puwen@hygon.cn> writes:
->> Add x86 architecture support for new processor Hygon Dhyana Family 18h.
->> Rework to create a separated file(arch/x86/kernel/cpu/hygon.c) from the
->> AMD init one(arch/x86/kernel/cpu/amd.c) to initialize Dhyana CPU.
->
->Standard approach would be to move the shared code into a different
->file and call it from both amd.c and hygon.c instead of duplicating.
+> From: KY Srinivasan
+> Sent: Thursday, August 30, 2018 10:32
+> > >          */
+> > >    if (version >=3D VERSION_WIN8_1) {
+> > >        msg->target_vcpu =3D
+> > > -            hv_cpu_number_to_vp_number(smp_processor_id());
+> > > -       vmbus_connection.connect_cpu =3D smp_processor_id();
+> >
+> > > +       hv_cpu_number_to_vp_number(get_cpu());
+> > > +       vmbus_connection.connect_cpu =3D msg->target_vcpu;
+> > > +       put_cpu();
+> >
+> > While the warning " BUG: using smp_processor_id() in preemptible" can a=
+lso
+> > be avoided, the line
+> > +	vmbus_connection.connect_cpu =3D msg->target_vcpu;
+> > seems incorrect, as the "connect_cpu" should reflect Linux CPU numberin=
+g
+> > rather than Hyper-V's vCPU numbering.
+>=20
+> Yes of course!  Can you send me a patch with the fix.
+>=20
+> K. Y
 
-Hi Andi, Thanks for your feedback.
+Ok. Will do.
 
-As Hygon Dhyana arch originate from AMD, we share most arch codes with
-AMD. In our first patch v1, we direct reuse AMD's init codes in amd.c,
-which can work out a minimal patch. But the code mixture between AMD
-and Hygon occur, which might cause problem in long term.
-
-To reduce long term maintaining effort, we reworked the patch and do the
-arch code duplication and removed unnecessary old arch support code/family
-condition check, which reduce code size to 37%, and give a clear view for
-hygon arch initialize flow. For long term, it also remove code modification
-interference between AMD and Hygon, make hygon code easy to modify for it's
-further products. That's the patch since v2.
-
-We did try the standard approach as you suggested between v1 and v2
-internally, and found out it's hard to find a clear version. Because amd.c
-has many family checking to support it's multiple family products, which
-make the common function strip difficult. Also based on the consideration
-of common functions also might interference with each other, we finally
-choose the patch v2 style.
-
-It's hard to find a best way between code duplication and code reuse.
-Any suggestion please let us know.
-
-Regards,
-Pu Wen
-
+-- Dexuan
