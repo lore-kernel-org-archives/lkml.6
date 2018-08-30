@@ -2,139 +2,107 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BE5C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E750C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BD32073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:52:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BD32073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id AB2392073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 09:57:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2392073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeH3Nxl (ORCPT
+        id S1728245AbeH3N7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 09:53:41 -0400
-Received: from www62.your-server.de ([213.133.104.62]:57241 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbeH3Nxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 09:53:41 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fvJcf-0004Nf-MN; Thu, 30 Aug 2018 11:52:17 +0200
-Received: from [2a02:120b:c3f4:b8b0:b5ea:3969:d380:aafd] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fvJcf-0002d0-Dm; Thu, 30 Aug 2018 11:52:17 +0200
-Subject: Re: KASAN: stack-out-of-bounds Read in __schedule
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Theodore Ts'o <tytso@mit.edu>
-References: <000000000000fef39305748083ae@google.com>
- <20180829134620.GD7369@quack2.suse.cz>
- <CAG_fn=VMcHaGrFs_YvtBttmfuz8Rr1C_dfmKRibvPrbqeKFGCA@mail.gmail.com>
- <CACT4Y+a2bwVvDRfL=wg=5bnOv6S7RrJYoh4ygaizqVm3JpNu1A@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <279041ab-d449-1bfb-a05d-2d8b0d5c601b@iogearbox.net>
-Date:   Thu, 30 Aug 2018 11:52:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 30 Aug 2018 09:59:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38686 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728082AbeH3N7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 09:59:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25A797A9;
+        Thu, 30 Aug 2018 02:57:54 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30BE93F721;
+        Thu, 30 Aug 2018 02:57:50 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 10:57:45 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
+ static key
+Message-ID: <20180830095723.4qqbpft7gpbtgkhd@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-8-quentin.perret@arm.com>
+ <20180829165058.GR2960@e110439-lin>
+ <20180829172004.afbe2oukprvptqs2@queper01-lin>
+ <20180830092329.GS2960@e110439-lin>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+a2bwVvDRfL=wg=5bnOv6S7RrJYoh4ygaizqVm3JpNu1A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24886/Thu Aug 30 06:46:17 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830092329.GS2960@e110439-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/2018 06:11 AM, Dmitry Vyukov wrote:
-> On Wed, Aug 29, 2018 at 7:03 AM, 'Alexander Potapenko' via
-> syzkaller-bugs <syzkaller-bugs@googlegroups.com> wrote:
->> On Wed, Aug 29, 2018 at 3:46 PM Jan Kara <jack@suse.cz> wrote:
->>> On Tue 28-08-18 08:30:02, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following crash on:
->>>>
->>>> HEAD commit:    5b394b2ddf03 Linux 4.19-rc1
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=14f4d8e1400000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=49927b422dcf0b29
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=45a34334c61a8ecf661d
->>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13127e5a400000
->>>>
->>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>> Reported-by: syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com
->>>>
->>>> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
->>>> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
->>>> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->>>> 8021q: adding VLAN 0 to HW filter on device team0
->>>> ==================================================================
->>>> BUG: KASAN: stack-out-of-bounds in schedule_debug kernel/sched/core.c:3285
->>>> [inline]
->>>> BUG: KASAN: stack-out-of-bounds in __schedule+0x1977/0x1df0
->>>> kernel/sched/core.c:3395
->>>> Read of size 8 at addr ffff8801ad090000 by task syz-executor0/4718
->>>
->>> Weird, can you please help me decipher this? So here KASAN complains about
->>> wrong memory access in the scheduler.
-> 
-> This looks like a result of a previous bad silent memory corruption.
-> 
-> The KASAN report says there is a stack out-of-bounds in scheduler. And
-> that if followed by slab corruption report in another task.
-> 
-> fs/jbd2/transaction.c happens to be the first meaningful file in this
-> crash, and so that's where it is attributed to.
-> 
-> Rerunning the reproducer several times can maybe give some better
-> glues, or maybe not, maybe they all will look equally puzzling.
-> 
-> This part of the repro looks familiar:
-> 
-> r1 = bpf$MAP_CREATE(0x0, &(0x7f0000002e40)={0x12, 0x0, 0x4, 0x6e, 0x0,
-> 0x1}, 0x68)
-> bpf$MAP_UPDATE_ELEM(0x2, &(0x7f0000000180)={r1, &(0x7f0000000000),
-> &(0x7f0000000140)}, 0x20)
-> 
-> We had exactly such consequences of a bug in bpf map very recently,
-> but that was claimed to be fixed. Maybe not completely?
-> +bpf maintainers
+Hi Patrick,
 
-Looks like syzbot found this in Linus tree with HEAD commit 5b394b2ddf03 ("Linux 4.19-rc1")
-one day later net PR got merged via 050cdc6c9501 ("Merge git://git.kernel.org/pub/...").
+On Thursday 30 Aug 2018 at 10:23:29 (+0100), Patrick Bellasi wrote:
+> Yes, dunno if it's just me but perhaps a bit of rephrasing could help.
 
-This PR contained a couple of fixes I did on sockmap code during audit such as:
+Ok, so what about something a little bit more explicit like:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b845c898b2f1ea458d5453f0fa1da6e2dfce3bb4
+/*
+ * The complexity of the Energy Model is defined as:
+ *
+ *		C = nr_pd * (nr_cpus + nr_cs)
+ *
+ * with parameters defined as:
+ *  - nr_pd:	the number of performance domains
+ *  - nr_cpus:	the number of CPUs
+ *  - nr_cs:	the sum of the number of capacity states of all performance
+ *		domains (for example, on a system with 2 performance domains,
+ *		with 10 capacity states each, nr_cs = 2 * 10 = 20).
+ *
+ * It is generally not a good idea to use such a model in the wake-up path on
+ * very complex platforms because of the associated scheduling overheads. The
+ * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
+ * with per-CPU DVFS and less than 8 capacity states each, for example.
+ */
 
-Looking at the reproducer syzkaller found it contains:
+> Alternatively, why not having this comment and check after patches
+> 11 and 12 ?
 
-  r1 = bpf$MAP_CREATE(0x0, &(0x7f0000002e40)={0x12, 0x0, 0x4, 0x6e, 0x0, 0x1}, 0x68)
-                                                    ^^^
+Oh, you don't like it here ? What's wrong with it :-) ?
 
-So it found the crash with map type of sock hash and key size of 0x0 (which is invalid),
-where subsequent map update triggered the corruption. I just did a 'syz test' and it
-wasn't able to trigger the crash anymore.
+> Right... I was totally confused by the idea that we don't
+> run EAS if we just have 1 CPU per PD... my bad!
+> 
+> Although on those systems, since we don't have idle costs, should not
+> be a spreading strategy always the best from an energy efficiency
+> standpoint ?
 
-#syz fix: bpf, sockmap: fix sock_hash_alloc and reject zero-sized keys
+Even with per-CPU DVFS, if you have big and little CPUs it matters
+_where_ you execute a task, and you'll still need an Energy Model to
+make good decisions in a generic way. But yes, there is definitely some
+room for improvement for those platforms. That's something we could
+improve later on top of this series I suppose.
+
+Thanks for looking at the patches !
+Quentin
