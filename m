@@ -2,190 +2,110 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9672C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4060BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F6D205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE816205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:59:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="H5aVCmCW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F6D205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="NCCd/sgd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE816205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbeH3SAD (ORCPT
+        id S1729053AbeH3SBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:00:03 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:54956 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbeH3SAC (ORCPT
+        Thu, 30 Aug 2018 14:01:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35491 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbeH3SBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:00:02 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 627D810C122B;
-        Thu, 30 Aug 2018 06:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1535637466; bh=6k1zoRLzZSG94an35JBtchiqePVUaxsoLDtDTl5MnTs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=H5aVCmCWQKMf+/L3JB7Yh1asXZ3rbiJ6nj9boLOBOUP3IkiR2Bpz9ccOSgtbupnGn
-         HzesXCsT2smEq4dAI9fzj/MrI5Br3q/iN2aVhdo+IaObnAK4yW9j8KM59xHifMIRsX
-         fzrgp7vwHtosthDIBgEw3PDNRQvl7F8avo54OSHiyKgzmg4VDqJjwHmonCimG6QUzj
-         nl7w0bSlX2rZDYvujEBQ3wjCs1eXdN1uRvbMRbiYAtGHuXbIw8BdAtWJZ38qbtzQIr
-         yRSs5/+bpHWfpeIC1SCkGFVS3Yi0cq6CqoAMF9dNMgecKYOKP7BkSxRvFMNE5KNsv+
-         m/r2DsyzP1I4g==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id D9BCA3ADF;
-        Thu, 30 Aug 2018 06:57:42 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 30 Aug 2018 06:57:42 -0700
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 30 Aug 2018 15:57:40 +0200
-Received: from [10.0.2.15] (10.107.25.44) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 30 Aug
- 2018 15:57:39 +0200
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-To:     Przemyslaw Gaj <pgaj@cadence.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <Vitor.Soares@synopsys.com>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
- <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon>
- <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
- <20180824201600.7d80bca9@bbrezillon>
- <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
- <20180828140209.29155d00@bbrezillon>
- <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-From:   vitor <Vitor.Soares@synopsys.com>
-Message-ID: <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
-Date:   Thu, 30 Aug 2018 14:57:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 14:01:18 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p12-v6so3935316pfh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Opp7/90KgZLyY+6mrs4uBZrkB8MAeRsaRuOg8MZIqwQ=;
+        b=NCCd/sgdULlh0dXy3t3REW2/kPqSugZr7dXRGjL0QyoxO98IDuFLESfG7IgdiVEVWl
+         sjGdGwrZ511GZgPtBFEvFAI3EbRd1MPlBEBsRGqEVrnurLFWpcIDiLu2CEM9DC9KKe7t
+         DXtQU01m3mQuWXwZ3M/ySwV8CjVfX1J2hsgASMSbrbIsVAXxZwgwJwnV6IkmaJxobfOl
+         l3OLpR3GgoSLI5GNKcdMcCiUhWUoD0SPEuuk2goinJn3NTnr30YmO7H6wQCk5Xlmf8et
+         /qxSIdBpDs2jshmbkhrgi/kkdwV5LYCpdMEwrBJ46y1KKWSrfBd0umE2qkHq8XDQI9Un
+         w5Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Opp7/90KgZLyY+6mrs4uBZrkB8MAeRsaRuOg8MZIqwQ=;
+        b=Mh5XluCT0dPNZe5j6pSvSHEY4H+pxrVV5MHkhB5hrMxRJKvZPFcXYYKYkHLd/8rxbG
+         zSUNVi1ZiLBvmPUJl84CsvE8VkWcqz3ZZsTSYS4qR3J1es6NBfI86zqcgosfmgxt2k2H
+         Q1vGO7MK0JaraQixIxkDCobCSsTkpPi0YiRQbopKRq9Jv5tAGR97P1/50RNCiG468nLZ
+         6ikP6DFltGeLK+PtAsqeziAjYJVHggcSa/J/adKxFJlWd3YAgPgRvSji00fMw03pBO1W
+         4CqhlGlK6yZNO3vAaFX5zTGLYhp+UVvkbseDQ2Hy/pw3bN3WyWcPgYWGCMTskWmEBfyv
+         SXpg==
+X-Gm-Message-State: APzg51AqhNc9W3hh9LWAFBCUgiVZVQz5K3tp38TFIxINKAtUxuxUhygN
+        WEqUKHOvpBYSY5II2dqKTFaMQQ==
+X-Google-Smtp-Source: ANB0VdbNwj6Ao+Jm4aJbF8+cismAIByBVysr73DhT1C9pGPgU4QyY5wCbUe8KY3Nbw2nh6irffVzzQ==
+X-Received: by 2002:a62:1bc2:: with SMTP id b185-v6mr10781246pfb.170.1535637541761;
+        Thu, 30 Aug 2018 06:59:01 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id v7-v6sm11739585pgh.57.2018.08.30.06.59.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 06:59:00 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 222EE3001A3; Thu, 30 Aug 2018 16:58:56 +0300 (+03)
+Date:   Thu, 30 Aug 2018 16:58:56 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add restrictions for kexec/kdump jumping between
+ 5-level and 4-level kernel
+Message-ID: <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
+References: <20180829141624.13985-1-bhe@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.107.25.44]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829141624.13985-1-bhe@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Przemyslaw
+On Wed, Aug 29, 2018 at 10:16:21PM +0800, Baoquan He wrote:
+> This was suggested by Kirill several months ago, I worked out several
+> patches to fix, then interrupted by other issues. So sort them out
+> now and post for reviewing.
 
+Thanks for doing this.
 
-On 28-08-2018 13:55, Przemyslaw Gaj wrote:
-> Hi Vitor,
->
-> I have already implemented Mastership request/handover but we are waiting for Boris’s patch to be accepted and merged. Anyway, my comments below.
->
-> ﻿On 8/28/18, 2:02 PM, "Boris Brezillon" <boris.brezillon@bootlin.com> wrote:
->
->      EXTERNAL MAIL
->      
->      
->      Hi Vitor,
->      
->      On Tue, 28 Aug 2018 12:50:12 +0100
->      vitor <Vitor.Soares@synopsys.com> wrote:
->      
->      > Hi Boris,
->      >
->      > The DT Bindings say "The node describing an I3C bus should be named
->      > i3c-master.". Do you have a field for secondary master?
->
-> I think we don’t need separate field for secondary master. Main and secondary masters
-> support similar functionalities. It’s enough to have this state internally and do mastership it it's needed.
+> The current upstream kernel supports 5-level paging mode and supports
+> dynamically choosing paging mode during bootup according to kernel
+> image, hardware and kernel parameter setting. This flexibility brings
+> several issues for kexec/kdump:
+> 1)
+> Switching between paging modes, requires changes into target kernel.
+> It means you cannot kexec() 4-level paging kernel from 5-level paging
+> kernel if 4-level paging kernel doesn't include changes. 
+> 
+> 2)
+> Switching from 5-level paging to 4-level paging kernel would fail, if
+> kexec() put kernel image above 64TiB of memory.
 
-Yes, you are right.
+I'm not entirely sure that 64TiB is the limit here. Technically, 4-level
+paging allows to address 256TiB in 1-to-1 mapping. We just don't have
+machines with that wide physical address space (which don't support
+5-level paging too).
 
->
->      >
->      > On 24-08-2018 19:16, Boris Brezillon wrote:
->      > > Well, before even considering supporting secondary master registration,
->      > > we need to handle mastership handover. As for the DAA operation, it's
->      > > likely to be host specific, so we'll have to add a new hook to the
->      > > i3c_master_controller_ops struct.
->      > Do you mean when master try to delegate the bus ownership through
->      > GETACCMST? or to get the bus ownership with IBI-MR?
->      
->      I think we need to support both.
->
-> I agree.
+What is your reasoning about 64TiB limit?
 
-That's ok to me.
-
->      
->      >
->      > I think that could be useful to pass the ibi type on request_ibi(),
->      > there is some case where the master doesn't support IBI-MR.
->      
->      Actually, I was planning on making it completely separate from
->      regular slave IBIs. That is, the master controller driver would demux
->      the slave, MR and Hot Join IBIs, and if there's an MR request, queue a
->      mastership handover work to the workqueue (pretty much what we do for
->      Hot-Join already). Mastership handover is anyway likely to be IP
->      specific, so I don't think there's a need to make it look like a
->      regular IBI.
->
-> I think it's better to have separate function to do mastership request.
->      
->      Regarding whether IBI-MR support should be exposed to the I3C framework
->      or not depends on how much will be automated on the framework side. I
->      don't the answer yet, but that's probably something will figure out
->      along the road.
->
-> My current implementation is: when request_mastership field
-> of i3c_master_controller_ops structure is set, master driver supports mastership requests.
-> That's how I check if this is supported or not.
->      
->      Regards,
->      
->      Boris
->      
-> Regards,
-> Przemek
->
-when you say request_mastership, do you mean the current master do the 
-mastership hand-off or the secondary master request to be current master?
-
-So, per my understanding since the Main master support the hand-off of 
-the bus you accept all incoming MR, right? Or do you check all devices BCR?
-
-Best regards,
-Vitor Soares
+-- 
+ Kirill A. Shutemov
