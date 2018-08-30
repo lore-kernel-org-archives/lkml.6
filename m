@@ -2,183 +2,217 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5945C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB91C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9172082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:40:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TK9woC2w";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LzM1rES+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9172082C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A4C42082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:40:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4C42082C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbeH3SnL (ORCPT
+        id S1729422AbeH3SnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:43:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51080 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728972AbeH3SnL (ORCPT
+        Thu, 30 Aug 2018 14:43:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37237 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728972AbeH3SnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:43:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6A2D960388; Thu, 30 Aug 2018 14:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535640042;
-        bh=gu5qe3RnPUWCsVYyYOgUi09FFa136wIbvQedHfU1rMY=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=TK9woC2w0gn9BNqua/XaNjzW508FPTOb2nflJDAjIGHTYc6m3iJv1TRLQW7oUukPv
-         88gSPLQj8KZqNH6wc3htaw8asPo+i5kVz8RvGo97TQ2sf/s15cB/qmAK7JyswdYN2I
-         j3ycWN0/gkeVTKxlwjCgd1EuHcaflcsriXxxM87Y=
-Received: from WUFANW10 (c-71-205-14-210.hsd1.co.comcast.net [71.205.14.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF024606DB;
-        Thu, 30 Aug 2018 14:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535640041;
-        bh=gu5qe3RnPUWCsVYyYOgUi09FFa136wIbvQedHfU1rMY=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=LzM1rES+j1qDGCcZHAotIseDRNPZ4jBC6F2Lyvti42xEWvF6E4eKIw1kHMoWcEmIM
-         Go9RsoizKlL7mub9gA/ngn/gVNSyNmW8SiNKIHXKSsEBLg2Cwn5d5V17PpUN7r3Bte
-         huqla3QX8VMGUXa8VelkDYdnTt4VJpHdHtF41qgI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF024606DB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   "wufan" <wufan@codeaurora.org>
-To:     "'James Morse'" <james.morse@arm.com>
-Cc:     <mchehab@kernel.org>, <bp@alien8.de>, <baicar.tyler@gmail.com>,
-        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org> <c70fa799-bc9f-64c8-e151-088ca8c3ed3e@arm.com>
-In-Reply-To: <c70fa799-bc9f-64c8-e151-088ca8c3ed3e@arm.com>
-Subject: RE: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Thu, 30 Aug 2018 08:40:40 -0600
-Message-ID: <000f01d4406f$6ce8f160$46bad420$@codeaurora.org>
+        Thu, 30 Aug 2018 14:43:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7UEdqU91788837
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 30 Aug 2018 07:39:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7UEdqdH1788834;
+        Thu, 30 Aug 2018 07:39:52 -0700
+Date:   Thu, 30 Aug 2018 07:39:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-16f54a362e4083218ac8d67a4879532c6eef2d98@git.kernel.org>
+Cc:     bp@alien8.de, linux-kernel@vger.kernel.org, luto@kernel.org,
+        mingo@kernel.org, hpa@zytor.com, nadav.amit@gmail.com,
+        riel@surriel.com, tglx@linutronix.de, jannh@google.com,
+        peterz@infradead.org
+Reply-To: jannh@google.com, peterz@infradead.org, tglx@linutronix.de,
+          luto@kernel.org, hpa@zytor.com, mingo@kernel.org,
+          riel@surriel.com, nadav.amit@gmail.com, bp@alien8.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
+References: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/nmi: Fix NMI uaccess race against CR3
+ switching
+Git-Commit-ID: 16f54a362e4083218ac8d67a4879532c6eef2d98
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHcLsFbwflxxBzVeG17JegIRw3gmAF/6qNxpLx8bJA=
-Content-Language: en-us
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Commit-ID:  16f54a362e4083218ac8d67a4879532c6eef2d98
+Gitweb:     https://git.kernel.org/tip/16f54a362e4083218ac8d67a4879532c6eef2d98
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Wed, 29 Aug 2018 08:47:18 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 30 Aug 2018 16:31:19 +0200
 
-> > The current ghes_edac driver does not update per-dimm error counters
-> > when reporting memory errors, because there is no =
-platform-independent
-> > way to find DIMMs based on the error information provided by =
-firmware.
->=20
-> I'd argue there is: its in the CPER records, we just didn't do =
-anything useful
-> with the information in the past!
+x86/nmi: Fix NMI uaccess race against CR3 switching
 
-Agreed. Will update the wording.=20
-=20
-> > +static int ghes_edac_dimm_index(u16 handle) {
-> > +	struct mem_ctl_info *mci;
-> > +	int i;
-> > +
-> > +	if (!ghes_pvt)
-> > +		return -1;
->=20
-> ghes_edac_report_mem_error() already checked this, as its the only =
-caller
-> there is no need to check it again.
+A NMI can hit in the middle of context switching or in the middle of
+switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
+which could cause copy_from_user_nmi() and friends to read the wrong
+memory.
 
-Will remove.
-=20
->=20
-> > +	mci =3D ghes_pvt->mci;
-> > +
-> > +	if (!mci)
-> > +		return -1;
->=20
-> Can this happen? ghes_edac_report_mem_error() would have
-> dereferenced this already!
->=20
-> If you need the struct mem_ctl_info, you may as well pass it in as the =
-only
-> caller has it to hand.
+Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
 
-Will remove.
->=20
-> > +
-> > +	for (i =3D 0; i < mci->tot_dimms; i++) {
-> > +		if (mci->dimms[i]->smbios_handle =3D=3D handle)
-> > +			return i;
-> > +	}
-> > +	return -1;
-> > +}
-> > +
-> >  static void ghes_edac_dmidecode(const struct dmi_header *dh, void
-> > *arg)  {
-> >  	struct ghes_edac_dimm_fill *dimm_fill =3D arg; @@ -177,6 +197,8 @@
-> > static void ghes_edac_dmidecode(const struct dmi_header *dh, void =
-*arg)
-> >  				entry->total_width, entry->data_width);
-> >  		}
-> >
-> > +		dimm->smbios_handle =3D entry->handle;
->=20
-> We aren't checking for duplicate handles, (e.g. they're all zero). I =
-think this is
-> fine as chances are firmware on those systems won't set
-> CPER_MEM_VALID_MODULE_HANDLE. If it does, the handle it gives us is
-> ambiguous, and we pick a dimm, instead of whine-ing about broken
-> firmware tables.
->=20
-> (I'm just drawing attention to it in case someone disagrees)
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
 
-SBMIOS tables are typically automatically generated so chances for =
-duplicate
-handles are small.=20
+---
+ arch/x86/events/core.c          |  2 +-
+ arch/x86/include/asm/tlbflush.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/lib/usercopy.c         |  5 +++++
+ arch/x86/mm/tlb.c               |  7 +++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
 
->=20
-> >  		dimm_fill->count++;
-> >  	}
-> >  }
-> > @@ -327,12 +349,20 @@ void ghes_edac_report_mem_error(int sev,
-> struct cper_sec_mem_err *mem_err)
-> >  		p +=3D sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
-> >  	if (mem_err->validation_bits &
-> CPER_MEM_VALID_MODULE_HANDLE) {
-> >  		const char *bank =3D NULL, *device =3D NULL;
-> > +		int index =3D -1;
-> > +
-> >  		dmi_memdev_name(mem_err->mem_dev_handle, &bank,
-> &device);
->=20
-> > +		p +=3D sprintf(p, "DIMM DMI handle: 0x%.4x ",
-> > +			     mem_err->mem_dev_handle);
-> >  		if (bank !=3D NULL && device !=3D NULL)
-> >  			p +=3D sprintf(p, "DIMM location:%s %s ", bank, device);
-> > -		else
-> > -			p +=3D sprintf(p, "DIMM DMI handle: 0x%.4x ",
-> > -				     mem_err->mem_dev_handle);
->=20
-> Why do we now print the handle every time? The handle is pretty
-> meaningless, it can only be used to find the location-strings, if we =
-get those
-> we print them instead.
-
-For ghes_edac the bank/device is informational, and nothing would go =
-wrong
-if the bank/device numbers are the same as another entry. But the handle
-is now critical for DIMM lookup, thus pull it out.
-
-Thanks!
-Fan
-
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5f4829f10129..dfb2f7c0d019 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ 
+ 	perf_callchain_store(entry, regs->ip);
+ 
+-	if (!current->mm)
++	if (!nmi_uaccess_okay())
+ 		return;
+ 
+ 	if (perf_callchain_user32(regs, entry))
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 29c9da6c62fc..58ce5288878e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -175,8 +175,16 @@ struct tlb_state {
+ 	 * are on.  This means that it may not match current->active_mm,
+ 	 * which will contain the previous user mm when we're in lazy TLB
+ 	 * mode even if we've already switched back to swapper_pg_dir.
++	 *
++	 * During switch_mm_irqs_off(), loaded_mm will be set to
++	 * LOADED_MM_SWITCHING during the brief interrupts-off window
++	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
++	 * is for nmi_uaccess_okay()'s benefit.
+ 	 */
+ 	struct mm_struct *loaded_mm;
++
++#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
++
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+ 	/* last user mm's ctx id */
+@@ -246,6 +254,38 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or
++ * switching the loaded mm.  It can also be dangerous if we
++ * interrupted some kernel code that was temporarily using a
++ * different mm.
++ */
++static inline bool nmi_uaccess_okay(void)
++{
++	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	struct mm_struct *current_mm = current->mm;
++
++	VM_WARN_ON_ONCE(!loaded_mm);
++
++	/*
++	 * The condition we want to check is
++	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
++	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
++	 * is supposed to be reasonably fast.
++	 *
++	 * Instead, we check the almost equivalent but somewhat conservative
++	 * condition below, and we rely on the fact that switch_mm_irqs_off()
++	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
++	 */
++	if (loaded_mm != current_mm)
++		return false;
++
++	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
++
++	return true;
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
+index c8c6ad0d58b8..3f435d7fca5e 100644
+--- a/arch/x86/lib/usercopy.c
++++ b/arch/x86/lib/usercopy.c
+@@ -7,6 +7,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ 
++#include <asm/tlbflush.h>
++
+ /*
+  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+  * nested NMI paths are careful to preserve CR2.
+@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
+ 	if (__range_not_ok(from, n, TASK_SIZE))
+ 		return n;
+ 
++	if (!nmi_uaccess_okay())
++		return n;
++
+ 	/*
+ 	 * Even though this function is typically called from NMI/IRQ context
+ 	 * disable pagefaults so that its behaviour is consistent even when
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 9517d1b2a281..e96b99eb800c 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -305,6 +305,10 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+ 
++		/* Let nmi_uaccess_okay() know that we're changing CR3. */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		if (need_flush) {
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+@@ -335,6 +339,9 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		if (next != &init_mm)
+ 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+ 
++		/* Make sure we write CR3 before loaded_mm. */
++		barrier();
++
+ 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+ 	}
