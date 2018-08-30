@@ -2,93 +2,81 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE8FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F48AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C452720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C452720834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id D777F2082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:49:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D777F2082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeH3Qtb (ORCPT
+        id S1728884AbeH3QvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:49:31 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:35261 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbeH3Qtb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:49:31 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 421Mhf72Njz1r8T7
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:47:30 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 421Mhf6wQTz1tLP5
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:47:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id roPIsKnF0gh3 for <linux-kernel@vger.kernel.org>;
-        Thu, 30 Aug 2018 14:47:30 +0200 (CEST)
-X-Auth-Info: Z8QRGr0n2+CW94rzptyu/knVgI681BPKGch08OAqimg=
-Received: from mail-internal.denx.de (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:47:30 +0200 (CEST)
-Received: from pollux.denx.de (pollux [192.168.1.1])
-        by mail-internal.denx.de (Postfix) with ESMTP id D765718082A;
-        Thu, 30 Aug 2018 14:47:10 +0200 (CEST)
-Received: by pollux.denx.de (Postfix, from userid 515)
-        id A990A23B3; Thu, 30 Aug 2018 14:47:07 +0200 (CEST)
-From:   Heiko Schocher <hs@denx.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Heiko Schocher <hs@denx.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Peter Chen <peter.chen@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH] ARM: dts: imx6ull: fix pinmux input_val for uart5 rx pin
-Date:   Thu, 30 Aug 2018 14:47:02 +0200
-Message-Id: <20180830124702.12572-1-hs@denx.de>
-X-Mailer: git-send-email 2.14.4
+        Thu, 30 Aug 2018 12:51:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54064 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728713AbeH3QvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 12:51:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 496F0AE88;
+        Thu, 30 Aug 2018 12:49:16 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 14:49:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+Message-ID: <20180830124915.GH2656@dhcp22.suse.cz>
+References: <20180830090319.985-1-feng.tang@intel.com>
+ <20180830104401.GZ24124@hirez.programming.kicks-ass.net>
+ <20180830111207.GE2656@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-on the imx6ull the input_val for uart5 rx function
-of pin MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX
-is 7 and not 5 as on the imx6ul. With this
-patch, console on an imx6ull based board works
-with uart5.
+On Thu 30-08-18 13:54:19, Thomas Gleixner wrote:
+> On Thu, 30 Aug 2018, Michal Hocko wrote:
+> > On Thu 30-08-18 12:44:02, Peter Zijlstra wrote:
+> > > On Thu, Aug 30, 2018 at 05:03:19PM +0800, Feng Tang wrote:
+> > > > The root cause is that when CONFIG_NO_BOOTMEM=y,  before
+> > > > e820__memblock_setup() is called there is no memory for bootmem
+> > > > to allocate,
+> > > 
+> > > Which you bloody well asked for by using NO_BOOTMEM=y.
+> > > 
+> > > Going down this route; adding hacks for every little thing that does
+> > > want bootmem, completely defeats the purpose.
+> > > 
+> > > If anything, make the earlycon thing depend on NO_BOOTMEM=n. That also
+> > > solves your problem. No earlycon, no panic.
+> > 
+> > Well, there is endeavor to remove bootmem allocator altogether. So
+> > making earlycon depend on NO_BOOTMEM=n doesn't sound like a good fit to
+> 
+> If we want to remove bootmem, then reintroducing it with a static bootmem
+> section doesn't make any sense at all.
 
-Signed-off-by: Heiko Schocher <hs@denx.de>
-
----
-
- arch/arm/boot/dts/imx6ull-pinfunc.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/imx6ull-pinfunc.h b/arch/arm/boot/dts/imx6ull-pinfunc.h
-index fdc46bb09cc1a..d835aeae5485b 100644
---- a/arch/arm/boot/dts/imx6ull-pinfunc.h
-+++ b/arch/arm/boot/dts/imx6ull-pinfunc.h
-@@ -61,5 +61,6 @@
- #define MX6ULL_PAD_CSI_DATA05__ESAI_TX_CLK                        0x01F8 0x0484 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA06__ESAI_TX5_RX0                       0x01FC 0x0488 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA07__ESAI_T0                            0x0200 0x048C 0x0000 0x9 0x0
-+#define MX6ULL_PAD_UART5_RX_DATA__UART5_DCE_RX		0x00C0 0x034C 0x0644 0 7
- 
- #endif /* __DTS_IMX6ULL_PINFUNC_H */
+I have actually checked the code now and see what you mean. I thought it
+would be a single allocation that is needed but that is not the case so
+the static buffer is not going to fly.
 -- 
-2.14.4
-
+Michal Hocko
+SUSE Labs
