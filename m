@@ -2,150 +2,190 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F219FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD748C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D80D20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:52:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="QfoS6x3R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D80D20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 573F42082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 573F42082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeH3W4S (ORCPT
+        id S1727942AbeH3W5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:56:18 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:43645 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727337AbeH3W4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:56:17 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie2.idc.renesas.com with ESMTP; 31 Aug 2018 03:52:42 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 67A8B4C406;
-        Fri, 31 Aug 2018 03:52:42 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,307,1531753200"; 
-   d="scan'208";a="291097010"
-Received: from mail-os2jpn01lp0148.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.148])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Aug 2018 03:52:42 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Y8DSADi5NKyKlJ8D/uT6CaR5T1qDr1YST60clVwqfg=;
- b=QfoS6x3RalRr7M2/2NuFuii6G/rA0lB20W9uTZxT9NeRLeq6h9obI8QEQg4lcasUqdr2qYpdXgxAsCQRvqctEOIne7BQWZAgtkniD5G1a7L/16FA1P5vHlCUa4e1Lt5G3abtSQhoe6IBUgUmT9bubGhWi34vsVbNyNQlj5jD8kQ=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
- TY1PR01MB0304.jpnprd01.prod.outlook.com (10.161.136.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.14; Thu, 30 Aug 2018 18:52:38 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::c6c:fe7d:de0a:c681]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::c6c:fe7d:de0a:c681%4]) with mapi id 15.20.1080.019; Thu, 30 Aug 2018
- 18:52:37 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Jiri Slaby <jslaby@suse.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM platforms
-Thread-Topic: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM
- platforms
-Thread-Index: AQHUQGCOSg91s/0E00GS4Ir2iFfTsKTYoyuQ
-Date:   Thu, 30 Aug 2018 18:52:37 +0000
-Message-ID: <TY1PR01MB1562E58C07A892AC7CF7438B8A080@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180830125404.21192-1-geert+renesas@glider.be>
-In-Reply-To: <20180830125404.21192-1-geert+renesas@glider.be>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB0304;20:SD4JUpu5SD+OnQCFCyKQnKN/7TYJ3xfGOKMAParK/h1s9mPu1ge2nA4BbrB4irjbtL+N012+kxgb1c6jmUratHmNZAOQqv/920azWMLoSv9DwmDnYRQm32aSky/pNpui0LUwZe7vBO5o4AVdwF893oEEKctUsLt8ebGVhKxrf4g=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 058a0014-e70d-4d98-0e0c-08d60ea9c198
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0304;
-x-ms-traffictypediagnostic: TY1PR01MB0304:
-x-microsoft-antispam-prvs: <TY1PR01MB030401F59E3E5EFAA1A8E00B8A080@TY1PR01MB0304.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:TY1PR01MB0304;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0304;
-x-forefront-prvs: 07807C55DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(189003)(199004)(486006)(68736007)(102836004)(6506007)(97736004)(14454004)(55016002)(53936002)(9686003)(2900100001)(86362001)(54906003)(26005)(186003)(476003)(316002)(110136005)(446003)(11346002)(99286004)(2906002)(72206003)(478600001)(5250100002)(5660300001)(7736002)(7696005)(81156014)(105586002)(3846002)(74316002)(6116002)(256004)(8676002)(66066001)(4326008)(106356001)(76176011)(229853002)(25786009)(6436002)(8936002)(33656002)(305945005)(6246003)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0304;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: klzr7WCLq9bN4ZEzIF2WSd0tSzcw12uDzcGxzlbZBZcqvY4IzUwYUiTLOmDUrR9AfHaPNJt4532bfZq//iOhulAUEyFgPh160rVLa3bZwHXhSd9H28LXab3Ng1Jn2OPsiQPlXE8svNHLt71N7w75uxMo8bAI34LT55b0cosz4g3dRzQFZKKiktRs/g5wG05zRkNluIoR5PszGCXooHxLFbsB2Cf8ZOAIKQTRLbh4P5NlVvGqJDX5RzVQ2qkoBedqqak8amGBYqIygQ+3yxJDeSPuqJPF5Vt7yJX6QyRgi1eyrfBvs6kgcMqr6+P8kflB08K+JONX3NuIvJfVH6wx1Es+SUQlEMl9oxntHr7dYx0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 058a0014-e70d-4d98-0e0c-08d60ea9c198
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2018 18:52:37.6608
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0304
+        Thu, 30 Aug 2018 18:57:42 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40086 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727406AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:57:41 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fvS4u-0006Or-GN; Thu, 30 Aug 2018 12:54:06 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fvS4p-0000to-AP; Thu, 30 Aug 2018 12:53:55 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Thu, 30 Aug 2018 12:53:51 -0600
+Message-Id: <20180830185352.3369-13-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v5 12/13] nvmet: Introduce helper functions to allocate and free request SGLs
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Add helpers to allocate and free the SGL in a struct nvmet_req:
 
-On Thursday, August 30, 2018, Geert Uytterhoeven wrote:
-> Earlycon for RZ/A2 (which is a new platform) will be fixed later in a
-> separate patch.
+int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
+void nvmet_req_free_sgl(struct nvmet_req *req)
 
-I assume something like this:
-(which works for me)
+This will be expanded in a future patch to implement peer-to-peer
+memory DMAs and should be common with all target drivers. The presently
+unused 'sq' argument in the alloc function will be necessary to
+decide whether to use peer-to-peer memory and obtain the correct
+provider to allocate the memory.
 
+The new helpers are used in nvmet-rdma. Seeing we use req.transfer_len
+as the length of the SGL it is set earlier and cleared on any error.
+It also seems to be unnecessary to accumulate the length as the map_sgl
+functions should only ever be called once per request.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index ab3f6e91853d..426241da2e44 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3414,6 +3414,12 @@ static int __init scif_early_console_setup(struct ea=
-rlycon_device *device,
- {
-        return early_console_setup(device, PORT_SCIF);
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+---
+ drivers/nvme/target/core.c  | 18 ++++++++++++++++++
+ drivers/nvme/target/nvmet.h |  2 ++
+ drivers/nvme/target/rdma.c  | 20 ++++++++++++--------
+ 3 files changed, 32 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index ebf3e7a6c49e..6a1c8d5f552b 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -725,6 +725,24 @@ void nvmet_req_execute(struct nvmet_req *req)
  }
-+static int __init rzscifa_early_console_setup(struct earlycon_device *devi=
-ce,
-+                                         const char *opt)
+ EXPORT_SYMBOL_GPL(nvmet_req_execute);
+ 
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
 +{
-+       port_cfg.regtype =3D SCIx_RZ_SCIFA_REGTYPE;
-+       return early_console_setup(device, PORT_SCIF);
++	req->sg = sgl_alloc(req->transfer_len, GFP_KERNEL, &req->sg_cnt);
++	if (!req->sg)
++		return -ENOMEM;
++
++	return 0;
 +}
- static int __init scifa_early_console_setup(struct earlycon_device *device=
-,
-                                          const char *opt)
++EXPORT_SYMBOL_GPL(nvmet_req_alloc_sgl);
++
++void nvmet_req_free_sgl(struct nvmet_req *req)
++{
++	sgl_free(req->sg);
++	req->sg = NULL;
++	req->sg_cnt = 0;
++}
++EXPORT_SYMBOL_GPL(nvmet_req_free_sgl);
++
+ static inline bool nvmet_cc_en(u32 cc)
  {
-@@ -3432,6 +3438,7 @@ static int __init hscif_early_console_setup(struct ea=
-rlycon_device *device,
-=20
- OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
- OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
-+OF_EARLYCON_DECLARE(scif, "renesas,scif-r7s9210", rzscifa_early_console_se=
-tup);
- OF_EARLYCON_DECLARE(scifa, "renesas,scifa", scifa_early_console_setup);
- OF_EARLYCON_DECLARE(scifb, "renesas,scifb", scifb_early_console_setup);
- OF_EARLYCON_DECLARE(hscif, "renesas,hscif", hscif_early_console_setup);
-
-
-Chris
+ 	return (cc >> NVME_CC_EN_SHIFT) & 0x1;
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index ec9af4ee03b6..7d6cb61021e4 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -336,6 +336,8 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
+ void nvmet_req_uninit(struct nvmet_req *req);
+ void nvmet_req_execute(struct nvmet_req *req);
+ void nvmet_req_complete(struct nvmet_req *req, u16 status);
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq);
++void nvmet_req_free_sgl(struct nvmet_req *req);
+ 
+ void nvmet_cq_setup(struct nvmet_ctrl *ctrl, struct nvmet_cq *cq, u16 qid,
+ 		u16 size);
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index 3533e918ea37..e148dee72ba5 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -489,7 +489,7 @@ static void nvmet_rdma_release_rsp(struct nvmet_rdma_rsp *rsp)
+ 	}
+ 
+ 	if (rsp->req.sg != rsp->cmd->inline_sg)
+-		sgl_free(rsp->req.sg);
++		nvmet_req_free_sgl(&rsp->req);
+ 
+ 	if (unlikely(!list_empty_careful(&queue->rsp_wr_wait_list)))
+ 		nvmet_rdma_process_wr_wait_list(queue);
+@@ -638,24 +638,24 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+ {
+ 	struct rdma_cm_id *cm_id = rsp->queue->cm_id;
+ 	u64 addr = le64_to_cpu(sgl->addr);
+-	u32 len = get_unaligned_le24(sgl->length);
+ 	u32 key = get_unaligned_le32(sgl->key);
+ 	int ret;
+ 
++	rsp->req.transfer_len = get_unaligned_le24(sgl->length);
++
+ 	/* no data command? */
+-	if (!len)
++	if (!rsp->req.transfer_len)
+ 		return 0;
+ 
+-	rsp->req.sg = sgl_alloc(len, GFP_KERNEL, &rsp->req.sg_cnt);
+-	if (!rsp->req.sg)
+-		return NVME_SC_INTERNAL;
++	ret = nvmet_req_alloc_sgl(&rsp->req, &rsp->queue->nvme_sq);
++	if (ret < 0)
++		goto error_out;
+ 
+ 	ret = rdma_rw_ctx_init(&rsp->rw, cm_id->qp, cm_id->port_num,
+ 			rsp->req.sg, rsp->req.sg_cnt, 0, addr, key,
+ 			nvmet_data_dir(&rsp->req));
+ 	if (ret < 0)
+-		return NVME_SC_INTERNAL;
+-	rsp->req.transfer_len += len;
++		goto error_out;
+ 	rsp->n_rdma += ret;
+ 
+ 	if (invalidate) {
+@@ -664,6 +664,10 @@ static u16 nvmet_rdma_map_sgl_keyed(struct nvmet_rdma_rsp *rsp,
+ 	}
+ 
+ 	return 0;
++
++error_out:
++	rsp->req.transfer_len = 0;
++	return NVME_SC_INTERNAL;
+ }
+ 
+ static u16 nvmet_rdma_map_sgl(struct nvmet_rdma_rsp *rsp)
+-- 
+2.11.0
 
