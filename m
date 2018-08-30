@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79F1C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F243DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B772082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B772082A
+	by mail.kernel.org (Postfix) with ESMTP id B82202082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:54:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82202082A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeH3W5p (ORCPT
+        id S1728047AbeH3W57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:57:45 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40128 "EHLO ale.deltatee.com"
+        Thu, 30 Aug 2018 18:57:59 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40140 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeH3W5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727345AbeH3W5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 18:57:44 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4t-0006Oj-Nc; Thu, 30 Aug 2018 12:54:09 -0600
+        id 1fvS4u-0006Ok-Ft; Thu, 30 Aug 2018 12:54:09 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4o-0000tQ-HV; Thu, 30 Aug 2018 12:53:54 -0600
+        id 1fvS4o-0000tT-Ke; Thu, 30 Aug 2018 12:53:54 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -46,16 +46,24 @@ Cc:     Stephen Bates <sbates@raithlin.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 30 Aug 2018 12:53:43 -0600
-Message-Id: <20180830185352.3369-5-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Sagar Dharia <sdharia@codeaurora.org>
+Date:   Thu, 30 Aug 2018 12:53:44 -0600
+Message-Id: <20180830185352.3369-6-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
 References: <20180830185352.3369-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com, corbet@lwn.net, mchehab@kernel.org, gregkh@linuxfoundation.org, linus.walleij@linaro.org, treding@nvidia.com, keith.busch@intel.com, dan.j.williams@intel.com, vinod.koul@intel.com, sanyog.r.kale@intel.com, sdharia@codeaurora.org
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v5 04/13] PCI/P2PDMA: Introduce configfs/sysfs enable attribute helpers
+Subject: [PATCH v5 05/13] docs-rst: Add a new directory for PCI documentation
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,152 +71,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Users of the P2PDMA infrastructure will typically need a way for
-the user to tell the kernel to use P2P resources. Typically
-this will be a simple on/off boolean operation but sometimes
-it may be desirable for the user to specify the exact device to
-use for the P2P operation.
+Add a new directory in the driver API guide for PCI specific
+documentation.
 
-Add new helpers for attributes which take a boolean or a PCI device.
-Any boolean, or the word 'auto' turn P2P on or off. Specifying a full
-PCI device name/BDF will select the specific device.
+This is in preparation for adding a new PCI P2P DMA driver writers
+guide which will go in this directory.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Sanyog Kale <sanyog.r.kale@intel.com>
+Cc: Sagar Dharia <sdharia@codeaurora.org>
 ---
- drivers/pci/p2pdma.c       | 83 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pci-p2pdma.h | 15 +++++++++
- 2 files changed, 98 insertions(+)
+ Documentation/driver-api/index.rst         |  2 +-
+ Documentation/driver-api/pci/index.rst     | 20 ++++++++++++++++++++
+ Documentation/driver-api/{ => pci}/pci.rst |  0
+ 3 files changed, 21 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/driver-api/pci/index.rst
+ rename Documentation/driver-api/{ => pci}/pci.rst (100%)
 
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index 29bd40a87768..3da848f3fe72 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -9,6 +9,7 @@
-  */
- 
- #define pr_fmt(fmt) "pci-p2pdma: " fmt
-+#include <linux/ctype.h>
- #include <linux/pci-p2pdma.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -856,3 +857,85 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
- 	return nents;
- }
- EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 6d9f2f9fe20e..e9e7d24169cf 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -29,7 +29,7 @@ available subsections can be seen below.
+    iio/index
+    input
+    usb/index
+-   pci
++   pci/index
+    spi
+    i2c
+    hsi
+diff --git a/Documentation/driver-api/pci/index.rst b/Documentation/driver-api/pci/index.rst
+new file mode 100644
+index 000000000000..eaf20b24bf7d
+--- /dev/null
++++ b/Documentation/driver-api/pci/index.rst
+@@ -0,0 +1,20 @@
++.. SPDX-License-Identifier: GPL-2.0
++============================================
++The Linux PCI driver implementer's API guide
++============================================
 +
-+/**
-+ * pci_p2pdma_enable_store - parse a configfs/sysfs attribute store
-+ *		to enable p2pdma
-+ * @page: contents of the value to be stored
-+ * @p2p_dev: returns the PCI device that was selected to be used
-+ *		(if 'auto', 'none or a boolean isn't the store value)
-+ * @use_p2pdma: returns whether to enable p2pdma or not
-+ *
-+ * Parses an attribute value to decide whether to enable p2pdma.
-+ * The value can select a PCI device (using it's full BDF device
-+ * name), a boolean, or 'auto'. 'auto' and a true boolean value
-+ * have the same meaning. A false value disables p2pdma and
-+ * a PCI device enables it to use a specific device as the
-+ * backing provider.
-+ *
-+ * pci_p2pdma_enable_show() should be used as the show operation for
-+ * the attribute.
-+ *
-+ * Returns 0 on success
-+ */
-+int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
-+			    bool *use_p2pdma)
-+{
-+	struct device *dev;
++.. class:: toc-title
 +
-+	dev = bus_find_device_by_name(&pci_bus_type, NULL, page);
-+	if (dev) {
-+		*use_p2pdma = true;
-+		*p2p_dev = to_pci_dev(dev);
++	   Table of contents
 +
-+		if (!pci_has_p2pmem(*p2p_dev)) {
-+			pr_err("PCI device has no peer-to-peer memory: %s\n",
-+			       page);
-+			pci_dev_put(*p2p_dev);
-+			return -ENODEV;
-+		}
++.. toctree::
++   :maxdepth: 2
 +
-+		return 0;
-+	} else if (sysfs_streq(page, "auto")) {
-+		*use_p2pdma = true;
-+		return 0;
-+	} else if ((page[0] == '0' || page[0] == '1') && !iscntrl(page[1])) {
-+		/*
-+		 * If the user enters a PCI device that  doesn't exist
-+		 * like "0000:01:00.1", we don't want strtobool to think
-+		 * it's a '0' when it's clearly not what the user wanted.
-+		 * So we require 0's and 1's to be exactly one character.
-+		 */
-+	} else if (!strtobool(page, use_p2pdma)) {
-+		return 0;
-+	}
++   pci
 +
-+	pr_err("No such PCI device: %.*s\n", (int)strcspn(page, "\n"), page);
-+	return -ENODEV;
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_enable_store);
++.. only::  subproject and html
 +
-+/**
-+ * pci_p2pdma_enable_show - show a configfs/sysfs attribute indicating
-+ *		whether p2pdma is enabled
-+ * @page: contents of the stored value
-+ * @p2p_dev: the selected p2p device (NULL if no device is selected)
-+ * @use_p2pdma: whether p2pdme has been enabled
-+ *
-+ * Attributes that use pci_p2pdma_enable_store() should use this function
-+ * to show the value of the attribute.
-+ *
-+ * Returns 0 on success
-+ */
-+ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
-+			       bool use_p2pdma)
-+{
-+	if (!use_p2pdma)
-+		return sprintf(page, "none\n");
++   Indices
++   =======
 +
-+	if (!p2p_dev)
-+		return sprintf(page, "auto\n");
-+
-+	return sprintf(page, "%s\n", pci_name(p2p_dev));
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_enable_show);
-diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-index 2f03dbbf5af6..377de4d73767 100644
---- a/include/linux/pci-p2pdma.h
-+++ b/include/linux/pci-p2pdma.h
-@@ -38,6 +38,10 @@ void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
- void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
- int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
- 		      enum dma_data_direction dir);
-+int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
-+			    bool *use_p2pdma);
-+ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
-+			       bool use_p2pdma);
- #else /* CONFIG_PCI_P2PDMA */
- static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
- 		size_t size, u64 offset)
-@@ -105,5 +109,16 @@ static inline int pci_p2pdma_map_sg(struct device *dev,
- {
- 	return 0;
- }
-+static inline int pci_p2pdma_enable_store(const char *page,
-+		struct pci_dev **p2p_dev, bool *use_p2pdma)
-+{
-+	*use_p2pdma = false;
-+	return 0;
-+}
-+static inline ssize_t pci_p2pdma_enable_show(char *page,
-+		struct pci_dev *p2p_dev, bool use_p2pdma)
-+{
-+	return sprintf(page, "none\n");
-+}
- #endif /* CONFIG_PCI_P2PDMA */
- #endif /* _LINUX_PCI_P2P_H */
++   * :ref:`genindex`
+diff --git a/Documentation/driver-api/pci.rst b/Documentation/driver-api/pci/pci.rst
+similarity index 100%
+rename from Documentation/driver-api/pci.rst
+rename to Documentation/driver-api/pci/pci.rst
 -- 
 2.11.0
 
