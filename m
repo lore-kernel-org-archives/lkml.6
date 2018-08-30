@@ -2,101 +2,103 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFF9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C24C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751E520661
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751E520661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 2257720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:35:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBypc8Tz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2257720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeH3Tgy (ORCPT
+        id S1727334AbeH3Th4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:36:54 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([207.82.80.211]:38151 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727123AbeH3Tgy (ORCPT
+        Thu, 30 Aug 2018 15:37:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34420 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeH3Thz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:36:54 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-50-d_oZkD_5Ny2tcsryVzKzZQ-1; Thu, 30 Aug 2018 16:34:00 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 30 Aug 2018 16:35:39 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 30 Aug 2018 16:35:39 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Miguel Ojeda' <miguel.ojeda.sandonis@gmail.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "Hartmut Knaack" <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Jiri Slaby" <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-Thread-Topic: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-Thread-Index: AQHUQFJsyE6G3E8Q/UO/0Ujg2pGZq6TYbMjw
-Date:   Thu, 30 Aug 2018 15:35:39 +0000
-Message-ID: <34ad57ec954c481d87ef6af58453ee9f@AcuMS.aculab.com>
-References: <20180820234341.5271-1-jmkrzyszt@gmail.com>
- <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180829204900.19390-2-jmkrzyszt@gmail.com>
- <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
-In-Reply-To: <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
+        Thu, 30 Aug 2018 15:37:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d19-v6so4061858pgv.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=59YJuTd/P3YlkbKgdzoXos1iq41zGzPiWfFh8Oq0dRU=;
+        b=JBypc8TzxvutiL03VLybhPV/L6bqSZZlD1YvMDqb9Afg2MQIDELO9XxZb4vSSDMeg4
+         JAEEC+QeUTOkBfGFTN8aMkDsCrnHLuCUEWuPfgD6UyET9C7Px4b+B3+txMD4n9zSL2G8
+         AVe7Qa+ja1xhH5s2q5grXnkhO5smtUxfFpbrcQ6vQDh+HrXfrZqcRHEyqQdaRCZTaTlz
+         619IqM0J9RinHJveabdfJwloCvV8ED5h62SkR1RlZ0MaRoe64HGn3JiP47vFDJr4C0J+
+         j3OS1/c/Kt8ucpwOE7fnqofZ7c9l+aIeq8wsdZT7iLrMosJGCMaSs+AeGJfnCUA3oVdo
+         t1hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=59YJuTd/P3YlkbKgdzoXos1iq41zGzPiWfFh8Oq0dRU=;
+        b=EXmeohz/wZJJ10jeVr7+M3y2edlzfd5OYcru9YFAOypoo15hoc3SxPmgBUijnAnhPO
+         fn5qd2BgKmgc6Wa+dpSAMQHmW3WiNG05M8yI6v8gR6qqC5HlLb5SwfYFXHdajZNfKD2v
+         I1rgZAjd2vmMfSUPxgjYQj/bjZYup/mP3q8xWTil092ycmX6+iUfTgwXJk1S4dFgeZbB
+         4DY8qQE82AUR5UZBox3n/NPog/31HvttyMPg26nzhsP8nyb4FgksUh3x/3vl4bMaHHj9
+         ZsXmnOnyyTfFixU/sba9gxbotkLgN48uNvrOvKOaOr6swxhr+0mQcDGdXFxfi12b4UDC
+         AK0g==
+X-Gm-Message-State: APzg51D/HpeizCoPIJ59Hy5bM8YooGRhNmBHb9sPesgTWxp4xmizWjVf
+        mTCT6gyILbbHPpUlP1TIuIs=
+X-Google-Smtp-Source: ANB0VdawHpdM4DWIxbxOzhTXeFXkCe9FfV/jOAILh1e238fm0ycK49thdBEIJZyRSZqhFfAnvMzESQ==
+X-Received: by 2002:a63:4826:: with SMTP id v38-v6mr10308880pga.379.1535643312759;
+        Thu, 30 Aug 2018 08:35:12 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.216.27])
+        by smtp.gmail.com with ESMTPSA id 5-v6sm10715816pgc.86.2018.08.30.08.35.10
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 30 Aug 2018 08:35:11 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 21:08:13 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     dan.j.williams@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: [PATCH] device-dax: Convert variable to vm_fault_t type
+Message-ID: <20180830153813.GA26059@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-X-MC-Unique: d_oZkD_5Ny2tcsryVzKzZQ-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTWlndWVsIE9qZWRhDQo+IFNlbnQ6IDMwIEF1Z3VzdCAyMDE4IDEyOjExDQouLi4NCj4g
-PiArICAgICAgIHVuc2lnbmVkIGxvbmcgdmFsdWVfYml0bWFwWzFdOyAgLyogZm9yIERBVEFbMC03
-XSwgUlMsIFJXICovDQo+IA0KPiAoSSByZWFkIHlvdXIgY29tbWVudHMgaW4gdGhlIG90aGVyIGVt
-YWlsKQ0KPiANCj4gSSBzdGlsbCBmaW5kIHRoaXMgb2RkLCBidXQgaWYgZXZlcnlvbmUgaXMgZ29p
-bmcgdG8gaGF2ZSB0aGlzIGNoYW5nZQ0KPiBkb25lIGxpa2UgdGhpcywgY29uc2lzdGVuY3kgaXMg
-YmV0dGVyLg0KDQpNYXliZSB0aGVyZSBvdWdodCB0byBiZSBhIGRlZmluZSBzbyB5b3UgY2FuIGRv
-Og0KCURFRklORV9CSVRNQVAodmFsdWVfYml0bWFwLCAzMik7DQoNCldoaWxlIGl0IG1pZ2h0IGp1
-c3QgZ2VuZXJhdGUgYW4gdW5zaWduZWQgbG9uZyBbXSB0aGVyZSBpcyBwcm9iYWJseQ0Kc2NvcGUg
-Zm9yIHN0cm9uZ2VyIHR5cGluZy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBM
-YWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBU
-LCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+As part of commit 226ab561075f ("device-dax: Convert to
+vmf_insert_mixed and vm_fault_t") in 4.19-rc1,
+'rc' was not converted to vm_fault_t. Now converted.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/dax/device.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index 6fd4608..bbe4d72 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -392,7 +392,8 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
+ {
+ 	struct file *filp = vmf->vma->vm_file;
+ 	unsigned long fault_size;
+-	int rc, id;
++	vm_fault_t rc = VM_FAULT_SIGBUS;
++	int id;
+ 	pfn_t pfn;
+ 	struct dev_dax *dev_dax = filp->private_data;
+ 
+-- 
+1.9.1
 
