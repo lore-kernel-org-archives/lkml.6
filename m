@@ -2,93 +2,103 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CB1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A4FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB70120834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECFE62073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:14:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmSsMFVg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB70120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oTBm6Ljn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFE62073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbeH3SRD (ORCPT
+        id S1729283AbeH3SRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:17:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728273AbeH3SRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:17:02 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A01852073D;
-        Thu, 30 Aug 2018 14:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535638482;
-        bh=lP0iRRCcPa1+ThBFmPx/Hi/C6YRfDyPoXO1Mg7Z+Iaw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmSsMFVgazl1fsDNOVY81Md7tVg5d6hBjSUhq4zgzwaG4SJ9cevI4tF0yXICv1IT7
-         i75MFZng6KhA1LLfn0x1i7HIoXBUdS0lGHTbyg28buFwwa9if/pMrmBNF29queOz1W
-         f30aXT8VP07Gq66L/QoNfywoZIn2GH5/1rOYJXdI=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/28] selftests/ftrace: More initialize features in initialize_ftrace
-Date:   Thu, 30 Aug 2018 23:14:19 +0900
-Message-Id: <153563845959.29700.6744691744020482131.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <153563834333.29700.11242968505215651399.stgit@devbox>
-References: <153563834333.29700.11242968505215651399.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 30 Aug 2018 14:17:11 -0400
+Received: from mail-pf1-f176.google.com ([209.85.210.176]:45231 "EHLO
+        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729045AbeH3SRK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 14:17:10 -0400
+Received: by mail-pf1-f176.google.com with SMTP id i26-v6so3930332pfo.12;
+        Thu, 30 Aug 2018 07:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zurj3wZUUdvWmLzrXQJDu57Ik/qb9GDh/+UW5PIu2QQ=;
+        b=oTBm6Ljn1dFfokD++mhPANd3O6PaHiOTIW4DSVGAx8qrkpvXZX5HtxnDx3TLubV7rZ
+         wqKPuc73wWPtQN6G8SftIWfEss76Hc2T80LmnD9MgNarNTm0+ZvXjrJZbByENpQJurN0
+         BbUMeRRywA9NhW0NzDkuj850zQx8kdgAZSkmZJZY6aQ6j9xTyh/xdtMaIT3zE8d0TGJe
+         0soXV5YLUZ1km27qkbqXSjTDarVyBFOJmb1sGPKxAa1e38ya+uyt1eWJHfL22tXfkhip
+         EsrpUwXZQUXTStmQwq9JBiN7WJhiUKKsfIkru6Quw43/cCWwYWvCYhrAOq8R3e15tJGF
+         Z1LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zurj3wZUUdvWmLzrXQJDu57Ik/qb9GDh/+UW5PIu2QQ=;
+        b=ATXaUVF5ACKoUeW1cnrFf6+IpsPv5sZS0DaFV8LTloAt1RgcmMA+VFiegnlOpsrRLG
+         oK1oXNg/hFyhnj1CuPTi2ld0v2s4lcF9YFDhTsAg14o9ynVzov9L9uSzwlbsOGTxRPlP
+         YclOqYWjWMyRzqsn+uDcebEcqfUiOgp03eLIIhvs/4/9hH93oEjSvxfk88wFBBZpDrMh
+         DDfO4so0C68CSvt8jdr+JbkP6NDNyFmwr8ZPpTwsLdHOQ887MtuItPlB6myFRu58FFXu
+         iunDFUkSOleXX7CXQdQq7NBtFS37xv3tY2JyXo2f7ikScW8CDBbLM7mRgTMhaY1bINEm
+         pQEw==
+X-Gm-Message-State: APzg51D0S91YhTSHJVYGR951TxYnTJ0hS4tdV6BuFG7Zw84hLG8BdHHK
+        sEgNCOZSEgpcDWSK2/pYld4=
+X-Google-Smtp-Source: ANB0VdYpb3LFKzsQcXlE6p1vRB5GTlbvCQoCYd9YkO4JvLX7jp6i+56Egh3fTHUYWv0eR1Ycv8QuLQ==
+X-Received: by 2002:aa7:8713:: with SMTP id b19-v6mr10715469pfo.151.1535638489928;
+        Thu, 30 Aug 2018 07:14:49 -0700 (PDT)
+Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
+        by smtp.gmail.com with ESMTPSA id q26-v6sm24972519pfj.127.2018.08.30.07.14.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 07:14:49 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 00:14:46 +1000
+From:   Balbir Singh <bsingharora@gmail.com>
+To:     jglisse@redhat.com
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Ralph Campbell <rcampbell@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 3/7] mm/hmm: fix race between hmm_mirror_unregister() and
+ mmu_notifier callback
+Message-ID: <20180830141446.GB28695@350D>
+References: <20180824192549.30844-1-jglisse@redhat.com>
+ <20180824192549.30844-4-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180824192549.30844-4-jglisse@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clear pid filter, synthetic_events, snapshots,
-ftrace filter, and trace log in initialize_ftrace(),
-since those are used in test cases.
+On Fri, Aug 24, 2018 at 03:25:45PM -0400, jglisse@redhat.com wrote:
+> From: Ralph Campbell <rcampbell@nvidia.com>
+> 
+> In hmm_mirror_unregister(), mm->hmm is set to NULL and then
+> mmu_notifier_unregister_no_release() is called. That creates a small
+> window where mmu_notifier can call mmu_notifier_ops with mm->hmm equal
+> to NULL. Fix this by first unregistering mmu notifier callbacks and
+> then setting mm->hmm to NULL.
+> 
+> Similarly in hmm_register(), set mm->hmm before registering mmu_notifier
+> callbacks so callback functions always see mm->hmm set.
+> 
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: stable@vger.kernel.org
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-  Changes in v2:
-   - Add reset_ftrace_filter
----
- tools/testing/selftests/ftrace/test.d/functions |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
-index e4645d5e3126..b2bfa4dd43f7 100644
---- a/tools/testing/selftests/ftrace/test.d/functions
-+++ b/tools/testing/selftests/ftrace/test.d/functions
-@@ -89,12 +89,17 @@ initialize_ftrace() { # Reset ftrace to initial-state
-     reset_tracer
-     reset_trigger
-     reset_events_filter
-+    reset_ftrace_filter
-     disable_events
-     echo > set_event_pid	# event tracer is always on
-+    echo > set_ftrace_pid
-     [ -f set_ftrace_filter ] && echo | tee set_ftrace_*
-     [ -f set_graph_function ] && echo | tee set_graph_*
-     [ -f stack_trace_filter ] && echo > stack_trace_filter
-     [ -f kprobe_events ] && echo > kprobe_events
-     [ -f uprobe_events ] && echo > uprobe_events
-+    [ -f synthetic_events ] && echo > synthetic_events
-+    [ -f snapshot ] && echo 0 > snapshot
-+    clear_trace
-     enable_tracing
- }
-
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
