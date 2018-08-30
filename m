@@ -3,199 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B36AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 583F2C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5462082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:06:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5462082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 159172082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159172082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbeH3XKX (ORCPT
+        id S1727426AbeH3XKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:10:23 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:36367 "EHLO smtp.infotech.no"
+        Thu, 30 Aug 2018 19:10:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:6188 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbeH3XKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:10:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 7C960204197;
-        Thu, 30 Aug 2018 21:06:42 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pTpJe5VOMntz; Thu, 30 Aug 2018 21:06:42 +0200 (CEST)
-Received: from [82.134.31.167] (unknown [82.134.31.167])
-        by smtp.infotech.no (Postfix) with ESMTPA id 4CE42204165;
-        Thu, 30 Aug 2018 21:06:41 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: 4.19.0-rc1 rtsx_pci_sdmmc.0: error: data->host_cookie = 62,
- host->cookie = 63
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-References: <6c696030-51a5-9ab9-47a9-d6fa3000a8a3@interlog.com>
- <CAPDyKFqk+K7TOyHoB1-+sguxbS_1s=RwCRiFMdrWOaSVhkpqJQ@mail.gmail.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <221c1dd1-504c-a255-55cf-8d51041f63de@interlog.com>
-Date:   Thu, 30 Aug 2018 21:06:41 +0200
+        id S1726959AbeH3XKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 19:10:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 12:07:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
+   d="scan'208";a="259449633"
+Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
+  by fmsmga006.fm.intel.com with ESMTP; 30 Aug 2018 12:07:11 -0700
+Subject: Re: [PATCH V4 4/4] kvm: add a check if pfn is from NVDIMM pmem.
+To:     Zhang Yi <yi.z.zhang@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
+        david@redhat.com, jack@suse.cz, hch@lst.de
+References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
+ <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
+Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
+        yi.z.zhang@intel.com
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <4192066a-79f3-2b3e-386f-c4ec9b6dd8fd@intel.com>
+Date:   Thu, 30 Aug 2018 12:07:11 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqk+K7TOyHoB1-+sguxbS_1s=RwCRiFMdrWOaSVhkpqJQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
+In-Reply-To: <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-30 02:03 PM, Ulf Hansson wrote:
-> On 28 August 2018 at 23:47, Douglas Gilbert <dgilbert@interlog.com> wrote:
->> I usually boot my Lenovo X270 with a SD card in its:
->>    # lspci
->> 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS522A PCI
->> Express Card Reader (rev 01)
->> ...
->>
->> In lk 4.19.0-rc1 the boot locks up solid, almost immediately and nothing in
->> the logs. If I remove the SD card my machine boots and works okay until I
->> insert the SD card. Then:
->>
->> Aug 28 23:30:38 xtwo70 kernel: mmc0: cannot verify signal voltage switch
->> Aug 28 23:30:38 xtwo70 kernel: mmc0: new ultra high speed SDR104 SDXC card
->> at address aaaa
->> Aug 28 23:30:38 xtwo70 kernel: mmcblk0: mmc0:aaaa ACLCE 59.5 GiB
->> Aug 28 23:30:38 xtwo70 kernel: mmcblk0: p1 p2
->> Aug 28 23:30:38 xtwo70 kernel: rtsx_pci_sdmmc rtsx_pci_sdmmc.0: error:
->> data->host_cookie = 62, host->cookie = 63
->> Aug 28 23:30:38 xtwo70 kernel: BUG: unable to handle kernel NULL pointer
->> dereference at 0000000000000018
->> Aug 28 23:30:38 xtwo70 kernel: PGD 0 P4D 0
->> Aug 28 23:30:38 xtwo70 kernel: Oops: 0000 [#1] SMP
->> Aug 28 23:30:38 xtwo70 kernel: CPU: 3 PID: 1571 Comm: kworker/3:2 Not
->> tainted 4.19.0-rc1 #78
->> Aug 28 23:30:38 xtwo70 kernel: Hardware name: LENOVO 20HNCTO1WW/20HNCTO1WW,
->> BIOS R0IET53W (1.31 ) 05/22/2018
->> Aug 28 23:30:38 xtwo70 kernel: Workqueue: events sd_request [rtsx_pci_sdmmc]
->> Aug 28 23:30:38 xtwo70 kernel: RIP: 0010:rtsx_pci_dma_transfer+0x6e/0x260
->> [rtsx_pci]
->> Aug 28 23:30:38 xtwo70 kernel: Code: 49 89 fe 45 89 c5 c7 87 90 00 00 00 00
->> 00 00 00 8d 6a ff 81 c9 00 00 00 88 31 d2 41 89 cc 45 31 ff eb 07 41 8b 96
->> 90 00 00 00 <8b> 78 18 48 63 ca 31 f6 44 39 fd 48 8b 50 10 40 0f 94 c6 41 83
->> c7
->> Aug 28 23:30:38 xtwo70 kernel: RSP: 0018:ffffc90000217d78 EFLAGS: 00010202
->> Aug 28 23:30:38 xtwo70 kernel: RAX: 0000000000000000 RBX: 0000000000000003
->> RCX: 0000000000000000
->> Aug 28 23:30:38 xtwo70 kernel: RDX: 0000000000000001 RSI: 0000000000000021
->> RDI: ffff8801b6328000
->> Aug 28 23:30:38 xtwo70 kernel: RBP: 0000000000000002 R08: ffff880036000400
->> R09: 0000000000000000
->> Aug 28 23:30:38 xtwo70 kernel: R10: 0000000000000000 R11: 0000000000000000
->> R12: 00000000a8000000
->> Aug 28 23:30:38 xtwo70 kernel: R13: 0000000000002710 R14: ffff88021fd35400
->> R15: 0000000000000001
->> Aug 28 23:30:38 xtwo70 kernel: FS:  0000000000000000(0000)
->> GS:ffff880227380000(0000) knlGS:0000000000000000
->> Aug 28 23:30:38 xtwo70 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
->> 0000000080050033
->> Aug 28 23:30:38 xtwo70 kernel: CR2: 0000000000000018 CR3: 000000000400f006
->> CR4: 00000000003606e0
->> Aug 28 23:30:38 xtwo70 kernel: Call Trace:
->> Aug 28 23:30:38 xtwo70 kernel: ? mark_held_locks+0x50/0x80
->> Aug 28 23:30:38 xtwo70 kernel: ? _raw_spin_unlock_irqrestore+0x2d/0x40
->> Aug 28 23:30:38 xtwo70 kernel: sd_request+0x385/0x81a [rtsx_pci_sdmmc]
->> Aug 28 23:30:38 xtwo70 kernel: process_one_work+0x287/0x5e0
->> Aug 28 23:30:38 xtwo70 kernel: worker_thread+0x28/0x3d0
->> Aug 28 23:30:38 xtwo70 kernel: ? process_one_work+0x5e0/0x5e0
->> Aug 28 23:30:38 xtwo70 kernel: kthread+0x10e/0x130
->> Aug 28 23:30:38 xtwo70 kernel: ? kthread_park+0x80/0x80
->> Aug 28 23:30:38 xtwo70 kernel: ret_from_fork+0x3a/0x50
->> Aug 28 23:30:38 xtwo70 kernel: Modules linked in: mmc_block fuse msr bnep
->> ccm btusb btrtl btbcm btintel bluetooth squashfs ecdh_generic binfmt_misc
->> intel_rapl nls_iso8859_1 nls_cp437 x86_pkg_temp_thermal vfat
->> intel_powerclamp fat coretemp kvm_intel arc4 snd_hda_codec_hdmi kvm
->> snd_hda_codec_realtek snd_hda_codec_generic irqbypass crct10dif_pclmul
->> crc32_pclmul ghash_clmulni_intel pcbc iwlmvm aesni_intel aes_x86_64
->> crypto_simd cryptd glue_helper mac80211 intel_cstate intel_uncore
->> intel_rapl_perf snd_hda_intel joydev snd_hda_codec mousedev snd_hwdep
->> iwlwifi snd_hda_core input_leds efi_pstore snd_pcm serio_raw efivars
->> cfg80211 rtsx_pci_ms memstick mei_me idma64 virt_dma mei intel_lpss_pci
->> intel_lpss intel_pch_thermal thinkpad_acpi nvram snd_seq_dummy tps6598x
->> snd_seq_oss typec snd_seq_midi snd_rawmidi snd_seq_midi_event
->> Aug 28 23:30:38 xtwo70 kernel: snd_seq snd_seq_device snd_timer snd
->> soundcore rfkill tpm_crb tpm_tis tpm_tis_core tpm evdev mac_hid pcc_cpufreq
->> ip6t_REJECT nf_reject_ipv6 nf_log_ipv6 xt_hl ip6t_rt ipt_REJECT
->> nf_reject_ipv4 nf_log_ipv4 nf_log_common xt_LOG xt_limit xt_tcpudp
->> xt_addrtype xt_conntrack ip6table_filter ip6_tables nf_conntrack_netbios_ns
->> nf_conntrack_broadcast nf_nat_ftp nf_nat nf_conntrack_ftp nf_conntrack
->> nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_filter parport_pc ppdev lp
->> parport efivarfs ip_tables x_tables autofs4 hid_logitech_hidpp
->> hid_logitech_dj hid_generic usbhid hid rtsx_pci_sdmmc mmc_core i915 nvme
->> e1000e i2c_algo_bit nvme_core drm_kms_helper syscopyarea sysfillrect
->> sysimgblt fb_sys_fops xhci_pci drm xhci_hcd video
->> drm_panel_orientation_quirks usbcore intel_gtt agpgart usb_common rtsx_pci
->> Aug 28 23:30:38 xtwo70 kernel: CR2: 0000000000000018
->> Aug 28 23:30:38 xtwo70 kernel: ---[ end trace bb8ce18072d22d51 ]---
->> Aug 28 23:30:38 xtwo70 dbus-daemon[2110]: [system] Activating via systemd:
->> service name='org.freedesktop.hostname1'
->> unit='dbus-org.freedesktop.hostname1.service' requested by ':1.77' (uid=1000
->> pid=3518 comm="/usr/bin/gnome-shell ")
->> Aug 28 23:30:38 xtwo70 systemd[1]: Attaching egress BPF program to cgroup
->> /sys/fs/cgroup/unified/system.slice/systemd-hostnamed.service failed:
->> Invalid argument
->> Aug 28 23:30:38 xtwo70 systemd[1]: Starting Hostname Service...
->> Aug 28 23:30:39 xtwo70 kernel: RIP: 0010:rtsx_pci_dma_transfer+0x6e/0x260
->> [rtsx_pci]
->> Aug 28 23:30:39 xtwo70 kernel: Code: 49 89 fe 45 89 c5 c7 87 90 00 00 00 00
->> 00 00 00 8d 6a ff 81 c9 00 00 00 88 31 d2 41 89 cc 45 31 ff eb 07 41 8b 96
->> 90 00 00 00 <8b> 78 18 48 63 ca 31 f6 44 39 fd 48 8b 50 10 40 0f 94 c6 41 83
->> c7
->> Aug 28 23:30:39 xtwo70 kernel: RSP: 0018:ffffc90000217d78 EFLAGS: 00010202
->> Aug 28 23:30:39 xtwo70 kernel: RAX: 0000000000000000 RBX: 0000000000000003
->> RCX: 0000000000000000
->> Aug 28 23:30:39 xtwo70 kernel: RDX: 0000000000000001 RSI: 0000000000000021
->> RDI: ffff8801b6328000
->> Aug 28 23:30:39 xtwo70 kernel: RBP: 0000000000000002 R08: ffff880036000400
->> R09: 0000000000000000
->> Aug 28 23:30:39 xtwo70 kernel: R10: 0000000000000000 R11: 0000000000000000
->> R12: 00000000a8000000
->> Aug 28 23:30:39 xtwo70 kernel: R13: 0000000000002710 R14: ffff88021fd35400
->> R15: 0000000000000001
->> Aug 28 23:30:39 xtwo70 kernel: FS:  0000000000000000(0000)
->> GS:ffff880227380000(0000) knlGS:0000000000000000
->> Aug 28 23:30:39 xtwo70 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
->> 0000000080050033
->> Aug 28 23:30:39 xtwo70 kernel: CR2: 000056531391e498 CR3: 000000000400f006
->> CR4: 00000000003606e0
->>
->>
->> Doug Gilbert
-> 
-> Thanks for reporting!
-> 
-> I don't fine anything obvious from the mmc host driver point of view.
-> However, there are a few changes in the mmc core layer which we
-> already have fixes for.
-> 
-> You may either try my fixes branch from my mmc tree or use Stephen's
-> tree and the branch pending fixes, to see if that fixes the problem.
-> 
-> git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git fixes
-> 
-> git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git pending-fixes
+On 08/22/2018 03:58 AM, Zhang Yi wrote:
+>  bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
+>  {
+> -	if (pfn_valid(pfn))
+> -		return PageReserved(pfn_to_page(pfn));
+> +	struct page *page;
+> +
+> +	if (pfn_valid(pfn)) {
+> +		page = pfn_to_page(pfn);
+> +		return PageReserved(page) && !is_dax_page(page);
+> +	}
 
+This is in desperate need of commenting about what it is doing and why.
 
-This patch from your fixes branch:
-     mmc: block: Fix unsupported parallel dispatch of requests
-fixes my boot problem. I also did a remove and re-insertion of
-the SD card and that worked as well.
-
-Doug Gilbert
-
-P.S. it's commit 26caddf274cf1e89fd4ce44ab2b8dbc7a7f97681
+The changelog alone doesn't cut it.
