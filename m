@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7E9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC45C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3023420837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4CB2083D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:41:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IfkjmFho"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3023420837
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K+wpn7aJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4CB2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeH3PnG (ORCPT
+        id S1728214AbeH3PnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:43:06 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33327 "EHLO
+        Thu, 30 Aug 2018 11:43:08 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40102 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbeH3PnG (ORCPT
+        with ESMTP id S1728047AbeH3PnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:43:06 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i134-v6so1623968wmf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 04:41:22 -0700 (PDT)
+        Thu, 30 Aug 2018 11:43:07 -0400
+Received: by mail-wm0-f68.google.com with SMTP id 207-v6so1658614wme.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 04:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YmU2UyMtUBNWrj8mk4LYzQ193g4/d71hDCIWAiq7WI0=;
-        b=IfkjmFhoYEchL2Isulzy2HGRhwUAvap8gk4OyFAK0S+ltBBXHbvrenzzgK+qvOksep
-         rT9yKFfHZfQEV/a2ynV/OdX/nQGjRmi7he70z1eH6qrLQ3lwq4LuweIieHCRhK4Enyhv
-         Y/gq3YABwR6a0aXat6gq+Lyr8Eio3epXuS7ZQuLPUltrbA2hH36lxQ5P/tM2cGhNAW/m
-         EKAhVkg4m1MQR7TLAVQizX9UGMu7fl5t03okJs3F5vVf+fiG5emA5xD+U4Z9YlGmcW0B
-         +eTkHSvtA0rc7e598IGlPLS/QkOhICrwKPD9gy6G9xIi+jtUcHw7zIgHTM2WTQBPhKfc
-         xocw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=83X0Ly3GNFYkIBH/BFHbUkVhejW7zXmTm47ETsZa+AI=;
+        b=K+wpn7aJOFLmPZBtmJEtbDEIz8wwRyqKm90YcGp+HMvxjAN9pVZ9cCtV/gejD6CHx8
+         CCRwiS6KNOavKWrpApClDZVkUNnM1PpPI0sPj53nn54bQD/sBRG7JsNHHoX4PU66BtJs
+         sWQPtl9p71g3J5ENln6J0XiGFBCetgKOUOzChKveAkosXimFhJVQQlzelgwZoNQSSMrk
+         bcDUcVPQoIRyS/FnXWMTu46L+C5BZMmJ8YmSSpruskuUgtBE+n6hxzvCGEZKPoQmzw5o
+         IloxmtP6GY49QXdlXgn3aXUqKYfzJKfo4M4OVXaCo+jBOHmqanbdshjSYmo4j7v976ox
+         Mgrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YmU2UyMtUBNWrj8mk4LYzQ193g4/d71hDCIWAiq7WI0=;
-        b=nmw9vMMG4yv+qwdyPNwrXr6JIBgznCzKgElIf2yQvIIRLfgVJur6bqi8iXDofbeY3L
-         dcWQfIfDUHn01UTxXDwxUQS2R94OWLE+ZVnH2KjA2phTFtD7BIIxs72INLI7mUR97vqj
-         yPinPTygc30ACA2p6a11f9rGXymG3GD/zBB/QqxDLmt9ejCjaA07PI/rbyHDf79TdmRp
-         sGD+t7N5ojwnnLsLWNOx7gxvu2xRzKlqoYspJPsr9V3UIRTBVsTq0rTahK1zzHlT4gZ0
-         NFT/xr8pIOggG03U6Iwya9ZvrlhoWAf/INPph1t4rhmrNwWOSfTr53bzCL6f63jJ6h6N
-         A52w==
-X-Gm-Message-State: APzg51AcQPFeS18kjLhl4Yl/oSUYgZ6TjXqIp4YDEFqVuP0ymskz1/xY
-        +4SmoT8wxTtH3D1sMFNEwOOGVQ==
-X-Google-Smtp-Source: ANB0VdZKEPoV77ehl9ywVOCWQ7xqiHdmHuPpuz7eJeQGWHYp02kmszcINUT2okmEOJZE3BRog9Lg5Q==
-X-Received: by 2002:a1c:b6d6:: with SMTP id g205-v6mr1662119wmf.17.1535629280841;
-        Thu, 30 Aug 2018 04:41:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=83X0Ly3GNFYkIBH/BFHbUkVhejW7zXmTm47ETsZa+AI=;
+        b=RGZ9yiMXsoQwSOtox2eFzl/oFio5VyPsTyMeyNFYCOJQMwBcUJ9/Y4ZmKTsLIKuCva
+         by2uSFP28197tJF9YfzL7/X2K0Ey/dWilM+08hNUSqFM3CvIqu8bgckJs/QNonoN2H6I
+         qgPDN0aByxUOn6qoPxiPQ2RM+QWeJT5GJViR/Wy0ndhe8xkxj1hK2JeVhnPa02sybTQa
+         lxCzah3vY/4nu8TYx/tcJHrZITsyNHbCoSvF4rV/LcfXuTEj/1O9DXhSFW841VGQEx7v
+         /FXOgnJ+CByVsnFBX0MaxkOehIQni2R+u5vPMTkrdBBHPHZ9MfQnwJzl3HnsnjJPkqPR
+         V9QA==
+X-Gm-Message-State: APzg51Cc3q0Kr7QplP/ip8clQ4iCBe6IJf8yk62XeQOLN8kzCZBn9287
+        dC2SuIupLsrwGNsdKgTLOC5gfQ==
+X-Google-Smtp-Source: ANB0VdblrnnClBYraLmPvStLXRnR3nCTmyxCJTD1zNjyPyVzvdcT/vtJe4+4mlXiStIG6mJaA/B2LQ==
+X-Received: by 2002:a1c:9e4d:: with SMTP id h74-v6mr1596295wme.70.1535629282357;
+        Thu, 30 Aug 2018 04:41:22 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id z184-v6sm2175218wmz.0.2018.08.30.04.41.19
+        by smtp.gmail.com with ESMTPSA id z184-v6sm2175218wmz.0.2018.08.30.04.41.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 04:41:19 -0700 (PDT)
+        Thu, 30 Aug 2018 04:41:21 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -84,10 +84,12 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Jacob Bramley <Jacob.Bramley@arm.com>,
         Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
         Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v6 00/11] arm64: untag user pointers passed to the kernel
-Date:   Thu, 30 Aug 2018 13:41:05 +0200
-Message-Id: <cover.1535629099.git.andreyknvl@google.com>
+Subject: [PATCH v6 01/11] arm64: add type casts to untagged_addr macro
+Date:   Thu, 30 Aug 2018 13:41:06 +0200
+Message-Id: <fb5fa982f99419a3099031cf20ddb9957e627886.1535629099.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
+In-Reply-To: <cover.1535629099.git.andreyknvl@google.com>
+References: <cover.1535629099.git.andreyknvl@google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -95,136 +97,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm64 has a feature called Top Byte Ignore, which allows to embed pointer
-tags into the top byte of each pointer. Userspace programs (such as
-HWASan, a memory debugging tool [1]) might use this feature and pass
-tagged user pointers to the kernel through syscalls or other interfaces.
+This patch makes the untagged_addr macro accept all kinds of address types
+(void *, unsigned long, etc.) and allows not to specify type casts in each
+place where it is used. This is done by using __typeof__.
 
-This patch makes a few of the kernel interfaces accept tagged user
-pointers. The kernel is already able to handle user faults with tagged
-pointers and has the untagged_addr macro, which this patchset reuses.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/include/asm/uaccess.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
-
-[1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
-
-Changes in v6:
-- Added annotations for user pointer casts found by sparse.
-- Rebased onto 050cdc6c (4.19-rc1+).
-
-Changes in v5:
-- Added 3 new patches that add untagging to places found with static
-  analysis.
-- Rebased onto 44c929e1 (4.18-rc8).
-
-Changes in v4:
-- Added a selftest for checking that passing tagged pointers to the
-  kernel succeeds.
-- Rebased onto 81e97f013 (4.18-rc1+).
-
-Changes in v3:
-- Rebased onto e5c51f30 (4.17-rc6+).
-- Added linux-arch@ to the list of recipients.
-
-Changes in v2:
-- Rebased onto 2d618bdf (4.17-rc3+).
-- Removed excessive untagging in gup.c.
-- Removed untagging pointers returned from __uaccess_mask_ptr.
-
-Changes in v1:
-- Rebased onto 4.17-rc1.
-
-Changes in RFC v2:
-- Added "#ifndef untagged_addr..." fallback in linux/uaccess.h instead of
-  defining it for each arch individually.
-- Updated Documentation/arm64/tagged-pointers.txt.
-- Dropped "mm, arm64: untag user addresses in memory syscalls".
-- Rebased onto 3eb2ce82 (4.16-rc7).
-
-Andrey Konovalov (11):
-  arm64: add type casts to untagged_addr macro
-  uaccess: add untagged_addr definition for other arches
-  arm64: untag user addresses in access_ok and __uaccess_mask_ptr
-  mm, arm64: untag user addresses in mm/gup.c
-  lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
-  arm64: untag user address in __do_user_fault
-  fs, arm64: untag user address in copy_mount_options
-  usb, arm64: untag user addresses in devio
-  arm64: update Documentation/arm64/tagged-pointers.txt
-  selftests, arm64: add a selftest for passing tagged pointers to kernel
-  arm64: annotate user pointers casts detected by sparse
-
- Documentation/arm64/tagged-pointers.txt       |  5 +--
- arch/arm64/include/asm/compat.h               |  2 +-
- arch/arm64/include/asm/uaccess.h              | 16 ++++++----
- arch/arm64/kernel/perf_callchain.c            |  4 +--
- arch/arm64/kernel/signal.c                    | 16 +++++-----
- arch/arm64/kernel/signal32.c                  |  6 ++--
- arch/arm64/mm/fault.c                         |  4 +--
- block/compat_ioctl.c                          | 15 +++++----
- drivers/ata/libata-scsi.c                     |  2 +-
- drivers/block/loop.c                          |  2 +-
- drivers/gpio/gpiolib.c                        |  8 +++--
- drivers/input/evdev.c                         |  2 +-
- drivers/media/dvb-core/dvb_frontend.c         |  3 +-
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |  9 +++---
- drivers/mmc/core/block.c                      |  6 ++--
- drivers/mtd/mtdchar.c                         |  2 +-
- drivers/net/tap.c                             |  2 +-
- drivers/net/tun.c                             |  2 +-
- drivers/spi/spidev.c                          |  6 ++--
- drivers/tty/tty_ioctl.c                       |  3 +-
- drivers/tty/vt/vt_ioctl.c                     |  5 +--
- drivers/usb/core/devio.c                      | 10 ++++--
- drivers/vfio/vfio.c                           |  6 ++--
- drivers/video/fbdev/core/fbmem.c              |  4 +--
- drivers/xen/gntdev.c                          |  6 ++--
- drivers/xen/privcmd.c                         |  4 +--
- fs/aio.c                                      |  2 +-
- fs/autofs/dev-ioctl.c                         |  3 +-
- fs/autofs/root.c                              |  2 +-
- fs/binfmt_elf.c                               | 10 +++---
- fs/btrfs/ioctl.c                              |  2 +-
- fs/compat_ioctl.c                             | 32 ++++++++++---------
- fs/ext2/ioctl.c                               |  2 +-
- fs/ext4/ioctl.c                               |  2 +-
- fs/fat/file.c                                 |  3 +-
- fs/fuse/file.c                                |  2 +-
- fs/namespace.c                                |  2 +-
- fs/readdir.c                                  |  4 +--
- fs/signalfd.c                                 | 10 +++---
- include/linux/mm.h                            |  2 +-
- include/linux/pagemap.h                       |  8 ++---
- include/linux/socket.h                        |  2 +-
- include/linux/uaccess.h                       |  4 +++
- ipc/shm.c                                     |  4 +--
- kernel/futex.c                                |  6 ++--
- kernel/futex_compat.c                         |  2 +-
- kernel/power/user.c                           |  2 +-
- kernel/signal.c                               |  2 +-
- lib/iov_iter.c                                | 16 +++++-----
- lib/strncpy_from_user.c                       |  4 ++-
- lib/strnlen_user.c                            |  6 ++--
- lib/test_kasan.c                              |  2 +-
- mm/gup.c                                      |  4 +++
- mm/memory.c                                   |  2 +-
- mm/migrate.c                                  |  4 +--
- mm/process_vm_access.c                        | 13 ++++----
- net/bluetooth/hidp/sock.c                     |  2 +-
- net/compat.c                                  | 12 ++++---
- sound/core/control_compat.c                   |  5 +--
- sound/core/pcm_native.c                       |  5 +--
- sound/core/timer_compat.c                     |  3 +-
- tools/testing/selftests/arm64/.gitignore      |  1 +
- tools/testing/selftests/arm64/Makefile        | 11 +++++++
- .../testing/selftests/arm64/run_tags_test.sh  | 12 +++++++
- tools/testing/selftests/arm64/tags_test.c     | 19 +++++++++++
- 65 files changed, 232 insertions(+), 147 deletions(-)
- create mode 100644 tools/testing/selftests/arm64/.gitignore
- create mode 100644 tools/testing/selftests/arm64/Makefile
- create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
- create mode 100644 tools/testing/selftests/arm64/tags_test.c
-
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index e66b0fca99c2..2d6451cbaa86 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -102,7 +102,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
+  * up with a tagged userland pointer. Clear the tag to get a sane pointer to
+  * pass on to access_ok(), for instance.
+  */
+-#define untagged_addr(addr)		sign_extend64(addr, 55)
++#define untagged_addr(addr)		\
++	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
+ 
+ #define access_ok(type, addr, size)	__range_ok(addr, size)
+ #define user_addr_max			get_fs
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
