@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABBCC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F7AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D8520837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D8520837
+	by mail.kernel.org (Postfix) with ESMTP id 426A320837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 426A320837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeH3Vh2 (ORCPT
+        id S1727659AbeH3Vhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:37:28 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14372 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726674AbeH3VhU (ORCPT
+        Thu, 30 Aug 2018 17:37:37 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:48535 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727406AbeH3VhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 30 Aug 2018 17:37:20 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 30 Aug 2018 10:33:41 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 30 Aug 2018 10:33:48 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 9D2FEB05DD;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id D0F3EB05D4;
         Thu, 30 Aug 2018 13:34:06 -0400 (EDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -37,101 +37,74 @@ CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 3/6] fork: provide a function for copying init_mm
-Date:   Thu, 30 Aug 2018 10:32:15 -0700
-Message-ID: <20180830173218.238900-4-namit@vmware.com>
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 6/6] x86/alternatives: remove text_poke() return value
+Date:   Thu, 30 Aug 2018 10:32:18 -0700
+Message-ID: <20180830173218.238900-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830173218.238900-1-namit@vmware.com>
 References: <20180830173218.238900-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a function for copying init_mm. This function will be later used
-for setting a temporary mm.
+The return value of text_poke() is meaningless - it is one of the
+function inputs. One day someone may allow the callers to deal with
+text_poke() failures, if those actually happen.
+
+In the meanwhile, remove the return value.
 
 Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/sched/task.h |  1 +
- kernel/fork.c              | 24 ++++++++++++++++++------
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/text-patching.h | 2 +-
+ arch/x86/kernel/alternative.c        | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 108ede99e533..ac0a675678f5 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -74,6 +74,7 @@ extern void exit_itimers(struct signal_struct *);
- extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
-+struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index d896e9ca38b0..a1c637b903c1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1254,13 +1254,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- 		complete_vfork_done(tsk);
- }
- 
--/*
-- * Allocate a new mm structure and copy contents from the
-- * mm structure of the passed in task structure.
-+/**
-+ * dup_mm() - duplicates an existing mm structure
-+ * @tsk: the task_struct with which the new mm will be associated.
-+ * @oldmm: the mm to duplicate.
-+ *
-+ * Allocates a new mm structure and copy contents from the provided
-+ * @oldmm structure.
-+ *
-+ * Return: the duplicated mm or NULL on failure.
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index ffe7902cc326..1f73f71b4de2 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -34,7 +34,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * On the local CPU you need to be protected again NMI or MCE handlers seeing an
+  * inconsistent instruction while you patch.
   */
--static struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk,
-+				struct mm_struct *oldmm)
+-extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void text_poke(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 2b976296c9f3..840448ca357e 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -809,7 +809,7 @@ static void text_poke_safe(void *addr, const void *opcode, size_t len,
+  *	    holding the mutex and ensures that none of them will acquire the
+  *	    mutex while the code runs.
+  */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++void text_poke(void *addr, const void *opcode, size_t len)
  {
--	struct mm_struct *mm, *oldmm = current->mm;
-+	struct mm_struct *mm;
- 	int err;
+ 	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
+ 	struct page *pages[2] = {0};
+@@ -851,7 +851,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	BUG_ON(memcmp(addr, opcode, len));
  
- 	mm = allocate_mm();
-@@ -1327,7 +1334,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
- 	}
- 
- 	retval = -ENOMEM;
--	mm = dup_mm(tsk);
-+	mm = dup_mm(tsk, current->mm);
- 	if (!mm)
- 		goto fail_nomem;
- 
-@@ -2127,6 +2134,11 @@ struct task_struct *fork_idle(int cpu)
- 	return task;
+ 	local_irq_restore(flags);
+-	return addr;
  }
  
-+struct mm_struct *copy_init_mm(void)
-+{
-+	return dup_mm(NULL, &init_mm);
-+}
-+
- /*
-  *  Ok, this is the main fork-routine.
-  *
+ static void do_sync_core(void *info)
 -- 
 2.17.1
 
