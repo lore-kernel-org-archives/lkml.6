@@ -2,177 +2,115 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8940C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD01C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FAB20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:48:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FAB20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ED0C32073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:57:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED0C32073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbeH3SvI (ORCPT
+        id S1728630AbeH3TA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:51:08 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38417 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729048AbeH3SqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:46:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 07:43:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,307,1531810800"; 
-   d="scan'208";a="67186660"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Aug 2018 07:43:39 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v3 00/24] Control Flow Enforcement: Shadow Stack
-Date:   Thu, 30 Aug 2018 07:38:40 -0700
-Message-Id: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 30 Aug 2018 15:00:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60242 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728449AbeH3TA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:00:29 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EA7FB5CB;
+        Thu, 30 Aug 2018 14:57:55 +0000 (UTC)
+Received: from localhost (ovpn-8-29.pek2.redhat.com [10.72.8.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D13A9465E;
+        Thu, 30 Aug 2018 14:57:54 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 22:57:51 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, tglx@linutronix.de,
+        mingo@kernel.org, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add restrictions for kexec/kdump jumping between
+ 5-level and 4-level kernel
+Message-ID: <20180830145751.GC14702@192.168.1.2>
+References: <20180829141624.13985-1-bhe@redhat.com>
+ <20180830135855.rylamc7mx2ur3tab@kshutemo-mobl1>
+ <20180830141202.GA14702@192.168.1.2>
+ <20180830142739.gfpa23nvex7xbkkf@black.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830142739.gfpa23nvex7xbkkf@black.fi.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 30 Aug 2018 14:57:55 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 30 Aug 2018 14:57:55 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous version of CET patches can be found in the following
-link.
+On 08/30/18 at 05:27pm, Kirill A. Shutemov wrote:
+> On Thu, Aug 30, 2018 at 02:12:02PM +0000, Baoquan He wrote:
+> > On 08/30/18 at 04:58pm, Kirill A. Shutemov wrote:
+> > > On Wed, Aug 29, 2018 at 10:16:21PM +0800, Baoquan He wrote:
+> > > > This was suggested by Kirill several months ago, I worked out several
+> > > > patches to fix, then interrupted by other issues. So sort them out
+> > > > now and post for reviewing.
+> > > 
+> > > Thanks for doing this.
+> > > 
+> > > > The current upstream kernel supports 5-level paging mode and supports
+> > > > dynamically choosing paging mode during bootup according to kernel
+> > > > image, hardware and kernel parameter setting. This flexibility brings
+> > > > several issues for kexec/kdump:
+> > > > 1)
+> > > > Switching between paging modes, requires changes into target kernel.
+> > > > It means you cannot kexec() 4-level paging kernel from 5-level paging
+> > > > kernel if 4-level paging kernel doesn't include changes. 
+> > > > 
+> > > > 2)
+> > > > Switching from 5-level paging to 4-level paging kernel would fail, if
+> > > > kexec() put kernel image above 64TiB of memory.
+> > > 
+> > > I'm not entirely sure that 64TiB is the limit here. Technically, 4-level
+> > > paging allows to address 256TiB in 1-to-1 mapping. We just don't have
+> > > machines with that wide physical address space (which don't support
+> > > 5-level paging too).
+> > 
+> > Hmm, afaik, the MAX_PHYSMEM_BITS limits the maximum address space
+> > which physical RAM can mapped to. We have 256TB for the whole address
+> > space for 4-level paging, that includes user space and kernel space,
+> > it might not allow 256TB entirely for the direct mapping.
+> > And the direct mapping is only for physical RAM mapping, and
+> > kexec/kdump only cares about the physical RAM space and load them
+> > inside.
+> > 
+> > # define MAX_PHYSMEM_BITS       (pgtable_l5_enabled() ? 52 : 46)
+> > 
+> > Not sure if my understanding is right, please correct me if I am wrong.
+> 
+> IIRC, we only care about the place kexec puts the kernel before it gets
+> decompressed. After the decompression kernel will be put into the right
+> spot.
+> 
+> Decompression is done in early boot where we use 1-to-1 mapping (not a
+> usual kernel virtual memory layout). All 256TiB should be reachable.
 
-  https://lkml.org/lkml/2018/7/10/1031
+My understanding that is although it's 1:1 identity mapping, it still
+has to be inside available physical RAM region. I don't remember what
+the old code did, now in __startup_64(), you can see that there's a
+check like below, and at this time, it's still identity mapping.
 
-Summary of changes from v2:
+        /* Is the address too large? */
+        if (physaddr >> MAX_PHYSMEM_BITS)
+                for (;;);
 
-  Move Shadow Stack page fault handling logic to arch/x86.
-  Update can_follow_write_pte/pmd; move logic to arch/x86.
-  Fix problems in WRUSS in-line assembly.
-  Fix issues in ELF parser.
-  Split out IBT/PTRACE patches to a second set.
-  Other small fixes.
-
-Yu-cheng Yu (24):
-  x86/cpufeatures: Add CPUIDs for Control-flow Enforcement Technology
-    (CET)
-  x86/fpu/xstate: Change some names to separate XSAVES system and user
-    states
-  x86/fpu/xstate: Enable XSAVES system states
-  x86/fpu/xstate: Add XSAVES system states for shadow stack
-  Documentation/x86: Add CET description
-  x86/cet: Control protection exception handler
-  x86/cet/shstk: Add Kconfig option for user-mode shadow stack
-  mm: Introduce VM_SHSTK for shadow stack memory
-  x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
-  x86/mm: Introduce _PAGE_DIRTY_SW
-  drm/i915/gvt: Update _PAGE_DIRTY to _PAGE_DIRTY_BITS
-  x86/mm: Modify ptep_set_wrprotect and pmdp_set_wrprotect for
-    _PAGE_DIRTY_SW
-  x86/mm: Shadow stack page fault error checking
-  mm: Handle shadow stack page fault
-  mm: Handle THP/HugeTLB shadow stack page fault
-  mm: Update can_follow_write_pte/pmd for shadow stack
-  mm: Introduce do_mmap_locked()
-  x86/cet/shstk: User-mode shadow stack support
-  x86/cet/shstk: Introduce WRUSS instruction
-  x86/cet/shstk: Signal handling for shadow stack
-  x86/cet/shstk: ELF header parsing of Shadow Stack
-  x86/cet/shstk: Handle thread shadow stack
-  x86/cet/shstk: Add arch_prctl functions for Shadow Stack
-  x86/cet/shstk: Add Shadow Stack instructions to opcode map
-
- .../admin-guide/kernel-parameters.txt         |   6 +
- Documentation/index.rst                       |   1 +
- Documentation/x86/index.rst                   |  11 +
- Documentation/x86/intel_cet.rst               | 252 +++++++++++++
- arch/x86/Kconfig                              |  28 ++
- arch/x86/Makefile                             |   7 +
- arch/x86/entry/entry_64.S                     |   2 +-
- arch/x86/ia32/ia32_signal.c                   |  13 +
- arch/x86/include/asm/cet.h                    |  42 +++
- arch/x86/include/asm/cpufeatures.h            |   2 +
- arch/x86/include/asm/disabled-features.h      |   8 +-
- arch/x86/include/asm/elf.h                    |   5 +
- arch/x86/include/asm/fpu/internal.h           |   6 +-
- arch/x86/include/asm/fpu/types.h              |  22 ++
- arch/x86/include/asm/fpu/xstate.h             |  31 +-
- arch/x86/include/asm/mmu_context.h            |   3 +
- arch/x86/include/asm/msr-index.h              |  14 +
- arch/x86/include/asm/pgtable.h                | 175 +++++++--
- arch/x86/include/asm/pgtable_types.h          |  31 +-
- arch/x86/include/asm/processor.h              |   5 +
- arch/x86/include/asm/sighandling.h            |   5 +
- arch/x86/include/asm/special_insns.h          |  37 ++
- arch/x86/include/asm/traps.h                  |   5 +
- arch/x86/include/uapi/asm/elf_property.h      |  15 +
- arch/x86/include/uapi/asm/prctl.h             |   5 +
- arch/x86/include/uapi/asm/processor-flags.h   |   2 +
- arch/x86/include/uapi/asm/sigcontext.h        |  17 +
- arch/x86/kernel/Makefile                      |   4 +
- arch/x86/kernel/cet.c                         | 285 +++++++++++++++
- arch/x86/kernel/cet_prctl.c                   |  79 ++++
- arch/x86/kernel/cpu/common.c                  |  24 ++
- arch/x86/kernel/cpu/scattered.c               |   1 +
- arch/x86/kernel/elf.c                         | 338 ++++++++++++++++++
- arch/x86/kernel/fpu/core.c                    |  11 +-
- arch/x86/kernel/fpu/init.c                    |  10 -
- arch/x86/kernel/fpu/signal.c                  |   6 +-
- arch/x86/kernel/fpu/xstate.c                  | 152 +++++---
- arch/x86/kernel/idt.c                         |   4 +
- arch/x86/kernel/process.c                     |   8 +
- arch/x86/kernel/process_64.c                  |   7 +
- arch/x86/kernel/relocate_kernel_64.S          |   2 +-
- arch/x86/kernel/signal.c                      |  96 +++++
- arch/x86/kernel/traps.c                       |  58 +++
- arch/x86/kvm/vmx.c                            |   2 +-
- arch/x86/lib/x86-opcode-map.txt               |  26 +-
- arch/x86/mm/extable.c                         |  11 +
- arch/x86/mm/fault.c                           |  27 ++
- arch/x86/mm/pgtable.c                         |  36 ++
- drivers/gpu/drm/i915/gvt/gtt.c                |   2 +-
- fs/binfmt_elf.c                               |  15 +
- fs/proc/task_mmu.c                            |   3 +
- include/asm-generic/pgtable.h                 |  52 +++
- include/linux/mm.h                            |  26 ++
- include/uapi/linux/elf.h                      |   1 +
- mm/gup.c                                      |   8 +-
- mm/huge_memory.c                              |  12 +-
- mm/internal.h                                 |   8 +
- mm/memory.c                                   |   3 +
- tools/objtool/arch/x86/lib/x86-opcode-map.txt |  26 +-
- 59 files changed, 1943 insertions(+), 150 deletions(-)
- create mode 100644 Documentation/x86/index.rst
- create mode 100644 Documentation/x86/intel_cet.rst
- create mode 100644 arch/x86/include/asm/cet.h
- create mode 100644 arch/x86/include/uapi/asm/elf_property.h
- create mode 100644 arch/x86/kernel/cet.c
- create mode 100644 arch/x86/kernel/cet_prctl.c
- create mode 100644 arch/x86/kernel/elf.c
-
--- 
-2.17.1
-
+Thanks
+Baoquan
