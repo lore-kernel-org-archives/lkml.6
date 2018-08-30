@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84725C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB34C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342C22082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342C22082A
+	by mail.kernel.org (Postfix) with ESMTP id E6D1120645
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 04:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6D1120645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeH3ILj (ORCPT
+        id S1727810AbeH3ILj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 30 Aug 2018 04:11:39 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31598 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:31597 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbeH3ILY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 04:11:24 -0400
+        id S1727743AbeH3ILZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 04:11:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 21:11:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
-   d="scan'208";a="68959983"
+   d="scan'208";a="68959977"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 21:11:07 -0700
+  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 21:11:04 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -44,9 +44,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH v2 08/10] vfio/type1: Add domain at(de)taching group helpers
-Date:   Thu, 30 Aug 2018 12:09:20 +0800
-Message-Id: <20180830040922.30426-9-baolu.lu@linux.intel.com>
+Subject: [RFC PATCH v2 07/10] vfio/mdev: Add mediated device domain type
+Date:   Thu, 30 Aug 2018 12:09:19 +0800
+Message-Id: <20180830040922.30426-8-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180830040922.30426-1-baolu.lu@linux.intel.com>
 References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
@@ -55,158 +55,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a domain is attaching to a group which includes the
-mediated devices, it should attach to the mdev parent
-of each mdev. This adds a helper for attaching domain
-to group, no matter a PCI physical device or mediated
-devices which are derived from a PCI physical device.
+A parent device might create different types of mediated
+devices. For example, a mediated device could be created
+by the parent device with full isolation and protection
+provided by the IOMMU. One usage case could be found on
+Intel platforms where a mediated device is an assignable
+subset of a PCI, the DMA requests on behalf of it are all
+tagged with a PASID. Since IOMMU supports PASID-granular
+translations (scalable mode in vt-d 3.0), this mediated
+device could be individually protected and isolated by the
+IOMMU.
+
+This patch defines the domain types of a mediated device
+and allows the parent driver to specify this attributes
+when a mediated device is being careated. The following
+types are defined:
+
+* DOMAIN_TYPE_NO_IOMMU
+  - Do not need any IOMMU support. All isolation and
+    protection are handled by the parent device driver
+    through the callbacks with device specific mechanism.
+* DOMAIN_TYPE_ATTACH_PARENT
+  - IOMMU can isolate and protect this mediated device,
+    and an isolation domain should be attaced to the
+    the parent device.
+
+This also reseves a place in mdev private data structure
+to save the iommu domain, and adds interfaces to store and
+retrieve the domain. Below APIs are introduced:
+
+* mdev_set/get_domain_type(type)
+  - Set or query the domain type of a mediated device.
+    The parent device driver should set the domain type
+    (or keep DOMAIN_TYPE_NO_IOMMU by default) during the
+    mediated device creation.
+
+* mdev_set/get_domain(domain)
+  - A iommu domain which has been attached to the parent
+    device in order to protect and isolate the mediated
+    device will be kept in the mdev data structure and
+    could be retrieved later.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Kevin Tian <kevin.tian@intel.com>
 Cc: Liu Yi L <yi.l.liu@intel.com>
+Suggested-by: Kevin Tian <kevin.tian@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 77 ++++++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 7 deletions(-)
+ drivers/vfio/mdev/mdev_core.c    | 36 ++++++++++++++++++++++++++++++++
+ drivers/vfio/mdev/mdev_private.h |  2 ++
+ include/linux/mdev.h             | 26 +++++++++++++++++++++++
+ 3 files changed, 64 insertions(+)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index d9fd3188615d..89e2e6123223 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -91,6 +91,9 @@ struct vfio_dma {
- struct vfio_group {
- 	struct iommu_group	*iommu_group;
- 	struct list_head	next;
-+	bool			attach_parent;	/* An mdev group with domain
-+						 * attached to parent
-+						 */
- };
- 
- /*
-@@ -1327,6 +1330,66 @@ static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
- 	return ret;
+diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+index 0212f0ee8aea..d45a829c5b11 100644
+--- a/drivers/vfio/mdev/mdev_core.c
++++ b/drivers/vfio/mdev/mdev_core.c
+@@ -390,6 +390,42 @@ int mdev_device_remove(struct device *dev, bool force_remove)
+ 	return 0;
  }
  
-+static int vfio_mdev_set_aux_domain(struct device *dev,
-+				    struct iommu_domain *domain)
++int mdev_set_domain_type(struct device *dev, enum mdev_domain_type type)
 +{
-+	int (*fn)(struct device *dev, void *domain);
-+	int ret;
++	struct mdev_device *mdev = to_mdev_device(dev);
 +
-+	fn = symbol_get(mdev_set_domain);
-+	if (fn) {
-+		ret = fn(dev, domain);
-+		symbol_put(mdev_set_domain);
-+
-+		return ret;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int vfio_attach_aux_domain(struct device *dev, void *data)
-+{
-+	struct iommu_domain *domain = data;
-+	int ret;
-+
-+	ret = vfio_mdev_set_aux_domain(dev, domain);
-+	if (ret)
-+		return ret;
-+
-+	return iommu_attach_device(domain, dev->parent);
-+}
-+
-+static int vfio_detach_aux_domain(struct device *dev, void *data)
-+{
-+	struct iommu_domain *domain = data;
-+
-+	vfio_mdev_set_aux_domain(dev, NULL);
-+	iommu_detach_device(domain, dev->parent);
++	mdev->domain_type = type;
 +
 +	return 0;
 +}
++EXPORT_SYMBOL(mdev_set_domain_type);
 +
-+static int vfio_iommu_attach_group(struct vfio_domain *domain,
-+				   struct vfio_group *group)
++enum mdev_domain_type mdev_get_domain_type(struct device *dev)
 +{
-+	if (group->attach_parent)
-+		return iommu_group_for_each_dev(group->iommu_group,
-+						domain->domain,
-+						vfio_attach_aux_domain);
-+	else
-+		return iommu_attach_group(domain->domain, group->iommu_group);
-+}
++	struct mdev_device *mdev = to_mdev_device(dev);
 +
-+static void vfio_iommu_detach_group(struct vfio_domain *domain,
-+				    struct vfio_group *group)
++	return mdev->domain_type;
++}
++EXPORT_SYMBOL(mdev_get_domain_type);
++
++int mdev_set_domain(struct device *dev, void *domain)
 +{
-+	if (group->attach_parent)
-+		iommu_group_for_each_dev(group->iommu_group, domain->domain,
-+					 vfio_detach_aux_domain);
-+	else
-+		iommu_detach_group(domain->domain, group->iommu_group);
-+}
++	struct mdev_device *mdev = to_mdev_device(dev);
 +
- static int vfio_iommu_type1_attach_group(void *iommu_data,
- 					 struct iommu_group *iommu_group)
++	mdev->domain = domain;
++
++	return 0;
++}
++EXPORT_SYMBOL(mdev_set_domain);
++
++void *mdev_get_domain(struct device *dev)
++{
++	struct mdev_device *mdev = to_mdev_device(dev);
++
++	return mdev->domain;
++}
++EXPORT_SYMBOL(mdev_get_domain);
++
+ static int __init mdev_init(void)
  {
-@@ -1402,7 +1465,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 			goto out_domain;
- 	}
+ 	return mdev_bus_register();
+diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
+index b5819b7d7ef7..fd9e33fbd6e5 100644
+--- a/drivers/vfio/mdev/mdev_private.h
++++ b/drivers/vfio/mdev/mdev_private.h
+@@ -34,6 +34,8 @@ struct mdev_device {
+ 	struct list_head next;
+ 	struct kobject *type_kobj;
+ 	bool active;
++	int domain_type;
++	void *domain;
+ };
  
--	ret = iommu_attach_group(domain->domain, iommu_group);
-+	ret = vfio_iommu_attach_group(domain, group);
- 	if (ret)
- 		goto out_domain;
+ #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
+diff --git a/include/linux/mdev.h b/include/linux/mdev.h
+index b6e048e1045f..3224587bda1e 100644
+--- a/include/linux/mdev.h
++++ b/include/linux/mdev.h
+@@ -15,6 +15,32 @@
  
-@@ -1434,8 +1497,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	list_for_each_entry(d, &iommu->domain_list, next) {
- 		if (d->domain->ops == domain->domain->ops &&
- 		    d->prot == domain->prot) {
--			iommu_detach_group(domain->domain, iommu_group);
--			if (!iommu_attach_group(d->domain, iommu_group)) {
-+			vfio_iommu_detach_group(domain, group);
-+			if (!vfio_iommu_attach_group(d, group)) {
- 				list_add(&group->next, &d->group_list);
- 				iommu_domain_free(domain->domain);
- 				kfree(domain);
-@@ -1443,7 +1506,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 				return 0;
- 			}
+ struct mdev_device;
  
--			ret = iommu_attach_group(domain->domain, iommu_group);
-+			ret = vfio_iommu_attach_group(domain, group);
- 			if (ret)
- 				goto out_domain;
- 		}
-@@ -1469,7 +1532,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	return 0;
- 
- out_detach:
--	iommu_detach_group(domain->domain, iommu_group);
-+	vfio_iommu_detach_group(domain, group);
- out_domain:
- 	iommu_domain_free(domain->domain);
- out_free:
-@@ -1560,7 +1623,7 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 		if (!group)
- 			continue;
- 
--		iommu_detach_group(domain->domain, iommu_group);
-+		vfio_iommu_detach_group(domain, group);
- 		list_del(&group->next);
- 		kfree(group);
- 		/*
-@@ -1625,7 +1688,7 @@ static void vfio_release_domain(struct vfio_domain *domain, bool external)
- 	list_for_each_entry_safe(group, group_tmp,
- 				 &domain->group_list, next) {
- 		if (!external)
--			iommu_detach_group(domain->domain, group->iommu_group);
-+			vfio_iommu_detach_group(domain, group);
- 		list_del(&group->next);
- 		kfree(group);
- 	}
++enum mdev_domain_type {
++	DOMAIN_TYPE_NO_IOMMU,		/* Don't need any IOMMU support.
++					 * All isolation and protection
++					 * are handled by the parent
++					 * device driver with a device
++					 * specific mechanism.
++					 */
++	DOMAIN_TYPE_ATTACH_PARENT,	/* IOMMU can isolate and protect
++					 * the mdev, and the isolation
++					 * domain should be attaced with
++					 * the parent device.
++					 */
++};
++
++/*
++ * Called by the parent device driver to set the domain type.
++ * By default, the domain type is set to DOMAIN_TYPE_EXTERNAL.
++ */
++int mdev_set_domain_type(struct device *dev, enum mdev_domain_type type);
++
++/* Check the domain type. */
++enum mdev_domain_type mdev_get_domain_type(struct device *dev);
++
++int mdev_set_domain(struct device *dev, void *domain);
++void *mdev_get_domain(struct device *dev);
++
+ /**
+  * struct mdev_parent_ops - Structure to be registered for each parent device to
+  * register the device to mdev module.
 -- 
 2.17.1
 
