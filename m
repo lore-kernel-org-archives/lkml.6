@@ -1,112 +1,153 @@
 Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7114AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 775DB20835
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:43:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sP6xgVkz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775DB20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 21FAF20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 17:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FAF20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeH3VqR (ORCPT
+        id S1727765AbeH3Vri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 17:46:17 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48003 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727582AbeH3VqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 17:46:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=iPpgRrWsxDnPqjMElfLEWocL8UoqMVQCyvagPcW3hAE=;
-        b=sP6xgVkzHufsSZwKQlft6uj16D5c9savAUC8fpjdokO+EIl1nvjl/UhMJooT3IqIh8cGAsFgF3CIPJr87g+LkKyTqdikY3CxtFEtQ9phtCQYdvfhBJ7SfSXSSs1ne09bC2PQbmiLIaj+RyFfz4XwJStByEIZy59KJg66DsrIwqE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fvQy8-0001Am-Ow; Thu, 30 Aug 2018 19:42:56 +0200
-Date:   Thu, 30 Aug 2018 19:42:56 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Moritz Fischer <moritz.fischer@ettus.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, Alex Williams <alex.williams@ni.com>
-Subject: Re: [PATCH net-next 2/3] net: nixge: Add support for having nixge as
- subdevice
-Message-ID: <20180830174256.GC31581@lunn.ch>
-References: <20180830004046.9417-1-mdf@kernel.org>
- <20180830004046.9417-3-mdf@kernel.org>
- <20180830031110.GC16896@lunn.ch>
- <CAAtXAHceYgPx4A7F14AYEQs9RFo2hP6JTkApHa_GtbxVcdiQNA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAtXAHceYgPx4A7F14AYEQs9RFo2hP6JTkApHa_GtbxVcdiQNA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 30 Aug 2018 17:47:38 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:45708 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbeH3Vri (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 17:47:38 -0400
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1fvQv4-0000lU-4A; Thu, 30 Aug 2018 12:39:49 -0500
+Message-ID: <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
+Cc:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        Andy Tang <andy.tang@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        Varun Sethi <V.Sethi@nxp.com>
+Date:   Thu, 30 Aug 2018 12:39:44 -0500
+In-Reply-To: <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+         <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+         <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+         <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: vabhav.sharma@nxp.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de, kstewart@linuxfoundation.org, yamada.masahiro@socionext.com, yogeshnarayan.gaur@nxp.com, andy.tang@nxp.com, udit.kumar@nxp.com, linux@armlinux.org.uk, V.Sethi@nxp.com
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 09:39:39AM -0700, Moritz Fischer wrote:
-> Hi Andrew,
+On Thu, 2018-08-30 at 07:36 +0000, Vabhav Sharma wrote:
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> > owner@vger.kernel.org> On Behalf Of Scott Wood
+> > Sent: Wednesday, August 29, 2018 5:49 AM
+> > To: Vabhav Sharma <vabhav.sharma@nxp.com>; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org;
+> > mark.rutland@arm.com; linuxppc-dev@lists.ozlabs.org; linux-arm-
+> > kernel@lists.infradead.org; mturquette@baylibre.com; sboyd@kernel.org;
+> > rjw@rjwysocki.net; viresh.kumar@linaro.org; linux-clk@vger.kernel.org;
+> > linux-pm@vger.kernel.org; linux-kernel-owner@vger.kernel.org;
+> > catalin.marinas@arm.com; will.deacon@arm.com;
+> > gregkh@linuxfoundation.org; arnd@arndb.de;
+> > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
+> > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Andy Tang
+> > <andy.tang@nxp.com>; Udit Kumar <udit.kumar@nxp.com>;
+> > linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com>
+> > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+> > lx2160a
+> > 
+> > On Mon, 2018-08-20 at 12:17 +0530, Vabhav Sharma wrote:
+> > > From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > 
+> > > Add clockgen support for lx2160a.
+> > > Added entry for compat 'fsl,lx2160a-clockgen'.
+> > > As LX2160A is 16 core, so modified value for NUM_CMUX
+> > > 
+> > > Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> > > Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> > > ---
+> > >  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
+> > >  drivers/cpufreq/qoriq-cpufreq.c |  1 +
+> > >  2 files changed, 14 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index
+> > > 3a1812f..fc6e308 100644
+> > > --- a/drivers/clk/clk-qoriq.c
+> > > +++ b/drivers/clk/clk-qoriq.c
+> > > @@ -60,7 +60,7 @@ struct clockgen_muxinfo {  };
+> > > 
+> > >  #define NUM_HWACCEL	5
+> > > -#define NUM_CMUX	8
+> > > +#define NUM_CMUX	16
+> > > 
+> > >  struct clockgen;
+> > > 
+> > > @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] =
+> > > {
+> > >  		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > >  	},
+> > >  	{
+> > > +		.compat = "fsl,lx2160a-clockgen",
+> > > +		.cmux_groups = {
+> > > +			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+> > > +		},
+> > > +		.cmux_to_group = {
+> > > +			0, 0, 0, 0, 1, 1, 1, 1, -1
+> > > +		},
+> > > +		.pll_mask = 0x37,
+> > > +		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > > +	},
+> > 
+> > Why are you increasing NUM_CMUX beyond 8 for a chip that only has 8
+> > entries in cmux_to_group?
 > 
-> On Wed, Aug 29, 2018 at 8:11 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > Could you tell us more about the parent device. I'm guessing PCIe.  Is
-> > it x86 so no device tree? Are there cases where it does not have a PHY
-> > connected? What is connected instead? SFP? A switch? Can there be
-> > multiple PHYs on the MDIO bus?
-> 
-> The device is part of a larger FPGA design. One use case that I was trying
-> to support with this patch is PCIe with x86 (hopefully on it's own PF...)
-> Since the whole design isn't completely done, these are the use cases I
-> see upcoming and current:
-> 
-> ARM(64):
-> a) DT: PHY over MDIO (current use case), fixed-link with GPIO (coming)
-> b) DT: SFP (potentially coming)
-> 
-> x86:
-> a) no PHY (coming)-> fixed-link with GPIO
-> b) SFP (potentially), PHY over MDIO (potentially)
+> Configuration is 16 cores,8 cluster with 2 cores in each cluster
 
-Hi Mortiz
+So?  This is about cmuxes, not cores.  You're increasing the array without
+ever using the new size.
 
-For SFP, you need to convert this driver to use phylink. That will
-also help you with fixed-link, since phylink will handle probing that
-for you.
+-Scott
 
-But this brings its own problems. phylink and sfp currently has no
-support for platform devices. The SFP driver needs to know which i2c
-bus to use, and which GPIOs are connected to the SFP. phylink parses
-the device tree to find out if there is an SFP device, or a fixed
-link, etc. I don't know of any conceptual reason why platform data
-would not work, it just needs implementing.
-
-There also does not appear to be any in kernel users of the device
-tree binding. That gives you some flexibility in that you could think
-about making non-backwards compatible changes in the binding. I would
-definitely want to move PHYs into an mdio subnode.
-
-I'm not aware of any x86 drivers using fixed link. What they generally
-do is register the mdio bus using mdiobus_register() and then use
-phy_find_first() to get a PHY. This works O.K. for PCs, laptops, and
-PCIe cards where there is only one PHY on the bus. What you might be
-able to do is always register the MDIO bus, and if you fail to find a
-PHY, instantiate a fixed-link and use that instead.
-
-Reality is, all the core work in this area has been pushed by the
-embedded world, which is ARM and device tree. For Intel and Server
-style networking, drivers tend to either ignore the Linux core code
-and write there own PHY and MDIO bus drivers, or it is all done in
-firmware.
-
-     Andrew
