@@ -2,114 +2,116 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10297C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F33AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC9F20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD1B020658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:49:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=6wind-com.20150623.gappssmtp.com header.i=@6wind-com.20150623.gappssmtp.com header.b="iT3kdGVJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC9F20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=6wind.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kink44Va"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1B020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeH3TwD (ORCPT
+        id S1727611AbeH3Twk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:52:03 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52820 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727042AbeH3TwD (ORCPT
+        Thu, 30 Aug 2018 15:52:40 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50643 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbeH3Twk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:52:03 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y139-v6so2470435wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:49:16 -0700 (PDT)
+        Thu, 30 Aug 2018 15:52:40 -0400
+Received: by mail-it0-f65.google.com with SMTP id j81-v6so3237124ite.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=6wind-com.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:references:to:cc:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2Ro+YhYCgLdkkVvf8gJKCyfj8mMLYi1pQy4uXORtAYg=;
-        b=iT3kdGVJ9qbKPjgJKBKj4KAACGK0WNTtQxjecE36kHmX35lmiswAbq8tuSjtLhT5ae
-         zMEMo2brjutkuvU78cQ3bsP70UeIZN13tBxbM+eahaN8hwtdVmDnvoI/jWrzzLqTmXRX
-         k6BqzSTIgWANg+a6m9IftdfJKx1+XEFefhEbl5W7wJymthPR/VTaKBeJN5jWBmu9wxpQ
-         Bh57igFrl0pKdhXi5TCEYTUOOtYjHy5uYSm063Yh1OMyB+CWI/IFMw/5K5fZHVk6Opls
-         1zDvMPuVohgvv0Ja4jFhaG6UIR+qi5rG6yqxL1BvmOuEBTqfNIhfnIrXvffR6YsOHMIZ
-         lkSQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PlzLOqrBAIn0ZzDf9bDS9S5Pof2gIH/fkTuJ2GMRdkQ=;
+        b=Kink44VaEN0WpM1tJZk5KYkoFX30KpwtyWVpdFTZyccvw5MOJhW7miuL+lNjFGtZnQ
+         FhXg668+LO1J7h4snm6FY4nxFzVLPEcjo/6EqlwfmiNTbkS7GDbexgaJz1ZxcukrcxZB
+         iCucsdigcC1l3Nkurst4T5+8oIPy1e172bkyYG1ChyD/mu8WP2fp5+Vl7T7XGkJUsl8g
+         KHkWDxSQioSw9CukDfFNQ5Lo64xjFqzFECjThyRgap45Tfe2YalI/3J8njzQwOHop4W1
+         tS11jeqlHM/FtBUS9OUdLmKHox2gqSod2hGoccXnWVKzCoCPpoZL2iNjD+eNJiOVkupu
+         9kMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:references:to:cc:from
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2Ro+YhYCgLdkkVvf8gJKCyfj8mMLYi1pQy4uXORtAYg=;
-        b=F8l4t1Hi/1cK4WU2I08kqIM/aOT1woU/NXC0/X5eW/wDLi27Bsqhfq8R/35yNRqvBz
-         uj056/Dd4+Pz4epFUR3vtlvTuNmmYKKcG7ZJb+Ozaj3dU6/89rKKh5V3r9CanF3jUPij
-         xJLvXR1EzA2+PyRCYgK68KEgK8Qj/Gz6l+UjNPaj8troHMN5M/NNBUfw60tBtpndrraC
-         netWpJ6fSn3dG52gUkr1fX5Qhcz+5eCs7nXodxo6b7T19kLE733fjiIshOKPDKEqW3zw
-         8GdtWCY9Otz/CI1AjLSg+g0buYm8/SlpjTt/fmYJPxJGeLuOPGils/ejUIJPeOymPqLV
-         LJCw==
-X-Gm-Message-State: APzg51Dfp9l3cW9UkH9jXJQt1XHXd6LR+frktaPWhc0l5kngfT05x610
-        Yy0rRiFDXPxDYUqjg8p2Cam1m89T1cs=
-X-Google-Smtp-Source: ANB0VdY3ap5X13baBkKxmh17NadkZYLxMR2JuJwvZzU1A2c86vsx1AfkaRXW2Bl6mRq4TmZtUTNSBw==
-X-Received: by 2002:a1c:b709:: with SMTP id h9-v6mr2089118wmf.130.1535644155297;
-        Thu, 30 Aug 2018 08:49:15 -0700 (PDT)
-Received: from ?IPv6:2a01:e35:8b63:dc30:b857:a345:7022:7458? ([2a01:e35:8b63:dc30:b857:a345:7022:7458])
-        by smtp.gmail.com with ESMTPSA id w10-v6sm5603707wrp.31.2018.08.30.08.49.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 08:49:14 -0700 (PDT)
-Reply-To: nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next 0/5] rtnetlink: add IFA_IF_NETNSID for
- RTM_GETADDR
-References: <20180828231859.29758-1-christian@brauner.io>
- <adc2fae5-e22b-3a74-d531-01570e7970ee@virtuozzo.com>
- <20180829181303.4sacopk7y3p5xyou@gmail.com>
- <81379a4f-7149-10ff-2453-886314d0b0c4@virtuozzo.com>
- <20180830144544.tpross4jd6awou4u@gmail.com>
-To:     Christian Brauner <christian.brauner@canonical.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, dsahern@gmail.com, fw@strlen.de,
-        lucien.xin@gmail.com, jakub.kicinski@netronome.com,
-        jbenc@redhat.com
-From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Organization: 6WIND
-Message-ID: <ba6a1b18-959e-e307-45fa-e0da9d6f0b0f@6wind.com>
-Date:   Thu, 30 Aug 2018 17:49:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PlzLOqrBAIn0ZzDf9bDS9S5Pof2gIH/fkTuJ2GMRdkQ=;
+        b=C2UX2A5HwIkFsQDDLJPMDiZ4/loFj2hqU05SIZPZjcVrchYIWMrNUqJ4vVNRpA+nDQ
+         akgOXQmZRXDh8ildbouLVDzgAVwc6OujO/BUI51JBJvU7b6ucmRNPfXLuhL99V+r9/FL
+         4JreKHA4FEfklun44vTXIq6QEdxC7fZGh70zcgny9zEuxanS//2JZPDi/oEyEI5Muf/C
+         PC9fPcfHsWEtpmze20mm4mRpbXFRveAZFTb09c1VNluoXx74VMyAKj3r8yHl5QQzfUkm
+         RLRJnfRjkcW3AoWphJ3P/n/hnyqpto2u+X6cmayg4vQpVcnbIb+NtZuIhkYxYWHKylYz
+         /ACg==
+X-Gm-Message-State: APzg51Df9EqO2PvonM7wah+A/rnCyxlmn2qSdSYskbQ/UhblS2X+gBaZ
+        fUo2ogkxJlEGcjGKrA3goL1ukNvO89KMn+9gRAiBXQ==
+X-Google-Smtp-Source: ANB0Vda4vcpEwmg6XQlQlc9x8R+vlF9Ot6N2pLbaUmqj0qE8YyMFwpDujJ2TsKnFBATfciRS6aJt91gXROTxGatovE4=
+X-Received: by 2002:a24:dd88:: with SMTP id t130-v6mr2602962itf.129.1535644192353;
+ Thu, 30 Aug 2018 08:49:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180830144544.tpross4jd6awou4u@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20180828160005.90796-1-tkjos@google.com> <20180829070036.GA13718@infradead.org>
+In-Reply-To: <20180829070036.GA13718@infradead.org>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Thu, 30 Aug 2018 08:49:40 -0700
+Message-ID: <CAHRSSExgXbKOYR9HU=+WDaQjHBYB3=YCYXgnAOGwJ0Y3Q3qshw@mail.gmail.com>
+Subject: Re: [PATCH] binder: use standard functions to allocate fds
+To:     hch@infradead.org
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        ben@decadent.org.uk, torvalds@linux-foundation.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 30/08/2018 à 16:45, Christian Brauner a écrit :
-[snip]
-> Introducing the IFA_IF_NETNSID property will not make the netlink
-> interface less modular. It is a clean, RTM_*ADDR-request specific
-> property using network namespace identifiers which we discussed in prior
-> patches are the way to go forward.
-> 
-> You can already get interfaces via GETLINK from another network
-> namespaces than the one you reside in (Which we enabled just a few
-> months back.) but you can't do the same for GETADDR. Those two are
-> almost always used together. When you want to get the links you usually
-> also want to get the addresses associated with it right after.
-> In a prior discussion we agreed that network namespace identifiers are
-> the way to go forward but that any other propery, i.e. PIDs and fds
-> should never be ported into other parts of the codebase and that is
-> indeed something I agree with.
-Yes, I agree with this and I think this series go to the right direction.
+On Wed, Aug 29, 2018 at 12:00 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> >  config ANDROID_BINDER_IPC
+> >       bool "Android Binder IPC Driver"
+> > -     depends on MMU
+> > +     depends on MMU && !CPU_CACHE_VIVT
+>
+> Thats is a purely arm specific symbol which should not be
+> used in common code.  Nevermind that there generally should
+> be no good reason for it.
 
-Maybe I would choose a more generic name for the attribute, something that can
-be used in other netlink families (xfrm, netfilter, ...) also.
-What about IFA_TARGET_NSID?
+It is true that the current design (10+ years old) has this flaw. VIVT
+cache support was the rationale for using the non-standard functions
+to allocate file descriptors from the sender context. There are no
+known cases of recent android releases running on a device with
+a VIVT cache architecture, but I did want to call this out.
+
+We're working on refactoring to eliminate this issue.
+
+>
+> > +     fixup->offset = (uintptr_t)fdp - (uintptr_t)t->buffer->data;
+>
+> This looks completely broken.  Why would you care at what exact
+> place the fd is placed?  Oh, because you share an array with fds
+> with userspace, which is a hell of a bad idea, and then maninpulate
+> that buffer mapped to userspace from kernel threads.
+
+Well, android apps rely on this behavior (and have for 10+ years) so
+there is no way to avoid the need to manipulate the buffer from
+the kernel. We are working to refactor the driver to do this
+using standard mechanisms instead of relying on low-level internal
+functions.
+
+>
+> I think we just need to rm -rf drivers/android/binder*.c and be done
+> with it, as this piece of crap should never have been merged to start
+> with.
