@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36350C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6BBD20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B31620838
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:45:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uSl/Vax1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BBD20834
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0MxvQAW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B31620838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeH3TsW (ORCPT
+        id S1727762AbeH3TsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:48:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40864 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbeH3TsU (ORCPT
+        Thu, 30 Aug 2018 15:48:25 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52409 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727683AbeH3TsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:48:20 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 207-v6so2491373wme.5;
-        Thu, 30 Aug 2018 08:45:34 -0700 (PDT)
+        Thu, 30 Aug 2018 15:48:25 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y139-v6so2458893wmc.2;
+        Thu, 30 Aug 2018 08:45:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KQMFFCtjVJMB79OboK16hKVLwCLSA0PsOx2A/8CBESc=;
-        b=uSl/Vax1IuA+CFRUIKwTxxFUvJfRWakNh5g16Kc0q07Q68gw45yu6ugu2nZm/dMKko
-         QadCBK52Wf+8QPU4hVqpjMsnFMfMhPxGReEQknxirOo1kHhARPI0a1btuB90dm730IkN
-         1OO6dsLT8qznPCn7cgcBZ93F0MWNoU2Kle15pJEe73mC8+Osqt/9YiQnijDe87Z7c7Ov
-         AFNXVGKcDcnmBvVQyuGcR6n/G6zuYTX7MOItqnR9zmK8pmklbB0+m+sz43o2YD4D9DTF
-         hSj+RBgWWLsMkwnaE/tcMpPG1EignyUBXHtPfw1XPE4H74HINyNmEPeZMLQkUcn57dja
-         nHVA==
+        bh=awc7lOb1lT80drwezjxAgYVu4AbsJ53UXF1LdxXOCho=;
+        b=X0MxvQAWNa/QHG1a/x8gvN03aFC9bPKcstD3++OvpK/mWPr/Nu71ydd6Bi41ISzadw
+         qIrOAT4F4OdsZ2kzh+q00Iis58hoEqbdTQiaJXXSzS2z9xTXQ5TxEH5tqgZjYazGaWjL
+         bgRuTIATJ9oEsL4Wiu0TCg4IYGtnZMurHeihga0x6jkxCqTnuwwGYQJO+iPhrO6Es8uG
+         PfJfsu2w7Xck8vTApyDRlNjCvRFoI5IwEtRAnxtxmXrFhmaoTmiGArLtORnF021wvrAd
+         TAL+o92qdd4pPHPE+vbp5YWVnctSPkhqkJ92iBaWO2vxPhz1KGnXaQA3f6nl67oaEha3
+         JKrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KQMFFCtjVJMB79OboK16hKVLwCLSA0PsOx2A/8CBESc=;
-        b=KW6h+rmxQNH/Y+HfGlf3uv/U+/2aF2VWoPeXOrtT5hZaGnqKbppYiEr/MUNDtV6e3d
-         +Mr1bV4K1CplLGqWvNIpvGwKAqtZUA2bUKaDrPh6ZxF7Ev8YFL9+8bYHufTwugod5aUx
-         mj6PhtLUFkcc/veZ5iNtQwM23rcLJD0C1NSewiQD927FpsTTxOpDzILnqSaNN584cZ7n
-         dYNgKPndQVl4g10VYwq+jMR9BIWjPtr1unCj4L5CY//nO5kIy59CtVqgQCWExlT3QSrC
-         YRGrXw7RERA6yTIj1ya6yIdq0XSWK3KO91a4DA9LtyuILr/tAeVa+Gh4e3T6VvykQWXB
-         mAyg==
-X-Gm-Message-State: APzg51DMaUCSMD+1Ya2PAAeBgQou6ej2TSnFhQrnLfOxwnKmFsoDVkmR
-        xxeNwN1/XXhOap8Oh07WaJY=
-X-Google-Smtp-Source: ANB0VdYDy7wn0q0bTBfQwfLF4nhftHhBI9Gwyly1JXh4FK3AUDx60kkf66i1PFdimUNMVOn1/QjC9A==
-X-Received: by 2002:a1c:ba84:: with SMTP id k126-v6mr2051153wmf.96.1535643933705;
-        Thu, 30 Aug 2018 08:45:33 -0700 (PDT)
+        bh=awc7lOb1lT80drwezjxAgYVu4AbsJ53UXF1LdxXOCho=;
+        b=RlO5JBPY1Ynt6MAlVm7Q3VyjKbiF8PLuXEEC4f6fEfw7d6NjdEOL4dg1K+uEI6XuZU
+         yH08gy9rL8vmV+0GdXichfRnk99oGr4OoObqxUptVWQwcFuVvakiYyoMG3YFG9e3c7lq
+         Wkhtb5yf1f3KBhE+X7f/YvH6xyEyiqvX3NhXpizea6QNjI7jbZm6XE3PdEUVPhyXWwm6
+         v+AqbPhE+opsnZOmX2yuSZlB/Put9l6jVFvaqoafkwK9CXxb/aQR+lbJ/cYwmk8Ua1d4
+         a/KGr6exwwO8QFh/BbWPCoExLobq0XEP6JPUL9MX2n3Yr4ZlKDx8pSpLit8HJG6yeb2b
+         h5Eg==
+X-Gm-Message-State: APzg51DqrotD9OusUHyFbj/9ZLvcMlEPpA+KWV2WGgycXJaa3HYtvNs8
+        Zs1R05QkhMDrUODYyVGteSU=
+X-Google-Smtp-Source: ANB0VdZ9TFSjSij1veJmjfSvCzyhdYiErnmAIpTWPnan95g96ps8uKTdevRe8LnmmxEcbDyC2EYNlg==
+X-Received: by 2002:a1c:7e13:: with SMTP id z19-v6mr2044367wmc.156.1535643937235;
+        Thu, 30 Aug 2018 08:45:37 -0700 (PDT)
 Received: from debian-hp.wlan.uni-ulm.de (eduroam170-020.wlan.uni-ulm.de. [134.60.170.20])
-        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.32
+        by smtp.gmail.com with ESMTPSA id j20-v6sm1362759wmh.9.2018.08.30.08.45.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 08:45:33 -0700 (PDT)
+        Thu, 30 Aug 2018 08:45:36 -0700 (PDT)
 From:   Philipp Rossak <embed3d@gmail.com>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
@@ -70,9 +70,9 @@ To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 14/30] dt-bindings: update the Allwinner GPADC device tree binding for H3 & A83T
-Date:   Thu, 30 Aug 2018 17:45:02 +0200
-Message-Id: <20180830154518.29507-15-embed3d@gmail.com>
+Subject: [PATCH v3 17/30] iio: adc: sun4i-gpadc-iio: rework: support clocks and reset
+Date:   Thu, 30 Aug 2018 17:45:05 +0200
+Message-Id: <20180830154518.29507-18-embed3d@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180830154518.29507-1-embed3d@gmail.com>
 References: <20180830154518.29507-1-embed3d@gmail.com>
@@ -81,83 +81,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H3 features a thermal sensor like the one in A33, but has its
-register re-arranged, the clock divider moved to CCU (originally the
-clock divider is in ADC) and added a pair of bus clock and reset.
+For adding newer sensor some basic rework of the code is necessary.
 
-Allwinner A83T features a thermal sensor similar to the H3, the ths clock,
-the bus clock and the reset was removed from the CCU. The THS in A83T
-has a clock that is directly connected and runs with 24 MHz.
+The SoCs after H3 has newer thermal sensor ADCs, which have two clock
+inputs (bus clock and sampling clock) and a reset. The registers are
+also re-arranged.
 
-Update the binding document to cover H3 and A83T.
+This commit reworks the code, adds the process of the clocks and resets.
 
 Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 ---
- .../devicetree/bindings/iio/adc/sun4i-gpadc.txt    | 41 ++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 3 deletions(-)
+ drivers/iio/adc/sun4i-gpadc-iio.c | 72 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 70 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/sun4i-gpadc.txt b/Documentation/devicetree/bindings/iio/adc/sun4i-gpadc.txt
-index a7ef9dd21f04..9116ad308cf1 100644
---- a/Documentation/devicetree/bindings/iio/adc/sun4i-gpadc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/sun4i-gpadc.txt
-@@ -4,12 +4,35 @@ The Allwinner SoCs all have an ADC that can also act as a thermal sensor
- and sometimes as a touchscreen controller.
+diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
+index c278e165e161..c12de48c4e86 100644
+--- a/drivers/iio/adc/sun4i-gpadc-iio.c
++++ b/drivers/iio/adc/sun4i-gpadc-iio.c
+@@ -22,6 +22,7 @@
+  * shutdown for not being used.
+  */
  
- Required properties:
--  - compatible: "allwinner,sun8i-a33-ths",
-+  - compatible: must contain one of the following compatibles:
-+		- "allwinner,sun8i-a33-ths"
-+		- "allwinner,sun8i-h3-ths"
-+		- "allwinner,sun8i-a83t-ths"
-   - reg: mmio address range of the chip,
--  - #thermal-sensor-cells: shall be 0,
-+  - #thermal-sensor-cells:
-+		Please refer <devicetree/bindings/thermal/thermal.txt>,
-   - #io-channel-cells: shall be 0,
++#include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -31,6 +32,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ #include <linux/thermal.h>
+ #include <linux/delay.h>
  
--Example:
-+Required properties for the following compatibles:
-+		- "allwinner,sun8i-h3-ths"
-+		- "allwinner,sun8i-a83t-ths"
-+  - interrupts: the sampling interrupt of the ADC,
-+
-+Required properties for the following compatibles:
-+		- "allwinner,sun8i-h3-ths"
-+  - clocks: the bus clock and the input clock of the ADC,
-+  - clock-names: should be "bus" and "mod",
-+  - resets: the bus reset of the ADC,
-+
-+Optional properties for the following compatibles:
-+		- "allwinner,sun8i-h3-ths"
-+		- "allwinner,sun8i-a83t-ths"
-+  - nvmem-cells: A phandle to the calibration data provided by a nvmem device.
-+  - nvmem-cell-names: Should be "calibration".
-+
-+Details see: bindings/nvmem/nvmem.txt
-+
-+Example for A33:
- 	ths: ths@1c25000 {
- 		compatible = "allwinner,sun8i-a33-ths";
- 		reg = <0x01c25000 0x100>;
-@@ -17,6 +40,18 @@ Example:
- 		#io-channel-cells = <0>;
- 	};
+@@ -63,6 +65,9 @@ struct gpadc_data {
+ 	int		(*ths_suspend)(struct sun4i_gpadc_iio *info);
+ 	int		(*ths_resume)(struct sun4i_gpadc_iio *info);
+ 	bool		support_irq;
++	bool		has_bus_clk;
++	bool		has_bus_rst;
++	bool		has_mod_clk;
+ 	u32		temp_data_base;
+ };
  
-+Example for H3:
-+	ths: thermal-sensor@1c25000 {
-+		compatible = "allwinner,sun8i-h3-ths";
-+		reg = <0x01c25000 0x400>;
-+		clocks = <&ccu CLK_BUS_THS>, <&ccu CLK_THS>;
-+		clock-names = "bus", "mod";
-+		resets = <&ccu RST_BUS_THS>;
-+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+		#thermal-sensor-cells = <0>;
-+		#io-channel-cells = <0>;
-+	};
-+
- sun4i, sun5i and sun6i SoCs are also supported via these bindings:
+@@ -127,6 +132,9 @@ struct sun4i_gpadc_iio {
+ 	struct mutex			mutex;
+ 	struct thermal_zone_device	*tzd;
+ 	struct device			*sensor_device;
++	struct clk			*bus_clk;
++	struct clk			*mod_clk;
++	struct reset_control		*reset;
+ };
  
- Required properties:
+ static const struct iio_chan_spec sun4i_gpadc_channels[] = {
+@@ -472,8 +480,13 @@ static int sun4i_gpadc_probe_dt(struct platform_device *pdev,
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	info->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+-					     &sun4i_gpadc_regmap_config);
++	if (info->data->has_bus_clk)
++		info->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "bus",
++				base, &sun4i_gpadc_regmap_config);
++	else
++		info->regmap = devm_regmap_init_mmio(&pdev->dev, base,
++				&sun4i_gpadc_regmap_config);
++
+ 	if (IS_ERR(info->regmap)) {
+ 		ret = PTR_ERR(info->regmap);
+ 		dev_err(&pdev->dev, "failed to init regmap: %d\n", ret);
+@@ -498,9 +511,58 @@ static int sun4i_gpadc_probe_dt(struct platform_device *pdev,
+ 		}
+ 	}
+ 
++	if (info->data->has_bus_rst) {
++		info->reset = devm_reset_control_get(&pdev->dev, NULL);
++		if (IS_ERR(info->reset)) {
++			ret = PTR_ERR(info->reset);
++			return ret;
++		}
++
++		ret = reset_control_deassert(info->reset);
++		if (ret)
++			return ret;
++	}
++
++	if (info->data->has_bus_clk) {
++		info->bus_clk = devm_clk_get(&pdev->dev, "bus");
++		if (IS_ERR(info->bus_clk)) {
++			ret = PTR_ERR(info->bus_clk);
++			goto assert_reset;
++		}
++
++		ret = clk_prepare_enable(info->bus_clk);
++		if (ret)
++			goto assert_reset;
++	}
++
++	if (info->data->has_mod_clk) {
++		info->mod_clk = devm_clk_get(&pdev->dev, "mod");
++		if (IS_ERR(info->mod_clk)) {
++			ret = PTR_ERR(info->mod_clk);
++			goto disable_bus_clk;
++		}
++
++		/* Running at 4MHz */
++		ret = clk_set_rate(info->mod_clk, 4000000);
++		if (ret)
++			goto disable_bus_clk;
++
++		ret = clk_prepare_enable(info->mod_clk);
++		if (ret)
++			goto disable_bus_clk;
++	}
++
+ 	info->sensor_device = &pdev->dev;
+ 
+ 	return 0;
++
++disable_bus_clk:
++	clk_disable_unprepare(info->bus_clk);
++
++assert_reset:
++	reset_control_assert(info->reset);
++
++	return ret;
+ }
+ 
+ static int sun4i_gpadc_probe(struct platform_device *pdev)
+@@ -586,6 +648,12 @@ static int sun4i_gpadc_remove(struct platform_device *pdev)
+ 	if (!info->data->support_irq)
+ 		iio_map_array_unregister(indio_dev);
+ 
++	clk_disable_unprepare(info->mod_clk);
++
++	clk_disable_unprepare(info->bus_clk);
++
++	reset_control_assert(info->reset);
++
+ 	return 0;
+ }
+ 
 -- 
 2.11.0
 
