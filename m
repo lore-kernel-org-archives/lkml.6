@@ -2,102 +2,176 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8864DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C062C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACD22084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:44:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r/jYC+/1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACD22084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B6C72054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:45:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6C72054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbeH3Ppo (ORCPT
+        id S1728260AbeH3Pqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:45:44 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52866 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbeH3Ppn (ORCPT
+        Thu, 30 Aug 2018 11:46:45 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:49390 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727499AbeH3Pqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:45:43 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7UBdCUn196269;
-        Thu, 30 Aug 2018 11:42:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=V9qZ81JocbnutLjbmnknLp4leCHUqHldqUW2grvQ9L8=;
- b=r/jYC+/1AfUg1gOufCFEeCVeYWT+v+Xyh9D22uy+hA1KqYIvWTnlwH+AHlGwILW2Jelm
- Y5YLHbmYXHFUFvEHrg1o/2s8GMKDIuYIOLnl/+9XxBXI71fSMJaKq7/9ec9JBed7WDxV
- NUKqOrVRBi0YT1AXFoKDE1nv41urZhb7L561nRuEmdVVWuJiFnxhNOU1BRiTrl9GY85s
- vhXrMqDtgcsDC3j7AQzKccneQU7vYOfXB9ni65z82MddRfonxSS0z9A2rlGYj+P47Lsg
- qXFiuwBnVcplNPArFnq66/tjAg45tt1DkrS+7PfHTi7gb3bYC7YuJITeWMvoLV3c1SDa Lw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2m2y2ps18r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 11:42:08 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7UBg3kM008132
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Aug 2018 11:42:03 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7UBg1h0013493;
-        Thu, 30 Aug 2018 11:42:02 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Aug 2018 04:42:01 -0700
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        codalist@telemann.coda.cs.cmu.edu, coda@cs.cmu.edu,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Paul Sokolovsky <paul.sokolovsky@linaro.org>,
-        Miklos Szeredi <mszeredi@suse.cz>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 2/2] scsi: aic7xxx: Fix build using bare-metal toolchain
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180829170015.7729-1-semen.protsenko@linaro.org>
-        <20180829170015.7729-3-semen.protsenko@linaro.org>
-Date:   Thu, 30 Aug 2018 07:41:58 -0400
-In-Reply-To: <20180829170015.7729-3-semen.protsenko@linaro.org> (Sam
-        Protsenko's message of "Wed, 29 Aug 2018 20:00:15 +0300")
-Message-ID: <yq1efeg3wu1.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 30 Aug 2018 11:46:45 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7UBidYN007995;
+        Thu, 30 Aug 2018 06:44:49 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2m34h1xq1j-1;
+        Thu, 30 Aug 2018 06:44:49 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 5177F611CE60;
+        Thu, 30 Aug 2018 06:46:29 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 30 Aug 2018
+ 12:44:48 +0100
+Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ w7UBilsO012304;        Thu, 30 Aug 2018 12:44:47 +0100
+Subject: Re: [PATCH v10 2/2] irqchip: Add driver for Cirrus Logic Madera
+ codecs
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20180828130934.18135-1-rf@opensource.cirrus.com>
+ <20180828130934.18135-2-rf@opensource.cirrus.com>
+ <alpine.DEB.2.21.1808301154040.1210@nanos.tec.linutronix.de>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <4aa5941b-547d-7218-1b8f-4cd2a01a4fa5@opensource.cirrus.com>
+Date:   Thu, 30 Aug 2018 12:44:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=842
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808300123
+In-Reply-To: <alpine.DEB.2.21.1808301154040.1210@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=711 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808300123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 30/08/18 11:31, Thomas Gleixner wrote:
+> On Tue, 28 Aug 2018, Richard Fitzgerald wrote:
+>> @@ -0,0 +1,244 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Interrupt support for Cirrus Logic Madera codecs
+>> + *
+>> + * Copyright (C) 2015-2018 Cirrus Logic
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by the
+>> + * Free Software Foundation; version 2.
+> 
+> You have the SPDX identifier above, which makes this boilerplate
+> superfluous.
+> 
 
-Sam,
+Our legal people want it left here.
+They are ok with the SPDX reference, but they want to keep an
+explicit statement of the license that was intended.
 
-> Bare-metal toolchains don't define __linux__, so aic7xxx build with
-> bare-metal toolchain is broken. This driver codebase used to be
-> partially shared with FreeBSD, but these days there is no point in
-> keeping the compatibility around. So let's just drop FreeBSD related
-> code and get rid of __linux__ checking in order to fix the build using
-> bare-metal toolchains.
+>> +#ifdef CONFIG_PM_SLEEP
+>> +static int madera_suspend_noirq(struct device *dev)
+>> +{
+>> +	struct madera *madera = dev_get_drvdata(dev->parent);
+>> +
+>> +	dev_dbg(madera->irq_dev, "No IRQ suspend, reenabling IRQ\n");
+>> +
+>> +	enable_irq(madera->irq);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int madera_suspend(struct device *dev)
+>> +{
+>> +	struct madera *madera = dev_get_drvdata(dev->parent);
+>> +
+>> +	dev_dbg(madera->irq_dev, "Suspend, disabling IRQ\n");
+>> +
+>> +	disable_irq(madera->irq);
+>> +
+>> +	return 0;
+>> +}
+> 
+> This really wants a comment why you are disabling it first and reenabling
+> it afterwards. I have no idea why you are doing this and it doesn't make
+> much sense from the S/R perspective either.
+> 
+>> +	/*
+>> +	 * Read the flags from the interrupt controller if not specified
+>> +	 * by pdata
+>> +	 */
+>> +	irq_flags = madera->pdata.irq_flags;
+>> +	if (!irq_flags) {
+>> +		irq_data = irq_get_irq_data(madera->irq);
+>> +		if (!irq_data) {
+>> +			dev_err(&pdev->dev, "Invalid IRQ: %d\n", madera->irq);
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		irq_flags = irqd_get_trigger_type(irq_data);
+>> +
+>> +		/* Codec defaults to trigger low, use this if no flags given */
+>> +		if (irq_flags == IRQ_TYPE_NONE)
+>> +			irq_flags = IRQF_TRIGGER_LOW;
+>> +	}
+>> +
+>> +	if (irq_flags & (IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING)) {
+>> +		dev_err(&pdev->dev, "Host interrupt not level-triggered\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (irq_flags & IRQF_TRIGGER_HIGH) {
+>> +		ret = regmap_update_bits(madera->regmap, MADERA_IRQ1_CTRL,
+>> +					 MADERA_IRQ_POL_MASK, 0);
+>> +		if (ret) {
+>> +			dev_err(&pdev->dev,
+>> +				"Failed to set IRQ polarity: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+> 
+> This looks wrong. Why are you only updating the polarity for trigger HIGH?
+> 
+>> diff --git a/include/linux/irqchip/irq-madera.h b/include/linux/irqchip/irq-madera.h
+>> new file mode 100644
+>> index 000000000000..5aeb7e6adc82
+>> --- /dev/null
+>> +++ b/include/linux/irqchip/irq-madera.h
+>> @@ -0,0 +1,135 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Interrupt support for Cirrus Logic Madera codecs
+>> + *
+>> + * Copyright 2016-2018 Cirrus Logic
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by the
+>> + * Free Software Foundation; version 2.
+> 
+> See above.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
 
-Applied to 4.20/scsi-queue, thank you!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
