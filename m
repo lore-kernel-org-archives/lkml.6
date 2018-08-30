@@ -2,95 +2,84 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50DAC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48F4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67065205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67065205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9A952205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 14:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A952205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbeH3S2l (ORCPT
+        id S1729266AbeH3S3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 14:28:41 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50336 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729084AbeH3S2k (ORCPT
+        Thu, 30 Aug 2018 14:29:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39528 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbeH3S3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 14:28:40 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvNtf-0005LV-Cq; Thu, 30 Aug 2018 16:26:07 +0200
-Date:   Thu, 30 Aug 2018 16:26:06 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Prarit Bhargava <prarit@redhat.com>
-cc:     linux-kernel@vger.kernel.org, Mark Salter <msalter@redhat.com>,
-        Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        x86@kernel.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3] console: Add console=spcr option
-In-Reply-To: <20180829155618.32359-1-prarit@redhat.com>
-Message-ID: <alpine.DEB.2.21.1808301542560.1210@nanos.tec.linutronix.de>
-References: <20180829155618.32359-1-prarit@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 30 Aug 2018 14:29:48 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fvNup-0007vf-8h; Thu, 30 Aug 2018 14:27:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][net-next] xdp: remove redundant variable 'headroom'
+Date:   Thu, 30 Aug 2018 15:27:18 +0100
+Message-Id: <20180830142718.10850-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018, Prarit Bhargava wrote:
-> +
-> +void __init arch_console_setup(void)
-> +{
-> +	int ret;
-> +
-> +	ret = acpi_parse_spcr(false, true);
-> +	if (ret)
-> +		pr_err(PREFIX "ERROR: SPCR console is not enabled (%d)\n", ret);
-> +}
+From: Colin Ian King <colin.king@canonical.com>
 
-Why does this require yet another arch/weak function?
+Variable 'headroom' is being assigned but is never used hence it is
+redundant and can be removed.
 
->  /*
->   * Set up a console.  Called via do_early_param() in init/main.c
->   * for each "console=" parameter in the boot command line.
-> @@ -2107,6 +2112,11 @@ static int __init console_setup(char *str)
->  	char *s, *options, *brl_options = NULL;
->  	int idx;
->  
-> +	if (!strcmp(str, "spcr")) {
-> +		arch_console_setup();
-> +		return 1;
+Cleans up clang warning:
+variable ‘headroom’ set but not used [-Wunused-but-set-variable]
 
-And this gets added to everything and the world whether it's
-needed/supported or not.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/core/xdp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Why can't we simply register the SPCR console as we do with any other
-console when it is detected?
-
-If we can't for some real good reason then there is no need to invoke
-acpi_parse_spcr() twice. We simply can store the fact that it got selected
-and use that information in acpi_boot_init().
-
-Thanks,
-
-	tglx
-
-
-
-
+diff --git a/net/core/xdp.c b/net/core/xdp.c
+index 654dbb19707e..4b2b194f4f1f 100644
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -412,7 +412,7 @@ EXPORT_SYMBOL_GPL(xdp_attachment_setup);
+ 
+ struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp)
+ {
+-	unsigned int metasize, headroom, totsize;
++	unsigned int metasize, totsize;
+ 	void *addr, *data_to_copy;
+ 	struct xdp_frame *xdpf;
+ 	struct page *page;
+@@ -420,7 +420,6 @@ struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp)
+ 	/* Clone into a MEM_TYPE_PAGE_ORDER0 xdp_frame. */
+ 	metasize = xdp_data_meta_unsupported(xdp) ? 0 :
+ 		   xdp->data - xdp->data_meta;
+-	headroom = xdp->data - xdp->data_hard_start;
+ 	totsize = xdp->data_end - xdp->data + metasize;
+ 
+ 	if (sizeof(*xdpf) + totsize > PAGE_SIZE)
+-- 
+2.17.1
 
