@@ -2,165 +2,144 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB11C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D744EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 422EE20666
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:39:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zj3uL4mo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422EE20666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 85BC6205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 01:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BC6205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeH3Fim (ORCPT
+        id S1727211AbeH3Fnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 01:38:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbeH3Fim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 01:38:42 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B65D920647;
-        Thu, 30 Aug 2018 01:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535593143;
-        bh=8VlH8e8j2cWDJs9IABSd5/ciDypp8K7ukiOk3NJaHAE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Zj3uL4mopCYWNyOGbCZxST7/BgQSQ4Ijlk2bHjO0Or977olW+02NjRbrMVcW5mFTN
-         iJmhwJcARnz1n+fCI2z2Pkt9y6n0ACUn5HgkhhPaEq5YMXsz3IYW5i83f7SjWAIxB1
-         zAy0yHWUVhmh2+zNCXB3t2dS7V8NmH+8peL1UL6c=
-Date:   Thu, 30 Aug 2018 10:38:59 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        Thu, 30 Aug 2018 01:43:51 -0400
+Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:44612 "EHLO
+        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725996AbeH3Fnv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 01:43:51 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl2.internode.on.net with ESMTP; 30 Aug 2018 11:13:08 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1fvBzE-00038X-UU; Thu, 30 Aug 2018 11:43:04 +1000
+Date:   Thu, 30 Aug 2018 11:43:04 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 2/6] x86/mm: temporary mm struct
-Message-Id: <20180830103859.ac309b71c53d267da2f6e9f8@kernel.org>
-In-Reply-To: <CALCETrWF5XQndPikmBgo9t1UWKS7T0K2kFGOpzX-tavFVis5_Q@mail.gmail.com>
-References: <20180829081147.184610-1-namit@vmware.com>
-        <20180829081147.184610-3-namit@vmware.com>
-        <20180829184925.64caee4dadf705080373f84f@kernel.org>
-        <CALCETrWF5XQndPikmBgo9t1UWKS7T0K2kFGOpzX-tavFVis5_Q@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 1/2] fs/dcache: Track & report number of negative dentries
+Message-ID: <20180830014304.GD5631@dastard>
+References: <1535476780-5773-1-git-send-email-longman@redhat.com>
+ <1535476780-5773-2-git-send-email-longman@redhat.com>
+ <20180829001153.GD1572@dastard>
+ <e084f670-b279-0f85-404c-9506e329f633@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e084f670-b279-0f85-404c-9506e329f633@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 08:41:00 -0700
-Andy Lutomirski <luto@kernel.org> wrote:
-
-> On Wed, Aug 29, 2018 at 2:49 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > On Wed, 29 Aug 2018 01:11:43 -0700
-> > Nadav Amit <namit@vmware.com> wrote:
-> >
-> >> From: Andy Lutomirski <luto@kernel.org>
+On Wed, Aug 29, 2018 at 01:11:08PM -0400, Waiman Long wrote:
+> On 08/28/2018 08:11 PM, Dave Chinner wrote:
+> > On Tue, Aug 28, 2018 at 01:19:39PM -0400, Waiman Long wrote:
+> >> The current dentry number tracking code doesn't distinguish between
+> >> positive & negative dentries. It just reports the total number of
+> >> dentries in the LRU lists.
 > >>
-> >> Sometimes we want to set a temporary page-table entries (PTEs) in one of
-> >> the cores, without allowing other cores to use - even speculatively -
-> >> these mappings. There are two benefits for doing so:
+> >> As excessive number of negative dentries can have an impact on system
+> >> performance, it will be wise to track the number of positive and
+> >> negative dentries separately.
 > >>
-> >> (1) Security: if sensitive PTEs are set, temporary mm prevents their use
-> >> in other cores. This hardens the security as it prevents exploding a
-> >> dangling pointer to overwrite sensitive data using the sensitive PTE.
+> >> This patch adds tracking for the total number of negative dentries in
+> >> the system LRU lists and reports it in the /proc/sys/fs/dentry-state
+> >> file. The number, however, does not include negative dentries that are
+> >> in flight but not in the LRU yet.
 > >>
-> >> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-> >> remote page-tables.
+> >> The number of positive dentries in the LRU lists can be roughly found
+> >> by subtracting the number of negative dentries from the total.
 > >>
-> >> To do so a temporary mm_struct can be used. Mappings which are private
-> >> for this mm can be set in the userspace part of the address-space.
-> >> During the whole time in which the temporary mm is loaded, interrupts
-> >> must be disabled.
-> >>
-> >> The first use-case for temporary PTEs, which will follow, is for poking
-> >> the kernel text.
-> >>
-> >> [ Commit message was written by Nadav ]
-> >>
-> >> Cc: Andy Lutomirski <luto@kernel.org>
-> >> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> >> Cc: Kees Cook <keescook@chromium.org>
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Signed-off-by: Nadav Amit <namit@vmware.com>
+> >> Signed-off-by: Waiman Long <longman@redhat.com>
 > >> ---
-> >>  arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
-> >>  1 file changed, 20 insertions(+)
+> >>  Documentation/sysctl/fs.txt | 19 +++++++++++++------
+> >>  fs/dcache.c                 | 45 +++++++++++++++++++++++++++++++++++++++++++++
+> >>  include/linux/dcache.h      |  7 ++++---
+> >>  3 files changed, 62 insertions(+), 9 deletions(-)
 > >>
-> >> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-> >> index eeeb9289c764..96afc8c0cf15 100644
-> >> --- a/arch/x86/include/asm/mmu_context.h
-> >> +++ b/arch/x86/include/asm/mmu_context.h
-> >> @@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast(void)
-> >>       return cr3;
-> >>  }
-> >>
-> >> +typedef struct {
-> >> +     struct mm_struct *prev;
-> >> +} temporary_mm_state_t;
-> >> +
-> >> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-> >> +{
-> >> +     temporary_mm_state_t state;
-> >> +
-> >> +     lockdep_assert_irqs_disabled();
-> >> +     state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-> >> +     switch_mm_irqs_off(NULL, mm, current);
-> >> +     return state;
-> >> +}
+> >> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
+> >> index 819caf8..118bb93 100644
+> >> --- a/Documentation/sysctl/fs.txt
+> >> +++ b/Documentation/sysctl/fs.txt
+> >> @@ -63,19 +63,26 @@ struct {
+> >>          int nr_unused;
+> >>          int age_limit;         /* age in seconds */
+> >>          int want_pages;        /* pages requested by system */
+> >> -        int dummy[2];
+> >> +        int nr_negative;       /* # of unused negative dentries */
+> >> +        int dummy;
+> >>  } dentry_stat = {0, 0, 45, 0,};
+> > That's not a backwards compatible ABI change. Those dummy fields
+> > used to represent some metric we no longer calculate, and there are
+> > probably still monitoring apps out there that think they still have
+> > the old meaning. i.e. they are still visible to userspace:
 > >
-> > Hmm, why don't we return mm_struct *prev directly?
+> > $ cat /proc/sys/fs/dentry-state 
+> > 83090	67661	45	0	0	0
+> > $
+> >
+> > IOWs, you can add new fields for new metrics to the end of the
+> > structure, but you can't re-use existing fields even if they
+> > aren't calculated anymore.
+> >
+> > [....]
 > 
-> I did it this way to make it easier to add future debugging stuff
-> later. Also, when I first wrote this, I stashed the old CR3 instead
-> of the old mm_struct, and it seemed like callers should be insulated
-> from details like this.
+> I looked up the git history and the state of the dentry_stat structure
+> hadn't changed since it was first put into git in 2.6.12-rc2 on Apr 16,
+> 2005. That was over 13 years ago. Even adding an extra argument can have
+> the potential of breaking old applications depending on how the parsing
+> code was written.
 
-Hmm, I see. But in that case, we should call it "struct temporary_mm"
-and explicitly allocate (and pass) it, since we can not return the
-data structure from stack. If we can combine it with new mm, it will
-be more encapsulated e.g.
+I'm pretty we've had this discussion many times before  w.r.t.
+/proc/self/mount* and other multi-field proc files. 
 
-struct temporary_mm {
-	struct mm_struct *mm;
-	struct mm_struct *prev;
-};
+IIRC, The answer has always been that it's OK to extend lines with
+new fields as existing apps /should/ ignore them, but it's not OK to
+remove or redefine existing fields in the line because existing apps
+/will/ misinterpret what that field means.
 
-static struct temporary_mm poking_tmp_mm;
+> Given that systems that are still using some very old tools are not
+> likely to upgrade to the latest kernel anyway. I don't see that as a big
+> problem.
 
-poking_init()
-{
-	if (init_temporary_mm(&tmp_mm, &init_mm))
-		goto error;
-	...
-}
+I don't think that matters when it comes to changing what
+information we expose in proc files.
 
-text_poke_safe()
-{
-	...
-	use_temporary_mm(&tmp_mm);
-	...
-	unuse_temporary_mm(&tmp_mm);
-}
+Cheers,
 
-Any thought?
-
-Thanks,
-
+Dave.
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Dave Chinner
+david@fromorbit.com
