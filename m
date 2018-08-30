@@ -2,266 +2,322 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D35AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB8DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C5320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:12:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C5320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A3DCA20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 07:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DCA20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeH3LNc convert rfc822-to-8bit (ORCPT
+        id S1727625AbeH3LTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 07:13:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46553 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727395AbeH3LNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 07:13:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 140E620828; Thu, 30 Aug 2018 09:12:47 +0200 (CEST)
-Received: from dell-desktop.home (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B57242072C;
-        Thu, 30 Aug 2018 09:12:36 +0200 (CEST)
-Date:   Thu, 30 Aug 2018 09:12:35 +0200
-From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?B?TXlsw6huZQ==?= Josserand 
-        <mylene.josserand@free-electrons.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v6 0/2] Input: Add Cypress Gen5 Touchscreen driver
-Message-ID: <20180830091235.6fff7b7d@dell-desktop.home>
-In-Reply-To: <CAKdAkRQQ27TNmDSSg5x4kGvhhBjRbM9G2Bv_1WBxAhYWNUkz1w@mail.gmail.com>
-References: <20180703094309.18514-1-mylene.josserand@bootlin.com>
-        <20180704162158.euiw2v3hyv3hzofn@penguin>
-        <20180724150046.7d70786c@dell-desktop.home>
-        <20180724174053.GA61165@dtor-ws>
-        <20180813172358.71912d55@dell-desktop.home>
-        <CAKdAkRQQ27TNmDSSg5x4kGvhhBjRbM9G2Bv_1WBxAhYWNUkz1w@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 30 Aug 2018 07:19:19 -0400
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:33658 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbeH3LTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 07:19:19 -0400
+Received: by mail-qk0-f178.google.com with SMTP id z78-v6so5123970qka.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 00:18:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IiZxBNjxW+DaKGchM85AzbdML9Ok520SR2CkdBPCFRM=;
+        b=BecN/nMZcGFczZLK96OrbItIL4t22ZFfZ9E8+GJZjRuIOloRDqzCsVaPIXJzinIzSk
+         vkqI1QKW0jQnn2SEfH1t2YNtWy/zlHim9cT7iQMeuJjbNjFceAbtZqYIfGVr1lDlOh0Y
+         99P4LOksoYWoorADhqBOHCbIDbkml89oBt6Wdk/RUggTa5mJAxoLS+t6fwPqqJQUxcpB
+         5GWLLy9DpOzTe9n0tA1uYiPZn4393o6Zy/5MV7EWsRw4tPV5pxKHXiznHdzOAJMOLnXX
+         yOJnMctPZOYnuK/Rs/YqQpEKoRaPTMmsJny3cg30zS9L2lGxpftQs8SkyZB8PmkcEiKG
+         aPRQ==
+X-Gm-Message-State: APzg51BoFF7j+iBCKgRIByOiDkUJEJJVkplPEeESLkB1CZNuA7s/ccoA
+        K0b5ccO18GiRtpqSM1ULZv+ahxe0Ue/Ame/pYqUPoQ==
+X-Google-Smtp-Source: ANB0Vda8ceDry5Dn51xNEPqULALjYvWJUTx5HuAs8O2Jzo0vJ8XPzlLbCCDPov+0uUf7lSJci7E0v7vS5EWZGX3TVNc=
+X-Received: by 2002:a37:a05:: with SMTP id 5-v6mr9934714qkk.325.1535613513945;
+ Thu, 30 Aug 2018 00:18:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20180823183057.247630-1-hcutts@chromium.org> <20180823183057.247630-4-hcutts@chromium.org>
+ <CAO-hwJ+rR8ft96AGjoEApr1ZkythKfcxjVzdULzgpRy-aRv_vg@mail.gmail.com> <CA+jURcvguwXAVnpQ9+84QQOaJG74oeV8U4zzM1X0UabaY5DJBQ@mail.gmail.com>
+In-Reply-To: <CA+jURcvguwXAVnpQ9+84QQOaJG74oeV8U4zzM1X0UabaY5DJBQ@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 30 Aug 2018 09:18:22 +0200
+Message-ID: <CAO-hwJ+tb6XdEM76r0jxBfCx2r_PqQp9T5=A2ALociyHOKUeMg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] Enable high-resolution scrolling on Logitech mice
+To:     hcutts@chromium.org, Nestor Lopez Casado <nlopezcasad@logitech.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmitry,
+Hi Harry,
 
-On Mon, 13 Aug 2018 08:36:32 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> Hi Mylène,
-> 
-> On Mon, Aug 13, 2018 at 8:24 AM Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
-> >
-> > Hi Dmitry,
-> >
-> > On Tue, 24 Jul 2018 10:40:53 -0700
-> > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >  
-> > > Hi Mylène,
+On Thu, Aug 30, 2018 at 1:06 AM Harry Cutts <hcutts@chromium.org> wrote:
+>
+> Hi Benjamin,
+>
+> On Tue, 28 Aug 2018 at 01:47, Benjamin Tissoires
+> <benjamin.tissoires@redhat.com> wrote:
+> > On Thu, Aug 23, 2018 at 8:31 PM Harry Cutts <hcutts@chromium.org> wrote:
+> > > [snip]
+> > > @@ -400,32 +409,53 @@ static void hidpp_prefix_name(char **name, int name_length)
+> > >  #define HIDPP_SET_LONG_REGISTER                                0x82
+> > >  #define HIDPP_GET_LONG_REGISTER                                0x83
 > > >
-> > > On Tue, Jul 24, 2018 at 03:00:46PM +0200, Mylène Josserand wrote:  
-> > > > Hello Dmitry,
-> > > >
-> > > > On Wed, 4 Jul 2018 16:21:58 +0000
-> > > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > >  
-> > > > > Hi Mylène,
-> > > > >
-> > > > > On Tue, Jul 03, 2018 at 11:43:07AM +0200, Mylène Josserand wrote:  
-> > > > > > Hello,
-> > > > > >
-> > > > > > Here is a V6 series to add the driver of the touchscreen Cypress,
-> > > > > > TrueTouch Generation 5.
-> > > > > > Based on v4.18-rc3.
-> > > > > >
-> > > > > > This patch series has already been posted in several iterations:
-> > > > > >     - v1: Sent on 2017/05/29
-> > > > > >     - v2: Sent on 2017/08/18
-> > > > > >     - v3: Sent on 2017/09/27
-> > > > > >     - v4: Sent on 2017/12/01
-> > > > > >     - v5: Sent on 2017/12/20
-> > > > > >
-> > > > > > I did not have any comments the last 4 versions.
-> > > > > > And no reviews on my v5 during 6 months. Could I have any updates
-> > > > > > or feedback on my series to know why it is not merged (to be able to
-> > > > > > correct what is wrong)?  
-> > > > >
-> > > > > Sorry, I must have missed the v5, sorry about that.
-> > > > >
-> > > > > I probably asked this question before, but just to make sure - I see
-> > > > > references to HID in the patch - the device is really not HID
-> > > > > compatible? Is there any hope it could be made work with i2c-hid +
-> > > > > hid-multitouch?
-> > > > >
-> > > > > Thanks.
-> > > > >  
-> > > >
-> > > > I have checked and, for what I have seen, all the HID descriptor stuff
-> > > > is HID compliant. We could definitely use i2c-hid and hid-multitouch
-> > > > (there is the "hid-cypress" driver that exists also).
-> > > >
-> > > > The only problem is that this touchscreen has two modes: a bootloader
-> > > > mode and an application mode (which is the one where we can send
-> > > > HID commands). After a power-on-reset, it is always in "bootloader"
-> > > > mode so we need to send some commands (called "bootloader commands") to
-> > > > switch to application mode.  
+> > > -#define HIDPP_REG_GENERAL                              0x00
+> > > -
+> > > -static int hidpp10_enable_battery_reporting(struct hidpp_device *hidpp_dev)
+> > > +/**
+> > > + * hidpp10_set_register_bit() - Sets a single bit in a HID++ 1.0 register.
+> > > + * @hidpp_dev: the device to set the register on.
+> > > + * @register_address: the address of the register to modify.
+> > > + * @byte: the byte of the register to modify. Should be less than 3.
+> > > + * Return: 0 if successful, otherwise a negative error code.
+> > > + */
+> > > +static int hidpp10_set_register_bit(struct hidpp_device *hidpp_dev,
+> > > +       u8 register_address, u8 byte, u8 bit)
+> > >  {
+> > >         struct hidpp_report response;
+> > >         int ret;
+> > >         u8 params[3] = { 0 };
 > > >
-> > > Is this a documented or observed behavior? In my practice devices (I am
-> > > talking in general, not about Cypress) that have proper configuration
-> > > loaded and that were brought up with appropriate power up sequence and
-> > > timings automatically switch to application mode. They only end up in
-> > > bootloader mode when proper power up sequence is not respected and they
-> > > are unhappy.  
-> >
-> > I have checked and indeed, if everything is correctly performed, the
-> > bootloader has a timeout to switch to application mode.
-> > The datasheet says that this timeout can be configured and the "0" value
-> > means that the bootloader will never automatically switch to application
-> > unless a bootloader command is sent.
-> >
-> > In our case, you were right, after a timeout, the touchscreen is
-> > correctly switching to Application mode. Great news!
-> >  
-> > >  
-> > > > These commands are not HID-compliant as the
-> > > > datasheet indicates:
-> > > >
-> > > > "Bootloader commands are not HID-over-I2C compliant."  
+> > >         ret = hidpp_send_rap_command_sync(hidpp_dev,
+> > > -                                       REPORT_ID_HIDPP_SHORT,
+> > > -                                       HIDPP_GET_REGISTER,
+> > > -                                       HIDPP_REG_GENERAL,
+> > > -                                       NULL, 0, &response);
+> > > +                                         REPORT_ID_HIDPP_SHORT,
+> > > +                                         HIDPP_GET_REGISTER,
+> > > +                                         register_address,
+> > > +                                         NULL, 0, &response);
+> > >         if (ret)
+> > >                 return ret;
 > > >
-> > > Any chance you could share the datasheet?  
-> >
-> > Sorry, it is not possible, the datasheet is under NDA :(
-> >  
-> > >  
-> > > >
-> > > > I think that if the touchscreen would start directly in "application"
-> > > > mode, we could directly use i2c-hid and hid-cypress drivers.
-> > > > Unfortunately, this is not the case.
-> > > >
-> > > > In bootloader mode, the ProductID is 0xc101 and in application mode, it
-> > > > is 0xc001 (already available in hid-ids.h:
-> > > > USB_DEVICE_ID_CYPRESS_TRUETOUCH but not handled)
-> > > >
-> > > > What would be the better approach here?
-> > > > Should I add a new product ID to detect the bootloader mode in
-> > > > hid-cypress driver and send non-HID commands to switch to
-> > > > "application" mode in this driver?
-> > > > Anyway, I guess that I will drop this cyttsp5 driver and update the
-> > > > existing one, right?  
+> > >         memcpy(params, response.rap.params, 3);
 > > >
-> > > So it still accessible through HID, even when in bootloader mode? OK,
-> > > then I guess there are 2 options:
+> > > -       /* Set the battery bit */
+> > > -       params[0] |= BIT(4);
+> > > +       params[byte] |= BIT(bit);
 > > >
-> > > - if device is documented to always start in bootloader mode, you could
-> > >   have a small stub driver that switches it into application mode in its
-> > >   probe() code. The "bootloader" device will disappear and
-> > >   "application" device will appear, and standard driver (hid-multitouch)
-> > >   will bind to it.  
+> > >         return hidpp_send_rap_command_sync(hidpp_dev,
+> > > -                                       REPORT_ID_HIDPP_SHORT,
+> > > -                                       HIDPP_SET_REGISTER,
+> > > -                                       HIDPP_REG_GENERAL,
+> > > -                                       params, 3, &response);
+> > > +                                          REPORT_ID_HIDPP_SHORT,
+> > > +                                          HIDPP_SET_REGISTER,
+> > > +                                          register_address,
+> > > +                                          params, 3, &response);
+> > > +}
+> > > +
+> > > +
+> > > +#define HIDPP_REG_GENERAL                              0x00
+> > > +
+> > > +static int hidpp10_enable_battery_reporting(struct hidpp_device *hidpp_dev)
+> > > +{
+> > > +       return hidpp10_set_register_bit(hidpp_dev, HIDPP_REG_GENERAL, 0, 4);
+> > > +}
 > >
-> > Okay, I see. In our case, we do not have the timeout to 0 as after a
-> > moment, the application mode is automatically switched.
-> >  
+> > This hunk should be dealt in a separate patch (including the one function below)
+>
+> OK, will do in v2.
+>
+> > > [snip]
+> > > @@ -2399,7 +2524,8 @@ static int m560_raw_event(struct hid_device *hdev, u8 *data, int size)
+> > >                 input_report_rel(mydata->input, REL_Y, v);
 > > >
-> > > - if device supposed to come up in application mode unless configuration
-> > >   is damaged: I'd recommend doing what we do on Chrome OS and have some
-> > >   userspace software that runs on boot (or whenever device is
-> > >   discovered) and check if it has the latest firmware/configuration, and
-> > >   repair device if needed.  
+> > >                 v = hid_snto32(data[6], 8);
+> > > -               input_report_rel(mydata->input, REL_WHEEL, v);
+> > > +               hid_scroll_counter_handle_scroll(
+> > > +                               &hidpp->vertical_wheel_counter, v);
 > >
-> > I see.
-> >
-> > I tried to make the i2d-hid & hid-cypress working. This is not
-> > successful for the moment because I can not retrieve the correct
-> > bcdVersion. While debugging, I have noticed that the HID descriptors
-> > don't seem to be exactly the same:
-> >
-> > under i2c-hid.c:
-> >
-> > struct i2c_hid_desc {
-> >         __le16 wHIDDescLength;
-> >         __le16 bcdVersion;
-> >         __le16 wReportDescLength;
-> >         __le16 wReportDescRegister;
-> >         __le16 wInputRegister;
-> >         __le16 wMaxInputLength;
-> >         __le16 wOutputRegister;
-> >         __le16 wMaxOutputLength;
-> >         __le16 wCommandRegister;
-> >         __le16 wDataRegister;
-> >         __le16 wVendorID;
-> >         __le16 wProductID;
-> >         __le16 wVersionID;
-> >         __le32 reserved;
-> > } __packed;
-> >
-> > whereas in my driver, I have:
-> >
-> > struct cyttsp5_hid_desc {
-> >         __le16 hid_desc_len;
-> >         u8 packet_id;       <-- Different
-> >         u8 reserved_byte;   <-- Different
-> >         __le16 bcd_version;
-> >         __le16 report_desc_len;
-> >         __le16 report_desc_register;
-> >         __le16 input_register;
-> >         __le16 max_input_len;
-> >         __le16 output_register;
-> >         __le16 max_output_len;
-> >         __le16 command_register;
-> >         __le16 data_register;
-> >         __le16 vendor_id;
-> >         __le16 product_id;
-> >         __le16 version_id;
-> >         u8 reserved[4];
-> > } __packed;
-> >
-> > Have you already seen devices that are "HID compatible" with a different
-> > HID descriptor's content like this?  
-> 
-> That seems like a violation of Microsoft I2C HID protocol:
-> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
-> How do Cypress devices work in Windows? Might they have a compatible
-> firmware?
+> > The conversion input_report_rel(... REL_WHEEL,...) to
+> > hid_scroll_counter_handle_scroll() should be dealt in a separate
+> > patch.
+>
+> OK, I'll do that in v2, but might I ask why? I don't see how this
+> particular hunk is special.
 
-I do not know how it works on Windows, actually.
-The datasheet indicates that it is based on HID specification. I guess
-it is not "HID compliant" as I was thinking while reading it.
+I tend to consider that existing code rewrite need to be in their
+special commit, especially if the change isn't supposed to change the
+behaviour. This is my personal taste in case something goes wrong and
+(in this case) a m560 suddenly starts complaining about an issue with
+this mouse.
+I wouldn't mind too much if you rather keep the
+hid_scroll_counter_handle_scroll() introduction to this commit though.
 
-"Packet Interface Protocol (PIP) is a command and response-based
-communication protocol used to communicate with the
-TrueTouch device over the physical communication interface. PIP is
-modeled after Microsoft’s HID over I2C protocol specification, version
-1.00. However, PIP extends the functionality of HID over I2C protocol
-to support both I2C and SPI physical communication interfaces, raw
-data extraction, self-tests, bootloading, and configuration data
-programming."
+>
+> >
+> > >
+> > >                 input_sync(mydata->input);
+> > >         }
+> > > @@ -2527,6 +2653,71 @@ static int g920_get_config(struct hidpp_device *hidpp)
+> > >         return 0;
+> > >  }
+> > >
+> > > +/* -------------------------------------------------------------------------- */
+> > > +/* High-resolution scroll wheels                                              */
+> > > +/* -------------------------------------------------------------------------- */
+> > > +
+> > > +/**
+> > > + * struct hi_res_scroll_info - Stores info on a device's high-res scroll wheel.
+> > > + * @product_id: the HID product ID of the device being described.
+> > > + * @mm256_per_hi_res_unit: the distance moved by the user's finger for each
+> > > + *                         high-resolution unit reported by the device, in
+> > > + *                         256ths of a millimetre.
+> > > + */
+> > > +struct hi_res_scroll_info {
+> > > +       __u32 product_id;
+> > > +       int mm256_per_hi_res_unit;
+> > > +};
+> > > +
+> > > +static struct hi_res_scroll_info hi_res_scroll_devices[] = {
+> > > +       { /* Anywhere MX */
+> > > +         .product_id = 0x1017, .mm256_per_hi_res_unit = 114 },
+> > > +       { /* Performance MX */
+> > > +         .product_id = 0x101a, .mm256_per_hi_res_unit = 104 },
+> > > +       { /* M560 */
+> > > +         .product_id = 0x402d, .mm256_per_hi_res_unit = 111 },
+> > > +       { /* MX Master 2S */
+> > > +         .product_id = 0x4069, .mm256_per_hi_res_unit = 104 },
+> > > +       { .product_id = USB_DEVICE_ID_LOGITECH_MOUSE_MX_MASTER_2S_BT,
+> > > +         .mm256_per_hi_res_unit = 104 },
+> > > +};
+> > > +
+> > > +static int hi_res_scroll_look_up_mm256(__u32 product_id)
+> > > +{
+> > > +       int i;
+> > > +       int num_devices = sizeof(hi_res_scroll_devices)
+> > > +                         / sizeof(hi_res_scroll_devices[0]);
+> > > +       for (i = 0; i < num_devices; i++) {
+> > > +               if (hi_res_scroll_devices[i].product_id == product_id)
+> > > +                       return hi_res_scroll_devices[i].mm256_per_hi_res_unit;
+> > > +       }
+> > > +       return 104;
+> >
+> > 104?
+>
+> This seems like a sensible default value in case we don't have a value
+> for this mouse in hi_res_scroll_devices. I'll add a comment explaining
+> this in v2.
+>
+> >
+> > > [snip]
+> > > +static int hidpp_event(struct hid_device *hdev, struct hid_field *field,
+> > > +       struct hid_usage *usage, __s32 value)
+> > > +{
+> > > +       struct hidpp_device *hidpp = hid_get_drvdata(hdev);
+> > > +       struct hid_scroll_counter *counter = &hidpp->vertical_wheel_counter;
+> > > +
+> > > +       /* A scroll event may occur before the multiplier has been retrieved or
+> > > +        * the input device set, or high-res scroll enabling may fail. In such
+> > > +        * cases we must return early (falling back to default behaviour) to
+> > > +        * avoid a crash in hid_scroll_counter_handle_scroll.
+> > > +        */
+> > > +       if (!(hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL) || value == 0
+> > > +           || counter->dev == NULL || counter->resolution_multiplier == 0)
+> > > +               return 0;
+> >
+> > You are using usage_table to force the .event function to be called
+> > only on the WHEEL events. This is correct, but I have a feeling this
+> > will be harder to understand when we are going to extend the .event()
+> > function for other events.
+> > If you rather keep the cde that way, please add a comment at the
+> > beginning of the function stating that we are only called against
+> > WHEEL events because of usage_table.
+>
+> OK, I'll add the comment in v2.
+>
+> > > [snip]
+> > >
+> > > +#define LDJ_DEVICE(product) \
+> > > +       HID_DEVICE(BUS_USB, HID_GROUP_LOGITECH_DJ_DEVICE, \
+> > > +                  USB_VENDOR_ID_LOGITECH, (product))
+> > > +
+> > >  static const struct hid_device_id hidpp_devices[] = {
+> > >         { /* wireless touchpad */
+> > > -         HID_DEVICE(BUS_USB, HID_GROUP_LOGITECH_DJ_DEVICE,
+> > > -               USB_VENDOR_ID_LOGITECH, 0x4011),
+> > > +         LDJ_DEVICE(0x4011),
+> > >           .driver_data = HIDPP_QUIRK_CLASS_WTP | HIDPP_QUIRK_DELAYED_INIT |
+> > >                          HIDPP_QUIRK_WTP_PHYSICAL_BUTTONS },
+> > >         { /* wireless touchpad T650 */
+> > > -         HID_DEVICE(BUS_USB, HID_GROUP_LOGITECH_DJ_DEVICE,
+> > > -               USB_VENDOR_ID_LOGITECH, 0x4101),
+> > > +         LDJ_DEVICE(0x4101),
+> >
+> > The rewrite of the existing supported devices should be in a separate patch too.
+>
+> OK, will do.
+>
+> > > [snip]
+> > > diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+> > > index 249d49b6b16c..7926c275f258 100644
+> > > --- a/drivers/hid/hid-quirks.c
+> > > +++ b/drivers/hid/hid-quirks.c
+> > > @@ -463,6 +463,17 @@ static const struct hid_device_id hid_have_special_driver[] = {
+> > >  #endif
+> > >  #if IS_ENABLED(CONFIG_HID_LOGITECH_HIDPP)
+> > >         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_T651) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_M336_337_535_BT1) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_M336_337_535_BT2) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_M720_BT) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_ANYWHERE_2_BT1) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_ANYWHERE_2_BT2) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_ANYWHERE_2_BT3) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_ANYWHERE_2S_BT) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_MASTER_BT1) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_MASTER_BT2) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_MASTER_BT3) },
+> > > +       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_MX_MASTER_2S_BT) },
+> >
+> > Since v4.16, this should not be required anymore. Please drop the hunk
+> > if I am correct.
+>
+> Yes, it seems to work fine without it (at least for the MX Master 2S).
+> Unfortunately, while testing this I encountered a bug with high-res
+> scrolling over Bluetooth. (It seems that if you turn off the MX Master
+> 2S while it's connected over Bluetooth, we don't detect that and
+> remove the input device, meaning that when it reconnects the driver
+> thinks it's in high-res mode but the mouse is in low-res.) I'm
+> investigating, but in the meantime I'll remove the Bluetooth support
+> from v2 and add it back in later.
 
-> 
-> In any case, for all I2C HID things Benjamin (CCed) is your guy.
+As far as I can see, the MX Master 2S is connected over BLE. Bluez
+keeps the uhid node opened (and thus the existing bluetooth HID
+device) to be able to reconnect faster.
+I would suppose you should get notified in the connect event of a
+reconnection, but it doesn't seem to be the case.
 
-Okay, thanks.
-I am not so sure it is possible to use HID's drivers, now.
+Nestor, is there any event emitted by the mouse when it gets
+reconnected over BLE or is that a bluez issue?
 
-Best regards,
+Cheers,
+Benjamin
 
--- 
-Mylène Josserand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>
+> >
+> > Cheers,
+> > Benjamin
+> >
+> > >         { HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G920_WHEEL) },
+> > >  #endif
+> > >  #if IS_ENABLED(CONFIG_HID_LOGITECH_DJ)
+> > > --
+> > > 2.18.0.1017.ga543ac7ca45-goog
+> > >
+>
+> Thanks,
+>
+> Harry Cutts
+> Chrome OS Touch/Input team
