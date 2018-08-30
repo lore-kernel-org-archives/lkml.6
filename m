@@ -2,357 +2,102 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09527C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A294C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A290420658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E877620658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 12:20:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K+DGYIdL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A290420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzkbtvPe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E877620658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeH3QVG (ORCPT
+        id S1728837AbeH3QWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 12:21:06 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48094 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbeH3QVF (ORCPT
+        Thu, 30 Aug 2018 12:22:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37413 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbeH3QWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:21:05 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7UCIokR002462;
-        Thu, 30 Aug 2018 07:18:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535631530;
-        bh=pTwDO/nfJMkETP21zgjURp6t0dF54Mdz82OdRMaqUcY=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=K+DGYIdLDsrsQ4Xcd+I9ji1d6yyCFdCrWVKO85SB8+f6jBfzI3pvSHmhZK+3wbG3f
-         mT95+APT7MilF/3KAjmBm6bRhWa1ipU6il2aH/Rq4ZpjspgaCaNqoCCPRSAPQngedl
-         y4olpOqIZF9uVHNknORcSVERLwBnUQu5xHTbvD1A=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7UCIoxA006834;
-        Thu, 30 Aug 2018 07:18:50 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 30
- Aug 2018 07:18:47 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 30 Aug 2018 07:18:47 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7UCIhK0019829;
-        Thu, 30 Aug 2018 07:18:45 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <dan.j.williams@intel.com>, <vkoul@kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lars@metafoo.de>, <radheys@xilinx.com>
-Subject: [PATCH v2 1/2] dmaengine: Add metadata_ops for dma_async_tx_descriptor
-Date:   Thu, 30 Aug 2018 15:19:09 +0300
-Message-ID: <20180830121910.16005-2-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180830121910.16005-1-peter.ujfalusi@ti.com>
-References: <20180830121910.16005-1-peter.ujfalusi@ti.com>
+        Thu, 30 Aug 2018 12:22:18 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 2-v6so3289077pgo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 05:20:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h6eY6FjhIFaIwb/lsDYjz4Qar5nyf8S1g1nmAjb6huQ=;
+        b=UzkbtvPe4HlqZe1VE/sfz/HtXMjT9OO7loxbPZ64B1Z/0u80QX0rkCUHPxQMrcYde6
+         5ptmkASmcnIYZPc85M0k3L66dJ4J5bUB4Vgp09f+kv5zwEI+JHy89BwyQyMubIauG1JJ
+         fytj/5a0wvdIpP4cmbyN985paWljiFMdeKgXuX++4YycqPpuhbLeCWQLNqrVnmKBfcT4
+         wVLU4ARJUGfCHdHzSSJn7Oxp4QaZ+YvNRJ4aFaV0eY2SQa/osD65QHivPQFLFgo5MpAj
+         F3L7YTEuZDnkGBlnYdp07uterOVm19P6/PA6NC1H+DMxoMxWHIkpXu2WuWC+fl/V8Pbx
+         mPew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h6eY6FjhIFaIwb/lsDYjz4Qar5nyf8S1g1nmAjb6huQ=;
+        b=IomCzS3R3ir926ltB53SPlnXLgxdhUFrwln1vBJD/OW4SWV8Wxqf+AEEsIdndJwLlS
+         6u+U4x5i9IPsd+JEmJSQ1bEFRWTQf4TtSSzDWlJL4RPTxMPhSnB6J5zQSnIWo5ZITfUv
+         v7M/EZYpW/zmIqjaqW3EDzAZJ/hXBTrgvNhQ4MIXRrZfUCH53sDT3IBq9pHTCnsa7OZB
+         Id+MSLuUK/fS9VijQDuhio9HQ410FmX+8PBlNMxFlvrFbAQ6f/8ToWs7tHiCl7LRWVI6
+         VcKw3ZYrPa0S2sRTXst/EbjlTYqOzGXsr9B5ugGP+un7qYnaMI/IeCo/u16L4EU8Ux+B
+         k0KA==
+X-Gm-Message-State: APzg51DHSLqjkA7xngR0JDeIoVFz7kvppLhJ/WFQE9FEeoLOiIQsG95G
+        MEiLxgDN2ADYly3NuHVM5eE=
+X-Google-Smtp-Source: ANB0Vdb7f8ZInfjpwaPvaJrBkP/2Kej1urjliRea6MrovwxT8yRxL+Kz02FBYxRgeDarxFHTDLaTkg==
+X-Received: by 2002:a63:10c:: with SMTP id 12-v6mr9484223pgb.62.1535631625229;
+        Thu, 30 Aug 2018 05:20:25 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id y85-v6sm10879597pfa.170.2018.08.30.05.20.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 05:20:24 -0700 (PDT)
+Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Pavel Machek <pavel@ucw.cz>
+References: <20180829201659.GA29801@roeck-us.net>
+ <20180830071951.dv6wgnn6ikfhh7yt@suse.de>
+ <f6d9bdcd-98a6-fcf2-5308-936ffd714ea7@roeck-us.net>
+ <20180830113059.qj6yvw4ggktc7yex@suse.de>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <915dca84-c98a-fc63-3210-b21dd926b3d4@roeck-us.net>
+Date:   Thu, 30 Aug 2018 05:20:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180830113059.qj6yvw4ggktc7yex@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The metadata is best described as side band data or parameters traveling
-alongside the data DMAd by the DMA engine. It is data
-which is understood by the peripheral and the peripheral driver only, the
-DMA engine see it only as data block and it is not interpreting it in any
-way.
+On 08/30/2018 04:30 AM, Joerg Roedel wrote:
+> On Thu, Aug 30, 2018 at 03:11:26AM -0700, Guenter Roeck wrote:
+>> OVMF image:
+>>
+>> https://github.com/groeck/linux-build-test/blob/master/rootfs/firmware/OVMF-pure-efi-32.fd
+> 
+> Thanks, with this image I can reproduce the issue. Investigating now...
+> 
 
-The metadata can be different per descriptor as it is a parameter for the
-data being transferred.
+Excellent.
 
-If the DMA supports per descriptor metadata it can implement the attach,
-get_ptr/set_len callbacks.
+In case it matters: I can use the same 32-bit efi image to boot a 64-bit kernel
+without problems.
 
-Client drivers must only use either attach or get_ptr/set_len to avoid
-misconfiguration.
-
-Client driver can check if a given metadata mode is supported by the
-channel during probe time with
-dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_CLIENT);
-dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_ENGINE);
-
-and based on this information can use either mode.
-
-Wrappers are also added for the metadata_ops.
-
-To be used in DESC_METADATA_CLIENT mode:
-dmaengine_desc_attach_metadata()
-
-To be used in DESC_METADATA_ENGINE mode:
-dmaengine_desc_get_metadata_ptr()
-dmaengine_desc_set_metadata_len()
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/dmaengine.c   |  73 ++++++++++++++++++++++++++
- include/linux/dmaengine.h | 108 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 181 insertions(+)
-
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index f1a441ab395d..53bd1eae23f2 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -1306,6 +1306,79 @@ void dma_async_tx_descriptor_init(struct dma_async_tx_descriptor *tx,
- }
- EXPORT_SYMBOL(dma_async_tx_descriptor_init);
- 
-+static inline int desc_check_and_set_metadata_mode(
-+	struct dma_async_tx_descriptor *desc, enum dma_desc_metadata_mode mode)
-+{
-+	/* Make sure that the metadata mode is not mixed */
-+	if (!desc->desc_metadata_mode) {
-+		if (dmaengine_is_metadata_mode_supported(desc->chan, mode))
-+			desc->desc_metadata_mode = mode;
-+		else
-+			return -ENOTSUPP;
-+	} else if (desc->desc_metadata_mode != mode) {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+int dmaengine_desc_attach_metadata(struct dma_async_tx_descriptor *desc,
-+				   void *data, size_t len)
-+{
-+	int ret;
-+
-+	if (!desc)
-+		return -EINVAL;
-+
-+	ret = desc_check_and_set_metadata_mode(desc, DESC_METADATA_CLIENT);
-+	if (ret)
-+		return ret;
-+
-+	if (!desc->metadata_ops || !desc->metadata_ops->attach)
-+		return -ENOTSUPP;
-+
-+	return desc->metadata_ops->attach(desc, data, len);
-+}
-+EXPORT_SYMBOL(dmaengine_desc_attach_metadata);
-+
-+void *dmaengine_desc_get_metadata_ptr(struct dma_async_tx_descriptor *desc,
-+				      size_t *payload_len, size_t *max_len)
-+{
-+	int ret;
-+
-+	if (!desc)
-+		return ERR_PTR(-EINVAL);
-+
-+	ret = desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (!desc->metadata_ops || !desc->metadata_ops->get_ptr)
-+		return ERR_PTR(-ENOTSUPP);
-+
-+	return desc->metadata_ops->get_ptr(desc, payload_len, max_len);
-+}
-+EXPORT_SYMBOL(dmaengine_desc_get_metadata_ptr);
-+
-+int dmaengine_desc_set_metadata_len(struct dma_async_tx_descriptor *desc,
-+				    size_t payload_len)
-+{
-+	int ret;
-+
-+	if (!desc)
-+		return -EINVAL;
-+
-+	ret = desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
-+	if (ret)
-+		return ret;
-+
-+	if (!desc->metadata_ops || !desc->metadata_ops->set_len)
-+		return -ENOTSUPP;
-+
-+	return desc->metadata_ops->set_len(desc, payload_len);
-+}
-+EXPORT_SYMBOL(dmaengine_desc_set_metadata_len);
-+
- /* dma_wait_for_async_tx - spin wait for a transaction to complete
-  * @tx: in-flight transaction to wait on
-  */
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 3db833a8c542..10ff71b13eef 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -231,6 +231,58 @@ typedef struct { DECLARE_BITMAP(bits, DMA_TX_TYPE_END); } dma_cap_mask_t;
-  * @bytes_transferred: byte counter
-  */
- 
-+/**
-+ * enum dma_desc_metadata_mode - per descriptor metadata mode types supported
-+ * @DESC_METADATA_CLIENT - the metadata buffer is allocated/provided by the
-+ *  client driver and it is attached (via the dmaengine_desc_attach_metadata()
-+ *  helper) to the descriptor.
-+ *
-+ * Client drivers interested to use this mode can follow:
-+ * - DMA_MEM_TO_DEV / DEV_MEM_TO_MEM:
-+ *   1. prepare the descriptor (dmaengine_prep_*)
-+ *	construct the metadata in the client's buffer
-+ *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
-+ *	descriptor
-+ *   3. submit the transfer
-+ * - DMA_DEV_TO_MEM:
-+ *   1. prepare the descriptor (dmaengine_prep_*)
-+ *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
-+ *	descriptor
-+ *   3. submit the transfer
-+ *   4. when the transfer is completed, the metadata should be available in the
-+ *	attached buffer
-+ *
-+ * @DESC_METADATA_ENGINE - the metadata buffer is allocated/managed by the DMA
-+ *  driver. The client driver can ask for the pointer, maximum size and the
-+ *  currently used size of the metadata and can directly update or read it.
-+ *  dmaengine_desc_get_metadata_ptr() and dmaengine_desc_set_metadata_len() is
-+ *  provided as helper functions.
-+ *
-+ * Client drivers interested to use this mode can follow:
-+ * - DMA_MEM_TO_DEV / DEV_MEM_TO_MEM:
-+ *   1. prepare the descriptor (dmaengine_prep_*)
-+ *   2. use dmaengine_desc_get_metadata_ptr() to get the pointer to the engine's
-+ *	metadata area
-+ *   3. update the metadata at the pointer
-+ *   4. use dmaengine_desc_set_metadata_len()  to tell the DMA engine the amount
-+ *	of data the client has placed into the metadata buffer
-+ *   5. submit the transfer
-+ * - DMA_DEV_TO_MEM:
-+ *   1. prepare the descriptor (dmaengine_prep_*)
-+ *   2. submit the transfer
-+ *   3. on transfer completion, use dmaengine_desc_get_metadata_ptr() to get the
-+ *	pointer to the engine's metadata are
-+ *   4. Read out the metadate from the pointer
-+ *
-+ * Note: the two mode is not compatible and clients must use one mode for a
-+ * descriptor.
-+ */
-+enum dma_desc_metadata_mode {
-+	DESC_METADATA_NONE = 0,
-+	DESC_METADATA_CLIENT = BIT(0),
-+	DESC_METADATA_ENGINE = BIT(1),
-+};
-+
- struct dma_chan_percpu {
- 	/* stats */
- 	unsigned long memcpy_count;
-@@ -494,6 +546,18 @@ struct dmaengine_unmap_data {
- 	dma_addr_t addr[0];
- };
- 
-+struct dma_async_tx_descriptor;
-+
-+struct dma_descriptor_metadata_ops {
-+	int (*attach)(struct dma_async_tx_descriptor *desc, void *data,
-+		      size_t len);
-+
-+	void *(*get_ptr)(struct dma_async_tx_descriptor *desc,
-+			 size_t *payload_len, size_t *max_len);
-+	int (*set_len)(struct dma_async_tx_descriptor *desc,
-+		       size_t payload_len);
-+};
-+
- /**
-  * struct dma_async_tx_descriptor - async transaction descriptor
-  * ---dma generic offload fields---
-@@ -507,6 +571,11 @@ struct dmaengine_unmap_data {
-  * descriptor pending. To be pushed on .issue_pending() call
-  * @callback: routine to call after this operation is complete
-  * @callback_param: general parameter to pass to the callback routine
-+ * @desc_metadata_mode: core managed metadata mode to protect mixed use of
-+ *	DESC_METADATA_CLIENT or DESC_METADATA_ENGINE. Otherwise
-+ *	DESC_METADATA_NONE
-+ * @metadata_ops: DMA driver provided metadata mode ops, need to be set by the
-+ *	DMA driver if metadata mode is supported with the descriptor
-  * ---async_tx api specific fields---
-  * @next: at completion submit this descriptor
-  * @parent: pointer to the next level up in the dependency chain
-@@ -523,6 +592,8 @@ struct dma_async_tx_descriptor {
- 	dma_async_tx_callback_result callback_result;
- 	void *callback_param;
- 	struct dmaengine_unmap_data *unmap;
-+	enum dma_desc_metadata_mode desc_metadata_mode;
-+	struct dma_descriptor_metadata_ops *metadata_ops;
- #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
- 	struct dma_async_tx_descriptor *next;
- 	struct dma_async_tx_descriptor *parent;
-@@ -685,6 +756,7 @@ struct dma_filter {
-  * @global_node: list_head for global dma_device_list
-  * @filter: information for device/slave to filter function/param mapping
-  * @cap_mask: one or more dma_capability flags
-+ * @desc_metadata_modes: supported metadata modes by the DMA device
-  * @max_xor: maximum number of xor sources, 0 if no capability
-  * @max_pq: maximum number of PQ sources and PQ-continue capability
-  * @copy_align: alignment shift for memcpy operations
-@@ -749,6 +821,7 @@ struct dma_device {
- 	struct list_head global_node;
- 	struct dma_filter filter;
- 	dma_cap_mask_t  cap_mask;
-+	enum dma_desc_metadata_mode desc_metadata_modes;
- 	unsigned short max_xor;
- 	unsigned short max_pq;
- 	enum dmaengine_alignment copy_align;
-@@ -935,6 +1008,41 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
- 						    len, flags);
- }
- 
-+static inline bool dmaengine_is_metadata_mode_supported(struct dma_chan *chan,
-+		enum dma_desc_metadata_mode mode)
-+{
-+	if (!chan)
-+		return false;
-+
-+	return !!(chan->device->desc_metadata_modes & mode);
-+}
-+
-+#ifdef CONFIG_DMA_ENGINE
-+int dmaengine_desc_attach_metadata(struct dma_async_tx_descriptor *desc,
-+				   void *data, size_t len);
-+void *dmaengine_desc_get_metadata_ptr(struct dma_async_tx_descriptor *desc,
-+				      size_t *payload_len, size_t *max_len);
-+int dmaengine_desc_set_metadata_len(struct dma_async_tx_descriptor *desc,
-+				    size_t payload_len);
-+#else /* CONFIG_DMA_ENGINE */
-+static inline int dmaengine_desc_attach_metadata(
-+		struct dma_async_tx_descriptor *desc, void *data, size_t len)
-+{
-+	return -EINVAL;
-+}
-+static inline void *dmaengine_desc_get_metadata_ptr(
-+		struct dma_async_tx_descriptor *desc, size_t *payload_len,
-+		size_t *max_len)
-+{
-+	return NULL;
-+}
-+static inline int dmaengine_desc_set_metadata_len(
-+		struct dma_async_tx_descriptor *desc, size_t payload_len)
-+{
-+	return -EINVAL;
-+}
-+#endif /* CONFIG_DMA_ENGINE */
-+
- /**
-  * dmaengine_terminate_all() - Terminate all active DMA transfers
-  * @chan: The channel for which to terminate the transfers
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+Guenter
