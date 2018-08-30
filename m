@@ -3,76 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B8BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59EF2082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59EF2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 22BC32082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BC32082C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbeH3P4M (ORCPT
+        id S1728636AbeH3P4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:56:12 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50003 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbeH3P4M (ORCPT
+        Thu, 30 Aug 2018 11:56:52 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35594 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727388AbeH3P4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:56:12 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvLWl-0002MZ-OD; Thu, 30 Aug 2018 13:54:19 +0200
-Date:   Thu, 30 Aug 2018 13:54:19 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Ingo Molnar <mingo@elte.hu>,
-        "H . Peter Anvin" <hpa@linux.intel.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
- NO_BOOTMEM
-In-Reply-To: <20180830111207.GE2656@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de>
-References: <20180830090319.985-1-feng.tang@intel.com> <20180830104401.GZ24124@hirez.programming.kicks-ass.net> <20180830111207.GE2656@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 30 Aug 2018 11:56:52 -0400
+Received: by mail-qk0-f196.google.com with SMTP id 89-v6so5511392qkp.2;
+        Thu, 30 Aug 2018 04:55:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hMkJRfcvKnFcYB76xEo03K/fDVUWqwMLhV2vmNlOfU8=;
+        b=ct9PweLNJk45TIg4RlPR/ic9vvnXvO2OBWlPAbMfBkwvi8OgBoV9QotVQH4MsG+Q0l
+         fAvzdrbPC74ukVFaFq6lNIgwnn3mZCdmCnjBAsfARfH7CLJBpP2mjE0+5q3SDCVmELMg
+         X7nmK+0ozdpkG1gZHv71MlEi7JAi7yLp304S6+DYknjjSQB+TxjOihbF1IUoKhQF8uNE
+         jPqBOwK6CrW5GZuB4gkV/0mJzNbeE4QjbjNbdLjO19PBJn2qg6tOsWv3Srg27j934kX4
+         tOJ5wnlYN4nekUrreA0D0Hw1T5XSzzL657NKplrMquqSwviQ5HX3+UBVSwgQfF4OJfJF
+         ACRA==
+X-Gm-Message-State: APzg51Acr5OSxJZNLX3WkVDelojxBgLDXqkmPCq3NqkjAoYg/m/2DwSz
+        Lz7yQ5SFh+sjXksEtKQuzg/h1fAmYKpPVIMuxXI=
+X-Google-Smtp-Source: ANB0VdY3U6zDi9HUaEjrukl9kVYL1jk9k8HYjkWxAZ8zczTsoepeL9dt7Kp6lDjz7YbCDk/VNICNjQAuesChPEqkj4E=
+X-Received: by 2002:a37:1b91:: with SMTP id m17-v6mr10932232qkh.173.1535630105117;
+ Thu, 30 Aug 2018 04:55:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20180829140409.833488-1-arnd@arndb.de> <20180830110453.GC1473@alphalink.fr>
+In-Reply-To: <20180830110453.GC1473@alphalink.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 30 Aug 2018 13:54:48 +0200
+Message-ID: <CAK8P3a1WSa5yPWXYGieAc0+Xk=CAy_G-RhNNcQBsGQGOU-8WfA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/5] pppoe: fix PPPOEIOCSFWD compat handling
+To:     g.nault@alphalink.fr
+Cc:     Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>, mitch@sfgoth.com,
+        mostrows@earthlink.net, jchapman@katalix.com, xeb@mail.ru,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018, Michal Hocko wrote:
-> On Thu 30-08-18 12:44:02, Peter Zijlstra wrote:
-> > On Thu, Aug 30, 2018 at 05:03:19PM +0800, Feng Tang wrote:
-> > > The root cause is that when CONFIG_NO_BOOTMEM=y,  before
-> > > e820__memblock_setup() is called there is no memory for bootmem
-> > > to allocate,
-> > 
-> > Which you bloody well asked for by using NO_BOOTMEM=y.
-> > 
-> > Going down this route; adding hacks for every little thing that does
-> > want bootmem, completely defeats the purpose.
-> > 
-> > If anything, make the earlycon thing depend on NO_BOOTMEM=n. That also
-> > solves your problem. No earlycon, no panic.
-> 
-> Well, there is endeavor to remove bootmem allocator altogether. So
-> making earlycon depend on NO_BOOTMEM=n doesn't sound like a good fit to
+On Thu, Aug 30, 2018 at 1:04 PM Guillaume Nault <g.nault@alphalink.fr> wrote:
+>
+> On Wed, Aug 29, 2018 at 04:03:26PM +0200, Arnd Bergmann wrote:
+> > Support for handling the PPPOEIOCSFWD ioctl in compat mode was added in
+> > linux-2.5.69 along with hundreds of other commands, but was always broken
+> > sincen only the structure is compatible, but the command number is not,
+> > due to the size being sizeof(size_t), or at first sizeof(sizeof((struct
+> > sockaddr_pppox)), which is different on 64-bit architectures.
+> >
+> And the implementation was broken until 2016 (see 29e73269aa4d ("pppoe:
+> fix reference counting in PPPoE proxy")), and nobody ever noticed. I
+> should probably have removed this ioctl entirely instead of fixing it.
+> Clearly, it has never been used.
+>
+> If you think it's worth fixing (as opposed to dropping this ioctl or
+> its compat mode), then,
+> Acked-by: Guillaume Nault <g.nault@alphalink.fr>
 
-If we want to remove bootmem, then reintroducing it with a static bootmem
-section doesn't make any sense at all.
+I don't care much, but fixing it seems seems easier than coming
+up with a convincing rationale for dropping.
 
-Thanks,
+I'll update the changelog text to include your additional background
+information though, unless someone else prefers to have it dropped.
 
-	tglx
-
-
+       Arnd
