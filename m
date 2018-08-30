@@ -2,126 +2,93 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE05FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADD8C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23962082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23962082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 615DC2082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jsl6yxUD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615DC2082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbeH3W66 (ORCPT
+        id S1728184AbeH3W7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:58:58 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40048 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbeH3W5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:57:41 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4t-0006Om-Nd; Thu, 30 Aug 2018 12:54:01 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fvS4o-0000tZ-RG; Thu, 30 Aug 2018 12:53:54 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 30 Aug 2018 12:53:46 -0600
-Message-Id: <20180830185352.3369-8-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180830185352.3369-1-logang@deltatee.com>
-References: <20180830185352.3369-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and check support for requests
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Thu, 30 Aug 2018 18:59:09 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45550 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbeH3W7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:59:08 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u83-v6so8089363lje.12;
+        Thu, 30 Aug 2018 11:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BYvS0O5X6jqdECcgyHa7h20uv2YPuOkJVyKAAqt1BCE=;
+        b=Jsl6yxUDup4y8qtj0Siw+BBVOGT8P22tzEliFf5NYwy39KkOxtdDELmNUMjvdqrwfI
+         x2nmVH0sbLqYfOZ4qU9TMljfAy2qNHHbwLy27BTdgUl3w+bdmrxN5tyC3VaBteVJhy1p
+         PdL6tZPrZVbTeHjhZ2wJg0Zhh2wbHNkqhB78DXKUqZ1TpxrXIkukHgma01ykFKKU/F54
+         a4f2oF/X6kB1uMusqNagU9Fq1pJf0/cDR3hwZZ48/a0vlkb4GpjrOTAsgmhAxy2HS/Hv
+         dzxYC5b3tcJbGFQVLIUFz65dJ1qyrQcbpIiBEpTh7MZA9ysNBU+5jYO7mpWobD47HfVW
+         zTxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BYvS0O5X6jqdECcgyHa7h20uv2YPuOkJVyKAAqt1BCE=;
+        b=Yajurdr2zgZ+byqD4T1UkMZWIFkF8ent/5eOHeHHwwRkvSH14/qBleLZXnn7N6MPff
+         2G1ehsOUp/8g+qWegc5eukSedwrI5HvSGkvZCFQTvJf4c5jBODUchQdBQin0nvxYfCUM
+         DIpsblnOjKXctar32IBmIKMJs2Pw5vpQCCz2dauOA6oZYlA31eFfy45sn6afHPeAQ9As
+         M+fc69ETlTbTZshaUO97gjUg0bJvFgTFsDAgf3rHcFdXS9MR+/NDHMtgc6MUchxljqm5
+         5AGUuXhTm/z+EipQABbdMmE/3wWwntKe4uYOMm7ircC8KQMps6PguaJywGv/qfuoiWbu
+         vLAQ==
+X-Gm-Message-State: APzg51Dp3SYbSgRwv5yG5GyJj5ixZkdx6FHThrKOa1Jg/G45lckyAyo7
+        cy9NMfOPViuY+2EiFJF3pQZzvODq
+X-Google-Smtp-Source: ANB0VdZIuA1xn//SKZcAKX3sE4MAcbqDumW8slG2N7p0o+LBPWqWPbnUYI/bh+J4TQ97wiVAurTBFw==
+X-Received: by 2002:a2e:2bd3:: with SMTP id r80-v6mr8529105ljr.57.1535655332936;
+        Thu, 30 Aug 2018 11:55:32 -0700 (PDT)
+Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id u28-v6sm1373087ljd.61.2018.08.30.11.55.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 11:55:32 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] EMC fixes for Tegra30+
+Date:   Thu, 30 Aug 2018 21:54:00 +0300
+Message-Id: <20180830185404.7224-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_PCI_P2P is introduced meaning a driver's request queue
-supports targeting P2P memory.
+Hello,
 
-When a request is submitted we check if PCI P2PDMA memory is assigned
-to the first page in the bio. If it is, we ensure the queue it's
-submitted to supports it, and enforce REQ_NOMERGE.
+This patch series fixes couple bugs in the memory self-refresh code.
+The EMC / MC state is properly restored after patches being applied,
+please review.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- block/blk-core.c       | 14 ++++++++++++++
- include/linux/blkdev.h |  3 +++
- 2 files changed, 17 insertions(+)
+Dmitry Osipenko (4):
+  ARM: tegra: Fix missed EMC registers latching on resume from LP1 on
+    Tegra30+
+  ARM: tegra: Fix DRAM refresh-interval clobbering on resume from LP1 on
+    Tegra30
+  ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
+  ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index dee56c282efb..cc0289c7b983 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2264,6 +2264,20 @@ generic_make_request_checks(struct bio *bio)
- 	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_rq_based(q))
- 		goto not_supported;
- 
-+	/*
-+	 * Ensure PCI P2PDMA memory is not used in requests to queues that
-+	 * have no support. This should never happen if the higher layers using
-+	 * P2PDMA do the right thing and use the proper P2PDMA client
-+	 * infrastructure. Also, ensure such requests use REQ_NOMERGE
-+	 * seeing requests can not mix P2PDMA and non-P2PDMA memory at
-+	 * this time.
-+	 */
-+	if (bio->bi_vcnt && is_pci_p2pdma_page(bio->bi_io_vec->bv_page)) {
-+		if (WARN_ON_ONCE(!blk_queue_pci_p2pdma(q)))
-+			goto not_supported;
-+		bio->bi_opf |= REQ_NOMERGE;
-+	}
-+
- 	if (should_fail_bio(bio))
- 		goto end_io;
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d6869e0e2b64..7bf80ca802e1 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -699,6 +699,7 @@ struct request_queue {
- #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
- #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
- #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
-+#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports pci p2p requests */
- 
- #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
- 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-@@ -731,6 +732,8 @@ bool blk_queue_flag_test_and_clear(unsigned int flag, struct request_queue *q);
- #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
- #define blk_queue_scsi_passthrough(q)	\
- 	test_bit(QUEUE_FLAG_SCSI_PASSTHROUGH, &(q)->queue_flags)
-+#define blk_queue_pci_p2pdma(q)	\
-+	test_bit(QUEUE_FLAG_PCI_P2PDMA, &(q)->queue_flags)
- 
- #define blk_noretry_request(rq) \
- 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
+ arch/arm/mach-tegra/iomap.h         |  9 ++++++++
+ arch/arm/mach-tegra/sleep-tegra30.S | 32 +++++++++++++++++++++++++++--
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+
 -- 
-2.11.0
+2.18.0
 
