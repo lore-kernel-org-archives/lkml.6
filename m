@@ -2,223 +2,237 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A72FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2099C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60E520837
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:29:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="br9e3Osg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60E520837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C45120839
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C45120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeH3WcZ (ORCPT
+        id S1728167AbeH3Wee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:32:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeH3WcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:32:25 -0400
-Received: from jouet.infradead.org (unknown [189.43.51.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 349DE20835;
-        Thu, 30 Aug 2018 18:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535653737;
-        bh=nZXCBhnAYxIvZExdTki87i1+Ypmu1nE4Br9Su32v/C8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=br9e3OsgvTqZe9qvqtqkIxsiRBgowbGJBtxYJ3atkeVRNDPwDuCrAad7mcezLNJD5
-         gvkXcv3cmAWagAe1hFXM2Wxh99jPIIuiDA4CNu9QuhqVw9VRL1N4ZaE7rmM4qVxIBn
-         ItYRTV1Om7x8VJ+2r7VF/nAEMY7Hdg3p7ixRkSkM=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 6A7A7141C3F; Thu, 30 Aug 2018 15:28:48 -0300 (-03)
-Date:   Thu, 30 Aug 2018 15:28:48 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Benjamin Peterson <benjamin@python.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf trace beautify: Beautify flags of mount(2) and
- umount(2).
-Message-ID: <20180830182848.GE6097@kernel.org>
-References: <20180828035344.31500-1-benjamin@python.org>
+        Thu, 30 Aug 2018 18:34:34 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:52678 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeH3Wec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:34:32 -0400
+Received: by mail-io0-f199.google.com with SMTP id q20-v6so8431609iod.19
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 11:31:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zOHXeHWZ2VfFwFzuhN7DO0F/08mVk78jM8m5nU16mcM=;
+        b=OtQXbK959usppjoJDFgubliELcxfgHA33VbnRHeZ+pX5Qbm5aWgruVdCqbHo9bXaKQ
+         5Jrf/1SPgiQcC0hhUBqq+uU27/HW3Ua3uRDlKyQ1DAWfj0VqVMU52LT76h40qFviRxvd
+         Z+X6vayEc51mxvwxhuZqrRo0h+J7jPVp17IQyMyqCoJNUH/BFn8cysYa+NUe6prdHozo
+         yrGc0dpaK7S8tnD4HQND5ADNmvXLyGZXGhrTgAn2BV4aEFXmEbg6C9cvz9nKTwhxdVwx
+         /1hfV8xtb2rWGenLXhR2sxCkbkLHD6dretiCy1wQs7qcK+SaBvD41qojlckCpIJYXr8F
+         JqMg==
+X-Gm-Message-State: APzg51CpTGptjcShLqsLPwlVJ1DHlILqENywn+Y5DheC639Y5GGDmzaU
+        V29P3nuQyf7Ovhi88gE+x4JbGjvUaWIgkUHU8P4IfXsDfENz
+X-Google-Smtp-Source: ANB0VdYcIGuAPwqeAim4GnUuJ4FQiV126gdqHGZzqr9G7BMXGoEGEbvfTRfbo+f18uLfDWGUPagQwIcBZOMoWvIeBvLWwk4DLQKX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828035344.31500-1-benjamin@python.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a6b:984d:: with SMTP id a74-v6mr5250349ioe.84.1535653863544;
+ Thu, 30 Aug 2018 11:31:03 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 11:31:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000008e7340574ab473a@google.com>
+Subject: possible deadlock in __might_fault (3)
+From:   syzbot <syzbot+6884a790570df1022b2d@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, gregkh@linuxfoundation.org, jrdr.linux@gmail.com,
+        keescook@chromium.org, kstewart@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk, zaitcev@redhat.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Aug 27, 2018 at 08:53:44PM -0700, Benjamin Peterson escreveu:
-> Example output of perf trace -e mount,umount2:
-> 
->   6243.930 ( 0.052 ms): mount/30976 mount(dev_name: 0x55dc541bb920, dir_name: 0x55dc541bc960, type: 0x55dc541b9c40, flags: BIND) = 0
->   7851.821 (26.015 ms): umount/30983 umount2(name: 0x558daa82cf50, flags: MNT_FORCE                        ) = 0
-> 
-> Signed-off-by: Benjamin Peterson <benjamin@python.org>
+Hello,
 
-So, I tried:
+syzbot found the following crash on:
 
-Before your patch:
+HEAD commit:    58c3f14f86c9 Merge tag 'riscv-for-linus-4.19-rc2' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13795092400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+dashboard link: https://syzkaller.appspot.com/bug?extid=6884a790570df1022b2d
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
 
-  # perf trace -e *mount* mount /dev/mapper/fedora-home /s
-     0.000 ( 4.335 ms): mount/3126 mount(dev_name: 0x55deecc4d480, dir_name: 0x55deecc4d4a0, type: 0x55deecc53880, flags: 3236757504) = 0
-  #
-  # perf trace -e *mount* umount /dev/mapper/fedora-home /s
-         ? (         ): umount/3138  ... [continued]: umount2()) = 0
-    11.576 (umount:  0.004 ms): /s: not mounted.umount/
-3138 umount2(arg0: 94501956754656, arg1: 0, arg2: 1, arg3: 140051050083104, arg4: 4, arg5: 94501956755136) = -1 EINVAL Invalid argument
-  #
+Unfortunately, I don't have any reproducer for this crash yet.
 
-After:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6884a790570df1022b2d@syzkaller.appspotmail.com
 
-[root@jouet ~]# perf trace -e *mount* mount /dev/mapper/fedora-home /s
-     0.000 ( 1.213 ms): mount/5244 mount(dev_name: 0x5558c1169480, dir_name: 0x5558c11694a0, type: 0x5558c116f880, flags: ) = 0
-[root@jouet ~]# perf trace -e *mount* umount /s
-     0.000 ( 9.241 ms): umount/5251 umount2(name: 0x55f74a986480                                          ) = 0
 
-The flags for mount got empty? Can you pleaes check that? I.e. using the
-default mount options, not specifying a 'bind' mount like you did.
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0-rc1+ #118 Not tainted
+------------------------------------------------------
+syz-executor7/25985 is trying to acquire lock:
+00000000bd99782f (&mm->mmap_sem){++++}, at: __might_fault+0xfb/0x1e0  
+mm/memory.c:4577
 
-I'm splitting this patch so that the aliasing of 'umount2' to 'umount'
-gets merged now,
+but task is already holding lock:
+00000000a8e804bc (&rp->fetch_lock){+.+.}, at: mon_bin_fetch+0x37/0x340  
+drivers/usb/mon/mon_bin.c:909
 
-Check my perf/core branch at:
+which lock already depends on the new lock.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
 
-- Arnaldo
+the existing dependency chain (in reverse order) is:
 
-> ---
->  tools/perf/builtin-trace.c            |  5 ++
->  tools/perf/trace/beauty/mount_flags.c | 79 +++++++++++++++++++++++++++
->  2 files changed, 84 insertions(+)
->  create mode 100644 tools/perf/trace/beauty/mount_flags.c
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 22ab8e67c760..3cffb25d1928 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -603,6 +603,7 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
->  #include "trace/beauty/futex_val3.c"
->  #include "trace/beauty/mmap.c"
->  #include "trace/beauty/mode_t.c"
-> +#include "trace/beauty/mount_flags.c"
->  #include "trace/beauty/msg_flags.c"
->  #include "trace/beauty/open_flags.c"
->  #include "trace/beauty/perf_event_open.c"
-> @@ -722,6 +723,8 @@ static struct syscall_fmt {
->  	  .arg = { [0] = { .scnprintf = SCA_HEX,	/* addr */ },
->  		   [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ },
->  		   [3] = { .scnprintf = SCA_MMAP_FLAGS,	/* flags */ }, }, },
-> +	{ .name     = "mount",
-> +	  .arg = { [3] = { .scnprintf = SCA_MOUNT_FLAGS, /* flags */ }, }, },
->  	{ .name	    = "mprotect",
->  	  .arg = { [0] = { .scnprintf = SCA_HEX,	/* start */ },
->  		   [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ }, }, },
-> @@ -830,6 +833,8 @@ static struct syscall_fmt {
->  	  .arg = { [2] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
->  	{ .name	    = "tkill",
->  	  .arg = { [1] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
-> +	{ .name     = "umount2", .alias = "umount",
-> +	  .arg = { [1] = { .scnprintf = SCA_UMOUNT_FLAGS, /* flags */ }, }, },
->  	{ .name	    = "uname", .alias = "newuname", },
->  	{ .name	    = "unlinkat",
->  	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
-> diff --git a/tools/perf/trace/beauty/mount_flags.c b/tools/perf/trace/beauty/mount_flags.c
-> new file mode 100644
-> index 000000000000..86790b82c869
-> --- /dev/null
-> +++ b/tools/perf/trace/beauty/mount_flags.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <sys/mount.h>
-> +
-> +static size_t syscall_arg__scnprintf_mount_flags(char *bf, size_t size, struct syscall_arg *arg)
-> +{
-> +	size_t printed = 0;
-> +	int flags = arg->val;
-> +
-> +	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
-> +		flags &= ~MS_MGC_MSK;
-> +
-> +#define	P_FLAG(n) \
-> +	if (flags & MS_##n) { \
-> +		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
-> +		flags &= ~MS_##n; \
-> +	}
-> +
-> +	P_FLAG(RDONLY);
-> +	P_FLAG(NOSUID);
-> +	P_FLAG(NODEV);
-> +	P_FLAG(NOEXEC);
-> +	P_FLAG(SYNCHRONOUS);
-> +	P_FLAG(REMOUNT);
-> +	P_FLAG(MANDLOCK);
-> +	P_FLAG(DIRSYNC);
-> +	P_FLAG(NOATIME);
-> +	P_FLAG(NODIRATIME);
-> +	P_FLAG(BIND);
-> +	P_FLAG(MOVE);
-> +	P_FLAG(REC);
-> +	P_FLAG(SILENT);
-> +	P_FLAG(POSIXACL);
-> +	P_FLAG(UNBINDABLE);
-> +	P_FLAG(PRIVATE);
-> +	P_FLAG(SLAVE);
-> +	P_FLAG(SHARED);
-> +	P_FLAG(RELATIME);
-> +	P_FLAG(KERNMOUNT);
-> +	P_FLAG(I_VERSION);
-> +	P_FLAG(STRICTATIME);
-> +	P_FLAG(LAZYTIME);
-> +	P_FLAG(ACTIVE);
-> +	P_FLAG(NOUSER);
-> +
-> +#undef P_FLAG
-> +
-> +	if (flags)
-> +		printed += scnprintf(bf + printed, size - printed, "%s%#x", printed ? "|" : "", flags);
-> +
-> +	return printed;
-> +}
-> +
-> +#define SCA_MOUNT_FLAGS syscall_arg__scnprintf_mount_flags
-> +
-> +static size_t syscall_arg__scnprintf_umount_flags(char *bf, size_t size, struct syscall_arg *arg)
-> +{
-> +	size_t printed = 0;
-> +	int flags = arg->val;
-> +
-> +#define	P_FLAG(n) \
-> +	if (flags & n) { \
-> +		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
-> +		flags &= ~n; \
-> +	}
-> +
-> +	P_FLAG(MNT_FORCE);
-> +	P_FLAG(MNT_DETACH);
-> +	P_FLAG(MNT_EXPIRE);
-> +	P_FLAG(UMOUNT_NOFOLLOW);
-> +
-> +#undef P_FLAG
-> +
-> +	if (flags)
-> +		printed += scnprintf(bf + printed, size - printed, "%s%#x", printed ? "|" : "", flags);
-> +
-> +	return printed;
-> +}
-> +
-> +#define SCA_UMOUNT_FLAGS syscall_arg__scnprintf_umount_flags
-> -- 
-> 2.17.1
+-> #1 (&rp->fetch_lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+        mon_bin_vma_fault+0xdc/0x4a0 drivers/usb/mon/mon_bin.c:1237
+        __do_fault+0xee/0x450 mm/memory.c:3240
+        do_read_fault mm/memory.c:3652 [inline]
+        do_fault mm/memory.c:3752 [inline]
+        handle_pte_fault mm/memory.c:3983 [inline]
+        __handle_mm_fault+0x2b4a/0x4350 mm/memory.c:4107
+        handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+        faultin_page mm/gup.c:518 [inline]
+        __get_user_pages+0x823/0x1b50 mm/gup.c:718
+        populate_vma_page_range+0x2db/0x3d0 mm/gup.c:1222
+        __mm_populate+0x286/0x4d0 mm/gup.c:1270
+        mm_populate include/linux/mm.h:2307 [inline]
+        vm_mmap_pgoff+0x27f/0x2c0 mm/util.c:362
+        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+        __do_sys_mmap_pgoff mm/mmap.c:1596 [inline]
+        __se_sys_mmap_pgoff mm/mmap.c:1592 [inline]
+        __ia32_sys_mmap_pgoff+0xdd/0x1a0 mm/mmap.c:1592
+        do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+        do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+-> #0 (&mm->mmap_sem){++++}:
+        lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+        __might_fault+0x155/0x1e0 mm/memory.c:4578
+        mon_bin_fetch+0x26f/0x340 drivers/usb/mon/mon_bin.c:928
+        mon_bin_compat_ioctl+0x232/0x560 drivers/usb/mon/mon_bin.c:1170
+        __do_compat_sys_ioctl fs/compat_ioctl.c:1419 [inline]
+        __se_compat_sys_ioctl fs/compat_ioctl.c:1365 [inline]
+        __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1365
+        do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+        do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+        CPU0                    CPU1
+        ----                    ----
+   lock(&rp->fetch_lock);
+                                lock(&mm->mmap_sem);
+                                lock(&rp->fetch_lock);
+   lock(&mm->mmap_sem);
+TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor7/25985:
+  #0: 00000000a8e804bc (&rp->fetch_lock){+.+.}, at: mon_bin_fetch+0x37/0x340  
+drivers/usb/mon/mon_bin.c:909
+
+stack backtrace:
+CPU: 1 PID: 25985 Comm: syz-executor7 Not tainted 4.19.0-rc1+ #118
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_circular_bug.isra.34.cold.55+0x1bd/0x27d  
+kernel/locking/lockdep.c:1222
+  check_prev_add kernel/locking/lockdep.c:1862 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1975 [inline]
+  validate_chain kernel/locking/lockdep.c:2416 [inline]
+  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
+  lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+  __might_fault+0x155/0x1e0 mm/memory.c:4578
+  mon_bin_fetch+0x26f/0x340 drivers/usb/mon/mon_bin.c:928
+  mon_bin_compat_ioctl+0x232/0x560 drivers/usb/mon/mon_bin.c:1170
+  __do_compat_sys_ioctl fs/compat_ioctl.c:1419 [inline]
+  __se_compat_sys_ioctl fs/compat_ioctl.c:1365 [inline]
+  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1365
+  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f2aca9
+Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
+5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f5f260cc EFLAGS: 00000296 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000c00c9207
+TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+RDX: 0000000020000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge0 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+bridge0: port 2(bridge_slave_1) entered disabled state
+bridge0: port 1(bridge_slave_0) entered disabled state
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
