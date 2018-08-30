@@ -2,97 +2,94 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFACC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D204C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403B120658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:18:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 403B120658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C0AEB20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:24:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HwJAqaUZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0AEB20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbeH3TUx (ORCPT
+        id S1727252AbeH3T1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:20:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725996AbeH3TUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:20:52 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EE88740216F9;
-        Thu, 30 Aug 2018 15:18:12 +0000 (UTC)
-Received: from krava (ovpn-204-85.brq.redhat.com [10.40.204.85])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DD2632166B41;
-        Thu, 30 Aug 2018 15:18:10 +0000 (UTC)
-Date:   Thu, 30 Aug 2018 17:18:10 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, lkp@intel.com, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
- events
-Message-ID: <20180830151810.GB23723@krava>
-References: <20180815170313.455943-1-songliubraving@fb.com>
- <20180815170313.455943-2-songliubraving@fb.com>
+        Thu, 30 Aug 2018 15:27:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35718 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbeH3T1D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 15:27:03 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w8-v6so2456089pgs.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+yTIwkCYK+pxqBVVBZV9JxsXH4X6wG8/VjUyBuG8Tdg=;
+        b=HwJAqaUZojBZu6tlzU8IPEXrzKEbHkBwLZ2bAIsV1nIxqrxHWCXMqWFluhpcQBTs8O
+         78skkYDqFWUO8VUNM73Qsy8VOA3M+qzJgyqFteumztMdI+D0S0dogjBKqqYQqg6YXTPv
+         EpfNAbeD80SA0SN+jkIeLNU3k4slMyJ1FDa4I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+yTIwkCYK+pxqBVVBZV9JxsXH4X6wG8/VjUyBuG8Tdg=;
+        b=tDyC2SmPdvqmfSLnJfVe2thkBnfbLPKwNiaOUOLXx7ZCiRgfFZS7A/lJNisbnWuGbU
+         OkbDzck7vBIWHyoVrpktfPkIru4HIa4hSGj9hMhReg4xjUsDWagb0inlY1El9kBEVl88
+         /oVOZ2veNw+bypb/EpC1dtzT+hhVVDejFzxEkkHnxEkji7Mzia4o0zbHG0DLulekbHH6
+         /l1WIrfLdZAX2MwNiktz4xaB5uakBfQJXs4tuUEix2nK7mPlXZrEuqUObC/u0+pDimU+
+         Wqduy8zVtktbnT3NCww94HG8ZxRR6zYnPKXX+I4IiDo7UgFuVvMyrP6WqJ8Xg7HjJUh9
+         b/vg==
+X-Gm-Message-State: APzg51CQgzkT8WVWLfK+RghlvO0lFLXg84qeZpPeiOEmUsnKqzsMjINF
+        COSLHPMu7NcQkUZUju847vAWAA==
+X-Google-Smtp-Source: ANB0VdZPAnUX6Oce2nX15bPwRmYgnQ90k/9jG4pHnwZwRJNt4ZLWlAwXSvZiv+JykR6wxKopSqhHmg==
+X-Received: by 2002:a62:2744:: with SMTP id n65-v6mr11090551pfn.125.1535642663082;
+        Thu, 30 Aug 2018 08:24:23 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id d9-v6sm24143920pfb.86.2018.08.30.08.24.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 08:24:22 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     "Ivan T . Ivanov" <iivanov@mm-sol.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [RFT PATCH 0/2] pinctrl: Fix two more xxx_config_get() functions to be compliant
+Date:   Thu, 30 Aug 2018 08:23:37 -0700
+Message-Id: <20180830152340.242249-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815170313.455943-2-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 30 Aug 2018 15:18:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 30 Aug 2018 15:18:13 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 10:03:13AM -0700, Song Liu wrote:
+I have no way to test the patches in this series, but Stephen Boyd
+pointed out the problems being fixed here when he reviewed my patch
+("pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be
+compliant").  It seemed nice to (finally) follow-up and address the
+problems that Stephen found.  Hopefully someone can test them out and
+make sure they work as advertised.
 
-SNIP
 
-> @@ -6100,7 +6333,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
->  
->  		if ((sub != event) &&
->  		    (sub->state == PERF_EVENT_STATE_ACTIVE))
-> -			sub->pmu->read(sub);
-> +			event_pmu_read(sub);
->  
->  		values[n++] = perf_event_count(sub);
->  		if (read_format & PERF_FORMAT_ID)
-> @@ -9109,7 +9342,7 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
->  	if (event->state != PERF_EVENT_STATE_ACTIVE)
->  		return HRTIMER_NORESTART;
->  
-> -	event->pmu->read(event);
-> +	event_pmu_read(event);
->  
->  	perf_sample_data_init(&data, 0, event->hw.last_period);
->  	regs = get_irq_regs();
-> @@ -10504,6 +10737,14 @@ SYSCALL_DEFINE5(perf_event_open,
->  		goto err_cred;
->  	}
->  
-> +	if (perf_event_can_share(event)) {
-> +		event->tmp_master = perf_event_alloc(&event->attr, cpu,
-> +						     task, NULL, NULL,
-> +						     NULL, NULL, -1);
+Douglas Anderson (2):
+  pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+  pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
 
-can't get around this.. I understand the need, but AFAICS you allocate
-the whole 'struct perf_event', just because there's count field in it
-otherwise the 'struct hw_perf_event' should be enough to carry all that's
-needed to read hw event
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c  | 19 ++++++++++------
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 28 ++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 14 deletions(-)
 
-would it be better to move the count to 'struct hw_perf_event' and use
-that instead? assuming I'm not missing anything..
+-- 
+2.19.0.rc0.228.g281dcd1b4d0-goog
 
-jirka
