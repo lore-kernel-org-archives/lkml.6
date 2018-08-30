@@ -2,153 +2,156 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8703CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3168C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB5F20658
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E68B20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 21:35:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="x5KvS7Jr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB5F20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTyeCRuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E68B20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeHaBja (ORCPT
+        id S1727757AbeHaBjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 21:39:30 -0400
-Received: from imap.thunk.org ([74.207.234.97]:35132 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbeHaBja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 21:39:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-        Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=K7oWBuRmTcJZZ3nbH8W1e5wGtLf2LqsZuqpPKxXorbg=; b=x5KvS7JrtIpDKFDLHZM+WznixG
-        ma40n9JYPyw2fVjcKu5KqW92w300TaPXr9P3vL9kOkQ2uZ+E0LA703rJiuWdWiKknaxNclqKv95P6
-        v3vuHqKV9YZqL/kpGl+AWyri72Tu39WpvTesws1Mz0ZNGaf7zKoZVwOxUQBRbYxZyZ8I=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fvUb1-0008Bu-NI; Thu, 30 Aug 2018 21:35:19 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 523BB7A4BB9; Thu, 30 Aug 2018 17:35:17 -0400 (EDT)
-Date:   Thu, 30 Aug 2018 17:35:17 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Maintainer / Kernel Summit 2018 planning kick-off
-Message-ID: <20180830213517.GA19110@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-block@vger.kernel.org
+        Thu, 30 Aug 2018 21:39:40 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52834 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbeHaBjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 21:39:40 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y139-v6so3300186wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 14:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oX49PoSjiNLV6aev76S5msVEqsgo4EoYV1fqYZdBu8g=;
+        b=rTyeCRuPuFGkQwaDLJN+y0seP2pAG7cLB6FsgH4PuIpPKVWpwvYZOND50OU0YaIboU
+         XSsWkQTRIPKau45y0IRFv0cm3H29nqACrGSC26gyacM9hSp5EecWyPwV6pV9SvedM6X7
+         S2jy56Mc6/4gC+THzQo7qfWC0/JiPZEzY3ou1jzQngqBnYZqtNYoztS3JeknvucFAE+t
+         rg8DKzFjwt8/zTmUwaZW7JP4ySSpAsUlcDGSNfA/8N1f7Ov1sS2q1Lxha93mz3gICzw9
+         rT9IF5RbwDi7WjSf+nLsNjwkFlRu7nUr7yCpZ/hEPs1cCRgGNKBCZKpGEJfRzxCQjW3t
+         54Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oX49PoSjiNLV6aev76S5msVEqsgo4EoYV1fqYZdBu8g=;
+        b=pwJQPxdBa45xIsqm9I2kEDEOZ8XwJLE+yV+mX9wcDv7eSRuZ1Mqtg3X7bXcwVEv+Eo
+         Nwg/e2OD3CRJa52zjb6aN0kU791qn1NV+4yw7oCvO9+YEB9aarZ/g/aiMxj0M1hcfVqq
+         XHwK0x8Tdbyzu5iXMhdevI7Fu1es1MDxZTwYb2MBE10B2HkuWpkc7J6UxnHASKEPUeIw
+         BLtwYHRZZwWkyGINt/zpJN0XqTQjQpVVMs7O5emGglhycoSxROwZqXgxMIScSKTQaEFG
+         eKupxWRLaGh2uAHoEcxbv0CoIa41tmp6hB+uyhDe/szuJv5/dP1dMDqhVuMvRNWI1lHd
+         fP+Q==
+X-Gm-Message-State: APzg51DzqbyLnw7sr1epSqZJQd59+XDjxrQPfIXbucR014mnbAEheTGi
+        cfPF4t9qDc3G8YeeORmqINE=
+X-Google-Smtp-Source: ANB0VdYgUxABUseEnRKf4nOzQSUfaMcJWHYzrTERzPXw5shFUT3pn0n8BGKDG9HnVZ1TmB8GQ+cL8Q==
+X-Received: by 2002:a1c:7305:: with SMTP id d5-v6mr2938995wmb.53.1535664928880;
+        Thu, 30 Aug 2018 14:35:28 -0700 (PDT)
+Received: from xux707-tw (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
+        by smtp.gmail.com with ESMTPSA id h73-v6sm7407359wma.11.2018.08.30.14.35.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 14:35:28 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 22:35:37 +0100
+From:   John Whitmore <arigead@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     John Whitmore <johnfwhitmore@gmail.com>,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/21] staging:rtl8192u: Rename AdvCoding - Style
+Message-ID: <20180830213536.GA2904@xux707-tw>
+References: <20180829203547.15650-1-johnfwhitmore@gmail.com>
+ <20180829203547.15650-2-johnfwhitmore@gmail.com>
+ <20180830082305.umqtq3fdexlyvn65@mwanda>
+ <20180830082628.ff5x3tzvd2wdrbir@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180830082628.ff5x3tzvd2wdrbir@mwanda>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Feel free to forward this to other Linux kernel mailing lists as
-  appropriate -- Ted ]
+On Thu, Aug 30, 2018 at 11:26:28AM +0300, Dan Carpenter wrote:
+> On Thu, Aug 30, 2018 at 11:23:05AM +0300, Dan Carpenter wrote:
+> > On Wed, Aug 29, 2018 at 09:35:27PM +0100, John Whitmore wrote:
+> > > Rename the bit field element AdvCoding, as it causes a checkpatch issue
+> > > with CamelCase naming. As the element is not actually used in code it
+> > > has been renamed to 'not_used_adv_coding'.
+> > > 
+> > > The single line of code which initialises the bit has been removed,
+> > > as the  field is unused.
+> > > 
+> > > This is a purely coding style change which should have no impact
+> > > on runtime code execution.
+> > > 
+> > > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 +-
+> > >  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 1 -
+> > >  2 files changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> > > index 64d5359cf7e2..66a0274077d3 100644
+> > > --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> > > +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> > > @@ -39,7 +39,7 @@ enum ht_extension_chan_offset {
+> > >  
+> > >  struct ht_capability_ele {
+> > >  	//HT capability info
+> > > -	u8	AdvCoding:1;
+> > > +	u8	not_used_adv_coding:1;
+> > 
+> > I can't review any more of this patchset when this is the first line...
+> > 
+> 
+> That email wasn't very clear.  If you think some of your patches are
+> going to be more controversial than others, put them at the very end so
+> we can at least apply part of the patchset.
+> 
+> regards,
+> dan carpenter
+> 
 
-This year, the Maintainer and Kernel Summit will be in Vancouver,
-B.C., November 12th -- 15th.  The Maintainer's summit will be held on
-Monday, November 12th, in Vancouver, immediately before the Linux
-Plumber's Conference (LPC) November 13th -- 15th.
+Thanks for the clarification, I needed it ;)
 
-For the past few years, before 2017, we've scheduled mostly management
-and development process issues on the first day.  We then opened up
-the second day of the Kernel Summit to all attendees of the conference
-with which the Kernel Summit has been colocated, and called it the
-"Open Technical Day".  This is something that just made sense in order
-to assure that all of the necessary people needed to discuss a
-particular technical issue could be in the room.
+I'm not sure I consider any of the patches in the series as being
+controversial. They are all just simple name changes of member
+variables. As a number of the variables are not used in code the names
+have been changed to reflect that fact. If I'd renamed them and left out
+the 'not_used_' prefix would the changes not be controversial? I
+don't think the fact that the members are unused is a biggy.
 
-Starting last year in Prague, we took the next logical step, and split
-the Kernel Summit in two.  The "Maintainer's Summit" is an
-invite-only, half-day event, where the primary focus will be process
-issues of Linux Kernel Development.  It will be limited to 30 invitees
-and a handful of sponsored attendees.  This makes it smaller than the
-first few kernel summits (which were limited to around 50 attendees).
+What might appear to be controversial is that I didn't simply remove
+the members. I haven't done that because I'm not yet satisfied that
+the structure's size is insignificant. As soon as I am happy that the
+size of the structure is not important, to runtime code execution,
+there'll be a patch which removes a number of 'not_used_...' members
+from a structure.
 
-The "Kernel Summit" is now organized as a track which is run in
-parallel with the other tracks at the Linux Plumber's Conference, and
-is open to all registered attendees of Plumbers.  Much as how we
-organized the Kernel Summit "open technical day" in 2016 in Santa Fe,
-the Kernel Summit schedule will be synchronized with the other tracks
-at the Plumber's Conference, and it will be open to all registered
-Plumber's attendees.
+Alternatively if the size if important there might be a patch which
+renames a number of unused bitfield members to reserved_1, reserved_2,
+reserved_3....
 
-Linus has suggested the following ten people as the core of the people
-he would like invited to the Maintainer's Summit, which was calculated
-from statistics from his git tree.
+Perhaps I should have held off this patch set until I had satisfied
+myself that the size either, does or does not, matter and combine all
+changes into one series of patches. On the other hand I've added an
+extra step which can be reviewed and clearly see the incremental
+changes. I'm happy enough for the whole patch set to be rejected
+for the moment, but I'd be even happier if on review somebody pointed
+out that a member which I have decided is unused in the code is
+actually used and a patch gets rejected on those grounds. If
+everybody accepts this series, that asserts that members are unused,
+the next step is easy either way.
 
-	David Miller
-	Dave Airlie
-	Greg KH
-	Arnd Bergmann
-	Ingo Molnar
-	Mauro Carvalho Chehab
-	Takashi Iwai
-	Thomas Gleixner
-	Andrew Morton
-	Olof Johansson
+jwhitmore
 
-As we did last year, there will be a mini-program committee that will
-be pick enough names to bring the total number of 30 for the
-Maintainer's Summit.  That program committee will consist of Arnd
-Bergmann, Thomas Gleixner, Greg KH, Paul McKenney, and Ted Ts'o.
-
-We will use the rest of names on the list generated by Linus's script
-as a starting point of people to be considered.  People who suggest
-topics that should be discussed on the Maintainer's summit will also
-be added to the list.  To make topic suggestions for the Maintainer's
-Summit, please send e-mail to the ksummit-discuss list with a subject
-prefix of [MAINTAINERS SUMMIT].
-
-
-The other job of the program committee will be to organize the program
-for the Kernel Summit.  The goal of the Kernel Summit track will be to
-provide a forum to discuss specific technical issues that would be
-easier to resolve in person than over e-mail.  The program committee
-will also consider "information sharing" topics if they are clearly of
-interest to the wider development community (i.e., advanced training
-in topics that would be useful to kernel developers).
-
-To suggest a topic for the Kernel Summit, please tag your e-mail with
-[TECH TOPIC].  As before, please use a separate e-mail for each topic,
-and send the topic suggestions to:
-
-	ksummit-discuss@lists.linuxfoundation.org
-
-People who submit topic suggestions before September 21st and which
-are accepted, will be given a free admission to the Linux Plumbers
-Conference.
-
-We will reserving roughly half the Kernel Summit slots for last-minute
-discussions that will be scheduled during the week of Plumber's, in an
-"unconference style".  This was extremely popular in Santa Fe and in
-Prague, since it allowed ideas that came up in hallway discussions,
-and in Plumber's Miniconference, to be given scheduled, dedicated
-times for that discussion.
-
-
-If you were not subscribed on to the kernel-discuss mailing list from
-last year (or if you had removed yourself after the kernel summit),
-you can subscribe to the discuss list using mailman:
-
-   https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
