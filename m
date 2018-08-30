@@ -2,125 +2,122 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48A3C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E84FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A00C2073D
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A00C2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 280ED20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 10:44:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IotMuSXr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IotMuSXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280ED20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbeH3Ops (ORCPT
+        id S1728513AbeH3OqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 10:45:48 -0400
-Received: from mga07.intel.com ([134.134.136.100]:41906 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728318AbeH3Ops (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 10:45:48 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2018 03:44:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,306,1531810800"; 
-   d="scan'208";a="84639912"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Aug 2018 03:44:16 -0700
-Received: from tiger-server (dazhang1-ssd.sh.intel.com [10.239.48.163])
+        Thu, 30 Aug 2018 10:46:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58014 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728405AbeH3OqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:46:07 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 848D4606FC; Thu, 30 Aug 2018 10:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535625876;
+        bh=deYTnQDyciVjSagtNf9CCYXyBPKuFJgXtbpZbHoB7zw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IotMuSXrMIqW2AAlTJfteiMa5xQa9FTq9VV9E9L4Pm1Cx7CwrU18RwS3c/1p2LcnC
+         Et8UwIQSweo/gW7KAcD9BYGKdoQXW47SRU5YtGoBAPmwOQt4ZcY+XE3ncHdZ4guwn2
+         l6axSgRIsx61qGsWHwYZOrqLTfKKE26ctzmYXo+Y=
+Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 3A091580224;
-        Thu, 30 Aug 2018 03:44:14 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 03:23:13 +0800
-From:   Yi Zhang <yi.z.zhang@linux.intel.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        yu c zhang <yu.c.zhang@intel.com>, david@redhat.com,
-        jack@suse.cz, hch@lst.de, linux-mm@kvack.org, rkrcmar@redhat.com,
-        jglisse@redhat.com, yi z zhang <yi.z.zhang@intel.com>
-Subject: Re: [PATCH V4 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-Message-ID: <20180830192312.GA84758@tiger-server>
-Mail-Followup-To: Pankaj Gupta <pagupta@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        yu c zhang <yu.c.zhang@intel.com>, david@redhat.com, jack@suse.cz,
-        hch@lst.de, linux-mm@kvack.org, rkrcmar@redhat.com,
-        jglisse@redhat.com, yi z zhang <yi.z.zhang@intel.com>
-References: <cover.1534934405.git.yi.z.zhang@linux.intel.com>
- <a4183c0f0adfb6d123599dd306062fd193e83f5a.1534934405.git.yi.z.zhang@linux.intel.com>
- <380594559.7598107.1535537748154.JavaMail.zimbra@redhat.com>
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1180B60600;
+        Thu, 30 Aug 2018 10:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535625876;
+        bh=deYTnQDyciVjSagtNf9CCYXyBPKuFJgXtbpZbHoB7zw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IotMuSXrMIqW2AAlTJfteiMa5xQa9FTq9VV9E9L4Pm1Cx7CwrU18RwS3c/1p2LcnC
+         Et8UwIQSweo/gW7KAcD9BYGKdoQXW47SRU5YtGoBAPmwOQt4ZcY+XE3ncHdZ4guwn2
+         l6axSgRIsx61qGsWHwYZOrqLTfKKE26ctzmYXo+Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1180B60600
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qt0-f178.google.com with SMTP id d4-v6so9145617qtn.13;
+        Thu, 30 Aug 2018 03:44:36 -0700 (PDT)
+X-Gm-Message-State: APzg51CWuph+MBE4gRkNXw2CDbCMHDiVsss8yJKztFVZrJ3j/Ul2ZYt3
+        E+HhSZtW5BuZuebDphneyV3inXzxCV/19nFzIXo=
+X-Google-Smtp-Source: ANB0VdYxVcvNFONs2Kbxg3esl0t5mpbaua78sDl5RWoCxpPEwtjbPN1KKGcSC9xETXl7tZ3oGor2hzIauDNF0D75Jao=
+X-Received: by 2002:ac8:4596:: with SMTP id l22-v6mr11369696qtn.184.1535625875329;
+ Thu, 30 Aug 2018 03:44:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <380594559.7598107.1535537748154.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180731100914.19856-1-cang@codeaurora.org> <20180830061604.GM2523@minitux>
+In-Reply-To: <20180830061604.GM2523@minitux>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 30 Aug 2018 16:14:22 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iGDvt9UX8y7HCwC+QdTdyCLxuj5pNWbbttJAHGEPW+tyw@mail.gmail.com>
+Message-ID: <CAFp+6iGDvt9UX8y7HCwC+QdTdyCLxuj5pNWbbttJAHGEPW+tyw@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] Support for Qualcomm UFS QMP PHY on SDM845
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Can Guo <cang@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        asutoshd@codeaurora.org, Manu Gautam <mgautam@codeaurora.org>,
+        kishon <kishon@ti.com>, "robh+dt" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-29 at 06:15:48 -0400, Pankaj Gupta wrote:
-> 
-> > 
-> > For device specific memory space, when we move these area of pfn to
-> > memory zone, we will set the page reserved flag at that time, some of
-> > these reserved for device mmio, and some of these are not, such as
-> > NVDIMM pmem.
-> > 
-> > Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
-> > backend, since these pages are reserved, the check of
-> > kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
-> > introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
-> > to identify these pages are from NVDIMM pmem and let kvm treat these
-> > as normal pages.
-> > 
-> > Without this patch, many operations will be missed due to this
-> > mistreatment to pmem pages, for example, a page may not have chance to
-> > be unpinned for KVM guest(in kvm_release_pfn_clean), not able to be
-> > marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
-> > 
-> > Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> > ---
-> >  virt/kvm/kvm_main.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index c44c406..969b6ca 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -147,8 +147,12 @@ __weak void
-> > kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> >  
-> >  bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
-> >  {
-> > -	if (pfn_valid(pfn))
-> > -		return PageReserved(pfn_to_page(pfn));
-> > +	struct page *page;
-> > +
-> > +	if (pfn_valid(pfn)) {
-> > +		page = pfn_to_page(pfn);
-> > +		return PageReserved(page) && !is_dax_page(page);
-> > +	}
-> >  
-> >  	return true;
-> >  }
-> 
-> Acked-by: Pankaj Gupta <pagupta@redhat.com>
+On Thu, Aug 30, 2018 at 11:46 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Tue 31 Jul 03:09 PDT 2018, Can Guo wrote:
+>
+> > This patch series adds support for UFS QMP PHY on SDM845 and the
+> > compatible string for it. This patch series depends on the current
+> > proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
+> > the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
+> > rebased on updated pipe_clk initialization sequence [3]. This series
+> > can only be merged once the dependent patches do.
+> > [1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
+> > [2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
+> > [3] https://patchwork.kernel.org/patch/10376551/
+> >
+>
+> Hi Can,
+>
+> We still have the issue that the older non-QMP phy driver takes a direct
+> call to ufs_qcom_phy_set_tx_lane_enable(), which means that pointing
+> UFSHCD to this phy implementation results in a kernel panic.
 
-Thanks for your kindly review, Pankaj, as all the patch [1,2,3,4]/4 got
-the reviewed[acked]-by, can we Queue this by now?
+Hi Bjorn,
 
-> 
-> > --
-> > 2.7.4
-> > 
-> > 
+I have a series that removes couple of these function calls -
+ufs_qcom_phy_set_tx_lane_enable(), and
+ufs_qcom_phy_save_controller_version() from ufs-qcom, and
+make phy-qcom-ufs-qmp-20nm as broken.
+I can post it out if that sounds okay.
+
+Best regards
+Vivek
+
+[snip]
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
