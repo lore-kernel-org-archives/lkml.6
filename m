@@ -2,98 +2,110 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBF5C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB71C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCFB8205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFB8205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D97720661
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 18:50:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yPQopcs+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D97720661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeH3Wxy (ORCPT
+        id S1727505AbeH3WyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 18:53:54 -0400
-Received: from gateway20.websitewelcome.com ([192.185.68.24]:18982 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725836AbeH3Wxy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 18:53:54 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8D4B4400E035B
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 13:50:21 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vS1NfaYWskBj6vS1Nfo7Ub; Thu, 30 Aug 2018 13:50:21 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.90.185] (port=48844 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fvS1N-002VFE-0t; Thu, 30 Aug 2018 13:50:21 -0500
-Date:   Thu, 30 Aug 2018 13:50:19 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] i40e: mark expected switch fall-through
-Message-ID: <20180830185019.GA30328@embeddedor.com>
+        Thu, 30 Aug 2018 18:54:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727337AbeH3WyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 18:54:06 -0400
+Received: from jouet.infradead.org (unknown [189.43.51.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E8B7205F4;
+        Thu, 30 Aug 2018 18:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535655033;
+        bh=n9F6AzQMSS0Zpr7/zZgP12eOlMwdFpq3YhYoAGdW49I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yPQopcs+BXtSUpQBdZGV9wLiBHCZ+CVI0U7LrivdFFUVkxNbcaDAZhyx5zNndNHtu
+         BU4dSdfB2F2ioay1qmrC6tVX1ksWi2jsDG2G6rAIYu1OnhG4YFxOmQQ1V9NramSqtD
+         wLKcDeyPViVPwhSYB6W5tqO8/f7pWbXib56JKQlY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 0F18B141C3F; Thu, 30 Aug 2018 15:50:27 -0300 (-03)
+Date:   Thu, 30 Aug 2018 15:50:27 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        srikar@linux.vnet.ibm.com, oleg@redhat.com, mhiramat@kernel.org,
+        liu.song.a23@gmail.com, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v9 4/4] perf probe: Support SDT markers having reference
+ counter (semaphore)
+Message-ID: <20180830185026.GI6097@kernel.org>
+References: <20180820044250.11659-1-ravi.bangoria@linux.ibm.com>
+ <20180820044250.11659-5-ravi.bangoria@linux.ibm.com>
+ <20180830144531.3011e185@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.90.185
-X-Source-L: No
-X-Exim-ID: 1fvS1N-002VFE-0t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.90.185]:48844
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180830144531.3011e185@gandalf.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Em Thu, Aug 30, 2018 at 02:45:31PM -0400, Steven Rostedt escreveu:
+> 
+> Arnaldo,
+> 
+> I'm going to be playing with some of the probe code which may conflict
+> with these patches, so I would like to pull these in my tree. But this
+> patch requires an Acked-by from you before I can pull it in.
+> 
+> You OK with this?
 
-Addresses-Coverity-ID: 1473099 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/intel/i40e/i40e_xsk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-index 94947a8..a6f50f6 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-@@ -300,9 +300,10 @@ static int i40e_run_xdp_zc(struct i40e_ring *rx_ring, struct xdp_buff *xdp)
- 		break;
- 	default:
- 		bpf_warn_invalid_xdp_action(act);
-+		/* fall through */
- 	case XDP_ABORTED:
- 		trace_xdp_exception(rx_ring->netdev, xdp_prog, act);
--		/* fallthrough -- handle aborts by dropping packet */
-+		/* fall through -- handle aborts by dropping packet */
- 	case XDP_DROP:
- 		result = I40E_XDP_CONSUMED;
- 		break;
--- 
-2.7.4
-
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Thanks!
+> 
+> -- Steve
+> 
+> 
+> On Mon, 20 Aug 2018 10:12:50 +0530
+> Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+> 
+> > With this, perf buildid-cache will save SDT markers with reference
+> > counter in probe cache. Perf probe will be able to probe markers
+> > having reference counter. Ex,
+> > 
+> >   # readelf -n /tmp/tick | grep -A1 loop2
+> >     Name: loop2
+> >     ... Semaphore: 0x0000000010020036
+> > 
+> >   # ./perf buildid-cache --add /tmp/tick
+> >   # ./perf probe sdt_tick:loop2
+> >   # ./perf stat -e sdt_tick:loop2 /tmp/tick
+> >     hi: 0
+> >     hi: 1
+> >     hi: 2
+> >     ^C
+> >      Performance counter stats for '/tmp/tick':
+> >                  3      sdt_tick:loop2
+> >        2.561851452 seconds time elapsed
+> > 
+> > Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
