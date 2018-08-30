@@ -2,303 +2,93 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91443C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C69C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8522054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTnoGAeR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8522054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1551A2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 11:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1551A2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbeH3PM6 (ORCPT
+        id S1728574AbeH3PNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 11:12:58 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:40660 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728261AbeH3PM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 11:12:58 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c126-v6so5423456qkd.7;
-        Thu, 30 Aug 2018 04:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QqMP2AgNUNF9Xqp4Y8iFAHR2fQLutX74w+JY89RdMS8=;
-        b=XTnoGAeRi2K79tI1NGY69H2PgZ+gAfOWrlVjHs51H6LH/Btr7XKat7Dd03fvWyxOtt
-         poxuUq+rgM4s2VQ9OKwSAvJI7kGNB4bJKsUcsMOFdSNARthKPY9tmxK/gBe8BmCzAWgm
-         apXwfd9gEem6P/c3PNm/AY3o8iL6yVylG9LYm9rBmDJhzZnIxNtH7RqtrFS3aDYWCy2F
-         Z09YRkQmQTDIa7Ve1w+JoAT+W3Zo9Fpjo7CFWPAu0K8m1QBMjmQtknML7or0+iq0ujug
-         v5d0WT4FVDbcUbhCA0J3Flh17afSygSqt4XUCkhwRBh8fAspeg+A4ZegYfnszqs9s50C
-         2pTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QqMP2AgNUNF9Xqp4Y8iFAHR2fQLutX74w+JY89RdMS8=;
-        b=JlNSKHXl1MhMl/I6Ip8tIb+3Yv5cqUGB5WK8ICx7u5cjj+6Ck5zCregzODDsl2DAPS
-         OTj/2HE3Ex/VrKV1tdI67v6NU9V25avZl7nQMlws58JFHa+Dbq4lCFVweurRy9/F/RyG
-         gOBfJyPX3EwDVwRp8/0qlppKiqS8TvYLbN8SWUbCpgdhciQtBtF8ElZEPnrQYjj/7M/C
-         dnAL9Eea2CHz3anpLZ4DB37LmDe17xR8CUyqoFXl48il3UEBWJ96PX2gcSVYharf32bZ
-         awI3qByJvIJcjT9q1cBNzQOi+ayKyUaNca7hMByHyFpSwia10HdJuuovznERHYjHM8QX
-         9a3w==
-X-Gm-Message-State: APzg51CvJojHm+fiNxLSonEOYKRmq6GRok3IgRK98A1t/z9jS4IEbK01
-        3XEph00HT3gBHxZC14LyhqK2WTMBuRBtlBh9T81GQv0j
-X-Google-Smtp-Source: ANB0VdYhvjmXHn33TdJvXnR0yPuked4L0CwQ3JJDYot5N+dPpAseETvPROzNYxHQcYXefCr2XACYw5+uku+bV6cgmsw=
-X-Received: by 2002:a37:1204:: with SMTP id c4-v6mr10395060qkh.63.1535627479820;
- Thu, 30 Aug 2018 04:11:19 -0700 (PDT)
+        Thu, 30 Aug 2018 11:13:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36558 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728261AbeH3PNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 Aug 2018 11:13:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6D6DEACC6;
+        Thu, 30 Aug 2018 11:12:09 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 13:12:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+Message-ID: <20180830111207.GE2656@dhcp22.suse.cz>
+References: <20180830090319.985-1-feng.tang@intel.com>
+ <20180830104401.GZ24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 04:10:59
- -0700 (PDT)
-In-Reply-To: <20180829204900.19390-2-jmkrzyszt@gmail.com>
-References: <20180820234341.5271-1-jmkrzyszt@gmail.com> <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180829204900.19390-2-jmkrzyszt@gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 30 Aug 2018 13:10:59 +0200
-Message-ID: <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830104401.GZ24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
+On Thu 30-08-18 12:44:02, Peter Zijlstra wrote:
+> On Thu, Aug 30, 2018 at 05:03:19PM +0800, Feng Tang wrote:
+> > We hit a kernel panic when enabling earlycon for a platform, the
+> > call trace is:
+> > 
+> > 	  panic+0xd2/0x220
+> > 	  __alloc_bootmem+0x31/0x34
+> > 	  spp_getpage+0x60/0x8a
+> > 	  fill_pte+0x71/0x130
+> > 	  __set_pte_vaddr+0x1d/0x50
+> > 	  set_pte_vaddr+0x3c/0x60
+> > 	  __native_set_fixmap+0x23/0x30
+> > 	  native_set_fixmap+0x30/0x40
+> > 	  setup_earlycon+0x1e0/0x32f
+> > 	  param_setup_earlycon+0x13/0x22
+> > 	  do_early_param+0x5b/0x90
+> > 	  parse_args+0x1f7/0x300
+> > 	  parse_early_options+0x24/0x28
+> > 	  parse_early_param+0x65/0x73
+> > 	  setup_arch+0x31e/0x9f1
+> > 	  start_kernel+0x58/0x44e
+> > 
+> > The root cause is that when CONFIG_NO_BOOTMEM=y,  before
+> > e820__memblock_setup() is called there is no memory for bootmem
+> > to allocate,
+> 
+> Which you bloody well asked for by using NO_BOOTMEM=y.
+> 
+> Going down this route; adding hacks for every little thing that does
+> want bootmem, completely defeats the purpose.
+> 
+> If anything, make the earlycon thing depend on NO_BOOTMEM=n. That also
+> solves your problem. No earlycon, no panic.
 
-On Wed, Aug 29, 2018 at 10:48 PM, Janusz Krzysztofik
-<jmkrzyszt@gmail.com> wrote:
-> Most users of get/set array functions iterate consecutive bits of data,
-> usually a single integer, while processing array of results obtained
-> from, or building an array of values to be passed to those functions.
-> Save time wasted on those iterations by changing the functions' API to
-> accept bitmaps.
->
-> All current users are updated as well.
->
-> More benefits from the change are expected as soon as planned support
-> for accepting/passing those bitmaps directly from/to respective GPIO
-> chip callbacks if applicable is implemented.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-> Cc: Peter Korsgaard <peter.korsgaard@barco.com>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  Documentation/driver-api/gpio/consumer.rst  | 22 ++++----
->  drivers/auxdisplay/hd44780.c                | 52 +++++++++--------
->  drivers/bus/ts-nbus.c                       | 19 ++-----
->  drivers/gpio/gpio-max3191x.c                | 17 +++---
->  drivers/gpio/gpiolib.c                      | 86 +++++++++++++++--------------
->  drivers/gpio/gpiolib.h                      |  4 +-
->  drivers/i2c/muxes/i2c-mux-gpio.c            |  8 +--
->  drivers/mmc/core/pwrseq_simple.c            | 13 ++---
->  drivers/mux/gpio.c                          |  9 +--
->  drivers/net/phy/mdio-mux-gpio.c             |  3 +-
->  drivers/pcmcia/soc_common.c                 | 11 ++--
->  drivers/phy/motorola/phy-mapphone-mdm6600.c | 17 +++---
->  drivers/staging/iio/adc/ad7606.c            |  9 +--
->  drivers/tty/serial/serial_mctrl_gpio.c      |  7 ++-
->  include/linux/gpio/consumer.h               | 18 +++---
->  15 files changed, 140 insertions(+), 155 deletions(-)
->
-> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-> index aa03f389d41d..ed68042ddccf 100644
-> --- a/Documentation/driver-api/gpio/consumer.rst
-> +++ b/Documentation/driver-api/gpio/consumer.rst
-> @@ -323,29 +323,29 @@ The following functions get or set the values of an array of GPIOs::
->
->         int gpiod_get_array_value(unsigned int array_size,
->                                   struct gpio_desc **desc_array,
-> -                                 int *value_array);
-> +                                 unsigned long *value_bitmap);
->         int gpiod_get_raw_array_value(unsigned int array_size,
->                                       struct gpio_desc **desc_array,
-> -                                     int *value_array);
-> +                                     unsigned long *value_bitmap);
->         int gpiod_get_array_value_cansleep(unsigned int array_size,
->                                            struct gpio_desc **desc_array,
-> -                                          int *value_array);
-> +                                          unsigned long *value_bitmap);
->         int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
->                                            struct gpio_desc **desc_array,
-> -                                          int *value_array);
-> +                                          unsigned long *value_bitmap);
->
->         void gpiod_set_array_value(unsigned int array_size,
->                                    struct gpio_desc **desc_array,
-> -                                  int *value_array)
-> +                                  unsigned long *value_bitmap)
->         void gpiod_set_raw_array_value(unsigned int array_size,
->                                        struct gpio_desc **desc_array,
-> -                                      int *value_array)
-> +                                      unsigned long *value_bitmap)
->         void gpiod_set_array_value_cansleep(unsigned int array_size,
->                                             struct gpio_desc **desc_array,
-> -                                           int *value_array)
-> +                                           unsigned long *value_bitmap)
->         void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                                 struct gpio_desc **desc_array,
-> -                                               int *value_array)
-> +                                               unsigned long *value_bitmap)
->
->  The array can be an arbitrary set of GPIOs. The functions will try to access
->  GPIOs belonging to the same bank or chip simultaneously if supported by the
-> @@ -356,8 +356,8 @@ accessed sequentially.
->  The functions take three arguments:
->         * array_size    - the number of array elements
->         * desc_array    - an array of GPIO descriptors
-> -       * value_array   - an array to store the GPIOs' values (get) or
-> -                         an array of values to assign to the GPIOs (set)
-> +       * value_bitmap  - a bitmap to store the GPIOs' values (get) or
-> +                         a bitmap of values to assign to the GPIOs (set)
->
->  The descriptor array can be obtained using the gpiod_get_array() function
->  or one of its variants. If the group of descriptors returned by that function
-> @@ -366,7 +366,7 @@ the struct gpio_descs returned by gpiod_get_array()::
->
->         struct gpio_descs *my_gpio_descs = gpiod_get_array(...);
->         gpiod_set_array_value(my_gpio_descs->ndescs, my_gpio_descs->desc,
-> -                             my_gpio_values);
-> +                             my_gpio_value_bitmap);
->
->  It is also possible to access a completely arbitrary array of descriptors. The
->  descriptors may be obtained using any combination of gpiod_get() and
-> diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
-> index f1a42f0f1ded..bbbd6a29bf01 100644
-> --- a/drivers/auxdisplay/hd44780.c
-> +++ b/drivers/auxdisplay/hd44780.c
-> @@ -62,20 +62,19 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
->  /* write to an LCD panel register in 8 bit GPIO mode */
->  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
->  {
-> -       int values[10]; /* for DATA[0-7], RS, RW */
-> -       unsigned int i, n;
-> +       unsigned long value_bitmap[1];  /* for DATA[0-7], RS, RW */
+Well, there is endeavor to remove bootmem allocator altogether. So
+making earlycon depend on NO_BOOTMEM=n doesn't sound like a good fit to
+me. I am not familiar with this code path but why cannot we postpone the
+allocation to later or use a statically allocated storage?
 
-(I read your comments in the other email)
-
-I still find this odd, but if everyone is going to have this change
-done like this, consistency is better.
-
-> +       unsigned int n;
->
-> -       for (i = 0; i < 8; i++)
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> +       value_bitmap[0] = val;
-> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
->         n = 9;
->         if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
->                 n++;
->         }
->
->         /* Present the data to the port */
-> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], values);
-> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], value_bitmap);
->
->         hd44780_strobe_gpio(hd);
->  }
-> @@ -83,32 +82,31 @@ static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
->  /* write to an LCD panel register in 4 bit GPIO mode */
->  static void hd44780_write_gpio4(struct hd44780 *hd, u8 val, unsigned int rs)
->  {
-> -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> -       unsigned int i, n;
-> +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> +       unsigned long value_bitmap[1];
-
-Ditto.
-
-> +       unsigned int n;
->
->         /* High nibble + RS, RW */
-> -       for (i = 4; i < 8; i++)
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> +       value_bitmap[0] = val;
-> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
->         n = 5;
->         if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
->                 n++;
->         }
-> +       value_bitmap[0] >>= PIN_DATA4;
->
->         /* Present the data to the port */
-> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
-> -                                      &values[PIN_DATA4]);
-> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
->
->         hd44780_strobe_gpio(hd);
->
->         /* Low nibble */
-> -       for (i = 0; i < 4; i++)
-> -               values[PIN_DATA4 + i] = !!(val & BIT(i));
-> +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
-> +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
-
-This is still wrong! What I originally meant in my v4 review is that
-there is an extra ~ in the second line.
-
-Also, a couple of general comments:
-
- - Please review the list of CCs (I was not CC'd originally, so maybe
-there are other maintainers that aren't, either)
- - In general, the new code seems harder to read than the original one
-(but that is my impression).
-
-Thanks for your effort! :-)
-
-Cheers,
-Miguel
+-- 
+Michal Hocko
+SUSE Labs
