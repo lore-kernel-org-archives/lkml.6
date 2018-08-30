@@ -2,141 +2,153 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5ECC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9E0C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4749B20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GahXkin8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4749B20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E661B20658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 15:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E661B20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH3Tmr (ORCPT
+        id S1727470AbeH3TnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 15:42:47 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:41833 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbeH3Tmq (ORCPT
+        Thu, 30 Aug 2018 15:43:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727449AbeH3TnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 15:42:46 -0400
-Received: by mail-oi0-f65.google.com with SMTP id k12-v6so16192356oiw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 08:40:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kz8MQNPDzN7DpxJUSNa0x2jNVynzAGDge5M0MJqhY20=;
-        b=GahXkin85mYJmrx3gkxXQUSOqfxLsi/S3VnWOXUHAnhj2laosZYLnElcPMFU9jBlcM
-         MpeaAdrPAiq0cIZUu06yCjopY/3JAhnPiFzVo7CzX9/Sa5TBQMYgH5E48wCryCZXWoQY
-         K2OiwrfN+NapCxb6HlqTTc1S1mjkkyi7a5Y1+YRH2UkUpcNfqiAEUzj/oxCZ0TONKgJC
-         gUUYYiUnAmJl2qm99Uz/1rdppwThCn97f79155Vo2tuFLecwQk5drDbdd/fIItHv7RmF
-         xOQe14fJb+0XH2Vuu+UGJKsbhqgBI8qi3NuJ49joiSzqZFxBUQS3GHkn3Dkjps+yxMEf
-         3vlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kz8MQNPDzN7DpxJUSNa0x2jNVynzAGDge5M0MJqhY20=;
-        b=JMhi3jf8br3rQ52Q3EWTfqwhyLNuuLMZzzpQo5BAw0SPdCcch3EZWZgsRcqlBCx2UT
-         jUXFenisJNTIG0vx3jZR4MDM1PyuNiTX/rLV2g9UmOJmlthQwGpY9GS8IsHhCHLU87fZ
-         0gvxHq+PnsQ6D8Uvw4o/hZvY4+7zuz8TUJ+jAj5/j5G2A9aoUsB6Mz5X+tny6/5EhN92
-         Aiw7VdBSpk7aTg7RRA2uyyTe6MV15iVyzFdpNHMD67h+322GkIO3/3WLvUl75654g0Qn
-         VjxkjG7mG+Jl/DMqMnoB9f/qagz/ySYXhE606o219922AxvF0p7A6/dOmnBkf9O7fgp7
-         JPHg==
-X-Gm-Message-State: APzg51B+7EG+kkIURCeQQYz+rD2zl/qJWiBKaFo7JLSjpOwo2/89chGk
-        +Awjww8Bd5CEUDKFf/9dILdE6GyElwp1s6eR2UI1fw==
-X-Google-Smtp-Source: ANB0VdYaBXuBowN4ka7CRUckryC7LCadsYYfFF5hzkra4PeZDW+8Km3yy7+qQSyezootxpeVpbiOv87LI2ozFTl8JS4=
-X-Received: by 2002:aca:4204:: with SMTP id p4-v6mr2836500oia.242.1535643601937;
- Thu, 30 Aug 2018 08:40:01 -0700 (PDT)
+        Thu, 30 Aug 2018 15:43:21 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7UFdUIx066485
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 11:40:36 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6k2a12a8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 11:40:36 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Thu, 30 Aug 2018 09:40:35 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 Aug 2018 09:40:31 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7UFeU1524707316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 Aug 2018 08:40:30 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50FD06A06D;
+        Thu, 30 Aug 2018 09:40:30 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDA216A047;
+        Thu, 30 Aug 2018 09:40:22 -0600 (MDT)
+Received: from oc6728276242.ibm.com (unknown [9.85.221.248])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Aug 2018 09:40:22 -0600 (MDT)
+Subject: Re: [PATCH 4/4] media: platform: Add Aspeed Video Engine driver
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        andrew@aj.id.au, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        joel@jms.id.au, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
+ <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Thu, 30 Aug 2018 10:40:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-20-yu-cheng.yu@intel.com>
-In-Reply-To: <20180830143904.3168-20-yu-cheng.yu@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 30 Aug 2018 17:39:35 +0200
-Message-ID: <CAG48ez3uZrC-9uJ0uMoVPTtxRXRN8D+3zs5FknZD2woTT6mazg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 19/24] x86/cet/shstk: Introduce WRUSS instruction
-To:     yu-cheng.yu@intel.com
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18083015-0020-0000-0000-00000E5B5E22
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009639; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01081084; UDB=6.00557701; IPR=6.00861068;
+ MB=3.00023018; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-30 15:40:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083015-0021-0000-0000-000062DBB5E7
+Message-Id: <7cb0c2f0-cc12-81a6-a858-40776ec5904c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808300162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 4:44 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+
+
+On 08/29/2018 07:52 PM, Ezequiel Garcia wrote:
+> Hi Eddie,
 >
-> WRUSS is a new kernel-mode instruction but writes directly
-> to user shadow stack memory.  This is used to construct
-> a return address on the shadow stack for the signal
-> handler.
+> On 29 August 2018 at 18:09, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting a service processor, the Video Engine can capture
+>> the host processor graphics output.
+>>
+>> Add a V4L2 driver to capture video data and compress it to JPEG images,
+>> making the data available through a standard read interface.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+>> ---
+>>   drivers/media/platform/Kconfig        |    8 +
+>>   drivers/media/platform/Makefile       |    1 +
+>>   drivers/media/platform/aspeed-video.c | 1307 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 1316 insertions(+)
+>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>
+>> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+>> index 94c1fe0..e599245 100644
+>> --- a/drivers/media/platform/Kconfig
+>> +++ b/drivers/media/platform/Kconfig
+>> @@ -32,6 +32,14 @@ source "drivers/media/platform/davinci/Kconfig"
+>>
+>>   source "drivers/media/platform/omap/Kconfig"
+>>
+>> +config VIDEO_ASPEED
+>> +       tristate "Aspeed AST2400 and AST2500 Video Engine driver"
+>> +       depends on VIDEO_V4L2
+> It seems you are not using videobuf2. I think it should simplify the read
+> I/O part and at the same time expose the other capture methods.
+
+Hi,
+
+Well I'm not sure it would simplify the read interface; it's quite 
+simple as it is, both in the driver and to set up in user-space.
+
+I did get streaming I/O working but found the performance significantly 
+worse than simple read calls, and therefore not worth the additional 
+complexity.
+
+Is it required that I support streaming?
+
+Thanks,
+Eddie
+
 >
-> This instruction can fault if the user shadow stack is
-> invalid shadow stack memory.  In that case, the kernel does
-> fixup.
+> There are plenty of examples to follow.
 >
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-[...]
-> +static inline int write_user_shstk_64(unsigned long addr, unsigned long val)
-> +{
-> +       int err = 0;
-> +
-> +       asm volatile("1: wrussq %1, (%0)\n"
-> +                    "2:\n"
-> +                    _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_wruss)
-> +                    :
-> +                    : "r" (addr), "r" (val));
-> +
-> +       return err;
-> +}
+> Regards,
+> Eze
+>
 
-What's up with "err"? You set it to zero, and then you return it, but
-nothing can ever set it to non-zero, right?
-
-> +__visible bool ex_handler_wruss(const struct exception_table_entry *fixup,
-> +                               struct pt_regs *regs, int trapnr)
-> +{
-> +       regs->ip = ex_fixup_addr(fixup);
-> +       regs->ax = -1;
-> +       return true;
-> +}
-
-And here you just write into regs->ax, but your "asm volatile" doesn't
-reserve that register. This looks wrong to me.
-
-I think you probably want to add something like an explicit
-`"+&a"(err)` output to the asm statements.
-
-> @@ -1305,6 +1305,15 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
->                 error_code |= X86_PF_USER;
->                 flags |= FAULT_FLAG_USER;
->         } else {
-> +               /*
-> +                * WRUSS is a kernel instrcution and but writes
-
-Nits: typo ("instrcution"), weird grammar ("and but writes")
