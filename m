@@ -2,135 +2,232 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7312C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00815C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6866D204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:32:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6866D204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AE1620658
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 13:36:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tcwxio1s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE1620658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeH3ReZ (ORCPT
+        id S1728933AbeH3RiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 13:34:25 -0400
-Received: from 6.mo2.mail-out.ovh.net ([87.98.165.38]:37903 "EHLO
-        6.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728561AbeH3ReY (ORCPT
+        Thu, 30 Aug 2018 13:38:15 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37294 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728561AbeH3RiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:34:24 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 Aug 2018 13:34:24 EDT
-Received: from player157.ha.ovh.net (unknown [10.109.160.143])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id 117B6155D10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 15:13:25 +0200 (CEST)
-Received: from [192.168.0.230] (22.220.201.77.rev.sfr.net [77.201.220.22])
-        (Authenticated sender: sebastien.szymanski@armadeus.com)
-        by player157.ha.ovh.net (Postfix) with ESMTPSA id E2BEF10008B;
-        Thu, 30 Aug 2018 15:13:10 +0200 (CEST)
-To:     Heiko Schocher <hs@denx.de>, linux-kernel@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Peter Chen <peter.chen@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180830124702.12572-1-hs@denx.de>
-From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sebastien.szymanski@armadeus.com; prefer-encrypt=mutual;
- keydata=
- xsBNBFNfZLEBCACv1lqSePHJNpRgcnER+3emy+Arjz84zFax3XkogjY/e3ZneihIgWrVKe5M
- ql16pX4KTkzNgMUKz4bG/XwT3kjcrXshxFLlg7KrHMl287C+W+QOUjnjVeRi/su+SPmjz8VD
- yr11h+ZkVLAWhS+uQJ93jy1NwG8M4t1kBLAVHHD5Vw4FJ+3ouaVYIp1X1Cr8bVKQw33Q1aTd
- ro0kMBb96B9vNu7ciJZ3gvlaBzUEKOgNnq9KaywuLnqrqr4HUIn5JuxZjCjJzt9kTAKcTfp2
- cJM8qpp+2FF5qtbkse9fZ6M64qozgOPr9Tk4Amf9fZEUQ6UNw14mmBZuXSzoHe75gI7TABEB
- AAHNN1PDqWJhc3RpZW4gU1pZTUFOU0tJIDxzZWJhc3RpZW4uc3p5bWFuc2tpQGFybWFkZXVz
- LmNvbT7CwH8EEwECACkFAlNfZLECGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIX
- gAAKCRCwminogTJk4ss0CACpxtvYO1rCYNtc/j/6fkDsuKKwGtijixHU+C3N+EAJVoHSCdRM
- /PMtyN1fa+94XbW4LHQpZthkXd4kBpcf0aNtrS51193/YZHK5jLpJlUMKLGgU5VHXguakOOF
- ZWptlUCEqZaQ4gR8CUxPZi4urNAg/ORxCiVW2oMO/8GRhoZ+r14QNDGFVphbdlk/4YyY3wr7
- scDKTrRdkGw7kJElAp61I/B2KSbhnvF7U6H646a12/7bm6IEOAWbntoPcBg1h6irlCiNqfxs
- Zfy3r6rVRy840Dl7ldoUzOs7Eon8lUQilr9UorOHBF4NaBTpyD75DtvjRQsF2qV+R1RGS/Em
- IvrjzsBNBFNfZLEBCAC6O44V3Xa1wU0buUgI3pVed48hwSU1/7zeJy/1W21v7GnGvjSYw0sc
- eQwZqLWW0HViMmYkiI1P8Z00RL7Q65emXkrClne2aoromOH0kc8LkKfa3dMqkbsXrK1nsiQd
- cwknRLy8igEhEbfp8ZDgPiMyeMtai7b51q/ki9QF4EzMPk5MsCiAwkVh0yGGrNdZXRo/NoDi
- KWHl52qXjSx30+BEMINDXlmB8pycQEFol+Wj5cNLkqQEErAV0BSHt36aL3jEp1yvjxtgQTs3
- sWL+6+Eu9GurBfbIE0z6XyqlGqqgvrtfm1F+mpUwCoRiicsGhelYqi5YGPD38KIUsgJapU0T
- ABEBAAHCwGUEGAECAA8FAlNfZLECGwwFCQlmAYAACgkQsJop6IEyZOKWTgf/RbOvtKW77EXW
- XBzh04rfkW6prOlbJaIMUjVKZZ1D2OOpAxJbq80whJqCoJ+oVh7uAteozgX3U5TnL7fRx6HP
- zhyidiwKCOXEeTsFrRHEpTOCJYbPz8MTsK14ogz/aUlImt0HbxTaVHz5m65wWM8doCqOj2J9
- Vf12NNpfTxkotmM0QJQAIcEg10RfT3DLG1a68sdghM5rlz/b8mr/wjtOVxYX1TWKMvilCdQy
- YT8NNFcBwMEy5Jt2SXpeASY0CIXGwqqCBLqmQMhh3VcmibIbBBB0hIg4f56Vfn7v8ouFmbYS
- G0Q3TMIWXxYn91KiMXeox+Wsic2Ocw/KpZ/tus0JXQ==
-Subject: Re: [PATCH] ARM: dts: imx6ull: fix pinmux input_val for uart5 rx pin
-Message-ID: <218369fa-8ec1-fd3c-dd2e-b4821e11cb62@armadeus.com>
-Date:   Thu, 30 Aug 2018 15:25:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 13:38:14 -0400
+Received: by mail-it0-f67.google.com with SMTP id h20-v6so2718131itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 06:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kOV91s+OtKmYXlqMcqXCsKuHk8BI5LFQE/fX9+gin+s=;
+        b=Tcwxio1sP05eW8BsgJr10bT+g46G5EQ+KxeHydJ2xeiQdRe2i2Kpi9ouX1w9mG2ReL
+         3oTeYnQ8jMqwCmlVYQTzJlvIaPPIjhla8Ov5OD/JMN4OuIQWdVw70cTJLPe4tm1/Xr24
+         eS3Ke03CieFFphbdfyxCXz/2MYfJu0GEdGAIU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kOV91s+OtKmYXlqMcqXCsKuHk8BI5LFQE/fX9+gin+s=;
+        b=uM2F5z+k2HDx6IUYyVtu9pd3di6R0hVRIl30eovgOUxH/tSmozGCLQAMSUuY3Fdsy/
+         OPU7RX43PiboiUdfFIK0yUsHZpyAbSUFj1+cUDQWAHvfLbuNR9DDfZdEcbGQve7KOpx5
+         zA/g136QikAnPcNxb1OXYVM1v4EqolrXyYL4ALHNRXViXLKqmQ+aJMf+K8NuCl31SXy1
+         fyxqBH6NhSH4lxhQSwrBZ/jeY2sUoTo+KyQxMz2eWuh+bojJi+aY6Arkax+2vAmICNaD
+         G3EgIH1QSrAIf0zQURTvOmNS9fk5VutYgXhF4IOzJS4Xc+LedsodosK4IQ2GUa06FoAG
+         zUNw==
+X-Gm-Message-State: APzg51CBNh6kLYW0ZIpHSzuNJmYgdxRyxUOYagB3ik3vjo06uuPmgeMI
+        LnQI16m/KXV9ge6STWNK/cHYTB5WKwdtQbqLcUIFvg==
+X-Google-Smtp-Source: ANB0VdaiGzZw491re26u1nwH/hVyjgAAzbbLx6L9Q+Ti7h64cLOTqC/Kw1NgsGNKfJQc+AMuGJKKbK4zXJ+12FT1x6c=
+X-Received: by 2002:a24:5f92:: with SMTP id r140-v6mr2182491itb.45.1535636163165;
+ Thu, 30 Aug 2018 06:36:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180830124702.12572-1-hs@denx.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 17110300887725921532
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrgeekgdehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 06:36:02
+ -0700 (PDT)
+In-Reply-To: <20180824103828.GA11491@red-moon>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org>
+ <20180620172226.15012-8-ulf.hansson@linaro.org> <3574880.GjmnMm1lMq@aspire.rjw.lan>
+ <10360149.m4MlxDWZY5@aspire.rjw.lan> <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
+ <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com>
+ <20180809153925.GA20329@red-moon> <CAPDyKFp=AuqEPHKYgi-+DAhejQZSHixmtLORj_Rkn3m8fUoqJw@mail.gmail.com>
+ <20180824103828.GA11491@red-moon>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 30 Aug 2018 15:36:02 +0200
+Message-ID: <CAPDyKFqDHeMwyJ3Xx1kJcj968s=__3juR5bPn-d_3w=bzo-ovA@mail.gmail.com>
+Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 24 August 2018 at 12:38, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> On Fri, Aug 24, 2018 at 11:26:19AM +0200, Ulf Hansson wrote:
+>
+> [...]
+>
+>> > That's a good question and it maybe gives a path towards a solution.
+>> >
+>> > AFAICS the genPD governor only selects the idle state parameter that
+>> > determines the idle state at, say, GenPD cpumask level it does not touch
+>> > the CPUidle decision, that works on a subset of idle states (at cpu
+>> > level).
+>> >
+>> > That's my understanding, which can be wrong so please correct me
+>> > if that's the case because that's a bit confusing.
+>> >
+>> > Let's imagine that we flattened out the list of idle states and feed
+>> > CPUidle with it (all of them - cpu, cluster, package, system - as it is
+>> > in the mainline _now_). Then the GenPD governor can run-through the
+>> > CPUidle selection and _demote_ the idle state if necessary since it
+>> > understands that some CPUs in the GenPD will wake up shortly and break
+>> > the target residency hyphothesis the CPUidle governor is expecting.
+>> >
+>> > The whole idea about this series is improving CPUidle decision when
+>> > the target idle state is _shared_ among groups of cpus (again, please
+>> > do correct me if I am wrong).
+>>
+>> Absolutely, this is one of the main reason for the series!
+>>
+>> >
+>> > It is obvious that a GenPD governor must only demote - never promote a
+>> > CPU idle state selection given that hierarchy implies more power
+>> > savings and higher target residencies required.
+>>
+>> Absolutely. I apologize if I have been using the word "promote"
+>> wrongly, I realize it may be a bit confusing.
+>>
+>> >
+>> > This whole series would become more generic and won't depend on
+>> > PSCI OSI at all - actually that would become a hierarchical
+>> > CPUidle governor.
+>>
+>> Well, to me we need a first user of the new infrastructure code in
+>> genpd and PSCI is probably the easiest one to start with. An option
+>> would be to start with an old ARM32 platform, but it seems a bit silly
+>> to me.
+>
+> If the code can be structured as described above as a hierarchical
+> (possibly optional through a Kconfig entry or sysfs tuning) idle
+> decision you can apply it to _any_ PSCI based platform out there,
+> provided that the new governor improves power savings.
+>
+>> In regards to OS-initiated mode vs platform coordinated mode, let's
+>> discuss that in details in the other email thread instead.
+>
+> I think that's crystal clear by now that IMHO PSCI OS-initiated mode is
+> a red-herring, it has nothing to do with this series, it is there just
+> because QC firmware does not support PSCI platform coordinated suspend
+> mode.
 
-On 08/30/2018 02:47 PM, Heiko Schocher wrote:
-> on the imx6ull the input_val for uart5 rx function
-> of pin MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX
-> is 7 and not 5 as on the imx6ul. With this
-> patch, console on an imx6ull based board works
-> with uart5.
-> 
-> Signed-off-by: Heiko Schocher <hs@denx.de>
+I fully agree that the series isn't specific to PSCI OSI mode. On the
+other hand, for PSCI OSI mode, that's where I see this series to fit
+naturally. And in particular for the QCOM 410c board.
 
-This is already fixed on v4.19-rc1 and also on a few others PADs that
-have similar issue.
-Moreover signals common for both i.MX6UL and i.MX6ULL should have
-IMX6UL_ as prefix:
+When it comes to the PSCI PC mode, it may under certain circumstances
+be useful to deploy this approach for that as well, and I agree that
+it seems reasonable to have that configurable as opt-in, somehow.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/commit/?h=for-next&id=387301d5b88e2fe91de9baf4ca25f771cc633f70
+Although, let's discuss that separately, in a next step. Or at least
+let's try to keep PSCI related technical discussions to the other
+thread, as that makes it easier to follow.
 
-Regards,
+>
+> You can apply the concept in this series to _any_ arch provided
+> the power domains representation is correct (and again, I would sound
+> like a broken record but the series must improve power savings over
+> vanilla CPUidle menu governor).
 
-> 
-> ---
-> 
->  arch/arm/boot/dts/imx6ull-pinfunc.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6ull-pinfunc.h b/arch/arm/boot/dts/imx6ull-pinfunc.h
-> index fdc46bb09cc1a..d835aeae5485b 100644
-> --- a/arch/arm/boot/dts/imx6ull-pinfunc.h
-> +++ b/arch/arm/boot/dts/imx6ull-pinfunc.h
-> @@ -61,5 +61,6 @@
->  #define MX6ULL_PAD_CSI_DATA05__ESAI_TX_CLK                        0x01F8 0x0484 0x0000 0x9 0x0
->  #define MX6ULL_PAD_CSI_DATA06__ESAI_TX5_RX0                       0x01FC 0x0488 0x0000 0x9 0x0
->  #define MX6ULL_PAD_CSI_DATA07__ESAI_T0                            0x0200 0x048C 0x0000 0x9 0x0
-> +#define MX6ULL_PAD_UART5_RX_DATA__UART5_DCE_RX		0x00C0 0x034C 0x0644 0 7
->  
->  #endif /* __DTS_IMX6ULL_PINFUNC_H */
-> 
+I agree, but let me elaborate a bit, to hopefully add some clarity,
+which I may not have been able to communicate earlier.
 
+The goal with the series is to enable platforms to support all its
+available idlestates, which are shared among a group of CPUs. This is
+the case for QCOM 410c, for example.
 
--- 
-Sébastien Szymanski
-Software engineer, Armadeus Systems
-Tel: +33 (0)9 72 29 41 44
-Fax: +33 (0)9 72 28 79 26
+To my knowledge, we have other ARM32 based platforms that currently
+have disabled some of its cluster idle states. That's because they
+can't know when it's safe to power off the cluster "coherency domain",
+in cases when the platform also have other shared resources in it.
+
+The point is, to see improved power savings, additional platform
+deployment may be needed and that just takes time. For example runtime
+PM support is needed in those drivers that deals with the "shared
+resources", a correctly modeled PM domain topology using genpd, etc,
+etc.
+
+>
+>> > I still think that PSCI firmware and most certainly mwait() play the
+>> > role the GenPD governor does since they can detect in FW/HW whether
+>> > that's worthwhile to switch off a domain, the information is obviously
+>> > there and the kernel would just add latency to the idle path in that
+>> > case but let's gloss over this for the sake of this discussion.
+>>
+>> Yep, let's discuss that separately.
+>>
+>> That said, can I interpret your comments on the series up until this
+>> change, that you seems rather happy with where the series is going?
+>
+> It is something we have been discussing with Daniel since generic idle
+> was merged for Arm a long while back. I have nothing against describing
+> idle states with power domains but it must improve idle decisions
+> against the mainline. As I said before, runtime PM can also be used
+> to get rid of CPU PM notifiers (because with power domains we KNOW
+> what devices eg PMU are switched off on idle entry, we do not guess
+> any longer; replacing CPU PM notifiers is challenging and can be
+> tackled - if required - in a different series).
+
+Yes, we have be talking about the CPU PM and CPU_CLUSTER_PM notifiers
+and I fully agree. It's something that we should look into and in
+future steps.
+
+>
+> Bottom line (talk is cheap, I know and apologise about that): this
+> series (up until this change) adds complexity to the idle path and lots
+> of code; if its usage is made optional and can be switched on on systems
+> where it saves power that's fine by me as long as we keep PSCI
+> OS-initiated idle states out of the equation, that's an orthogonal
+> discussion as, I hope, I managed to convey.
+>
+> Thanks,
+> Lorenzo
+
+Lorenzo, thanks for your feedback!
+
+Please, when you have time, could you also reply to the other thread
+we started, I would like to understand how I should proceed with this
+series.
+
+Kind regards
+Uffe
