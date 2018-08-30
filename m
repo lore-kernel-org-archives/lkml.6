@@ -2,114 +2,112 @@ Return-Path: <SRS0=PZjb=LN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F34C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503E6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BD32082B
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086762082B
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 08:23:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H61AcRUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BD32082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="epvc3joD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 086762082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeH3MXy (ORCPT
+        id S1728207AbeH3MYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 08:23:54 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:38739 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbeH3MXy (ORCPT
+        Thu, 30 Aug 2018 08:24:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33950 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbeH3MYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 08:23:54 -0400
-Received: by mail-it0-f42.google.com with SMTP id p129-v6so1553112ite.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 01:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DKebPjUuiHkI2MmJvez7z4l5YnMFL+nZpOaMZy0LQAc=;
-        b=H61AcRUHfIg2nnQZt1Kh/tin7s3D0GUV6hwvzpbtJ2mQ7ZnB0c/9kI6tmKsG+GLcGR
-         2iJBj6C53ZnfnHL/aIs+sQWQL4Y7yVQqLi/KZxqxi8dicqR5mwLkcv7FIFsA6nffN5Je
-         Vkw03aGSSEvT1FIgiuIwyHd6bglB6l4kMBMWs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DKebPjUuiHkI2MmJvez7z4l5YnMFL+nZpOaMZy0LQAc=;
-        b=sp30E5aS1X6WKArfQZ9WeXAAOIT3CNDVSsonYS7WeQg4PWxf3BgxXydvozYDDF5P2x
-         FappFQ1zHgotj19E7Ps9B7g0xqO3j+ImYNr4/ds6QlSIix0D7tSlTpvp2NLcxubaoFoD
-         3MAbGvWBabCf/CDfevvc7ZWRhcKzbYQNXA+ogGZMFx2GcMz5m/dXnrzn6CkAJlqIgX/T
-         dHeoJ8FDjqjt5KxgrKAdNxzuaI7RMPtx7ujGaIOyEL9H3QVuCYcCWEspDVCviRyEFnMH
-         Q1DR9+cyrAlmElZwMlAOKWuQgcLYHbTwFU9GdUb/8bFy6tF/3RZo2/yZ6hePvCJKohuT
-         5kvQ==
-X-Gm-Message-State: APzg51AcLpndieW9LgKZ+bkcY0V7WlsKV4UhTLxb6Ao4dLb5fDKJXyzV
-        +NXcuSCo98cviRaIR75N7tiTO6GEFILR6w1qZI5Zzw==
-X-Google-Smtp-Source: ANB0VdYO/UdRNueo4zeglbHadcq0rjxGBp4BeCEUdvOs/A2fDzXiNfnrP2yTe3Fu9B0//sHezi3+yMLWMbbra80JqAE=
-X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr1227923ita.64.1535617375535;
- Thu, 30 Aug 2018 01:22:55 -0700 (PDT)
+        Thu, 30 Aug 2018 08:24:15 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7U8Impv028317;
+        Thu, 30 Aug 2018 08:23:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=OiZs4G6ixA2A/wsOsZoCHq3D71FSNXFqz1lz6LwjJu8=;
+ b=epvc3joDO3JP/EZ4XcEjlkSnVKIAlYByvX/r/4+AEt04V3N3J4ERJtLpQpDYvr47k5sW
+ Yo0YRNNXTc2+12sIhQttJI3M98jdD75iUXwL2/te2tjeMJbfq99HuX8sA+zV4pzfj8yE
+ CqmtmYw1P8YkPJpx95pKjSDu8VazT28PJ2qGtVR/EuRxSdzDZJNJW4M65ZrTMzJqEkMU
+ EK1G5eUDGREyXvxaUksX8PfWJQqBJsiaM/MIufO/8KNUIGAqzwnjyR8G/sY2ZdoCENTg
+ ew0EQt4fplk2+LE7gcJh7osRGfk7AtpUhGF80HJ1vgzS2lMZQTO78to/W1CGKMFNC1Hy 6A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2m2y2pr3m8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Aug 2018 08:23:13 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7U8NCOU005053
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Aug 2018 08:23:13 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7U8NCg4022948;
+        Thu, 30 Aug 2018 08:23:12 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 30 Aug 2018 01:23:11 -0700
+Date:   Thu, 30 Aug 2018 11:23:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH 01/21] staging:rtl8192u: Rename AdvCoding - Style
+Message-ID: <20180830082305.umqtq3fdexlyvn65@mwanda>
+References: <20180829203547.15650-1-johnfwhitmore@gmail.com>
+ <20180829203547.15650-2-johnfwhitmore@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 30 Aug 2018 01:22:55
- -0700 (PDT)
-In-Reply-To: <bcdbf067-4213-18ed-6d30-dc0dd2376c02@linaro.org>
-References: <516d8599-8038-7b47-a3f5-640bf13856c2@linaro.org>
- <2682482.uFPN0cxrGI@aspire.rjw.lan> <bcdbf067-4213-18ed-6d30-dc0dd2376c02@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 30 Aug 2018 10:22:55 +0200
-Message-ID: <CAPDyKFrOoJam38Nc05DTo09HbY964bGaw+27GuikYuEz3o=UWw@mail.gmail.com>
-Subject: Re: [RFD] Add debugfs for cpuidle ?
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829203547.15650-2-johnfwhitmore@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=871
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808300088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 May 2018 at 10:47, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> On 24/05/2018 10:28, Rafael J. Wysocki wrote:
->> On Thursday, May 24, 2018 10:14:31 AM CEST Daniel Lezcano wrote:
->>>
->>> Hi all,
->>
->> Hi,
->>
->>> would it be interesting to add debugfs metrics for cpuidle in order
->>> to read some statistics from there and investigate the behavior ?
->>
->> What exactly would you like to see in there?
->
-> It could be interesting to have statistics on a per cpu and global basis
-> for:
->
-> - prediction accuracy:
->
-> /sys/kernel/debug/cpuidle/prediction/[good|over|under]
-> /sys/kernel/debug/cpuidle/cpu*/state*/prediction/[good|over|under]
->
->  - exit latency
->
-> In addition, it is often the case the idle states values are dropped
-> randomly, it is interesting to see the average exit latency for the
-> states. That could give also an indication the cluster idle state success.
->
-> /sys/kernel/debug/cpuidle/state*/latency/[min|max|avg|stddev]
-> /sys/kernel/debug/cpuidle/cpu*/state*/prediction/[min|max|avg|stddev]
->
-> And perhaps more information like the tick stopped stat ?
->
+On Wed, Aug 29, 2018 at 09:35:27PM +0100, John Whitmore wrote:
+> Rename the bit field element AdvCoding, as it causes a checkpatch issue
+> with CamelCase naming. As the element is not actually used in code it
+> has been renamed to 'not_used_adv_coding'.
+> 
+> The single line of code which initialises the bit has been removed,
+> as the  field is unused.
+> 
+> This is a purely coding style change which should have no impact
+> on runtime code execution.
+> 
+> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> ---
+>  drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 +-
+>  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> index 64d5359cf7e2..66a0274077d3 100644
+> --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> @@ -39,7 +39,7 @@ enum ht_extension_chan_offset {
+>  
+>  struct ht_capability_ele {
+>  	//HT capability info
+> -	u8	AdvCoding:1;
+> +	u8	not_used_adv_coding:1;
 
-Daniel,
+I can't review any more of this patchset when this is the first line...
 
-Any chance that you have some draft version of actual code implementing this?
+:(
 
-I would be very interested to try then - or help out to implement
-this, in case you haven't started yet.
+regards,
+dan carpenter
 
-Kind regards
-Uffe
