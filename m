@@ -7,175 +7,83 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BB7C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D21C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 720802082A
-	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 661E82082A
+	for <linux-kernel@archiver.kernel.org>; Thu, 30 Aug 2018 19:05:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ovh2DSFQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720802082A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/K1kD6h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661E82082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbeH3XFN (ORCPT
+        id S1727251AbeH3XIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 30 Aug 2018 19:05:13 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35714 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH3XFK (ORCPT
+        Thu, 30 Aug 2018 19:08:46 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36418 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH3XIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 Aug 2018 19:05:10 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o18-v6so3084850wmc.0;
-        Thu, 30 Aug 2018 12:01:32 -0700 (PDT)
+        Thu, 30 Aug 2018 19:08:46 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v26-v6so8147792ljj.3;
+        Thu, 30 Aug 2018 12:05:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=t7Yy96h1CNLQsmpPB+gBtt+3MwMJX3o+4LyGaKYq94s=;
-        b=Ovh2DSFQ3Cs6oLBB67ht6cSz4HYmGF8Wha89mOyuDPXkA1DktCSvtOe9hN5rJM0COS
-         BqdbmOs3DP96TKpkimSVj+KN7d2D3YrtcPABUwXb7VS+YIshG7m0D0X9qlXfWUE5WPzQ
-         fumVRD+JDD/7qTg9FPB+lWDdNyQSuT2/aERQEzH34edKn8K+oLj+6uX49dMym8abrtMS
-         5auJyHSU4SL8rfQCcfSL/B77phx64zqXzdkX+1ZlG5PSW+jGUVvUSOAiG9/QcA2gNIlQ
-         4cfntFdChWp7ZXQNx0uxZIJQoWDez6a8xLhtUG6/YweucdqC+/Gp+iLOg7i2Vr2fkqKp
-         7FCA==
+        h=from:to:cc:subject:date:message-id;
+        bh=qMQExZ5pfFvwXY1fBHkgqK5Xngk1uYqfFb/4tnV8mgw=;
+        b=T/K1kD6hn7cwXC+cjj8j2DdyjEEKfV44E+HkhnisG3O3C5R6hYA0vh5jGz4A/MZ2Mb
+         oMONE5o4kDLVksCyGbSwoPUlGhES5j5fqgKJmraaRD4N5R8HXOWu4BJ+oLfpnXbi0Z9K
+         YXX5sxGKJUjYa+DxStKUtlXL5uY2v1epVmx98ZV3rKiO0kepY3LfX630Qv1f2pJJJuR/
+         rFMdhrk1euU6C9LwmAiM4mHUViJ1TXrv/Eu6IVK+eESfHiFc2S+bPmfQU0OKlPaLw362
+         m2IVkgY2gyyOs07lrkQglyplmcKyYJAeeM/V+VXSzigtzsZA37gfSy2U8AEWMmLv+N+O
+         bB4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=t7Yy96h1CNLQsmpPB+gBtt+3MwMJX3o+4LyGaKYq94s=;
-        b=rInyriQaT05Sn2a72D2vweNqrTwcTWZjIeCw63edfMYpsrkIis0/LpR+Bn1uip4cs3
-         plm/67Y/AO0JWn/ffcwljWVtdcUAqrCNyxL4ao+HrhKu6KVktFzZQbDdsqyJT1Wl24hU
-         8q7wCcc0e62nacfO5iF/0eTBFvHzy4pbwTb/qRyqyd3R1AKenyx3F5SeRk/Bxh7e8lk5
-         6yLI4Rbsm5RouwQEaheU9Qgmg0JgN0zPhfEzRJWNUWzw+SCRLJgyAiPdUtEyiaGtqJ99
-         /Zh6sWfozFMhE1KdZ9atc2eFEC5EfbcXLrHySoUWrjzgkTUEcUXTo7RW326MZk+D+gZm
-         63fg==
-X-Gm-Message-State: APzg51DnB4f4HyY2HBy4BpRBKtQFV5i1gNlqlfLD41ptHTL05KSdOkJF
-        /J3SUtEeitEgS3SNE6TNQXs=
-X-Google-Smtp-Source: ANB0Vdb6vrLVv1tUQqsKvf3EK6v9rGI3K/xY72jlBe/Kj2psPEnGdHTISywO0PI3hRnsWYx3Asqzew==
-X-Received: by 2002:a1c:908b:: with SMTP id s133-v6mr2706797wmd.69.1535655691915;
-        Thu, 30 Aug 2018 12:01:31 -0700 (PDT)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w17-v6sm2937095wmc.43.2018.08.30.12.01.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qMQExZ5pfFvwXY1fBHkgqK5Xngk1uYqfFb/4tnV8mgw=;
+        b=WzERgVMkyHuE1nhLo+SW9OCOa9+z4numJES697a+IVbHyKn8/14Z7yq99fByEBlC0J
+         tDmKzwb0ojQd3xD3VfKpyLlvnhk4MLa5mZssSZLRoVV4+wrgwIqIqGH6B6QcBThxsBa1
+         7S7WpbFDsclO2AbluD8228MLEKNmXCmxm1H3WgYtJhBlNyGK99zA47KTheeni0d6uRBm
+         Sm/7318NIH4WkvkprKbIvSYVtTU1Eq3cowFSQQ25UnYUumFU2qwnqVhkD1HDjQuPhb2W
+         XQc7isUp25L52gZGofLgc+3oiXgt9mkHIunDnxl5HnOw9aBR1gpsklX9PzCblGPNKNlj
+         7JTg==
+X-Gm-Message-State: APzg51CZB0ZoPKp15R50wGM63dP407YDlA9LUCiupDfL8sGzwAcE5Iv6
+        hZF+GjSFcyDygCaHBlWb/4Y=
+X-Google-Smtp-Source: ANB0VdbmbWqTqem7gDIbT2LS9shwpdYmIermIPQEj31QoN4tAON8wsYsRUzLY1FCCkbczdI5zitlqA==
+X-Received: by 2002:a2e:8513:: with SMTP id j19-v6mr8054172lji.10.1535655907333;
+        Thu, 30 Aug 2018 12:05:07 -0700 (PDT)
+Received: from localhost.localdomain (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id q128-v6sm1373081ljq.72.2018.08.30.12.05.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 12:01:30 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
-        mark.rutland@arm.com, maxime.ripard@bootlin.com,
-        robh+dt@kernel.org, wens@csie.org, clabbe.montjoie@gmail.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v4 02/13] ata: ahci_platform: add support for AHCI controller regulator
-Date:   Thu, 30 Aug 2018 21:01:09 +0200
-Message-Id: <20180830190120.722-3-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180830190120.722-1-clabbe.montjoie@gmail.com>
-References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+        Thu, 30 Aug 2018 12:05:06 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] LP1/LP2 suspend-resume CPU clock fixes for Tegra30
+Date:   Thu, 30 Aug 2018 22:04:52 +0300
+Message-Id: <20180830190454.8729-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SoC R40 AHCI controller need a regulator to work.
-So this patch add a way to add an optional regulator on AHCI controller.
+Hello,
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/ata/ahci.h             |  1 +
- drivers/ata/libahci_platform.c | 26 ++++++++++++++++++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
+This patch-series fixes CPU hanging after suspend-resume / LP2 cpuidle
+on Tegra30. The bug really appears during stress-testing, like frequent
+suspending under variable load + the upcoming Tegra30 CPUFREQ driver.
 
-diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-index 6a1515f0da40..1415f1012de5 100644
---- a/drivers/ata/ahci.h
-+++ b/drivers/ata/ahci.h
-@@ -352,6 +352,7 @@ struct ahci_host_priv {
- 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
- 	struct reset_control	*rsts;		/* Optional */
- 	struct regulator	**target_pwrs;	/* Optional */
-+	struct regulator	*ahci_regulator;/* Optional */
- 	/*
- 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
- 	 * the PHY position in this array.
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index c92c10d55374..a886b61476a3 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -139,7 +139,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_clks);
-  * ahci_platform_enable_regulators - Enable regulators
-  * @hpriv: host private area to store config values
-  *
-- * This function enables all the regulators found in
-+ * This function enables all the regulators found in controller and
-  * hpriv->target_pwrs, if any.  If a regulator fails to be enabled, it
-  * disables all the regulators already enabled in reverse order and
-  * returns an error.
-@@ -151,6 +151,12 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
- {
- 	int rc, i;
- 
-+	if (hpriv->ahci_regulator) {
-+		rc = regulator_enable(hpriv->ahci_regulator);
-+		if (rc)
-+			return rc;
-+	}
-+
- 	for (i = 0; i < hpriv->nports; i++) {
- 		if (!hpriv->target_pwrs[i])
- 			continue;
-@@ -167,6 +173,8 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
- 		if (hpriv->target_pwrs[i])
- 			regulator_disable(hpriv->target_pwrs[i]);
- 
-+	if (hpriv->ahci_regulator)
-+		regulator_disable(hpriv->ahci_regulator);
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(ahci_platform_enable_regulators);
-@@ -175,7 +183,8 @@ EXPORT_SYMBOL_GPL(ahci_platform_enable_regulators);
-  * ahci_platform_disable_regulators - Disable regulators
-  * @hpriv: host private area to store config values
-  *
-- * This function disables all regulators found in hpriv->target_pwrs.
-+ * This function disables all regulators found in hpriv->target_pwrs and
-+ * AHCI controller.
-  */
- void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
- {
-@@ -186,6 +195,9 @@ void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
- 			continue;
- 		regulator_disable(hpriv->target_pwrs[i]);
- 	}
-+
-+	if (hpriv->ahci_regulator)
-+		regulator_disable(hpriv->ahci_regulator);
- }
- EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
- /**
-@@ -351,6 +363,7 @@ static int ahci_platform_get_regulator(struct ahci_host_priv *hpriv, u32 port,
-  *
-  * 1) mmio registers (IORESOURCE_MEM 0, mandatory)
-  * 2) regulator for controlling the targets power (optional)
-+ *    regulator for controlling the AHCI controller (optional)
-  * 3) 0 - AHCI_MAX_CLKS clocks, as specified in the devs devicetree node,
-  *    or for non devicetree enabled platforms a single clock
-  * 4) resets, if flags has AHCI_PLATFORM_GET_RESETS (optional)
-@@ -408,6 +421,15 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
- 		hpriv->clks[i] = clk;
- 	}
- 
-+	hpriv->ahci_regulator = devm_regulator_get_optional(dev, "ahci");
-+	if (IS_ERR(hpriv->ahci_regulator)) {
-+		rc = PTR_ERR(hpriv->ahci_regulator);
-+		if (rc == -EPROBE_DEFER)
-+			goto err_out;
-+		rc = 0;
-+		hpriv->ahci_regulator = NULL;
-+	}
-+
- 	if (flags & AHCI_PLATFORM_GET_RESETS) {
- 		hpriv->rsts = devm_reset_control_array_get_optional_shared(dev);
- 		if (IS_ERR(hpriv->rsts)) {
+Dmitry Osipenko (2):
+  ARM: tegra: Switch CPU to PLLP before powergating on Tegra30
+  ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30
+
+ arch/arm/mach-tegra/sleep-tegra30.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-2.16.4
+2.18.0
 
