@@ -6,121 +6,277 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18F1C43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E26C433F5
 	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65AFC20837
+	by mail.kernel.org (Postfix) with ESMTP id 2E6EC2083A
 	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:55:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65AFC20837
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6EC2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeHaIBE (ORCPT
+        id S1727325AbeHaIBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 31 Aug 2018 04:01:04 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:46368 "EHLO inva021.nxp.com"
+Received: from inva021.nxp.com ([92.121.34.21]:46338 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727098AbeHaIBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 04:01:04 -0400
+        id S1726660AbeHaIBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 04:01:03 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 22584200075;
-        Fri, 31 Aug 2018 05:55:39 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5EE842000AD;
+        Fri, 31 Aug 2018 05:55:38 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5D5DD200063;
-        Fri, 31 Aug 2018 05:55:35 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A05720000C;
+        Fri, 31 Aug 2018 05:55:34 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 60E0B402FB;
-        Fri, 31 Aug 2018 11:55:30 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6EAC9402F0;
+        Fri, 31 Aug 2018 11:55:29 +0800 (SGT)
 From:   Ran Wang <ran.wang_1@nxp.com>
 To:     Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH 2/3] Documentation: dt: binding: fsl: update property description for RCPM
-Date:   Fri, 31 Aug 2018 11:52:18 +0800
-Message-Id: <20180831035219.31619-2-ran.wang_1@nxp.com>
+Subject: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
+Date:   Fri, 31 Aug 2018 11:52:17 +0800
+Message-Id: <20180831035219.31619-1-ran.wang_1@nxp.com>
 X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180831035219.31619-1-ran.wang_1@nxp.com>
-References: <20180831035219.31619-1-ran.wang_1@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add property 'big-endian' and supportted IP's configuration info.
-Remove property 'fsl,#rcpm-wakeup-cell'.
+This driver is to provide a independent framework for PM service
+provider and consumer to configure system level wake up feature. For
+example, RCPM driver could register a callback function on this
+platform first, and Flex timer driver who want to enable timer wake
+up feature, will call generic API provided by this platform driver,
+and then it will trigger RCPM driver to do it. The benefit is to
+isolate the user and service, such as flex timer driver will not have
+to know the implement details of wakeup function it require. Besides,
+it is also easy for service side to upgrade its logic when design is
+changed and remain user side unchanged.
 
 Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
 ---
- Documentation/devicetree/bindings/soc/fsl/rcpm.txt |   42 ++++++-------------
- 1 files changed, 13 insertions(+), 29 deletions(-)
+ drivers/soc/fsl/Kconfig   |   14 +++++
+ drivers/soc/fsl/Makefile  |    1 +
+ drivers/soc/fsl/plat_pm.c |  144 +++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/fsl/plat_pm.h |   22 +++++++
+ 4 files changed, 181 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/soc/fsl/plat_pm.c
+ create mode 100644 include/soc/fsl/plat_pm.h
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-index e284e4e..7fc630a 100644
---- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-@@ -5,8 +5,6 @@ and power management.
- 
- Required properites:
-   - reg : Offset and length of the register set of the RCPM block.
--  - fsl,#rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
--	fsl,rcpm-wakeup property.
-   - compatible : Must contain a chip-specific RCPM block compatible string
- 	and (if applicable) may contain a chassis-version RCPM compatible
- 	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
-@@ -27,37 +25,23 @@ Chassis Version		Example Chips
- ---------------		-------------------------------
- 1.0				p4080, p5020, p5040, p2041, p3041
- 2.0				t4240, b4860, b4420
--2.1				t1040, ls1021
-+2.1				t1040, ls1021, ls1012
+diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+index 7a9fb9b..6517412 100644
+--- a/drivers/soc/fsl/Kconfig
++++ b/drivers/soc/fsl/Kconfig
+@@ -16,3 +16,17 @@ config FSL_GUTS
+ 	  Initially only reading SVR and registering soc device are supported.
+ 	  Other guts accesses, such as reading RCW, should eventually be moved
+ 	  into this driver as well.
 +
-+Optional properties:
-+ - big-endian : Indicate RCPM registers is big-endian. A RCPM node
-+   that doesn't have this property will be regarded as little-endian.
-+ - <property 'compatible' string of consumer device> : This string
-+   is referred by RCPM driver to judge if the consumer (such as flex timer)
-+   is able to be regards as wakeup source or not, such as 'fsl,ls1012a-ftm'.
-+   Further, this property will carry the bit mask info to control
-+   coresponding wake up source.
- 
- Example:
- The RCPM node for T4240:
- 	rcpm: global-utilities@e2000 {
- 		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
- 		reg = <0xe2000 0x1000>;
--		fsl,#rcpm-wakeup-cells = <2>;
--	};
--
--* Freescale RCPM Wakeup Source Device Tree Bindings
---------------------------------------------
--Required fsl,rcpm-wakeup property should be added to a device node if the device
--can be used as a wakeup source.
--
--  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
--	register cells. The number of IPPDEXPCR register cells is defined in
--	"fsl,#rcpm-wakeup-cells" in the rcpm node. The first register cell is
--	the bit mask that should be set in IPPDEXPCR0, and the second register
--	cell is for IPPDEXPCR1, and so on.
--
--	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
--	mechanism for keeping certain blocks awake during STANDBY and MEM, in
--	order to use them as wake-up sources.
--
--Example:
--	lpuart0: serial@2950000 {
--		compatible = "fsl,ls1021a-lpuart";
--		reg = <0x0 0x2950000 0x0 0x1000>;
--		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&sysclk>;
--		clock-names = "ipg";
--		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
-+		big-endian;
-+		fsl,ls1012a-ftm = <0x20000>;
-+		fsl,pfe = <0xf0000020>;
- 	};
++config FSL_PLAT_PM
++	bool "Freescale platform PM framework"
++	help
++	  This driver is to provide a independent framework for PM service
++	  provider and consumer to configure system level wake up feature. For
++	  example, RCPM driver could register a callback function on this
++	  platform first, and Flex timer driver who want to enable timer wake
++	  up feature, will call generic API provided by this platform driver,
++	  and then it will trigger RCPM driver to do it. The benefit is to
++	  isolate the user and service, such as  flex timer driver will not
++	  have to know the implement details of wakeup function it require.
++	  Besides, it is also easy for service side to upgrade its logic when
++	  design changed and remain user side unchanged.
+diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+index 44b3beb..8f9db23 100644
+--- a/drivers/soc/fsl/Makefile
++++ b/drivers/soc/fsl/Makefile
+@@ -6,3 +6,4 @@ obj-$(CONFIG_FSL_DPAA)                 += qbman/
+ obj-$(CONFIG_QUICC_ENGINE)		+= qe/
+ obj-$(CONFIG_CPM)			+= qe/
+ obj-$(CONFIG_FSL_GUTS)			+= guts.o
++obj-$(CONFIG_FSL_PLAT_PM)	+= plat_pm.o
+diff --git a/drivers/soc/fsl/plat_pm.c b/drivers/soc/fsl/plat_pm.c
+new file mode 100644
+index 0000000..19ea14e
+--- /dev/null
++++ b/drivers/soc/fsl/plat_pm.c
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// plat_pm.c - Freescale platform PM framework
++//
++// Copyright 2018 NXP
++//
++// Author: Ran Wang <ran.wang_1@nxp.com>,
++
++#include <linux/kernel.h>
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <soc/fsl/plat_pm.h>
++
++
++struct plat_pm_t {
++	struct list_head node;
++	fsl_plat_pm_handle handle;
++	void *handle_priv;
++	spinlock_t	lock;
++};
++
++static struct plat_pm_t plat_pm;
++
++// register_fsl_platform_wakeup_source - Register callback function to plat_pm
++// @handle: Pointer to handle PM feature requirement
++// @handle_priv: Handler specific data struct
++//
++// Return 0 on success other negative errno
++int register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
++		void *handle_priv)
++{
++	struct plat_pm_t *p;
++	unsigned long	flags;
++
++	if (!handle) {
++		pr_err("FSL plat_pm: Handler invalid, reject\n");
++		return -EINVAL;
++	}
++
++	p = kmalloc(sizeof(*p), GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	p->handle = handle;
++	p->handle_priv = handle_priv;
++
++	spin_lock_irqsave(&plat_pm.lock, flags);
++	list_add_tail(&p->node, &plat_pm.node);
++	spin_unlock_irqrestore(&plat_pm.lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(register_fsl_platform_wakeup_source);
++
++// Deregister_fsl_platform_wakeup_source - deregister callback function
++// @handle_priv: Handler specific data struct
++//
++// Return 0 on success other negative errno
++int deregister_fsl_platform_wakeup_source(void *handle_priv)
++{
++	struct plat_pm_t *p, *tmp;
++	unsigned long	flags;
++
++	spin_lock_irqsave(&plat_pm.lock, flags);
++	list_for_each_entry_safe(p, tmp, &plat_pm.node, node) {
++		if (p->handle_priv == handle_priv) {
++			list_del(&p->node);
++			kfree(p);
++		}
++	}
++	spin_unlock_irqrestore(&plat_pm.lock, flags);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(deregister_fsl_platform_wakeup_source);
++
++// fsl_platform_wakeup_config - Configure wakeup source by calling handlers
++// @dev: pointer to user's device struct
++// @flag: to tell enable or disable wakeup source
++//
++// Return 0 on success other negative errno
++int fsl_platform_wakeup_config(struct device *dev, bool flag)
++{
++	struct plat_pm_t *p;
++	int ret;
++	bool success_handled;
++	unsigned long	flags;
++
++	success_handled = false;
++
++	// Will consider success if at least one callback return 0.
++	// Also, rest handles still get oppertunity to be executed
++	spin_lock_irqsave(&plat_pm.lock, flags);
++	list_for_each_entry(p, &plat_pm.node, node) {
++		if (p->handle) {
++			ret = p->handle(dev, flag, p->handle_priv);
++			if (!ret)
++				success_handled = true;
++			else if (ret != -ENODEV) {
++				pr_err("FSL plat_pm: Failed to config wakeup source:%d\n", ret);
++				return ret;
++			}
++		} else
++			pr_warn("FSL plat_pm: Invalid handler detected, skip\n");
++	}
++	spin_unlock_irqrestore(&plat_pm.lock, flags);
++
++	if (success_handled == false) {
++		pr_err("FSL plat_pm: Cannot find the matchhed handler for wakeup source config\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++// fsl_platform_wakeup_enable - Enable wakeup source
++// @dev: pointer to user's device struct
++//
++// Return 0 on success other negative errno
++int fsl_platform_wakeup_enable(struct device *dev)
++{
++	return fsl_platform_wakeup_config(dev, true);
++}
++EXPORT_SYMBOL_GPL(fsl_platform_wakeup_enable);
++
++// fsl_platform_wakeup_disable - Disable wakeup source
++// @dev: pointer to user's device struct
++//
++// Return 0 on success other negative errno
++int fsl_platform_wakeup_disable(struct device *dev)
++{
++	return fsl_platform_wakeup_config(dev, false);
++}
++EXPORT_SYMBOL_GPL(fsl_platform_wakeup_disable);
++
++static int __init fsl_plat_pm_init(void)
++{
++	spin_lock_init(&plat_pm.lock);
++	INIT_LIST_HEAD(&plat_pm.node);
++	return 0;
++}
++
++core_initcall(fsl_plat_pm_init);
+diff --git a/include/soc/fsl/plat_pm.h b/include/soc/fsl/plat_pm.h
+new file mode 100644
+index 0000000..bbe151e
+--- /dev/null
++++ b/include/soc/fsl/plat_pm.h
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// plat_pm.h - Freescale platform PM Header
++//
++// Copyright 2018 NXP
++//
++// Author: Ran Wang <ran.wang_1@nxp.com>,
++
++#ifndef __FSL_PLAT_PM_H
++#define __FSL_PLAT_PM_H
++
++typedef int (*fsl_plat_pm_handle)(struct device *dev, bool flag,
++		void *handle_priv);
++
++int register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
++		void *handle_priv);
++int deregister_fsl_platform_wakeup_source(void *handle_priv);
++int fsl_platform_wakeup_config(struct device *dev, bool flag);
++int fsl_platform_wakeup_enable(struct device *dev);
++int fsl_platform_wakeup_disable(struct device *dev);
++
++#endif	// __FSL_PLAT_PM_H
 -- 
 1.7.1
 
