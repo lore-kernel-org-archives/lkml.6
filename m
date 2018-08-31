@@ -2,117 +2,148 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C43C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0EDD2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18B8B20843
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:20:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hth26sQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0EDD2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OguqJ3jm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B8B20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeIAB1V (ORCPT
+        id S1727363AbeIAB3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:27:21 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:10073 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeIAB1U (ORCPT
+        Fri, 31 Aug 2018 21:29:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37577 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727248AbeIAB3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:27:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1535750283; x=1567286283;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=AzBH+Tvtlqkm0ten07yP+A1EZFsALSV7gstfTEMQnEo=;
-  b=hth26sQT9G/xYxXlYSo0snX8Od8987RGcFL/9X7OxJyG9vP0O/cW2a9N
-   mbzS613mpeiePMnCaT4ZXhpJamvOooDKc+jRgGElh8KrhT1Wq4uTE+y4c
-   swDW7obJfQXHmpqkVnUVNDxLk4IP6tAGo07prOG5Mh97hcYgAqFn1xS4h
-   ySSiNAO2Mqfb64y/IlR6PC+s6UF9lNEOI8oWTQmY/7h08iel1O0rmxwxh
-   9dVvAkepuaZlj5FlJGapPFLha2qMlrCk2haqiMJJPP0fBKnCQDW6YdhAj
-   NMd1BjzF6LTlYnc130/w5eg2O4QW7wOQLQQXRzApqQqmWIa2114jDCRgg
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.53,313,1531756800"; 
-   d="scan'208";a="192946877"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Sep 2018 05:18:03 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 31 Aug 2018 14:04:58 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.64.114]) ([10.111.64.114])
-  by uls-op-cesaip01.wdc.com with ESMTP; 31 Aug 2018 14:18:03 -0700
-Subject: Re: [PATCH 5/8] RISC-V: Rename im_okay_therefore_i_am to
- found_boot_cpu
-To:     Christoph Hellwig <hch@infradead.org>,
-        Palmer Dabbelt <palmer@sifive.com>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
-        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-References: <20180827184243.25344-1-palmer@sifive.com>
- <20180827184243.25344-6-palmer@sifive.com>
- <20180830144118.GA27233@infradead.org>
- <30229ef5-ce4e-e78b-32f9-7c563f63827b@wdc.com>
- <20180831055447.GA18478@infradead.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <f62e9466-bd77-096d-fcc7-f5750d0257bb@wdc.com>
-Date:   Fri, 31 Aug 2018 14:18:02 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Fri, 31 Aug 2018 21:29:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h69-v6so6061973pfd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cj7JgX+iXT4uVtzoZVFieuPOGdIccPYkThtUySHDX3o=;
+        b=OguqJ3jmuSSpbIQ20CGUxnTlM/NbIUSJ/4qvAX8dD8WOyfGvZNj23XRFdUZ+Rdz4Km
+         E0xxTBxMC98+BIioFZjj4JkL+KPwF+RzGk6UIJX3ayzZGua0aNT4K99BlkPa6aXZPZ7+
+         sRfl6B+s+OY10SK1udN+PHe0YKIbseHx57q8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cj7JgX+iXT4uVtzoZVFieuPOGdIccPYkThtUySHDX3o=;
+        b=oqWUdvFAHZ1tS50+9HdNy+6nMGl3jd/8MuQiLjebTSexGPN0jnxJ1RsiVP4FIPZaUP
+         95Wj3RrCKlojvnxG/D8+IzgVZ/Ms2U5UZrRZvfJK3yvd6faonzbgggMCCB52eDPxzWnK
+         n4rf9IO1iGOw6RIcTUBPwykyqvWs6TBxcKMWg71hY9UQ5IDOqEa0DbtkJ3qTe1Ck4F8d
+         DMcpn/1K+VOhjpCEWkLvQQeFHvL77qda22ewJd5lkZPvSbs+CFdfJGAuE44R7lJAJOFO
+         aCLqkl1xcgEUhzNmugvmYb4d2CxjAW+dGMHr4FSBrW21J+RVglCXzxoRB6+sqeIlcFmw
+         xfgw==
+X-Gm-Message-State: APzg51A1eKT+i0WLnbVIGVcVRcY3nLrQF2GdUZKvBFiksUa/NSG0LVa0
+        EejmtQU+rB3EWL4QeVuDHT5Guw==
+X-Google-Smtp-Source: ANB0VdasySdItJWdWiVlXP+3rKJiuvUdpg46FbcWkl+DBNJ4lHrN9szEMRZ8sLbBh1tzhsXtcxpwZg==
+X-Received: by 2002:a62:3001:: with SMTP id w1-v6mr17731669pfw.19.1535750412330;
+        Fri, 31 Aug 2018 14:20:12 -0700 (PDT)
+Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5e2b:39df:72ed:4968])
+        by smtp.gmail.com with ESMTPSA id d24-v6sm11838607pgv.23.2018.08.31.14.20.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 14:20:11 -0700 (PDT)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH] clk: fix clk_calc_subtree compute duplications
+Date:   Fri, 31 Aug 2018 14:20:07 -0700
+Message-Id: <20180831212007.247186-1-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.19.0.rc1.350.ge57e33dbd1-goog
 MIME-Version: 1.0
-In-Reply-To: <20180831055447.GA18478@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/18 10:54 PM, Christoph Hellwig wrote:
-> On Thu, Aug 30, 2018 at 09:11:11AM -0700, Atish Patra wrote:
->> On 8/30/18 7:41 AM, Christoph Hellwig wrote:
->>>>    	struct device_node *dn = NULL;
->>>> -	int hart, im_okay_therefore_i_am = 0;
->>>> +	int hart, found_boot_cpu = 0;
->>>
->>> If you rename this anyway please switch to use a bool.
->>>
->>
->> I can address the comment on this patch and fold it in my series to avoid
->> unnecessary conflict.
->>
->> @Palmer: You can drop this patch.
-> 
-> If Palmer is ok with it how about you include a respin of his whole
-> series?  There are some overlaps I think and having a single person
-> in charge might be helpful.
-> 
+clk_calc_subtree was called at every step up the clk tree in
+clk_calc_new_rates. Since it recursively calls itself for its
+children, this means it would be called once on each clk for each
+step above the top clk is.
 
-Sure. I am fine with it. Palmer ?
+This is fixed by adding a non-recursive function called at every
+step in clk_calc_new_rates that fills in new_rate, new_parent, etc.
+Since the clks not called directly for clk_calc_new_rates can only
+change their rate, we only set new_rate in clk_calc_subtree.
+clk_calc_subtree is also only called on the top clk after it's found
+via clk_calc_new_rates to remove the duplicate recursive calls.
 
-> Btw, I've found your series in my linux-kernel folder, but it did
-> not make it to linux-riscv or my personal inbox despite the CC.
-> 
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ drivers/clk/clk.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-Thanks for the review.
-I checked my scripts. I couldn't figure out what went wrong.
-Not sure if there was some issue with infradead.org at that time.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d31055ae6ec6..52032fb1a8a2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1609,11 +1609,18 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 	return ret;
+ }
+ 
+-static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+-			     struct clk_core *new_parent, u8 p_index)
++static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate)
+ {
+ 	struct clk_core *child;
+ 
++	core->new_rate = new_rate;
++	hlist_for_each_entry(child, &core->children, child_node)
++		clk_calc_subtree(child, clk_recalc(child, new_rate));
++}
++
++static void clk_set_change(struct clk_core *core, unsigned long new_rate,
++			   struct clk_core *new_parent, u8 p_index)
++{
+ 	core->new_rate = new_rate;
+ 	core->new_parent = new_parent;
+ 	core->new_parent_index = p_index;
+@@ -1621,11 +1628,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 	core->new_child = NULL;
+ 	if (new_parent && new_parent != core->parent)
+ 		new_parent->new_child = core;
+-
+-	hlist_for_each_entry(child, &core->children, child_node) {
+-		child->new_rate = clk_recalc(child, new_rate);
+-		clk_calc_subtree(child, child->new_rate, NULL, 0);
+-	}
+ }
+ 
+ /*
+@@ -1709,7 +1711,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 		top = clk_calc_new_rates(parent, best_parent_rate);
+ 
+ out:
+-	clk_calc_subtree(core, new_rate, parent, p_index);
++	clk_set_change(core, new_rate, parent, p_index);
+ 
+ 	return top;
+ }
+@@ -1910,6 +1912,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (ret)
+ 		return ret;
+ 
++	clk_calc_subtree(top, top->new_rate);
++
+ 	/* notify that we are about to change rates */
+ 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+ 	if (fail_clk) {
+-- 
+2.19.0.rc1.350.ge57e33dbd1-goog
 
-Anyways, sorry again for the mess. I will keep a watch on this next time.
-
-Regards,
-Atish
