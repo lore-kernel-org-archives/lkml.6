@@ -2,241 +2,180 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E771C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8E9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEF120839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:29:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBEF120839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E4E262083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGg0ca8w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E262083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeHaHe3 (ORCPT
+        id S1727334AbeHaHzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 03:34:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40927 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726959AbeHaHe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 03:34:28 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9E2B6F2ADC703;
-        Fri, 31 Aug 2018 11:29:04 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Fri, 31 Aug 2018
- 11:29:05 +0800
-Subject: Re: [PATCH 2/6] staging: erofs: formatting fix to NULL comparison
-To:     Gao Xiang <hsiangkao@aol.com>,
-        Pavel Zemlyanoy <zemlyanoy@ispras.ru>
-CC:     <ldv-project@linuxtesting.org>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
- <1535642042-5336-2-git-send-email-zemlyanoy@ispras.ru>
- <747d9c74-02cd-fa39-9870-ae17dbddf366@aol.com>
- <44d6e603-fe1d-6853-c474-760c0a2ed4ec@aol.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <47c7d469-c807-760d-7e28-ae8108a46af5@huawei.com>
-Date:   Fri, 31 Aug 2018 11:29:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 03:55:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35117 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726660AbeHaHzM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 03:55:12 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so4860441pfh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 20:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JnzZTNwm0KxZndR9Wyi/0X0W9XERF0usnWDQzFxLzQo=;
+        b=JGg0ca8w7F1MQfZwodFAiOlcja1xPSgnj7p4t6P3qQqQE4hEvbr15Eh4c+ZBRvqdoF
+         DWfNDVeOKCGI7hNzhXUua9zYjvlKL0N8P910V3vJRdMwl0f4BE7ks8E+SQzo3Mp3XBcn
+         bu4o+P+aoiO4xrWaB6N2A3GoxnHejRiavCpJUQU+ktp8Cvaou7AA1zFNNnvCgQUXWcSw
+         pVOw1aDJ8vRHjF8lrc5G9neHZeUpL9iqBM/v33a1tGfjI5Im9q5I8SurQaK87Q98BnRD
+         Y8I4rh3ZoS/2+b80zZeYwX7ZyKzRXLuzhL69wHueEVbpBbVV+FHmBGuYFAa68NQoYh4J
+         l11Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JnzZTNwm0KxZndR9Wyi/0X0W9XERF0usnWDQzFxLzQo=;
+        b=REMUcYIcm8h2Uc9+A5+1rJWdn44fwjp7zu6/ZBrZ3d1VpGZ9dpp0Bv7XagpNGd30uK
+         xON/z5Y7R/2n3AooP2IANPA9+KVNQ9QnBPHd8uE0EAUnZcfEyHANTrF6CsMualO+a4Xo
+         DTyNRdfrTijXKZmuUbhe7wiUBW4WNmmWGRUzD+at/zpcNtXXknfw6twX7VhynyMwu+K3
+         aeXRVmeok9VQuxojmaW59lUAFlA5G/QmfYchb0ZVVU1gbQcvSOgFqDi22gf3HGAIzbmi
+         luf8o2C+LwLnnCszqfzDgWbfL4PEk5zcTC58JwdrtARf9wSveFrDfubfw0ZEuwvVgmAl
+         fSKw==
+X-Gm-Message-State: APzg51Bev63PFmC2ZgxgSNyMyb8T6OC3ZEZgLv1ZmJDsfoVlab/hsrHB
+        7aGNUN2FViCl/8ywKXm8fNs=
+X-Google-Smtp-Source: ANB0VdZobyUWPfl0OOqPNQ8FpLEc9F9hPBWVrA5LDeR0jqZCy0dBiXNYs51Zp4zrB3Zk3Ts1maOZwQ==
+X-Received: by 2002:a63:3741:: with SMTP id g1-v6mr12684689pgn.59.1535687390460;
+        Thu, 30 Aug 2018 20:49:50 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm11454902pfo.135.2018.08.30.20.49.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 20:49:49 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 13:49:43 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: VirtIO console hangs
+Message-ID: <20180831134943.7f516fed@roar.ozlabs.ibm.com>
+In-Reply-To: <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
+References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
+        <20180829003539.668e514c@roar.ozlabs.ibm.com>
+        <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <44d6e603-fe1d-6853-c474-760c0a2ed4ec@aol.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: base64
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC84LzMxIDA6MzIsIEdhbyBYaWFuZyB2aWEgTGludXgtZXJvZnMgd3JvdGU6DQo+
-IA0KPiANCj4gT24gMjAxOC84LzMxIDA6MDksIEdhbyBYaWFuZyB2aWEgTGludXgtZXJvZnMg
-d3JvdGU6DQo+PiBIaSBQYXZlbCwNCj4+DQo+PiBPbiAyMDE4LzgvMzAgMjM6MTMsIFBhdmVs
-IFplbWx5YW5veSB3cm90ZToNCj4+PiBUaGlzIHBhdGNoIGRvZXMgbm90IGNoYW5nZSB0aGUg
-bG9naWMsIGl0IG9ubHkNCj4+PiBjb3JyZWN0cyB0aGUgZm9ybWF0dGluZyBhbmQgY2hlY2tw
-YXRjaCBjaGVja3MgYnkNCj4+PiB0byBOVUxMIGNvbXBhcmlzb24uDQo+Pj4NCj4+PiBUaGUg
-cGF0Y2ggZml4ZXMgNSBjaGVja3Mgb2YgdHlwZToNCj4+PiAiQ29tcGFyaXNvbiB0byBOVUxM
-IGNvdWxkIGJlIHdyaXR0ZW4iLg0KPj4+DQo+Pj4gU2lnbmVkLW9mZi1ieTogUGF2ZWwgWmVt
-bHlhbm95IDx6ZW1seWFub3lAaXNwcmFzLnJ1Pg0KPj4NCj4+IFNvcnJ5IGFib3V0IHRoZSBs
-YXRlIHJlcGx5LiBJIGFtIG9uIHZhY2F0aW9uIG5vdy4NCj4+DQo+PiBQZXJzb25hbGx5LCBJ
-IHVzZSAiPT0gTlVMTCIgb3IgIiE9IE5VTEwiIG9uIHB1cnBvc2UsIHNpbmNlIGl0IGlzIG1v
-cmUgDQo+PiBlbXBoYXNpemVkIHRoYW4gdGhlIGNoZWNrcGF0Y2gucGwgc3VnZ2VzdGVkIHdh
-eSwgYW5kIEkgdGVuZCB0byB1c2UgdGhlIG51bGxwdHIgZXhwbGljaXRseS4NCj4+DQo+PiBC
-VFcsIEl0IHNlZW1zIG90aGVyIGZpbGVzeXN0ZW1zIHN0aWxsIHVzZSAiPT0gTlVMTCIgb3Ig
-IiE9IE5VTEwiIGV4cGxpY2l0bHksIHRvbywgZWc6DQo+PiB4ZnMsIGV4dDQsIGV4dDIsIG9j
-ZnMyLCBldGMuLi4gWW91IGNvdWxkICdncmVwJyBpbiB0aGUgZnMgZGlyZWN0b3J5Li4uIA0K
-Pj4NCj4+IE90aGVyIGNvbW1pdHMgbG9vayBnb29kIGZvciBtZSBhdCBnbGFuY2UuDQo+Pg0K
-PiANCj4gcC5zLiBJIHBlcnNvbmFsbHkgdGVuZCB0byBkcm9wIHRoaXMgcGF0Y2guIDooDQo+
-IA0KPiBIZXJlIGFyZSBidW5jaCBvZiAnTlVMTCBjb21wYXJpc29uJyB1c2FnZXMgaW4geGZz
-LCBlZy4NCj4gDQo+IC4uLg0KPiAuL3hmc19xbV9zeXNjYWxscy5jOjIxODogICAgICAgIGlm
-IChpbm8gPT0gTlVMTEZTSU5PKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgLi94ZnNfcW1fc3lzY2FsbHMuYzo3NDc6ICAgICAgICAgICAgICAg
-IEFTU0VSVChpcC0+aV91ZHF1b3QgPT0gTlVMTCk7ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIC4veGZzX3FtX3N5c2NhbGxzLmM6NzQ4OiAgICAgICAgICAgICAgICBBU1NF
-UlQoaXAtPmlfZ2RxdW90ID09IE5VTEwpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAuL3hmc19xbV9zeXNjYWxscy5jOjc0OTogICAgICAgICAgICAgICAgQVNTRVJUKGlw
-LT5pX3BkcXVvdCA9PSBOVUxMKTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Li94ZnNfcXVvdGEuaDoyNzogICAgICAgKChYRlNfSVNfVVFVT1RBX09OKG1wKSAmJiAoaXAp
-LT5pX3VkcXVvdCA9PSBOVUxMKSB8fCBcICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZz
-X3F1b3RhLmg6Mjg6ICAgICAgICAoWEZTX0lTX0dRVU9UQV9PTihtcCkgJiYgKGlwKS0+aV9n
-ZHF1b3QgPT0gTlVMTCkgfHwgXCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc19xdW90
-YS5oOjI5OiAgICAgICAgKFhGU19JU19QUVVPVEFfT04obXApICYmIChpcCktPmlfcGRxdW90
-ID09IE5VTEwpKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfcXVvdGFvcHMu
-YzozMTogICAgaWYgKCFpcCAmJiBpbm8gPT0gTlVMTEZTSU5PKSAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3JlZmxpbmsuYzoyMTM6
-ICAgIGlmIChmYm5vID09IE5VTExBR0JMT0NLKSB7ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc19yZWZsaW5rLmM6NjUyOiAgICBp
-ZiAoY291bnQgPT0gTlVMTEZJTEVPRkYpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfcmVmbGluay5jOjE0NjI6ICAgICAgICAg
-ICAgICAgICAgIGlmIChyYm5vID09IE5VTExBR0JMT0NLKSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIC4veGZzX3J0YWxsb2MuYzo4MzY6ICAgICAgICAgICAgICAg
-ICAgICBpZiAoYnAgPT0gTlVMTCkgeyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAuL3hmc19ydGFsbG9jLmM6ODk5OiAgICBpZiAobXAtPm1fcnRkZXZf
-dGFyZ3AgPT0gTlVMTCB8fCBtcC0+bV9yYm1pcCA9PSBOVUxMIHx8ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLi94ZnNfcnRhbGxvYy5jOjExNjU6ICAgaWYgKG1wLT5tX3J0ZGV2X3Rhcmdw
-ID09IE5VTEwpIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC4veGZzX3J0YWxsb2MuYzoxMjA5OiAgIGlmIChzYnAtPnNiX3JibWlubyA9PSBOVUxM
-RlNJTk8pICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAu
-L3hmc190cmFucy5jOjE4NTogICAgICAgICAgICAgICAgICAgICAgQVNTRVJUKHRwLT50X3Rp
-Y2tldCA9PSBOVUxMKTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNf
-dHJhbnNfYWlsLmM6NTk6ICAgICAgIChwcmV2X2xzbiA9PSBOVUxMQ09NTUlUTFNOIHx8IFhG
-U19MU05fQ01QKHByZXZfbHNuLCBsc24pIDw9IDApICYmICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5z
-X2FpbC5jOjYwOiAgICAgICAobmV4dF9sc24gPT0gTlVMTENPTU1JVExTTiB8fCBYRlNfTFNO
-X0NNUChuZXh0X2xzbiwgbHNuKSA+PSAwKSkgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19haWwu
-Yzo2NTogICBBU1NFUlQocHJldl9sc24gPT0gTlVMTENPTU1JVExTTiB8fCBYRlNfTFNOX0NN
-UChwcmV2X2xzbiwgbHNuKSA8PSAwKTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfYWlsLmM6NjY6
-ICAgQVNTRVJUKG5leHRfbHNuID09IE5VTExDT01NSVRMU04gfHwgWEZTX0xTTl9DTVAobmV4
-dF9sc24sIGxzbikgPj0gMCk7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2FpbC5jOjQ3NTogICAg
-ICAgICAgaWYgKGxpcCA9PSBOVUxMKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19idWYuYzo3MDogICBBU1NFUlQo
-YnAtPmJfdHJhbnNwID09IE5VTEwpOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfYnVmLmM6MTU1OiAgaWYgKGJwID09IE5V
-TEwpIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIC4veGZzX3RyYW5zX2J1Zi5jOjE4NzogIGlmICh0cCA9PSBOVUxMKSAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAuL3hmc190cmFuc19idWYuYzoyMDc6ICBpZiAoYnAgPT0gTlVMTCkgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLi94ZnNfdHJhbnNfYnVmLmM6MzUwOiAgaWYgKHRwID09IE5VTEwpIHsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4v
-eGZzX3RyYW5zX2J1Zi5jOjM1MTogICAgICAgICAgQVNTRVJUKGJwLT5iX3RyYW5zcCA9PSBO
-VUxMKTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190
-cmFuc19idWYuYzo0OTU6ICBBU1NFUlQoYnAtPmJfaW9kb25lID09IE5VTEwgfHwgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNf
-ZHF1b3QuYzoxMDM6ICAgICAgICAgICAgICAgICAgICAgICAgaWYgKG9xYVtpXS5xdF9kcXVv
-dCA9PSBOVUxMKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2RxdW90
-LmM6MTQ5OiAgICAgICAgaWYgKHRwLT50X2RxaW5mbyA9PSBOVUxMKSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19kcXVvdC5jOjE3
-ODogICAgICAgICAgICAgICAgaWYgKHFhW2ldLnF0X2RxdW90ID09IE5VTEwgfHwgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94ZnNfdHJhbnNfZHF1b3QuYzoyMDU6ICAg
-ICAgICBpZiAodHAtPnRfZHFpbmZvID09IE5VTEwpICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3RyYW5zX2RxdW90LmM6MjEzOiAgICAgICAg
-aWYgKHF0cngtPnF0X2RxdW90ID09IE5VTEwpICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAuL3hmc190cmFuc19kcXVvdC5jOjI5NTogICAgICAgIGlmIChx
-WzFdLnF0X2RxdW90ID09IE5VTEwpIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgLi94ZnNfdHJhbnNfZHF1b3QuYzozMzI6ICAgICAgICAgICAgICAgIGlm
-IChxYVswXS5xdF9kcXVvdCA9PSBOVUxMKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC4veGZzX3RyYW5zX2RxdW90LmM6MzQ2OiAgICAgICAgICAgICAgICAgICAgICAg
-IGlmICgoZHFwID0gcXRyeC0+cXRfZHF1b3QpID09IE5VTEwpICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAuL3hmc190cmFuc19kcXVvdC5jOjUxOTogICAgICAgICAgICAgICAgICAgICAgICBpZiAo
-KGRxcCA9IHF0cngtPnF0X2RxdW90KSA9PSBOVUxMKSAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi94
-ZnNfdHJhbnNfZHF1b3QuYzo3NTc6ICAgICAgICBpZiAodHAgJiYgdHAtPnRfZHFpbmZvID09
-IE5VTEwpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC4veGZzX3Ry
-YW5zX2lub2RlLmM6MzY6IGlmIChpcC0+aV9pdGVtcCA9PSBOVUxMKSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCj4gLi4uDQo+IA0K
-PiBBbmQgaW4gZXh0NCwgZWcuDQo+IC4uLg0KPiAuL21iYWxsb2MuYzoyODkyOiAgICAgICBp
-ZiAoZXh0NF9mcmVlX2RhdGFfY2FjaGVwID09IE5VTEwpIHsNCj4gLi9tYmFsbG9jLmM6MzA0
-NjogICAgICAgQlVHX09OKGxnID09IE5VTEwpOw0KPiAuL21iYWxsb2MuYzozMjg2OiAgICAg
-ICBpZiAocGEgPT0gTlVMTCkgew0KPiAuL21iYWxsb2MuYzozMzc3OiAgICAgICBpZiAoY3Bh
-ID09IE5VTEwpIHsNCj4gLi9tYmFsbG9jLmM6MzQ0NzogICAgICAgaWYgKGxnID09IE5VTEwp
-DQo+IC4vbWJhbGxvYy5jOjM2MzU6ICAgICAgIGlmIChwYSA9PSBOVUxMKQ0KPiAuL21iYWxs
-b2MuYzozNzI3OiAgICAgICBCVUdfT04oZXh0NF9wc3BhY2VfY2FjaGVwID09IE5VTEwpOw0K
-PiAuL21iYWxsb2MuYzozNzI5OiAgICAgICBpZiAocGEgPT0gTlVMTCkNCj4gLi9tYmFsbG9j
-LmM6Mzc1NjogICAgICAgQlVHX09OKGxnID09IE5VTEwpOw0KPiAuL21iYWxsb2MuYzo0NjM3
-OiAgICAgICBCVUdfT04oZTRiLT5iZF9iaXRtYXBfcGFnZSA9PSBOVUxMKTsNCj4gLi9tYmFs
-bG9jLmM6NDYzODogICAgICAgQlVHX09OKGU0Yi0+YmRfYnVkZHlfcGFnZSA9PSBOVUxMKTsN
-Cj4gLi9tb3ZlX2V4dGVudC5jOjM0OiAgICAgaWYgKHBhdGhbZXh0X2RlcHRoKGlub2RlKV0u
-cF9leHQgPT0gTlVMTCkgew0KPiAuL25hbWVpLmM6ODc0OiAgaWYgKGZyYW1lc1swXS5iaCA9
-PSBOVUxMKQ0KPiAuL25hbWVpLmM6ODc5OiAgICAgICAgICBpZiAoZnJhbWVzW2ldLmJoID09
-IE5VTEwpDQo+IC4vbmFtZWkuYzoxNDMyOiAgICAgICAgIGlmICgoYmggPSBiaF91c2VbcmFf
-cHRyKytdKSA9PSBOVUxMKQ0KPiAuL3BhZ2UtaW8uYzozODogaWYgKGlvX2VuZF9jYWNoZXAg
-PT0gTlVMTCkNCj4gLi9wYWdlLWlvLmM6Mzk4OiAgICAgICAgaWYgKGlvLT5pb19iaW8gPT0g
-TlVMTCkgew0KPiAuL3JlYWRwYWdlLmM6MjQyOiAgICAgICAgICAgICAgIGlmIChiaW8gPT0g
-TlVMTCkgew0KPiAuL3Jlc2l6ZS5jOjIwMDogaWYgKGZsZXhfZ2QgPT0gTlVMTCkNCj4gLi9y
-ZXNpemUuYzoyMTA6IGlmIChmbGV4X2dkLT5ncm91cHMgPT0gTlVMTCkNCj4gLi9yZXNpemUu
-YzoyMTU6IGlmIChmbGV4X2dkLT5iZ19mbGFncyA9PSBOVUxMKQ0KPiAuL3Jlc2l6ZS5jOjI2
-NTogQlVHX09OKGZsZXhfZ2QtPmNvdW50ID09IDAgfHwgZ3JvdXBfZGF0YSA9PSBOVUxMKTsN
-Cj4gLi9yZXNpemUuYzoxMzQ1OiAgICAgICAgQlVHX09OKGZsZXhfZ2QtPmNvdW50ID09IDAg
-fHwgZ3JvdXBfZGF0YSA9PSBOVUxMKTsNCj4gLi9yZXNpemUuYzoyMDEyOiAgICAgICAgaWYg
-KGZsZXhfZ2QgPT0gTlVMTCkgew0KPiAuL3N1cGVyLmM6MzY1OiAgcmV0dXJuIGJkaS0+ZGV2
-ID09IE5VTEw7DQo+IC4vc3VwZXIuYzo1OTY6ICBpZiAoZXJybm8gPT0gLUVST0ZTICYmIGpv
-dXJuYWxfY3VycmVudF9oYW5kbGUoKSA9PSBOVUxMICYmIHNiX3Jkb25seShzYikpDQo+IC4v
-c3VwZXIuYzoxMDg2OiBpZiAoZXh0NF9pbm9kZV9jYWNoZXAgPT0gTlVMTCkNCj4gLi9zdXBl
-ci5jOjQwNTA6IGlmIChzYmktPnNfZ3JvdXBfZGVzYyA9PSBOVUxMKSB7DQo+IC4vc3VwZXIu
-Yzo0NjE3OiBpZiAoYmRldiA9PSBOVUxMKQ0KPiAuL3N1cGVyLmM6NTI4ODogaWYgKHNiaS0+
-c19qb3VybmFsID09IE5VTEwgJiYgIShvbGRfc2JfZmxhZ3MgJiBTQl9SRE9OTFkpKSB7DQo+
-IC4veGF0dHIuYzoyODY6ICBpZiAobmFtZSA9PSBOVUxMKQ0KPiAuL3hhdHRyLmM6MTkwNTog
-ICAgICAgICAgICAgICAgIGlmIChzLT5iYXNlID09IE5VTEwpDQo+IC4veGF0dHIuYzoxOTQ4
-OiAgICAgICAgIGlmIChzLT5iYXNlID09IE5VTEwpDQo+IC4veGF0dHIuYzoyNjY1OiAgICAg
-ICAgIGlmIChlbnRyeSA9PSBOVUxMKSB7DQo+IC4veGF0dHIuYzoyNjY2OiAgICAgICAgICAg
-ICAgICAgaWYgKHNtYWxsX2VudHJ5ID09IE5VTEwpDQo+IC4veGF0dHIuYzoyODA0OiBpZiAo
-KmVhX2lub2RlX2FycmF5ID09IE5VTEwpIHsNCj4gLi94YXR0ci5jOjI4MTM6ICAgICAgICAg
-aWYgKCplYV9pbm9kZV9hcnJheSA9PSBOVUxMKQ0KPiAuL3hhdHRyLmM6MjgyNjogICAgICAg
-ICBpZiAobmV3X2FycmF5ID09IE5VTEwpDQo+IC4veGF0dHIuYzoyOTQ3OiBpZiAoZWFfaW5v
-ZGVfYXJyYXkgPT0gTlVMTCkNCj4gLi4uDQo+IA0KPiBBbnl3YXksIEknZCBsaWtlIHRvIGxp
-c3RlbiB0aGUgR3JlZydzIGFuZCBDaGFvJ3MgaWRlYXMuDQoNCkhpIFhpYW5nLA0KDQpJJ20g
-bm90IGFnYWluc3QgdGhpcyBjaGFuZ2Ugd2hpY2ggZm9sbG93cyBjaGVja3BhdGNoJ3MgcnVs
-ZSwgc2luY2UgSSB0aGluayB0aGlzDQpjYW4gaGVscCB0byB1bmlmeSBjb2Rpbmcgc3R5bGUg
-aW4gZGlmZmVyZW50IG1vZHVsZXMgb2YgTGludXguIE1heWJlIGNsZWFudXAgaW4NCm90aGVy
-IGZpbGVzeXN0ZW0gaXMgbmVlZGVkIGFzIHdlbGwuDQoNCkFsc28sIHBlcnNvbmFsbHkgc3Bl
-YWtpbmcsIEknbSB1c2VkIHRvIGp1ZGdlIHBvaW50L3ZhcmlhYmxlIGlzIHZhbGlkIG9yIG5v
-dCBieQ0KdXNpbmcgJ2lmIHssIX17dmFsdWUscG9pbnRlcn0nLCBpdCB3aWxsIGJlIGVhc3kg
-Zm9yIG1lIHRvIGtub3cgd2hpY2ggY2FzZSBuZXh0DQpicmFuY2ggYmVsb25ncyB0bywganVz
-dCBteSBoYWJpdCBiZWluZyB0cmFpbmVkIGR1cmluZyBmMmZzIGRldmVsb3BtZW50Li4uIDpQ
-DQoNClRoYW5rcywNCg0KPiANCj4gVGhhbmtzLA0KPiANCj4+IFRoYW5rcywNCj4+IEdhbyBY
-aWFuZw0KPj4NCg==
+On Tue, 28 Aug 2018 15:00:14 +0000
+Matteo Croce <mcroce@redhat.com> wrote:
+
+> On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:
+> >
+> > On Tue, 28 Aug 2018 12:54:08 +0000
+> > Matteo Croce <mcroce@redhat.com> wrote:
+> >  
+> > > With kernel 4.19.0-rc1 virtio_console hangs very often.
+> > > I can always trigger the bug by pasting some characters in the
+> > > terminal window, the console will stop receiving keypresses, but I can
+> > > still see output from the console.
+> > > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
+> > > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
+> > >
+> > > I did a git bisect and I've found that this is the offending commit,
+> > > reverting it fixes it.
+> > >
+> > > Cheers,
+> > >
+> > > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
+> > > Author: Nicholas Piggin <npiggin@gmail.com>
+> > > Date:   Tue May 1 00:55:54 2018 +1000
+> > >
+> > >     tty: hvc: hvc_poll() break hv read loop  
+> >
+> > Thanks for the report. I can't immediately see what the problem
+> > is. Can you try get a stack trace of where it is stuck?
+> >  
+> 
+> I tried but didn't get one.
+> 
+> > Perhaps try this patch if you have time (it's a bit of a shot
+> > in the dark).
+> >  
+> 
+> Yes it seems to fix. Thanks!
+
+Okay sorry for the delay, I can reproduce it here and found a better
+fix, if I could trouble you to test again.
+
+[PATCH] tty: hvc: hvc_poll() fix read loop hang
+
+Patch ec97eaad1383 ("tty: hvc: hvc_poll() break hv read loop") causes
+the virtio console to hang if you paste a bunch of characters to it.
+
+The reason is that get_chars must return 0 before we can be sure the
+driver will kick or poll input again, but this patch only scheduled a
+poll if get_chars had returned a full count. Change this to poll on
+> 0 count.
+
+Fixes: ec97eaad1383 ("tty: hvc: hvc_poll() break hv read loop")
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+---
+ drivers/tty/hvc/hvc_console.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/tty/hvc/hvc_console.c
+b/drivers/tty/hvc/hvc_console.c index 5414c4a87bea..219369aebb1f 100644
+--- a/drivers/tty/hvc/hvc_console.c
++++ b/drivers/tty/hvc/hvc_console.c
+@@ -717,10 +717,13 @@ static int __hvc_poll(struct hvc_struct *hp, bool
+may_sleep) #endif /* CONFIG_MAGIC_SYSRQ */
+ 		tty_insert_flip_char(&hp->port, buf[i], 0);
+ 	}
+-	if (n == count)
+-		poll_mask |= HVC_POLL_READ;
+ 	read_total = n;
+ 
++	/* Activity is occurring, so reset the polling backoff value to
++	   a minimum for performance. */
++	timeout = MIN_TIMEOUT;
++	poll_mask |= HVC_POLL_READ;
++
+  out:
+ 	/* Wakeup write queue if necessary */
+ 	if (hp->do_wakeup) {
+@@ -730,13 +733,8 @@ static int __hvc_poll(struct hvc_struct *hp, bool
+may_sleep) bail:
+ 	spin_unlock_irqrestore(&hp->lock, flags);
+ 
+-	if (read_total) {
+-		/* Activity is occurring, so reset the polling backoff
+value to
+-		   a minimum for performance. */
+-		timeout = MIN_TIMEOUT;
+-
++	if (read_total)
+ 		tty_flip_buffer_push(&hp->port);
+-	}
+ 	tty_kref_put(tty);
+ 
+ 	return poll_mask;
+-- 
+2.18.0
 
