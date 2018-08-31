@@ -2,106 +2,109 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770D5C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9288BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9E82083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 483972083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:24:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ML0DipMy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9E82083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPrEjU5e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483972083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeIACdk (ORCPT
+        id S1727634AbeIACdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:33:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34961 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbeIACdk (ORCPT
+        Fri, 31 Aug 2018 22:33:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36598 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeIACdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:33:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 7-v6so1090785pgf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:24:07 -0700 (PDT)
+        Fri, 31 Aug 2018 22:33:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so6034263pgo.3;
+        Fri, 31 Aug 2018 15:24:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=muhsxbhe1qDbUQ4jcUrsoThKcresfAmhuSXs9ng5ZKI=;
-        b=ML0DipMyHn9/d4Pwq+z2C7gSrjYcSqb2c1HOUX+SX14vnDiJCyruHN66zylXn19W7r
-         VVihxNNOoMSnd0NZi9y7bZDhZynS8Hf9lAplTodKprFuy/US/gAw0Xki2Jdrr+svZDD/
-         frjaVSyBvgN6M4u/KGPYtshEWSeFPgVsZUDHAuN4gS2WwuELhPEjPlI1aLp98Tl/7Np7
-         puFdXYQA5oVo3u7wvChcAF5im7yonaKQECgrWE93OZHGfh+fr7OYs5VFhT6SXQ3EAU4O
-         Q6iDRWNHIHCek0JMgAj9FBi2Pv1zysZvglew8nVfneNQp8h7zYfnxkZZpWPtuK5X68Ec
-         dDtw==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6eYN1qllWYHTmUDJ48f68iHeHMhzkffLFI0awVIa5j0=;
+        b=kPrEjU5e2tK87pz9E+X9q6lm3tr0PBJW8xWmrwPflD2HwZs1flPrzhhJO0NP1T+/2G
+         yO9iCKAM5cKiTfTWlrY3PgOuECfW8naSaRd/NSsfi1DZE5W8JNfUDkiImCOQTRzf7KDH
+         sIezu5Cvrh+kYNPY1fxh74Vhc7rnLzcxts5k1xeflN7eOwn21QCzR5QCcxFTKV/oud44
+         NFeNlPnCz6pgDQAqyOazGnPvQfXwQfc+pC58Cj9h2vZBQl08oqwg1BhVvXBq91WBj4Ej
+         cUMhkxFB0LMqH3pYEvYLbRZ35I00MdGLWtfE7FDgfMoT1B9nWaTR1gglNzBhEMdvimtZ
+         58yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=muhsxbhe1qDbUQ4jcUrsoThKcresfAmhuSXs9ng5ZKI=;
-        b=qXj8Qvf2+I8bZurUy1OXIqNWNf1tMzOPZ91eyuUmUuAuqRIHZxcaqYSNRiluEyCQ+x
-         xCIcGzI17k066h1WgJLLJhoNAg71fzpwr2de+Y4rTwuFU3Nr3QvsXYQ9kEaddzsaw/WU
-         0n9gt6JvUTgXBlmCwI5ddyUcWs5SWC99WAqQDENIEQ7VFL8MmqwMssEaBtN2YIvLTN/C
-         UFagnpMlVS/t6bzNSER6rasTlTadDvwHvrHC2V7LRVkPmQZd5Iz1OZSL/G7bNHfwl+Tz
-         0254ypR8jvrHiRpLbO9pMz6t9slcz1IMwEVojtnaWbf4Rz7IWW2zPXV0WL9CpryAGWQM
-         9ung==
-X-Gm-Message-State: APzg51DR59fvW6XfnVEDFMnVzXLdZltDIy0xIfMabfMpUOBmQRtuGsT0
-        2tudcbp4/rexnuu4XmLbz3N1sA==
-X-Google-Smtp-Source: ANB0VdauRun3gd9o7fA2CF/z2PiJpPhNXk07BLblPuiG20aey7/5dFGLvfBH95C58idQbO3sNMjnVw==
-X-Received: by 2002:a63:24c:: with SMTP id 73-v6mr16830562pgc.252.1535754246938;
-        Fri, 31 Aug 2018 15:24:06 -0700 (PDT)
-Received: from smuckle.san.corp.google.com ([2620:15c:2d:3:fa74:b312:5fef:6cbf])
-        by smtp.gmail.com with ESMTPSA id d81-v6sm15072750pfj.122.2018.08.31.15.24.05
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6eYN1qllWYHTmUDJ48f68iHeHMhzkffLFI0awVIa5j0=;
+        b=Ypwpuh9cBgmHR7m7erpYVFM21CwVx0V5+/Pw3MXMytXwzti6DQVr+zm4ySP45YVFoI
+         2m8vuTnMcCIkWjqG78T0lahCMd/0VYP5wEM5g+Vg9ZaPnZVB5ly3bM39MFfXlZS6Ysp6
+         5W65kuYzDfhMt1pFNddkVm7xLTtWqRh6xuhDWG7TerK4I5i+Jxy/h1SCesg1772H3+O7
+         G3Nu02wc8S8IMzgjWfY1vUzose5i17dsyJmLVIkCaSeJ/eTkSji1W/ybn6TkpfVjqoGR
+         bIf6GsE3hh3mRdjTpfZ8VGTsXeQXQTwsVjmLd+N+RUi8rqbPI9LKyWliVB8mYCXYHfBb
+         WIgw==
+X-Gm-Message-State: APzg51BOH9f+2hW4g8Y3JLt1kTDY8O6fA9nKxDeaVgFYldUxo18Vl2u6
+        Mzc0QwVLs4gyNOHRp+6dumY=
+X-Google-Smtp-Source: ANB0VdbaLl2lvXQQuA/06WOe79byc+ltQ0NWuYfATqaPwvMRsUm7EJsT1bLeAx6AWFxiVkUz5v5XCw==
+X-Received: by 2002:a63:e70e:: with SMTP id b14-v6mr9282200pgi.68.1535754256590;
+        Fri, 31 Aug 2018 15:24:16 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::1:1347])
+        by smtp.gmail.com with ESMTPSA id b6-v6sm9856619pfh.182.2018.08.31.15.24.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 15:24:06 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
- fair
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Miguel de Dios <migueldedios@google.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Todd Kjos <tkjos@google.com>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Patrick Bellasi <Patrick.Bellasi@arm.com>,
-        Chris Redpath <Chris.Redpath@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        John Dias <joaodias@google.com>
-References: <20180817182728.76129-1-smuckle@google.com>
- <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
- <20180824093227.GN24124@hirez.programming.kicks-ass.net>
- <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
- <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
- <20180827111458.GB24124@hirez.programming.kicks-ass.net>
- <2ed346fa-dbe8-4928-928b-a34338b2d8c9@arm.com>
- <273b9b52-8c00-0414-ea11-214d81cd57c7@arm.com>
- <20180829115954.GS24124@hirez.programming.kicks-ass.net>
- <f7c5a86f-7d76-bf26-4763-94a9ef4bba2e@arm.com>
-From:   Steve Muckle <smuckle@google.com>
-Message-ID: <52ea5cf6-b22b-f026-5796-f52b3e40415a@google.com>
-Date:   Fri, 31 Aug 2018 15:24:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 31 Aug 2018 15:24:15 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 15:24:12 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fix blkcg offlining and destruction
+Message-ID: <20180831222412.GA1488037@devbig004.ftw2.facebook.com>
+References: <20180831202244.21678-1-dennisszhou@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <f7c5a86f-7d76-bf26-4763-94a9ef4bba2e@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831202244.21678-1-dennisszhou@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018 08:33 AM, Dietmar Eggemann wrote:
-> Yes, this solves the issue for the case I described. Using
-> 'p->sched_remote_wakeup' (WF_MIGRATED) looks more elegant than using
-> 'p->sched_class == &fair_sched_class'.
+On Fri, Aug 31, 2018 at 04:22:41PM -0400, Dennis Zhou wrote:
+> Hi everyone,
+> 
+> This is a split of an earlier series I sent out [1] containing the first
+> 3 patches with fixes from feedback. This series tackles the first
+> problem where blkcgs were not being destroyed.
+> 
+> There is a regression in blkcg destruction where references weren't
+> properly put causing blkcgs to never be destroyed. Previously, blkgs
+> were destroyed during offlining of the blkcg. This puts back the blkcg
+> reference a blkg holds allowing blkcg ref to reach zero. Then,
+> blkcg_css_free() is called as part of the final cleanup.
+> 
+> To address the problem, 0001 reverts the broken commit, 0002 delays
+> blkg destruction until writeback has finished, and 0003 closes the
+> window on a race condition between a css migration and dying, and
+> blkg association. This should fix the issue where blkg_get() was getting
+> called when a blkcg had already begun exiting. If a bio finds itself
+> here, it will just fall back to root. Oddly enough at one point,
+> blk-throttle was using policy data from and associating with potentially
+> different blkgs, thus how this was exposed.
 
-It's confirmed that this patch solves the original issue we saw (and my 
-test case passes for me as well). I will send this version out shortly.
+For patches 1-3,
+
+  Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
