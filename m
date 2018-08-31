@@ -3,170 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1850C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B89C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A284F20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:09:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A284F20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id ADEB42083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADEB42083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeHaNPt (ORCPT
+        id S1727972AbeHaNQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:15:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33601 "EHLO mail.bootlin.com"
+        Fri, 31 Aug 2018 09:16:54 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12416 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727552AbeHaNPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:15:49 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D9711207EB; Fri, 31 Aug 2018 11:09:16 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AAE40206EE;
-        Fri, 31 Aug 2018 11:09:16 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 11:09:15 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 20/30] iio: adc: sun4i-gpadc-iio: rework: device
- specific suspend & resume
-Message-ID: <20180831090915.agbldint76ngj5jf@flea>
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-21-embed3d@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z37k4t7jsyhjydbp"
-Content-Disposition: inline
-In-Reply-To: <20180830154518.29507-21-embed3d@gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1727286AbeHaNQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 09:16:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 02:10:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
+   d="scan'208";a="66573625"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 31 Aug 2018 02:10:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id F13C0110; Fri, 31 Aug 2018 12:10:18 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/4] x86/efi: Get rid of custom ICPU() macro
+Date:   Fri, 31 Aug 2018 12:10:16 +0300
+Message-Id: <20180831091018.17543-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180831091018.17543-1-andriy.shevchenko@linux.intel.com>
+References: <20180831091018.17543-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replace custom grown macro with generic INTEL_CPU_FAM_ANY() one.
 
---z37k4t7jsyhjydbp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No functional change intended.
 
-On Thu, Aug 30, 2018 at 05:45:08PM +0200, Philipp Rossak wrote:
-> Different sensors will have different suspend and resume functions. So
-> we are modularize the suspend and resume functions.
->=20
-> The resume function configures and initializes the thermal sensor and
-> the suspend function disables the sensors.
->=20
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  drivers/iio/adc/sun4i-gpadc-iio.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gp=
-adc-iio.c
-> index 2fd73d143815..c7b46c82e3e5 100644
-> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> @@ -76,6 +76,9 @@ struct gpadc_data {
-> =20
->  static irqreturn_t sun4i_gpadc_data_irq_handler(int irq, void *dev_id);
-> =20
-> +static int sun4i_ths_resume(struct sun4i_gpadc_iio *info);
-> +static int sun4i_ths_suspend(struct sun4i_gpadc_iio *info);
-> +
->  static const struct gpadc_data sun4i_gpadc_data =3D {
->  	.temp_offset =3D -1932,
->  	.temp_scale =3D 133,
-> @@ -87,6 +90,8 @@ static const struct gpadc_data sun4i_gpadc_data =3D {
->  	.ths_irq_thread =3D sun4i_gpadc_data_irq_handler,
->  	.support_irq =3D true,
->  	.temp_data_base =3D SUN4I_GPADC_TEMP_DATA,
-> +	.ths_resume =3D sun4i_ths_resume,
-> +	.ths_suspend =3D sun4i_ths_suspend,
->  	.sensor_count =3D 1,
->  };
-> =20
-> @@ -101,6 +106,8 @@ static const struct gpadc_data sun5i_gpadc_data =3D {
->  	.ths_irq_thread =3D sun4i_gpadc_data_irq_handler,
->  	.support_irq =3D true,
->  	.temp_data_base =3D SUN4I_GPADC_TEMP_DATA,
-> +	.ths_resume =3D sun4i_ths_resume,
-> +	.ths_suspend =3D sun4i_ths_suspend,
->  	.sensor_count =3D 1,
->  };
-> =20
-> @@ -115,6 +122,8 @@ static const struct gpadc_data sun6i_gpadc_data =3D {
->  	.ths_irq_thread =3D sun4i_gpadc_data_irq_handler,
->  	.support_irq =3D true,
->  	.temp_data_base =3D SUN4I_GPADC_TEMP_DATA,
-> +	.ths_resume =3D sun4i_ths_resume,
-> +	.ths_suspend =3D sun4i_ths_suspend,
->  	.sensor_count =3D 1,
->  };
-> =20
-> @@ -123,6 +132,8 @@ static const struct gpadc_data sun8i_a33_gpadc_data =
-=3D {
->  	.temp_scale =3D 162,
->  	.tp_mode_en =3D SUN8I_A33_GPADC_CTRL1_CHOP_TEMP_EN,
->  	.temp_data_base =3D SUN4I_GPADC_TEMP_DATA,
-> +	.ths_resume =3D sun4i_ths_resume,
-> +	.ths_suspend =3D sun4i_ths_suspend,
->  	.sensor_count =3D 1,
->  };
-> =20
-> @@ -401,6 +412,11 @@ static irqreturn_t sun4i_gpadc_data_irq_handler(int =
-irq, void *dev_id)
->  static int sun4i_gpadc_runtime_suspend(struct device *dev)
->  {
->  	struct sun4i_gpadc_iio *info =3D iio_priv(dev_get_drvdata(dev));
-> +	return info->data->ths_suspend(info);
-> +}
-> +
-> +static int sun4i_ths_suspend(struct sun4i_gpadc_iio *info)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/include/asm/intel-family.h | 2 ++
+ arch/x86/platform/efi/quirks.c      | 6 +-----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-suspend is already a hook in the kernel, which hasn't the same meaning
-than runtime_suspend (and the same applies to resume), so we'd rather
-pick a better name. And all the functions (and the driver) use gpadc,
-please continue to use that prefix.
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 093014aceb65..be28519b2020 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -16,6 +16,8 @@
+  * that group keep the CPUID for the variants sorted by model number.
+  */
+ 
++#define INTEL_FAM5_QUARK_X1000		0x09
++
+ #define INTEL_FAM6_CORE_YONAH		0x0E
+ 
+ #define INTEL_FAM6_CORE2_MEROM		0x0F
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 844d31cb8a0c..cf8ea09cc52b 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -610,12 +610,8 @@ static int qrk_capsule_setup_info(struct capsule_info *cap_info, void **pkbuff,
+ 	return 1;
+ }
+ 
+-#define ICPU(family, model, quirk_handler) \
+-	{ X86_VENDOR_INTEL, family, model, X86_FEATURE_ANY, \
+-	  (unsigned long)&quirk_handler }
+-
+ static const struct x86_cpu_id efi_capsule_quirk_ids[] = {
+-	ICPU(5, 9, qrk_capsule_setup_info),	/* Intel Quark X1000 */
++	INTEL_CPU_FAM_ANY(5, INTEL_FAM5_QUARK_X1000, &qrk_capsule_setup_info),
+ 	{ }
+ };
+ 
+-- 
+2.18.0
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---z37k4t7jsyhjydbp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluJBboACgkQ0rTAlCFN
-r3RzUA//UXRWu6QAJniE4rnihCbGG3G3Ko/GuCYAHX2FXDoCBFJgG3jeK1vIKeNX
-eqqnkFTrBvFjDejRgF8pulukNP+M3v14FNOYYalLIjoGw/pSQvqo61/2jHqnbZmx
-jNT2JOubyzjRvszALoCCQd9szOc/UKugK9aAk3HQ1iD2Jamfd5Xy694BjJJHb4pl
-tOuMoUncpAZo4Lda0/VqXKF7HUNFAGzlX3x2PceA9/D9Xo4lw5MKO+az6d4/I9wV
-Ntm5lVVoeZkaFeKFOTZ4+vFp2xXFlxDhpRwsuTvz51edNf0FG2nQSQYOMdo3BPQc
-9gQZ/OoJJk2wKDop+AMjuUE0mLqQTHKL8mp18bMrpBOXl6P5tSIT06MdH/zG/xSs
-YtjTrzjOsnEsGjzAL/rRMGpL+9kZCENVX/ulAVyDH/Dd5VOWKfANRpCHbYWIJ9oz
-DyeY3Pxdwhv0djZUWFLMhOtR3xF89BmMawq2lv/us3l+LnF/72vRFw/rFyLfQ2hW
-aFcK3jZfpRXjE2iEr7SF3X+hu/PA40hEAG62zgx48mGv+z67hnw1Me6viht4PApX
-1iOEBNQWfuADV940EJWSVDFiI+r1O3pAlHci+KU7D7s9gltp6+3tQcOJMlFKLsNS
-OvvpOjA99HuKjTSWPe5j2/auZyCnq55veWdYjO4XhdRASoUiDcg=
-=KOJG
------END PGP SIGNATURE-----
-
---z37k4t7jsyhjydbp--
