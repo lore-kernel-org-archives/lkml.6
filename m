@@ -2,112 +2,82 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E73DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC38C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F034120839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:11:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F034120839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id F1E8D2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:50:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dDkJEwzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E8D2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeHaJR2 (ORCPT
+        id S1727309AbeHaJ4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 05:17:28 -0400
-Received: from gate.crashing.org ([63.228.1.57]:56165 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbeHaJR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 05:17:28 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7V4npxG005521;
-        Thu, 30 Aug 2018 23:49:52 -0500
-Message-ID: <b54888e7cbfad8ea0f53cd93ec58743cc88e2431.camel@kernel.crashing.org>
-Subject: Re: v4.17 regression: PowerMac G3 won't boot, was Re: [PATCH v5
- 1/3] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Mac User <userm57@yahoo.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     fthain@telegraphics.com.au, Frank Rowand <frank.rowand@sony.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Date:   Fri, 31 Aug 2018 14:49:51 +1000
-In-Reply-To: <84f13bded54eda0817f9134f355d518d5b3a5f77.camel@kernel.crashing.org>
-References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
-         <1520208889-3908-2-git-send-email-frowand.list@gmail.com>
-         <alpine.LNX.2.21.1808301025480.73@nippy.intranet>
-         <CAL_JsqLJ9QMHCMqGKpCouP1rTEO+cMGA1es94qAH+ukLsR31jg@mail.gmail.com>
-         <569e4bc3-2149-4b2d-562f-e400dd05a8a8@yahoo.com>
-         <84f13bded54eda0817f9134f355d518d5b3a5f77.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 31 Aug 2018 05:56:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34686 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbeHaJ4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 05:56:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=q811eMT5lda/oXK2icQo0XxLX74T529LrzCbrH/4PC4=; b=dDkJEwzdqMCj2YUoHyqYPcLhe
+        CrH5EgWmDYAHifrAMbrXE6Kf/AkRhjtC+cHxsZFRsx3QevEjx1ivY662Lr0gPifMpcAnskkeMa1CP
+        8c63T6spuSxki/WsxARZ9yv4PcTz8zmoY3/0bBoaeTDkI1HX+wW/LxdfmxgVp/PBuczl1Z36XZxrU
+        tMClLt+4JFI9Rw+LBkW1cIlzVQqy4L589CoJO7AaHwBFkWOyQ76soSodF8Fje9/1gWdTZ66QR3UZk
+        656iE3WvX0heatHJjUceinpRyW8MDVx2CovGPxc5CGKKBwRB/fQGUOH6XO09yaZg3ZKQjuvLlkubk
+        5C/yQXHIg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvcKV-0004DY-SV; Fri, 31 Aug 2018 05:50:47 +0000
+Date:   Thu, 30 Aug 2018 22:50:47 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-media@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "Matwey V . Kornilov" <matwey@sai.msu.ru>,
+        Alan Stern <stern@rowland.harvard.edu>, kernel@collabora.com,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Subject: Re: [RFC 2/3] USB: core: Add non-coherent buffer allocation helpers
+Message-ID: <20180831055047.GA9140@infradead.org>
+References: <20180830172030.23344-1-ezequiel@collabora.com>
+ <20180830172030.23344-3-ezequiel@collabora.com>
+ <20180830175850.GA11521@infradead.org>
+ <4fc5107f93871599ead017af7ad50f22535a7683.camel@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4fc5107f93871599ead017af7ad50f22535a7683.camel@collabora.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 14:35 +1000, Benjamin Herrenschmidt wrote:
+On Thu, Aug 30, 2018 at 07:11:35PM -0300, Ezequiel Garcia wrote:
+> On Thu, 2018-08-30 at 10:58 -0700, Christoph Hellwig wrote:
+> > Please don't introduce new DMA_ATTR_NON_CONSISTENT users, it is
+> > a rather horrible interface, and I plan to kill it off rather sooner
+> > than later.  I plan to post some patches for a better interface
+> > that can reuse the normal dma_sync_single_* interfaces for ownership
+> > transfers.  I can happily include usb in that initial patch set based
+> > on your work here if that helps.
 > 
-> > If I force output with "-f", the resulting file has no occurrences 
-> > of "phandle".
-> 
-> Are you booting with BootX or Open Firmware ?
+> Please do. Until we have proper allocators that go thru the DMA API,
+> drivers will have to kmalloc the USB transfer buffers, and have
+> streaming mappings. Which in turns mean not using IOMMU or CMA.
 
-Assuming you are using BootX (or miBoot), can you try this patch ?
-
---- a/arch/powerpc/platforms/powermac/bootx_init.c
-+++ b/arch/powerpc/platforms/powermac/bootx_init.c
-@@ -37,6 +37,7 @@ static unsigned long __initdata bootx_dt_strend;
- static unsigned long __initdata bootx_node_chosen;
- static boot_infos_t * __initdata bootx_info;
- static char __initdata bootx_disp_path[256];
-+static int __initdata bootx_phandle;
- 
- /* Is boot-info compatible ? */
- #define BOOT_INFO_IS_COMPATIBLE(bi) \
-@@ -258,6 +259,8 @@ static void __init bootx_scan_dt_build_strings(unsigned long base,
-                namep = pp->name ? (char *)(base + pp->name) : NULL;
-                if (namep == NULL || strcmp(namep, "name") == 0)
-                        goto next;
-+               if (!strcmp(namep, "phandle") || !strcmp(namep, "linux,phandle"))
-+                       bootx_phandle = -1;
-                /* get/create string entry */
-                soff = bootx_dt_find_string(namep);
-                if (soff == 0)
-@@ -330,6 +333,12 @@ static void __init bootx_scan_dt_build_struct(unsigned long base,
-                ppp = &pp->next;
-        }
- 
-+       /* add a phandle */
-+       if (bootx_phandle > 0) {
-+               bootx_dt_add_prop("phandle", &bootx_phandle, 4, mem_end);
-+               bootx_phandle++;
-+       }
-+
-        if (node == bootx_node_chosen) {
-                bootx_add_chosen_props(base, mem_end);
-                if (bootx_info->dispDeviceRegEntryOffset == 0)
-@@ -385,6 +394,8 @@ static unsigned long __init bootx_flatten_dt(unsigned long start)
-        bootx_dt_add_string("linux,bootx-height", &mem_end);
-        bootx_dt_add_string("linux,bootx-linebytes", &mem_end);
-        bootx_dt_add_string("linux,bootx-addr", &mem_end);
-+       if (bootx_phandle > 0)
-+               bootx_dt_add_string("phandle", &mem_end);
-        /* Wrap up strings */
-        hdr->off_dt_strings = bootx_dt_strbase - mem_start;
-        hdr->dt_strings_size = bootx_dt_strend - bootx_dt_strbase;
-@@ -482,6 +493,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
-        bootx_dt_strbase = bootx_dt_strend = 0;
-        bootx_node_chosen = 0;
-        bootx_disp_path[0] = 0;
-+       bootx_phandle = 1;
- 
-        if (!BOOT_INFO_IS_V2_COMPATIBLE(bi))
-                bi->logicalDisplayBase = bi->dispDeviceBase;
-
-
+dma_map_page will of course use the iommu.
