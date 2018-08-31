@@ -5,99 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAC1C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B80C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FA720661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FA720661
+	by mail.kernel.org (Postfix) with ESMTP id 5C21520661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:18:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C21520661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbeHaQ0A (ORCPT
+        id S1728375AbeHaQ0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:26:00 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42472 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeHaQ0A (ORCPT
+        Fri, 31 Aug 2018 12:26:07 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33238 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeHaQ0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:26:00 -0400
-Received: by mail-qt0-f193.google.com with SMTP id z8-v6so14211935qto.9;
-        Fri, 31 Aug 2018 05:18:46 -0700 (PDT)
+        Fri, 31 Aug 2018 12:26:06 -0400
+Received: by mail-qt0-f195.google.com with SMTP id r37-v6so14260947qtc.0;
+        Fri, 31 Aug 2018 05:18:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bIvwO2k16JmokORIYNK+S0BqwAHcxkHoHwlHfqQLNEw=;
-        b=UVuVqUKQTS5B/TsGTo91g+FpgfhGg66soi5IiIJ5GJ4Q/JkfFUgbvpAwvQXU9utFGR
-         NNqmOVOKE4w8N0e9Uqocy09m3YeZEaF4nsomsw1ekI53Og8C0JPYdK2DMraEidxmI+h3
-         3NNPNgtz4ZLKK3F2OqhjwQmIeIwaCfUjJlGjcmniGhWsTH1FATCilhu/eN8o0cL/SOYF
-         dvGazvfJDLZzMoIydDMp7jQgB6NIgxYV+Lt/7QjCgJXDIfpdqslmR2BWExG5MRqJ9pb3
-         9w8y/hVtAdpIvVXkl2x3obKNg/Yp9Vk2VkzzIHRF5+vVm+ur7EpRyac0Hhf3jjd2U5Jh
-         eqYw==
-X-Gm-Message-State: APzg51Bgblz6Nds22tMisLauFwwO9vMXi/tL8N2pvYR1LY3bYQ0dqkpD
-        r7q7q3PMsRlWT3Qyuu3tlA==
-X-Google-Smtp-Source: ANB0VdaxsH/2KhnD3lS397pejSnZIg/uP600wZ5s03A/uOorG4X8NUqdanjueUxdMIozOoaVnz5ptQ==
-X-Received: by 2002:a0c:e74c:: with SMTP id g12-v6mr15302482qvn.118.1535717925746;
-        Fri, 31 Aug 2018 05:18:45 -0700 (PDT)
+        bh=KqSYjMYrw2EGztRkB08ocQDhT5457iGfrLd1PeWe5So=;
+        b=i9cFCohtfEzk0RR1+tKAcNOtCbeXSSS/6AF20Mte5DKFUiamiJ5ytpc2cTS2NCghiw
+         4qBjZnk06TmtTwLL2tnyuK1QTrZDbBsNcr8eBqp6XO9dd5YrNpb4Uc7ngTvUnCGxm6Fa
+         lTBkkAoOel570q4vVdJ3Ol0JdJk8RmacJ5+l9IoNCsFAscxzbb8qI6kJJFXUu/1tGnwd
+         Hz/BQEbgVX6HU2k7OQRNyGL+FKX695GrayywBmCiRBpI0BmDxUac9TasluWpn+GSJpzn
+         aQ9jadKDkLogsZiHFnHyxnqD6JKn2njoug35f2fhYwd3yAPE9mrUvjxJGqhs7dIN5exz
+         711g==
+X-Gm-Message-State: APzg51B0M5gO/FdVW1/x5MuQ6d2A77TC4y+hWZVg9kOhBVTRuUWGX+bN
+        r2IJstWcP2JUqqVM7X3tHg==
+X-Google-Smtp-Source: ANB0VdatskEkTV3nqb/2OKXFHa3/zs/aRAwEyGZZ5gGu5zu8AVYF15Elksc3ht8KVVixD+EpgS3GyA==
+X-Received: by 2002:ad4:50ce:: with SMTP id e14-v6mr14736429qvq.232.1535717932499;
+        Fri, 31 Aug 2018 05:18:52 -0700 (PDT)
 Received: from localhost (mobile-166-170-28-234.mycingular.net. [166.170.28.234])
-        by smtp.gmail.com with ESMTPSA id l23-v6sm6242705qta.30.2018.08.31.05.18.44
+        by smtp.gmail.com with ESMTPSA id 60-v6sm5520131qte.29.2018.08.31.05.18.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 05:18:45 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 08:18:42 -0400
+        Fri, 31 Aug 2018 05:18:52 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 08:18:49 -0400
 From:   Rob Herring <robh@kernel.org>
-To:     Jan Tuerk <jan.tuerk@emtrion.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix typo in compatible description.
-Message-ID: <20180831121842.GA23617@bogus>
-References: <20180822134348.49165-1-jan.tuerk@emtrion.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alex Smith <alex@alex-smith.me.uk>, od@zcrc.me,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 3/4] memory: jz4780-nemc: Reduce size of const array
+Message-ID: <20180831121849.GA23787@bogus>
+References: <20180822172953.11281-1-paul@crapouillou.net>
+ <20180822172953.11281-3-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180822134348.49165-1-jan.tuerk@emtrion.com>
+In-Reply-To: <20180822172953.11281-3-paul@crapouillou.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 03:43:48PM +0200, Jan Tuerk wrote:
-> This fixes the error in the compatible documentation for the EDT
-> etm0700[g].. panels which have accidentally documented as etm0700[8]0..
-
-This needs a more specific subject.
-
+On Wed, 22 Aug 2018 19:29:52 +0200, Paul Cercueil wrote:
+> The maximum value found in that array is 15, there's no need to store
+> these values as uint32_t, a uint8_t is enough.
 > 
-> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  .../devicetree/bindings/display/panel/edt,et-series.txt     | 6 +++---
+>  drivers/memory/jz4780-nemc.c | 6 +++---
 >  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/edt,et-series.txt b/Documentation/devicetree/bindings/display/panel/edt,et-series.txt
-> index f56b99ebd9be..5759d64d0c15 100644
-> --- a/Documentation/devicetree/bindings/display/panel/edt,et-series.txt
-> +++ b/Documentation/devicetree/bindings/display/panel/edt,et-series.txt
-> @@ -23,13 +23,13 @@ simple-panel.txt
->  +-----------------+---------------------+-------------------------------------+
->  | Identifier      | compatbile          | description                         |
->  +=================+=====================+=====================================+
-> -| ETM0700G0DH6    | edt,etm070080dh6    | WVGA TFT Display with capacitive    |
-> +| ETM0700G0DH6    | edt,etm0700g0dh6    | WVGA TFT Display with capacitive    |
->  |                 |                     | Touchscreen                         |
->  +-----------------+---------------------+-------------------------------------+
-> -| ETM0700G0BDH6   | edt,etm070080bdh6   | Same as ETM0700G0DH6 but with       |
-> +| ETM0700G0BDH6   | edt,etm0700g0bdh6   | Same as ETM0700G0DH6 but with       |
->  |                 |                     | inverted pixel clock.               |
->  +-----------------+---------------------+-------------------------------------+
-> -| ETM0700G0EDH6   | edt,etm070080edh6   | Same display as the ETM0700G0BDH6,  |
-> +| ETM0700G0EDH6   | edt,etm0700g0edh6   | Same display as the ETM0700G0BDH6,  |
->  |                 |                     | but with changed Hardware for the   |
->  |                 |                     | backlight and the touch interface   |
->  +-----------------+---------------------+-------------------------------------+
-> -- 
-> 2.18.0
-> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
