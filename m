@@ -6,67 +6,73 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B59C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDCFC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA0AE20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42D3320835
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OwGLqYC5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0AE20835
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Vhg/ULI+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D3320835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbeHaEeO (ORCPT
+        id S1727238AbeHaEfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 00:34:14 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:51812 "EHLO
+        Fri, 31 Aug 2018 00:35:37 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:52876 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725761AbeHaEeO (ORCPT
+        with ESMTP id S1725761AbeHaEfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 00:34:14 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AB80B24E0551;
-        Thu, 30 Aug 2018 17:29:28 -0700 (PDT)
+        Fri, 31 Aug 2018 00:35:37 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B548210C08CB;
+        Thu, 30 Aug 2018 17:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1535675369; bh=fXnYiqI42LOGye18rcxjZqniCwIgik+6X74NVaaTfQ0=;
+        t=1535675452; bh=X1t+NgmZcwZyxrPSWolMRySn9k6lt3z1i/z9X9jOAHs=;
         h=From:To:CC:Subject:Date:References:From;
-        b=OwGLqYC5EhnzR4MeQVEY+NiA0VR1Mnu8VkQ6PiWRB/IAbSOp9cphGIkdd8ajZJUoA
-         nN/yeNRtjoXKDr/iiIoGrhjsfQasjILwWpEDRYD2hnsFF3R5JBlagb74bHc+VaOYdm
-         o6woFJwVOsjXiJ8oj7ak0HUK5lbNSmW0239pEECrJLe+rXsPXYeVB2N7FKlqu9klri
-         OdxmfTA9QSZZ7V/pnu2A8cShvftGkBwt4e5z3ucRvwAnrlY4QrHzh1HnY1MHFKnUFs
-         8kgeStpGRrfhLjYwTsmRVRojhajDlFWqYel9oJT88XL1SziI40Ukf/lD79/pso0nvC
-         kByaC2StuVLCQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 674FD39B2;
-        Thu, 30 Aug 2018 17:29:28 -0700 (PDT)
+        b=Vhg/ULI+zqeKQpBw59xURT2+7D7Nt/l2XzC18dHW1OVdyiajAiBqrCHWllx9QkNgN
+         z4Bk3BM7Q4JYV3PXjC464dQHy/zTsFIMZ+1VBko1IsGQda4lC/+X1io78sKZqlvxaV
+         8DcJEPq6A/+haGZg9Tu4+80bS4vIF3dEyTFUCG/q8knM+39j+MAnVy0ET8ZgB3S1a0
+         I+82rSJBbPD8Fw6WAF+MLRowi/A7BGVJ2TJTywAuimL1qprTcT3UnMnGuyHp1ScigF
+         6OHKCBOmYJlsKj0Simcv4b6u+UuwBt5egRvB8YwZwzKrU/HMxcpcdor3zTmiOcnPtY
+         bFOW+s9EtqoYA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 95EE25580;
+        Thu, 30 Aug 2018 17:30:51 -0700 (PDT)
 Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0361.001; Thu, 30 Aug 2018 17:29:28 -0700
+ US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu, 30
+ Aug 2018 17:30:51 -0700
 From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
 To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
+CC:     Will Deacon <will.deacon@arm.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "linux-snps-arc@lists.infradead.org" 
         <linux-snps-arc@lists.infradead.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
         "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: __clear_bit_lock to use atomic clear_bit (was Re: Patch
- "asm-generic/bitops/lock.h)
-Thread-Topic: __clear_bit_lock to use atomic clear_bit (was Re: Patch
- "asm-generic/bitops/lock.h)
-Thread-Index: AQHUQMGso+PkNISfNEiGPCaoPY7i3g==
-Date:   Fri, 31 Aug 2018 00:29:27 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B090FE0@us01wembx1.internal.synopsys.com>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Topic: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Index: AQHUP8bWpY6ZRO7qfEeDcvF8FJVDUg==
+Date:   Fri, 31 Aug 2018 00:30:50 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B090FF3@us01wembx1.internal.synopsys.com>
 References: <1535567633.4465.23.camel@synopsys.com>
  <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
  <20180830094411.GX24124@hirez.programming.kicks-ass.net>
+ <20180830095148.GB5942@arm.com> <1535629996.4465.44.camel@synopsys.com>
+ <20180830141713.GN24082@hirez.programming.kicks-ass.net>
+ <20180830142354.GB13005@arm.com>
+ <20180830142920.GO24082@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090EA4@us01wembx1.internal.synopsys.com>
+ <20180830204515.GC24124@hirez.programming.kicks-ass.net>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -80,66 +86,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/2018 02:44 AM, Peter Zijlstra wrote:=0A=
->> Back in 2016, Peter had fixed this file due to a problem I reported on A=
-RC. See=0A=
->> commit f75d48644c56a ("bitops: Do not default to __clear_bit() for=0A=
->> __clear_bit_unlock()")=0A=
->> That made __clear_bit_unlock() use the atomic clear_bit() vs. non-atomic=
-=0A=
->> __clear_bit(), effectively making clear_bit_unlock() and __clear_bit_unl=
-ock() same.=0A=
+On 08/30/2018 01:45 PM, Peter Zijlstra wrote:=0A=
 >>=0A=
->> This patch undoes that which could explain the issues you see. @Peter, @=
-Will ?=0A=
-> Right, so the thinking is that on platforms that suffer that issue,=0A=
-> atomic_set*() should DTRT. And if you look at your spinlock based atomic=
+>> Indeed this is the mother of all issues, I tried and system is clearly h=
+osed with=0A=
+>> and works after.=0A=
+>> What's amazing is the commit 4aef66c8ae9 which introduced it is from 201=
+6 ;-)=0A=
+>> Back then we had a retry branch with backoff stuff which I'd reverted fo=
+r new=0A=
+>> cores and the merge conflict somehow missed it.=0A=
+>>=0A=
+>> @PeterZ I'll create a patch with you as author ? do I need any formal si=
+gn offs,=0A=
+>> acks etc ?=0A=
+> Well, Will spotted it, give authorship to him, you have my ack per the=0A=
+> above.=0A=
 =0A=
-> implementation, you'll note that atomic_set() does indeed do the right=0A=
-> thing.=0A=
->=0A=
-> arch/arc/include/asm/atomic.h:108=0A=
+Oops, sorry for the mixup. I have him as author now and pushed to ARC for-c=
+urr=0A=
+(will trickle into linux-next eventually).=0A=
 =0A=
-For !LLSC atomics, ARC has always had atomic_set() DTRT even in the git rev=
-ision=0A=
-of 2016. The problem was not in atomics, but the asymmetric way slub bit lo=
-ck etc=0A=
-worked (haven't checked if this changed), i.e.=0A=
+> FWIW, also ACK on Will's patch to switch you over to asm-generic bitops=
 =0A=
-     slab_lock() -> bit_spin_lock() -> test_and_set_bit()    # atomic=0A=
-     slab_unlock() -> __bit_spin_unlock() -> __clear_bit()    # non-atomic=
+> entirely.=0A=
 =0A=
-=0A=
-And with v4.19-rc1, we have essentially reverted f75d48644c56a due to 84c65=
-91103db=0A=
-("locking/atomics, asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*(=
-)")=0A=
-=0A=
-So what we have with 4.19-rc1 is=0A=
-=0A=
-   static inline void __clear_bit_unlock(unsigned int nr, volatile unsigned=
- long *p)=0A=
-   {=0A=
-     unsigned long old;=0A=
-     p +=3D ((nr) / 32);=0A=
-     old =3D // some typecheck magic on *p=0A=
-     old &=3D ~(1UL << ((nr) % 32));=0A=
-     atomic_long_set_release((atomic_long_t *)p, old);=0A=
-   }=0A=
-=0A=
-So @p is being r-m-w non atomically. The lock variant uses atomic op...=0A=
-=0A=
-   int test_and_set_bit_lock(unsigned int nr, volatile unsigned long *p)=0A=
-   { =0A=
-      ...=0A=
-      old =3D atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);=0A=
-      ....=0A=
-   }=0A=
-=0A=
-Now I don't know why we don't see the issue with LLSC atomics, perhaps race=
- window=0A=
-reduces due to less verbose code itself etc..=0A=
-=0A=
-Am I missing something still ?=0A=
+Yeah I'll get it to that and your's after the clear_bit_lock stuff - sorry =
+for=0A=
+hijacking this thread to that topic now=0A=
 =0A=
 -Vineet=0A=
