@@ -2,217 +2,196 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A1C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7148C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DA72083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WIy92CX7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DA72083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EA0A20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA0A20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeHaL4o (ORCPT
+        id S1727507AbeHaL5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:56:44 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54625 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbeHaL4o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:56:44 -0400
-Received: by mail-it0-f67.google.com with SMTP id f14-v6so6024056ita.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 00:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:references:in-reply-to:mime-version:thread-index:date
-         :message-id:subject:to:cc;
-        bh=HRrBVCY/liedzrbx86nkK5B7G7CXmut26GQ8sobj9js=;
-        b=WIy92CX7lt2vi3uFw+GOFuzvnErhx6rhWOdMdIXevOEUBUDRkR1mRZiFm5N+ACzgxI
-         zyFrtcy0DvY24hDBtwOUAPPaEcb54hw/Wv3PUp0Gr1v97Bvzu1buYA1+6IhtUMaTxcw5
-         a/ZOP7ZvZCqV+B9IPynolEi7VAd/TsTHe6HMI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:in-reply-to:mime-version
-         :thread-index:date:message-id:subject:to:cc;
-        bh=HRrBVCY/liedzrbx86nkK5B7G7CXmut26GQ8sobj9js=;
-        b=Af+g/m+Uo03acniCHASvgvlbCtkoXZCwaufAWkDHc0KraZ2i/X/Q6IMbvXAeTgE0Ue
-         SGgDL1FbfJcdkN06xMas/CTBNS6E24G/4pKEdCuUowwLXXAqp5npU1AVm6h1LChyZPn5
-         kpDocVyY6cUuV/TqwWAtehj20hFn0Ap00yxNgXmxk+hSUA7S1uYLFHAzcrUVcBead1j+
-         meIyqlUDuDdtR45hoSKRlyqwo1zWryNANYQLAMNHmjJI3y9rEPCru2ZFwCnf6feWCoQ5
-         XOf9WdELsHncHJ+9qTbO6hyYRSkc0/mR07ZEt93YT9UXz37uaKYGs2TIfWAvY915J9vi
-         EVOQ==
-X-Gm-Message-State: APzg51BVZHYFrL6StYrgarS4KzxwsbhWK35loVkQdGRCSO3uLHuW4H7i
-        AN4GOAqOUT6T9c6oDaH8/OtwcZ0su3fs/fGb5MHERQ==
-X-Google-Smtp-Source: ANB0VdbMahUvQCNsl6jOMLPsW2eYwr1e5R0sBFQYTprMuCi4riM3eqT1mzGREWC3SHH08TSLunaZL1eA+hkxVIQo40k=
-X-Received: by 2002:a02:5651:: with SMTP id o78-v6mr12053713jab.8.1535701833507;
- Fri, 31 Aug 2018 00:50:33 -0700 (PDT)
-From:   Kashyap Desai <kashyap.desai@broadcom.com>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
- <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
- <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
-In-Reply-To: <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+        Fri, 31 Aug 2018 07:57:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39732 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727191AbeHaL5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 07:57:24 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 78B95401EF05;
+        Fri, 31 Aug 2018 07:51:13 +0000 (UTC)
+Received: from [10.36.116.16] (ovpn-116-16.ams2.redhat.com [10.36.116.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A8812166B41;
+        Fri, 31 Aug 2018 07:51:08 +0000 (UTC)
+Subject: Re: [PATCH v1 2/5] mm/memory_hotplug: enforce section alignment when
+ onlining/offlining
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Jia He <jia.he@hxt-semitech.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Baoquan He <bhe@redhat.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180816100628.26428-1-david@redhat.com>
+ <20180816100628.26428-3-david@redhat.com>
+ <772774b8-77d8-c09b-f933-5ce29be58fa9@microsoft.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <bd09cf13-6eba-ed06-5491-0d1e239c40c8@redhat.com>
+Date:   Fri, 31 Aug 2018 09:51:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbqJgkvCw
-Date:   Fri, 31 Aug 2018 01:50:31 -0600
-Message-ID: <615d78004495aebc53807156d04d988c@mail.gmail.com>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-To:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <772774b8-77d8-c09b-f933-5ce29be58fa9@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 07:51:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 07:51:13 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Ming Lei [mailto:tom.leiming@gmail.com]
-> Sent: Friday, August 31, 2018 12:54 AM
-> To: sumit.saxena@broadcom.com
-> Cc: Ming Lei; Thomas Gleixner; Christoph Hellwig; Linux Kernel Mailing
-> List;
-> Kashyap Desai; shivasharan.srikanteshwara@broadcom.com; linux-block
-> Subject: Re: Affinity managed interrupts vs non-managed interrupts
->
-> On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena
-> <sumit.saxena@broadcom.com> wrote:
-> >
-> > > -----Original Message-----
-> > > From: Ming Lei [mailto:ming.lei@redhat.com]
-> > > Sent: Wednesday, August 29, 2018 2:16 PM
-> > > To: Sumit Saxena <sumit.saxena@broadcom.com>
-> > > Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
-> > > Subject: Re: Affinity managed interrupts vs non-managed interrupts
-> > >
-> > > Hello Sumit,
-> > Hi Ming,
-> > Thanks for response.
-> > >
-> > > On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
-> > > >  Affinity managed interrupts vs non-managed interrupts
-> > > >
-> > > > Hi Thomas,
-> > > >
-> > > > We are working on next generation MegaRAID product where
-> requirement
-> > > > is- to allocate additional 16 MSI-x vectors in addition to number of
-> > > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID
-> > > > adapter
-> > > > supports 128 MSI-x vectors.
-> > > >
-> > > > To explain the requirement and solution, consider that we have 2
-> > > > socket system (each socket having 36 logical CPUs). Current driver
-> > > > will allocate total 72 MSI-x vectors by calling API-
-> > > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
-> > > > vectors will have affinity across NUMA node s and interrupts are
-> > affinity
-> > > managed.
-> > > >
-> > > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
-> > > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
-> > >
-> > > Could you explain a bit what the specific use case the extra 16
-> > > vectors
-> > is?
-> > We are trying to avoid the penalty due to one interrupt per IO
-> > completion
-> > and decided to coalesce interrupts on these extra 16 reply queues.
-> > For regular 72 reply queues, we will not coalesce interrupts as for low
-> > IO
-> > workload, interrupt coalescing may take more time due to less IO
-> > completions.
-> > In IO submission path, driver will decide which set of reply queues
-> > (either extra 16 reply queues or regular 72 reply queues) to be picked
-> > based on IO workload.
->
-> I am just wondering how you can make the decision about using extra
-> 16 or regular 72 queues in submission path, could you share us a bit
-> your idea? How are you going to recognize the IO workload inside your
-> driver? Even the current block layer doesn't recognize IO workload, such
-> as random IO or sequential IO.
+On 31.08.2018 00:14, Pasha Tatashin wrote:
+> Hi David,
+> 
+> I am not sure this is needed, because we already have a stricter checker:
+> 
+> check_hotplug_memory_range()
+> 
+> You could call it from online_pages(), if you think there is a reason to
+> do it, but other than that it is done from add_memory_resource() and
+> from remove_memory().
 
-It is not yet finalized, but it can be based on per sdev outstanding,
-shost_busy etc.
-We want to use special 16 reply queue for IO acceleration (these queues are
-working interrupt coalescing mode. This is a h/w feature)
+Hi,
 
->
-> Frankly speaking, you may reuse the 72 reply queues to do interrupt
-> coalescing by configuring one extra register to enable the coalescing
-> mode,
-> and you may just use small part of the 72 reply queues under the
-> interrupt coalescing mode.
-Our h/w can set interrupt coalescing per 8 reply queues. So smallest is 8.
-If we choose to take 8 reply queue from existing 72 reply queue (without
-asking for extra reply queue), we still have  an issue on more numa node
-systems.  Example - in 8 numa node system each node will have only *one*
-reply queue for effective interrupt coalescing. (since irq subsystem will
-spread msix per numa).
+As offline_pages() is called from a different location for ppc (and I
+understand why but don't consider this clean) and I used both functions
+in a prototype, believing they would work with pageblock_nr_pages, I
+really think that we should at least drop the misleading check from
+offline_pages() and better also add checks for check_hotplug_memory_range().
 
-To keep things scalable we cherry picked few reply queues and wanted them to
-be out of cpu-msix mapping.
+Thanks for having a look Pavel!
 
->
-> Or you can learn from SPDK to use one or small number of dedicated cores
-> or kernel threads to poll the interrupts from all reply queues, then I
-> guess you may benefit much compared with the extra 16 queue approach.
-Problem with polling -  It requires some steady completion, otherwise
-prediction in driver gives different results on different profiles.
-We attempted irq-poll and thread ISR based polling, but it has pros and
-cons. One of the key usage of method what we are trying is not to impact
-latency for lower QD workloads.
-I posted RFC at
-https://www.spinics.net/lists/linux-scsi/msg122874.html
+> 
+> Thank you,
+> Pavel
+> 
+> On 8/16/18 6:06 AM, David Hildenbrand wrote:
+>> onlining/offlining code works on whole sections, so let's enforce that.
+>> Existing code only allows to add memory in memory block size. And only
+>> whole memory blocks can be onlined/offlined. Memory blocks are always
+>> aligned to sections, so this should not break anything.
+>>
+>> online_pages/offline_pages will implicitly mark whole sections
+>> online/offline, so the code really can only handle such granularities.
+>>
+>> (especially offlining code cannot deal with pageblock_nr_pages but
+>>  theoretically only MAX_ORDER-1)
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>  mm/memory_hotplug.c | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index 090cf474de87..30d2fa42b0bb 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -897,6 +897,11 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+>>  	struct memory_notify arg;
+>>  	struct memory_block *mem;
+>>  
+>> +	if (!IS_ALIGNED(pfn, PAGES_PER_SECTION))
+>> +		return -EINVAL;
+>> +	if (!IS_ALIGNED(nr_pages, PAGES_PER_SECTION))
+>> +		return -EINVAL;
+>> +
+>>  	/*
+>>  	 * We can't use pfn_to_nid() because nid might be stored in struct page
+>>  	 * which is not yet initialized. Instead, we find nid from memory block.
+>> @@ -1600,10 +1605,9 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+>>  	struct zone *zone;
+>>  	struct memory_notify arg;
+>>  
+>> -	/* at least, alignment against pageblock is necessary */
+>> -	if (!IS_ALIGNED(start_pfn, pageblock_nr_pages))
+>> +	if (!IS_ALIGNED(start_pfn, PAGES_PER_SECTION))
+>>  		return -EINVAL;
+>> -	if (!IS_ALIGNED(end_pfn, pageblock_nr_pages))
+>> +	if (!IS_ALIGNED(nr_pages, PAGES_PER_SECTION))
+>>  		return -EINVAL;
+>>  	/* This makes hotplug much easier...and readable.
+>>  	   we assume this for now. .*/
 
-We have done extensive study and concluded to use interrupt coalescing is
-better if h/w can manage two different modes (coalescing on/off).
 
->
-> Introducing extra 16 queues just for interrupt coalescing and making it
-> coexisting with the regular 72 reply queues seems one very unusual use
-> case, not sure the current genirq affinity can support it well.
+-- 
 
-Yes. This is unusual case. I think it is not used by any other drivers.
+Thanks,
 
->
-> > >
-> > > >
-> > > > All pre_vectors (16) will be mapped to all available online CPUs but
-> > > > e
-> > > > ffective affinity of each vector is to CPU 0. Our requirement is to
-> > > > have pre _vectors 16 reply queues to be mapped to local NUMA node
-> with
-> > > > effective CPU should be spread within local node cpu mask. Without
-> > > > changing kernel code, we can
-> > >
-> > > If all CPUs in one NUMA node is offline, can this use case work as
-> > expected?
-> > > Seems we have to understand what the use case is and how it works.
-> >
-> > Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
-> > broken and irqbalancer takes care of migrating affected IRQs to online
-> > CPUs of different NUMA node.
-> > When offline CPUs are onlined again, irqbalancer restores affinity.
->
->  irqbalance daemon can't cover managed interrupts, or you mean
-> you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
-
-Yes. We did not used " pci_alloc_irq_vectors_affinity".
-We used " pci_enable_msix_range" and manually set affinity in driver using
-irq_set_affinity_hint.
-
->
-> Thanks,
-> Ming Lei
+David / dhildenb
