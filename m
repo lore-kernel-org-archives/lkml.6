@@ -2,127 +2,97 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A62FC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F988C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C7F2054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C7F2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 191852083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="hmVVNNHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191852083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbeHaT51 (ORCPT
+        id S1729190AbeHaT5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:57:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33607 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeHaT51 (ORCPT
+        Fri, 31 Aug 2018 15:57:50 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33002 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728375AbeHaT5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:57:27 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFmnUq2205992
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 31 Aug 2018 08:48:49 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFmmaZ2205989;
-        Fri, 31 Aug 2018 08:48:48 -0700
-Date:   Fri, 31 Aug 2018 08:48:48 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-eeb89e2bb1ac45b0836d4170e97a988c3a746c62@git.kernel.org>
-Cc:     ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net, ak@linux.intel.com, dave.hansen@intel.com,
-        mhocko@suse.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, jroedel@suse.de, pavel@ucw.cz
-Reply-To: mhocko@suse.com, hpa@zytor.com, ard.biesheuvel@linaro.org,
-          torvalds@linux-foundation.org, dave.hansen@intel.com,
-          ak@linux.intel.com, linux@roeck-us.net, mingo@kernel.org,
-          pavel@ucw.cz, jroedel@suse.de, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <1535702738-10971-1-git-send-email-joro@8bytes.org>
-References: <1535702738-10971-1-git-send-email-joro@8bytes.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/efi: Load fixmap GDT in efi_call_phys_epilog()
-Git-Commit-ID: eeb89e2bb1ac45b0836d4170e97a988c3a746c62
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 31 Aug 2018 15:57:50 -0400
+Received: by mail-qt0-f193.google.com with SMTP id r37-v6so15061648qtc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sC8N1acRi2T0wcB2hYaIbejNJ4iMdgdw+m2NKObxBm0=;
+        b=hmVVNNHXcUy+YLY9OhZzCIWW2RBnPcBYnVfh7t9lwJxo+qJTxhzzHiCaq8vucWlFMj
+         eYDo9R8u03JOZzxZ/kn3K3iNvUzShDcY2rjNyuYDPRai58GJGFCVPkQgZO9Y39iklpR7
+         N/RyVM/CoTMEJNbg7Vv7FzvJwismPWcOstByUEvGX5xSsh9bR+BT8Agvyrw/7kQ8gqw6
+         gNG/9PTQPRw7LMpm4zb5rhkzURuJY9NjNRPRyH5QpwAdUKIHcMsOnZYt4qt3iJhnpKlX
+         aoZp4j0xUqo7wpst3j89S8D7PCAXmHD2GUF+Hx/puogsSJwBMTZAl1vDsmVp9ijC3JCX
+         R0eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sC8N1acRi2T0wcB2hYaIbejNJ4iMdgdw+m2NKObxBm0=;
+        b=Kn6DOsyNdT97GDRaQS952Y9ZN+rYXVE9QAHMhIN95V+IoqvcJx8R/FORuqiUUyeAQ1
+         cXPywfeRZxb4YJs+bzVI1Wj6cm2Nfg5y4Go6vFN5BK8rfz4KDEH1yfeL0f+QxdxSXSYc
+         Mkpt0fg/+MSeP7Wt63/Ms5gbMNgvhpv2rNerRMtvT1pqN0/CloGEp3P8pH2paG4oH6/y
+         9aqR/262jz9ytsBxvTrsmWsetMSm7IKjERHxDaBgvZF3WO9CoeaebInt3/Yrs7XhcQ3z
+         zkSXHIuDUKdo2Z3La2TbOwpkrjtdywshXvuP3r9JeENS4TIuhUu1CajikjY98IDzEj3z
+         ztFw==
+X-Gm-Message-State: APzg51C06pUneAFULSFAGyePT4XrHjolUcg+sgLla1yegdh1g7FWh0ad
+        L8IBR4z1j6a7yUO9KUtfPewu8A==
+X-Google-Smtp-Source: ANB0VdY5I+7eMF4n7GjPTDNfb9S6LfoSlPVu7J6HnwkOq03bPkBjjSKqYfaEC8LlQ62KqfkcYaZKCg==
+X-Received: by 2002:ac8:2d2e:: with SMTP id n43-v6mr16741565qta.38.1535730583504;
+        Fri, 31 Aug 2018 08:49:43 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id 80-v6sm8083068qka.6.2018.08.31.08.49.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 08:49:42 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:49:41 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/15] blkcg: change blkg reference counting to use
+ percpu_ref
+Message-ID: <20180831154939.sb24oz7ekxcwkkfd@destiny>
+References: <20180831015356.69796-1-dennisszhou@gmail.com>
+ <20180831015356.69796-14-dennisszhou@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180831015356.69796-14-dennisszhou@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  eeb89e2bb1ac45b0836d4170e97a988c3a746c62
-Gitweb:     https://git.kernel.org/tip/eeb89e2bb1ac45b0836d4170e97a988c3a746c62
-Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Fri, 31 Aug 2018 10:05:38 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 31 Aug 2018 17:45:54 +0200
+On Thu, Aug 30, 2018 at 09:53:54PM -0400, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+> 
+> Now that every bio is associated with a blkg, this puts the use of
+> blkg_get, blkg_try_get, and blkg_put on the hot path. This switches over
+> the refcnt in blkg to use percpu_ref.
+> 
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 
-x86/efi: Load fixmap GDT in efi_call_phys_epilog()
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-When PTI is enabled on x86-32 the kernel uses the GDT mapped in the fixmap
-for the simple reason that this address is also mapped for user-space.
+Thanks,
 
-The efi_call_phys_prolog()/efi_call_phys_epilog() wrappers change the GDT
-to call EFI runtime services and switch back to the kernel GDT when they
-return. But the switch-back uses the writable GDT, not the fixmap GDT.
-
-When that happened and and the CPU returns to user-space it switches to the
-user %cr3 and tries to restore user segment registers. This fails because
-the writable GDT is not mapped in the user page-table, and without a GDT
-the fault handlers also can't be launched. The result is a triple fault and
-reboot of the machine.
-
-Fix that by restoring the GDT back to the fixmap GDT which is also mapped
-in the user page-table.
-
-Fixes: 7757d607c6b3 x86/pti: ('Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32')
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: hpa@zytor.com
-Cc: linux-efi@vger.kernel.org
-Link: https://lkml.kernel.org/r/1535702738-10971-1-git-send-email-joro@8bytes.org
-
----
- arch/x86/platform/efi/efi_32.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/platform/efi/efi_32.c b/arch/x86/platform/efi/efi_32.c
-index 324b93328b37..05ca14222463 100644
---- a/arch/x86/platform/efi/efi_32.c
-+++ b/arch/x86/platform/efi/efi_32.c
-@@ -85,14 +85,10 @@ pgd_t * __init efi_call_phys_prolog(void)
- 
- void __init efi_call_phys_epilog(pgd_t *save_pgd)
- {
--	struct desc_ptr gdt_descr;
--
--	gdt_descr.address = (unsigned long)get_cpu_gdt_rw(0);
--	gdt_descr.size = GDT_SIZE - 1;
--	load_gdt(&gdt_descr);
--
- 	load_cr3(save_pgd);
- 	__flush_tlb_all();
-+
-+	load_fixmap_gdt(0);
- }
- 
- void __init efi_runtime_update_mappings(void)
+Josef
