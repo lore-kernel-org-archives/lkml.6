@@ -2,137 +2,105 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C51C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA4FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E99DC20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685A520658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:46:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sIYEr3Ho"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99DC20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XLYFS8ge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685A520658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbeHaUxl (ORCPT
+        id S1727823AbeHaUyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:53:41 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:44962 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeHaUxl (ORCPT
+        Fri, 31 Aug 2018 16:54:35 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35708 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbeHaUyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:53:41 -0400
-Received: by mail-qt0-f193.google.com with SMTP id k38-v6so15212992qtk.11;
-        Fri, 31 Aug 2018 09:45:20 -0700 (PDT)
+        Fri, 31 Aug 2018 16:54:35 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 7-v6so752768pgf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 09:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pNABGCfUpq+twrrudbVaR6VIWYKXET0UXf8W5VdDxdU=;
-        b=sIYEr3HoNnKl476GyQSn3JsRhI0MZtnxg6vmQUehjF6Ug96BvAF0Bdhh3mb9nh8oeI
-         UES2weUpSNhYxQ0pAZ5oWSo+mfW2nINkfoYN6tRIdnhT44fA5L8ZCSuWfk6UXlWBQUEy
-         W0EJ5L8zor40oIUgixAsMg4NhOl/5D3YBjoZEZns0adAqeCakhrftHgxZnN2qGQRh3h2
-         4fUiLEbaaI7OKoomtx4LSX/1G8N0yfDmLmbnbgTnOH78n6vHFURJhFRbX7DSoLyopWsK
-         tQxfXsu0MT2qKF6eKozF1hgV73xteyfWSLMFleeGzLwuHf6eBDfKUgHHnMPIjBq3kj/Y
-         cMEg==
+        bh=5lvQdgD/EXcDOV9R8OuQUbo/2DyQX0Rl0dUcicH6fsY=;
+        b=XLYFS8geXPIrgarFkNKVxqNESUrc7geuGcov3/laCMY9pa8C4DtOiBpnBeB/RUn2D/
+         alqrLkkFL2pDzK6kMxY+M9s7BQpgMcIe5ujnHD6DsfsyzhTdpQvZUThmmKY7sffLYJ6K
+         9+XVt1YMUnOdTxBcCX+AQ7ZmzV+dJ/zWeSA9BBNebpq4fudgkdJiONS9qdDo5jcfdl5b
+         l9s2vEAF3TZcVnYCAbdJJ1iGKVEmWNbc9F7tKDmvKjr+VT4HhzKXd9OyBNmuB/bQGFJK
+         coO8gkHhR6GZDQgZtH6jTY0KmPlt9dRUiIayCmOvDF9ftsYH2nzfpu8WNvsRZwAPNHEo
+         KJyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pNABGCfUpq+twrrudbVaR6VIWYKXET0UXf8W5VdDxdU=;
-        b=ghWguub+HLS/jEmFSd1GG4AGgVMPstMGv0pr5NxrtEEm7aldgjGSqfja7+BN+DsFQ9
-         CCiJC0av2VHkwMjFNffNjw0NiprUZbvezd5Hsa2Cm1tkw7Pdm0SA4ys87wzSTfQol70b
-         XutjFtnl5eZ1YE2nCFKgWuJifl3udAUNYoL8YPRbKU+7qYwPwT/zGeUjwy6ON/RUP1OH
-         Q5u44HmeqBlKf/6pPgAplVsYboyJL+nSnDlANpNmLz8wKfzs8dRUi9agKn1LnKMoL6CI
-         g6IEeBlV73xhh7biyQCgPsd2ZeKiEYLAnN2AMPBIn3xnVb6zhtyseRX1XkN9Haf0Z6PM
-         SYeg==
-X-Gm-Message-State: APzg51DFRRSl0uUToqhbiGtwjzFX7dK2hOWmZ5CgWjzseL2EaMgDllHw
-        ak+lGQHUM+xERUZ0e2PUN6tPm2Z7keGuwx4/l29whE7/
-X-Google-Smtp-Source: ANB0VdbRDf8W0OZvR8xOfLUoNG+T3sYSaAvKoymF4fGHurknFfmaQMieIepCRPHoTrnJBlp82w+bpcilVsENUlC/WN4=
-X-Received: by 2002:aed:2aa1:: with SMTP id t30-v6mr17002233qtd.101.1535733919498;
- Fri, 31 Aug 2018 09:45:19 -0700 (PDT)
+        bh=5lvQdgD/EXcDOV9R8OuQUbo/2DyQX0Rl0dUcicH6fsY=;
+        b=WcFIaxrP187BqxFIkLMnnEcz2NjhCNVWKvl4zB07KlwZymchiUczEwNMK1kcYHzrop
+         2gkPVCPdcaTXF/gpyxaczu6UuK9x+p2zk7FdF9LjMoi0gCogANUKgYYPssS+oYfpAVX4
+         4bskb685TkU72rREVEu7Zd7iNgaLCO9WmMhcL0LKszYWc6fzt3bNw64uF0nXYPOmw+GU
+         UN8bapnhzgYWwtPDAGNpckY8rUIzGnpHbaFeexhGmLCk/DsFYMYRI5vmF30j4XoWebWL
+         tBTOfIg71EKY0GHKndlTG9CWI+btKSCYIFl3Y3S9uk+FTq5DM7fjJ3grT2OBojWZmOWf
+         23gA==
+X-Gm-Message-State: APzg51C1C0Hs/QdatQ2PD9F+yohxgUUbBKPfMuRYhRaWPImbUtxGmK3M
+        4vn2adrs0/dU7NVityChmTIUtJweOC9IJvw47kH6sQ==
+X-Google-Smtp-Source: ANB0VdbOrErQLwsxSqSiOUUgltAc0By1++KcxctDSMiE/Z2qEUH4CDRz+dQo15tl76PKKyC87P5iVuNrPrdkp5/JcN8=
+X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr7282517pgl.302.1535733973960;
+ Fri, 31 Aug 2018 09:46:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831130356.6b0fd971@canb.auug.org.au> <fe65a78f-51fb-248a-565a-f21594caa957@infradead.org>
-In-Reply-To: <fe65a78f-51fb-248a-565a-f21594caa957@infradead.org>
-From:   Moritz Fischer <moritz.fischer.private@gmail.com>
-Date:   Fri, 31 Aug 2018 09:36:15 -0700
-Message-ID: <CAJYdmeMYT_L841XsUOYYepen7WOSp-6zU40QbRy97G5GPzAygg@mail.gmail.com>
-Subject: Re: linux-next: Tree for Aug 31 (nixge.c and phy)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
+References: <1535220989-27645-1-git-send-email-yamada.masahiro@socionext.com>
+ <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com> <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
+ <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com> <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
+In-Reply-To: <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 31 Aug 2018 09:46:02 -0700
+Message-ID: <CAKwvOdnyA=Y_+KnJrDc5mu7twTAEOMXvb8cAZhwzsXTi7a9sEA@mail.gmail.com>
+Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>, sparse@chrisli.org,
+        linux-sparse@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        daniel.santos@pobox.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy, Dave,
-
-On Fri, Aug 31, 2018 at 8:57 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Tue, Aug 28, 2018 at 4:00 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
 >
-> On 08/30/2018 08:03 PM, Stephen Rothwell wrote:
-> > Hi all,
+> On Mon, Aug 27, 2018 at 1:42 PM Daniel Santos <daniel.santos@pobox.com> wrote:
 > >
-> > Changes since 20180830:
+> > Hello Nick,
 > >
+> > On 08/27/2018 03:09 PM, Nick Desaulniers wrote:
+> > >>> Let's give up __compiletime_assert_fallback().  This commit does not
+> > >>> change the current behavior since it just rips off the useless code.
+> > >> Clang is not the only target audience of
+> > >> __compiletime_assert_fallback().  Instead of ripping out something that
+> > >> may benefit builds with gcc 4.2 and earlier, why not override its
+> > > Note that with commit cafa0010cd51 ("Raise the minimum required gcc
+> > > version to 4.6") that gcc < 4.6 is irrelevant.
+> >
+> > Ah, I guess I'm not keeping up, that's wonderful news!  Considering that
+> > I guess I would be OK with its removal, but I still think it would be
+> > better if a similar mechanism to break the Clang build could be found.
 >
-> on i386:
->
-> WARNING: unmet direct dependencies detected for OF_MDIO
->   Depends on [n]: OF [=n] && PHYLIB [=y]
->   Selected by [y]:
->   - NI_XGE_MANAGEMENT_ENET [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_NI [=y] && HAS_IOMEM [=y] && HAS_DMA [=y]
->
-> WARNING: unmet direct dependencies detected for OF_MDIO
->   Depends on [n]: OF [=n] && PHYLIB [=y]
->   Selected by [y]:
->   - NI_XGE_MANAGEMENT_ENET [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_NI [=y] && HAS_IOMEM [=y] && HAS_DMA [=y]
->
-> drivers/net/phy/mdio-gpio.o: In function `mdio_gpio_probe':
-> mdio-gpio.c:(.text+0x294): undefined reference to `of_mdiobus_register'
-> drivers/net/phy/mdio-hisi-femac.o: In function `hisi_femac_mdio_probe':
-> mdio-hisi-femac.c:(.text+0x352): undefined reference to `of_mdiobus_register'
-> drivers/net/ethernet/ni/nixge.o: In function `nixge_probe':
-> nixge.c:(.text+0x1357): undefined reference to `of_mdiobus_register'
-> drivers/net/ethernet/ni/nixge.o: In function `nixge_open':
-> nixge.c:(.text+0x21e9): undefined reference to `of_phy_connect'
-> drivers/net/usb/lan78xx.o: In function `lan78xx_probe':
-> lan78xx.c:(.text+0x5e29): undefined reference to `of_mdiobus_register'
-> /home/rdunlap/lnx/next/linux-next-20180831/Makefile:1035: recipe for target 'vmlinux' failed
->
->
-> Full randconfig file is attached.
->
->
-> --
-> ~Randy
+> I'm consulting with our best language lawyers to see what combinations
+> of _Static_assert and __builtin_constant_p would do the trick.
 
-Would:
+Linus,
+Can this patch be merged in the meantime?
 
-diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
-index 04e315704f71..83b6922767af 100644
---- a/drivers/net/ethernet/ni/Kconfig
-+++ b/drivers/net/ethernet/ni/Kconfig
-@@ -20,7 +20,6 @@ config NI_XGE_MANAGEMENT_ENET
-        tristate "National Instruments XGE management enet support"
-        depends on HAS_IOMEM && HAS_DMA
-        select PHYLIB
--       select OF_MDIO
-        help
-          Simple LAN device for debug or management purposes. Can
-          support either 10G or 1G PHYs via SFP+ ports.
-
-
-be the right solution? I did a quick build-test with the configuration
-above and it seems to fix the issue.
-Do I submit a follow-up patch to Dave?
-
+-- 
 Thanks,
-
-Moritz
+~Nick Desaulniers
