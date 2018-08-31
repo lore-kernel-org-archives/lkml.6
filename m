@@ -2,572 +2,217 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1D7C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3772083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:48:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5DA72083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YQW25Wc5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3772083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WIy92CX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DA72083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeHaLyI (ORCPT
+        id S1727492AbeHaL4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:54:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33699 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeHaLyI (ORCPT
+        Fri, 31 Aug 2018 07:56:44 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54625 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbeHaL4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:54:08 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y3-v6so3852293pgv.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 00:47:58 -0700 (PDT)
+        Fri, 31 Aug 2018 07:56:44 -0400
+Received: by mail-it0-f67.google.com with SMTP id f14-v6so6024056ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 00:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n4527YEizYqLP9LfimyDUAVtY0KL0e8HylWiioBL+cE=;
-        b=YQW25Wc5LBF7pmi9HchNfvEH9kjzRDZsg5L9j7C6qpHM7OAsQgy5ZE8MCT6H+Wx54f
-         oRcwwGRHPLQNHiG10iXnVyAMPmTH8g8CfK5D/FrTZbv8sW1SYRn+byqGWpeQpqy96iHk
-         xp+5qTGa7z9vd2Q8iez9ge9J9+pUtMBl+uI2A=
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=HRrBVCY/liedzrbx86nkK5B7G7CXmut26GQ8sobj9js=;
+        b=WIy92CX7lt2vi3uFw+GOFuzvnErhx6rhWOdMdIXevOEUBUDRkR1mRZiFm5N+ACzgxI
+         zyFrtcy0DvY24hDBtwOUAPPaEcb54hw/Wv3PUp0Gr1v97Bvzu1buYA1+6IhtUMaTxcw5
+         a/ZOP7ZvZCqV+B9IPynolEi7VAd/TsTHe6HMI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n4527YEizYqLP9LfimyDUAVtY0KL0e8HylWiioBL+cE=;
-        b=d4BGAyTwUIU1kr5e1E23nPlBhC2oyIewusXzEuaufvjrdy7TZkXoNnVY5Og71vVRNH
-         MRrxqk/SSXZOdoLyS+ygeTwdtRxNJxnC8U3q8KBxR6sTCGCawICMsaeApAyYfkrsJfeS
-         U6QB8MGeAi02qHd3rDeQVZI5CbtbiYEIM/ItRe9a+1Yr78rq4AeOeIv2V1I2iC+p8Mgw
-         C4y5tm3JPrgIANedpsDu5fTeVH0pStH9GNUwn9LXGwtSweHjlolmApPKTyvqdFCsh850
-         hCQuja9jUbZHeqJUnwAxQB58iBqI2vHYMFZMj1MeOk8Q3u/DaeD3oOzqRAMuErV8n1UT
-         +KbQ==
-X-Gm-Message-State: APzg51DLFpm6L6hswcEIUcAQXXrr6bS4fA2JDC50n3aLYdrJgtkmzCeU
-        6QohxixPKdVjAFciMun7uRUsEA==
-X-Google-Smtp-Source: ANB0VdbC0xXp66jTslKP+qJVO9cMRE4Wr4TxuO+AQ9TXNIUmRprBdQl9MAE3WQnqOfthu6hKcw40bg==
-X-Received: by 2002:a62:8acd:: with SMTP id o74-v6mr14598373pfk.12.1535701677405;
-        Fri, 31 Aug 2018 00:47:57 -0700 (PDT)
-Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm30517914pfd.155.2018.08.31.00.47.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 00:47:56 -0700 (PDT)
-From:   Alexandre Courbot <acourbot@chromium.org>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFC PATCH] media: docs-rst: Document m2m stateless video decoder interface
-Date:   Fri, 31 Aug 2018 16:47:43 +0900
-Message-Id: <20180831074743.235010-1-acourbot@chromium.org>
-X-Mailer: git-send-email 2.19.0.rc1.350.ge57e33dbd1-goog
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=HRrBVCY/liedzrbx86nkK5B7G7CXmut26GQ8sobj9js=;
+        b=Af+g/m+Uo03acniCHASvgvlbCtkoXZCwaufAWkDHc0KraZ2i/X/Q6IMbvXAeTgE0Ue
+         SGgDL1FbfJcdkN06xMas/CTBNS6E24G/4pKEdCuUowwLXXAqp5npU1AVm6h1LChyZPn5
+         kpDocVyY6cUuV/TqwWAtehj20hFn0Ap00yxNgXmxk+hSUA7S1uYLFHAzcrUVcBead1j+
+         meIyqlUDuDdtR45hoSKRlyqwo1zWryNANYQLAMNHmjJI3y9rEPCru2ZFwCnf6feWCoQ5
+         XOf9WdELsHncHJ+9qTbO6hyYRSkc0/mR07ZEt93YT9UXz37uaKYGs2TIfWAvY915J9vi
+         EVOQ==
+X-Gm-Message-State: APzg51BVZHYFrL6StYrgarS4KzxwsbhWK35loVkQdGRCSO3uLHuW4H7i
+        AN4GOAqOUT6T9c6oDaH8/OtwcZ0su3fs/fGb5MHERQ==
+X-Google-Smtp-Source: ANB0VdbMahUvQCNsl6jOMLPsW2eYwr1e5R0sBFQYTprMuCi4riM3eqT1mzGREWC3SHH08TSLunaZL1eA+hkxVIQo40k=
+X-Received: by 2002:a02:5651:: with SMTP id o78-v6mr12053713jab.8.1535701833507;
+ Fri, 31 Aug 2018 00:50:33 -0700 (PDT)
+From:   Kashyap Desai <kashyap.desai@broadcom.com>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+In-Reply-To: <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbqJgkvCw
+Date:   Fri, 31 Aug 2018 01:50:31 -0600
+Message-ID: <615d78004495aebc53807156d04d988c@mail.gmail.com>
+Subject: RE: Affinity managed interrupts vs non-managed interrupts
+To:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch documents the protocol that user-space should follow when
-communicating with stateless video decoders. It is based on the
-following references:
+> -----Original Message-----
+> From: Ming Lei [mailto:tom.leiming@gmail.com]
+> Sent: Friday, August 31, 2018 12:54 AM
+> To: sumit.saxena@broadcom.com
+> Cc: Ming Lei; Thomas Gleixner; Christoph Hellwig; Linux Kernel Mailing
+> List;
+> Kashyap Desai; shivasharan.srikanteshwara@broadcom.com; linux-block
+> Subject: Re: Affinity managed interrupts vs non-managed interrupts
+>
+> On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena
+> <sumit.saxena@broadcom.com> wrote:
+> >
+> > > -----Original Message-----
+> > > From: Ming Lei [mailto:ming.lei@redhat.com]
+> > > Sent: Wednesday, August 29, 2018 2:16 PM
+> > > To: Sumit Saxena <sumit.saxena@broadcom.com>
+> > > Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
+> > > Subject: Re: Affinity managed interrupts vs non-managed interrupts
+> > >
+> > > Hello Sumit,
+> > Hi Ming,
+> > Thanks for response.
+> > >
+> > > On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
+> > > >  Affinity managed interrupts vs non-managed interrupts
+> > > >
+> > > > Hi Thomas,
+> > > >
+> > > > We are working on next generation MegaRAID product where
+> requirement
+> > > > is- to allocate additional 16 MSI-x vectors in addition to number of
+> > > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID
+> > > > adapter
+> > > > supports 128 MSI-x vectors.
+> > > >
+> > > > To explain the requirement and solution, consider that we have 2
+> > > > socket system (each socket having 36 logical CPUs). Current driver
+> > > > will allocate total 72 MSI-x vectors by calling API-
+> > > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
+> > > > vectors will have affinity across NUMA node s and interrupts are
+> > affinity
+> > > managed.
+> > > >
+> > > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
+> > > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
+> > >
+> > > Could you explain a bit what the specific use case the extra 16
+> > > vectors
+> > is?
+> > We are trying to avoid the penalty due to one interrupt per IO
+> > completion
+> > and decided to coalesce interrupts on these extra 16 reply queues.
+> > For regular 72 reply queues, we will not coalesce interrupts as for low
+> > IO
+> > workload, interrupt coalescing may take more time due to less IO
+> > completions.
+> > In IO submission path, driver will decide which set of reply queues
+> > (either extra 16 reply queues or regular 72 reply queues) to be picked
+> > based on IO workload.
+>
+> I am just wondering how you can make the decision about using extra
+> 16 or regular 72 queues in submission path, could you share us a bit
+> your idea? How are you going to recognize the IO workload inside your
+> driver? Even the current block layer doesn't recognize IO workload, such
+> as random IO or sequential IO.
 
-* The current protocol used by Chromium (converted from config store to
-  request API)
+It is not yet finalized, but it can be based on per sdev outstanding,
+shost_busy etc.
+We want to use special 16 reply queue for IO acceleration (these queues are
+working interrupt coalescing mode. This is a h/w feature)
 
-* The submitted Cedrus VPU driver
+>
+> Frankly speaking, you may reuse the 72 reply queues to do interrupt
+> coalescing by configuring one extra register to enable the coalescing
+> mode,
+> and you may just use small part of the 72 reply queues under the
+> interrupt coalescing mode.
+Our h/w can set interrupt coalescing per 8 reply queues. So smallest is 8.
+If we choose to take 8 reply queue from existing 72 reply queue (without
+asking for extra reply queue), we still have  an issue on more numa node
+systems.  Example - in 8 numa node system each node will have only *one*
+reply queue for effective interrupt coalescing. (since irq subsystem will
+spread msix per numa).
 
-As such, some things may not be entirely consistent with the current
-state of drivers, so it would be great if all stakeholders could point
-out these inconsistencies. :)
+To keep things scalable we cherry picked few reply queues and wanted them to
+be out of cpu-msix mapping.
 
-This patch is supposed to be applied on top of the Request API V18 as
-well as the memory-to-memory video decoder interface series by Tomasz
-Figa.
+>
+> Or you can learn from SPDK to use one or small number of dedicated cores
+> or kernel threads to poll the interrupts from all reply queues, then I
+> guess you may benefit much compared with the extra 16 queue approach.
+Problem with polling -  It requires some steady completion, otherwise
+prediction in driver gives different results on different profiles.
+We attempted irq-poll and thread ISR based polling, but it has pros and
+cons. One of the key usage of method what we are trying is not to impact
+latency for lower QD workloads.
+I posted RFC at
+https://www.spinics.net/lists/linux-scsi/msg122874.html
 
-It should be considered an early RFC.
+We have done extensive study and concluded to use interrupt coalescing is
+better if h/w can manage two different modes (coalescing on/off).
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
----
- .../media/uapi/v4l/dev-stateless-decoder.rst  | 413 ++++++++++++++++++
- Documentation/media/uapi/v4l/devices.rst      |   1 +
- .../media/uapi/v4l/extended-controls.rst      |  23 +
- 3 files changed, 437 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/dev-stateless-decoder.rst
+>
+> Introducing extra 16 queues just for interrupt coalescing and making it
+> coexisting with the regular 72 reply queues seems one very unusual use
+> case, not sure the current genirq affinity can support it well.
 
-diff --git a/Documentation/media/uapi/v4l/dev-stateless-decoder.rst b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
-new file mode 100644
-index 000000000000..bf7b13a8ee16
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/dev-stateless-decoder.rst
-@@ -0,0 +1,413 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _stateless_decoder:
-+
-+**************************************************
-+Memory-to-memory Stateless Video Decoder Interface
-+**************************************************
-+
-+A stateless decoder is a decoder that works without retaining any kind of state
-+between processing frames. This means that each frame is decoded independently
-+of any previous and future frames, and that the client is responsible for
-+maintaining the decoding state and providing it to the driver. This is in
-+contrast to the stateful video decoder interface, where the hardware maintains
-+the decoding state and all the client has to do is to provide the raw encoded
-+stream.
-+
-+This section describes how user-space ("the client") is expected to communicate
-+with such decoders in order to successfully decode an encoded stream. Compared
-+to stateful codecs, the driver/client protocol is simpler, but cost of this
-+simplicity is extra complexity in the client which must maintain the decoding
-+state.
-+
-+Querying capabilities
-+=====================
-+
-+1. To enumerate the set of coded formats supported by the driver, the client
-+   calls :c:func:`VIDIOC_ENUM_FMT` on the ``OUTPUT`` queue.
-+
-+   * The driver must always return the full set of supported formats for the
-+     currently set ``OUTPUT`` format, irrespective of the format currently set
-+     on the ``CAPTURE`` queue.
-+
-+2. To enumerate the set of supported raw formats, the client calls
-+   :c:func:`VIDIOC_ENUM_FMT` on the ``CAPTURE`` queue.
-+
-+   * The driver must return only the formats supported for the format currently
-+     active on the ``OUTPUT`` queue.
-+
-+   * In order to enumerate raw formats supported by a given coded format, the
-+     client must thus set that coded format on the ``OUTPUT`` queue first, and
-+     then enumerate the ``CAPTURE`` queue.
-+
-+3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
-+   resolutions for a given format, passing desired pixel format in
-+   :c:type:`v4l2_frmsizeenum` ``pixel_format``.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` on ``OUTPUT`` queue
-+     must include all possible coded resolutions supported by the decoder
-+     for given coded pixel format.
-+
-+   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` on ``CAPTURE`` queue
-+     must include all possible frame buffer resolutions supported by the
-+     decoder for given raw pixel format and coded format currently set on
-+     ``OUTPUT`` queue.
-+
-+    .. note::
-+
-+       The client may derive the supported resolution range for a
-+       combination of coded and raw format by setting width and height of
-+       ``OUTPUT`` format to 0 and calculating the intersection of
-+       resolutions returned from calls to :c:func:`VIDIOC_ENUM_FRAMESIZES`
-+       for the given coded and raw formats.
-+
-+4. Supported profiles and levels for given format, if applicable, may be
-+   queried using their respective controls via :c:func:`VIDIOC_QUERYCTRL`.
-+
-+Initialization
-+==============
-+
-+1. *[optional]* Enumerate supported ``OUTPUT`` formats and resolutions. See
-+   capability enumeration.
-+
-+2. Set the coded format on the ``OUTPUT`` queue via :c:func:`VIDIOC_S_FMT`
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+     ``pixelformat``
-+         a coded pixel format
-+
-+     ``width``, ``height``
-+         parsed width and height of the coded format
-+
-+     other fields
-+         follow standard semantics
-+
-+   .. note::
-+
-+      Changing ``OUTPUT`` format may change currently set ``CAPTURE``
-+      format. The driver will derive a new ``CAPTURE`` format from
-+      ``OUTPUT`` format being set, including resolution, colorimetry
-+      parameters, etc. If the client needs a specific ``CAPTURE`` format,
-+      it must adjust it afterwards.
-+
-+3. *[optional]* Get minimum number of buffers required for ``OUTPUT``
-+   queue via :c:func:`VIDIOC_G_CTRL`. This is useful if client intends to
-+   use more buffers than minimum required by hardware/format.
-+
-+   * **Required fields:**
-+
-+     ``id``
-+         set to ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``
-+
-+   * **Return fields:**
-+
-+     ``value``
-+         required number of ``OUTPUT`` buffers for the currently set
-+         format
-+
-+4. Call :c:func:`VIDIOC_G_FMT` for ``CAPTURE`` queue to get format for the
-+   destination buffers parsed/decoded from the bitstream.
-+
-+   * **Required fields:**
-+
-+     ``type``
-+         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-+
-+   * **Return fields:**
-+
-+     ``width``, ``height``
-+         frame buffer resolution for the decoded frames
-+
-+     ``pixelformat``
-+         pixel format for decoded frames
-+
-+     ``num_planes`` (for _MPLANE ``type`` only)
-+         number of planes for pixelformat
-+
-+     ``sizeimage``, ``bytesperline``
-+         as per standard semantics; matching frame buffer format
-+
-+   .. note::
-+
-+      The value of ``pixelformat`` may be any pixel format supported for the
-+      ``OUTPUT`` format, based on the hardware capabilities. It is suggested
-+      that driver chooses the preferred/optimal format for given configuration.
-+      For example, a YUV format may be preferred over an RGB format, if
-+      additional conversion step would be required.
-+
-+5. *[optional]* Enumerate ``CAPTURE`` formats via :c:func:`VIDIOC_ENUM_FMT` on
-+   ``CAPTURE`` queue. The client may use this ioctl to discover which
-+   alternative raw formats are supported for the current ``OUTPUT`` format and
-+   select one of them via :c:func:`VIDIOC_S_FMT`.
-+
-+   .. note::
-+
-+      The driver will return only formats supported for the currently selected
-+      ``OUTPUT`` format, even if more formats may be supported by the driver in
-+      general.
-+
-+      For example, a driver/hardware may support YUV and RGB formats for
-+      resolutions 1920x1088 and lower, but only YUV for higher resolutions (due
-+      to hardware limitations). After setting a resolution of 1920x1088 or lower
-+      as the ``OUTPUT`` format, :c:func:`VIDIOC_ENUM_FMT` may return a set of
-+      YUV and RGB pixel formats, but after setting a resolution higher than
-+      1920x1088, the driver will not return RGB, unsupported for this
-+      resolution.
-+
-+6. *[optional]* Choose a different ``CAPTURE`` format than suggested via
-+   :c:func:`VIDIOC_S_FMT` on ``CAPTURE`` queue. It is possible for the client to
-+   choose a different format than selected/suggested by the driver in
-+   :c:func:`VIDIOC_G_FMT`.
-+
-+    * **Required fields:**
-+
-+      ``type``
-+          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-+
-+      ``pixelformat``
-+          a raw pixel format
-+
-+    .. note::
-+
-+       Calling :c:func:`VIDIOC_ENUM_FMT` to discover currently available
-+       formats after receiving ``V4L2_EVENT_SOURCE_CHANGE`` is useful to find
-+       out a set of allowed formats for given configuration, but not required,
-+       if the client can accept the defaults.
-+
-+7. *[optional]* Get minimum number of buffers required for ``CAPTURE`` queue via
-+   :c:func:`VIDIOC_G_CTRL`. This is useful if client intends to use more buffers
-+   than minimum required by hardware/format.
-+
-+    * **Required fields:**
-+
-+      ``id``
-+          set to ``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``
-+
-+    * **Return fields:**
-+
-+      ``value``
-+          minimum number of buffers required to decode the stream parsed in this
-+          initialization sequence.
-+
-+    .. note::
-+
-+       Note that the minimum number of buffers must be at least the number
-+       required to successfully decode the current stream. This may for example
-+       be the required DPB size for an H.264 stream given the parsed stream
-+       configuration (resolution, level).
-+
-+8. Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS` on
-+   ``OUTPUT`` queue.
-+
-+    * **Required fields:**
-+
-+      ``count``
-+          requested number of buffers to allocate; greater than zero
-+
-+      ``type``
-+          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
-+
-+      ``memory``
-+          follows standard semantics
-+
-+      ``sizeimage``
-+          follows standard semantics; the client is free to choose any
-+          suitable size, however, it may be subject to change by the
-+          driver
-+
-+    * **Return fields:**
-+
-+      ``count``
-+          actual number of buffers allocated
-+
-+    * The driver must adjust count to minimum of required number of ``OUTPUT``
-+      buffers for given format and count passed. The client must check this
-+      value after the ioctl returns to get the number of buffers allocated.
-+
-+    .. note::
-+
-+       To allocate more than minimum number of buffers (for pipeline depth), use
-+       G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``) to get minimum number of
-+       buffers required by the driver/format, and pass the obtained value plus
-+       the number of additional buffers needed in count to
-+       :c:func:`VIDIOC_REQBUFS`.
-+
-+9. Allocate destination (raw format) buffers via :c:func:`VIDIOC_REQBUFS` on the
-+   ``CAPTURE`` queue.
-+
-+    * **Required fields:**
-+
-+      ``count``
-+          requested number of buffers to allocate; greater than zero
-+
-+      ``type``
-+          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-+
-+      ``memory``
-+          follows standard semantics
-+
-+    * **Return fields:**
-+
-+      ``count``
-+          adjusted to allocated number of buffers
-+
-+    * The driver must adjust count to minimum of required number of
-+      destination buffers for given format and stream configuration and the
-+      count passed. The client must check this value after the ioctl
-+      returns to get the number of buffers allocated.
-+
-+    .. note::
-+
-+       To allocate more than minimum number of buffers (for pipeline
-+       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE``) to
-+       get minimum number of buffers required, and pass the obtained value
-+       plus the number of additional buffers needed in count to
-+       :c:func:`VIDIOC_REQBUFS`.
-+
-+10. Allocate requests (likely one per ``OUTPUT`` buffer) via
-+    :c:func:`MEDIA_IOC_REQUEST_ALLOC` on the media device.
-+
-+11. Start streaming on both ``OUTPUT`` and ``CAPTURE`` queues via
-+    :c:func:`VIDIOC_STREAMON`.
-+
-+Decoding
-+========
-+
-+For each frame, the client is responsible for submitting a request to which the
-+following is attached:
-+
-+* Exactly one frame worth of encoded data in a buffer submitted to the
-+  ``OUTPUT`` queue,
-+* All the controls relevant to the format being decoded (see below for details).
-+
-+``CAPTURE`` buffers must not be part of the request, but must be queued
-+independently. The driver will pick one of the queued ``CAPTURE`` buffers and
-+decode the frame into it. Although the client has no control over which
-+``CAPTURE`` buffer will be used with a given ``OUTPUT`` buffer, it is guaranteed
-+that ``CAPTURE`` buffers will be returned in decode order (i.e. the same order
-+as ``OUTPUT`` buffers were submitted), so it is trivial to associate a dequeued
-+``CAPTURE`` buffer to its originating request and ``OUTPUT`` buffer.
-+
-+If the request is submitted without an ``OUTPUT`` buffer or if one of the
-+required controls are missing, then :c:func:`MEDIA_REQUEST_IOC_QUEUE` will return
-+``-EINVAL``. Decoding errors are signaled by the ``CAPTURE`` buffers being
-+dequeued carrying the ``V4L2_BUF_FLAG_ERROR`` flag.
-+
-+The contents of source ``OUTPUT`` buffers, as well as the controls that must be
-+set on the request, depend on active coded pixel format and might be affected by
-+codec-specific extended controls, as stated in documentation of each format
-+individually.
-+
-+MPEG-2 buffer content and controls
-+----------------------------------
-+The following information is valid when the ``OUTPUT`` queue is set to the
-+``V4L2_PIX_FMT_MPEG2_SLICE`` format.
-+
-+The ``OUTPUT`` buffer must contain all the macroblock slices of a given frame,
-+i.e. if a frame requires several macroblock slices to be entirely decoded, then
-+all these slices must be provided. In addition, the following controls must be
-+set on the request:
-+
-+V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS
-+   Slice parameters (one per slice) for the current frame.
-+
-+Optional controls:
-+
-+V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION
-+   Quantization matrices for the current frame.
-+
-+H.264 buffer content and controls
-+---------------------------------
-+The following information is valid when the ``OUTPUT`` queue is set to the
-+``V4L2_PIX_FMT_H264_SLICE`` format.
-+
-+The ``OUTPUT`` buffer must contain all the macroblock slices of a given frame,
-+i.e. if a frame requires several macroblock slices to be entirely decoded, then
-+all these slices must be provided. In addition, the following controls must be
-+set on the request:
-+
-+V4L2_CID_MPEG_VIDEO_H264_SPS
-+   Instance of struct v4l2_ctrl_h264_sps, containing the SPS of to use with the
-+   frame.
-+
-+V4L2_CID_MPEG_VIDEO_H264_PPS
-+   Instance of struct v4l2_ctrl_h264_pps, containing the PPS of to use with the
-+   frame.
-+
-+V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX
-+   Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the scaling
-+   matrix to use when decoding the frame.
-+
-+V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM
-+   Array of struct v4l2_ctrl_h264_slice_param, containing at least as many
-+   entries as there are slices in the corresponding ``OUTPUT`` buffer.
-+
-+V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM
-+   Instance of struct v4l2_ctrl_h264_decode_param, containing the high-level
-+   decoding parameters for a H.264 frame.
-+
-+Seek
-+====
-+In order to seek, the client just needs to submit requests using input buffers
-+corresponding to the new stream position. It must however be aware that
-+resolution may have changed and follow the dynamic resolution change protocol in
-+that case. Also depending on the codec used, picture parameters (e.g. SPS/PPS
-+for H.264) may have changed and the client is responsible for making sure that
-+a valid state is sent to the kernel.
-+
-+The client is then free to ignore any returned ``CAPTURE`` buffer that comes
-+from the pre-seek position.
-+
-+Pause
-+=====
-+
-+In order to pause, the client should just cease queuing buffers onto the
-+``OUTPUT`` queue. This is different from the general V4L2 API definition of
-+pause, which involves calling :c:func:`VIDIOC_STREAMOFF` on the queue.
-+Without source bitstream data, there is no data to process and the hardware
-+remains idle.
-+
-+Dynamic resolution change
-+=========================
-+
-+If the client detects a resolution change in the stream, it may need to
-+reallocate the ``CAPTURE`` buffers to fit the new size.
-+
-+1. Wait until all submitted requests have completed and dequeue the
-+   corresponding output buffers.
-+
-+2. Call :c:func:`VIDIOC_STREAMOFF` on the ``CAPTURE`` queue.
-+
-+3. Free all ``CAPTURE`` buffers by calling :c:func:`VIDIOC_REQBUFS` on the
-+   ``CAPTURE`` queue with a buffer count of zero.
-+
-+4. Set the new format and resolution on the ``CAPTURE`` queue.
-+
-+5. Allocate new ``CAPTURE`` buffers for the new resolution.
-+
-+6. Call :c:func:`VIDIOC_STREAMON` on the ``CAPTURE`` queue to resume the stream.
-+
-+The client can then start queueing new ``CAPTURE`` buffers and submit requests
-+to decode the next buffers at the new resolution.
-+
-+Drain
-+=====
-+
-+In order to drain the stream on a stateless decoder, the client just needs to
-+wait until all the submitted requests are completed. There is no need to send a
-+``V4L2_DEC_CMD_STOP`` command since requests are processed sequentially by the
-+driver.
-+
-+End of stream
-+=============
-+
-+If the decoder encounters an end of stream marking in the stream, the
-+driver must send a ``V4L2_EVENT_EOS`` event to the client after all frames
-+are decoded and ready to be dequeued on the ``CAPTURE`` queue, with the
-+:c:type:`v4l2_buffer` ``flags`` set to ``V4L2_BUF_FLAG_LAST``. This
-+behavior is identical to the drain sequence triggered by the client via
-+``V4L2_DEC_CMD_STOP``.
-diff --git a/Documentation/media/uapi/v4l/devices.rst b/Documentation/media/uapi/v4l/devices.rst
-index 1822c66c2154..a8e568eda7d8 100644
---- a/Documentation/media/uapi/v4l/devices.rst
-+++ b/Documentation/media/uapi/v4l/devices.rst
-@@ -16,6 +16,7 @@ Interfaces
-     dev-osd
-     dev-codec
-     dev-decoder
-+    dev-stateless-decoder
-     dev-encoder
-     dev-effect
-     dev-raw-vbi
-diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-index a9252225b63e..c0411ebf4c12 100644
---- a/Documentation/media/uapi/v4l/extended-controls.rst
-+++ b/Documentation/media/uapi/v4l/extended-controls.rst
-@@ -810,6 +810,29 @@ enum v4l2_mpeg_video_bitrate_mode -
-     otherwise the decoder expects a single frame in per buffer.
-     Applicable to the decoder, all codecs.
- 
-+``V4L2_CID_MPEG_VIDEO_H264_SPS``
-+    Instance of struct v4l2_ctrl_h264_sps, containing the SPS of to use with
-+    the next queued frame. Applicable to the H.264 stateless decoder.
-+
-+``V4L2_CID_MPEG_VIDEO_H264_PPS``
-+    Instance of struct v4l2_ctrl_h264_pps, containing the PPS of to use with
-+    the next queued frame. Applicable to the H.264 stateless decoder.
-+
-+``V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX``
-+    Instance of struct v4l2_ctrl_h264_scaling_matrix, containing the scaling
-+    matrix to use when decoding the next queued frame. Applicable to the H.264
-+    stateless decoder.
-+
-+``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM``
-+    Array of struct v4l2_ctrl_h264_slice_param, containing at least as many
-+    entries as there are slices in the corresponding ``OUTPUT`` buffer.
-+    Applicable to the H.264 stateless decoder.
-+
-+``V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM``
-+    Instance of struct v4l2_ctrl_h264_decode_param, containing the high-level
-+    decoding parameters for a H.264 frame. Applicable to the H.264 stateless
-+    decoder.
-+
- ``V4L2_CID_MPEG_VIDEO_H264_VUI_SAR_ENABLE (boolean)``
-     Enable writing sample aspect ratio in the Video Usability
-     Information. Applicable to the H264 encoder.
--- 
-2.19.0.rc1.350.ge57e33dbd1-goog
+Yes. This is unusual case. I think it is not used by any other drivers.
 
+>
+> > >
+> > > >
+> > > > All pre_vectors (16) will be mapped to all available online CPUs but
+> > > > e
+> > > > ffective affinity of each vector is to CPU 0. Our requirement is to
+> > > > have pre _vectors 16 reply queues to be mapped to local NUMA node
+> with
+> > > > effective CPU should be spread within local node cpu mask. Without
+> > > > changing kernel code, we can
+> > >
+> > > If all CPUs in one NUMA node is offline, can this use case work as
+> > expected?
+> > > Seems we have to understand what the use case is and how it works.
+> >
+> > Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
+> > broken and irqbalancer takes care of migrating affected IRQs to online
+> > CPUs of different NUMA node.
+> > When offline CPUs are onlined again, irqbalancer restores affinity.
+>
+>  irqbalance daemon can't cover managed interrupts, or you mean
+> you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
+
+Yes. We did not used " pci_alloc_irq_vectors_affinity".
+We used " pci_enable_msix_range" and manually set affinity in driver using
+irq_set_affinity_hint.
+
+>
+> Thanks,
+> Ming Lei
