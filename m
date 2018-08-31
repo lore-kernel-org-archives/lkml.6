@@ -2,141 +2,103 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CCEC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696B7C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D094C20839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:41:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D094C20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 203042083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:42:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 203042083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbeHaQsp (ORCPT
+        id S1728370AbeHaQuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:48:45 -0400
-Received: from sauhun.de ([88.99.104.3]:60760 "EHLO pokefinder.org"
+        Fri, 31 Aug 2018 12:50:14 -0400
+Received: from mout.perfora.net ([74.208.4.196]:56981 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbeHaQsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:48:45 -0400
-Received: from localhost (p54B33960.dip0.t-ipconnect.de [84.179.57.96])
-        by pokefinder.org (Postfix) with ESMTPSA id 2048434AE18;
-        Fri, 31 Aug 2018 14:41:24 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 14:41:23 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.19
-Message-ID: <20180831124120.suchscewwcrta476@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ixjdo3bmjypr3tme"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1727774AbeHaQuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 12:50:14 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0M5fUk-1fgWEM143M-00xcFh; Fri, 31 Aug 2018 14:42:42 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] ARM: dts: tegra30: fix xcvr-setup-use-fuses
+Date:   Fri, 31 Aug 2018 14:42:33 +0200
+Message-Id: <20180831124233.27156-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:w+D5ZyStcKPbuCvYjmmkgm69SeLunWnHv/T/dMo2dqBHP6xJmUQ
+ oQmugpBxICYwPDIu6bVSHZ/wpKlzJnN2JuPSZJNoboyMkJFo1+lAKl4MasG+kABsBmYf9CJ
+ r9tUa6l0Qf+X/Ne/7hvZTo6vimSbg6Vs+CE5H3QnxzZquBPnPTAKrlnACRElKRh9HOV3jIk
+ DjukZNW/90ZZNcWgFgBlQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:UKzHTpn5Brg=:BxaIniJaatBjAQTdCjhF0+
+ ajr26V1OP4SxcITMnCmzCpEKvDekCVI93+TETSx/DysRMjBtOxaM5pJm1x4b6Gos4lpt6rqS/
+ DXIC8yb7NN+oFXkNXY3Iiomkkfy/wQXilBJPj85V1pPzLjpx3pYtgWIhvQoLgbkKwaD9byBaJ
+ WSp8a/kpp46/sR4Uelr0Bog6AwRFd0x5eNRvoFQ31MZ/VYqSohTCCEIoVsnGaDgw3DKB25M28
+ aoYTklaqiE8jJ7x8v/ogxTAMlxJl9z0Y9ibGwOa37acN+drqq+iZqMK9hXkTj5W6ZcLAfk006
+ 4XMdSkVyeyuGsFdFpjfKfZxu2gTB4BYUoCvDGC22S1+3EIWFGph0NWAZUbaz6R5Rs/o+BBrqO
+ ZN1GkpRd0qwR9JBG/ALK2zHn4JgtCWuynO/c0uuhQYTUdR4kaO+EPcXfJpB5uqRUog1/lJi8Q
+ 3mNS8OxxtFeYEdm/y3b/BIunLLzOLaJUCr95Xyw6uTCj36zNOJZU2mVK21cBAhYMQ9gArMRmV
+ N9ONv+DBTSSq/tMc+c4o5N1PBsodZoS6NecJpPhZEonHG1IYqrWT0fGtkL9hwQYdPmQ0Li8y9
+ vcPvojs0J396pBkH+5C/Il3ptYoaloAbz0NvjNRJ+X4nuLRI3RWKG6j9wIbJBG+J7M2raKznI
+ Ax8EKHcfKXGoo328EKkytKVCSGtuQD8eFvPul+1twCdMuAL9LNKIuK/3NKKCRr4Cdq5E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
---ixjdo3bmjypr3tme
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There was a dot instead of a comma. Fix this.
 
-Linus,
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-I2C has for you:
+---
 
-* regression fixes for i801 and designware
-* better API and leak fix for releasing DMA safe buffers
-* better greppable strings for the bitbang algorithm
+ arch/arm/boot/dts/tegra30.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 1de10f0d1da7..d2b553f76719 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -896,7 +896,7 @@
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <51>;
+-		nvidia.xcvr-setup-use-fuses;
++		nvidia,xcvr-setup-use-fuses;
+ 		nvidia,xcvr-lsfslew = <1>;
+ 		nvidia,xcvr-lsrslew = <1>;
+ 		nvidia,xcvr-hsslew = <32>;
+@@ -933,7 +933,7 @@
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <51>;
+-		nvidia.xcvr-setup-use-fuses;
++		nvidia,xcvr-setup-use-fuses;
+ 		nvidia,xcvr-lsfslew = <2>;
+ 		nvidia,xcvr-lsrslew = <2>;
+ 		nvidia,xcvr-hsslew = <32>;
+@@ -969,7 +969,7 @@
+ 		nvidia,elastic-limit = <16>;
+ 		nvidia,term-range-adj = <6>;
+ 		nvidia,xcvr-setup = <51>;
+-		nvidia.xcvr-setup-use-fuses;
++		nvidia,xcvr-setup-use-fuses;
+ 		nvidia,xcvr-lsfslew = <2>;
+ 		nvidia,xcvr-lsrslew = <2>;
+ 		nvidia,xcvr-hsslew = <32>;
+-- 
+2.14.4
 
-   Wolfram
-
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-curre=
-nt
-
-for you to fetch changes up to cebc07d84ad71bc58d6f59b770e4347da48a5a2b:
-
-  i2c: sh_mobile: fix leak when using DMA bounce buffer (2018-08-30 23:13:5=
-9 +0200)
-
-----------------------------------------------------------------
-Hans de Goede (1):
-      i2c: designware: Re-init controllers with pm_disabled set on resume
-
-Jan Kundr=C3=A1t (1):
-      i2c: algos: bit: make the error messages grepable
-
-Mika Westerberg (1):
-      i2c: i801: Allow ACPI AML access I/O ports not reserved for SMBus
-
-Wolfram Sang (3):
-      i2c: refactor function to release a DMA safe buffer
-      i2c: sh_mobile: define start_ch() void as it only returns 0 anyhow
-      i2c: sh_mobile: fix leak when using DMA bounce buffer
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      (Rev.) i2c: designware: Re-init controllers with pm_disabled set on r=
-esume
-
-Jean Delvare (1):
-      (Rev.) i2c: i801: Allow ACPI AML access I/O ports not reserved for SM=
-Bus
-
-Niklas S=C3=B6derlund (3):
-      (Rev.) i2c: sh_mobile: fix leak when using DMA bounce buffer
-      (Rev.) i2c: sh_mobile: define start_ch() void as it only returns 0 an=
-yhow
-      (Rev.) i2c: refactor function to release a DMA safe buffer
-
- Documentation/i2c/DMA-considerations        | 10 ++++--
- drivers/i2c/algos/i2c-algo-bit.c            | 55 ++++++++++++++++---------=
-----
- drivers/i2c/busses/i2c-designware-master.c  |  1 -
- drivers/i2c/busses/i2c-designware-platdrv.c |  7 +++-
- drivers/i2c/busses/i2c-i801.c               |  9 ++++-
- drivers/i2c/busses/i2c-sh_mobile.c          | 15 ++++----
- drivers/i2c/i2c-core-base.c                 | 11 +++---
- include/linux/i2c.h                         |  2 +-
- 8 files changed, 66 insertions(+), 44 deletions(-)
-
---ixjdo3bmjypr3tme
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluJN2wACgkQFA3kzBSg
-KbY4xw//R0MzLS066a0HzbRD6NwGqKFk9hyT5jqaUSxTRrtI2jIkVD+4FpSODFSe
-46LnZixGGN8ox+WWl9UU/LZDqW80qhxK5zq+kmB+S6j/DFxuGmxLbfIwKaocMbyA
-0mRx1orfHacWpF8zpxrkwl2KZf08M8bhynwmh9e8RMYBawpJy/GRAtTXgj99lTTB
-HHNhXaQO2XwSvXQaWi64ErmSaRLFYpxrnu6cdhaJgG8gpDYKoANcAZuA74UUNGfO
-dNeAkemwuSCcnuZkHFckllSW28fy4yYRJWYmI+kdWrXqbG1w/+P9zwdDM0mDqD5j
-bZSHsWhN+91DvKSS0HYb7xIFOsOCaHbID3/WnS9GVK/jmVPrjVtrxWwItFRkrCb3
-un2+au3+ePVpCkRZYJqEeRdFvNpRTzBdCCLAGa8hgUo0l5m86OwgYjXnsX+bGA7h
-mjLIGmO0KQfieTiBWo/zOXi1vKtEHeXfpT4DIXPGmYaCa7B3CmDMVI2UAjzPlowK
-iB3HZnSXnFXEsx38iSrN3YeUk40/M3LKbXVCNP+XG8hT8T7SKP44HZQ9sXHPGpX9
-tYucOyDlh8Jr7LqEM2r3j+31xnrShLHO41dP7uMQ8L8/fRLxo67c3+bI0jw77B7s
-9MTdDv0fycDSXbh2IrTvVKlfbceTAYN0QjyYV+nzdtZAg4xkuSw=
-=wlos
------END PGP SIGNATURE-----
-
---ixjdo3bmjypr3tme--
