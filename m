@@ -2,102 +2,90 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D06C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F1BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE0D420658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0D420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 070792083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:14:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070792083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeHaPUj (ORCPT
+        id S1727998AbeHaPVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 11:20:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:18597 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbeHaPUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 11:20:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 04:13:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="84964652"
-Received: from ssirohi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.48.112])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Aug 2018 04:13:35 -0700
-Date:   Fri, 31 Aug 2018 14:13:34 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
- EPC pages
-Message-ID: <20180831111334.GB16827@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
- <4666cae8-c711-8dd5-cbce-3d97cc19a9e5@intel.com>
- <20180828103040.GA21326@linux.intel.com>
- <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
- <20180828213432.GB29488@linux.intel.com>
+        Fri, 31 Aug 2018 11:21:21 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11212 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726990AbeHaPVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 11:21:21 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B5D6043DCE876;
+        Fri, 31 Aug 2018 19:14:18 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Fri, 31 Aug 2018
+ 19:14:13 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <kvalo@codeaurora.org>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <amit.karwar@redpinesignals.com>,
+        <pavani.muthyala@redpinesignals.com>, <keescook@chromium.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] rsi: remove set but not used variable 'header_size'
+Date:   Fri, 31 Aug 2018 19:13:25 +0800
+Message-ID: <20180831111325.16984-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828213432.GB29488@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:34:32PM -0700, Sean Christopherson wrote:
-> On Tue, Aug 28, 2018 at 09:53:11AM -0700, Dave Hansen wrote:
-> > >>> +		sgx_nr_epc_banks++;
-> > >>> +	}
-> > >>> +
-> > >>> +	if (!sgx_nr_epc_banks) {
-> > >>> +		pr_err("There are zero EPC banks.\n");
-> > >>> +		return -ENODEV;
-> > >>> +	}
-> > >>> +
-> > >>> +	return 0;
-> > >>> +}
-> > >>
-> > >> Does this support hot-addition of a bank?  If not, why not?
-> > ...
-> > > I'm not aware that we would have an ACPI specification for SGX so this
-> > > is all I have at the moment (does not show any ACPI event for
-> > > hotplugging).
-> > 
-> > So you're saying the one platform you looked at don't support hotplug.
-> > I was looking for a more broad statement about SGX.
-> 
-> Hardware doesn't support hotplug of EPC as the EPC size and location
-> is locked during activation of SGX.  And IIRC, activation of SGX must
-> be synchronized across all CPUs in a multi-socket platform, e.g. you
-> can't late-enable SGX on a socket and due hotplugging that way.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Makes me wonder how on a multisocket platform would this work anyway
-given that they have different fused keys?
+drivers/net/wireless/rsi/rsi_91x_hal.c: In function 'rsi_send_data_pkt':
+drivers/net/wireless/rsi/rsi_91x_hal.c:288:5: warning:
+ variable 'header_size' set but not used [-Wunused-but-set-variable]
 
-> In a virtualized environment there are no such restrictions.  I am not
-> aware of any explicit requirements or use cases for supporting hotplug
-> of EPC, but that's probably only because virtualization of SGX is
-> fairly nascent.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: remove unused 'tx_params'
+---
+ drivers/net/wireless/rsi/rsi_91x_hal.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-/Jarkko
+diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
+index 01edf96..182b066 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -282,10 +282,8 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
+ 	struct rsi_hw *adapter = common->priv;
+ 	struct ieee80211_vif *vif;
+ 	struct ieee80211_tx_info *info;
+-	struct skb_info *tx_params;
+ 	struct ieee80211_bss_conf *bss;
+ 	int status = -EINVAL;
+-	u8 header_size;
+ 
+ 	if (!skb)
+ 		return 0;
+@@ -297,8 +295,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
+ 		goto err;
+ 	vif = info->control.vif;
+ 	bss = &vif->bss_conf;
+-	tx_params = (struct skb_info *)info->driver_data;
+-	header_size = tx_params->internal_hdr_size;
+ 
+ 	if (((vif->type == NL80211_IFTYPE_STATION) ||
+ 	     (vif->type == NL80211_IFTYPE_P2P_CLIENT)) &&
+-- 
+2.7.0
+
+
