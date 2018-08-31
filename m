@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2E9C43334
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1735C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688C32083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60AD92082C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEXfyhc5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 688C32083B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtgK3CJM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60AD92082C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeHaF7Y (ORCPT
+        id S1727624AbeHaF71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:59:24 -0400
-Received: from mail-yb1-f175.google.com ([209.85.219.175]:41043 "EHLO
-        mail-yb1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbeHaF7X (ORCPT
+        Fri, 31 Aug 2018 01:59:27 -0400
+Received: from mail-yw1-f45.google.com ([209.85.161.45]:41769 "EHLO
+        mail-yw1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeHaF7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:59:23 -0400
-Received: by mail-yb1-f175.google.com with SMTP id q18-v6so330267ybg.8;
-        Thu, 30 Aug 2018 18:54:21 -0700 (PDT)
+        Fri, 31 Aug 2018 01:59:25 -0400
+Received: by mail-yw1-f45.google.com with SMTP id q129-v6so4522223ywg.8;
+        Thu, 30 Aug 2018 18:54:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Mj25J0UoslyA5YmwNy0OqZFtdVfhQZOp37ROGcHR3Fc=;
-        b=QEXfyhc5/2+9jk5xLBPys7D34HzM2ObH4YFt7r0EnTI0aeKtvb9LXYDRQF1lpMBMak
-         zbi8UQMIqu4nbcPSomeVaG7vwWOJN3aT9xnL5gacaY0t6uRfuQTnR7zJAyXYSP/x4Jxi
-         SkL9XTyOlWBeFFL1BYuikzyoZJPRCzRGwFvAc8wBFA3Zl80lMibBkqaM9AP7lQhddUwV
-         LKzURAPrN2AXwiBjecsqqYILKRG22PoFln2HIRIhhhZKdIhwk4rNQGdnM6waZ7oa8rXE
-         QOLelyydMejuQSOHBb4xqMC+QF8tW35E1IOcP80Ul21wmuDjap1pcLc95zEwAWRWUYtN
-         bNvQ==
+        bh=q26zPLlJMQz/P301NVTgMQxmRy+StVgpKtoXVBZh7MI=;
+        b=PtgK3CJMnoDN7zWMlDBQxMoVWliItSylMvpCKSvlGSbiuysVpyqMCBH/XW/ohrHEkl
+         3DPwIoDnslddba9uYsyueNq8BRxRNqenC7BueMnyplS70xQEk4QBGmqmJo77TKuZyAr/
+         ZMsSnW5G0WseF5ihvX1diwxlMYKBwXq8XRMvlnEmzHQ7o0vcfq1f6/qCx9bbHMP2MW9v
+         jckVawYKvAhtLRi/b0vqRgoO5IFtd5iXwSAPKEwnAO0vnysFdAej54zyjSBOVFwgXEXF
+         KIDbpwQG+Df3NoSmi7OK2DaSASWSRKyX1WmUW/5blYsp9PAe8rjR0ofaggAUOXno0CpV
+         1Yvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Mj25J0UoslyA5YmwNy0OqZFtdVfhQZOp37ROGcHR3Fc=;
-        b=AB+MMcZR8+o1EtyLLwbggpqrf2ATyxiaNsoH7vDtP4Ex/GITN35jbqXHcbDZXpiLyI
-         N9mQ0irgSvEkADijPviovxrehKf986gIFZXntyS1vtBNejXxHKkvaDuns4j9NTkZlJdo
-         TqYSuIh+mCfoTdmWDgcs/h1SHKdh7OUt/Zz4fFe5kcHo7mJNLW4HTkVYad0FE0fQFbo/
-         g0jo4GpvyectP09i41SB1vLoG05pfmqg1j4e6YQMId3Gp3g5/9D3kXSTBa8ED0GlGO4w
-         StHyjRzRdHTEDEOHc7HbheThauD6Cs0KWo5b+TmCM+SSQYz1XfusSBCLH/mieLD/dHMw
-         JnXA==
-X-Gm-Message-State: APzg51B371J4UaF3u8TbWtvHjHZaUIvQkvS1n8Be1xCC87t7IOCT0JpN
-        wulYrR961pJ02kSqiqv6KTY=
-X-Google-Smtp-Source: ANB0VdZN2Uj/rL5lIreTV25UR+WaCxZE8TZxHXN07eljMMWLqzEQ571yC3MAelGy0mQfKVXlba3lBg==
-X-Received: by 2002:a25:7904:: with SMTP id u4-v6mr7634178ybc.365.1535680460964;
-        Thu, 30 Aug 2018 18:54:20 -0700 (PDT)
+        bh=q26zPLlJMQz/P301NVTgMQxmRy+StVgpKtoXVBZh7MI=;
+        b=UoYa7SWcQKKEvpzuWd8/gSdX1wRZ8M1IHwf19c6/WQf/Kzm75BZk7+h4i+fYMBLwUk
+         x2VDgo5UScEVkqOabFi0KjjXtxXibPL7sfodzXljnowI3J1pGhD6wjfbHh8jXywiWYeL
+         udNpWHKgM64XG/loVgif3VL94U7zmzoCuXoa8BP3SCsnhEQVpP1A4RyjcD1vWUdl9H5Q
+         NYrsFWj6cD9soJBZYocCZAGFMMJkysSMzkfHEhlynfptHU/pw0OmDkhTAAaQWx+tSSPM
+         hfXTMoOLbbieTypXKLM0IaUzG5HGIpZgtcPA00xgTpQ1ef1EDKwAbqQovkz3pftPYQFT
+         dAmQ==
+X-Gm-Message-State: APzg51CGYhgWmztC2RR3/UVjyJNXzcjigKgdz4jHM7mlpcJei7lgU2qP
+        q9O3c978Yix7z8PJS8wLnns=
+X-Google-Smtp-Source: ANB0VdbX55aienlN1y7d9dxpG1kNy5lu4AECgnl9aAp3kZXAz8mGH8qe6kBfuRDlGaSmemc9TAwQcQ==
+X-Received: by 2002:a81:2c07:: with SMTP id s7-v6mr5011609yws.302.1535680462639;
+        Thu, 30 Aug 2018 18:54:22 -0700 (PDT)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.20
+        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:54:20 -0700 (PDT)
+        Thu, 30 Aug 2018 18:54:22 -0700 (PDT)
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -65,9 +65,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 06/15] blkcg: always associate a bio with a blkg
-Date:   Thu, 30 Aug 2018 21:53:47 -0400
-Message-Id: <20180831015356.69796-7-dennisszhou@gmail.com>
+Subject: [PATCH 08/15] blkcg: associate a blkg for pages being evicted by swap
+Date:   Thu, 30 Aug 2018 21:53:49 -0400
+Message-Id: <20180831015356.69796-9-dennisszhou@gmail.com>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180831015356.69796-1-dennisszhou@gmail.com>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
@@ -78,150 +78,168 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-Previously, blkg's were only assigned as needed by blk-iolatency and
-blk-throttle. bio->css was also always being associated while blkg was
-being looked up and then thrown away in blkcg_bio_issue_check.
-
-This patch beings the cleanup of bio->css and bio->bi_blkg by always
-associating a blkg in blkcg_bio_issue_check. This tries to create the
-blkg, but if it is not possible, falls back to using the root_blkg of
-the request_queue. Therefore, a bio will always be associated with a
-blkg.
-
-A missing definition for bio_associate_blkg is also added for parity in
-bio.h.
+A prior patch in this series added blkg association to bios issued by
+cgroups. There are two other paths that we want to attribute work back
+to the appropriate cgroup: swap and writeback. Here we modify the way
+swap tags bios to include the blkg. Writeback will be tackle in the next
+patch.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 ---
- block/bio.c                | 41 ++++++++++++++++++++++++++++++++++++++
- include/linux/bio.h        |  5 +++++
- include/linux/blk-cgroup.h | 19 ++----------------
- 3 files changed, 48 insertions(+), 17 deletions(-)
+ block/bio.c         | 83 ++++++++++++++++++++++++++++++++-------------
+ include/linux/bio.h | 11 ++++--
+ mm/page_io.c        |  2 +-
+ 3 files changed, 68 insertions(+), 28 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 09a31e4d46bb..e937f9681188 100644
+index ab41f5b7eb1f..97ef994a08b6 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1999,6 +1999,44 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+@@ -1930,30 +1930,6 @@ EXPORT_SYMBOL(bioset_init_from_src);
+ 
+ #ifdef CONFIG_BLK_CGROUP
+ 
+-#ifdef CONFIG_MEMCG
+-/**
+- * bio_associate_blkcg_from_page - associate a bio with the page's blkcg
+- * @bio: target bio
+- * @page: the page to lookup the blkcg from
+- *
+- * Associate @bio with the blkcg from @page's owning memcg.  This works like
+- * every other associate function wrt references.
+- */
+-int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
+-{
+-	struct cgroup_subsys_state *blkcg_css;
+-
+-	if (unlikely(bio->bi_css))
+-		return -EBUSY;
+-	if (!page->mem_cgroup)
+-		return 0;
+-	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
+-				     &io_cgrp_subsys);
+-	bio->bi_css = blkcg_css;
+-	return 0;
+-}
+-#endif /* CONFIG_MEMCG */
+-
+ /**
+  * bio_associate_blkcg - associate a bio with the specified blkcg
+  * @bio: target bio
+@@ -2001,6 +1977,65 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
  	return 0;
  }
  
-+/**
-+ * bio_associate_create_blkg - associate a bio with a blkg from q
-+ * @q: request_queue where bio is going
-+ * @bio: target bio
-+ *
-+ * Associate @bio with the blkg found from the bio's css and the request_queue.
-+ * If one is not found, bio_lookup_blkg creates the blkg.
-+ */
-+int bio_associate_create_blkg(struct request_queue *q, struct bio *bio)
++static int __bio_associate_blkg_from_css(struct bio *bio,
++					 struct cgroup_subsys_state *css)
 +{
-+	struct blkcg *blkcg;
 +	struct blkcg_gq *blkg;
-+	int ret = 0;
-+
-+	/* someone has already associated this bio with a blkg */
-+	if (bio->bi_blkg)
-+		return ret;
 +
 +	rcu_read_lock();
 +
-+	bio_associate_blkcg(bio, NULL);
-+	blkcg = bio_blkcg(bio);
++	blkg = blkg_lookup_create(css_to_blkcg(css), bio->bi_disk->queue);
 +
-+	if (!blkcg->css.parent) {
-+		ret = bio_associate_blkg(bio, q->root_blkg);
-+		goto assoc_out;
-+	}
-+
-+	blkg = blkg_lookup_create(blkcg, q);
-+	if (IS_ERR(blkg))
-+		blkg = q->root_blkg;
-+
-+	ret = bio_associate_blkg(bio, blkg);
-+assoc_out:
 +	rcu_read_unlock();
-+	return ret;
++
++	return bio_associate_blkg(bio, blkg);
 +}
 +
- /**
-  * bio_disassociate_task - undo bio_associate_current()
-  * @bio: target bio
-@@ -2028,6 +2066,9 @@ void bio_clone_blkcg_association(struct bio *dst, struct bio *src)
- {
- 	if (src->bi_css)
- 		WARN_ON(bio_associate_blkcg(dst, src->bi_css));
++/**
++ * bio_associate_blkg_from_css - associate a bio with a specified css
++ * @bio: target bio
++ * @css: target css
++ *
++ * Associate @bio with the blkg found by combining the css's blkg and the
++ * request_queue of the @bio.  This takes a reference on the css that will
++ * be put upon freeing of @bio.
++ */
++int bio_associate_blkg_from_css(struct bio *bio,
++				struct cgroup_subsys_state *css)
++{
++	css_get(css);
++	bio->bi_css = css;
++	return __bio_associate_blkg_from_css(bio, css);
++}
++EXPORT_SYMBOL_GPL(bio_associate_blkg_from_css);
 +
-+	if (src->bi_blkg)
-+		bio_associate_blkg(dst, src->bi_blkg);
- }
- EXPORT_SYMBOL_GPL(bio_clone_blkcg_association);
- #endif /* CONFIG_BLK_CGROUP */
++#ifdef CONFIG_MEMCG
++/**
++ * bio_associate_blkg_from_page - associate a bio with the page's blkg
++ * @bio: target bio
++ * @page: the page to lookup the blkcg from
++ *
++ * Associate @bio with the blkg from @page's owning memcg and the respective
++ * request_queue.  This works like every other associate function wrt
++ * references.
++ *
++ * Note: this must be called after bio has an associated device.
++ */
++int bio_associate_blkg_from_page(struct bio *bio, struct page *page)
++{
++	struct cgroup_subsys_state *css;
++
++	if (unlikely(bio->bi_css))
++		return -EBUSY;
++	if (!page->mem_cgroup)
++		return 0;
++	css = cgroup_get_e_css(page->mem_cgroup->css.cgroup, &io_cgrp_subsys);
++	bio->bi_css = css;
++
++	return __bio_associate_blkg_from_css(bio, css);
++}
++#endif /* CONFIG_MEMCG */
++
+ /**
+  * bio_associate_create_blkg - associate a bio with a blkg from q
+  * @q: request_queue where bio is going
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 51371740d2a8..d4626108b9d7 100644
+index d4626108b9d7..81530d11d34d 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -556,11 +556,16 @@ static inline int bio_associate_blkcg_from_page(struct bio *bio,
+@@ -547,15 +547,17 @@ do {						\
+ 	disk_devt((bio)->bi_disk)
+ 
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
+-int bio_associate_blkcg_from_page(struct bio *bio, struct page *page);
++int bio_associate_blkg_from_page(struct bio *bio, struct page *page);
+ #else
+-static inline int bio_associate_blkcg_from_page(struct bio *bio,
+-						struct page *page) {  return 0; }
++static inline int bio_associate_blkg_from_page(struct bio *bio,
++					       struct page *page) { return 0; }
+ #endif
+ 
  #ifdef CONFIG_BLK_CGROUP
  int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
  int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
-+int bio_associate_create_blkg(struct request_queue *q, struct bio *bio);
++int bio_associate_blkg_from_css(struct bio *bio,
++				struct cgroup_subsys_state *css);
+ int bio_associate_create_blkg(struct request_queue *q, struct bio *bio);
  void bio_disassociate_task(struct bio *bio);
  void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
- #else	/* CONFIG_BLK_CGROUP */
- static inline int bio_associate_blkcg(struct bio *bio,
+@@ -564,6 +566,9 @@ static inline int bio_associate_blkcg(struct bio *bio,
  			struct cgroup_subsys_state *blkcg_css) { return 0; }
-+static inline int bio_associate_blkg(struct bio *bio,
-+				     struct blkcg_gq *blkg) { return 0; }
-+static inline int bio_associate_create_blkg(struct request_queue *q,
-+					    struct bio *bio) { return 0; }
+ static inline int bio_associate_blkg(struct bio *bio,
+ 				     struct blkcg_gq *blkg) { return 0; }
++static inline int bio_associate_blkg_from_css(struct bio *bio,
++					      struct cgroup_subsys_state *css)
++{ return 0; }
+ static inline int bio_associate_create_blkg(struct request_queue *q,
+ 					    struct bio *bio) { return 0; }
  static inline void bio_disassociate_task(struct bio *bio) { }
- static inline void bio_clone_blkcg_association(struct bio *dst,
- 			struct bio *src) { }
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index ea2dd6e6baf2..9931ec2f4e9e 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -824,29 +824,15 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
- static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 					 struct bio *bio)
- {
--	struct blkcg *blkcg;
- 	struct blkcg_gq *blkg;
- 	bool throtl = false;
- 
--	rcu_read_lock();
--
--	/* associate blkcg if bio hasn't attached one */
--	bio_associate_blkcg(bio, NULL);
--	blkcg = bio_blkcg(bio);
--
--	blkg = blkg_lookup(blkcg, q);
--	if (unlikely(!blkg)) {
--		spin_lock_irq(q->queue_lock);
--		blkg = __blkg_lookup_create(blkcg, q);
--		if (IS_ERR(blkg))
--			blkg = NULL;
--		spin_unlock_irq(q->queue_lock);
--	}
-+	bio_associate_create_blkg(q, bio);
-+	blkg = bio->bi_blkg;
- 
- 	throtl = blk_throtl_bio(q, blkg, bio);
- 
- 	if (!throtl) {
--		blkg = blkg ?: q->root_blkg;
- 		/*
- 		 * If the bio is flagged with BIO_QUEUE_ENTERED it means this
- 		 * is a split bio and we would have already accounted for the
-@@ -858,7 +844,6 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
+diff --git a/mm/page_io.c b/mm/page_io.c
+index aafd19ec1db4..573d3663d846 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -339,7 +339,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 		goto out;
  	}
- 
--	rcu_read_unlock();
- 	return !throtl;
- }
- 
+ 	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
+-	bio_associate_blkcg_from_page(bio, page);
++	bio_associate_blkg_from_page(bio, page);
+ 	count_swpout_vm_event(page);
+ 	set_page_writeback(page);
+ 	unlock_page(page);
 -- 
 2.17.1
 
