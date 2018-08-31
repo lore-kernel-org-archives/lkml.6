@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3A5C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FC9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E39A20658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E39A20658
+	by mail.kernel.org (Postfix) with ESMTP id 8DC4C20658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC4C20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeHaUrH (ORCPT
+        id S1728456AbeHaUrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:47:07 -0400
-Received: from mout.perfora.net ([74.208.4.197]:45305 "EHLO mout.perfora.net"
+        Fri, 31 Aug 2018 16:47:10 -0400
+Received: from mout.perfora.net ([74.208.4.197]:47755 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbeHaUrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:47:07 -0400
+        id S1728374AbeHaUrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:47:10 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lalt0-1fTHFr0C1w-00kM8b; Fri, 31 Aug 2018 18:38:35 +0200
+ 0MRE53-1gLEcs1BU7-00UbyE; Fri, 31 Aug 2018 18:38:45 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 05/34] ARM: tegra: apalis_t30: annotate/clean-up pcie controller/port nodes
-Date:   Fri, 31 Aug 2018 18:37:47 +0200
-Message-Id: <20180831163817.23970-6-marcel@ziswiler.com>
+Subject: [PATCH v2 10/34] ARM: tegra: apalis_t30: drop unused cami2c label
+Date:   Fri, 31 Aug 2018 18:37:52 +0200
+Message-Id: <20180831163817.23970-11-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:LyWEpCOPnp31vKFp6T2fAOKyTSloy3//JVV/p6LJbXRUrb8i/h3
- x1oiXzXf1c1yFFBk5tScsOKQCxwL1q9UduPCdXlCbpwXwComdGtHhyDqSmpWXxzceAwGN0e
- Ule/PRLpdfQARZKLgGMENjueAAmsAl621MYRjmySkBiFI6HptmkaEa3PVj5BBm/UbzxrRu2
- uutHSyM7J2y561/hwcYtQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ItJgjGLjSuI=:BtKW4nhsnYepdkhd5+qt/v
- 9CzInaVbmIePzWC8LXX3JoEUevpgv8+Mb1WWF49fzJm6xt7vRK02SEJmBv7n9XnNjXgIEhEGb
- mJNx4Ut7sLWtXovCQCQS33+zCsMPRYdfe9LyL8Ok0SiOtHX128rz0WwZVuJJ6dhlbgMzaDbBd
- hVvev0D2EaWO3Y6fclQm9bPrcrZD7gZj7Y9zYYzG1Gi38sIEIi8yNGZVzAhkNqoASCn3XxSmW
- GtN5eepXfLosACJAEsw84lK19Yfy5XY3IcEZ13LklcPZpengsawFm2jMSN3BswFWY+zFzJTNC
- tunaMxUn3vUXFmUARmqKlH9hqhRrIn9S1xDjMalBwRdep6qNzDXzbT8HjARxuaFa5G7a3bbLD
- fHmChuJNOhKlrD0sOH6JRSgN7bGShpxM/EEx5YheS/O6mBW7ydZNMSmy9u88fWgjtr/3uTPtn
- 80ZmtFBrbRwpa1lAmKjAIg8yoWUlIFZXAlfOiyn3xoNYg2WxkMajwhjfv+U3vefQgWZwtnPzL
- d5Afxi4I6XtrpAKJ2in9xAzekYGHi3LycBflSPkhV/5o02IjfWvnjBcCj7s56wrXxL6969uhw
- RTQArApO2trxytVIQb/zFfXz9mJVvHhIjYLmZyKS+XQka9c6zLg3TMRKgv6pAOBnjZf0vqxkD
- qFVo+VBrjMBKCnKXYKxY2/wuHLtB02xH+pPG1jLCQIJrKxDVy1+ug0aJTIk1scblI7WU=
+X-Provags-ID: V03:K1:CVJRRcFkEHVVz6n2rr7rK1MwA0vo3EqYumcSDfKqv9xT56XkYVZ
+ SJhiRjV/MY4puPkU5mB/FEYQcnxNAMFKEtJ6rxWwzDvh94vdLpJ4PiZdNm9vQz5ej5fSrD7
+ 0tbb0gLuY5kRZ94F5HfTzZUK/zHKO0YpN74CH08tQhjST3lJOO1YO9cTGIE/Nm30s/gnQRu
+ wBNghGaP8NDnIZa0PnnSw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WN5nSTPGN/M=:UVtBnQcyCRnPgtSMd7j8Z6
+ leqm8p4d5ICNylAw3RVgjtJ9fPdFwL1gRpzQIO5ujd/AZsTwG7ZGJ2mNsG9jaELCrpu2m8kFa
+ fY0qI8NyHjW3zBR9LEOr591AfPChfDJYDfrBL1yJdmCAV0OVBJ3dhEooV6LwzGSKWm68VpwzH
+ qVb+9seWup46MfNDhphO4CTixH3Xc8SfoQewalFXM2yL79ijCld6b3pu3NI9sgoSiUKxIp34W
+ vEaUOK+AHNEvfExanVgNsBO+zBnBdbNOJwG8SD++szmzmGolGuQwpl7suak5a/f+DSMZjZOjH
+ u8amDbBqJuXY2zM6zNZmGzJY2YXGW76h8CMK9gfDbQJbkVGUAtiyV7bIM0QvTB6vUKGksCGQM
+ JUtUmmBf/6I0hvU5B6SOLajWR6BcPuJLHIEBbGx5HOQGPO4C4KyG/DclYI5ElUrem7mAHFiQl
+ bBqim8/bK47ppl+lU4xQx2aNZLmAyc3CYap/ZFOo4rPH11P1HF/pfK6iTKIsy79ICEBCyMQYg
+ R6T0a9Blo76lJnVh6BhTpx+1rZYTfsexRDmLHO0k4I34c4nwb36g+/aEIjfYCFjvDi0v7/zep
+ dWU4I7gdKcAI9ndPS1K4hujBu33LFOMMZ3xVwDLbFx9l1OZAzd2KTCmnKVuaQebygdbN505sp
+ qP5ItIQr84uGETrjuFrv4Rd3DAuoJ4VJx1vIUepYW6fbuzodX6aiGUk8RlxKLXXj46w4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,78 +61,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate PCIe port nodes and clean-up PCIe controller/port status' with
-respect to carrier board vs. module level device trees. As port 3
-connects to the on-module Gigabit Ethernet MACPHY it is always enabled
-together with the PCIe controller itself.
+Drop unused cami2c label.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Clean-up PCIe controller/port status' as well.
+Changes in v2: None
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 6 ------
- arch/arm/boot/dts/tegra30-apalis.dtsi     | 5 +++++
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 0dc85a20bd45..e3c70e7d8d37 100644
+index cd4e45759ac8..3f15f327f293 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -23,8 +23,6 @@
+@@ -95,7 +95,7 @@
+ 	 * CAM_I2C: I2C3_SDA/SCL on MXM3 pin 201/203 (e.g. camera sensor on
+ 	 * carrier board)
+ 	 */
+-	cami2c: i2c@7000c500 {
++	i2c@7000c500 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
  	};
- 
- 	pcie@3000 {
--		status = "okay";
--
- 		pci@1,0 {
- 			status = "okay";
- 		};
-@@ -32,10 +30,6 @@
- 		pci@2,0 {
- 			status = "okay";
- 		};
--
--		pci@3,0 {
--			status = "okay";
--		};
- 	};
- 
- 	host1x@50000000 {
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index fc279a073ac5..c810c044025a 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -15,6 +15,7 @@
- 	};
- 
- 	pcie@3000 {
-+		status = "okay";
- 		avdd-pexa-supply = <&vdd2_reg>;
- 		avdd-pexb-supply = <&vdd2_reg>;
- 		avdd-pex-pll-supply = <&vdd2_reg>;
-@@ -24,15 +25,19 @@
- 		vdd-pexa-supply = <&vdd2_reg>;
- 		vdd-pexb-supply = <&vdd2_reg>;
- 
-+		/* Apalis type specific */
- 		pci@1,0 {
- 			nvidia,num-lanes = <4>;
- 		};
- 
-+		/* Apalis PCIe */
- 		pci@2,0 {
- 			nvidia,num-lanes = <1>;
- 		};
- 
-+		/* I210/I211 Gigabit Ethernet Controller (on-module) */
- 		pci@3,0 {
-+			status = "okay";
- 			nvidia,num-lanes = <1>;
- 			pcie@0 {
- 				reg = <0 0 0 0 0>;
 -- 
 2.14.4
 
