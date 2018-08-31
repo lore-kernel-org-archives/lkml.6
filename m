@@ -2,85 +2,99 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696F0C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A82C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA09020661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA09020661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id DC66F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:04:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC66F2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeHaLHe (ORCPT
+        id S1727310AbeHaLK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:07:34 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:44481 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbeHaLHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:07:34 -0400
-Received: by mail-vk0-f67.google.com with SMTP id 125-v6so5110499vke.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 00:01:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tMU22EdUcmHRCMp0IGQdIo7vm8BY/VMqL4n8mQzvJgg=;
-        b=r55thBF5kw97Y7grKjhQm/67/kNOlqjdryvfryEWwHEN+eRubHaeRC/VNGmxGaQ10H
-         drVAWmQWsxTvKO2y2et37IUNVb+0v2WUBYLqeLujp+A6iXEXzIahMQjJoQ//J+4PdkM5
-         V7j0K/OKLAITLxhH2l7aUjUl4TzgP26TYlmSFkZafQjxbaOU8f+eTgjAjr8NdpjTp/C8
-         jkYKHI9rqFe7wgiQihzc6OWFAq0D1MfsWZ+OwRIO3rt5yWUSE3Wego3VYqtPKUxO2ON7
-         rzL1bdGE2aCwKbTZPZTQlsAg6q3FqgBTe32wAqV/6RS3vV321OZ0XRog+Y9colE26v2X
-         G1Cg==
-X-Gm-Message-State: APzg51DGIllQrqre7ratrhXpd1G6BBptnVNLyHA939rWvjg5SPNf0Lg0
-        B09iUJ2f4HC5VGBSc8pq6j5MSoENNmvFszXHzpbhnOLT
-X-Google-Smtp-Source: ANB0VdZIlbCN6PwiTF9H8vaXXerJv0jXSM6JQBZM5iKXOwUMVh3W79F3aUWCUpKyF5bpFXvoqAumHpFfEI7l8JCISxI=
-X-Received: by 2002:a1f:1246:: with SMTP id 67-v6mr8276971vks.82.1535698890197;
- Fri, 31 Aug 2018 00:01:30 -0700 (PDT)
+        Fri, 31 Aug 2018 07:10:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727177AbeHaLK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 07:10:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A98940200A8;
+        Fri, 31 Aug 2018 07:04:26 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-224.ams2.redhat.com [10.36.116.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EA5201C5AB;
+        Fri, 31 Aug 2018 07:04:25 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 0345511AA4; Fri, 31 Aug 2018 09:04:25 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 09:04:24 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Zach Reizner <zachr@google.com>,
+        Daniel Stone <daniels@collabora.com>
+Subject: Re: [PATCH v6] Add udmabuf misc device
+Message-ID: <20180831070424.3xoxfy54vyxbdfzd@sirius.home.kraxel.org>
+References: <20180703075359.30349-1-kraxel@redhat.com>
+ <20180703083757.GG7880@phenom.ffwll.local>
+ <20180704055338.n3b7oexltaejqmcd@sirius.home.kraxel.org>
+ <9818b301-9c9d-c703-d4fe-7c2d4d43ed66@collabora.com>
+ <20180704080005.juutrwri4kxm7yim@sirius.home.kraxel.org>
+ <06d8aa8d-5eac-64e2-f21e-43fe7ca96cc2@collabora.com>
 MIME-Version: 1.0
-References: <9b103c232c73b223ec951994c9789326754ef7a9.1535015050.git.fthain@telegraphics.com.au>
-In-Reply-To: <9b103c232c73b223ec951994c9789326754ef7a9.1535015050.git.fthain@telegraphics.com.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 31 Aug 2018 09:01:18 +0200
-Message-ID: <CAMuHMdUFss2C_ifNxU7OH_rbY4b9zS-v9P54qAfsjYuiZa8Jiw@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Use correct PMU response format
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06d8aa8d-5eac-64e2-f21e-43fe7ca96cc2@collabora.com>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 07:04:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 07:04:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+  Hi,
 
-On Fri, Aug 24, 2018 at 4:02 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> Now that the 68k Mac port has adopted the via-pmu driver, it must decode
-> the PMU response accordingly otherwise the date and time will be wrong.
->
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> > qemu can use memfd to allocate guest ram.  Now, with the help of
+> > udmabuf, qemu can create a *host* dma-buf for the *guest* graphics
+> > buffer.
+> 
+> Guess each physical address in the iovec in
+> VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING can be passed as the offset in the
+> udmabuf_create_item struct?
 
-Looks good to me, so I will queue as a fix for v4.19.
+Exactly.
 
-I guess the proper Fixes tag is:
+https://git.kraxel.org/cgit/qemu/commit/?h=sirius/udmabuf&id=515a5b9f1215ea668a992e39d66993a17a940801
 
-Fixes: ebd722275f9cfc67 ("macintosh/via-pmu: Replace via-pmu68k driver
-with via-pmu driver")
+> Are you thinking of anything else besides passing the winsrv protocol across
+> the guest/host boundary? Just wondering if I'm missing something.
 
-Can you please confirm? Thanks!
+The patch above uses the dmabuf internally in qemu.  It simply mmaps it,
+so qemu has a linear representation of the resource and can use it as
+pixman image backing storage without copying the pixel data.
 
-Gr{oetje,eeting}s,
+So it is useful even without actually exporting the dmabuf to other
+processes.
 
-                        Geert
+cheers,
+  Gerd
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+PS: Any chance you can review the v7 patch?
