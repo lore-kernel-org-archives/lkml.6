@@ -2,170 +2,59 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52079C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF4A2C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE6B2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:38:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ff1JxQ5M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE6B2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8382920839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 00:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8382920839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeHaEnd (ORCPT
+        id S1727265AbeHaEqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 00:43:33 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36807 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbeHaEnd (ORCPT
+        Fri, 31 Aug 2018 00:46:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53256 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbeHaEqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 00:43:33 -0400
-Received: by mail-oi0-f65.google.com with SMTP id r69-v6so18812140oie.3;
-        Thu, 30 Aug 2018 17:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PlDAzwU1qaaQZfiyP0Sifb0zPhG2R0v+GgoqNEMhtaU=;
-        b=ff1JxQ5MPGDlzrHag2XTdI0pYzuXoCyGrN7rAmr5yCFyvMBYJpbwd7L1OWbhDjcIpA
-         QASFGEK/NcC0gIlQp4KDChR1v9djBJekeQTvxKfJwkZpcBpF2n3dQjpmqhdw2ERb5Oes
-         QXxX/duizasI3nFScPmBKN0tvorDZiJyiTMliF388NiMSQFVqE3atCAiHsB/Q+yt0IBC
-         hgJxg4FULW43FFJgMhNfdwo4xc+1o7IIClKjtmWovl9V9u0e5j5UdsUnypxEUXnOkF6c
-         Xc0XJO6fi+r7li3pr9qin71pqC+kBIvVFfAX5OQ+F3C7cbRkFTWsCCWpoGDExrcQkwEJ
-         Lc0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PlDAzwU1qaaQZfiyP0Sifb0zPhG2R0v+GgoqNEMhtaU=;
-        b=Incc6tHpqY8oUKYQW+c0ATIzJgGHkAWJXHmRRnQw6njKhZtKAJsr1Nh50aDI7HpaPJ
-         uq/385nx+3fEh9bZ46dxv3ip4LCN6sGS5B7AN0aav7xuzbXdMs+6XyvugIJQ7NCSWogz
-         sqGu5d0EEp1rnBVhaBwGE/8ewsixTHsD2lzDfiJ1v6dcBwbgYVXD/Ms1owjA4KBS6n4U
-         peQ5K236OA2TlnTtApIsTbNJ566uTh7qMb8KpaHP4RYaWJZ5rEG5pk1WyzyjBfAACJX1
-         UN8QuQbWXza5KeU2Cspe63xslGMAqpNmVCwtRg8WDnm8ebdqIer3LWMKkEEhu1F1TNiJ
-         A7sg==
-X-Gm-Message-State: APzg51BYbzCDKElXoNuy9OwQvh4HeZ/birHU28r6fFE56ntv/9VFKGFY
-        Ya5BxCt7Zj8YJBfydYbDqu+XPdX4qB1a5E6GZuM=
-X-Google-Smtp-Source: ANB0Vda5o857DrI8sc1rEikyvgBh/pJPYLZENSpeiskbO/OzgQZVuCfbKYNpxaekz+qmt8MHVlzWOhbvJF0XVQY1eUs=
-X-Received: by 2002:aca:34d6:: with SMTP id b205-v6mr4705707oia.77.1535675926244;
- Thu, 30 Aug 2018 17:38:46 -0700 (PDT)
+        Fri, 31 Aug 2018 00:46:33 -0400
+Received: from localhost (unknown [72.28.92.217])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92614EC7;
+        Fri, 31 Aug 2018 00:41:46 +0000 (UTC)
+Date:   Thu, 30 Aug 2018 17:41:44 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] staging: android: ion: check for kref overflow
+Message-ID: <20180831004144.GC20664@kroah.com>
+References: <20180830230946.228701-1-drosen@google.com>
 MIME-Version: 1.0
-References: <1535594610-9095-1-git-send-email-wanpengli@tencent.com> <20180830110121.GB19438@flask>
-In-Reply-To: <20180830110121.GB19438@flask>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Fri, 31 Aug 2018 08:38:52 +0800
-Message-ID: <CANRm+Cw8ebLxtXu_2g2SvZm8T1Hvzhgm4CXapxu80udX9wkMfg@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: LAPIC: Fix pv ipis out-of-bounds access
-To:     Radim Krcmar <rkrcmar@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830230946.228701-1-drosen@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018 at 19:01, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.c=
-om> wrote:
->
-> 2018-08-30 10:03+0800, Wanpeng Li:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Dan Carpenter reported that the untrusted data returns from kvm_registe=
-r_read()
-> > results in the following static checker warning:
-> >   arch/x86/kvm/lapic.c:576 kvm_pv_send_ipi()
-> >   error: buffer underflow 'map->phys_map' 's32min-s32max'
-> >
-> > KVM guest can easily trigger this by executing the following assembly s=
-equence
-> > in Ring0:
-> >
-> > mov $10, %rax
-> > mov $0xFFFFFFFF, %rbx
-> > mov $0xFFFFFFFF, %rdx
-> > mov $0, %rsi
-> > vmcall
-> >
-> > As this will cause KVM to execute the following code-path:
-> > vmx_handle_exit() -> handle_vmcall() -> kvm_emulate_hypercall() -> kvm_=
-pv_send_ipi()
-> > which will reach out-of-bounds access.
-> >
-> > This patch fixes it by adding a check to kvm_pv_send_ipi() against map-=
->max_apic_id,
-> > ignoring destinations that are not present and delivering the rest. We =
-also check
-> > whether or not map->phys_map[min + i] is NULL since the max_apic_id is =
-set to the
-> > max apic id, some phys_map maybe NULL when apic id is sparse, especiall=
-y kvm
-> > unconditionally set max_apic_id to 255 to reserve enough space for any =
-xAPIC ID.
-> >
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Reviewed-by: Liran Alon <liran.alon@oracle.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Liran Alon <liran.alon@oracle.com>
-> > Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > v1 -> v2:
-> >  * add min > map->max_apic_id check
-> >  * change min to u32
-> >  * add min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))
-> >
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > @@ -548,7 +548,7 @@ int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct =
-kvm_lapic_irq *irq,
-> >  }
-> >
-> >  int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
-> > -                 unsigned long ipi_bitmap_high, int min,
-> > +                 unsigned long ipi_bitmap_high, u32 min,
-> >                   unsigned long icr, int op_64_bit)
-> >  {
-> >       int i;
-> > @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned lon=
-g ipi_bitmap_low,
-> >       rcu_read_lock();
-> >       map =3D rcu_dereference(kvm->arch.apic_map);
-> >
-> > +     if (min > map->max_apic_id)
-> > +             goto out;
-> >       /* Bits above cluster_size are masked in the caller.  */
-> > -     for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
-> > -             vcpu =3D map->phys_map[min + i]->vcpu;
-> > -             count +=3D kvm_apic_set_irq(vcpu, &irq, NULL);
-> > +     for_each_set_bit(i, &ipi_bitmap_low,
-> > +             min((u32)BITS_PER_LONG, (map->max_apic_id - min + 1))) {
-> > +             if (map->phys_map[min + i]) {
-> > +                     vcpu =3D map->phys_map[min + i]->vcpu;
-> > +                     count +=3D kvm_apic_set_irq(vcpu, &irq, NULL);
-> > +             }
-> >       }
-> >
-> >       min +=3D cluster_size;
->
-> We need a second
->
->   if (min > map->max_apic_id)
->         goto out;
->
-> here.  I will add it while applying if there are no other change
-> requests.
+On Thu, Aug 30, 2018 at 04:09:46PM -0700, Daniel Rosenberg wrote:
+> This patch is against 4.9. It does not apply to master due to a large
+> rework of ion in 4.12 which removed the affected functions altogther.
+> 4c23cbff073f3b9b ("staging: android: ion: Remove import interface")
+> 
+> Userspace can cause the kref to handles to increment
+> arbitrarily high. Ensure it does not overflow.
+> 
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Thanks Radim. :)
+I signed off on this?  Where?  When?  Are you sure?
 
-Regards,
-Wanpeng Li
+greg k-h
