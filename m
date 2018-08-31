@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB4AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE8EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC1C20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC1C20661
+	by mail.kernel.org (Postfix) with ESMTP id 29D0120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D0120661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbeHaTVE (ORCPT
+        id S1728954AbeHaTVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:21:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36339 "EHLO
+        Fri, 31 Aug 2018 15:21:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51951 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbeHaTVE (ORCPT
+        with ESMTP id S1728529AbeHaTVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:21:04 -0400
+        Fri, 31 Aug 2018 15:21:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFCrbh2195630
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFDPLF2195679
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 31 Aug 2018 08:12:53 -0700
+        Fri, 31 Aug 2018 08:13:25 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFCrL52195627;
-        Fri, 31 Aug 2018 08:12:53 -0700
-Date:   Fri, 31 Aug 2018 08:12:53 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFDOY02195676;
+        Fri, 31 Aug 2018 08:13:24 -0700
+Date:   Fri, 31 Aug 2018 08:13:24 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jann Horn <tipbot@zytor.com>
-Message-ID: <tip-342db04ae71273322f0011384a9ed414df8bdae4@git.kernel.org>
-Cc:     mingo@kernel.org, jannh@google.com, bp@suse.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        keescook@chromium.org, luto@kernel.org
-Reply-To: hpa@zytor.com, bp@suse.de, jannh@google.com, mingo@kernel.org,
-          luto@kernel.org, keescook@chromium.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180828154901.112726-1-jannh@google.com>
-References: <20180828154901.112726-1-jannh@google.com>
+From:   tip-bot for Ben Hutchings <tipbot@zytor.com>
+Message-ID: <tip-829fe4aa9ac16417a904ad1de1307de906854bcf@git.kernel.org>
+Cc:     mingo@kernel.org, helmutg@debian.org, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        ben@decadent.org.uk
+Reply-To: mingo@kernel.org, helmutg@debian.org, tglx@linutronix.de,
+          hpa@zytor.com, ben@decadent.org.uk, linux-kernel@vger.kernel.org
+In-Reply-To: <20180829194317.GA4765@decadent.org.uk>
+References: <20180829194317.GA4765@decadent.org.uk>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/dumpstack: Don't dump kernel memory based on
- usermode RIP
-Git-Commit-ID: 342db04ae71273322f0011384a9ed414df8bdae4
+Subject: [tip:x86/urgent] x86: Allow generating user-space headers without a
+ compiler
+Git-Commit-ID: 829fe4aa9ac16417a904ad1de1307de906854bcf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,101 +58,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  342db04ae71273322f0011384a9ed414df8bdae4
-Gitweb:     https://git.kernel.org/tip/342db04ae71273322f0011384a9ed414df8bdae4
-Author:     Jann Horn <jannh@google.com>
-AuthorDate: Tue, 28 Aug 2018 17:49:01 +0200
+Commit-ID:  829fe4aa9ac16417a904ad1de1307de906854bcf
+Gitweb:     https://git.kernel.org/tip/829fe4aa9ac16417a904ad1de1307de906854bcf
+Author:     Ben Hutchings <ben@decadent.org.uk>
+AuthorDate: Wed, 29 Aug 2018 20:43:17 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 31 Aug 2018 17:08:22 +0200
 
-x86/dumpstack: Don't dump kernel memory based on usermode RIP
+x86: Allow generating user-space headers without a compiler
 
-show_opcodes() is used both for dumping kernel instructions and for dumping
-user instructions. If userspace causes #PF by jumping to a kernel address,
-show_opcodes() can be reached with regs->ip controlled by the user,
-pointing to kernel code. Make sure that userspace can't trick us into
-dumping kernel memory into dmesg.
+When bootstrapping an architecture, it's usual to generate the kernel's
+user-space headers (make headers_install) before building a compiler.  Move
+the compiler check (for asm goto support) to the archprepare target so that
+it is only done when building code for the target.
 
-Fixes: 7cccf0725cf7 ("x86/dumpstack: Add a show_ip() function")
-Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: e501ce957a78 ("x86: Force asm-goto")
+Reported-by: Helmut Grohne <helmutg@debian.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: security@kernel.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180828154901.112726-1-jannh@google.com
+Link: https://lkml.kernel.org/r/20180829194317.GA4765@decadent.org.uk
 
 
 ---
- arch/x86/include/asm/stacktrace.h |  2 +-
- arch/x86/kernel/dumpstack.c       | 16 +++++++++++++---
- arch/x86/mm/fault.c               |  2 +-
- 3 files changed, 15 insertions(+), 5 deletions(-)
+ arch/x86/Makefile | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/stacktrace.h
-index b6dc698f992a..f335aad404a4 100644
---- a/arch/x86/include/asm/stacktrace.h
-+++ b/arch/x86/include/asm/stacktrace.h
-@@ -111,6 +111,6 @@ static inline unsigned long caller_frame_pointer(void)
- 	return (unsigned long)frame;
- }
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 8fc8f94ef5f5..8f6e7eb8ae9f 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -175,10 +175,6 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
+   endif
+ endif
  
--void show_opcodes(u8 *rip, const char *loglvl);
-+void show_opcodes(struct pt_regs *regs, const char *loglvl);
- void show_ip(struct pt_regs *regs, const char *loglvl);
- #endif /* _ASM_X86_STACKTRACE_H */
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 1596e6bfea6f..f56895106ccf 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -90,14 +90,24 @@ static void printk_stack_address(unsigned long address, int reliable,
-  * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
-  * guesstimate in attempt to achieve all of the above.
-  */
--void show_opcodes(u8 *rip, const char *loglvl)
-+void show_opcodes(struct pt_regs *regs, const char *loglvl)
- {
- #define PROLOGUE_SIZE 42
- #define EPILOGUE_SIZE 21
- #define OPCODE_BUFSIZE (PROLOGUE_SIZE + 1 + EPILOGUE_SIZE)
- 	u8 opcodes[OPCODE_BUFSIZE];
-+	unsigned long prologue = regs->ip - PROLOGUE_SIZE;
-+	bool bad_ip;
+-ifndef CC_HAVE_ASM_GOTO
+-  $(error Compiler lacks asm-goto support.)
+-endif
+-
+ ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
+ 	# This compiler flag is not supported by Clang:
+ 	KBUILD_CFLAGS += $(call cc-option,-maccumulate-outgoing-args,)
+@@ -300,6 +296,13 @@ PHONY += vdso_install
+ vdso_install:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/vdso $@
  
--	if (probe_kernel_read(opcodes, rip - PROLOGUE_SIZE, OPCODE_BUFSIZE)) {
-+	/*
-+	 * Make sure userspace isn't trying to trick us into dumping kernel
-+	 * memory by pointing the userspace instruction pointer at it.
-+	 */
-+	bad_ip = user_mode(regs) &&
-+		__chk_range_not_ok(prologue, OPCODE_BUFSIZE, TASK_SIZE_MAX);
++archprepare: checkbin
++checkbin:
++ifndef CC_HAVE_ASM_GOTO
++	@echo Compiler lacks asm-goto support.
++	@exit 1
++endif
 +
-+	if (bad_ip || probe_kernel_read(opcodes, (u8 *)prologue,
-+					OPCODE_BUFSIZE)) {
- 		printk("%sCode: Bad RIP value.\n", loglvl);
- 	} else {
- 		printk("%sCode: %" __stringify(PROLOGUE_SIZE) "ph <%02x> %"
-@@ -113,7 +123,7 @@ void show_ip(struct pt_regs *regs, const char *loglvl)
- #else
- 	printk("%sRIP: %04x:%pS\n", loglvl, (int)regs->cs, (void *)regs->ip);
- #endif
--	show_opcodes((u8 *)regs->ip, loglvl);
-+	show_opcodes(regs, loglvl);
- }
- 
- void show_iret_regs(struct pt_regs *regs)
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index b9123c497e0a..47bebfe6efa7 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -837,7 +837,7 @@ show_signal_msg(struct pt_regs *regs, unsigned long error_code,
- 
- 	printk(KERN_CONT "\n");
- 
--	show_opcodes((u8 *)regs->ip, loglvl);
-+	show_opcodes(regs, loglvl);
- }
- 
- static void
+ archclean:
+ 	$(Q)rm -rf $(objtree)/arch/i386
+ 	$(Q)rm -rf $(objtree)/arch/x86_64
