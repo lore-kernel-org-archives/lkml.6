@@ -2,152 +2,71 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6576C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE826C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A862077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:52:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A862077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 45C4F2077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C4F2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbeHaTAq (ORCPT
+        id S1728621AbeHaTCf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:00:46 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:57689 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727990AbeHaTAq (ORCPT
+        Fri, 31 Aug 2018 15:02:35 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:28694 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbeHaTCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:00:46 -0400
-Received: (qmail 9454 invoked by uid 500); 31 Aug 2018 10:52:54 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 31 Aug 2018 10:52:54 -0400
-Date:   Fri, 31 Aug 2018 10:52:54 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Andrea Parri <parri.andrea@gmail.com>
-cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <will.deacon@arm.com>, <peterz@infradead.org>,
-        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-In-Reply-To: <20180831091641.GA3634@andrea>
-Message-ID: <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
+        Fri, 31 Aug 2018 15:02:35 -0400
+Received: from belgarion ([90.89.234.36])
+        by mwinf5d40 with ME
+        id Vqud1y00q0nnJME03que5a; Fri, 31 Aug 2018 16:54:41 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Fri, 31 Aug 2018 16:54:41 +0200
+X-ME-IP: 90.89.234.36
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Rob Herring <robh+dt@kernel.org>, kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ARM: dts: pxa: add mioa701 board description
+References: <20180830195941.6118-1-robert.jarzmik@free.fr>
+        <201808311515.Fq0HyEql%fengguang.wu@intel.com>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Fri, 31 Aug 2018 16:54:37 +0200
+In-Reply-To: <201808311515.Fq0HyEql%fengguang.wu@intel.com> (kbuild test
+        robot's message of "Fri, 31 Aug 2018 15:45:18 +0800")
+Message-ID: <878t4m7fiq.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018, Andrea Parri wrote:
+kbuild test robot <lkp@intel.com> writes:
 
-> On Thu, Aug 30, 2018 at 05:31:32PM -0400, Alan Stern wrote:
-> > On Thu, 30 Aug 2018, Andrea Parri wrote:
-> > 
-> > > > All the architectures supported by the Linux kernel (including RISC-V)
-> > > > do provide this ordering for locks, albeit for varying reasons.
-> > > > Therefore this patch changes the model in accordance with the
-> > > > developers' wishes.
-> > > > 
-> > > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > > Reviewed-by: Will Deacon <will.deacon@arm.com>
-> > > > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > 
-> > > Round 2 ;-), I guess...  Let me start from the uncontroversial points:
-> > > 
-> > >   1) being able to use the LKMM to reason about generic locking code
-> > >      is useful and desirable (paraphrasing Peter in [1]);
-> > > 
-> > >   2) strengthening the ordering requirements of such code isn't going
-> > >      to boost performance (that's "real maths").
-> > > 
-> > > This patch is taking (1) away from us and it is formalizing (2), with
-> > > almost _no_ reason (no reason at all, if we stick to the commit msg.).
-> > 
-> > That's not quite fair.  Generic code isn't always universally
-> > applicable; some of it is opt-in -- meant only for the architectures
-> > that can support it.  In general, the LKMM allows us to reason about
-> > higher abstractions (such as locking) at a higher level, without
-> > necessarily being able to verify the architecture-specific details of
-> > the implementations.
-> 
-> No, generic code is "universally applicable" by definition; see below
-> for more on this point.
+> Hi Robert,
+>
+> I love your patch! Yet something to improve:
+This is because you are missing at least this patch submitted earlier :
+ - [PATCH] ARM: dts: pxa: add pincontrol helpers
 
-Then perhaps we should be talking about "partially generic" code; i.e., 
-code that applies to many but not all architectures.
+You're also missing the previous patches in the pxa/dt tree, which are already
+on the trampoline for linux-next :
+ - git fetch github.com:rjarzmik/linux.git pxa/dt
 
-> > > In [2], Will wrote:
-> > > 
-> > >   "[...] having them [the RMWs] closer to RCsc[/to the semantics of
-> > >    locks] would make it easier to implement and reason about generic
-> > >    locking implementations (i.e. reduce the number of special ordering
-> > >    cases and/or magic barrier macros)"
-> > > 
-> > > "magic barrier macros" as in "mmh, if we accept this patch, we _should_
-> > > be auditing the various implementations/code to decide where to place a
-> > > 
-> > >   smp_barrier_promote_ordinary_release_acquire_to_unlock_lock()" ;-)
-> > > 
-> > > or the like, and "special ordering cases" as in "arrgh, (otherwise) we
-> > > are forced to reason on a per-arch basis while looking at generic code".
-> > 
-> > Currently the LKMM does not permit architecture-specific reasoning.  It 
-> > would have to be extended (in a different way for each architecture) 
-> > first.
-> 
-> Completely agreed; that's why I said that this patch is detrimental to
-> the applicability of the LKMM...
+Cheers.
 
-This ignores the attitude of the kernel developers who want locking to 
-have the stronger RCtso semantics.  From their point of view, the patch 
-enhances the LKMM's applicability.
-
-> > For example, one could use herd's POWER model combined with the POWER 
-> > compilation scheme and the POWER-specific implementation of spinlocks 
-> > for such reasoning.  The LKMM alone is not sufficient.
-> > 
-> > Sure, programming and reasoning about the kernel would be easier if all
-> > architectures were the same.  Unfortunately, we (and the kernel) have
-> > to live in the real world.
-> > 
-> > > (Remark: ordinary release/acquire are building blocks for code such as
-> > >  qspinlock, (q)rwlock, mutex, rwsem, ... and what else??).
-> > 
-> > But are these building blocks used the same way for all architectures?
-> 
-> The more, the better! (because then we have the LKMM tools) 
-> 
-> We already discussed the "fast path" example: the fast paths of the
-> above all resemble:
-> 
->   *_lock(s):  atomic_cmpxchg_acquire(&s->val, UNLOCKED_VAL, LOCKED_VAL) ...
->   *_unlock(s): ...  atomic_set_release(&s->val, UNLOCKED_VAL)
-> 
-> When I read this code, I think "Of course." (unless some arch. has
-> messed the implementation of cmpxchg_* up, which can happen...); but
-> then I read the subject line of this patch and I think "Wait, what?".
-> 
-> You can argue that this is not generic code, sure; but why on Earth
-> would you like to do so?!
-
-Because the code might not work!  On RISC-V, for example, the
-implementation of ordinary release/acquire is currently not as strong
-as atomic release/acquire.
-
-Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
-should be correct on all existing architectures.  And Paul has invited 
-a patch to modify the LKMM accordingly.  If you feel that such a change 
-would be a useful enhancement to the LKMM's applicability, please write 
-it.
-
-Alan
-
+--
+Robert
