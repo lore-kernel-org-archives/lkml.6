@@ -2,131 +2,86 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFDBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD8CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9161320661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9161320661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5029820661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5029820661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeHaQYV (ORCPT
+        id S1728176AbeHaQYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:24:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21175 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727942AbeHaQYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:24:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 05:17:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="84976574"
-Received: from dbarealo-mobl.ger.corp.intel.com (HELO localhost) ([10.252.36.33])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Aug 2018 05:17:04 -0700
-Date:   Fri, 31 Aug 2018 15:17:03 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180831121645.GA18075@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+        Fri, 31 Aug 2018 12:24:55 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:40396 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeHaQYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 12:24:55 -0400
+Received: by mail-qt0-f193.google.com with SMTP id h4-v6so14230631qtj.7;
+        Fri, 31 Aug 2018 05:17:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EyXLS/Rpsh0mUd6C45rCziFH3sSp6YahcQ3CFWv7i68=;
+        b=oDYqywqKh+2tUbNp/TRg10QHDoZf+jO3UlucOWW/v2K3gexPSW2H4SCyGsiAmxKXE2
+         qc1uDTyjaxG+1CqQw1BW0OSPFTfO+v+R0wG3+1EkV6SrTwdKS7+z5EdEliUMAUszoBq5
+         rWGjgCOgdiokx+j9x4pHL3kJeQHJ5SMjvte+ypYvQTcVLVktj4HKS+WaKOFPVfUR4wyE
+         1/qc8R0F1lecc36h9V4p08umhwhwB0MUqv1tDigMHpJdB2q5CEBtGExOCEDx12/8OYgR
+         TCV9Z9wz96Hc0x8pqlG1/Qgiyu09iOTk8UTerBVNzfUP7uAYMMh5dArHyQt1EZxua91H
+         LIGA==
+X-Gm-Message-State: APzg51B63iD5bW7WnwNvxu/vzy7eBeZNhE1ZjeW9PgRTvEl5+bSDKMXT
+        ql2RW6YRvRJoogw18kZ/+g==
+X-Google-Smtp-Source: ANB0VdbyoXM3YK4TMLXvwROqmId/e+as3P9PJQntwryW7dvB9Z0H8QN0lYYQM5q8FjRPi3WRmm2vcg==
+X-Received: by 2002:a0c:e083:: with SMTP id l3-v6mr15262671qvk.1.1535717861941;
+        Fri, 31 Aug 2018 05:17:41 -0700 (PDT)
+Received: from localhost (mobile-166-170-28-234.mycingular.net. [166.170.28.234])
+        by smtp.gmail.com with ESMTPSA id v72-v6sm5648467qkb.84.2018.08.31.05.17.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 05:17:41 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 08:17:40 -0400
+From:   Rob Herring <robh@kernel.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
+Subject: Re: [PATCH 2/3] dt-bindings: usb: fusb302: Use usb-connector
+ bindings for  configuration
+Message-ID: <20180831121740.GA21868@bogus>
+References: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+ <6472fd66d20df31165f9645eb49f4f30a0a51468.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <6472fd66d20df31165f9645eb49f4f30a0a51468.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> [snip..]
+On Tue, 21 Aug 2018 13:28:22 +0100, Adam Thomson wrote:
+> There are now generic usb-connector bindings which can be used
+> to define a port controllers configuration for USB-PD, so device
+> specific bindings are no longer necessary.
 > 
-> > > >
-> > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
-> > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > +sgx_pm_cnt;
-> > > > +
-> > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > +MSRs
-> > > > for each
-> > > > + * CPU. The entries are initialized when they are first used by
-> > > > sgx_einit().
-> > > > + */
-> > > > +struct sgx_lepubkeyhash {
-> > > > +	u64 msrs[4];
-> > > > +	u64 pm_cnt;
-> > >
-> > > May I ask why do we need pm_cnt here? In fact why do we need suspend
-> > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
-> > > in this patch? From the patch commit message I don't see why we need
-> > > PM staff here. Please give comment why you need PM staff, or you may
-> > > consider to split the PM staff to another patch.
-> > 
-> > Refining the commit message probably makes more sense because without PM
-> > code sgx_einit() would be broken. The MSRs have been reset after waking up.
-> > 
-> > Some kind of counter is required to keep track of the power cycle. When going
-> > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
-> > the global count to the value in the cache entry to see whether we are in a new
-> > power cycle.
+> This update deprecates 'fcs,operating-sink-microwatt', and references
+> the 'usb-connector' bindings instead to achieve the required port
+> config.
 > 
-> You mean reset to Intel default? I think we can also just reset the
-> cached MSR values on each power cycle, which would be simpler, IMHO?
-
-I don't really see that much difference in the complexity.
-
-> I think we definitely need some code to handle S3-S5, but should be in
-> separate patches, since I think the major impact of S3-S5 is entire
-> EPC being destroyed. I think keeping pm_cnt is not sufficient enough
-> to handle such case?
-
-The driver has SGX_POWER_LOST_ENCLAVE for ioctls and it deletes the TCS
-entries.
-
-> > This brings up one question though: how do we deal with VM host going to sleep?
-> > VM guest would not be aware of this.
+> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+> ---
+>  .../devicetree/bindings/usb/fcs,fusb302.txt        | 32 +++++++++++++++++-----
+>  1 file changed, 25 insertions(+), 7 deletions(-)
 > 
-> IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
-> SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
-> co-working together to re-establish the missing enclaves.
 
-This is not about EPC. It is already dealt by the driver. I'm concerned
-about the MSR cache as it would mess up.
-
-But I guess this logic is part of the KVM code anyway now that I think
-more of it.
-
-/Jarkko
+Reviewed-by: Rob Herring <robh@kernel.org>
