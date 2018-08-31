@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91B8C43334
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8EAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DDD02082C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B37312083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHpSs+I6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDD02082C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="orPO+qf9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37312083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeHaF7b (ORCPT
+        id S1727705AbeHaF7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:59:31 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:46480 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbeHaF73 (ORCPT
+        Fri, 31 Aug 2018 01:59:33 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:43322 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727675AbeHaF7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:59:29 -0400
-Received: by mail-yb1-f193.google.com with SMTP id y20-v6so330206ybi.13;
-        Thu, 30 Aug 2018 18:54:27 -0700 (PDT)
+        Fri, 31 Aug 2018 01:59:32 -0400
+Received: by mail-yw1-f67.google.com with SMTP id l189-v6so4517084ywb.10;
+        Thu, 30 Aug 2018 18:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ru9Qz6kW5Z2dkilYGK5da+gwQEIQ16H8/tvKmMoSEbM=;
-        b=MHpSs+I62J6Op19vonhV08rs6EraCMW+KPzHndWzozzK76abz4lzjc/WGwXFdpTHH8
-         nuo09GdHXH0dPbv9LeZ6i8jw1JdQ9//Yiq2a//47vuYatMTH7h+9eNnGPe/ndIDzNr5U
-         QLR6Fbc62U/8y7Dal2RLbFPo1L3Oe+hdxqTxzMyyLCuyKZ8rQeL4un9MJPDm2zrNVC6j
-         OPSJ1ZWOPJHIn2eI54bvyKGbRrOIxnmT7QNTJrXGiv4WxGK7Tp4MX2NwcotIgVxUgdFp
-         rOEXYedjby9j10x5oYVhFPex9sQ0f1U5Adw9E235V6fLRSbIdud+B7uZWeQ8jpL3NsbX
-         kw9A==
+        bh=RK66jqDs7zDL0RJHQV7q3eA8Ukkwh4hDqWR/Q1DdJY0=;
+        b=orPO+qf94fuPLJTM/hYqiXUZ/su2V1Eu4AasGCvyWZGso0y0tteuEgoOf/OSsPviFV
+         0xSCToZkfY7U9/f0s1NHyO2o25iCA7FsWJkQEXynqnct7jNgr1Yw8AyGkyUAPMHvHMgZ
+         yrXPsVAQGVU3ioNgUDm+7CrgOtRwKefCN4hJtPc0nf9JZG1ckWCzWYicryKam/3zn+oG
+         4gtqgsM5kMYitS2Me/XHM+jQcbH5pSOqYESvXHj75SuSgJS+gMonhMCxMAk20Ve38OtP
+         dDoYzxfPF/uaTwtCCG4mBnlC86k+yOluoMYjuGDAC3ijIX9eAbWjylOmGPN0I38Dues4
+         EDLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ru9Qz6kW5Z2dkilYGK5da+gwQEIQ16H8/tvKmMoSEbM=;
-        b=EFzno1cB44vhPRfFgzergobleLf2qoITP4DEaBcUu9jxy+vbuipey2MoSAR860Lk+r
-         5dgeqf4iIoP89HjDc3Dxxmn0IFdRwPRwsG6TaZapJoHTCc2fW1dtWg0zKly2X3RN7TSz
-         I2Td7ehl1sQ37F4qd+vnQoUi9BdC0fV8O+669vv5l44lYrc4uJMw3eMdQXjc9pNUtIbS
-         lODqtlK5f7/sJV1KQ2ASXOU7L8D0iC7rZmP6fYEeudil4/htY3JbKKzsBp5JtFXb9cP+
-         ZtsAY2IMTpVeRz82d82mv9Sj7kh+aSyMOGD6EBGqLUeR+Uil0Xp0RAFlZM4wJvsIwIAe
-         +Rzw==
-X-Gm-Message-State: APzg51DpZOXPD2ruHzEd85j8uWHLIbaH3ebfdfoCERLO5dGIEYzA4L7M
-        Ba7MnBfxzo3xM9K0alLWaLk=
-X-Google-Smtp-Source: ANB0VdY/nydM4ppgyloEBKKxP7x5D5J6I7AOFZAqMZSZjwanpjU5NsTIXHiKItI5ra+pMsyKG+zC7A==
-X-Received: by 2002:a5b:647:: with SMTP id o7-v6mr7686706ybq.443.1535680466364;
-        Thu, 30 Aug 2018 18:54:26 -0700 (PDT)
+        bh=RK66jqDs7zDL0RJHQV7q3eA8Ukkwh4hDqWR/Q1DdJY0=;
+        b=gEJRO1WtLkbpqAIL/bM1HJjUJtR39bcjNKBF1av2dcLt9juw0gYVUu8xoYeyYFolcA
+         cMQGsL0XjG7WPZEMojVJQYAmIjNF+JeDRt7gmhKlS3eOkOUPqWix3/uu0QY5WaNpKzyj
+         8lN3xSVvZa0w6Bcrwqk+VLI3VKg4HXay5vj4hoLjcuua+CFqaCHcMzp6QgE7JeTPfign
+         zFJPIaymqYdcaJne93vPXpOaAifILpxtH6aip2QbaC3u7CnlAGQSFzCHZsNPXbkYfyAh
+         rY8c8RuUd3ilvOuWR0dBFclA8TsaepJrkVZ/mrn9eskdfZ6Rsew8E7isA52Iv/aHGRT6
+         9YBA==
+X-Gm-Message-State: APzg51CZWvotcZhTyRZuB+ex5/Z6DPgvXYgZrlildptGJak42R+A+q8d
+        WVSGq6S/oK0sS5Wi+q4Hh+I=
+X-Google-Smtp-Source: ANB0VdaoSsamAdbYLz14RQmfhKAsNdXwFEaSOH0iJujWQFNehDPNse5KOCKD2VE/Wyo9trtcYV5zlQ==
+X-Received: by 2002:a81:2b55:: with SMTP id r82-v6mr5609720ywr.234.1535680468950;
+        Thu, 30 Aug 2018 18:54:28 -0700 (PDT)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.25
+        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:54:25 -0700 (PDT)
+        Thu, 30 Aug 2018 18:54:28 -0700 (PDT)
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -65,9 +65,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 12/15] blkcg: cleanup and make blk_get_rl use blkg_lookup_create
-Date:   Thu, 30 Aug 2018 21:53:53 -0400
-Message-Id: <20180831015356.69796-13-dennisszhou@gmail.com>
+Subject: [PATCH 15/15] blkcg: add average latency tracking to blk-cgroup
+Date:   Thu, 30 Aug 2018 21:53:56 -0400
+Message-Id: <20180831015356.69796-16-dennisszhou@gmail.com>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180831015356.69796-1-dennisszhou@gmail.com>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
@@ -78,94 +78,273 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-blk_get_rl is responsible for identifying which request_list a request
-should be allocated to. Try get logic was added earlier, but
-semantically the logic was not changed.
+Latency is an important metric to understanding whether or not you're
+receiving adequate service from your block devices. blk-iolatency
+demonstrates the utility of such information.
 
-This patch makes better use of the bio already having a reference to the
-blkg in the hot path. The cold path uses a better fallback of
-blkg_lookup_create rather than just blkg_lookup and then falling back to
-the q->root_rl. If lookup_create fails with anything but -ENODEV, it
-falls back to q->root_rl.
-
-A clarifying comment is added to explain why q->root_rl is used rather
-than the root blkg's rl.
+This patch introduces a moving average to track latency to blk-cgroup.
+The value can be found in all non-root cgroups in io.stat. A bio's
+latency is counted and propagated up to, but excluding, the root cgroup.
+It uses a minimum window of 1s and windows only elapse with active bios.
+A single value is contributed to the moving average from each window.
+The percpu stats are long running, thus each interval requires
+calculating the delta between the previous read and current read.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 ---
- include/linux/blk-cgroup.h | 53 ++++++++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 16 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst |   6 +-
+ block/bio.c                             |   3 +
+ block/blk-cgroup.c                      | 117 +++++++++++++++++++++++-
+ include/linux/blk-cgroup.h              |   9 ++
+ 4 files changed, 127 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 3eed491e4daa..97cb82029b18 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -537,28 +537,49 @@ static inline struct request_list *blk_get_rl(struct request_queue *q,
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 2dc8f95077aa..1cdc0e4279c5 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1521,9 +1521,9 @@ IO Latency Interface Files
  
- 	rcu_read_lock();
+ 	  avg_lat
+ 		This is an exponential moving average with a decay rate of 1/exp
+-		bound by the sampling interval.  The decay rate interval can be
+-		calculated by multiplying the win value in io.stat by the
+-		corresponding number of samples based on the win value.
++		every 12 samples, with a sampling rate of 1s.  Only IO activity
++		can elapse a window and idle periods extend the most recent
++		window.
  
--	blkcg = bio_blkcg(bio);
--	if (!blkcg)
+ 	  win
+ 		The sampling window size in milliseconds.  This is the minimum
+diff --git a/block/bio.c b/block/bio.c
+index a0b816811e7d..2739e6f5acb7 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1720,6 +1720,9 @@ void bio_endio(struct bio *bio)
+ 	if (!bio_integrity_endio(bio))
+ 		return;
+ 
++	if (bio->bi_blkg && bio->bi_blkg->parent)
++		blkg_record_latency(bio);
++
+ 	if (bio->bi_disk)
+ 		rq_qos_done_bio(bio->bi_disk->queue, bio);
+ 
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 1eaf097e38b0..b720ca629eea 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -17,6 +17,7 @@
+ #include <linux/ioprio.h>
+ #include <linux/kdev_t.h>
+ #include <linux/module.h>
++#include <linux/sched/loadavg.h>
+ #include <linux/sched/signal.h>
+ #include <linux/err.h>
+ #include <linux/blkdev.h>
+@@ -32,6 +33,18 @@
+ 
+ #define MAX_KEY_LEN 100
+ 
++/*
++ * This constant is used to fake the fixed-point moving average calculation
++ * just like load average for blkg->lat_avg.  The call to CALC_LOAD folds
++ * (FIXED_1 (2048) - exp_factor) * new_sample into lat_avg.  The sampling
++ * window size is fixed to 1s, so BLKCG_EXP_12s is the corresponding value
++ * to create a 1/exp decay rate every 12s when windows elapse immediately.
++ * Note, windows only elapse with IO activity and idle periods extend the
++ * most recent window.
++ */
++#define BLKG_EXP_12s 1884
++#define BLKG_STAT_WIN_SIZE NSEC_PER_SEC
++
+ /*
+  * blkcg_pol_mutex protects blkcg_policy[] and policy [de]activation.
+  * blkcg_pol_register_mutex nests outside of it and synchronizes entire
+@@ -72,6 +85,9 @@ static void blkg_free(struct blkcg_gq *blkg)
+ 	if (!blkg)
+ 		return;
+ 
++	if (blkg->rq_stat)
++		free_percpu(blkg->rq_stat);
++
+ 	for (i = 0; i < BLKCG_MAX_POLS; i++)
+ 		if (blkg->pd[i])
+ 			blkcg_policy[i]->pd_free_fn(blkg->pd[i]);
+@@ -120,7 +136,7 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct request_queue *q,
+ 				   gfp_t gfp_mask)
+ {
+ 	struct blkcg_gq *blkg;
+-	int i;
++	int i, cpu;
+ 
+ 	/* alloc and init base part */
+ 	blkg = kzalloc_node(sizeof(*blkg), gfp_mask, q->node);
+@@ -159,6 +175,20 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct request_queue *q,
+ 		pd->plid = i;
+ 	}
+ 
++	/* init rq_stats */
++	blkg->rq_stat = __alloc_percpu_gfp(sizeof(struct blk_rq_stat),
++					   __alignof__(struct blk_rq_stat),
++					   gfp_mask);
++	if (!blkg->rq_stat)
++		goto err_free;
++	for_each_possible_cpu(cpu) {
++		struct blk_rq_stat *s;
++		s = per_cpu_ptr(blkg->rq_stat, cpu);
++		blk_rq_stat_init(s);
++	}
++	blk_rq_stat_init(&blkg->last_rq_stat);
++	atomic64_set(&blkg->win_start, ktime_to_ns(ktime_get()));
++
+ 	return blkg;
+ 
+ err_free:
+@@ -981,7 +1011,7 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 		const char *dname;
+ 		char *buf;
+ 		struct blkg_rwstat rwstat;
+-		u64 rbytes, wbytes, rios, wios, dbytes, dios;
++		u64 rbytes, wbytes, rios, wios, dbytes, dios, avg_lat;
+ 		size_t size = seq_get_buf(sf, &buf), off = 0;
+ 		int i;
+ 		bool has_stats = false;
+@@ -1012,14 +1042,16 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 		wios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
+ 		dios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
+ 
++		avg_lat = div64_u64(blkg->lat_avg, NSEC_PER_USEC);
++
+ 		spin_unlock_irq(blkg->q->queue_lock);
+ 
+ 		if (rbytes || wbytes || rios || wios) {
+ 			has_stats = true;
+ 			off += scnprintf(buf+off, size-off,
+-					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu dbytes=%llu dios=%llu",
+-					 rbytes, wbytes, rios, wios,
+-					 dbytes, dios);
++				 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu dbytes=%llu dios=%llu avg_lat=%llu",
++				 rbytes, wbytes, rios, wios, dbytes, dios,
++				 avg_lat);
+ 		}
+ 
+ 		if (!blkcg_debug_stats)
+@@ -1638,6 +1670,81 @@ void blkcg_policy_unregister(struct blkcg_policy *pol)
+ }
+ EXPORT_SYMBOL_GPL(blkcg_policy_unregister);
+ 
++/*
++ * This aggregates the latency of all bios under this cgroup and then
++ * advances the moving average window.  A window contributes a single
++ * value to the moving average regardless of how many IOs occurred.
++ */
++static void blkg_aggregate_latency(struct blkcg_gq *blkg)
++{
++	struct blk_rq_stat rq_stat;
++	struct blk_rq_stat *last_rq_stat;
++	u64 mean;
++	int cpu;
++
++	blk_rq_stat_init(&rq_stat);
++	preempt_disable();
++	for_each_online_cpu(cpu) {
++		struct blk_rq_stat *s;
++		s = per_cpu_ptr(blkg->rq_stat, cpu);
++		blk_rq_stat_sum(&rq_stat, s);
++	}
++	preempt_enable();
++
++	last_rq_stat = &blkg->last_rq_stat;
++
++	mean = div64_u64(rq_stat.nr_samples * rq_stat.mean -
++			 last_rq_stat->nr_samples * last_rq_stat->mean,
++			 rq_stat.nr_samples - last_rq_stat->nr_samples);
++	CALC_LOAD(blkg->lat_avg, BLKG_EXP_12s, mean);
++	blkg->last_rq_stat = rq_stat;
++}
++
++/**
++ * blkg_record_latency - records the latency of a bio
++ * @bio: bio of interest
++ *
++ * This records the latency of a bio in all nodes up to root, excluding root.
++ */
++void blkg_record_latency(struct bio *bio)
++{
++	u64 now = ktime_to_ns(ktime_get());
++	u64 start = bio_issue_time(&bio->bi_issue);
++	u64 win_start, req_time;
++	struct blkcg_gq *blkg;
++	struct blk_rq_stat *rq_stat;
++	bool issue_as_root = bio_issue_as_root_blkg(bio);
++
 +	blkg = bio->bi_blkg;
-+	if (blkg) {
-+		blkcg = bio->bi_blkg->blkcg;
-+		if (blkcg == &blkcg_root)
-+			goto rl_use_root;
-+
-+		blkg_get(blkg);
-+		return &blkg->rl;
-+	}
-+
-+	while (true) {
- 		blkcg = css_to_blkcg(blkcg_css());
-+		if (blkcg == &blkcg_root)
-+			goto rl_use_root;
- 
--	/* bypass blkg lookup and use @q->root_rl directly for root */
--	if (blkcg == &blkcg_root)
--		goto root_rl;
-+		blkg = blkg_lookup(blkcg, q);
- 
--	/*
--	 * Try to use blkg->rl.  blkg lookup may fail under memory pressure
--	 * or if either the blkcg or queue is going away.  Fall back to
--	 * root_rl in such cases.
--	 */
--	blkg = blkg_lookup(blkcg, q);
--	if (unlikely(!blkg))
--		goto root_rl;
-+		if (unlikely(!blkg))
-+			blkg = __blkg_lookup_create(blkcg, q);
-+
-+		if (IS_ERR(blkg)) {
-+			if (PTR_ERR(blkg) == -ENODEV) {
-+				cpu_relax();
-+				continue;
-+			} else {
-+				goto rl_use_root;
-+			}
-+		}
-+
-+		if (blkg_try_get(blkg))
-+			break;
-+		cpu_relax();
-+	}
- 
--	if (!blkg_try_get(blkg))
--		goto root_rl;
- 	rcu_read_unlock();
- 	return &blkg->rl;
--root_rl:
++	if (!blkg)
++		return;
 +
 +	/*
-+	 * Each blkg has its own request_list, however, the root blkcg
-+	 * uses the request_queue's root_rl.  This is to avoid most
-+	 * overhead for the root blkcg.
++	 * Have to do this so we are truncated to the correct time that our
++	 * issue is truncated to.
 +	 */
-+rl_use_root:
- 	rcu_read_unlock();
- 	return &q->root_rl;
++	now = __bio_issue_time(now);
++
++	if (now <= start || issue_as_root)
++		return;
++
++	req_time = now - start;
++
++	while (blkg && blkg->parent) {
++		rq_stat = get_cpu_ptr(blkg->rq_stat);
++		blk_rq_stat_add(rq_stat, req_time);
++		put_cpu_ptr(rq_stat);
++
++		win_start = atomic64_read(&blkg->win_start);
++		if (now > win_start && (now - win_start) >= BLKG_STAT_WIN_SIZE)
++			if (atomic64_cmpxchg(&blkg->win_start,
++					     win_start, now) == win_start)
++				blkg_aggregate_latency(blkg);
++
++		blkg = blkg->parent;
++	}
++}
++
+ /*
+  * Scale the accumulated delay based on how long it has been since we updated
+  * the delay.  We only call this when we are adding delay, in case it's been a
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 0134cdd270b8..215af051f876 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -136,6 +136,11 @@ struct blkcg_gq {
+ 
+ 	struct blkg_policy_data		*pd[BLKCG_MAX_POLS];
+ 
++	struct blk_rq_stat __percpu	*rq_stat;
++	struct blk_rq_stat		last_rq_stat;
++	atomic64_t			win_start;
++	u64				lat_avg;
++
+ 	struct rcu_head			rcu_head;
+ 
+ 	atomic_t			use_delay;
+@@ -895,6 +900,8 @@ static inline void blkcg_clear_delay(struct blkcg_gq *blkg)
+ 	}
  }
+ 
++void blkg_record_latency(struct bio *bio);
++
+ void blkcg_add_delay(struct blkcg_gq *blkg, u64 now, u64 delta);
+ void blkcg_schedule_throttle(struct request_queue *q, bool use_memdelay);
+ void blkcg_maybe_throttle_current(void);
+@@ -917,6 +924,8 @@ struct blkcg_policy {
+ 
+ #define blkcg_root_css	((struct cgroup_subsys_state *)ERR_PTR(-EINVAL))
+ 
++static inline void blkg_record_latency(struct bio *bio) {}
++
+ static inline void blkcg_maybe_throttle_current(void) { }
+ static inline bool blk_cgroup_congested(void) { return false; }
+ 
 -- 
 2.17.1
 
