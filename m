@@ -2,205 +2,99 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41155C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED07C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25A12083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFDD32083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n0jufl+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25A12083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XqYm1Njk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDD32083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeIACat (ORCPT
+        id S1727555AbeIACbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:30:49 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37312 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeIACat (ORCPT
+        Fri, 31 Aug 2018 22:31:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47446 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeIACbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:30:49 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d12-v6so6055240pls.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tC5LLLPeZn2Xw9XHqNrwq5gqQZEwZSsBW9pLCFnbSfA=;
-        b=n0jufl+3XqgpFQpITyLrX8uyNXDWj0mpFz4qfcRpTy02fqJWvVmm5t0wF9HQZKWjUr
-         bbxoboVXMUtpZB7lS6Lu0nClM86EogX/j43eJQxHnDrLfLUXxdTxz96W5E6sSt4yzJ8P
-         zGo/aqXmIZO33+wIV7PhMRv6UjSc2fcYqfXM1Q7QGvwsJJOfjQ+ybPw1sM2OSJ8V5eqb
-         V6LIOL+tKO86R69wVb7YLQmynYjIeDWZl3FazqQpzRp6/XOYyNreLtSMtMATpNMlBvLP
-         N6urArmfOzNr7WTQOE64CYdzT8UDdnvEw2JyXwM1bIFM2k62/LWmCgoFDqVdXpNWjLX3
-         ZRTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tC5LLLPeZn2Xw9XHqNrwq5gqQZEwZSsBW9pLCFnbSfA=;
-        b=JgMEgm5NOSdm+sTzXtpdtVly2QwUDf/hT8O9I8wN8D5mVCTPyX2PQYTki6Y930375E
-         Rf76iH90Gp89205pbSFAzHODo1V0Nlj5OQT/g44/OYGdgUhFnqGQsKD35YlohSyJJ4mH
-         PFSwAQ16zijH9o9K8AmgPeM5AxOcPPR3GC0mp/ZM+FQ4IN1fO4L1PwiNGrI1jnFZpDpE
-         Jny6j+kTzGsoO5NUTfTSPiVU0dvCY1RhqW2jzouPrb4h3SaImLNLPW3s4VbldZM2H7zn
-         KXlfLgAj4QHP88ANY0eI6qQmz2gG8BwDCPDw2dZy0qt9PnJQLPbWh0MAAQawy04GGbmR
-         UInw==
-X-Gm-Message-State: APzg51CwXj6yvs14FzO6mlJa2DYXfji2gXaCtN8Y1BFedMCH0qSa3zVz
-        4CBNfmU8hRF4f3QyhuLT+tk=
-X-Google-Smtp-Source: ANB0VdaeKJ0TUigAdIDJENxKlVa51SjvHOMF7fiH7XgAVzKCzqIflMZhvKn40Ls7rN+/7jDs9hItzQ==
-X-Received: by 2002:a17:902:9302:: with SMTP id bc2-v6mr17780959plb.280.1535754077894;
-        Fri, 31 Aug 2018 15:21:17 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm24345730pfc.178.2018.08.31.15.21.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 15:21:17 -0700 (PDT)
-Date:   Sat, 1 Sep 2018 03:51:10 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v6 3/3] staging: mt7621-mmc: Fix debug macro IRQ_MSG and its
- usages
-Message-ID: <8f8cff3f1042e3fd303350baa261876cf4e3d7e7.1535752537.git.nishadkamdar@gmail.com>
-References: <cover.1535752537.git.nishadkamdar@gmail.com>
+        Fri, 31 Aug 2018 22:31:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Wc68WdaMlE04hN3vECgN5sEUmVsEJXRkosxdzu2/8fA=; b=XqYm1NjkLvX6StmlNqi814hDi
+        P+sftpobEflR2RWqIjlRIBLwvlHRzsFV+ZIwzRR9Lv8L37HPnwAGRD+QQIte+VwluY3Q4Ed54yIxj
+        w5HkCL07xsb/VHA+InYfIH/ysRYkqm9j2MguOOMvVrWLcyxrNEofuCRZ0Y3hEnWr5npcSCSby25cv
+        MFW9atTLPnDlwHlCW1u9QElbjyxy2aOjNdphiVSQFZ+5fLnSWW70ee+NYbiJhpaD9OJKhLJZdi3Z3
+        O1Bxr8AloYELQpBS3POV5PNzRYkPC30O1/MYF6UDZnuSn+GGYdfRBasUOmSGzhcEOljJ7mBldboWY
+        g3AxkS0Cg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvrnY-0000bz-LJ; Fri, 31 Aug 2018 22:21:48 +0000
+Subject: Re: [PATCH] kconfig: do not require pkg-config on make {menu,n}config
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Meelis Roos <mroos@linux.ee>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <1535708095-15847-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <70ea8a20-fd5a-1a78-3fda-5d3b060ba389@infradead.org>
+Date:   Fri, 31 Aug 2018 15:21:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1535752537.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1535708095-15847-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all usages of IRQ_MSG with with dev_<level> without __func__
-or __LINE__ or current->comm and current->pid. Remove the do {}
-while(0) loop for the single statement macro. Drop IRQ_MSG from dbg.h.
-Issue found by checkpatch.
+On 08/31/2018 02:34 AM, Masahiro Yamada wrote:
+> Meelis Roos reported a {menu,n}config regression:
+> 
+>  "I have libncurses devel package installed in the default system
+>   location (as do 99%+ on actual developers probably) and in this
+>   case, pkg-config is useless.  pkg-config is needed only when
+>   libraries and headers are installed in non-default locations but
+>   it is bad to require installation of pkg-config on all the machines
+>   where make menuconfig would be possibly run."
+> 
+> For {menu,n}config, do not use pkg-config if it is not installed.
+> For {g,x}config, keep checking pkg-config since we really rely on it
+> for finding the installation paths of the required packages.
+> 
+> Fixes: 4ab3b80159d4 ("kconfig: check for pkg-config on make {menu,n,g,x}config")
+> Reported-by: Meelis Roos <mroos@linux.ee>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v6:
-  - No change
-Changes in v5:
-  - No change
----
- drivers/staging/mt7621-mmc/dbg.h | 12 -----------
- drivers/staging/mt7621-mmc/sd.c  | 36 ++++++++++++++++++++++++--------
- 2 files changed, 27 insertions(+), 21 deletions(-)
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 79914d98c573..4ab9f10dccc2 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -102,18 +102,6 @@ do { \
- } while (0)
- #endif /* end of +++ */
- 
--#if 1
--//defined CONFIG_MTK_MMC_CD_POLL
--#define IRQ_MSG(fmt, args...)
--#else
--/* PID in ISR in not corrent */
--#define IRQ_MSG(fmt, args...) \
--do { \
--	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d>\n",	\
--	       host->id,  ##args, __FUNCTION__, __LINE__);	\
--} while (0);
--#endif
--
- void msdc_debug_proc_init(void);
- 
- #if 0 /* --- chhung */
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 7474f9ed7b5b..f3ae19fe0f76 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -279,7 +279,9 @@ static void msdc_tasklet_card(struct work_struct *work)
- 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
- 	}
- 
--	IRQ_MSG("card found<%s>", inserted ? "inserted" : "removed");
-+	dev_err(mmc_dev(host->mmc),
-+		"%d -> card found<%s>\n",
-+		host->id, inserted ? "inserted" : "removed");
- #endif
- 
- 	spin_unlock(&host->lock);
-@@ -1638,14 +1640,17 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 	if (intsts & MSDC_INT_CDSC) {
- 		if (host->mmc->caps & MMC_CAP_NEEDS_POLL)
- 			return IRQ_HANDLED;
--		IRQ_MSG("MSDC_INT_CDSC irq<0x%.8x>", intsts);
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> MSDC_INT_CDSC irq<0x%.8x>\n", host->id, intsts);
- 		schedule_delayed_work(&host->card_delaywork, HZ);
- 		/* tuning when plug card ? */
- 	}
- 
- 	/* sdio interrupt */
- 	if (intsts & MSDC_INT_SDIOIRQ) {
--		IRQ_MSG("XXX MSDC_INT_SDIOIRQ");  /* seems not sdio irq */
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> XXX MSDC_INT_SDIOIRQ\n",
-+			host->id); /* seems not sdio irq */
- 		//mmc_signal_sdio_irq(host->mmc);
- 	}
- 
-@@ -1663,10 +1668,15 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 			msdc_clr_int();
- 
- 			if (intsts & MSDC_INT_DATTMO) {
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATTMO", host->mrq->cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_DATTMO\n",
-+					host->id, host->mrq->cmd->opcode);
- 				data->error = -ETIMEDOUT;
- 			} else if (intsts & MSDC_INT_DATCRCERR) {
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>", host->mrq->cmd->opcode, readl(host->base + SDC_DCRC_STS));
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>\n",
-+					host->id, host->mrq->cmd->opcode,
-+					readl(host->base + SDC_DCRC_STS);
- 				data->error = -EIO;
- 			}
- 
-@@ -1699,15 +1709,23 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 			}
- 		} else if ((intsts & MSDC_INT_RSPCRCERR) || (intsts & MSDC_INT_ACMDCRCERR)) {
- 			if (intsts & MSDC_INT_ACMDCRCERR)
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDCRCERR", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_ACMDCRCERR\n",
-+					host->id, cmd->opcode);
- 			else
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_RSPCRCERR", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_RSPCRCERR\n",
-+					host->id, cmd->opcode);
- 			cmd->error = -EIO;
- 		} else if ((intsts & MSDC_INT_CMDTMO) || (intsts & MSDC_INT_ACMDTMO)) {
- 			if (intsts & MSDC_INT_ACMDTMO)
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDTMO", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_ACMDTMO\n",
-+					host->id, cmd->opcode);
- 			else
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_CMDTMO", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_CMDTMO\n",
-+					host->id, cmd->opcode);
- 			cmd->error = -ETIMEDOUT;
- 			msdc_reset_hw(host);
- 			msdc_clr_fifo(host);
+Thank you.
+
+> ---
+> 
+>  Documentation/process/changes.rst  |  2 +-
+>  scripts/kconfig/Makefile           |  1 -
+>  scripts/kconfig/check-pkgconfig.sh |  8 --------
+>  scripts/kconfig/gconf-cfg.sh       |  7 +++++++
+>  scripts/kconfig/mconf-cfg.sh       | 25 ++++++++++++++-----------
+>  scripts/kconfig/nconf-cfg.sh       | 25 ++++++++++++++-----------
+>  scripts/kconfig/qconf-cfg.sh       |  7 +++++++
+>  7 files changed, 43 insertions(+), 32 deletions(-)
+>  delete mode 100644 scripts/kconfig/check-pkgconfig.sh
+
+
 -- 
-2.17.1
-
+~Randy
