@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C4FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4B9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62F5B20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5643420835
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:05:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oz0tvJh8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F5B20835
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlUjtXkw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5643420835
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeHaVNt (ORCPT
+        id S1728232AbeHaVNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 17:13:49 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34173 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeHaVNt (ORCPT
+        Fri, 31 Aug 2018 17:13:51 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40981 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727864AbeHaVNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 17:13:49 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j25-v6so3822108wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 10:05:22 -0700 (PDT)
+        Fri, 31 Aug 2018 17:13:50 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z96-v6so11850399wrb.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 10:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MattRFtonwDaxU1QdB3LlHBD2lClNUTulWxSVvPqfV4=;
-        b=Oz0tvJh81l/+cJktUQCCwgeDOu87PT/dPzt13F8UfNf73t3NjAjYQaAGwRCs6jyF6n
-         3bnuksa1siQ69roacdWrTdxyLJJXFNitbRgLhESDExwMmueXUzcLKpwWmciTrxdMTPLj
-         fN32YbX3QJ2u671IOm5rbZ24wk9a10QzpXqPFaDE4mgrh6+8XcGrx6edeaDhLp8UjEKr
-         It2V0wgg/sevhu1zjj9iwhV7GzWsYFlz/mb8HHiHi5zoE0n4ugaVpgHtl8fYL0F+bvaF
-         WpS35ma5OiKishAgPp8+A6cBs4MDZvrKbfEjn7KpoEXbBGOsMgAoWYJ/CR/7jSR8LH57
-         rwkA==
+        bh=0v/+Zwx16Fnpgc4bSyVBE5da4LsVXCU9DjhKCldisdI=;
+        b=RlUjtXkwdrUqd8rTAnNhtDpeq8I9tWN+zOQ6Yp+1Ycp4EZ5NlGLP/2NkkUs0Uc5CEG
+         NyvQRSwvJUKKnSjF7XoLF0MmJUVJ7jFcxal/21x2IjUo9lblVIeZttWigs6CUmxT2W5h
+         zOTIsLE7IwkX5Nx9LAzFaG7mcFUrF+A9QJZ29BNPsSlDjDV7dp0cnAcmi5vZAd5VnLst
+         vtKhMZYncCk+1irgbrpkW/BFOKkoFxFaUqkxMJ0Uu087EQD3O/LpJBm7WznpYnMWUDnm
+         Eo48WtNs3LmBkMqS+aExAAwfpGSOecsIN3ya+IT5b5D1XT2T+z9vHVgfqJ3+xp0KqnyF
+         5SKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MattRFtonwDaxU1QdB3LlHBD2lClNUTulWxSVvPqfV4=;
-        b=jKbd8fcFaz2Uign6dxwJ4qHsn/oZ0Edef3eXy/KDnbFewFouQN+xmUiRZF1Cwm9Jc2
-         obULhnrAp3Sga5gyn0Yct3lq1cXdLjpiyF4nrVnsKgJFRdlVPJe6jQ8ujywK/C6z1dOL
-         oCRA/OCl4cfSximCIlNMMwvDA9qq8TUsl9QbFH3lnMYqArtEPxYuBmQyt+sHAb89tvuh
-         Y4u7fANK3lThjr+Ecg0HXXUn/PEyNI7GBZkSN0NI2Gtz3IL8GVp7zlH3N1AVdhkwu0pw
-         YMwP84+WFkl2Aeio3K40POkkrcg9z4fCX2HyRi4jGuLzma9xe4K79CrJONUGbbl8yeDx
-         oAqg==
-X-Gm-Message-State: APzg51B9/aL0dPYMID1mT6TXVnHO8HAB4ieFXAYfnrRH4PCnJ83A5Q4t
-        HibbsIWtEhUCPpOEjs4+XTA=
-X-Google-Smtp-Source: ANB0VdZ0BCZ6JAxIt20dA+J1XJcgIxkDeQr1T7wLV4u/sF6nMKuI3fPOIf2t0xugmTxT6yQsV7+8Wg==
-X-Received: by 2002:a1c:e54:: with SMTP id 81-v6mr5402205wmo.84.1535735122249;
-        Fri, 31 Aug 2018 10:05:22 -0700 (PDT)
+        bh=0v/+Zwx16Fnpgc4bSyVBE5da4LsVXCU9DjhKCldisdI=;
+        b=G1usI+ipYVx92zHMaP6ApjBCjxwWDtvcK0AdJORphy8ETytmTd44HSjbYGFz3jmrJN
+         O9xJJXHbzAPG9tgZAidiQCni1vTcu8Jphhy82vOYacIeGs0cTeblWz7y7DdIKuw8j2eF
+         oMGblz0wtr696ct/L3XpWrhrWL4Q9hsygErrZbi9xbjHmxSKUlbBhQ5ts4bEf6jLYAue
+         r1xEV4xjmqJdhuGroqlfLGw277+7wPEQKBwGZ+K785JwbbDdEJpZm0i/Vd89jWR1ut2w
+         Jju23x3mYDHnCMyM9pKHonhg7w2xHfqaxW+hv/S/PcFM1rHyVBo9zuSL6J68Ty1HZYtK
+         jD+A==
+X-Gm-Message-State: APzg51A/WEBJDWT32RAJxYCGgU9ySpdNnJ/WaVJX/dB2ai4k/ehkvZue
+        VQLI7jpmfmEUn+Nj81dpUvY=
+X-Google-Smtp-Source: ANB0VdbbAPf2ZaYzF3jwMiM4bHCvfLIHBaRvAK42NxLP71eC9MZZNQIBBh3FWV1VXnYLzFExkgzVNQ==
+X-Received: by 2002:a5d:5606:: with SMTP id l6-v6mr11772258wrv.209.1535735124673;
+        Fri, 31 Aug 2018 10:05:24 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm11280332wre.86.2018.08.31.10.05.20
+        by smtp.gmail.com with ESMTPSA id c19-v6sm11280332wre.86.2018.08.31.10.05.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 10:05:21 -0700 (PDT)
+        Fri, 31 Aug 2018 10:05:24 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -73,9 +73,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 2/7] Compiler Attributes: use the no-underscores syntax
-Date:   Fri, 31 Aug 2018 19:05:09 +0200
-Message-Id: <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH 3/7] Compiler Attributes: remove unneeded tests
+Date:   Fri, 31 Aug 2018 19:05:10 +0200
+Message-Id: <20180831170514.24665-3-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,11 +83,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The attribute syntax optionally allows to surround attribute names
-with "__" in order to avoid collisions with macros of the same name
-(see https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html).
+Attributes const and always_inline have tests around them
+which are unneeded, since they are supported by gcc >= 4.6,
+clang >= 3 and icc >= 13. See https://godbolt.org/z/no0OZH
 
-This homogenizes all attributes to use the syntax without underscores.
+In the case of gnu_inline, we do not need to test for
+__GNUC_STDC_INLINE__ because, regardless of the current
+inlining behavior, we can simply always force the old
+GCC inlining behavior by using the attribute in all cases.
 
 Cc: Eli Friedman <efriedma@codeaurora.org>
 Cc: Christopher Li <sparse@chrisli.org>
@@ -103,97 +106,61 @@ Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-clang.h | 2 +-
- include/linux/compiler-gcc.h   | 4 ++--
- include/linux/compiler.h       | 4 ++--
- include/linux/compiler_types.h | 8 ++++----
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ include/linux/compiler_types.h | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index b1ce500fe8b3..efda74f4eeba 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -43,4 +43,4 @@
- #define barrier() __asm__ __volatile__("" : : : "memory")
- #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- #define __assume_aligned(a, ...)	\
--	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-+	__attribute__((assume_aligned(a, ## __VA_ARGS__)))
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0a2d06677d83..dbfbecf703f8 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -132,7 +132,7 @@
- 	} while (0)
- 
- /* Mark a function definition as prohibited from being cloned. */
--#define __noclone	__attribute__((__noclone__, __optimize__("no-tracer")))
-+#define __noclone	__attribute__((noclone, optimize("no-tracer")))
- 
- #if defined(RANDSTRUCT_PLUGIN) && !defined(__CHECKER__)
- #define __randomize_layout __attribute__((randomize_layout))
-@@ -165,7 +165,7 @@
-  * compiler should see some alignment anyway, when the return value is
-  * massaged by 'flags = ptr & 3; ptr &= ~3;').
-  */
--#define __assume_aligned(a, ...) __attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-+#define __assume_aligned(a, ...) __attribute__((assume_aligned(a, ## __VA_ARGS__)))
- #endif
- 
- /*
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 7c0157d50964..e0e55eb3f242 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -23,7 +23,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #define __branch_check__(x, expect, is_constant) ({			\
- 			long ______r;					\
- 			static struct ftrace_likely_data		\
--				__attribute__((__aligned__(4)))		\
-+				__attribute__((aligned(4)))		\
- 				__attribute__((section("_ftrace_annotated_branch"))) \
- 				______f = {				\
- 				.data.func = __func__,			\
-@@ -59,7 +59,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 	({								\
- 		int ______r;						\
- 		static struct ftrace_branch_data			\
--			__attribute__((__aligned__(4)))			\
-+			__attribute__((aligned(4)))			\
- 			__attribute__((section("_ftrace_branch")))	\
- 			______f = {					\
- 				.func = __func__,			\
 diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index b6534292ea33..7cd958360ead 100644
+index 7cd958360ead..3662b19599fc 100644
 --- a/include/linux/compiler_types.h
 +++ b/include/linux/compiler_types.h
-@@ -159,7 +159,7 @@ struct ftrace_likely_data {
+@@ -158,10 +158,6 @@ struct ftrace_likely_data {
+ 	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
  	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
  
- #ifndef __attribute_const__
--#define __attribute_const__	__attribute__((__const__))
-+#define __attribute_const__	__attribute__((const))
- #endif
- 
+-#ifndef __attribute_const__
+-#define __attribute_const__	__attribute__((const))
+-#endif
+-
  #ifndef __noclone
-@@ -203,14 +203,14 @@ struct ftrace_likely_data {
- #define __maybe_unused		__attribute__((unused))
- #define __always_unused		__attribute__((unused))
- #define __mode(x)		__attribute__((mode(x)))
--#define __malloc		__attribute__((__malloc__))
--#define __used			__attribute__((__used__))
-+#define __malloc		__attribute__((malloc))
-+#define __used			__attribute__((used))
- #define __noreturn		__attribute__((noreturn))
- #define __packed		__attribute__((packed))
- #define __weak			__attribute__((weak))
- #define __alias(symbol)		__attribute__((alias(#symbol)))
- #define __cold			__attribute__((cold))
--#define __section(S)		__attribute__((__section__(#S)))
-+#define __section(S)		__attribute__((section(#S)))
+ #define __noclone
+ #endif
+@@ -196,6 +192,7 @@ struct ftrace_likely_data {
+  * [...]
+  */
+ #define __pure			__attribute__((pure))
++#define __const			__attribute__((const))
+ #define __aligned(x)		__attribute__((aligned(x)))
+ #define __aligned_largest	__attribute__((aligned))
+ #define __printf(a, b)		__attribute__((format(printf, a, b)))
+@@ -227,17 +224,7 @@ struct ftrace_likely_data {
  
+ #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
  
- #ifdef CONFIG_ENABLE_MUST_CHECK
+-/*
+- * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
+- * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
+- * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
+- * defined so the gnu89 semantics are the default.
+- */
+-#ifdef __GNUC_STDC_INLINE__
+-# define __gnu_inline	__attribute__((gnu_inline))
+-#else
+-# define __gnu_inline
+-#endif
++#define __gnu_inline	__attribute__((gnu_inline))
+ 
+ /*
+  * Force always-inline if the user requests it so via the .config.
+@@ -263,9 +250,7 @@ struct ftrace_likely_data {
+ #define __inline inline
+ #define noinline	__attribute__((noinline))
+ 
+-#ifndef __always_inline
+ #define __always_inline inline __attribute__((always_inline))
+-#endif
+ 
+ /*
+  * Rather then using noinline to prevent stack consumption, use
 -- 
 2.17.1
 
