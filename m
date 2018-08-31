@@ -2,88 +2,143 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54701C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713B9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF0220839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:49:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12A9220837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HlX+bc7D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF0220839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u9lVJJjW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A9220837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbeHaO4p (ORCPT
+        id S1727669AbeHaPBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:56:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50226 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeHaO4p (ORCPT
+        Fri, 31 Aug 2018 11:01:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51030 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeHaPBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:56:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yKxjqEbWTrOxvTGzinmdWdVD8Qs54eCTbTXOBVFsEhI=; b=HlX+bc7Dth8gnFhCQILmvr1D7
-        rGddCvBvG7AgDsOeKMjg9+hhkykIZFKdUSecb31xMYjx1U1uXJPnu4diydEnx4r4rNUxJnKAmn05U
-        diwhfGOUk2SqQxd60bD2TMSTrW0lDM8rcy2fpoBSGdjVO0n7xp22Wzqpf/3eXMWZg099YPKJRv3rt
-        zQU/iucix7BPrrVpGU2vL60agCbN1orMrD+Ud+Uo9bpYU7IhHFdsWBOrXjrJZuR1kS2e6jBcg+Gae
-        VsaqeImXbNRedTABYk1Qb5LlIJHUFZYulilMUz4X4fwCF46toyVFqdV3GPGiwmhSyjY1RHuw/MpRj
-        DBFaUPadg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvgzr-0001uG-St; Fri, 31 Aug 2018 10:49:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C4C862024D425; Fri, 31 Aug 2018 12:49:45 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 12:49:45 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: Re: [PATCH 00/12] Avoid synchronous TLB invalidation for
- intermediate page-table entries on arm64
-Message-ID: <20180831104945.GI24124@hirez.programming.kicks-ass.net>
-References: <1535645747-9823-1-git-send-email-will.deacon@arm.com>
- <CA+55aFzMMU5RBhn52Lbzf-FXvx3inh5VPVZL613srY+dVU+Lxw@mail.gmail.com>
- <20180831110054.475a3534@roar.ozlabs.ibm.com>
- <CA+55aFyweLwdAeeLnPv1ceje2y9Qc2AkM+LdMzK_z29fFb96ug@mail.gmail.com>
- <20180831095417.GF13166@arm.com>
- <20180831101014.GG24124@hirez.programming.kicks-ass.net>
- <20180831203234.7b8f4d13@roar.ozlabs.ibm.com>
+        Fri, 31 Aug 2018 11:01:13 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so4811284wmc.0;
+        Fri, 31 Aug 2018 03:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SBHx9PW6jhqq6hqNuWf3Y2GoTEAsmPKYUx01XQ8gpls=;
+        b=u9lVJJjW7bPr46W3or9ECgp9NC/tTsxcrV99YjwqyqRZ/BaWusu2WuWV4J1T4ZP5nw
+         ReTDbAykXWWTUgGidY7YFbrrxfAvc88hEOTVmHVVd4KS9MIxAozdS7u2RErgkppnPqht
+         vEI1nmr0tyH4/XTo4veQCI89VOKdjhaaz+r1ZPeMLBZyIxdF5xC7icARS87ps+LakLCH
+         6gw1jyL6H/iJkh8GVIRL1soeroeFH3GEbrGsNt8aRA6zvzoQrvUve4qU2pxxYaDFSlGR
+         A/YcrPqCdG/9I0Bvbgkae1PpY/dUBLQDsx38BIEIAPK92Y4flybdomTphz9xd1bbgiiI
+         6U1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SBHx9PW6jhqq6hqNuWf3Y2GoTEAsmPKYUx01XQ8gpls=;
+        b=EzAghm3WNaYjaZEH/1u6ytZh5hvLGwFuRuJmjF80X7ILM0GHFcIScwlzBU64jCH/Zi
+         xSBc1khYCSWbkOW7PgitXPFbq/0FMyCrso9xnJFxiuxlijo37hAcKe70xv1ZvjMPanK5
+         Pvr+M9fmt8H1kgArthYI6Ud7cJJYojW4cLPJNKkOZ+D0AhXocm6FrtarSGMJB7xiWIpG
+         5pgCf28YAN+ou70P1s1VcdfN0bLiFWQ9Wad7WkisQqF+HpIJ5liZppXEv9p0zEK+3Gdh
+         vvCgX9k8tLUTnqk1RBzPyKIpymwgpGk9IQq1cQd8Or5L0cvu4WDySPi0q2TFjrz3NKTo
+         Wt4Q==
+X-Gm-Message-State: APzg51DZvFFG8YQ34W/+mJqQGgqLZ0DBbh8nP5a5fAcKMUBswTcHfQTX
+        j88VpjrZys9bYy5Ka+FKTss=
+X-Google-Smtp-Source: ANB0VdZ3CGDCxorYORlI9uJSqnIEYbczv4y9fLqeMXUgIilNKG98YyWnkMfbW+u/Qgn6nKj+zYlgZQ==
+X-Received: by 2002:a1c:1d0:: with SMTP id 199-v6mr4531520wmb.2.1535712855527;
+        Fri, 31 Aug 2018 03:54:15 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id n5-v6sm3093280wmh.1.2018.08.31.03.54.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 03:54:14 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 12:54:12 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     maxime.ripard@bootlin.com
+Cc:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v4 09/13] ARM: dts: sun8i: r40: add sata node
+Message-ID: <20180831105412.GD16301@Red>
+References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+ <20180830190120.722-10-clabbe.montjoie@gmail.com>
+ <20180831073500.zubqpvar4yhjqrge@flea>
+ <20180831075631.GB16301@Red>
+ <20180831102021.idz42sfgldihpkrp@flea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831203234.7b8f4d13@roar.ozlabs.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180831102021.idz42sfgldihpkrp@flea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 08:32:34PM +1000, Nicholas Piggin wrote:
-> Oh gee, I suppose. powerpc hash is kind of interesting because it's
-> crazy, Aneesh knows that code a lot better than I do. radix modulo
-> some minor details of exact instructions is fairly like x86 
+On Fri, Aug 31, 2018 at 12:20:21PM +0200, maxime.ripard@bootlin.com wrote:
+> On Fri, Aug 31, 2018 at 09:56:31AM +0200, Corentin Labbe wrote:
+> > On Fri, Aug 31, 2018 at 09:35:00AM +0200, Maxime Ripard wrote:
+> > > On Thu, Aug 30, 2018 at 09:01:16PM +0200, Corentin Labbe wrote:
+> > > > R40 have a sata controller which is the same as A20.
+> > > > This patch adds a DT node for it.
+> > > > 
+> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > > > ---
+> > > >  arch/arm/boot/dts/sun8i-r40.dtsi | 23 +++++++++++++++++++++++
+> > > >  1 file changed, 23 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > index 852c2ccc3268..d6b5820da850 100644
+> > > > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > @@ -550,6 +550,29 @@
+> > > >  			#size-cells = <0>;
+> > > >  		};
+> > > >  
+> > > > +		ahci: sata@1c18000 {
+> > > > +			compatible = "allwinner,sun8i-r40-ahci";
+> > > > +			reg = <0x01c18000 0x1000>;
+> > > > +			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
+> > > > +			resets = <&ccu RST_BUS_SATA>;
+> > > > +			resets-name = "ahci";
+> > > > +			#address-cells = <1>;
+> > > > +			#size-cells = <0>;
+> > > > +			status = "disabled";
+> > > > +
+> > > > +			sata_port: sata-port@0 {
+> > > > +				reg = <0>;
+> > > > +				phys = <&sata_phy>;
+> > > > +			};
+> > > > +		};
+> > > > +
+> > > > +		sata_phy: sata-phy@1c180c0  {
+> > > > +			compatible = "allwinner,sun8i-r40-sata-phy";
+> > > > +			reg = <0x1c180c0 0x200>;
+> > > 
+> > > Overlapping devices in the DTS is not ok.
+> > > 
+> > 
+> > I do the same than arch/arm/boot/dts/berlin2.dtsi (sata@e90000
+> > phy@e900a0)
+> >
+> > But since it is not a good justification, it seems that regmap is my
+> > only solution ?
+> 
+> I'm not even sure why you are moving the phy out of its original node
+> (and driver).
+> 
 
-The whole TLB broadcast vs explicit IPIs is a fairly big difference in
-my book.
-
-Anyway, have you guys tried the explicit IPI approach? Depending on how
-IPIs are routed vs broadcasts it might save a little bus traffic. No
-point in getting all CPUs to process the TLBI when there's only a hand
-full that really need it.
-
-OTOH, I suppose the broadcast thing has been optimized to death on the
-hardware side, so who knows..
+For using the phy-supply already handled by the code.
+The other choice is to add another xxx-supply to ahci_platform.
+Or to use hackily port_regulator for this regulator.
