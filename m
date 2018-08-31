@@ -2,231 +2,126 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B319C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC86C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC09F20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08A982083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KPFwpwbV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC09F20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKbqX6/m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A982083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeHaL7B (ORCPT
+        id S1727574AbeHaMAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:59:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39268 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeHaL7A (ORCPT
+        Fri, 31 Aug 2018 08:00:05 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46583 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeHaMAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:59:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g20-v6so5078808pgv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 00:52:50 -0700 (PDT)
+        Fri, 31 Aug 2018 08:00:05 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a108-v6so10268405wrc.13;
+        Fri, 31 Aug 2018 00:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=dKOJ+CTxR1KzlSdYi8FhgRlhGEP1ZssjFa9PN/aPtUE=;
-        b=KPFwpwbVbO7gPMHvtQzB1yJXOssdadzns2Kz76qrIMp+ueqEyWf1duJcn8oYM/lI7i
-         H4elOf95ItQEXgJNDxZg/DOl9ttDm/WTKkQHwToSOoJd8cUqY7LnQoINgxj4yfYeKokV
-         rhjam3dDvkuaUdJyq0DwbENZg5xqEbYrUJRG4=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8TdtQhgtqZGgxfijJpbg6tzO9uUQU2SwR1jOrgh9jJ4=;
+        b=WKbqX6/muF7VEyRxMgAsz5DaMJF6WHNlAoYvjN623hCDyUne8HvhrJsth7JsDf3d8v
+         xQgQY48ytVDNfF90ClLuUsiptu/XKwX7x1YPa+AeseUxctXS5gKSWq1frtKfZChh962J
+         fQ+FbNjezZcWitk3KQVPHLeWgNW6MxyB6qM7A91eEgSfKqamuKZTtKq1Pk/rvf3edJ9A
+         tV16CCLiIDvFmMNFIoN4iAayF0F40GlVDnBti5rmvnAzTGWZrD8ARYjVJzYD7BJJkZoM
+         LsL2EO/0r0gBunzxy54JDgPAA3PUZiCXRw624olUBHX5KoyAp2JvAAcHI7lvSmbgJT6d
+         ERtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=dKOJ+CTxR1KzlSdYi8FhgRlhGEP1ZssjFa9PN/aPtUE=;
-        b=PHX2/jkf2rTIPZ5SJxaJNknjkkPU2sBBjQpt+Q7b85zMKEppDhSg1ibV8b+iNC5prj
-         VqXHI7mTWY38H97HqyRXGHWTf3geK4foNOP1ekJqfh5/skF4axVuDKHozypslHGbYRvE
-         LNm/R4qIcGknLqOo7oXFvItkzzsnr9qBKVsCVT0z+N6qoKP+XQBqdK5y5vhTQZCpDK03
-         PRldWwZrNdpGRzHh6ZrBHIT6ENj9lLP3+zqihY47zzRbMyQAbv9bBpxWAHFrSfkzL0Zj
-         jihlECkZ8BBtotZdj8LQ607szs0fmfPAXg9eTSCflIvI4cEGqb78XtuHayqNWzzJUKk0
-         qulw==
-X-Gm-Message-State: APzg51D+myJj5KAw6LziYNrHCn09ACEjcmUQ9FcALl/I7dCVBb9kmqa5
-        FwpMlmGHia2jJ/d5dSpn/CU7cA==
-X-Google-Smtp-Source: ANB0Vdb6SZBn4asMF1rUCVJJfqAJtSXI4PYS1KW4RLPmwMWAjCrfWDghMMik9hGE0oAOIwUlCPcDtA==
-X-Received: by 2002:a62:8d16:: with SMTP id z22-v6mr14774381pfd.181.1535701969990;
-        Fri, 31 Aug 2018 00:52:49 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id s195-v6sm13972729pgs.76.2018.08.31.00.52.47
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 31 Aug 2018 00:52:49 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
-        baolin.wang@linaro.org, broonie@kernel.org,
-        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date:   Fri, 31 Aug 2018 15:52:33 +0800
-Message-Id: <2ab988583fbdf6a4a3d762fe14459a7ed81795a1.1535700092.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
-References: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
-In-Reply-To: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
-References: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8TdtQhgtqZGgxfijJpbg6tzO9uUQU2SwR1jOrgh9jJ4=;
+        b=Zx04xiOQjDxq8NxG9I00aKCllWD9yvKOv9hRhQPIxAQmC9LR/gZciCCEkI6XZECMWf
+         nd3eePvOgH1VhKgTdBMBLEaNBN+l3D4dHyl5cOvpBgLYre/MH8moY30pquksWmjm7mRw
+         lUlgkYxtRkcAI/fBsOkvGWdt44zcV4rQRGbxT/ShdWWLQA8acqeJLNlm0GVW8rZwlGlc
+         7orqzQR2Ed5pJdwDTHceABooQjF0AYdJ2Oik0Jh/OsBxQsbcvB1IuumpxFL7UEDbEBlX
+         3X/JbFBOtv7g6Kz/gOnh8ZXVYvF110YVazOdwf1AC3wXHJaEAQl0bwYBWOGUf7mhzgnD
+         a3fg==
+X-Gm-Message-State: APzg51DXT8bDiiTvYisC/Fha0k5awzBdYfIKm+kOX6/QiE4Ko03foDJj
+        pinZ3BoSB5ASRCXBLdR3Enm0umjx
+X-Google-Smtp-Source: ANB0Vda4dkUf/ESfRQWkF4frWOyI/Hlmd9qv+5E2ONfX6CGzBBjVtbVDNrGmEmhY1ixK9x+QdKvMMQ==
+X-Received: by 2002:adf:ac6a:: with SMTP id v97-v6mr9322527wrc.7.1535702033386;
+        Fri, 31 Aug 2018 00:53:53 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id e202-v6sm4832257wma.31.2018.08.31.00.53.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 00:53:52 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 09:53:50 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 12/13] ARM: dts: sun4i: a10: add sata-port/sata-phy
+ nodes
+Message-ID: <20180831075350.GA16301@Red>
+References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+ <20180830190120.722-13-clabbe.montjoie@gmail.com>
+ <20180831073724.kuw5tb6yypb4pmkp@flea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831073724.kuw5tb6yypb4pmkp@flea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+On Fri, Aug 31, 2018 at 09:37:24AM +0200, Maxime Ripard wrote:
+> On Thu, Aug 30, 2018 at 09:01:19PM +0200, Corentin Labbe wrote:
+> > This patch convert sun4i-a10 sata to the new binding which use a sata
+> > phy node.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/sun4i-a10.dtsi | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+> > index 3d62a8950720..52d5c2e79499 100644
+> > --- a/arch/arm/boot/dts/sun4i-a10.dtsi
+> > +++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+> > @@ -556,7 +556,20 @@
+> >  			reg = <0x01c18000 0x1000>;
+> >  			interrupts = <56>;
+> >  			clocks = <&ccu CLK_AHB_SATA>, <&ccu CLK_SATA>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> >  			status = "disabled";
+> > +
+> > +			sata_port: sata-port@0 {
+> > +				reg = <0>;
+> > +				phys = <&sata_phy>;
+> > +			};
+> > +		};
+> > +
+> > +		sata_phy: sata_phy@1c180c0 {
+> > +			compatible = "allwinner,sun4i-a10-sata-phy";
+> > +			reg = <0x01c180c0 0x200>;
+> > +			#phy-cells = <0>;
+> >  		};
+> 
+> This patch, together with the following one, breaks the DT ABI, this
+> isn't something we can do anymore.
+> 
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v6:
- - None.
+So what can I do ?
+Keep the DT in place and drop the patch 13 like wens suggested ?
 
-Changes from v5:
- - None.
-
-Changes from v4:
- - None.
-
-Changes from v3:
- - None.
-
-Changes from v2:
- - None.
-
-Changes from v1:
- - Remove pattern_get interface.
----
- drivers/leds/leds-sc27xx-bltc.c |   94 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
-
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..297dd43 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,13 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +127,91 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 patterns to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +230,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +334,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
-
+Regards
