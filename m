@@ -2,79 +2,50 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF361C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D58FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50FB920837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIoiAIfl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FB920837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 32FD120839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FD120839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbeHaRRX (ORCPT
+        id S1727642AbeHaRS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 13:17:23 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46380 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeHaRRX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:17:23 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a108-v6so11136827wrc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L5H/wnIhN29h3I7TtS7DBvm4OggXK9Nx9NYHKcAcmBM=;
-        b=HIoiAIflPXJ7qpZtn91Qf70jW+3Ddkz8H/6rkkHthJsN9VVxSImSpzg9bXt/rWjYcW
-         OVRNK8YS+1ezcUU17pMEnVsMxjEpmq26KCzcuYmcOzM2NZRn5E1QtPik8mM+cXUxMHjQ
-         3vfj9w6OcCe4QTFn5B3mGUYY8Gwp4v4F97Tqox+huWNeNGGbLec0LSP+vmsrhNR4Lmcy
-         V8CMkhLbMZozpQn/ehtmYMknemXKQ+vf3pNsvZOTc9OzwNJ8YDFipkYv5KiYfVG7vmGf
-         0VTkDITdu+7q2OAyvqFrgy6HmHJHSMovHsFpvmJ6950phfk70+szRdFQw0/rdhsfgAm8
-         hW4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L5H/wnIhN29h3I7TtS7DBvm4OggXK9Nx9NYHKcAcmBM=;
-        b=YzLrkmqwcZX84eP1ztX9NhWwmOQLvqfaX4J2/A0WsiNF+ij5HcmDGxzK9603IT9VB0
-         v0rRkZXgCe4/ns3EJDCvOoalRhq+6X12RqycNKtQ8DAVFNjL7CzhjymB0qPHRpVAiaa0
-         95gVKgNaQ2FLQZ95tTgFcb0fCy5Wk9E1oJ8gM0Fyz6mIgpUw3/fUlIp5DrQ2h5LBGM7m
-         f+6GfYOu2DrNoMR8KeKHv2SF5whpnsuYuokqcCtCmuXji1zRPTYSEYRuxlMCJmH1peqa
-         sJgEs8gyyPjTWYDLsl5roOzsc/pzeqWKHFhN86r0iJvQ2vPAthsezUC/OT8L77yPF13p
-         pHaw==
-X-Gm-Message-State: APzg51Cbowdoasw8+Bo5kDIJikk62CTBLbU084zpCoVj4vY74nvq1vSc
-        ScU9oW8d2OO6hl3yAexIrc4=
-X-Google-Smtp-Source: ANB0VdaUkX1pGZLRIJ+AuHvEaaNPycFJIfVYuCS3WZBt/W6X1ySlXLkGPOJyS2p1eldlViRZhdXV9g==
-X-Received: by 2002:adf:9281:: with SMTP id 1-v6mr11461933wrn.69.1535720996922;
-        Fri, 31 Aug 2018 06:09:56 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
-        by smtp.gmail.com with ESMTPSA id l12-v6sm12086054wrv.29.2018.08.31.06.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 06:09:56 -0700 (PDT)
-Subject: Re: [PATCH] regulator: da9063: fix DT probing with constraints
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20180831123402.9494-1-p.zabel@pengutronix.de>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <5f3b9c9c-27ae-cfc3-07df-04c01c313ddd@gmail.com>
-Date:   Fri, 31 Aug 2018 15:09:39 +0200
+        Fri, 31 Aug 2018 13:18:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:57806 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727501AbeHaRS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 13:18:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90BFA7A9;
+        Fri, 31 Aug 2018 06:11:33 -0700 (PDT)
+Received: from [10.4.13.35] (ostrya.emea.arm.com [10.4.13.35])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D04D3F5BC;
+        Fri, 31 Aug 2018 06:11:30 -0700 (PDT)
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
+To:     Auger Eric <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        christoffer.dall@arm.com
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+ <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+ <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
+Message-ID: <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
+Date:   Fri, 31 Aug 2018 14:11:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180831123402.9494-1-p.zabel@pengutronix.de>
+In-Reply-To: <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,81 +54,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/31/2018 02:34 PM, Philipp Zabel wrote:
-> Commit 1c892e38ce59 ("regulator: da9063: Handle less LDOs on DA9063L")
-> reordered the da9063_regulator_info[] array, but not the DA9063_ID_*
-> regulator ids and not the da9063_matches[] array, because ids are used
-> as indices in the array initializer. This mismatch between regulator id
-> and da9063_regulator_info[] array index causes the driver probe to fail
-> because constraints from DT are not applied to the correct regulator:
-> 
->   da9063 0-0058: Device detected (chip-ID: 0x61, var-ID: 0x50)
->   DA9063_BMEM: Bringing 900000uV into 3300000-3300000uV
->   DA9063_LDO9: Bringing 3300000uV into 2500000-2500000uV
->   DA9063_LDO1: Bringing 900000uV into 3300000-3300000uV
->   DA9063_LDO1: failed to apply 3300000-3300000uV constraint(-22)
-> 
-> This patch reorders the DA9063_ID_* as apparently intended, and with
-> them the entries in the da90630_matches[] array.
-> 
-> Fixes: 1c892e38ce59 ("regulator: da9063: Handle less LDOs on DA9063L")
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
+Hi Eric,
 
-Thanks
+On 23/08/18 16:25, Auger Eric wrote:
+>> +int iommu_bind_guest_stage(struct iommu_domain *domain, struct device *dev,
+>> +			   struct iommu_guest_stage_config *cfg)
 
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+About the name change from iommu_bind_pasid_table: is the intent to
+reuse this API for SMMUv2, which supports nested but not PASID? Seems
+like a good idea but "iommu_bind_table" may be better since "stage" is
+only used by Arm.
 
-> ---
->  include/linux/mfd/da9063/pdata.h | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/mfd/da9063/pdata.h b/include/linux/mfd/da9063/pdata.h
-> index 8a125701ef7b..50bed4f89c1a 100644
-> --- a/include/linux/mfd/da9063/pdata.h
-> +++ b/include/linux/mfd/da9063/pdata.h
-> @@ -21,7 +21,7 @@
->  /*
->   * Regulator configuration
->   */
-> -/* DA9063 regulator IDs */
-> +/* DA9063 and DA9063L regulator IDs */
->  enum {
->  	/* BUCKs */
->  	DA9063_ID_BCORE1,
-> @@ -37,18 +37,20 @@ enum {
->  	DA9063_ID_BMEM_BIO_MERGED,
->  	/* When two BUCKs are merged, they cannot be reused separately */
->  
-> -	/* LDOs */
-> +	/* LDOs on both DA9063 and DA9063L */
-> +	DA9063_ID_LDO3,
-> +	DA9063_ID_LDO7,
-> +	DA9063_ID_LDO8,
-> +	DA9063_ID_LDO9,
-> +	DA9063_ID_LDO11,
-> +
-> +	/* DA9063-only LDOs */
->  	DA9063_ID_LDO1,
->  	DA9063_ID_LDO2,
-> -	DA9063_ID_LDO3,
->  	DA9063_ID_LDO4,
->  	DA9063_ID_LDO5,
->  	DA9063_ID_LDO6,
-> -	DA9063_ID_LDO7,
-> -	DA9063_ID_LDO8,
-> -	DA9063_ID_LDO9,
->  	DA9063_ID_LDO10,
-> -	DA9063_ID_LDO11,
->  };
->  
->  /* Regulators platform data */
-> 
+>> +/**
+>> + * PASID table data used to bind guest PASID table to the host IOMMU. This will
+>> + * enable guest managed first level page tables.
+>> + * @version: for future extensions and identification of the data format
+>> + * @bytes: size of this structure
+>> + * @base_ptr:	PASID table pointer
+>> + * @pasid_bits:	number of bits supported in the guest PASID table, must be less
+>> + *		or equal than the host supported PASID size.
+>> + */
+>> +struct iommu_pasid_table_config {
+>> +	__u32 version;
+>> +#define PASID_TABLE_CFG_VERSION_1 1
+>> +	__u32 bytes;
+>> +	__u64 base_ptr;
+>> +	__u8 pasid_bits;
+>> +};
+>> +
+>> +/**
+>> + * Stream Table Entry S1 info
+>> + * @disabled: the smmu is disabled
+>> + * @bypassed: stage 1 is bypassed
+>> + * @aborted: aborted
+>> + * @cdptr_dma: GPA of the Context Descriptor
+>> + * @asid: address space identified associated to the CD
+>> + */
+>> +struct iommu_smmu_s1_config {
+>> +	__u8 disabled;
+>> +	__u8 bypassed;
+>> +	__u8 aborted;
+>> +	__u64 cdptr_dma;
+>> +	__u16 asid;
+> This asid field is a leftover. asid is part of the CD (owned by the
+> guest) and cannot be conveyed through this API. What is relevant is to
+> pass is the guest asid_bits (vSMMU IDR1 info), to be compared with the
+> host one. So we end up having something similar to the base_ptr and
+> pasid_bits of iommu_pasid_table_config.
 
+That part seems strange. Userspace wouldn't try arbitrary ASID sizes
+until one fits, especially since ASID size isn't the only parameter:
+there will be SSID, IOVA, IPA sizes, HTTU features and I guess any other
+SMMU_IDRx bit that corresponds to a field in the CD or STE. Doesn't
+vSMMU need to tailor its IDR registers to whatever is supported by the
+host SMMU, in order to use nested translation?
 
--- 
-Best regards,
-Marek Vasut
+Before creating the virtual ID registers, userspace will likely want to
+know more about the physical IOMMU, by querying the kernel. I wrote
+something about that interface recently:
+https://www.spinics.net/lists/iommu/msg28039.html
+
+And if you provide this interface, checking the parameters again in
+BIND_GUEST_STAGE isn't very useful, it only tells you that userspace
+read your values. Once the guest writes the CD, it could still use the
+wrong ASID size or some other invalid config. That would be caught by
+the SMMU walker and cause a C_BAD_CD error report.
+
+> Otherwise, the other fields (disable, bypassed, aborted) can be packed
+> as masks in a _u8 flag.
+
+What's the difference between aborted and disabled? I'm also not sure we
+should give such fine tweaks to userspace, since the STE code is already
+pretty complicated and has to deal with several state transitions.
+Existing behavior (1) (2) (5) probably needs to be preserved:
+
+(1) Initially no container is set, s1-translate s2-bypass with the
+default domain (non-VFIO)
+(2) A VFIO_TYPE1_NESTING_IOMMU container is set, s1-bypass s2-translate
+(3) BIND_GUEST_STAGE, s1-translate s2-translate
+(4) UNBIND_GUEST_STAGE, s1-bypass s2-translate
+(5) Remove container, s1-translate s2-bypass with the default domain
+
+That said, when instantiating a vSMMU, QEMU may want to switch from (2)
+to an intermediate "s1-abort s2-translate" state. At the moment with
+virtio-iommu I only create the stage-2 mappings at (3). This ensures
+that transactions abort until the guest configures the vIOMMU and it
+keeps the host driver simple, but it has the downside of pinning guest
+memory lazily (necessary with virtio-iommu since the guest falls back to
+the map/unmap interface, which doesn't pin all memory upfront, if it
+can't support nested).
+
+> Anyway this API still is at the stage of proof of concept. At least it
+> shows the similarities between that use case and the PASID one and
+> should encourage to discuss about the relevance to have a unified API to
+> pass the guest stage info.
+Other required fields in the BIND_GUEST_STAGE ioctl are at least s1dss,
+s1cdmax and s1fmt. It's not for sanity-check, they describe the guest
+configuration. The guest selects a PASID table format (1-level, 2-level
+4k/64k) which is written into STE.s1fmt. It also selects the behavior of
+requests-without-pasid, which is written into STE.s1dss. s1cdmax
+corresponds to pasid_bits.
+
+Thanks,
+Jean
