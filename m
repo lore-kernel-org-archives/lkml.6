@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F988C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA09C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191852083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 564082083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:50:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="hmVVNNHX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191852083F
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="xFPHzLgC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564082083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbeHaT5u (ORCPT
+        id S1729194AbeHaT60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:57:50 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33002 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbeHaT5u (ORCPT
+        Fri, 31 Aug 2018 15:58:26 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39523 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbeHaT60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:57:50 -0400
-Received: by mail-qt0-f193.google.com with SMTP id r37-v6so15061648qtc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:49:43 -0700 (PDT)
+        Fri, 31 Aug 2018 15:58:26 -0400
+Received: by mail-qk1-f196.google.com with SMTP id b19-v6so1689556qkc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:50:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=sC8N1acRi2T0wcB2hYaIbejNJ4iMdgdw+m2NKObxBm0=;
-        b=hmVVNNHXcUy+YLY9OhZzCIWW2RBnPcBYnVfh7t9lwJxo+qJTxhzzHiCaq8vucWlFMj
-         eYDo9R8u03JOZzxZ/kn3K3iNvUzShDcY2rjNyuYDPRai58GJGFCVPkQgZO9Y39iklpR7
-         N/RyVM/CoTMEJNbg7Vv7FzvJwismPWcOstByUEvGX5xSsh9bR+BT8Agvyrw/7kQ8gqw6
-         gNG/9PTQPRw7LMpm4zb5rhkzURuJY9NjNRPRyH5QpwAdUKIHcMsOnZYt4qt3iJhnpKlX
-         aoZp4j0xUqo7wpst3j89S8D7PCAXmHD2GUF+Hx/puogsSJwBMTZAl1vDsmVp9ijC3JCX
-         R0eQ==
+        bh=UqaA9H8RxsZ7IIFSLpndjVyK5I3+eZWdGd5MwXiwCqQ=;
+        b=xFPHzLgC4sh+KhS4ZP9khaBXROOYwkCxcppvRlSRnZwE/Fk4jSXgWzsTkC1d/QwWoL
+         ULECdegUNk6v49JIUEau+Lgmytsx96g++icAS0OrqGmpsa8GbFHVqRqauGJIboC9JH9I
+         G62OsSkIcfQudGL7RpUYOgeSlbottNanch3F3HDOULvSgVZjx6SXtOAsgSdhOdjsK9qK
+         q416PyTf4iul1hZll4jhEmnHqyQ5GkCD5cjNfZRrB9Z0N+Dle4LyBdvXWQXeF703PWmU
+         B+umTNjO+2ampF1Y4tJt1LWuxgjKFeWH/ZOLy15b9BpAsyxoVkBKzCQUeyk/aSYffZ/A
+         hCXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sC8N1acRi2T0wcB2hYaIbejNJ4iMdgdw+m2NKObxBm0=;
-        b=Kn6DOsyNdT97GDRaQS952Y9ZN+rYXVE9QAHMhIN95V+IoqvcJx8R/FORuqiUUyeAQ1
-         cXPywfeRZxb4YJs+bzVI1Wj6cm2Nfg5y4Go6vFN5BK8rfz4KDEH1yfeL0f+QxdxSXSYc
-         Mkpt0fg/+MSeP7Wt63/Ms5gbMNgvhpv2rNerRMtvT1pqN0/CloGEp3P8pH2paG4oH6/y
-         9aqR/262jz9ytsBxvTrsmWsetMSm7IKjERHxDaBgvZF3WO9CoeaebInt3/Yrs7XhcQ3z
-         zkSXHIuDUKdo2Z3La2TbOwpkrjtdywshXvuP3r9JeENS4TIuhUu1CajikjY98IDzEj3z
-         ztFw==
-X-Gm-Message-State: APzg51C06pUneAFULSFAGyePT4XrHjolUcg+sgLla1yegdh1g7FWh0ad
-        L8IBR4z1j6a7yUO9KUtfPewu8A==
-X-Google-Smtp-Source: ANB0VdY5I+7eMF4n7GjPTDNfb9S6LfoSlPVu7J6HnwkOq03bPkBjjSKqYfaEC8LlQ62KqfkcYaZKCg==
-X-Received: by 2002:ac8:2d2e:: with SMTP id n43-v6mr16741565qta.38.1535730583504;
-        Fri, 31 Aug 2018 08:49:43 -0700 (PDT)
+        bh=UqaA9H8RxsZ7IIFSLpndjVyK5I3+eZWdGd5MwXiwCqQ=;
+        b=tdvMDrnjmQXcDgErcyo/eU+I2SNGsUk9rPrhxkeAKgRlk8HeYuNAW5+SduP0bdSc4M
+         kykVSyPXNUtaNxncr1gGynbg+zJhq9gLBKgDD1KpdquTSqkHy5zS5BVKTq2krRpvF5zl
+         1cRILqqGzwMan5CaQZwnQBBAmZGlq+8CFlnO8/VVdg6bYsdUPkQRP0Dho1V9lL9QEVyA
+         FHqmEaisKDd0Yz55yL0iezb7hORzpkuwFw5bIxVGKBx5VrK3Sf6gtEcLDl02yIXLdf05
+         IzjkC9m1nrB+8pFt9hwI5av7xccFqDOw6Czjkz9PxGNAoe69+iugwTIzhUyo6y6islOm
+         ARYA==
+X-Gm-Message-State: APzg51Ap//pIzoU8SQTvE488D8WoMoed8or+RyUJiFexcrtdI63q29FX
+        5jlWdQ4DhgEqNB/TO90LgtxVsw==
+X-Google-Smtp-Source: ANB0VdZWq+5TxuwWkuCfhugDL7+n7H9jLvY3ES+/Kx6GLVxAl57yzMmcxIBOVfo4J6lvBIDvIjeaxg==
+X-Received: by 2002:ae9:eb58:: with SMTP id b85-v6mr16252484qkg.110.1535730619226;
+        Fri, 31 Aug 2018 08:50:19 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 80-v6sm8083068qka.6.2018.08.31.08.49.42
+        by smtp.gmail.com with ESMTPSA id l87-v6sm6793765qki.82.2018.08.31.08.50.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 08:49:42 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 11:49:41 -0400
+        Fri, 31 Aug 2018 08:50:18 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:50:17 -0400
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Dennis Zhou <dennisszhou@gmail.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
@@ -67,27 +67,26 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
         linux-block@vger.kernel.org, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/15] blkcg: change blkg reference counting to use
- percpu_ref
-Message-ID: <20180831154939.sb24oz7ekxcwkkfd@destiny>
+Subject: Re: [PATCH 14/15] blkcg: rename blkg_try_get to blkg_tryget
+Message-ID: <20180831155016.2u5erpni5omhcncr@destiny>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
- <20180831015356.69796-14-dennisszhou@gmail.com>
+ <20180831015356.69796-15-dennisszhou@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831015356.69796-14-dennisszhou@gmail.com>
+In-Reply-To: <20180831015356.69796-15-dennisszhou@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 09:53:54PM -0400, Dennis Zhou wrote:
+On Thu, Aug 30, 2018 at 09:53:55PM -0400, Dennis Zhou wrote:
 > From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 > 
-> Now that every bio is associated with a blkg, this puts the use of
-> blkg_get, blkg_try_get, and blkg_put on the hot path. This switches over
-> the refcnt in blkg to use percpu_ref.
+> blkg reference counting now uses percpu_ref rather than atomic_t. Let's
+> make this consistent with css_tryget. This renames blkg_try_get to
+> blkg_tryget and now returns a bool rather than the blkg or NULL.
 > 
 > Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 
