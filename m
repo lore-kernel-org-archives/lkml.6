@@ -2,745 +2,115 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2B4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0E0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A222120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:18:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A222120661
+	by mail.kernel.org (Postfix) with ESMTP id BFF232083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:19:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF232083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeHaT0g (ORCPT
+        id S1728828AbeHaT1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:26:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54012 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727303AbeHaT0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:26:35 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43FF140216E7;
-        Fri, 31 Aug 2018 15:18:34 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 63EE62027EA0;
-        Fri, 31 Aug 2018 15:18:30 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Bastien Nocera <hadess@hadess.net>,
-        Stephen Just <stephenjust@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Darren Hart <dvhart@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v3] platform/x86: surface3_power: MSHW0011 rev-eng implementation
-Date:   Fri, 31 Aug 2018 17:18:28 +0200
-Message-Id: <20180831151828.15175-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 15:18:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 15:18:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        Fri, 31 Aug 2018 15:27:15 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36914 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728451AbeHaT1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 15:27:15 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u12-v6so11548010wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:19:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YMd+w6xu6z5E6UfjvFxCMon3HjXziUFla9i/JhUAeyI=;
+        b=aQcNBLAe63rVvApNCX7FMwH1uRMpN65x1s+mtUsGM0FTWwPTu3s7PeyAWCFHCmoj4h
+         FHCB5pfRMB/0UpQ2DW+hBuv/O3QSagBs239A4pnS6MvC1MSNK0na8TrCwzfNuVCK/Zo0
+         HBUKTKvzGOFhw00gmWhZCYqUY9+mLpZJin4BZkUD2IhWWdwyPAuDRldcFuiCw82fRR5+
+         uQy2RaboCSUjPiSEfaRGU/gyqAlyVEWo0rXz1S0HVqbws91TNqAaFCqvU0e1ygCTmOmC
+         SUgr/Ux9/Wg6Rrl8DNxTSpi2sZ/oCkDmUtM0lXQkni16CYueCBgkZSu+lxydePWx6cMX
+         wa6A==
+X-Gm-Message-State: APzg51A9ZGn4XVsCByzCxPI9CV9s6aOEJ5GrXVEEx+drEvMFS8mRjjZE
+        A9XfOSS95DyhUHH65hsPgYpzi8hrfSI=
+X-Google-Smtp-Source: ANB0VdZ9aRhrN6ckmFswpdH1PiAiKOXoqocvGG29uniVqoNZUeuYtKmzNdHqaj1lonMB6EgFpLpTRQ==
+X-Received: by 2002:adf:82c3:: with SMTP id 61-v6mr11610326wrc.131.1535728754888;
+        Fri, 31 Aug 2018 08:19:14 -0700 (PDT)
+Received: from minerva.redhat.com ([90.168.169.92])
+        by smtp.gmail.com with ESMTPSA id q3-v6sm5788904wma.45.2018.08.31.08.19.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 08:19:14 -0700 (PDT)
+From:   Javier Martinez Canillas <javierm@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: ov2680: register the v4l2 subdev async at the end of probe
+Date:   Fri, 31 Aug 2018 17:19:06 +0200
+Message-Id: <20180831151906.9315-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MSHW0011 device is a chip that replaces the battery firmware
-by using ACPI operation regions on the Surface 3.
-It is unclear whether or not the chip will be reused somewhere else
-(under Windows, the chip is called "Surface Platform Power Driver"
-and the driver is provided by Microsoft).
+The driver registers the subdev async in the middle of the probe function
+but this has to be done at the very end of the probe function to prevent
+registering a device whose probe function could fail (i.e: the clock and
+regulators enable can fail, the I2C transfers could return errors, etc).
 
-The values have been obtained by reverse engineering, and are subject to
-errors. Looks like it works on overall pretty well.
+It could also lead to a media device driver that is waiting to bound the
+v4l2 subdevice to incorrectly expose its media device to userspace, since
+the subdev is registered but later its media entity is cleaned up on error.
 
-I couldn't manage to get the IRQ correctly triggered, so I am using a
-good old polling thread to check for changes. This is something
-to be fixed in a later version.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=106231
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Stephen Just <stephenjust@gmail.com>
+Fixes: 3ee47cad3e69 ("media: ov2680: Add Omnivision OV2680 sensor driver")
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
 
 ---
 
-changes in v2:
-- moved to drivers/acpi/ instead of power
-- use uuid_le
-- fix uper/lower case
-- print_hex_dump() used in mshw0011_dump_registers() instead of custom dump
-- removed "MSHW0011:00" in mshw0011_id
+ drivers/media/i2c/ov2680.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-changes in v3:
-- remove le16_to_cpu() after i2c_smbus_read_word_data() as it already
-  handles it properly
-- use i2c_acpi_new_device() to remove a bunch of duplicated code from I2C
-  core.
-- move the driver in platform/x86
-- add depends ACPI && I2C in Kconfig
-- remove the dump registers facility, as it's debugging only
-- use of BIT() in MSHW0011 defs
-- use of guid_t
-- remove useless ret = 0
-- use probe_new()
-- remove empty .id_table
-- removed mshw0011_i2c_read_block() and use directly
-  i2c_smbus_read_i2c_block_data()
-- use snprintf() instead of custom memcpy()
-- renamed the 'version' as 'mask'
-- use SPDX license identifier
----
- drivers/platform/x86/Kconfig          |   7 +
- drivers/platform/x86/Makefile         |   1 +
- drivers/platform/x86/surface3_power.c | 604 ++++++++++++++++++++++++++
- 3 files changed, 612 insertions(+)
- create mode 100644 drivers/platform/x86/surface3_power.c
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index ac4d48830415..c254f7aadbe1 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1158,6 +1158,13 @@ config SURFACE_3_BUTTON
- 	---help---
- 	  This driver handles the power/home/volume buttons on the Microsoft Surface 3 tablet.
+diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+index f753a1c333ef..2ef920a17278 100644
+--- a/drivers/media/i2c/ov2680.c
++++ b/drivers/media/i2c/ov2680.c
+@@ -983,10 +983,6 @@ static int ov2680_v4l2_init(struct ov2680_dev *sensor)
  
-+config SURFACE_3_POWER_OPREGION
-+	tristate "Surface 3 battery platform operation region support"
-+	depends on ACPI && I2C
-+	help
-+	  Select this option to enable support for ACPI operation
-+	  region of the Surface 3 battery platform driver.
-+
- config INTEL_PUNIT_IPC
- 	tristate "Intel P-Unit IPC Driver"
- 	---help---
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 2ba6cb795338..2f683597af9f 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -81,6 +81,7 @@ obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
- obj-$(CONFIG_SILEAD_DMI)	+= silead_dmi.o
- obj-$(CONFIG_SURFACE_PRO3_BUTTON)	+= surfacepro3_button.o
- obj-$(CONFIG_SURFACE_3_BUTTON)	+= surface3_button.o
-+obj-$(CONFIG_SURFACE_3_POWER_OPREGION) += surface3_power.o
- obj-$(CONFIG_INTEL_PUNIT_IPC)  += intel_punit_ipc.o
- obj-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= intel_bxtwc_tmu.o
- obj-$(CONFIG_INTEL_TELEMETRY)	+= intel_telemetry_core.o \
-diff --git a/drivers/platform/x86/surface3_power.c b/drivers/platform/x86/surface3_power.c
-new file mode 100644
-index 000000000000..e0af01a60302
---- /dev/null
-+++ b/drivers/platform/x86/surface3_power.c
-@@ -0,0 +1,604 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * Supports for the power IC on the Surface 3 tablet.
-+ *
-+ * (C) Copyright 2016-2018 Red Hat, Inc
-+ * (C) Copyright 2016-2018 Benjamin Tissoires <benjamin.tissoires@gmail.com>
-+ * (C) Copyright 2016 Stephen Just <stephenjust@gmail.com>
-+ *
-+ */
-+
-+/*
-+ * This driver has been reverse-engineered by parsing the DSDT of the Surface 3
-+ * and looking at the registers of the chips.
-+ *
-+ * The DSDT allowed to find out that:
-+ * - the driver is required for the ACPI BAT0 device to communicate to the chip
-+ *   through an operation region.
-+ * - the various defines for the operation region functions to communicate with
-+ *   this driver
-+ * - the DSM 3f99e367-6220-4955-8b0f-06ef2ae79412 allows to trigger ACPI
-+ *   events to BAT0 (the code is all available in the DSDT).
-+ *
-+ * Further findings regarding the 2 chips declared in the MSHW0011 are:
-+ * - there are 2 chips declared:
-+ *   . 0x22 seems to control the ADP1 line status (and probably the charger)
-+ *   . 0x55 controls the battery directly
-+ * - the battery chip uses a SMBus protocol (using plain SMBus allows non
-+ *   destructive commands):
-+ *   . the commands/registers used are in the range 0x00..0x7F
-+ *   . if bit 8 (0x80) is set in the SMBus command, the returned value is the
-+ *     same as when it is not set. There is a high chance this bit is the
-+ *     read/write
-+ *   . the various registers semantic as been deduced by observing the register
-+ *     dumps.
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <linux/acpi.h>
-+#include <linux/freezer.h>
-+#include <linux/i2c.h>
-+#include <linux/kernel.h>
-+#include <linux/kthread.h>
-+#include <linux/slab.h>
-+#include <linux/uuid.h>
-+
-+#define POLL_INTERVAL		(2 * HZ)
-+
-+struct mshw0011_data {
-+	struct i2c_client	*adp1;
-+	struct i2c_client	*bat0;
-+	unsigned short		notify_mask;
-+	struct task_struct	*poll_task;
-+	bool			kthread_running;
-+
-+	bool			charging;
-+	bool			bat_charging;
-+	u8			trip_point;
-+	s32			full_capacity;
-+};
-+
-+struct mshw0011_lookup {
-+	struct mshw0011_data	*cdata;
-+	unsigned int		n;
-+	unsigned int		index;
-+	int			addr;
-+};
-+
-+struct mshw0011_handler_data {
-+	struct acpi_connection_info	info;
-+	struct i2c_client		*client;
-+};
-+
-+struct bix {
-+	u32	revision;
-+	u32	power_unit;
-+	u32	design_capacity;
-+	u32	last_full_charg_capacity;
-+	u32	battery_technology;
-+	u32	design_voltage;
-+	u32	design_capacity_of_warning;
-+	u32	design_capacity_of_low;
-+	u32	cycle_count;
-+	u32	measurement_accuracy;
-+	u32	max_sampling_time;
-+	u32	min_sampling_time;
-+	u32	max_average_interval;
-+	u32	min_average_interval;
-+	u32	battery_capacity_granularity_1;
-+	u32	battery_capacity_granularity_2;
-+	char	model[10];
-+	char	serial[10];
-+	char	type[10];
-+	char	OEM[10];
-+} __packed;
-+
-+struct bst {
-+	u32	battery_state;
-+	s32	battery_present_rate;
-+	u32	battery_remaining_capacity;
-+	u32	battery_present_voltage;
-+} __packed;
-+
-+struct gsb_command {
-+	u8	arg0;
-+	u8	arg1;
-+	u8	arg2;
-+} __packed;
-+
-+struct gsb_buffer {
-+	u8	status;
-+	u8	len;
-+	u8	ret;
-+	union {
-+		struct gsb_command	cmd;
-+		struct bst		bst;
-+		struct bix		bix;
-+	} __packed;
-+} __packed;
-+
-+
-+#define ACPI_BATTERY_STATE_DISCHARGING	BIT(0)
-+#define ACPI_BATTERY_STATE_CHARGING	BIT(1)
-+#define ACPI_BATTERY_STATE_CRITICAL	BIT(2)
-+
-+#define MSHW0011_CMD_DEST_BAT0		0x01
-+#define MSHW0011_CMD_DEST_ADP1		0x03
-+
-+#define MSHW0011_CMD_BAT0_STA		0x01
-+#define MSHW0011_CMD_BAT0_BIX		0x02
-+#define MSHW0011_CMD_BAT0_BCT		0x03
-+#define MSHW0011_CMD_BAT0_BTM		0x04
-+#define MSHW0011_CMD_BAT0_BST		0x05
-+#define MSHW0011_CMD_BAT0_BTP		0x06
-+#define MSHW0011_CMD_ADP1_PSR		0x07
-+#define MSHW0011_CMD_BAT0_PSOC		0x09
-+#define MSHW0011_CMD_BAT0_PMAX		0x0a
-+#define MSHW0011_CMD_BAT0_PSRC		0x0b
-+#define MSHW0011_CMD_BAT0_CHGI		0x0c
-+#define MSHW0011_CMD_BAT0_ARTG		0x0d
-+
-+#define MSHW0011_NOTIFY_GET_VERSION	0x00
-+#define MSHW0011_NOTIFY_ADP1		0x01
-+#define MSHW0011_NOTIFY_BAT0_BST	0x02
-+#define MSHW0011_NOTIFY_BAT0_BIX	0x05
-+
-+#define MSHW0011_ADP1_REG_PSR		0x04
-+
-+#define MSHW0011_BAT0_REG_CAPACITY		0x0c
-+#define MSHW0011_BAT0_REG_FULL_CHG_CAPACITY	0x0e
-+#define MSHW0011_BAT0_REG_DESIGN_CAPACITY	0x40
-+#define MSHW0011_BAT0_REG_VOLTAGE	0x08
-+#define MSHW0011_BAT0_REG_RATE		0x14
-+#define MSHW0011_BAT0_REG_OEM		0x45
-+#define MSHW0011_BAT0_REG_TYPE		0x4e
-+#define MSHW0011_BAT0_REG_SERIAL_NO	0x56
-+#define MSHW0011_BAT0_REG_CYCLE_CNT	0x6e
-+
-+#define MSHW0011_EV_2_5			0x1ff
-+
-+static int
-+mshw0011_notify(struct mshw0011_data *cdata, u8 arg1, u8 arg2,
-+		unsigned int *ret_value)
-+{
-+	static const guid_t mshw0011_guid =
-+		GUID_INIT(0x3F99E367, 0x6220, 0x4955,
-+			  0x8B, 0x0F, 0x06, 0xEF, 0x2A, 0xE7, 0x94, 0x12);
-+	union acpi_object *obj;
-+	struct acpi_device *adev;
-+	acpi_handle handle;
-+	unsigned int i;
-+
-+	handle = ACPI_HANDLE(&cdata->adp1->dev);
-+	if (!handle || acpi_bus_get_device(handle, &adev))
-+		return -ENODEV;
-+
-+	obj = acpi_evaluate_dsm_typed(handle, &mshw0011_guid, arg1, arg2, NULL,
-+				      ACPI_TYPE_BUFFER);
-+	if (!obj) {
-+		dev_err(&cdata->adp1->dev, "device _DSM execution failed\n");
-+		return -ENODEV;
-+	}
-+
-+	*ret_value = 0;
-+	for (i = 0; i < obj->buffer.length; i++)
-+		*ret_value |= obj->buffer.pointer[i] << (i * 8);
-+
-+	ACPI_FREE(obj);
-+	return 0;
-+}
-+
-+static const struct bix default_bix = {
-+	.revision = 0x00,
-+	.power_unit = 0x01,
-+	.design_capacity = 0x1dca,
-+	.last_full_charg_capacity = 0x1dca,
-+	.battery_technology = 0x01,
-+	.design_voltage = 0x10df,
-+	.design_capacity_of_warning = 0x8f,
-+	.design_capacity_of_low = 0x47,
-+	.cycle_count = 0xffffffff,
-+	.measurement_accuracy = 0x00015f90,
-+	.max_sampling_time = 0x03e8,
-+	.min_sampling_time = 0x03e8,
-+	.max_average_interval = 0x03e8,
-+	.min_average_interval = 0x03e8,
-+	.battery_capacity_granularity_1 = 0x45,
-+	.battery_capacity_granularity_2 = 0x11,
-+	.model = "P11G8M",
-+	.serial = "",
-+	.type = "LION",
-+	.OEM = "",
-+};
-+
-+static int mshw0011_bix(struct mshw0011_data *cdata, struct bix *bix)
-+{
-+	struct i2c_client *client = cdata->bat0;
-+	char buf[10];
-+	int ret;
-+
-+	*bix = default_bix;
-+
-+	/* get design capacity */
-+	ret = i2c_smbus_read_word_data(client,
-+				       MSHW0011_BAT0_REG_DESIGN_CAPACITY);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Error reading design capacity: %d\n",
-+			ret);
-+		return ret;
-+	}
-+	bix->design_capacity = ret;
-+
-+	/* get last full charge capacity */
-+	ret = i2c_smbus_read_word_data(client,
-+				       MSHW0011_BAT0_REG_FULL_CHG_CAPACITY);
-+	if (ret < 0) {
-+		dev_err(&client->dev,
-+			"Error reading last full charge capacity: %d\n", ret);
-+		return ret;
-+	}
-+	bix->last_full_charg_capacity = ret;
-+
-+	/* get serial number */
-+	ret = i2c_smbus_read_i2c_block_data(client, MSHW0011_BAT0_REG_SERIAL_NO,
-+					    10, buf);
-+	if (ret != 10) {
-+		dev_err(&client->dev, "Error reading serial no: %d\n", ret);
-+		return ret;
-+	}
-+	snprintf(bix->serial, ARRAY_SIZE(bix->serial),
-+		 "%*pE%*pE", 3, buf + 7, 6, buf);
-+
-+	/* get cycle count */
-+	ret = i2c_smbus_read_word_data(client, MSHW0011_BAT0_REG_CYCLE_CNT);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Error reading cycle count: %d\n", ret);
-+		return ret;
-+	}
-+	bix->cycle_count = ret;
-+
-+	/* get OEM name */
-+	ret = i2c_smbus_read_i2c_block_data(client, MSHW0011_BAT0_REG_OEM,
-+					    4, buf);
-+	if (ret != 4) {
-+		dev_err(&client->dev, "Error reading cycle count: %d\n", ret);
-+		return ret;
-+	}
-+	snprintf(bix->OEM, ARRAY_SIZE(bix->OEM), "%*pE", 3, buf);
-+
-+	return 0;
-+}
-+
-+static int mshw0011_bst(struct mshw0011_data *cdata, struct bst *bst)
-+{
-+	struct i2c_client *client = cdata->bat0;
-+	int rate, capacity, voltage, state;
-+	s16 tmp;
-+
-+	rate = i2c_smbus_read_word_data(client, MSHW0011_BAT0_REG_RATE);
-+	if (rate < 0)
-+		return rate;
-+
-+	capacity = i2c_smbus_read_word_data(client, MSHW0011_BAT0_REG_CAPACITY);
-+	if (capacity < 0)
-+		return capacity;
-+
-+	voltage = i2c_smbus_read_word_data(client, MSHW0011_BAT0_REG_VOLTAGE);
-+	if (voltage < 0)
-+		return voltage;
-+
-+	tmp = rate;
-+	bst->battery_present_rate = abs((s32)tmp);
-+
-+	state = 0;
-+	if ((s32) tmp > 0)
-+		state |= ACPI_BATTERY_STATE_CHARGING;
-+	else if ((s32) tmp < 0)
-+		state |= ACPI_BATTERY_STATE_DISCHARGING;
-+	bst->battery_state = state;
-+
-+	bst->battery_remaining_capacity = capacity;
-+	bst->battery_present_voltage = voltage;
-+
-+	return 0;
-+}
-+
-+static int mshw0011_adp_psr(struct mshw0011_data *cdata)
-+{
-+	struct i2c_client *client = cdata->adp1;
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(client, MSHW0011_ADP1_REG_PSR);
+ 	sensor->sd.ctrl_handler = hdl;
+ 
+-	ret = v4l2_async_register_subdev(&sensor->sd);
+-	if (ret < 0)
+-		goto cleanup_entity;
+-
+ 	return 0;
+ 
+ cleanup_entity:
+@@ -1096,6 +1092,10 @@ static int ov2680_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		goto error_cleanup;
+ 
++	ret = v4l2_async_register_subdev(&sensor->sd);
 +	if (ret < 0)
-+		return ret;
++		goto error_cleanup;
 +
-+	return ret;
-+}
-+
-+static int mshw0011_isr(struct mshw0011_data *cdata)
-+{
-+	struct bst bst;
-+	struct bix bix;
-+	int ret;
-+	bool status, bat_status;
-+
-+	ret = mshw0011_adp_psr(cdata);
-+	if (ret < 0)
-+		return ret;
-+
-+	status = ret;
-+
-+	if (status != cdata->charging)
-+		mshw0011_notify(cdata, cdata->notify_mask,
-+				MSHW0011_NOTIFY_ADP1, &ret);
-+
-+	cdata->charging = status;
-+
-+	ret = mshw0011_bst(cdata, &bst);
-+	if (ret < 0)
-+		return ret;
-+
-+	bat_status = bst.battery_state;
-+
-+	if (bat_status != cdata->bat_charging)
-+		mshw0011_notify(cdata, cdata->notify_mask,
-+				MSHW0011_NOTIFY_BAT0_BST, &ret);
-+
-+	cdata->bat_charging = bat_status;
-+
-+	ret = mshw0011_bix(cdata, &bix);
-+	if (ret < 0)
-+		return ret;
-+	if (bix.last_full_charg_capacity != cdata->full_capacity)
-+		mshw0011_notify(cdata, cdata->notify_mask,
-+				MSHW0011_NOTIFY_BAT0_BIX, &ret);
-+
-+	cdata->full_capacity = bix.last_full_charg_capacity;
-+
-+	return 0;
-+}
-+
-+static int mshw0011_poll_task(void *data)
-+{
-+	struct mshw0011_data *cdata = data;
-+	int ret = 0;
-+
-+	cdata->kthread_running = true;
-+
-+	set_freezable();
-+
-+	while (!kthread_should_stop()) {
-+		schedule_timeout_interruptible(POLL_INTERVAL);
-+		try_to_freeze();
-+		ret = mshw0011_isr(data);
-+		if (ret)
-+			break;
-+	}
-+
-+	cdata->kthread_running = false;
-+	return ret;
-+}
-+
-+static acpi_status
-+mshw0011_space_handler(u32 function, acpi_physical_address command,
-+			u32 bits, u64 *value64,
-+			void *handler_context, void *region_context)
-+{
-+	struct gsb_buffer *gsb = (struct gsb_buffer *)value64;
-+	struct mshw0011_handler_data *data = handler_context;
-+	struct acpi_connection_info *info = &data->info;
-+	struct acpi_resource_i2c_serialbus *sb;
-+	struct i2c_client *client = data->client;
-+	struct mshw0011_data *cdata = i2c_get_clientdata(client);
-+	struct acpi_resource *ares;
-+	u32 accessor_type = function >> 16;
-+	acpi_status ret;
-+	int status = 1;
-+
-+	ret = acpi_buffer_to_resource(info->connection, info->length, &ares);
-+	if (ACPI_FAILURE(ret))
-+		return ret;
-+
-+	if (!value64 || ares->type != ACPI_RESOURCE_TYPE_SERIAL_BUS) {
-+		ret = AE_BAD_PARAMETER;
-+		goto err;
-+	}
-+
-+	sb = &ares->data.i2c_serial_bus;
-+	if (sb->type != ACPI_RESOURCE_SERIAL_TYPE_I2C) {
-+		ret = AE_BAD_PARAMETER;
-+		goto err;
-+	}
-+
-+	if (accessor_type != ACPI_GSB_ACCESS_ATTRIB_RAW_PROCESS) {
-+		ret = AE_BAD_PARAMETER;
-+		goto err;
-+	}
-+
-+	if (gsb->cmd.arg0 == MSHW0011_CMD_DEST_ADP1 &&
-+	    gsb->cmd.arg1 == MSHW0011_CMD_ADP1_PSR) {
-+		ret = mshw0011_adp_psr(cdata);
-+		if (ret >= 0) {
-+			status = ret;
-+			ret = 0;
-+		}
-+		goto out;
-+	}
-+
-+	if (gsb->cmd.arg0 != MSHW0011_CMD_DEST_BAT0) {
-+		ret = AE_BAD_PARAMETER;
-+		goto err;
-+	}
-+
-+	switch (gsb->cmd.arg1) {
-+	case MSHW0011_CMD_BAT0_STA:
-+		break;
-+	case MSHW0011_CMD_BAT0_BIX:
-+		ret = mshw0011_bix(cdata, &gsb->bix);
-+		break;
-+	case MSHW0011_CMD_BAT0_BTP:
-+		cdata->trip_point = gsb->cmd.arg2;
-+		break;
-+	case MSHW0011_CMD_BAT0_BST:
-+		ret = mshw0011_bst(cdata, &gsb->bst);
-+		break;
-+	default:
-+		pr_info("command(0x%02x) is not supported.\n", gsb->cmd.arg1);
-+		ret = AE_BAD_PARAMETER;
-+		goto err;
-+	}
-+
-+ out:
-+	gsb->ret = status;
-+	gsb->status = 0;
-+
-+ err:
-+	ACPI_FREE(ares);
-+	return ret;
-+}
-+
-+static int mshw0011_install_space_handler(struct i2c_client *client)
-+{
-+	acpi_handle handle;
-+	struct mshw0011_handler_data *data;
-+	acpi_status status;
-+
-+	handle = ACPI_HANDLE(&client->dev);
-+
-+	if (!handle)
-+		return -ENODEV;
-+
-+	data = kzalloc(sizeof(struct mshw0011_handler_data),
-+			    GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->client = client;
-+	status = acpi_bus_attach_private_data(handle, (void *)data);
-+	if (ACPI_FAILURE(status)) {
-+		kfree(data);
-+		return -ENOMEM;
-+	}
-+
-+	status = acpi_install_address_space_handler(handle,
-+				ACPI_ADR_SPACE_GSBUS,
-+				&mshw0011_space_handler,
-+				NULL,
-+				data);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(&client->dev, "Error installing i2c space handler\n");
-+		acpi_bus_detach_private_data(handle);
-+		kfree(data);
-+		return -ENOMEM;
-+	}
-+
-+	acpi_walk_dep_device_list(handle);
-+	return 0;
-+}
-+
-+static void mshw0011_remove_space_handler(struct i2c_client *client)
-+{
-+	acpi_handle handle = ACPI_HANDLE(&client->dev);
-+	struct mshw0011_handler_data *data;
-+	acpi_status status;
-+
-+	if (!handle)
-+		return;
-+
-+	acpi_remove_address_space_handler(handle,
-+				ACPI_ADR_SPACE_GSBUS,
-+				&mshw0011_space_handler);
-+
-+	status = acpi_bus_get_private_data(handle, (void **)&data);
-+	if (ACPI_SUCCESS(status))
-+		kfree(data);
-+
-+	acpi_bus_detach_private_data(handle);
-+}
-+
-+static int mshw0011_probe(struct i2c_client *client)
-+{
-+	struct i2c_board_info board_info;
-+	struct device *dev = &client->dev;
-+	struct i2c_client *bat0;
-+
-+	struct mshw0011_data *data;
-+	int error, mask;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->adp1 = client;
-+	i2c_set_clientdata(client, data);
-+
-+	memset(&board_info, 0, sizeof(board_info));
-+	strlcpy(board_info.type, "MSHW0011-bat0", I2C_NAME_SIZE);
-+
-+	bat0 = i2c_acpi_new_device(dev, 1, &board_info);
-+	if (!bat0)
-+		return -ENOMEM;
-+
-+	data->bat0 = bat0;
-+	i2c_set_clientdata(bat0, data);
-+
-+	error = mshw0011_notify(data, 1, MSHW0011_NOTIFY_GET_VERSION, &mask);
-+	if (error)
-+		goto out_err;
-+
-+	data->notify_mask = mask == MSHW0011_EV_2_5;
-+
-+	data->poll_task = kthread_run(mshw0011_poll_task, data, "mshw0011_adp");
-+	if (IS_ERR(data->poll_task)) {
-+		error = PTR_ERR(data->poll_task);
-+		dev_err(&client->dev, "Unable to run kthread err %d\n", error);
-+		goto out_err;
-+	}
-+
-+	error = mshw0011_install_space_handler(client);
-+	if (error)
-+		goto out_err;
-+
-+	return 0;
-+
-+out_err:
-+	if (data->kthread_running)
-+		kthread_stop(data->poll_task);
-+	i2c_unregister_device(data->bat0);
-+	return error;
-+}
-+
-+static int mshw0011_remove(struct i2c_client *client)
-+{
-+	struct mshw0011_data *cdata = i2c_get_clientdata(client);
-+
-+	mshw0011_remove_space_handler(client);
-+
-+	if (cdata->kthread_running)
-+		kthread_stop(cdata->poll_task);
-+
-+	i2c_unregister_device(cdata->bat0);
-+
-+	return 0;
-+}
-+
-+static const struct acpi_device_id mshw0011_acpi_match[] = {
-+	{ "MSHW0011", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, mshw0011_acpi_match);
-+
-+static struct i2c_driver mshw0011_driver = {
-+	.probe_new = mshw0011_probe,
-+	.remove = mshw0011_remove,
-+	.driver = {
-+		.name = "mshw0011",
-+		.acpi_match_table = ACPI_PTR(mshw0011_acpi_match),
-+	},
-+};
-+module_i2c_driver(mshw0011_driver);
-+
-+MODULE_AUTHOR("Benjamin Tissoires <benjamin.tissoires@gmail.com>");
-+MODULE_DESCRIPTION("mshw0011 driver");
-+MODULE_LICENSE("GPL v2");
+ 	dev_info(dev, "ov2680 init correctly\n");
+ 
+ 	return 0;
+@@ -1104,7 +1104,6 @@ static int ov2680_probe(struct i2c_client *client)
+ 	dev_err(dev, "ov2680 init fail: %d\n", ret);
+ 
+ 	media_entity_cleanup(&sensor->sd.entity);
+-	v4l2_async_unregister_subdev(&sensor->sd);
+ 	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
+ 
+ lock_destroy:
 -- 
-2.17.0
+2.17.1
 
