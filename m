@@ -2,101 +2,111 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FF2C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6532C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD8F2077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:14:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD8F2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E0CB20839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E0CB20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeHaSWg (ORCPT
+        id S1728438AbeHaSYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:22:36 -0400
-Received: from gateway20.websitewelcome.com ([192.185.48.38]:20626 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727563AbeHaSWg (ORCPT
+        Fri, 31 Aug 2018 14:24:03 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35340 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeHaSYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:22:36 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 76758400DDFC5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 09:14:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vkCMflKqHSjJAvkCMfPtiQ; Fri, 31 Aug 2018 09:14:54 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.90.185] (port=43952 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fvkCL-002vKb-RJ; Fri, 31 Aug 2018 09:14:53 -0500
-Date:   Fri, 31 Aug 2018 09:14:51 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ipmi: Fix NULL pointer dereference in ssif_probe
-Message-ID: <20180831141451.GA19032@embeddedor.com>
+        Fri, 31 Aug 2018 14:24:03 -0400
+Received: by mail-qt0-f194.google.com with SMTP id j7-v6so14689499qtp.2;
+        Fri, 31 Aug 2018 07:16:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TP8ZGwsEQsRzmKoj0dBlNuXeVoWE5a822Ceik/rVN28=;
+        b=HHzCE3z67iUppeLTCzG0QwJIeCfLHLIFVQpxLusiTKcQvMwRD3qV8b8kcSY3tq4k55
+         TdEDEHppPGJ6pcS2tAGDWzt5ClAnj8GEvUtjs+ol2pBCDZzAAeHUbVMPEZcd87D5kO7r
+         XusBlSlv69q68eoOXKThYGyQiOLSKMucrkJaSeDl4gNagnwpkQwVAdG70AU6RJzjaDe+
+         260K3Njggk1MnpHyKrWve7F4ZwLuUcDkAS5Kpx3t783k7nKMZZ2/ZbVgbcZQzXKyiJk8
+         TM1lWoYAT9WeP7RctfJNBiJUTVvekgLW0Dt8Lgo8B57LeKEmsHX+FvfH8DlQkxrqTxCD
+         LkXQ==
+X-Gm-Message-State: APzg51BcdGUYIOetlvBX5f1QUxTl/NQ47FAKUxVMTktWu1UcokAPp7jU
+        2YgrSx3uvHTbYXw25Pi6pI17q3m1kHtq12BrvcI=
+X-Google-Smtp-Source: ANB0VdbqVySie6pyJZyzfEtDAoMBUS94R3uJMIE5QiCNDo2Qap0n7hN/+jsJpfqds6oh1VE7CSlP0We6xp/gWM7M7Z8=
+X-Received: by 2002:a0c:c171:: with SMTP id i46-v6mr15625072qvh.40.1535724980590;
+ Fri, 31 Aug 2018 07:16:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.90.185
-X-Source-L: No
-X-Exim-ID: 1fvkCL-002vKb-RJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.90.185]:43952
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+ <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
+ <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
+ <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com>
+ <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
+ <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com>
+ <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com> <CA+sq2CfjJjswOwypNMtro+g8TeHGoBqAeKpFrf2ys-1=Xg+qHw@mail.gmail.com>
+In-Reply-To: <CA+sq2CfjJjswOwypNMtro+g8TeHGoBqAeKpFrf2ys-1=Xg+qHw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 31 Aug 2018 16:16:04 +0200
+Message-ID: <CAK8P3a3q_rY6VHwX9xQ9VMNC_4EmJLKzzDPL28SE13qNHX7=aA@mail.gmail.com>
+Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
+To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, amakarov@marvell.com,
+        sgoutham@marvell.com, lbartosik@marvell.com,
+        Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a potential execution patch in which function ssif_info_find()
-returns NULL, hence there is a NULL pointer dereference when accessing
-pointer *addr_info*
+On Thu, Aug 30, 2018 at 8:37 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> On Thu, Aug 30, 2018 at 7:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Tue, Aug 28, 2018 at 3:23 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > Any PCI device here irrespective in what domain (kernel or userspace)
+> > > they are in
+> > > use common mailbox communication. Which is
+> > > # Write a mailbox msg (format is agreed between all parties) into
+> > > shared (between AF and other PF/VFs)
+> > >    memory region and trigger a interrupt to admin function.
+> > > # Admin function processes the msg and puts reply in the same memory
+> > > region and trigger
+> > >    IRQ to the requesting device. If the device has a driver instance
+> > > in kernel then it uses
+> > >    IRQ and userspace applications does polling on the IRQ status bit.
+> >
+> > What is the purpose of the exported interface then? Is this
+> > just an abstraction so each of the drivers can talk to its own
+> > mailbox using a set of common helper functions?
+> >
+>
+> Yes, that's correct.
+>
+> In kernel there will be a minimum of 3 drivers which will use this
+> mailbox communication.
+> So instead of duplicating APIs and structures in every driver, we
+> thought of adding them in this AF driver and export them to ethernet
+> and crypto drivers.
 
-Fix this by null checking *addr_info* before dereferencing it.
+Ok. My feeling is then that the API is fine, but that it should not
+be part of the AF module but rather be a standalone module.
 
-Addresses-Coverity-ID: 1473145 ("Explicit null dereferenced")
-Fixes: e333054a91d1 ("ipmi: Fix I2C client removal in the SSIF driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/char/ipmi/ipmi_ssif.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+My comment about the generic mailbox API no longer applies
+here: you don't have a single shared mailbox hardware interface,
+but each device has its own mailbox register set, so there
+is no point in setting up a separate device for it, but I see
+no need for creating an artificial dependency on the AF
+driver. E.g. in a virtual machine that only has one ethernet
+interface, you otherwise wouldn't load that driver, right?
 
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index 2ff3679..764d305 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -1641,7 +1641,9 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 
-  out:
- 	if (rv) {
--		addr_info->client = NULL;
-+		if (addr_info)
-+			addr_info->client = NULL;
-+
- 		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
- 		kfree(ssif_info);
- 	}
--- 
-2.7.4
-
+         Arnd
