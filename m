@@ -2,112 +2,94 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D250C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94136C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE08220661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A98820661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STVBA0C4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE08220661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJuevRr0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A98820661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeHaMda (ORCPT
+        id S1727729AbeHaMdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:33:30 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:56179 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeHaMda (ORCPT
+        Fri, 31 Aug 2018 08:33:36 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50983 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbeHaMdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:33:30 -0400
-Received: by mail-it0-f67.google.com with SMTP id d10-v6so6130350itj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:27:10 -0700 (PDT)
+        Fri, 31 Aug 2018 08:33:36 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so4380706wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/uO2yUjEs9fRJpUD0GczrOmUQ6mfM6VxBFqAxlyYXQ8=;
-        b=STVBA0C4FYnNBVCzNnqEg5jmX+zoQM+0rXBiIQWHPVnmbBPN8bKf+aQuNNr16PgXUQ
-         SKvx67Em6dsbkxTsZY1fee/1NnwZC9gapBpXrC8HKcQ3BzmeIve3aICYBmj1Z7hY6rUV
-         Kmm08YgSabUTCDlNdx8vfCGmtyYoW4V5lkY1k=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f39v9NvL0dna5Wxvti4XgLL2bwfWPTeGuj+93NLRq2g=;
+        b=TJuevRr0s0G8sPZ8pqCfwr69T9ty8m1sPHVhP2cYVzxR7f/pPNpsj1u+IvNyOM9Y38
+         B4SSfgktnyF9D98re/rekALXnPbZe8ryN7JudthO5qarpbDsMIUwdbxrjVIcpmUJP2S3
+         UQbfKSICZ/T0nQOkTKKa+FdzXGLIYb+Tj1VshHvF8GlLd3BWLcj1axSqa0q1J+J5ALoZ
+         AAJlkoaWP3obRN4xFEs1ryiuwpkjdjROymsBg055ELV/Ga29V+1vSjQlY4aTqYFlX+4x
+         VKZlVDvrWKU5maqJ0eGaGRmRzl/0QktykF7zg7UVd7PM4v2N/buZnskxSjmQgiQdZ6Y/
+         xnRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/uO2yUjEs9fRJpUD0GczrOmUQ6mfM6VxBFqAxlyYXQ8=;
-        b=RoT1Cv5I2rf4IHLzZXg8CZ7AWOzKuWNEyoZ+/k+ER2QC4PgdSIamQ6r5Qgs3WRvJQA
-         CWvtPiganhS0PRwUjdsyr4DZFFl8aq9zHg+RMHMEqZyHvhJM1GErAAbt8m6WOlJBdtqa
-         Qqc7V1aijbuz9VhBU+7Q1/fv/CSVoX9/LCHct1ZkCKSqIC8akPZSMh3inaJqT22M7BTX
-         q+BGz/uAezuAmwjdwl3EHtczxRN6M1sbmYxyg8U84QZknG8k8yYpTKr6RqgWkaOHQ0Lc
-         esVAsft/3vL9fcsisijuAf8pGsUxXQz+C3R5Y9irT4O3MU26ZbBqXDvQPbkgyuEs4Lrd
-         xbVA==
-X-Gm-Message-State: APzg51CobYDNV4sTJCCsMJJs47nfWUWZv3FBdscO1LfYdNeaEgds9M+g
-        ijm9nmVHGotnQaPXkq8OaQUNbDVULFA=
-X-Google-Smtp-Source: ANB0VdbrQMGqpfNWnUUXCvySVzZM7enCBqC+6wl26qlg/By5XqH/hlDVny7fcXWzASa8hN4+ovl9Sw==
-X-Received: by 2002:a24:1196:: with SMTP id 144-v6mr4764386itf.45.1535704030540;
-        Fri, 31 Aug 2018 01:27:10 -0700 (PDT)
-Received: from mail-io0-f172.google.com (mail-io0-f172.google.com. [209.85.223.172])
-        by smtp.gmail.com with ESMTPSA id q6-v6sm3748896iob.65.2018.08.31.01.27.08
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f39v9NvL0dna5Wxvti4XgLL2bwfWPTeGuj+93NLRq2g=;
+        b=DF5jwOeeb20Q6K3orOevg1vmVaeIb31ORBmtFxoru4JZOHCJcNxvNMONJAKL4URFqy
+         o5otu3oa94aQrzHQ6jOmzOpaGcRrlcIuPG6wTVeNJH3wHzU74tYYox3VbFcGGiaarAW1
+         Z7fNoUxJasTX5Xsb8u34N7PLyyKc4CWfiBSNUIWktF46NYR/LtIT6x1VlEaFrYM9/wWK
+         mcuMKSPovuP4O9GVB+lbgPWAl404QAXDyiwrn1k6mgGRppXnMVHYx/fD8NTS25LEHZJ3
+         ihSmkErrZa5zEukPatOlmIlXLAFPoUclpIoF/Hlqtna0P/7Rgv6QS5a/NJ0XjKyhgaBt
+         +Ccw==
+X-Gm-Message-State: APzg51CMHmV5PRjDscVW7hMbKeOV3OuVKV+ViN8kXTsfXrwan0MFvHJS
+        KiI9+r33Tz1LL36SOX06dCxog5GO
+X-Google-Smtp-Source: ANB0VdbWA4HEdeqxBzccavbVPxLDbBz5u5PP7rD0JCNaRd6uaPTXgYpRjVZtDzSxhDvW4O1YhtgHRw==
+X-Received: by 2002:a1c:1188:: with SMTP id 130-v6mr3997573wmr.138.1535704035743;
+        Fri, 31 Aug 2018 01:27:15 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4006:df00:41c4:f3ec:dcc3:6a2f])
+        by smtp.gmail.com with ESMTPSA id k35-v6sm14523080wrc.14.2018.08.31.01.27.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 01:27:09 -0700 (PDT)
-Received: by mail-io0-f172.google.com with SMTP id y10-v6so9785552ioa.10
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:27:08 -0700 (PDT)
-X-Received: by 2002:a6b:2387:: with SMTP id j129-v6mr11141298ioj.86.1535704028001;
- Fri, 31 Aug 2018 01:27:08 -0700 (PDT)
+        Fri, 31 Aug 2018 01:27:15 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 10:27:14 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH] x86/dumpstack: fix address space casting in
+ show_opcodes()
+Message-ID: <20180831082712.cbfvv655amizvkfq@ltop.local>
+References: <20180830194736.210039-1-jannh@google.com>
 MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
-In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Fri, 31 Aug 2018 17:26:56 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
-Message-ID: <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, p.zabel@pengutronix.de,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        andrew-ct.chen@mediatek.com, todor.tomov@linaro.org,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org, ezequiel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830194736.210039-1-jannh@google.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz, just a few thoughts I came across while writing the
-stateless codec document:
+On Thu, Aug 30, 2018 at 09:47:36PM +0200, Jann Horn wrote:
+> I sloppily passed a kernel-typed pointer to __range_not_ok(), and sparse
+> doesn't like that.
+> Make `prologue` a __user pointer (to protect against accidental
+> dereferences) and force-cast it to a kernel pointer when calling
+> probe_kernel_read(), which will then immediately force-cast it back to a
+> user pointer.
 
-On Tue, Jul 24, 2018 at 11:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
-[snip]
-> +****************************************
-> +Memory-to-memory Video Decoder Interface
-> +****************************************
+It's a bit sad to have to do this.
+__range_not_ok() explicitly requires a __user pointer (I don't know
+if there is a good reason for it) but  the real job is done by
+__chk_range_not_ok(). Can't you use this later instead?
 
-Since we have a m2m stateless decoder interface, can we call this the
-m2m video *stateful* decoder interface? :)
 
-> +Conventions and notation used in this document
-> +==============================================
-[snip]
-> +Glossary
-> +========
-
-I think these sections apply to both stateless and stateful. How about
-moving then into dev-codec.rst and mentioning that they apply to the
-two following sections?
+-- Luc Van Oostenryck
