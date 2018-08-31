@@ -2,76 +2,143 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D00C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B275CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 821922083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:13:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RDz9gGqc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821922083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 698D420837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 698D420837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeHaWVn (ORCPT
+        id S1727438AbeHaWXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 18:21:43 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46804 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeHaWVn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 18:21:43 -0400
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 679CDB8E;
-        Fri, 31 Aug 2018 20:13:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1535739182;
-        bh=nMU57z1ORa9uCNKQVVC/4vfJC3Hk4qVoYc6qDeGZleU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RDz9gGqc0RlKPwerxVSb7Cilqbe+fCG4HA4GV31OKn7iRsDPWjqSueJmCjtf2YyZo
-         tTeYg3U9BpLL0ZqH7M3tPeJctxOLECJXbJbY/w33KoX9HTwqAP7aSEE/mpIBn0s3AO
-         i3sxyhk+v77WJ7CbqyxuCVN2JsF0tU1TpLW+WbPs=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/3] drm: rcar-du: Update DU support
-Date:   Fri, 31 Aug 2018 19:12:56 +0100
-Message-Id: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 31 Aug 2018 18:23:50 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3133 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727201AbeHaWXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 18:23:49 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 11:15:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,312,1531810800"; 
+   d="scan'208";a="69420777"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
+  by orsmga007.jf.intel.com with ESMTP; 31 Aug 2018 11:15:09 -0700
+Date:   Fri, 31 Aug 2018 11:15:09 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180831181509.GB21555@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831121645.GA18075@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3 patches to remove current limitations in the DU.
-Image formats that the hardware is capable of were not listed in the
-driver, and are added by Koji Masuoka.
+On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
+> On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
+> > [snip..]
+> > 
+> > > > >
+> > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
+> > > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > > +sgx_pm_cnt;
+> > > > > +
+> > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > > +MSRs
+> > > > > for each
+> > > > > + * CPU. The entries are initialized when they are first used by
+> > > > > sgx_einit().
+> > > > > + */
+> > > > > +struct sgx_lepubkeyhash {
+> > > > > +	u64 msrs[4];
+> > > > > +	u64 pm_cnt;
+> > > >
+> > > > May I ask why do we need pm_cnt here? In fact why do we need suspend
+> > > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
+> > > > in this patch? From the patch commit message I don't see why we need
+> > > > PM staff here. Please give comment why you need PM staff, or you may
+> > > > consider to split the PM staff to another patch.
+> > > 
+> > > Refining the commit message probably makes more sense because without PM
+> > > code sgx_einit() would be broken. The MSRs have been reset after waking up.
+> > > 
+> > > Some kind of counter is required to keep track of the power cycle. When going
+> > > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
+> > > the global count to the value in the cache entry to see whether we are in a new
+> > > power cycle.
+> > 
+> > You mean reset to Intel default? I think we can also just reset the
+> > cached MSR values on each power cycle, which would be simpler, IMHO?
+> 
+> I don't really see that much difference in the complexity.
 
-Frame sizes on Gen3 platforms were artificially limited to the Gen2
-framesizes, and so this has been lifted to support larger displays such
-as 4K outputs.
+Tracking the validity of the cache means we're hosed if we miss any
+condition that causes the MSRs to be reset.  I think we're better off
+assuming the cache can be stale at any time, i.e. don't track power
+cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
+the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
+interruptible and its latency is extremely variable in any case, e.g.
+tens of thousands of cycles, so this rarely-hit "slow path" probably
+wouldn't affect the worst case latency of EINIT.
+ 
+> > I think we definitely need some code to handle S3-S5, but should be in
+> > separate patches, since I think the major impact of S3-S5 is entire
+> > EPC being destroyed. I think keeping pm_cnt is not sufficient enough
+> > to handle such case?
+> 
+> The driver has SGX_POWER_LOST_ENCLAVE for ioctls and it deletes the TCS
+> entries.
+> 
+> > > This brings up one question though: how do we deal with VM host going to sleep?
+> > > VM guest would not be aware of this.
+> > 
+> > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
+> > SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
+> > co-working together to re-establish the missing enclaves.
+> 
+> This is not about EPC. It is already dealt by the driver. I'm concerned
+> about the MSR cache as it would mess up.
+> 
+> But I guess this logic is part of the KVM code anyway now that I think
+> more of it.
 
-Finally restrictions on the framebuffer strides and alignments are
-lifted due to the greater flexibility of the VSP.
-
-Kieran Bingham (1):
-  drm: rcar-du: Update Gen3 output limitations
-
-Koji Matsuoka (1):
-  drm: rcar-du: Add pixel format support
-
-Laurent Pinchart (1):
-  drm: rcar-du: Update framebuffer pitch and alignment limits for Gen3
-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 81 ++++++++++++++++++++++-----
- 1 file changed, 67 insertions(+), 14 deletions(-)
-
--- 
-2.17.1
-
+Ya, I expect that VMMs will preserve VM's virtual pubkey MSRs, though
+there might be scenarios where a VM has direct access to the hardware
+MSRs.  This is probably a moot point since I don't think we want to
+assume the kernel's cache is 100% accurate, regardless of environment.
