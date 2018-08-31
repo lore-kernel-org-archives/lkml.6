@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79205C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35477C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23CC52083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CC52083F
+	by mail.kernel.org (Postfix) with ESMTP id D23FC2083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23FC2083F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbeIACpZ (ORCPT
+        id S1727571AbeIACrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:45:25 -0400
-Received: from ms.lwn.net ([45.79.88.28]:33938 "EHLO ms.lwn.net"
+        Fri, 31 Aug 2018 22:47:15 -0400
+Received: from ms.lwn.net ([45.79.88.28]:33962 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbeIACpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:45:25 -0400
+        id S1727273AbeIACrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 22:47:15 -0400
 Received: from localhost.localdomain (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 90A8B2B0;
-        Fri, 31 Aug 2018 22:35:44 +0000 (UTC)
-Date:   Fri, 31 Aug 2018 16:35:31 -0600
+        by ms.lwn.net (Postfix) with ESMTPSA id 941CE2B0;
+        Fri, 31 Aug 2018 22:37:30 +0000 (UTC)
+Date:   Fri, 31 Aug 2018 16:37:17 -0600
 From:   Jonathan Corbet <corbet@lwn.net>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] docs: tracing: Add stacktrace filter command
-Message-ID: <20180831163531.4b1cf1e4@lwn.net>
-In-Reply-To: <20180816085031.531732d3@gandalf.local.home>
-References: <153441301698.6024.1680500212551396320.stgit@devbox>
-        <153441304709.6024.553337906391633027.stgit@devbox>
-        <20180816085031.531732d3@gandalf.local.home>
+To:     Salvatore Bonaccorso <carnil@debian.org>
+Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tony Luck <tony.luck@intel.com>, linux-doc@vger.kernel.org,
+        trivial@kernel.org
+Subject: Re: [PATCH] Documentation/l1tf: Fix small spelling typo
+Message-ID: <20180831163717.3729f5d2@lwn.net>
+In-Reply-To: <20180815054604.27895-1-carnil@debian.org>
+References: <20180815054604.27895-1-carnil@debian.org>
 Organization: LWN.net
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -49,22 +49,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Aug 2018 08:50:31 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, 15 Aug 2018 07:46:04 +0200
+Salvatore Bonaccorso <carnil@debian.org> wrote:
 
-> On Thu, 16 Aug 2018 18:50:47 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> Fix small typo (wiil -> will) in the "3.4. Nested virtual machines"
+> section.
 > 
-> > Add a description of stacktrace filter command.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Cc: linux-doc@vger.kernel.org  
+> Fixes: 5b76a3cff011 ("KVM: VMX: Tell the nested hypervisor to skip L1D flush on vmentry")
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: linux-doc@vger.kernel.org
+> Cc: trivial@kernel.org
 > 
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> 
-> Jon, want to pull this patch into your tree?
+> Signed-off-by: Salvatore Bonaccorso <carnil@debian.org>
 
-Applied (finally), thanks.
+Applied, thanks.
 
 jon
