@@ -3,137 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0DCC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6576C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5874020837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:49:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5874020837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 89A862077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:52:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A862077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbeHaS5n (ORCPT
+        id S1728471AbeHaTAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:57:43 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44044 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbeHaS5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:57:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 07:49:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="259682029"
-Received: from dde-mobl1.amr.corp.intel.com (HELO [10.254.69.89]) ([10.254.69.89])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Aug 2018 07:47:29 -0700
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>
-References: <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
- <1535649960.26689.15.camel@intel.com>
- <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
- <1535651666.27823.6.camel@intel.com>
- <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
- <1535660494.28258.36.camel@intel.com>
- <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
- <1535662366.28781.6.camel@intel.com>
- <CAG48ez0mkr95_TbLQnDGuGUd6G+eJVLZ-fEjDkwA6dSrm+9tLw@mail.gmail.com>
- <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
- <20180831095300.GF24124@hirez.programming.kicks-ass.net>
- <1535726032.32537.0.camel@intel.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f5a36e32-7c5f-91fe-9e98-fb44867fda11@linux.intel.com>
-Date:   Fri, 31 Aug 2018 07:47:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 15:00:46 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:57689 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727990AbeHaTAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 15:00:46 -0400
+Received: (qmail 9454 invoked by uid 500); 31 Aug 2018 10:52:54 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 31 Aug 2018 10:52:54 -0400
+Date:   Fri, 31 Aug 2018 10:52:54 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Andrea Parri <parri.andrea@gmail.com>
+cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <mingo@kernel.org>, <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+In-Reply-To: <20180831091641.GA3634@andrea>
+Message-ID: <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <1535726032.32537.0.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/31/2018 07:33 AM, Yu-cheng Yu wrote:
-> Please use the form:
+On Fri, 31 Aug 2018, Andrea Parri wrote:
+
+> On Thu, Aug 30, 2018 at 05:31:32PM -0400, Alan Stern wrote:
+> > On Thu, 30 Aug 2018, Andrea Parri wrote:
+> > 
+> > > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > > do provide this ordering for locks, albeit for varying reasons.
+> > > > Therefore this patch changes the model in accordance with the
+> > > > developers' wishes.
+> > > > 
+> > > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Reviewed-by: Will Deacon <will.deacon@arm.com>
+> > > > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > 
+> > > Round 2 ;-), I guess...  Let me start from the uncontroversial points:
+> > > 
+> > >   1) being able to use the LKMM to reason about generic locking code
+> > >      is useful and desirable (paraphrasing Peter in [1]);
+> > > 
+> > >   2) strengthening the ordering requirements of such code isn't going
+> > >      to boost performance (that's "real maths").
+> > > 
+> > > This patch is taking (1) away from us and it is formalizing (2), with
+> > > almost _no_ reason (no reason at all, if we stick to the commit msg.).
+> > 
+> > That's not quite fair.  Generic code isn't always universally
+> > applicable; some of it is opt-in -- meant only for the architectures
+> > that can support it.  In general, the LKMM allows us to reason about
+> > higher abstractions (such as locking) at a higher level, without
+> > necessarily being able to verify the architecture-specific details of
+> > the implementations.
 > 
-> 	pte_t new_pte, pte = READ_ONCE(*ptep);
-> 	do {
-> 		new_pte = /* ... */;
-> 	} while (!try_cmpxchg(ptep, &pte, new_pte);
+> No, generic code is "universally applicable" by definition; see below
+> for more on this point.
 
-It's probably also worth doing some testing to see if you can detect the
-cost of the cmpxchg.  It's definitely more than the old code.
+Then perhaps we should be talking about "partially generic" code; i.e., 
+code that applies to many but not all architectures.
 
-A loop that does mprotect(PROT_READ) followed by
-mprotect(PROT_READ|PROT_WRITE) should do it.
+> > > In [2], Will wrote:
+> > > 
+> > >   "[...] having them [the RMWs] closer to RCsc[/to the semantics of
+> > >    locks] would make it easier to implement and reason about generic
+> > >    locking implementations (i.e. reduce the number of special ordering
+> > >    cases and/or magic barrier macros)"
+> > > 
+> > > "magic barrier macros" as in "mmh, if we accept this patch, we _should_
+> > > be auditing the various implementations/code to decide where to place a
+> > > 
+> > >   smp_barrier_promote_ordinary_release_acquire_to_unlock_lock()" ;-)
+> > > 
+> > > or the like, and "special ordering cases" as in "arrgh, (otherwise) we
+> > > are forced to reason on a per-arch basis while looking at generic code".
+> > 
+> > Currently the LKMM does not permit architecture-specific reasoning.  It 
+> > would have to be extended (in a different way for each architecture) 
+> > first.
+> 
+> Completely agreed; that's why I said that this patch is detrimental to
+> the applicability of the LKMM...
+
+This ignores the attitude of the kernel developers who want locking to 
+have the stronger RCtso semantics.  From their point of view, the patch 
+enhances the LKMM's applicability.
+
+> > For example, one could use herd's POWER model combined with the POWER 
+> > compilation scheme and the POWER-specific implementation of spinlocks 
+> > for such reasoning.  The LKMM alone is not sufficient.
+> > 
+> > Sure, programming and reasoning about the kernel would be easier if all
+> > architectures were the same.  Unfortunately, we (and the kernel) have
+> > to live in the real world.
+> > 
+> > > (Remark: ordinary release/acquire are building blocks for code such as
+> > >  qspinlock, (q)rwlock, mutex, rwsem, ... and what else??).
+> > 
+> > But are these building blocks used the same way for all architectures?
+> 
+> The more, the better! (because then we have the LKMM tools) 
+> 
+> We already discussed the "fast path" example: the fast paths of the
+> above all resemble:
+> 
+>   *_lock(s):  atomic_cmpxchg_acquire(&s->val, UNLOCKED_VAL, LOCKED_VAL) ...
+>   *_unlock(s): ...  atomic_set_release(&s->val, UNLOCKED_VAL)
+> 
+> When I read this code, I think "Of course." (unless some arch. has
+> messed the implementation of cmpxchg_* up, which can happen...); but
+> then I read the subject line of this patch and I think "Wait, what?".
+> 
+> You can argue that this is not generic code, sure; but why on Earth
+> would you like to do so?!
+
+Because the code might not work!  On RISC-V, for example, the
+implementation of ordinary release/acquire is currently not as strong
+as atomic release/acquire.
+
+Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
+should be correct on all existing architectures.  And Paul has invited 
+a patch to modify the LKMM accordingly.  If you feel that such a change 
+would be a useful enhancement to the LKMM's applicability, please write 
+it.
+
+Alan
+
