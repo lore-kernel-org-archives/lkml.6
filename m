@@ -2,117 +2,95 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5BBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0701CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D35F2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D35F2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ACB5120658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB5120658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbeHaPaE (ORCPT
+        id S1728084AbeHaPa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 11:30:04 -0400
-Received: from mga09.intel.com ([134.134.136.24]:17906 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbeHaPaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 11:30:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 04:23:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="84966070"
-Received: from ssirohi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.48.112])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Aug 2018 04:22:47 -0700
-Date:   Fri, 31 Aug 2018 14:22:45 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
- manager
-Message-ID: <20180831112245.GC16827@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
- <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
- <20180828083540.GH15508@linux.intel.com>
- <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
- <20180828212244.GA29488@linux.intel.com>
+        Fri, 31 Aug 2018 11:30:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726990AbeHaPa4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 11:30:56 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VBK5ro106946
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:23:55 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m741v9s44-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:23:54 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ivan@de.ibm.com>;
+        Fri, 31 Aug 2018 12:23:52 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 31 Aug 2018 12:23:49 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VBNnmX18808868
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Aug 2018 11:23:49 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19E4C4204C;
+        Fri, 31 Aug 2018 14:23:46 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D3B142041;
+        Fri, 31 Aug 2018 14:23:46 +0100 (BST)
+Received: from d06ml001.portsmouth.uk.ibm.com (unknown [9.149.76.127])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 31 Aug 2018 14:23:46 +0100 (BST)
+Received: from localhost.localdomain ([9.145.170.35])
+          by d06ml001.portsmouth.uk.ibm.com (IBM Domino Release 9.0.1FP10HF192)
+          with ESMTP id 2018083112234840-26468 ;
+          Fri, 31 Aug 2018 12:23:48 +0100 
+From:   Ivan Mikhaylov <ivan@de.ibm.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Christian Lamparter" <chunkeey@gmail.com>
+Subject: Re: [PATCH 2/2] net/ibm/emac: deletion of unneeded macros definitions
+Date:   Fri, 31 Aug 2018 14:23:45 +0300
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180829.181007.967677259832053608.davem@davemloft.net>
+References: <20180829.181007.967677259832053608.davem@davemloft.net>
+X-MIMETrack: Itemize by SMTP Server on D06ML001/06/M/IBM(Release 9.0.1FP10HF192 | April
+ 16, 2018) at 31/08/2018 12:23:48,
+        Serialize by Router on D06ML001/06/M/IBM(Release 9.0.1FP10HF192 | April 16, 2018) at
+ 31/08/2018 12:23:48,
+        Serialize complete at 31/08/2018 12:23:48
+X-TNEFEvaluated: 1
+X-TM-AS-GCONF: 00
+x-cbid: 18083111-0008-0000-0000-0000026A4136
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083111-0009-0000-0000-000021D244EB
+Message-Id: <20180831112345.16594-1-ivan@de.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828212244.GA29488@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=739 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808310119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:22:44PM -0700, Sean Christopherson wrote:
-> On Tue, Aug 28, 2018 at 07:07:33AM -0700, Dave Hansen wrote:
-> > On 08/28/2018 01:35 AM, Jarkko Sakkinen wrote:
-> > > On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
-> > >> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> > >>> +struct sgx_epc_page_ops {
-> > >>> +	bool (*get)(struct sgx_epc_page *epc_page);
-> > >>> +	void (*put)(struct sgx_epc_page *epc_page);
-> > >>> +	bool (*reclaim)(struct sgx_epc_page *epc_page);
-> > >>> +	void (*block)(struct sgx_epc_page *epc_page);
-> > >>> +	void (*write)(struct sgx_epc_page *epc_page);
-> > >>> +};
-> > >> Why do we need a fancy, slow (retpoline'd) set of function pointers when
-> > >> we only have one user of these (the SGX driver)?
-> > > KVM has its own implementation for these operations.
-> > 
-> > That belongs in the changelog.
-> > 
-> > Also, where is the implementation?  How can we assess this code that was
-> > built to create an abstraction without both of the users?
-> 
-> I can provide an early preview of the KVM reclaim code, but honestly
-> I think that would do more harm than good.  The VMX architecture for
-> EPC reclaim is complex, even for SGX standards.  Opening that can of
-> worms would likely derail this discussion.  That being said, this
-> abstraction isn't exactly what KVM will need, but it's pretty close
-> and gives us something to build on.
-> 
-> Regardless, this layer of indirection is justifiable even with a
-> single implementation.  Reclaiming an EPC page is not a simple matter
-> of copying the data somewhere else and marking the page not present.
-> Actual eviction requires a reference to the Secure Enclave Control
-> Structure (SECS) of the enclave that owns the page.  Software needs
-> to ensure it doesn't violate the hardware-enforced access rules, e.g.
-> most reclaim activites need to be done under a per-enclave lock.
-> Not all pages have the same reclaim rules, e.g. an SECS can only
-> be reclaimed after all its child pages have reclaimed, a VA page
-> doesn't need to be blocked, etc...  And the list goes on...
+>Please do not delete these, they could be useful for other
+>developers and people reading this driver.
+Hmm, that's possible, need I resubmit first patch without this one?
 
-To simplify a bit what Sean said about the key difference to a standard
-page is that in SGX a page is part of a hierarchical structure. EPC
-pages have hardware enforced dependencies to each other.
-
-Examples: 
-
-1. You cannot delete or swap SECS before its children have been deleted or
-   swapped. You get SGX_CHILD_PRESENT erro from EREMOVE.
-2. In order to swap or fault a page you need to have an EPC page that
-   holds a version number for the page you want to swap. These are
-   called Version Array (VA) pages.
-
-/Jarkko
