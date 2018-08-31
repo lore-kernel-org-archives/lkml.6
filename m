@@ -2,126 +2,97 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E13C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DEBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC4CD2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8197A2083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:16:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQEPPi8w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4CD2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jelIu//P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8197A2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeHaXY2 (ORCPT
+        id S1727430AbeHaXZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:24:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44996 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeHaXY2 (ORCPT
+        Fri, 31 Aug 2018 19:25:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50274 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeHaXZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:24:28 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l82-v6so23532905oih.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 12:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=lc9fm95V2WdxCn8kPB0ZOs9ykONInjGymx4GcY0zwUQ=;
-        b=bQEPPi8wy6UxUsjavOTr6QyUXNDg2ND4CGc5TMp3Ght8jlIAi7BBAQNL15eA2gPtKL
-         crpH5z7khGeAgBPlBIt9xfM6ZWxHEgiEGqQN0xRy1pHGyVVfNVSxF2nCssuZOFGqj7i4
-         0kFKZMJBgVjqi1nkZ49mfNOBzM4/4VFfR8vmVpQALuvIXfMsZq4TiwXqY1OFapyjCya0
-         PA9peRYKqqWtEssuUS7nk4fo/I7MySGZYcy4+ifkVcpZsaq+AdK3JWVPbwdfsi+zlLlF
-         xhdVWOzs8kvVYThwgNCndoUIiVdW/D3zkfcpob8r0icAFPHoxz1W68tu/XMEYKC5639X
-         iaSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=lc9fm95V2WdxCn8kPB0ZOs9ykONInjGymx4GcY0zwUQ=;
-        b=KOlCJrvcURAyDwTAZtdFap4lky7IhaDi8QcliXFZRJPRhBHf+IeJttWbuwXpYNhVAi
-         +s8qL4GXngkMCFmS9L1W6gk0fRBhWieKAc9pErGxCsuNxpA+YHLZ0F4BGyThiv/+jH+4
-         u0FK9/8UCaeFH11+r7bTY0NcYg6OI26Fo6H9HNySwCPrFwAyJ3OIRkBg+nwJiZ7K7unz
-         gHeguZYCxprRTJThk2+4jrtmzJqmK/aMxNerac35enaXw+ak3r0kY/Wt4TT8teDRdxs2
-         VRDUlWM/68XaCdH1z9INvMosx4ZAa/XHdz4A9XOHJCB39rFscJiKRnwY8T75jfCkvIVC
-         Qsow==
-X-Gm-Message-State: APzg51BeDKEcki8r0pC5Dnt8eMAJrjRZ9Qq+awh7cLdSg6yQsGD9/C09
-        6IzS7GlBgn+Gyxhd84XaRg==
-X-Google-Smtp-Source: ANB0VdbOlB6QeRPEDbg74Sk8SBgdqSzff4vZREP1tq45AYZr8bVaVnRukx2nUXngjtS56Dp+Wv9a7w==
-X-Received: by 2002:a54:4f94:: with SMTP id g20-v6mr8160812oiy.130.1535742935690;
-        Fri, 31 Aug 2018 12:15:35 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.128])
-        by smtp.gmail.com with ESMTPSA id m11-v6sm10958362oif.27.2018.08.31.12.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 12:15:34 -0700 (PDT)
-Received: from [IPv6:2001:470:b8f6:1b:910d:22e8:ff84:3fdd] (unknown [IPv6:2001:470:b8f6:1b:910d:22e8:ff84:3fdd])
-        by serve.minyard.net (Postfix) with ESMTPSA id 8C8E4677;
-        Fri, 31 Aug 2018 14:15:33 -0500 (CDT)
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH v2] ipmi: Fix NULL pointer dereference in ssif_probe
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180831150034.GA22019@embeddedor.com>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <6efd45da-8b35-b1c8-bd0e-148c578c99f5@acm.org>
-Date:   Fri, 31 Aug 2018 14:15:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 19:25:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=XkRtyCxu3r8Zhxu8rcdfGndJLyorZ5E6H4SaM8QtWDY=; b=jelIu//PsXEjYCk42oRW9uIj8W
+        dnkroLfQxhOAYas1h4gpv/IRN+nPCBADzDzBfby+qpp/Mzp0ySAF0S+cQoT5qXfAqs5U6BlHywq05
+        i6fw33weIuowEnMNm+29onidP7aYve2JC89bVweYqR8VGa7NemXIx7KrSJNE5wnSsuZ4uGpOwseDA
+        VBbXPv3RF22OwkMtPmVt12P8EqOLYQROeTp9cOxtLuhti341e+Fki8qu7Pxg8JFqMskH4p86bd5uU
+        +i1kgruDlmTQt4DOfRoC8XdRmhMoLfebCnkDexC8v7BE9xHoIbvUTw6d01QdEmMGc4MJHg74vXstN
+        LAVdz28g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvou2-0000iR-Ly; Fri, 31 Aug 2018 19:16:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B2AD02024EB09; Fri, 31 Aug 2018 21:16:11 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 21:16:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Numan =?utf-8?B?RGVtaXJkw7bEn2Vu?= <if.gnu.linux@gmail.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: PROBLEM: Keyboard not responding after resuming from
+ suspend/hibernate
+Message-ID: <20180831191611.GR24124@hirez.programming.kicks-ass.net>
+References: <20180831215121.1b1f66bf@korsan.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180831150034.GA22019@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <20180831215121.1b1f66bf@korsan.localdomain>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/31/2018 10:00 AM, Gustavo A. R. Silva wrote:
-> There is a potential execution path in which function ssif_info_find()
-> returns NULL, hence there is a NULL pointer dereference when accessing
-> pointer *addr_info*
->
-> Fix this by null checking *addr_info* before dereferencing it.
+On Fri, Aug 31, 2018 at 09:53:11PM +0300, Numan Demirdöğen wrote:
+> If I put laptop to suspend or hibernate by closing lid, power
+> manager or any other method and then I resume/wake up laptop, keyboard
+> is not responding. My laptop is a Sony Vaio VPCEH2F1E. 
+> 
+> Steps to produce bug:
+> 1. Boot
+> 2. Put laptop to sleep
+> 3. Resume
+> What I expect to happen: Keyboard responds to key press.
+> What happens: Keyboard does not respond but mouse and trackball are
+> working.
+> 
+> git bisect point 9d659ae14b545c4296e812c70493bfdc999b5c1c as the first
+> bad commit.
+> 
+> Bad commit link:
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=9d659ae14b545c4296e812c70493bfdc999b5c1c
 
-Thanks for catching this quickly, before it went out.  It's merged into 
-my next tree.
+That doesn't make any kind of sense... if that commit had trouble (oddly
+there is one another report fingering this) all the mutex locking should
+be busted (and there is a _lot_ of that in the kernel).
 
--corey
+I really wouldn't know where to begin debugging this. Suspend/resume
+isn't really something I know much of, all I can say it that it works on
+my laptop.
 
-> Addresses-Coverity-ID: 1473145 ("Explicit null dereferenced")
-> Fixes: e333054a91d1 ("ipmi: Fix I2C client removal in the SSIF driver")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-> Changes in v2:
->   - Fix typo in commit log.
->
->   drivers/char/ipmi/ipmi_ssif.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-> index 2ff3679..764d305 100644
-> --- a/drivers/char/ipmi/ipmi_ssif.c
-> +++ b/drivers/char/ipmi/ipmi_ssif.c
-> @@ -1641,7 +1641,9 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
->   
->    out:
->   	if (rv) {
-> -		addr_info->client = NULL;
-> +		if (addr_info)
-> +			addr_info->client = NULL;
-> +
->   		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
->   		kfree(ssif_info);
->   	}
+Rafael, any idea where to start looking for this?
 
+>  Link to actual bug report:
+> https://bugzilla.kernel.org/show_bug.cgi?id=195471
 
+No, _this_ is the actual report, that is a random website you put stuff
+on.
