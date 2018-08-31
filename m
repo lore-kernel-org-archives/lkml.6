@@ -2,113 +2,149 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BEEC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18937C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64C96205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C602C205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="N4uzRMmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C96205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JNXiDy1r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C602C205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbeHaNti (ORCPT
+        id S1727765AbeHaNu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:49:38 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:61607 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeHaNti (ORCPT
+        Fri, 31 Aug 2018 09:50:29 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41614 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727410AbeHaNu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:49:38 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w7V9ggNQ010588;
-        Fri, 31 Aug 2018 18:42:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7V9ggNQ010588
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535708563;
-        bh=kwnqRBs+OZKfqJ00gpwaNHG9W3str+toDOJR3V65k4E=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=N4uzRMmETPtlSRO6gmbpH+VosHvWdwlGPJCEFpCxPFhRAvHuc+cNwE6+d37E4hgN3
-         JJXkOQhFy60/D7RQgFx5pN+emXF9yPqDarQiHoPq9Ud28Ik72g84SiUYOvRpwIRiIj
-         cW+38GXkeu+FawunieB9wE/X9mzP+ywAAjATxZFKZsq3axazGKcRsOGik/9xmBGkGa
-         Q7OT+l1wnBdeS9IoxjG920RpHYo5hPnw6Oj9LI+84ql4OcIKHD21NNFQA2Q+/mn9DW
-         1ka8Zw7CZrMJNFzW2nleZbpW3B3CC6uyJ6+qB5n0c2xtAqRIFx6zoEr00t/7IKKRoV
-         3LinAQ4CnHwuA==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id w7-v6so7715363uan.9;
-        Fri, 31 Aug 2018 02:42:42 -0700 (PDT)
-X-Gm-Message-State: APzg51BEt0UjjfM//nLkxkpkKWh2DI4aqBRJdNxp+ZdKGE64y2SXIZI7
-        CBqfyTfJW2j3XXLBD0MaxwpcF5C6La5bccFHdGE=
-X-Google-Smtp-Source: ANB0VdbgHhstuQWtTArXHr+Jqx/9u/CWtvUn0WLH6sGOiJzSa+mpwlhE+9kHUe95WVa+6rz7bhbMM23RQSFoQ3BP9ow=
-X-Received: by 2002:ab0:4f17:: with SMTP id n23-v6mr9208695uah.135.1535708561786;
- Fri, 31 Aug 2018 02:42:41 -0700 (PDT)
+        Fri, 31 Aug 2018 09:50:29 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f38-v6so8595198edd.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 02:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8VHe5ji9OPYS6+EyWeSRlHZeRlQ2kxQyLeNoAecrM+o=;
+        b=JNXiDy1rUQa8Ei43BYnJC22qxF113EQxHTOv92sH4GjQ1MEafjyZ8qUd/ZcouIAvZ1
+         HyEscNgz+EMT+pzu40HrMr4EBAODBIYPtVeU/9HtPGIyiM7sUol3BRiZ8lOUYsajACTu
+         CSGRIsn6mvsqbpHwVL/+MXkkG+M6XmaqId22Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8VHe5ji9OPYS6+EyWeSRlHZeRlQ2kxQyLeNoAecrM+o=;
+        b=flV40S8GnO4oYbgfPoDbEMGEIq6IQ4+VOAHsjq9pw1HJ4BxwNoUQgrE7Yk/0RsIAYV
+         4qqO62ZVsssD59XOYVaZfbekTYMaiQzN1qIwsZAE1rZQhiaq6Ht9rkznXhO1B4NXBmuJ
+         enuTTZpXgjBYwbVmdX9BAL60OiDVkB8C6XGcYlmU7F/KVHClbzdkXe5iaEvyMUp6WuWz
+         JlXvVKkUA+HqBM/I/fbk3DDThaaFmnN3PCg+TjQgIhE5sNeEoFFKbhKO6AxFhbHDb38I
+         Px8C8GvRpeYbnQ2uhlbIrEkWz+5OfX/YEcXMD0fZKrXoGfyUxTs2+zegf9jDrlCkR6LM
+         T5rA==
+X-Gm-Message-State: APzg51COPvGxH2M1PwcmqjGhmb5aUdkfVDo7utEYlRou5Cx7AOlJhIo3
+        vigsrE3JrSEf+LK1uEKrZQmEvQ==
+X-Google-Smtp-Source: ANB0VdamkvFb4qb4tWUT7Xh4FcHeSGoo9IBJUenq/PZM1PE0SvYGS+SAWJEChgVfMeLBI4dbYKP5mQ==
+X-Received: by 2002:a50:878b:: with SMTP id a11-v6mr16459699eda.305.1535708628554;
+        Fri, 31 Aug 2018 02:43:48 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id h34-v6sm4258920eda.58.2018.08.31.02.43.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 02:43:47 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:43:42 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 3/7] EXP tools/memory-model: Add more LKMM
+ limitations
+Message-ID: <20180831094341.GA4634@andrea>
+References: <20180829211018.GA19646@linux.vnet.ibm.com>
+ <20180829211053.20531-3-paulmck@linux.vnet.ibm.com>
+ <20180830091713.GA4617@andrea>
+ <20180830221814.GQ4225@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:5155:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 02:42:01
- -0700 (PDT)
-In-Reply-To: <177f25ad-de40-ce3f-987f-ac34c2559be4@infradead.org>
-References: <alpine.LRH.2.21.1808191406030.12334@math.ut.ee> <177f25ad-de40-ce3f-987f-ac34c2559be4@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 31 Aug 2018 18:42:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATOTW2mSHB_D3BcgtXPuiLGpLz_rbjgPQzCq4hCLhTfYw@mail.gmail.com>
-Message-ID: <CAK7LNATOTW2mSHB_D3BcgtXPuiLGpLz_rbjgPQzCq4hCLhTfYw@mail.gmail.com>
-Subject: Re: make *config regression: pkg-build
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Meelis Roos <mroos@linux.ee>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830221814.GQ4225@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+> > > +	b.	The "unless" RMW operations are not currently modeled:
+> > > +		atomic_long_add_unless(), atomic_add_unless(),
+> > > +		atomic_inc_unless_negative(), and
+> > > +		atomic_dec_unless_positive().  These can be emulated
+> > > +		in litmus tests, for example, by using atomic_cmpxchg().
+> > 
+> > There is a prototype atomic_add_unless(): with current herd7,
+> > 
+> > $ cat atomic_add_unless.litmus
+> > C atomic_add_unless
+> > 
+> > {}
+> > 
+> > P0(atomic_t *u, atomic_t *v)
+> > {
+> > 	int r0;
+> > 	int r1;
+> > 
+> > 	r0 = atomic_add_unless(u, 1, 2);
+> > 	r1 = atomic_read(v);
+> > }
+> > 
+> > P1(atomic_t *u, atomic_t *v)
+> > {
+> > 	int r0;
+> > 	int r1;
+> > 
+> > 	r0 = atomic_add_unless(v, 1, 2);
+> > 	r1 = atomic_read(u);
+> > }
+> > 
+> > exists (0:r1=0 /\ 1:r1=0)
+> > 
+> > $ herd7 -conf linux-kernel.cfg atomic_add_unless.litmus
+> > Test atomic_add_unless Allowed
+> > States 3
+> > 0:r1=0; 1:r1=1;
+> > 0:r1=1; 1:r1=0;
+> > 0:r1=1; 1:r1=1;
+> > No
+> > Witnesses
+> > Positive: 0 Negative: 3
+> > Condition exists (0:r1=0 /\ 1:r1=0)
+> > Observation atomic_add_unless Never 0 3
+> > Time atomic_add_unless 0.00
+> > Hash=fa37a2359831690299e4cc394e45d966
+> > 
+> > The last commit in the herdtools7 repo. related to this implementation
+> > (AFAICT) is:
+> > 
+> >   9523c340917b6a ("herd/linux: make atomic_add_unless a primitive, so as to yield more precise dependencies for the returned boolean.")
+> > 
+> > but I can only vaguely remember those dependencies issues now :/  ...;
+> > maybe we can now solve these issues?  or should we change herd7 to re-
+> > turn a warning?  (Notice that this primitive is currently not exported
+> > to the linux-kernel.def file.)
+> 
+> Cool!  It would be good to add this to the .def file once the underlying
+> herd7 machinery is ready.  And then I would update the documentation
+> accordingly.  Or happily accept a patch updating the documentation,
+> as the case might be.  ;-)
 
-2018-08-20 0:37 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 08/19/2018 04:15 AM, Meelis Roos wrote:
->> Just tried to run 'make menuconfig' on v4.18-10568-g08b5fa819970 and
->> found a bad surprise:
->>
->> 'make *config' requires 'pkg-config'. Please install it.
->> make[1]: *** [scripts/kconfig/Makefile:219: scripts/kconfig/.mconf-cfg] Error 1
->>
->> This is clearly a regression - I have libncurses devele pakcage
->> installed in the default system location (as do 99%+ on actuall
->> develeopers proobably) and in this case, pkg-config is useless.
->> pkg-config is needed only when libraries and headers are installed in
->> non-default locations but it is bad to require installation of
->> pkg-config on all the machines where make menuconfig would be possibly
->> run (for example, I have a aboult 100 machine kernel testbed with
->> self-hosted kernel compilation and machine-specific kernel
->> configurations that ocassionally need tweaking).
->>
->> I notice 4.18 complained it can not find pkg-config but still worked.
->> This is clearly better than now.
->>
->> If we want to support developers with libraries in non-default
->> locations, why not - but the common case of system include path should
->> work without any trouble or warnings. For exaple, test if compilation
->> against ncurses works, and if not retry it with pkg-config (and error
->> out if it does not give working result).
->>
->
-> Hi,
-> This is due to my patch: 4ab3b80159d4db63b902ef635d4b5e882911b2da.
->
-> Yamada-san, any ideas?  Feel free to just revert it.
->
+Fair enough, ;-)  Please feel free to add:
 
-Sorry for delay, I chose a partial revert
-because I want to keep checking pkg-config for {g,x}config.
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-I posted a patch.
-
-
--- 
-Best Regards
-Masahiro Yamada
+  Andrea
