@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A40C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33AD20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEC5120841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/uQQtZN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33AD20841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LV3yQoGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC5120841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeIADNB (ORCPT
+        id S1728091AbeIADNC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:13:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40086 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbeIADNA (ORCPT
+        Fri, 31 Aug 2018 23:13:02 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34652 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbeIADNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:13:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n2-v6so12528925wrw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:18 -0700 (PDT)
+        Fri, 31 Aug 2018 23:13:02 -0400
+Received: by mail-wm0-f68.google.com with SMTP id j25-v6so4372002wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uRO0Wj60NCrQjcO1zavlVZ4z9J2KbXG1nwQS6DaRvzI=;
-        b=j/uQQtZN5mqpGlfnp5xZrsnxn8dF60qeE5i9TCFajnRrFdY+wocKW+HngyuyX49sWu
-         iFYay1RMgdCW4k/gaEHK5uvqms6mPpxnRpVj1bDAYC88W5/jG5Gvcnk3V/Olp/MJLGx6
-         SpruSYudMfNB7PO3IgcHd78vhpeE0snLbxrZ67taT8V6LDxR6Gcukamb1SetMBXn6XNu
-         smf5iJHo4QCkTQ+NETB8sZa5MLo3BDRdryrvZu4fvXF8BcNySvKzNQvNjfff27TOMwc9
-         FP2uEsRIH1AXFcirE4rcips4g0JDqWQ/byAblVs3GLL7kDrT6hh0gx8LLi7+uGNwGWXr
-         lLZQ==
+        bh=ZY1oOLnvvIu+TIFMSTHaSpn3nf3ouvQ7kg9qNVkEnLE=;
+        b=LV3yQoGj+gDiFheHq3LuC+wdtRd59OXUNRb2+0xX1QG1zLtI0nuaFsAKNUXCPbsEbu
+         P2LCi/iTnWOHlyz3GKS+6rrBBYPNuNeQ2uRa3lBDMsFTeUqKPcFZ/BX+4h3eIlpm0Owv
+         3uByAwTI7WAtQeNUzCglzvpqVsDI5b30ZpWyIfbvzI32vmGqpyrEKrdZ8CFKIPkXOaug
+         BM+IZuqJBzRrHQPPf++rAWoBOqy1YtwOtdeXuc/f/fswSUwxRGdb8AEZpwPOo+VM+z2m
+         iPxCOLn6QeSoG4b9LwB81fN5ymhmuE8wfVCdMGmq3JAT0TpAPSVPoU6jCmYMQHd0vOYm
+         SR0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uRO0Wj60NCrQjcO1zavlVZ4z9J2KbXG1nwQS6DaRvzI=;
-        b=Y5RzZrNyiFo4PvRAtX9qQ+L9hA8tvkRC0Wi8o40sSktqFAWAIw+2+7XWB5SA4DDom4
-         kUHVFPebhzR0xsZ7OtvaCJJfkcVyzYeDNL0aaS8PFDvApCiMGgHIza/w3JxpWdU1+W+W
-         gbBQjcE9pn/5LceTFQYhh1fHZz7OIG5JHo+lU4Y/G7ddbglfs50dFdSXSDYcnyANXjQM
-         aKcEXNNUjYTJqt0ISC6Y3XeNFbY7wD3/m13OoYED40FGyjCcBD3zzcxfJE/fBbHKRs9E
-         jm6kM/0MVk3YzTwWlEEMJZ76X/tHIEaVwug6iNkFCYOyPR0L628kbeI7FE+c7tXm1Gcl
-         UO9Q==
-X-Gm-Message-State: APzg51CdMh39NJrrv2GcCOMUKoslF1TdOBWoeuSIO53+RVxYRGwAEPTl
-        2qBhHC0FWkVGI6SiYgd6vSMqLgQyvcM=
-X-Google-Smtp-Source: ANB0VdZBDc/VE+60wBn89JfYkObkoc3fSnBW3uFy1wunpBrAkFUDj3xJx1QY1VqmYBpKkwikpshyKQ==
-X-Received: by 2002:adf:edd2:: with SMTP id v18-v6mr12896135wro.39.1535756597943;
-        Fri, 31 Aug 2018 16:03:17 -0700 (PDT)
+        bh=ZY1oOLnvvIu+TIFMSTHaSpn3nf3ouvQ7kg9qNVkEnLE=;
+        b=Ae76poPtiFT4Vjl6GZrNCRGCTZubn+K4eC3GKg3USbgM617sMJhBoqF5lsbyRxwlry
+         +7Tf6donL1KxRmvkrE387HVxAKs9rXf1ZFrfZqawoZMe8Bcf6qXv4oC2iZcqk162cwE4
+         owRVtY7mIkhLv0gUDJTenbJkNcrhbLvbSdnaSpEIHMODgQ5hwmEn3EIbCzafjOABCcpt
+         KjHlDe0e0MFJBw9T3BXz2n34jNYiEWUGA0gdYRCUXGNLN9AcXFL7GuIeij2kdTz9G0ex
+         WCDiYnyJOB1ci6gpPbGAXaFIuq9Y+8PY99pgpb573ovS8fDGwNY2uL/7qbW5aMKrsFEe
+         KPWw==
+X-Gm-Message-State: APzg51DVCjuK4xE5egDoXPsvN3eOfEJxzFMkWb/04BRY++vcIP4Il1j8
+        Bj1+ks7mXPcbG2PFGv1PsBROIV1bUNs=
+X-Google-Smtp-Source: ANB0VdbKy3rZ2pUK1t+lr+M4tPkiZCNzUDgSjsZq5oz6qqxhMKXqoug3FfTLEgwIShui8WC5sabv0g==
+X-Received: by 2002:a1c:c345:: with SMTP id t66-v6mr980027wmf.100.1535756599302;
+        Fri, 31 Aug 2018 16:03:19 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.16
+        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 16:03:17 -0700 (PDT)
+        Fri, 31 Aug 2018 16:03:18 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 14/20] staging:rtl8192u: Rename Offset - Style
-Date:   Sat,  1 Sep 2018 00:02:44 +0100
-Message-Id: <20180831230250.16810-15-johnfwhitmore@gmail.com>
+Subject: [PATCH 15/20] staging:rtl8192u: Rename Reserved... structure members - Style
+Date:   Sat,  1 Sep 2018 00:02:45 +0100
+Message-Id: <20180831230250.16810-16-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831230250.16810-1-johnfwhitmore@gmail.com>
 References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
@@ -73,44 +73,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the member variable 'Offset' to 'offset', this clears the
-checkpatch issue with CamelCase naming.
+Rename the 'Reserved...' members of the 'tx_desc_819x_usb' structure
+to 'reserved...'. This change clears the checkpatch issue with
+CamelCase naming.
 
-This is a coding style change which should not impact runtime code
-execution.
+This is a simple coding style change which should not impact runtime
+code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U.h      | 2 +-
- drivers/staging/rtl8192u/r8192U_core.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index 9931ede1524b..8aaea1d8cf50 100644
+index 8aaea1d8cf50..5d643870a1e3 100644
 --- a/drivers/staging/rtl8192u/r8192U.h
 +++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -159,7 +159,7 @@ extern u32 rt_global_debug_component;
- struct tx_desc_819x_usb {
+@@ -160,7 +160,7 @@ struct tx_desc_819x_usb {
  	/* DWORD 0 */
  	u16	pkt_size;
--	u8	Offset;
-+	u8	offset;
- 	u8	Reserved0:3;
+ 	u8	offset;
+-	u8	Reserved0:3;
++	u8	reserved0:3;
  	u8	CmdInit:1;
  	u8	LastSeg:1;
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 2a3cb0f1ac07..d4af6cc01fc6 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -1516,7 +1516,7 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
- 	/* DWORD 0 */
- 	tx_desc->LINIP = 0;
- 	tx_desc->CmdInit = 1;
--	tx_desc->Offset =  sizeof(struct tx_fwinfo_819x_usb) + 8;
-+	tx_desc->offset =  sizeof(struct tx_fwinfo_819x_usb) + 8;
- 	tx_desc->pkt_size = (skb->len - TX_PACKET_SHIFT_BYTES) & 0xffff;
+ 	u8	FirstSeg:1;
+@@ -177,7 +177,7 @@ struct tx_desc_819x_usb {
+ 	u8	PIFS:1;
+ 	u8	QueueSelect:5;
+ 	u8	NoACM:1;
+-	u8	Reserved1:2;
++	u8	reserved1:2;
+ 	u8	SecCAMID:5;
+ 	u8	SecDescAssign:1;
+ 	u8	SecType:2;
+@@ -185,13 +185,13 @@ struct tx_desc_819x_usb {
+ 	/* DWORD 2 */
+ 	u16	TxBufferSize;
+ 	u8	ResvForPaddingLen:7;
+-	u8	Reserved3:1;
+-	u8	Reserved4;
++	u8	reserved3:1;
++	u8	reserved4;
  
- 	/*DWORD 1*/
+ 	/* DWORD 3, 4, 5 */
+-	u32	Reserved5;
+-	u32	Reserved6;
+-	u32	Reserved7;
++	u32	reserved5;
++	u32	reserved6;
++	u32	reserved7;
+ };
+ 
+ struct tx_desc_cmd_819x_usb {
 -- 
 2.18.0
 
