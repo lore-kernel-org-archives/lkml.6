@@ -2,137 +2,91 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725D0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD3EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD5D2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CB42083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAgFsP2K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD5D2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRDZUedq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CB42083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeHaVmy (ORCPT
+        id S1727282AbeHaVo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 17:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbeHaVmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 17:42:54 -0400
-Received: from localhost (unknown [104.132.0.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB70B20837;
-        Fri, 31 Aug 2018 17:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535736862;
-        bh=P+FS6F8pnbg0nJKzYAGqeE/zqh+YPdCKyYkNdNzgZW0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=cAgFsP2K7Wmxifj+5K+/v0PyzwLXtTqHgET4CaAvRONmX2krMWUoyGSFekGmU8mVp
-         yAhfy+SfQnosIw6kFr7EoSjPwIvGCZ76w1JQ/Dgv+H2Ayes8sRJ5PGeXhAmGgHKXvV
-         b4vmvu8RccLP8dYPaQd+Gq92NThJAmhXVu6bUVXg=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 31 Aug 2018 17:44:28 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:38460 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbeHaVo2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 17:44:28 -0400
+Received: by mail-qt0-f172.google.com with SMTP id x7-v6so15413914qtk.5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 10:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mPNDPhl/l1BKCJtvZ7gVrEjCk2pYovw45tTIHQi3c38=;
+        b=CRDZUedq+FLaW3CMDAY6KxD6YA+883Nfdd6aozjLye4GOUwoLNTkN5rr9fmXOnoVMQ
+         kG9t0zmPjTjpVNkkLvyjyStd5U/FDz3zh6UGZEAPm7hgOrbbz60Xhs60mvqw0DEcJrhh
+         z/u5VYn1cQKlwvfbLzPpgcR6gA+YPmEMA6nc2FqChygdPrJKvABNnab9pyzgdbZ2lidZ
+         DSksjTSOJMnxMbBNpJAz5K2VYIj8oI5u/5q0k2it3E5yxMg5wdrKPBffurl9QCt9YPon
+         +7Kq3TBN218MqVPF+xfEjJkUfm4tpCkP8yv7/6IjxUiXu5U5iJEnLwhOq5nK7OHJw48P
+         x63A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mPNDPhl/l1BKCJtvZ7gVrEjCk2pYovw45tTIHQi3c38=;
+        b=eB59vrMnpSyqXFI63aODFgVes0ySjR/aPhCWpjWkZvzdzu9ZThXC6Iqd3E0qrvI3i3
+         AXfRoTGKQbZqdy9Z1eazL8Rrp6v/EYIAOgwdxUKge7oLRJzuDAKNx4flebedSHdafCH6
+         HyjsLXAhww3LOj5NjEX5fylBMmBZ5nq86STyHWJhptQf9RD7XZixuk13VPiL5abQLlk9
+         WIRtOe8BkHOe/F27JgTkVyJFNvM5ubuT5TmsRqLRtXRZe+9iXyKbOgc9m0B+Xct6nVPr
+         QEAPQvTR9SgM/Bi2E3N8vNV+L2NH5MlM/VTaMMvWmPUSQT77uPHhWLXEaLq5bajE3QKH
+         46Ew==
+X-Gm-Message-State: APzg51CuutNzVeW4HWEQeGHbFPWOgnwQEH+eI+B+K3M6aC2RIaKmlId9
+        uP5VLG4AXhqTx3EbVNsvx/syUG8cDqkeUvG8efI=
+X-Google-Smtp-Source: ANB0VdY40Fcl+riDgkDR62IoKk/ZDlzPjhoI4qzBeZIxTwbm4Rc/NBTjKjjVAGwpCx1soANTAT7LeskQHMPk0PQGAb0=
+X-Received: by 2002:a0c:aed9:: with SMTP id n25-v6mr16420861qvd.10.1535736956313;
+ Fri, 31 Aug 2018 10:35:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Tony Xie <tony.xie@rock-chips.com>, heiko@sntech.de
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1535081762-20844-1-git-send-email-tony.xie@rock-chips.com>
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
- <1535081762-20844-1-git-send-email-tony.xie@rock-chips.com>
-Message-ID: <153573686206.93865.11806745452503167124@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 5/5] clk: RK808: add RK809 and RK817 support.
-Date:   Fri, 31 Aug 2018 10:34:22 -0700
+Received: by 2002:ac8:33b1:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 10:35:35
+ -0700 (PDT)
+In-Reply-To: <CANiq72=exw5RUNiZ2svNobeiX4vOhcCB1xs4fQsma2LJDDM5zg@mail.gmail.com>
+References: <CANiq72=exw5RUNiZ2svNobeiX4vOhcCB1xs4fQsma2LJDDM5zg@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Fri, 31 Aug 2018 19:35:35 +0200
+Message-ID: <CANiq72=J8cHi40wTUX6ZsF-ni7BmYsyQ6moYsixKGx5UpHWjPg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] Compiler Attributes: cover letter
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tony Xie (2018-08-23 20:36:02)
-> diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-> index 6461f28..c5d3492 100644
-> --- a/drivers/clk/clk-rk808.c
-> +++ b/drivers/clk/clk-rk808.c
-> @@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
-> +
-> +static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct rk808_clkout *rk808_clkout =3D container_of(hw,
-> +                                                        struct rk808_clk=
-out,
-> +                                                        clkout2_hw);
-> +       struct rk808 *rk808 =3D rk808_clkout->rk808;
-> +       unsigned int val;
-> +
-> +       int ret =3D regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-> +
-> +       if (ret < 0)
-> +               return ret;
+On Fri, Aug 31, 2018 at 7:30 PM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+>   * Removed noinline and noclone inside notrace since we are now post gcc 4.6
 
-The clk core handles the return value here as true or false. Probably
-should return 0 here.
-
-> +
-> +       return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-> +}
-> +
-> +static const struct clk_ops rk817_clkout2_ops =3D {
-> +       .prepare =3D rk817_clkout2_prepare,
-> +       .unprepare =3D rk817_clkout2_unprepare,
-> +       .is_prepared =3D rk817_clkout2_is_prepared,
-> +       .recalc_rate =3D rk808_clkout_recalc_rate,
-> +};
-> +
-> +static const struct clk_ops *rkpmic_get_ops(long variant)
-
-Use the enum here for 'variant'? Then the case statement here will
-complain loudly for unhandled cases.
-
-> +{
-> +       switch (variant) {
-> +       case RK809_ID:
-> +       case RK817_ID:
-> +               return &rk817_clkout2_ops;
-> +       case RK805_ID:
-> +       case RK808_ID:
-> +       case RK818_ID:
-> +               return &rk808_clkout2_ops;
-> +       }
-> +
-> +       return &rk808_clkout2_ops;
-> +}
-> +
->  static int rk808_clkout_probe(struct platform_device *pdev)
->  {
->         struct rk808 *rk808 =3D dev_get_drvdata(pdev->dev.parent);
-> @@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device =
-*pdev)
->                 return ret;
->  =
-
->         init.name =3D "rk808-clkout2";
-> -       init.ops =3D &rk808_clkout2_ops;
-> +       init.ops =3D rkpmic_get_ops(rk808->variant);
->         rk808_clkout->clkout2_hw.init =3D &init;
->  =
-
->         /* optional override of the clockname */
-> -- =
-
-> 1.9.1
-> =
-
->=20
+s/notrace/naked/
