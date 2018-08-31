@@ -2,117 +2,197 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05EAC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F8FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887642083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887642083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9ACD220837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:50:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6vXZEV5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACD220837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeIAC63 (ORCPT
+        id S1727501AbeIADAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:58:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53407 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeIAC62 (ORCPT
+        Fri, 31 Aug 2018 23:00:08 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37118 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIADAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:58:28 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvsDe-00069p-TO; Sat, 01 Sep 2018 00:48:47 +0200
-Date:   Sat, 1 Sep 2018 00:48:46 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Kashyap Desai <kashyap.desai@broadcom.com>
-cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-In-Reply-To: <486f94a563d63c4779498fe8829a546c@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com>
- <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 31 Aug 2018 23:00:07 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 2-v6so5531328pgo.4;
+        Fri, 31 Aug 2018 15:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y3AYMW2DVREEVOGphu6KAAuqbYTyiUUSsIbIQMuT8J0=;
+        b=O6vXZEV5WQiS36qBnMZemSOCaSPpspWPDN5bXPE1CedhKQ/njd5Y2QK9MPGSRO3k8d
+         FQtZLnXez09+m9J4YJcrCKEEqq6DM1QNYvtw/bfuuiM3q0pa9/2BN+Ol2MUiTRQagXd4
+         j+khF6ECpasZQ5bqKZgHsHdV1kjeU5ZKeQygwIamAUuf/4VqA5zqCI0Hp4MFpfGwmpV5
+         jpooU4uYHbmCTsDSm0+J0dMHBda7Jh14tFH9hl8mlRVo7OgGlXf0likw5pfGWdknJPES
+         ++7Bu7HvjFJSnuCfqSh8oTXf3F5Q4uZ53V+1YWD20bDWlf/x6Hn4Gf/drT2kFT1Qcn0w
+         akPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y3AYMW2DVREEVOGphu6KAAuqbYTyiUUSsIbIQMuT8J0=;
+        b=jJvAHcmzrbi0164NQh0jHRB6MF/GxnLgFxTRzO4pqCVMXnwFw+DttGCH+VhnJBtPen
+         PiCfb/kGc6eXZk+VjBq9aimJ2tOTxS64jQJfMXXZLLPlnbuE0f7TUqh4ROyEgD7mMbh1
+         NnOVqsBAtfT3/r4aVoBhhV0/6Yg9GbLrZrENw1y6nK4va3ki7ChFWTOPC1GIOe+LFy6k
+         tsJQ2fwclAbUMT0/bn5KzoBgizxzPOQO6VWJg71pMqd5t0MuYcmL8kyUD2mryLGVPyrp
+         HHPYUw1l3xQ0/t+j8zTeaUUjROtojaMGX6bNCGStpNsn82iw5wj/ZzQngofzV6y4rwAz
+         rB3w==
+X-Gm-Message-State: APzg51BZy4dYZu1SaVq83/Q9Rbl+V25jnfe7azRWVUgrWMdsEOBVVI7z
+        JV7zmAG/RRK3RuMPU5nmpUw=
+X-Google-Smtp-Source: ANB0VdZMtZ75gjC+kSe12O6XccSRSQOGc8FAdJaih6oFIFjfuDG2iz9V52h1+rY74Repl41OhVIrmQ==
+X-Received: by 2002:a63:e914:: with SMTP id i20-v6mr16380122pgh.10.1535755830013;
+        Fri, 31 Aug 2018 15:50:30 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id 77-v6sm16072066pga.40.2018.08.31.15.50.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 15:50:29 -0700 (PDT)
+Subject: Re: [PATCH 1/3] ARM: dts: qcom: Add SPMI PMIC Arbiter nodes for
+ APQ8084 and MSM8974
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <1422965880-11047-1-git-send-email-iivanov@mm-sol.com>
+ <1422965880-11047-2-git-send-email-iivanov@mm-sol.com>
+ <550311ad-8f93-3e80-9706-1321482b8c19@gmail.com>
+Message-ID: <f9b942a2-073d-5f28-81d1-63be02829fef@gmail.com>
+Date:   Fri, 31 Aug 2018 15:50:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <550311ad-8f93-3e80-9706-1321482b8c19@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018, Kashyap Desai wrote:
-> > > It is not yet finalized, but it can be based on per sdev outstanding,
-> > > shost_busy etc.
-> > > We want to use special 16 reply queue for IO acceleration (these
-> queues are
-> > > working interrupt coalescing mode. This is a h/w feature)
-> >
-> > TBH, this does not make any sense whatsoever. Why are you trying to have
-> > extra interrupts for coalescing instead of doing the following:
-> 
-> Thomas,
-> 
-> We are using this feature mainly for performance and not for CPU hotplug
-> issues.
-> I read your below #1 to #4 points are more of addressing CPU hotplug
-> stuffs. Right ? If we use all 72 reply queue (all are in interrupt
-> coalescing mode) without any extra reply queues, we don't have any issue
-> with cpu-msix mapping and cpu hotplug issues.  Our major problem with
-> that method is latency is very bad on lower QD and/or single worker case.
-> 
-> To solve that problem we have added extra 16 reply queue (this is a
-> special h/w feature for performance only) which can be worked in interrupt
-> coalescing mode vs existing 72 reply queue will work without any interrupt
-> coalescing.   Best way to map additional 16 reply queue is map it to the
-> local numa node.
+Hi All,
 
-Ok. I misunderstood the whole thing a bit. So your real issue is that you
-want to have reply queues which are instantaneous, the per cpu ones, and
-then the extra 16 which do batching and are shared over a set of CPUs,
-right?
-
-> I understand that, it is unique requirement but at the same time we may
-> be able to do it gracefully (in irq sub system) as you mentioned "
-> irq_set_affinity_hint" should be avoided in low level driver.
-
-> Is it possible to have similar mapping in managed interrupt case as below
-> ?
-> 
->     for (i = 0; i < 16 ; i++)
->         irq_set_affinity_hint (pci_irq_vector(instance->pdev,
-> cpumask_of_node(local_numa_node));
-> 
-> Currently we always see managed interrupts for pre-vectors are 0-71 and
-> effective cpu is always 0.
-
-The pre-vectors are not affinity managed. They get the default affinity
-assigned and at request_irq() the vectors are dynamically spread over CPUs
-to avoid that the bulk of interrupts ends up on CPU0. That's handled that
-way since a0c9259dc4e1 ("irq/matrix: Spread interrupts on allocation")
-
-> We want some changes in current API which can allow us to  pass flags
-> (like *local numa affinity*) and cpu-msix mapping are from local numa node
-> + effective cpu are spread across local numa node.
-
-What you really want is to split the vector space for your device into two
-blocks. One for the regular per cpu queues and the other (16 or how many
-ever) which are managed separately, i.e. spread out evenly. That needs some
-extensions to the core allocation/management code, but that shouldn't be a
-huge problem.
+The email for Ivan is no longer valid.  Can anyone else help me with
+my question?
 
 Thanks,
 
-	tglx
+Frank
+
+
+On 08/31/18 15:46, Frank Rowand wrote:
+> Hi Ivan,
+> 
+> 
+> On 02/03/15 04:17, Ivan T. Ivanov wrote:
+>> Add SPMI PMIC Arbiter configuration nodes for APQ8084 and MSM8974.
+>>
+>> Signed-off-by: Ivan T. Ivanov <iivanov@mm-sol.com>
+>> ---
+>>  arch/arm/boot/dts/qcom-apq8084.dtsi | 16 ++++++++++++++++
+>>  arch/arm/boot/dts/qcom-msm8974.dtsi | 16 ++++++++++++++++
+>>  2 files changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
+>> index 1f130bc..dbedf64 100644
+>> --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
+>> +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
+>> @@ -226,5 +226,21 @@
+>>  			clock-names = "core", "iface";
+>>  			status = "disabled";
+>>  		};
+>> +
+>> +		spmi_bus: spmi@fc4cf000 {
+>> +			compatible = "qcom,spmi-pmic-arb";
+>> +			reg-names = "core", "intr", "cnfg";
+>> +			reg = <0xfc4cf000 0x1000>,
+>> +			      <0xfc4cb000 0x1000>,
+>> +			      <0xfc4ca000 0x1000>;
+>> +			interrupt-names = "periph_irq";
+>> +			interrupts = <0 190 0>;> +			qcom,ee = <0>;
+>> +			qcom,channel = <0>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <0>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <4>;
+>> +		};
+>>  	};
+>>  };
+>> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+>> index e265ec1..2d11641 100644
+>> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
+>> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+>> @@ -247,5 +247,21 @@
+>>  			#address-cells = <1>;
+>>  			#size-cells = <0>;
+>>  		};
+>> +
+>> +		spmi_bus: spmi@fc4cf000 {
+>> +			compatible = "qcom,spmi-pmic-arb";
+>> +			reg-names = "core", "intr", "cnfg";
+>> +			reg = <0xfc4cf000 0x1000>,
+>> +			      <0xfc4cb000 0x1000>,
+>> +			      <0xfc4ca000 0x1000>;
+>> +			interrupt-names = "periph_irq";
+> 
+>> +			interrupts = <0 190 0>;
+> 
+> The final value in this interrupts property means IRQ_TYPE_NONE.
+> 
+> A WARN_ON() was added early this year to complain about use of
+> IRQ_TYPE_NONE: 83a86fbb5b56 "irqchip/gic: Loudly complain about
+> the use of IRQ_TYPE_NONE", resulting in many warnings spewing
+> forth when I boot an APQ8074 Dragonboard.  I am trying to
+> determine whether the warning is overly aggressive, or whether
+> the IRQ TYPE is incorrectly specified for the spmi node.
+> 
+> The interrupt-parent for the spmi node is intc: interrupt-controller@f9000000,
+> which has compatible = "qcom,msm-qgic2".  I do not know the architecture
+> or implementation of this interrupt controller.  Is an IRQ_TYPE_NONE
+> valid in this case, or should a specific type be provided?
+> 
+> Thanks!
+> 
+> -Frank
+> 
+> 
+>> +			qcom,ee = <0>;
+>> +			qcom,channel = <0>;
+>> +			#address-cells = <2>;
+>> +			#size-cells = <0>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <4>;
+>> +		};
+>>  	};
+>>  };
+>> --
+>> 1.9.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> .
+> 
+
