@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86585C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B62C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48BE020661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BE020661
+	by mail.kernel.org (Postfix) with ESMTP id CCA8620661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA8620661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeHaTTp (ORCPT
+        id S1728705AbeHaTTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:19:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46968 "EHLO mail.bootlin.com"
+        Fri, 31 Aug 2018 15:19:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46993 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbeHaTTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:19:44 -0400
+        id S1727303AbeHaTTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 15:19:47 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9275B2072D; Fri, 31 Aug 2018 17:11:47 +0200 (CEST)
+        id 9F61D207EB; Fri, 31 Aug 2018 17:11:50 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9E887208C7;
+        by mail.bootlin.com (Postfix) with ESMTPSA id EE3A0215E6;
         Fri, 31 Aug 2018 17:11:27 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>,
@@ -39,9 +39,9 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Allan Nielsen <allan.nielsen@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v5 1/7] i2c: designware: use generic table matching
-Date:   Fri, 31 Aug 2018 17:11:08 +0200
-Message-Id: <20180831151114.25739-2-alexandre.belloni@bootlin.com>
+Subject: [PATCH v5 2/7] i2c: designware: move #ifdef CONFIG_OF to the top
+Date:   Fri, 31 Aug 2018 17:11:09 +0200
+Message-Id: <20180831151114.25739-3-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.19.0.rc1
 In-Reply-To: <20180831151114.25739-1-alexandre.belloni@bootlin.com>
 References: <20180831151114.25739-1-alexandre.belloni@bootlin.com>
@@ -52,50 +52,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to device_get_match_data in probe to match the device specific data
-instead of using the acpi specific function.
+Move the #ifdef CONFIG_OF section to the top of the file, after the ACPI
+section so functions defined there can be used in dw_i2c_plat_probe.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/i2c/busses/i2c-designware-platdrv.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-designware-platdrv.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 1a8d2da5b000..72f403e75fa6 100644
+index 72f403e75fa6..e88090a62cb5 100644
 --- a/drivers/i2c/busses/i2c-designware-platdrv.c
 +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -86,7 +86,6 @@ static int dw_i2c_acpi_configure(struct platform_device *pdev)
- 	struct i2c_timings *t = &dev->timings;
- 	u32 ss_ht = 0, fp_ht = 0, hs_ht = 0, fs_ht = 0;
- 	acpi_handle handle = ACPI_HANDLE(&pdev->dev);
--	const struct acpi_device_id *id;
- 	struct acpi_device *adev;
- 	const char *uid;
+@@ -156,6 +156,14 @@ static inline int dw_i2c_acpi_configure(struct platform_device *pdev)
+ }
+ #endif
  
-@@ -119,10 +118,6 @@ static int dw_i2c_acpi_configure(struct platform_device *pdev)
- 		break;
- 	}
- 
--	id = acpi_match_device(pdev->dev.driver->acpi_match_table, &pdev->dev);
--	if (id && id->driver_data)
--		dev->flags |= (u32)id->driver_data;
--
- 	if (acpi_bus_get_device(handle, &adev))
- 		return -ENODEV;
- 
-@@ -291,6 +286,8 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	else
- 		t->bus_freq_hz = 400000;
- 
-+	dev->flags |= (uintptr_t)device_get_match_data(&pdev->dev);
++#ifdef CONFIG_OF
++static const struct of_device_id dw_i2c_of_match[] = {
++	{ .compatible = "snps,designware-i2c", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, dw_i2c_of_match);
++#endif
 +
- 	if (has_acpi_companion(&pdev->dev))
- 		dw_i2c_acpi_configure(pdev);
+ static void i2c_dw_configure_master(struct dw_i2c_dev *dev)
+ {
+ 	struct i2c_timings *t = &dev->timings;
+@@ -390,14 +398,6 @@ static int dw_i2c_plat_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
+-#ifdef CONFIG_OF
+-static const struct of_device_id dw_i2c_of_match[] = {
+-	{ .compatible = "snps,designware-i2c", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, dw_i2c_of_match);
+-#endif
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int dw_i2c_plat_prepare(struct device *dev)
+ {
 -- 
 2.19.0.rc1
 
