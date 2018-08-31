@@ -2,101 +2,104 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92CEC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A1BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6847F2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30D752083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aAWPTt8/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6847F2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8QKNv6g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30D752083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeHaXvg (ORCPT
+        id S1727390AbeHaXxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:51:36 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:57386 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727249AbeHaXvg (ORCPT
+        Fri, 31 Aug 2018 19:53:33 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44398 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbeHaXxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:51:36 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VJgPJ6106444;
-        Fri, 31 Aug 2018 14:42:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535744545;
-        bh=2bbyh9vlOqHrMFQgzGzOEVhfRe8gCX99+/3BFJ+cmuM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aAWPTt8/JPz2rXMzIHyUGsFfDhseow4tSEd5lZjk5typpx3ITizurvMY3/fwR88OK
-         zQDW2ujMhXMAzrTwnz86OjzdagUQr4F/S1WwBFZOjm76YSzh4Fu3NPOJ/KBxiVUQT9
-         iDvMPfsCWl9RzLMP7hvVqCShVLw4r+Ew958bOms4=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJgPgQ008070;
-        Fri, 31 Aug 2018 14:42:25 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 31
- Aug 2018 14:42:25 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 31 Aug 2018 14:42:25 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJgPgm008235;
-        Fri, 31 Aug 2018 14:42:25 -0500
-Subject: Re: [4.14.66-rt40] [report][cpuhotplug] BUG: sleeping function called
- from invalid context at kernel/locking/rtmutex.c:974
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-CC:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <4277080d-fbd1-282c-164d-c07796260c36@ti.com>
- <20180829140817.7pr5g2aonbp55fjr@linutronix.de>
- <3aaebda9-a956-55d6-0b04-f84daa6e4866@ti.com>
- <20180830091456.mz73o26ohrc3rq2f@linutronix.de>
- <c744c81c-752e-499e-ffe1-32df30a7831b@ti.com>
- <20180831193053.e3wvssdrxxnw2qah@linutronix.de>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <1bb777d4-7d72-ecdf-4b78-7d60ec49b815@ti.com>
-Date:   Fri, 31 Aug 2018 14:42:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180831193053.e3wvssdrxxnw2qah@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 31 Aug 2018 19:53:33 -0400
+Received: by mail-lf1-f66.google.com with SMTP id g6-v6so10814787lfb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 12:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=F9DaonvEapl6YnvqzHacv5ImpGQxDeye4uIerD81AMI=;
+        b=O8QKNv6gtif/f8leEzF/Ix20gGFZfauHfN1PnrqDZGF/5CmhaQ9ZwAOAZxqSpifsGB
+         2ImpsOiN13AmVJMiJLJfMv5wmVcNF2mIEieHbp+q4kdz5gPhzQu4F1yUyvC6kJ/MmkeA
+         hFBD1SdCVID70FUP5Z9LdEW2rEq5K1DiQVtFZfKrE/8596YpgCaKapTOiEU2eIiSW+S6
+         K9YO4C3t7jjTR7TLoaLzAioy1+d4XgmOgs5xUWyol+yM9MuO8cuwUE+kiMPVwr6xVayE
+         EY8+GdoFwJiHKUtwFWwaoMxZIYrEyV9C1biWnltzpfYnlWte0yuZE6b1IH2HorVvVwr+
+         Iwug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=F9DaonvEapl6YnvqzHacv5ImpGQxDeye4uIerD81AMI=;
+        b=EL8gYHn8kH3pVRMTkhnuEos+dMh3v4VEbXLrMwnqkcjKG//sLv41KEhjOqjFSjIPdN
+         L/DHh8hOravIevclYHDylcAqzZyPfdUMinFtM+czYbDZ4yBEYK6mRzMo444RqQpjXent
+         Xr0QnAfjJM3zegSonxjL++Gy5VmCuqXKYVJJPesoykQTZsj8V0qHj0A1rDJUkoszlXfa
+         KvtuHmhpVoOgP0y52DACjTaZba7vEuXV+Akq1DOuQHv4NFyjx23zV7IUX6Qf7SoZ6Qb6
+         QaTP2Lb1tAMVceehS8LYgm123Xeg+8PfoZSaEcqUB1p0UJ+2dtS5h94EYt8Hd9t7wyBa
+         cD8w==
+X-Gm-Message-State: APzg51BASX1VDLuJm3tbNp3kYFb2vlvl+5gnNrEdFjqTN7mDzt8oYBur
+        DCPDnSTIdPMUuuJHsNbzIs0=
+X-Google-Smtp-Source: ANB0VdZOstdlD9LmkCLlD3qB7hQy2Q5Hrf6pfFndIUBXwwamAhc8+qx5YnoubdyW4mJX64+Ko0QhkA==
+X-Received: by 2002:a19:ce50:: with SMTP id e77-v6mr9337261lfg.81.1535744673069;
+        Fri, 31 Aug 2018 12:44:33 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
+        by smtp.gmail.com with ESMTPSA id v18-v6sm1774960ljv.49.2018.08.31.12.44.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 12:44:32 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        Tejun Heo <tj@kernel.org>, zijun_hu <zijun_hu@htc.com>,
+        Christoph Lameter <cl@linux.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: percpu: remove unnecessary unlikely()
+Date:   Fri, 31 Aug 2018 22:44:22 +0300
+Message-Id: <20180831194422.13730-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+WARN_ON() already contains an unlikely(), so it's not necessary to
+wrap it into another.
 
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Acked-by: Dennis Zhou <dennisszhou@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: zijun_hu <zijun_hu@htc.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+---
+ mm/percpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 08/31/2018 02:30 PM, Sebastian Andrzej Siewior wrote:
-> On 2018-08-31 14:19:53 [-0500], Grygorii Strashko wrote:
->>
->> I've tried this and do not see warnings. I'm sending 4.14-rt patches i have as
->> I could miss smth while cherry-picking.
-> 
-> perfect. Thanks for the confirmation.
-> I saw your three patches. Could you please instead just backport the two
-> patches I have in v4.16 so that it applies on v4.14?
-> 
-
-Do you mean these two:
-https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/commit/?h=linux-4.16.y-rt&id=c7a3334c762a9b1dd2e39cb2ded00ce66e8a06d1
-
-https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/commit/?h=linux-4.16.y-rt&id=e083f14dc2e98ced872bf077b4d1cccf95b7e4f8
-
-
+diff --git a/mm/percpu.c b/mm/percpu.c
+index a749d4d96e3e..f5c2796fe63e 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -2588,7 +2588,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
+ 	BUG_ON(ai->nr_groups != 1);
+ 	upa = ai->alloc_size/ai->unit_size;
+ 	nr_g0_units = roundup(num_possible_cpus(), upa);
+-	if (unlikely(WARN_ON(ai->groups[0].nr_units != nr_g0_units))) {
++	if (WARN_ON(ai->groups[0].nr_units != nr_g0_units)) {
+ 		pcpu_free_alloc_info(ai);
+ 		return -EINVAL;
+ 	}
 -- 
-regards,
--grygorii
+2.17.1
+
