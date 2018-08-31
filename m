@@ -2,89 +2,102 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B7CC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD7AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF53D20835
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:36:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF53D20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7D6382077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:38:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="ZIR6D0IY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6382077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbeHaToC (ORCPT
+        id S1729099AbeHaTqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:44:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52868 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbeHaToC (ORCPT
+        Fri, 31 Aug 2018 15:46:04 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33809 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728872AbeHaTqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:44:02 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvlSM-0007tG-My; Fri, 31 Aug 2018 17:35:30 +0200
-Date:   Fri, 31 Aug 2018 17:35:30 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Tony Luck <tony.luck@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Anvin <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH] x86/mce: Fix set_mce_nospec() to avoid #GP fault
-In-Reply-To: <CA+55aFy+R8pw1aX84cGNBNbtDgOMANXqX3+-MxAbLZRnUj=0vg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808311731110.4105@nanos.tec.linutronix.de>
-References: <20180830214517.29372-1-tony.luck@intel.com> <CA+55aFxVQqnFVQaCYHbnWnt3kBfVkLWgNvKFkf6qgDWCSDNpEg@mail.gmail.com> <CA+8MBbLKWj0RVM5astYB7_htJZ0203cQ65BWJO_o4=WDWn2kAw@mail.gmail.com>
- <CA+55aFy+R8pw1aX84cGNBNbtDgOMANXqX3+-MxAbLZRnUj=0vg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 31 Aug 2018 15:46:04 -0400
+Received: by mail-qt0-f195.google.com with SMTP id m13-v6so15033185qth.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4horjyeJc+AP18U1mdCUwawf1Q45fUOIo0sacVoEYXQ=;
+        b=ZIR6D0IYHg6u+A+5s8aeDh8kd8lRi8BapEmyS73g4N7SiM6QgrZdfo64z1j4F4NZsa
+         Y22ROBc/3jomOQ9feMbV9cWEDmdaT3rXFmm9I72rjJfOVrPGc8MM/W3QpP+wFWRK7fTw
+         fGEsGrYZ26w6YmTF50Qr24SUZz1rCQNSgwPOAsE3SroC9QVxI4e1/r2H2MYThYuQSz3B
+         OM7MU6Z0Fyq6xk/t/jzXyNMQsvcPQ8yI/8oyWy5EnmmyWE7Rr0AvSkYUXtIBRSVvQROr
+         KeNmGWK8UsUwBiwVCg/60hlrKh6x0N91ZJ1XDYKbOyKW/sb0g+/YoZ8RWgJydscCXa98
+         Y5Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4horjyeJc+AP18U1mdCUwawf1Q45fUOIo0sacVoEYXQ=;
+        b=psMFaM0L6MARAb9DPXqMuYx1qjm2IvyuxVXpxE3+MCId5ncsCONJjA9FJLO0Q+S2vL
+         eXglJF2yUzrcIqwvPetEIy7vLo9C/Cuk1gbGeSJ7I5Nlckc4il3DzK+E2OPK9IrpjduA
+         Oqhi127ObmhVsapzqlGgcQ3nLmVquRDD4P/q5/0Sn/rkTp2pzFjq3BhssN02DPdeOVbo
+         rUrI/Ks3FrO6nysBl0bt7z9/HQNd5ipNWNO5LCWYgD57xcQZ/3jj6uDd34jL4zVgLRv6
+         oqAv7qbTELAUSpID6hjChyJmlGx+dulFKlu3iXUaTT+YahpiDdh6cRDCgCexTOKXIE+y
+         WA+Q==
+X-Gm-Message-State: APzg51Avp8qcw+Rdw2MNmOUjBeLlbAzVzwCTGf3unb25HGB5n7T6bF4Q
+        FyEzGnb1xSaQ4S5nDWuZQgHQJg==
+X-Google-Smtp-Source: ANB0VdZEs5zgD+bM4hP7hhWMzuqdoov/JToYy0XwB4A2LO2PErzxk4Y7wubMmUUKbPM3+J4ROtzOiA==
+X-Received: by 2002:aed:2524:: with SMTP id v33-v6mr16672444qtc.319.1535729880835;
+        Fri, 31 Aug 2018 08:38:00 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id o124-v6sm6183968qkd.61.2018.08.31.08.37.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 08:37:59 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:37:59 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennisszhou@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/15] blkcg: update blkg_lookup_create to do locking
+Message-ID: <20180831153757.ztep3tw5j4zmlatm@destiny>
+References: <20180831015356.69796-1-dennisszhou@gmail.com>
+ <20180831015356.69796-6-dennisszhou@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831015356.69796-6-dennisszhou@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018, Linus Torvalds wrote:
-> On Thu, Aug 30, 2018 at 6:49 PM Tony Luck <tony.luck@intel.com> wrote:
-> >
-> > Just checking "do we have a non-canonical address" at the bottom of that
-> > call stack and flipping bit 63 back on again seems like a bad idea.
+On Thu, Aug 30, 2018 at 09:53:46PM -0400, Dennis Zhou wrote:
+> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 > 
-> You could literally do something like
+> To know when to create a blkg, the general pattern is to do a
+> blkg_lookup and if that fails, lock and then do a lookup again and if
+> that fails finally create. It doesn't make much sense for everyone who
+> wants to do creation to write this themselves.
 > 
->     /* Make it canonical in case we flipped the high bit */
->     addr = (long)(addr<<1)>>1;
+> This changes blkg_lookup_create to do locking and implement this
+> pattern. The old blkg_lookup_create is renamed to __blkg_lookup_create.
+> If a call site wants to do its own error handling or already owns the
+> queue lock, they can use __blkg_lookup_create.
 > 
-> in the call to clflush and it magically does the right thing.
-> 
-> Pretty? No. But with a big comment about what is going on and why it's
-> done, I think it's prettier than your much bigger patch.
-> 
-> I dunno. It does strike me as a bit hacky, but I'd rather have a
-> *small*  one-liner hack that generates two instructions, than add a
-> complex hack that modifies the page tables three times and has a
-> serializing instruction in it.
-> 
-> Both are subtle fixes for a subtle issue, but one seems pretty
-> harmless in comparison.
-> 
-> Hmm?
-> 
-> But I'll bow to the x86 maintainers.
+> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 
-The above is fugly, but it has the charm of simplicity and I assume it's
-going to be useful for other places as well. With a big fat comment WHY we
-are doing it it's not that horrible. We have all the other L1TF places
-where we fiddle with bits in non-obvious ways, so having another instance
-of magic bit fiddling is not that big of a problem.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
 Thanks,
 
-	tglx
+Josef
