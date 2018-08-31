@@ -2,244 +2,139 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F35C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2504C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4663205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADD32083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JvKaUyVx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4663205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDv/ei/s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ADD32083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeHaNvi (ORCPT
+        id S1727837AbeHaNwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:51:38 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35102 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbeHaNvi (ORCPT
+        Fri, 31 Aug 2018 09:52:01 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43312 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbeHaNwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:51:38 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q13-v6so9503461lfc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 02:44:58 -0700 (PDT)
+        Fri, 31 Aug 2018 09:52:01 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m84-v6so9560792lje.10;
+        Fri, 31 Aug 2018 02:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UWi/bSi7txLQGHDATFAGekuCpStW097MdvRaEAa5vZw=;
-        b=JvKaUyVx621fNCftEuAM33Ee64Eg0hjbcvkABnuN5ox2dEU1uDCqTUlp2gSLJ8D/7+
-         K+fYT9OpSZmfphGT6IbXdZbwoIQCj5PtEwx9I0IuQp9MK6mm17aOoBbp7yKlasq9Nvbl
-         qfhSgjsyPDpe07on+eZG85MybetM/QUpeBTpE=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sWgrEHp2Hm+Otn13AJo1op+yiR29O836I0b63Ezz5TY=;
+        b=KDv/ei/sIJIYlgb4PvljxYyJcHRocUrghxzGhIff30R0R/sPzKlz1eWpodF3ktyn7+
+         oJzFrVghILlbXbcuUyARdA5aI8N26X+E+hgpAOOGByoJnX+DpaVHQ+biuKNBjF34CR0C
+         HJDwseY+qfxDmmZllpdhGkfxbHtOq+lBJPRxdba6GcAPvvx58C5xwTB5z1k306eeJAuH
+         /tWYKXW0KgX7qNziA9sn5aqlDqP4BrKtGk6UHry0KrTkCjhcgz0hSxcWBwiInw5nBz8Z
+         +pxZMQm98p90T2nHPqh+gzTOdc8+OBfinczp39YTXd/brmF57hKnDXKCeamThPKwVY3J
+         0dpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UWi/bSi7txLQGHDATFAGekuCpStW097MdvRaEAa5vZw=;
-        b=MkF7yQsaeyaZROb6u+1F0N6lvXmiIlBx55EXbv9LkBGd/mBzlvioPFm42zQfq8w7VW
-         5XHQVyH38H1OaY4iAtXoO/1eeUY0goy1gJgBXqgjIAipWA9z77cKPvMvH+ycEtEujj0U
-         eKhYeEIzFjk/tncBiWAgyWehgs9DzvrErwqz0+Z2U7Is5iliCp/4W6HEdaqfdCn/5gsQ
-         K/onUyhgZNcBJOYfeaQF42It9Bg2puEzgOB4KpBtK1ea6lSbLAbbqPSnzomR2n8WdVop
-         SAWLuaeMfzAlYUwkZD20oAt6U2O8zyKMGeD2Ot8dJ0xi4pyz5/aSaMPhuSRQmnImeFAx
-         XRHQ==
-X-Gm-Message-State: APzg51Ac9zMbEPJS4rIJ6nc1VwaPwk2X+SyVlEBdrS+ZudAenti7fho6
-        PkHQ0pCR0QfPKaylrObJGkhDtw==
-X-Google-Smtp-Source: ANB0VdaJGDTCRgCLlIQtrQwa/S5FZC/veQ3ZQMQLKW6kp1YMbbC0sP1dvnRrl+ZF2KceDfs9rZ6SZg==
-X-Received: by 2002:a19:9941:: with SMTP id b62-v6mr4102308lfe.63.1535708693516;
-        Fri, 31 Aug 2018 02:44:53 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm1459917lfc.77.2018.08.31.02.44.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 02:44:52 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 11:44:50 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rohit kumar <rohitkr@codeaurora.org>
-Subject: Re: [PATCH] remoteproc: qcom: Rename Hexagon v5 PAS driver
-Message-ID: <20180831094450.GA17121@centauri.lan>
-References: <20180828051203.22394-1-bjorn.andersson@linaro.org>
- <20180829092520.GA9677@centauri.ideon.se>
- <20180831031053.GP2523@minitux>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=sWgrEHp2Hm+Otn13AJo1op+yiR29O836I0b63Ezz5TY=;
+        b=ZIIjFw66hn8DKERDahZNLZmcWnjRADMlY9qigy1Q3m16OtYvwhYokjskd8CA4WfnhA
+         x2YRiCTkJfaMHnlf+FCYItTgXbcbBa+fNHTz4TIg1UF/PpCVghldRogAi56rFwLw9MOd
+         CQXNhdrMKQcscqu2Bd+RLjsqEzxmN2dOvVlDy2rPkOt9yzkV5MQZTfyk65LXHlJZtwg4
+         Ibm02dAB9AzmLFbq0tScxRb1zZmTpZfPTaaG86GBRBwh67CkfOz8wXk1PGq2ti6tutay
+         MPX20tERq9SeJWnFpxwfYZZhUGotaGE2ZeH7I6Ta5lgTXyHj4KDdBVKHD5tfSYhF2Iv1
+         qZ5A==
+X-Gm-Message-State: APzg51Duv7hTavybO1T/L514qZCC64hIVb7qisUAmHqIxe8yfDM0xfRD
+        2iH0ODO3eiV5Di0b9Qwi0Jf1/iiP
+X-Google-Smtp-Source: ANB0VdbXsn6C4txVEFZwYvKZ4nQ3HBQSaLTOB3Kh7exM2zc/aWM/la67s/HOKqt8tewlRIGUZ9NsjQ==
+X-Received: by 2002:a2e:2d0a:: with SMTP id t10-v6mr9434673ljt.8.1535708719301;
+        Fri, 31 Aug 2018 02:45:19 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.googlemail.com with ESMTPSA id m22-v6sm1795665lfc.44.2018.08.31.02.45.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 02:45:18 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830184210.5369-1-digetx@gmail.com>
+ <20180830184210.5369-2-digetx@gmail.com>
+ <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
+Date:   Fri, 31 Aug 2018 12:45:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831031053.GP2523@minitux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 08:10:53PM -0700, Bjorn Andersson wrote:
-> On Wed 29 Aug 02:25 PDT 2018, Niklas Cassel wrote:
+On 8/31/18 12:29 PM, Peter De Schrijver wrote:
+> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+>> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+>> a lock-status bit. The lock-status polling was disabled ~7 years ago
+>> because PLLE was failing to lock and was a suspicion that other PLLs
+>> might be faulty too. Other PLLs are okay, hence enable the lock-status
+>> polling for them. This reduces delay of any operation that require PLL
+>> to lock.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> Changelog:
+>>
+>> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+>>
 > 
-> > On Mon, Aug 27, 2018 at 10:12:03PM -0700, Bjorn Andersson wrote:
-> > > The Hexagon v5 ADSP driver is used for more than only the ADSP and
-> > > there's an upcoming non-PAS ADSP PIL for SDM845, so rename the driver to
-> > > qcom_q6v5_pas in order to better suite this.
-> > 
-> > Hello Bjorn,
-> > 
-> > so I'm a bit new to this, but after your rename we will have:
-> > 
-> > QCOM_Q6V5_PIL
-> > and
-> > QCOM_Q6V5_PAS
-> > 
-> > that both are PILs.
-> > I guess that the difference is that the latter uses TrustZone?
-> > 
-> > The ADSP for some QCOM SoCs is a Hexagon v5, therefore the
-> > QCOM_Q6V5_PAS can also boot certain ADSPs?
-> > 
-> > But we also have QCOM_Q6V5_WCSS
-> > "Qualcomm Hexagon based WCSS Peripheral Image Loader",
-> > which also appears to be Hexagon v5 based, but I assume that
-> > neither QCOM_Q6V5_PIL nor QCOM_Q6V5_PAS can boot the WCSS?
-> > 
-> > There is also an upcoming non-PAS ADSP PIL loader for SDM845,
-> > but I guess that the ADSP there is not based on Hexagon v5,
-> > so the QCOM_Q6V5_PIL will not be able to boot it?
-> > 
-> > This all seems to be quite confusing, perhaps the help texts
-> > could be improved to mitigate this confusion?
-> > 
-> 
-> You're right, as proposed this is confusing.
-> 
-> The plan is to have QCOM_Q6V5_PAS, which deals with standard Hexagon
-> peripherals that relies on the PAS service in TrustZone and then rename
-> QCOM_Q6V5_PIL to QCOM_Q6V5_MSA to denote that this is the remoteproc
-> driver for the self-authenticating modem.
+> This isn't correct. The lock bit of PLLE can declare lock too early, but the
+> PLL itself does lock.
 
-Ok. It might be a good idea to send both driver renames in a single
-patch series, so that it is easier to verify that the renaming is
-consistent.
+Indeed, it locks but can't be polled for the lock-status as it doesn't have the
+lock-status bit.
 
-> 
-> The QCOM_Q6V5_WCSS then fits into this pattern, of being the non-TZ
-> based WCSS remoteproc driver.
-> 
-> > > 
-> > > Cc: Rohit kumar <rohitkr@codeaurora.org>
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > >  drivers/remoteproc/Kconfig                    | 22 +++++++++----------
-> > >  drivers/remoteproc/Makefile                   |  2 +-
-> > >  .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}      |  4 ++--
-> > 
-> > You should probably also edit the qcom_defconfig:
-> > arch/arm/configs/qcom_defconfig:CONFIG_QCOM_ADSP_PIL=y
-> > 
-> 
-> Yes, this needs to be done as well. But needs to be done in a separate
-> patch.
+Do you want me to adjust the commit description or it is fine as is?
 
-Doing it in the same patch would ensure that we don't break bisectability.
-
-
-
-Kind regards,
-Niklas
-
-> 
-> > >  3 files changed, 14 insertions(+), 14 deletions(-)
-> > >  rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (98%)
-> > > 
-> > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> > > index 052d4dd347f9..c98c0b2a2237 100644
-> > > --- a/drivers/remoteproc/Kconfig
-> > > +++ b/drivers/remoteproc/Kconfig
-> > > @@ -84,8 +84,16 @@ config KEYSTONE_REMOTEPROC
-> > >  	  It's safe to say N here if you're not interested in the Keystone
-> > >  	  DSPs or just want to use a bare minimum kernel.
-> > >  
-> > > -config QCOM_ADSP_PIL
-> > > -	tristate "Qualcomm ADSP Peripheral Image Loader"
-> > > +config QCOM_RPROC_COMMON
-> > > +	tristate
-> > > +
-> > > +config QCOM_Q6V5_COMMON
-> > > +	tristate
-> > > +	depends on ARCH_QCOM
-> > > +	depends on QCOM_SMEM
-> > > +
-> > > +config QCOM_Q6V5_PAS
-> > > +	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
-> > >  	depends on OF && ARCH_QCOM
-> > >  	depends on QCOM_SMEM
-> > >  	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-> > > @@ -98,15 +106,7 @@ config QCOM_ADSP_PIL
-> > >  	select QCOM_SCM
-> > >  	help
-> > >  	  Say y here to support the TrustZone based Peripherial Image Loader
-> > 
-> > Since you are editing this help text, yoy may just as well s/Peripherial/Peripheral.
-> > 
-> 
-> Thanks, will do.
-> 
-> Regards,
-> Bjorn
-> 
-> > Kind regards,
-> > Niklas
-> > 
-> > > -	  for the Qualcomm ADSP remote processors.
-> > > -
-> > > -config QCOM_RPROC_COMMON
-> > > -	tristate
-> > > -
-> > > -config QCOM_Q6V5_COMMON
-> > > -	tristate
-> > > -	depends on ARCH_QCOM
-> > > -	depends on QCOM_SMEM
-> > > +	  for the Qualcomm Hexagon v5 based remote processors.
-> > >  
-> > >  config QCOM_Q6V5_PIL
-> > >  	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
-> > > diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> > > index 03332fa7e2ee..eb86c8ba5a87 100644
-> > > --- a/drivers/remoteproc/Makefile
-> > > +++ b/drivers/remoteproc/Makefile
-> > > @@ -14,9 +14,9 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
-> > >  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-> > >  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-> > >  obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
-> > > -obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
-> > >  obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
-> > >  obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
-> > > +obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
-> > >  obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
-> > >  obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
-> > >  obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
-> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > similarity index 98%
-> > > rename from drivers/remoteproc/qcom_adsp_pil.c
-> > > rename to drivers/remoteproc/qcom_q6v5_pas.c
-> > > index d4339a6da616..2478ef3cd519 100644
-> > > --- a/drivers/remoteproc/qcom_adsp_pil.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > @@ -364,11 +364,11 @@ static struct platform_driver adsp_driver = {
-> > >  	.probe = adsp_probe,
-> > >  	.remove = adsp_remove,
-> > >  	.driver = {
-> > > -		.name = "qcom_adsp_pil",
-> > > +		.name = "qcom_q6v5_pas",
-> > >  		.of_match_table = adsp_of_match,
-> > >  	},
-> > >  };
-> > >  
-> > >  module_platform_driver(adsp_driver);
-> > > -MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996 ADSP Peripherial Image Loader");
-> > > +MODULE_DESCRIPTION("Qualcomm Hexagon v5 Peripheral Authentication Service driver");
-> > >  MODULE_LICENSE("GPL v2");
-> > > -- 
-> > > 2.18.0
-> > > 
+It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
