@@ -2,190 +2,169 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AF1C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 093C92083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:16:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PiV/2GNv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093C92083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 381E420841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E420841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeIAB0O (ORCPT
+        id S1727393AbeIAB1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:26:14 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36061 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeIAB0O (ORCPT
+        Fri, 31 Aug 2018 21:27:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44404 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726869AbeIAB1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:26:14 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e11-v6so6006159plb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:16:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bio1/EvjYxG92soGhk1gFCdvf45JsVdwiwH2NlU2Hm0=;
-        b=PiV/2GNvYLQvt6gm1u0nn1nGZae5RR1Ks+t6ow695ZsvNI7C6LQRhgOtbHnb8p7MpX
-         QVna0qENLQ6Y7YlCJ35aGv7Wvu5IiERFq2XkS4DcBC0wY7XPnM8Qoy+FuTC9hTp2v3u+
-         Ar/mXhNU5uu/A8KS0h1aDSKDklvhwkW9mqQsJ0kiilXd6/0EX2P2awnXvLNJ2tQvLncA
-         vSDSxfIws4Cwgt2AdaSLN0NNsCFYvcqKP241XcED+ky1F0RaQaxwcHbPFxdY+wooZaCa
-         LokMFWv+X95j89whgeTGheO/OlvljvgVzwB+yjbNzrZ8jR4j9NAMLNlRSyD1T213cp+Y
-         HhiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bio1/EvjYxG92soGhk1gFCdvf45JsVdwiwH2NlU2Hm0=;
-        b=S1XBzbtAzwVa9P1WHxWq0Bjd3UgKI53Ka0jv8Z9AG+pV+HEtkaQ82Sf4u4bN5PaDlA
-         t+BSBU12vBFujSNMYN3lHvbIk3U1IdKyVFFWhrXo4LubOyKW5tDmrR5esBTTTSlKcPOG
-         n+gvztnnsJog9u8ehTLaEpuuIjfsCJuO1VUZrdaND7ILIfs6BMovBgvf1Z0uX0YanDE7
-         B27W+PVJZFjfq4hUqOAg4YfJufNqMX/Za4drOvBPrMtnKlQGLeXfnJKOeWnOapqizpOT
-         oCuHrI85+W4yjeLsZ9SimSoMeIXcs6Ciw5HFtnxwDRJWGX+OPiMRIYuvbp8AP7am0KwY
-         hUMw==
-X-Gm-Message-State: APzg51AIgUa7/Rw8hqmgJThQ37bCZiA5FxjkGnM1Oe814sW4WJ79Ui0G
-        gUHrnBJTX74mr4CWfGIYCvvwTaxilSiDmva5Zo6YGQ==
-X-Google-Smtp-Source: ANB0VdZyXg6roMuuzILL2Bz0FTzqKjhUP1mgEg5w5Vyva0/5dLXk8ADg/bwodoKaQyJcBXHx3z786UXV/TsiAgB2WaQ=
-X-Received: by 2002:a17:902:7102:: with SMTP id a2-v6mr17247231pll.217.1535750215857;
- Fri, 31 Aug 2018 14:16:55 -0700 (PDT)
+        Fri, 31 Aug 2018 21:27:16 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VL9lOb137013
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:17:57 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m79cx0em1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:17:57 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 31 Aug 2018 22:17:55 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 31 Aug 2018 22:17:52 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VLHppQ43647018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Aug 2018 21:17:51 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 356E2AE04D;
+        Sat,  1 Sep 2018 00:17:19 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32171AE051;
+        Sat,  1 Sep 2018 00:17:18 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.206.53])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sat,  1 Sep 2018 00:17:18 +0100 (BST)
+Date:   Sat, 1 Sep 2018 00:17:48 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mips@linux-mips.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] mips: switch to NO_BOOTMEM
+References: <1535356775-20396-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180830214856.cwqyjksz36ujxydm@pburton-laptop>
 MIME-Version: 1.0
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com> <20180831170514.24665-4-miguel.ojeda.sandonis@gmail.com>
-In-Reply-To: <20180831170514.24665-4-miguel.ojeda.sandonis@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 31 Aug 2018 14:16:44 -0700
-Message-ID: <CAKwvOdkukFvZw6HkwXN96Y_WRaSkATPjMFsFhvW-jVG8Fxg2Bw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] Compiler Attributes: homogenize __must_be_array
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, efriedma@codeaurora.org,
-        sparse@chrisli.org, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        joe@perches.com, asmadeus@codewreck.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830214856.cwqyjksz36ujxydm@pburton-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18083121-0008-0000-0000-0000026A7A30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083121-0009-0000-0000-000021D27FDF
+Message-Id: <20180831211747.GA31133@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808310211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 10:05 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Different definitions of __must_be_array:
->
->   * gcc: disabled for __CHECKER__
->
->   * clang: same definition as gcc's, but without __CHECKER__
->
->   * intel: the comment claims __builtin_types_compatible_p()
->     is unsupported; but icc seems to support it since 13.0.1
->     (released in 2012). See https://godbolt.org/z/S0l6QQ
+Hi Paul,
 
-Indeed.  It seems that if we can't find a contact for ICC, then 13.0.1
-(the oldest version supported by godbolt) is a best effort, IMO.  If
-we end up adding patches for minimal compiler versions, maybe v13.0.1
-is a good minimal for ICC.  But I would really defer to someone who
-has an install of ICC (not me).
+On Thu, Aug 30, 2018 at 02:48:57PM -0700, Paul Burton wrote:
+> Hi Mike,
+> 
+> On Mon, Aug 27, 2018 at 10:59:35AM +0300, Mike Rapoport wrote:
+> > MIPS already has memblock support and all the memory is already registered
+> > with it.
+> > 
+> > This patch replaces bootmem memory reservations with memblock ones and
+> > removes the bootmem initialization.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > ---
+> > 
+> >  arch/mips/Kconfig                      |  1 +
+> >  arch/mips/kernel/setup.c               | 89 +++++-----------------------------
+> >  arch/mips/loongson64/loongson-3/numa.c | 34 ++++++-------
+> >  arch/mips/sgi-ip27/ip27-memory.c       | 11 ++---
+> >  4 files changed, 33 insertions(+), 102 deletions(-)
+> 
+> Thanks for working on this. Unfortunately it breaks boot for at least a
+> 32r6el_defconfig kernel on QEMU:
+> 
+>   $ qemu-system-mips64el \
+>     -M boston \
+>     -kernel arch/mips/boot/vmlinux.gz.itb \
+>     -serial stdio \
+>     -append "earlycon=uart8250,mmio32,0x17ffe000,115200 console=ttyS0,115200 debug memblock=debug mminit_loglevel=4"
+>   [    0.000000] Linux version 4.19.0-rc1-00008-g82d0f342eecd (pburton@pburton-laptop) (gcc version 8.1.0 (GCC)) #23 SMP Thu Aug 30 14:38:06 PDT 2018
+>   [    0.000000] CPU0 revision is: 0001a900 (MIPS I6400)
+>   [    0.000000] FPU revision is: 20f30300
+>   [    0.000000] MSA revision is: 00000300
+>   [    0.000000] MIPS: machine is img,boston
+>   [    0.000000] Determined physical RAM map:
+>   [    0.000000]  memory: 10000000 @ 00000000 (usable)
+>   [    0.000000]  memory: 30000000 @ 90000000 (usable)
+>   [    0.000000] earlycon: uart8250 at MMIO32 0x17ffe000 (options '115200')
+>   [    0.000000] bootconsole [uart8250] enabled
+>   [    0.000000] memblock_reserve: [0x00000000-0x009a8fff] setup_arch+0x224/0x718
+>   [    0.000000] memblock_reserve: [0x01360000-0x01361ca7] setup_arch+0x3d8/0x718
+>   [    0.000000] Initrd not found or empty - disabling initrd
+>   [    0.000000] memblock_virt_alloc_try_nid: 7336 bytes align=0x40 nid=-1 from=0x00000000 max_addr=0x00000000 early_init_dt_alloc_memory_arch+0x20/0x2c
+>   [    0.000000] memblock_reserve: [0xbfffe340-0xbfffffe7] memblock_virt_alloc_internal+0x120/0x1ec
+>   <hang>
+> 
+> It looks like we took a TLB store exception after calling memset() with
+> a bogus address from memblock_virt_alloc_try_nid() or something inlined
+> into it.
 
->
-> Therefore, we can remove all of them and have a single definition
-> in compiler.h
->
-> Cc: Eli Friedman <efriedma@codeaurora.org>
-> Cc: Christopher Li <sparse@chrisli.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Dominique Martinet <asmadeus@codewreck.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> ---
->  include/linux/compiler-clang.h | 1 -
->  include/linux/compiler-gcc.h   | 7 -------
->  include/linux/compiler-intel.h | 3 ---
->  include/linux/compiler.h       | 7 +++++++
->  4 files changed, 7 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> index efda74f4eeba..0aee694d3ab8 100644
-> --- a/include/linux/compiler-clang.h
-> +++ b/include/linux/compiler-clang.h
-> @@ -41,6 +41,5 @@
->   * compilers, like ICC.
->   */
->  #define barrier() __asm__ __volatile__("" : : : "memory")
-> -#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
->  #define __assume_aligned(a, ...)       \
->         __attribute__((assume_aligned(a, ## __VA_ARGS__)))
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index dbfbecf703f8..66e1eb8822d9 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -68,13 +68,6 @@
->   */
->  #define uninitialized_var(x) x = x
->
-> -#ifdef __CHECKER__
-> -#define __must_be_array(a)     0
-> -#else
-> -/* &a[0] degrades to a pointer: a different type from an array */
-> -#define __must_be_array(a)     BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> -#endif
-> -
->  #ifdef RETPOLINE
->  #define __noretpoline __attribute__((indirect_branch("keep")))
->  #endif
-> diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-> index 4c7f9befa9f6..18bd4362deaa 100644
-> --- a/include/linux/compiler-intel.h
-> +++ b/include/linux/compiler-intel.h
-> @@ -29,9 +29,6 @@
->   */
->  #define OPTIMIZER_HIDE_VAR(var) barrier()
->
-> -/* Intel ECC compiler doesn't support __builtin_types_compatible_p() */
-> -#define __must_be_array(a) 0
-> -
->  #endif
->
->  /* icc has this, but it's called _bswap16 */
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index e0e55eb3f242..e4a702f99e50 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -357,4 +357,11 @@ static inline void *offset_to_ptr(const int *off)
->         compiletime_assert(__native_word(t),                            \
->                 "Need native word sized stores/loads for atomicity.")
->
-> +#ifdef __CHECKER__
-> +#define __must_be_array(a)     0
-> +#else
-> +/* &a[0] degrades to a pointer: a different type from an array */
-> +#define __must_be_array(a)     BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> +#endif
-> +
->  #endif /* __LINUX_COMPILER_H */
-> --
-> 2.17.1
->
+Memblock tries to allocate from the top and the resulting address ends up
+in the high memory. 
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+With the hunk below I was able to get to "VFS: Cannot open root device"
+
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 4114d3c..4a9b0f7 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -577,6 +577,8 @@ static void __init bootmem_init(void)
+         * Reserve initrd memory if needed.
+         */
+        finalize_initrd();
++
++       memblock_set_bottom_up(true);
+ }
+ 
+ #endif /* CONFIG_SGI_IP27 */
+ 
+> This was with your patch applied atop the mips-next branch from [1],
+> which is currently at commit 35d017947401 ("MIPS: ralink: Add rt3352
+> SPI_CS1 pinmux").
+> 
+> Thanks,
+>     Paul
+> 
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+> 
 
 -- 
-Thanks,
-~Nick Desaulniers
+Sincerely yours,
+Mike.
+
