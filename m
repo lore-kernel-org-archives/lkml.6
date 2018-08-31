@@ -2,119 +2,149 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE13C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED898C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76FD20658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE2120835
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="j0NXcSyk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76FD20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hs7gsUYu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE2120835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbeHaUPm (ORCPT
+        id S1728838AbeHaUSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:15:42 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44558 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728935AbeHaUPm (ORCPT
+        Fri, 31 Aug 2018 16:18:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52444 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727286AbeHaUSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:15:42 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g6-v6so10349304lfb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 09:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=65NarGhfN2XCP1e46WQY+ZVm97UzJG2fjE8dK4dfQbA=;
-        b=j0NXcSykMPGp8LTlY0GehLqTYDMsyBDpT+xF7uQBjPxdi07CWnV44HlBZ1Uo8PHJiY
-         jKW8DGYN1t1DzmCjxJ4Z6IFIIBq+uNoRqr5E9N+c3Wuui5uv+Xiy83qcU5GuE96zx5LA
-         MO9TUoIjdiOSVciv9Q9+BcW1XNutyXXpgKwQ3+ht3vHqKJHbBwCZ6g7iNxmUBO3LWA2f
-         ONwJYAn9sVm8r92w7DcjrDsu39Sierjv+rgV46JUzZ52X9C9SjHe9Gulcqdie1QmHjMC
-         mOWWIbKw8BT2UhS8vv8l50sn3qQLyd4H5tht/N8iYl0MDGo4d7hBS//4u6m/nwgQYry2
-         iYRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=65NarGhfN2XCP1e46WQY+ZVm97UzJG2fjE8dK4dfQbA=;
-        b=V5or/6s6Bkz8PnzShSRrMfwpZcBOZLkrDpr2kwLi2RrGC2uNyrjm6+bgKPhdYtEPGP
-         WDqn6nM01YqgU9k+oWUUnSnR3B4u/s5MYRFbLlcRAM+LzWnANPCcjOztccHDAAtmcoex
-         Bui5RbNlITYkQck8K7oWKmn8O/SIbW4tSUGg0SDkDTMK7rPJFvZXaUko9YDWLqVcZ0Wj
-         oiqOnVWRpHhFfy61/XhtC4+jt1nMk+ePrJH57+6Jrw7wsJWfSf+d+NqdNDvbyx9NorCL
-         gq83Xvh9WotOODFvl8w5EWvds1DHNtZOPCS81/XVxdy05iThH60/Ype2QGUXd9sM2wMV
-         NsoQ==
-X-Gm-Message-State: APzg51By3WB+S4h4Y7RQaLUv2wLwjtbTyHdeOmrhUoj2F9AjmpjWaOAp
-        JO4bN2EtZns5zZA5GDQFPvQWO1zrPD9glBJUA5sy
-X-Google-Smtp-Source: ANB0VdZ8CpeiwPi9Mfk61CxrUSc/irVzMA9fD5HLHvfDyhOnSp7rtlJ5Y75DXv9jSksh4hxpxEV6eTKwUllFshTyFug=
-X-Received: by 2002:a19:d78d:: with SMTP id q13-v6mr7567488lfi.27.1535731649491;
- Fri, 31 Aug 2018 09:07:29 -0700 (PDT)
+        Fri, 31 Aug 2018 16:18:45 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7VG8w5d126928;
+        Fri, 31 Aug 2018 16:10:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DZ/qz/aTQJ/Lq7CDgnT32UuI7j+FCETi797sDvq6fwE=;
+ b=hs7gsUYuLKaSbPv6BhGil7dVu+F8m7EZVfFG7mjJ5V/L0SxeWbPALkEtx6pQ0DoQEniX
+ +bWRaWlbECzv0UCokm3JzEZx7zy7QPOAooj6b2WwZDcmdEvn5tCiMzthxZ0HxLwCgNns
+ h3JqiR0zJdEZQJJvoQbEAsvvXJP2EPGI4SWM5jfg05dX/E0Ok8OSc7L1yTV45uC5dV2R
+ swoQvRMn9dQbqv/Zy5CBAm4vr3Jcm9j0Ab6TrsDwcUet2jqcT312XPtSKTT/hl6UNaEv
+ a6rpoBQSuRqF1EN59HxRzMuQiZeBmZ7W8sRzsHEBHfD0TlMDw+pRIyXGwLr9rBb8IKX3 uQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2m2xhucb0w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Aug 2018 16:10:03 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7VG9uTx008044
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Aug 2018 16:09:57 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7VG9uOF027981;
+        Fri, 31 Aug 2018 16:09:56 GMT
+Received: from [10.39.231.202] (/10.39.231.202)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 31 Aug 2018 09:09:56 -0700
+Subject: Re: [RFC PATCH 1/2] pipe: introduce busy wait for pipe
+To:     subhra mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, dhaval.giani@oracle.com
+References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
+ <20180830202458.32579-2-subhra.mazumdar@oracle.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <db00b844-055e-2024-2334-8e4b0e0ac5c5@oracle.com>
+Date:   Fri, 31 Aug 2018 12:09:47 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <000000000000c178e305749daba4@google.com> <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
- <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
-In-Reply-To: <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 31 Aug 2018 12:07:18 -0400
-Message-ID: <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Stephen Smalley <sds@tycho.nsa.gov>, dvyukov@google.com
-Cc:     syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com,
-        tyhicks@canonical.com, john.johansen@canonical.com,
-        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180830202458.32579-2-subhra.mazumdar@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9001 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808310167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:01 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 08/29/2018 10:21 PM, Dmitry Vyukov wrote:
-> > On Wed, Aug 29, 2018 at 7:17 PM, syzbot
-> > <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com> wrote:
-> >> Hello,
-> >>
-> >> syzbot found the following crash on:
-> >>
-> >> HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
-> >> git tree:       net-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
-> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> >>
-> >> Unfortunately, I don't have any reproducer for this crash yet.
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
-> >
-> > Hi John, Tyler,
-> >
-> > I've switched syzbot from selinux to apparmor as we discussed on lss:
-> > https://github.com/google/syzkaller/commit/2c6cb254ae6c06f61e3aba21bb89ffb05b5db946
->
-> Sorry, does this mean that you are no longer testing selinux via syzbot?
->   That seems unfortunate.  SELinux is default-enabled and used in
-> Fedora, RHEL and all derivatives (e.g. CentOS), and mandatory in Android
-> (and seemingly getting some use in ChromeOS now as well, at least for
-> the Android container and possibly wider), so it seems unwise to drop it
-> from your testing altogether.  I was under the impression that you were
-> just going to add apparmor to your testing matrix, not drop selinux
-> altogether.
+On 8/30/2018 4:24 PM, subhra mazumdar wrote:
+> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
+> seconds a thread should spin if pipe is empty or full before sleeping. This
+> is similar to network sockets. Workloads like hackbench in pipe mode
+> benefits significantly from this by avoiding the sleep and wakeup overhead.
+> Other similar usecases can benefit. pipe_wait_flag is used to signal any
+> thread busy waiting. pipe_busy_loop_timeout checks if spin time is over.
+> 
+> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+> ---
+>  include/linux/pipe_fs_i.h | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+> index e7497c9..fdfd2a2 100644
+> --- a/include/linux/pipe_fs_i.h
+> +++ b/include/linux/pipe_fs_i.h
+> @@ -1,6 +1,8 @@
+>  #ifndef _LINUX_PIPE_FS_I_H
+>  #define _LINUX_PIPE_FS_I_H
+>  
+> +#include <linux/sched/clock.h>
+> +
+>  #define PIPE_DEF_BUFFERS	16
+>  
+>  #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
+> @@ -54,6 +56,8 @@ struct pipe_inode_info {
+>  	unsigned int waiting_writers;
+>  	unsigned int r_counter;
+>  	unsigned int w_counter;
+> +	unsigned int pipe_ll_usec;
+> +	unsigned long pipe_wait_flag;
+>  	struct page *tmp_page;
+>  	struct fasync_struct *fasync_readers;
+>  	struct fasync_struct *fasync_writers;
+> @@ -157,6 +161,21 @@ static inline int pipe_buf_steal(struct pipe_inode_info *pipe,
+>  	return buf->ops->steal(pipe, buf);
+>  }
+>  
+> +static inline unsigned long pipe_busy_loop_current_time(void)
+> +{
+> +	return (unsigned long)(local_clock() >> 10);
 
-It is also important to note that testing with SELinux enabled but no
-policy loaded is not going to be very helpful (last we talked that is
-what syzbot is/was doing).  While syzbot did uncover some issues
-relating to the enabled-no-policy case, those are much less
-interesting and less relevant than the loaded-policy case.
+Why ">> 10" ? local_lock() has nanosec units, and you compare to the tunable
+pipe_llc_sec which has microsec units.  Should be ">> 3".  Better yet, redefine 
+the tunable to have nanosec units.  I suspect you will need very large values
+of the tunable to show similar results.
 
--- 
-paul moore
-www.paul-moore.com
+Also, since this type of optimization consumes CPU extra cycles that could
+be used by other tasks, show the overall CPU utilization before and after
+the optimization, such as by using "time hackbench ...".
+
+- Steve
+
+> +}
+> +
+> +static inline bool pipe_busy_loop_timeout(struct pipe_inode_info *pipe,
+> +					  unsigned long start_time)
+> +{
+> +	unsigned long bp_usec = READ_ONCE(pipe->pipe_ll_usec);
+> +	unsigned long end_time = start_time + bp_usec;
+> +	unsigned long now = pipe_busy_loop_current_time();
+> +
+> +	return time_after(now, end_time);
+> +}
+> +
+>  /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+>     memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+>  #define PIPE_SIZE		PAGE_SIZE
+> 
