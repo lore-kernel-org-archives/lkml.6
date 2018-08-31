@@ -2,137 +2,131 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18418C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC8DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A8E20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A8E20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FFF220661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:21:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YkrSANv5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFF220661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeHaT2z (ORCPT
+        id S1728940AbeHaT3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:28:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45613 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbeHaT2y (ORCPT
+        Fri, 31 Aug 2018 15:29:50 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:60830 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeHaT3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:28:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 20-v6so11553115wrb.12
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:20:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TyoCTa8EMpKGM+YX+iYdLQKMVHxr1N7PsqhbZhZaE4w=;
-        b=lT5tEUw4m3GDsG1ztELmpNtB2Ppzm3+LUcLWBHmiPkFidfzDqnlpveGmJaFktuUgpJ
-         j7iKknUdQcCuftcwiOGwVNKD8OqAb1uOrojmG30qxNtthqvpOpEi878Fzu/s9TFKlqRV
-         fytrDHOKpt1RAFBzTf0cHDXVJNefD5sR2zDbaHRyF/0Qs9qw4+XCd9YVVoI0mq2dJHWP
-         UtrilQdTVniKm+OmlyMbdEs5/XEyATVQ8Dem3uHjS+Rxrklcm7MpG7a/3oetfMbGRH8s
-         KEJo2NPhcYilD4NoF44I2VEu7SmV1KgcL1UeoFgasQWjkXtYwekzJI8f85pxerRUjrDr
-         cXVg==
-X-Gm-Message-State: APzg51AImCstVsbGXqO/BVe/rSTR+X5xNDyzLmI7RYBXY8AqBn+iHn9Q
-        Fbbeooz/JkzbzUjs3eZ971DHEIDGR60=
-X-Google-Smtp-Source: ANB0VdZNBbbkCHtbaSU563YBTO7Kqko/IbAlJvt3QHZcZeAU6RKYnOhDG4LPaQ0YFfXCk7ZHpQ+Udg==
-X-Received: by 2002:a5d:428a:: with SMTP id k10-v6mr305354wrq.225.1535728854562;
-        Fri, 31 Aug 2018 08:20:54 -0700 (PDT)
-Received: from minerva.redhat.com ([90.168.169.92])
-        by smtp.gmail.com with ESMTPSA id n17-v6sm3244923wmc.13.2018.08.31.08.20.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 08:20:53 -0700 (PDT)
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Jian Xu Zheng <jian.xu.zheng@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org
-Subject: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async notifier complete
-Date:   Fri, 31 Aug 2018 17:20:45 +0200
-Message-Id: <20180831152045.9957-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 31 Aug 2018 15:29:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AiyhXPlgawhHcX8YvGCRU7bTKrw/LJCJmlkd1EF9oKk=; b=YkrSANv5x1GH6TybmluPnw4DE
+        NSQz1w+QJ8ajkZgWpQsAIWi7u1aN64cmPu/FyI0r4Dn6Yv+uZ1oevLM51UVZRcokw5UR4MESs0oJO
+        Q6zmGdrWS7wuErmVN08/vX+BMS6TVca04ecH7J1MQAjsFqPc35imJ/xKXdcP9bAdN9Ye0=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:55898)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1fvlEu-0000aS-UW; Fri, 31 Aug 2018 16:21:37 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1fvlEr-00020g-ME; Fri, 31 Aug 2018 16:21:33 +0100
+Date:   Fri, 31 Aug 2018 16:21:31 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, gregory.clement@bootlin.com, jason@lakedaemon.net,
+        sebastian.hesselbarth@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v3 02/10] net: mvpp2: phylink support
+Message-ID: <20180831152131.GN30658@n2100.armlinux.org.uk>
+References: <20180517082939.14598-1-antoine.tenart@bootlin.com>
+ <20180517082939.14598-3-antoine.tenart@bootlin.com>
+ <20180827165058.GD30658@n2100.armlinux.org.uk>
+ <20180831133651.GB32574@kwain>
+ <20180831141123.GM30658@n2100.armlinux.org.uk>
+ <20180831143721.GB19733@lunn.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831143721.GB19733@lunn.ch>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9832e155f1ed ("[media] media-device: split media initialization and
-registration") split the media_device_register() function in two, to avoid
-a race condition that can happen when the media device node is accessed by
-userpace before the pending subdevices have been asynchronously registered.
+On Fri, Aug 31, 2018 at 04:37:21PM +0200, Andrew Lunn wrote:
+> > Can you see any down-sides to moving the netif_carrier_off() in
+> > mvneta_open() to phylink_start() ?
+> 
+> This sounds like a good idea.
+> 
+> What happens on the resume path?
 
-But the ipu3-cio2 driver calls the media_device_register() function right
-after calling media_device_init() which defeats the purpose of having two
-separate functions.
+Suspend/resume should be safe, because we force the link down when
+phylink_stop() is called.
 
-In that case, userspace could have a partial view of the media device if
-it opened the media device node before all the pending devices have been
-bound. So instead, only register the media device once all pending v4l2
-subdevices have been registered.
+Looking at mvneta again, mvneta_stop_dev() is called in the suspend
+path, which then calls phylink_stop().  This causes us to call
+mac_link_down() and netif_carrier_off().  So, at the point of suspend,
+the netdev carrier is set down and the mac taken down.
 
-Fixes: 9832e155f1ed ("media: intel-ipu3: cio2: add new MIPI-CSI2 driver")
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
----
+When resuming, mvneta_start_dev() calls phylink_start(), which undoes
+the changes above, calling mac_link_up() if the link is now up.
 
- drivers/media/pci/intel/ipu3/ipu3-cio2.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+So, as long as netdevs don't mess with the carrier state in their
+suspend/resume functions, and they call phylink_start()/phylink_stop()
+there, everything will work as intended - and that's really the key
+issue here.
 
-diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-index 29027159eced..d936f3426c4e 100644
---- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-+++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-@@ -1468,7 +1468,14 @@ static int cio2_notifier_complete(struct v4l2_async_notifier *notifier)
- 		}
- 	}
- 
--	return v4l2_device_register_subdev_nodes(&cio2->v4l2_dev);
-+	ret = v4l2_device_register_subdev_nodes(&cio2->v4l2_dev);
-+	if (ret) {
-+		dev_err(&cio2->pci_dev->dev,
-+			"failed to register V4L2 subdev nodes (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return media_device_register(&cio2->media_dev);
- }
- 
- static const struct v4l2_async_notifier_operations cio2_async_ops = {
-@@ -1792,16 +1799,12 @@ static int cio2_pci_probe(struct pci_dev *pci_dev,
- 	cio2->media_dev.hw_revision = 0;
- 
- 	media_device_init(&cio2->media_dev);
--	r = media_device_register(&cio2->media_dev);
--	if (r < 0)
--		goto fail_mutex_destroy;
--
- 	cio2->v4l2_dev.mdev = &cio2->media_dev;
- 	r = v4l2_device_register(&pci_dev->dev, &cio2->v4l2_dev);
- 	if (r) {
- 		dev_err(&pci_dev->dev,
- 			"failed to register V4L2 device (%d)\n", r);
--		goto fail_media_device_unregister;
-+		goto fail_media_device_cleanup;
- 	}
- 
- 	r = cio2_queues_init(cio2);
-@@ -1831,10 +1834,8 @@ static int cio2_pci_probe(struct pci_dev *pci_dev,
- 	cio2_queues_exit(cio2);
- fail_v4l2_device_unregister:
- 	v4l2_device_unregister(&cio2->v4l2_dev);
--fail_media_device_unregister:
--	media_device_unregister(&cio2->media_dev);
-+fail_media_device_cleanup:
- 	media_device_cleanup(&cio2->media_dev);
--fail_mutex_destroy:
- 	mutex_destroy(&cio2->lock);
- 	cio2_fbpt_exit_dummy(cio2);
- 
+> I've not looked at any code.... Just thinking aloud. Can we suspend
+> with the link up? When we resume, so long as we were not doing WoL,
+> the link is down. If phylink_start() is not called, we have this miss
+> match again.
+
+It depends what you mean by "link up".  Are you talking about the PHYs
+link to the external world (which is normally what's responsible for
+handling WOL) or are you talking about keeping the MAC and its rings
+alive so it can process packets while suspended.
+
+If the former, that's the responsibility of phylib to manage, if the
+latter, the netdev must not call phylink_stop() in its suspend function.
+
+Either way, not messing with the netdev's carrier state is key.
+
+The only exception to this is that the carrier should be down at open()
+time.  However, I don't see anything in net/core that fiddles with the
+carrier state for a net device, so the default state at boot should be
+carrier-off.
+
+I think some questions for Antoine are:
+
+- what is the state of the carrier at the start of mvpp2_start() ?
+- when does the missing call to mac_link_up() occur - is it the first
+  time the netdev is brought up, or a subsequent time?
+- is the carrier always off at the end of mvpp2_stop()?
+
+Having a local reproducer may help, so if you can point to a DT fragment
+and set of steps to reproduce, it could be helpful.
+
+Thanks.
+
 -- 
-2.17.1
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
+According to speedtest.net: 13Mbps down 490kbps up
