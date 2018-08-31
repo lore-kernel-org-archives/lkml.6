@@ -2,132 +2,123 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A69AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EA2C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1DA20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B2620841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:42:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhVWqKU0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1DA20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XS530OL3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B2620841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeIACuv (ORCPT
+        id S1727539AbeIACwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:50:51 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44835 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeIACuu (ORCPT
+        Fri, 31 Aug 2018 22:52:10 -0400
+Received: from mail-qt0-f202.google.com ([209.85.216.202]:41471 "EHLO
+        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbeIACwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:50:50 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d131-v6so2428475qke.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:41:14 -0700 (PDT)
+        Fri, 31 Aug 2018 22:52:10 -0400
+Received: by mail-qt0-f202.google.com with SMTP id y54-v6so16128284qta.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:42:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ysT38iRd7Xjc2D+93950208mkURZP2Ef+Z769S1Muwo=;
-        b=UhVWqKU0ZJZLcREbE0I7m3yc6LhPxBPq/biMlf+ykGQp1DdeSoLn0zpNXjdEDOT1l3
-         brqMjz2zBfNaY0CNYwwnOWlFfxYB5p63dZain9sLvQEe96fcRkW6Jz8viTYOEM+jkMzR
-         bO8ve7kB0btrJpDHA8YZ/ztzmggU7zF9dPXF58M3J8G7JflBVUoVDJEaei37gwb8lgui
-         +g2Jx0QY34aGBWC4XhMEx7LYeHQxFfbh+44up87oAgVHZCl8H953RzfJ2ivllvrppl1A
-         ZfubHgC0SAM8BjCPG1xeb0Qaes14328lVucGspLJI9PjNpYodTpODUwmyrurCz+XtEIA
-         GWmA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=bSWtmVHdy6cuRwB7rIChRFaGA6F6tUQK3awO6ib4VPI=;
+        b=XS530OL3vf4EYSY01G75QbooLYiWxPdTWpbJklWHmmGchcBtXZ+j5EEjzlUihKLU7T
+         8xOQoQlA+IvkIvkSJBRLGzg3DPxIc6PI+wY4aTw5xi9M8GzqwIzXWCmQzWNVBnnEZT7a
+         ti2rPfxyCworVLO7u6Cziz5MDawJ7UyPncvVAo0xDeO/w7LSGsNU/vmTIn1O+5l5C9GF
+         mYyc5edWgShNtLUKG1JpOwTVY8D2v9TtFXeIu2VmxXy1vJSk1hkmg7QL90L7js4XRs/d
+         KIkgMDDxsB82H5CuUUcCkIjxl7fL9C8uuRn+DKSic3N7Z7H4UDmD+iARhAJ2UEmzonhM
+         zk5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ysT38iRd7Xjc2D+93950208mkURZP2Ef+Z769S1Muwo=;
-        b=JlXXXwNVoge1k0sZP1l8r3BLcVC8u3nJkOMb9iM1c80kKV5/EE93whvB0J5Kgueteu
-         AvJNQtELYr0U5A1aONvZ3bjBd6q9EzFBEqt9RPP8XxpsEC/QB+JPz/lixYwz+dUVG+Hw
-         7TDBPA84ln7kKuoWrwj1CNN9gMuAKppDQ3Rm1MqwPmgjyHN1vaaE536KaV4YlYapGOY4
-         oPSIYEciDwGSRvjQIBZGqH5pTBzyGyOukW0swFwjjTF9oHlV0vOGSGUojGBBPYUSh2ZF
-         1BfyHze7mkkvx9c+K2lR6sMDBXHJbkckcqowjSmmrFvqKm3MPlhFgUyBz/kyigssM+H2
-         wANQ==
-X-Gm-Message-State: APzg51B8mHRsQUdaXkSXvovfqSgkg0HQA+1NYuhOKjdYs+Vr4Ud9QtTt
-        suttvu+FajvAjiVoNALkbDS+W3dDzBmXjjSkbRU=
-X-Google-Smtp-Source: ANB0VdagG9ID8Q3XeUitQsyiqiXBA9IerMcGS4HU86XOt8usrsWElMnuktDX0aOWvvR1yFKqq6PDhJmG3ElxxgmuBsc=
-X-Received: by 2002:ae9:e118:: with SMTP id g24-v6mr2568879qkm.306.1535755274571;
- Fri, 31 Aug 2018 15:41:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:aed:2291:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 15:40:54
- -0700 (PDT)
-In-Reply-To: <CANiq72mJ+AhD0DO6xcbG5SbGmraPU48+UbWaaU5rW-p4XoO4LQ@mail.gmail.com>
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
- <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com> <0a8588f3-929a-608f-1fdc-e24b90e6b59b@rasmusvillemoes.dk>
- <CANiq72mJ+AhD0DO6xcbG5SbGmraPU48+UbWaaU5rW-p4XoO4LQ@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 1 Sep 2018 00:40:54 +0200
-Message-ID: <CANiq72mDH1hPTAuB=zmX0uiVEx_mWS-3GO26YUSKXPHRREYjjA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] Compiler Attributes: use the no-underscores syntax
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=bSWtmVHdy6cuRwB7rIChRFaGA6F6tUQK3awO6ib4VPI=;
+        b=oaxUeaU7Wtq0EU8YianAu6kUkGGQ+u3uF+nurJKhKy9cEMkbXNoFgSPkz98b+9j16m
+         5udZ9YLafLb2f7WzQUldpmhv2TwtxyWha6K4uCobsGt/eT4fSGe2blPmU7MlX9o2PkDK
+         +hxGM6AFKazDvtKMsBeV7NxzK8zNugkoiHXWLM7Yqzfdk6PuvHIldLyqiptBoH+u8Kxv
+         0qa+nIeDehAZcAfYOPm6bilJWpIxFX7x45xPB/FhHsuGQm/q5VwUNE275K+LpBblD1B1
+         I15T/bVdYc3lidxoxwKJ1cRSZVI9fZAj8CBj8wdoeodUomoX+o8Ft/i8uk3uRKyxFXdc
+         vgTw==
+X-Gm-Message-State: APzg51AV7xGtZ4KChh+KfzWheRjfs9JdcazyloMTRM7AGGWI4Hw/rhFS
+        j5+yiP2VFYnYs33GV0qw6+gwPxITYq10
+X-Google-Smtp-Source: ANB0VdZ3VqaYWw/ywG2HNxg1FUPYGPT0OiYcyXYPz8tUTOqiAE1v/UxAID/wgleX3sMjX93GV35dWSVtPfeN
+X-Received: by 2002:ac8:2943:: with SMTP id z3-v6mr9929647qtz.1.1535755353713;
+ Fri, 31 Aug 2018 15:42:33 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 15:42:17 -0700
+Message-Id: <20180831224217.169476-1-smuckle@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.rc1.350.ge57e33dbd1-goog
+Subject: [PATCH] sched/fair: fix vruntime_normalized for remote non-migration wakeup
+From:   Steve Muckle <smuckle@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Kjos <tkjos@google.com>, Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Chris Redpath <Chris.Redpath@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Miguel de Dios <migueldedios@google.com>,
+        John Dias <joaodias@google.com>,
+        Steve Muckle <smuckle@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 1, 2018 at 12:10 AM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> arch/parisc/boot/compressed/misc.c:#define malloc       malloc_gzip
-> include/linux/decompress/mm.h:#define malloc(a) kmalloc(a, GFP_KERNEL)
-> lib/inflate.c:#define malloc(a) kmalloc(a, GFP_KERNEL)
-> include/linux/compiler_types.h:#define noinline_for_stack noinline
-> include/linux/raid/pq.h:#define noinline __attribute__((noinline))
-> tools/include/linux/compiler.h:#define noinline
-> arch/mips/sgi-ip27/ip27-reset.c:#define noreturn while(1);
+When a task which previously ran on a given CPU is remotely queued to
+wake up on that same CPU, there is a period where the task's state is
+TASK_WAKING and its vruntime is not normalized. This is not accounted
+for in vruntime_normalized() which will cause an
+error in the task's vruntime if it is switched from the fair class
+during this time, for example if it is boosted to RT priority via
+rt_mutex_setprio. The rq's min_vruntime will not be subtracted from the
+task's vruntime but it will be added again when the task returns to the
+fair class. The task's vruntime will have been erroneously doubled and
+the effective priority of the task will be reduced.
 
-A better list, searching for all attributes used anywhere in the kernel:
+Note this will also lead to inflation of all vruntimes since the doubled
+vruntime value will become the rq's min_vruntime when other tasks leave
+the rq. This leads to repeated doubling of the vruntime and priority
+penalty.
 
-git grep -E '^\s*#define\s+(address_space|alias|aligned|always_inline|assum=
-e_aligned|bitwise|bnd_legacy|cold|common|const|constructor|context|deprecat=
-ed|designated_init|destructor|error|externally_visible|flatten|force|format=
-|format|gnu_inline|hot|hotpatch|indirect_branch|latent_entropy|long_call|ma=
-lloc|may_alias|mode|model|naked|nocast|noclone|noderef|noinline|no_instrume=
-nt_function|nonnull|no_randomize_layout|noreturn|no_sanitize_address|optimi=
-ze|packed|pure|randomize_layout|regparm|require_context|safe|section|syscal=
-l_linkage|target|tls_model|unused|used|user|vector_size|visibility|warning|=
-warn_unused_result|weak)(\(|\s|$)'
+Fix this by recognizing a WAKING task's vruntime as normalized only if
+sched_remote_wakeup is true. This indicates a migration, in which case
+the vruntime would have been normalized in migrate_task_rq_fair().
 
-arch/mips/sgi-ip27/ip27-reset.c:#define noreturn while(1);
-                 /* Silence gcc.  */
-arch/parisc/boot/compressed/misc.c:#define malloc       malloc_gzip
-arch/powerpc/xmon/ansidecl.h:#define    const
-drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c:#define error(fmt,
-args...) bioslog(ERROR, fmt, ##args)
-include/linux/compiler_attributes.h:#define   noinline
-__attribute__((noinline))
-include/linux/decompress/mm.h:#define malloc(a) kmalloc(a, GFP_KERNEL)
-include/linux/raid/pq.h:#define noinline __attribute__((noinline))
-lib/inflate.c:#define malloc(a) kmalloc(a, GFP_KERNEL)
-tools/include/linux/compiler-gcc.h:#define  noinline
-__attribute__((noinline))
-tools/include/linux/compiler.h:#define noinline
-tools/testing/selftests/futex/include/logging.h:#define error(message,
-err, args...) \
+Based on a similar patch from joaodias@google.com.
 
-None of these should make a problem. And it would may avoid people
-using such common-name-macros in the future ;-)
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Steve Muckle <smuckle@google.com>
+---
+ kernel/sched/fair.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Cheers,
-Miguel
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b39fb596f6c1..b3b62cf37fb6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9638,7 +9638,8 @@ static inline bool vruntime_normalized(struct task_struct *p)
+ 	 * - A task which has been woken up by try_to_wake_up() and
+ 	 *   waiting for actually being woken up by sched_ttwu_pending().
+ 	 */
+-	if (!se->sum_exec_runtime || p->state == TASK_WAKING)
++	if (!se->sum_exec_runtime ||
++	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
+ 		return true;
+ 
+ 	return false;
+-- 
+2.19.0.rc1.350.ge57e33dbd1-goog
+
