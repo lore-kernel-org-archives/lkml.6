@@ -2,118 +2,111 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9E7C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4035EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE60120839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE60120839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DDBE420839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:55:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="DinZr9wc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDBE420839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeHaQBH (ORCPT
+        id S1727743AbeHaQCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:01:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39624 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727486AbeHaQBG (ORCPT
+        Fri, 31 Aug 2018 12:02:10 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44553 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbeHaQCK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:01:06 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VBnLYF106339
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:53:58 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m73s73qmj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:53:57 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 31 Aug 2018 12:53:56 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 31 Aug 2018 12:53:53 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VBrqZU35193028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Aug 2018 11:53:53 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A72D52052;
-        Fri, 31 Aug 2018 14:53:48 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with SMTP id 6AD1E5204F;
-        Fri, 31 Aug 2018 14:53:46 +0100 (BST)
-Date:   Fri, 31 Aug 2018 04:53:50 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Subject: Re: [PATCH 2/2] sched/topology: Expose numa_mask set/clear functions
- to arch
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180808081942.GA37418@linux.vnet.ibm.com>
- <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1533920419-17410-2-git-send-email-srikar@linux.vnet.ibm.com>
- <20180829080219.GN24124@hirez.programming.kicks-ass.net>
- <20180831102724.GB8437@linux.vnet.ibm.com>
- <20180831111253.GJ24124@hirez.programming.kicks-ass.net>
- <20180831112639.GA24142@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180831112639.GA24142@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18083111-0028-0000-0000-000002F24A83
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083111-0029-0000-0000-000023ABB0E1
-Message-Id: <20180831115350.GC8437@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808310124
+        Fri, 31 Aug 2018 12:02:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s10-v6so8824306edb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 04:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eKbNuiRflFTOoI075dTWihwFLTBIB+AUDOUAZ3tZLcQ=;
+        b=DinZr9wcTy1Ezmdldomlv7NIWc/UmBDqC3RKYLlH+0iJeppEXo+3JlDisFiwdMEleg
+         NRDS4cltr5prCSPqfe+SR4ppP7wlRKHFdKyK+8yjWitRuKdUUOEwPrzXGGmK/qrMCMbr
+         HDWxJoupJSJbWUR/xkoCcc0DnoUky5vrTlH7gPaqRWdZ/b8Qd0c429k73W4p4J9TtKe9
+         q+jxEm5B7Bo/J3mV2SMKWJDL7gKcVAUr5/sWnJqA0twxm+sWYPGGbE4ZmRljMhRrZtmS
+         4EE5jEcAUhsYFjSN8H/EVxtE7otzdEIWWCNoK11spDNjK6fCGx+KVGNjvXAsNldHOLJX
+         pZ3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eKbNuiRflFTOoI075dTWihwFLTBIB+AUDOUAZ3tZLcQ=;
+        b=GpZfSWICdlcXpiuNUSWLJjhQjF+Qu01j0T4dOSn3xCqD/WHyVaEOQrRdebtotCQklr
+         KyotPy7BchPBEjaJwUbgIWFUQ7N8i3J48xPA/56CwJMr05f0gN0RO/zG8Ev05jzKZ3CT
+         FrsgDF4vIPIGf7A2cXRxLbfIInu09RiPJ6LyPTq4HLmi7EElPnms6A3BhP1f6xj4FpFP
+         12Q0sFjeOL88nrlZr1/34xBUi/J1INGTuWzbUo/v4V8ZMCBsNGZsgy0gUB9oF6Fvm3N2
+         dLHNIyggsSntG3B1mYMwvf9If76QECbsW/ldfC6CrRTSSB8EaDUnKp5z7WNJR4QunAJR
+         ZtGw==
+X-Gm-Message-State: APzg51Df+uXcCGo0csQ2s1vAM+ADk2b0Su0N+7aa0RBJdUXRTVKtvFyL
+        ZDi4mMTFL1sKBM1bwExs5J/AxA==
+X-Google-Smtp-Source: ANB0VdZfRM18ygUFRa2y4OX4/dNqoFxq3DLMOaNLgNISZzPLeisCc7c6TVnga8UA1RTFRn2aRb95Sg==
+X-Received: by 2002:a50:95dd:: with SMTP id x29-v6mr17819920eda.3.1535716501426;
+        Fri, 31 Aug 2018 04:55:01 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id w41-v6sm4332832edd.92.2018.08.31.04.54.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 04:55:00 -0700 (PDT)
+Message-ID: <1535716498.23560.78.camel@arista.com>
+Subject: Re: [PATCH 1/4] tty: Drop tty->count on tty_reopen() failure
+From:   Dmitry Safonov <dima@arista.com>
+To:     Jiri Slaby <jslaby@suse.cz>, linux-kernel@vger.kernel.org
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, stable@vger.kernel.org
+Date:   Fri, 31 Aug 2018 12:54:58 +0100
+In-Reply-To: <b6481bae-a5bd-139f-d193-198a02d24bd8@suse.cz>
+References: <20180829022353.23568-1-dima@arista.com>
+         <20180829022353.23568-2-dima@arista.com>
+         <cbedde00-a0f4-6714-f7f4-a180dca15ce0@suse.cz>
+         <1535559207.23560.55.camel@arista.com>
+         <b6481bae-a5bd-139f-d193-198a02d24bd8@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2018-08-31 13:26:39]:
+On Fri, 2018-08-31 at 08:47 +0200, Jiri Slaby wrote:
+> On 08/29/2018, 06:13 PM, Dmitry Safonov wrote:
+> > > I would just do:
+> > >   if (!retval)
+> > >     tty->count++;
+> > > here. Nobody from ldiscs should rely on tty->count.
+> > 
+> > I thought about that and probably should have described in commit
+> > message why I haven't done that: I prefer to keep it as was as I
+> > did Cc
+> > stable tree - to keep the chance of regression to minimum.
+> > 
+> > I agree that your way is cleaner, but probably it may be done as
+> > cleanup on top for linux-next..
+> 
+> Agreed, so care to cook it up as 5/4 in this series :)?
 
-> On Fri, Aug 31, 2018 at 01:12:53PM +0200, Peter Zijlstra wrote:
-> > NAK, not until you've fixed every cpu_to_node() user in the kernel to
-> > deal with that mask changing.
-> 
-> Also, what happens if userspace reads that information; uses libnuma and
-> then you go and shift the world underneath their feet?
-> 
-> > This is absolutely insane.
-> 
-
-The topology events are suppose to be very rare.
-From whatever small experiments I have done till now, unless tasks are
-bound to both cpu and memory, they seem to be coping well with topology
-updates. I know things weren't optimal after a topology change but they
-worked. Now after 051f3ca02e46 "Introduce NUMA identity node sched
-domain", systems stall. I am only exploring at ways to keep them working
-as much as they were before that commit.
+Sure, will resend v2 with that and all tested-by.
 
 -- 
-Thanks and Regards
-Srikar Dronamraju
-
+Thanks,
+             Dmitry
