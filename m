@@ -2,129 +2,83 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE9CC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB000C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B532083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B8120837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhDSDQRt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B532083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GA3/uWrI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B8120837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeHaFeG (ORCPT
+        id S1727467AbeHaFeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:34:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbeHaFeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:34:06 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6D2C20837;
-        Fri, 31 Aug 2018 01:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535678947;
-        bh=BDsoP5G6dDU7wOY/YOWY7Pmjrr4PnV27ii0kVb0EKSw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=UhDSDQRtkGXS6P36o1hDZchM//jDZljoAgSe6t+ndVR0mZZ5yCw9XHL/nVQyuuM16
-         N+hkWkxKjvho6PPTtsEMRxGcVh6dZDRRKqi3kdv5YYAVDiBMofdXUzs/pWWivg83uJ
-         Umhh+nsVWUUtNYe9KAoMz1VDNcwqr52CkxmLGNDw=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 31 Aug 2018 01:34:21 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36625 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbeHaFeV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 01:34:21 -0400
+Received: by mail-it0-f68.google.com with SMTP id u13-v6so5261168iti.1;
+        Thu, 30 Aug 2018 18:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bEDpd09z+D1w9x6ey5KLDa45+xyXCiFT5LtuJOT76zY=;
+        b=GA3/uWrIIFVUkCgPH8VHmklSGHbqEDA/XYpSBKIazT43rnriQi8DQDZWjsX1nHdTfi
+         jQE8Rt9G5zrU98mSc7tDG5X0A/CIfecJxOV3isE8h/4XMoCq5uiOPKwa5dUbveJTdpuE
+         kN0fwoXgCD4+zlyxqHy7d0SWWX22LcDWRlxqU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bEDpd09z+D1w9x6ey5KLDa45+xyXCiFT5LtuJOT76zY=;
+        b=Un8tkPDNF1kVU6MRtLoZ2dJklDQfwK7WXtZuQSwilABT7kNnBrhu2lOcGXaerbmjFP
+         oPM5YqFeXoaqSbNL0oK1zzM8Ai8D5NLl5RCAzEW0EOx5M4X4pKfberi9Rms6JVL+ZDSX
+         RPb/CmkYg/9LUp+OTYqVBP2AW7VVMPcR/Rw+MaK2/G7Hi6/drVimNYg2GSPTL9yZ2nAy
+         QD+PPoUS5w5RsF1KZU6TZwV0rCsAzi75kGlI92QFMMvo4qAEcmlr1R9JuUUx0PXjEHkr
+         8+4rzfi/XNLxNcz0ZeNSJKf6xwxirm/T2GJJhL8cgx2CK2wSV+yvb4lZZJDcassCLt9G
+         KTwg==
+X-Gm-Message-State: APzg51BkN+YHZ7KCRjsbM32NO+LLtbFz+KPW+MFQwsGKT0hZKPAtXncX
+        MS9NgCyZoj/iAlpbozO4LJ4LoUF30Maj0DVBUOs=
+X-Google-Smtp-Source: ANB0VdZo1aq65uf5Hk0yfDiqshuOJPB41SyIM79FgxXKMurA60vNIsSIl4qAYN0Yk5fHsBTrFY19A1PR6G2YjtBXFRk=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr3901530ite.123.1535678962883;
+ Thu, 30 Aug 2018 18:29:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Message-ID: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Date:   Thu, 30 Aug 2018 18:29:07 -0700
+References: <20180830214517.29372-1-tony.luck@intel.com>
+In-Reply-To: <20180830214517.29372-1-tony.luck@intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 30 Aug 2018 18:29:11 -0700
+Message-ID: <CA+55aFxVQqnFVQaCYHbnWnt3kBfVkLWgNvKFkf6qgDWCSDNpEg@mail.gmail.com>
+Subject: Re: [PATCH] x86/mce: Fix set_mce_nospec() to avoid #GP fault
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Borislav Petkov <bp@alien8.de>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Peng Fan (2018-08-12 18:15:41)
-> Hi Anson,
-> =
+On Thu, Aug 30, 2018 at 2:45 PM Tony Luck <tony.luck@intel.com> wrote:
+>
+> Fix is to move one step at a time. First mark the page not present
+> (using the decoy address). Then it is safe to use the actual address
+> of the 1:1 mapping to mark it "uc", and finally as present.
 
-> > > > -----Original Message-----
-> > > > From: Anson Huang
-> > > > Sent: 2018=E5=B9=B48=E6=9C=888=E6=97=A5 12:39
-> > > > To: shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > > > mturquette@baylibre.com; sboyd@kernel.org;
-> > > > linux-arm-kernel@lists.infradead.org;
-> > > > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > > > Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-> > > >
-> > > > Clock framework will enable those clocks registered with
-> > > > CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
-> > > > clock
-> > > initialization now.
-> > >
-> > > Will it be more flexible to parse dts saying "critical-clocks =3D <xx=
-x>"
-> > > or "init-on-arrary=3D<xxx>"
-> > > and enable those clocks?
-> > =
+Can't we do it in one step, but make sure that he clflush gets the real address?
 
-> > Parsing the clocks arrays from dtb is another way of enabling critical =
-clocks, but
-> > for current i.MX6/7 platforms, we implement it in same way as most of o=
-ther
-> > SoCs, currently I did NOT see any necessity of putting them in dtb, jus=
-t adding
-> > flag during clock registering is more simple, if there is any special r=
-equirement
-> > for different clocks set to be enabled, then we can add support to enab=
-le the
-> > method of parsing critical-clocks from dtb. Just my two cents.
-> =
-
-> Thinking about OP-TEE want to use one device, but it's clocks are registe=
-red
-> by Linux, because there is no module in Linux side use it, it will shutdo=
-wn the clock,
-> which cause OP-TEE could not access the device.
-> =
-
-> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make s=
-ure
-> the clocks are not shutdown by Linux.
-> =
-
-> However adding a new property in clk node and let driver code parse the d=
-ts,
-> there is no need to modify clk driver code when OP-TEE needs another devi=
-ce clock.
-> =
-
-
-If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
-in Linux probe, acquire clocks, and keep the clks enabled forever?
-
+              Linus
