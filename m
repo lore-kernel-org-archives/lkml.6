@@ -2,291 +2,114 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511C2C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3CBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2AC920839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6E720839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:59:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xvr+nriL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2AC920839
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8NwuuvS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6E720839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeHaGAo (ORCPT
+        id S1727405AbeHaGEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 02:00:44 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:36284 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeHaF7U (ORCPT
+        Fri, 31 Aug 2018 02:04:02 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46648 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeHaGEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:59:20 -0400
-Received: by mail-yb1-f196.google.com with SMTP id d34-v6so330097yba.3;
-        Thu, 30 Aug 2018 18:54:18 -0700 (PDT)
+        Fri, 31 Aug 2018 02:04:02 -0400
+Received: by mail-yb1-f194.google.com with SMTP id y20-v6so333220ybi.13
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 18:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=k8lJl7i7FTYeBdqfAw+QVbGJHRo/sAwQBcaRUhagy58=;
-        b=Xvr+nriLTlLEABF5sEIpcHJQkaiad4VSO9wg2Zoc6LCEGfaTY0f/0eKKggr54RPwFP
-         G5mzHYIyTQ5Suvz1yx/FrC6ETSkZE+iKOE5onNlLjjZgOUxhfEdtNX3etrFonMvoX+6n
-         7ogrpxgKr0sISHYroCUc15SVViVYtwFO+8/2HwhwvV5aqpuH3CR3zUvD/zSiBBi68CkX
-         qwcnDFAaXAyFvT5G33zor9hI7+VCmmRlnbuoEwywB2S8bNM/8Ji47x4h+h4wyZiO//Ey
-         69g5NojLOZX0sc92pEq5DQMGYiajJubxYgBS/8t8PWMw7Y/jpSG+jhVLfPxNwpYSrm52
-         hzTA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d/Ao+mQGjbU8DNivYLWqm5ccgBuwG9QH6Bcvi5bSBNI=;
+        b=d8NwuuvSFu8/HTkAd9dsQNFRUneAB9aquzdUO38lOoqR7ZL+/84bRYUuG6wcmG73+D
+         3f80w/yDEMVtt4fSMnVaTxfBbWfettITgZ98IZm93mzya6efHAbgRHRNToKrwhj89tH4
+         SvHeWW2+/IXX22W38gCnOn22vWFxjrZzeVT+UXlzFSRoHlrpYp3GckZeanbv/+40KsES
+         4tjYtZgUxx30Nm2L7m+BGDF+3JSl4NIFrpkLeVUheDfqbKaXed1jrxsUbMKrpZdlazH1
+         qS8fAcoHwdhFcBakl5UysvtgYcoKoFLGj7vaVIoxNJzAqYojdALSHvRVWA563aGzzCBP
+         HyDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=k8lJl7i7FTYeBdqfAw+QVbGJHRo/sAwQBcaRUhagy58=;
-        b=aRIHrsDyx1kzi7j01IFQWWJphDee0ihckA0/gvct/StS/fXS4D0iZgoKTbyKKLsleS
-         fgkQxOyTRyt5wwrumkOYK2KSRle5NUCoCk1rde0pz0EXOeNVePSyUpCt4Ti9WRHBLMgh
-         vGiUlAb3xwefidf0cwS4qfIE8AX0xhNPSGhJ8qDtjT6GOCFrX/Y6YdHfvcGSf0/AH9J9
-         JVL8f9XrExoVnDZCmE9VtIEOHrI+HpbUiEb0FmbEtmEjVLItSK8MZvB4bE8Gp1KaVr9p
-         fyWaiOd6XpWFp3eVrljAatyQ4BYxxOCa0kD5mNdHAeGPFmy+SxOn0d7y9wwRHAb3a1pY
-         M2Gg==
-X-Gm-Message-State: APzg51CsVJQxvFWz9LVDCTfepg0Gw6AMy0X8IYcF06IAyJIRBeQ0nrZZ
-        eJlv3bd0S0egNplzlae2x7graobuWa4=
-X-Google-Smtp-Source: ANB0Vdaty0R6GKaTmA2vaySuwyNIj/I85pNNltlGns3DuX5lhWc+M+n6mQsqT9yuLLiTarxfTJSTdA==
-X-Received: by 2002:a25:220a:: with SMTP id i10-v6mr7337402ybi.489.1535680457461;
-        Thu, 30 Aug 2018 18:54:17 -0700 (PDT)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.16
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d/Ao+mQGjbU8DNivYLWqm5ccgBuwG9QH6Bcvi5bSBNI=;
+        b=gEQyRyaA8pGxzdFJIkIbmFbFKw9b4vX/6vbLIxJn0xS6Am2izmEN51fOvql9u78/NL
+         xp4xzIN3+Qggid+wmYaxv34LOt6K+yAg5faeyVAuKmaVQ+y7qn6ddn+/XiAmmcpcpld/
+         7J2tnsBOPTsoqPU0XGCSufEWrZoI0BIVXdivl0lHoEkv9QrGY+xhlwMT6v2txZRno+ar
+         97Krkht6jL6sNQW2JcMjbL0n+x9UpSrFMldIzBE11RYup8FN48bVy90uOWFRyV6uKU0k
+         N6mrfEBUK2Mx5iUX6w2ICsL0VZI6TxG3/2iX2qxLhSzKoIv3/IVa4OCYLbCawXxydbpy
+         DZ8A==
+X-Gm-Message-State: APzg51BE70mlYI+JQMQLuewg4rTlPAFN2BHe6tKZv7ciEZZeK0SIrG3M
+        kXpQrk1ReFxRBgbXXQc3pNs=
+X-Google-Smtp-Source: ANB0VdYCn4dZD1QYggQPqJ2LjB5VDuM4G6Vm9qrO8JYwMfypH6snpocEhlBCQCBauw0DXYYv11Kayg==
+X-Received: by 2002:a25:3f07:: with SMTP id m7-v6mr7343525yba.50.1535680738666;
+        Thu, 30 Aug 2018 18:58:58 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::d51e])
+        by smtp.gmail.com with ESMTPSA id x133-v6sm4250393ywg.49.2018.08.30.18.58.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:54:17 -0700 (PDT)
+        Thu, 30 Aug 2018 18:58:58 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 21:58:55 -0400
 From:   Dennis Zhou <dennisszhou@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 02/15] blkcg: delay blkg destruction until after writeback has finished
-Date:   Thu, 30 Aug 2018 21:53:43 -0400
-Message-Id: <20180831015356.69796-3-dennisszhou@gmail.com>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180831015356.69796-1-dennisszhou@gmail.com>
-References: <20180831015356.69796-1-dennisszhou@gmail.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Igor Stoppa <igor.stoppa@huawei.com>,
+        zijun_hu <zijun_hu@htc.com>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>
+Subject: Re: [PATCH 20/23] mm: percpu: remove unnecessary unlikely()
+Message-ID: <20180831015854.GA69977@dennisz-mbp.dhcp.thefacebook.com>
+References: <20180830223429.30051-1-igor.stoppa@huawei.com>
+ <20180830223429.30051-21-igor.stoppa@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830223429.30051-21-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+On Fri, Aug 31, 2018 at 01:34:26AM +0300, Igor Stoppa wrote:
+> WARN_ON() already contains an unlikely(), so it's not necessary to
+> wrap it into another.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> Cc: zijun_hu <zijun_hu@htc.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Dennis Zhou <dennisszhou@gmail.com>
+> ---
+>  mm/percpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/percpu.c b/mm/percpu.c
+> index a749d4d96e3e..f5c2796fe63e 100644
+> --- a/mm/percpu.c
+> +++ b/mm/percpu.c
+> @@ -2588,7 +2588,7 @@ int __init pcpu_page_first_chunk(size_t reserved_size,
+>  	BUG_ON(ai->nr_groups != 1);
+>  	upa = ai->alloc_size/ai->unit_size;
+>  	nr_g0_units = roundup(num_possible_cpus(), upa);
+> -	if (unlikely(WARN_ON(ai->groups[0].nr_units != nr_g0_units))) {
+> +	if (WARN_ON(ai->groups[0].nr_units != nr_g0_units)) {
+>  		pcpu_free_alloc_info(ai);
+>  		return -EINVAL;
+>  	}
+> -- 
+> 2.17.1
+> 
 
-Currently, blkcg destruction relies on a sequence of events:
-  1. Destruction starts. blkcg_css_offline() is called and blkgs
-     release their reference to the blkcg. This immediately destroys
-     the cgwbs (writeback).
-  2. With blkgs giving up their reference, the blkcg ref count should
-     become zero and eventually call blkcg_css_free() which finally
-     frees the blkcg.
+Acked-by: Dennis Zhou <dennisszhou@gmail.com>
 
-Jiufei Xue reported that there is a race between blkcg_bio_issue_check()
-and cgroup_rmdir(). To remedy this, blkg destruction becomes contingent
-on the completion of all writeback associated with the blkcg. A count of
-the number of cgwbs is maintained and once that goes to zero, blkg
-destruction can follow. This should prevent premature blkg destruction.
-
-The new process for blkcg cleanup is as follows:
-  1. Destruction starts. blkcg_css_offline() is called which offlines
-     writeback. Blkg destruction is delayed on the nr_cgwbs count to
-     avoid punting potentially large amounts of outstanding writeback
-     to root while maintaining any ongoing policies.
-  2. When the nr_cgwbs becomes zero, blkcg_destroy_blkgs() is called and
-     handles destruction of blkgs. This is where the css reference held
-     by each blkg is released.
-  3. Once the blkcg ref count goes to zero, blkcg_css_free() is called.
-     This finally frees the blkg.
-
-It seems in the past blk-throttle didn't do the most understandable
-things with taking data from a blkg while associating with current. So,
-the simplification and unification of what blk-throttle is doing caused
-this.
-
-Fixes: 08e18eab0c579 ("block: add bi_blkg to the bio for cgroups")
-Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
-Cc: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: Jens Axboe <axboe@kernel.dk>
----
- block/blk-cgroup.c         | 53 ++++++++++++++++++++++++++++++++------
- include/linux/blk-cgroup.h | 29 +++++++++++++++++++++
- mm/backing-dev.c           |  5 ++++
- 3 files changed, 79 insertions(+), 8 deletions(-)
-
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 2998e4f095d1..d7114308a480 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1042,21 +1042,59 @@ static struct cftype blkcg_legacy_files[] = {
- 	{ }	/* terminate */
- };
- 
-+/*
-+ * blkcg destruction is a three-stage process.
-+ *
-+ * 1. Destruction starts.  The blkcg_css_offline() callback is invoked
-+ *    which offlines writeback.  Here we tie the next stage of blkg destruction
-+ *    to the completion of writeback associated with the blkcg.  This lets us
-+ *    avoid punting potentially large amounts of outstanding writeback to root
-+ *    while maintaining any ongoing policies.  The next stage is triggered when
-+ *    the nr_cgwbs count goes to zero.
-+ *
-+ * 2. When the nr_cgwbs count goes to zero, blkcg_destroy_blkgs() is called
-+ *    and handles the destruction of blkgs.  Here the css reference held by
-+ *    the blkg is put back eventually allowing blkcg_css_free() to be called.
-+ *    This work may occur in cgwb_release_workfn() on the cgwb_release
-+ *    workqueue.  Any submitted ios that fail to get the blkg ref will be
-+ *    punted to the root_blkg.
-+ *
-+ * 3. Once the blkcg ref count goes to zero, blkcg_css_free() is called.
-+ *    This finally frees the blkcg.
-+ */
-+
- /**
-  * blkcg_css_offline - cgroup css_offline callback
-  * @css: css of interest
-  *
-- * This function is called when @css is about to go away and responsible
-- * for shooting down all blkgs associated with @css.  blkgs should be
-- * removed while holding both q and blkcg locks.  As blkcg lock is nested
-- * inside q lock, this function performs reverse double lock dancing.
-- *
-- * This is the blkcg counterpart of ioc_release_fn().
-+ * This function is called when @css is about to go away.  Here the cgwbs are
-+ * offlined first and only once writeback associated with the blkcg has
-+ * finished do we start step 2 (see above).
-  */
- static void blkcg_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct blkcg *blkcg = css_to_blkcg(css);
- 
-+	/* this prevents anyone from attaching or migrating to this blkcg */
-+	wb_blkcg_offline(blkcg);
-+
-+	/* allow the count the count to go to zero */
-+	blkcg_cgwb_dec(blkcg);
-+}
-+
-+/**
-+ * blkcg_destroy_blkgs - responsible for shooting down blkgs
-+ * @blkcg: blkcg of interest
-+ *
-+ * blkgs should be removed while holding both q and blkcg locks.  As blkcg lock
-+ * is nested inside q lock, this function performs reverse double lock dancing.
-+ * Destroying the blkgs releases the reference held on the blkcg's css allowing
-+ * blkcg_css_free to eventually be called.
-+ *
-+ * This is the blkcg counterpart of ioc_release_fn().
-+ */
-+void blkcg_destroy_blkgs(struct blkcg *blkcg)
-+{
- 	spin_lock_irq(&blkcg->lock);
- 
- 	while (!hlist_empty(&blkcg->blkg_list)) {
-@@ -1075,8 +1113,6 @@ static void blkcg_css_offline(struct cgroup_subsys_state *css)
- 	}
- 
- 	spin_unlock_irq(&blkcg->lock);
--
--	wb_blkcg_offline(blkcg);
- }
- 
- static void blkcg_css_free(struct cgroup_subsys_state *css)
-@@ -1146,6 +1182,7 @@ blkcg_css_alloc(struct cgroup_subsys_state *parent_css)
- 	INIT_HLIST_HEAD(&blkcg->blkg_list);
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	INIT_LIST_HEAD(&blkcg->cgwb_list);
-+	atomic_set(&blkcg->nr_cgwbs, 1);
- #endif
- 	list_add_tail(&blkcg->all_blkcgs_node, &all_blkcgs);
- 
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 1615cdd4c797..c7386464ec4c 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -56,6 +56,7 @@ struct blkcg {
- 	struct list_head		all_blkcgs_node;
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	struct list_head		cgwb_list;
-+	atomic_t			nr_cgwbs;
- #endif
- };
- 
-@@ -386,6 +387,34 @@ static inline struct blkcg *cpd_to_blkcg(struct blkcg_policy_data *cpd)
- 	return cpd ? cpd->blkcg : NULL;
- }
- 
-+/**
-+ * blkcg_cgwb_inc - increment the count for cgwb_list
-+ * @blkcg: blkcg of interest
-+ *
-+ * This is used to count the number of active wb's related to a blkcg.
-+ */
-+static inline void blkcg_cgwb_inc(struct blkcg *blkcg)
-+{
-+	atomic_inc(&blkcg->nr_cgwbs);
-+}
-+
-+extern void blkcg_destroy_blkgs(struct blkcg *blkcg);
-+
-+/**
-+ * blkcg_cgwb_dec - decrement the count for cgwb_list
-+ * @blkcg: blkcg of interest
-+ *
-+ * This is used to count the number of active wb's related to a blkcg.
-+ * When this count goes to zero, all active wb has finished so the
-+ * blkcg can be destroyed.  This does blkg destruction if the nr_cgwbs
-+ * drops to zero.
-+ */
-+static inline void blkcg_cgwb_dec(struct blkcg *blkcg)
-+{
-+	if (atomic_dec_and_test(&blkcg->nr_cgwbs))
-+		blkcg_destroy_blkgs(blkcg);
-+}
-+
- /**
-  * blkg_path - format cgroup path of blkg
-  * @blkg: blkg of interest
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 2e5d3df0853d..92342d38f0c6 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -494,6 +494,7 @@ static void cgwb_release_workfn(struct work_struct *work)
- {
- 	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
- 						release_work);
-+	struct blkcg *blkcg = css_to_blkcg(wb->blkcg_css);
- 
- 	mutex_lock(&wb->bdi->cgwb_release_mutex);
- 	wb_shutdown(wb);
-@@ -502,6 +503,9 @@ static void cgwb_release_workfn(struct work_struct *work)
- 	css_put(wb->blkcg_css);
- 	mutex_unlock(&wb->bdi->cgwb_release_mutex);
- 
-+	/* this triggers destruction of blkgs if nr_cgwbs becomes zero */
-+	blkcg_cgwb_dec(blkcg);
-+
- 	fprop_local_destroy_percpu(&wb->memcg_completions);
- 	percpu_ref_exit(&wb->refcnt);
- 	wb_exit(wb);
-@@ -600,6 +604,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
- 			list_add_tail_rcu(&wb->bdi_node, &bdi->wb_list);
- 			list_add(&wb->memcg_node, memcg_cgwb_list);
- 			list_add(&wb->blkcg_node, blkcg_cgwb_list);
-+			blkcg_cgwb_inc(blkcg);
- 			css_get(memcg_css);
- 			css_get(blkcg_css);
- 		}
--- 
-2.17.1
-
+Thanks,
+Dennis
