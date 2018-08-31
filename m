@@ -2,114 +2,126 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE8EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B855C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D0120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D0120661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id C330C2083E
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:14:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QE2fOoTO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C330C2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeHaTVb (ORCPT
+        id S1728784AbeHaTWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:21:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51951 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728529AbeHaTVb (ORCPT
+        Fri, 31 Aug 2018 15:22:11 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45996 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeHaTWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:21:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFDPLF2195679
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 31 Aug 2018 08:13:25 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFDOY02195676;
-        Fri, 31 Aug 2018 08:13:24 -0700
-Date:   Fri, 31 Aug 2018 08:13:24 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ben Hutchings <tipbot@zytor.com>
-Message-ID: <tip-829fe4aa9ac16417a904ad1de1307de906854bcf@git.kernel.org>
-Cc:     mingo@kernel.org, helmutg@debian.org, hpa@zytor.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        ben@decadent.org.uk
-Reply-To: mingo@kernel.org, helmutg@debian.org, tglx@linutronix.de,
-          hpa@zytor.com, ben@decadent.org.uk, linux-kernel@vger.kernel.org
-In-Reply-To: <20180829194317.GA4765@decadent.org.uk>
-References: <20180829194317.GA4765@decadent.org.uk>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86: Allow generating user-space headers without a
- compiler
-Git-Commit-ID: 829fe4aa9ac16417a904ad1de1307de906854bcf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 31 Aug 2018 15:22:10 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VFE9S5006420;
+        Fri, 31 Aug 2018 10:14:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535728449;
+        bh=RTpRZYg25nhyRAAlE9npB6x05adjYTxmEE0UYgeGVj0=;
+        h=From:To:CC:Subject:Date;
+        b=QE2fOoTOuhJnPxsz4fbi+ny1d1ITYGDs+ePODsOMbaKqobJTpEOzGNuHhwbQ0kc7o
+         W+buoiFg+SLHCBurGmyxFJsJYDXiXp6ieQmDZwA/6QWDfSvKeidqB1F9Zan6A/FCiR
+         7BYoOQEwvwekH3LlK2fhxrEvb3nn/M4xSTjM9K6Q=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VFE9RT012652;
+        Fri, 31 Aug 2018 10:14:09 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 31
+ Aug 2018 10:14:08 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 31 Aug 2018 10:14:08 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VFE8vp025649;
+        Fri, 31 Aug 2018 10:14:08 -0500
+Received: from localhost (uda0226330.dhcp.ti.com [172.22.167.21])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7VFE8x19322;
+        Fri, 31 Aug 2018 10:14:08 -0500 (CDT)
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH 1/3] ASoC: tas6424: Save last fault register even when clear
+Date:   Fri, 31 Aug 2018 10:14:05 -0500
+Message-ID: <20180831151407.18864-1-afd@ti.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  829fe4aa9ac16417a904ad1de1307de906854bcf
-Gitweb:     https://git.kernel.org/tip/829fe4aa9ac16417a904ad1de1307de906854bcf
-Author:     Ben Hutchings <ben@decadent.org.uk>
-AuthorDate: Wed, 29 Aug 2018 20:43:17 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 31 Aug 2018 17:08:22 +0200
+When there is no fault bit set in a fault register we skip the fault
+reporting section for that register. This also skips over saving that
+registers value. We save the value so we will not double report an
+error, but if an error clears then returns we will also not report it
+as we did not save the all cleared register value. Fix this by saving
+the fault register value in the all clear path.
 
-x86: Allow generating user-space headers without a compiler
-
-When bootstrapping an architecture, it's usual to generate the kernel's
-user-space headers (make headers_install) before building a compiler.  Move
-the compiler check (for asm goto support) to the archprepare target so that
-it is only done when building code for the target.
-
-Fixes: e501ce957a78 ("x86: Force asm-goto")
-Reported-by: Helmut Grohne <helmutg@debian.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180829194317.GA4765@decadent.org.uk
-
-
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- arch/x86/Makefile | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ sound/soc/codecs/tas6424.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 8fc8f94ef5f5..8f6e7eb8ae9f 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -175,10 +175,6 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
-   endif
- endif
+diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
+index 14999b999fd3..0d6145549a98 100644
+--- a/sound/soc/codecs/tas6424.c
++++ b/sound/soc/codecs/tas6424.c
+@@ -424,8 +424,10 @@ static void tas6424_fault_check_work(struct work_struct *work)
+ 	       TAS6424_FAULT_PVDD_UV |
+ 	       TAS6424_FAULT_VBAT_UV;
  
--ifndef CC_HAVE_ASM_GOTO
--  $(error Compiler lacks asm-goto support.)
--endif
--
- ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
- 	# This compiler flag is not supported by Clang:
- 	KBUILD_CFLAGS += $(call cc-option,-maccumulate-outgoing-args,)
-@@ -300,6 +296,13 @@ PHONY += vdso_install
- vdso_install:
- 	$(Q)$(MAKE) $(build)=arch/x86/entry/vdso $@
+-	if (reg)
++	if (!reg) {
++		tas6424->last_fault1 = reg;
+ 		goto check_global_fault2_reg;
++	}
  
-+archprepare: checkbin
-+checkbin:
-+ifndef CC_HAVE_ASM_GOTO
-+	@echo Compiler lacks asm-goto support.
-+	@exit 1
-+endif
-+
- archclean:
- 	$(Q)rm -rf $(objtree)/arch/i386
- 	$(Q)rm -rf $(objtree)/arch/x86_64
+ 	/*
+ 	 * Only flag errors once for a given occurrence. This is needed as
+@@ -461,8 +463,10 @@ static void tas6424_fault_check_work(struct work_struct *work)
+ 	       TAS6424_FAULT_OTSD_CH3 |
+ 	       TAS6424_FAULT_OTSD_CH4;
+ 
+-	if (!reg)
++	if (!reg) {
++		tas6424->last_fault2 = reg;
+ 		goto check_warn_reg;
++	}
+ 
+ 	if ((reg & TAS6424_FAULT_OTSD) && !(tas6424->last_fault2 & TAS6424_FAULT_OTSD))
+ 		dev_crit(dev, "experienced a global overtemp shutdown\n");
+@@ -497,8 +501,10 @@ static void tas6424_fault_check_work(struct work_struct *work)
+ 	       TAS6424_WARN_VDD_OTW_CH3 |
+ 	       TAS6424_WARN_VDD_OTW_CH4;
+ 
+-	if (!reg)
++	if (!reg) {
++		tas6424->last_warn = reg;
+ 		goto out;
++	}
+ 
+ 	if ((reg & TAS6424_WARN_VDD_UV) && !(tas6424->last_warn & TAS6424_WARN_VDD_UV))
+ 		dev_warn(dev, "experienced a VDD under voltage condition\n");
+-- 
+2.18.0
+
