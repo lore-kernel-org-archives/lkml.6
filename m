@@ -2,129 +2,106 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D48C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7498BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA2A20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA2F20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqOEwXME"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA2A20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="03k5c5RA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA2F20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeHaSxO (ORCPT
+        id S1728641AbeHaSyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:53:14 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37689 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727809AbeHaSxO (ORCPT
+        Fri, 31 Aug 2018 14:54:33 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:49753 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbeHaSyd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:53:14 -0400
-Received: by mail-io0-f196.google.com with SMTP id v14-v6so10610152iob.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5Qz8Kz1wIUkVJsNPiip3hX8FZFk4JWKS58U7cHDxgPo=;
-        b=CqOEwXMEQxpWYhg20f21rc7QCPySzEoziwXqW03BHd/KA4ubvD+HWI/s5D9bDj2lsr
-         ngjSsYnNyABNRZDA7L+qAReVeeilRQFtpq4shLDkqgmq94w2qZMAavIQlnKyH2aRMi7Q
-         593iTcGcl5kR+atSxy9EYAJyLF/P3LuAM53YU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5Qz8Kz1wIUkVJsNPiip3hX8FZFk4JWKS58U7cHDxgPo=;
-        b=TbKesHyyBbEXoc6dfGT0gJDP/sFTGf7y4AhrrkklnwvwEtyqhTZ0LHfEbBO8wx+2Fp
-         ReL9UfnVRu76rp0AvcQCzxOW6HFjT+cdGEPfMtrLNLsxQUC+OMY1vOLUYPCQ7HyW72R6
-         3TpPPlxdZYllmd5sVdDoreksoUvqHWL3uLL4Ickarn8qMh7FmcVSepE05u+8h82Qnnmz
-         m9VctamaELjwROFKbsmadItQIbxh3qrGmwkH+K9BmNAXT8YhIZ3L53dB1fK3HOMELy1M
-         Rq6wfTfMU/4jokBYqHAXNsdBYrPoca2WzztkEnmA53Qr4QGn/uVj6a0RvjBv78WFBQQp
-         bSrQ==
-X-Gm-Message-State: APzg51BuQ9fYxngARWO4iAdua2FeSLODbxBQAwNXdISoROTGkk9ftina
-        OJAvYnux6xfLHJ7O45TWuLNgN+xeAsuBjoSFjGoXdg==
-X-Google-Smtp-Source: ANB0VdZLRMRm9sZSPdfukCJMDAAt+f59Zu7Ngo0hkAbCnhoeO6eijzqtDf1GizrtWbVnvvtVxSPEW220yY2agk4gFps=
-X-Received: by 2002:a6b:ea0a:: with SMTP id m10-v6mr12576590ioc.18.1535726724466;
- Fri, 31 Aug 2018 07:45:24 -0700 (PDT)
+        Fri, 31 Aug 2018 14:54:33 -0400
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w7VEkdUt005204;
+        Fri, 31 Aug 2018 23:46:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w7VEkdUt005204
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535726800;
+        bh=+1D6tLSi6dwxMlSKQs+4lK9phPzVgQ4IMW9jmf3Qmlc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=03k5c5RAh/6KnIOsUTqdMmpjEPIHthnWY+LNCSo3IQiAy/QveRVftg+99oHh9ymqt
+         B8Pe8d5GbMZ6eN+A/PBS35gfKWHG798EBMq+mcaNayRQl6SVoc+6hE2BBPl0Fuojwq
+         Qlm4ASKMByvMO1Zt1mLnEQCJx8KmXWB5mVnKz4CU4+/Xu36wW2iqF493BhTgv5laiK
+         62NvhyY5SxYNe548EdLxngVdicxUYNQtXBdQZd5uDaIYtF2KZZlIrXmSj7w2LTmvZG
+         BensQVBtAvsVkgx6tHB/1vBFSVz8qXd1Cg4GdglFKaJ5ScTvfy0XqegJDAXSHvahlT
+         OavJTssRMT4bQ==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id m26-v6so8360231uap.2;
+        Fri, 31 Aug 2018 07:46:39 -0700 (PDT)
+X-Gm-Message-State: APzg51CuRF305gYql9nnmggWjMT5kTiTyz7HwMHRQiPoH7vWzMf3VwjX
+        s4NtCyT79p0ytGs0VNe5aCGA5yyvWiDDoPFpx7I=
+X-Google-Smtp-Source: ANB0VdZdvLKUqKPIK0wFLSZwN5aQdTOcy22y44J71LyIIQbS3ERu6U5UvQvZ9byJv5Nk8SYQWHB3sjfwQYibqH26bkM=
+X-Received: by 2002:ab0:30ea:: with SMTP id d10-v6mr9886387uam.58.1535726798724;
+ Fri, 31 Aug 2018 07:46:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535723908-10779-1-git-send-email-vincent.guittot@linaro.org> <20180831144146.GO24124@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180831144146.GO24124@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 31 Aug 2018 16:45:13 +0200
-Message-ID: <CAKfTPtBPmQBtq5xvpVP59X4OqQcodTpT2djqVWKeW8X-CkhwOA@mail.gmail.com>
-Subject: Re: [PATCH] sched/pelt: fix update_blocked_averages() for dl and rt
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+Received: by 2002:ab0:5155:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 07:45:58
+ -0700 (PDT)
+In-Reply-To: <1535620722-14689-1-git-send-email-lukas.bulwahn@gmail.com>
+References: <1535620722-14689-1-git-send-email-lukas.bulwahn@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 31 Aug 2018 23:45:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQDm+=55UvLKp3ox_a64WU=W55=2ftAQ7MmMxA5E-bXkw@mail.gmail.com>
+Message-ID: <CAK7LNAQDm+=55UvLKp3ox_a64WU=W55=2ftAQ7MmMxA5E-bXkw@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: remove a spurious self-assignment
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018 at 16:41, Peter Zijlstra <peterz@infradead.org> wrote:
+2018-08-30 18:18 GMT+09:00 Lukas Bulwahn <lukas.bulwahn@gmail.com>:
+> The self assignment was probably introduced by an automated code
+> refactoring in
+> commit 694c49a7c01c ("kconfig: drop localization support").
 >
-> On Fri, Aug 31, 2018 at 03:58:28PM +0200, Vincent Guittot wrote:
-> > update_blocked_averages() is called to periodiccally decay the stalled load
-> > of idle CPUs and to sync all loads before running load balance.
-> >
-> > When cfs rq is idle, it trigs a load balance during pick_next_task_fair()
-> > in order to potentially pull tasks and to use this newly idle CPU. This
-> > load balance happens whereas prev task from another class has not been put
-> > and its utilization updated yet. This may lead to wrongly account running
-> > time as idle time for rt or dl classes.
-> >
-> > Test that no rt or dl task is running when updating their utilization in
-> > update_blocked_averages().
-> >
-> > We still update rt and dl utilization instead of simply skipping them to
-> > make sure that all metrics are synced when used during load balance.
-> >
+> The issue was identified by a self-assign warning when running
+> make menuconfig with clang.
 >
-> Fixes: 371bf4273269 ("sched/rt: Add rt_rq utilization tracking")
-> Fixes: 3727e0e16340 ("sched/dl: Add dl_rq utilization tracking")
->
-> Right?
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Yes
+Applied to linux-kbuild/fixes. Thanks!
 
->
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 309c93f..a1babaf 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7262,6 +7262,7 @@ static void update_blocked_averages(int cpu)
-> >  {
-> >       struct rq *rq = cpu_rq(cpu);
-> >       struct cfs_rq *cfs_rq, *pos;
-> > +     const struct sched_class *curr_class = rq->curr->sched_class;
-> >       struct rq_flags rf;
-> >       bool done = true;
-> >
-> > @@ -7298,8 +7299,8 @@ static void update_blocked_averages(int cpu)
-> >               if (cfs_rq_has_blocked(cfs_rq))
-> >                       done = false;
-> >       }
-> > -     update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-> > -     update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-> > +     update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
-> > +     update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
-> >       update_irq_load_avg(rq, 0);
-> >       /* Don't need periodic decay once load/util_avg are null */
-> >       if (others_have_blocked(rq))
->
-> Did you forget to update the second implementation of
-> update_blocked_averages() ?
 
-Yes. I have sent this version to quickly.
-I'm going to send an update
+>  scripts/kconfig/mconf.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+> index 83b5836..143c05f 100644
+> --- a/scripts/kconfig/mconf.c
+> +++ b/scripts/kconfig/mconf.c
+> @@ -490,7 +490,6 @@ static void build_conf(struct menu *menu)
+>                         switch (prop->type) {
+>                         case P_MENU:
+>                                 child_count++;
+> -                               prompt = prompt;
+>                                 if (single_menu_mode) {
+>                                         item_make("%s%*c%s",
+>                                                   menu->data ? "-->" : "++>",
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
