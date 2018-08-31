@@ -6,85 +6,154 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDB9C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C39DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5242E20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:14:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5242E20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id ED76120847
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:16:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED76120847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeHaQV5 (ORCPT
+        id S1728262AbeHaQXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:21:57 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52447 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeHaQV5 (ORCPT
+        Fri, 31 Aug 2018 12:23:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59527 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbeHaQXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:21:57 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fviJn-0004Md-Jj; Fri, 31 Aug 2018 14:14:27 +0200
-Date:   Fri, 31 Aug 2018 14:14:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     mojha@codeaurora.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mingo@kernel.org, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:smp/urgent] cpu/hotplug: Remove skip_onerr field from
+        Fri, 31 Aug 2018 12:23:50 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VCFtBH2143880
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 31 Aug 2018 05:15:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VCFtKc2143877;
+        Fri, 31 Aug 2018 05:15:55 -0700
+Date:   Fri, 31 Aug 2018 05:15:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mukesh Ojha <tipbot@zytor.com>
+Message-ID: <tip-6fb86d97207880c1286cd4cb3a7e6a598afbc727@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        mojha@codeaurora.org
+Reply-To: mojha@codeaurora.org, hpa@zytor.com, tglx@linutronix.de,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org
+In-Reply-To: <1535439294-31426-1-git-send-email-mojha@codeaurora.org>
+References: <1535439294-31426-1-git-send-email-mojha@codeaurora.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/urgent] cpu/hotplug: Remove skip_onerr field from
  cpuhp_step structure
-In-Reply-To: <20180831083316.GR24082@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1808311413280.4105@nanos.tec.linutronix.de>
-References: <1535439294-31426-1-git-send-email-mojha@codeaurora.org> <tip-935aad3015fb4afc0b7ef6e6c18175b95461de47@git.kernel.org> <20180831083316.GR24082@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Git-Commit-ID: 6fb86d97207880c1286cd4cb3a7e6a598afbc727
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-557380923-1535717667=:4105"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit-ID:  6fb86d97207880c1286cd4cb3a7e6a598afbc727
+Gitweb:     https://git.kernel.org/tip/6fb86d97207880c1286cd4cb3a7e6a598afbc727
+Author:     Mukesh Ojha <mojha@codeaurora.org>
+AuthorDate: Tue, 28 Aug 2018 12:24:54 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 31 Aug 2018 14:13:03 +0200
 
---8323329-557380923-1535717667=:4105
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+cpu/hotplug: Remove skip_onerr field from cpuhp_step structure
 
-On Fri, 31 Aug 2018, Peter Zijlstra wrote:
+When notifiers were there, `skip_onerr` was used to avoid calling
+particular step startup/teardown callbacks in the CPU up/down rollback
+path, which made the hotplug asymmetric.
 
-> On Thu, Aug 30, 2018 at 04:03:58AM -0700, tip-bot for Mukesh Ojha wrote:
-> > Commit-ID:  935aad3015fb4afc0b7ef6e6c18175b95461de47
-> > Gitweb:     https://git.kernel.org/tip/935aad3015fb4afc0b7ef6e6c18175b95461de47
-> > Author:     Mukesh Ojha <mojha@codeaurora.org>
-> > AuthorDate: Tue, 28 Aug 2018 12:24:54 +0530
-> > Committer:  Thomas Gleixner <tglx@linutronix.de>
-> > CommitDate: Thu, 30 Aug 2018 12:59:30 +0200
-> 
-> > @@ -644,12 +637,6 @@ static void cpuhp_thread_fun(unsigned int cpu)
-> >  
-> >  	WARN_ON_ONCE(!cpuhp_is_ap_state(state));
-> >  
-> > -	if (st->rollback) {
-> > -		struct cpuhp_step *step = cpuhp_get_step(state);
-> > -		if (step->skip_onerr)
-> > -			goto next;
-> > -	}
-> > -
-> >  	if (cpuhp_is_atomic_state(state)) {
-> >  		local_irq_disable();
-> >  		st->result = cpuhp_invoke_callback(cpu, state, bringup, st->node, &st->last);
-> 
-> 
-> Can you fold this in?
-> 
-> ../kernel/cpu.c: In function ‘cpuhp_thread_fun’:
-> ../kernel/cpu.c:663:1: warning: label ‘next’ defined but not used [-Wunused-label]
+As notifiers are gone now after the full state machine conversion, the
+`skip_onerr` field is no longer required.
 
-Bah. I even saw the warning and wanted to fix it before pushing it
-out. That's what you get for doing 20 things at once....
+Remove it from the structure and its usage.
 
-Folded in and force pushed. Thanks Peter!
---8323329-557380923-1535717667=:4105--
+Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/1535439294-31426-1-git-send-email-mojha@codeaurora.org
+---
+ kernel/cpu.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index ed44d7d34c2d..aa7fe85ad62e 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -102,8 +102,6 @@ static inline void cpuhp_lock_release(bool bringup) { }
+  * @name:	Name of the step
+  * @startup:	Startup function of the step
+  * @teardown:	Teardown function of the step
+- * @skip_onerr:	Do not invoke the functions on error rollback
+- *		Will go away once the notifiers	are gone
+  * @cant_stop:	Bringup/teardown can't be stopped at this step
+  */
+ struct cpuhp_step {
+@@ -119,7 +117,6 @@ struct cpuhp_step {
+ 					 struct hlist_node *node);
+ 	} teardown;
+ 	struct hlist_head	list;
+-	bool			skip_onerr;
+ 	bool			cant_stop;
+ 	bool			multi_instance;
+ };
+@@ -550,12 +547,8 @@ static int bringup_cpu(unsigned int cpu)
+ 
+ static void undo_cpu_up(unsigned int cpu, struct cpuhp_cpu_state *st)
+ {
+-	for (st->state--; st->state > st->target; st->state--) {
+-		struct cpuhp_step *step = cpuhp_get_step(st->state);
+-
+-		if (!step->skip_onerr)
+-			cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
+-	}
++	for (st->state--; st->state > st->target; st->state--)
++		cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
+ }
+ 
+ static int cpuhp_up_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
+@@ -644,12 +637,6 @@ static void cpuhp_thread_fun(unsigned int cpu)
+ 
+ 	WARN_ON_ONCE(!cpuhp_is_ap_state(state));
+ 
+-	if (st->rollback) {
+-		struct cpuhp_step *step = cpuhp_get_step(state);
+-		if (step->skip_onerr)
+-			goto next;
+-	}
+-
+ 	if (cpuhp_is_atomic_state(state)) {
+ 		local_irq_disable();
+ 		st->result = cpuhp_invoke_callback(cpu, state, bringup, st->node, &st->last);
+@@ -673,7 +660,6 @@ static void cpuhp_thread_fun(unsigned int cpu)
+ 		st->should_run = false;
+ 	}
+ 
+-next:
+ 	cpuhp_lock_release(bringup);
+ 
+ 	if (!st->should_run)
+@@ -916,12 +902,8 @@ void cpuhp_report_idle_dead(void)
+ 
+ static void undo_cpu_down(unsigned int cpu, struct cpuhp_cpu_state *st)
+ {
+-	for (st->state++; st->state < st->target; st->state++) {
+-		struct cpuhp_step *step = cpuhp_get_step(st->state);
+-
+-		if (!step->skip_onerr)
+-			cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
+-	}
++	for (st->state++; st->state < st->target; st->state++)
++		cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
+ }
+ 
+ static int cpuhp_down_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
