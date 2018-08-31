@@ -2,119 +2,156 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067C6C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58129C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952DA2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0326A2083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9m/VkB2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952DA2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6KUWOUj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0326A2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbeHaWoI (ORCPT
+        id S1727381AbeHaWsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 18:44:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34858 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeHaWoH (ORCPT
+        Fri, 31 Aug 2018 18:48:14 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42376 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeHaWsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 18:44:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j26-v6so12050660wre.2;
-        Fri, 31 Aug 2018 11:35:23 -0700 (PDT)
+        Fri, 31 Aug 2018 18:48:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so5891632pff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 11:39:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pu4d3RVUUdPlCH9xGqZIyoOubOEpKWlkGfWbiKMjGPU=;
-        b=C9m/VkB20rzVwxuflt1rhnTGoF83CU+VzsRcBYFVnS7Fz18IAbY+CDOtKwjqVDTxsl
-         yBNuwRt5FV7nuvvcFMauO73gA7mnWlBjSvu+uKLp4SDA+nzywHBUKvvcx0Tc2XA+ck/T
-         eIALmL/1E3Czr+vR5FZn8NkPRY9BzX49D5VR1ecG4pI/Qwf41aDplAkMFKT4Gdi9IdZj
-         RdbVN4tdCts3immTOXgAVeuUPoW4njFFDUHPCXD8fcg9djRS//E7MoRCrMPsfxrZcK6b
-         dQ6RRiIfL/6iVF0FHOYtKN6ImyyIQC60SkYdR8chmbAujM30qOqDgKeow9oF5taPzuRF
-         Drqg==
+        bh=rbEBSLoYYXdqkwapMaPABG8uME/HyFvOnTsz2qYUb+U=;
+        b=n6KUWOUjWk6iRpHm6Q15oaJP9GKoMGh1SXU6x341j7cHJhYNXLyIkLRy5vdqHJC7tU
+         PSKbBu/aL6ziaUcddX43g6RkFfHnKRRMGHkniMJc2qufLskIBb3vXAbtWOkhyvdKqFJW
+         xGveDEg7vprYLRCKe3YBYreYqphNbik3iGQM8F8Ji5GURXQLmoWki5TPJL3lxONZLupR
+         B+6+8CSisqeD8MhK2m1xut2JHLQhyCjlN34ByXVU3ZfRzUpbFhkLkQBPxaaeK+llBD4k
+         w5948cey/Hkj6ZV40j9XXPHgQwrXbjJFybmTOXnELAEgYQ853StcbRhXJT96iNwMsPae
+         TU8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pu4d3RVUUdPlCH9xGqZIyoOubOEpKWlkGfWbiKMjGPU=;
-        b=jRw1QT6iIM9TV6EJoXjtMl2RmEmsmJciOjPbIb65nnXF6EQDDUhVqEq9/vEE1Ggr50
-         lWj/wtEzgoxfQsWe8frUqK3xIPvMZQs9koZI4uMtkDk2waL0ePHOPBVq7AsCVvo4bk11
-         0XYhvPrqUTHABHhvefNsPWQI7Bz/OyhC64bxkc/HaXdVAz1p5UAxs0YqwXr0bqZWX/Sq
-         VP8GGVWhEZ/eAkC3fbzvtF70L4Nkm6nV2/1Td49Wf4rQ/85AlIkAXO+9kAt0CbcGv76m
-         9U4jTKM4ag1CUelqcf0iNcRybjd2hNpFSAizgRU0uzTFhTAwq31+akcjzsTix9ez6OGZ
-         /yRg==
-X-Gm-Message-State: APzg51C0mgFmTa9xa9UeIfJbxr1Ps1cLDRy/02/s82WJxcMCJFEfbvQV
-        bm2Onffj2zINCJkw+6kyay0xaIsGtClLzQjtZmc=
-X-Google-Smtp-Source: ANB0VdZ9WMLFVsgMY9bJ/9g/mCqOEO/MX1mlPtiuRP3s82nqeDYy1asG1SvYFDv2wl1/mMFQ82YEfl9bn9zfi0yubU0=
-X-Received: by 2002:adf:9051:: with SMTP id h75-v6mr12545497wrh.65.1535740522478;
- Fri, 31 Aug 2018 11:35:22 -0700 (PDT)
+        bh=rbEBSLoYYXdqkwapMaPABG8uME/HyFvOnTsz2qYUb+U=;
+        b=Ezd40swqOKuZMRNScxOgQG+L6916CFQnQYaEffkv83djJ71+XwcbFPrzEhvu4dXrkk
+         xgJvqfOznxWtaL3M5pxHzQswufHgHVdcam8yx1WT5H42iXzrY864I4srj7D5ib486+bC
+         jex4RZSyoyZ2Ac+lxMzsLY0m99TbaunAOLLldBTkH4Egjs1efjZvoMoWvYrUoBvi7k9A
+         tWYlT+g0LVMlBtbn5zLq8ud347ZvKDCLgNCST1xMSlSq7IRkJ1vpYxByuF4z2EiWbyw3
+         5MHNiYA6CISZQR7rbA1kLn3nYLmUJITjG8tgZhpMRKjtwISO5UWw7xJNzK9TGH7uN2cy
+         Dj4A==
+X-Gm-Message-State: APzg51DqNboANniKm2NxJbTKrOqAKa+DuEPkxK8vTrbQnQETBFUxWr1R
+        uMLMexpu1JuBxeA16QurYVunTUtamFyzAvH8w43IMh3dMZoNuw==
+X-Google-Smtp-Source: ANB0VdafPH8gQHIO+fdQp8UWLrrC52VAlrH9znF2JsbEP0NzLROz4tG6Qe2T1vIfcaAIAFENVVpVajE4fPtkbXRVx4Y=
+X-Received: by 2002:a63:2605:: with SMTP id m5-v6mr9659101pgm.225.1535740768913;
+ Fri, 31 Aug 2018 11:39:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-12-git-send-email-sunil.kovvuri@gmail.com>
- <CAK8P3a0q0P-FuG6cTgMNkeZbtXE4pMk1iJq36_x20WRddtwaDg@mail.gmail.com>
- <CA+sq2Cc1CSKmuEjKt8psR7Zyv9PzLkN10hzy8mrai136SF4-qA@mail.gmail.com>
- <CAK8P3a2CMcYg6vMmRAc4N80BpFwczGiPnaLNCDZYXCsRydtPQw@mail.gmail.com>
- <CA+sq2Ce3ew0X+RMm7fQ+iUZF0HKptzBr1dBk3NuRL8o82wBTjg@mail.gmail.com>
- <CAK8P3a1oeOFVYc2xH+KO1gV0m9utHziGpNtQLAEv-RBxKkB7Og@mail.gmail.com>
- <CA+sq2CfAvasZoNmnNQadhdsEz-eyXQPBtXbDmvt1nM0DQsm+8g@mail.gmail.com>
- <CAK8P3a0wdXRmZOw+yyws00GU=xYAFkGm81xKTF3-DjNmjjZH5g@mail.gmail.com>
- <CA+sq2CfL-eBWPcu1H9UkvKuL4kPeKnL1qkiG0tLZa_GW8LEqXA@mail.gmail.com> <CAK8P3a0p2PdjVS+QVMtiYK+5=ToeLSfjvf5X85S0HK2Om4fZ1Q@mail.gmail.com>
-In-Reply-To: <CAK8P3a0p2PdjVS+QVMtiYK+5=ToeLSfjvf5X85S0HK2Om4fZ1Q@mail.gmail.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Sat, 1 Sep 2018 00:05:10 +0530
-Message-ID: <CA+sq2Cc_fdTjSJx1BdietRThfK=gn3Sy__=K4iQNQDCBTa+JyA@mail.gmail.com>
-Subject: Re: [PATCH 11/15] soc: octeontx2: Add Marvell OcteonTX2 CGX driver
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Sunil Goutham <sgoutham@marvell.com>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 31 Aug 2018 11:39:17 -0700
+Message-ID: <CAKwvOdk9ck_85u5-_eHwrtNu260HM5X5HRsqh8aKfK66CJH6jw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] Compiler Attributes: remove unused attributes
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, efriedma@codeaurora.org,
+        sparse@chrisli.org, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        joe@perches.com, asmadeus@codewreck.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Aug 31, 2018 at 10:05 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> On Fri, Aug 31, 2018 at 6:01 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
-> > On Fri, Aug 31, 2018 at 7:50 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> __optimize and __deprecate_for_modules are unused in
+> the whole kernel tree. Simply drop them.
+
+Indeed.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
 >
-> >
-> > Thanks for the suggestion, that does makes sense.
-> > Actually i did thought about it, but i was skeptical if it would be
-> > acceptable to make
-> > a single module out of drivers registering for two different PCI devices.
+> Cc: Eli Friedman <efriedma@codeaurora.org>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dominique Martinet <asmadeus@codewreck.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+>  include/linux/compiler-gcc.h   | 2 --
+>  include/linux/compiler.h       | 4 ----
+>  include/linux/compiler_types.h | 1 -
+>  3 files changed, 7 deletions(-)
 >
-> I don't think it matters much whether there is one module or two
-> (others might have a strong opinion one way or the other).
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index 763bbad1e258..0a2d06677d83 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -95,8 +95,6 @@
 >
-> What is important though are these two points:
+>  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
 >
-> - How to represent the two PCI devices to user space: You should only
->   have one interface to user space I think, and this should be similar
->   to how other drivers manage similar cases (I don't actually know what they
->   do, but I assume you've done some research here)
+> -#define __optimize(level)      __attribute__((__optimize__(level)))
+> -
+>  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
 >
-> - How you connect find the pair of devices: Generally speaking while
->   the SoC might only have one of each, you shouldn't make that assumption
->   in the code, but instead have a reliable way of having one driver wait
->   for the other driver to finish probing so you can match the pair.
+>  #ifndef __CHECKER__
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 681d866efb1e..7c0157d50964 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -301,10 +301,6 @@ static inline void *offset_to_ptr(const int *off)
+>
+>  #endif /* __ASSEMBLY__ */
+>
+> -#ifndef __optimize
+> -# define __optimize(level)
+> -#endif
+> -
+>  /* Compile time object size, -1 for unknown */
+>  #ifndef __compiletime_object_size
+>  # define __compiletime_object_size(obj) -1
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 3525c179698c..b6534292ea33 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -108,7 +108,6 @@ struct ftrace_likely_data {
+>
+>  /* Don't. Just don't. */
+>  #define __deprecated
+> -#define __deprecated_for_modules
+>
+>  #endif /* __KERNEL__ */
+>
+> --
+> 2.17.1
 >
 
-Agreed.
-I do have a patch in works for that, i.e to defer AF driver probe till
-CGX driver is loaded.
-https://github.com/sunilkovvuri/rvu_drivers/commit/27b449087c16224a9e93dd91d6d9f734b5210bed
 
-> > Will wait for few more days for more feedback from anyone and port v2 series.
->
-> Ok.
->
->       Arnd
+-- 
+Thanks,
+~Nick Desaulniers
