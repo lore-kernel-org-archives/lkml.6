@@ -2,259 +2,128 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3CDC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B38FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957A620839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957A620839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DBC9F20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:25:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC9F20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeHaM0y (ORCPT
+        id S1727659AbeHaMcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:26:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727229AbeHaM0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:26:54 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 42B6E4077D73;
-        Fri, 31 Aug 2018 08:20:36 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E1FDD10D178A;
-        Fri, 31 Aug 2018 08:20:27 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        ebiederm@xmission.com, joro@8bytes.org, thomas.lendacky@amd.com,
-        dyoung@redhat.com, kexec@lists.infradead.org,
-        iommu@lists.linux-foundation.org, bhe@redhat.com
-Subject: [PATCH 5/5 V6] kdump/vmcore: support encrypted old memory with SME enabled
-Date:   Fri, 31 Aug 2018 16:19:30 +0800
-Message-Id: <20180831081930.31561-6-lijiang@redhat.com>
-In-Reply-To: <20180831081930.31561-1-lijiang@redhat.com>
-References: <20180831081930.31561-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 31 Aug 2018 08:20:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 31 Aug 2018 08:20:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+        Fri, 31 Aug 2018 08:32:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59097 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727390AbeHaMcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:32:16 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4F15620719; Fri, 31 Aug 2018 10:25:56 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 20BC32072F;
+        Fri, 31 Aug 2018 10:25:46 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 10:25:45 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Philipp Rossak <embed3d@gmail.com>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        eugen.hristev@microchip.com, rdunlap@infradead.org,
+        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
+        quentin.schulz@bootlin.com, geert+renesas@glider.be,
+        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
+        broonie@kernel.org, arnaud.pouliquen@st.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 01/30] mfd: Makefile: Remove build option for
+ MFD:sun4i-gpadc
+Message-ID: <20180831082545.z6oilsmizliin3li@flea>
+References: <20180830154518.29507-1-embed3d@gmail.com>
+ <20180830154518.29507-2-embed3d@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="j2u73h5y32ocesl5"
+Content-Disposition: inline
+In-Reply-To: <20180830154518.29507-2-embed3d@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kdump kernel, we need to dump the old memory into vmcore file,if SME
-is enabled in the first kernel, we have to remap the old memory with the
-memory encryption mask, which will be automatically decrypted when we
-read from DRAM.
 
-For SME kdump, there are two cases that doesn't support:
+--j2u73h5y32ocesl5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- ----------------------------------------------
-| first-kernel | second-kernel | kdump support |
-|      (mem_encrypt=on|off)    |   (yes|no)    |
-|--------------+---------------+---------------|
-|     on       |     on        |     yes       |
-|     off      |     off       |     yes       |
-|     on       |     off       |     no        |
-|     off      |     on        |     no        |
-|______________|_______________|_______________|
+Hi Philipp,
 
-1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
-In this case, because the old memory is encrypted, we can't decrypt the
-old memory.
+First, thanks for doing that rework. It was needed, and it's very much
+appreciated :)
 
-2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
-On the one hand, the old memory is unencrypted, the old memory can be dumped
-as usual, we don't need to enable SME in kdump kernel; On the other hand, it
-will increase the complexity of the code, we will have to consider how to
-pass the SME flag from the first kernel to the kdump kernel, it is really
-too expensive to do this.
+As you can imagine though, I have a bunch of comments.
 
-This patches are only for SME kdump, the patches don't support SEV kdump.
+On Thu, Aug 30, 2018 at 05:44:49PM +0200, Philipp Rossak wrote:
+> Since we are merging the mfd driver into the sun4i-gpadc driver we need
+> to remove the build options for the sun4i-gpadc driver.
+>=20
+> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> ---
+>  drivers/mfd/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index e9fd20dba18d..c680994db988 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -220,7 +220,6 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+=3D intel_soc_=
+pmic_chtdc_ti.o
+>  obj-$(CONFIG_MFD_MT6397)	+=3D mt6397-core.o
+> =20
+>  obj-$(CONFIG_MFD_ALTERA_A10SR)	+=3D altera-a10sr.o
+> -obj-$(CONFIG_MFD_SUN4I_GPADC)	+=3D sun4i-gpadc.o
 
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
- arch/x86/kernel/Makefile             |  1 +
- arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++
- fs/proc/vmcore.c                     | 21 +++++++----
- include/linux/crash_dump.h           | 12 +++++++
- 4 files changed, 81 insertions(+), 6 deletions(-)
- create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+One of the things we should strive for is bisectability, which means
+being able to have a working driver at every point in time while
+introducing the features.
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 8824d01c0c35..dfbeae0e35ce 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -97,6 +97,7 @@ obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec_$(BITS).o
- obj-$(CONFIG_KEXEC_CORE)	+= relocate_kernel_$(BITS).o crash.o
- obj-$(CONFIG_KEXEC_FILE)	+= kexec-bzimage64.o
- obj-$(CONFIG_CRASH_DUMP)	+= crash_dump_$(BITS).o
-+obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= crash_dump_encrypt.o
- obj-y				+= kprobes/
- obj-$(CONFIG_MODULES)		+= module.o
- obj-$(CONFIG_DOUBLEFAULT)	+= doublefault.o
-diff --git a/arch/x86/kernel/crash_dump_encrypt.c b/arch/x86/kernel/crash_dump_encrypt.c
-new file mode 100644
-index 000000000000..e1b1a577f197
---- /dev/null
-+++ b/arch/x86/kernel/crash_dump_encrypt.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *	Memory preserving reboot related code.
-+ *
-+ *	Created by: Lianbo Jiang (lijiang@redhat.com)
-+ *	Copyright (C) RedHat Corporation, 2018. All rights reserved
-+ */
-+
-+#include <linux/errno.h>
-+#include <linux/crash_dump.h>
-+#include <linux/uaccess.h>
-+#include <linux/io.h>
-+
-+/**
-+ * copy_oldmem_page_encrypted - copy one page from "oldmem encrypted"
-+ * @pfn: page frame number to be copied
-+ * @buf: target memory address for the copy; this can be in kernel address
-+ *	space or user address space (see @userbuf)
-+ * @csize: number of bytes to copy
-+ * @offset: offset in bytes into the page (based on pfn) to begin the copy
-+ * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-+ *	otherwise @buf is in kernel address space, use memcpy().
-+ *
-+ * Copy a page from "oldmem encrypted". For this page, there is no pte
-+ * mapped in the current kernel. We stitch up a pte, similar to
-+ * kmap_atomic.
-+ */
-+
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+		size_t csize, unsigned long offset, int userbuf)
-+{
-+	void  *vaddr;
-+
-+	if (!csize)
-+		return 0;
-+
-+	vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT,
-+						  PAGE_SIZE);
-+	if (!vaddr)
-+		return -ENOMEM;
-+
-+	if (userbuf) {
-+		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
-+			iounmap((void __iomem *)vaddr);
-+			return -EFAULT;
-+		}
-+	} else
-+		memcpy(buf, vaddr + offset, csize);
-+
-+	set_iounmap_nonlazy();
-+	iounmap((void __iomem *)vaddr);
-+	return csize;
-+}
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index cbde728f8ac6..3065c8bada6a 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -25,6 +25,9 @@
- #include <linux/pagemap.h>
- #include <linux/uaccess.h>
- #include <asm/io.h>
-+#include <linux/io.h>
-+#include <linux/mem_encrypt.h>
-+#include <asm/pgtable.h>
- #include "internal.h"
- 
- /* List representing chunks of contiguous memory areas and their offsets in
-@@ -98,7 +101,8 @@ static int pfn_is_ram(unsigned long pfn)
- 
- /* Reads a page from the oldmem device from given offset. */
- static ssize_t read_from_oldmem(char *buf, size_t count,
--				u64 *ppos, int userbuf)
-+				u64 *ppos, int userbuf,
-+				bool encrypted)
- {
- 	unsigned long pfn, offset;
- 	size_t nr_bytes;
-@@ -120,8 +124,11 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
- 		if (pfn_is_ram(pfn) == 0)
- 			memset(buf, 0, nr_bytes);
- 		else {
--			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
--						offset, userbuf);
-+			tmp = encrypted ? copy_oldmem_page_encrypted(pfn,
-+					    buf, nr_bytes, offset, userbuf)
-+					: copy_oldmem_page(pfn, buf, nr_bytes,
-+							   offset, userbuf);
-+
- 			if (tmp < 0)
- 				return tmp;
- 		}
-@@ -155,7 +162,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, false);
- }
- 
- /*
-@@ -163,7 +170,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-  */
- ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, sme_active());
- }
- 
- /*
-@@ -173,6 +180,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 				  unsigned long from, unsigned long pfn,
- 				  unsigned long size, pgprot_t prot)
- {
-+	prot = pgprot_encrypted(prot);
- 	return remap_pfn_range(vma, from, pfn, size, prot);
- }
- 
-@@ -351,7 +359,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
- 					    m->offset + m->size - *fpos,
- 					    buflen);
- 			start = m->paddr + *fpos - m->offset;
--			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-+			tmp = read_from_oldmem(buffer, tsz, &start, userbuf,
-+						sme_active());
- 			if (tmp < 0)
- 				return tmp;
- 			buflen -= tsz;
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 3e4ba9d753c8..a7e7be8b0502 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -26,6 +26,18 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 
- extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
- 						unsigned long, int);
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
-+extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+					   size_t csize, unsigned long offset,
-+					   int userbuf);
-+#else
-+static inline
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-+				    unsigned long offset, int userbuf)
-+{
-+	return 0;
-+}
-+#endif
- void vmcore_cleanup(void);
- 
- /* Architecture code defines this if there are other possible ELF
--- 
-2.17.1
+In this particular case, this isn't really a problem since you're
+removing part of code that were never really enabled, but you should
+at least document why in your commit log.
 
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--j2u73h5y32ocesl5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluI+4gACgkQ0rTAlCFN
+r3R/VhAAmQ4SVvjzMqsfkWiQvO3ZbetzY3B9dF/6KJqtJk+2r3UHh8pk6jeS4h+H
+aOjik1EexDdOO06eQGIcRUjpt0CBcFeZ1AIFb5JouhFQH6lhWAlGRPvrHmRE7KX0
+vlYCjDtZLzA1QNv8cmN2oXeI4sVCvGdNzNaiyBaPj2ao9aOWPofgZNLBWUTDTOgf
+LEmXabxt6VqP/Ah8BgV4yEHxcU4rYKIBUYuQljL7hXaLyGR8r8NcFmBa4CUIgKUc
+lB8fdrvI9ADNl4bXFleBe7muAyU8rTFcfKCmGJ7IXkd8pQzEDxnpccY1ikdAGtCD
+95oLWBVNRvRxXwzCmGjGIKhQ55/uxixnO+EZHoL7dFFFPGdqQtvM01EJqx50Ccri
+ecb1NWiOwNSnaY/Z4/oWWEBAoYeRex21dhbInF4NXlob54U7r/CDlcy/StGTTF/H
+jvg/YmrEA00GF9/ykXJSy64qyBC0p0gA9DrXRq18eXVVo/utNgMi8hHKBoFUq5Pe
+iz0XdpQKlgGWalc3rx0cjNFWsiaAgg9Qq/4qyozBHJ6jcgs4Hql2Jdx3/ey/OTsv
+i40fGwAiJKRj30lEh5jmivvuRQfTMRuXk3OLFRdwwbO5wTBmBSVblP/CS5T5L802
+ttYxhpAmjH3XgpmSubblkg74EUA6OIVVci/ThHTmgbM7Yu8hatk=
+=7tUJ
+-----END PGP SIGNATURE-----
+
+--j2u73h5y32ocesl5--
