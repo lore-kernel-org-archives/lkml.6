@@ -2,90 +2,142 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FD8C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D23C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06BF220837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BF220837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 85B4E20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:20:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B4E20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbeHaOZu convert rfc822-to-8bit (ORCPT
+        id S1728183AbeHaO1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:25:50 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54688 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727707AbeHaOZt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:25:49 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VAEHTx064127
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:19:02 -0400
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.82])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m731xa512-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:19:02 -0400
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <ivan@de.ibm.com>;
-        Fri, 31 Aug 2018 10:19:00 -0000
-Received: from us1a3-smtp07.a3.dal06.isc4sb.com (10.146.103.14)
-        by smtp.notes.na.collabserv.com (10.106.227.105) with smtp.notes.na.collabserv.com ESMTP;
-        Fri, 31 Aug 2018 10:18:55 -0000
-Received: from us1a3-mail161.a3.dal06.isc4sb.com ([10.146.71.28])
-          by us1a3-smtp07.a3.dal06.isc4sb.com
-          with ESMTP id 2018083110185500-1677283 ;
-          Fri, 31 Aug 2018 10:18:55 +0000 
-In-Reply-To: <13714694.2rXNjIIGUQ@debian64>
-Subject: Re: [PATCH 1/2] net/ibm/emac: wrong emac_calc_base call was used by typo
-From:   "Ivan Mikhaylov1" <ivan@de.ibm.com>
-To:     Christian Lamparter <chunkeey@gmail.com>
-Cc:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 31 Aug 2018 10:18:54 +0000
+        Fri, 31 Aug 2018 10:27:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36399 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727208AbeHaO1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 10:27:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C0AB6207B1; Fri, 31 Aug 2018 12:20:22 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8483320618;
+        Fri, 31 Aug 2018 12:20:22 +0200 (CEST)
+From:   maxime.ripard@bootlin.com
+Date:   Fri, 31 Aug 2018 12:20:21 +0200
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     axboe@kernel.dk, hdegoede@redhat.com, kishon@ti.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v4 09/13] ARM: dts: sun8i: r40: add sata node
+Message-ID: <20180831102021.idz42sfgldihpkrp@flea>
+References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+ <20180830190120.722-10-clabbe.montjoie@gmail.com>
+ <20180831073500.zubqpvar4yhjqrge@flea>
+ <20180831075631.GB16301@Red>
 MIME-Version: 1.0
-Sensitivity: 
-Importance: Normal
-X-Priority: 3 (Normal)
-References: <13714694.2rXNjIIGUQ@debian64>,<20180827164336.8815-1-ivan@de.ibm.com>
-X-Mailer: IBM iNotes ($HaikuForm 1011.1) | IBM Domino Build SCN1812108_20180501T0841
- May 01, 2018 at 08:41
-X-LLNOutbound: False
-X-Disclaimed: 61651
-X-TNEFEvaluated: 1
-x-cbid: 18083110-5101-0000-0000-00000C1E3F2C
-X-IBM-SpamModules-Scores: BY=0.000001; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.113581
-X-IBM-SpamModules-Versions: BY=3.00009644; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01081456; UDB=6.00557925; IPR=6.00861441;
- BA=6.00006088; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00023031; XFM=3.00000015;
- UTC=2018-08-31 10:18:58
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2018-08-31 09:28:34 - 6.00008905
-x-cbparentid: 18083110-5102-0000-0000-000035904075
-Message-Id: <OFDE0DD570.AB33A394-ON002582FA.003749CA-002582FA.0038A9CE@notes.na.collabserv.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iuyup6akl4fzegyw"
+Content-Disposition: inline
+In-Reply-To: <20180831075631.GB16301@Red>
+11;rgb: 00000/2b2b/3636From: Maxime Ripard <maxime.ripard@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->I do have a ot question though:
->Since you are working for IBM and probably have access to all the
->wonderful docs and the working hardware: Would you consider to be
->the emac/emac4/emac-sync maintainer? From what I can parse from
->the /MAINTAINERS file, there isn't currently anyone listed.
 
-Unfortunately, I can't take this obligation due to some circumstances
-in the future. 
+--iuyup6akl4fzegyw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 31, 2018 at 09:56:31AM +0200, Corentin Labbe wrote:
+> On Fri, Aug 31, 2018 at 09:35:00AM +0200, Maxime Ripard wrote:
+> > On Thu, Aug 30, 2018 at 09:01:16PM +0200, Corentin Labbe wrote:
+> > > R40 have a sata controller which is the same as A20.
+> > > This patch adds a DT node for it.
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > > ---
+> > >  arch/arm/boot/dts/sun8i-r40.dtsi | 23 +++++++++++++++++++++++
+> > >  1 file changed, 23 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun=
+8i-r40.dtsi
+> > > index 852c2ccc3268..d6b5820da850 100644
+> > > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > @@ -550,6 +550,29 @@
+> > >  			#size-cells =3D <0>;
+> > >  		};
+> > > =20
+> > > +		ahci: sata@1c18000 {
+> > > +			compatible =3D "allwinner,sun8i-r40-ahci";
+> > > +			reg =3D <0x01c18000 0x1000>;
+> > > +			interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			clocks =3D <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
+> > > +			resets =3D <&ccu RST_BUS_SATA>;
+> > > +			resets-name =3D "ahci";
+> > > +			#address-cells =3D <1>;
+> > > +			#size-cells =3D <0>;
+> > > +			status =3D "disabled";
+> > > +
+> > > +			sata_port: sata-port@0 {
+> > > +				reg =3D <0>;
+> > > +				phys =3D <&sata_phy>;
+> > > +			};
+> > > +		};
+> > > +
+> > > +		sata_phy: sata-phy@1c180c0  {
+> > > +			compatible =3D "allwinner,sun8i-r40-sata-phy";
+> > > +			reg =3D <0x1c180c0 0x200>;
+> >=20
+> > Overlapping devices in the DTS is not ok.
+> >=20
+>=20
+> I do the same than arch/arm/boot/dts/berlin2.dtsi (sata@e90000
+> phy@e900a0)
+>
+> But since it is not a good justification, it seems that regmap is my
+> only solution ?
 
+I'm not even sure why you are moving the phy out of its original node
+(and driver).
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--iuyup6akl4fzegyw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluJFmQACgkQ0rTAlCFN
+r3RwrQ//U3Gb2LBuRwsQ9GNqECkI8F5YsbFtURvA4Z2SVb0CZosWBJhZSq8HH2E2
+ZTUQ3IlVWIYIvhHd/hj7gMOjXq2o7QtU+RCLCBa21yRsuk0begIAomOlY9WiHPBa
+dV1iGk8deiPV+sNGhUZeOZTkkiurAKmXk0mkMpNBibnchv6PMoDrU8SpsfXoot4y
+gGV6OLwdi/VDkU3QYiQEhJjgcgGSPr4ZDfbupapNfIK0jMFTNy/g/RwdfCdE7yMl
+Ur8KckrXIML3zPuUU3UNRnrtkjvBn3jekB7sNftgN3mWE3E53sAIVJj7yfTyMhNH
+2F1jWmE+iXkoC/b7Z27xNcGzGpMlfRCP/c72cYSJHCEr3+sno6JNzyf8ouwEBvur
+FL3GV23N4DpAFCZbav+UjjI+kpbcDfDUg3QPfrkQZwHTSLDo1zALQUmwH5JH02ji
+IDNczbOFc+fRdqCmckMgg0CZ4eS9oAIvklea0y65hvBDWcdFr0fDzwPBuY2m/TIf
+5mipSj+nu9mjFmVNOFl43YvykB4EscTu1o6GH8Ah6RbuRy/qke4EUqZX+Iiq9zn8
+OP5OnluhPSfe4qB/BU7e83zeNJ9e38U/3QwPtmidrET32nVQSY5EXsIIHlHYIC2O
+N9gbGTW+0bsTWtkJpBLPyJRq0agptVXIEKO0dzI9V419lT2uqf0=
+=1DZb
+-----END PGP SIGNATURE-----
+
+--iuyup6akl4fzegyw--
