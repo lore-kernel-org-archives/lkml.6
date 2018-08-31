@@ -2,153 +2,102 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E92C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D06C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8729620658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XoZ+C9Ti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729620658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id AE0D420658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 11:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0D420658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbeHaPUJ (ORCPT
+        id S1727978AbeHaPUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 11:20:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60562 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeHaPUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 11:20:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2Kulq2o6y6oW+ZbHRNjinXQHvy9HQQV5t1WcNklJmHA=; b=XoZ+C9Ti04LPBLr5AMdxTciPn
-        7Wka1mSg7oTd/FDj79ryD1SB87yn8SDLHXF161rHqaeiD3y0KszRcI+PvJQkom862ym1/B+KPzVt2
-        tLCZyhkL9COaeTUm+a5re3uHcN61KCCWm8VqvjwjQDSLrIybsVuLQLO7qbJGBsuoKM637XOQOtY8h
-        w152jVg35i9gkcpIU+c2mOhMoOhbPeFsGY2dEgddO0VBE48UfwhnUWt5F1u2UKULLiBNldYz9aXVv
-        8+yhU0bQlfTFbAN+V09fYV8//wlPFnlZ62pLhBcO9QIxfZ82EMxHchdhgHrx2H3Qt5KmquWkaoBTX
-        oALaaA4bQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvhMF-0003Ew-81; Fri, 31 Aug 2018 11:12:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2A8E02024D425; Fri, 31 Aug 2018 13:12:53 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 13:12:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
+        Fri, 31 Aug 2018 11:20:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:18597 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbeHaPUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 11:20:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 04:13:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
+   d="scan'208";a="84964652"
+Received: from ssirohi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.48.112])
+  by fmsmga004.fm.intel.com with ESMTP; 31 Aug 2018 04:13:35 -0700
+Date:   Fri, 31 Aug 2018 14:13:34 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Serge Ayoun <serge.ayoun@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Subject: Re: [PATCH 2/2] sched/topology: Expose numa_mask set/clear functions
- to arch
-Message-ID: <20180831111253.GJ24124@hirez.programming.kicks-ass.net>
-References: <20180808081942.GA37418@linux.vnet.ibm.com>
- <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1533920419-17410-2-git-send-email-srikar@linux.vnet.ibm.com>
- <20180829080219.GN24124@hirez.programming.kicks-ass.net>
- <20180831102724.GB8437@linux.vnet.ibm.com>
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
+ EPC pages
+Message-ID: <20180831111334.GB16827@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+ <4666cae8-c711-8dd5-cbce-3d97cc19a9e5@intel.com>
+ <20180828103040.GA21326@linux.intel.com>
+ <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
+ <20180828213432.GB29488@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831102724.GB8437@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180828213432.GB29488@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 03:27:24AM -0700, Srikar Dronamraju wrote:
-> * Peter Zijlstra <peterz@infradead.org> [2018-08-29 10:02:19]:
-
-
-> Powerpc lpars running on Phyp have 2 modes. Dedicated and shared.
+On Tue, Aug 28, 2018 at 02:34:32PM -0700, Sean Christopherson wrote:
+> On Tue, Aug 28, 2018 at 09:53:11AM -0700, Dave Hansen wrote:
+> > >>> +		sgx_nr_epc_banks++;
+> > >>> +	}
+> > >>> +
+> > >>> +	if (!sgx_nr_epc_banks) {
+> > >>> +		pr_err("There are zero EPC banks.\n");
+> > >>> +		return -ENODEV;
+> > >>> +	}
+> > >>> +
+> > >>> +	return 0;
+> > >>> +}
+> > >>
+> > >> Does this support hot-addition of a bank?  If not, why not?
+> > ...
+> > > I'm not aware that we would have an ACPI specification for SGX so this
+> > > is all I have at the moment (does not show any ACPI event for
+> > > hotplugging).
+> > 
+> > So you're saying the one platform you looked at don't support hotplug.
+> > I was looking for a more broad statement about SGX.
 > 
-> Dedicated lpars are similar to kvm guest with vcpupin.
+> Hardware doesn't support hotplug of EPC as the EPC size and location
+> is locked during activation of SGX.  And IIRC, activation of SGX must
+> be synchronized across all CPUs in a multi-socket platform, e.g. you
+> can't late-enable SGX on a socket and due hotplugging that way.
 
-Like i know what that means... I'm not big on virt. I suppose you're
-saying it has a fixed virt to phys mapping.
+Makes me wonder how on a multisocket platform would this work anyway
+given that they have different fused keys?
 
-> Shared  lpars are similar to kvm guest without any pinning. When running
-> shared lpar mode, Phyp allows overcommitting. Now if more lpars are
-> created/destroyed, Phyp will internally move / consolidate the cores. The
-> objective is similar to what autonuma tries achieves on the host but with a
-> different approach (consolidating to optimal nodes to achieve the best
-> possible output).  This would mean that the actual underlying cpus/node
-> mapping has changed.
+> In a virtualized environment there are no such restrictions.  I am not
+> aware of any explicit requirements or use cases for supporting hotplug
+> of EPC, but that's probably only because virtualization of SGX is
+> fairly nascent.
 
-AFAIK Linux can _not_ handle cpu:node relations changing. And I'm pretty
-sure I told you that before.
-
-> Phyp will propogate upwards an event to the lpar.  The
-> lpar / os can choose to ignore or act on the same.
-> 
-> We have found that acting on the event will provide upto 40% improvement
-> over ignoring the event. Acting on the event would mean moving the cpu from
-> one node to the other, and topology_work_fn exactly does that.
-
-How? Last time I checked there was a ton of code that relies on
-cpu_to_node() not changing during the runtime of the kernel.
-
-Stuff like the per-cpu memory allocations are done using the boot time
-cpu_to_node() map for instance. Similarly, kthread creation uses the
-cpu_to_node() map at the time of creation.
-
-A lot of stuff is not re-evaluated. If you're dynamically changing the
-node map, you're in for a world of hurt.
-
-> In the case where we didn't have the NUMA sched domain, we would build the
-> independent (aka overlap) sched_groups. With NUMA  sched domain
-> introduction, we try to reuse sched_groups (aka non-overlay). This results
-> in the above, which I thought I tried to explain in
-> https://lwn.net/ml/linux-kernel/20180810164533.GB42350@linux.vnet.ibm.com
-
-That email was a ton of confusion; you show an error and you don't
-explain how you get there.
-
-> In the typical case above, lets take 2 node, 8 core each having SMT 8
-> threads.  Initially all the 8 cores might come from node 0.  Hence
-> sched_domains_numa_masks[NODE][node1] and
-> sched_domains_numa_mask[NUMA][node1] is set at sched_init_numa will have
-> blank cpumasks.
-> 
-> Let say Phyp decides to move some of the load to another node, node 1, which
-> till now has 0 cpus.  Hence we will see
-> 
-> "BUG: arch topology borken \n the DIE domain not a subset of the NODE
-> domain"   which is probably okay. This problem is even present even before
-> NODE domain was created and systems still booted and ran.
-
-No that is _NOT_ OKAY. The fact that it boots and runs just means we
-cope with it, but it violates a base assumption when building domains.
-
-> However with the introduction of NODE sched_domain,
-> init_sched_groups_capacity() gets called for non-overlay sched_domains which
-> gets us into even worse problems. Here we will end up in a situation where
-> sgA->sgB->sgC-sgD->sgA gets converted into sgA->sgB->sgC->sgB which ends up
-> creating cpu stalls.
-> 
-> So the request is to expose the sched_domains_numa_masks_set /
-> sched_domains_numa_masks_clear to arch, so that on topology update i.e event
-> from phyp, arch set the mask correctly. The scheduler seems to take care of
-> everything else.
-
-NAK, not until you've fixed every cpu_to_node() user in the kernel to
-deal with that mask changing.
-
-This is absolutely insane.
+/Jarkko
