@@ -2,121 +2,149 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCBBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0780FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89D120837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD2220837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E38PWl8l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89D120837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=logitech-com.20150623.gappssmtp.com header.i=@logitech-com.20150623.gappssmtp.com header.b="pLg1Dq7B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD2220837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=logitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbeHaNVQ (ORCPT
+        id S1728074AbeHaNVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:21:16 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54660 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbeHaNVQ (ORCPT
+        Fri, 31 Aug 2018 09:21:24 -0400
+Received: from mail-yb1-f172.google.com ([209.85.219.172]:42829 "EHLO
+        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727758AbeHaNVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:21:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id f14-v6so6269076ita.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 02:14:43 -0700 (PDT)
+        Fri, 31 Aug 2018 09:21:24 -0400
+Received: by mail-yb1-f172.google.com with SMTP id z12-v6so622639ybg.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 02:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=logitech-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oqc3wX8JBE3xxl60w0r8Z7EC6M3lE33h9kTqazogcZI=;
-        b=E38PWl8lGr9I+qJHEzz7ASNkjoDKOoUMmE2LHPMSJrtH61+QCkfCiI6PJQfpJpz3i+
-         QyRCvgVl9TzhRegOqRCaKhA5EPhVuBfbvDi4CKqf3ZODat2M+PmvbCL3mB/fnVWT7HxH
-         XsQDzcxlsFg4/xM38iv08w2C6LUzWnw1LoFo4=
+        bh=MJrgb3xk1VRcA5niIOkHAQ/4GLGlxEQ409cvwYh98l8=;
+        b=pLg1Dq7BAVfNzoWvqTfsszxu7tQR4ExBytraVdWlV8VkNXqJKuqKWCEXGUEBAaw3sK
+         5CeTgqoS64kM/ca2MoRyNgTDjRBIU3eBWFeaHohFPtJAtTgVODzbvGPjTv9ywtmvr/BG
+         q/ZxyBcfF/PB/JHp5mXsdOsDkYAS96pwO/3A1YLRZ/QwWnXX/FLEy/BzbWso0os46KDr
+         rRjpn5uu6I7O7DaRl2oLOgawTOwlpvTT3gYTtuH7YzpZSb6y1AAlmGS9tFdcpUG5e9c/
+         Oq/0FzOS0cHqv/VJANJHmEs27gw5lHxCbi0dGaN+nl9ZX1BoReLQEcyjwPSStXB3YlBi
+         B6vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oqc3wX8JBE3xxl60w0r8Z7EC6M3lE33h9kTqazogcZI=;
-        b=c1ZHlFeV9jsTT0SoISPcOr6KtqamN3mpnkQHj3Oe0dNpUHg9yzQsFjrRIFrdJ3/f3N
-         SLOAKcIBUfGVHrwHPKEEJB+p+K4C1LBT9IJnE+Ih/FlWgOajNVz8j0/9vLL+sKVa6CQn
-         Ev94ZML2ANNq9d4Kvhogsd5Z/eHQnP8gsoCnz2cBJZIh/ODzYIPimHm7aTD/eoNh93HC
-         e/NIgdLTJfIQMu9ZwiBzh/y2q1WTLyV/7U8xyAfWuwrsfahmjIQ7upQX0MSZOm5kxzQM
-         G5FzMoEte2Hduvo7jRHpqelco4x5pYFoIKXN+IT9l/2NujBcOWaSH1DaJZGxfhuxv810
-         jo7g==
-X-Gm-Message-State: APzg51DXJyUiOnZUzEH52MG+e8Vlv0sJlKben7rCgDYKdEXTraCZa4DY
-        HyMFKfpK0yKZHlyXY3YlZKU5g28C2llQpidguNzxZg==
-X-Google-Smtp-Source: ANB0VdZdIoBJrJINrn4lloNMBwDfGpoDCLWysa07mlmrthaJTunEepVwcZUbM9QORD8bqxuelhSd+DXI30GjEFzhJus=
-X-Received: by 2002:a02:2505:: with SMTP id g5-v6mr11825626jag.112.1535706883400;
- Fri, 31 Aug 2018 02:14:43 -0700 (PDT)
+        bh=MJrgb3xk1VRcA5niIOkHAQ/4GLGlxEQ409cvwYh98l8=;
+        b=uYmO8Q17qHcVpZ7O0K224bUhtjYzJIyawygq1B62gzR1WZG/UjCobqHm66inhuYO9H
+         eEOMjkcRS+H8aMTBNvY5uv+EwB2Njr51hGYExY0tLUZhIlZ0I2I7qMrOw04FjVkyh+WO
+         ry4d9JKGRBrl11kG7Y53Sz81Oqutcu7S9jcjVdOYbyMA2RI4qFiyiTCCVdv3ZQHtc7wU
+         Ae+g55gdmufx+t1KzfnTGo8u5M5hbQQy326TcqkLtUBXvXYZVxiLmbHfPlm0jZSfmQ0V
+         lD9GL2kb8nI1V6wyXWwuNTbFppYeU0+ykymaWYTj7UvvhlvZeTePIEzy+v/7zKZtP+i1
+         eAkw==
+X-Gm-Message-State: APzg51Can9Xef7UtMPu9QdOXwYFpG7wQZ5h7lVL9kSpZdY+KTD+u/PmA
+        U4Wr49+N29ev14fl4sz+CzLSlkkSg1R49Y4WbSRgiw==
+X-Google-Smtp-Source: ANB0VdZYdiQm/rng1p9NDuSr9Hn6ARXWvFmo4sobc6qLc5yk25Ok6jitFMauXc/CwNxqQB7kfAIE8PTZWA7BYxtzimo=
+X-Received: by 2002:a25:3354:: with SMTP id z81-v6mr7960257ybz.212.1535706891069;
+ Fri, 31 Aug 2018 02:14:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180820234341.5271-1-jmkrzyszt@gmail.com> <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180829204900.19390-2-jmkrzyszt@gmail.com>
-In-Reply-To: <20180829204900.19390-2-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 31 Aug 2018 11:14:31 +0200
-Message-ID: <CACRpkdYmd=Efh4-YsTzRAhtKLWHuhJ-9D6iVagkg=+zxU=KLHA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180823183057.247630-1-hcutts@chromium.org> <20180823183057.247630-4-hcutts@chromium.org>
+ <CAO-hwJ+rR8ft96AGjoEApr1ZkythKfcxjVzdULzgpRy-aRv_vg@mail.gmail.com>
+ <CA+jURcvguwXAVnpQ9+84QQOaJG74oeV8U4zzM1X0UabaY5DJBQ@mail.gmail.com>
+ <CAO-hwJ+tb6XdEM76r0jxBfCx2r_PqQp9T5=A2ALociyHOKUeMg@mail.gmail.com>
+ <CA+jURcsDJbL_3aF7wE0MQ_6ZSVV3Aba-tUDX-f=1+y+LBhqmng@mail.gmail.com> <CAE7qMrrBdZSg1P+JTr9SA5a1ui-zdAmsg6pE-B1N5La_1WwvHw@mail.gmail.com>
+In-Reply-To: <CAE7qMrrBdZSg1P+JTr9SA5a1ui-zdAmsg6pE-B1N5La_1WwvHw@mail.gmail.com>
+From:   Nestor Lopez Casado <nlopezcasad@logitech.com>
+Date:   Fri, 31 Aug 2018 11:14:26 +0200
+Message-ID: <CAE7qMrqoioqPSMem3rLs1OEZPFNLzen7TcCWeANC6svvHwbxeg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] Enable high-resolution scrolling on Logitech mice
+To:     hcutts@chromium.org
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>, jikos@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 10:48 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Fri, Aug 31, 2018 at 11:11 AM Nestor Lopez Casado
+<nlopezcasad@logitech.com> wrote:
+>
+>
+>
+> On Thu, Aug 30, 2018 at 10:38 PM Harry Cutts <hcutts@chromium.org> wrote:
+>>
+>> Hi Benjamin,
+>>
+>> On Thu, 30 Aug 2018 at 00:18, Benjamin Tissoires
+>> <benjamin.tissoires@redhat.com> wrote:
+>> >> On Thu, Aug 30, 2018 at 1:06 AM Harry Cutts <hcutts@chromium.org> wrote:
+>> > > > The conversion input_report_rel(... REL_WHEEL,...) to
+>> > > > hid_scroll_counter_handle_scroll() should be dealt in a separate
+>> > > > patch.
+>> > >
+>> > > OK, I'll do that in v2, but might I ask why? I don't see how this
+>> > > particular hunk is special.
+>> >
+>> > I tend to consider that existing code rewrite need to be in their
+>> > special commit, especially if the change isn't supposed to change the
+>> > behaviour. This is my personal taste in case something goes wrong and
+>> > (in this case) a m560 suddenly starts complaining about an issue with
+>> > this mouse.
+>> > I wouldn't mind too much if you rather keep the
+>> > hid_scroll_counter_handle_scroll() introduction to this commit though.
+>>
+>> Yes, I see the reasoning for that, but this hunk is pretty tied to the
+>> main change in that scrolling on the M560 would be 8x too fast without
+>> it. I'll keep it in the same one, if you don't mind.
+>>
+>> > > [snip]
+>> > > Yes, it seems to work fine without it (at least for the MX Master 2S).
+>> > > Unfortunately, while testing this I encountered a bug with high-res
+>> > > scrolling over Bluetooth. (It seems that if you turn off the MX Master
+>> > > 2S while it's connected over Bluetooth, we don't detect that and
+>> > > remove the input device, meaning that when it reconnects the driver
+>> > > thinks it's in high-res mode but the mouse is in low-res.) I'm
+>> > > investigating, but in the meantime I'll remove the Bluetooth support
+>> > > from v2 and add it back in later.
+>> >
+>> > As far as I can see, the MX Master 2S is connected over BLE. Bluez
+>> > keeps the uhid node opened (and thus the existing bluetooth HID
+>> > device) to be able to reconnect faster.
+>> > I would suppose you should get notified in the connect event of a
+>> > reconnection, but it doesn't seem to be the case.
+>> >
+>> > Nestor, is there any event emitted by the mouse when it gets
+>> > reconnected over BLE or is that a bluez issue?
+>>
+>> Ah, interesting. The MX Master 2S is indeed using BLE, and testing
+>> with another Logitech BLE mouse (the M585) also leaves the input
+>> device around. I think this is something Logitech-specific, though, as
+>> the Microsoft Surface Precision mouse (also BLE) does have its input
+>> device removed when it turns off. I notice that btmon does show
+>> "device disconnected" and "device connected" events when I turn the
+>> M585 on and off; maybe we need to plumb those through to the driver.
+>> We've decided to delay Bluetooth support for high-res scrolling until
+>> the Chrome OS Bluetooth stack is more stable.
 
-So it's no secret that I strongly fancy this patch set.
-
-What would be great at this point is to have some people test
-that the drivers still work as expected, even better if they can do
-some benchmarking.
-
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> +       value_bitmap[0] = val;
-> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
->         n = 9;
->         if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
-
-This seems fine to me, but I understand the comment that the
-code becomes harder to read.
-
-I think part of it is those __assign_bit() and __clear_bit() with
-the double-underscore of unclear meaning. The meaning is
-"non atomic" IIRC, so maybe I should move forward
-with my plan to send a sed script to Torvalds just renaming all
-of those to something sane in the next merge window.
-
-Like __assign_bit() -> assign_bit_nonatomic()
-
-Yours,
-Linus Walleij
+-----Ooops, no html now...
+This might be related to how the device disconnects from the host.
+Sometimes a disconnection comes from the device not responding anymore
+and it is the BT supervision timeout that kicks in (host side). In
+some cases (hw support required on the device side) a device will send
+a disconnect request when switched off. Maybe these different
+disconnect flavors are the root cause behind the input device being
+removed or not.
+--nestor
+>>
+>> Harry Cutts
+>> Chrome OS Touch/Input team
