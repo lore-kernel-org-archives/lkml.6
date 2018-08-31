@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B861C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19ED5C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E2220841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:20:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5E720842
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:20:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+KRklmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E2220841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgIXHfLU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5E720842
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeHaX3q (ORCPT
+        id S1727655AbeHaX3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:29:46 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:43432 "EHLO
+        Fri, 31 Aug 2018 19:29:49 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38814 "EHLO
         mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeHaX3q (ORCPT
+        with ESMTP id S1727085AbeHaX3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:29:46 -0400
-Received: by mail-qt0-f196.google.com with SMTP id g53-v6so15732161qtg.10;
-        Fri, 31 Aug 2018 12:20:52 -0700 (PDT)
+        Fri, 31 Aug 2018 19:29:48 -0400
+Received: by mail-qt0-f196.google.com with SMTP id x7-v6so15768119qtk.5;
+        Fri, 31 Aug 2018 12:20:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KaDF8Y9NiIVVpO8fIUtLbwriHKMu6JuYaDupLhRe/4A=;
-        b=O+KRklmfzHPxu/J8d+CD0QilmY4TpeJrWu2yN91gP4Cw/UKUE2uqSNLtLWyP4uOLTp
-         5WY/jQPyI4vhOlIlZPG5MBdl6mhF0RZt+nHAMkxf2qWId/GJwpBW8PATNP5VukF1hb5e
-         1ej4nv6ByehL7ugDcFw6V4rtsSeCSKJIFgduoreSFT1BH2e1Vgb/Wsu/ufKHe53vc7+w
-         lEWYQFKTX7PynmpzhEBD5y7kz719fr3OUBZDb0XITyMo/AF9pqmQQyl8nrIMUyDRbZ4t
-         ZoyiqFXmljZ2Fw5M/8lKdo1eUR46DcTPA4rfz+RmlJgmdmvVZsjxYwNZAVAZnEnFSCTa
-         mcNw==
+        bh=+Qii3n+jUAsVW01OvBpIFXuRjq40zduqyJYtvGeJEEs=;
+        b=fgIXHfLUrytqNWq6sV75KcLHLDHBTy8UdGjeXGW9jy/NsITsQO5YjbAOfy+mdiMidD
+         fbLnf8IQ+TxaCCClXEUQLcLhVq+QolvnqKM2DAlOsKqSojd6b0CH3yzdXb2e0CuSdgH0
+         0NDAenqkHXA33NABd6Oppwn++LBZesRQi3d/O8YnZhBSCw130UCY8dN3qANSjzoB0VKN
+         jaOB//vdmMcKhijqXvtd4ILxfjd/6GIfRZjvT7Grbe4V6G0dp5bW//DH8MY+7gXYBfxk
+         cD7/5qLQ83LtkRw/oGFCHg0X7PFooes4ckh2LQ8QaXnNEDCHJJOpR9jjp6bMxa+Gzlgj
+         x0cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KaDF8Y9NiIVVpO8fIUtLbwriHKMu6JuYaDupLhRe/4A=;
-        b=aFvBa7Vs2+8E6YoQfssSjHXV++8xzjoTg8pVKdVW0jeAj8xPZA7RrxiV9brbpUmMP0
-         5YUJZ65SMX1jhbuPc50hIY1I089r9iGgx+5D41W2PINj5cHVfJc8daO6RHhkUylzMsP9
-         Cl7lyklQL1o+Gz3t+bGg8W6AoURDtsXdz8Xv0zHomEfPYenHbCXil7nZi/Ss7VR5BGXH
-         ykHx4DxaK8xlz03hLK14aNmtQxbdrEf4/y+nCe/cehIJ248UUq/TdpDIEb7VhxEtWpTY
-         Au+oPLsTkbn3bK/BtL2oVcIFvXPW9rEoNPz/mSUSUNTlB7fQ6HrmXJn41YdrQXFGv9qP
-         Q51g==
-X-Gm-Message-State: APzg51AczbCrb8dwEK1Dmc2j1otHXEHLVJnrPxV6KN5KMeD+7Y7OOhs+
-        MpEyELyxypnUzj1REXAwCsQ=
-X-Google-Smtp-Source: ANB0Vdb87CxRvleILM5F6xLq/iTIDkY7pVazJrxoMBoHb3AHzcrQAM092f8qi2pUccn8w9pyTbcIIQ==
-X-Received: by 2002:a0c:9c09:: with SMTP id v9-v6mr17149613qve.186.1535743251883;
-        Fri, 31 Aug 2018 12:20:51 -0700 (PDT)
+        bh=+Qii3n+jUAsVW01OvBpIFXuRjq40zduqyJYtvGeJEEs=;
+        b=eaAQ4kbrpARSp0RvzhhApQH106s37fgcGg1pTjBajHldzr8LWSJO62FqGfxWuEvE2v
+         xOMvwq8RhxBdbIacwaIvOXyFIPhW2pnXSfV7neGueyOxLFwu2h3Dla909DhT25ErXEZt
+         DDq8g9dj+mFx7fj8/BOHDv6JqqIVeZEF4/ZVIXoSQ6+Ok/3vApiXOLh3t/MirOPe5xQv
+         ea12vQVu+42tjZmWIHtBkwMqu6jdtc5vmPCKw0u4PqYB4qZ7VWmthCJSAfIwDqU3u11V
+         f+DWmcQ2RsHVF8LmevYROnXNUn8jbFqGNGIzRLVzZidCeMEUQ4dv3q/R1GVTgO3WT2S8
+         NZcA==
+X-Gm-Message-State: APzg51DCryYubp1i71h82RCtaYIXYgo6Wo7BBw2QAI4hwNugIlyfPhHZ
+        pK8j56+uvpx44QWj0Q5maHU=
+X-Google-Smtp-Source: ANB0VdZuqzo3JJVrMHfD5jxxN09gP/ABfkmLV1lh+ZpZveMl5sED5eUz56aoeKwnk+PFeGjCqj95KA==
+X-Received: by 2002:a0c:b5d8:: with SMTP id o24-v6mr17074360qvf.189.1535743254301;
+        Fri, 31 Aug 2018 12:20:54 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id f53-v6sm6949160qtk.40.2018.08.31.12.20.49
+        by smtp.gmail.com with ESMTPSA id f53-v6sm6949160qtk.40.2018.08.31.12.20.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 12:20:50 -0700 (PDT)
+        Fri, 31 Aug 2018 12:20:53 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -71,9 +71,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
         andrew@lunn.ch, rmk+kernel@armlinux.org.uk
-Subject: [PATCH v3 1/3] ARM: dts: NSP: Enable SFP on bcm958625hr
-Date:   Fri, 31 Aug 2018 12:20:37 -0700
-Message-Id: <20180831192039.11842-2-f.fainelli@gmail.com>
+Subject: [PATCH v3 2/3] dt-bindings: net: dsa: Document B53 SRAB interrupts and registers
+Date:   Fri, 31 Aug 2018 12:20:38 -0700
+Message-Id: <20180831192039.11842-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180831192039.11842-1-f.fainelli@gmail.com>
 References: <20180831192039.11842-1-f.fainelli@gmail.com>
@@ -82,63 +82,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the SFP connected to port 5 of the switch and wire up all GPIOs
-to the SFP cage. Because of a hardware limitation of the i2c controller
-on the iProc SoCs which prevents large i2c (> 63 bytes) transactions to
-work, we use the i2c-gpio interface instead, which does not have that
-limitation. This allows us to read the SFP module EEPROM, which would
-not be possible otherwise since it exceeds that size during a single
-read transfer.
+Document the Broadcom roboswitch Switch Register Access Block interrupt
+lines and additional register base addresses for port mux configuration
+and SGMII status/configuration registers.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm/boot/dts/bcm958625hr.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ .../devicetree/bindings/net/dsa/b53.txt       | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm958625hr.dts b/arch/arm/boot/dts/bcm958625hr.dts
-index ea3fc194f8f3..a53a2f629d74 100644
---- a/arch/arm/boot/dts/bcm958625hr.dts
-+++ b/arch/arm/boot/dts/bcm958625hr.dts
-@@ -58,6 +58,24 @@
- 		open-source;
- 		priority = <200>;
- 	};
-+
-+	/* Hardware I2C block cannot do more than 63 bytes per transfer,
-+	 * which would prevent reading from a SFP's EEPROM (256 byte).
-+	 */
-+	i2c1: i2c {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&gpioa 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpioa 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	};
-+
-+	sfp: sfp {
-+		compatible = "sff,sfp";
-+		i2c-bus = <&i2c1>;
-+		mod-def0-gpios = <&gpioa 28 GPIO_ACTIVE_LOW>;
-+		los-gpios = <&gpioa 24 GPIO_ACTIVE_HIGH>;
-+		tx-fault-gpios = <&gpioa 30 GPIO_ACTIVE_HIGH>;
-+		tx-disable-gpios = <&gpioa 26 GPIO_ACTIVE_HIGH>;
-+	};
- };
+diff --git a/Documentation/devicetree/bindings/net/dsa/b53.txt b/Documentation/devicetree/bindings/net/dsa/b53.txt
+index 1811e1972a7a..5201bc15fdd6 100644
+--- a/Documentation/devicetree/bindings/net/dsa/b53.txt
++++ b/Documentation/devicetree/bindings/net/dsa/b53.txt
+@@ -46,6 +46,42 @@ Required properties:
+       "brcm,bcm6328-switch"
+       "brcm,bcm6368-switch" and the mandatory "brcm,bcm63xx-switch"
  
- &amac0 {
-@@ -210,6 +228,14 @@
- 			reg = <4>;
- 		};
- 
-+		port@5 {
-+			label = "sfp";
-+			phy-mode = "sgmii";
-+			reg = <5>;
-+			sfp = <&sfp>;
-+			managed = "in-band-status";
-+		};
++Required properties for BCM585xx/586xx/88312 SoCs:
 +
- 		port@8 {
- 			ethernet = <&amac2>;
- 			label = "cpu";
++ - reg: a total of 3 register base addresses, the first one must be the
++   Switch Register Access block base, the second is the port 5/4 mux
++   configuration register and the third one is the SGMII configuration
++   and status register base address.
++
++ - interrupts: a total of 13 interrupts must be specified, in the following
++   order: port 0-5, 7-8 link status change, then the integrated PHY interrupt,
++   then the timestamping interrupt and the sleep timer interrupts for ports
++   5,7,8.
++
++Optional properties for BCM585xx/586xx/88312 SoCs:
++
++  - reg-names: a total of 3 names matching the 3 base register address, must
++    be in the following order:
++	"srab"
++	"mux_config"
++	"sgmii_config"
++
++  - interrupt-names: a total of 13 names matching the 13 interrupts specified
++    must be in the following order:
++	"link_state_p0"
++	"link_state_p1"
++	"link_state_p2"
++	"link_state_p3"
++	"link_state_p4"
++	"link_state_p5"
++	"link_state_p7"
++	"link_state_p8"
++	"phy"
++	"ts"
++	"imp_sleep_timer_p5"
++	"imp_sleep_timer_p7"
++	"imp_sleep_timer_p8"
++
+ See Documentation/devicetree/bindings/net/dsa/dsa.txt for a list of additional
+ required and optional properties.
+ 
 -- 
 2.17.1
 
