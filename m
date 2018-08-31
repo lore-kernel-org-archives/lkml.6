@@ -5,80 +5,94 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E5AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA55C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9441C20839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9441C20839
+	by mail.kernel.org (Postfix) with ESMTP id C45A12083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:20:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45A12083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbeHaM0Z (ORCPT
+        id S1727773AbeHaM0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:26:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40852 "EHLO mx1.redhat.com"
+        Fri, 31 Aug 2018 08:26:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42092 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727229AbeHaM0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:26:24 -0400
+        id S1727229AbeHaM0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:26:32 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B79A6401EF0D;
-        Fri, 31 Aug 2018 08:20:06 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B43A04021CC3;
+        Fri, 31 Aug 2018 08:20:14 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA7CC10D18E0;
-        Fri, 31 Aug 2018 08:19:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B554E112D169;
+        Fri, 31 Aug 2018 08:20:07 +0000 (UTC)
 From:   Lianbo Jiang <lijiang@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         ebiederm@xmission.com, joro@8bytes.org, thomas.lendacky@amd.com,
         dyoung@redhat.com, kexec@lists.infradead.org,
         iommu@lists.linux-foundation.org, bhe@redhat.com
-Subject: [PATCH 2/5 V6] x86/ioremap: strengthen the logic in early_memremap_pgprot_adjust() to adjust encryption mask
-Date:   Fri, 31 Aug 2018 16:19:27 +0800
-Message-Id: <20180831081930.31561-3-lijiang@redhat.com>
+Subject: [PATCH 3/5 V6] kexec: allocate unencrypted control pages for kdump in case SME is enabled
+Date:   Fri, 31 Aug 2018 16:19:28 +0800
+Message-Id: <20180831081930.31561-4-lijiang@redhat.com>
 In-Reply-To: <20180831081930.31561-1-lijiang@redhat.com>
 References: <20180831081930.31561-1-lijiang@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 08:20:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 31 Aug 2018 08:20:06 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 31 Aug 2018 08:20:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 31 Aug 2018 08:20:14 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For kdump kernel, when SME is enabled, the acpi table and dmi table will need
-to be remapped without the memory encryption mask. So we have to strengthen
-the logic in early_memremap_pgprot_adjust(), which makes us have an opportunity
-to adjust the memory encryption mask.
+When SME is enabled in the first kernel, we will allocate unencrypted pages
+for kdump in order to be able to boot the kdump kernel like kexec.
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 ---
- arch/x86/mm/ioremap.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/kexec_core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index e01e6c695add..f9d9a39955f3 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -689,8 +689,15 @@ pgprot_t __init early_memremap_pgprot_adjust(resource_size_t phys_addr,
- 	encrypted_prot = true;
- 
- 	if (sme_active()) {
-+                /*
-+                 * In kdump kernel, the acpi table and dmi table will need
-+                 * to be remapped without the memory encryption mask. Here
-+                 * we have to strengthen the logic to adjust the memory
-+                 * encryption mask.
-+                 */
- 		if (early_memremap_is_setup_data(phys_addr, size) ||
--		    memremap_is_efi_data(phys_addr, size))
-+		    memremap_is_efi_data(phys_addr, size) ||
-+		    is_kdump_kernel())
- 			encrypted_prot = false;
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 23a83a4da38a..e7efcd1a977b 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+ 		}
  	}
  
++	if (pages) {
++		/*
++		 * For kdump, we need to ensure that these pages are
++		 * unencrypted pages if SME is enabled.
++		 * By the way, it is unnecessary to call the arch_
++		 * kexec_pre_free_pages(), which will make the code
++		 * become more simple.
++		 */
++		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
++	}
+ 	return pages;
+ }
+ 
+@@ -867,6 +877,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result  = -ENOMEM;
+ 			goto out;
+ 		}
++		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+ 		ptr = kmap(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+@@ -884,6 +895,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+ 		kunmap(page);
++		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
 -- 
 2.17.1
 
