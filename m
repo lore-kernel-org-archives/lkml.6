@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD77C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5762EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640EF20658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640EF20658
+	by mail.kernel.org (Postfix) with ESMTP id 1C4C020837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4C020837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbeHaUrC (ORCPT
+        id S1728255AbeHaUq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:47:02 -0400
-Received: from mout.perfora.net ([74.208.4.197]:44121 "EHLO mout.perfora.net"
+        Fri, 31 Aug 2018 16:46:59 -0400
+Received: from mout.perfora.net ([74.208.4.194]:39823 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbeHaUrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:47:01 -0400
+        id S1727651AbeHaUq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:46:58 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LsRIM-1fko8p1r4a-0121Vt; Fri, 31 Aug 2018 18:38:27 +0200
+ 0M8jj0-1g3Qt916XU-00C7FR; Fri, 31 Aug 2018 18:38:31 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 01/34] ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
-Date:   Fri, 31 Aug 2018 18:37:43 +0200
-Message-Id: <20180831163817.23970-2-marcel@ziswiler.com>
+Subject: [PATCH v2 03/34] ARM: tegra: apalis_t30: add local-mac-address property
+Date:   Fri, 31 Aug 2018 18:37:45 +0200
+Message-Id: <20180831163817.23970-4-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:Gu5Eb8M2rU8C24cW9yEHFAB7Ud7iO8+UmYq22Zjvi/1EnUCHyfi
- T995Go+JxazTLqn69GnpzuMt7Isxq+JbRWsdITEIup/D4u5rDJEAq/bqkN3PRgZK+sYhri/
- goMX4/eALppFkZLa1Vw0OMQrRprs4QbxCJI6InnSXBJ7qQmS92RdsoOMnsPuI7Gbt6dEvsO
- 2QWT6uKzWm5dB6HrlQH0A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:LJUzShtj/3g=:dbnqiNiXzdkBlLaiZheNVM
- TaXM4PADf7mOfv3FxdFRT77ySyqPeII+MZD4F08bZ+nIjHqU37xBX5VBtAoK6OgHB93J1vzSL
- cak1OKE+gFMDEUGQeexnrm+MitpWdnTSZHgL0N9q5KlilRexA5O9pqoojA5dq5sXy/v1xLlBn
- bwFxKVY6lasSKug2Q1kqNlT3YHUZ35c2owmuE6ud9kenB14l4Lvt6xCNTu6Q0EiSKMRrU6vaN
- SJMA9MTCJ9zedme9SlXemqBpXrL1/P8T80sXDE3uKIqd/84yj6Hp0sbhH61qfywm+0O3UMWgb
- jt1Nh7eSgj0jH7GNAU+dOUMTW7CGoFZN8UO7B98kBy22T/teSagLuI/fG1GrawlcAtz98qB27
- YW4Rur0dvPYc/hRUa6IIdtCKC3IUOmFiGTH7tb3neZlbmX+vmBnoLP2slOHBlK8ajPDit8dlN
- r5ZpopYhXV3PJSNvXg4NMXeC4ywpKx4aYY+ZnU6kog/b02JqxCr6LFOUf2dmJL3ya4wRzb8S3
- JHD0MigdIW72j/ihvmAjP/S3NyDuLGIP2z6llMhMGyZlNm1OZGRA3SUYAhP5fktkNeTNC23JN
- 0kn65GoMtclA05KZzXMLQaSy5EXrwaEyaTZkvk8xsqqKAZpig6VKt3w53tDRhKhZQs9hM2phb
- pVUmKoONQAkqtzOqGI/U+68dBw2MbBQWHv8wOKem7SE+9ZeLKZIs5/3vra9O890B/BOI=
+X-Provags-ID: V03:K1:Ed4KuJYfff1EGI0ZFjwrUCcox/fd/KLL+CyruzLL0VphdchqllS
+ N4H+lRTdOIG+ayxwG2Wpni+nNJwO6GAYq/JyvkmuvxKYEZLrYCfS7WzZGc97tboPnldAN4F
+ zsTHBVAaKFZBEEAWbyRn80zaJSnXDjWUGX8C1WIpIHw5U2xcsMmu8+tXnHz7iNRQNdygE5m
+ CSRLASaZbSweznArxD2yA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3zpbD9AgCKk=:MLP2y6de5nw9ibZSxf/6kG
+ 7iIjY6aEl53MT+0D6FttS37kCvLnt+pFeEvfaFYzU8rWIzIDD74Bqos/JITlfkpMG5TjFQQVo
+ OlxHkERjddWFwbWIwAdIH/HWu+S7pkp0SrzOliG56lqFdt3VKwaY9Mz7dvWaYIFkZq9RwiMAD
+ 0nNe58ObvkHBMHqKrlDORla4sBFk2rpyIOyhJlK3Wts7xeRyeCVhp/JitwFkwQtbQcLoAU76s
+ TWoqAlNrfw2vOvmSmP0vor96LJno00ZCcNl5BcUhGvuiGLiET7QSkxJYHc6zIXxgwUdLyIKvU
+ 7F4Kun1gAoHRSL6iXHVZB012fRlS8/1kvZW9IPv0KxVVQGDXoSWu/bzbCXSpmhXWx41FiPwT7
+ KW1wQDLKFX3TeGSn3k16k8nYxIM0tdHU+LoVMlccI0yBltZiN/Rf5FoCy/aBJSWSnBNxea6uF
+ qco/s7khGerxyWHl3GXOR2yk77IUXvsZ5mo722N1ofmF/y1uAIAc475vnbSgNmiONV7ilX6rC
+ uQk6SUyH1SwpAEaYsWa7VKW8vwONbdqw2PIc/NzVLXE3KymVTUUi4magSyDXaHnDEJeHIXT6/
+ EbgJC0+o5c0dBMAltjwpPsRaQ5wJJxxnox74AzfE/2yuXHurt9D0WvehrxeoaL5PfNxAPxFN/
+ nS6PUy3yWxqWLXZY5udwANAal5rlpOyETRyQrKMfk/b2qfV+dvXxni7qzkTeOWkJEDQE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,8 +61,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Fix MMC1 cmd pin pull-up causing issues on carrier boards without
-external pull-up.
+Add empty local-mac-address property to be filled in by boot loader
+(e.g. U-Boot).
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -70,31 +70,24 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 2f807d40c1b7..e749e047db7a 100644
+index 69bb11c31d77..f13df31b5e25 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -171,14 +171,14 @@
+@@ -34,6 +34,10 @@
  
- 			/* Apalis MMC1 */
- 			sdmmc3_clk_pa6 {
--				nvidia,pins = "sdmmc3_clk_pa6",
--					      "sdmmc3_cmd_pa7";
-+				nvidia,pins = "sdmmc3_clk_pa6";
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			sdmmc3_dat0_pb7 {
--				nvidia,pins = "sdmmc3_dat0_pb7",
-+				nvidia,pins = "sdmmc3_cmd_pa7",
-+					      "sdmmc3_dat0_pb7",
- 					      "sdmmc3_dat1_pb6",
- 					      "sdmmc3_dat2_pb5",
- 					      "sdmmc3_dat3_pb4",
+ 		pci@3,0 {
+ 			nvidia,num-lanes = <1>;
++			pcie@0 {
++				reg = <0 0 0 0 0>;
++				local-mac-address = [00 00 00 00 00 00];
++			};
+ 		};
+ 	};
+ 
 -- 
 2.14.4
 
