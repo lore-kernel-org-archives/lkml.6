@@ -2,95 +2,109 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA69C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A614BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D72D2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:43:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D72D2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 49F7F2083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:44:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0r1cwZq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F7F2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeHaRuf (ORCPT
+        id S1728614AbeHaRwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 13:50:35 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:58766 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbeHaRuf (ORCPT
+        Fri, 31 Aug 2018 13:52:30 -0400
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:41786 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbeHaRw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:50:35 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fvjhF-00006h-0B; Fri, 31 Aug 2018 13:42:45 +0000
-Date:   Fri, 31 Aug 2018 14:42:44 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
- sparse
-Message-ID: <20180831134244.GB19965@ZenIV.linux.org.uk>
-References: <cover.1535629099.git.andreyknvl@google.com>
- <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
- <20180831081123.6mo62xnk54pvlxmc@ltop.local>
+        Fri, 31 Aug 2018 13:52:29 -0400
+Received: by mail-lj1-f171.google.com with SMTP id y17-v6so10133298ljy.8;
+        Fri, 31 Aug 2018 06:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K7F5D6u/WF0ZIAoHKqPGlh7cMjCdFB7jYX+uWCiO63w=;
+        b=Y0r1cwZq8gVrF/wG17K6GbEByl1WZ60rVdgf/NCncmPY4efM2T1N1lJUjfCibEPeAG
+         nC2JgnDd3k/pBJxYVx595jsiEcTaEzKtuMnARmiWwA4uiF5pH22XHhh5x+6Uy2iEK+dx
+         r/6vo7mVmVKIRA46lj/YMIKEb52Dh9T36o+4oxWv5kvqPoL8GTDegI8YrcfhBFJ/+PVV
+         OgxVaQ/001AOznv/vVi0IoGWF2CurnfyKLBZ+RU5Ko5t22CKxJCA+yArI9t1H4UVtgyp
+         wUNn4Pkub7oTaVFdNHfbaKf1kzJA2WCCPSsAW5rIKJmJBg911blQYXhOhhCnWG0ZVs39
+         Wlng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K7F5D6u/WF0ZIAoHKqPGlh7cMjCdFB7jYX+uWCiO63w=;
+        b=Tf4+uoXXK+hXC48g43oWXLQXW17+fHIgGooAOLjzYCBOkjGkwD1tOy1vZFSqFfUPw2
+         fT1AaR4dN5Ie5zKcr5pq/1kTZjgr407wtbEEN+4Jwn+lXd0WycsiTs9qD+yq7m1RYa8t
+         yM/QSix1H/fpysV0Adv4jncJE+QIUKU7HgyvTdBNYCbAFcgKvsZM+Sgrt4FLKkH4z23f
+         D++XY8htceF956l9+J+Y0HQn0FHfKctLIdW4k4J67r0zajWOcw1WnoOP0F20uCqHI0Xm
+         c8dzDhKddrHjnko0hFgfhkOAl63m9H3TAjRHBi2eYztuy9YzIS8janby1JZmv1AdZcKs
+         /ZJQ==
+X-Gm-Message-State: APzg51AxoT2jfMQCZOdN7P9DQRFFPh3KAiNP4YW3sWZW+bOC0TYSO5eA
+        zdeIIYREMlUT3dqaD903KbWoci2MLMU=
+X-Google-Smtp-Source: ANB0VdYSzUAQsBVZD6SY0zJh3TmIl0cKfB/QGdE1nSc/kH0OcfKJ1zD+eHfRRT7Xtt+Da6o2bhqEzw==
+X-Received: by 2002:a2e:9791:: with SMTP id y17-v6mr10327331lji.41.1535723094072;
+        Fri, 31 Aug 2018 06:44:54 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm1776235ljc.97.2018.08.31.06.44.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 06:44:53 -0700 (PDT)
+Subject: Re: [PATCH 10/23] wireless: remove unnecessary unlikely()
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, Igor Stoppa <igor.stoppa@huawei.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-wireless@vger.kernel.org
+References: <20180830223429.30051-1-igor.stoppa@huawei.com>
+ <20180830223429.30051-11-igor.stoppa@huawei.com>
+ <87va7qdfry.fsf@kamboji.qca.qualcomm.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <814defe0-72ab-049b-97cb-f295f4964895@gmail.com>
+Date:   Fri, 31 Aug 2018 16:44:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831081123.6mo62xnk54pvlxmc@ltop.local>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <87va7qdfry.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 10:11:24AM +0200, Luc Van Oostenryck wrote:
-> On Thu, Aug 30, 2018 at 01:41:16PM +0200, Andrey Konovalov wrote:
-> > This patch adds __force annotations for __user pointers casts detected by
-> > sparse with the -Wcast-from-as flag enabled (added in [1]).
-> > 
-> > [1] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
-> 
-> Hi,
-> 
-> It would be nice to have some explanation for why these added __force
-> are useful.
 
-	It would be even more useful if that series would either deal with
-the noise for real ("that's what we intend here, that's what we intend there,
-here's a primitive for such-and-such kind of cases, here we actually
-ought to pass __user pointer instead of unsigned long", etc.) or left it
-unmasked.
 
-	As it is, __force says only one thing: "I know the code is doing
-the right thing here".  That belongs in primitives, and I do *not* mean the
-#define cast_to_ulong(x) ((__force unsigned long)(x))
-kind.
+On 31/08/18 12:52, Kalle Valo wrote:
+> + linux-wireless
 
-	Folks, if you don't want to deal with that - leave the warnings be.
-They do carry more information than "someone has slapped __force in that place".
+> IMHO you could fold patches 10, 11 and 12 into one to avoid having three
+> patches with duplicate titles. Or alternatively use proper driver
+> prefixes like "ath10k:", "b43:" and so on.
 
-Al, very annoyed by that kind of information-hiding crap...
+I was wondering if it would be ok to fold them, but it's easier to fold 
+than to split, so I started with 3
+
+> But how do you want these to be applied? For the wireless patches you
+> didn't Cc linux-wireless so our patchwork won't see them and hence I
+> can't take them. So if you want me to take these, please resend and
+> include linux-wireless.
+
+
+ok, I was hoping to avoid joining the ml but it's done
+I had patches for about 20 different trees, so I decided to first see if 
+the patches could be taken in right away.
+In at least one case (pinctrl) I got lucky :-)
+
+--
+thanks, igor
