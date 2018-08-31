@@ -2,149 +2,129 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCA8C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D476AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535AE2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535AE2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7642F2083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:26:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efl/iYfy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7642F2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbeIAAds (ORCPT
+        id S1727443AbeIAAfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 20:33:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53267 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeIAAds (ORCPT
+        Fri, 31 Aug 2018 20:35:31 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:45138 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbeIAAfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 20:33:48 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fvpyA-0004Iw-3E; Fri, 31 Aug 2018 22:24:38 +0200
-Date:   Fri, 31 Aug 2018 22:24:37 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Kashyap Desai <kashyap.desai@broadcom.com>
-cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-In-Reply-To: <615d78004495aebc53807156d04d988c@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
- <615d78004495aebc53807156d04d988c@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 31 Aug 2018 20:35:30 -0400
+Received: by mail-qt0-f196.google.com with SMTP id g44-v6so15919813qtb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 13:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LNWbwQ1xiz3zlVQ6+AjLts6cYDeXgqB3PvKUhOBm/dg=;
+        b=efl/iYfyem0X81bVbSE3S6StfAT/QB5GpyJnGpXgzc3usKqf7SXen/CnVHfcV+6zxV
+         W1B3iZC9uPm7zF3UDCIocmukyizOXiascHby8V+YbjFOKD5XD929YnbaHL8TRISQNm0e
+         p/zcnLbeqHVLofnPysNOpgsUOFQXBJNtwe54dQeF/DY1RV46kIw8B9mV462BEYgQVEiM
+         wmCBpb90/uTE6BCroVW+NrJh2Xwy5sJf45T0kIv066k/zaEdTbfSzHMRYzqxQm1NN+4X
+         F6KIYSGE/UuN3UT2ipNv87nqYgN+nqbgjkTyx2f6l8F4f/3TGA7o+yjF+p/crCTWSG74
+         0MdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LNWbwQ1xiz3zlVQ6+AjLts6cYDeXgqB3PvKUhOBm/dg=;
+        b=YbPyZsMSxY0NbLqvZ/NzmBl//zaH/f5NaFznOgFDP5yct/pQSPxRNXIwb7bUlkSF9c
+         7k0lTY8chNABpRK4fON9TV1FY0/LyiKuV/IKSFnIti766kqK3LiNaaHg7iI7lMan3vDJ
+         EPWysjj1ebJIao5CMsvNq3gyk38HPbD85AHXElt5RJWefwlOoHAm8Ss3flc3suXRF/8U
+         t2c7zppS3bzbc3xKfyqVXPmenlraeykIh7EoXhwcl8Ss2ksUwZIQqpto0QRHESMWnyEI
+         OXKdh3sFSBM5aa4Qa73VSCg4KasDx5NFbaWBzson9Eg8I5CgzyyWSLq+a4rGsG46GUea
+         6saA==
+X-Gm-Message-State: APzg51DPEL6p/SfHvNcZ5+ZDoEujurDYN91Rz2SPpQMBygKNuICpFwP5
+        nUkjY/GbaJPMrMjxhX1K+1eK+OQVD+niVulfmU4=
+X-Google-Smtp-Source: ANB0VdZ6croGnaNGLyXMVbeoowh958qf/nQUNeX/3jg15o4vIwzRyH11e7SSjV/QyXdlnZdQ1u5IIpBkKiIsOdJQj0k=
+X-Received: by 2002:a0c:abca:: with SMTP id k10-v6mr16780222qvb.140.1535747183289;
+ Fri, 31 Aug 2018 13:26:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:aed:2291:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 13:26:02
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a2N0pPvLvmERpHPZ5pmYQpNpd4Yqfq2d2cJZ96UHLd8VA@mail.gmail.com>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+ <20180831170514.24665-5-miguel.ojeda.sandonis@gmail.com> <CAK8P3a2N0pPvLvmERpHPZ5pmYQpNpd4Yqfq2d2cJZ96UHLd8VA@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Fri, 31 Aug 2018 22:26:02 +0200
+Message-ID: <CANiq72nOOcumNJeZ7w=UXW5p9w82+FZGXGuwJ_SA-gPuFfctow@mail.gmail.com>
+Subject: Re: [PATCH 5/7] Compiler Attributes: naked was fixed in gcc 4.6
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018, Kashyap Desai wrote:
-> > From: Ming Lei [mailto:tom.leiming@gmail.com]
-> > Sent: Friday, August 31, 2018 12:54 AM
-> > To: sumit.saxena@broadcom.com
-> > Cc: Ming Lei; Thomas Gleixner; Christoph Hellwig; Linux Kernel Mailing
-> > List;
-> > Kashyap Desai; shivasharan.srikanteshwara@broadcom.com; linux-block
-> > Subject: Re: Affinity managed interrupts vs non-managed interrupts
+Hi Arnd,
 
-Can you please teach your mail client NOT to insert the whole useless mail
-header?
+On Fri, Aug 31, 2018 at 9:48 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Aug 31, 2018 at 7:05 PM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>>
+>> Commit 9c695203a7dd ("compiler-gcc.h: gcc-4.5 needs noclone
+>> and noinline on __naked functions") added noinline and noclone
+>> as a workaround for a gcc 4.5 bug, which was resolved in 4.6.0.
+>>
+>> Since now the minimum gcc supported version is 4.6,
+>> we can clean it up.
+>>
+>> See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44290
+>> and https://godbolt.org/z/h6NMIL
+>>
+>
+>> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+>> index 66e1eb8822d9..fdf2fbe6d544 100644
+>> --- a/include/linux/compiler-gcc.h
+>> +++ b/include/linux/compiler-gcc.h
+>> @@ -77,14 +77,8 @@
+>>   * to trace naked functions because then mcount is called without
+>>   * stack and frame pointer being set up and there is no chance to
+>>   * restore the lr register to the value before mcount was called.
+>> - *
+>> - * The asm() bodies of naked functions often depend on standard calling
+>> - * conventions, therefore they must be noinline and noclone.
+>> - *
+>> - * GCC 4.[56] currently fail to enforce this, so we must do so ourselves.
+>> - * See GCC PR44290.
+>>   */
+>> -#define __naked                __attribute__((naked)) noinline __noclone notrace
+>> +#define __naked                __attribute__((naked)) notrace
+>>
+>
+> Good catch. Can this be moved into linux/compiler.h now so we
+> don't need separate definitions for clang and gcc?
 
-> > On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena
-> > <sumit.saxena@broadcom.com> wrote:
+Yes, it can! :-) Actually I was writing that to Nick in the other
+thread about clang, but you beat me to it. Good catch too!
 
-> > > > > We are working on next generation MegaRAID product where
-> > requirement
-> > > > > is- to allocate additional 16 MSI-x vectors in addition to number of
-> > > > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID
-> > > > > adapter
-> > > > > supports 128 MSI-x vectors.
-> > > > >
-> > > > > To explain the requirement and solution, consider that we have 2
-> > > > > socket system (each socket having 36 logical CPUs). Current driver
-> > > > > will allocate total 72 MSI-x vectors by calling API-
-> > > > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
-> > > > > vectors will have affinity across NUMA node s and interrupts are
-> > > affinity
-> > > > managed.
-> > > > >
-> > > > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
-> > > > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
-> > > >
-> > > > Could you explain a bit what the specific use case the extra 16
-> > > > vectors
-> > > is?
-> > > We are trying to avoid the penalty due to one interrupt per IO
-> > > completion
-> > > and decided to coalesce interrupts on these extra 16 reply queues.
-> > > For regular 72 reply queues, we will not coalesce interrupts as for low
-> > > IO
-> > > workload, interrupt coalescing may take more time due to less IO
-> > > completions.
-> > > In IO submission path, driver will decide which set of reply queues
-> > > (either extra 16 reply queues or regular 72 reply queues) to be picked
-> > > based on IO workload.
-> >
-> > I am just wondering how you can make the decision about using extra
-> > 16 or regular 72 queues in submission path, could you share us a bit
-> > your idea? How are you going to recognize the IO workload inside your
-> > driver? Even the current block layer doesn't recognize IO workload, such
-> > as random IO or sequential IO.
-> 
-> It is not yet finalized, but it can be based on per sdev outstanding,
-> shost_busy etc.
-> We want to use special 16 reply queue for IO acceleration (these queues are
-> working interrupt coalescing mode. This is a h/w feature)
-
-TBH, this does not make any sense whatsoever. Why are you trying to have
-extra interrupts for coalescing instead of doing the following:
-
-1) Allocate 72 reply queues which get nicely spread out to every CPU on the
-   system with affinity spreading.
-
-2) Have a configuration for your reply queues which allows them to be
-   grouped, e.g. by phsyical package.
-
-3) Have a mechanism to mark a reply queue offline/online and handle that on
-   CPU hotplug. That means on unplug you have to wait for the reply queue
-   which is associated to the outgoing CPU to be empty and no new requests
-   to be queued, which has to be done for the regular per CPU reply queues
-   anyway.
-
-4) On queueing the request, flag it 'coalescing' which causes the
-   hard/firmware to direct the reply to the first online reply queue in the
-   group.
-
-If the last CPU of a group goes offline, then the normal hotplug mechanism
-takes effect and the whole thing is put 'offline' as well. This works
-nicely for all kind of scenarios even if you have more CPUs than queues. No
-extras, no magic affinity hints, it just works.
-
-Hmm?
-
-> Yes. We did not used " pci_alloc_irq_vectors_affinity".
-> We used " pci_enable_msix_range" and manually set affinity in driver using
-> irq_set_affinity_hint.
-
-I still regret the day when I merged that abomination.
-
-Thanks,
-
-	tglx
-
+Cheers,
+Miguel
