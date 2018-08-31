@@ -2,94 +2,91 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84CBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF7B420652
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:52:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j/w5aGzG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kgp/62qV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF7B420652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D39F20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D39F20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeHaN7U (ORCPT
+        id S1727880AbeHaOAU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:59:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46906 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbeHaN7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:59:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 01475606FC; Fri, 31 Aug 2018 09:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535709159;
-        bh=yFm+eKN4XMCF/AChukJnyrNHWfw4YnFeA0bZNbnSKbU=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=j/w5aGzGsZm4mJMcOqKQDML2lubkFUZKJaCq6gJzW392OH9jcmcuWECZhbXPVSwEV
-         Dh8GWqT16vB6vygE+DSaKbwMC7JZBWWWWgVU6TGgkQBNEyaGhH58i4ZDFpvKOg13C1
-         dyqzQRsOEsB4j1NqKuoWAmGrk9EnDP0e5Pq1PL/0=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C1032606FC;
-        Fri, 31 Aug 2018 09:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535709158;
-        bh=yFm+eKN4XMCF/AChukJnyrNHWfw4YnFeA0bZNbnSKbU=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Kgp/62qVXRkMihlHdULECxUMmYZiuNhA2H1C5jiRiQiAhkc2vTnP/FKXgElqV8IZy
-         zPxnZVAXll4J9kic6bbIyXfdZxaVdllFme9e0BPsGDLqwblFc54TnKdG86MqKCN5Wg
-         73X8GdzNNOn0LBQEwea6l0FIFSKD4vzZ7sQj2nlI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1032606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Igor Stoppa <igor.stoppa@huawei.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 10/23] wireless: remove unnecessary unlikely()
-References: <20180830223429.30051-1-igor.stoppa@huawei.com>
-        <20180830223429.30051-11-igor.stoppa@huawei.com>
-Date:   Fri, 31 Aug 2018 12:52:33 +0300
-In-Reply-To: <20180830223429.30051-11-igor.stoppa@huawei.com> (Igor Stoppa's
-        message of "Fri, 31 Aug 2018 01:34:16 +0300")
-Message-ID: <87va7qdfry.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 31 Aug 2018 10:00:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55438 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726493AbeHaOAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 10:00:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1285918A;
+        Fri, 31 Aug 2018 02:53:39 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D75673F721;
+        Fri, 31 Aug 2018 02:53:38 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7288B1AE3614; Fri, 31 Aug 2018 10:53:51 +0100 (BST)
+Date:   Fri, 31 Aug 2018 10:53:51 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Message-ID: <20180831095351.GD13166@arm.com>
+References: <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
+ <20180830094411.GX24124@hirez.programming.kicks-ass.net>
+ <20180830095148.GB5942@arm.com>
+ <1535629996.4465.44.camel@synopsys.com>
+ <20180830141713.GN24082@hirez.programming.kicks-ass.net>
+ <20180830142354.GB13005@arm.com>
+ <20180830142920.GO24082@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090EA4@us01wembx1.internal.synopsys.com>
+ <20180830204515.GC24124@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA23075012B090FF3@us01wembx1.internal.synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B090FF3@us01wembx1.internal.synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ linux-wireless
+On Fri, Aug 31, 2018 at 12:30:50AM +0000, Vineet Gupta wrote:
+> On 08/30/2018 01:45 PM, Peter Zijlstra wrote:
+> >>
+> >> Indeed this is the mother of all issues, I tried and system is clearly hosed with
+> >> and works after.
+> >> What's amazing is the commit 4aef66c8ae9 which introduced it is from 2016 ;-)
+> >> Back then we had a retry branch with backoff stuff which I'd reverted for new
+> >> cores and the merge conflict somehow missed it.
+> >>
+> >> @PeterZ I'll create a patch with you as author ? do I need any formal sign offs,
+> >> acks etc ?
+> > Well, Will spotted it, give authorship to him, you have my ack per the
+> > above.
+> 
+> Oops, sorry for the mixup. I have him as author now and pushed to ARC for-curr
+> (will trickle into linux-next eventually).
 
-Igor Stoppa <igor.stoppa@gmail.com> writes:
+Okey doke: you can have my Signed-off-by for all the diffs I sent. Just
+stick something like [vineet: wrote commit message] in there so I don't
+read it in the future and confuse myself.
 
-> WARN_ON_ONCE() already contains an unlikely(), and the logical or of two of
-> them is still unlikely(), so it's not necessary to wrap them into another.
->
-> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> Cc: Christian Lamparter <chunkeey@googlemail.com>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-
-IMHO you could fold patches 10, 11 and 12 into one to avoid having three
-patches with duplicate titles. Or alternatively use proper driver
-prefixes like "ath10k:", "b43:" and so on.
-
-But how do you want these to be applied? For the wireless patches you
-didn't Cc linux-wireless so our patchwork won't see them and hence I
-can't take them. So if you want me to take these, please resend and
-include linux-wireless.
-
--- 
-Kalle Valo
+Will
