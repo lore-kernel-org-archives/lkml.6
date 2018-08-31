@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCC0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE61C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA56C20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA56C20652
+	by mail.kernel.org (Postfix) with ESMTP id 5375A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5375A20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbeHaOCZ (ORCPT
+        id S1728123AbeHaODZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:02:25 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:3743 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727268AbeHaOCZ (ORCPT
+        Fri, 31 Aug 2018 10:03:25 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:64401 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728084AbeHaODZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:02:25 -0400
-X-UUID: 3a93283f9ee7415d85cebdfc115bd0f8-20180831
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        Fri, 31 Aug 2018 10:03:25 -0400
+X-UUID: b906152d07ae44ec8c0fca7242014852-20180831
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1264044211; Fri, 31 Aug 2018 17:55:28 +0800
+        with ESMTP id 1103494497; Fri, 31 Aug 2018 17:56:37 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 31 Aug 2018 17:55:28 +0800
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 31 Aug 2018 17:56:36 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 31 Aug 2018 17:55:21 +0800
+ Transport; Fri, 31 Aug 2018 17:56:36 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Felipe Balbi <felipe.balbi@linux.intel.com>
@@ -45,9 +45,10 @@ CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>
-Subject: [PATCH] usb: core: phy: clean up return value check about devm_of_phy_get_by_index()
-Date:   Fri, 31 Aug 2018 17:55:09 +0800
-Message-ID: <258d57f5c8559c5fd3ba6d1ac1dcc5463737da2e.1535709096.git.chunfeng.yun@mediatek.com>
+Subject: [PATCH v4] usb: core: phy: clean up return value check about devm_of_phy_get_by_index()
+Date:   Fri, 31 Aug 2018 17:56:33 +0800
+Message-ID:
+ <258d57f5c8559c5fd3ba6d1ac1dcc5463737da2e.1535709096.git.chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -56,6 +57,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180831095633.VxP7AaGpYHNxgHsIt7YMlcZj-AZYdsrIEGx51A6hJLc@z>
 
 Use IS_ERR() instead of IS_ERR_OR_NULL() because devm_of_phy_get_by_index()
 never return NULL value;
