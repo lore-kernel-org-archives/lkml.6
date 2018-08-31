@@ -5,41 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53F5C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E73DC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF0120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:59:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF0120661
+	by mail.kernel.org (Postfix) with ESMTP id F034120839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 05:11:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F034120839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeHaJEh (ORCPT
+        id S1727340AbeHaJR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 05:04:37 -0400
-Received: from gate.crashing.org ([63.228.1.57]:39119 "EHLO gate.crashing.org"
+        Fri, 31 Aug 2018 05:17:28 -0400
+Received: from gate.crashing.org ([63.228.1.57]:56165 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbeHaJEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 05:04:37 -0400
+        id S1727106AbeHaJR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 05:17:28 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7V4wfZB006011;
-        Thu, 30 Aug 2018 23:58:42 -0500
-Message-ID: <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7V4npxG005521;
+        Thu, 30 Aug 2018 23:49:52 -0500
+Message-ID: <b54888e7cbfad8ea0f53cd93ec58743cc88e2431.camel@kernel.crashing.org>
 Subject: Re: v4.17 regression: PowerMac G3 won't boot, was Re: [PATCH v5
  1/3] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>
-Cc:     Stan Johnson <userm57@yahoo.com>, Rob Herring <robh+dt@kernel.org>,
+To:     Mac User <userm57@yahoo.com>, Rob Herring <robh+dt@kernel.org>
+Cc:     fthain@telegraphics.com.au, Frank Rowand <frank.rowand@sony.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 31 Aug 2018 14:58:41 +1000
-In-Reply-To: <0ad5dbfd-08f3-b97d-34b9-70fc9a729921@gmail.com>
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Date:   Fri, 31 Aug 2018 14:49:51 +1000
+In-Reply-To: <84f13bded54eda0817f9134f355d518d5b3a5f77.camel@kernel.crashing.org>
 References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
          <1520208889-3908-2-git-send-email-frowand.list@gmail.com>
          <alpine.LNX.2.21.1808301025480.73@nippy.intranet>
-         <0ad5dbfd-08f3-b97d-34b9-70fc9a729921@gmail.com>
+         <CAL_JsqLJ9QMHCMqGKpCouP1rTEO+cMGA1es94qAH+ukLsR31jg@mail.gmail.com>
+         <569e4bc3-2149-4b2d-562f-e400dd05a8a8@yahoo.com>
+         <84f13bded54eda0817f9134f355d518d5b3a5f77.camel@kernel.crashing.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
@@ -49,28 +51,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-08-30 at 21:36 -0700, Frank Rowand wrote:
-> > No idea whether that's relevant; I haven't done any further investigation. 
-> > Complete dmesg output is attached. Please let me know if there's any more 
-> > information you need to help find the bug.
-> > 
-> > Thanks.
+On Fri, 2018-08-31 at 14:35 +1000, Benjamin Herrenschmidt wrote:
 > 
-> I don't have any useful answers yet, but I am following the thread and have
-> also quickly scanned the two commits for any obvious cause.  I will look
-> into this some more, but have a few other tasks that I need to complete
-> first.
+> > If I force output with "-f", the resulting file has no occurrences 
+> > of "phandle".
 > 
-> A long shot, but something to consider, is that I failed to cover the
-> cases of dynamic devicetree updates (removing nodes that contain a
-> phandle) in ways other than overlays.  Michael Ellerman has reported
-> such a problem for powerpc/mobility with of_detach_node().  A patch to
-> fix that is one of the tasks I need to complete.
+> Are you booting with BootX or Open Firmware ?
 
-The only thing I can think of is booting via the BootX bootloader on
-those ancient macs results in a DT with no phandles. I didn't see an
-obvious reason why that would cause that patch to break though.
+Assuming you are using BootX (or miBoot), can you try this patch ?
 
-Cheers,
-Ben.
+--- a/arch/powerpc/platforms/powermac/bootx_init.c
++++ b/arch/powerpc/platforms/powermac/bootx_init.c
+@@ -37,6 +37,7 @@ static unsigned long __initdata bootx_dt_strend;
+ static unsigned long __initdata bootx_node_chosen;
+ static boot_infos_t * __initdata bootx_info;
+ static char __initdata bootx_disp_path[256];
++static int __initdata bootx_phandle;
+ 
+ /* Is boot-info compatible ? */
+ #define BOOT_INFO_IS_COMPATIBLE(bi) \
+@@ -258,6 +259,8 @@ static void __init bootx_scan_dt_build_strings(unsigned long base,
+                namep = pp->name ? (char *)(base + pp->name) : NULL;
+                if (namep == NULL || strcmp(namep, "name") == 0)
+                        goto next;
++               if (!strcmp(namep, "phandle") || !strcmp(namep, "linux,phandle"))
++                       bootx_phandle = -1;
+                /* get/create string entry */
+                soff = bootx_dt_find_string(namep);
+                if (soff == 0)
+@@ -330,6 +333,12 @@ static void __init bootx_scan_dt_build_struct(unsigned long base,
+                ppp = &pp->next;
+        }
+ 
++       /* add a phandle */
++       if (bootx_phandle > 0) {
++               bootx_dt_add_prop("phandle", &bootx_phandle, 4, mem_end);
++               bootx_phandle++;
++       }
++
+        if (node == bootx_node_chosen) {
+                bootx_add_chosen_props(base, mem_end);
+                if (bootx_info->dispDeviceRegEntryOffset == 0)
+@@ -385,6 +394,8 @@ static unsigned long __init bootx_flatten_dt(unsigned long start)
+        bootx_dt_add_string("linux,bootx-height", &mem_end);
+        bootx_dt_add_string("linux,bootx-linebytes", &mem_end);
+        bootx_dt_add_string("linux,bootx-addr", &mem_end);
++       if (bootx_phandle > 0)
++               bootx_dt_add_string("phandle", &mem_end);
+        /* Wrap up strings */
+        hdr->off_dt_strings = bootx_dt_strbase - mem_start;
+        hdr->dt_strings_size = bootx_dt_strend - bootx_dt_strbase;
+@@ -482,6 +493,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
+        bootx_dt_strbase = bootx_dt_strend = 0;
+        bootx_node_chosen = 0;
+        bootx_disp_path[0] = 0;
++       bootx_phandle = 1;
+ 
+        if (!BOOT_INFO_IS_V2_COMPATIBLE(bi))
+                bi->logicalDisplayBase = bi->dispDeviceBase;
+
 
