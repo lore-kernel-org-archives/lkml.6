@@ -3,73 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD2DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE9CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA04320837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4B532083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:29:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/SUBQ5M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA04320837
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhDSDQRt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B532083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeHaFcr (ORCPT
+        id S1727303AbeHaFeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:32:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45026 "EHLO mail.kernel.org"
+        Fri, 31 Aug 2018 01:34:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbeHaFcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:32:47 -0400
+        id S1725772AbeHaFeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 01:34:06 -0400
 Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0914D20837;
-        Fri, 31 Aug 2018 01:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6D2C20837;
+        Fri, 31 Aug 2018 01:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535678870;
-        bh=KhKyCwFVTo2vZA9MyfLPYo+up6fuIOP8bu5fmzgYXHI=;
+        s=default; t=1535678947;
+        bh=BDsoP5G6dDU7wOY/YOWY7Pmjrr4PnV27ii0kVb0EKSw=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=a/SUBQ5MDjNbhffafVtRYIE36FpxCFv9zCcbUbdEheiqx5u9FrNcbnZouatZeRbqG
-         plr1F+nSns+h0u3vIgZpFz4pTmDiEnhFoDfEeJValBFX1LFqWQE/wY5T3PZxBo+5QK
-         6gCemXhgsg6rWUx+jraRKItgO9tOb0fv0iN3Cjg0=
+        b=UhDSDQRtkGXS6P36o1hDZchM//jDZljoAgSe6t+ndVR0mZZ5yCw9XHL/nVQyuuM16
+         N+hkWkxKjvho6PPTtsEMRxGcVh6dZDRRKqi3kdv5YYAVDiBMofdXUzs/pWWivg83uJ
+         Umhh+nsVWUUtNYe9KAoMz1VDNcwqr52CkxmLGNDw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
+To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1533725239-14214-2-git-send-email-anischal@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-References: <1533725239-14214-1-git-send-email-anischal@codeaurora.org>
- <1533725239-14214-2-git-send-email-anischal@codeaurora.org>
-Message-ID: <153567886934.93865.7315233769224403089@swboyd.mtv.corp.google.com>
+In-Reply-To: <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Message-ID: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v3] clk: qcom: Add camera clock controller driver for SDM845
-Date:   Thu, 30 Aug 2018 18:27:49 -0700
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date:   Thu, 30 Aug 2018 18:29:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Nischal (2018-08-08 03:47:19)
-> Add support for the camera clock controller found on SDM845
-> based devices. This would allow camera drivers to probe and
-> control their clocks.
+Quoting Peng Fan (2018-08-12 18:15:41)
+> Hi Anson,
 > =
 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
+> > > > -----Original Message-----
+> > > > From: Anson Huang
+> > > > Sent: 2018=E5=B9=B48=E6=9C=888=E6=97=A5 12:39
+> > > > To: shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
+> > > > mturquette@baylibre.com; sboyd@kernel.org;
+> > > > linux-arm-kernel@lists.infradead.org;
+> > > > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > > Cc: dl-linux-imx <linux-imx@nxp.com>
+> > > > Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+> > > >
+> > > > Clock framework will enable those clocks registered with
+> > > > CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
+> > > > clock
+> > > initialization now.
+> > >
+> > > Will it be more flexible to parse dts saying "critical-clocks =3D <xx=
+x>"
+> > > or "init-on-arrary=3D<xxx>"
+> > > and enable those clocks?
+> > =
 
-Applied to clk-next
+> > Parsing the clocks arrays from dtb is another way of enabling critical =
+clocks, but
+> > for current i.MX6/7 platforms, we implement it in same way as most of o=
+ther
+> > SoCs, currently I did NOT see any necessity of putting them in dtb, jus=
+t adding
+> > flag during clock registering is more simple, if there is any special r=
+equirement
+> > for different clocks set to be enabled, then we can add support to enab=
+le the
+> > method of parsing critical-clocks from dtb. Just my two cents.
+> =
+
+> Thinking about OP-TEE want to use one device, but it's clocks are registe=
+red
+> by Linux, because there is no module in Linux side use it, it will shutdo=
+wn the clock,
+> which cause OP-TEE could not access the device.
+> =
+
+> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make s=
+ure
+> the clocks are not shutdown by Linux.
+> =
+
+> However adding a new property in clk node and let driver code parse the d=
+ts,
+> there is no need to modify clk driver code when OP-TEE needs another devi=
+ce clock.
+> =
+
+
+If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
+in Linux probe, acquire clocks, and keep the clks enabled forever?
 
