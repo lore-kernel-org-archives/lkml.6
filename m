@@ -2,393 +2,286 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,T_DKIMWL_WL_MED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41C6C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E3EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0E320837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDB772083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:21:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkU2d9Fo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0E320837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UapOqpfm";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="TSizru8Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB772083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeIAC3V (ORCPT
+        id S1727490AbeIACah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:29:21 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36630 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeIAC3U (ORCPT
+        Fri, 31 Aug 2018 22:30:37 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:38892 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727247AbeIACah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:29:20 -0400
-Received: by mail-pl1-f193.google.com with SMTP id e11-v6so6059863plb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dhrZkuDy75ELjUgT23FQnYAEkT6SUS0uytUtJuejBXU=;
-        b=IkU2d9FohwhtVPKr0mVWiALs2EB0D6TNl6QXvdoo73yZHVGvC9Tn9PEOeNxWI+3/JV
-         BTRsmcTE5XUndx+c8RSaXMoip+JEeH8MEVTlUAKPIpeMURkK5FV5ltcPjrkGEYDPK51e
-         ea2Z58nIfso3jzMauI0Kq5Htm8ybdweqAOjd81RtO0LJ7byiedKxWBs/OttBa/GqWRg+
-         mGvsKxLHoultBTj5lEyLJ+dfUXjFot6gjVG4K53dzChxh3GkqJiteTW6GPRVuHhwNHVy
-         WVuqw9v9xkSfgSHJP6jC/RS08Q2u1bYUX/7xRDBl6YUehbnlta2brt2I+9Dxsvmj4U5Q
-         UcCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dhrZkuDy75ELjUgT23FQnYAEkT6SUS0uytUtJuejBXU=;
-        b=moN3WuP2OvlPVNFWDXB1L1sXjK+85AFupZCUR/W/f5N7h7T9lN8aNyy613h35BaSOc
-         6dgwpjYtm/EU1JZRXc6qEww3yeJK8YnMxVENOgf56l7vc3N5jIonLtmIL69xdpJpxhjy
-         F9WTLnia8UizzncJsUcU4Qt6lqNExj8qRWkKMQN1b45/d89rKuAqU+TQuoc2H2lll9PO
-         NB4kiIKZICAt3FQ3kCIJDWC9rpGByE4fdxWn9/5K+gXeEGL7EWnicn+5YZykFZcYwlhc
-         rQ4O9C5gAXhQA5J939KQYVSkED3HbCI5Ezlh9nzxKqxMvqq/h3DtoXcQmTpZP90KEiju
-         OT/Q==
-X-Gm-Message-State: APzg51AoFp+KzKQgd0zEUNdvCxmLfvym6bNxA123wcfYpuzBhD9rEXHi
-        G89aZjXCey3xEjPHnZmLcpE=
-X-Google-Smtp-Source: ANB0VdZD2mhMksFp8x9HiL56WTqOCMva/Nsg6D+DkTI60hDulWBKeKTvGAS/rA9w5y5HQLUydWRn8w==
-X-Received: by 2002:a17:902:8a8e:: with SMTP id p14-v6mr17469126plo.213.1535753989467;
-        Fri, 31 Aug 2018 15:19:49 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm16181464pfh.83.2018.08.31.15.19.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 15:19:49 -0700 (PDT)
-Date:   Sat, 1 Sep 2018 03:49:43 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v6 2/3] staging: mt7621-mmc: Fix debug macro ERR_MSG and its
- usages
-Message-ID: <2c1539f5d4cb3ed1d7af3bb163f499b4c0d6dee7.1535752537.git.nishadkamdar@gmail.com>
-References: <cover.1535752537.git.nishadkamdar@gmail.com>
+        Fri, 31 Aug 2018 22:30:37 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VM9oaf013195;
+        Fri, 31 Aug 2018 15:20:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=T5bJtRAw0I/LlJVBVV1CPV6Zwc7kWL3ui6skcdyWyQU=;
+ b=UapOqpfmXXVRkT+X1GJrIWwrLwviWEMajCn4vtHHtbihusHzoAMFCbpkd0VDiCRZtfDQ
+ QLXDhDUPeOkWh611Gdc+iSkWODOHzignyzv+FyMEMnaVx4wnMq+3bnPJjyF87hHm1ps/
+ vw/F/1Rmm0OP6YKI3hFj/6bk9bC04FVGK7w= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2m7dpu039d-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 31 Aug 2018 15:20:42 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.32) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Fri, 31 Aug 2018 18:20:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T5bJtRAw0I/LlJVBVV1CPV6Zwc7kWL3ui6skcdyWyQU=;
+ b=TSizru8YfiRJ7byptcok1iVVpiKtWJFsKK84RjojSUpujPDG2JCoyMdIT4mKlbCD97pda1ijtQ0NNiCbSnplWf/V6g391axssJK3a5dldPw9SrNXHIGVOFXCKE6R0ud19DPsEr5xaJP8ZudXLEd2OPozBZHkE3a68N48dvKwnck=
+Received: from fb.com (2620:10d:c091:200::98f2) by
+ BN6PR15MB1153.namprd15.prod.outlook.com (2603:10b6:404:e6::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.17; Fri, 31 Aug 2018 22:20:17 +0000
+From:   Yannick Brosseau <scientist@fb.com>
+To:     <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Yannick Brosseau <scientist@fb.com>
+Subject: [PATCH v2] Optimize lookup of /0 xfrm policies
+Date:   Fri, 31 Aug 2018 18:18:38 -0400
+Message-ID: <20180831221838.25597-1-scientist@fb.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1535752537.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c091:200::98f2]
+X-ClientProxiedBy: CY4PR0601CA0038.namprd06.prod.outlook.com
+ (2603:10b6:910:89::15) To BN6PR15MB1153.namprd15.prod.outlook.com
+ (2603:10b6:404:e6::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fc826d6f-27b6-4b9e-eea5-08d60f8fef34
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR15MB1153;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1153;3:vyeneLIvH7FanlGCaaAm8gXzVEZ6AE+1c5XD0XMulDL8mpI66cjn75JLAAq/0c53pxp8kj5UPtatKkIGReR70KQajL/BJp6qNqVbs2TGleqFBe7x1+Ao/jZsXWwAo27wSkOYU6chX+adfFAwOMkv2zH9TDGcJTckDpCt/zVyY2cw4o7v86rHQdNlfWAvmDTJcg72FK00Ryrx3FHs0RyjZ8maAlksmBXsb8CSGFhUNU6AkcxOP6q+OSe87SMo0Xx2;25:cQEeNAmAXYkpAyiHDFgPRA4Y/AafoZkfij7qf6zGD5HDm+GK5uHETOq2DXMrfhuD0rSjpICXhuN78ylQHs3TRdj4LayPyCClcMkLjwbaD6fQZa4ze17Vb+7zPLn2fzipkbsDrE6kmnGYrt8CR46BmB8TBcjOomsPoWHH4DIYe2r0/8ximmuSPCj4k62SqOXMPi8jiDftGmFoKaWReuj1HZpz7RMxq5ihHOBPCqEN0TOCgqmYc8c7z75HnNApC9KIjVyy5ptByFHOpnjp/4QiMG/SA7rmY7kVv8LAHmY9bgROjqyPeTyfv1CTAkR4Z0o+5kLqF2+5ez4yuZxDxKJMqQ==;31:A7OftsqdKDkq/92c9fEzi5znlS3JYzZRhEzo9R1Fkw8vr1QJ8ayi7MLZHrldARcCSYk2d4/tg+BCoSyFi/dFMAym9G4TjJDaIMzNlnE46IkQKJD67bBogsiH8bMwwVB/8lHYDsxce9O4VfCr/hDY6K6cN+XJcKS0nVjyvGKQW5WRCCUzN5RKCcbF1jUrSZbaP7vXWoiF5k3ToGaV+4hbMd/NbuEACWJ7t503tv6+ZNQ=
+X-MS-TrafficTypeDiagnostic: BN6PR15MB1153:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1153;20:fhH5KNjUJfQnvD5df7y+bfcy4ql1kNO0odKoKKLEh73ITyXunOFLeFeELvk8MJGZXWmEbgGuiUNg8T503Qkgu39cLCuTTXVF6Dj9GhygZg5jDMujNiPR765zfahC9j7vEAHFskXDqBu5YxeNmcZRZPuSFI9yAXuJoIxs0C97SB1f9BU2CIrC1Jh6FAOPDlLQ7J0mR2OD2+1Y8sZ/O1hkdpxVfFDtj0D2c4PhxFD307Wmrtyxl8TzRg4E+iKmKWZ6Ecp9T2/ntP2OOE6QDVEya/kAexBrbfNRg0KxB+ShoA3Ot4+vzK1icGrAeqdtSJoarDV2XKHx7u4Kpa7m7j7Xfox1Nvn1IKTguslKYYuq+/NerZZMTIZ3u3ZwUl9vZioT1P8bIjL1e9lXjVLEnuif13dOsmx23cD+YagxfuGNZzx5/b9A8bnysssR3aN6tED9tMuMqcrb4q3+o5ZaMEM4rCuTLlVdh7a3iSBnK1zX4eB6zHovY/spns+nrYQXFe0c;4:Bm7nGP0FydjLSJYREMaH+Fs9rK9KEhSX5K2VNm/wTEj3zcb83K5glnOQ15YXnKkC+1pEwYs4ZPmmei2K0B0ih0ZrowYRLAFc3K3tLu7vCB9L9TtquxAmfzX7mfzAJ8zma4ceY+a9kmUyTDn2kZOQ8fDcqikvVCGZYom5xmYfd3hjP+XnOMtwr8XIanayGHbPp0OVYrFJ1AVNpMjLWbh5T/W29VABdMeHoEd/7SE0aL4MvhPP2h10+FhMDaopcw8KBtrNouqjmmSiQJBcmdchueoTAi9JRgkZ+I8OO473WZqagKcOkI9scoGLzMwwMHPR
+X-Microsoft-Antispam-PRVS: <BN6PR15MB1153E830EC3C75E6525DD6ECE80F0@BN6PR15MB1153.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(3231311)(11241501184)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BN6PR15MB1153;BCL:0;PCL:0;RULEID:;SRVR:BN6PR15MB1153;
+X-Forefront-PRVS: 07817FCC2D
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(6116002)(50466002)(1076002)(386003)(2616005)(46003)(16526019)(476003)(486006)(186003)(55016002)(47776003)(5660300001)(6666003)(48376002)(14444005)(21086003)(53936002)(106356001)(4326008)(36756003)(7736002)(478600001)(105586002)(51416003)(25786009)(52396003)(7696005)(52116002)(8676002)(81156014)(81166006)(97736004)(16586007)(316002)(50226002)(2906002)(68736007)(305945005)(8936002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1153;H:fb.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR15MB1153;23:oLEN4YX643o5jt4rAPIRTfP5+SrtqTuFqzj7lVOpk?=
+ =?us-ascii?Q?AdgxmAhgZro50su8PSaSrtNpxLXqNLdWPPG33jNxtF/9nMHdncKzpMFOFugn?=
+ =?us-ascii?Q?oVNteNcTzwamEn+cV/qzVf9wt4ifYc1394cJ0CpGoYXjCHhMOlNUFYpMbvmz?=
+ =?us-ascii?Q?Aqbn/NlZ0tGVYoLoFAjbQX4Yn/iTPsjVssqnArCyjiSjq50jo+3Er6plt8LY?=
+ =?us-ascii?Q?oWS/5L1nLW5pEAwhVE/1e/cs/lRyGa4TqNC86Eeyh2Twz4TK+K3vAOX5XVfj?=
+ =?us-ascii?Q?8Natne/FwKMMgX/K9/XARRPMYyl8tEKNUqGTeEvV0M48wBEhPyyUsTqjRoJa?=
+ =?us-ascii?Q?PRCSQtBN/7WQfBjY/8+TD9SUATP+gsVREeS7d/f0wDaS7znbRuHMLjMEqs1b?=
+ =?us-ascii?Q?x+Um+9SfHDwHM5To84O+MVXaOXxo+/S3PH0MrzUROjqTv67hk+zqc1VzeXCf?=
+ =?us-ascii?Q?SE7WNmogZzC0SxBN/AsRdiWh6mu9rrpMVYE3ha/iHT86MMbBXy7iNYqdcMeh?=
+ =?us-ascii?Q?wk7oZDTuHePjCjIz/GdS+Am0JiOC/oBVdZeUgbQRUqct0BWr8tnB37ZibzCT?=
+ =?us-ascii?Q?mXwd9KAffA9/Y1vbWvGGDujYeW0eJhuMycBm4oJH2Poj4kuyjCoh4o8zy4Xb?=
+ =?us-ascii?Q?WxI+Gw1MPzMTCQ4i0g3zgalhsPH6z9sajOpDkM74sUz5rvdPPMDrWoL6FNgx?=
+ =?us-ascii?Q?PadaE0Glo//rOsNGO98EDj5zGF2O1xxzejsGCzDmf0m7LggDZ3DPm5CPag7Z?=
+ =?us-ascii?Q?h73x4cDWjq5cGzYh/vIUzj23RlH2G4r6bopiQykf1HlFR7RWRCNy00Hxxlqq?=
+ =?us-ascii?Q?hdCgtkZYZsITdh4HoMTt/2m33rU4t7dwVXIqT7VA8lKy7JF6B3biO56gAc0a?=
+ =?us-ascii?Q?EO5HTVQGxEsl9lpw0qfRCVCwrdzcXqZF+6nkqEI0DKFD6GNQjtMiyogtUMDB?=
+ =?us-ascii?Q?uO4Kw3L9UNdYu3c7Ga0BxP/wKerhbJ0BstbuA8RodCBoWS5YFk7jsjnOmbjR?=
+ =?us-ascii?Q?MZo9dzaCVRPvq424qCcBWBzqcU50TG4bXkmylwFPv0N9n/Rorh2dANyy9n3D?=
+ =?us-ascii?Q?z7MDNde1QdJzVqJuQJAuxAeRB1S753m4o+lBif/sWreW2ZplQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: 6nwm2sl1DNF9va7mlIN5DO0cMl4x0aoupgiNxbb8AFcHmiL7FAJ77JtezVxeczfykfsbfBghbwsmIlsiy60pLCCaYh8L9OxRxvIL+qYgvFipTglh3ApfHa2bGX1is1dQ96Eb7hBmTEKyFyyWWxU3L3zHUIgmDSYeqe3yIEcyVv+2vv9TFZDE5JpK49J7AgwxZwCfd6AzXl0ECCCyXAV33TLEUbUpIq9f/QPovKid25jg7DM1lCuAQ4KOS0u8ERMZjH1uKIVDEzaaFSFjKX90uG5yCtxgVzpqp6BsIbjuBRQ68llzXvIaKitf6WknAqFGDIJctdFNM87c2v2ixCn7dDe9zvslYIJM3ibSEyQMLMc=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1153;6:IlgBVHyy9T9CGPAxjpRj0KKn77DgwSusMQg0pktYC6Yh6tzw1TKXviPlcGHkBKUcdVvjOVGRNoJ0GpswBy0GiwKVRv61GBQxERfw8aEPXunvlfTytrciG5IKZSBP62ef0bKTMh8oJ3sH1SkbBRslZr/dwr6SuAZnMqLvfUNM2PAovMxA3yf4Bn9rHcHGIEqhnggHZtPE9fTlQEdyyHXaImtb9wGF4gx4plUz7Sl48TX+XfjnMgbrCwIhjthc9Zg6V2+d1arc5CpnTai7M/BRhHnG7FLV4SL4GtEkAcmsNohVqoIVkrYOTJfdVJ0C1FYRQ+ysdlU2Rr/S8tcnUPljLvbZeDPkRbvOD0Y/I773HKNTHKpQU7nk5oxAzzEzzLcIMCMt2G7AevC2a6vHysYFw9NXvf+FJ5y+98PQ80qLk5wmoTEO9SzGV1/9BONOjmDuBYuxS8KlAobsmYFTIBA1pg==;5:4VUf1wTinI9HdCgHZI8QxoQkEF6NoIO+j7AXTeofuNyJ9jn8qrbhHj6lmuzfLOxWAWTwBpBFtYYm6AVPepYX1kB4R8WZHkzSQMECeppaQlCTsuT5OBAU57yqxS/iQMdl+fe+HhApK75djQi6K+HKUgejiltNG8Lkp/wants8PYQ=;7:g+0EZRH2nSuHaeMYf9Gx3tTTx+CCLULdd68gCZmST/M0vy9/5SFtHqgFMvt697PSTTXerS3MCSXC9rFtv+Hs5pkLntn01Hop6cssC5s9z2bjac0DVGSZRD32Z666I9bwLbPvbAsijI2uWQml+hKzrzw6GT42A0qDA7e16szJFrzzqV63eBSAWP4AcpdWWAorlfPCxq7RrVpRpU4a02yT5K6AS7D4mXPGGwK4MiMkm+uO036Qf9R5Aa4hPhd1KMOL
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR15MB1153;20:++tSRjyrll+Gir305WUSjMhOal/vn4j84GBDv3Olw7fzGkNUOigF+s4ayw5cE/4FiG1eGPYW4F4gnrUHSYh7nQEEzlkrGHUl0r025GrpbjKgRt6LMMthgab7xKZ//fH1QP9/LZLgqyF46Cvhz13ivMARb57beqrj2enN0MnRoSU=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2018 22:20:17.6608 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc826d6f-27b6-4b9e-eea5-08d60f8fef34
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1153
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all usages of ERR_MSG with with dev_<level> without __func__
-or __LINE__ or current->comm and current->pid. Remove the do {}
-while(0) loop for the single statement macro. Delete commented
-ERR_MSG() usage. Drop ERR_MSG from dbg.h. Issue found by checkpatch.
+Currently, all the xfrm policies that are not /32 end up in
+the inexact policies linked list which take a long time to lookup.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v6:
-  - No change
-Changes in v5:
-  - Remove commented ERR_MSG() usage.
----
- drivers/staging/mt7621-mmc/dbg.h |   6 --
- drivers/staging/mt7621-mmc/sd.c  | 120 +++++++++++++++++++++----------
- 2 files changed, 81 insertions(+), 45 deletions(-)
+We can optimize the case where we have a /0 prefix in the policy, which
+means we can match any address to that part.
+We do this by putting those policies in the direct hash table after
+zeroing the address part.
+At lookup time, we do an additional lookup with the packet address
+and either the destination or source address zeroed out.
+We still call xfrm_policy_match to validate that the packet match the
+selector.
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 9152db30a2ed..79914d98c573 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -102,12 +102,6 @@ do { \
- } while (0)
- #endif /* end of +++ */
+In our tests, with this optimization we reduce softirq cpu utilisation
+from about 40% to 7% with 3k policies.
+
+Signed-off-by: Yannick Brosseau <scientist@fb.com>
+---
+ net/xfrm/xfrm_hash.h   | 10 +++++
+ net/xfrm/xfrm_policy.c | 87 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 95 insertions(+), 2 deletions(-)
+
+diff --git a/net/xfrm/xfrm_hash.h b/net/xfrm/xfrm_hash.h
+index 61be810389d8..40997fb5336d 100644
+--- a/net/xfrm/xfrm_hash.h
++++ b/net/xfrm/xfrm_hash.h
+@@ -145,6 +145,16 @@ static inline unsigned int __sel_hash(const struct xfrm_selector *sel,
+ 	const xfrm_address_t *saddr = &sel->saddr;
+ 	unsigned int h = 0;
  
--#define ERR_MSG(fmt, args...) \
--do { \
--	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
--	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
--} while (0);
--
- #if 1
- //defined CONFIG_MTK_MMC_CD_POLL
- #define IRQ_MSG(fmt, args...)
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 0154117fae15..7474f9ed7b5b 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -322,7 +322,6 @@ static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int hz)
- 	//u8  clksrc = hw->clk_src;
++	/* A selector with a prefixlen of zero can basically be ignored in
++	 * the matching. To speed up the lookup, let's hash it without those
++	 * component. In the lookup, we'll do an additional check for a zero
++	 * daddr and a zero saddr.
++	 */
++	if (sel->prefixlen_d == 0)
++		dbits = 0;
++	if (sel->prefixlen_s == 0)
++		sbits = 0;
++
+ 	switch (family) {
+ 	case AF_INET:
+ 		if (sel->prefixlen_d < dbits ||
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 3110c3fbee20..a1ca78900ffc 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1096,8 +1096,10 @@ static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
+ 	int err;
+ 	struct xfrm_policy *pol, *ret;
+ 	const xfrm_address_t *daddr, *saddr;
++	static const xfrm_address_t zero_addr = {0};
++
+ 	struct hlist_head *chain;
+-	unsigned int sequence;
++	unsigned int sequence, first_sequence;
+ 	u32 priority;
  
- 	if (!hz) { // set mmc system clock to 0 ?
--		//ERR_MSG("set mclk to 0!!!");
- 		msdc_reset_hw(host);
- 		return;
- 	}
-@@ -373,7 +372,7 @@ static void msdc_abort_data(struct msdc_host *host)
- {
- 	struct mmc_command *stop = host->mrq->stop;
+ 	daddr = xfrm_flowi_daddr(fl, family);
+@@ -1112,6 +1114,7 @@ static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
+ 		chain = policy_hash_direct(net, daddr, saddr, family, dir);
+ 	} while (read_seqcount_retry(&xfrm_policy_hash_generation, sequence));
  
--	ERR_MSG("Need to Abort.");
-+	dev_err(mmc_dev(host->mmc), "%d -> Need to Abort.\n", host->id);
- 
- 	msdc_reset_hw(host);
- 	msdc_clr_fifo(host);
-@@ -382,7 +381,8 @@ static void msdc_abort_data(struct msdc_host *host)
- 	// need to check FIFO count 0 ?
- 
- 	if (stop) {  /* try to stop, but may not success */
--		ERR_MSG("stop when abort CMD<%d>", stop->opcode);
-+		dev_err(mmc_dev(host->mmc), "%d -> stop when abort CMD<%d>\n",
-+			host->id, stop->opcode);
- 		(void)msdc_do_command(host, stop, 0, CMD_TIMEOUT);
- 	}
- 
-@@ -523,13 +523,14 @@ static void msdc_pm(pm_message_t state, void *data)
- 
- 	} else if (evt == PM_EVENT_RESUME || evt == PM_EVENT_USER_RESUME) {
- 		if (!host->suspend) {
--			//ERR_MSG("warning: already resume");
- 			return;
++	first_sequence = sequence;
+ 	priority = ~0U;
+ 	ret = NULL;
+ 	hlist_for_each_entry_rcu(pol, chain, bydst) {
+@@ -1129,6 +1132,86 @@ static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
+ 			break;
  		}
- 
- 		/* No PM resume when USR suspend */
- 		if (evt == PM_EVENT_RESUME && host->pm_state.event == PM_EVENT_USER_SUSPEND) {
--			ERR_MSG("PM Resume when in USR Suspend");		/* won't happen. */
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> PM Resume when in USR Suspend\n",
-+				host->id); /* won't happen. */
- 			return;
- 		}
- 
-@@ -645,7 +646,9 @@ static unsigned int msdc_command_start(struct msdc_host   *host,
- 				break;
- 
- 			if (time_after(jiffies, tmo)) {
--				ERR_MSG("XXX cmd_busy timeout: before CMD<%d>", opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX cmd_busy timeout: before CMD<%d>\n",
-+					host->id, opcode);
- 				cmd->error = -ETIMEDOUT;
- 				msdc_reset_hw(host);
- 				goto end;
-@@ -656,7 +659,9 @@ static unsigned int msdc_command_start(struct msdc_host   *host,
- 			if (!sdc_is_busy())
- 				break;
- 			if (time_after(jiffies, tmo)) {
--				ERR_MSG("XXX sdc_busy timeout: before CMD<%d>", opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX sdc_busy timeout: before CMD<%d>\n",
-+					host->id, opcode);
- 				cmd->error = -ETIMEDOUT;
- 				msdc_reset_hw(host);
- 				goto end;
-@@ -695,7 +700,9 @@ static unsigned int msdc_command_resp(struct msdc_host   *host,
- 
- 	spin_unlock(&host->lock);
- 	if (!wait_for_completion_timeout(&host->cmd_done, 10 * timeout)) {
--		ERR_MSG("XXX CMD<%d> wait_for_completion timeout ARG<0x%.8x>", opcode, cmd->arg);
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> XXX CMD<%d> wait_for_completion timeout ARG<0x%.8x>\n",
-+			host->id, opcode, cmd->arg);
- 		cmd->error = -ETIMEDOUT;
- 		msdc_reset_hw(host);
  	}
-@@ -909,15 +916,22 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 
- 		spin_unlock(&host->lock);
- 		if (!wait_for_completion_timeout(&host->xfer_done, DAT_TIMEOUT)) {
--			ERR_MSG("XXX CMD<%d> wait xfer_done<%d> timeout!!", cmd->opcode, data->blocks * data->blksz);
--			ERR_MSG("    DMA_SA   = 0x%x",
--				readl(host->base + MSDC_DMA_SA));
--			ERR_MSG("    DMA_CA   = 0x%x",
--				readl(host->base + MSDC_DMA_CA));
--			ERR_MSG("    DMA_CTRL = 0x%x",
--				readl(host->base + MSDC_DMA_CTRL));
--			ERR_MSG("    DMA_CFG  = 0x%x",
--				readl(host->base + MSDC_DMA_CFG));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> XXX CMD<%d> wait xfer_done<%d> timeout!!\n",
-+				host->id, cmd->opcode,
-+				data->blocks * data->blksz);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_SA   = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_SA));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CA   = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CA));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CTRL = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CTRL));
-+			dev_err(mmc_dev(host->mmc),
-+				"%d ->     DMA_CFG  = 0x%x\n",
-+				host->id, readl(host->base + MSDC_DMA_CFG));
- 			data->error = -ETIMEDOUT;
- 
- 			msdc_reset_hw(host);
-@@ -979,8 +993,6 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	if (mrq->stop && mrq->stop->error)
- 		host->error |= 0x100;
- 
--	//if (host->error) ERR_MSG("host->error<%d>", host->error);
--
- 	return host->error;
- }
- 
-@@ -1039,19 +1051,27 @@ static int msdc_tune_cmdrsp(struct msdc_host *host, struct mmc_command *cmd)
- 			if (host->app_cmd) {
- 				result = msdc_app_cmd(host->mmc, host);
- 				if (result) {
--					ERR_MSG("TUNE_CMD app_cmd<%d> failed: RESP_RXDLY<%d>,R_SMPL<%d>",
--						host->mrq->cmd->opcode, cur_rrdly, cur_rsmpl);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_CMD app_cmd<%d> failed: RESP_RXDLY<%d>,R_SMPL<%d>\n",
-+						host->id,
-+						host->mrq->cmd->opcode,
-+						cur_rrdly, cur_rsmpl);
- 					continue;
- 				}
- 			}
- 			result = msdc_do_command(host, cmd, 0, CMD_TIMEOUT); // not tune.
--			ERR_MSG("TUNE_CMD<%d> %s PAD_CMD_RESP_RXDLY[26:22]<%d> R_SMPL[1]<%d>", cmd->opcode,
--				(result == 0) ? "PASS" : "FAIL", cur_rrdly, cur_rsmpl);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> TUNE_CMD<%d> %s PAD_CMD_RESP_RXDLY[26:22]<%d> R_SMPL[1]<%d>\n",
-+				host->id, cmd->opcode,
-+				(result == 0) ? "PASS" : "FAIL", cur_rrdly,
-+				cur_rsmpl);
- 
- 			if (result == 0)
- 				return 0;
- 			if (result != -EIO) {
--				ERR_MSG("TUNE_CMD<%d> Error<%d> not -EIO", cmd->opcode, result);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> TUNE_CMD<%d> Error<%d> not -EIO\n",
-+					host->id, cmd->opcode, result);
- 				return result;
- 			}
- 
-@@ -1104,7 +1124,10 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 			if (host->app_cmd) {
- 				result = msdc_app_cmd(host->mmc, host);
- 				if (result) {
--					ERR_MSG("TUNE_BREAD app_cmd<%d> failed", host->mrq->cmd->opcode);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_BREAD app_cmd<%d> failed\n",
-+						host->id,
-+						host->mrq->cmd->opcode);
- 					continue;
- 				}
- 			}
-@@ -1115,10 +1138,13 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 				      &dcrc); /* RO */
- 			if (!ddr)
- 				dcrc &= ~SDC_DCRC_STS_NEG;
--			ERR_MSG("TUNE_BREAD<%s> dcrc<0x%x> DATRDDLY0/1<0x%x><0x%x> dsmpl<0x%x>",
--				(result == 0 && dcrc == 0) ? "PASS" : "FAIL", dcrc,
--				readl(host->base + MSDC_DAT_RDDLY0),
--				readl(host->base + MSDC_DAT_RDDLY1), cur_dsmpl);
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> TUNE_BREAD<%s> dcrc<0x%x> DATRDDLY0/1<0x%x><0x%x> dsmpl<0x%x>\n",
-+				host->id,
-+				(result == 0 && dcrc == 0) ? "PASS" : "FAIL",
-+				dcrc, readl(host->base + MSDC_DAT_RDDLY0),
-+				readl(host->base + MSDC_DAT_RDDLY1),
-+				cur_dsmpl);
- 
- 			/* Fix me: result is 0, but dcrc is still exist */
- 			if (result == 0 && dcrc == 0) {
-@@ -1127,8 +1153,11 @@ static int msdc_tune_bread(struct mmc_host *mmc, struct mmc_request *mrq)
- 				/* there is a case: command timeout, and data phase not processed */
- 				if (mrq->data->error != 0 &&
- 				    mrq->data->error != -EIO) {
--					ERR_MSG("TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>",
--						result, mrq->cmd->error, mrq->data->error);
-+					dev_err(mmc_dev(host->mmc),
-+						"%d -> TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>\n",
-+						host->id, result,
-+						mrq->cmd->error,
-+						mrq->data->error);
- 					goto done;
- 				}
- 			}
-@@ -1237,13 +1266,18 @@ static int msdc_tune_bwrite(struct mmc_host *mmc, struct mmc_request *mrq)
- 				if (host->app_cmd) {
- 					result = msdc_app_cmd(host->mmc, host);
- 					if (result) {
--						ERR_MSG("TUNE_BWRITE app_cmd<%d> failed", host->mrq->cmd->opcode);
-+						dev_err(mmc_dev(host->mmc),
-+							"%d -> TUNE_BWRITE app_cmd<%d> failed\n",
-+							host->id,
-+							host->mrq->cmd->opcode);
- 						continue;
- 					}
- 				}
- 				result = msdc_do_request(mmc, mrq);
- 
--				ERR_MSG("TUNE_BWRITE<%s> DSPL<%d> DATWRDLY<%d> MSDC_DAT_RDDLY0<0x%x>",
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> TUNE_BWRITE<%s> DSPL<%d> DATWRDLY<%d> MSDC_DAT_RDDLY0<0x%x>\n",
-+					host->id,
- 					result == 0 ? "PASS" : "FAIL",
- 					cur_dsmpl, cur_wrrdly, cur_rxdly0);
- 
-@@ -1252,8 +1286,11 @@ static int msdc_tune_bwrite(struct mmc_host *mmc, struct mmc_request *mrq)
- 				} else {
- 					/* there is a case: command timeout, and data phase not processed */
- 					if (mrq->data->error != -EIO) {
--						ERR_MSG("TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>",
--							result, mrq->cmd->error, mrq->data->error);
-+						dev_err(mmc_dev(host->mmc),
-+							"%d -> TUNE_READ: result<0x%x> cmd_error<%d> data_error<%d>\n",
-+							host->id, result,
-+							mrq->cmd->error,
-+							mrq->data->error);
- 						goto done;
- 					}
- 				}
-@@ -1287,7 +1324,8 @@ static int msdc_get_card_status(struct mmc_host *mmc, struct msdc_host *host, u3
- 	if (mmc->card) {
- 		cmd.arg = mmc->card->rca << 16;
- 	} else {
--		ERR_MSG("cmd13 mmc card is null");
-+		dev_err(mmc_dev(host->mmc), "%d -> cmd13 mmc card is null\n",
-+			host->id);
- 		cmd.arg = host->app_cmd_arg;
- 	}
- 	cmd.flags = MMC_RSP_SPI_R2 | MMC_RSP_R1 | MMC_CMD_AC;
-@@ -1314,7 +1352,8 @@ static int msdc_check_busy(struct mmc_host *mmc, struct msdc_host *host)
- 		if (err)
- 			return err;
- 		/* need cmd12? */
--		ERR_MSG("cmd<13> resp<0x%x>", status);
-+		dev_err(mmc_dev(host->mmc), "%d -> cmd<13> resp<0x%x>\n",
-+			host->id, status);
- 	} while (R1_CURRENT_STATE(status) == 7);
- 
- 	return err;
-@@ -1338,7 +1377,9 @@ static int msdc_tune_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	} else {
- 		ret = msdc_check_busy(mmc, host);
- 		if (ret) {
--			ERR_MSG("XXX cmd13 wait program done failed");
-+			dev_err(mmc_dev(host->mmc),
-+				"%d -> XXX cmd13 wait program done failed\n",
-+				host->id);
- 			return ret;
++
++	/* Do an additional lookup for saddr == 0, since we stored source
++	 * selector with a prefix len of 0 that way in the bydst hash
++	 */
++	do {
++		sequence = read_seqcount_begin(&xfrm_policy_hash_generation);
++		chain = policy_hash_direct(net, daddr, &zero_addr, family, dir);
++	} while (read_seqcount_retry(&xfrm_policy_hash_generation, sequence));
++
++	hlist_for_each_entry_rcu(pol, chain, bydst) {
++		if ((pol->priority >= priority) && ret)
++			break;
++
++		err = xfrm_policy_match(pol, fl, type, family, dir, if_id);
++		if (err) {
++			if (err == -ESRCH)
++				continue;
++			else {
++				ret = ERR_PTR(err);
++				goto fail;
++			}
++		} else {
++			ret = pol;
++			priority = ret->priority;
++			break;
++		}
++	}
++
++	/* Do an additional lookup for daddr == 0, since we stored dest
++	 * selector with a prefix len of 0 that way in the bydst hash
++	 */
++	do {
++		sequence = read_seqcount_begin(&xfrm_policy_hash_generation);
++		chain = policy_hash_direct(net, &zero_addr, saddr, family, dir);
++	} while (read_seqcount_retry(&xfrm_policy_hash_generation, sequence));
++
++	hlist_for_each_entry_rcu(pol, chain, bydst) {
++		if ((pol->priority >= priority) && ret)
++			break;
++
++		err = xfrm_policy_match(pol, fl, type, family, dir, if_id);
++		if (err) {
++			if (err == -ESRCH)
++				continue;
++			else {
++				ret = ERR_PTR(err);
++				goto fail;
++			}
++		} else {
++			ret = pol;
++			priority = ret->priority;
++			break;
++		}
++	}
++
++	/* Do an additional lookup for both saddr and daddr == 0 */
++	do {
++		sequence = read_seqcount_begin(&xfrm_policy_hash_generation);
++		chain = policy_hash_direct(net, &zero_addr, &zero_addr, family, dir);
++	} while (read_seqcount_retry(&xfrm_policy_hash_generation, sequence));
++
++	hlist_for_each_entry_rcu(pol, chain, bydst) {
++		if ((pol->priority >= priority) && ret)
++			break;
++
++		err = xfrm_policy_match(pol, fl, type, family, dir, if_id);
++		if (err) {
++			if (err == -ESRCH)
++				continue;
++			else {
++				ret = ERR_PTR(err);
++				goto fail;
++			}
++		} else {
++			ret = pol;
++			priority = ret->priority;
++			break;
++		}
++	}
++
+ 	chain = &net->xfrm.policy_inexact[dir];
+ 	hlist_for_each_entry_rcu(pol, chain, bydst) {
+ 		if ((pol->priority >= priority) && ret)
+@@ -1148,7 +1231,7 @@ static struct xfrm_policy *xfrm_policy_lookup_bytype(struct net *net, u8 type,
  		}
- 		/* CRC and TO */
-@@ -2031,7 +2072,8 @@ static int msdc_drv_remove(struct platform_device *pdev)
- 	host = mmc_priv(mmc);
- 	BUG_ON(!host);
+ 	}
  
--	ERR_MSG("removed !!!");
-+	dev_err(mmc_dev(host->mmc), "%d -> removed !!!\n",
-+		host->id);
+-	if (read_seqcount_retry(&xfrm_policy_hash_generation, sequence))
++	if (read_seqcount_retry(&xfrm_policy_hash_generation, first_sequence))
+ 		goto retry;
  
- 	platform_set_drvdata(pdev, NULL);
- 	mmc_remove_host(host->mmc);
+ 	if (ret && !xfrm_pol_hold_rcu(ret))
 -- 
-2.17.1
+2.18.0
 
