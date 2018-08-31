@@ -2,96 +2,79 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98138C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE00C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 374FA20839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:13:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNdGpc0C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374FA20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D2F7D2077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F7D2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeHaVVd (ORCPT
+        id S1727973AbeHaVXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 17:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727301AbeHaVVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 17:21:32 -0400
-Received: from localhost (unknown [104.132.0.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BEC42077C;
-        Fri, 31 Aug 2018 17:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535735586;
-        bh=uPJimPlF7yyKd+X1kPW5Svf3bKd3KY199sq6AbkdR/Q=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ZNdGpc0ChTwoLOGayUjDCZKhqmf6qQhJoQj3lnr0glRwmHV4zCNIUmINbYCDfDZ+m
-         83y0klJYaHjzNak9VDg1cgfOXyuX/bAARUVgWbi2nk+9MdAQ/ndicAfd9YQ2oze3fx
-         AJwmQWwV65x06PvCCHdGcaJMdS2fioaMpsHvhyew=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 31 Aug 2018 17:23:07 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:23111 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbeHaVXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 17:23:07 -0400
+X-IronPort-AV: E=Sophos;i="5.53,312,1531810800"; 
+   d="scan'208";a="19891695"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Aug 2018 10:14:39 -0700
+Received: from rob-ult-m19940.mchp-main.com (10.10.76.4) by
+ chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
+ 14.3.352.0; Fri, 31 Aug 2018 10:14:39 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <alexandre.belloni@bootlin.com>, <nicolas.ferre@microchip.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <florian.meier@koalo.de>,
+        <cristian.birsan@microchip.com>
+Subject: [PATCH v2 0/2] Add support for MikroElektronika PROTO codec
+Date:   Fri, 31 Aug 2018 20:14:34 +0300
+Message-ID: <20180831171436.13360-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com,
-        qi-ming.wu@intel.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
-Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-3-songjun.wu@linux.intel.com>
- <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
- <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
- <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
- <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
-Message-ID: <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
-Date:   Fri, 31 Aug 2018 10:13:05 -0700
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Zhu, Yi Xin (2018-08-29 03:34:26)
-> >>>> +}
-> >>>> +
-> >>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_ini=
-t);
-> >>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE(=
-)?
-> >> It provides CPU clock which is used in early boot stage.
-> >>
-> > Ok. What is the CPU clock doing in early boot stage? Some sort of timer
-> > frequency? If the driver can be split into two pieces, one to handle the
-> > really early stuff that must be in place to get timers up and running
-> > and the other to register the rest of the clks that aren't critical from
-> > a regular platform driver it would be good. That's preferred model if
-> > something is super critical.
-> >
-> Just to make sure my approach is same as you think.
-> =
+This patchset is based on Florian's initial PROTO driver:
+https://lkml.org/lkml/2013/5/22/342
 
-> In the driver, there's two clock registrations.
-> =
+My changes made the driver more generic, so that we could connect other
+I2S CPU DAIs, by using device-tree.
 
-> - One through CLK_OF_DECLARE for early stage clocks.
-> =
+Tested with sama5d2 I2S driver.
 
-> - The other via platform driver for the non-critical clocks.
+Changes in v2:
+ - removed unnecessary code that added constraints for the fixed SYSLK;
+ - fixed errors reported by kbuild;	
+ - adjusted "mikroe" in vendor prefixes;
+ - updated description in Kconfig;
 
-You can use the same DT node for both parts, no need to split the node
-into two and use syscon here.
+Codrin Ciubotariu (2):
+  ASoC: Add driver for PROTO Audio CODEC (with a WM8731)
+  ASoC: mikroe-proto: dt-bindings: add DT bindings for PROTO board
+
+ .../bindings/sound/mikroe,mikroe-proto.txt    |  23 +++
+ .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+ sound/soc/atmel/Kconfig                       |  11 ++
+ sound/soc/atmel/Makefile                      |   2 +
+ sound/soc/atmel/mikroe-proto.c                | 165 ++++++++++++++++++
+ 5 files changed, 202 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/mikroe,mikroe-proto.txt
+ create mode 100644 sound/soc/atmel/mikroe-proto.c
+
+-- 
+2.17.1
 
