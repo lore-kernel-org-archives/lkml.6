@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533F5C43334
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D64CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014B52083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D57122083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXoVKo9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014B52083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sB0LbiWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57122083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeIADMr (ORCPT
+        id S1727945AbeIADMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:12:47 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37783 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeIADMq (ORCPT
+        Fri, 31 Aug 2018 23:12:49 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51964 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeIADMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:12:46 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n11-v6so6643181wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:05 -0700 (PDT)
+        Fri, 31 Aug 2018 23:12:48 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y2-v6so6538045wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CWn75krmwHooT4pjFCD3x30OOQnXNj/Fi4ruRVc5sCs=;
-        b=aXoVKo9u48MKOmG3xyJXBs/LJBFkp+5QZBfC9YTWe67xZxwqH5K3mprp6vVPO7ZiaE
-         4pDR0pC0B7rIaQBlxelaeoYS6RhEcWgbjH433mcPK5FkecGxX5sPyqkfZE/ckoqwbfTY
-         IVzDtcSuqBxfYQuEfZrkJ7adDlrxilV3R+zkowRrZ90HyrngvsXhWFwH+CQ6LiL59Q9U
-         FAMsL/qgmov/H37zsf5LJI0g3Bvi9tJQMhIFGInxyYcReDKgiU/qmFEWJ9cy559lwNke
-         3VpjtngS3Q5jSfwUJedjpQXzvHOr8XGG0MlYjBU5KjuTvAkfAXtYWF3KPipYXh8GeA5e
-         m93Q==
+        bh=/wVrhZZ5plHSLk1j0gZpUxiGDkkVRhSGuBRihyKgcR8=;
+        b=sB0LbiWUIHWsl87LJaq1i/C4QqRGPFJKKmxIXSIzc5/FNXJRQtYcQZtk9bSOOSCF6g
+         h6U1dTXuv8kgax8orpz/VtLMgYvQ5lODhQyfRo489Glgdcrsv5ufXAnYJrzZuy1gpU/z
+         Pn/gHwZnhjrNqOSIPv9j8Il006sHXzfCZFsmqGinRM5ubzIykBwepiZDXPFzQCFjW9tY
+         B4wfkw7jck/+2k2LT1NeJULpRaHlLvtEZbXpvYFCLE44F8jzUQjZlUcFLaDdFad2Ft6B
+         74ZuHhA2vqujop2IHi2h/F5IUCxBVBH+QuZabuYq/ZtORBrE4IkUmI7JvTkhX1X4LJ1u
+         lJzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CWn75krmwHooT4pjFCD3x30OOQnXNj/Fi4ruRVc5sCs=;
-        b=YM5iWPHQHLGKkAtrkBDjgZ1qLw5+7LbnIff+7HofuC2DlIx4B2Cc5fVvWYGiLxfq+p
-         y4b73lsR+HDvMATqMpxduydvY9gZ8SKAJwXu5t8Pys+F/q1r1N6tTH72csDvp/igT/yr
-         IrM8aBviCCQrc5MsACtGXo6NIVC6NTzNwK01FodfcDErQ7MDdkPQNJ90BgNc/xYwj7nj
-         QMvKYvu3SIjB77wSE1INSsbRZ7tjaAm4TEkPDn8kBKeiSVWk0ELjnDRvcw7vvS5eMoKp
-         GsJjUBIiMQcZ0IjfQBQFJyT+ZPRctFh3dwaEfNnVjbhU278MKw/iZlH3c1lPQkXISoJ0
-         ahXA==
-X-Gm-Message-State: APzg51DYUIbsOLqrOFpK1k/MS/YzCfQtQs/5y7XnwKq/a7B63n5E/9kQ
-        jPppwGSIyb0Dv0ncPd85Rf8cdCRNaMg=
-X-Google-Smtp-Source: ANB0VdaVc2TNgHSfsau9xq9tTIDZc+H4rHpL63HuJQlXZSwhevGsNQcJ1pzB7P3l7maQR0Pyodgyew==
-X-Received: by 2002:a1c:3743:: with SMTP id e64-v6mr5899992wma.63.1535756584636;
-        Fri, 31 Aug 2018 16:03:04 -0700 (PDT)
+        bh=/wVrhZZ5plHSLk1j0gZpUxiGDkkVRhSGuBRihyKgcR8=;
+        b=NhwZ34StfaPJxKY7/73ct1YG7AM9/ugIyarkjPo4qH8Bqp5bZH3Bl+kvDe4UHVsM00
+         R7Fp1AUHpd/VQQ39WBiqWSoh7gkJnkEj3J9ke2LknH7/FSWDjoRWCMe5iC+D+lrR4MHp
+         mLJkmvpZJK6ZRwsH3DOBp1oAMk+u0JgFkZbU2kz538oV4bO89XlhpA8W6K9qwv/WbgIl
+         X+H7hgyZ2n/Lu8F7f2HRGurb8qd1BhAF2wds17A2ZXAyor2UaFhW2EF1KtNOpUyRlyk2
+         oYYMslhykeyH332G7idrbOK3THkEuHV5furOKAwioC61AnqAoCTOfJHPDSOZ2HOsG7ZJ
+         tuag==
+X-Gm-Message-State: APzg51Cwr8q9Yqvz+vnoeWk1l3UVz5JqbRisSa274AttExcxgJIbCKIA
+        eynIHWdFHPw3YCbVhsprwJzDI6ZA8KI=
+X-Google-Smtp-Source: ANB0VdY5HReYAgPWOAlvXx0YRfYMxdHfWZKiPEsO+Y45Fql4YXAqgBHx8jHGcbmURr13/hUPiBF1NQ==
+X-Received: by 2002:a1c:8e04:: with SMTP id q4-v6mr5960486wmd.150.1535756586051;
+        Fri, 31 Aug 2018 16:03:06 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.03
+        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 16:03:03 -0700 (PDT)
+        Fri, 31 Aug 2018 16:03:05 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 06/20] staging:rtl8192u: Rename Rx_Smooth_Factor - Style
-Date:   Sat,  1 Sep 2018 00:02:36 +0100
-Message-Id: <20180831230250.16810-7-johnfwhitmore@gmail.com>
+Subject: [PATCH 07/20] staging:rtl8192u: Refactor RT_TRACE - Style
+Date:   Sat,  1 Sep 2018 00:02:37 +0100
+Message-Id: <20180831230250.16810-8-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831230250.16810-1-johnfwhitmore@gmail.com>
 References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
@@ -73,82 +73,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the MACRO Rx_Smooth_Factor to RX_SMOOTH_FACTOR, this clears the
-checkpatch issue with CamelCase naming.
+Refactor the MACRO RT_TRACE to add parentheses around the parameter
+'component', this clears the checkpatch warning with respect to
+precedence issues.
 
 This is a coding style change which should have no impact on runtime
 code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U.h      |  2 +-
- drivers/staging/rtl8192u/r8192U_core.c | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index 81a7072a6285..b5ad69af8dac 100644
+index b5ad69af8dac..c613894a6088 100644
 --- a/drivers/staging/rtl8192u/r8192U.h
 +++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -45,7 +45,7 @@
- #define MAX_KEY_LEN     61
- #define KEY_BUF_SIZE    5
+@@ -52,7 +52,7 @@
+ extern u32 rt_global_debug_component;
+ #define RT_TRACE(component, x, args...) \
+ 	do {							\
+-		if (rt_global_debug_component & component)	\
++		if (rt_global_debug_component & (component))	\
+ 			pr_debug("RTL8192U: " x "\n", ##args);	\
+ 	} while (0)
  
--#define	Rx_Smooth_Factor		20
-+#define	RX_SMOOTH_FACTOR		20
- #define DMESG(x, a...)
- #define DMESGW(x, a...)
- #define DMESGE(x, a...)
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index b3d32ea29fee..dd87cee6604b 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -3975,13 +3975,13 @@ static void rtl8192_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
- 					pprevious_stats->RxMIMOSignalStrength[rfpath];
- 			if (pprevious_stats->RxMIMOSignalStrength[rfpath]  > priv->stats.rx_rssi_percentage[rfpath]) {
- 				priv->stats.rx_rssi_percentage[rfpath] =
--					((priv->stats.rx_rssi_percentage[rfpath] * (Rx_Smooth_Factor - 1)) +
--					 (pprevious_stats->RxMIMOSignalStrength[rfpath])) / (Rx_Smooth_Factor);
-+					((priv->stats.rx_rssi_percentage[rfpath] * (RX_SMOOTH_FACTOR - 1)) +
-+					 (pprevious_stats->RxMIMOSignalStrength[rfpath])) / (RX_SMOOTH_FACTOR);
- 				priv->stats.rx_rssi_percentage[rfpath] = priv->stats.rx_rssi_percentage[rfpath]  + 1;
- 			} else {
- 				priv->stats.rx_rssi_percentage[rfpath] =
--					((priv->stats.rx_rssi_percentage[rfpath] * (Rx_Smooth_Factor - 1)) +
--					 (pprevious_stats->RxMIMOSignalStrength[rfpath])) / (Rx_Smooth_Factor);
-+					((priv->stats.rx_rssi_percentage[rfpath] * (RX_SMOOTH_FACTOR - 1)) +
-+					 (pprevious_stats->RxMIMOSignalStrength[rfpath])) / (RX_SMOOTH_FACTOR);
- 			}
- 			RT_TRACE(COMP_DBG,
- 				 "priv->stats.rx_rssi_percentage[rfPath]  = %d\n",
-@@ -4026,13 +4026,13 @@ static void rtl8192_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
- 				pprevious_stats->RxPWDBAll;
- 		if (pprevious_stats->RxPWDBAll > (u32)priv->undecorated_smoothed_pwdb) {
- 			priv->undecorated_smoothed_pwdb =
--				(((priv->undecorated_smoothed_pwdb) * (Rx_Smooth_Factor - 1)) +
--				 (pprevious_stats->RxPWDBAll)) / (Rx_Smooth_Factor);
-+				(((priv->undecorated_smoothed_pwdb) * (RX_SMOOTH_FACTOR - 1)) +
-+				 (pprevious_stats->RxPWDBAll)) / (RX_SMOOTH_FACTOR);
- 			priv->undecorated_smoothed_pwdb = priv->undecorated_smoothed_pwdb + 1;
- 		} else {
- 			priv->undecorated_smoothed_pwdb =
--				(((priv->undecorated_smoothed_pwdb) * (Rx_Smooth_Factor - 1)) +
--				 (pprevious_stats->RxPWDBAll)) / (Rx_Smooth_Factor);
-+				(((priv->undecorated_smoothed_pwdb) * (RX_SMOOTH_FACTOR - 1)) +
-+				 (pprevious_stats->RxPWDBAll)) / (RX_SMOOTH_FACTOR);
- 		}
- 	}
- 
-@@ -4075,8 +4075,8 @@ static void rtl8192_process_phyinfo(struct r8192_priv *priv, u8 *buffer,
- 					if (priv->stats.rx_evm_percentage[nspatial_stream] == 0) /* initialize */
- 						priv->stats.rx_evm_percentage[nspatial_stream] = pprevious_stats->RxMIMOSignalQuality[nspatial_stream];
- 					priv->stats.rx_evm_percentage[nspatial_stream] =
--						((priv->stats.rx_evm_percentage[nspatial_stream] * (Rx_Smooth_Factor - 1)) +
--						 (pprevious_stats->RxMIMOSignalQuality[nspatial_stream] * 1)) / (Rx_Smooth_Factor);
-+						((priv->stats.rx_evm_percentage[nspatial_stream] * (RX_SMOOTH_FACTOR - 1)) +
-+						 (pprevious_stats->RxMIMOSignalQuality[nspatial_stream] * 1)) / (RX_SMOOTH_FACTOR);
- 				}
- 			}
- 		}
 -- 
 2.18.0
 
