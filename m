@@ -2,163 +2,181 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775CFC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2188820839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:25:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fQx7CntO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2188820839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A60C20839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 07:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A60C20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeHaLbK (ORCPT
+        id S1727325AbeHaLef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:31:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44000 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeHaLbJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:31:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PV2Vqjf8NoBURjcZwFikIbC9a6IezCdTW5yUO030lxE=; b=fQx7CntOITHBTQQJsmEUp0r0p
-        LiPUgbrzIttmu5G3YyPUyh/j9+Rb2lMS8T9iyld7MRucDUdatFA6Bt9nUt87eSrPzEtZK6TWY0LgO
-        u1buFIJ/Nf2jVO8+9UgLIdmDNd4qeth1sKaR1Lb0exnOR5JEbng1Fa+FouEt44jz49+7KIchYppqw
-        WbhzIyhb0JobwMIexskarZMHbQyNF9AT+C9gUOG5EfRx8jJEfNJOlHhSSyy/QZcJrkI1xkuKZymY/
-        tG44lic2+xvD0p0vSR7D18JjCqb9lZhN/8/0H4QxPLEpm9eb776mASSTYbSAuxDJuSW+nmM/0Y8u9
-        pEXBLzW9Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvdnZ-0005KE-1I; Fri, 31 Aug 2018 07:24:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5B8052024D444; Fri, 31 Aug 2018 09:24:44 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 09:24:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: __clear_bit_lock to use atomic clear_bit (was Re: Patch
- "asm-generic/bitops/lock.h)
-Message-ID: <20180831072444.GD24124@hirez.programming.kicks-ass.net>
-References: <1535567633.4465.23.camel@synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
- <20180830094411.GX24124@hirez.programming.kicks-ass.net>
- <C2D7FE5348E1B147BCA15975FBA23075012B090FE0@us01wembx1.internal.synopsys.com>
+        Fri, 31 Aug 2018 07:34:35 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59586 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbeHaLef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 07:34:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 00:22:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,309,1531810800"; 
+   d="scan'208";a="87842044"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by orsmga002.jf.intel.com with ESMTP; 31 Aug 2018 00:22:14 -0700
+Subject: Re: [PATCH v3 00/38] Tegra SDHCI add support for HS200 and UHS
+ signaling
+To:     Aapo Vienamo <avienamo@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+References: <20180830150639.21048-1-avienamo@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c0b484dc-bfb1-244b-f40e-e6511b8888ba@intel.com>
+Date:   Fri, 31 Aug 2018 10:20:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B090FE0@us01wembx1.internal.synopsys.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180830150639.21048-1-avienamo@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:29:27AM +0000, Vineet Gupta wrote:
-> On 08/30/2018 02:44 AM, Peter Zijlstra wrote:
-> >> Back in 2016, Peter had fixed this file due to a problem I reported on ARC. See
-> >> commit f75d48644c56a ("bitops: Do not default to __clear_bit() for
-> >> __clear_bit_unlock()")
-> >> That made __clear_bit_unlock() use the atomic clear_bit() vs. non-atomic
-> >> __clear_bit(), effectively making clear_bit_unlock() and __clear_bit_unlock() same.
-> >>
-> >> This patch undoes that which could explain the issues you see. @Peter, @Will ?
-> > Right, so the thinking is that on platforms that suffer that issue,
-> > atomic_set*() should DTRT. And if you look at your spinlock based atomic
-> > implementation, you'll note that atomic_set() does indeed do the right
-> > thing.
-> >
-> > arch/arc/include/asm/atomic.h:108
+On 30/08/18 18:06, Aapo Vienamo wrote:
+> Hi all,
 > 
-> For !LLSC atomics, ARC has always had atomic_set() DTRT even in the git revision
-> of 2016. The problem was not in atomics, but the asymmetric way slub bit lock etc
-> worked (haven't checked if this changed), i.e.
+> This series implements support for faster signaling modes on Tegra
+> SDHCI controllers. This series consist of several parts: changes
+> required for 1.8 V signaling and pad control, pad calibration, and
+> tuning. Following earlies patch sets have been merged into this
+> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
+> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
+> padautocal procedure". Also the patches for enabling SDHCI tuning
+> are added.
+
+For sdhci-related patches 11 thru' 27
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+
 > 
->      slab_lock() -> bit_spin_lock() -> test_and_set_bit()    # atomic
->      slab_unlock() -> __bit_spin_unlock() -> __clear_bit()    # non-atomic
+> Changelog:
+> v3:
+> 	- Remove tegra_sdhci_writew() from tegra210_sdhci_ops to prevent
+> 	  incorrect access to SDHCI_TRANSFER_MODE on Tegra210.
+> 	- Drop "mmc: sdhci: Add a quirk to skip clearing the transfer
+> 	  mode register on tuning". This is no longer needed since it
+> 	  was effectively a workaround to the behavior caused by
+> 	  tegra_sdhci_writew() on Tegra210.
+> 	- Implement disabling of the card clock during issuing of the
+> 	  tuning command in tegra210_sdhci_writew().
+> 	- Drop "mmc: sdhci: Add a quirk to disable card clock during
+> 	  tuning". This is now implemented in the sdhci-tegra driver.
+> 	
+> v2:
+> 	- Fix grammar in PMC device tree bindings docs
+> 	- Remove a stray line from tegra sdhci bindings
+> 	- Cosmetic changes to PMC pinctrl driver
+> 	- Fix a typo in "soc/tegra: pmc: Implement
+> 	  tegra_io_pad_is_powered()" commit message
+> 	- Declare mask and value on the same line in
+> 	  tegra_io_pad_is_powered()
+> 	- Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
+> 	  inside the if condition in tegra_sdhci_reset()
+> 	- Use usleep_range() in tegra_sdhci_configure_cal_pad()
+> 	- Move sdhci_writel() out of the enable if-else body in
+> 	  tegra_sdhci_configure_cal_pad()
+> 	- Add a delay before starting polling in
+> 	  tegra_sdhci_pad_autocalib()
+> 	- Use usleep_range() in tegra_sdhci_set_tap()
+> 	- Rename orig_enabled to status in
+> 	  tegra_sdhci_configure_card_clk()
+> 	- Fix if condition wrapping alignment in tegra_sdhci_set_tap()
 > 
-> And with v4.19-rc1, we have essentially reverted f75d48644c56a due to 84c6591103db
-> ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*()")
+> v1:
+> 	- Probe the regulator voltage capabilities to determine whether pinctrl
+> 	  is needed in tegra_sdhci_r eset
+> 	- Don't remove tegra_sdhci_voltage_switch()
+> 	- Use dev_warn() in tegra_sdhci_init_pinctrl_info()
+> 	- Don't change start_signal_voltage_switch callback if pinctrl info
+> 	  invalid
+> 	- Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
+> 	- Add nvidia, prefix to pad autocal offset dt props in the example
 > 
-> So what we have with 4.19-rc1 is
+> See the original patch sets for earlier changelogs.
 > 
->    static inline void __clear_bit_unlock(unsigned int nr, volatile unsigned long *p)
->    {
->      unsigned long old;
->      p += ((nr) / 32);
->      old = // some typecheck magic on *p
->      old &= ~(1UL << ((nr) % 32));
->      atomic_long_set_release((atomic_long_t *)p, old);
->    }
 > 
-> So @p is being r-m-w non atomically. The lock variant uses atomic op...
+> Aapo Vienamo (38):
+>   dt-bindings: Add Tegra PMC pad configuration bindings
+>   dt-bindings: mmc: tegra: Add pad voltage control properties
+>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
+>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
+>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+>   soc/tegra: pmc: Factor out DPD register bit calculation
+>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+>   soc/tegra: pmc: Use X macro to generate IO pad tables
+>   soc/tegra: pmc: Remove public pad voltage APIs
+>   soc/tegra: pmc: Implement pad configuration via pinctrl
+>   mmc: tegra: Reconfigure pad voltages during voltage switching
+>   mmc: tegra: Poll for calibration completion
+>   mmc: tegra: Set calibration pad voltage reference
+>   mmc: tegra: Power on the calibration pad
+>   mmc: tegra: Disable card clock during pad calibration
+>   mmc: tegra: Program pad autocal offsets from dt
+>   mmc: tegra: Perform pad calibration after voltage switch
+>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
+>   mmc: tegra: Add a workaround for tap value change glitch
+>   mmc: tegra: Parse default trim and tap from dt
+>   mmc: tegra: Configure default tap values
+>   mmc: tegra: Configure default trim value on reset
+>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
+>   mmc: tegra: Remove tegra_sdhci_writew() from tegra210_sdhci_ops
+>   mmc: tegra: Disable card clock during tuning cmd on Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
+>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
+>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
 > 
->    int test_and_set_bit_lock(unsigned int nr, volatile unsigned long *p)
->    { 
->       ...
->       old = atomic_long_fetch_or_acquire(mask, (atomic_long_t *)p);
->       ....
->    }
+>  .../arm/tegra/nvidia,tegra186-pmc.txt         |  93 +++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt | 103 ++++
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt     |  68 ++
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  74 +++
+>  .../arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  12 +-
+>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   1 -
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  55 ++
+>  drivers/mmc/host/sdhci-tegra.c                | 583 ++++++++++++++++--
+>  drivers/soc/tegra/pmc.c                       | 511 +++++++++++----
+>  .../pinctrl/pinctrl-tegra-io-pad.h            |  18 +
+>  include/soc/tegra/pmc.h                       |  20 +-
+>  11 files changed, 1328 insertions(+), 210 deletions(-)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 > 
-> Now I don't know why we don't see the issue with LLSC atomics, perhaps race window
-> reduces due to less verbose code itself etc..
-> 
-> Am I missing something still ?
 
-Yes :-) So there are 2 things to consider:
-
- 1) this whole test_and_set_bit() + __clear_bit() combo only works if we
-    have the guarantee that no other bit will change while we have our
-    'lock' bit set.
-
-    This means that @old is invariant.
-
- 2) atomic ops and stores work as 'expected' -- which is true for all
-    hardware LL/SC or CAS implementations, but not for spinlock based
-    atomics.
-
-The bug in f75d48644c56a was the atomic test_and_set loosing the
-__clear_bit() store.
-
-With LL/SC this cannot happen, because the competing store (__clear_bit)
-will cause the SC to fail, then we'll retry, the second LL observes the
-new value.
-
-So the main point is that test_and_set must not loose a store.
-atomic_fetch_or() vs atomic_set() ensures this.
-
-
-NOTE: another possible solution for spinlock based bitops is making
-test_and_set 'smarter':
-
-	spin_lock();
-	val = READ_ONCE(word);
-	if (!(val & bit)) {
-		val |= bit;
-		WRITE_ONCE(word, val);
-	}
-	spin_unlock();
-
-But that is not something that works in generic (the other atomic ops),
-and therefore atomic_set() is required to take the spinlock too, which
-also cures the problem.
