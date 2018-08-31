@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7CAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527C9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A7020837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A7020837
+	by mail.kernel.org (Postfix) with ESMTP id F33B920658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33B920658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeHaUrZ (ORCPT
+        id S1728826AbeHaUr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:47:25 -0400
-Received: from mout.perfora.net ([74.208.4.194]:33967 "EHLO mout.perfora.net"
+        Fri, 31 Aug 2018 16:47:29 -0400
+Received: from mout.perfora.net ([74.208.4.197]:59465 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727634AbeHaUrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:47:24 -0400
+        id S1727634AbeHaUr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:47:29 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LjKaf-1fLsbN2frb-00dVyE; Fri, 31 Aug 2018 18:38:59 +0200
+ 0LgoYS-1fbXus23JW-00oC9L; Fri, 31 Aug 2018 18:39:00 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 17/34] ARM: tegra: apalis_t30: pinmux clean-up
-Date:   Fri, 31 Aug 2018 18:37:59 +0200
-Message-Id: <20180831163817.23970-18-marcel@ziswiler.com>
+Subject: [PATCH v2 18/34] ARM: tegra: apalis_t30: add missing pinmux
+Date:   Fri, 31 Aug 2018 18:38:00 +0200
+Message-Id: <20180831163817.23970-19-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:+IyhM+ZXaBogNcqICsY046IcWZqMFJZAem4kIFr1thnCZLetgCP
- MnTYM6TIYslx2Miyjz9fNDB4AB8OV0ZQsKU3w7orpHzS1heqbz3nQGTJMifBEbPLGinscmT
- OYkzvBu8Av4ARDZoShagj2zDou4IqPeipCTc1Muau054sZTeEK8sqqOB8v9mYfgnyYGmKmU
- WXTIHU9DunnT15h9gXLNA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:krJLD/169oU=:PzxtG9F9GgPjqmERl6hzKc
- R4b3rV8qUJlTFfH0a9gMk2zJkmw2St8VxocmnprUwgFUt9Y+QHvICK3ncWRcsI7Zwxerwndnv
- VOng9W7FEuvjmJlCWxEwRepEhPig3D7vhvOBQwVNUVzqFLPWdlS5LIlzo5/3vTYRIffShiAjn
- NLeeiacAcFVNx8U9TkuXdItERJcLqC6b1Z7oMZ8FXjA0uVhrxDfXsHLmCLaWG7JbX67FoMSnU
- 3gaaHLCt/FWti0E4HejUld5d0AxefhB7Uw64kJmfaqoU53lRgd/zf/1yMvqZ0qvnwcdAku0uZ
- HSYUoMB4S+pVQNerXZTcoe8En6myP4KlV/zQrw8Wa84QtY+ph9pK+XZU5XvX5Y81zfrMHlKuq
- kRoql3ZLVJBmAlA2rxCoq3ZlhSYmiObx+oRC/5scyYoZcrsw5QKydxXE26+1Tqty4pYPqFNQO
- JlSU7Fon7nLFC6BQzv7kBDnIh5yQyhfe67WtDBdiGlPKGcctRi4AfZ6/uXz3p+AvASgwb8lhw
- Vw4qp6esX3AcWvmOLVQ+f7khm7lNxzhqXntXVpOC+mtSTZZWRSk8q87F2LF4IZJjYDhFOmrJF
- rPbMLJOgreE1TuBJ/N2eZTYFIGoBWjDjEL4PUb/5AnqPyWptEQBtGrvcH6KIc0kYWx25s3EgQ
- k0Jk5iA0ssdRU5qifnnXgSrr8Fx9Qc+rye6j60OXNJh4SY9Q/cT3wjOtQYfedIW8xwV4=
+X-Provags-ID: V03:K1:hlkSQOPmXZPKaLt79zY+9ywwKXwJex+zqNDzbpVDgfaKwlezSCW
+ iMsnWvC2x9maYOMwGwB7Feqo4iDqzPe9rnz5Ipfi1vhh5HAC1qz6bfVcnxBl4t7Jiscebaw
+ Iv/Uf2Ncn/qXbIa/HGMg+QeAu6kF1EcCjNx+D2LJ3AEahACJSTusvG5ta7LIb1Dm8A21oVH
+ 6uj2R572MC+qzZG2HhDNQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gm5g5cJQdHs=:+Px8AB+oyylTMC9OYIWYlP
+ jmVEAm2Sgg34EK/DR95agAv+VDkqt1pKkUHPbM5ThCYXL3HBUb0FQLTe12vGEroP3Fai0PkQX
+ 7J3sOMW+Ow7SxbrmwpYhiwCMAbRNLJZA0PftmiYpCN3efeZztMX/+SHL62JG3RWkuaLvlZFl5
+ QLMKfLuW1cNyu+iyhJIp3R4+HVJrTbxmEiyYiiasLyH9XTABv8gCnR3IvWPe5wJUkXSxLNPtY
+ yOdJXDf+GWpNuVE193Wv/Fk1elwdDYnqGypgi2S36/pgdHyY6Q01TKh2fjt5xN5pnzJNdxAca
+ IYcv2JX5xs4CE9JKV8IAH6HxTfdFeX8gvlihgdWipGppgeiMWAG66tlOJrkTehLfkrijwoNSr
+ TjskZcrRmnu6ddPhY81F8dy/1I3Vd04DATsT+hF/NLa98fJWBM6rKLcilAYM35czy9UMacj6n
+ A9IvE8PH+geYcZmOiwNRA6vuRf0F+A8XVfXW9HQhRJxCD3tmXE+Oco12eldpymcOCsDpKDD51
+ FXEThuClvcM9Zf/Ws7fauq8oWx0rhcTJFGD/4NOV8sc7k1dpYDY4g+Gf6egy0PqHH2Cqoeu8a
+ olwKCoK9kAb7keK6qziVTqLMU+sNAVJtqHDce1IBLJNFpjV627FVua57LC7hD2GjIDYDfv5He
+ aeEVscRJMkyoKyUSfSQRydQdxMxKQlzKABV0shVMRxW6PiBh0dTH4bFpp4EvM+fAFD9o=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,353 +61,476 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Clean-up pinmuxing:
-- white-space clean-up
-- explicitly disable input of BKL1_ON, BKL1_PWM and BKL1_PWM_EN#
-- annotate Apalis I2C3 usage for CAM
-- get rid of nvidia,lock property
-- add missing eMMC sdmmc4_cmd_pt7 and explicitly enable input
-- explicitly disable lcd_dc1_pd2 (e.g. LM95245 I2C address pin)
-- annotate TOUCH_PEN_INT# being on-module
-- As underscores in node names are not recommended replace them all
-  where possible with dashes.
+Explicitly mux all T30 SoC balls now:
+- Apalis GPIO
+- Apalis HDMI1
+- Apalis I2C1
+- Apalis I2C2 (DDC)
+- Apalis LCD1
+- Apalis Parallel Camera
+- Apalis SATA1_ACT#
+- Apalis SPDIF1
+- Apalis TS (Low-speed type specific)
+- Apalis USBH_EN
+- Apalis USBH_OC#
+- Apalis VGA1
+- on-module i210/i211 LAN control signals
+- not connected and therefore disabled signals
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
 Changes in v2:
-- Also replace underscores in node names with dashes.
-- Explicitly disable input of BKL1_ON as well.
+- Replace underscores in node names with dashes.
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 88 ++++++++++++++++++-----------------
- 1 file changed, 45 insertions(+), 43 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 370 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 370 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index e84feac9b992..cb587670a5af 100644
+index cb587670a5af..e37d22e2ceef 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -63,18 +63,18 @@
- 
- 		state_default: pinmux {
- 			/* Analogue Audio (On-module) */
--			clk1_out_pw4 {
-+			clk1-out-pw4 {
- 				nvidia,pins = "clk1_out_pw4";
- 				nvidia,function = "extperiph1";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
--			dap3_fs_pp0 {
--				nvidia,pins =	"dap3_fs_pp0",
--						"dap3_sclk_pp3",
--						"dap3_din_pp1",
--						"dap3_dout_pp2";
-+			dap3-fs-pp0 {
-+				nvidia,pins = "dap3_fs_pp0",
-+					      "dap3_sclk_pp3",
-+					      "dap3_din_pp1",
-+					      "dap3_dout_pp2";
- 				nvidia,function = "i2s2";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-@@ -86,25 +86,28 @@
- 				nvidia,function = "rsvd4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis BKL1_PWM */
--			uart3_rts_n_pc0 {
-+			uart3-rts-n-pc0 {
- 				nvidia,pins = "uart3_rts_n_pc0";
- 				nvidia,function = "pwm0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
- 			/* BKL1_PWM_EN#, disable TPS65911 PMIC PWM backlight */
--			uart3_cts_n_pa1 {
-+			uart3-cts-n-pa1 {
- 				nvidia,pins = "uart3_cts_n_pa1";
- 				nvidia,function = "rsvd2";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis CAN1 on SPI6 */
--			spi2_cs0_n_px3 {
-+			spi2-cs0-n-px3 {
- 				nvidia,pins = "spi2_cs0_n_px3",
- 					      "spi2_miso_px1",
- 					      "spi2_mosi_px0",
-@@ -114,7 +117,7 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			/* CAN_INT1 */
--			spi2_cs1_n_pw2 {
-+			spi2-cs1-n-pw2 {
- 				nvidia,pins = "spi2_cs1_n_pw2";
- 				nvidia,function = "spi3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-@@ -123,7 +126,7 @@
- 			};
- 
- 			/* Apalis CAN2 on SPI4 */
--			gmi_a16_pj7 {
-+			gmi-a16-pj7 {
- 				nvidia,pins = "gmi_a16_pj7",
- 					      "gmi_a17_pb0",
- 					      "gmi_a18_pb1",
-@@ -134,7 +137,7 @@
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			/* CAN_INT2 */
--			spi2_cs2_n_pw3 {
-+			spi2-cs2-n-pw3 {
- 				nvidia,pins = "spi2_cs2_n_pw3";
- 				nvidia,function = "spi3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-@@ -143,20 +146,20 @@
- 			};
- 
- 			/* Apalis Digital Audio */
--			clk1_req_pee2 {
-+			clk1-req-pee2 {
- 				nvidia,pins = "clk1_req_pee2";
- 				nvidia,function = "hda";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
--			clk2_out_pw5 {
-+			clk2-out-pw5 {
- 				nvidia,pins = "clk2_out_pw5";
- 				nvidia,function = "extperiph2";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
--			dap1_fs_pn0 {
-+			dap1-fs-pn0 {
- 				nvidia,pins = "dap1_fs_pn0",
- 					      "dap1_din_pn1",
- 					      "dap1_dout_pn2",
-@@ -166,26 +169,25 @@
+@@ -169,6 +169,68 @@
  				nvidia,tristate = <TEGRA_PIN_DISABLE>;
  			};
  
--			/* Apalis I2C3 */
--			cam_i2c_scl_pbb1 {
-+			/* Apalis I2C3 (CAM) */
-+			cam-i2c-scl-pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1",
- 					      "cam_i2c_sda_pbb2";
- 				nvidia,function = "i2c3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
--				nvidia,lock = <TEGRA_PIN_DISABLE>;
- 				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 
- 			/* Apalis MMC1 */
--			sdmmc3_clk_pa6 {
-+			sdmmc3-clk-pa6 {
- 				nvidia,pins = "sdmmc3_clk_pa6";
- 				nvidia,function = "sdmmc3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
--			sdmmc3_dat0_pb7 {
-+			sdmmc3-dat0-pb7 {
- 				nvidia,pins = "sdmmc3_cmd_pa7",
- 					      "sdmmc3_dat0_pb7",
- 					      "sdmmc3_dat1_pb6",
-@@ -241,7 +243,7 @@
- 			};
- 
- 			/* Apalis RESET_MOCI# */
--			gmi_rst_n_pi4 {
-+			gmi-rst-n-pi4 {
- 				nvidia,pins = "gmi_rst_n_pi4";
- 				nvidia,function = "gmi";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-@@ -249,13 +251,13 @@
- 			};
- 
- 			/* Apalis SD1 */
--			sdmmc1_clk_pz0 {
-+			sdmmc1-clk-pz0 {
- 				nvidia,pins = "sdmmc1_clk_pz0";
- 				nvidia,function = "sdmmc1";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
--			sdmmc1_cmd_pz1 {
-+			sdmmc1-cmd-pz1 {
- 				nvidia,pins = "sdmmc1_cmd_pz1",
- 					      "sdmmc1_dat0_py7",
- 					      "sdmmc1_dat1_py6",
-@@ -266,7 +268,7 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			/* Apalis SD1_CD# */
--			clk2_req_pcc5 {
-+			clk2-req-pcc5 {
- 				nvidia,pins = "clk2_req_pcc5";
- 				nvidia,function = "rsvd2";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-@@ -275,7 +277,7 @@
- 			};
- 
- 			/* Apalis SPI1 */
--			spi1_sck_px5 {
-+			spi1-sck-px5 {
- 				nvidia,pins = "spi1_sck_px5",
- 					      "spi1_mosi_px4",
- 					      "spi1_miso_px7",
-@@ -286,7 +288,7 @@
- 			};
- 
- 			/* Apalis SPI2 */
--			lcd_sck_pz4 {
-+			lcd-sck-pz4 {
- 				nvidia,pins = "lcd_sck_pz4",
- 					      "lcd_sdout_pn5",
- 					      "lcd_sdin_pz2",
-@@ -297,7 +299,7 @@
- 			};
- 
- 			/* Apalis UART1 */
--			ulpi_data0 {
-+			ulpi-data0 {
- 				nvidia,pins = "ulpi_data0_po1",
- 					      "ulpi_data1_po2",
- 					      "ulpi_data2_po3",
-@@ -312,7 +314,7 @@
- 			};
- 
- 			/* Apalis UART2 */
--			ulpi_clk_py0 {
-+			ulpi-clk-py0 {
- 				nvidia,pins = "ulpi_clk_py0",
- 					      "ulpi_dir_py1",
- 					      "ulpi_nxt_py2",
-@@ -323,7 +325,7 @@
- 			};
- 
- 			/* Apalis UART3 */
--			uart2_rxd_pc3 {
-+			uart2-rxd-pc3 {
- 				nvidia,pins = "uart2_rxd_pc3",
- 					      "uart2_txd_pc2";
- 				nvidia,function = "uartb";
-@@ -332,7 +334,7 @@
- 			};
- 
- 			/* Apalis UART4 */
--			uart3_rxd_pw7 {
-+			uart3-rxd-pw7 {
- 				nvidia,pins = "uart3_rxd_pw7",
- 					      "uart3_txd_pw6";
- 				nvidia,function = "uartc";
-@@ -341,7 +343,7 @@
- 			};
- 
- 			/* Apalis USBO1_EN */
--			gen2_i2c_scl_pt5 {
-+			gen2-i2c-scl-pt5 {
- 				nvidia,pins = "gen2_i2c_scl_pt5";
- 				nvidia,function = "rsvd4";
- 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-@@ -350,7 +352,7 @@
- 			};
- 
- 			/* Apalis USBO1_OC# */
--			gen2_i2c_sda_pt6 {
-+			gen2-i2c-sda-pt6 {
- 				nvidia,pins = "gen2_i2c_sda_pt6";
- 				nvidia,function = "rsvd4";
- 				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-@@ -369,14 +371,16 @@
- 			};
- 
- 			/* eMMC (On-module) */
--			sdmmc4_clk_pcc4 {
-+			sdmmc4-clk-pcc4 {
- 				nvidia,pins = "sdmmc4_clk_pcc4",
-+					      "sdmmc4_cmd_pt7",
- 					      "sdmmc4_rst_n_pcc3";
- 				nvidia,function = "sdmmc4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			/* Apalis GPIO */
++			kb-col0-pq0 {
++				nvidia,pins = "kb_col0_pq0",
++					      "kb_col1_pq1",
++					      "kb_row10_ps2",
++					      "kb_row11_ps3",
++					      "kb_row12_ps4",
++					      "kb_row13_ps5",
++					      "kb_row14_ps6",
++					      "kb_row15_ps7";
++				nvidia,function = "kbc";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
--			sdmmc4_dat0_paa0 {
-+			sdmmc4-dat0-paa0 {
- 				nvidia,pins = "sdmmc4_dat0_paa0",
- 					      "sdmmc4_dat1_paa1",
- 					      "sdmmc4_dat2_paa2",
-@@ -388,6 +392,7 @@
- 				nvidia,function = "sdmmc4";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 
- 			/* LVDS Transceiver Configuration */
-@@ -400,7 +405,6 @@
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,lock = <TEGRA_PIN_DISABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3",
-@@ -411,18 +415,16 @@
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,lock = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Power I2C (On-module) */
--			pwr_i2c_scl_pz6 {
-+			pwr-i2c-scl-pz6 {
- 				nvidia,pins = "pwr_i2c_scl_pz6",
- 					      "pwr_i2c_sda_pz7";
- 				nvidia,function = "i2cpwr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
--				nvidia,lock = <TEGRA_PIN_DISABLE>;
- 				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 
-@@ -431,15 +433,15 @@
- 			 * temperature sensor therefore requires disabling for
- 			 * now
- 			 */
--			lcd_dc1_pd2 {
-+			lcd-dc1-pd2 {
- 				nvidia,pins = "lcd_dc1_pd2";
- 				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
--				nvidia,tristate = <TEGRA_PIN_DISABLE>;
--				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			/* Multiplexed and therefore disabled */
++			owr {
++				nvidia,pins = "owr";
++				nvidia,function = "rsvd3";
 +				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
 +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
 +				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
++			/* Apalis HDMI1 */
++			hdmi-cec-pee3 {
++				nvidia,pins = "hdmi_cec_pee3";
++				nvidia,function = "cec";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++			};
++			hdmi-int-pn7 {
++				nvidia,pins = "hdmi_int_pn7";
++				nvidia,function = "hdmi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* Apalis I2C1 */
++			gen1-i2c-scl-pc4 {
++				nvidia,pins = "gen1_i2c_scl_pc4",
++					      "gen1_i2c_sda_pc5";
++				nvidia,function = "i2c1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* Apalis I2C2 (DDC) */
++			ddc-scl-pv4 {
++				nvidia,pins = "ddc_scl_pv4",
++					      "ddc_sda_pv5";
++				nvidia,function = "i2c4";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* Apalis I2C3 (CAM) */
+ 			cam-i2c-scl-pbb1 {
+ 				nvidia,pins = "cam_i2c_scl_pbb1",
+@@ -180,6 +242,42 @@
+ 				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
  			};
  
--			/* TOUCH_PEN_INT# */
-+			/* TOUCH_PEN_INT# (On-module) */
- 			pv0 {
- 				nvidia,pins = "pv0";
- 				nvidia,function = "rsvd1";
++			/* Apalis LCD1 */
++			lcd-d0-pe0 {
++				nvidia,pins = "lcd_d0_pe0",
++					      "lcd_d1_pe1",
++					      "lcd_d2_pe2",
++					      "lcd_d3_pe3",
++					      "lcd_d4_pe4",
++					      "lcd_d5_pe5",
++					      "lcd_d6_pe6",
++					      "lcd_d7_pe7",
++					      "lcd_d8_pf0",
++					      "lcd_d9_pf1",
++					      "lcd_d10_pf2",
++					      "lcd_d11_pf3",
++					      "lcd_d12_pf4",
++					      "lcd_d13_pf5",
++					      "lcd_d14_pf6",
++					      "lcd_d15_pf7",
++					      "lcd_d16_pm0",
++					      "lcd_d17_pm1",
++					      "lcd_d18_pm2",
++					      "lcd_d19_pm3",
++					      "lcd_d20_pm4",
++					      "lcd_d21_pm5",
++					      "lcd_d22_pm6",
++					      "lcd_d23_pm7",
++					      "lcd_de_pj1",
++					      "lcd_hsync_pj3",
++					      "lcd_pclk_pb3",
++					      "lcd_vsync_pj4";
++				nvidia,function = "displaya";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* Apalis MMC1 */
+ 			sdmmc3-clk-pa6 {
+ 				nvidia,pins = "sdmmc3_clk_pa6";
+@@ -210,6 +308,77 @@
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 
++			/* Apalis Parallel Camera */
++			cam-mclk-pcc0 {
++				nvidia,pins = "cam_mclk_pcc0";
++				nvidia,function = "vi_alt3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			vi-vsync-pd6 {
++				nvidia,pins = "vi_d0_pt4",
++					      "vi_d1_pd5",
++					      "vi_d2_pl0",
++					      "vi_d3_pl1",
++					      "vi_d4_pl2",
++					      "vi_d5_pl3",
++					      "vi_d6_pl4",
++					      "vi_d7_pl5",
++					      "vi_d8_pl6",
++					      "vi_d9_pl7",
++					      "vi_d10_pt2",
++					      "vi_d11_pt3",
++					      "vi_hsync_pd7",
++					      "vi_pclk_pt0",
++					      "vi_vsync_pd6";
++				nvidia,function = "vi";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			/* Multiplexed and therefore disabled */
++			kb-col2-pq2 {
++				nvidia,pins = "kb_col2_pq2",
++					      "kb_col3_pq3",
++					      "kb_col4_pq4",
++					      "kb_row4_pr4";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			kb-row0-pr0 {
++				nvidia,pins = "kb_row0_pr0",
++					      "kb_row1_pr1",
++					      "kb_row2_pr2",
++					      "kb_row3_pr3";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			kb-row5-pr5 {
++				nvidia,pins = "kb_row5_pr5",
++					      "kb_row6_pr6",
++					      "kb_row7_pr7";
++				nvidia,function = "kbc";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			/*
++			 * VI level-shifter direction
++			 * (pull-down => default direction input)
++			 */
++			vi-mclk-pt1 {
++				nvidia,pins = "vi_mclk_pt1";
++				nvidia,function = "vi_alt3";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
+ 			/* Apalis PWM1 */
+ 			pu6 {
+ 				nvidia,pins = "pu6";
+@@ -250,6 +419,15 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 
++			/* Apalis SATA1_ACT# */
++			pex-l0-prsnt-n-pdd0 {
++				nvidia,pins = "pex_l0_prsnt_n_pdd0";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
+ 			/* Apalis SD1 */
+ 			sdmmc1-clk-pz0 {
+ 				nvidia,pins = "sdmmc1_clk_pz0";
+@@ -276,6 +454,16 @@
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 
++			/* Apalis SPDIF1 */
++			spdif-out-pk5 {
++				nvidia,pins = "spdif_out_pk5",
++					      "spdif_in_pk6";
++				nvidia,function = "spdif";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* Apalis SPI1 */
+ 			spi1-sck-px5 {
+ 				nvidia,pins = "spi1_sck_px5",
+@@ -298,6 +486,28 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 
++			/*
++			 * Apalis TS (Low-speed type specific)
++			 * pins may be used as GPIOs
++			 */
++			kb-col5-pq5 {
++				nvidia,pins = "kb_col5_pq5";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			kb-col6-pq6 {
++				nvidia,pins = "kb_col6_pq6",
++					      "kb_col7_pq7",
++					      "kb_row8_ps0",
++					      "kb_row9_ps1";
++				nvidia,function = "kbc";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* Apalis UART1 */
+ 			ulpi-data0 {
+ 				nvidia,pins = "ulpi_data0_po1",
+@@ -342,6 +552,24 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 
++			/* Apalis USBH_EN */
++			pex-l0-rst-n-pdd1 {
++				nvidia,pins = "pex_l0_rst_n_pdd1";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
++			/* Apalis USBH_OC# */
++			pex-l0-clkreq-n-pdd2 {
++				nvidia,pins = "pex_l0_clkreq_n_pdd2";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* Apalis USBO1_EN */
+ 			gen2-i2c-scl-pt5 {
+ 				nvidia,pins = "gen2_i2c_scl_pt5";
+@@ -361,6 +589,16 @@
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 
++			/* Apalis VGA1 not supported and therefore disabled */
++			crt-hsync-pv6 {
++				nvidia,pins = "crt_hsync_pv6",
++					      "crt_vsync_pv7";
++				nvidia,function = "rsvd2";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
+ 			/* Apalis WAKE1_MICO */
+ 			pv1 {
+ 				nvidia,pins = "pv1";
+@@ -395,6 +633,33 @@
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 
++			/* LAN i210/i211 DEV_OFF_N, PE_RST_N (On-module) */
++			pex-l2-prsnt-n-pdd7 {
++				nvidia,pins = "pex_l2_prsnt_n_pdd7",
++					      "pex_l2_rst_n_pcc6";
++				nvidia,function = "pcie";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			/* LAN i210/i211 PE_WAKE_N, SDP3 (On-module) */
++			pex-wake-n-pdd3 {
++				nvidia,pins = "pex_wake_n_pdd3",
++					      "pex_l2_clkreq_n_pcc7";
++				nvidia,function = "pcie";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			/* LAN i210/i211 SMB_ALERT_N (On-module) */
++			sys-clk-req-pz5 {
++				nvidia,pins = "sys_clk_req_pz5";
++				nvidia,function = "rsvd2";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
+ 			/* LVDS Transceiver Configuration */
+ 			pbb0 {
+ 				nvidia,pins = "pbb0",
+@@ -417,6 +682,111 @@
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
+ 
++			/* Not connected and therefore disabled */
++			clk-32k-out-pa0 {
++				nvidia,pins = "clk3_out_pee0",
++					      "clk3_req_pee1",
++					      "clk_32k_out_pa0",
++					      "dap4_din_pp5",
++					      "dap4_dout_pp6",
++					      "dap4_fs_pp4",
++					      "dap4_sclk_pp7";
++				nvidia,function = "rsvd2";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			dap2-fs-pa2 {
++				nvidia,pins = "dap2_fs_pa2",
++					      "dap2_sclk_pa3",
++					      "dap2_din_pa4",
++					      "dap2_dout_pa5",
++					      "lcd_dc0_pn6",
++					      "lcd_m1_pw1",
++					      "lcd_pwr1_pc1",
++					      "pex_l1_clkreq_n_pdd6",
++					      "pex_l1_prsnt_n_pdd4",
++					      "pex_l1_rst_n_pdd5";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gmi-ad0-pg0 {
++				nvidia,pins = "gmi_ad0_pg0",
++					      "gmi_ad2_pg2",
++					      "gmi_ad3_pg3",
++					      "gmi_ad4_pg4",
++					      "gmi_ad5_pg5",
++					      "gmi_ad6_pg6",
++					      "gmi_ad7_pg7",
++					      "gmi_ad8_ph0",
++					      "gmi_ad9_ph1",
++					      "gmi_ad10_ph2",
++					      "gmi_ad11_ph3",
++					      "gmi_ad12_ph4",
++					      "gmi_ad13_ph5",
++					      "gmi_ad14_ph6",
++					      "gmi_ad15_ph7",
++					      "gmi_adv_n_pk0",
++					      "gmi_clk_pk1",
++					      "gmi_cs4_n_pk2",
++					      "gmi_cs2_n_pk3",
++					      "gmi_dqs_pi2",
++					      "gmi_iordy_pi5",
++					      "gmi_oe_n_pi1",
++					      "gmi_wait_pi7",
++					      "gmi_wr_n_pi0",
++					      "lcd_cs1_n_pw0",
++					      "pu0",
++					      "pu1",
++					      "pu2";
++				nvidia,function = "rsvd4";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gmi-cs0-n-pj0 {
++				nvidia,pins = "gmi_cs0_n_pj0",
++					      "gmi_cs1_n_pj2",
++					      "gmi_cs3_n_pk4";
++				nvidia,function = "rsvd1";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gmi-cs6-n-pi3 {
++				nvidia,pins = "gmi_cs6_n_pi3";
++				nvidia,function = "sata";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gmi-cs7-n-pi6 {
++				nvidia,pins = "gmi_cs7_n_pi6";
++				nvidia,function = "gmi_alt";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			lcd-pwr0-pb2 {
++				nvidia,pins = "lcd_pwr0_pb2",
++					      "lcd_pwr2_pc6",
++					      "lcd_wr_n_pz3";
++				nvidia,function = "hdcp";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			uart2-cts-n-pj5 {
++				nvidia,pins = "uart2_cts_n_pj5",
++					      "uart2_rts_n_pj6";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
+ 			/* Power I2C (On-module) */
+ 			pwr-i2c-scl-pz6 {
+ 				nvidia,pins = "pwr_i2c_scl_pz6",
 -- 
 2.14.4
 
