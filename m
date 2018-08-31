@@ -2,163 +2,111 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CF7C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B74C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BC62083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BC62083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BDED20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:52:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EeuGXnoF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDED20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeHaK5V (ORCPT
+        id S1727310AbeHaK6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 06:57:21 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56218 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbeHaK5U (ORCPT
+        Fri, 31 Aug 2018 06:58:08 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:35312 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeHaK6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 06:57:20 -0400
-Received: by mail-wm0-f65.google.com with SMTP id f21-v6so4111295wmc.5;
-        Thu, 30 Aug 2018 23:51:20 -0700 (PDT)
+        Fri, 31 Aug 2018 06:58:08 -0400
+Received: by mail-yb1-f193.google.com with SMTP id o17-v6so513180yba.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 23:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TZ/5ZVsKF6hpzEfu+yWQmFbyBRzNosTVXBr10CImg44=;
+        b=EeuGXnoFznVrYjNfnF5WTaykrX56m4WBd2foQBvzPTJF0Xmi0kYkDXvLlixdz/MSMB
+         Su2JxDeG/egZcvuWi8QyT44wD+UUHCg/DSnxgZm3VaAZXfWtLlOyMhcYMNxBT2Qv3JPs
+         PV964yFRSDqSJIH2qfZ9pxETQysm2/Dh/vECM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=fjf9S5EbtZ0YH6WUm2RAw1eCgDTAqwCgEoEWhubwC/Q=;
-        b=NYzBVZNEimBMwC1pLzWy2UE8w2U+Ps0E+oe1gPLZ0hAnlAWhh9TEKKca5zsuzMQghX
-         m+ZQmKD80/MqDlmSCuOcsI1N0Fq3Az21Zt3fPm5KV+7IXhDSZCYVIOmTAJNtyODaLppR
-         LxMqE3oKvLaSpf0YfW3CReawcIn4hwBigtYW0v7MQouH5BZ7JXLOkoZAA0V27wx2MmaP
-         jzD3c5ZAm76cDF+u+fDkydCPxe0FFZ1rJJfQeWK/9pIgUFU0E1VBMcw3B4B0wSnYfNae
-         2XUGMo51wMSTLFX4cYduydfeZWOvZtH9Wkkn0O6gfEotumH7tB/HVSaVt9nDqxGSFbvI
-         9nAg==
-X-Gm-Message-State: APzg51A7HkHMcFDhSWeJst1ox8VCAGtOJkz+DDof1WukmEr3tz0rtJ+v
-        wnCbHqyN5Oyz80l17beFY2sPVybe
-X-Google-Smtp-Source: ANB0VdYWs3Ey5bRi7zdbGfKJCmlkPjUy6+Fg+jdXXvJUF7nQj8Bo0cZRe6EUY5w3D7i9XvBKcc3PAA==
-X-Received: by 2002:a1c:ac07:: with SMTP id v7-v6mr3523352wme.110.1535698279990;
-        Thu, 30 Aug 2018 23:51:19 -0700 (PDT)
-Received: from ?IPv6:2a01:4240:2e27:ad85:aaaa::70f? ([2a01:4240:2e27:ad85:aaaa::70f])
-        by smtp.gmail.com with ESMTPSA id k5-v6sm13353038wrm.96.2018.08.30.23.51.18
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TZ/5ZVsKF6hpzEfu+yWQmFbyBRzNosTVXBr10CImg44=;
+        b=HkB4g0Kv1oL0ED1r9BgVBtB4y5ozR5kDeA9JQD77hMHFZIFlHSW/H/69SnmYWlPz02
+         c1T9OsBYtffqLxXobLabdRTmHRn0XTFqDbHm4xjPkhf/WYZ184h89yhGCk5GhCFV1192
+         OFnODGTAM7fJ7YqMvrcvPTvTQbiix4aQE+PE2bJoLXXsCGLerYFmTqUeLIzymVnzFob9
+         NUntvqt6P311H4wgc4wBTimIKlE0ihaBbO4fj7yhMnrDFIVi7BVZnsSBCB0mKbyhCN3C
+         +CKg2Sep/R+5H5j1/6BWieK2uEdNOZupLxoQ313fzivKHSZwHXKN6pvYCZbT+NtHB7cx
+         qdiw==
+X-Gm-Message-State: APzg51BIRf+FJ4l7l1YfqcjIaFWD7X0n6U/zlOfhF9T61VykCXEGPcIt
+        HJiOqUDzB4/tMdc0M9mmZ3aPrkwyqXRYkg==
+X-Google-Smtp-Source: ANB0VdY7GIvbGX3LQuu1aw4QYeStRnpkQj7zoNmjcfPeeiKrHu29jmBM707Eac5VkHTMDaIpHQudjw==
+X-Received: by 2002:a25:690e:: with SMTP id e14-v6mr7826160ybc.468.1535698328344;
+        Thu, 30 Aug 2018 23:52:08 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm3987724ywc.29.2018.08.30.23.52.06
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 23:51:19 -0700 (PDT)
-Subject: Re: [PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        =?UTF-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-References: <20180829022353.23568-1-dima@arista.com>
- <20180829022353.23568-3-dima@arista.com>
- <0cb6bb7c-776b-28d6-65a6-f5b496e32344@I-love.SAKURA.ne.jp>
-From:   Jiri Slaby <jslaby@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5b5fa362-f5cf-53ab-044b-0577856b872d@suse.com>
-Date:   Fri, 31 Aug 2018 08:51:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 30 Aug 2018 23:52:07 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id f145-v6so513600ybg.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 23:52:06 -0700 (PDT)
+X-Received: by 2002:a25:348a:: with SMTP id b132-v6mr7857994yba.373.1535698325907;
+ Thu, 30 Aug 2018 23:52:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0cb6bb7c-776b-28d6-65a6-f5b496e32344@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20180830172030.23344-1-ezequiel@collabora.com>
+ <20180830172030.23344-3-ezequiel@collabora.com> <20180830175850.GA11521@infradead.org>
+ <4fc5107f93871599ead017af7ad50f22535a7683.camel@collabora.com> <20180831055047.GA9140@infradead.org>
+In-Reply-To: <20180831055047.GA9140@infradead.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 31 Aug 2018 15:51:54 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DhFr8ywjc41oK9q+zZXH9zsOKh_7DxWmjzcE0+5Q3hGA@mail.gmail.com>
+Message-ID: <CAAFQd5DhFr8ywjc41oK9q+zZXH9zsOKh_7DxWmjzcE0+5Q3hGA@mail.gmail.com>
+Subject: Re: [RFC 2/3] USB: core: Add non-coherent buffer allocation helpers
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Alan Stern <stern@rowland.harvard.edu>, kernel@collabora.com,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018, 05:19 PM, Tetsuo Handa wrote:
-> On 2018/08/29 11:23, Dmitry Safonov wrote:
->> tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
->> nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
->> But it races with anyone who expects line discipline to be the same
->> after hoding read semaphore in tty_ldisc_ref().
->>
->> We've seen the following crash on v4.9.108 stable:
->>
->> BUG: unable to handle kernel paging request at 0000000000002260
->> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
->> Workqueue: events_unbound flush_to_ldisc
->> Call Trace:
->>  [..] n_tty_receive_buf2
->>  [..] tty_ldisc_receive_buf
->>  [..] flush_to_ldisc
->>  [..] process_one_work
->>  [..] worker_thread
->>  [..] kthread
->>  [..] ret_from_fork
->>
->> I think, tty_ldisc_reinit() should be called with ldisc_sem hold for
->> writing, which will protect any reader against line discipline changes.
->>
->> Note: I failed to reproduce the described crash, so obiviously can't
->> guarantee that this is the place where line discipline was switched.
-> 
-> This will be same with a report at
-> https://syzkaller.appspot.com/bug?id=f08670354701fa64cc0dd3c0128a491bdb16adcc .
-> 
-> syzbot is now testing a patch from Jiri Slaby.
+On Fri, Aug 31, 2018 at 2:50 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Aug 30, 2018 at 07:11:35PM -0300, Ezequiel Garcia wrote:
+> > On Thu, 2018-08-30 at 10:58 -0700, Christoph Hellwig wrote:
+> > > Please don't introduce new DMA_ATTR_NON_CONSISTENT users, it is
+> > > a rather horrible interface, and I plan to kill it off rather sooner
+> > > than later.  I plan to post some patches for a better interface
+> > > that can reuse the normal dma_sync_single_* interfaces for ownership
+> > > transfers.  I can happily include usb in that initial patch set based
+> > > on your work here if that helps.
+> >
+> > Please do. Until we have proper allocators that go thru the DMA API,
+> > drivers will have to kmalloc the USB transfer buffers, and have
+> > streaming mappings. Which in turns mean not using IOMMU or CMA.
+>
+> dma_map_page will of course use the iommu.
 
-Yes, my patch passed, so could you add:
-Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Sure, dma_map*() will, but using kmalloc() defeats (half of) the
+purpose of it, since contiguous memory would be allocated
+unnecessarily, risking failures due to fragmentation.
 
-(not adding tested-by as this particular patch was not tested, but
-shoiuld work the same way.)
-
-thanks,
--- 
-js
-suse labs
+Best regards,
+Tomasz
