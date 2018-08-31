@@ -2,1016 +2,123 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEFBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BCCC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C77820837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23DDE2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:05:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MOg68kf2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C77820837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="hZO0NhZo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DDE2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbeHaSKc (ORCPT
+        id S1727833AbeHaSMl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:10:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34337 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbeHaSJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:09:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g33-v6so11352332wrd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=N/W8zd3bTZzKaNUU2ACUTJaEOjhT4gjYpIecw5fgIWs=;
-        b=MOg68kf2qIN3YOE911nIKZN7iGj7eLApO5TluNfl8twVACqgBIXkjvnn45l0NMzWC0
-         Sss1mv8ueX4rfo6G+W5r7dChXrhcm2nl9mjky+fbVQuVEuk/be8Vm0mDRyiP8VZ6aYiM
-         fNcf6jiOspB1yEpubAq2M7Xdt+5crxaUnnWI0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=N/W8zd3bTZzKaNUU2ACUTJaEOjhT4gjYpIecw5fgIWs=;
-        b=BdRUQVKDxD9TA+pYUU51BOCYBFP0n6dd3kIf4OTYhGExLcxaac1+RAatSmFe5rZsBX
-         guYSZUpdR+UNfqVSIZQJmO95DPQfvqR1UXZuI3yRqgpiigxwnZXCuwQWDRLHu5LWDfh0
-         /N9sgmBrMZP77VJRlpht3aUeXot8xIVUmeRrAzYO5fDUvMd3o/RbANC1aIcj7AfdG8hU
-         9lLg4EcB0HNvqHBWwIjSndURcqcYW5I1OTeaj2QRX/5FwwDXICPra+yuH1+qiAtSQaaD
-         0kHZlCHHTbzilq79tr2D97o7EJxvjGKnALQ8NOXt0MOKk6Aq5MBPAQCiIeKn2tg9FgRh
-         V73w==
-X-Gm-Message-State: APzg51B6hvtxB3ul+eDiiBSUYdJrGQrabuSTd1fEYgNzXuP8VS2ChNaV
-        nqBz1gjXsr5/rWdn96uroZ4QZw==
-X-Google-Smtp-Source: ANB0VdZWRzViykzuhxRNxA/f9eJUNFXto2Wp7WW5cPsAKESUSpwryB2aSqreVtQ+z6crH0ISp5OXWQ==
-X-Received: by 2002:adf:d84a:: with SMTP id k10-v6mr10244565wrl.26.1535724115734;
-        Fri, 31 Aug 2018 07:01:55 -0700 (PDT)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id m68-v6sm8624513wmb.10.2018.08.31.07.01.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 31 Aug 2018 07:01:55 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, vincent.guittot@linaro.org,
-        skannan@codeaurora.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        abailon@baylibre.com, maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v9 1/8] interconnect: Add generic on-chip interconnect API
-Date:   Fri, 31 Aug 2018 17:01:44 +0300
-Message-Id: <20180831140151.13972-2-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180831140151.13972-1-georgi.djakov@linaro.org>
-References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+        Fri, 31 Aug 2018 14:12:41 -0400
+Received: from mail-bn3nam01on0128.outbound.protection.outlook.com ([104.47.33.128]:2443
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727404AbeHaSMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:12:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5091Qxj0lJkvlNfYqZr6i6V62xg6MO0KmBbcLu8njzU=;
+ b=hZO0NhZoIsUuiNQMzIUEuNCGJtwcsnE1M5lb7Lu/rDvM4zZ3dM7C05n6vNq3mEWNz/jTj5/o0RbwSgvap7PK24JHsL0lai9HqnRADmxDwSiFlqRsn6bidFN8JZduTDPNaXAuFoaZit0TqnjM0sBmBQnkpBLbiUXGATC+Vy/OYaw=
+Received: from MWHPR21MB0510.namprd21.prod.outlook.com (10.172.95.140) by
+ MWHPR21MB0832.namprd21.prod.outlook.com (10.173.51.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.1; Fri, 31 Aug 2018 14:04:59 +0000
+Received: from MWHPR21MB0510.namprd21.prod.outlook.com
+ ([fe80::a9a4:7c1a:2713:ad83]) by MWHPR21MB0510.namprd21.prod.outlook.com
+ ([fe80::a9a4:7c1a:2713:ad83%7]) with mapi id 15.20.1122.009; Fri, 31 Aug 2018
+ 14:04:59 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH] mm/page_alloc: Clean up check_for_memory
+Thread-Topic: [PATCH] mm/page_alloc: Clean up check_for_memory
+Thread-Index: AQHUPxJkr6MHAJjlhEm5lgIiZ1w8R6TXiugAgAJB8oCAABwzgA==
+Date:   Fri, 31 Aug 2018 14:04:59 +0000
+Message-ID: <b2fea9ef-84e9-84dc-c847-5b944a8d832f@microsoft.com>
+References: <20180828210158.4617-1-osalvador@techadventures.net>
+ <332d9ea1-cdd0-6bb6-8e83-28af25096637@microsoft.com>
+ <20180831122401.GA2123@techadventures.net>
+In-Reply-To: <20180831122401.GA2123@techadventures.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.117.57.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR21MB0832;6:6tQTDSQtH3aoY5R8QJjvcM7McoQq9hFuELLZmp0XA/4lWtjQUnISJHVtC45zc9F+DQR2k/WV3jwM6SrddQxH1TnlrDVbz3dZ9SDOekdotOz1wLVE5szSjm84IeHSeK1Vxw8j04MzjwdaquccDXQlFNWJfAMXG0RRrpMEPKvEbRQeTHcJ/J6kOPpfFtXKMuMwX1zk3C4009yDboQoAYDJU+3lndBhFOxArZLE9OuYlIHYhrxN/5XMnYyyewz/YIOvUgMtrRwIRE5g6ga/9HC8kTpisWU78k2PtHvhBvGZWKCcXP6w/2AVZwWcv19zUCxQHKN/haFNwgmZTVy/X1JYSOoMZEi7f533tZfR8l9dh3fploXzqQn/vV8mQwzzYPE8agiP6L4RVymw7QROVL51TtXw2OAowtvSAfok9HAIrFox7ugigAZ16Yoqh5c6WHSJoiKcCA4JrRWdZf+2ZTISWg==;5:+msgBjAWtTcwrtjH2Cg4kmj2XDET63Ww1+J4kqfbIbzDGbOnPVArMK/VZaAoc6sg5R5S9CUEj/e6Yv7zlulbxhTIOcwd14fLnsnIeZUUQj6JLISqnUM+1mKLMEIwzX5cpt1VcQA4QuxS2fLgDrGwXViKIDF5lkQyVpaCJ3hvuFU=;7:vUzbY4VtnM8g35zFNl7JfxRP3NVoKkLZZV3mfDf3J4L72xRLdPKuoiqb0zEzRiTHVRdR0wDDrRZOxb1GA/ErYiu30ktoYLZHllxK60ZfCnUqv+hxKcT8gKK6ZMbVQT2E3L4fxC/j6uhK9jypKfplZFb0NFAlAaqOFrbcbjwo9xXmU37eJt0wWD4nbVMQVXZM0mVTZ5Q0QndK26MFrTbyGZYPQenkeIfyFaOah6KGMkeHJL7mTsqmElYuSBj06ZnQ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f7ac53ad-50e9-4c07-f6f6-08d60f4abd11
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MWHPR21MB0832;
+x-ms-traffictypediagnostic: MWHPR21MB0832:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-prvs: <MWHPR21MB0832CEC1D17CAB9355A46A9C9D0F0@MWHPR21MB0832.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231340)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:MWHPR21MB0832;BCL:0;PCL:0;RULEID:;SRVR:MWHPR21MB0832;
+x-forefront-prvs: 07817FCC2D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(366004)(346002)(39860400002)(199004)(189003)(2616005)(5250100002)(11346002)(54906003)(8936002)(476003)(446003)(10090500001)(305945005)(7736002)(22452003)(53546011)(6506007)(6916009)(6436002)(8676002)(68736007)(486006)(316002)(102836004)(10290500003)(99286004)(186003)(72206003)(478600001)(25786009)(2906002)(53936002)(86362001)(106356001)(26005)(81166006)(81156014)(6486002)(5660300001)(4326008)(86612001)(97736004)(2900100001)(36756003)(31686004)(256004)(6246003)(66066001)(3846002)(6116002)(105586002)(31696002)(229853002)(76176011)(6512007)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0832;H:MWHPR21MB0510.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: //DiwVwhulM/spRbTU44IdJDXRJCkiVqXfYUZr5tuVjiZOlJC5fQcFXcIoF6ToAawAeU3lxRWaBIRvs5DsPdxKU6u+3ZhG4cRSB/5QwMlj5qu2cQOekUhxIFb0chVUAk8lqcncKGVgGabiypU39mjgn/7JUHGNwm7IeD1tFE1lxpBpK6KzD3asnHdCqPMpFW/2Fx5hoX7qMOUIYcX02W75AAmvf8e7dUjhMKuMfV3dQQCHWlXkFC1cCuSBE/QdNMMKZ94w0ZEyTwPkd/H4tF20MS2RoU724XpW4s5jM6lHK5PI8DZ3HO3Rmzd7o1gtVE6j/P8Ce4cXJ/6XCmV6M0EK3o9Cj1Tkv6rIOH/iYOZ98=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18361ACBE0182B419F357C275908FB63@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7ac53ad-50e9-4c07-f6f6-08d60f4abd11
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2018 14:04:59.2477
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0832
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces a new API to get requirements and configure the
-interconnect buses across the entire chipset to fit with the current
-demand.
-
-The API is using a consumer/provider-based model, where the providers are
-the interconnect buses and the consumers could be various drivers.
-The consumers request interconnect resources (path) between endpoints and
-set the desired constraints on this data flow path. The providers receive
-requests from consumers and aggregate these requests for all master-slave
-pairs on that path. Then the providers configure each participating in the
-topology node according to the requested data flow path, physical links and
-constraints. The topology could be complicated and multi-tiered and is SoC
-specific.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
----
- Documentation/interconnect/interconnect.rst |  94 ++++
- drivers/Kconfig                             |   2 +
- drivers/Makefile                            |   1 +
- drivers/interconnect/Kconfig                |  10 +
- drivers/interconnect/Makefile               |   5 +
- drivers/interconnect/core.c                 | 573 ++++++++++++++++++++
- include/linux/interconnect-provider.h       | 125 +++++
- include/linux/interconnect.h                |  42 ++
- 8 files changed, 852 insertions(+)
- create mode 100644 Documentation/interconnect/interconnect.rst
- create mode 100644 drivers/interconnect/Kconfig
- create mode 100644 drivers/interconnect/Makefile
- create mode 100644 drivers/interconnect/core.c
- create mode 100644 include/linux/interconnect-provider.h
- create mode 100644 include/linux/interconnect.h
-
-diff --git a/Documentation/interconnect/interconnect.rst b/Documentation/interconnect/interconnect.rst
-new file mode 100644
-index 000000000000..b8107dcc4cd3
---- /dev/null
-+++ b/Documentation/interconnect/interconnect.rst
-@@ -0,0 +1,94 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================================
-+GENERIC SYSTEM INTERCONNECT SUBSYSTEM
-+=====================================
-+
-+Introduction
-+------------
-+
-+This framework is designed to provide a standard kernel interface to control
-+the settings of the interconnects on an SoC. These settings can be throughput,
-+latency and priority between multiple interconnected devices or functional
-+blocks. This can be controlled dynamically in order to save power or provide
-+maximum performance.
-+
-+The interconnect bus is hardware with configurable parameters, which can be
-+set on a data path according to the requests received from various drivers.
-+An example of interconnect buses are the interconnects between various
-+components or functional blocks in chipsets. There can be multiple interconnects
-+on an SoC that can be multi-tiered.
-+
-+Below is a simplified diagram of a real-world SoC interconnect bus topology.
-+
-+::
-+
-+ +----------------+    +----------------+
-+ | HW Accelerator |--->|      M NoC     |<---------------+
-+ +----------------+    +----------------+                |
-+                         |      |                    +------------+
-+  +-----+  +-------------+      V       +------+     |            |
-+  | DDR |  |                +--------+  | PCIe |     |            |
-+  +-----+  |                | Slaves |  +------+     |            |
-+    ^ ^    |                +--------+     |         |   C NoC    |
-+    | |    V                               V         |            |
-+ +------------------+   +------------------------+   |            |   +-----+
-+ |                  |-->|                        |-->|            |-->| CPU |
-+ |                  |-->|                        |<--|            |   +-----+
-+ |     Mem NoC      |   |         S NoC          |   +------------+
-+ |                  |<--|                        |---------+    |
-+ |                  |<--|                        |<------+ |    |   +--------+
-+ +------------------+   +------------------------+       | |    +-->| Slaves |
-+   ^  ^    ^    ^          ^                             | |        +--------+
-+   |  |    |    |          |                             | V
-+ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
-+ | CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
-+ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
-+           |
-+       +-------+
-+       | Modem |
-+       +-------+
-+
-+Terminology
-+-----------
-+
-+Interconnect provider is the software definition of the interconnect hardware.
-+The interconnect providers on the above diagram are M NoC, S NoC, C NoC, P NoC
-+and Mem NoC.
-+
-+Interconnect node is the software definition of the interconnect hardware
-+port. Each interconnect provider consists of multiple interconnect nodes,
-+which are connected to other SoC components including other interconnect
-+providers. The point on the diagram where the CPUs connect to the memory is
-+called an interconnect node, which belongs to the Mem NoC interconnect provider.
-+
-+Interconnect endpoints are the first or the last element of the path. Every
-+endpoint is a node, but not every node is an endpoint.
-+
-+Interconnect path is everything between two endpoints including all the nodes
-+that have to be traversed to reach from a source to destination node. It may
-+include multiple master-slave pairs across several interconnect providers.
-+
-+Interconnect consumers are the entities which make use of the data paths exposed
-+by the providers. The consumers send requests to providers requesting various
-+throughput, latency and priority. Usually the consumers are device drivers, that
-+send request based on their needs. An example for a consumer is a video decoder
-+that supports various formats and image sizes.
-+
-+Interconnect providers
-+----------------------
-+
-+Interconnect provider is an entity that implements methods to initialize and
-+configure interconnect bus hardware. The interconnect provider drivers should
-+be registered with the interconnect provider core.
-+
-+.. kernel-doc:: include/linux/interconnect-provider.h
-+
-+Interconnect consumers
-+----------------------
-+
-+Interconnect consumers are the clients which use the interconnect APIs to
-+get paths between endpoints and set their bandwidth/latency/QoS requirements
-+for these interconnect paths.
-+
-+.. kernel-doc:: include/linux/interconnect.h
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index ab4d43923c4d..ec510981554a 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -219,4 +219,6 @@ source "drivers/siox/Kconfig"
- 
- source "drivers/slimbus/Kconfig"
- 
-+source "drivers/interconnect/Kconfig"
-+
- endmenu
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 578f469f72fb..06f68339e2a7 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -186,3 +186,4 @@ obj-$(CONFIG_MULTIPLEXER)	+= mux/
- obj-$(CONFIG_UNISYS_VISORBUS)	+= visorbus/
- obj-$(CONFIG_SIOX)		+= siox/
- obj-$(CONFIG_GNSS)		+= gnss/
-+obj-$(CONFIG_INTERCONNECT)	+= interconnect/
-diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-new file mode 100644
-index 000000000000..a261c7d41deb
---- /dev/null
-+++ b/drivers/interconnect/Kconfig
-@@ -0,0 +1,10 @@
-+menuconfig INTERCONNECT
-+	tristate "On-Chip Interconnect management support"
-+	help
-+	  Support for management of the on-chip interconnects.
-+
-+	  This framework is designed to provide a generic interface for
-+	  managing the interconnects in a SoC.
-+
-+	  If unsure, say no.
-+
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-new file mode 100644
-index 000000000000..7a01f33b5593
---- /dev/null
-+++ b/drivers/interconnect/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+icc-core-objs				:= core.o
-+
-+obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-new file mode 100644
-index 000000000000..6d932245a610
---- /dev/null
-+++ b/drivers/interconnect/core.c
-@@ -0,0 +1,573 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Interconnect framework core driver
-+ *
-+ * Copyright (c) 2018, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/idr.h>
-+#include <linux/init.h>
-+#include <linux/interconnect.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/slab.h>
-+#include <linux/overflow.h>
-+
-+static DEFINE_IDR(icc_idr);
-+static LIST_HEAD(icc_provider_list);
-+static DEFINE_MUTEX(icc_lock);
-+
-+/**
-+ * struct icc_req - constraints that are attached to each node
-+ *
-+ * @req_node: entry in list of requests for the particular @node
-+ * @node: the interconnect node to which this constraint applies
-+ * @dev: reference to the device that sets the constraints
-+ * @avg_bw: an integer describing the average bandwidth in kBps
-+ * @peak_bw: an integer describing the peak bandwidth in kBps
-+ */
-+struct icc_req {
-+	struct hlist_node req_node;
-+	struct icc_node *node;
-+	struct device *dev;
-+	u32 avg_bw;
-+	u32 peak_bw;
-+};
-+
-+/**
-+ * struct icc_path - interconnect path structure
-+ * @num_nodes: number of hops (nodes)
-+ * @reqs: array of the requests applicable to this path of nodes
-+ */
-+struct icc_path {
-+	size_t num_nodes;
-+	struct icc_req reqs[];
-+};
-+
-+static struct icc_node *node_find(const int id)
-+{
-+	return idr_find(&icc_idr, id);
-+}
-+
-+static struct icc_path *path_init(struct device *dev, struct icc_node *dst,
-+				  ssize_t num_nodes)
-+{
-+	struct icc_node *node = dst;
-+	struct icc_path *path;
-+	int i;
-+
-+	path = kzalloc(struct_size(path, reqs, num_nodes), GFP_KERNEL);
-+	if (!path)
-+		return ERR_PTR(-ENOMEM);
-+
-+	path->num_nodes = num_nodes;
-+
-+	for (i = num_nodes - 1; i >= 0; i--) {
-+		node->provider->users++;
-+		hlist_add_head(&path->reqs[i].req_node, &node->req_list);
-+		path->reqs[i].node = node;
-+		path->reqs[i].dev = dev;
-+		/* reference to previous node was saved during path traversal */
-+		node = node->reverse;
-+	}
-+
-+	return path;
-+}
-+
-+static struct icc_path *path_find(struct device *dev, struct icc_node *src,
-+				  struct icc_node *dst)
-+{
-+	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
-+	struct icc_node *n, *node = NULL;
-+	struct list_head traverse_list;
-+	struct list_head edge_list;
-+	struct list_head visited_list;
-+	size_t i, depth = 1;
-+	bool found = false;
-+
-+	INIT_LIST_HEAD(&traverse_list);
-+	INIT_LIST_HEAD(&edge_list);
-+	INIT_LIST_HEAD(&visited_list);
-+
-+	list_add(&src->search_list, &traverse_list);
-+	src->reverse = NULL;
-+
-+	do {
-+		list_for_each_entry_safe(node, n, &traverse_list, search_list) {
-+			if (node == dst) {
-+				found = true;
-+				list_splice_init(&edge_list, &visited_list);
-+				list_splice_init(&traverse_list, &visited_list);
-+				break;
-+			}
-+			for (i = 0; i < node->num_links; i++) {
-+				struct icc_node *tmp = node->links[i];
-+
-+				if (!tmp) {
-+					path = ERR_PTR(-ENOENT);
-+					goto out;
-+				}
-+
-+				if (tmp->is_traversed)
-+					continue;
-+
-+				tmp->is_traversed = true;
-+				tmp->reverse = node;
-+				list_add_tail(&tmp->search_list, &edge_list);
-+			}
-+		}
-+
-+		if (found)
-+			break;
-+
-+		list_splice_init(&traverse_list, &visited_list);
-+		list_splice_init(&edge_list, &traverse_list);
-+
-+		/* count the hops including the source */
-+		depth++;
-+
-+	} while (!list_empty(&traverse_list));
-+
-+out:
-+
-+	/* reset the traversed state */
-+	list_for_each_entry_reverse(n, &visited_list, search_list)
-+		n->is_traversed = false;
-+
-+	if (found)
-+		path = path_init(dev, dst, depth);
-+
-+	return path;
-+}
-+
-+/*
-+ * We want the path to honor all bandwidth requests, so the average and peak
-+ * bandwidth requirements from each consumer are aggregated at each node.
-+ */
-+
-+static int aggregate_requests(struct icc_node *node)
-+{
-+	struct icc_provider *p = node->provider;
-+	struct icc_req *r;
-+
-+	node->avg_bw = 0;
-+	node->peak_bw = 0;
-+
-+	hlist_for_each_entry(r, &node->req_list, req_node)
-+		p->aggregate(node, r->avg_bw, r->peak_bw,
-+			     &node->avg_bw, &node->peak_bw);
-+
-+	return 0;
-+}
-+
-+static int apply_constraints(struct icc_path *path)
-+{
-+	struct icc_node *next, *prev = NULL;
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < path->num_nodes; i++, prev = next) {
-+		struct icc_provider *p;
-+
-+		next = path->reqs[i].node;
-+		/*
-+		 * Both endpoints should be valid master-slave pairs of the
-+		 * same interconnect provider that will be configured.
-+		 */
-+		if (!prev || next->provider != prev->provider)
-+			continue;
-+
-+		p = next->provider;
-+
-+		/* set the constraints */
-+		ret = p->set(prev, next);
-+		if (ret)
-+			goto out;
-+	}
-+out:
-+	return ret;
-+}
-+
-+/**
-+ * icc_set() - set constraints on an interconnect path between two endpoints
-+ * @path: reference to the path returned by icc_get()
-+ * @avg_bw: average bandwidth in kilobytes per second
-+ * @peak_bw: peak bandwidth in kilobytes per second
-+ *
-+ * This function is used by an interconnect consumer to express its own needs
-+ * in terms of bandwidth for a previously requested path between two endpoints.
-+ * The requests are aggregated and each node is updated accordingly. The entire
-+ * path is locked by a mutex to ensure that the set() is completed.
-+ * The @path can be NULL when the "interconnects" DT properties is missing,
-+ * which will mean that no constraints will be set.
-+ *
-+ * Returns 0 on success, or an appropriate error code otherwise.
-+ */
-+int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
-+{
-+	struct icc_node *node;
-+	struct icc_provider *p;
-+	size_t i;
-+	int ret;
-+
-+	if (!path)
-+		return 0;
-+
-+	mutex_lock(&icc_lock);
-+
-+	for (i = 0; i < path->num_nodes; i++) {
-+		node = path->reqs[i].node;
-+		p = node->provider;
-+
-+		/* update the consumer request for this path */
-+		path->reqs[i].avg_bw = avg_bw;
-+		path->reqs[i].peak_bw = peak_bw;
-+
-+		/* aggregate requests for this node */
-+		aggregate_requests(node);
-+	}
-+
-+	ret = apply_constraints(path);
-+	if (ret)
-+		pr_err("interconnect: error applying constraints (%d)", ret);
-+
-+	mutex_unlock(&icc_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(icc_set);
-+
-+/**
-+ * icc_get() - return a handle for path between two endpoints
-+ * @dev: the device requesting the path
-+ * @src_id: source device port id
-+ * @dst_id: destination device port id
-+ *
-+ * This function will search for a path between two endpoints and return an
-+ * icc_path handle on success. Use icc_put() to release
-+ * constraints when they are not needed anymore.
-+ * If the interconnect API is disabled, NULL is returned and the consumer
-+ * drivers will still build. Drivers are free to handle this specifically,
-+ * but they don't have to.
-+ *
-+ * Return: icc_path pointer on success, ERR_PTR() on error or NULL if the
-+ * interconnect API is disabled.
-+ */
-+struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
-+{
-+	struct icc_node *src, *dst;
-+	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
-+
-+	mutex_lock(&icc_lock);
-+
-+	src = node_find(src_id);
-+	if (!src)
-+		goto out;
-+
-+	dst = node_find(dst_id);
-+	if (!dst)
-+		goto out;
-+
-+	path = path_find(dev, src, dst);
-+	if (IS_ERR(path))
-+		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
-+
-+out:
-+	mutex_unlock(&icc_lock);
-+	return path;
-+}
-+EXPORT_SYMBOL_GPL(icc_get);
-+
-+/**
-+ * icc_put() - release the reference to the icc_path
-+ * @path: interconnect path
-+ *
-+ * Use this function to release the constraints on a path when the path is
-+ * no longer needed. The constraints will be re-aggregated.
-+ */
-+void icc_put(struct icc_path *path)
-+{
-+	struct icc_node *node;
-+	size_t i;
-+	int ret;
-+
-+	if (!path || WARN_ON(IS_ERR(path)))
-+		return;
-+
-+	ret = icc_set(path, 0, 0);
-+	if (ret)
-+		pr_err("%s: error (%d)\n", __func__, ret);
-+
-+	mutex_lock(&icc_lock);
-+	for (i = 0; i < path->num_nodes; i++) {
-+		node = path->reqs[i].node;
-+		hlist_del(&path->reqs[i].req_node);
-+		if (!WARN_ON(!node->provider->users))
-+			node->provider->users--;
-+	}
-+	mutex_unlock(&icc_lock);
-+
-+	kfree(path);
-+}
-+EXPORT_SYMBOL_GPL(icc_put);
-+
-+static struct icc_node *icc_node_create_nolock(int id)
-+{
-+	struct icc_node *node;
-+
-+	/* check if node already exists */
-+	node = node_find(id);
-+	if (node)
-+		goto out;
-+
-+	node = kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (!node) {
-+		node = ERR_PTR(-ENOMEM);
-+		goto out;
-+	}
-+
-+	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
-+	if (WARN(id < 0, "couldn't get idr")) {
-+		kfree(node);
-+		node = ERR_PTR(id);
-+		goto out;
-+	}
-+
-+	node->id = id;
-+
-+out:
-+	return node;
-+}
-+
-+/**
-+ * icc_node_create() - create a node
-+ * @id: node id
-+ *
-+ * Return: icc_node pointer on success, or ERR_PTR() on error
-+ */
-+struct icc_node *icc_node_create(int id)
-+{
-+	struct icc_node *node;
-+
-+	mutex_lock(&icc_lock);
-+
-+	node = icc_node_create_nolock(id);
-+
-+	mutex_unlock(&icc_lock);
-+
-+	return node;
-+}
-+EXPORT_SYMBOL_GPL(icc_node_create);
-+
-+/**
-+ * icc_node_destroy() - destroy a node
-+ * @id: node id
-+ *
-+ */
-+void icc_node_destroy(int id)
-+{
-+	struct icc_node *node;
-+
-+	mutex_lock(&icc_lock);
-+
-+	node = node_find(id);
-+	if (node) {
-+		idr_remove(&icc_idr, node->id);
-+		WARN_ON(!hlist_empty(&node->req_list));
-+	}
-+
-+	mutex_unlock(&icc_lock);
-+
-+	kfree(node);
-+}
-+EXPORT_SYMBOL_GPL(icc_node_destroy);
-+
-+/**
-+ * icc_link_create() - create a link between two nodes
-+ * @src_id: source node id
-+ * @dst_id: destination node id
-+ *
-+ * Create a link between two nodes. The nodes might belong to different
-+ * interconnect providers and the @dst_id node might not exist (if the
-+ * provider driver has not probed yet). So just create the @dst_id node
-+ * and when the actual provider driver is probed, the rest of the node
-+ * data is filled.
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int icc_link_create(struct icc_node *node, const int dst_id)
-+{
-+	struct icc_node *dst;
-+	struct icc_node **new;
-+	int ret = 0;
-+
-+	if (!node->provider)
-+		return -EINVAL;
-+
-+	mutex_lock(&icc_lock);
-+
-+	dst = node_find(dst_id);
-+	if (!dst) {
-+		dst = icc_node_create_nolock(dst_id);
-+
-+		if (IS_ERR(dst)) {
-+			ret = PTR_ERR(dst);
-+			goto out;
-+		}
-+	}
-+
-+	new = krealloc(node->links,
-+		       (node->num_links + 1) * sizeof(*node->links),
-+		       GFP_KERNEL);
-+	if (!new) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	node->links = new;
-+	node->links[node->num_links++] = dst;
-+
-+out:
-+	mutex_unlock(&icc_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(icc_link_create);
-+
-+/**
-+ * icc_link_destroy() - destroy a link between two nodes
-+ * @src: pointer to source node
-+ * @dst: pointer to destination node
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct icc_node **new;
-+	size_t slot;
-+	int ret = 0;
-+
-+	if (IS_ERR_OR_NULL(src))
-+		return -EINVAL;
-+
-+	if (IS_ERR_OR_NULL(dst))
-+		return -EINVAL;
-+
-+	mutex_lock(&icc_lock);
-+
-+	for (slot = 0; slot < src->num_links; slot++)
-+		if (src->links[slot] == dst)
-+			break;
-+
-+	if (WARN_ON(slot == src->num_links)) {
-+		ret = -ENXIO;
-+		goto out;
-+	}
-+
-+	src->links[slot] = src->links[--src->num_links];
-+
-+	new = krealloc(src->links,
-+		       (src->num_links) * sizeof(*src->links),
-+		       GFP_KERNEL);
-+	if (new)
-+		src->links = new;
-+
-+out:
-+	mutex_unlock(&icc_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(icc_link_destroy);
-+
-+/**
-+ * icc_node_add() - add interconnect node to interconnect provider
-+ * @node: pointer to the interconnect node
-+ * @provider: pointer to the interconnect provider
-+ *
-+ */
-+void icc_node_add(struct icc_node *node, struct icc_provider *provider)
-+{
-+	mutex_lock(&icc_lock);
-+
-+	node->provider = provider;
-+	list_add(&node->node_list, &provider->nodes);
-+
-+	mutex_unlock(&icc_lock);
-+}
-+EXPORT_SYMBOL_GPL(icc_node_add);
-+
-+/**
-+ * icc_node_del() - delete interconnect node from interconnect provider
-+ * @node: pointer to the interconnect node
-+ *
-+ */
-+void icc_node_del(struct icc_node *node)
-+{
-+	mutex_lock(&icc_lock);
-+
-+	list_del(&node->node_list);
-+
-+	mutex_unlock(&icc_lock);
-+}
-+EXPORT_SYMBOL_GPL(icc_node_del);
-+
-+/**
-+ * icc_provider_add() - add a new interconnect provider
-+ * @icc_provider: the interconnect provider that will be added into topology
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int icc_provider_add(struct icc_provider *provider)
-+{
-+	if (WARN_ON(!provider->set))
-+		return -EINVAL;
-+
-+	mutex_lock(&icc_lock);
-+
-+	INIT_LIST_HEAD(&provider->nodes);
-+	list_add(&provider->provider_list, &icc_provider_list);
-+
-+	mutex_unlock(&icc_lock);
-+
-+	dev_dbg(provider->dev, "interconnect provider added to topology\n");
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(icc_provider_add);
-+
-+/**
-+ * icc_provider_del() - delete previously added interconnect provider
-+ * @icc_provider: the interconnect provider that will be removed from topology
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int icc_provider_del(struct icc_provider *provider)
-+{
-+	mutex_lock(&icc_lock);
-+	if (provider->users) {
-+		pr_warn("interconnect provider still has %d users\n",
-+			provider->users);
-+		mutex_unlock(&icc_lock);
-+		return -EBUSY;
-+	}
-+
-+	if (!list_empty(&provider->nodes)) {
-+		pr_warn("interconnect provider still has nodes\n");
-+		mutex_unlock(&icc_lock);
-+		return -EBUSY;
-+	}
-+
-+	list_del(&provider->provider_list);
-+	mutex_unlock(&icc_lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(icc_provider_del);
-+
-+MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org");
-+MODULE_DESCRIPTION("Interconnect Driver Core");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-new file mode 100644
-index 000000000000..78208a754181
---- /dev/null
-+++ b/include/linux/interconnect-provider.h
-@@ -0,0 +1,125 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#ifndef __LINUX_INTERCONNECT_PROVIDER_H
-+#define __LINUX_INTERCONNECT_PROVIDER_H
-+
-+#include <linux/interconnect.h>
-+
-+#define icc_units_to_bps(bw)  ((bw) * 1000ULL)
-+
-+struct icc_node;
-+
-+/**
-+ * struct icc_provider - interconnect provider (controller) entity that might
-+ * provide multiple interconnect controls
-+ *
-+ * @provider_list: list of the registered interconnect providers
-+ * @nodes: internal list of the interconnect provider nodes
-+ * @set: pointer to device specific set operation function
-+ * @aggregate: pointer to device specific aggregate operation function
-+ * @dev: the device this interconnect provider belongs to
-+ * @users: count of active users
-+ * @data: pointer to private data
-+ */
-+struct icc_provider {
-+	struct list_head	provider_list;
-+	struct list_head	nodes;
-+	int (*set)(struct icc_node *src, struct icc_node *dst);
-+	int (*aggregate)(struct icc_node *node, u32 avg_bw, u32 peak_bw,
-+			 u32 *agg_avg, u32 *agg_peak);
-+	struct device		*dev;
-+	int			users;
-+	void			*data;
-+};
-+
-+/**
-+ * struct icc_node - entity that is part of the interconnect topology
-+ *
-+ * @id: platform specific node id
-+ * @name: node name used in debugfs
-+ * @links: a list of targets pointing to where we can go next when traversing
-+ * @num_links: number of links to other interconnect nodes
-+ * @provider: points to the interconnect provider of this node
-+ * @node_list: the list entry in the parent provider's "nodes" list
-+ * @search_list: list used when walking the nodes graph
-+ * @reverse: pointer to previous node when walking the nodes graph
-+ * @is_traversed: flag that is used when walking the nodes graph
-+ * @req_list: a list of QoS constraint requests associated with this node
-+ * @avg_bw: aggregated value of average bandwidth requests from all consumers
-+ * @peak_bw: aggregated value of peak bandwidth requests from all consumers
-+ * @data: pointer to private data
-+ */
-+struct icc_node {
-+	int			id;
-+	const char              *name;
-+	struct icc_node		**links;
-+	size_t			num_links;
-+
-+	struct icc_provider	*provider;
-+	struct list_head	node_list;
-+	struct list_head	search_list;
-+	struct icc_node		*reverse;
-+	u8			is_traversed:1;
-+	struct hlist_head	req_list;
-+	u32			avg_bw;
-+	u32			peak_bw;
-+	void			*data;
-+};
-+
-+#if IS_ENABLED(CONFIG_INTERCONNECT)
-+
-+struct icc_node *icc_node_create(int id);
-+void icc_node_destroy(int id);
-+int icc_link_create(struct icc_node *node, const int dst_id);
-+int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
-+void icc_node_add(struct icc_node *node, struct icc_provider *provider);
-+void icc_node_del(struct icc_node *node);
-+int icc_provider_add(struct icc_provider *provider);
-+int icc_provider_del(struct icc_provider *provider);
-+
-+#else
-+
-+static inline struct icc_node *icc_node_create(int id)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
-+
-+void icc_node_destroy(int id)
-+{
-+}
-+
-+static inline int icc_link_create(struct icc_node *node, const int dst_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+void icc_node_add(struct icc_node *node, struct icc_provider *provider)
-+{
-+}
-+
-+void icc_node_del(struct icc_node *node)
-+{
-+}
-+
-+static inline int icc_provider_add(struct icc_provider *provider)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int icc_provider_del(struct icc_provider *provider)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+#endif /* CONFIG_INTERCONNECT */
-+
-+#endif /* __LINUX_INTERCONNECT_PROVIDER_H */
-diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-new file mode 100644
-index 000000000000..7fd6e8d0696c
---- /dev/null
-+++ b/include/linux/interconnect.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#ifndef __LINUX_INTERCONNECT_H
-+#define __LINUX_INTERCONNECT_H
-+
-+#include <linux/mutex.h>
-+#include <linux/types.h>
-+
-+struct icc_path;
-+struct device;
-+
-+#if IS_ENABLED(CONFIG_INTERCONNECT)
-+
-+struct icc_path *icc_get(struct device *dev, const int src_id,
-+			 const int dst_id);
-+void icc_put(struct icc_path *path);
-+int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
-+
-+#else
-+
-+static inline struct icc_path *icc_get(struct device *dev, const int src_id,
-+				       const int dst_id)
-+{
-+	return NULL;
-+}
-+
-+static inline void icc_put(struct icc_path *path)
-+{
-+}
-+
-+static inline int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
-+{
-+	return 0;
-+}
-+
-+#endif /* CONFIG_INTERCONNECT */
-+
-+#endif /* __LINUX_INTERCONNECT_H */
+DQoNCk9uIDgvMzEvMTggODoyNCBBTSwgT3NjYXIgU2FsdmFkb3Igd3JvdGU6DQo+IE9uIFRodSwg
+QXVnIDMwLCAyMDE4IGF0IDAxOjU1OjI5QU0gKzAwMDAsIFBhc2hhIFRhdGFzaGluIHdyb3RlOg0K
+Pj4gSSB3b3VsZCByZS13cml0ZSB0aGUgYWJvdmUgZnVuY3Rpb24gbGlrZSB0aGlzOg0KPj4gc3Rh
+dGljIHZvaWQgY2hlY2tfZm9yX21lbW9yeShwZ19kYXRhX3QgKnBnZGF0LCBpbnQgbmlkKQ0KPj4g
+ew0KPj4gICAgICAgICBlbnVtIHpvbmVfdHlwZSB6b25lX3R5cGU7DQo+Pg0KPj4gICAgICAgICBm
+b3IgKHpvbmVfdHlwZSA9IDA7IHpvbmVfdHlwZSA8IFpPTkVfTU9WQUJMRTsgem9uZV90eXBlKysp
+IHsNCj4+ICAgICAgICAgICAgICAgICBpZiAocG9wdWxhdGVkX3pvbmUoJnBnZGF0LT5ub2RlX3pv
+bmVzW3pvbmVfdHlwZV0pKSB7IA0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgbm9kZV9zZXRf
+c3RhdGUobmlkLCB6b25lX3R5cGUgPD0gWk9ORV9OT1JNQUwgPw0KPj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgTl9OT1JNQUxfTUVNT1JZOiBOX0hJR0hfTUVNT1JZKTsN
+Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOw0KPj4gICAgICAgICAgICAgICAgIH0N
+Cj4+ICAgICAgICAgfQ0KPj4gfQ0KPiANCj4gSGkgUGF2ZWwsDQo+IA0KPiB0aGUgYWJvdmUgd291
+bGQgbm90IHdvcmsgZmluZS4NCj4gWW91IHNldCBlaXRoZXIgTl9OT1JNQUxfTUVNT1JZIG9yIE5f
+SElHSF9NRU1PUlksIGJ1dCBhIG5vZGUgY2FuIGhhdmUgYm90aA0KPiB0eXBlcyBvZiBtZW1vcnkg
+YXQgdGhlIHNhbWUgdGltZSAob24gQ09ORklHX0hJR0hNRU0gc3lzdGVtcykuDQo+IA0KPiBOX0hJ
+R0hfTUVNT1JZIHN0YW5kcyBmb3IgcmVndWxhciBvciBoaWdoIG1lbW9yeQ0KPiB3aGlsZSBOX05P
+Uk1BTF9NRU1PUlkgc3RhbmRzIG9ubHkgZm9yIHJlZ3VsYXIgbWVtb3J5LA0KPiB0aGF0IGlzIHdo
+eSB3ZSBzZXQgaXQgb25seSBpbiBjYXNlIHRoZSB6b25lIGlzIDw9IFpPTkVfTk9STUFMLg0KDQpI
+aSBPc2NhciwNCg0KQXJlIHlvdSBzYXlpbmcgdGhlIGNvZGUgdGhhdCBpcyBpbiBtYWlubGluZSBp
+cyBicm9rZW4/IEJlY2F1c2Ugd2Ugc2V0DQpub2RlX3NldF9zdGF0ZShuaWQsIE5fTk9STUFMX01F
+TU9SWSk7IGV2ZW4gb24gbm9kZSB3aXRoIE5fSElHSF9NRU1PUlk6DQoNCjY4MjYJCQlpZiAoTl9O
+T1JNQUxfTUVNT1JZICE9IE5fSElHSF9NRU1PUlkgJiYNCjY4MjcJCQkgICAgem9uZV90eXBlIDw9
+IFpPTkVfTk9STUFMKQ0KNjgyOAkJCQlub2RlX3NldF9zdGF0ZShuaWQsIE5fTk9STUFMX01FTU9S
+WSk7DQoNClRoYW5rIHlvdSwNClBhdmVs
