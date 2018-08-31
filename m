@@ -2,94 +2,91 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7343BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B922C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EE0205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:50:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32EE0205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 99DB0205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:52:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ieRmlfdr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DB0205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeIAA7z (ORCPT
+        id S1727474AbeIABBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 20:59:55 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:37538 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeIAA7z (ORCPT
+        Fri, 31 Aug 2018 21:01:43 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42804 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIABBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 20:59:55 -0400
-Received: by mail-wr1-f50.google.com with SMTP id u12-v6so12311007wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 13:50:42 -0700 (PDT)
+        Fri, 31 Aug 2018 21:01:43 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v17-v6so12338608wrr.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 13:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xA7an3MtvPDHqyv/GmK4u4YNwImf+ORfvSp8ZP9m9CU=;
+        b=ieRmlfdrMXXHV9W4zShUk7QQaz6/vDGYOJkJKSEAfqiuLaM8yFUeZGTMS2wCUED/Oe
+         MheQ6RWmWqAQCnRe2HKs8Rq2uBBIbeV6eXzHd8RSaHrGFM+qFdB7LBfp/CNS4DZrRVav
+         rkcrBn+0YY+sDloPCHPAtqVgA9K1ZnOzLeDWc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+SVi80wrbbngLcx6Bsj63I2xnjD8Ms9n+e/3Og5oNRk=;
-        b=iSyiGWf+3PZWEBqodfvpyGlA+lWHT2j/r9Og3iUdRcT6sTYwAe+V7b77iKJ7mnvha+
-         ahUKbPrQ6ge+4rrrAQJMideKxSAUqK0QWMgOQYhvYrdRH/ElzhlQLfSiNvrBUWJKYhTY
-         DvL6ZZ7q2Zf/scXYhCA3EXUOdF3CYN+ryGHNAwNsgN23Z/RhTxrxSleCDmA9YcnRQz2G
-         Ela6fywbXTC4zw9/ebzwJ2ArpdT/6lxxl1CtPzUTXPFH7PfObDYtUoesLd5pL1kHb21F
-         uMboEGW90geu2KA0WgSmH1MVrQV7ucE22CHvBc/6lf4wwuKdJifQonIRMV4nSubaZMAt
-         gHYA==
-X-Gm-Message-State: APzg51B5jSZ1nrkoxWmgGQUGqWUe2NOViO3VbSkP5Xeh5XQG/9PrvmVY
-        3bd/PCpY5m6t0GF5zpfBUstG/SP5KYyo6Q==
-X-Google-Smtp-Source: ANB0VdaesVc9g/j44+IV0W5p0Dh33abxwEU33j9D0lZEcgpSAWtE0CyM9rTCr8Kb20C1iK/lf18ZjQ==
-X-Received: by 2002:adf:e14f:: with SMTP id f15-v6mr11875988wri.42.1535748641700;
-        Fri, 31 Aug 2018 13:50:41 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id z16-v6sm9053337wrq.78.2018.08.31.13.50.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 13:50:40 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 5EE4D124D4B; Fri, 31 Aug 2018 22:50:40 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 22:50:40 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
-        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
-        "logang@deltatee.com" <logang@deltatee.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [RFC v2 2/2] mm/memory_hotplug: Shrink spanned pages when
- offlining memory
-Message-ID: <20180831205040.GA3945@techadventures.net>
-References: <20180817154127.28602-1-osalvador@techadventures.net>
- <20180817154127.28602-3-osalvador@techadventures.net>
- <348c662b-455a-1ea4-1db5-3bddcbdb4f14@microsoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <348c662b-455a-1ea4-1db5-3bddcbdb4f14@microsoft.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xA7an3MtvPDHqyv/GmK4u4YNwImf+ORfvSp8ZP9m9CU=;
+        b=pVrjHEbuHIWuwoB3LYnxV+sL7u34LufRy7I0CfnjDl1O/SWwbKN+xTjbtbrkUE/T30
+         /b1hrcV5Yw6MzJ9cKtE4MHqSjahTajSu6SLT+KxejuDJU/H1cQO+Va5bbd7MCLloYzeZ
+         Zr1LXkUJiRsz5/yE47s37u91yq3jv7SOo6pLKmE89jhfRwUK3RymEU37M/3VjqZ6n9PK
+         tIfzIaVYWlbT1XhJd7XFQT2CX8FNBzdlw+tiWbpuJmxigMU5HZA/UYlJcEpvMUKEMMll
+         e1Atoa5dETQb3jEKTOFWcy8UwLluUGoxpvB3m5fuRSxwquiwSOdI41gu3QI61v0adOur
+         1WJg==
+X-Gm-Message-State: APzg51AgWZqsYsZHV67+JpDDaDLyhovigHAQBzLnBafb4qipDNRCnrVV
+        YZZ1MDqtdo8sFFpsq4kRHv6pjDf7p7k=
+X-Google-Smtp-Source: ANB0VdZmJ1LmMCj6aL1/6T+KPd+A3P3zZtSVvHhSjF523+H4PS2BxR4i13eGqmSJhNMnoMIiQhMvaw==
+X-Received: by 2002:a5d:608b:: with SMTP id w11-v6mr2037619wrt.193.1535748749046;
+        Fri, 31 Aug 2018 13:52:29 -0700 (PDT)
+Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id u4-v6sm7659356wro.47.2018.08.31.13.52.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 13:52:28 -0700 (PDT)
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Jason Wessel <jason.wessel@windriver.com>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        patches@linaro.org
+Subject: [PATCH 0/5] kdb: Cleanup code to read user input and handle escape sequences
+Date:   Fri, 31 Aug 2018 21:51:37 +0100
+Message-Id: <20180831205142.23609-1-daniel.thompson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 11:09:01PM +0000, Pasha Tatashin wrote:
-> Hi Oscar,
-> 
-> I have been studying this patch, and do not see anything bad about it
-> except that it begs to be split into smaller patches. I think you can
-> send this work as a series without RFC if this patch is split into 3 or
-> so patches. I will review that series.
+I spend a little time earlier this month looking at kdb_read() and ended
+up doing a little light refactoring a bit to make easier to read.
 
-Thanks Pavel for having taken a look at this.
-I will split up the patch and re-send it without RFC.
+Most of the patches are simple tidy ups although patches 4 and 5
+introduce new behaviours. Patch 4 is probably not controversial
+but perhaps patch 5 is ;-).
 
-Thanks!
--- 
-Oscar Salvador
-SUSE L3
+Tested as shown here:
+https://github.com/daniel-thompson/kgdbtest/commit/c65e28d99357c2df6dac2cebe195574e634d04dc
+
+Daniel Thompson (5):
+  kdb: Tidy up code to handle escape sequences
+  kdb: Simplify code to fetch characters from console
+  kdb: Remove special case logic from kdb_read()
+  kdb: Improve handling of characters from different input sources
+  kdb: Tweak escape handling for vi users
+
+ kernel/debug/kdb/kdb_io.c | 218 +++++++++++++++++---------------------
+ 1 file changed, 99 insertions(+), 119 deletions(-)
+
+--
+2.17.1
+
