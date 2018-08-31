@@ -2,167 +2,123 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201BAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41C5C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC4CC20839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:19:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC4CC20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 916D520839
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916D520839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbeHaU1l (ORCPT
+        id S1729310AbeHaU1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:27:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11616 "EHLO huawei.com"
+        Fri, 31 Aug 2018 16:27:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57180 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728569AbeHaU1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:27:41 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1B028F447A913;
-        Sat,  1 Sep 2018 00:19:21 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Sat, 1 Sep 2018
- 00:19:20 +0800
-Date:   Fri, 31 Aug 2018 17:19:06 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <linux-rdma@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-block@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v5 01/13] PCI/P2PDMA: Support peer-to-peer memory
-Message-ID: <20180831171906.00002751@huawei.com>
-In-Reply-To: <20180830185352.3369-2-logang@deltatee.com>
-References: <20180830185352.3369-1-logang@deltatee.com>
-        <20180830185352.3369-2-logang@deltatee.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1727268AbeHaU1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:27:52 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C0D9626362;
+        Fri, 31 Aug 2018 16:19:37 +0000 (UTC)
+Received: from redhat.com (ovpn-123-69.rdu2.redhat.com [10.10.123.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38FF32166B41;
+        Fri, 31 Aug 2018 16:19:37 +0000 (UTC)
+Date:   Fri, 31 Aug 2018 12:19:35 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3/7] mm/rmap: map_pte() was not handling private
+ ZONE_DEVICE page properly v2
+Message-ID: <20180831161935.GB4111@redhat.com>
+References: <20180824192549.30844-3-jglisse@redhat.com>
+ <20180830144156.7226-1-jglisse@redhat.com>
+ <20180831092724.GD28695@350D>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180831092724.GD28695@350D>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 16:19:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 16:19:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018 12:53:40 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
-
-> Some PCI devices may have memory mapped in a BAR space that's
-> intended for use in peer-to-peer transactions. In order to enable
-> such transactions the memory must be registered with ZONE_DEVICE pages
-> so it can be used by DMA interfaces in existing drivers.
+On Fri, Aug 31, 2018 at 07:27:24PM +1000, Balbir Singh wrote:
+> On Thu, Aug 30, 2018 at 10:41:56AM -0400, jglisse@redhat.com wrote:
+> > From: Ralph Campbell <rcampbell@nvidia.com>
+> > 
+> > Private ZONE_DEVICE pages use a special pte entry and thus are not
+> > present. Properly handle this case in map_pte(), it is already handled
+> > in check_pte(), the map_pte() part was lost in some rebase most probably.
+> > 
+> > Without this patch the slow migration path can not migrate back private
+> > ZONE_DEVICE memory to regular memory. This was found after stress
+> > testing migration back to system memory. This ultimatly can lead the
+> > CPU to an infinite page fault loop on the special swap entry.
+> > 
+> > Changes since v1:
+> >     - properly lock pte directory in map_pte()
+> > 
+> > Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Cc: Balbir Singh <bsingharora@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  mm/page_vma_mapped.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+> > index ae3c2a35d61b..bd67e23dce33 100644
+> > --- a/mm/page_vma_mapped.c
+> > +++ b/mm/page_vma_mapped.c
+> > @@ -21,7 +21,14 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw)
+> >  			if (!is_swap_pte(*pvmw->pte))
+> >  				return false;
+> >  		} else {
+> > -			if (!pte_present(*pvmw->pte))
+> > +			if (is_swap_pte(*pvmw->pte)) {
+> > +				swp_entry_t entry;
+> > +
+> > +				/* Handle un-addressable ZONE_DEVICE memory */
+> > +				entry = pte_to_swp_entry(*pvmw->pte);
+> > +				if (!is_device_private_entry(entry))
+> > +					return false;
 > 
-> Add an interface for other subsystems to find and allocate chunks of P2P
-> memory as necessary to facilitate transfers between two PCI peers:
+> OK, so we skip this pte from unmap since it's already unmapped? This prevents
+> try_to_unmap from unmapping it and it gets restored with MIGRATE_PFN_MIGRATE
+> flag cleared?
 > 
-> int pci_p2pdma_add_client();
-> struct pci_dev *pci_p2pmem_find();
-> void *pci_alloc_p2pmem();
-> 
-> The new interface requires a driver to collect a list of client devices
-> involved in the transaction with the pci_p2pmem_add_client*() functions
-> then call pci_p2pmem_find() to obtain any suitable P2P memory. Once
-> this is done the list is bound to the memory and the calling driver is
-> free to add and remove clients as necessary (adding incompatible clients
-> will fail). With a suitable p2pmem device, memory can then be
-> allocated with pci_alloc_p2pmem() for use in DMA transactions.
-> 
-> Depending on hardware, using peer-to-peer memory may reduce the bandwidth
-> of the transfer but can significantly reduce pressure on system memory.
-> This may be desirable in many cases: for example a system could be designed
-> with a small CPU connected to a PCIe switch by a small number of lanes
-> which would maximize the number of lanes available to connect to NVMe
-> devices.
-> 
-> The code is designed to only utilize the p2pmem device if all the devices
-> involved in a transfer are behind the same PCI bridge. This is because we
-> have no way of knowing whether peer-to-peer routing between PCIe Root Ports
-> is supported (PCIe r4.0, sec 1.3.1). Additionally, the benefits of P2P
-> transfers that go through the RC is limited to only reducing DRAM usage
-> and, in some cases, coding convenience. The PCI-SIG may be exploring
-> adding a new capability bit to advertise whether this is possible for
-> future hardware.
-> 
-> This commit includes significant rework and feedback from Christoph
-> Hellwig.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Sounds like the right thing, if I understand it correctly
 
-Apologies for being a late entrant to this conversation so I may be asking
-about a topic that has been covered in detail in earlier patches!
-> ---
-...
+Well not exactly we do not skip it, we replace it with a migration
+pte see try_to_unmap_one() which get call with TTU_MIGRATION flag
+set (which do not translate in PVMW_MIGRATION being set on contrary).
 
-> +/*
-> + * Find the distance through the nearest common upstream bridge between
-> + * two PCI devices.
-> + *
-> + * If the two devices are the same device then 0 will be returned.
-> + *
-> + * If there are two virtual functions of the same device behind the same
-> + * bridge port then 2 will be returned (one step down to the PCIe switch,
-> + * then one step back to the same device).
-> + *
-> + * In the case where two devices are connected to the same PCIe switch, the
-> + * value 4 will be returned. This corresponds to the following PCI tree:
-> + *
-> + *     -+  Root Port
-> + *      \+ Switch Upstream Port
-> + *       +-+ Switch Downstream Port
-> + *       + \- Device A
-> + *       \-+ Switch Downstream Port
-> + *         \- Device B
-> + *
-> + * The distance is 4 because we traverse from Device A through the downstream
-> + * port of the switch, to the common upstream port, back up to the second
-> + * downstream port and then to Device B.
-> + *
-> + * Any two devices that don't have a common upstream bridge will return -1.
-> + * In this way devices on separate PCIe root ports will be rejected, which
-> + * is what we want for peer-to-peer seeing each PCIe root port defines a
-> + * separate hierarchy domain and there's no way to determine whether the root
-> + * complex supports forwarding between them.
-> + *
-> + * In the case where two devices are connected to different PCIe switches,
-> + * this function will still return a positive distance as long as both
-> + * switches evenutally have a common upstream bridge. Note this covers
-> + * the case of using multiple PCIe switches to achieve a desired level of
-> + * fan-out from a root port. The exact distance will be a function of the
-> + * number of switches between Device A and Device B.
+From migration point of view even if this is a swap pte, it is still
+a valid mapping of the page and is counted as such for all intent and
+purposes. The only thing we don't need is flushing CPU tlb or cache.
 
-This feels like a somewhat simplistic starting point rather than a
-generally correct estimate to use.  Should we be taking the bandwidth of
-those links into account for example, or any discoverable latencies?
-Not all PCIe switches are alike - particularly when it comes to P2P.
+So this all happens when we are migrating something back to regular
+memory either because of CPU fault or because the device driver want
+to make room in its memory and decided to evict that page back to
+regular memory.
 
-I guess that can be a topic for future development if it turns out people
-have horrible mixed systems.
-
-> + *
-> + * If a bridge which has any ACS redirection bits set is in the path
-> + * then this functions will return -2. This is so we reject any
-> + * cases where the TLPs are forwarded up into the root complex.
-> + * In this case, a list of all infringing bridge addresses will be
-> + * populated in acs_list (assuming it's non-null) for printk purposes.
-> + */
-
+Cheers,
+Jérôme
