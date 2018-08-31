@@ -2,113 +2,146 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931AEC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D4C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F7D2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVhxyUSr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F7D2083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0AF63205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF63205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeHaNkw (ORCPT
+        id S1727574AbeHaNmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:40:52 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45695 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbeHaNkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:40:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u83-v6so9526463lje.12;
-        Fri, 31 Aug 2018 02:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WS5p00ItCHcw4rbEZG+VJ8/83UKSmQ4iDVjVkCx0Cxw=;
-        b=AVhxyUSrXDFylqqMDYhaZrxHJb51O9BE8exOaGK1LmnEWwPtoc6us1iMZM4FpGS2u9
-         /jAMaIvYT0S6MUKEeg098iDQXtd+r0hmRZb4Ysbdm1V0MMHsR/oEe1YVO1dwBsI8YEEW
-         F3u7+oTGLZMbjCKB9R1Vmg3eAbSuPaVShnXjNONjMxqVIUbk+8pdpuOtw+x5KhbCdmUL
-         3541M4phAHHcVyEKuToMYV0wXxzLg6Rw/jRByr+boT5iB1ZcyuMmox3sNQdzOLqkILNn
-         rWx81fHEvYoZ2/1eWyZYQoLptWkdBLjhlKJ197l5ZRFyG8YjuJ5bGUrQ0VxYiKswk3SP
-         639Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WS5p00ItCHcw4rbEZG+VJ8/83UKSmQ4iDVjVkCx0Cxw=;
-        b=XhEeKb4gulP/Z///+c8JAfyOBeZ4CtQ+7OcG6klNFKvjVN7+Y/rBixfg1f5A6tl65y
-         kCESubuzJzTiL2CkDkAhS7XVRsOomncTtBqREx1mEr1V5eL21p2K4IPTNj4Pg4mZdjpN
-         uunIXCDoFyMtqQXrXmgEVKbj62H5K6LYyYTRT4C7+NeIgxlwID/xOEWW4gx7H4UAknZv
-         di4EvpbOm2gcPuzPndI9GF9I8WFt/c2AeHYcxa5O8VCHzV0JKW3rHHW4u/XuP1WdH0hR
-         /iYkUDyAaN7aWJOT0FTjyDPP/j/ewo6z/aDsGX4dY5MtqkCvfSMcZinV9LUTPkZ2Xart
-         LJaw==
-X-Gm-Message-State: APzg51ByZ8luzySPGwnh4RB+WMllvImS1MXlq96jEZ61Bsm8lfLToTtk
-        NBYR5fJITYxTy8Oa/pYqD5E=
-X-Google-Smtp-Source: ANB0VdY05xFrUWJMoT1118hCtjWeIULcLKVNlZVRn26xymJIMToGrAjaY/xwAIOL5dQuknRraoJU1w==
-X-Received: by 2002:a2e:240c:: with SMTP id k12-v6mr1986873ljk.135.1535708052801;
-        Fri, 31 Aug 2018 02:34:12 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id r70-v6sm1745319lff.0.2018.08.31.02.34.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 02:34:12 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fvfoj-0006dp-GK; Fri, 31 Aug 2018 11:34:13 +0200
-Date:   Fri, 31 Aug 2018 11:34:13 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
-Message-ID: <20180831093413.GK28861@localhost>
-References: <20180822090319.29167-1-johan@kernel.org>
- <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
- <20180829075007.GC28861@localhost>
- <4fbdbb5d-6b56-37e2-08e1-27f71cb6de22@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4fbdbb5d-6b56-37e2-08e1-27f71cb6de22@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 31 Aug 2018 09:42:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726990AbeHaNmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 09:42:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 71A797DAC2;
+        Fri, 31 Aug 2018 09:36:10 +0000 (UTC)
+Received: from plouf.redhat.com (ovpn-116-59.ams2.redhat.com [10.36.116.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A1632166B41;
+        Fri, 31 Aug 2018 09:36:07 +0000 (UTC)
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] Partially revert "HID: generic: create one input report per application type"
+Date:   Fri, 31 Aug 2018 11:36:04 +0200
+Message-Id: <20180831093604.5915-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 09:36:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 09:36:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 10:28:28AM +0300, Tero Kristo wrote:
-> On 29/08/18 10:50, Johan Hovold wrote:
-> > On Tue, Aug 28, 2018 at 03:32:03PM -0700, Stephen Boyd wrote:
-> >> Quoting Johan Hovold (2018-08-22 02:03:19)
-> >>> Fix child-node lookup which by using the wrong OF helper was searching
-> >>> the whole tree depth-first, something which could end up matching an
-> >>> unrelated node.
-> >>>
-> >>> Also fix the related node-reference leaks.
-> >>>
-> >>> Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
-> >>
-> >> Found by inspection? Or it's actively causing problems? I'm thinking
-> >> it's the former so this can bake in clk-next for a while.
-> > 
-> > Right, through inspection. I fixed up most of these last year, but this
-> > one managed to sneak in since then.
-> > 
-> > clk-next should be fine.
-> 
-> The patch looks fine to me also, just had to test this out with my 
-> latest development branch as it conflicts with that one a bit.
-> 
-> Acked-by: Tero Kristo <t-kristo@ti.com>
+This partially reverts commit f07b3c1da92db108662f99417a212fc1eddc44d1.
 
-Thanks for reviewing.
+It looks like some mice are not correctly treated by
+HID_QUIRK_INPUT_PER_APP. Those mice have the following
+report descriptor:
 
-Johan
+0x05, 0x01,                    // Usage Page (Generic Desktop)        0
+0x09, 0x02,                    // Usage (Mouse)                       2
+0xa1, 0x01,                    // Collection (Application)            4
+0x85, 0x01,                    //  Report ID (1)                      6
+0x09, 0x01,                    //  Usage (Pointer)                    8
+0xa1, 0x00,                    //  Collection (Physical)              10
+0x95, 0x05,                    //   Report Count (5)                  12
+0x75, 0x01,                    //   Report Size (1)                   14
+0x05, 0x09,                    //   Usage Page (Button)               16
+0x19, 0x01,                    //   Usage Minimum (1)                 18
+0x29, 0x05,                    //   Usage Maximum (5)                 20
+0x15, 0x00,                    //   Logical Minimum (0)               22
+0x25, 0x01,                    //   Logical Maximum (1)               24
+0x81, 0x02,                    //   Input (Data,Var,Abs)              26
+...
+0xc0,                          //  End Collection                     57
+0x85, 0x02,                    //  Report ID (2)                      58
+0x09, 0x01,                    //  Usage (Consumer Control)           60
+0xa1, 0x00,                    //  Collection (Physical)              62
+0x75, 0x0c,                    //   Report Size (12)                  64
+0x95, 0x02,                    //   Report Count (2)                  66
+0x05, 0x01,                    //   Usage Page (Generic Desktop)      68
+0x09, 0x30,                    //   Usage (X)                         70
+0x09, 0x31,                    //   Usage (Y)                         72
+0x16, 0x01, 0xf8,              //   Logical Minimum (-2047)           74
+0x26, 0xff, 0x07,              //   Logical Maximum (2047)            77
+0x81, 0x06,                    //   Input (Data,Var,Rel)              80
+0xc0,                          //  End Collection                     82
+0xc0,                          // End Collection                      83
+...
+
+Both the cursor position and the buttons are located in the
+same application collection (Mouse) and the kernel should
+only create one input device for those.
+
+However, for an undetermined reason, the kernel splits the
+device in 2, making systemd not tagging the second mouse
+with the coordinates only as a mouse. And then userspace
+ignores it which leads to a mouse where only the buttons
+are working.
+
+Until the quirk gets properly fixed, we should probably
+revert applying it to all of the generic devices and
+re-enable it when the root reason has been found.
+
+link: https://bugzilla.kernel.org/show_bug.cgi?id=200847
+link: https://bugzilla.kernel.org/show_bug.cgi?id=200849
+link: https://bugs.archlinux.org/task/59699
+link: https://github.com/NixOS/nixpkgs/issues/45165
+
+Cc: stable@vger.kernel.org # v4.18+
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+---
+ drivers/hid/hid-generic.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
+index 3b6eccbc2519..c25b4718de44 100644
+--- a/drivers/hid/hid-generic.c
++++ b/drivers/hid/hid-generic.c
+@@ -56,20 +56,6 @@ static bool hid_generic_match(struct hid_device *hdev,
+ 	return true;
+ }
+ 
+-static int hid_generic_probe(struct hid_device *hdev,
+-			     const struct hid_device_id *id)
+-{
+-	int ret;
+-
+-	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
+-
+-	ret = hid_parse(hdev);
+-	if (ret)
+-		return ret;
+-
+-	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+-}
+-
+ static const struct hid_device_id hid_table[] = {
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
+ 	{ }
+@@ -80,7 +66,6 @@ static struct hid_driver hid_generic = {
+ 	.name = "hid-generic",
+ 	.id_table = hid_table,
+ 	.match = hid_generic_match,
+-	.probe = hid_generic_probe,
+ };
+ module_hid_driver(hid_generic);
+ 
+-- 
+2.14.3
+
