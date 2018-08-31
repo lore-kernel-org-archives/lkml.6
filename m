@@ -2,164 +2,110 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE651C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F99DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F9520837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjWUPimh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F9520837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 439E320837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439E320837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=burcheri.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbeHaLAV (ORCPT
+        id S1727363AbeHaLAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 07:00:21 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:55392 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeHaLAU (ORCPT
+        Fri, 31 Aug 2018 07:00:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:41156 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeHaLAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 07:00:20 -0400
-Received: by mail-wm0-f54.google.com with SMTP id f21-v6so4117807wmc.5;
-        Thu, 30 Aug 2018 23:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7b849tg0B2AeAQpYcHCJh3ZDwCrGblVrliBrEc/MOio=;
-        b=MjWUPimhcVuk2IvzHF+0kkrxRKyxtFghA0YdGFG91d4BeFjEfE3HPNVwvFUm7PvzQb
-         YRg5MWjOgNU1K9PkIK1BLlUaAwqglkPjSJ7Gt1Su9c90Tz7f4ePFTwsRyJpe87x0CpOg
-         tvxCMzG2g48rZYsX1B/Yt+nTrx4nSGE8NFHf+ezqVEQ0mywDooNrYFRN9hZGY0u3KZhS
-         r3UDnqWUfEzCZCiKZRJ8X/m5FAjxP2Srb+YcsWD8aDJRD1/adQtMwoV6db7DzrvjWYaD
-         F5Bnly+NA0u0PFTLHTTCMRIJ44BRvKINPlU5AXVPkmoiM7P45Y7auoIBqS8mSNce1GvB
-         sn0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7b849tg0B2AeAQpYcHCJh3ZDwCrGblVrliBrEc/MOio=;
-        b=clFHDB48mNlY4geZDCFX3Q3zCOH/pgkzz6h7tn9zy0kV0P2aTRyHa/MDX2/0JqEWk6
-         oWmgi7BiCAoii/MaR04cC6LUjZXirJwz/1snTqg+Byx6pboRbeRko2P3VhiNDnwT3gJU
-         r0TrbAwGuHjIGfCsq0/5n3CejC7rMkqAkIIbbpQw5i7LG3HWTK2sIGhRC2GOv4FOeEeF
-         YWbkp4OtldEbzRXTr5hZvOxXBQ4/6e0fVC4YR1avcyqq/Sa+8nQnul9lcNywNx2OUN/X
-         f3eZlQMrCwBlcyzVHqdgC0m8ralancc8vY24+TkD0/EemnWy02nVzxVctt0885nTVDlb
-         mPSQ==
-X-Gm-Message-State: APzg51B3/jT+AUIIS/okZH4dDwojhLLSDtdjNgGdS2Z3wHxpXl66jY1l
-        ZqZusXgadgFhsGD9vzv7p8gU3vNQt2Zh+UrV+ArM2xxHh1w=
-X-Google-Smtp-Source: ANB0VdZjmnbm40FazpIbk0q1ZuWqwhgGYOvnA8S6rX4RrrpLEt65Bo7dHd8xOa6TBbzwpfXTGTPY0+uTax9RBOHQjwI=
-X-Received: by 2002:a1c:aa8f:: with SMTP id t137-v6mr3637304wme.54.1535698460299;
- Thu, 30 Aug 2018 23:54:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
- <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
-In-Reply-To: <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Fri, 31 Aug 2018 14:54:07 +0800
-Message-ID: <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
-Subject: Re: Affinity managed interrupts vs non-managed interrupts
-To:     sumit.saxena@broadcom.com
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        shivasharan.srikanteshwara@broadcom.com,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 31 Aug 2018 07:00:32 -0400
+Received: from localhost ([94.79.149.170]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0Lzkkl-1frpoZ0s0R-014zCX; Fri, 31 Aug 2018 08:54:24 +0200
+Message-ID: <1535698162.6624.31.camel@burcheri.de>
+Subject: Re: blk-mq crashing on battery mode
+From:   Massimo Burcheri <massimo@burcheri.de>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@osandov.com>
+In-Reply-To: <f2983f77-8cc7-2734-9acb-c2cea4a90bd8@oracle.com>
+References: <1534926011.18658.29.camel@burcheri.de>
+         <a43c5bdd-06ec-ae23-ebd3-bda8c0ea4f5c@kernel.dk>
+         <1535092156.11909.8.camel@burcheri.de>
+         <f2983f77-8cc7-2734-9acb-c2cea4a90bd8@oracle.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwAQMAAABtzGvEAAAAA3NCSVQICAjb4U/gAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABGUlEQVQYlUWQsUoDQRCGv71LjB7KSSBwwZCTgFhY2EYIHmJnZRMLo5AXUMRCBMHcE6iPoGBlINpoZXGVeQTFKqSxMgYtTBFcZw7EKfZn2Z2Z7//hr2ysZ+5tqFLmWKVaKKs0vWd9TJx2AibmoQcupj6CCZirqTgzA5hmsdtQWe5/xAREX7uJ3MLP9x4lyieNO5mcOxyM8HH79y/4Cdn9R3JDsts/uGO82yOMJf/ah1Y8tfQEIQt7Z7rCawtNiUpHFgYUdgTxgI1NAW6SvxoqWabbw0Bd5jpQibTNBC1F4nIMk2TWhTqIs+fSVpzfCsVR9eaiJf5W6mtWXK7O+vKR4nWkSYSuFbP4No3Ht6dpSN9pSMYmaXI1/usXT0FM3SoTKAAAAAAASUVORK5CYII=
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-43iEQBTRbqeAJEy0+Dhb"
+Date:   Fri, 31 Aug 2018 08:49:22 +0200
+Mime-Version: 1.0
+X-Mailer: Evolution 3.24.6 
+X-Provags-ID: V03:K1:rmaKKkuIB5hDWLY4x1F02EjXtC8AHMGZ8BsiZLqhfJXkci3/JIB
+ tOPsEgPfsG9KYexw/YfZDRTz/agAtQJKxLcna8nX/Zecr2GVx/siE6aDb6qPy2+lr629vLr
+ nsj8pZ6T21XqMnk4xFxKhfVaesiFuwqmC03Tqio3NvWIOrSQ4jvaYK/18q0x5Cb9D9rVceD
+ N7r7YQY64szF2os8Tx3zw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dxIrF4K7AwA=:7GQLwIKkom4DcgWXSdY7cp
+ Qd+y0095ayc182X8F1zUUYhM66guakMUdkHjeDhriRDyAyvHmrDS0LlARBYnekv9UcuC+ITI9
+ M/21OkD75Qle4rp8f3r6zmVTinMh142pzWFyqa6/+CS5MxOpXuK3zYGtbawRa+RwaTHV79pAz
+ 3Isr/6T/IYb0bPdaaqPDlQjbZepqaC0sG1b7nHZmv3XWOlLXtYa9vZl7RAaAj1JgUY/KKpujP
+ 1qHWwKMVlRy0rUjgEeIcbKgiwZskO1l/edRMEuxwQZefxijsJrifz0ceSEG7odnB9zWf6l59K
+ IROtqwx7LfAI6fQ3FvGL6L4pWeicKxKMseGYRXa+kGoaHGmwRxl8CT81GcxQX3MFRNl+UNV66
+ 7ILcWpNy1gUpfT8r956n+7L3ePOH5kxU3vOzdA0AsqCnxo+UA1VSNgNiI5zZiovHORzobIvgC
+ CHBpmtE44N1GvVoPaQ2GpTuTcCJBW/+DnvfWsbGTUDLPJh1FHcpyqzfgavBazi03ZxSAl1p14
+ 4m6JMmH0EFsBQ/l4MPMb4GsSXiqrCeO9DDIiElebzw7wa/pVuxAD9lQ6zSg4/E6+ZqA9wqj8K
+ 7xSV3qNUBYaFWqkEI8LL4yXBa2uqXwh55o9Vm+L4Y2OcrvvaEEqdp2s3CS0hf45Ruu2JZGiAv
+ vMwGk1pV94z/46hA8dlRiYrGlBcVJYzhUyBnf7E7Vt2RUzwPrbXQK676AiaYu4gM9MeA8Elam
+ TikdExnHpt7X0kvC9WBULLeWNELE2uTLPK/7f3cOyJXZWicEn8oeSywvwllXtc7HoGrVuEcBl
+ ijKoyif
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena <sumit.saxena@broadcom.com> wrote:
->
-> > -----Original Message-----
-> > From: Ming Lei [mailto:ming.lei@redhat.com]
-> > Sent: Wednesday, August 29, 2018 2:16 PM
-> > To: Sumit Saxena <sumit.saxena@broadcom.com>
-> > Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
-> > Subject: Re: Affinity managed interrupts vs non-managed interrupts
-> >
-> > Hello Sumit,
-> Hi Ming,
-> Thanks for response.
-> >
-> > On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
-> > >  Affinity managed interrupts vs non-managed interrupts
-> > >
-> > > Hi Thomas,
-> > >
-> > > We are working on next generation MegaRAID product where requirement
-> > > is- to allocate additional 16 MSI-x vectors in addition to number of
-> > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID adapter
-> > > supports 128 MSI-x vectors.
-> > >
-> > > To explain the requirement and solution, consider that we have 2
-> > > socket system (each socket having 36 logical CPUs). Current driver
-> > > will allocate total 72 MSI-x vectors by calling API-
-> > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
-> > > vectors will have affinity across NUMA node s and interrupts are
-> affinity
-> > managed.
-> > >
-> > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
-> > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
-> >
-> > Could you explain a bit what the specific use case the extra 16 vectors
-> is?
-> We are trying to avoid the penalty due to one interrupt per IO completion
-> and decided to coalesce interrupts on these extra 16 reply queues.
-> For regular 72 reply queues, we will not coalesce interrupts as for low IO
-> workload, interrupt coalescing may take more time due to less IO
-> completions.
-> In IO submission path, driver will decide which set of reply queues
-> (either extra 16 reply queues or regular 72 reply queues) to be picked
-> based on IO workload.
 
-I am just wondering how you can make the decision about using extra
-16 or regular 72 queues in submission path, could you share us a bit
-your idea? How are you going to recognize the IO workload inside your
-driver? Even the current block layer doesn't recognize IO workload, such
-as random IO or sequential IO.
+--=-43iEQBTRbqeAJEy0+Dhb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Frankly speaking, you may reuse the 72 reply queues to do interrupt
-coalescing by configuring one extra register to enable the coalescing mode,
-and you may just use small part of the 72 reply queues under the
-interrupt coalescing mode.
+On Fri, 2018-08-24 at 15:12 +0800, jianchao.wang wrote:
+> So this issue should not related with io scheduler.
 
-Or you can learn from SPDK to use one or small number of dedicated cores
-or kernel threads to poll the interrupts from all reply queues, then I
-guess you may benefit much compared with the extra 16 queue approach.
+Hi, I can't localize the specific issue and have changed the subject to blk=
+-mq.
 
-Introducing extra 16 queues just for interrupt coalescing and making it
-coexisting with the regular 72 reply queues seems one very unusual use
-case, not sure the current genirq affinity can support it well.
+> Would you please share the entire dmesg log or backtrace you got on 4.18.=
+3 ?
 
-> >
-> > >
-> > > All pre_vectors (16) will be mapped to all available online CPUs but e
-> > > ffective affinity of each vector is to CPU 0. Our requirement is to
-> > > have pre _vectors 16 reply queues to be mapped to local NUMA node with
-> > > effective CPU should be spread within local node cpu mask. Without
-> > > changing kernel code, we can
-> >
-> > If all CPUs in one NUMA node is offline, can this use case work as
-> expected?
-> > Seems we have to understand what the use case is and how it works.
->
-> Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
-> broken and irqbalancer takes care of migrating affected IRQs to online
-> CPUs of different NUMA node.
-> When offline CPUs are onlined again, irqbalancer restores affinity.
+Have you been able to reproduce this? I reproduced the backtrace on a vanil=
+la
+4.18.3:
+https://ibin.co/4E3q5dETqA5T.jpg
 
- irqbalance daemon can't cover managed interrupts, or you mean
-you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
+Best regards,
+Massimo
+--=-43iEQBTRbqeAJEy0+Dhb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Thanks,
-Ming Lei
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEjdL61EKP3VOAA+I8lQj3p5VSZjIFAluI5PIACgkQlQj3p5VS
+ZjLWOg/+OoHTqFGVd1DSUkWeie6Z0a3PmgFyFESfIIQDOz1xNIR4j/XPvxDR1gut
+BXa+lydeJ062GQI+QZZYfhCIOAh1QvrZ2A6dOabar1zM8cDUzaVuRV49a8CK7QOu
+DFN5Nh40G2uYRF8mrd6szurzJlTUm8dRixpTxQk5+pwfB3TZU3H2w/d7MAKIxDPH
+FzfUup+qLpXSoxUpz1JXSpeOsTVPPTgOqcTMI+nTnnY/WJAMfRr4mFP3MUOTpsWs
+ovQoHveFZK9OiWs2xlr+ybEQ3JHMqPecnD8PvKu5xkPA3tODbUYj/bxt+0swzrio
+bEZx4ZMWKhLXWppgRAbsPxFb9lXK7kIDDF3AGf3uorFtdPuiKaTd/oxt91oLagKt
+SR3xHG1bvyI0AqCQ1PSF4xlg+U7nRWmrramU63VIuoxGpxxRe2CqQP3wgL72UFOt
+YCyGFrfPaCmbIltczhkVZoA+UpY+yB2eoZIbYugVirqiZ3znTmbFYNZn3t8/jyqL
+sQBWmtuNIkakhqciF9w4AU385iCUpwkpQxUtXGzgKhyNmfaDV/u6ZcIvqpQi2y6D
+6kmFD8pTfDkSWCZblOC/c+e2TV3Xvg2HjzyT6Av0xEhs11vwZV2mzug69lrb++Et
+yj1xOwB/LU/q3/OzTGpq4RUDWoy/8qApi7yBryw0JSHreie5NSQ=
+=hEIB
+-----END PGP SIGNATURE-----
+
+--=-43iEQBTRbqeAJEy0+Dhb--
+
