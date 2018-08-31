@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB6EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBADC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5275F20658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5275F20658
+	by mail.kernel.org (Postfix) with ESMTP id 4364020658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4364020658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeHaUrS (ORCPT
+        id S1728709AbeHaUrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:47:18 -0400
-Received: from mout.perfora.net ([74.208.4.197]:49331 "EHLO mout.perfora.net"
+        Fri, 31 Aug 2018 16:47:22 -0400
+Received: from mout.perfora.net ([74.208.4.196]:32983 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728555AbeHaUrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:47:17 -0400
+        id S1728555AbeHaUrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:47:21 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MgvO2-1gHjAq3nqC-00M76b; Fri, 31 Aug 2018 18:38:53 +0200
+ 0LhuU8-1faRzG2yWI-00n6Dn; Fri, 31 Aug 2018 18:38:57 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 14/34] ARM: tegra: apalis_t30: move dr_mode property from phy to controller
-Date:   Fri, 31 Aug 2018 18:37:56 +0200
-Message-Id: <20180831163817.23970-15-marcel@ziswiler.com>
+Subject: [PATCH v2 16/34] ARM: tegra: apalis_t30: drop pwmleds
+Date:   Fri, 31 Aug 2018 18:37:58 +0200
+Message-Id: <20180831163817.23970-17-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
 References: <20180831163817.23970-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:jOwhrR4teg6PMEBnMzm1EmXO/UAoiSXhCHvaA5R+FyguRwQhSYC
- sCN7cxXOsVV/7Rude8TAY8b6wmo2DLNv0k4ToDETxF3xcV1vUep9NnHfdzQcDvOps58dT3o
- 24HjdKsXR7Gs/0WLgkRKqAEBDhcNyqxQngqFBX3sfdPQ9oI+9cpCMVfVhkGTQ26DMoLv4WN
- rvYDf8CLjuBgYmtzh62yg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ofyrKAKXahs=:0xXT3P8odnxg/KE91joebZ
- tJPLI9MXaNJvAV7j7n7kWw6m6rDV1l0sG2BYC/vBEUDgH7ADnaBO7iNm6NKwaRmVlnvyfbP4P
- 5T9xvFR7hP11o8LmXiGB1ienXJK3riElujMdb7trGPJq0sEHie7jUKpOO3J4SE1kr+5imQog9
- LCR0OqfErmrlsP3t67kXnNwIIqwazcedAWShuD3tXOHpghmXGGsoOpntfFSmWR+qQ8feN/LQJ
- Ois0vQGa2cc62FCb5t5SzEBvoYG0Ha8413YMslzjM0y0UYltInw9lOPiGacRfkhh4Gjr8PaeE
- YBB2YXwRqFSrb8lfUeXboW7EPOf7xApLoyDVxt6dTlalQQ287IgU3VuuqlIKIEFQmogMWyd2X
- jqENDdGfNEVaLoSs+zi8h5gLvXZW0vKbg7taExjyNjyXviEsx8s5YAYKH38feGFiVjmiI/sr2
- MepKGWuSnVom50iCkz1LVb6wdlYZxb7tmHseU56HCvtGWJLkRBw1lOtWTxIvGVehJWjc6X14U
- kR9smIR0GIYBLJ+YbKktVPMS7pIQf978vzr5imeaWuW4xVnPV+r6TFAYWUo1H2dkEqfswt9pS
- CJU0l/QyxLXk+IDcVPLRtTl74xOG/l0KvlwwL0Jl1iO2E/+M8iph7T1pDNzIcAeFn7qDbv5+H
- KzecOtcMjUvjHt6jkxUrGerCT8VhB3vJ5sXbt1M3AotyhTd+CDOk9yW84w4EBDDUN0Es=
+X-Provags-ID: V03:K1:B9XThUSb/49sOBdr/sjsTY+P8YHmQBJ6qFryBU8VyIamQ4/sfn3
+ HpY+i67sQk6KHqjZynw4CRorUsJdtVmqe3oukX6B131GjjHtdP3TXyZQOSDkzHcCDCykCcv
+ a5P13dWcg1jTdUS4dHW2YAaTrZs4Y8zOk+JXPKMc/F5b8SWyFQX4hFe/wjKonphUIavOPSP
+ Uwg42QZWBo+ACyaSWBJWw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JRstixR1fKg=:ouhYgu78rd+rzi4PL5ALAu
+ xOoRa4/5GeOdssNqQgJn6XiSGdkjl9ZmLhHI9566S3YVVtK5QwrmdYCpbq12CaaBIU/LNlXow
+ e+FhduSBPFKECaZHj3g5TonzV9UbQvUIHy9o2Ygp8aVS3EV3arI0O4bmytXlNuG/9DipPaWtv
+ vk6t3SidQRpCYUUhq3yQauNRVTwEeayIMVnoZkMLZQ3wBDO6ZwtyddGOR5PHmuWbGuQGKn2Uu
+ uqx41dgl08J4vOj6YOkQfVCCRQR19DIg4/DcD/WtK+3IyU3YGCxT0yeBV5SxmxE298tjxDCwK
+ dm67sWf9KLZQ9WpbOXWSK4TLIk+e+JvgbCvHmBQJ0VjudgmAbbr1D3qc3U4Ip3QDJ79AIeUex
+ +4+pGgor+QSErXyMjNtVVKSTVr8e92bEEoN7KipqlWHpys+2MQx8u8iwNdEVDKqUKDr1V0aRw
+ gOQt6hjoV5naMw1PZQUZ8/lMIyqFHfqPo/QQ5w1SvtX9GHGret7KgOj+MPBRATsrhFT6KhTbF
+ DmFVPfwD6YK/f4W/grBxZRACEtpUNFKvOI35xRzu657vodFBO4QQ5jaWZe+4+I4jOl8HXvuvt
+ NQuP30V5wu3o7FdHhqPqE89XxydqZpM0tnSpw1u5DYodafCCulZmF6fTT69Ub8vlBX041Q2Tr
+ CgskdgIb1zKruUFO5IZqo7cp/6fqHei5smLjZT1RH/Rx9ZnGKlBtXv+tswaBtvoytbt8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Move dr_mode property from USB PHY node to controller.
+Drop pwmleds in favour of using regular PWMs.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -69,26 +69,42 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-apalis-eval.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 22 ----------------------
+ 1 file changed, 22 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis-eval.dts b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-index 15e9de06c59a..9f2392a05532 100644
+index 300ce726ff4d..5d1bc8560dbe 100644
 --- a/arch/arm/boot/dts/tegra30-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra30-apalis-eval.dts
-@@ -155,11 +155,11 @@
- 	/* EHCI instance 0: USB1_DP/N -> USBO1_DP/N */
- 	usb@7d000000 {
- 		status = "okay";
-+		dr_mode = "otg";
+@@ -215,28 +215,6 @@
+ 		power-supply = <&reg_3v3>;
  	};
  
- 	usb-phy@7d000000 {
- 		status = "okay";
--		dr_mode = "otg";
- 		vbus-supply = <&reg_usbo1_vbus>;
- 	};
- 
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		pwm1 {
+-			label = "PWM1";
+-			pwms = <&pwm 3 19600>;
+-			max-brightness = <255>;
+-		};
+-
+-		pwm2 {
+-			label = "PWM2";
+-			pwms = <&pwm 2 19600>;
+-			max-brightness = <255>;
+-		};
+-
+-		pwm3 {
+-			label = "PWM3";
+-			pwms = <&pwm 1 19600>;
+-			max-brightness = <255>;
+-		};
+-	};
+-
+ 	reg_3v3: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "3.3V_SW";
 -- 
 2.14.4
 
