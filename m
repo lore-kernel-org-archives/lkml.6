@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F302DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EA1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37252083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B634A2083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ymlBV0qP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37252083F
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tN/d3jNx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B634A2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeHaXWV (ORCPT
+        id S1727592AbeHaXWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:22:21 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38808 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727500AbeHaXWU (ORCPT
+        Fri, 31 Aug 2018 19:22:22 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35834 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbeHaXWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:22:20 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VJDSUO085363;
-        Fri, 31 Aug 2018 14:13:28 -0500
+        Fri, 31 Aug 2018 19:22:21 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VJDTFl107882;
+        Fri, 31 Aug 2018 14:13:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535742808;
-        bh=23MEsB3WE6rDoSI2ZBb7wJHnp8NdvE2+R4eyD8SloWY=;
+        s=ti-com-17Q1; t=1535742809;
+        bh=uUQ2iDEix+p4lGC9u/N1yIBg24pApNYwSziUcOLwIas=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ymlBV0qP/nSQFtdsvzhDDtAtdIcRRf26xV4N1XyxUIWoZentPz63aWUlc2NPJ8p3E
-         XLFbwD0RcM9r8F/83b9mIrD6frgFI02SpyqrowXjOByldRFLq1eZtaGEZ1l8TdXHLc
-         0nkWrYg9tHh3PqjbFlQ+Panz7Dfd34g7LQ87Ols8=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJDSxl025220;
-        Fri, 31 Aug 2018 14:13:28 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        b=tN/d3jNxSbWIN/+jyPJ1C7R6RcL8UaENsuqKosmnpr4JkOUnP+sdxS3DEFOsbwyEu
+         pJp9wQQ5wRY5yDTHSM3xgR9HyXNL7cup9sjpxA2OCfDle+R+YrTyqB8XL4T5TiKbvZ
+         f5c8T69f5N/SVwwVdEK62xye46YomEQFk+GYydEs=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJDTbi014452;
+        Fri, 31 Aug 2018 14:13:29 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 31
  Aug 2018 14:13:28 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 31 Aug 2018 14:13:28 -0500
+ Fri, 31 Aug 2018 14:13:29 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJDRw0004124;
-        Fri, 31 Aug 2018 14:13:27 -0500
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VJDTPw004137;
+        Fri, 31 Aug 2018 14:13:29 -0500
 Received: from localhost (uda0226330.dhcp.ti.com [172.22.167.21])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7VJDRx13199;
-        Fri, 31 Aug 2018 14:13:27 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7VJDSx13203;
+        Fri, 31 Aug 2018 14:13:28 -0500 (CDT)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Keerthy <j-keerthy@ti.com>,
         Linus Walleij <linus.walleij@linaro.org>
 CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic base selection
-Date:   Fri, 31 Aug 2018 14:13:23 -0500
-Message-ID: <20180831191326.25106-2-afd@ti.com>
+Subject: [PATCH 3/5] gpio: davinci: Allocate the correct amount of memory for controller
+Date:   Fri, 31 Aug 2018 14:13:24 -0500
+Message-ID: <20180831191326.25106-3-afd@ti.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831191326.25106-1-afd@ti.com>
 References: <20180831191326.25106-1-afd@ti.com>
@@ -73,98 +73,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dev_name to get a unique label and use -1 for a base to get our
-selection automatically. We pull in all GPIOs per chip now so this
-does not have the effect of out of order labels like before.
+Previously we created a controller structure per bank of GPIO pins. This
+has since been changed to one per controller, but the allocation size
+was not changed. Fix this here.
 
-We do these both together so we can drop all the static data in one
-patch. This also lets us normalize the return paths as we don't need
-any cleanup after this change.
+This also leaves the variable 'nbank' unused, instead of removing it,
+move it down and use it to clean up a loop. For loops with multiple
+initializers and/or iteration expressions, especially ones that don't
+use those loop counters are quite hard to follow, fix this.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/gpio/gpio-davinci.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+ drivers/gpio/gpio-davinci.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index a5ece8ea79bc..14d1729927d3 100644
+index 14d1729927d3..121a7948f785 100644
 --- a/drivers/gpio/gpio-davinci.c
 +++ b/drivers/gpio/gpio-davinci.c
-@@ -41,7 +41,6 @@ struct davinci_gpio_regs {
- typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
- 
- #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
--#define MAX_LABEL_SIZE 20
- 
- static void __iomem *gpio_base;
- static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
-@@ -166,14 +165,12 @@ davinci_gpio_get_pdata(struct platform_device *pdev)
+@@ -165,7 +165,7 @@ davinci_gpio_get_pdata(struct platform_device *pdev)
  
  static int davinci_gpio_probe(struct platform_device *pdev)
  {
--	static int ctrl_num, bank_base;
- 	int gpio, bank, i, ret = 0;
+-	int gpio, bank, i, ret = 0;
++	int bank, i, ret = 0;
  	unsigned int ngpio, nbank, nirq;
  	struct davinci_gpio_controller *chips;
  	struct davinci_gpio_platform_data *pdata;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
--	char label[MAX_LABEL_SIZE];
+@@ -204,10 +204,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	else
+ 		nirq = DIV_ROUND_UP(ngpio, 16);
  
- 	pdata = davinci_gpio_get_pdata(pdev);
- 	if (!pdata) {
-@@ -228,10 +225,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 		}
- 	}
+-	nbank = DIV_ROUND_UP(ngpio, 32);
+-	chips = devm_kcalloc(dev,
+-			     nbank, sizeof(struct davinci_gpio_controller),
+-			     GFP_KERNEL);
++	chips = devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
+ 	if (!chips)
+ 		return -ENOMEM;
  
--	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
--	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
--		if (!chips->chip.label)
--			return -ENOMEM;
-+	chips->chip.label = dev_name(dev);
- 
- 	chips->chip.direction_input = davinci_direction_in;
- 	chips->chip.get = davinci_gpio_get;
-@@ -239,7 +233,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	chips->chip.set = davinci_gpio_set;
- 
- 	chips->chip.ngpio = ngpio;
--	chips->chip.base = bank_base;
-+	chips->chip.base = -1;
- 
- #ifdef CONFIG_OF_GPIO
- 	chips->chip.of_gpio_n_cells = 2;
-@@ -252,28 +246,20 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	}
+@@ -247,7 +244,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
  #endif
  	spin_lock_init(&chips->lock);
--	bank_base += ngpio;
  
- 	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
+-	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
++	nbank = DIV_ROUND_UP(ngpio, 32);
++	for (bank = 0; bank < nbank; bank++)
  		chips->regs[bank] = gpio_base + offset_array[bank];
  
  	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	platform_set_drvdata(pdev, chips);
- 	ret = davinci_gpio_irq_setup(pdev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	return 0;
--
--err:
--	/* Revert the static variable increments */
--	ctrl_num--;
--	bank_base -= ngpio;
--
--	return ret;
- }
- 
- /*--------------------------------------------------------------------------*/
 -- 
 2.18.0
 
