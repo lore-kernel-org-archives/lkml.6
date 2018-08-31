@@ -2,120 +2,218 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18B7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFF9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC08D2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:14:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TARDOJ4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC08D2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 08B1F20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B1F20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeHaTWL (ORCPT
+        id S1728506AbeHaTW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:22:11 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45994 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeHaTWK (ORCPT
+        Fri, 31 Aug 2018 15:22:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52741 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeHaTW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:22:10 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VFE9e7006424;
-        Fri, 31 Aug 2018 10:14:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535728450;
-        bh=q08HEBU4gy9nnMAsEz95z1AcP5gY6iBXy/JhjiFNE/c=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=TARDOJ4PDjlayK/q3K87zyhOrS9h7otgiOSxUSSj6MC3uSryoyrJ5/5xf1D5zg/6a
-         atsEHt5jtFKU+Sr759svPpbxiabtDe5ZCHaWSw9A0BSIiGNYxjn4CuNOpRrj2yDLQ+
-         lecrd5eTBfFWjEd3y3tCs3YiJGGVeL7DpsJRtK7E=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VFE9wa030814;
-        Fri, 31 Aug 2018 10:14:09 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 31
- Aug 2018 10:14:09 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 31 Aug 2018 10:14:09 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VFE99V025663;
-        Fri, 31 Aug 2018 10:14:09 -0500
-Received: from localhost (uda0226330.dhcp.ti.com [172.22.167.21])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7VFE8x19331;
-        Fri, 31 Aug 2018 10:14:09 -0500 (CDT)
-From:   "Andrew F. Davis" <afd@ti.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 2/3] ASoC: tas6424: Print full register name in error message
-Date:   Fri, 31 Aug 2018 10:14:06 -0500
-Message-ID: <20180831151407.18864-2-afd@ti.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180831151407.18864-1-afd@ti.com>
-References: <20180831151407.18864-1-afd@ti.com>
+        Fri, 31 Aug 2018 15:22:57 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFDwtr2195734
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 31 Aug 2018 08:13:58 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFDw362195731;
+        Fri, 31 Aug 2018 08:13:58 -0700
+Date:   Fri, 31 Aug 2018 08:13:58 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-4012e77a903d114f915fc607d6d2ed54a3d6c9b1@git.kernel.org>
+Cc:     peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
+        jannh@google.com, tglx@linutronix.de, nadav.amit@gmail.com,
+        bp@alien8.de, luto@kernel.org, riel@surriel.com,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
+          riel@surriel.com, linux-kernel@vger.kernel.org, jannh@google.com,
+          luto@kernel.org, tglx@linutronix.de, nadav.amit@gmail.com,
+          bp@alien8.de
+In-Reply-To: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
+References: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/nmi: Fix NMI uaccess race against CR3
+ switching
+Git-Commit-ID: 4012e77a903d114f915fc607d6d2ed54a3d6c9b1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current short version of the register name may be
-ambiguous when another fault register detection is added.
-Use the full name.
+Commit-ID:  4012e77a903d114f915fc607d6d2ed54a3d6c9b1
+Gitweb:     https://git.kernel.org/tip/4012e77a903d114f915fc607d6d2ed54a3d6c9b1
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Wed, 29 Aug 2018 08:47:18 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 31 Aug 2018 17:08:22 +0200
 
-While here fix comment about clearing faults, the CLEAR_FAULT
-register actually only clears sticky bits, which are only
-warnings, fault bits can only cleared by resolving the fault.
+x86/nmi: Fix NMI uaccess race against CR3 switching
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+A NMI can hit in the middle of context switching or in the middle of
+switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
+which could cause copy_from_user_nmi() and friends to read the wrong
+memory.
+
+Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
+
+
 ---
- sound/soc/codecs/tas6424.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/events/core.c          |  2 +-
+ arch/x86/include/asm/tlbflush.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/lib/usercopy.c         |  5 +++++
+ arch/x86/mm/tlb.c               |  7 +++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 0d6145549a98..aac559fffc1a 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -408,7 +408,7 @@ static void tas6424_fault_check_work(struct work_struct *work)
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5f4829f10129..dfb2f7c0d019 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
  
- 	ret = regmap_read(tas6424->regmap, TAS6424_GLOB_FAULT1, &reg);
- 	if (ret < 0) {
--		dev_err(dev, "failed to read FAULT1 register: %d\n", ret);
-+		dev_err(dev, "failed to read GLOB_FAULT1 register: %d\n", ret);
- 		goto out;
+ 	perf_callchain_store(entry, regs->ip);
+ 
+-	if (!current->mm)
++	if (!nmi_uaccess_okay())
+ 		return;
+ 
+ 	if (perf_callchain_user32(regs, entry))
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 29c9da6c62fc..58ce5288878e 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -175,8 +175,16 @@ struct tlb_state {
+ 	 * are on.  This means that it may not match current->active_mm,
+ 	 * which will contain the previous user mm when we're in lazy TLB
+ 	 * mode even if we've already switched back to swapper_pg_dir.
++	 *
++	 * During switch_mm_irqs_off(), loaded_mm will be set to
++	 * LOADED_MM_SWITCHING during the brief interrupts-off window
++	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
++	 * is for nmi_uaccess_okay()'s benefit.
+ 	 */
+ 	struct mm_struct *loaded_mm;
++
++#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
++
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+ 	/* last user mm's ctx id */
+@@ -246,6 +254,38 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or
++ * switching the loaded mm.  It can also be dangerous if we
++ * interrupted some kernel code that was temporarily using a
++ * different mm.
++ */
++static inline bool nmi_uaccess_okay(void)
++{
++	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	struct mm_struct *current_mm = current->mm;
++
++	VM_WARN_ON_ONCE(!loaded_mm);
++
++	/*
++	 * The condition we want to check is
++	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
++	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
++	 * is supposed to be reasonably fast.
++	 *
++	 * Instead, we check the almost equivalent but somewhat conservative
++	 * condition below, and we rely on the fact that switch_mm_irqs_off()
++	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
++	 */
++	if (loaded_mm != current_mm)
++		return false;
++
++	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
++
++	return true;
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
+index c8c6ad0d58b8..3f435d7fca5e 100644
+--- a/arch/x86/lib/usercopy.c
++++ b/arch/x86/lib/usercopy.c
+@@ -7,6 +7,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ 
++#include <asm/tlbflush.h>
++
+ /*
+  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+  * nested NMI paths are careful to preserve CR2.
+@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
+ 	if (__range_not_ok(from, n, TASK_SIZE))
+ 		return n;
+ 
++	if (!nmi_uaccess_okay())
++		return n;
++
+ 	/*
+ 	 * Even though this function is typically called from NMI/IRQ context
+ 	 * disable pagefaults so that its behaviour is consistent even when
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 9517d1b2a281..e96b99eb800c 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -305,6 +305,10 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+ 
++		/* Let nmi_uaccess_okay() know that we're changing CR3. */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		if (need_flush) {
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+@@ -335,6 +339,9 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		if (next != &init_mm)
+ 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+ 
++		/* Make sure we write CR3 before loaded_mm. */
++		barrier();
++
+ 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
  	}
- 
-@@ -453,7 +453,7 @@ static void tas6424_fault_check_work(struct work_struct *work)
- check_global_fault2_reg:
- 	ret = regmap_read(tas6424->regmap, TAS6424_GLOB_FAULT2, &reg);
- 	if (ret < 0) {
--		dev_err(dev, "failed to read FAULT2 register: %d\n", ret);
-+		dev_err(dev, "failed to read GLOB_FAULT2 register: %d\n", ret);
- 		goto out;
- 	}
- 
-@@ -530,7 +530,7 @@ static void tas6424_fault_check_work(struct work_struct *work)
- 	/* Store current warn value so we can detect any changes next time */
- 	tas6424->last_warn = reg;
- 
--	/* Clear any faults by toggling the CLEAR_FAULT control bit */
-+	/* Clear any warnings by toggling the CLEAR_FAULT control bit */
- 	ret = regmap_write_bits(tas6424->regmap, TAS6424_MISC_CTRL3,
- 				TAS6424_CLEAR_FAULT, TAS6424_CLEAR_FAULT);
- 	if (ret < 0)
--- 
-2.18.0
-
