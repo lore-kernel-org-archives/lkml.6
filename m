@@ -2,128 +2,112 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B38FC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D250C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC9F20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC9F20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BE08220661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:27:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="STVBA0C4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE08220661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeHaMcQ (ORCPT
+        id S1727684AbeHaMda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:32:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59097 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727390AbeHaMcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:32:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4F15620719; Fri, 31 Aug 2018 10:25:56 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 20BC32072F;
-        Fri, 31 Aug 2018 10:25:46 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 10:25:45 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 01/30] mfd: Makefile: Remove build option for
- MFD:sun4i-gpadc
-Message-ID: <20180831082545.z6oilsmizliin3li@flea>
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-2-embed3d@gmail.com>
+        Fri, 31 Aug 2018 08:33:30 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:56179 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbeHaMda (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:33:30 -0400
+Received: by mail-it0-f67.google.com with SMTP id d10-v6so6130350itj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/uO2yUjEs9fRJpUD0GczrOmUQ6mfM6VxBFqAxlyYXQ8=;
+        b=STVBA0C4FYnNBVCzNnqEg5jmX+zoQM+0rXBiIQWHPVnmbBPN8bKf+aQuNNr16PgXUQ
+         SKvx67Em6dsbkxTsZY1fee/1NnwZC9gapBpXrC8HKcQ3BzmeIve3aICYBmj1Z7hY6rUV
+         Kmm08YgSabUTCDlNdx8vfCGmtyYoW4V5lkY1k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/uO2yUjEs9fRJpUD0GczrOmUQ6mfM6VxBFqAxlyYXQ8=;
+        b=RoT1Cv5I2rf4IHLzZXg8CZ7AWOzKuWNEyoZ+/k+ER2QC4PgdSIamQ6r5Qgs3WRvJQA
+         CWvtPiganhS0PRwUjdsyr4DZFFl8aq9zHg+RMHMEqZyHvhJM1GErAAbt8m6WOlJBdtqa
+         Qqc7V1aijbuz9VhBU+7Q1/fv/CSVoX9/LCHct1ZkCKSqIC8akPZSMh3inaJqT22M7BTX
+         q+BGz/uAezuAmwjdwl3EHtczxRN6M1sbmYxyg8U84QZknG8k8yYpTKr6RqgWkaOHQ0Lc
+         esVAsft/3vL9fcsisijuAf8pGsUxXQz+C3R5Y9irT4O3MU26ZbBqXDvQPbkgyuEs4Lrd
+         xbVA==
+X-Gm-Message-State: APzg51CobYDNV4sTJCCsMJJs47nfWUWZv3FBdscO1LfYdNeaEgds9M+g
+        ijm9nmVHGotnQaPXkq8OaQUNbDVULFA=
+X-Google-Smtp-Source: ANB0VdbrQMGqpfNWnUUXCvySVzZM7enCBqC+6wl26qlg/By5XqH/hlDVny7fcXWzASa8hN4+ovl9Sw==
+X-Received: by 2002:a24:1196:: with SMTP id 144-v6mr4764386itf.45.1535704030540;
+        Fri, 31 Aug 2018 01:27:10 -0700 (PDT)
+Received: from mail-io0-f172.google.com (mail-io0-f172.google.com. [209.85.223.172])
+        by smtp.gmail.com with ESMTPSA id q6-v6sm3748896iob.65.2018.08.31.01.27.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 01:27:09 -0700 (PDT)
+Received: by mail-io0-f172.google.com with SMTP id y10-v6so9785552ioa.10
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:27:08 -0700 (PDT)
+X-Received: by 2002:a6b:2387:: with SMTP id j129-v6mr11141298ioj.86.1535704028001;
+ Fri, 31 Aug 2018 01:27:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j2u73h5y32ocesl5"
-Content-Disposition: inline
-In-Reply-To: <20180830154518.29507-2-embed3d@gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+In-Reply-To: <20180724140621.59624-2-tfiga@chromium.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Fri, 31 Aug 2018 17:26:56 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
+Message-ID: <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Pawel Osciak <posciak@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, p.zabel@pengutronix.de,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        andrew-ct.chen@mediatek.com, todor.tomov@linaro.org,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org, ezequiel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tomasz, just a few thoughts I came across while writing the
+stateless codec document:
 
---j2u73h5y32ocesl5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 24, 2018 at 11:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
+[snip]
+> +****************************************
+> +Memory-to-memory Video Decoder Interface
+> +****************************************
 
-Hi Philipp,
+Since we have a m2m stateless decoder interface, can we call this the
+m2m video *stateful* decoder interface? :)
 
-First, thanks for doing that rework. It was needed, and it's very much
-appreciated :)
+> +Conventions and notation used in this document
+> +==============================================
+[snip]
+> +Glossary
+> +========
 
-As you can imagine though, I have a bunch of comments.
-
-On Thu, Aug 30, 2018 at 05:44:49PM +0200, Philipp Rossak wrote:
-> Since we are merging the mfd driver into the sun4i-gpadc driver we need
-> to remove the build options for the sun4i-gpadc driver.
->=20
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  drivers/mfd/Makefile | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index e9fd20dba18d..c680994db988 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -220,7 +220,6 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+=3D intel_soc_=
-pmic_chtdc_ti.o
->  obj-$(CONFIG_MFD_MT6397)	+=3D mt6397-core.o
-> =20
->  obj-$(CONFIG_MFD_ALTERA_A10SR)	+=3D altera-a10sr.o
-> -obj-$(CONFIG_MFD_SUN4I_GPADC)	+=3D sun4i-gpadc.o
-
-One of the things we should strive for is bisectability, which means
-being able to have a working driver at every point in time while
-introducing the features.
-
-In this particular case, this isn't really a problem since you're
-removing part of code that were never really enabled, but you should
-at least document why in your commit log.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---j2u73h5y32ocesl5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluI+4gACgkQ0rTAlCFN
-r3R/VhAAmQ4SVvjzMqsfkWiQvO3ZbetzY3B9dF/6KJqtJk+2r3UHh8pk6jeS4h+H
-aOjik1EexDdOO06eQGIcRUjpt0CBcFeZ1AIFb5JouhFQH6lhWAlGRPvrHmRE7KX0
-vlYCjDtZLzA1QNv8cmN2oXeI4sVCvGdNzNaiyBaPj2ao9aOWPofgZNLBWUTDTOgf
-LEmXabxt6VqP/Ah8BgV4yEHxcU4rYKIBUYuQljL7hXaLyGR8r8NcFmBa4CUIgKUc
-lB8fdrvI9ADNl4bXFleBe7muAyU8rTFcfKCmGJ7IXkd8pQzEDxnpccY1ikdAGtCD
-95oLWBVNRvRxXwzCmGjGIKhQ55/uxixnO+EZHoL7dFFFPGdqQtvM01EJqx50Ccri
-ecb1NWiOwNSnaY/Z4/oWWEBAoYeRex21dhbInF4NXlob54U7r/CDlcy/StGTTF/H
-jvg/YmrEA00GF9/ykXJSy64qyBC0p0gA9DrXRq18eXVVo/utNgMi8hHKBoFUq5Pe
-iz0XdpQKlgGWalc3rx0cjNFWsiaAgg9Qq/4qyozBHJ6jcgs4Hql2Jdx3/ey/OTsv
-i40fGwAiJKRj30lEh5jmivvuRQfTMRuXk3OLFRdwwbO5wTBmBSVblP/CS5T5L802
-ttYxhpAmjH3XgpmSubblkg74EUA6OIVVci/ThHTmgbM7Yu8hatk=
-=7tUJ
------END PGP SIGNATURE-----
-
---j2u73h5y32ocesl5--
+I think these sections apply to both stateless and stateful. How about
+moving then into dev-codec.rst and mentioning that they apply to the
+two following sections?
