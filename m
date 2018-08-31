@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C49C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48099C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE982083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B5F2082C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCr52TZd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE982083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aq0waw4d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B5F2082C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeHaGAS (ORCPT
+        id S1727521AbeHaF7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 02:00:18 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:40741 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeHaF7Y (ORCPT
+        Fri, 31 Aug 2018 01:59:22 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41223 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeHaF7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:59:24 -0400
-Received: by mail-yb1-f193.google.com with SMTP id f4-v6so330906ybp.7;
-        Thu, 30 Aug 2018 18:54:22 -0700 (PDT)
+        Fri, 31 Aug 2018 01:59:21 -0400
+Received: by mail-yb1-f196.google.com with SMTP id q18-v6so330247ybg.8;
+        Thu, 30 Aug 2018 18:54:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4hs1gt3E+KmSCGAk5j+8gYSMsQ09LEqBMEiVFXkCT1w=;
-        b=CCr52TZdXMKZ1fa39IxMiQlXIo9YKFhZARy8r1UF/SeOX0Gv0mTeXLjy79n/LOAZY2
-         huDzYiFBzPtqLmJ+0tNxBqqVXtr+qPIOY+WJwUEbWmniNV6IdjQQkl7f4orQRx4Bnjq+
-         sEBGqPoeNkYOKK50bdXfRKAGnIqiaqg5FuK/QdTgUQoXj7Krx/L3VVU+OweiUptI/9Ha
-         FYxiDskNBzGYxZ/pVfd04X8ghjhQSl2eea2JCldTw/zvT93SCxTf3smeM0GExgBe+GT6
-         rhj1lJ7A6aK1Z/CMh32a+QPoT4Ifc5enIVGNqJ0NTOsbF+Tp7nWeTHBn3nVrukPcSztH
-         srkg==
+        bh=LkEE0pjSjrKxZKabWLhZY5urVfS7TzuQIWA33suAzNs=;
+        b=aq0waw4df6zDbvfZ6ZB5CqAcqgDdx9PlclK5giTqoGn8kPUhXWKDffW1/lkkguo33g
+         lB2h2L5lz8n7NLxhSDlDaPIj7QY2GljarhMPJEgJXL95gIsDEk0APC8y41jdm7yyAnOR
+         RuL9mqAANWvH3Yfg1XkKzhOB7kWIRyefDQWWmwxM5/zw/tjsh5yKVOEzaJpvfJgrbujH
+         Y2Xj2Jfit9xiVF7NieG0yn0CG3wNGXdE8ygIVA5jA403d9IZkVHDro99sawob+tzgclK
+         splK05yVG79/DX7y53IH+9s+Dt1a/O3QkB4LXgZEKOPNrV7TUMdKpsNFZcKspEM6UO8f
+         6yEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4hs1gt3E+KmSCGAk5j+8gYSMsQ09LEqBMEiVFXkCT1w=;
-        b=o2GTCk0c00f5gA2/jb4BInUC2YoLAyKg7yC2tHfdbl6cFs5kPMI11VyPeD6wYJUS76
-         N1lIfpgrb5pDt/u6CkJx8UAsvkZZhLr2NRBH+LdLemY3Qkjn+SIs3uv+w62PvERvIGJ+
-         2STKUc8e18BQan0o6vWVCGBGxO0S0fgGGtFtwyuAaLG06K7el1Zc4IbO59/buCTaN6Zm
-         RM4BNNuTQQgbICAJhc0sqtkbF+uhTaHTcA3JS5o4TJtwPIEKNjt1UvX0NBuSTs8j9FwO
-         DeR8StwL+jrLjO6rHJfy0z3/6/dXT4v2YVR6d9bnT/et0MmYSqVRT9ea3E2M+uer0STg
-         W2OQ==
-X-Gm-Message-State: APzg51A6MYUGyby6zz+Jpw67n5aa3Ls2pVzTvRQxI3vZIq66yjI8JQoe
-        bsKZhmNrhe6vwhBcQE9FJGU=
-X-Google-Smtp-Source: ANB0VdYP61pZSIzzSTx74PTZPt/juwaMyGnbkWUqzVdOjmBhE+d9kO9tDUjGUakeiqzddnYuqKB2vg==
-X-Received: by 2002:a25:c9c3:: with SMTP id z186-v6mr7512020ybf.232.1535680461835;
-        Thu, 30 Aug 2018 18:54:21 -0700 (PDT)
+        bh=LkEE0pjSjrKxZKabWLhZY5urVfS7TzuQIWA33suAzNs=;
+        b=YElWIp9iroyROxbfLe+AUOgRc9OVyC35gSyk7BmHpnf1i0NWjLP3QXcbqYl0vFWB7W
+         U3W7rBy71RCoCe2INCL8caQTrKSK2UAmnaoOG7OoSzCMBlxVJEAfScFd5ZWa2LcOG0AK
+         M4ESY9hWpMMQDPXqRS6lt2UcjiSBx5kxoUPX1g7Dp5MK5GQic0rJWZZ36tYH87lnOSNL
+         pyU971MqIz1r8PD8Z8qavjqMHRAgXDA5uqKI0Uw+epEtho2kX04/egIkkyNURBzAEJX1
+         erP9erH1cpEEtyvHAt9PhzsvM2ogMPzDA6rYzQ2AWSE/0HZBoSXtDrGCWH58qu/AcEBf
+         jw+Q==
+X-Gm-Message-State: APzg51BEdco2Nt8ahyJRjuSPUMegeJqBvK+47cbTLpD48Gkzj59Ku2rF
+        rcLmZSU80pOUrkVUXA9Unhk=
+X-Google-Smtp-Source: ANB0VdY5+1wfH2vnaSFw9078pPb/MFhbh2Xjw87MIyhi+p3UgfnGPOtwZXYOM7789tdJYVlDzwioqw==
+X-Received: by 2002:a25:cc56:: with SMTP id l83-v6mr2788260ybf.329.1535680459093;
+        Thu, 30 Aug 2018 18:54:19 -0700 (PDT)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.20
+        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:54:21 -0700 (PDT)
+        Thu, 30 Aug 2018 18:54:18 -0700 (PDT)
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -65,9 +65,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 07/15] blkcg: consolidate bio_issue_init and blkg association
-Date:   Thu, 30 Aug 2018 21:53:48 -0400
-Message-Id: <20180831015356.69796-8-dennisszhou@gmail.com>
+Subject: [PATCH 04/15] blkcg: fix ref count issue with bio_blkcg using task_css
+Date:   Thu, 30 Aug 2018 21:53:45 -0400
+Message-Id: <20180831015356.69796-5-dennisszhou@gmail.com>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180831015356.69796-1-dennisszhou@gmail.com>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
@@ -78,134 +78,168 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-This removes the now duplicate association logic in blk-throttle and
-blk-iolatency. bio_issue_init is moved into blkcg_bio_issue_check and
-into the bio clone variants to allow for the future addition of a
-latency moving average for IOs.
+The accessor function bio_blkcg either returns the blkcg associated with
+the bio or finds one in the current context. This can cause an issue
+when trying to associate a bio with a blkcg. Particularly, it's the
+third case that is problematic:
+
+	return css_to_blkcg(task_css(current, io_cgrp_id));
+
+As the above may race against task migration and the cgroup exiting, it
+is not always ok to take a reference on the blkcg returned from
+bio_blkcg.
+
+This patch adds association ahead of calling bio_blkcg rather than
+after. This prevents makes association a required and explicit step
+along the code paths for calling bio_blkcg. blk_get_rl is modified
+as well to get a reference to the blkcg it may use and blk_put_rl
+will always put the reference back. Association is also moved above the
+bio_blkcg call to ensure it will not return NULL in blk-iolatency.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 ---
- block/bio.c                |  2 ++
- block/blk-iolatency.c      | 24 +-----------------------
- block/blk-throttle.c       | 13 +------------
- block/bounce.c             |  2 ++
- include/linux/blk-cgroup.h |  2 ++
- 5 files changed, 8 insertions(+), 35 deletions(-)
+ block/bio.c                | 10 +++++--
+ block/blk-iolatency.c      |  2 +-
+ include/linux/blk-cgroup.h | 53 ++++++++++++++++++++++++++++++++------
+ 3 files changed, 54 insertions(+), 11 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index e937f9681188..ab41f5b7eb1f 100644
+index 4473ccd22987..09a31e4d46bb 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -610,6 +610,8 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
- 	bio->bi_io_vec = bio_src->bi_io_vec;
- 
- 	bio_clone_blkcg_association(bio, bio_src);
+@@ -1962,13 +1962,19 @@ int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
+  *
+  * This function takes an extra reference of @blkcg_css which will be put
+  * when @bio is released.  The caller must own @bio and is responsible for
+- * synchronizing calls to this function.
++ * synchronizing calls to this function.  If @blkcg_css is NULL, a call to
++ * blkcg_get_css finds the current css from the kthread or task.
+  */
+ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css)
+ {
+ 	if (unlikely(bio->bi_css))
+ 		return -EBUSY;
+-	css_get(blkcg_css);
 +
-+	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
++	if (blkcg_css)
++		css_get(blkcg_css);
++	else
++		blkcg_css = blkcg_get_css();
++
+ 	bio->bi_css = blkcg_css;
+ 	return 0;
  }
- EXPORT_SYMBOL(__bio_clone_fast);
- 
 diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 22b2ff0440cc..9d7052bad6f7 100644
+index 19923f8a029d..62fdd9002c29 100644
 --- a/block/blk-iolatency.c
 +++ b/block/blk-iolatency.c
-@@ -395,34 +395,12 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio,
- 				     spinlock_t *lock)
- {
- 	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
--	struct blkcg *blkcg;
--	struct blkcg_gq *blkg;
--	struct request_queue *q = rqos->q;
-+	struct blkcg_gq *blkg = bio->bi_blkg;
- 	bool issue_as_root = bio_issue_as_root_blkg(bio);
- 
- 	if (!blk_iolatency_enabled(blkiolat))
+@@ -404,8 +404,8 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio,
  		return;
  
--	rcu_read_lock();
--	bio_associate_blkcg(bio, NULL);
--	blkcg = bio_blkcg(bio);
--	blkg = blkg_lookup(blkcg, q);
--	if (unlikely(!blkg)) {
--		if (!lock)
--			spin_lock_irq(q->queue_lock);
--		blkg = __blkg_lookup_create(blkcg, q);
--		if (IS_ERR(blkg))
--			blkg = NULL;
--		if (!lock)
--			spin_unlock_irq(q->queue_lock);
--	}
--	if (!blkg)
--		goto out;
--
--	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
--	bio_associate_blkg(bio, blkg);
--out:
--	rcu_read_unlock();
- 	while (blkg && blkg->parent) {
- 		struct iolatency_grp *iolat = blkg_to_lat(blkg);
- 		if (!iolat) {
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index c626e1f7cdcd..f2b355338894 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -2126,21 +2126,11 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
- }
- #endif
- 
--static void blk_throtl_assoc_bio(struct throtl_grp *tg, struct bio *bio)
--{
--#ifdef CONFIG_BLK_DEV_THROTTLING_LOW
--	/* fallback to root_blkg if we fail to get a blkg ref */
--	if (bio->bi_css && bio_associate_blkg(bio, tg_to_blkg(tg)))
--		bio_associate_blkg(bio, bio->bi_disk->queue->root_blkg);
--	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
--#endif
--}
--
- bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
- 		    struct bio *bio)
- {
- 	struct throtl_qnode *qn = NULL;
--	struct throtl_grp *tg = blkg_to_tg(blkg ?: q->root_blkg);
-+	struct throtl_grp *tg = blkg_to_tg(blkg);
- 	struct throtl_service_queue *sq;
- 	bool rw = bio_data_dir(bio);
- 	bool throttled = false;
-@@ -2159,7 +2149,6 @@ bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
- 	if (unlikely(blk_queue_bypass(q)))
- 		goto out_unlock;
- 
--	blk_throtl_assoc_bio(tg, bio);
- 	blk_throtl_update_idletime(tg);
- 
- 	sq = &tg->service_queue;
-diff --git a/block/bounce.c b/block/bounce.c
-index bc63b3a2d18c..bea3b0cbe4a7 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -259,6 +259,8 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
- 
- 	bio_clone_blkcg_association(bio, bio_src);
- 
-+	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
-+
- 	return bio;
- }
- 
+ 	rcu_read_lock();
++	bio_associate_blkcg(bio, NULL);
+ 	blkcg = bio_blkcg(bio);
+-	bio_associate_blkcg(bio, &blkcg->css);
+ 	blkg = blkg_lookup(blkcg, q);
+ 	if (unlikely(!blkg)) {
+ 		if (!lock)
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 9931ec2f4e9e..55c348d66372 100644
+index c7386464ec4c..d3cafb1eda48 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -844,6 +844,8 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
- 	}
+@@ -230,22 +230,52 @@ int blkg_conf_prep(struct blkcg *blkcg, const struct blkcg_policy *pol,
+ 		   char *input, struct blkg_conf_ctx *ctx);
+ void blkg_conf_finish(struct blkg_conf_ctx *ctx);
  
-+	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
++/**
++ * blkcg_get_css - find and get a reference to the css
++ *
++ * Find the css associated with either the kthread or the current task.
++ */
++static inline struct cgroup_subsys_state *blkcg_get_css(void)
++{
++	struct cgroup_subsys_state *css;
 +
- 	return !throtl;
++	rcu_read_lock();
++
++	css = kthread_blkcg();
++	if (css) {
++		css_get(css);
++	} else {
++		while (true) {
++			css = task_css(current, io_cgrp_id);
++			if (likely(css_tryget(css)))
++				break;
++			cpu_relax();
++		}
++	}
++
++	rcu_read_unlock();
++
++	return css;
++}
+ 
+ static inline struct blkcg *css_to_blkcg(struct cgroup_subsys_state *css)
+ {
+ 	return css ? container_of(css, struct blkcg, css) : NULL;
  }
  
++/**
++ * bio_blkcg - grab the blkcg associated with a bio
++ * @bio: target bio
++ *
++ * This returns the blkcg associated with a bio, NULL if not associated.
++ * Callers are expected to either handle NULL or know association has been
++ * done prior to calling this.
++ */
+ static inline struct blkcg *bio_blkcg(struct bio *bio)
+ {
+-	struct cgroup_subsys_state *css;
+-
+ 	if (bio && bio->bi_css)
+ 		return css_to_blkcg(bio->bi_css);
+-	css = kthread_blkcg();
+-	if (css)
+-		return css_to_blkcg(css);
+-	return css_to_blkcg(task_css(current, io_cgrp_id));
++	return NULL;
+ }
+ 
+ static inline bool blk_cgroup_congested(void)
+@@ -519,6 +549,11 @@ static inline struct request_list *blk_get_rl(struct request_queue *q,
+ 	rcu_read_lock();
+ 
+ 	blkcg = bio_blkcg(bio);
++	if (blkcg) {
++		css_get(&blkcg->css);
++	} else {
++		blkcg = css_to_blkcg(blkcg_get_css());
++	}
+ 
+ 	/* bypass blkg lookup and use @q->root_rl directly for root */
+ 	if (blkcg == &blkcg_root)
+@@ -550,6 +585,8 @@ static inline struct request_list *blk_get_rl(struct request_queue *q,
+  */
+ static inline void blk_put_rl(struct request_list *rl)
+ {
++	/* an additional ref is always taken for rl */
++	css_put(&rl->blkg->blkcg->css);
+ 	if (rl->blkg->blkcg != &blkcg_root)
+ 		blkg_put(rl->blkg);
+ }
+@@ -790,10 +827,10 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 	bool throtl = false;
+ 
+ 	rcu_read_lock();
+-	blkcg = bio_blkcg(bio);
+ 
+ 	/* associate blkcg if bio hasn't attached one */
+-	bio_associate_blkcg(bio, &blkcg->css);
++	bio_associate_blkcg(bio, NULL);
++	blkcg = bio_blkcg(bio);
+ 
+ 	blkg = blkg_lookup(blkcg, q);
+ 	if (unlikely(!blkg)) {
 -- 
 2.17.1
 
