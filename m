@@ -3,137 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8D5C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497C9C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532422083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532422083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id EB7222083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7222083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeHaSRc (ORCPT
+        id S1728139AbeHaSTZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:17:32 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43531 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeHaSRc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:17:32 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 130-v6so1455992qkd.10
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:09:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QlqunTzw1AZE+0hYlMbmWmLxRG8G3jzolZ90fjqhEuw=;
-        b=ZotjzPo5lTsdy1KBtJxkhgHytFQOSvQivJB6TMh6K1mWzAhShuLZqKgEwurJ0BakUE
-         rUCLwq3jNC8H5PvT2vh5lwvKKzVu9vnZY8LuGbufRgo8Vj2jSy/2FfVTcTmz7czdJ0cu
-         sL8Gki+mReaFLolHeeSzx2QVTeVlNXjGYfqd7NLPuiU3zJKOvipm5GjLy2KWTFT3WcG0
-         DXC0VoDxecRqUdyKtNuMyGAPPK2BfgebRb5+trWFIgLjDLX95CWS/zDUT/eR/uEc+OIL
-         ZbkOrMAQFw3RvVB56S7CljLF6t2QW8mjY30SEN1lF+Xa89mVQ2JXdCvhGOy6SzMeLEV8
-         8C3A==
-X-Gm-Message-State: APzg51D+FaFYJ3X9hfRpR58eJq3QLKozerJPwoF8kmc21Ro9PxaJ7ifF
-        4Ic466BcJCHQYwvbqgD/c4Ce9oSmWyTa31svh3U=
-X-Google-Smtp-Source: ANB0VdYPyC0gOf24GDvxF6Uo79BQoK0t/JBn4Ozr281+SOs8X2uZ2lQQK4s9e+XLxhcQVJiN9oQQNW5HJNL9DvkS/HU=
-X-Received: by 2002:a37:1b91:: with SMTP id m17-v6mr15698910qkh.173.1535724590633;
- Fri, 31 Aug 2018 07:09:50 -0700 (PDT)
+        Fri, 31 Aug 2018 14:19:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40340 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727432AbeHaSTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:19:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1A24940201BD;
+        Fri, 31 Aug 2018 14:11:44 +0000 (UTC)
+Received: from [10.36.116.26] (ovpn-116-26.ams2.redhat.com [10.36.116.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C76AC49B0D;
+        Fri, 31 Aug 2018 14:11:38 +0000 (UTC)
+Subject: Re: [RFC 09/13] iommu/smmuv3: Get prepared for nested stage support
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "\"eric.auger.pro"@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        "yi.l.liu\""@linux.intel.com, will.deacon@arm.com,
+        robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        christoffer.dall@arm.com
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+ <1535026656-8450-10-git-send-email-eric.auger@redhat.com>
+ <538a2b88-dec5-a6fa-d918-486284eb56a9@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <012d4950-7a06-2d59-85a0-44d511ad893b@redhat.com>
+Date:   Fri, 31 Aug 2018 16:11:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180830223429.30051-1-igor.stoppa@huawei.com>
-In-Reply-To: <20180830223429.30051-1-igor.stoppa@huawei.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 Aug 2018 16:09:34 +0200
-Message-ID: <CAK8P3a2JasKXtXYoV7KsSZt4TwkffsBjrf=LK1HZJx0KFKCcow@mail.gmail.com>
-Subject: Re: [PATCH 00/23] Make use of unlikely() more consistently.
-To:     igor.stoppa@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        igor.stoppa@huawei.com, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Alasdair Kergon <agk@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Archit Taneja <architt@codeaurora.org>, asolokha@kb.kras.ru,
-        bvanassche@acm.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        chien.tin.tung@intel.com, chunkeey@googlemail.com,
-        Christoph Lameter <cl@linux.com>,
-        David Airlie <airlied@linux.ie>,
-        David Daney <ddaney@caviumnetworks.com>,
-        Dennis Zhou <dennisszhou@gmail.com>, dima@arista.com,
-        Doug Ledford <dledford@redhat.com>,
-        "Latif, Faisal" <faisal.latif@intel.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Daode Huang <huangdaode@hisilicon.com>,
-        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, ejt@redhat.com,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Kees Cook <keescook@chromium.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Madalin-Cristian Bucur <madalin.bucur@nxp.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>, michal.kazior@tieto.com,
-        Mike Snitzer <snitzer@redhat.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Clark <robdclark@gmail.com>, rolandd@cisco.com,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shuah Khan <shuah@kernel.org>,
-        srivatsa.bhat@linux.vnet.ibm.com, sviau@codeaurora.org,
-        Tejun Heo <tj@kernel.org>, yisen.zhuang@huawei.com,
-        zijun_hu@htc.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <538a2b88-dec5-a6fa-d918-486284eb56a9@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 14:11:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 14:11:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:35 AM Igor Stoppa <igor.stoppa@gmail.com> wrote:
->
-> In some cases, checks that are expected to not fail, do not take advantage
-> of specifying that the condition being tested is unlikely().
->
-> Ex:
->
-> #define assert(condition)
-> ...
->         if (!(condition))
->                 error_action()
-> ...
->
-> should be
->
-> #define assert(condition)
-> ...
->         if (unlikely(!(condition)))
->                 error_action()
-> ...
+Hi Jean-Philippe,
 
-There is a potential that this introduces false-postive -Wmaybe-uninitialized
-warnings when CONFIG_PROFILE_ANNOTATED_BRANCHES is
-set, since that turns unlikely() into a complex operation that in turn
-confuses the compiler so it no longer keeps track of which variables
-are initialized or not.
+On 08/31/2018 03:20 PM, Jean-Philippe Brucker wrote:
+> On 23/08/18 13:17, Eric Auger wrote:
+>>  	if (ste->s1_cfg) {
+>> -		BUG_ON(ste_live);
+> 
+> Scary! :) The current code assumes that it can make modifications to the
+> STE in any order and enable translation after a sync. So far I haven't
+> been able to find anything that violates this rule in the spec: "If
+> software modifies the structure while it is valid, it must not allow the
+> structure to enter an invalid intermediate state." So maybe it's fine,
+> though to be safe I would have started with disabling the STE
+> (http://www.linux-arm.org/git?p=linux-jpb.git;a=commitdiff;h=936e49f923e101c061269eadd5fa43fef819d2e9)
 
-It's possible that none of your patches do that, but one needs to be aware
-of the problem, and possibly revert some of your patches if it does cause
-warning regressions in drivers that don't actually benefit from the
-micro-optimization.
+Yep this works with my setup but I was waiting for such kind of comments
+to turn this prototype into something more "production level" ;-) Did
+you send anything upstream, related to this branch?
 
-> In other cases, the hint is given twice: once explicitly and once inside
-> whatever test is being performed: assert(), BUG_ON(), WARN_ON(), etc.
->
-> Ex:
->
-> if (unlikely(WARN_ON(condition, message)))
-> ...
+Thanks
 
-Removing those is definitely fine.
-
-        Arnd
+Eric
+> 
+> Thanks,
+> Jean
+> 
