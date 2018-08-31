@@ -2,149 +2,94 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED898C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE2120835
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:10:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hs7gsUYu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE2120835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CF47F20835
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:12:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF47F20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728838AbeHaUSp (ORCPT
+        id S1729188AbeHaUUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:18:45 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52444 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbeHaUSp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:18:45 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7VG8w5d126928;
-        Fri, 31 Aug 2018 16:10:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=DZ/qz/aTQJ/Lq7CDgnT32UuI7j+FCETi797sDvq6fwE=;
- b=hs7gsUYuLKaSbPv6BhGil7dVu+F8m7EZVfFG7mjJ5V/L0SxeWbPALkEtx6pQ0DoQEniX
- +bWRaWlbECzv0UCokm3JzEZx7zy7QPOAooj6b2WwZDcmdEvn5tCiMzthxZ0HxLwCgNns
- h3JqiR0zJdEZQJJvoQbEAsvvXJP2EPGI4SWM5jfg05dX/E0Ok8OSc7L1yTV45uC5dV2R
- swoQvRMn9dQbqv/Zy5CBAm4vr3Jcm9j0Ab6TrsDwcUet2jqcT312XPtSKTT/hl6UNaEv
- a6rpoBQSuRqF1EN59HxRzMuQiZeBmZ7W8sRzsHEBHfD0TlMDw+pRIyXGwLr9rBb8IKX3 uQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2m2xhucb0w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Aug 2018 16:10:03 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7VG9uTx008044
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Aug 2018 16:09:57 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7VG9uOF027981;
-        Fri, 31 Aug 2018 16:09:56 GMT
-Received: from [10.39.231.202] (/10.39.231.202)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 31 Aug 2018 09:09:56 -0700
-Subject: Re: [RFC PATCH 1/2] pipe: introduce busy wait for pipe
-To:     subhra mazumdar <subhra.mazumdar@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, dhaval.giani@oracle.com
-References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
- <20180830202458.32579-2-subhra.mazumdar@oracle.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <db00b844-055e-2024-2334-8e4b0e0ac5c5@oracle.com>
-Date:   Fri, 31 Aug 2018 12:09:47 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 16:20:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32906 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728502AbeHaUUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:20:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C7E9ED1;
+        Fri, 31 Aug 2018 09:12:01 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D2D33F557;
+        Fri, 31 Aug 2018 09:12:01 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id CC3FA1AE30C7; Fri, 31 Aug 2018 17:12:13 +0100 (BST)
+Date:   Fri, 31 Aug 2018 17:12:13 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com
+Subject: [GIT PULL] arm64: fixes for -rc2
+Message-ID: <20180831161213.GH30626@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180830202458.32579-2-subhra.mazumdar@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9001 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808310167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/2018 4:24 PM, subhra mazumdar wrote:
-> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
-> seconds a thread should spin if pipe is empty or full before sleeping. This
-> is similar to network sockets. Workloads like hackbench in pipe mode
-> benefits significantly from this by avoiding the sleep and wakeup overhead.
-> Other similar usecases can benefit. pipe_wait_flag is used to signal any
-> thread busy waiting. pipe_busy_loop_timeout checks if spin time is over.
-> 
-> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
-> ---
->  include/linux/pipe_fs_i.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-> index e7497c9..fdfd2a2 100644
-> --- a/include/linux/pipe_fs_i.h
-> +++ b/include/linux/pipe_fs_i.h
-> @@ -1,6 +1,8 @@
->  #ifndef _LINUX_PIPE_FS_I_H
->  #define _LINUX_PIPE_FS_I_H
->  
-> +#include <linux/sched/clock.h>
-> +
->  #define PIPE_DEF_BUFFERS	16
->  
->  #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
-> @@ -54,6 +56,8 @@ struct pipe_inode_info {
->  	unsigned int waiting_writers;
->  	unsigned int r_counter;
->  	unsigned int w_counter;
-> +	unsigned int pipe_ll_usec;
-> +	unsigned long pipe_wait_flag;
->  	struct page *tmp_page;
->  	struct fasync_struct *fasync_readers;
->  	struct fasync_struct *fasync_writers;
-> @@ -157,6 +161,21 @@ static inline int pipe_buf_steal(struct pipe_inode_info *pipe,
->  	return buf->ops->steal(pipe, buf);
->  }
->  
-> +static inline unsigned long pipe_busy_loop_current_time(void)
-> +{
-> +	return (unsigned long)(local_clock() >> 10);
+Hi Linus,
 
-Why ">> 10" ? local_lock() has nanosec units, and you compare to the tunable
-pipe_llc_sec which has microsec units.  Should be ">> 3".  Better yet, redefine 
-the tunable to have nanosec units.  I suspect you will need very large values
-of the tunable to show similar results.
+A few arm64 fixes came in this week, specifically fixing some nasty
+truncation of return values from firmware calls and resolving a VM_BUG_ON
+due to accessing uninitialised struct pages corresponding to NOMAP pages.
+Details in the tag.
 
-Also, since this type of optimization consumes CPU extra cycles that could
-be used by other tasks, show the overall CPU utilization before and after
-the optimization, such as by using "time hackbench ...".
+Please pull, thanks.
 
-- Steve
+Will
 
-> +}
-> +
-> +static inline bool pipe_busy_loop_timeout(struct pipe_inode_info *pipe,
-> +					  unsigned long start_time)
-> +{
-> +	unsigned long bp_usec = READ_ONCE(pipe->pipe_ll_usec);
-> +	unsigned long end_time = start_time + bp_usec;
-> +	unsigned long now = pipe_busy_loop_current_time();
-> +
-> +	return time_after(now, end_time);
-> +}
-> +
->  /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
->     memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
->  #define PIPE_SIZE		PAGE_SIZE
-> 
+--->8
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to f52bb98f5aded4c43e52f5ce19fb83f7261e9e73:
+
+  arm64: mm: always enable CONFIG_HOLES_IN_ZONE (2018-08-31 11:06:45 +0100)
+
+----------------------------------------------------------------
+A handful of arm64 fixes
+
+- Fix typos in SVE documentation
+- Fix type-checking and implicit truncation for SMCCC calls
+- Force CONFIG_HOLES_IN_ZONE=y so that SLAB doesn't fall over NOMAP regions
+
+----------------------------------------------------------------
+James Morse (1):
+      arm64: mm: always enable CONFIG_HOLES_IN_ZONE
+
+Julien Grall (1):
+      Documentation/arm64/sve: Couple of improvements and typos
+
+Marc Zyngier (2):
+      arm/arm64: smccc-1.1: Make return values unsigned long
+      arm/arm64: smccc-1.1: Handle function result as parameters
+
+ Documentation/arm64/sve.txt |  4 ++--
+ arch/arm64/Kconfig          |  1 -
+ include/linux/arm-smccc.h   | 38 ++++++++++++++++++++++++--------------
+ 3 files changed, 26 insertions(+), 17 deletions(-)
