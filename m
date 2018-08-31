@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4ED9C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5921C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A09F2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:40:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A09F2083C
+	by mail.kernel.org (Postfix) with ESMTP id A78172083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 13:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78172083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeHaRsH (ORCPT
+        id S1728547AbeHaRsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 13:48:07 -0400
+        Fri, 31 Aug 2018 13:48:10 -0400
 Received: from esa5.microchip.iphmx.com ([216.71.150.166]:58953 "EHLO
         esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbeHaRsG (ORCPT
+        with ESMTP id S1728464AbeHaRsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:48:06 -0400
+        Fri, 31 Aug 2018 13:48:10 -0400
 X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="16999758"
+   d="scan'208";a="16999761"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Aug 2018 06:40:34 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Aug 2018 06:40:37 -0700
 Received: from m19893.microchip.com (10.10.76.4) by
  chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 31 Aug 2018 06:40:32 -0700
+ 14.3.352.0; Fri, 31 Aug 2018 06:40:36 -0700
 From:   Radu Pirea <radu.pirea@microchip.com>
 To:     <richard.genoud@gmail.com>, <pirea.radu@gmail.com>,
         <lee.jones@linaro.org>, <robh+dt@kernel.org>,
@@ -41,9 +41,9 @@ CC:     <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-serial@vger.kernel.org>,
         Radu Pirea <radu.pirea@microchip.com>
-Subject: [RESEND PATCH v11 2/6] dt-bindings: add binding for atmel-usart in SPI mode
-Date:   Fri, 31 Aug 2018 16:41:37 +0300
-Message-ID: <20180831134141.9335-3-radu.pirea@microchip.com>
+Subject: [RESEND PATCH v11 3/6] mfd: at91-usart: added mfd driver for usart
+Date:   Fri, 31 Aug 2018 16:41:38 +0300
+Message-ID: <20180831134141.9335-4-radu.pirea@microchip.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831134141.9335-1-radu.pirea@microchip.com>
 References: <20180831134141.9335-1-radu.pirea@microchip.com>
@@ -54,78 +54,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the bindings for serial from serial/atmel-usart.txt to
-mfd/atmel-usart.txt and adds bindings for USART in SPI mode.
+This mfd driver is just a wrapper over atmel_serial driver and
+spi-at91-usart driver. Selection of one of the drivers is based on a
+property from device tree. If the property is not specified, the default
+driver is atmel_serial.
 
 Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 ---
- .../bindings/{serial => mfd}/atmel-usart.txt  | 25 +++++++++++++++++--
- include/dt-bindings/mfd/at91-usart.h          | 17 +++++++++++++
- 2 files changed, 40 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
- create mode 100644 include/dt-bindings/mfd/at91-usart.h
+ drivers/mfd/Kconfig      |  9 +++++
+ drivers/mfd/Makefile     |  1 +
+ drivers/mfd/at91-usart.c | 71 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
+ create mode 100644 drivers/mfd/at91-usart.c
 
-diff --git a/Documentation/devicetree/bindings/serial/atmel-usart.txt b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-similarity index 76%
-rename from Documentation/devicetree/bindings/serial/atmel-usart.txt
-rename to Documentation/devicetree/bindings/mfd/atmel-usart.txt
-index 7c0d6b2f53e4..0348fef0f497 100644
---- a/Documentation/devicetree/bindings/serial/atmel-usart.txt
-+++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-@@ -1,6 +1,6 @@
- * Atmel Universal Synchronous Asynchronous Receiver/Transmitter (USART)
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 11841f4b7b2b..0b79c5d04cc9 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -99,6 +99,15 @@ config MFD_AAT2870_CORE
+ 	  additional drivers must be enabled in order to use the
+ 	  functionality of the device.
  
--Required properties:
-+Required properties for USART:
- - compatible: Should be "atmel,<chip>-usart" or "atmel,<chip>-dbgu"
-   The compatible <chip> indicated will be the first SoC to support an
-   additional mode or an USART new feature.
-@@ -11,7 +11,13 @@ Required properties:
- 	Required elements: "usart"
- - clocks: phandles to input clocks.
- 
--Optional properties:
-+Required properties for USART in SPI mode:
-+- #size-cells      : Must be <0>
-+- #address-cells   : Must be <1>
-+- cs-gpios: chipselects (internal cs not supported)
-+- atmel,usart-mode : Must be <AT91_USART_MODE_SPI> (found in dt-bindings/mfd/at91-usart.h)
++config MFD_AT91_USART
++	tristate "AT91 USART Driver"
++	select MFD_CORE
++	help
++	  Select this to get support for AT91 USART IP. This is a wrapper
++	  over at91-usart-serial driver and usart-spi-driver. Only one function
++	  can be used at a time. The choice is done at boot time by the probe
++	  function of this MFD driver according to a device tree property.
 +
-+Optional properties in serial mode:
- - atmel,use-dma-rx: use of PDC or DMA for receiving data
- - atmel,use-dma-tx: use of PDC or DMA for transmitting data
- - {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD line respectively.
-@@ -62,3 +68,18 @@ Example:
- 		dma-names = "tx", "rx";
- 		atmel,fifo-size = <32>;
- 	};
-+
-+- SPI mode:
-+	#include <dt-bindings/mfd/at91-usart.h>
-+
-+	spi0: spi@f001c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "atmel,at91rm9200-usart", "atmel,at91sam9260-usart";
-+		atmel,usart-mode = <AT91_USART_MODE_SPI>;
-+		reg = <0xf001c000 0x100>;
-+		interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&usart0_clk>;
-+		clock-names = "usart";
-+		cs-gpios = <&pioB 3 0>;
-+	};
-diff --git a/include/dt-bindings/mfd/at91-usart.h b/include/dt-bindings/mfd/at91-usart.h
+ config MFD_ATMEL_FLEXCOM
+ 	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 5856a9489cbd..12980a4ad460 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -196,6 +196,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
+ obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
+ obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
+ obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
++obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
+ obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
+ obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
+ obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
+diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
 new file mode 100644
-index 000000000000..2de5bc312e1e
+index 000000000000..a4b9929c156f
 --- /dev/null
-+++ b/include/dt-bindings/mfd/at91-usart.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/mfd/at91-usart.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * This header provides macros for AT91 USART DT bindings.
++ * Driver for AT91 USART
 + *
 + * Copyright (C) 2018 Microchip Technology
 + *
@@ -133,13 +119,67 @@ index 000000000000..2de5bc312e1e
 + *
 + */
 +
-+#ifndef __DT_BINDINGS_AT91_USART_H__
-+#define __DT_BINDINGS_AT91_USART_H__
++#include <dt-bindings/mfd/at91-usart.h>
 +
-+#define AT91_USART_MODE_SERIAL	0
-+#define AT91_USART_MODE_SPI	1
++#include <linux/module.h>
++#include <linux/mfd/core.h>
++#include <linux/property.h>
 +
-+#endif /* __DT_BINDINGS_AT91_USART_H__ */
++static struct mfd_cell at91_usart_spi_subdev = {
++		.name = "at91_usart_spi",
++		.of_compatible = "microchip,at91sam9g45-usart-spi",
++	};
++
++static struct mfd_cell at91_usart_serial_subdev = {
++		.name = "atmel_usart_serial",
++		.of_compatible = "atmel,at91rm9200-usart-serial",
++	};
++
++static int at91_usart_mode_probe(struct platform_device *pdev)
++{
++	struct mfd_cell cell;
++	u32 opmode = AT91_USART_MODE_SERIAL;
++
++	device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
++
++	switch (opmode) {
++	case AT91_USART_MODE_SPI:
++		cell = at91_usart_spi_subdev;
++		break;
++	case AT91_USART_MODE_SERIAL:
++		cell = at91_usart_serial_subdev;
++		break;
++	default:
++		dev_err(&pdev->dev, "atmel,usart-mode has an invalid value %u\n",
++			opmode);
++		return -EINVAL;
++	}
++
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
++			      NULL, 0, NULL);
++}
++
++static const struct of_device_id at91_usart_mode_of_match[] = {
++	{ .compatible = "atmel,at91rm9200-usart" },
++	{ .compatible = "atmel,at91sam9260-usart" },
++	{ /* sentinel */ }
++};
++
++MODULE_DEVICE_TABLE(of, at91_usart_mode_of_match);
++
++static struct platform_driver at91_usart_mfd = {
++	.probe	= at91_usart_mode_probe,
++	.driver	= {
++		.name		= "at91_usart_mode",
++		.of_match_table	= at91_usart_mode_of_match,
++	},
++};
++
++module_platform_driver(at91_usart_mfd);
++
++MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
++MODULE_DESCRIPTION("AT91 USART MFD driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.18.0
 
