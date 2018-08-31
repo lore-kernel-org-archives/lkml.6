@@ -4,136 +4,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFDCC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A94C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A1420841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B1952077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uX2TorP7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A1420841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhGWiPPM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1952077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeHaX3v (ORCPT
+        id S1727398AbeHaXd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:29:51 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:32786 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeHaX3u (ORCPT
+        Fri, 31 Aug 2018 19:33:28 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35206 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeHaXd2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:29:50 -0400
-Received: by mail-qt0-f193.google.com with SMTP id r37-v6so15791603qtc.0;
-        Fri, 31 Aug 2018 12:20:57 -0700 (PDT)
+        Fri, 31 Aug 2018 19:33:28 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q13-v6so10823731lfc.2;
+        Fri, 31 Aug 2018 12:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=n4ZJEGZnhqrGdVeWYMnTCHn9LIITEWAYG3JkHNaGGr8=;
-        b=uX2TorP7YJ3Ol8Y870vosCx7MFlNmqM2LQeKVJv+IcNfCB4nSXg/gY8EqcdHojtdYV
-         mYZezuFcqhtwSlecXMyEGW1UnBQLXEfmLGog31KPPLZyXJoCRlYW0kzFgOublVRIVv3y
-         mLDHsGfzL9CoDQCsrACW8u3fka+giwXWodndeNI7pwLIXJq7D4cEo9iRjw4uQGkBJ3Xy
-         uD3lCKOD93pim546aLVBo9bYb5ugBeLEA70/qWo9V0Av9iO6a26xIkHsEtFXFGsRlirY
-         7Bb7DaizCD6glyi7TWoge8HM1NkBi5bPnrM6CTvzwAWNt9r9PgmJKTAERp6Yq0Lp7Sho
-         TszA==
+        h=from:to:cc:subject:date:message-id;
+        bh=5/CScGUK/Mr/UvAEUIS935zNUFcvU/PgjkXaci5Uekk=;
+        b=HhGWiPPMJgpFiqMO+fQrCNSVWE7ShaRYglCH0i/Msr5wjwza77u/WN00S+4527r3XL
+         c0mKOy11+qySiPtKMXcvDGNImG6pd7QlXykiA2pw1km/5OphFvQiwW9eqn4/yPjxm8mT
+         Mp9lMcHMW2AE5OcaVGo/hrxLk7ePO8DMbI6SDPIFvTn/LuAXg34Buhed6qr7lcg0uHgJ
+         ipH3azySPbRP6V8df0yCV9VBF1heZxsIXcsDclO8X1Uxk2+/o/+eawmSi4K6YH9t6Pa/
+         BRVmKBik1aXu49CWElMmKbCcSNvJ8++O2WUy+j5IDod/s2lIVmrnpHwSRJfbOQpR++VV
+         pxzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=n4ZJEGZnhqrGdVeWYMnTCHn9LIITEWAYG3JkHNaGGr8=;
-        b=btHIkTRofZICFP8LXa6/psdfeyMSYo/cb1ZwzNT3LEuUv7VXNpPD59SWcQ2NJw8SE/
-         TTaKGgdAjfJreI2157MnBqvfZgpa0GtZCQi91uIuCS5NFh233Nqrm5RKRItlVVLkvlVh
-         r7Zmq/zQLG9Z6KMK10J3cG5+9JKO9JfM0nDeJrqHtoKMNWXSTA8HAxnpse34BLOAFntk
-         jPztM1hxYyk5z/uD7vWD5UjIDWYR4mIv0YVHHOcwVh9KuBkD7y7S9mWgsIVFMADZ4kJx
-         du9MZuVrhxFwcvxm5DoRYAHgnOeBiW9vOEtpd7h5eOxXeeAbQK5GA1lszWj6ZqUvN7AM
-         khpw==
-X-Gm-Message-State: APzg51CYf5qWZrREnNvfE3GqHoas7ROkR6aFHkvkK13e02lX+Z/w7Wk5
-        Dj24MUjqA8kEckw4VwPMd10=
-X-Google-Smtp-Source: ANB0VdZsaRtQLrOU8YRe5ESYdVlq71QAftniSejVCNLsrSG1O2jha6f2s1eoTWLGO1wUyYXG+UuImQ==
-X-Received: by 2002:a0c:d5aa:: with SMTP id g39-v6mr16951817qvi.176.1535743256584;
-        Fri, 31 Aug 2018 12:20:56 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id f53-v6sm6949160qtk.40.2018.08.31.12.20.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5/CScGUK/Mr/UvAEUIS935zNUFcvU/PgjkXaci5Uekk=;
+        b=S04K8OgCj/Zz4lQxSiWRf/8azDZEkDQiL/5G6fXulj6ROgkcOgoCFBLTinUsRlnt9g
+         1K1UrpUq4k411Tf5w2efAXaiaSIDhPblaT0Abw8tdkYbUjr5ZqWlC0/U/uyWIxuQpfRX
+         LEcRiWu4GEs/sPl3L13Fm8VcLFXlRYtwnqZrXAbx/il7kq+XsE1Db5fVPW24MdyhfAS7
+         tqnLSJOLJW15udPchgjH3+98/I+dc75xMhYDguTfL2MOOTIEcpyPd3+oVndrHSUi+T3W
+         Fkqsf+RNAIxEwJGCJVaPAl/aA193e2h0TDkq3RkkYXyzsYOLgd6suoCyJU8PVDpvP7Yi
+         tZsA==
+X-Gm-Message-State: APzg51Ag4zKR7hbsiEWOh/3pvjJnqeuG6bwoZm5elIK4ZL0/ikR0LUuh
+        sFwOWyN2e8ZE3vbq6mfOv54=
+X-Google-Smtp-Source: ANB0VdbCO4+htvlBvlMCJeTPQv3WofpAorAX86oEdAw/3VOTk0YhiG/uJTfpUmd9n3MBG0PCWMjYXQ==
+X-Received: by 2002:a19:5353:: with SMTP id h80-v6mr11939413lfb.9.1535743472242;
+        Fri, 31 Aug 2018 12:24:32 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
+        by smtp.gmail.com with ESMTPSA id h71-v6sm2034796lfg.64.2018.08.31.12.24.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 12:20:55 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM IPROC ARM
-        ARCHITECTURE),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
-        andrew@lunn.ch, rmk+kernel@armlinux.org.uk
-Subject: [PATCH v3 3/3] ARM: dts: NSP: Wire up switch interrupts
-Date:   Fri, 31 Aug 2018 12:20:39 -0700
-Message-Id: <20180831192039.11842-4-f.fainelli@gmail.com>
+        Fri, 31 Aug 2018 12:24:31 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Faisal Latif <faisal.latif@intel.com>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        Chien Tung <chien.tin.tung@intel.com>,
+        Roland Dreier <rolandd@cisco.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] infiniband: nes: add unlikely() to assert()
+Date:   Fri, 31 Aug 2018 22:24:18 +0300
+Message-Id: <20180831192418.12346-1-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180831192039.11842-1-f.fainelli@gmail.com>
-References: <20180831192039.11842-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Switch Register Access Block (SRAB) has one interrupt for link state
-change on each ports (0-5, 7-8) a PHY interrupt, timestamping interrupt
-and sleep timer interrupts for each management ports (5,7,8). Wire those
-up so we can utilize them to speed up link resolution.
+Typically the assert is expected to not fail.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Acked-by: Doug Ledford <dledford@redhat.com>
+Cc: Faisal Latif <faisal.latif@intel.com>
+Cc: Chien Tung <chien.tin.tung@intel.com>
+Cc: Roland Dreier <rolandd@cisco.com>
+Cc: Faisal Latif <faisal.latif@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 ---
- arch/arm/boot/dts/bcm-nsp.dtsi | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/nes/nes.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
-index 09ba85046322..ec869a80f9ba 100644
---- a/arch/arm/boot/dts/bcm-nsp.dtsi
-+++ b/arch/arm/boot/dts/bcm-nsp.dtsi
-@@ -377,7 +377,36 @@
+diff --git a/drivers/infiniband/hw/nes/nes.h b/drivers/infiniband/hw/nes/nes.h
+index bedaa02749fb..d2d0098f38e0 100644
+--- a/drivers/infiniband/hw/nes/nes.h
++++ b/drivers/infiniband/hw/nes/nes.h
+@@ -151,7 +151,7 @@ do { \
  
- 		srab: srab@36000 {
- 			compatible = "brcm,nsp-srab";
--			reg = <0x36000 0x1000>;
-+			reg = <0x36000 0x1000>,
-+			      <0x3f308 0x8>,
-+			      <0x3f410 0xc>;
-+			reg-names = "srab", "mux_config", "sgmii";
-+			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "link_state_p0",
-+					  "link_state_p1",
-+					  "link_state_p2",
-+					  "link_state_p3",
-+					  "link_state_p4",
-+					  "link_state_p5",
-+					  "link_state_p7",
-+					  "link_state_p8",
-+					  "phy",
-+					  "ts",
-+					  "imp_sleep_timer_p5",
-+					  "imp_sleep_timer_p7",
-+					  "imp_sleep_timer_p8";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
+ #define assert(expr) \
+ do { \
+-	if (!(expr)) { \
++	if (unlikely(!(expr))) { \
+ 		printk(KERN_ERR PFX "Assertion failed! %s, %s, %s, line %d\n", \
+ 			   #expr, __FILE__, __func__, __LINE__); \
+ 	} \
 -- 
 2.17.1
 
