@@ -2,235 +2,134 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0028C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD958C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C7332077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DE120837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 17:25:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="jYAMbnw8";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="kxa5uKkr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C7332077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XF0C11ub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DE120837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeHaV0P (ORCPT
+        id S1727739AbeHaVeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 17:26:15 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:54333 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbeHaV0O (ORCPT
+        Fri, 31 Aug 2018 17:34:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46276 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbeHaVeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 17:26:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1535735866; x=1567271866;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=PO/uANhXYSz0E2q3iiKRoIqZpBsShauzFuZC9Ydi8PY=;
-  b=jYAMbnw8WWtsyJM/i9f3ssafWTlAceYEtjvQQ4GxEO/O6ukhn9tx8miB
-   Op0CHfkPWw1M0pb9psV5mV5ZCkyn4bnJqGmObdbNiGCC3YgQGQaknpM9b
-   HBzrUDmioh0kdI8kcGBz9BJMEDAfdlKsko8lL9Qcas1MG9mC+kaURDZzk
-   lV1127rItEvzi707DpVKNtafPNPzwJ6p0/YFUJgUQ34eNbKU/yy0wXiHu
-   oW92BG5wgitN3x2qyi7ypJGIoy5pDJMPOHQyMg907Gl12y8iiCDP8cDFM
-   ZuXa8K3mss6Kq111Nripoi8rugJ0tJIbb3BvFaTyXbp/KeP2LRtio3U92
-   g==;
-X-IronPort-AV: E=Sophos;i="5.53,312,1531756800"; 
-   d="scan'208";a="92871973"
-Received: from mail-sn1nam01lp0118.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([207.46.163.118])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Sep 2018 01:17:40 +0800
+        Fri, 31 Aug 2018 17:34:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a108-v6so11864825wrc.13;
+        Fri, 31 Aug 2018 10:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0ujRCW4Ypc9LicVgzY74lfOwcZTYWMB098uWUta1xw4=;
- b=kxa5uKkrNrjUR9tRRq5XuWs9NfE41tCgxRNm9SBnseiYrS/zVoAWgWzr1Jd0qpe2rXOG0UZJ4cxk91CBf6CbifmV9tLTGjLawSQKYs88+84v824C2RQewBYr3Wm7zu+Jgu5epyIJE84hqRyPrxp30uvqqyDXCa0LTiCDVVJbChE=
-Received: from SN1PR04MB1824.namprd04.prod.outlook.com (10.161.255.18) by
- SN1PR04MB1805.namprd04.prod.outlook.com (10.161.255.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Fri, 31 Aug 2018 17:17:35 +0000
-Received: from SN1PR04MB1824.namprd04.prod.outlook.com
- ([fe80::6519:abd2:2212:fe2b]) by SN1PR04MB1824.namprd04.prod.outlook.com
- ([fe80::6519:abd2:2212:fe2b%5]) with mapi id 15.20.1101.016; Fri, 31 Aug 2018
- 17:17:34 +0000
-From:   Jeffrey Lien <Jeff.Lien@wdc.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>
-CC:     "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        David Darrington <david.darrington@wdc.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Jeff Furlong <jeff.furlong@wdc.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>
-Subject: RE: [PATCH v2 1/3] crypto: Introduce notifier for new crypto
- algorithms
-Thread-Topic: [PATCH v2 1/3] crypto: Introduce notifier for new crypto
- algorithms
-Thread-Index: AQHUQHI9xu2hvSjTOkC0mpV5fsqYDKTaGvsw
-Date:   Fri, 31 Aug 2018 17:17:34 +0000
-Message-ID: <SN1PR04MB18242CFC7BBA2A40495FA9BCEA0F0@SN1PR04MB1824.namprd04.prod.outlook.com>
-References: <20180827060918.tfz7ljufqhlej4kq@gondor.apana.org.au>
- <20180830150016.15661-1-martin.petersen@oracle.com>
-In-Reply-To: <20180830150016.15661-1-martin.petersen@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jeff.Lien@wdc.com; 
-x-originating-ip: [199.255.44.173]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR04MB1805;6:FijkAu5xcoINvWmtOQ5IipE5NJwz6KU04Lfbl2pcOhAweq1+J8v1bDMDW3Se1SMGtUWANdmGnrxXfyYKPstSro7zrNUbYKqp0xo6jcWKdsIcPp0sdHqlMslROYjPtXGO5WvlOvYZFqarL/eF9YQDljp1cu/IYkElIbrolUQZQqLtDU9jibNMVf6/XdZN1T6adYWrhSph2nIyuCYIvIslKdi+1Lyv8C9rNo9AP9BLaINBZedoTw4HxdO22QQDl1LpJHA3x0viOamnWsbEi5LChTj1gtjgZJCMdU4lXRfiGWaaEJb3DqUMKo8JOD7P53zAQ/aDSaFyDm1SV/cfPzN8qp3+yWAzltIgV9C2Hr+Z0YRUeekwd4dwsLWWz3FGzjICmGgeM5jdowYW/xWSXUWA8zFUy0ZJVhpmK2elEYfRDcasJHqDwkwfMX14vL4obtGRyJK5m9FYDJ8nKjOj69Iy6A==;5:rW5PKxfIbkbNgCzF1972XEG3XmAAUKdG0HaRywqmvu1/gsJoMpHHtjy9YR6pJ7IFWCvT5K12062h8ZQ4tApvJkL4DuMgQGelAezPBF++WBBQSAGaKONUi8fjkDFQSQvbxK5mpA0nkP2k+08ODwyk6jVbIRnuSEwSa8gvCsW1d+A=;7:F5fIautq1LNet0osfZR3Ve5H+p4TBqx8NwpoXvlGw9IaGm92nH3QHrIGjWPrytEIlw/v+HnYAgyOPdp/veZdq9lGlfRBFIwL99WU1If3JxVKEHYQ9dIqlGqZtMR5YqNx+RHxgvqdSMWH+vvH4LTqmGAS7asJWgpq7BXYfTvCOnOjXPTKw6ko19QiPN1kWaxy/MSddEKaEaj29p/OE42OjTWzp88gka0mioQ57dSEWV3+VUIlbABL2EA7+KGWbSEK
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: c791f788-3323-44af-1017-08d60f65a4b5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR04MB1805;
-x-ms-traffictypediagnostic: SN1PR04MB1805:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <SN1PR04MB18050DEC3932F7B558AA1B97EA0F0@SN1PR04MB1805.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(146099531331640)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699016);SRVR:SN1PR04MB1805;BCL:0;PCL:0;RULEID:;SRVR:SN1PR04MB1805;
-x-forefront-prvs: 07817FCC2D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(366004)(136003)(39860400002)(13464003)(189003)(199004)(11346002)(446003)(72206003)(186003)(25786009)(6506007)(53546011)(33656002)(6246003)(14444005)(229853002)(256004)(8936002)(66066001)(6436002)(7696005)(99286004)(5250100002)(68736007)(14454004)(9686003)(55016002)(486006)(53936002)(105586002)(5660300001)(2501003)(2900100001)(106356001)(4326008)(81156014)(81166006)(478600001)(26005)(102836004)(8676002)(3846002)(6116002)(97736004)(74316002)(54906003)(110136005)(86362001)(575784001)(7736002)(316002)(305945005)(2906002)(476003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:SN1PR04MB1805;H:SN1PR04MB1824.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: R4GMDcqdyzVf+IybiYbLvGDsgTTUxPAfaIHoaOstJAuWdRnSEFmWzyq+L2hsDLugVl75i95OzzPQs04PPy2qOXCrfqtwAJCqD0oCF+wRzRrnMHTN4nzAQBV9ymgO+nZzVyAqDD1cL6rK4fMUgZXq4qDxwSSFtIktFu3zvofid3/qEs9XvpRZ/rpozG93lMxfay4jem/oMx9AKVU9aX9wXLztOtHHz2TGS12mmlzcHv9V/SVx8PHDSf2Nek9XyroC8SBf2TdwsfvMOQZX3rftLpfqCslH7dC2JXxqeWqCasPl5mGLCLrtAhwKQprfizpo1hP0DTrEqChK4ixfaox7CDbBIk6tTRgFKTiRtAcjwqM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7QoZGT2HFme8Q3ztIq1Z9OsqVbgIPLDBdFi3J7NpRs8=;
+        b=XF0C11ubjT525Fjlh+iMur/yKO8SB6/A48UaE3m+rWK5mVystgjKFW6RK7DXOLUqWG
+         a8kRnvQSZP4PA+OEz3hKJIqOzeyZ6z1IqSMSr38mULj5kKE1UMVE6vTsnDLzt5Ovc5FJ
+         kJWWONphnSUUG5Y4/MgjsOe6nX7Lvlv7Udc3t8FWTqxwqqVBy6QB2u7ahmyF9uhpM/rY
+         Z3JqwbqLcdg1xXOW3GR8H/UdOQ67wp9oi3QS44maMVbFgiGHpJucJIdjl76QZzCtVd7/
+         r4vjsvyquC9dOjhbsTjIam9f2v4XAOW97zgXQCFq46/2vEsAwSDgh2c84uQ0aZCwWfaZ
+         7Nag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7QoZGT2HFme8Q3ztIq1Z9OsqVbgIPLDBdFi3J7NpRs8=;
+        b=kutmAOl7eByqA69FgwF3ONIfmWnGTGW9TkpgyOMdN4uqnkrvOCGf0lpxQmCdQc+Yc6
+         LRniLDvJKRc+nXmLWm0I/6wTekSug30XEYA0wVn9EVTM9qp2JtF08DXBMK9zcF4Zxqp7
+         lM4TGNbj+xnOjvncGckZpXqpysv4X8dCIqdEzI1BASygZ/gNS40SVXc1zelJUqlgp3Bw
+         Eay20FIO6nRaRahR2/ciYdsL19FD1JxG7PjMhQim8c/gWlJo5ahZYc83HYCb1jMcNz7r
+         q+myQqMVB6DForMoseUPBw1CUokLWXJ7nphzt1pxkzsvkyWIem39EFkwO/ovXKRH1rLY
+         muVA==
+X-Gm-Message-State: APzg51AFNvNtSPMVstyHEfmVk17kDRSFe4KGCUnFM8mLQgY7sgEqRhhp
+        BF8N2krV69iUVsrFM7ehovce98zgM+D7P0NeZOw=
+X-Google-Smtp-Source: ANB0VdYyrpwS2EK3SjuzAv4n+1rqG4idukUECmINHnduvypuWusmcGpZNCpkbx1U9Jac8TVY5lPnWyNAqT28K0rSskI=
+X-Received: by 2002:adf:82c3:: with SMTP id 61-v6mr11972348wrc.131.1535736336582;
+ Fri, 31 Aug 2018 10:25:36 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c791f788-3323-44af-1017-08d60f65a4b5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2018 17:17:34.7697
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR04MB1805
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+ <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
+ <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
+ <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com>
+ <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
+ <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com>
+ <CAK8P3a1W2D5YWEC-VDkvQ8y3W8257g6X7B8_At7g8f9iE73a8w@mail.gmail.com>
+ <CA+sq2CfjJjswOwypNMtro+g8TeHGoBqAeKpFrf2ys-1=Xg+qHw@mail.gmail.com> <CAK8P3a3q_rY6VHwX9xQ9VMNC_4EmJLKzzDPL28SE13qNHX7=aA@mail.gmail.com>
+In-Reply-To: <CAK8P3a3q_rY6VHwX9xQ9VMNC_4EmJLKzzDPL28SE13qNHX7=aA@mail.gmail.com>
+From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Date:   Fri, 31 Aug 2018 22:55:25 +0530
+Message-ID: <CA+sq2CdrNDDhsfHoGiXzrJgfUXirEZjkxYcBOvi07jvJgtnnHQ@mail.gmail.com>
+Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, Aleksey Makarov <amakarov@marvell.com>,
+        Sunil Goutham <sgoutham@marvell.com>,
+        Lukasz Bartosik <lbartosik@marvell.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin,
-I tried out this latest series of patches on my system and the performance =
-is matches what I saw with CONFIG_CRYPTO_CRCT10DIF_PCLMUL=3DY, as expected.=
-  =20
+On Fri, Aug 31, 2018 at 7:46 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Aug 30, 2018 at 8:37 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > On Thu, Aug 30, 2018 at 7:27 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Tue, Aug 28, 2018 at 3:23 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > > On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > > Any PCI device here irrespective in what domain (kernel or userspace)
+> > > > they are in
+> > > > use common mailbox communication. Which is
+> > > > # Write a mailbox msg (format is agreed between all parties) into
+> > > > shared (between AF and other PF/VFs)
+> > > >    memory region and trigger a interrupt to admin function.
+> > > > # Admin function processes the msg and puts reply in the same memory
+> > > > region and trigger
+> > > >    IRQ to the requesting device. If the device has a driver instance
+> > > > in kernel then it uses
+> > > >    IRQ and userspace applications does polling on the IRQ status bit.
+> > >
+> > > What is the purpose of the exported interface then? Is this
+> > > just an abstraction so each of the drivers can talk to its own
+> > > mailbox using a set of common helper functions?
+> > >
+> >
+> > Yes, that's correct.
+> >
+> > In kernel there will be a minimum of 3 drivers which will use this
+> > mailbox communication.
+> > So instead of duplicating APIs and structures in every driver, we
+> > thought of adding them in this AF driver and export them to ethernet
+> > and crypto drivers.
+>
+> Ok. My feeling is then that the API is fine, but that it should not
+> be part of the AF module but rather be a standalone module.
+>
+> My comment about the generic mailbox API no longer applies
+> here: you don't have a single shared mailbox hardware interface,
+> but each device has its own mailbox register set, so there
+> is no point in setting up a separate device for it, but I see
+> no need for creating an artificial dependency on the AF
+> driver. E.g. in a virtual machine that only has one ethernet
+> interface, you otherwise wouldn't load that driver, right?
+>
+>          Arnd
 
-In this case, I applied your patches and built with CONFIG_CRYPTO_CRCT10DIF=
-_PCLMUL=3Dm.  =20
+Good point, thanks for catching this.
+Will look into this and post a v2 series.
 
-Is there anything else I should be checking or verifying?  =20
-
-
-Jeff Lien
-
------Original Message-----
-From: Martin K. Petersen [mailto:martin.petersen@oracle.com]=20
-Sent: Thursday, August 30, 2018 10:00 AM
-To: herbert@gondor.apana.org.au
-Cc: Jeffrey Lien <Jeff.Lien@wdc.com>; ard.biesheuvel@linaro.org; David Darr=
-ington <david.darrington@wdc.com>; hch@infradead.org; Jeff Furlong <jeff.fu=
-rlong@wdc.com>; linux-block@vger.kernel.org; linux-crypto@vger.kernel.org; =
-linux-kernel@vger.kernel.org; linux-scsi@vger.kernel.org; martin.petersen@o=
-racle.com; tim.c.chen@linux.intel.com
-Subject: [PATCH v2 1/3] crypto: Introduce notifier for new crypto algorithm=
-s
-
-Introduce a facility that can be used to receive a notification callback wh=
-en a new algorithm becomes available. This can be used by existing crypto r=
-egistrations to trigger a switch from a software-only algorithm to a hardwa=
-re-accelerated version.
-
-A new CRYPTO_MSG_ALG_LOADED state is introduced to the existing crypto noti=
-fication chain, and the register/unregister functions are exported so they =
-can be called by subsystems outside of crypto.
-
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
----
- crypto/algapi.c         |  2 ++
- crypto/algboss.c        |  2 ++
- crypto/internal.h       |  8 --------
- include/crypto/algapi.h | 10 ++++++++++
- 4 files changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/crypto/algapi.c b/crypto/algapi.c index c0755cf4f53f..33522a14=
-7412 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -367,6 +367,8 @@ static void crypto_wait_for_test(struct crypto_larval *=
-larval)
-=20
- 	err =3D wait_for_completion_killable(&larval->completion);
- 	WARN_ON(err);
-+	if (!err)
-+		crypto_probing_notify(CRYPTO_MSG_ALG_LOADED, larval);
-=20
- out:
- 	crypto_larval_kill(&larval->alg);
-diff --git a/crypto/algboss.c b/crypto/algboss.c index 5e6df2a087fa..527b44=
-d0af21 100644
---- a/crypto/algboss.c
-+++ b/crypto/algboss.c
-@@ -274,6 +274,8 @@ static int cryptomgr_notify(struct notifier_block *this=
-, unsigned long msg,
- 		return cryptomgr_schedule_probe(data);
- 	case CRYPTO_MSG_ALG_REGISTER:
- 		return cryptomgr_schedule_test(data);
-+	case CRYPTO_MSG_ALG_LOADED:
-+		break;
- 	}
-=20
- 	return NOTIFY_DONE;
-diff --git a/crypto/internal.h b/crypto/internal.h index 9a3f39939fba..ef76=
-9b5e8ad3 100644
---- a/crypto/internal.h
-+++ b/crypto/internal.h
-@@ -26,12 +26,6 @@
- #include <linux/rwsem.h>
- #include <linux/slab.h>
-=20
--/* Crypto notification events. */
--enum {
--	CRYPTO_MSG_ALG_REQUEST,
--	CRYPTO_MSG_ALG_REGISTER,
--};
--
- struct crypto_instance;
- struct crypto_template;
-=20
-@@ -90,8 +84,6 @@ struct crypto_alg *crypto_find_alg(const char *alg_name, =
- void *crypto_alloc_tfm(const char *alg_name,
- 		       const struct crypto_type *frontend, u32 type, u32 mask);
-=20
--int crypto_register_notifier(struct notifier_block *nb); -int crypto_unreg=
-ister_notifier(struct notifier_block *nb);  int crypto_probing_notify(unsig=
-ned long val, void *v);
-=20
- unsigned int crypto_alg_extsize(struct crypto_alg *alg); diff --git a/incl=
-ude/crypto/algapi.h b/include/crypto/algapi.h index bd5e8ccf1687..807501a4a=
-754 100644
---- a/include/crypto/algapi.h
-+++ b/include/crypto/algapi.h
-@@ -425,4 +425,14 @@ static inline void crypto_yield(u32 flags)  #endif  }
-=20
-+int crypto_register_notifier(struct notifier_block *nb); int=20
-+crypto_unregister_notifier(struct notifier_block *nb);
-+
-+/* Crypto notification events. */
-+enum {
-+	CRYPTO_MSG_ALG_REQUEST,
-+	CRYPTO_MSG_ALG_REGISTER,
-+	CRYPTO_MSG_ALG_LOADED,
-+};
-+
- #endif	/* _CRYPTO_ALGAPI_H */
---
-2.17.1
-
+Thanks,
+Sunil.
