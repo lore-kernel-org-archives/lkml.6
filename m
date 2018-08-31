@@ -2,230 +2,156 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CD6C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD044C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5752083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5752083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AD7F20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AD7F20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeHaNJj (ORCPT
+        id S1727698AbeHaNLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:09:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33028 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbeHaNJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:09:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EA8B320877; Fri, 31 Aug 2018 11:03:08 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B3309207EB;
-        Fri, 31 Aug 2018 11:03:08 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 11:03:07 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 17/30] iio: adc: sun4i-gpadc-iio: rework: support
- clocks and reset
-Message-ID: <20180831090307.v3bp445sgugquh6f@flea>
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-18-embed3d@gmail.com>
+        Fri, 31 Aug 2018 09:11:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54692 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbeHaNLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 09:11:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D778DED1;
+        Fri, 31 Aug 2018 02:04:52 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E14A13F721;
+        Fri, 31 Aug 2018 02:04:48 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 10:04:42 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180831090442.GA25636@e110439-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-4-quentin.perret@arm.com>
+ <20180829100435.GP2960@e110439-lin>
+ <20180829132811.iacfltcos6kfgp7e@queper01-lin>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o4ox2v23labjh637"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830154518.29507-18-embed3d@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180829132811.iacfltcos6kfgp7e@queper01-lin>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29-Aug 14:28, Quentin Perret wrote:
+> Hi Patrick,
+> 
+> On Wednesday 29 Aug 2018 at 11:04:35 (+0100), Patrick Bellasi wrote:
+> > In the loop above we use smp_store_release() to propagate the pointer
+> > setting in a PER_CPU(em_data), which ultimate goal is to protect
+> > em_register_perf_domain() from multiple clients registering the same
+> > power domain.
+> > 
+> > I think there are two possible optimizations there:
+> > 
+> > 1. use of a single memory barrier
+> > 
+> >    Since we are already em_pd_mutex protected, i.e. there cannot be a
+> >    concurrent writers, we can use one single memory barrier after the
+> >    loop, i.e.
+> > 
+> >         for_each_cpu(cpu, span)
+> >                 WRITE_ONCE()
+> >         smp_wmb()
+> > 
+> >    which should be just enough to ensure that all other CPUs will see
+> >    the pointer set once we release the mutex
+> 
+> Right, I'm actually wondering if the memory barrier is needed at all ...
+> The mutex lock()/unlock() should already ensure the ordering I want no ?
+> 
+> WRITE_ONCE() should prevent load/store tearing with concurrent em_cpu_get(),
+> and the release/acquire semantics of mutex lock/unlock should be enough to
+> serialize the memory accesses of concurrent em_register_perf_domain() calls
+> properly ...
+> 
+> Hmm, let me read memory-barriers.txt again.
 
---o4ox2v23labjh637
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I think it should... but better double check.
 
-On Thu, Aug 30, 2018 at 05:45:05PM +0200, Philipp Rossak wrote:
-> For adding newer sensor some basic rework of the code is necessary.
->=20
-> The SoCs after H3 has newer thermal sensor ADCs, which have two clock
-> inputs (bus clock and sampling clock) and a reset. The registers are
-> also re-arranged.
->=20
-> This commit reworks the code, adds the process of the clocks and resets.
->=20
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  drivers/iio/adc/sun4i-gpadc-iio.c | 72 +++++++++++++++++++++++++++++++++=
-++++--
->  1 file changed, 70 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gp=
-adc-iio.c
-> index c278e165e161..c12de48c4e86 100644
-> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> @@ -22,6 +22,7 @@
->   * shutdown for not being used.
->   */
-> =20
-> +#include <linux/clk.h>
->  #include <linux/completion.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -31,6 +32,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> +#include <linux/reset.h>
->  #include <linux/thermal.h>
->  #include <linux/delay.h>
-> =20
-> @@ -63,6 +65,9 @@ struct gpadc_data {
->  	int		(*ths_suspend)(struct sun4i_gpadc_iio *info);
->  	int		(*ths_resume)(struct sun4i_gpadc_iio *info);
->  	bool		support_irq;
-> +	bool		has_bus_clk;
-> +	bool		has_bus_rst;
-> +	bool		has_mod_clk;
->  	u32		temp_data_base;
->  };
-> =20
-> @@ -127,6 +132,9 @@ struct sun4i_gpadc_iio {
->  	struct mutex			mutex;
->  	struct thermal_zone_device	*tzd;
->  	struct device			*sensor_device;
-> +	struct clk			*bus_clk;
-> +	struct clk			*mod_clk;
-> +	struct reset_control		*reset;
->  };
-> =20
->  static const struct iio_chan_spec sun4i_gpadc_channels[] =3D {
-> @@ -472,8 +480,13 @@ static int sun4i_gpadc_probe_dt(struct platform_devi=
-ce *pdev,
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
-> =20
-> -	info->regmap =3D devm_regmap_init_mmio(&pdev->dev, base,
-> -					     &sun4i_gpadc_regmap_config);
-> +	if (info->data->has_bus_clk)
-> +		info->regmap =3D devm_regmap_init_mmio_clk(&pdev->dev, "bus",
-> +				base, &sun4i_gpadc_regmap_config);
-> +	else
-> +		info->regmap =3D devm_regmap_init_mmio(&pdev->dev, base,
-> +				&sun4i_gpadc_regmap_config);
-> +
->  	if (IS_ERR(info->regmap)) {
->  		ret =3D PTR_ERR(info->regmap);
->  		dev_err(&pdev->dev, "failed to init regmap: %d\n", ret);
-> @@ -498,9 +511,58 @@ static int sun4i_gpadc_probe_dt(struct platform_devi=
-ce *pdev,
->  		}
->  	}
-> =20
-> +	if (info->data->has_bus_rst) {
-> +		info->reset =3D devm_reset_control_get(&pdev->dev, NULL);
-> +		if (IS_ERR(info->reset)) {
-> +			ret =3D PTR_ERR(info->reset);
-> +			return ret;
-> +		}
-> +
-> +		ret =3D reset_control_deassert(info->reset);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (info->data->has_bus_clk) {
-> +		info->bus_clk =3D devm_clk_get(&pdev->dev, "bus");
-> +		if (IS_ERR(info->bus_clk)) {
-> +			ret =3D PTR_ERR(info->bus_clk);
-> +			goto assert_reset;
-> +		}
-> +
-> +		ret =3D clk_prepare_enable(info->bus_clk);
-> +		if (ret)
-> +			goto assert_reset;
+> > 2. avoid using PER_CPU variables
+> > 
+> >    Apart from the initialization code, i.e. boot time, the em_data is
+> >    expected to be read only, isn't it?
+> 
+> That's right. It's not only read only, it's also not read very often (in
+> the use-cases I have in mind at least). The scheduler for example will
+> call em_cpu_get() once when sched domains are built, and keep the
+> reference instead of calling it again.
+> 
+> >    If that's the case, I think that using PER_CPU variables is not
+> >    strictly required while it unnecessarily increases the cache pressure.
+> > 
+> >    In the worst case we can end up with one cache line for each CPU to
+> >    host just an 8B pointer, instead of using that single cache line to host
+> >    up to 8 pointers if we use just an array, i.e.
+> > 
+> >         struct em_perf_domain *em_data[NR_CPUS]
+> >                 ____cacheline_aligned_in_smp __read_mostly;
+> > 
+> >    Consider also that: up to 8 pointers in a single cache line means
+> >    also that single cache line can be enough to access the EM from all
+> >    the CPUs of almost every modern mobile phone SoC.
+> > 
+> >    Note entirely sure if PER_CPU uses less overall memory in case you
+> >    have much less CPUs then the compile time defined NR_CPUS.
+> >    But still, if the above makes sense, you still have a 8x gain
+> >    factor between number Write allocated .data..percp sections and
+> >    the value of NR_CPUS. Meaning that in the worst case we allocate
+> >    the same amount of memory using NR_CPUS=64 (the default on arm64)
+> >    while running on an 8 CPUs system... but still we should get less
+> >    cluster caches pressure at run-time with the array approach, 1
+> >    cache line vs 4.
+> 
+> Right, using per_cpu() might cause to bring in cache things you don't
+> really care about (other non-related per_cpu stuff), but that shouldn't
+> waste memory I think. I mean, if my em_data var is the first in a cache
+> line, the rest of the cache line will most likely be used by other
+> per_cpu variables anyways ...
+> 
+> As you suggested, the alternative would be to have a simple array. I'm
+> fine with this TBH. But I would probably allocate it dynamically using
+> nr_cpu_ids instead of using a static NR_CPUS-wide thing though -- the
+> registration of perf domains usually happens late enough in the boot
+> process.
+> 
+> What do you think ?
 
-That should be done in the runtime_resume hook
+Sound all reasonable to me.
 
-> +	}
-> +
-> +	if (info->data->has_mod_clk) {
-> +		info->mod_clk =3D devm_clk_get(&pdev->dev, "mod");
-> +		if (IS_ERR(info->mod_clk)) {
-> +			ret =3D PTR_ERR(info->mod_clk);
-> +			goto disable_bus_clk;
-> +		}
-> +
-> +		/* Running at 4MHz */
-> +		ret =3D clk_set_rate(info->mod_clk, 4000000);
-> +		if (ret)
-> +			goto disable_bus_clk;
+> Thanks
+> Quentin
 
-Why?
+Best Patrick
 
-> +		ret =3D clk_prepare_enable(info->mod_clk);
-> +		if (ret)
-> +			goto disable_bus_clk;
-> +	}
-> +
->  	info->sensor_device =3D &pdev->dev;
-> =20
->  	return 0;
-> +
-> +disable_bus_clk:
-> +	clk_disable_unprepare(info->bus_clk);
-> +
-> +assert_reset:
-> +	reset_control_assert(info->reset);
+-- 
+#include <best/regards.h>
 
-You should check for the variables here before calling those
-functions, if you end up here with your variable not set, you'll have
-improper refcounting.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---o4ox2v23labjh637
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluJBEsACgkQ0rTAlCFN
-r3Sy0w//QZInrgKvIlcZrtJ5CgqUW1VCq32Wo8LuWKyy2oRDMcfmc2HdSaIPKDpJ
-OTfzIh/l8yx9DLkFZu/UHpZbeqhZSi9471uFzbyZv8GubpDP+IPP9lhWlr8YnxPh
-3ZlQy+x/jQ5CG0FTGMI+WfmgTAUezTh+XyjFoEsNsd6n0Kf4htzPQgu1yXHeu1+G
-6XemmN+1chO9AqKOBZwyyOnrDfxYSmuxybCHSwlqv2sN5kldgklnV1FL1N/VGSQg
-NrKidawvuTriY42xFI6hvc48T5uSDNUCOeyn5oss80EVpsXtb4zkrL+jYWLqMOCm
-iw9VHioVZA/UekDnwyuPWb3NyOCgE3gnSTvl97ftplUxyrmx7UYuHvP7gX0TVnUH
-cpDBeQSJhbPrBTqwG7QJzNgaBCdu/frNFTtP6YN4CBX1X/RsLtYFr257l88DopsC
-uupPPulQCcBMOjAuve63PqaEhI1SiG4qdQA9syYL2Kb+oWp9AOq5WTmaB6Nm78Uk
-7BkFjJegYIy3AC0/Qap/joOH/qM+CC7LE+Q4c6624CMJK4ZWOfs9KJ87ty3zXGTG
-zceMZ8xmyKs2OvRh7a4paEam4Wpgjws5tyo0zWyG4pm+BPnxQBR41q17HmnRgLvB
-bu9/DZXjjpO0H8walsuoRT07gESiwaxz7FxFIc9xdQJKY7a5W1c=
-=30Zm
------END PGP SIGNATURE-----
-
---o4ox2v23labjh637--
+Patrick Bellasi
