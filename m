@@ -2,143 +2,132 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795BDC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB0BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 233C520837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 233C520837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 10E212054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:01:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fq5qLJ03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E212054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbeHaUGu (ORCPT
+        id S1728750AbeHaUJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:06:50 -0400
-Received: from mga17.intel.com ([192.55.52.151]:63092 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbeHaUGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:06:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 08:58:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,312,1531810800"; 
-   d="scan'208";a="81905046"
-Received: from unknown (HELO [10.54.74.179]) ([10.54.74.179])
-  by fmsmga002.fm.intel.com with ESMTP; 31 Aug 2018 08:58:39 -0700
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>
-References: <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
- <1535649960.26689.15.camel@intel.com>
- <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
- <1535651666.27823.6.camel@intel.com>
- <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
- <1535660494.28258.36.camel@intel.com>
- <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
- <1535662366.28781.6.camel@intel.com>
- <CAG48ez0mkr95_TbLQnDGuGUd6G+eJVLZ-fEjDkwA6dSrm+9tLw@mail.gmail.com>
- <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
- <20180831095300.GF24124@hirez.programming.kicks-ass.net>
- <1535726032.32537.0.camel@intel.com>
- <f5a36e32-7c5f-91fe-9e98-fb44867fda11@linux.intel.com>
- <1535730524.501.13.camel@intel.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6d31bd30-6d5b-bbde-1e97-1d8255eff76d@linux.intel.com>
-Date:   Fri, 31 Aug 2018 08:58:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 16:09:10 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37182 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727286AbeHaUJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:09:10 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n11-v6so5800784wmc.2;
+        Fri, 31 Aug 2018 09:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3kXYkLRuWQss7TYqX729+PafjBFNZFYwim8AH1ssZZA=;
+        b=Fq5qLJ03D9wOGlWhfXA7hp13SJYlWzKCxnvByz072qzHBkjf4jYLK2jMX0XzHhe8zb
+         mpo4ZijHEuSVnPkvQGbvJ7Krr9ge1jbkA2iq20mE9xrsRsCh45mPRHmY/8kK7/1lYura
+         ZwVWmF9fyS0K1AteQGafFSMTzKEvCk7Esw5btR/dt2B+CRtD53Wx6bKLO/Y+0CJp/+7f
+         MtbdrDkshOhYJCkcsFBqNxtoKrBql2AivaXbXH2uF3P+uThGr5DyCuTjOqnfwJkzeki8
+         Jagm+LW4+movWSTKMeeAAqyG9WXy9fXi6t+WQqNChTu3KUMLQCLeD32VCkohAn5s7+9p
+         fGSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3kXYkLRuWQss7TYqX729+PafjBFNZFYwim8AH1ssZZA=;
+        b=lWH8H55pSTvhKrfoWdVUzzR67xz2YohEkfi8abbsn/N3kb+vPA1KZLBAHS1zRXs05b
+         mQDCBHHskTmEkSvwLBHE0vODTvz69/ppJNuO0ey+tiCSS97r9qFRoE9XjJC+g9/v9wVG
+         YyWW+elS8koNb3BVJIlqWYVCPIPdEzQ8Zs/5vUpJgE74bIo4x2wXwQMDsA2WrNIYE4Xo
+         djs0wWlOx0g6/+MmQ1VVieLpbrG5WAXTwAV1RyijcrXO6Gj4SKyoDF6mMIGC9oYld9lC
+         b3raVrT8j/eV/PNC9yNLkMO5dahpMp94uryC+PGvcxUs9ciOZmpePHR/FZgcqIM3XZzv
+         5b5g==
+X-Gm-Message-State: APzg51D02zNK5wVOeBJk931UkaaMvkQYqUFQuSFNzTKBYImLZwM/uPnJ
+        VKaBtUIGLolOxDOs5ojuz3W6Rnl2DyOVf+VOh7I=
+X-Google-Smtp-Source: ANB0VdaUgahrzFNkie/VwojKI9qwIQ1pDUNWC9B4alyvXi/Gkr05gqZb6dW7nOAflp5bftdPB4HCdTpdbvtTs5n/lNI=
+X-Received: by 2002:a1c:b5d3:: with SMTP id e202-v6mr4824896wmf.23.1535731259103;
+ Fri, 31 Aug 2018 09:00:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1535730524.501.13.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+ <1535453838-12154-12-git-send-email-sunil.kovvuri@gmail.com>
+ <CAK8P3a0q0P-FuG6cTgMNkeZbtXE4pMk1iJq36_x20WRddtwaDg@mail.gmail.com>
+ <CA+sq2Cc1CSKmuEjKt8psR7Zyv9PzLkN10hzy8mrai136SF4-qA@mail.gmail.com>
+ <CAK8P3a2CMcYg6vMmRAc4N80BpFwczGiPnaLNCDZYXCsRydtPQw@mail.gmail.com>
+ <CA+sq2Ce3ew0X+RMm7fQ+iUZF0HKptzBr1dBk3NuRL8o82wBTjg@mail.gmail.com>
+ <CAK8P3a1oeOFVYc2xH+KO1gV0m9utHziGpNtQLAEv-RBxKkB7Og@mail.gmail.com>
+ <CA+sq2CfAvasZoNmnNQadhdsEz-eyXQPBtXbDmvt1nM0DQsm+8g@mail.gmail.com> <CAK8P3a0wdXRmZOw+yyws00GU=xYAFkGm81xKTF3-DjNmjjZH5g@mail.gmail.com>
+In-Reply-To: <CAK8P3a0wdXRmZOw+yyws00GU=xYAFkGm81xKTF3-DjNmjjZH5g@mail.gmail.com>
+From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Date:   Fri, 31 Aug 2018 21:30:47 +0530
+Message-ID: <CA+sq2CfL-eBWPcu1H9UkvKuL4kPeKnL1qkiG0tLZa_GW8LEqXA@mail.gmail.com>
+Subject: Re: [PATCH 11/15] soc: octeontx2: Add Marvell OcteonTX2 CGX driver
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, Sunil Goutham <sgoutham@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/31/2018 08:48 AM, Yu-cheng Yu wrote:
-> To trigger a race in ptep_set_wrprotect(), we need to fork from one of
-> three pthread siblings.
-> 
-> Or do we measure only how much this affects fork?
-> If there is no racing, the effect should be minimal.
+On Fri, Aug 31, 2018 at 7:50 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Aug 30, 2018 at 7:55 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > On Thu, Aug 30, 2018 at 7:37 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Tue, Aug 28, 2018 at 3:10 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> > > Ok, I think I understand the PF/VF distinction now. One (to me)
+> > > surprising aspect here is that you not just have one physical function
+> > > that you can use to assign resources to multiple virtual functions,
+> > > but also a second level of virtualization that is used to assign
+> > > resources to "physical functions" that are less physical than the
+> > > name suggests.
+> >
+> > Yes, PF is just for name sake, on-boot there is no difference between
+> > PFs/VFs as such.
+> > PF0 has privilege access to assign resources to all PFs and their VFs.
+> > This admin function driver loads for PF0.
+>
+> ok
+>
+> > > The part that I have not grasped yet is what the split between
+> > > the CGX and the AF is for, how they relate to one another, and
+> > > what the software abstraction for the two is going to be.
+> >
+> > In HW, CGX is a separate PCI device which handles the serdes and
+> > physical ethernet interface.
+> > Ethernet driver in drivers/net/ethernet can only communicate to
+> > admin function driver since they share a mailbox memory.
+> > So we had to bind both CGX and admin function drivers to almost work as one,
+> > inorder to provide relavent info to ethernet drivers. That's why we
+> > have many functions
+> > from CGX driver which AF uses.
+> >
+> > eg: Firmware gets to know about a physical interface status change,
+> > which CGX driver gets
+> > to know and it uses AF's mailbox communication to inform ethernet
+> > driver about the event.
+>
+> Would it make sense then to combine the CGX driver and the AF
+> driver into a single module? It sounds like you can never really
+> use one without the other anyway, and that would make it easier
+> to have a sensible abstraction to user space.
+>
+>       Arnd
 
-We don't need a race.
+Thanks for the suggestion, that does makes sense.
+Actually i did thought about it, but i was skeptical if it would be
+acceptable to make
+a single module out of drivers registering for two different PCI devices.
 
-I think the cmpxchg will be slower, even without a race, than the code
-that was there before.  The cmpxchg is a simple, straightforward
-solution, but we're putting it in place of a plain memory write, which
-is suboptimal.
+Will wait for few more days for more feedback from anyone and port v2 series.
 
-But, before I nitpick the performance, I wanted to see if we could even
-detect a delta.
+Sunil.
