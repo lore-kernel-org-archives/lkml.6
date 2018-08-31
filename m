@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68812C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED21C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1469A20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26D762083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egZfx5L3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1469A20841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HWCFNJJ4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D762083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeIADMk (ORCPT
+        id S1727743AbeIADMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:12:40 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40607 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeIADMj (ORCPT
+        Fri, 31 Aug 2018 23:12:42 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39013 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727679AbeIADMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:12:39 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 207-v6so6634869wme.5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:02:58 -0700 (PDT)
+        Fri, 31 Aug 2018 23:12:41 -0400
+Received: by mail-wm0-f68.google.com with SMTP id q8-v6so6687038wmq.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K43H5rQ9agFtp3KyVHtvsJHREwvDnw84omXL97re9ko=;
-        b=egZfx5L3Pami3Ew4TLK3aAS53FvlQKhCSpmg0Zi5JXeBkGMFpGEIL54QbB9zjegxxZ
-         Qi8hr4As/gIyKBc1fB+UK9FGhJq+nklchxzI6GCGcg7Jz75bX+VQljEw/7Xu0THgcvaj
-         ReJi7rddm8LB65AG9zfb5zAIiJsmlKFGlDZiZqYWXmRh1f/OYbC2rLSwqstojTOxvPnl
-         XsrD+va9njBEpUn011X0Ao+XEyV8lAUY+9Wqn5Ol4W+W4JNR+XCDGai8Ggd+N8VOW3oe
-         3c63Z+aSPBloFiTzw3Ci30YpjUWQFTq16t2tsKdxlL33uUYSYTtF7Zj/eV2rE35QjfX4
-         iThg==
+        bh=qft1yxX6SUMf5r8UKH3M8nkBjgXqmLeZW2EJYvF59Os=;
+        b=HWCFNJJ4QDyphw/9/smDD0OkcJi+cupmCAzPiw1iLxzui/Hx8CvCkurX8/aBsQSc40
+         8CrsEIj0jdm7+2KiBJHCLGNl7KSPSbr70pjbnJGtMHN5btu+uTxi7bN3EjQiqGHwHQTy
+         iEirMU7n7bSOPwgQ55ufAbd171gdeS3T5ra7tW1rnpd4MLpr5rowEeYsH4WbYw3BV4Es
+         LfaZlBzjeOAfal7PPbxQLOiZwX4DfXwqYiSUzzghwmvDqbdbnc9l6QSlCrzm1BaFWXN5
+         m8HN+dKH2pe4qOz8ubYGUCSKAYVIC2GbwPCwY8WLA9RAVIVOXFNe3FiFUo76lIuk++nl
+         +H4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K43H5rQ9agFtp3KyVHtvsJHREwvDnw84omXL97re9ko=;
-        b=gl3llqvKHU+UaCiKAUCJM4jicBwP+Zhvi4cBnto1SEQfQN1nn1dsJndzrflcHQRyT7
-         sAYyfO3lVCxLeHt2m8Q+Ir8p0XcsK+m8RpH4uL/JczpojFmn7ForAPFQ5Cd3LL6/7mYc
-         1GADUy+h1EhaP3XAeCFcRB9cUKujPw0nqmtq76bEOoVXLDf2VOkT5XxHOAfKTYQ9n9PR
-         OrGpN1E0bsru48zqvVeamZvxIRPUr1sWywLKgfd33ScBRFsAE5efI2min6lJhT0jVW/s
-         qN0j2HZZVv9Q6uf2Uf7LQ7HkwuFBKsXmqj3nlsvWhOZhBqwwqfr/GlWhpTUMwOJNT0Xy
-         BgSQ==
-X-Gm-Message-State: APzg51BvqAuuE37DOcKoMz33g65+QTNii1OenIkvxtUsby9Oez5oTKV6
-        Wy1odGgPhjnTaLn1iZKgPXdaWwI5O2A=
-X-Google-Smtp-Source: ANB0VdYrJReiW0Cf+Evy2rvHuYYBB2J5wnXYCjvLh91k/ecsRmH7BLNmF8wWKv4n2CfJSvF6x5AoHQ==
-X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr5853784wmg.67.1535756577124;
-        Fri, 31 Aug 2018 16:02:57 -0700 (PDT)
+        bh=qft1yxX6SUMf5r8UKH3M8nkBjgXqmLeZW2EJYvF59Os=;
+        b=eae1xHIUjil9F1mK43hIbD59GbUKKo2uT6A9lUenAvMbXX0cF7CxhgIy5Lsg3KGHPQ
+         kfDUHDf0KOtfqjkwOlS4pc+/KbtZmC+OD81JARp5o772miCFf34wgcSPlRCvbxB3abrY
+         94lHFS3mLncXfFJPMx3zWo4Otv2/h/4htnOqmyotiilWQ3iungXts4lGiIf9C+hrGXT9
+         LEF0/irpXf7T2YMWF2CNzuoFtQ9AZpDjOjSBIqORGBoRzc5pZ43ho7PsKoKbmGwvhSd7
+         rQEfj7+vyBvgSbacLIbHcS+loBlTHs0Z5dWCtBulhdAmoLa6uW7rcUTKh3ee/jRbmsoy
+         5KKw==
+X-Gm-Message-State: APzg51CjtoWQYDuo8/FyROrAZWoo8H5mvpsgsxnE8glSN1sIrPq/KA7r
+        A0ga4qR+sBaGk3yDXNKZigNLY+VcT3E=
+X-Google-Smtp-Source: ANB0VdYVGGYawCUmSdU2EmzvsBe6nDIVtmh9/Rpc5+q++W4GSchAfcrRGWzl/buvXZA8hfjBSti2MQ==
+X-Received: by 2002:a1c:f516:: with SMTP id t22-v6mr5768876wmh.103.1535756578735;
+        Fri, 31 Aug 2018 16:02:58 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.02.55
+        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.02.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 16:02:56 -0700 (PDT)
+        Fri, 31 Aug 2018 16:02:58 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 01/20] staging:rtl8192u: Remove write_cam() - Style
-Date:   Sat,  1 Sep 2018 00:02:31 +0100
-Message-Id: <20180831230250.16810-2-johnfwhitmore@gmail.com>
+Subject: [PATCH 02/20] staging:rtl8192u: Remove read_cam() - Style
+Date:   Sat,  1 Sep 2018 00:02:32 +0100
+Message-Id: <20180831230250.16810-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831230250.16810-1-johnfwhitmore@gmail.com>
 References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
@@ -73,46 +73,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the function write_cam() as it is unused.
+Remove the function read_cam(), as it is unused in code.
 
 Simple style change which should not impact runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U.h      | 1 -
- drivers/staging/rtl8192u/r8192U_core.c | 7 -------
- 2 files changed, 8 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h      | 2 --
+ drivers/staging/rtl8192u/r8192U_core.c | 9 ---------
+ 2 files changed, 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index 1b51601df1ee..77324a471de1 100644
+index 77324a471de1..70bbd1fadcca 100644
 --- a/drivers/staging/rtl8192u/r8192U.h
 +++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -1092,7 +1092,6 @@ short rtl819xU_tx_cmd(struct net_device *dev, struct sk_buff *skb);
+@@ -1091,8 +1091,6 @@ bool init_firmware(struct net_device *dev);
+ short rtl819xU_tx_cmd(struct net_device *dev, struct sk_buff *skb);
  short rtl8192_tx(struct net_device *dev, struct sk_buff *skb);
  
- u32 read_cam(struct net_device *dev, u8 addr);
--void write_cam(struct net_device *dev, u8 addr, u32 data);
- 
+-u32 read_cam(struct net_device *dev, u8 addr);
+-
  int read_nic_byte(struct net_device *dev, int x, u8 *data);
  int read_nic_byte_E(struct net_device *dev, int x, u8 *data);
+ int read_nic_dword(struct net_device *dev, int x, u32 *data);
 diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 6b22aaa40ff9..caa618a845df 100644
+index caa618a845df..12783b88eb58 100644
 --- a/drivers/staging/rtl8192u/r8192U_core.c
 +++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -237,13 +237,6 @@ static void CamResetAllEntry(struct net_device *dev)
+@@ -237,15 +237,6 @@ static void CamResetAllEntry(struct net_device *dev)
  	write_nic_dword(dev, RWCAM, ulcommand);
  }
  
--
--void write_cam(struct net_device *dev, u8 addr, u32 data)
+-u32 read_cam(struct net_device *dev, u8 addr)
 -{
--	write_nic_dword(dev, WCAMI, data);
--	write_nic_dword(dev, RWCAM, BIT(31) | BIT(16) | (addr & 0xff));
+-	u32 data;
+-
+-	write_nic_dword(dev, RWCAM, 0x80000000 | (addr & 0xff));
+-	read_nic_dword(dev, 0xa8, &data);
+-	return data;
 -}
 -
- u32 read_cam(struct net_device *dev, u8 addr)
+ int write_nic_byte_E(struct net_device *dev, int indx, u8 data)
  {
- 	u32 data;
+ 	int status;
 -- 
 2.18.0
 
