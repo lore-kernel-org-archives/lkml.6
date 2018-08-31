@@ -2,91 +2,107 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7241C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB989C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3E42077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7953120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gpnR0Ba0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3E42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ltto8TEt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7953120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeHaTPX (ORCPT
+        id S1728260AbeHaTQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:15:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40792 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbeHaTPW (ORCPT
+        Fri, 31 Aug 2018 15:16:44 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:32821 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbeHaTQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:15:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Bz300YUuhEcXdNtifjof+9Pk4fCA0uyHhqnrFGqd+j8=; b=gpnR0Ba0pn4PgRmObsPOdsTbY
-        rldJ1goZvvn3uKVsuKL0vjscuVaCVWFESuLKA5IiWNHb5z1kdCZxurdrwLg/fTYOKmD+NLytPCpcs
-        PjqKOrEOsW5DGVT7dMpuP9if/XNreK6skpwamnCbVf/G4nR9J90Q5yH8SzWNNV7imiaga8NLtY63p
-        z3R9HZ6pHkjSDIsbJ2bFZl0NOH25oj3AoPCQ4JQxCLFNb8MFuk2uqoS61awcJLOXpZMSlD+t2/f+C
-        GVsjT8OlX3KTyqstPT6L12QiX+Aeh1ijHV6HwcvqACHV/uOqvXqVotHswnQmuonVhezspxtwQnBoR
-        MsE13+fZA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvl1C-0002tZ-SF; Fri, 31 Aug 2018 15:07:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1E9842024EB09; Fri, 31 Aug 2018 17:07:21 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 17:07:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched/pelt: fix update_blocked_averages() for dl and
- rt
-Message-ID: <20180831150721.GP24124@hirez.programming.kicks-ass.net>
-References: <1535727379-17133-1-git-send-email-vincent.guittot@linaro.org>
+        Fri, 31 Aug 2018 15:16:43 -0400
+Received: by mail-ed1-f66.google.com with SMTP id d8-v6so1238138edv.0;
+        Fri, 31 Aug 2018 08:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OakFLENuwgbFbDjfQEAX9HmDNCHYIGzIDhRitMT5zYY=;
+        b=Ltto8TEt5omeD5A8gFwZfNQfRqduET/fclaEV7VurgbvUWUGDz62jx4Q4OYMph6b35
+         5HQFybqd+66NOlJsOmJpKb5sNP/C5e0E271mZesCSQLHxtsavkd3SC7t5SZvzwrCWVg0
+         hFxA5Zrz+mCdKyqsPczTpR+MJQtnDo7pBXruE4XvsMy5U2rJoXY4rU6fP/WaZ+w5+4qG
+         m9HPdENUNH3E1YcWw8QvHlPuA80MhLiN+JFPW4OQPnhDD3jGK61EwgJejKuF8eqPMXkS
+         io4yIy+2FGP81NLMuDN+H/rGe+Z72DQbcseRntNTBI1wiVvbwWuDU0XraU2B/r3+VpoA
+         xLHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OakFLENuwgbFbDjfQEAX9HmDNCHYIGzIDhRitMT5zYY=;
+        b=NgM/jD3KoUCDcFA5xWHTxhJrG5oWYJ/N2KFqbBpnml1u1qlkBSA40iXaLoRiPEb8B9
+         v+9w/cJPqulpYDVzMoEGT0OOAmd1dARd6T3ET1s/VlZI8SZ8BSvQ+OukHdOZmg4Jgfgs
+         CT/y7c41i7NJcYn6O52xKlaaoGbUdRbvNjQwrt7TPPYlPHjjY5WxGtzUWwpIjskXFdy8
+         lNIctL/xCIrGLAooV92Yfpt4J/Mehq3TPYGHb1sNySPWO9faUgXG1qnEl94IPXDb0V4Z
+         JMpSKb0NEZO3LqWS9Tsr0pIMiQia1Vd+Zm4VgpW1/YWDMUwERwxZ5FdSxqoEArNCifGK
+         fYug==
+X-Gm-Message-State: APzg51Ay6nd4CGaIlrVEx/vIuf7FJLwRA9Br329kfMy0QKSbji+s9VJo
+        XojJyxBTkf8P1wjUd924+aagezRGqLcIL1dLs09fNQ==
+X-Google-Smtp-Source: ANB0Vda7tSXnYS2FL8daSoWT+JEmDh0UglQTUOSoNZIvpPevQmG2DzcFqX/CLo3aHbXIfSR2qXIPznRC4yq3dkp/zHc=
+X-Received: by 2002:a50:fc03:: with SMTP id i3-v6mr18802924edr.85.1535728125829;
+ Fri, 31 Aug 2018 08:08:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535727379-17133-1-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180829130308.3504560-1-arnd@arndb.de> <CAF=yD-J7-GumUmonrZt7s44e3bsjY2DCD6ZpmhtCx6FOBV5BNA@mail.gmail.com>
+ <CAK8P3a2XTUZJUqGu6v=SZqcoJTqM3fgtDAWBnBopX3=4NJYcRA@mail.gmail.com>
+ <CAF=yD-+9yc838Y_DO1S4HsBpLrBk8iNt0oAj1ceO1S6sE+tCdg@mail.gmail.com> <CAK8P3a00DLR9JyfKwbYXnKCpRf+YWuUyMbC+UfXZTfdnAJxRtg@mail.gmail.com>
+In-Reply-To: <CAK8P3a00DLR9JyfKwbYXnKCpRf+YWuUyMbC+UfXZTfdnAJxRtg@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 31 Aug 2018 11:08:09 -0400
+Message-ID: <CAF=yD-+tiVeP0FA1CUrT4Jyn28tnT+bett+Dq2frvU5eS1ANPw@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: rework SIOCGSTAMP ioctl handling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Network Development <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>, linux-arch@vger.kernel.org,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-hams@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
+        dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-x25@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 04:56:19PM +0200, Vincent Guittot wrote:
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 309c93f..bc1de21 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7262,6 +7262,7 @@ static void update_blocked_averages(int cpu)
->  {
->  	struct rq *rq = cpu_rq(cpu);
->  	struct cfs_rq *cfs_rq, *pos;
-> +	const struct sched_class *curr_class = rq->curr->sched_class;
->  	struct rq_flags rf;
->  	bool done = true;
+> > > Looking at it again, it seems that sock_gettstamp() should
+> > > actually deal with this gracefully: it will return a -EINVAL
+> > > error condition if the timestamp remains at the
+> > > SK_DEFAULT_STAMP initial value, which is probably
+> > > just as appropriate (or better) as the current -ENOTTY
+> > > default, and if we are actually recording timestamps, we
+> > > might just as well report them.
+> >
+> > Yes, that's a nice solution. There is always some risk in changing
+> > error codes. But ioctl callers should be able to support newly
+> > implemented functionality. Even if partially implemented and
+> > returning ENOENT instead of ENOIOCTLCMD.
+>
+> Ok, so do you think we should stay with the current version
+> for now, and change the two points later, or should I rework
+> it to integrate the locking and removing the callback?
+>
+> I suppose the series actually gets nicer without the
+> callback, since I can simply add the generic timestamping
+> implementation first, and then remove the dead ioctl
+> handlers.
 
-Can you do me a v3 where you move that rq->curr dereference under the
-rq->lock?
-
-I _think_ it is actually OK, but it is really dodgy. Moving it under
-rq->lock makes it obvious correct.
-
-> @@ -7298,8 +7299,8 @@ static void update_blocked_averages(int cpu)
->  		if (cfs_rq_has_blocked(cfs_rq))
->  			done = false;
->  	}
-> -	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-> -	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-> +	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
-> +	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
->  	update_irq_load_avg(rq, 0);
->  	/* Don't need periodic decay once load/util_avg are null */
->  	if (others_have_blocked(rq))
+Agreed. I would add the locks in a separate patch, if only on the
+off-chance that lockdep discovers something and it will be easier
+to bisect and revise independently. I can also follow up with that
+patch outside this set, of course.
