@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA439C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B9720661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B9720661
+	by mail.kernel.org (Postfix) with ESMTP id 8B59F20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:53:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B59F20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeHaRAr (ORCPT
+        id S1728390AbeHaRBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 13:00:47 -0400
-Received: from mga03.intel.com ([134.134.136.65]:46691 "EHLO mga03.intel.com"
+        Fri, 31 Aug 2018 13:01:13 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45652 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbeHaRAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 13:00:47 -0400
+        id S1727651AbeHaRBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 13:01:13 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 05:53:26 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 05:53:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
-   d="scan'208";a="84982207"
+   d="scan'208";a="69349330"
 Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga004.fm.intel.com with SMTP; 31 Aug 2018 05:53:24 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 31 Aug 2018 15:53:23 +0300
-Date:   Fri, 31 Aug 2018 15:53:23 +0300
+  by orsmga007.jf.intel.com with SMTP; 31 Aug 2018 05:53:50 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 31 Aug 2018 15:53:49 +0300
+Date:   Fri, 31 Aug 2018 15:53:49 +0300
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     Lee Jones <lee.jones@linaro.org>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/7] mfd: intel_msic: Use DEFINE_RES_IRQ() macro
-Message-ID: <20180831125323.GH2283@lahna.fi.intel.com>
+Subject: Re: [PATCH v1 2/7] mfd: intel_soc_pmic_crc: Use
+ DEFINE_RES_IRQ_NAMED() macro
+Message-ID: <20180831125349.GI2283@lahna.fi.intel.com>
 References: <20180830165255.43114-1-andriy.shevchenko@linux.intel.com>
+ <20180830165255.43114-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180830165255.43114-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20180830165255.43114-2-andriy.shevchenko@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,11 +54,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 07:52:49PM +0300, Andy Shevchenko wrote:
+On Thu, Aug 30, 2018 at 07:52:50PM +0300, Andy Shevchenko wrote:
 > Instead of open coding each data structure with IRQ resources,
 > use dedicated macro.
-> 
-> In one case use DEFINE_RES_IRQ_NAMED() and DEFINE_RES_MEM_NAMED().
 > 
 > No functional change intended.
 > 
