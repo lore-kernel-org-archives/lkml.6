@@ -2,210 +2,138 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D186AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0DCC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B00F20839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:47:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UWqm7+Ht"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B00F20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 5874020837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5874020837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeHaSzK (ORCPT
+        id S1728637AbeHaS5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:55:10 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33138 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728331AbeHaSzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:55:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7VElF9V014358;
-        Fri, 31 Aug 2018 09:47:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535726835;
-        bh=yPvjAaKWq91lAPOsWwCEJheKsOYCxf/GjnNdvJ75LR4=;
-        h=From:To:CC:Subject:Date;
-        b=UWqm7+HtyUTKEfI6qeTN52qmVplYNSMHpk6iwquD6nGwVmJhS4H09BNbJgK2faomp
-         50SvI/Ft1bad4vhmELIVbxwhP72UMoK8w+fBdXUnVn981qdg7Hj5LDLbf/LMIso0Wz
-         eeI8P1a+EpOC637bq/WehVBdKulOIUdtYM9hHGTo=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VElFVO032752;
-        Fri, 31 Aug 2018 09:47:15 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 31
- Aug 2018 09:47:15 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 31 Aug 2018 09:47:15 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7VElFFA028191;
-        Fri, 31 Aug 2018 09:47:15 -0500
-Received: from localhost (uda0226330.dhcp.ti.com [172.22.167.21])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w7VElEx17475;
-        Fri, 31 Aug 2018 09:47:14 -0500 (CDT)
-From:   "Andrew F. Davis" <afd@ti.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH v2 1/2] ASoC: codecs: tas5720: add TAS5722 specific volume control
-Date:   Fri, 31 Aug 2018 09:47:13 -0500
-Message-ID: <20180831144714.16499-1-afd@ti.com>
-X-Mailer: git-send-email 2.18.0
+        Fri, 31 Aug 2018 14:57:43 -0400
+Received: from mga18.intel.com ([134.134.136.126]:44044 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727430AbeHaS5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:57:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 07:49:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,311,1531810800"; 
+   d="scan'208";a="259682029"
+Received: from dde-mobl1.amr.corp.intel.com (HELO [10.254.69.89]) ([10.254.69.89])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Aug 2018 07:47:29 -0700
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>
+References: <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
+ <1535649960.26689.15.camel@intel.com>
+ <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
+ <1535651666.27823.6.camel@intel.com>
+ <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
+ <1535660494.28258.36.camel@intel.com>
+ <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
+ <1535662366.28781.6.camel@intel.com>
+ <CAG48ez0mkr95_TbLQnDGuGUd6G+eJVLZ-fEjDkwA6dSrm+9tLw@mail.gmail.com>
+ <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
+ <20180831095300.GF24124@hirez.programming.kicks-ass.net>
+ <1535726032.32537.0.camel@intel.com>
+Cc:     the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <f5a36e32-7c5f-91fe-9e98-fb44867fda11@linux.intel.com>
+Date:   Fri, 31 Aug 2018 07:47:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1535726032.32537.0.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Dannenberg <dannenberg@ti.com>
+On 08/31/2018 07:33 AM, Yu-cheng Yu wrote:
+> Please use the form:
+> 
+> 	pte_t new_pte, pte = READ_ONCE(*ptep);
+> 	do {
+> 		new_pte = /* ... */;
+> 	} while (!try_cmpxchg(ptep, &pte, new_pte);
 
-The TAS5722 supports modifying volume in 0.25dB steps (as opposed to
-0.5dB steps on the TAS5720). Introduce a custom mixer control that
-allows taking advantage of this finer output volume granularity.
+It's probably also worth doing some testing to see if you can detect the
+cost of the cmpxchg.  It's definitely more than the old code.
 
-Also add custom getters/setters for access as the TAS5722 digital volume
-controls are split over two registers.
-
-Signed-off-by: Andreas Dannenberg <dannenberg@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
-
-Changes from v1:
- - Revise commit message
- - codec -> component
-
- sound/soc/codecs/tas5720.c | 88 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 80 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
-index ae3d032ac35a..3c469112477a 100644
---- a/sound/soc/codecs/tas5720.c
-+++ b/sound/soc/codecs/tas5720.c
-@@ -485,15 +485,56 @@ static const DECLARE_TLV_DB_RANGE(dac_analog_tlv,
- );
- 
- /*
-- * DAC digital volumes. From -103.5 to 24 dB in 0.5 dB steps. Note that
-- * setting the gain below -100 dB (register value <0x7) is effectively a MUTE
-- * as per device datasheet.
-+ * DAC digital volumes. From -103.5 to 24 dB in 0.5 dB or 0.25 dB steps
-+ * depending on the device. Note that setting the gain below -100 dB
-+ * (register value <0x7) is effectively a MUTE as per device datasheet.
-+ *
-+ * Note that for the TAS5722 the digital volume controls are actually split
-+ * over two registers, so we need custom getters/setters for access.
-  */
--static DECLARE_TLV_DB_SCALE(dac_tlv, -10350, 50, 0);
-+static DECLARE_TLV_DB_SCALE(tas5720_dac_tlv, -10350, 50, 0);
-+static DECLARE_TLV_DB_SCALE(tas5722_dac_tlv, -10350, 25, 0);
-+
-+static int tas5722_volume_get(struct snd_kcontrol *kcontrol,
-+			      struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int val;
-+
-+	snd_soc_component_read(component, TAS5720_VOLUME_CTRL_REG, &val);
-+	ucontrol->value.integer.value[0] = val << 1;
-+
-+	snd_soc_component_read(component, TAS5722_DIGITAL_CTRL2_REG, &val);
-+	ucontrol->value.integer.value[0] |= val & TAS5722_VOL_CONTROL_LSB;
-+
-+	return 0;
-+}
-+
-+static int tas5722_volume_set(struct snd_kcontrol *kcontrol,
-+			      struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int sel = ucontrol->value.integer.value[0];
-+
-+	snd_soc_component_write(component, TAS5720_VOLUME_CTRL_REG, sel >> 1);
-+	snd_soc_component_update_bits(component, TAS5722_DIGITAL_CTRL2_REG,
-+				      TAS5722_VOL_CONTROL_LSB, sel);
-+
-+	return 0;
-+}
- 
- static const struct snd_kcontrol_new tas5720_snd_controls[] = {
- 	SOC_SINGLE_TLV("Speaker Driver Playback Volume",
--		       TAS5720_VOLUME_CTRL_REG, 0, 0xff, 0, dac_tlv),
-+		       TAS5720_VOLUME_CTRL_REG, 0, 0xff, 0, tas5720_dac_tlv),
-+	SOC_SINGLE_TLV("Speaker Driver Analog Gain", TAS5720_ANALOG_CTRL_REG,
-+		       TAS5720_ANALOG_GAIN_SHIFT, 3, 0, dac_analog_tlv),
-+};
-+
-+static const struct snd_kcontrol_new tas5722_snd_controls[] = {
-+	SOC_SINGLE_EXT_TLV("Speaker Driver Playback Volume",
-+			   0, 0, 511, 0,
-+			   tas5722_volume_get, tas5722_volume_set,
-+			   tas5722_dac_tlv),
- 	SOC_SINGLE_TLV("Speaker Driver Analog Gain", TAS5720_ANALOG_CTRL_REG,
- 		       TAS5720_ANALOG_GAIN_SHIFT, 3, 0, dac_analog_tlv),
- };
-@@ -527,6 +568,23 @@ static const struct snd_soc_component_driver soc_component_dev_tas5720 = {
- 	.non_legacy_dai_naming	= 1,
- };
- 
-+static const struct snd_soc_component_driver soc_component_dev_tas5722 = {
-+	.probe = tas5720_codec_probe,
-+	.remove = tas5720_codec_remove,
-+	.suspend = tas5720_suspend,
-+	.resume = tas5720_resume,
-+	.controls = tas5722_snd_controls,
-+	.num_controls = ARRAY_SIZE(tas5722_snd_controls),
-+	.dapm_widgets = tas5720_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(tas5720_dapm_widgets),
-+	.dapm_routes = tas5720_audio_map,
-+	.num_dapm_routes = ARRAY_SIZE(tas5720_audio_map),
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+	.non_legacy_dai_naming	= 1,
-+};
-+
- /* PCM rates supported by the TAS5720 driver */
- #define TAS5720_RATES	(SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 |\
- 			 SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000)
-@@ -613,9 +671,23 @@ static int tas5720_probe(struct i2c_client *client,
- 
- 	dev_set_drvdata(dev, data);
- 
--	ret = devm_snd_soc_register_component(&client->dev,
--				     &soc_component_dev_tas5720,
--				     tas5720_dai, ARRAY_SIZE(tas5720_dai));
-+	switch (id->driver_data) {
-+	case TAS5720:
-+		ret = devm_snd_soc_register_component(&client->dev,
-+					&soc_component_dev_tas5720,
-+					tas5720_dai,
-+					ARRAY_SIZE(tas5720_dai));
-+		break;
-+	case TAS5722:
-+		ret = devm_snd_soc_register_component(&client->dev,
-+					&soc_component_dev_tas5722,
-+					tas5720_dai,
-+					ARRAY_SIZE(tas5720_dai));
-+		break;
-+	default:
-+		dev_err(dev, "unexpected private driver data\n");
-+		return -EINVAL;
-+	}
- 	if (ret < 0) {
- 		dev_err(dev, "failed to register component: %d\n", ret);
- 		return ret;
--- 
-2.18.0
-
+A loop that does mprotect(PROT_READ) followed by
+mprotect(PROT_READ|PROT_WRITE) should do it.
