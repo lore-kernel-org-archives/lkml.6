@@ -2,252 +2,129 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C0AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D48C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33DE520839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33DE520839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AA2A20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:45:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqOEwXME"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA2A20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbeHaSvJ convert rfc822-to-8bit (ORCPT
+        id S1728436AbeHaSxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:51:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:59804 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbeHaSvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:51:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F0107A9;
-        Fri, 31 Aug 2018 07:43:20 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EC243F5BD;
-        Fri, 31 Aug 2018 07:43:19 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 09:43:18 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Robert Walker <robert.walker@arm.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, <mike.leach@linaro.org>,
-        <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] perf: Support for Arm A32/T32 instruction sets in
- CoreSight trace
-Message-Id: <20180831094318.f898759538837c89409d2ed8@arm.com>
-In-Reply-To: <df383a27-d0e9-a1fc-8f36-868b2ca32117@arm.com>
-References: <1535535863-1818-1-git-send-email-robert.walker@arm.com>
-        <20180829084943.eca3716eb2a2141e5eb8e6ee@arm.com>
-        <8ff74d1f-e211-7423-2ad4-35369444488e@arm.com>
-        <20180829113214.8eb35081da54214c758434ff@arm.com>
-        <df383a27-d0e9-a1fc-8f36-868b2ca32117@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Fri, 31 Aug 2018 14:53:14 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37689 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbeHaSxO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:53:14 -0400
+Received: by mail-io0-f196.google.com with SMTP id v14-v6so10610152iob.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 07:45:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5Qz8Kz1wIUkVJsNPiip3hX8FZFk4JWKS58U7cHDxgPo=;
+        b=CqOEwXMEQxpWYhg20f21rc7QCPySzEoziwXqW03BHd/KA4ubvD+HWI/s5D9bDj2lsr
+         ngjSsYnNyABNRZDA7L+qAReVeeilRQFtpq4shLDkqgmq94w2qZMAavIQlnKyH2aRMi7Q
+         593iTcGcl5kR+atSxy9EYAJyLF/P3LuAM53YU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Qz8Kz1wIUkVJsNPiip3hX8FZFk4JWKS58U7cHDxgPo=;
+        b=TbKesHyyBbEXoc6dfGT0gJDP/sFTGf7y4AhrrkklnwvwEtyqhTZ0LHfEbBO8wx+2Fp
+         ReL9UfnVRu76rp0AvcQCzxOW6HFjT+cdGEPfMtrLNLsxQUC+OMY1vOLUYPCQ7HyW72R6
+         3TpPPlxdZYllmd5sVdDoreksoUvqHWL3uLL4Ickarn8qMh7FmcVSepE05u+8h82Qnnmz
+         m9VctamaELjwROFKbsmadItQIbxh3qrGmwkH+K9BmNAXT8YhIZ3L53dB1fK3HOMELy1M
+         Rq6wfTfMU/4jokBYqHAXNsdBYrPoca2WzztkEnmA53Qr4QGn/uVj6a0RvjBv78WFBQQp
+         bSrQ==
+X-Gm-Message-State: APzg51BuQ9fYxngARWO4iAdua2FeSLODbxBQAwNXdISoROTGkk9ftina
+        OJAvYnux6xfLHJ7O45TWuLNgN+xeAsuBjoSFjGoXdg==
+X-Google-Smtp-Source: ANB0VdZLRMRm9sZSPdfukCJMDAAt+f59Zu7Ngo0hkAbCnhoeO6eijzqtDf1GizrtWbVnvvtVxSPEW220yY2agk4gFps=
+X-Received: by 2002:a6b:ea0a:: with SMTP id m10-v6mr12576590ioc.18.1535726724466;
+ Fri, 31 Aug 2018 07:45:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1535723908-10779-1-git-send-email-vincent.guittot@linaro.org> <20180831144146.GO24124@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180831144146.GO24124@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 31 Aug 2018 16:45:13 +0200
+Message-ID: <CAKfTPtBPmQBtq5xvpVP59X4OqQcodTpT2djqVWKeW8X-CkhwOA@mail.gmail.com>
+Subject: Re: [PATCH] sched/pelt: fix update_blocked_averages() for dl and rt
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018 14:42:00 +0100
-Robert Walker <robert.walker@arm.com> wrote:
-
-> Generally, I agree with you about breaking backward compatibility, but 
-> in this case I don't think there is an actual problem.  As I understand 
-
-I consider it a serious problem.
-
-> it, you're worried that perf will break for people who are using an 
-> older version (0.8.x) of the OpenCSD library for CoreSight trace decode 
-> and this patch updates the requirement to a newer version (0.9.x) to 
-> enable support for trace of 32-bit applications.
-
-My problem is: every time a new feature is added, it shouldn't
-force base CoreSight decode functionality to require a new version of
-the library.
-
-My second problem is: this patch implements a build-time requirement,
-which is insufficient for running on machines with incompatible
-versions of the library.
-
-> There are only a few (4/5?) targets around with working support for 
-> CoreSight trace (and of these only Juno is the only platform with a 
-> devicetree in the mainline kernel), so only a few users of perf for Arm 
-> trace decode - most of these are people working those directly involved 
-> with Arm & Linaro or will be reading the coresight mailing list.  Anyone
-
-Great, then share this feature with them, but don't send a patch to
-break upstream, which, in turn, goes back to many things downstream
-(future distro releases on newer targets, etc.).
-
-> working with OpenCSD will have got it from github and compiled it 
-> themselves, so they can update and build a new version.  It's only been 
-
-No.  Updating the library - no matter where one gets it from - shouldn't
-have to be necessary to avoid perf build regressions.
-
-> packaged for debian so far and testing already has the 0.9.x version 
-> (the 0.8.x version was only in debian for 8 days before being replaced 
-> by 0.9.x).
-
-What Debian does is immaterial to upstream submissions.
-
-How is Debian testing the library, btw?  Functionality that worked in
-0.8 will fail in 0.9 AFAICT.
-
-> It would be possible to add conditional compilation flags to support 
-> compiling with 0.8.x, but I feel this would add too much mess to the 
-> code and I'd need some help in figuring out perf's feature detection 
-> system to generate the flags.
-
-No, we need run-time compatibility.  Build-time compatibility does not
-satisfy the run-time requirements in this case.
-
->  Given the likely small number of people 
-> affected and the easy upgrade path, I don't think this is worth it.
-
-This is an upstream submission, and I wouldn't like for a single person
-to ever have to experience such silently deceitful bugs.
-
-For now, share the new feature in a personal git tree, for those that
-need it.
-
-Meanwhile, the library needs to be fixed with a run-time version
-compatibility API ASAP.
-
-Thanks,
-
-Kim
-
-> On 29/08/18 17:32, Kim Phillips wrote:
-> > On Wed, 29 Aug 2018 15:34:16 +0100
-> > Robert Walker <robert.walker@arm.com> wrote:
+On Fri, 31 Aug 2018 at 16:41, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Aug 31, 2018 at 03:58:28PM +0200, Vincent Guittot wrote:
+> > update_blocked_averages() is called to periodiccally decay the stalled load
+> > of idle CPUs and to sync all loads before running load balance.
 > >
-> >> Hi Kim,
-> > Hi Robert,
+> > When cfs rq is idle, it trigs a load balance during pick_next_task_fair()
+> > in order to potentially pull tasks and to use this newly idle CPU. This
+> > load balance happens whereas prev task from another class has not been put
+> > and its utilization updated yet. This may lead to wrongly account running
+> > time as idle time for rt or dl classes.
 > >
-> >> On 29/08/18 14:49, Kim Phillips wrote:
-> >>> On Wed, 29 Aug 2018 10:44:23 +0100
-> >>> Robert Walker <robert.walker@arm.com> wrote:
-> >>>
-> >>>> This patch adds support for generating instruction samples from trace of
-> >>>> AArch32 programs using the A32 and T32 instruction sets.
-> >>>>
-> >>>> T32 has variable 2 or 4 byte instruction size, so the conversion between
-> >>>> addresses and instruction counts requires extra information from the trace
-> >>>> decoder, requiring version 0.9.1 of OpenCSD.  A check for the new struct
-> >>>> member has been added to the feature check for OpenCSD.
-> >>>>
-> >>>> Signed-off-by: Robert Walker <robert.walker@arm.com>
-> >>>> ---
-> >>> ...
-> >>>> +++ b/tools/build/feature/test-libopencsd.c
-> >>>> @@ -3,6 +3,13 @@
-> >>>>    
-> >>>>    int main(void)
-> >>>>    {
-> >>>> +	/*
-> >>>> +	 * Requires ocsd_generic_trace_elem.num_instr_range introduced in
-> >>>> +	 * OpenCSD 0.9
-> >>> 0.9 != 0.9.1 in the above commit text: which is it?
-> >> I'll change it to 0.9.1 if there's another version of the patch (it was
-> >> introduced in 0.9, but 0.9.1 has a necessary bug fix)
-> >>>> +	 */
-> >>>> +	ocsd_generic_trace_elem elem;
-> >>>> +	(void)elem.num_instr_range;
-> >>>> +
-> >>> This breaks building against older versions of OpenCSD, right?
-> >>>
-> >>>>    	(void)ocsd_get_version();
-> >>> Why don't we maintain building against older versions of the library,
-> >>> and use the version information to make the decision on whether to use
-> >>> the new feature being introduced in this patch?
-> >> The intention is to fail the feature detection check if the older
-> >> version is installed - perf will still compile, but without the
-> >> CoreSight trace support.
-> > It should still compile, and with CoreSight trace support, just
-> > not support for A32/T32 instruction sets.  The user shouldn't be denied
-> > CoreSight trace support if they don't care for A32/T32 ISA support.
+> > Test that no rt or dl task is running when updating their utilization in
+> > update_blocked_averages().
 > >
-> >> OpenCSD is still in development, so new features like this are being
-> >> added and it would add a lot of #ifdef mess to the perf code to continue
-> >> to support any machines with the old library version installed - there
-> > Even adding #ifdefs, that won't survive taking one perf executable
-> > built on one machine and running it on another machine with a different
-> > version of the OpenCSD library: it'll break inconspicuously, not
-> > gracefully!
-> 
-> perf has a lot of other shared library dependencies (ELF , unwind 
-> libraries etc), so moving builds between systems is already fragile.
-> 
-> > There needs to be a run-time means of working with older versions of
-> > the library.
+> > We still update rt and dl utilization instead of simply skipping them to
+> > make sure that all metrics are synced when used during load balance.
 > >
-> > Consider checking the sizeof some of the structs?  IIRC, some of the
-> > structs sizes changed in the library.  See e.g., the 'size' field of
-> > perf_event_attr:
+>
+> Fixes: 371bf4273269 ("sched/rt: Add rt_rq utilization tracking")
+> Fixes: 3727e0e16340 ("sched/dl: Add dl_rq utilization tracking")
+>
+> Right?
+
+Yes
+
+>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
 > >
-> > size
-> >       The size of the perf_event_attr structure for forward/backward
-> >       compatibility.  Set this using sizeof(struct perf_event_attr)
-> >       to allow the kernel to see the struct size at the time
-> >       of compilation.
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 309c93f..a1babaf 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7262,6 +7262,7 @@ static void update_blocked_averages(int cpu)
+> >  {
+> >       struct rq *rq = cpu_rq(cpu);
+> >       struct cfs_rq *cfs_rq, *pos;
+> > +     const struct sched_class *curr_class = rq->curr->sched_class;
+> >       struct rq_flags rf;
+> >       bool done = true;
 > >
-> > or, likely better, the 'version' and 'compat_version' of the
-> > perf_event_mmap_page structure:
-> >
-> >             struct perf_event_mmap_page {
-> >                 __u32 version;        /* version number of this structure */
-> >                 __u32 compat_version; /* lowest version this is compat with */
-> > 	       ...
-> >
-> >> will only be a handful of machines affected and it's trivial to upgrade
-> >> them (the new Debian packages are available).
-> > This is upstream linux, so I don't know how you know only a 'handful'
-> > of machines affected, and I wouldn't assume everyone's using Debian.
-> >
-> > For one, I'd hate to see a single user affected if it isn't necessary,
-> > as is in this case - not everyone wants A32/T32 ISA support, and
-> > library compatibility needn't be broken.
-> >
-> > This 'screw compatibility' mentality needs to be dropped *now* if
-> > CoreSight support is to have a successful future.
-> >
-> > Otherwise, I suggest keeping this feature in downstream trees for the
-> > 'handful', until the library and perf code are rewritten in a state
-> > where they properly interoperate, and do not break each other.
-> >
-> >> How long would we
-> >> continue to support such an older version?
-> > What do you mean such an older version?  The project's v0.9.0 commit
-> > was on 20 June 2018, the one that's usable - v0.9.1 - has a July 27
-> > 2018 commit date!  One month is *not* *old*!
-> I mean the 0.8.x version as the old version.
-> >>    I also don't see any
-> >> precedent for supporting multiple dependent library versions in perf.
-> > That's because perf doesn't have a precedent on depending on libraries
-> > that flat-out break their own users compatibility across versions ;)
-> This patch picks up a new feature that's been added - I notice the 
-> feature detection checks for other libraries check a number of features 
-> and emit warnings about required versions.
-> 
-> > Thanks,
-> >
-> > Kim
-> 
-> Regards
-> 
-> Rob
-> 
-> 
+> > @@ -7298,8 +7299,8 @@ static void update_blocked_averages(int cpu)
+> >               if (cfs_rq_has_blocked(cfs_rq))
+> >                       done = false;
+> >       }
+> > -     update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+> > -     update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
+> > +     update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
+> > +     update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
+> >       update_irq_load_avg(rq, 0);
+> >       /* Don't need periodic decay once load/util_avg are null */
+> >       if (others_have_blocked(rq))
+>
+> Did you forget to update the second implementation of
+> update_blocked_averages() ?
+
+Yes. I have sent this version to quickly.
+I'm going to send an update
