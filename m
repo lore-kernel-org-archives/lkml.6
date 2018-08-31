@@ -2,300 +2,147 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44435C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0105C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD07D20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:56:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQj4SGKN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD07D20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 71FE520841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FE520841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeIADFu (ORCPT
+        id S1727941AbeIADGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:05:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41821 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeIADFt (ORCPT
+        Fri, 31 Aug 2018 23:06:49 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.133]:24048 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727417AbeIADGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:05:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so11255908ljy.8;
-        Fri, 31 Aug 2018 15:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uh7mqvxXnjaw9WCsqO1jdthyZWLvGWRFnitWjcEgjoA=;
-        b=HQj4SGKNgs8f9iXKtGvns961NWAptusN3lWLpFVfdPo0Qcxm6Q2aePZ8b92Pdkjli4
-         f+pmlZugPzTlMQZPn//LwII//kLmU/cJrk3xhqLa9dNblTA71v7/M+Uf/kseKSDhWfj8
-         jpdaC46O4e/lS0oN6c5B+/o8xBAq+vZxlHIXsR8cuFdx8eIjFI3E3P+XhFWQSMTZbEhF
-         nFuJ8+Ii6agbid3pdfXbKl/HG7TI9Sm392Lai/k81stI5cWJhC6YXC6a02JoPw/gYpka
-         +SxglCsr1Fa3Nk70WW4t1ScRefu6Z9Qxbpl9jEZ3jGyrtx60ry+iPjXIgjlVFXUwlbmJ
-         kRZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uh7mqvxXnjaw9WCsqO1jdthyZWLvGWRFnitWjcEgjoA=;
-        b=pUMGlb8r7hFCyW0GWH8OckNKkK6/wqVfR2ny+Qcdtlp7zYXAuS2YsfGllRlpACY/Tt
-         7BC2l91qwt9RT+hXsozxDpsF4LdxJlOj8gaWLkNqMKtdruFLb/JhRZVKYglvr4Ez8gu/
-         VYBi/VfwCawYpKPJ9RwHglDDylg0htDU11eSo2lZEsX0//biAkf7MII2pvML3H+jfF2E
-         YUswXrak6l8DxfcHnOOVzSdJ6e7Uq364OF41aHVEup+MoWC8phQjOxNNidgvR22B5VoU
-         s2Ak/qhhFy8aqLa/UaWU96o9Oftl3m0ccQatN+AZYz/qUcIVx592Mskf3w34zJcG5Pb6
-         3tsA==
-X-Gm-Message-State: APzg51BLaAZYsyrNjjzCA/G8H5+yMAe//SfDYGWeZSJTXCD015MvnwvC
-        OMP9Bsnt2f35cdz2q4a8mdU=
-X-Google-Smtp-Source: ANB0VdYdQRK6Bou/NoJzk2IpPD7A6aa7x5dPB+XpbFgej7tf/vG0Hl9aZzM93U05I+aQRGsAcceLgA==
-X-Received: by 2002:a2e:610a:: with SMTP id v10-v6mr11343517ljb.39.1535756166923;
-        Fri, 31 Aug 2018 15:56:06 -0700 (PDT)
-Received: from localhost.localdomain (apn-37-248-212-140.dynamic.gprs.plus.pl. [37.248.212.140])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm1969187ljc.94.2018.08.31.15.56.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 15:56:06 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v6 4/4] gpiolib: Implement fast processing path in get/set array
-Date:   Sat,  1 Sep 2018 00:56:16 +0200
-Message-Id: <20180831225616.29221-5-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180831225616.29221-1-jmkrzyszt@gmail.com>
-References: <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180831225616.29221-1-jmkrzyszt@gmail.com>
+        Fri, 31 Aug 2018 23:06:49 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id CD821400CD139
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:57:08 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vsLkfof2XSjJAvsLkfT9UI; Fri, 31 Aug 2018 17:57:08 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.106.191] (port=58458 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fvsLk-002pMW-CV; Fri, 31 Aug 2018 17:57:08 -0500
+Subject: Re: [PATCH] i40e: mark expected switch fall-through
+To:     "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180830185019.GA30328@embeddedor.com>
+ <61CC2BC414934749BD9F5BF3D5D94044950056B7@ORSMSX112.amr.corp.intel.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <e791fe31-01ae-c208-3417-2ef6df94586b@embeddedor.com>
+Date:   Fri, 31 Aug 2018 17:57:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <61CC2BC414934749BD9F5BF3D5D94044950056B7@ORSMSX112.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.191
+X-Source-L: No
+X-Exim-ID: 1fvsLk-002pMW-CV
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.106.191]:58458
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain GPIO descriptor arrays returned by gpio_get_array() may contain
-information on direct mapping of array members to pins of a single GPIO
-chip in hardware order.  In such cases, bitmaps of values can be passed
-directly from/to the chip's .get/set_multiple() callbacks without
-wasting time on iterations.
 
-Add respective code to gpiod_get/set_array_bitmap_complex() functions.
-Pins not applicable for fast path are processed as before, skipping
-over the 'fast' ones.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- Documentation/driver-api/gpio/board.rst    | 15 ++++++
- Documentation/driver-api/gpio/consumer.rst |  8 +++
- drivers/gpio/gpiolib.c                     | 87 ++++++++++++++++++++++++++++--
- 3 files changed, 105 insertions(+), 5 deletions(-)
+On 8/30/18 4:09 PM, Kirsher, Jeffrey T wrote:
+>> -----Original Message-----
+>> From: Gustavo A. R. Silva [mailto:gustavo@embeddedor.com]
+>> Sent: Thursday, August 30, 2018 11:50
+>> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S. Miller
+>> <davem@davemloft.net>
+>> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> Subject: [PATCH] i40e: mark expected switch fall-through
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases where
+>> we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1473099 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/net/ethernet/intel/i40e/i40e_xsk.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> I have picked this up Dave.
+> 
 
-diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
-index 2c112553df84..c66821e033c2 100644
---- a/Documentation/driver-api/gpio/board.rst
-+++ b/Documentation/driver-api/gpio/board.rst
-@@ -193,3 +193,18 @@ And the table can be added to the board code as follows::
- 
- The line will be hogged as soon as the gpiochip is created or - in case the
- chip was created earlier - when the hog table is registered.
-+
-+Arrays of pins
-+--------------
-+In addition to requesting pins belonging to a function one by one, a device may
-+also request an array of pins assigned to the function.  The way those pins are
-+mapped to the device determines if the array qualifies for fast bitmap
-+processing.  If yes, a bitmap is passed over get/set array functions directly
-+between a caller and a respective .get/set_multiple() callback of a GPIO chip.
-+
-+In order to qualify for fast bitmap processing, the pin mapping must meet the
-+following requirements:
-+- it must belong to the same chip as other 'fast' pins of the function,
-+- its index within the function must match its hardware number within the chip.
-+
-+Open drain and open source pins are excluded from fast bitmap output processing.
-diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-index 0afd95a12b10..cf992e5ab976 100644
---- a/Documentation/driver-api/gpio/consumer.rst
-+++ b/Documentation/driver-api/gpio/consumer.rst
-@@ -388,6 +388,14 @@ array_info should be set to NULL.
- Note that for optimal performance GPIOs belonging to the same chip should be
- contiguous within the array of descriptors.
- 
-+Still better performance may be achieved if array indexes of the descriptors
-+match hardware pin numbers of a single chip.  If an array passed to a get/set
-+array function matches the one obtained from gpiod_get_array() and array_info
-+associated with the array is also passed, the function may take a fast bitmap
-+processing path, passing the value_bitmap argument directly to the respective
-+.get/set_multiple() callback of the chip.  That allows for utilization of GPIO
-+banks as data I/O ports without much loss of performance.
-+
- The return value of gpiod_get_array_value() and its variants is 0 on success
- or negative on error. Note the difference to gpiod_get_value(), which returns
- 0 or 1 on success to convey the GPIO value. With the array functions, the GPIO
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4d26cdbdb7cf..b799a89c4c17 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2787,7 +2787,36 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  struct gpio_array *array_info,
- 				  unsigned long *value_bitmap)
- {
--	int i = 0;
-+	int err, i = 0;
-+
-+	/*
-+	 * Validate array_info against desc_array and its size.
-+	 * It should immediately follow desc_array if both
-+	 * have been obtained from the same gpiod_get_array() call.
-+	 */
-+	if (array_info && array_info->desc == desc_array &&
-+	    array_size <= array_info->size &&
-+	    (void *)array_info == desc_array + array_info->size) {
-+		if (!can_sleep)
-+			WARN_ON(array_info->chip->can_sleep);
-+
-+		err = gpio_chip_get_multiple(array_info->chip,
-+					     array_info->get_mask,
-+					     value_bitmap);
-+		if (err)
-+			return err;
-+
-+		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
-+			bitmap_xor(value_bitmap, value_bitmap,
-+				   array_info->invert_mask, array_size);
-+
-+		if (bitmap_full(array_info->get_mask, array_size))
-+			return 0;
-+
-+		i = find_first_zero_bit(array_info->get_mask, array_size);
-+	} else {
-+		array_info = NULL;
-+	}
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
-@@ -2818,7 +2847,12 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 
- 			__set_bit(hwgpio, mask);
--			i++;
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->get_mask,
-+						   array_size, i);
-+			else
-+				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 
-@@ -2829,7 +2863,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			return ret;
- 		}
- 
--		for (j = first; j < i; j++) {
-+		for (j = first; j < i; ) {
- 			const struct gpio_desc *desc = desc_array[j];
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 			int value = test_bit(hwgpio, bits);
-@@ -2838,6 +2872,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				value = !value;
- 			__assign_bit(j, value_bitmap, value);
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->get_mask, i, j);
-+			else
-+				j++;
- 		}
- 
- 		if (mask != fastpath)
-@@ -3039,6 +3078,32 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- {
- 	int i = 0;
- 
-+	/*
-+	 * Validate array_info against desc_array and its size.
-+	 * It should immediately follow desc_array if both
-+	 * have been obtained from the same gpiod_get_array() call.
-+	 */
-+	if (array_info && array_info->desc == desc_array &&
-+	    array_size <= array_info->size &&
-+	    (void *)array_info == desc_array + array_info->size) {
-+		if (!can_sleep)
-+			WARN_ON(array_info->chip->can_sleep);
-+
-+		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
-+			bitmap_xor(value_bitmap, value_bitmap,
-+				   array_info->invert_mask, array_size);
-+
-+		gpio_chip_set_multiple(array_info->chip, array_info->set_mask,
-+				       value_bitmap);
-+
-+		if (bitmap_full(array_info->set_mask, array_size))
-+			return 0;
-+
-+		i = find_first_zero_bit(array_info->set_mask, array_size);
-+	} else {
-+		array_info = NULL;
-+	}
-+
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
- 		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-@@ -3066,7 +3131,14 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 			int value = test_bit(i, value_bitmap);
- 
--			if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-+			/*
-+			 * Pins applicable for fast input but not for
-+			 * fast output processing may have been already
-+			 * inverted inside the fast path, skip them.
-+			 */
-+			if (!raw && !(array_info &&
-+			    test_bit(i, array_info->invert_mask)) &&
-+			    test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 				value = !value;
- 			trace_gpio_value(desc_to_gpio(desc), 0, value);
- 			/*
-@@ -3085,7 +3157,12 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 					__clear_bit(hwgpio, bits);
- 				count++;
- 			}
--			i++;
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->set_mask,
-+						   array_size, i);
-+			else
-+				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 		/* push collected bits to outputs */
--- 
-2.16.4
-
+Thanks, Jeffrey.
+--
+Gustavo
