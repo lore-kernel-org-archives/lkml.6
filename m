@@ -2,149 +2,182 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0780FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87820C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD2220837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E4DF20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:17:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=logitech-com.20150623.gappssmtp.com header.i=@logitech-com.20150623.gappssmtp.com header.b="pLg1Dq7B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD2220837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=logitech.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnpWRQ08"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4DF20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbeHaNVY (ORCPT
+        id S1727852AbeHaNYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:21:24 -0400
-Received: from mail-yb1-f172.google.com ([209.85.219.172]:42829 "EHLO
-        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727758AbeHaNVY (ORCPT
+        Fri, 31 Aug 2018 09:24:00 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44543 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbeHaNYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:21:24 -0400
-Received: by mail-yb1-f172.google.com with SMTP id z12-v6so622639ybg.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 02:14:51 -0700 (PDT)
+        Fri, 31 Aug 2018 09:24:00 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s10-v6so8524422edb.11;
+        Fri, 31 Aug 2018 02:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=logitech-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJrgb3xk1VRcA5niIOkHAQ/4GLGlxEQ409cvwYh98l8=;
-        b=pLg1Dq7BAVfNzoWvqTfsszxu7tQR4ExBytraVdWlV8VkNXqJKuqKWCEXGUEBAaw3sK
-         5CeTgqoS64kM/ca2MoRyNgTDjRBIU3eBWFeaHohFPtJAtTgVODzbvGPjTv9ywtmvr/BG
-         q/ZxyBcfF/PB/JHp5mXsdOsDkYAS96pwO/3A1YLRZ/QwWnXX/FLEy/BzbWso0os46KDr
-         rRjpn5uu6I7O7DaRl2oLOgawTOwlpvTT3gYTtuH7YzpZSb6y1AAlmGS9tFdcpUG5e9c/
-         Oq/0FzOS0cHqv/VJANJHmEs27gw5lHxCbi0dGaN+nl9ZX1BoReLQEcyjwPSStXB3YlBi
-         B6vw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WQAuwYTzNRNvMZH3PHWfAKuVur42rOMya+jgQTFKSqY=;
+        b=gnpWRQ08CQRh2PFRHAJAd0V+uCxz4UR3iOyT0pr4hL+YFFk+ZzeOI3R0BtRWYAambt
+         M+eC9UICR350bSYr9E7ds7hm+w7Iv4+4oiYXGxODpMR6nAAExCidwDsS2jEv8aGifGgS
+         IodZz6loaUA6TMuC9stBlhvDZkHfWWcdFiyxeYFSyOm1jn4sVosDjJYoNlf2zkYb/YiH
+         1WBPUUcz7XUc8BiyB23ooS+yUNCnInRpoh/A2MDwgT4jj7IiuuBBhvj2kStTHXNba0r8
+         dHXL/Gbc6xZU/89E8GKUOu4mHE6DH02nGyUuxs7Vg0WBOKLx/XjYmSymioMxMYEzU2lI
+         6R0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJrgb3xk1VRcA5niIOkHAQ/4GLGlxEQ409cvwYh98l8=;
-        b=uYmO8Q17qHcVpZ7O0K224bUhtjYzJIyawygq1B62gzR1WZG/UjCobqHm66inhuYO9H
-         eEOMjkcRS+H8aMTBNvY5uv+EwB2Njr51hGYExY0tLUZhIlZ0I2I7qMrOw04FjVkyh+WO
-         ry4d9JKGRBrl11kG7Y53Sz81Oqutcu7S9jcjVdOYbyMA2RI4qFiyiTCCVdv3ZQHtc7wU
-         Ae+g55gdmufx+t1KzfnTGo8u5M5hbQQy326TcqkLtUBXvXYZVxiLmbHfPlm0jZSfmQ0V
-         lD9GL2kb8nI1V6wyXWwuNTbFppYeU0+ykymaWYTj7UvvhlvZeTePIEzy+v/7zKZtP+i1
-         eAkw==
-X-Gm-Message-State: APzg51Can9Xef7UtMPu9QdOXwYFpG7wQZ5h7lVL9kSpZdY+KTD+u/PmA
-        U4Wr49+N29ev14fl4sz+CzLSlkkSg1R49Y4WbSRgiw==
-X-Google-Smtp-Source: ANB0VdZYdiQm/rng1p9NDuSr9Hn6ARXWvFmo4sobc6qLc5yk25Ok6jitFMauXc/CwNxqQB7kfAIE8PTZWA7BYxtzimo=
-X-Received: by 2002:a25:3354:: with SMTP id z81-v6mr7960257ybz.212.1535706891069;
- Fri, 31 Aug 2018 02:14:51 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WQAuwYTzNRNvMZH3PHWfAKuVur42rOMya+jgQTFKSqY=;
+        b=B74BQhCq84nA8CZiulA7yQXUAwntAkcN+bxt6WP0Oh/yAfDsGRIbFZqux5dzHz8H6J
+         YxW2+bZa/kJrdxXTeakbxyfXc82T2NUVffoVMCedgSZY4GvVTS5xydQoSNgj7QKMQwPO
+         N4yGx3PiPci8JIVIG+jqmSYiqLzZVBtPnxzzDT5NQf2d5hqE84PgKLZVDm1oTN2Soo4w
+         BHy9KRNecRKtkmaxuHmtireCkXkrz9cIFkthL8U04YGPYL50MKKn2RzZcUR4qGs06Wtl
+         hqq8Ah6Ikl8r9RzC4cbm5sI1l0lJgdrmm8KS+63joe86EOJ3ddhsGcnza4LIPoFvvutI
+         63Uw==
+X-Gm-Message-State: APzg51DIoX8CJSBILCuL2wNvHPGHkg0SfdBiFj2YnF9cDTcSxK0bTdQ9
+        R5EV2Rni9C/eLdzIl9sUYko=
+X-Google-Smtp-Source: ANB0VdYQ8KVlseFFpqXt1oyajkeXzOCBdx71HleJWXzFVNlTkTaEBiy5c/BV5YtwN6aVmbWE7nNiSA==
+X-Received: by 2002:a50:b003:: with SMTP id i3-v6mr16406622edd.120.1535707045050;
+        Fri, 31 Aug 2018 02:17:25 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id j23-v6sm4072372edh.29.2018.08.31.02.17.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 02:17:24 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:17:18 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180831091641.GA3634@andrea>
+References: <20180830125045.GA6936@andrea>
+ <Pine.LNX.4.44L0.1808301712230.31183-100000@netrider.rowland.org>
 MIME-Version: 1.0
-References: <20180823183057.247630-1-hcutts@chromium.org> <20180823183057.247630-4-hcutts@chromium.org>
- <CAO-hwJ+rR8ft96AGjoEApr1ZkythKfcxjVzdULzgpRy-aRv_vg@mail.gmail.com>
- <CA+jURcvguwXAVnpQ9+84QQOaJG74oeV8U4zzM1X0UabaY5DJBQ@mail.gmail.com>
- <CAO-hwJ+tb6XdEM76r0jxBfCx2r_PqQp9T5=A2ALociyHOKUeMg@mail.gmail.com>
- <CA+jURcsDJbL_3aF7wE0MQ_6ZSVV3Aba-tUDX-f=1+y+LBhqmng@mail.gmail.com> <CAE7qMrrBdZSg1P+JTr9SA5a1ui-zdAmsg6pE-B1N5La_1WwvHw@mail.gmail.com>
-In-Reply-To: <CAE7qMrrBdZSg1P+JTr9SA5a1ui-zdAmsg6pE-B1N5La_1WwvHw@mail.gmail.com>
-From:   Nestor Lopez Casado <nlopezcasad@logitech.com>
-Date:   Fri, 31 Aug 2018 11:14:26 +0200
-Message-ID: <CAE7qMrqoioqPSMem3rLs1OEZPFNLzen7TcCWeANC6svvHwbxeg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Enable high-resolution scrolling on Logitech mice
-To:     hcutts@chromium.org
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>, jikos@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1808301712230.31183-100000@netrider.rowland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:11 AM Nestor Lopez Casado
-<nlopezcasad@logitech.com> wrote:
->
->
->
-> On Thu, Aug 30, 2018 at 10:38 PM Harry Cutts <hcutts@chromium.org> wrote:
->>
->> Hi Benjamin,
->>
->> On Thu, 30 Aug 2018 at 00:18, Benjamin Tissoires
->> <benjamin.tissoires@redhat.com> wrote:
->> >> On Thu, Aug 30, 2018 at 1:06 AM Harry Cutts <hcutts@chromium.org> wrote:
->> > > > The conversion input_report_rel(... REL_WHEEL,...) to
->> > > > hid_scroll_counter_handle_scroll() should be dealt in a separate
->> > > > patch.
->> > >
->> > > OK, I'll do that in v2, but might I ask why? I don't see how this
->> > > particular hunk is special.
->> >
->> > I tend to consider that existing code rewrite need to be in their
->> > special commit, especially if the change isn't supposed to change the
->> > behaviour. This is my personal taste in case something goes wrong and
->> > (in this case) a m560 suddenly starts complaining about an issue with
->> > this mouse.
->> > I wouldn't mind too much if you rather keep the
->> > hid_scroll_counter_handle_scroll() introduction to this commit though.
->>
->> Yes, I see the reasoning for that, but this hunk is pretty tied to the
->> main change in that scrolling on the M560 would be 8x too fast without
->> it. I'll keep it in the same one, if you don't mind.
->>
->> > > [snip]
->> > > Yes, it seems to work fine without it (at least for the MX Master 2S).
->> > > Unfortunately, while testing this I encountered a bug with high-res
->> > > scrolling over Bluetooth. (It seems that if you turn off the MX Master
->> > > 2S while it's connected over Bluetooth, we don't detect that and
->> > > remove the input device, meaning that when it reconnects the driver
->> > > thinks it's in high-res mode but the mouse is in low-res.) I'm
->> > > investigating, but in the meantime I'll remove the Bluetooth support
->> > > from v2 and add it back in later.
->> >
->> > As far as I can see, the MX Master 2S is connected over BLE. Bluez
->> > keeps the uhid node opened (and thus the existing bluetooth HID
->> > device) to be able to reconnect faster.
->> > I would suppose you should get notified in the connect event of a
->> > reconnection, but it doesn't seem to be the case.
->> >
->> > Nestor, is there any event emitted by the mouse when it gets
->> > reconnected over BLE or is that a bluez issue?
->>
->> Ah, interesting. The MX Master 2S is indeed using BLE, and testing
->> with another Logitech BLE mouse (the M585) also leaves the input
->> device around. I think this is something Logitech-specific, though, as
->> the Microsoft Surface Precision mouse (also BLE) does have its input
->> device removed when it turns off. I notice that btmon does show
->> "device disconnected" and "device connected" events when I turn the
->> M585 on and off; maybe we need to plumb those through to the driver.
->> We've decided to delay Bluetooth support for high-res scrolling until
->> the Chrome OS Bluetooth stack is more stable.
+On Thu, Aug 30, 2018 at 05:31:32PM -0400, Alan Stern wrote:
+> On Thu, 30 Aug 2018, Andrea Parri wrote:
+> 
+> > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > do provide this ordering for locks, albeit for varying reasons.
+> > > Therefore this patch changes the model in accordance with the
+> > > developers' wishes.
+> > > 
+> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > Reviewed-by: Will Deacon <will.deacon@arm.com>
+> > > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > 
+> > Round 2 ;-), I guess...  Let me start from the uncontroversial points:
+> > 
+> >   1) being able to use the LKMM to reason about generic locking code
+> >      is useful and desirable (paraphrasing Peter in [1]);
+> > 
+> >   2) strengthening the ordering requirements of such code isn't going
+> >      to boost performance (that's "real maths").
+> > 
+> > This patch is taking (1) away from us and it is formalizing (2), with
+> > almost _no_ reason (no reason at all, if we stick to the commit msg.).
+> 
+> That's not quite fair.  Generic code isn't always universally
+> applicable; some of it is opt-in -- meant only for the architectures
+> that can support it.  In general, the LKMM allows us to reason about
+> higher abstractions (such as locking) at a higher level, without
+> necessarily being able to verify the architecture-specific details of
+> the implementations.
 
------Ooops, no html now...
-This might be related to how the device disconnects from the host.
-Sometimes a disconnection comes from the device not responding anymore
-and it is the BT supervision timeout that kicks in (host side). In
-some cases (hw support required on the device side) a device will send
-a disconnect request when switched off. Maybe these different
-disconnect flavors are the root cause behind the input device being
-removed or not.
---nestor
->>
->> Harry Cutts
->> Chrome OS Touch/Input team
+No, generic code is "universally applicable" by definition; see below
+for more on this point.
+
+
+> 
+> > In [2], Will wrote:
+> > 
+> >   "[...] having them [the RMWs] closer to RCsc[/to the semantics of
+> >    locks] would make it easier to implement and reason about generic
+> >    locking implementations (i.e. reduce the number of special ordering
+> >    cases and/or magic barrier macros)"
+> > 
+> > "magic barrier macros" as in "mmh, if we accept this patch, we _should_
+> > be auditing the various implementations/code to decide where to place a
+> > 
+> >   smp_barrier_promote_ordinary_release_acquire_to_unlock_lock()" ;-)
+> > 
+> > or the like, and "special ordering cases" as in "arrgh, (otherwise) we
+> > are forced to reason on a per-arch basis while looking at generic code".
+> 
+> Currently the LKMM does not permit architecture-specific reasoning.  It 
+> would have to be extended (in a different way for each architecture) 
+> first.
+
+Completely agreed; that's why I said that this patch is detrimental to
+the applicability of the LKMM...
+
+
+> 
+> For example, one could use herd's POWER model combined with the POWER 
+> compilation scheme and the POWER-specific implementation of spinlocks 
+> for such reasoning.  The LKMM alone is not sufficient.
+> 
+> Sure, programming and reasoning about the kernel would be easier if all
+> architectures were the same.  Unfortunately, we (and the kernel) have
+> to live in the real world.
+> 
+> > (Remark: ordinary release/acquire are building blocks for code such as
+> >  qspinlock, (q)rwlock, mutex, rwsem, ... and what else??).
+> 
+> But are these building blocks used the same way for all architectures?
+
+The more, the better! (because then we have the LKMM tools) 
+
+We already discussed the "fast path" example: the fast paths of the
+above all resemble:
+
+  *_lock(s):  atomic_cmpxchg_acquire(&s->val, UNLOCKED_VAL, LOCKED_VAL) ...
+  *_unlock(s): ...  atomic_set_release(&s->val, UNLOCKED_VAL)
+
+When I read this code, I think "Of course." (unless some arch. has
+messed the implementation of cmpxchg_* up, which can happen...); but
+then I read the subject line of this patch and I think "Wait, what?".
+
+You can argue that this is not generic code, sure; but why on Earth
+would you like to do so?!
+
+  Andrea
+
+
+> 
+> > To avoid further repetition, I conclude by confirming all the concerns
+> > and my assessment of this patch as pointed out in [3]; the subsequent
+> > discussion, although not conclusive, presented several suggestions for
+> > improvement (IMO).
+> 
+> Alan
+> 
