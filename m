@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B495C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79845C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0CB2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 337102083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:52:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DfrQo3FM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0CB2083F
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="0KSooAfU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337102083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeHaM6s (ORCPT
+        id S1728140AbeHaM6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:58:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39108 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728097AbeHaM6s (ORCPT
+        Fri, 31 Aug 2018 08:58:50 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40095 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728117AbeHaM6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:58:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id o37-v6so10464516wrf.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:52:21 -0700 (PDT)
+        Fri, 31 Aug 2018 08:58:49 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 207-v6so4529553wme.5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=72CyoKBzMtubY3mTYHZb8sAe+LMtlh8bUtSwjYnQ2Ys=;
-        b=DfrQo3FMAhEoBDjlpANsZf6whkzdio5gg9khpR7cFpCa5D2gsL7u8w7dFb8kbiLvVA
-         QIVMYBIC+DSz5WY0goMmzS68mJTkYsd1bidmj0OR+I3i7k2vt96/XE06rhow25XFlGNE
-         XRqEeuNDBDyWF3ZHw11GFSwkgRXL0f0SUeps6VWYLhsbet1oI2Fz9Ib1PDc7cshZl5/q
-         6ICOLQbkmJGP7W0O+Vy7a5J5rOD2KdJqdWWe+gvbmwRnvGspAa2NfznFW3VQA1/PEMzT
-         DZIC/nc9b1b0OClJKHMy1+3KzRowJcQvc11AtgdETNVz0B2mTJYUemqO7QFR+s8CNeVz
-         igSg==
+        bh=TlhOjpl43EpRuA5yEzGXvHqeICOEPG6QYX+g5iMHpvQ=;
+        b=0KSooAfUchUz6L4rUvDniYYn5OIYYCRRJzGLriihxLUZkD6XCVCvoXykt6rCoUiYbs
+         D4coIkjh9BchCAx33o9GB2XURxzoAS6Bm463+lOgU0tUdpV04HfTyEWtgdYpiV9YowW5
+         LOmLzNumXgO4r+fWQ7M5eZIqgBSfYmDkYlPMb4N9xxCL934IrS8i1gsXQBiypxagYvOX
+         rA7RAQP2MluleNOjbv8PVTRuTg6D5lvucef9+Jk48CLcfKwxOdGqYs3veCnhHpDHXY9a
+         v9e5Gu+hSm5YA5vYLvZ2DDxW0zemjhcYqZkBkXANqpRN2joVS4bXHA67+BbSCiFk4vsf
+         U6Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=72CyoKBzMtubY3mTYHZb8sAe+LMtlh8bUtSwjYnQ2Ys=;
-        b=TfZyKt/EsIWmxjIzYsRCLGg7UVKY81ilD21u4u6HthTlrZSWI3ClRvw+WsAjzFgpQe
-         t9jn0VyTEElIcewaa6uI9MMvRguvkkIY1mCJmZcnjCzGSicyBqxiFFENMV9v5rjkpeEf
-         OtnnVntj6Q/oX+B0EjWR4t1lzJdKV2a7dwYwNcJTw6f9G2LUnkcY9A1v8D5f8JM2PWZA
-         naQtCjcWjd7q5OSOnaVvcDpMor/pBAqTmB6HR19tJJ86G07t1AjS9GgOqhgeTjURwg9G
-         881puiuYe5GCnkpHp6aYeJnP76CxhamUlHA/+7Cp5OrY1ckX8lYHGnFJS8U9GBd6iH3Y
-         pcEA==
-X-Gm-Message-State: APzg51Bqexe1LnUPOB8L9AvqV3YiNb4uwdYU8mPwFNJPJDKe/m16SDUK
-        bEtcviOREPB5lU3NujajhRkoFw==
-X-Google-Smtp-Source: ANB0VdY/TImFEXjjO2VF6KgXgh8L14j4adsDobnGapW+NYj/EWnSf/z8LvOYVdqqQzKHEKdsIO53Vw==
-X-Received: by 2002:adf:80ea:: with SMTP id 97-v6mr9832567wrl.57.1535705541070;
-        Fri, 31 Aug 2018 01:52:21 -0700 (PDT)
+        bh=TlhOjpl43EpRuA5yEzGXvHqeICOEPG6QYX+g5iMHpvQ=;
+        b=fiDOKqV25i6tCONERzQGl8P05ZNZXQIDriKwfjMInXfRZqbS4JKuw4gWJUn9R+4f4i
+         M2cFAJh3DcBaQUQVChjwUlicZQ0SK8ZWmUZYy79ngxEfcp/R78zSi0tHY2H18EHSnh1I
+         BHDOjXJYMYrZPK7+rCqPvCKxBJXVCzAiCSqSo0NZ4qMfLBPzXdhZ5Oj2vRfoYpU+IWXT
+         1sAxuBB/Q3Y2VZVjfoGzm9VBc7C+XkcvavpjJouEtUab6N7svkpTt/AzeA33Mm8FOsmM
+         SX+TVdxbPcZpsKLGy7iZG+QGWUUzhov3oF878a02Yqv+0w4v2q1xEehNxlg89Y5xc6gp
+         M4eg==
+X-Gm-Message-State: APzg51D+4GtgimhnJsdy+InxZWI5CFKNVk1Pc2PFGnbdmlHggMX1PBCr
+        uD88Sv11XXN03/T172wTXCx9uQ==
+X-Google-Smtp-Source: ANB0VdZaGQp8H4FSDbmJyy4mzlnI0mVST5etoCrIePvaBBhe9l8+tAWothU5X4FFf4cs6/7TmkEulw==
+X-Received: by 2002:a1c:7d51:: with SMTP id y78-v6mr3956828wmc.37.1535705542733;
+        Fri, 31 Aug 2018 01:52:22 -0700 (PDT)
 Received: from localhost.localdomain (81-67-76-113.rev.numericable.fr. [81.67.76.113])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm8920822wro.66.2018.08.31.01.52.20
+        by smtp.gmail.com with ESMTPSA id v6-v6sm8920822wro.66.2018.08.31.01.52.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 01:52:20 -0700 (PDT)
+        Fri, 31 Aug 2018 01:52:21 -0700 (PDT)
 From:   Maxime Jourdan <mjourdan@baylibre.com>
 To:     Kevin Hilman <khilman@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -69,9 +69,9 @@ Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org
-Subject: [PATCH 3/4] ARM64: dts: meson-gx: add vdec entry
-Date:   Fri, 31 Aug 2018 10:52:04 +0200
-Message-Id: <20180831085205.14760-4-mjourdan@baylibre.com>
+Subject: [PATCH 4/4] ARM64: dts: meson: add vdec entries
+Date:   Fri, 31 Aug 2018 10:52:05 +0200
+Message-Id: <20180831085205.14760-5-mjourdan@baylibre.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831085205.14760-1-mjourdan@baylibre.com>
 References: <20180831085205.14760-1-mjourdan@baylibre.com>
@@ -80,37 +80,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the video decoder dts entry
+This enables the video decoder for gxbb, gxl and gxm chips
 
 Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 11 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 11 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi  |  4 ++++
+ 3 files changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 737b741df035..d9e0fea71dbe 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -410,6 +410,19 @@
- 			};
- 		};
- 
-+		vdec: video-decoder@c8820000 {
-+			compatible = "amlogic,gx-vdec";
-+			reg = <0x0 0xc8820000 0x0 0x10000>,
-+			      <0x0 0xc110a580 0x0 0xe4>;
-+			reg-names = "dos", "esparser";
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 98cbba6809ca..daee53a755d7 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -774,3 +774,14 @@
+ 	compatible = "amlogic,meson-gxbb-vpu", "amlogic,meson-gx-vpu";
+ 	power-domains = <&pwrc_vpu>;
+ };
 +
-+			interrupts = <GIC_SPI 44 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
++&vdec {
++	compatible = "amlogic,gxbb-vdec";
++	clocks = <&clkc CLKID_DOS_PARSER>,
++		 <&clkc CLKID_DOS>,
++		 <&clkc CLKID_VDEC_1>,
++		 <&clkc CLKID_VDEC_HEVC>;
++	clock-names = "dos_parser", "dos", "vdec_1", "vdec_hevc";
++	resets = <&reset RESET_PARSER>;
++	reset-names = "esparser";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index c87a80e9bcc6..bfd65d1a8959 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -775,3 +775,14 @@
+ 	compatible = "amlogic,meson-gxl-vpu", "amlogic,meson-gx-vpu";
+ 	power-domains = <&pwrc_vpu>;
+ };
 +
-+			amlogic,ao-sysctrl = <&sysctrl_AO>;
-+			amlogic,canvas = <&canvas>;
-+		};
++&vdec {
++	compatible = "amlogic,gxl-vdec";
++	clocks = <&clkc CLKID_DOS_PARSER>,
++		 <&clkc CLKID_DOS>,
++		 <&clkc CLKID_VDEC_1>,
++		 <&clkc CLKID_VDEC_HEVC>;
++	clock-names = "dos_parser", "dos", "vdec_1", "vdec_hevc";
++	resets = <&reset RESET_PARSER>;
++	reset-names = "esparser";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+index 247888d68a3a..2f356495be5e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+@@ -117,3 +117,7 @@
+ &dwc3 {
+ 	phys = <&usb3_phy>, <&usb2_phy0>, <&usb2_phy1>, <&usb2_phy2>;
+ };
 +
- 		periphs: periphs@c8834000 {
- 			compatible = "simple-bus";
- 			reg = <0x0 0xc8834000 0x0 0x2000>;
++&vdec {
++	compatible = "amlogic,gxm-vdec";
++};
 -- 
 2.18.0
 
