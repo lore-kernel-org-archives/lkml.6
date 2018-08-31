@@ -2,99 +2,101 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1FEC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC6BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C4820661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t5+6jMA8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C4820661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D99D2083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:11:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D99D2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeHaTSy (ORCPT
+        id S1728187AbeHaTTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:18:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42608 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbeHaTSx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:18:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x7XKefPp0yZEPHew0hkE/Su8saN2whDlOBe1AShJvo4=; b=t5+6jMA8NFqETp1xVdFrNtNZy
-        wYpVTQOiZ4RPW7wapplGryS5VlTE88S12gzQZrv5t2D/OBEz/lQ9bXPp3ysNJhswoVR8+Z5F2mfYt
-        Hw+gXYtKnSsknFjVrwT7+guZQxL/tu+e/NmlJFndTGMWbVpJX6s9WkKvEtU0wBGGU5f1/HEC8LS0C
-        5rYv8jRoM26WZwDelrMgC0awL2KqhPrCB9WgFvJ8d7jptUZcX4SseegJ5pzX5TNqZAydG609jZUO8
-        7GL5zY9br7yqgouqyemrXE8zx7cQhBgclTJoCSjAWF+xHxMNyMdKwJPICMVUc+mXcF4XqBa3L9XGB
-        zkr5MzzxA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fvl4b-0004d8-9p; Fri, 31 Aug 2018 15:10:57 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D48582024D72E; Fri, 31 Aug 2018 17:10:49 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 17:10:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched/pelt: fix update_blocked_averages() for dl and
- rt
-Message-ID: <20180831151049.GB24142@hirez.programming.kicks-ass.net>
-References: <1535727379-17133-1-git-send-email-vincent.guittot@linaro.org>
- <20180831150721.GP24124@hirez.programming.kicks-ass.net>
+        Fri, 31 Aug 2018 15:19:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46958 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727433AbeHaTTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 15:19:44 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8C0022071E; Fri, 31 Aug 2018 17:11:47 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5484C20828;
+        Fri, 31 Aug 2018 17:11:27 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v5 0/7] Add support for MSCC Ocelot i2c
+Date:   Fri, 31 Aug 2018 17:11:07 +0200
+Message-Id: <20180831151114.25739-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831150721.GP24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 05:07:21PM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 31, 2018 at 04:56:19PM +0200, Vincent Guittot wrote:
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 309c93f..bc1de21 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7262,6 +7262,7 @@ static void update_blocked_averages(int cpu)
-> >  {
-> >  	struct rq *rq = cpu_rq(cpu);
-> >  	struct cfs_rq *cfs_rq, *pos;
-> > +	const struct sched_class *curr_class = rq->curr->sched_class;
-> >  	struct rq_flags rf;
-> >  	bool done = true;
-> 
-> Can you do me a v3 where you move that rq->curr dereference under the
-> rq->lock?
-> 
-> I _think_ it is actually OK, but it is really dodgy. Moving it under
-> rq->lock makes it obvious correct.
+Hello,
 
-Ah, it is not correct. I only checked to see if preemption was disabled
-and if we're calling this on the local CPU (which I think is true),
-which would guarantee rq->curr's existence.
+Because the designware IP was not able to handle the SDA hold time before
+version 1.11a, MSCC has its own implementation. Add support for it and then add
+i2c on ocelot boards.
 
-But that is not sufficient to make rq->curr->sched_class stable.
+I would expect patches 1 to 5 to go through the i2c tree.
 
-> > @@ -7298,8 +7299,8 @@ static void update_blocked_averages(int cpu)
-> >  		if (cfs_rq_has_blocked(cfs_rq))
-> >  			done = false;
-> >  	}
-> > -	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-> > -	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-> > +	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
-> > +	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
-> >  	update_irq_load_avg(rq, 0);
-> >  	/* Don't need periodic decay once load/util_avg are null */
-> >  	if (others_have_blocked(rq))
+Pathces 6-7 can go through the mips tree now that the bindings have been
+reviewed.
+
+Changes in v5:
+ - rebased on v4.19-rc1
+ - collected review, test and ack tags
+ - renamed the bindings documentation patch
+
+Changes in v4:
+ - collected review and ack tags
+ - split bindings to a separate patch
+
+Changes in v3:
+ - collected review tags
+ - fixed build warnings on 64bit machines
+
+Changes in v2:
+ - removed first patch as a similar one is in i2c-next
+ - rebase on top of i2c-next
+ - Added two patches to implement ideas from Andy
+
+
+Alexandre Belloni (7):
+  i2c: designware: use generic table matching
+  i2c: designware: move #ifdef CONFIG_OF to the top
+  i2c: designware: allow IP specific sda_hold_time
+  dt-bindings: i2c: designware: document MSCC Ocelot bindings
+  i2c: designware: add MSCC Ocelot support
+  MIPS: dts: mscc: Add i2c on ocelot
+  MIPS: dts: mscc: enable i2c on ocelot_pcb123
+
+ .../bindings/i2c/i2c-designware.txt           |  7 ++-
+ arch/mips/boot/dts/mscc/ocelot.dtsi           | 19 ++++++
+ arch/mips/boot/dts/mscc/ocelot_pcb123.dts     |  6 ++
+ drivers/i2c/busses/i2c-designware-common.c    |  2 +
+ drivers/i2c/busses/i2c-designware-core.h      |  4 ++
+ drivers/i2c/busses/i2c-designware-platdrv.c   | 63 +++++++++++++++----
+ 6 files changed, 87 insertions(+), 14 deletions(-)
+
+-- 
+2.19.0.rc1
+
