@@ -2,126 +2,128 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D367DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA5DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A3020841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A3020841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id E3C8A205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:10:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTQV6tQg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C8A205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeIACMb (ORCPT
+        id S1727326AbeIACTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:12:31 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23515 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbeIACLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:11:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 15:02:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,313,1531810800"; 
-   d="scan'208";a="229317074"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga004.jf.intel.com with ESMTP; 31 Aug 2018 15:02:09 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id DF6F3301BFC; Fri, 31 Aug 2018 15:02:09 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org
-Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v2 04/10] perf, tools, script: Allow sym and dso without ip, addr
-Date:   Fri, 31 Aug 2018 15:02:00 -0700
-Message-Id: <20180831220206.28351-5-andi@firstfloor.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180831220206.28351-1-andi@firstfloor.org>
-References: <20180831220206.28351-1-andi@firstfloor.org>
+        Fri, 31 Aug 2018 22:19:54 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40591 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeIACTy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 22:19:54 -0400
+Received: by mail-qt0-f195.google.com with SMTP id h4-v6so16239188qtj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/NoraxHa8GBeIssLf21fYSdvlpg/R0M7TFjxYJOe7dk=;
+        b=JTQV6tQgxyN763Ac0GBEAKfn7hCpOQKXMSt2DvbBDJJIWHaf/4r7jn2fPus5IaWZdU
+         WDmj1lX8DD/C5T5pNP/BDAkC85bUHToZpjhlVPwriP4iLyiXa6vaPlW1sAxWlXPuu0Gy
+         X0qiShvaCVKpoq1oYbx/9m/mUPwv1jxJ1ZJOUcMZrEMzcnUT9c9U67x42PUTLVSEFLdH
+         h8vQfFqGe4xVj5VF4Z1YL3IuVeSm9ycpDjeF7k6IgbEh0Chtt2lY24fVJBfQRgWOu0cq
+         sC1gQixgrQQXp6zkNlaw3c/5Q3Zriv/sbOiBZ4QhVN8BjkIgLc1wgzXyoci+r9OoAXvJ
+         9TYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/NoraxHa8GBeIssLf21fYSdvlpg/R0M7TFjxYJOe7dk=;
+        b=RVrUVp9oFvUbg7MAxLUgbucwd1ZQrMC8jP/brGSJsoxm/LVpQepgdvxCZl24NyYlVt
+         yKfXlEbGA+hqqrNn/Ba+uyBWFZWL88QZPQmtFqXaF6T503q5Qu/5XHwWt9UK61CpQxxp
+         Qxiq0aJnhMX0GBLwLCPWewe3cbA1iQlYO3P9SWS/tko41HwRn81wFmEJ4ZyiHcK40wGf
+         m2q2Wu9YkTAspYHP3IoQHnzjIPECaS4PKFi3eCMASppyBiKp+LN8oX5PS9cEWstsAxls
+         kk9ncfyYQN0qWhK+WTIEaccOY9RgXAKXnUVUa0zGtpuhMe4LhCdDRAaXMbflsQmXWzqn
+         c1Cg==
+X-Gm-Message-State: APzg51AAFmr0bPLI26NNan0XQe6U5rURq9odfx8aMIc3anuYxBv6IDlx
+        MmPFweDQUCUOJ0KxDI0i7aQ1qzRMi57EsRL2oYs=
+X-Google-Smtp-Source: ANB0VdbSicvfjYZ0+moSyR3nr9fusbV0az3/Kj/BXY2GRcIBWz29EPgkeirPZBqgtsO26NFoJtm+KXrjO1ZOkWhPhqg=
+X-Received: by 2002:a0c:aed9:: with SMTP id n25-v6mr17240687qvd.10.1535753424748;
+ Fri, 31 Aug 2018 15:10:24 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:aed:2291:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 15:10:04
+ -0700 (PDT)
+In-Reply-To: <0a8588f3-929a-608f-1fdc-e24b90e6b59b@rasmusvillemoes.dk>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+ <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com> <0a8588f3-929a-608f-1fdc-e24b90e6b59b@rasmusvillemoes.dk>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sat, 1 Sep 2018 00:10:04 +0200
+Message-ID: <CANiq72mJ+AhD0DO6xcbG5SbGmraPU48+UbWaaU5rW-p4XoO4LQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] Compiler Attributes: use the no-underscores syntax
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+Hi Ramus,
 
-Currently sym and dso require printing ip and addr because
-the print function is tied to those outputs. With callindent
-it makes sense to print the symbol or dso without numerical
-IP or ADDR. So change the dependency check to only check the
-underlying attribute.
+On Fri, Aug 31, 2018 at 11:49 PM, Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+> On 2018-08-31 19:05, Miguel Ojeda wrote:
+>> The attribute syntax optionally allows to surround attribute names
+>> with "__" in order to avoid collisions with macros of the same name
+>> (see https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html).
+>>
+>> This homogenizes all attributes to use the syntax without underscores.
+>
+> At the risk of bikeshedding, why not the other way around, exactly
+> because of what you write above? We have convenience macros anyway, so
+> those verbose leading/trailing underscores would only be in compiler*.h,
+> and some of the attribute names are common words that can appear as
+> #defines. E.g. error is defined
+> drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c ; if that used a
+> BUILD_BUG_ON somewhere, the
+>
+> #define __compiletime_error(message) __attribute__((error(message)))
+>
+> would break.
 
-This allows to remove a lot of noise in callindent output by
-dropping the numerical addresses, which are not all that useful.
+Indeed, if we are afraid of such cases, we should go with the __name__
+syntax. I was trying to go first for the "cleanest"/simplest way
+first, considering no one should be defining many such macros as
+"error" (and in lower case, at that). But indeed, good catch!
 
-Before
+Grepping for those in compiler_attributes.h (which, as you point out,
+are not all of them) yields:
 
-% perf script --itrace=cr -F +callindent
-         swapper     0 [000] 156546.354971:          1   branches: pt_config                                       0 [unknown] ([unknown]) => ffffffff81010486 pt_config ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     pt_config                    ffffffff81010499 pt_config ([kernel.kallsyms]) => ffffffff8101063e pt_event_add ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     pt_event_add                 ffffffff81010635 pt_event_add ([kernel.kallsyms]) => ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_enable              ffffffff8115e726 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff811579b0 perf_pmu_enable ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_nop_void            ffffffff81151730 perf_pmu_nop_void ([kernel.kallsyms]) => ffffffff8115e72b event_sched_in.isra.107 ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     event_sched_in.isra.107      ffffffff8115e737 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff8115e7a5 group_sched_in ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     __x86_indirect_thunk_rax     ffffffff8115e7f6 group_sched_in ([kernel.kallsyms]) => ffffffff81a03000 __x86_indirect_thunk_rax ([kernel.kallsyms])
+arch/parisc/boot/compressed/misc.c:#define malloc       malloc_gzip
+include/linux/decompress/mm.h:#define malloc(a) kmalloc(a, GFP_KERNEL)
+lib/inflate.c:#define malloc(a) kmalloc(a, GFP_KERNEL)
+include/linux/compiler_types.h:#define noinline_for_stack noinline
+include/linux/raid/pq.h:#define noinline __attribute__((noinline))
+tools/include/linux/compiler.h:#define noinline
+arch/mips/sgi-ip27/ip27-reset.c:#define noreturn while(1);
+                 /* Silence gcc.  */
 
-After
-
-% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff
-       swapper     0 [000] 156546.354971:          1   branches:  pt_config
-         swapper     0 [000] 156546.354971:          1   branches:      pt_config
-         swapper     0 [000] 156546.354971:          1   branches:      pt_event_add
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_enable
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_void
-         swapper     0 [000] 156546.354971:          1   branches:       event_sched_in.isra.107
-         swapper     0 [000] 156546.354971:          1   branches:       __x86_indirect_thunk_rax
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_int
-         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
-         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
-         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
-         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/builtin-script.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 66daa7df68c5..bae960c56763 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -407,9 +407,10 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 					PERF_OUTPUT_WEIGHT))
- 		return -EINVAL;
- 
--	if (PRINT_FIELD(SYM) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR)) {
-+	if (PRINT_FIELD(SYM) &&
-+		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
- 		pr_err("Display of symbols requested but neither sample IP nor "
--			   "sample address\nis selected. Hence, no addresses to convert "
-+			   "sample address\navailable. Hence, no addresses to convert "
- 		       "to symbols.\n");
- 		return -EINVAL;
- 	}
-@@ -418,10 +419,9 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 		       "selected.\n");
- 		return -EINVAL;
- 	}
--	if (PRINT_FIELD(DSO) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR) &&
--	    !PRINT_FIELD(BRSTACK) && !PRINT_FIELD(BRSTACKSYM) && !PRINT_FIELD(BRSTACKOFF)) {
--		pr_err("Display of DSO requested but no address to convert.  Select\n"
--		       "sample IP, sample address, brstack, brstacksym, or brstackoff.\n");
-+	if (PRINT_FIELD(DSO) &&
-+		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
-+		pr_err("Display of DSO requested but no address to convert.\n");
- 		return -EINVAL;
- 	}
- 	if (PRINT_FIELD(SRCLINE) && !PRINT_FIELD(IP)) {
--- 
-2.17.1
-
+Cheers,
+Miguel
