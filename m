@@ -2,102 +2,173 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC75C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45C6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A46120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6450420661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MlYBTx8z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A46120661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc2OasJN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6450420661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbeHaQO5 (ORCPT
+        id S1728205AbeHaQPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:14:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46940 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeHaQO4 (ORCPT
+        Fri, 31 Aug 2018 12:15:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43853 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeHaQPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:14:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yf4vlrsey7BLfPTudc4LWGEbJmcE45qXZ6yi9eiY5po=; b=MlYBTx8z/wYU+N1lf9mPJcQgm
-        xphes2waV1VKb6KGuC4VzWbPd38OO4gXhjoAd/9uGPVDIP1JcuCZaCyHE/KwXZuorDINJV6nxptbV
-        6opdEIayxilZNC1/g4/0twnB2PCY9f3V+dQxFpMwOxrOHUVFh1w0xa3NjK4GwIO63cMvvkqv9AEZS
-        n0l3BIqxrlXCCjpNVkiKp0xvK4RZBnQ3tDx1FEw2LeaQ9f3X1+25IKssiYu0LB9Y5B4Xfl9ZmsUHD
-        zaqGXLGNIxOkAX+z3+4VOcdJ5rSUxRXcYsGXxbZ7j7c2uZH11OwyAS+8QWC+okfkJvyJGQWQRtokV
-        8hJx5EpPw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fviB2-0006q0-PC; Fri, 31 Aug 2018 12:05:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 40C522024D700; Fri, 31 Aug 2018 14:05:22 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 14:05:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Subject: Re: [PATCH 2/2] sched/topology: Expose numa_mask set/clear functions
- to arch
-Message-ID: <20180831120522.GL24124@hirez.programming.kicks-ass.net>
-References: <20180808081942.GA37418@linux.vnet.ibm.com>
- <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1533920419-17410-2-git-send-email-srikar@linux.vnet.ibm.com>
- <20180829080219.GN24124@hirez.programming.kicks-ass.net>
- <20180831102724.GB8437@linux.vnet.ibm.com>
- <20180831111253.GJ24124@hirez.programming.kicks-ass.net>
- <20180831112639.GA24142@hirez.programming.kicks-ass.net>
- <20180831115350.GC8437@linux.vnet.ibm.com>
+        Fri, 31 Aug 2018 12:15:20 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k5-v6so10990004wre.10;
+        Fri, 31 Aug 2018 05:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kbSNbxWRBacg/sZCzBKl0VXiu3h1q2hw8VIBoYcF/H8=;
+        b=Zc2OasJNdJhxQgHmkHzCw77pEiFOoDbzayyUvohaqfXAjm7is/uPjPJ/mcFWPvtd16
+         kndemtNOFZzxQQZA6cjzME8Q3Tko8/ZLURb+zrtt4VPXKRfM/aP1FhVlYj0MWEGJDrv6
+         sm9ur+dFQyJJX1awIt9/imf5otwOMUrTup8cBTJqhIImpnycuMvYajiqzaWuu7EgBfNd
+         q9Aj2cTkBVB7DS9CdnI49bfyB8YE29zxbvGbJZmVBf4JlExkFVqZ0sF2YiUV1WoSGoHX
+         9j9IqBxFhiWafKj/AoSh4wYGLGPZj8FiHXX8azu7NffBiZsk5GabooKuum6qbnhOasFT
+         crhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kbSNbxWRBacg/sZCzBKl0VXiu3h1q2hw8VIBoYcF/H8=;
+        b=ocxjmrCKNkqzG3TWeX44Qyj4y06kkbUm/H2sG+I2jza3Ax08dcEdBFFNxYJVeQEo+n
+         Vj47qJyzk8kbWn8fWpSHJFViIMmxKj+2+hvOaugikiOznm+qf6CSLLDbKP5x0ItnVm40
+         lxqs+bF9fSF0dyyG1opPhgGiR80LgO0kX20zDeajGKOSWxljKAOIGl9h3uXRHQ9IiyaZ
+         44k2+0pjn3U9AjMdZWeluKYegOz059xG/zQjmtMeOduaqGrLhP0Tc+b7SNTm0HMQbQUi
+         x8GCkcsFA1u6c5mtpaX5RXSnAfPYE6YshEqMybSXUfLAeC2X1x0N56eH/Opfn6HXegIV
+         fK7A==
+X-Gm-Message-State: APzg51Aa97Rn6KcCKwbZky9k7+LRsJPCdFNwe19yfXwQtZhhVhpcdEHK
+        612yyESL7tJM3OXkCB0vHpU=
+X-Google-Smtp-Source: ANB0VdYyLR7DKEEKuiJ0jO30QG6xTit0g1KD7BLkI1c9nDaLLn6EEVykNpIHYLNIhIg0dxsR/0cuYw==
+X-Received: by 2002:a5d:53cf:: with SMTP id a15-v6mr11048540wrw.151.1535717287550;
+        Fri, 31 Aug 2018 05:08:07 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id m8-v6sm18074821wrf.93.2018.08.31.05.08.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 05:08:06 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 14:08:04 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>, axboe@kernel.dk,
+        Hans de Goede <hdegoede@redhat.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-ide@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH v4 09/13] ARM: dts: sun8i: r40: add sata node
+Message-ID: <20180831120804.GA11340@Red>
+References: <20180830190120.722-1-clabbe.montjoie@gmail.com>
+ <20180830190120.722-10-clabbe.montjoie@gmail.com>
+ <20180831073500.zubqpvar4yhjqrge@flea>
+ <20180831075631.GB16301@Red>
+ <20180831102021.idz42sfgldihpkrp@flea>
+ <20180831105412.GD16301@Red>
+ <CAGb2v65m73mZkQ9qbYne-utZPujEvRftYGz5kYCx=8t-C-=DJQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831115350.GC8437@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAGb2v65m73mZkQ9qbYne-utZPujEvRftYGz5kYCx=8t-C-=DJQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 04:53:50AM -0700, Srikar Dronamraju wrote:
-> * Peter Zijlstra <peterz@infradead.org> [2018-08-31 13:26:39]:
+On Fri, Aug 31, 2018 at 07:31:37PM +0800, Chen-Yu Tsai wrote:
+> On Fri, Aug 31, 2018 at 6:54 PM Corentin Labbe
+> <clabbe.montjoie@gmail.com> wrote:
+> >
+> > On Fri, Aug 31, 2018 at 12:20:21PM +0200, maxime.ripard@bootlin.com wrote:
+> > > On Fri, Aug 31, 2018 at 09:56:31AM +0200, Corentin Labbe wrote:
+> > > > On Fri, Aug 31, 2018 at 09:35:00AM +0200, Maxime Ripard wrote:
+> > > > > On Thu, Aug 30, 2018 at 09:01:16PM +0200, Corentin Labbe wrote:
+> > > > > > R40 have a sata controller which is the same as A20.
+> > > > > > This patch adds a DT node for it.
+> > > > > >
+> > > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > > > > > ---
+> > > > > >  arch/arm/boot/dts/sun8i-r40.dtsi | 23 +++++++++++++++++++++++
+> > > > > >  1 file changed, 23 insertions(+)
+> > > > > >
+> > > > > > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > > > index 852c2ccc3268..d6b5820da850 100644
+> > > > > > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > > > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > > > > > @@ -550,6 +550,29 @@
+> > > > > >                         #size-cells = <0>;
+> > > > > >                 };
+> > > > > >
+> > > > > > +               ahci: sata@1c18000 {
+> > > > > > +                       compatible = "allwinner,sun8i-r40-ahci";
+> > > > > > +                       reg = <0x01c18000 0x1000>;
+> > > > > > +                       interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > +                       clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
+> > > > > > +                       resets = <&ccu RST_BUS_SATA>;
+> > > > > > +                       resets-name = "ahci";
+> > > > > > +                       #address-cells = <1>;
+> > > > > > +                       #size-cells = <0>;
+> > > > > > +                       status = "disabled";
+> > > > > > +
+> > > > > > +                       sata_port: sata-port@0 {
+> > > > > > +                               reg = <0>;
+> > > > > > +                               phys = <&sata_phy>;
+> > > > > > +                       };
+> > > > > > +               };
+> > > > > > +
+> > > > > > +               sata_phy: sata-phy@1c180c0  {
+> > > > > > +                       compatible = "allwinner,sun8i-r40-sata-phy";
+> > > > > > +                       reg = <0x1c180c0 0x200>;
+> > > > >
+> > > > > Overlapping devices in the DTS is not ok.
+> > > > >
+> > > >
+> > > > I do the same than arch/arm/boot/dts/berlin2.dtsi (sata@e90000
+> > > > phy@e900a0)
+> > > >
+> > > > But since it is not a good justification, it seems that regmap is my
+> > > > only solution ?
+> > >
+> > > I'm not even sure why you are moving the phy out of its original node
+> > > (and driver).
+> > >
+> >
+> > For using the phy-supply already handled by the code.
+> > The other choice is to add another xxx-supply to ahci_platform.
+> > Or to use hackily port_regulator for this regulator.
 > 
-> > On Fri, Aug 31, 2018 at 01:12:53PM +0200, Peter Zijlstra wrote:
-> > > NAK, not until you've fixed every cpu_to_node() user in the kernel to
-> > > deal with that mask changing.
-> > 
-> > Also, what happens if userspace reads that information; uses libnuma and
-> > then you go and shift the world underneath their feet?
-> > 
-> > > This is absolutely insane.
-> > 
+> The PHY registers are in the AHCI's "vendor specific registers"
+> region. Following that are the per-port registers, which the ahci
+> driver will need access to. This doesn't look like it should
+> deserve a separate device node.
 > 
-> The topology events are suppose to be very rare.
-> From whatever small experiments I have done till now, unless tasks are
-> bound to both cpu and memory, they seem to be coping well with topology
-> updates. I know things weren't optimal after a topology change but they
-> worked. Now after 051f3ca02e46 "Introduce NUMA identity node sched
-> domain", systems stall. I am only exploring at ways to keep them working
-> as much as they were before that commit.
+> What's wrong with handling the regulator directly in the ahci-sunxi
+> PHY init code?
+> 
 
-I'm saying things were fundamentally buggered and this just made it show.
+The reason are that I didnt wanted to use the port-regulator, and I didnt want to add new code to ahci_platform.
+I tried to place a phy-supply in the ahci node, but it doesnt work (with or without a phy subnode).
 
-If you cannot guarantee cpu:node relations, you do not have NUMA, end of
-story.
+Moving PHy code in a dedicated driver seemed to be good, but with all your comments and Maxime's one, it seems not.
+
+I will keep ahci_sunxi as-is and will try to found how to add the needed phy-supply.
+
+Regards
