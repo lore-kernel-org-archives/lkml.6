@@ -4,178 +4,200 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8E9C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A9FC433F4
 	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E262083A
+	by mail.kernel.org (Postfix) with ESMTP id 96EC520837
 	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGg0ca8w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E262083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs4ld8PF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96EC520837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeHaHzN (ORCPT
+        id S1727282AbeHaHxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 03:55:13 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35117 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726660AbeHaHzM (ORCPT
+        Fri, 31 Aug 2018 03:53:24 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:37434 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeHaHxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 03:55:12 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so4860441pfh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 20:49:50 -0700 (PDT)
+        Fri, 31 Aug 2018 03:53:23 -0400
+Received: by mail-qt0-f172.google.com with SMTP id n6-v6so13166419qtl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 20:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JnzZTNwm0KxZndR9Wyi/0X0W9XERF0usnWDQzFxLzQo=;
-        b=JGg0ca8w7F1MQfZwodFAiOlcja1xPSgnj7p4t6P3qQqQE4hEvbr15Eh4c+ZBRvqdoF
-         DWfNDVeOKCGI7hNzhXUua9zYjvlKL0N8P910V3vJRdMwl0f4BE7ks8E+SQzo3Mp3XBcn
-         bu4o+P+aoiO4xrWaB6N2A3GoxnHejRiavCpJUQU+ktp8Cvaou7AA1zFNNnvCgQUXWcSw
-         pVOw1aDJ8vRHjF8lrc5G9neHZeUpL9iqBM/v33a1tGfjI5Im9q5I8SurQaK87Q98BnRD
-         Y8I4rh3ZoS/2+b80zZeYwX7ZyKzRXLuzhL69wHueEVbpBbVV+FHmBGuYFAa68NQoYh4J
-         l11Q==
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=rbO3xUZdmb28g4Bhw1CgfEqi48liRjp+Yj6Kboh5QNM=;
+        b=Qs4ld8PFJrAsnFiYATVyV7egkvSCe9Tra4unbGST9Holooa06BnVY6dm6Eb86jX3eo
+         KDoOp2B+s1wd/B108aO4mQUZCk5vufhC8/VV4hSvzfeJKJx9HTgGUPF/W+KRC90dHvRV
+         zT/WPpjKfNhAtSI75DqPlK/zXb98Lz6uMyNWvB3438cvuvp/IfyCJ108nwiICMqF+mba
+         sDNXgETnCe2hlqriNUxcBsqAp4taOiY1dUcOIC7Ruqhil1nFmRosryPAjme986lFKfLw
+         +3Fqnj666hxO2+Ag5eFXN4dwn5+kblNWOeLUy3IHHr5VhkIlQey5It84Hvh70HHrOa17
+         bzJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JnzZTNwm0KxZndR9Wyi/0X0W9XERF0usnWDQzFxLzQo=;
-        b=REMUcYIcm8h2Uc9+A5+1rJWdn44fwjp7zu6/ZBrZ3d1VpGZ9dpp0Bv7XagpNGd30uK
-         xON/z5Y7R/2n3AooP2IANPA9+KVNQ9QnBPHd8uE0EAUnZcfEyHANTrF6CsMualO+a4Xo
-         DTyNRdfrTijXKZmuUbhe7wiUBW4WNmmWGRUzD+at/zpcNtXXknfw6twX7VhynyMwu+K3
-         aeXRVmeok9VQuxojmaW59lUAFlA5G/QmfYchb0ZVVU1gbQcvSOgFqDi22gf3HGAIzbmi
-         luf8o2C+LwLnnCszqfzDgWbfL4PEk5zcTC58JwdrtARf9wSveFrDfubfw0ZEuwvVgmAl
-         fSKw==
-X-Gm-Message-State: APzg51Bev63PFmC2ZgxgSNyMyb8T6OC3ZEZgLv1ZmJDsfoVlab/hsrHB
-        7aGNUN2FViCl/8ywKXm8fNs=
-X-Google-Smtp-Source: ANB0VdZobyUWPfl0OOqPNQ8FpLEc9F9hPBWVrA5LDeR0jqZCy0dBiXNYs51Zp4zrB3Zk3Ts1maOZwQ==
-X-Received: by 2002:a63:3741:: with SMTP id g1-v6mr12684689pgn.59.1535687390460;
-        Thu, 30 Aug 2018 20:49:50 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
-        by smtp.gmail.com with ESMTPSA id h12-v6sm11454902pfo.135.2018.08.30.20.49.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 Aug 2018 20:49:49 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 13:49:43 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: VirtIO console hangs
-Message-ID: <20180831134943.7f516fed@roar.ozlabs.ibm.com>
-In-Reply-To: <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
-References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
-        <20180829003539.668e514c@roar.ozlabs.ibm.com>
-        <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=rbO3xUZdmb28g4Bhw1CgfEqi48liRjp+Yj6Kboh5QNM=;
+        b=mZL0MIB8qh+zIVTBJmeby35coEidTTDTPYew63E3f06PgSMgifKEVNpv6fK+a7ipqF
+         F0A4M8pcR/UzDIUBoRLNfAfcGrGXQ3Wd49umOsoAUMz9UffcznPDKTPAIBLV+w87cCZd
+         0Wl4re+xvVXTQadCryNmGdIXTm0XyNaEEnNiQXh0Wnt74vuV+ER8sSIN5y549ElV94H5
+         885mE7ubr9gBzL6GFUuoK9whEH/il1iUNJ4L9Zz10btV7Sq372o0Ed7qFkx9s/I1W6yR
+         S8Y6jqIi5eStLxfd2YNYx6X8nyJqJLQnIOdS7s/+dkmBm5T+65udkdVw9xT37vRaxM75
+         4JDA==
+X-Gm-Message-State: APzg51BUd4ffdJfryupZX8pf86ysIAKifF2+E30vp2sUCGobamw8zxax
+        vkkWXQZHt/s2xCRCWWxAoLYT3gUmnzS7UiLCz16Iu0Cy
+X-Google-Smtp-Source: ANB0Vdap/JPrwmGIl+4sc+XZCdVvtbFlBMfqh9hRPkUcigHh6nZ23cJ0QVD9/5StkA9PpqjWyUfqjm0AXgc3faDVui8=
+X-Received: by 2002:ac8:754a:: with SMTP id b10-v6mr14778217qtr.260.1535687281338;
+ Thu, 30 Aug 2018 20:48:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 31 Aug 2018 13:47:49 +1000
+Message-ID: <CAPM=9txzSjP-Asajk5m5jR5z-wqUVCWtJDrjWjac6x7GOunkUg@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.19-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 15:00:14 +0000
-Matteo Croce <mcroce@redhat.com> wrote:
+Hi Linus,
 
-> On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:
-> >
-> > On Tue, 28 Aug 2018 12:54:08 +0000
-> > Matteo Croce <mcroce@redhat.com> wrote:
-> >  
-> > > With kernel 4.19.0-rc1 virtio_console hangs very often.
-> > > I can always trigger the bug by pasting some characters in the
-> > > terminal window, the console will stop receiving keypresses, but I can
-> > > still see output from the console.
-> > > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
-> > > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
-> > >
-> > > I did a git bisect and I've found that this is the offending commit,
-> > > reverting it fixes it.
-> > >
-> > > Cheers,
-> > >
-> > > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
-> > > Author: Nicholas Piggin <npiggin@gmail.com>
-> > > Date:   Tue May 1 00:55:54 2018 +1000
-> > >
-> > >     tty: hvc: hvc_poll() break hv read loop  
-> >
-> > Thanks for the report. I can't immediately see what the problem
-> > is. Can you try get a stack trace of where it is stuck?
-> >  
-> 
-> I tried but didn't get one.
-> 
-> > Perhaps try this patch if you have time (it's a bit of a shot
-> > in the dark).
-> >  
-> 
-> Yes it seems to fix. Thanks!
+Regular fixes pull,
 
-Okay sorry for the delay, I can reproduce it here and found a better
-fix, if I could trouble you to test again.
+Mediatek is a bunch of fixes to their RDMA and Overlay engines.
+i915 has some Cannonlake/Geminilake watermark workarounds, LSPCON fix,
+HDCP free fix, audio fix and a ppgtt reference counting fix.
+amdgpu has some SRIOV, Kasan, memory leaks and other misc fixes.
 
-[PATCH] tty: hvc: hvc_poll() fix read loop hang
+Thanks,
+Dave.
 
-Patch ec97eaad1383 ("tty: hvc: hvc_poll() break hv read loop") causes
-the virtio console to hang if you paste a bunch of characters to it.
+drm-fixes-2018-08-31:
+drm fixes for mediatek, amdgpu and i915.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3=
+:
 
-The reason is that get_chars must return 0 before we can be sure the
-driver will kick or poll input again, but this patch only scheduled a
-poll if get_chars had returned a full count. Change this to poll on
-> 0 count.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-Fixes: ec97eaad1383 ("tty: hvc: hvc_poll() break hv read loop")
-Reported-by: Matteo Croce <mcroce@redhat.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
----
- drivers/tty/hvc/hvc_console.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/tty/hvc/hvc_console.c
-b/drivers/tty/hvc/hvc_console.c index 5414c4a87bea..219369aebb1f 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -717,10 +717,13 @@ static int __hvc_poll(struct hvc_struct *hp, bool
-may_sleep) #endif /* CONFIG_MAGIC_SYSRQ */
- 		tty_insert_flip_char(&hp->port, buf[i], 0);
- 	}
--	if (n == count)
--		poll_mask |= HVC_POLL_READ;
- 	read_total = n;
- 
-+	/* Activity is occurring, so reset the polling backoff value to
-+	   a minimum for performance. */
-+	timeout = MIN_TIMEOUT;
-+	poll_mask |= HVC_POLL_READ;
-+
-  out:
- 	/* Wakeup write queue if necessary */
- 	if (hp->do_wakeup) {
-@@ -730,13 +733,8 @@ static int __hvc_poll(struct hvc_struct *hp, bool
-may_sleep) bail:
- 	spin_unlock_irqrestore(&hp->lock, flags);
- 
--	if (read_total) {
--		/* Activity is occurring, so reset the polling backoff
-value to
--		   a minimum for performance. */
--		timeout = MIN_TIMEOUT;
--
-+	if (read_total)
- 		tty_flip_buffer_push(&hp->port);
--	}
- 	tty_kref_put(tty);
- 
- 	return poll_mask;
--- 
-2.18.0
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-08-31
 
+for you to fetch changes up to 49a51c4b4064c8a89ffd166434696138edef6b85:
+
+  Merge tag 'drm-intel-fixes-2018-08-29' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-08-30
+11:35:03 +1000)
+
+----------------------------------------------------------------
+drm fixes for mediatek, amdgpu and i915.
+
+----------------------------------------------------------------
+Andrey Grodzovsky (1):
+      drm/amdgpu: Fix page fault and kasan warning on pci device remove.
+
+Chris Wilson (2):
+      drm/i915: Stop holding a ref to the ppgtt from each vma
+      drm/i915/audio: Hook up component bindings even if displays are disab=
+led
+
+Christian K=C3=B6nig (3):
+      drm/amdgpu: fix VM clearing for the root PD
+      drm/amdgpu: fix preamble handling
+      drm/amdgpu: fix holding mn_lock while allocating memory
+
+Dave Airlie (3):
+      Merge branch 'mediatek-drm-fixes-4.19' of
+https://github.com/ckhu-mediatek/linux.git-tags into drm-fixes
+      Merge branch 'drm-fixes-4.19' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-08-29' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+
+Emily Deng (2):
+      amdgpu: fix multi-process hang issue
+      drm/amdgpu: Need to set moved to true when evict bo
+
+Felix Kuehling (1):
+      drm/amdgpu: Adjust the VM size based on system memory size v2
+
+Fredrik Sch=C3=B6n (1):
+      drm/i915: Increase LSPCON timeout
+
+Rex Zhu (6):
+      drm/amd/display: Fix bug use wrong pp interface
+      drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
+      drm/amdgpu: Fix vce initialize failed on Kaveri/Mullins
+      drm/amdgpu: Update power state at the end of smu hw_init.
+      drm/amdgpu: Power on uvd block when hw_fini
+      drm/amdgpu: Remove duplicated power source update
+
+Rodrigo Vivi (1):
+      drm/i915: Free write_buf that we allocated with kzalloc.
+
+SivapiriyanKumarasamy (1):
+      drm/amd/display: Fix memory leak caused by missed dc_sink_release
+
+Souptick Joarder (1):
+      drm/mediatek: Convert drm_atomic_helper_suspend/resume()
+
+Stu Hsieh (14):
+      drm/mediatek: add connection from RDMA0 to DPI1
+      drm/mediatek: add connection from RDMA0 to DSI1
+      drm/mediatek: add connection from RDMA1 to DSI0
+      drm/mediatek: add connection from RDMA2 to DSI0
+      drm/mediatek: add memory mode and layer_config for RDMA
+      drm/mediatek: add RGB color format support for RDMA
+      drm/mediatek: add the comment about color format setting for OVL
+      drm/mediatek: add YUYV/UYVY color format support for RDMA
+      drm/mediatek: add function to get layer number for component
+      drm/mediatek: add function to return OVL layer number
+      drm/mediatek: add function to return RDMA layer number
+      drm/mediatek: use layer_nr function to get layer number to init plane
+      drm/mediatek: update some variable name from ovl to comp
+      drm/mediatek: fix connection from RDMA2 to DSI1
+
+Thomas Zimmermann (1):
+      drm/mediatek: Replace drm_dev_unref with drm_dev_put
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      drm/i915: Fix glk/cnl display w/a #1175
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             | 47 ++++++-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c             |  3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             |  8 --
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             | 35 ++++++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h             |  2 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c              | 11 ++-
+ drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c              |  9 +--
+ drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c              | 16 +---
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c              | 16 +---
+ drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c              | 16 +---
+ drivers/gpu/drm/amd/amdgpu/kv_dpm.c                | 49 +++++++-----
+ drivers/gpu/drm/amd/amdgpu/si_dpm.c                |  3 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_pp_smu.c   | 12 ++-
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c      |  6 +-
+ drivers/gpu/drm/i915/i915_vma.c                    |  4 -
+ drivers/gpu/drm/i915/intel_audio.c                 |  3 -
+ drivers/gpu/drm/i915/intel_display.c               |  7 +-
+ drivers/gpu/drm/i915/intel_hdmi.c                  |  8 +-
+ drivers/gpu/drm/i915/intel_lspcon.c                |  2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c            | 11 +++
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c           | 92 ++++++++++++++++++=
+++++
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c            | 47 ++++++-----
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.h            |  3 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 18 ++++-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  9 +++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 27 +++----
+ 26 files changed, 303 insertions(+), 161 deletions(-)
