@@ -2,146 +2,119 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66841C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA4AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0257620837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09CD2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G5rTh0fQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0257620837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qzDiXdcW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09CD2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeHaMt5 (ORCPT
+        id S1728018AbeHaMuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:49:57 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39446 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeHaMt4 (ORCPT
+        Fri, 31 Aug 2018 08:50:20 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39650 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727263AbeHaMuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:49:56 -0400
-Received: by mail-wr1-f65.google.com with SMTP id o37-v6so10439499wrf.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=edqs2yv8UfeTuyXd+Al+7UCLVVQgNfMO2RyAviqlJAY=;
-        b=G5rTh0fQqA20y92alTbdDgQq2dYVWZN4nwYXyEAoSmdwK5ZfZ0ikRKrYEDNyQv/i/+
-         0Dfrm4tzA01ELjHvMXOvGhfODZAqVsTHGOSSaxCltMcS/oq4nA6WtWSMeMkzFHI7kaxS
-         ouOjWUEspQ/Ui1Nhdkq4m2D8TuEpB0RPL198U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=edqs2yv8UfeTuyXd+Al+7UCLVVQgNfMO2RyAviqlJAY=;
-        b=CI6SeNWjpTOu5B9E359i2kFgyOg10hlPU2ee5kSndo7UXNueitCyJlnYtcAwn4XYPi
-         f5djo01u86NJ8bCwdYTq4pfKuEMz6cDz9LOC7NDP0U8cdw06KYF0SnBgxhZUVpgtQaSx
-         bcL9vOsdyp7TaeeWyF9bQPPVCmZfuYckCJeMDLlC1xvGSAbZj9QnMQNAK3VPI1yejlpP
-         CBIju37oo5/Z8AmvXO0aaQ9ed78DH9kMo98Jl00JXQdDdfT7TES8x/RHB2XLoP2KxJ5M
-         fr1oyRZjXhcwR/xG5MH/fVNEVwvPTPQ2aspaks1OnwaeUkxfFC3p4tQncTNCbdQY/jyt
-         XCNw==
-X-Gm-Message-State: APzg51CK3onoplL9Vw9FREJr/TtJgIfCj+LicKy1xUiUzCObAkZ32+w1
-        0pjbJRR9rytukM6aum1eDhbw/w==
-X-Google-Smtp-Source: ANB0Vdb4gA9xFBa+UguRlmgWaa7XAX+1A2yEBgg3kSH2hV6dGx9f9hkE5eCeUwr/lje16rEKWgkgNQ==
-X-Received: by 2002:adf:f24e:: with SMTP id b14-v6mr9428091wrp.184.1535705012141;
-        Fri, 31 Aug 2018 01:43:32 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id u40-v6sm18017476wrc.43.2018.08.31.01.43.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 01:43:31 -0700 (PDT)
-Subject: Re: [RFC PATCH v1 0/3] device property: Support MAC address in VPD
-To:     Brian Norris <briannorris@chromium.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Brian Norris <computersforpeace@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Julius Werner <jwerner@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-References: <20180814223758.117433-1-briannorris@chromium.org>
- <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
- <20180815002204.GA258561@ban.mtv.corp.google.com>
- <bb1b2b7d-2c47-a6b3-7618-063351f379b2@gmail.com>
- <20180815014436.GA17200@ban.mtv.corp.google.com>
- <20180815221601.GB24830@rob-hp-laptop>
- <20180831012656.GB67271@ban.mtv.corp.google.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <44c7fc7a-9c1c-e894-f27f-5320c061aafc@linaro.org>
-Date:   Fri, 31 Aug 2018 09:43:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180831012656.GB67271@ban.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Fri, 31 Aug 2018 08:50:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 081D18EE1F4;
+        Fri, 31 Aug 2018 01:43:56 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id I7aNlxD4mMhQ; Fri, 31 Aug 2018 01:43:55 -0700 (PDT)
+Received: from jarvis.home (unknown [81.145.101.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 46EA68EE101;
+        Fri, 31 Aug 2018 01:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1535705035;
+        bh=Ajnnt3X7ChJnYfHHLUrrPQ7QHlFZHmrVsnci/KqWD1o=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qzDiXdcWv3F5lB0oysbVVZ7p/jszVT/lz1vdAstkmAPMomAU39baWqnLlsXY+RjPf
+         ijC50n9UUSYGZwoABC1s2CPb95tF/9frNRaUuPeF6AHO64urgajkNx50eW3LVOclbd
+         XUsarWLZ7XCra1TOKmVdw0DvtTS4m7xcamYiHDI4=
+Message-ID: <1535705027.3085.5.camel@HansenPartnership.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated
+ CPUs in mind (for KVM to isolate its guests per CPU)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+Cc:     "juerg.haefliger@hpe.com" <juerg.haefliger@hpe.com>,
+        "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
+        "liran.alon@oracle.com" <liran.alon@oracle.com>,
+        "keescook@google.com" <keescook@google.com>,
+        "jsteckli@os.inf.tu-dresden.de" <jsteckli@os.inf.tu-dresden.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
+        "tyhicks@canonical.com" <tyhicks@canonical.com>,
+        "john.haxby@oracle.com" <john.haxby@oracle.com>,
+        "jcm@redhat.com" <jcm@redhat.com>
+Date:   Fri, 31 Aug 2018 09:43:47 +0100
+In-Reply-To: <1534801939.10027.24.camel@amazon.co.uk>
+References: <20180820212556.GC2230@char.us.oracle.com>
+         <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
+         <1534801939.10027.24.camel@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the delay!! For some reason I missed this email thread totally!
-
-On 31/08/18 02:26, Brian Norris wrote:
->> Seems to me that nvmem needs to be extended to allow providers to
->> retrieve and interpret data. Not everything is at some fixed offset and
->> size. Something like this is valid dts:
->>
->> nvmem = <&phandle> "a-string";
->>
-
-There has been some discussion on extending nvmem support to MTD and 
-non-DT users in https://patchwork.kernel.org/cover/10562365/
-
-One of the thing which we discussed in this thread is adding compatible 
-strings to cells mainly to
-1> Differentiate between actual cells and partitions for MTD case.
-
-2> Allow provider specific bindings for each cell, in VPD instance key 
-string & value length could be one them.
-
-This means that we would endup adding xlate callback support to the 
-nvmem_config.
-
-AFAIU, From consumer side old bindings should still work!
-
- From non-dt or ACPI side these cells can be parsed by the provider 
-driver and add it to the nvmem_config.
-
-Does this make sense? Or Did I miss anything obvious ?
-
-
->> But that's pretty uncommon (I can't think of a binding that actually
->> uses that). Perhaps the provider has an array of keys defined and the
->> consumer just provides the index.
-> In the case of VPD, all keys are 0-terminated strings (there's also a
-> length field, but the key is still 0-terminated), so that scheme could
-> work. (I'm not sure an indexed provider is extremely relevant right now,
-> although it probably could be supported if I expand the of_nvmem
-> retrieval to support a generic of_xlate() override anyway.) The
-> information represented is almost the same as in my proposal, except that:
-> (a) now I have to give the VPD a phandle -- so far, I've avoided that,
->      as it's just an auto-enumerated device underneath the
->      /firmware/coreboot device (see drivers/firmware/google/vpd.c)
-> (b) this is no longer directly useful to ACPI systems -- I'm not
->      actually sure how (if at all) nvmem provider/consumer is supposed to
->      work there
+On Mon, 2018-08-20 at 21:52 +0000, Woodhouse, David wrote:
+> On Mon, 2018-08-20 at 14:48 -0700, Linus Torvalds wrote:
+> > 
+> > Of course, after the long (and entirely unrelated) discussion about
+> > the TLB flushing bug we had, I'm starting to worry about my own
+> > competence, and maybe I'm missing something really fundamental, and
+> > the XPFO patches do something else than what I think they do, or my
+> > "hey, let's use our Meltdown code" idea has some fundamental
+> > weakness
+> > that I'm missing.
 > 
-> But maybe this isn't really that useful to ACPI, and it's sufficient to
-> just have fwnode_get_mac_address() call of_get_nvmem_mac_address() when
-> we're using DT.
+> The interesting part is taking the user (and other) pages out of the
+> kernel's 1:1 physmap.
 > 
->> Or we could do '<key>-nvmem = <&phandle>', but parsing that is a bit
->> more complicated.
-> That doesn't seem to have much advantage to me.
+> It's the *kernel* we don't want being able to access those pages,
+> because of the multitude of unfixable cache load gadgets.
+
+A long time ago, I gave a talk about precisely this at OLS (2005 I
+think).  On PA-RISC we have a problem with inequivalent aliasing in the
+ page cache (same physical page with two different virtual addresses
+modulo 4MB) which causes a machine check if it occurs. 
+Architecturally, PA can move into the cache any page for which it has a
+mapping and the kernel offset map of every page causes an inequivalency
+if the same page is in use in user space.  Of course, practically the
+caching machinery is too busy moving in and out pages we reference to
+have an interest in speculating on other pages it has a mapping for, so
+it almost never (the almost being a set of machine checks we see very
+occasionally in the latest and most aggressively cached and speculating
+CPUs).  If this were implemented, we'd be interested in using it.
+
+James
+
