@@ -2,169 +2,117 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4DDC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C43C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381E420841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E420841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A0EDD2083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:18:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hth26sQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0EDD2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeIAB1Q (ORCPT
+        id S1727442AbeIAB1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:27:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44404 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726869AbeIAB1Q (ORCPT
+        Fri, 31 Aug 2018 21:27:21 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:10073 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIAB1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:27:16 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VL9lOb137013
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:17:57 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m79cx0em1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:17:57 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Fri, 31 Aug 2018 22:17:55 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 31 Aug 2018 22:17:52 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VLHppQ43647018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Aug 2018 21:17:51 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 356E2AE04D;
-        Sat,  1 Sep 2018 00:17:19 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32171AE051;
-        Sat,  1 Sep 2018 00:17:18 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.206.53])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat,  1 Sep 2018 00:17:18 +0100 (BST)
-Date:   Sat, 1 Sep 2018 00:17:48 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Michal Hocko <mhocko@kernel.org>, linux-mips@linux-mips.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] mips: switch to NO_BOOTMEM
-References: <1535356775-20396-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180830214856.cwqyjksz36ujxydm@pburton-laptop>
+        Fri, 31 Aug 2018 21:27:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1535750283; x=1567286283;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=AzBH+Tvtlqkm0ten07yP+A1EZFsALSV7gstfTEMQnEo=;
+  b=hth26sQT9G/xYxXlYSo0snX8Od8987RGcFL/9X7OxJyG9vP0O/cW2a9N
+   mbzS613mpeiePMnCaT4ZXhpJamvOooDKc+jRgGElh8KrhT1Wq4uTE+y4c
+   swDW7obJfQXHmpqkVnUVNDxLk4IP6tAGo07prOG5Mh97hcYgAqFn1xS4h
+   ySSiNAO2Mqfb64y/IlR6PC+s6UF9lNEOI8oWTQmY/7h08iel1O0rmxwxh
+   9dVvAkepuaZlj5FlJGapPFLha2qMlrCk2haqiMJJPP0fBKnCQDW6YdhAj
+   NMd1BjzF6LTlYnc130/w5eg2O4QW7wOQLQQXRzApqQqmWIa2114jDCRgg
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,313,1531756800"; 
+   d="scan'208";a="192946877"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Sep 2018 05:18:03 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 31 Aug 2018 14:04:58 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.111.64.114]) ([10.111.64.114])
+  by uls-op-cesaip01.wdc.com with ESMTP; 31 Aug 2018 14:18:03 -0700
+Subject: Re: [PATCH 5/8] RISC-V: Rename im_okay_therefore_i_am to
+ found_boot_cpu
+To:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
+        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+References: <20180827184243.25344-1-palmer@sifive.com>
+ <20180827184243.25344-6-palmer@sifive.com>
+ <20180830144118.GA27233@infradead.org>
+ <30229ef5-ce4e-e78b-32f9-7c563f63827b@wdc.com>
+ <20180831055447.GA18478@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <f62e9466-bd77-096d-fcc7-f5750d0257bb@wdc.com>
+Date:   Fri, 31 Aug 2018 14:18:02 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830214856.cwqyjksz36ujxydm@pburton-laptop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18083121-0008-0000-0000-0000026A7A30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083121-0009-0000-0000-000021D27FDF
-Message-Id: <20180831211747.GA31133@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808310211
+In-Reply-To: <20180831055447.GA18478@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-On Thu, Aug 30, 2018 at 02:48:57PM -0700, Paul Burton wrote:
-> Hi Mike,
+On 8/30/18 10:54 PM, Christoph Hellwig wrote:
+> On Thu, Aug 30, 2018 at 09:11:11AM -0700, Atish Patra wrote:
+>> On 8/30/18 7:41 AM, Christoph Hellwig wrote:
+>>>>    	struct device_node *dn = NULL;
+>>>> -	int hart, im_okay_therefore_i_am = 0;
+>>>> +	int hart, found_boot_cpu = 0;
+>>>
+>>> If you rename this anyway please switch to use a bool.
+>>>
+>>
+>> I can address the comment on this patch and fold it in my series to avoid
+>> unnecessary conflict.
+>>
+>> @Palmer: You can drop this patch.
 > 
-> On Mon, Aug 27, 2018 at 10:59:35AM +0300, Mike Rapoport wrote:
-> > MIPS already has memblock support and all the memory is already registered
-> > with it.
-> > 
-> > This patch replaces bootmem memory reservations with memblock ones and
-> > removes the bootmem initialization.
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > ---
-> > 
-> >  arch/mips/Kconfig                      |  1 +
-> >  arch/mips/kernel/setup.c               | 89 +++++-----------------------------
-> >  arch/mips/loongson64/loongson-3/numa.c | 34 ++++++-------
-> >  arch/mips/sgi-ip27/ip27-memory.c       | 11 ++---
-> >  4 files changed, 33 insertions(+), 102 deletions(-)
-> 
-> Thanks for working on this. Unfortunately it breaks boot for at least a
-> 32r6el_defconfig kernel on QEMU:
-> 
->   $ qemu-system-mips64el \
->     -M boston \
->     -kernel arch/mips/boot/vmlinux.gz.itb \
->     -serial stdio \
->     -append "earlycon=uart8250,mmio32,0x17ffe000,115200 console=ttyS0,115200 debug memblock=debug mminit_loglevel=4"
->   [    0.000000] Linux version 4.19.0-rc1-00008-g82d0f342eecd (pburton@pburton-laptop) (gcc version 8.1.0 (GCC)) #23 SMP Thu Aug 30 14:38:06 PDT 2018
->   [    0.000000] CPU0 revision is: 0001a900 (MIPS I6400)
->   [    0.000000] FPU revision is: 20f30300
->   [    0.000000] MSA revision is: 00000300
->   [    0.000000] MIPS: machine is img,boston
->   [    0.000000] Determined physical RAM map:
->   [    0.000000]  memory: 10000000 @ 00000000 (usable)
->   [    0.000000]  memory: 30000000 @ 90000000 (usable)
->   [    0.000000] earlycon: uart8250 at MMIO32 0x17ffe000 (options '115200')
->   [    0.000000] bootconsole [uart8250] enabled
->   [    0.000000] memblock_reserve: [0x00000000-0x009a8fff] setup_arch+0x224/0x718
->   [    0.000000] memblock_reserve: [0x01360000-0x01361ca7] setup_arch+0x3d8/0x718
->   [    0.000000] Initrd not found or empty - disabling initrd
->   [    0.000000] memblock_virt_alloc_try_nid: 7336 bytes align=0x40 nid=-1 from=0x00000000 max_addr=0x00000000 early_init_dt_alloc_memory_arch+0x20/0x2c
->   [    0.000000] memblock_reserve: [0xbfffe340-0xbfffffe7] memblock_virt_alloc_internal+0x120/0x1ec
->   <hang>
-> 
-> It looks like we took a TLB store exception after calling memset() with
-> a bogus address from memblock_virt_alloc_try_nid() or something inlined
-> into it.
-
-Memblock tries to allocate from the top and the resulting address ends up
-in the high memory. 
-
-With the hunk below I was able to get to "VFS: Cannot open root device"
-
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 4114d3c..4a9b0f7 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -577,6 +577,8 @@ static void __init bootmem_init(void)
-         * Reserve initrd memory if needed.
-         */
-        finalize_initrd();
-+
-+       memblock_set_bottom_up(true);
- }
- 
- #endif /* CONFIG_SGI_IP27 */
- 
-> This was with your patch applied atop the mips-next branch from [1],
-> which is currently at commit 35d017947401 ("MIPS: ralink: Add rt3352
-> SPI_CS1 pinmux").
-> 
-> Thanks,
->     Paul
-> 
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git
+> If Palmer is ok with it how about you include a respin of his whole
+> series?  There are some overlaps I think and having a single person
+> in charge might be helpful.
 > 
 
--- 
-Sincerely yours,
-Mike.
+Sure. I am fine with it. Palmer ?
 
+> Btw, I've found your series in my linux-kernel folder, but it did
+> not make it to linux-riscv or my personal inbox despite the CC.
+> 
+
+Thanks for the review.
+I checked my scripts. I couldn't figure out what went wrong.
+Not sure if there was some issue with infradead.org at that time.
+
+Anyways, sorry again for the mess. I will keep a watch on this next time.
+
+Regards,
+Atish
