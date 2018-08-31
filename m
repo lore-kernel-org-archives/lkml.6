@@ -3,124 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDB2C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4CFC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C17A52083E
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3EAC2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:23:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="QiMwputa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17A52083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdvJ6Pm5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EAC2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbeHaF2O (ORCPT
+        id S1727406AbeHaF2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:28:14 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38919 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727086AbeHaF2O (ORCPT
+        Fri, 31 Aug 2018 01:28:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41054 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbeHaF2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:28:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id g20-v6so4684191pgv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 18:23:18 -0700 (PDT)
+        Fri, 31 Aug 2018 01:28:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h79-v6so4695065pfk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 18:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1F2bt/QS4kUTSdQXENMmlBXZ8A8HW7T9eMb02IEllCQ=;
-        b=QiMwputaxxOXP3OzLmmGf+q8Fkx2Oig9kYN9AyUndmS5Nd1Oiz00ciExwtXcfWEOWH
-         kaCrlpZtezeN6wxEwm31gGdThaY5IfX7xDrS6ypGvhRBW4uYvWOt9PcgabZbkdXvxmx4
-         3KTp+dOZXMDNUr5HcMJvaluiDlx/9KynGTrgvMcVurIwpJ+1eFhhWMlg/hMrY9f8tHKw
-         f3ASRSv+s0wy+fna8zs1dE29CQ5Cu5Eu5f11PJSrDfbUCtkXnoTFuY8dhlVWD0Cr1uQS
-         oYR55HAwKEAxSMV1CDJf4CLrRnNBF+bf+2TXI24fQmuMR+/0Lf+hM20ipQtCTyf0o6zs
-         tAJw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ymVZdzsBc8ZLszmRk3skB4yM5dMs/LK8AwHiU42zu/4=;
+        b=SdvJ6Pm5fBG2KMXR5QgRB2HHT85Ytnev0N7SdEW45K7JLukNn7M3ZpUTJRFczsXJw4
+         cbYhU4vkXQaLB1sox3jCI4jf9LgG1wpm1/n8vsLXd1gGG/MbETvfmH1Q44nb9xNhgCXJ
+         6MjdsRXzTZdvkfFg4sVXME06PVLyogzQ3MmfR9yiTh7i+SSHjp+6gF6aSwaiQTHTfEh7
+         05S9nf/ag32WVXXJkn8s9Wl0KeLrPBjj7PlFTQ/GFptNh7yejAdYsO/02NVaqocrcd5+
+         BoJhi/t/0jd6atEIk9filoeEL/ebPxzqMVPbRjgZuJ5MIl4JEsLg2MMjtPoGJiJp8Imi
+         bWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1F2bt/QS4kUTSdQXENMmlBXZ8A8HW7T9eMb02IEllCQ=;
-        b=rcDB7uPZ2LYPJuwC7RDG4fv/U623wD3PLefOTF2N7PTKr+knpI/DiYWzy5+dchl/yU
-         u5F4X7UTFzmlWQ+0MwdvY6hC25ROEpHH0qcggsE45Ic57gJM2aPndqdOqfwaRapQi9Az
-         uPk/YJ2gheggJjo7pgFuwDDM2WMGU8X/cHfdMANJp1A2Oqh+HLW1eqarWxbC/4W3qbOr
-         3/pS3f9XyPNw+QTpvEP5MsI/jtqoCwA6Sv0GoDqEvc85CLO1SfIXMu9B+lidcmOIft33
-         JMUJz44xrJlwocF+5To0cm1Fd6NPUHZcN+2JPv88P6mi019lSaMDpyuYT3GogDOgYdkz
-         lYyg==
-X-Gm-Message-State: APzg51DdRId7zgFCgEDN31WArfVAs8z5g3rxpC0shv+eXEuFTiCfF11t
-        GjqGSBeCe/F+Qdnj5iMmjg8oEA==
-X-Google-Smtp-Source: ANB0VdZXf3nwRYcJA8jotm8G5HRdky8SEzYTTJHb+dE2Y4CvfuVuXGv9PiMQ3HhPsvC6pb+qOCfzyw==
-X-Received: by 2002:a62:b604:: with SMTP id j4-v6mr13201129pff.199.1535678598106;
-        Thu, 30 Aug 2018 18:23:18 -0700 (PDT)
-Received: from ?IPv6:2601:647:5803:15b9:5944:9b2e:c060:74c3? ([2601:647:5803:15b9:5944:9b2e:c060:74c3])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm13621663pfi.73.2018.08.30.18.23.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:23:16 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and pmdp_set_wrprotect for _PAGE_DIRTY_SW
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
-Date:   Thu, 30 Aug 2018 18:23:15 -0700
-Cc:     yu-cheng.yu@intel.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <337F9DA7-ED07-4CD0-B41C-22D570527362@amacapital.net>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-13-yu-cheng.yu@intel.com> <CAG48ez0Rca0XsdXJZ07c+iGPyep0Gpxw+sxQuACP5gyPaBgDKA@mail.gmail.com> <079a55f2-4654-4adf-a6ef-6e480b594a2f@linux.intel.com> <CAG48ez2gHOD9hH4+0wek5vUOv9upj79XWoug2SXjdwfXWoQqxw@mail.gmail.com> <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com> <1535649960.26689.15.camel@intel.com> <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com> <1535651666.27823.6.camel@intel.com> <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
-To:     Jann Horn <jannh@google.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ymVZdzsBc8ZLszmRk3skB4yM5dMs/LK8AwHiU42zu/4=;
+        b=h9zs0DOVCaFy32s9hs7YGK23hwellyQbwn60wg3EH3TykjneS0VgRSPduXaaCseXx8
+         xIyUKQ5wV9Nif4f6bdBzmI5D8tWf64gLiQ2Kh/5Yq9Odi1ohxua4D2Q4i7QWMuou5Lyy
+         udbKP7YNpSwcVIpvGh3wgUTPpTm8YX/DSQn0z3RS+h045bxKkdZFoFBOJTPRDrG/4sZy
+         qUufVlGybHHrAmsYggOG+OIXbbhoPmCx+tJK8CggQrcUAu7mHHlkzJmDqUnhgMY4bdaU
+         DtXMmrJHPQsxWx5X+Gn3U9r1C+ZIZZarvJx3ENFASo8YxiJskhunZcE9y+L1l83t0uZc
+         ADzw==
+X-Gm-Message-State: APzg51D9LGj9SnwZQeJiBK7OkMxbgCVnzQHL/diPEy8c5F86f/m/NA9V
+        B5X1MH9MMZFW70g87Yl5bqE=
+X-Google-Smtp-Source: ANB0VdZiWgkuFZhOz+GVet9DWfAXNLB6YLI6gQ3RKinTg1x0CzBiyv5x/8JesSeQx+86WDFkYqRIRg==
+X-Received: by 2002:a63:24c:: with SMTP id 73-v6mr12586397pgc.252.1535678635354;
+        Thu, 30 Aug 2018 18:23:55 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id g15-v6sm15955586pfg.98.2018.08.30.18.23.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 18:23:54 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 11:23:48 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        benh@au1.ibm.com, torvalds@linux-foundation.org,
+        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/12] asm-generic/tlb: Track which levels of the page
+ tables have been cleared
+Message-ID: <20180831112348.55d3d2ec@roar.ozlabs.ibm.com>
+In-Reply-To: <1535645747-9823-10-git-send-email-will.deacon@arm.com>
+References: <1535645747-9823-1-git-send-email-will.deacon@arm.com>
+        <1535645747-9823-10-git-send-email-will.deacon@arm.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 30 Aug 2018 17:15:43 +0100
+Will Deacon <will.deacon@arm.com> wrote:
 
+> It is common for architectures with hugepage support to require only a
+> single TLB invalidation operation per hugepage during unmap(), rather than
+> iterating through the mapping at a PAGE_SIZE increment. Currently,
+> however, the level in the page table where the unmap() operation occurs
+> is not stored in the mmu_gather structure, therefore forcing
+> architectures to issue additional TLB invalidation operations or to give
+> up and over-invalidate by e.g. invalidating the entire TLB.
+> 
+> Ideally, we could add an interval rbtree to the mmu_gather structure,
+> which would allow us to associate the correct mapping granule with the
+> various sub-mappings within the range being invalidated. However, this
+> is costly in terms of book-keeping and memory management, so instead we
+> approximate by keeping track of the page table levels that are cleared
+> and provide a means to query the smallest granule required for invalidation.
 
-> On Aug 30, 2018, at 10:59 AM, Jann Horn <jannh@google.com> wrote:
->=20
->> On Thu, Aug 30, 2018 at 7:58 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote=
-:
->>=20
->>> On Thu, 2018-08-30 at 10:33 -0700, Dave Hansen wrote:
->>>> On 08/30/2018 10:26 AM, Yu-cheng Yu wrote:
->>>>=20
->>>> We don't have the guard page now, but there is a shadow stack
->>>> token
->>>> there, which cannot be used as a return address.
->>> The overall concern is that we could overflow into a page that we
->>> did
->>> not intend.  Either another actual shadow stack or something that a
->>> page
->>> that the attacker constructed, like the transient scenario Jann
->>> described.
->>>=20
->>=20
->> A task could go beyond the bottom of its shadow stack by doing either
->> 'ret' or 'incssp'.  If it is the 'ret' case, the token prevents it.
->> If it is the 'incssp' case, a guard page cannot prevent it entirely,
->> right?
->=20
-> I mean the other direction, on "call".
+Actually the generic patches are pretty simple, and they look okay to
+me. powerpc *should* be able to switch to Peter's patch with a few
+lines of code with unchanged functionality as far as I can see.
 
-I still think that shadow stacks should work just like mmap and that mmap sh=
-ould learn to add guard pages for all non-MAP_FIXED allocations.=
+These flags we may use as well, but even if not if x86 and arm64 are
+using it, it seems reasonable to go in generic code for now. For the
+3 generic patches,
+
+Acked-by: Nicholas Piggin <npiggin@gmail.com>
+
+Thanks,
+Nick
