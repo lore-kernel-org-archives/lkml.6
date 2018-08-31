@@ -2,219 +2,113 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9BBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 437B1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB7F20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB7F20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id E24E52083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:31:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LcbENOmC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24E52083B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbeIABjz (ORCPT
+        id S1727572AbeIABlC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:39:55 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:32958 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbeIABjy (ORCPT
+        Fri, 31 Aug 2018 21:41:02 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39036 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727258AbeIABlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:39:54 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id A50E38058E; Fri, 31 Aug 2018 23:30:31 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 23:30:31 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: [rfc] leds: add TI LMU backlight driver
-Message-ID: <20180831213030.GA23447@amd>
-References: <20180829212032.GB15786@amd>
- <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com>
- <20180830201825.GA1936@amd>
- <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com>
+        Fri, 31 Aug 2018 21:41:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so6063316pff.6
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=CZUL5Hfj48Fyz685witLNRWwWvkcPBYw9FWfhHa6uVo=;
+        b=LcbENOmC0qrpvSID+PXyWxEfgESl83Q/dUazoozSkUnvChvEq5ErQTzZK7PH3U2BTL
+         hsRvCU+Bzi0wc7cFuMA6OJMdjsZrBlqofJMub9tQbbPukpDSZ2TAdA8N4O9LjlcO7sZt
+         mPoXdDKnBuL/L7WemI3Zc+AOUzdB9URbGOkvUTM1Yj9QjD0YVchJ7eYOG1hnx2HQE9h2
+         avz6rfC7oan4xgI3OGERpoHkN7iM68fckllamO7Rgq6TJmBnxy5AaKpbQ8J2WKdmGwdY
+         Wnf7iswJhUto013FsWm6yiJHmDimtiHQFYnbwr9csOuFrDlnBCT051Azbn9H1UpKV6Dy
+         uVFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=CZUL5Hfj48Fyz685witLNRWwWvkcPBYw9FWfhHa6uVo=;
+        b=BasuLlYZ6uDuLlgghSktU013HKlSwsZTjBgkRucOwLTlc/qTTxWdu1e4CFZVQa2qoO
+         WrOnvpY5liL4yJ/fNfS6j8WS1nJrmkbH+gT3qskj/NV7MrMnCWwg1EjYVPLS202fUqow
+         KU5pHyABbx2lIlTlGI16FUNhg3fJPspehTjlMvawFZLKTgM+NTUmLPIUfrbhvygtqnTa
+         qCQ936ZZ43j0fk0CXMNhCrERp+pZXLFzCD5o536uVa+kxxz8e+T779X3TEJH2s8mG9M5
+         jI8ShWN9InLzRg3Grj4iswcWc0w3I8vkQ+OjNbICs9OuUY9zX6/Cz/nuYQCtdryG/CPl
+         6Q/Q==
+X-Gm-Message-State: APzg51DCnn+S8taYvcJYL3Vfxx5jkABXtUMf/teyEG1NrXCnVXpztY9H
+        iNSFT1r2qSlx0kkIgoBb3atG1w==
+X-Google-Smtp-Source: ANB0VdZSc28f/0MTetnO12DHsPsIV/Ov7jTqFw5x8hJNLGnQY0XtubSec3G+RQOEpoJf4A8r42uOMg==
+X-Received: by 2002:a62:2c53:: with SMTP id s80-v6mr15291126pfs.154.1535751099960;
+        Fri, 31 Aug 2018 14:31:39 -0700 (PDT)
+Received: from drosen.mtv.corp.google.com ([2620:0:1000:1612:726:adc3:41a6:c383])
+        by smtp.gmail.com with ESMTPSA id h82-v6sm26975041pfa.173.2018.08.31.14.31.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 14:31:39 -0700 (PDT)
+Subject: Re: [PATCH] staging: android: ion: check for kref overflow
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+References: <20180830230946.228701-1-drosen@google.com>
+ <20180831004144.GC20664@kroah.com>
+ <589c036d-450a-3f3b-8f5a-4148713d4bfb@google.com>
+ <20180831155657.GA25066@kroah.com>
+From:   Daniel Rosenberg <drosen@google.com>
+Message-ID: <4b4e64a4-bf6f-b3d0-4221-2a0d3206a6a9@google.com>
+Date:   Fri, 31 Aug 2018 14:31:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
-Content-Disposition: inline
-In-Reply-To: <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180831155657.GA25066@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---BXVAT5kNtrzKuDFl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> > Aha. I did not realize that was for same hardware... I should have
-> > cc-ed you, I guess.
->=20
-> No worries Jacek cc'd me.
-
-Good.
-
-> >> I do not like this driver.
-> >> I don't like that it smashes numerous devices into some structure with=
- varying register maps.
-> >>
-> >=20
-> > Can you elaborate? The chips are similar enough that single driver
-> > makes sense, and we certainly want to maintain one driver, not 6
-> > drivers differing only in .. what exactly?
->=20
-> Well I think it is justified to have independent drivers as each device h=
-as different features from
-> this basic LED driver.  If we are just looking for basic support then yes=
- this driver is fine.
-
-> But here is where a single driver will start getting messy and support di=
-fficult
->=20
-> LM3533 has ALS and an ADC for an ALS analog sensor
-> LM3631 has no ALS functionality
-> LM3632 has strobe functionality and no ramp support
-> LM3633 has indicator support coupled with the hvled support
-> LM3695 does not even appear to be available publicly
-> LM3697 is the only device that that this driver could be used for as is.
-
-Ok, so ... yes, I'm really interested in basic support. But drivers
-seem to have a lot in common, voltage limits, for example.=20
-
-> In addition if I wanted to only support a single device I have to pull in=
- the full data
-> file that defines all the other devices.  That is pretty bad to increase =
-the size of the kernel
-> image to have support for devices that are not even on the target product=
-=2E  The ti-lmu data file
-> alone is ~15k, the ti-lmu code does not even build with this patch (So th=
-is is a nack on the patch as it is.)
-> but commenting out the offending code gives me at least ~23k more data on=
- top
-> of the ti-lmu MFD framework which is ~33k.  That is ~71k of code just to =
-support 1 LED device
-> that is 3x what we have now.  That is not good for IoT devices.
-
-> The LM3697 is 22k without ramp support.
-
-Well, I don't think object file size is huge problem. First,
-"distribution" kernel with support for 6 different chips will be ~71k,
-while your proposal will result in ~136k. Second, yes, we could put
-ifdefs into ti-lmu data file to make it smaller.
-
-Anyway, clean source code and easy maintainance is more important.
-
->=20
-> And I will continue. TI LMU really means nothing unless you know what LMU=
- stands for.  But this
-> also now implies support for all of TI's lighting products which will con=
-fuse the heck out of
-> customers and TI support staff.  We have a similar issue in our SoC sound=
- CODECs code that we are
-> attempting to clean up.  We have a generic driver that is supposed to sup=
-port a common set of features
-> but when extending support for other features the code gets very complica=
-ted and it is almost more
-> beneficial to re-write and create a new driver.
->=20
-> I would be OK with creating a ti-lmu framework that commonizes the functi=
-onality and create children that
-> register to that framework but even that is over kill.
+On 08/31/2018 08:56 AM, Greg Kroah-Hartman wrote:
+> On Thu, Aug 30, 2018 at 06:36:18PM -0700, Daniel Rosenberg wrote:
+>> The sign off was on the 4.4.y version that I cherry-picked this from.
+> Ah that wasn't obvious at all.  What is that git commit id?  You need to
+> give us a hint as to what is going on when you do that :)
+b84ec04bae905901("staging: android: ion: check for kref overflow") in 4.4.y
+>> There was a trivial conflict moving it to 4.9, but it did not modify
+>> any changed lines, so I hadn't thought that was worth noting on the
+>> patch. I apologise if leaving the signed-off-by was incorrect here.
+> Why did I only apply this to 4.4 and not 4.9 when the original patch was
+> submitted?  That seems odd.
 >
-
-I believe there's quite a lot of code that could be shared.=20
-
-> >> Not only that but it appears that you just pulled this driver from a r=
-epo and posted it without clean up.
-> >>
-> >=20
-> > a) No I did not, feel free to generate a diff.
-> >=20
->=20
-> No I looked at this driver before and determined a re-write was a waste o=
-f time.
-> If you look that the LM3697 driver I submitted it configures the banks vi=
-a the config file.
->=20
-> Only the ramp code is missing and the code is much simpler in nature.  We=
- could adopt that
-> code to extend out to the other devices as well and base the register map=
- deltas on the=20
-> device configuration file.  I am already using the fwnode calls and setti=
-ng up the banks.
-
-Well, you may know that hardware better than I do. But if you generate
-a diff...
-
-> > b) Even if I did, why would that be a problem?
->=20
-> So what you are saying is all I have to do is look for other peoples work=
- pull it in to a branch
-> slap a new copyright on it, push to a list and claim support?
-
-=2E..you'll see I did quite some changes.
-
-> I don't think you checked with the original author on pushing it upstream=
-=2E  Milo has not updated
-> his email with a public one unless you sent him a private email and recei=
-ved and ack on pushing
+> thanks,
 >
+> greg k-h
+I don't know. I had included it in the range of kernel versions it 
+should be applied to in the original patch, and noted the minor conflict 
+for later kernel versions. You added it in 3.18 and 4.4, and I assumed 
+not 4.9 because of the conflict in applying the patch, so I sent this 
+version.
 
-Tony Lindgren asked me to get support merged, and that's what I'm
-trying to do. I have Milo's sign off, that means he is/was ok with
-upstreaming that code; no, I did not have reason to contact him.
-
-> > Well all 6 chips this driver supports seem to be similar enough, so
-> > that single driver makes sense.
->=20
-> See above on device differentiation. So in my opinion a single driver tha=
-t supports
-> basic functionality is good but when adding additional support this drive=
-r will get very
-> complicated as to only allow different features for different devices.
-
-Well, the devices seem to have quite a lot in common. Yes, single
-driver for all of them will be somehow complex; but I believe that's
-still better than copy&pasting code.
-
-Anyway, I showed my proposal. I need support for ti,lm3532, but I can
-get basic support for many other chips with very little code.
-
-Do you plan basic support for support other chips in near future? Is
-TI willing to maintain the LED drivers?
-
-What is your proposal for lm3532 support? Should I just cp lm3697
-lm3532, then adjust register map? (Will not that cause rather ugly
-code duplication?)
-
-Best regards,
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---BXVAT5kNtrzKuDFl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluJs3YACgkQMOfwapXb+vK0QgCgrQkZ5TzvGqSlHPd2YifIfe4p
-CDoAniNnC95TNnqKjwmoHIBEq4jlP6wm
-=uVnF
------END PGP SIGNATURE-----
-
---BXVAT5kNtrzKuDFl--
+b1fa6d8acb50c8e9 ("staging: android: ion: Pull out ion ioctls to a 
+separate file") is the patch that causes the minor conflict in applying 
+the original patch.
+4c23cbff073f3b9b ("staging: android: ion: Remove import interface") is 
+the patch that removes the affected code altogether in later kernels 
+versions.
