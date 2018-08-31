@@ -2,189 +2,132 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4BAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F12C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2CE2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2CE2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 454312083C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454312083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeHaOeY (ORCPT
+        id S1728302AbeHaOic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:34:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33072 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727512AbeHaOeX (ORCPT
+        Fri, 31 Aug 2018 10:38:32 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37746 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726493AbeHaOib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:34:23 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VAOQWo127203
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:27:34 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m73s70dgn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:27:34 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 31 Aug 2018 11:27:32 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 31 Aug 2018 11:27:28 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VARRkW43057192
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Aug 2018 10:27:27 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3BE4D11C052;
-        Fri, 31 Aug 2018 13:27:22 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 771F211C05B;
-        Fri, 31 Aug 2018 13:27:20 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Fri, 31 Aug 2018 13:27:20 +0100 (BST)
-Date:   Fri, 31 Aug 2018 03:27:24 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Subject: Re: [PATCH 2/2] sched/topology: Expose numa_mask set/clear functions
- to arch
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180808081942.GA37418@linux.vnet.ibm.com>
- <1533920419-17410-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1533920419-17410-2-git-send-email-srikar@linux.vnet.ibm.com>
- <20180829080219.GN24124@hirez.programming.kicks-ass.net>
+        Fri, 31 Aug 2018 10:38:31 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so13938544qtl.4;
+        Fri, 31 Aug 2018 03:31:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D8eflnERVVnmyV4uIliMAqFR2z4AI9GlXrW8KWwX/mY=;
+        b=m1g1UyaqhLb/11tzBdBw11XZPW2I5RcKYYVTduF1mb3emFWk6Vbm8/AW07kjLtNI9f
+         7VX8dbO1ubTsRbWeR4sQs1EPylO2Wh55aa80zo2mJJmh7BrDk2m30fMXScPinm8lQckp
+         cbWaBx8ogI0ZoPRyj+Z0I5nHo/edIsehx0KfA5s+wIhca/QMzbvDnPCZU6eMxuDl1cM5
+         29x2txhu4dwsSR8WNc7jz+cXcq3L2F3bjzVDhqVshdHq+ELwZ51OjBdtKcWijg2HKraK
+         b7jw5qPpl9QFiS88OgbOx8r6V4hwyQlBkMDAnC5xpqs3Hjg89Dz5Cs77WX5a1z/5S2rv
+         oq2w==
+X-Gm-Message-State: APzg51BLY+bgCdJpohiPmCyzMe3wVIZLye8HQysbso5LdGh2dV2VZhye
+        NVy3WdQzsTV8J9R5l1yxcsK2cmbWzIK9W29edn8i/Fhs
+X-Google-Smtp-Source: ANB0VdY2uJHQdI75yrPcd9T448Fl6txbEcPCukLr6rMQX4kWswshFc3BkkafvTZEUq59ntKzCeacFtdGx2OT8AIMry0=
+X-Received: by 2002:aed:3f22:: with SMTP id p31-v6mr15106815qtf.185.1535711500103;
+ Fri, 31 Aug 2018 03:31:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180829080219.GN24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18083110-4275-0000-0000-000002B33B45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18083110-4276-0000-0000-000037BC3E7C
-Message-Id: <20180831102724.GB8437@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808310111
+References: <20180829130308.3504560-1-arnd@arndb.de> <CAF=yD-J7-GumUmonrZt7s44e3bsjY2DCD6ZpmhtCx6FOBV5BNA@mail.gmail.com>
+In-Reply-To: <CAF=yD-J7-GumUmonrZt7s44e3bsjY2DCD6ZpmhtCx6FOBV5BNA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 31 Aug 2018 12:31:23 +0200
+Message-ID: <CAK8P3a2XTUZJUqGu6v=SZqcoJTqM3fgtDAWBnBopX3=4NJYcRA@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: rework SIOCGSTAMP ioctl handling
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hams@vger.kernel.org,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        linux-can@vger.kernel.org, dccp@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-x25@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2018-08-29 10:02:19]:
+On Thu, Aug 30, 2018 at 10:10 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Wed, Aug 29, 2018 at 9:05 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > The SIOCGSTAMP/SIOCGSTAMPNS ioctl commands are implemented by many
+> > socket protocol handlers, and all of those end up calling the same
+> > sock_get_timestamp()/sock_get_timestampns() helper functions, which
+> > results in a lot of duplicate code.
+> >
+> > With the introduction of 64-bit time_t on 32-bit architectures, this
+> > gets worse, as we then need four different ioctl commands in each
+> > socket protocol implementation.
+> >
+> > To simplify that, let's add a new .gettstamp() operation in
+> > struct proto_ops, and move ioctl implementation into the common
+> > sock_ioctl()/compat_sock_ioctl_trans() functions that these all go
+> > through.
+> >
+> > We can reuse the sock_get_timestamp() implementation, but generalize
+> > it so it can deal with both native and compat mode, as well as
+> > timeval and timespec structures.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> This also will simplify fixing a recently reported race condition with
+> sock_get_timestamp [1]. That calls sock_enable_timestamp, which
+> modifies sk->sk_flags, without taking the socket lock. Currently some
+> callers of sock_get_timestamp hold the lock (ax25, netrom, qrtr), many
+> don't. See also how this patch removes the lock_sock in the netrom
+> case. Moving the call to sock_gettstamp outside the protocol handlers
+> will allow taking the lock inside the function.
 
-> On Fri, Aug 10, 2018 at 10:30:19PM +0530, Srikar Dronamraju wrote:
-> > With commit 051f3ca02e46 ("sched/topology: Introduce NUMA identity node
-> > sched domain") scheduler introduces an new numa level. However on shared
-> > lpars like powerpc, this extra sched domain creation can lead to
-> > repeated rcu stalls, sometimes even causing unresponsive systems on
-> > boot. On such stalls, it was noticed that init_sched_groups_capacity()
-> > (sg != sd->groups is always true).
-> > 
-> > INFO: rcu_sched self-detected stall on CPU
-> >  1-....: (240039 ticks this GP) idle=c32/1/4611686018427387906 softirq=782/782 fqs=80012
-> >   (t=240039 jiffies g=6272 c=6271 q=263040)
-> > NMI backtrace for cpu 1
-> 
-> > --- interrupt: 901 at __bitmap_weight+0x70/0x100
-> >     LR = __bitmap_weight+0x78/0x100
-> > [c00000832132f9b0] [c0000000009bb738] __func__.61127+0x0/0x20 (unreliable)
-> > [c00000832132fa00] [c00000000016c178] build_sched_domains+0xf98/0x13f0
-> > [c00000832132fb30] [c00000000016d73c] partition_sched_domains+0x26c/0x440
-> > [c00000832132fc20] [c0000000001ee284] rebuild_sched_domains_locked+0x64/0x80
-> > [c00000832132fc50] [c0000000001f11ec] rebuild_sched_domains+0x3c/0x60
-> > [c00000832132fc80] [c00000000007e1c4] topology_work_fn+0x24/0x40
-> > [c00000832132fca0] [c000000000126704] process_one_work+0x1a4/0x470
-> > [c00000832132fd30] [c000000000126a68] worker_thread+0x98/0x540
-> > [c00000832132fdc0] [c00000000012f078] kthread+0x168/0x1b0
-> > [c00000832132fe30] [c00000000000b65c]
-> > ret_from_kernel_thread+0x5c/0x80
-> > 
-> > Similar problem was earlier also reported at
-> > https://lwn.net/ml/linux-kernel/20180512100233.GB3738@osiris/
-> > 
-> > Allow arch to set and clear masks corresponding to numa sched domain.
-> 
+I suppose it would be best to always take that lock then, rather than
+removing the lock as my patch does at the moment.
 
-> What this Changelog fails to do is explain the problem and motivate why
-> this is the right solution.
-> 
-> As-is, this reads like, something's buggered, I changed this random thing
-> and it now works.
-> 
-> So what is causing that domain construction error?
-> 
+> If this is the only valid implementation of .gettstamp, the indirect
+> call could be avoided in favor of a simple branch.
 
-Powerpc lpars running on Phyp have 2 modes. Dedicated and shared.
+I thought about that as well, but I could not come up with a
+good way to encode the difference between socket protocols
+that allow timestamping and those that don't.
 
-Dedicated lpars are similar to kvm guest with vcpupin.
+I think ideally we would just call sock_gettstamp() unconditonally
+on every socket, and have that function decide whether timestamps
+make sense or not. The part I did not understand is which ones
+actually want the timestamps or not. Most protocols that
+implement the ioctls also assign skb->tstamp, but there are some
+protocols in which I could not see skb->tstamp ever being set,
+and some that set it but don't seem to have the ioctls.
 
-Shared  lpars are similar to kvm guest without any pinning. When running
-shared lpar mode, Phyp allows overcommitting. Now if more lpars are
-created/destroyed, Phyp will internally move / consolidate the cores. The
-objective is similar to what autonuma tries achieves on the host but with a
-different approach (consolidating to optimal nodes to achieve the best
-possible output).  This would mean that the actual underlying cpus/node
-mapping has changed. Phyp will propogate upwards an event to the lpar.  The
-lpar / os can choose to ignore or act on the same.
+Looking at it again, it seems that sock_gettstamp() should
+actually deal with this gracefully: it will return a -EINVAL
+error condition if the timestamp remains at the
+SK_DEFAULT_STAMP initial value, which is probably
+just as appropriate (or better) as the current -ENOTTY
+default, and if we are actually recording timestamps, we
+might just as well report them.
 
-We have found that acting on the event will provide upto 40% improvement
-over ignoring the event. Acting on the event would mean moving the cpu from
-one node to the other, and topology_work_fn exactly does that.
+> Acked-by: Willem de Bruijn <willemb@google.com>
 
-In the case where we didn't have the NUMA sched domain, we would build the
-independent (aka overlap) sched_groups. With NUMA  sched domain
-introduction, we try to reuse sched_groups (aka non-overlay). This results
-in the above, which I thought I tried to explain in
-https://lwn.net/ml/linux-kernel/20180810164533.GB42350@linux.vnet.ibm.com
+Thanks,
 
-In the typical case above, lets take 2 node, 8 core each having SMT 8
-threads.  Initially all the 8 cores might come from node 0.  Hence
-sched_domains_numa_masks[NODE][node1] and
-sched_domains_numa_mask[NUMA][node1] is set at sched_init_numa will have
-blank cpumasks.
-
-Let say Phyp decides to move some of the load to another node, node 1, which
-till now has 0 cpus.  Hence we will see
-
-"BUG: arch topology borken \n the DIE domain not a subset of the NODE
-domain"   which is probably okay. This problem is even present even before
-NODE domain was created and systems still booted and ran.
-
-However with the introduction of NODE sched_domain,
-init_sched_groups_capacity() gets called for non-overlay sched_domains which
-gets us into even worse problems. Here we will end up in a situation where
-sgA->sgB->sgC-sgD->sgA gets converted into sgA->sgB->sgC->sgB which ends up
-creating cpu stalls.
-
-So the request is to expose the sched_domains_numa_masks_set /
-sched_domains_numa_masks_clear to arch, so that on topology update i.e event
-from phyp, arch set the mask correctly. The scheduler seems to take care of
-everything else.
-
--- 
-Thanks and Regards
-Srikar Dronamraju
-
+      Arnd
