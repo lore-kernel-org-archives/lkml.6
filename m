@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751FDC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BFBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E6F20841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EF1F2083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:20:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TopJtve0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E6F20841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLHZkhab"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF1F2083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeIAA2W (ORCPT
+        id S1727577AbeIAA3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 20:28:22 -0400
-Received: from mail-yw1-f41.google.com ([209.85.161.41]:38002 "EHLO
-        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeIAA2W (ORCPT
+        Fri, 31 Aug 2018 20:29:48 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38332 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIAA3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 20:28:22 -0400
-Received: by mail-yw1-f41.google.com with SMTP id n21-v6so5489035ywh.5;
-        Fri, 31 Aug 2018 13:19:17 -0700 (PDT)
+        Fri, 31 Aug 2018 20:29:48 -0400
+Received: by mail-yw1-f66.google.com with SMTP id n21-v6so5490440ywh.5;
+        Fri, 31 Aug 2018 13:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Vk6eJaICnaGPvd/ak8gSgiTZzuoqUM/6teuv/tKzh+w=;
-        b=TopJtve0M1jk2OYvgWWQBfCKtk+Fv0HLw7ge+DUSAoydFXq3v2J0ZbIEdj14OOcy8W
-         /0fH5/sNsnEQlGv9d8+kgosmxRSNMJzyfaJpOHI5yf35vx4blaxsaFV6E9x8xGCjN8qO
-         HXj1OG0Ox5r/j3O0djnSnz1x98dA6+EkuyVg//C1wPReRDp9YPE9vn5dNcmE17eR5fzG
-         /d7ri0mHHyRPOZCzYMnmNvGmyC46HT+FZVZmOsVYzIB0h/TS05yy8m9R70FuVGVDyBUU
-         +uzN4iiPIFES0Bo7AXF+/F6uT8VXgQH6uLuHq7lxeZtySmEXFeRFIHpynmlhFalhx/1N
-         6WMQ==
+        bh=xB65XgsuIhVMr4wfu+fmV5tJ/QI8bJpBH5q/qwwB4aI=;
+        b=mLHZkhablFk9waUyMc8kuvj/PVXTKpZFF3mTAy+iVwTmSjp5bGMlkpbDQ+WexC9mat
+         X7UE7Ks2ezPEFePe9khKWJkqkIsWGEcDRxIB7Wo/nz8VDcuVbv2YaiH4ZAOTeq47okVL
+         dbT78Hp/pANTrGwrjY6jx2tHaBbyBtZOEUwQG38SKtuSruX3fqzCW6x9hpZfE8AdS1NA
+         pEQ5i+x/Qv8YZKyd3EVN/PI/Ci9IqIhY2nx2lGmaGqrWEeDyTjMg2dUuYvbcp9ZK/VFx
+         x7Rf0XUqTQvdOz8Tl/qkEdrAb2Ii45fyEpN9SGMjw3h+th+nnbIIXBiLTH6wQg+Zm5sF
+         zazg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vk6eJaICnaGPvd/ak8gSgiTZzuoqUM/6teuv/tKzh+w=;
-        b=GEDfI/orCzqNezJ0cYFMPAPpWdagSrEOjss+3qvrcRQQ/tY+QnThe9Da8yU4Wp6sfN
-         Um9sDthtAX21b5QQ11ifciDSIlIYbyQ7FklwaLroKfl+REeZF3E+qxtzaPOoSuJGKwVb
-         TKy/WpkSjreeuNgiCCIAwTTlLxyP9WD/a8ps5hoxc68tcqFibRlvT+Ak0l5SqXZjlhRh
-         HO2tFb4A+eFOZE25yZpWouLQg1g33DOws7sHSrZXPHjN/CrqpwYq0DOqqm4v2hpisNlV
-         bbblVcV+sSZHQ1xMZy1k9umu0RIufEABu30tetm1KUpWwYEkzsbTS0utGHfnfCeKrGIH
-         eOZA==
-X-Gm-Message-State: APzg51CoX/iZ5nBhxg+03KcdxTPVweM6qNBFmWky4BrBC+t5/4GNzxFY
-        2UleT0g3/3cgLVZJizDrzGw=
-X-Google-Smtp-Source: ANB0VdZSKuFvRZLTVXtFWUL+wGq6F3WAiKwDjD+gz/RZnlVpDYxFq5MyjNDoGimEYPNVl+Pmy5fizw==
-X-Received: by 2002:a81:83c5:: with SMTP id t188-v6mr10015697ywf.224.1535746756557;
-        Fri, 31 Aug 2018 13:19:16 -0700 (PDT)
+        bh=xB65XgsuIhVMr4wfu+fmV5tJ/QI8bJpBH5q/qwwB4aI=;
+        b=l9437i365aWGCb7BnbPNo95sD4ROqt81r1qxYoJZtvpiJEYSDWYD2MeI8i8XDE4KLu
+         Bjie6qaZeMW7/QOSQMdM9Mwowc+eV8s8m40355wQjjQoM7iC65tMvipZ+/noFFnm1xum
+         ChgEWBr5+34wbEr7oo8n0XO2iDnrX/y9LITnVvB36qh1zEyKlZ9T+py1u3flopUa5XMR
+         E61Lsl2MZNETPr9EhG0bX8nbYvlnu5HovU/OtsOzfPxvgLDu3k3kNBrprzmmlKJpy/OK
+         Ob5poo24LnaqYpvwhQzlkXxKGI78mFgAFthshh5b81oEMyVw7p5LYdWM5ouizndo8Oe/
+         WLzg==
+X-Gm-Message-State: APzg51CkQER6ceUnT0xTqQ14HZGnq/SVUGvKHC9a5ehAWcjlspB/ep+b
+        A2UQhj8SWNIWwW7OkwX2fJUNCegdjO4=
+X-Google-Smtp-Source: ANB0VdaNDgewJB/LvvuRvXk4Z5qAZkvfKbVmCnwqQ0Dnmwkfy2EHunXYw70q6XOPnxWffGtf5Dpymw==
+X-Received: by 2002:a81:2a0a:: with SMTP id q10-v6mr9970329ywq.159.1535746842438;
+        Fri, 31 Aug 2018 13:20:42 -0700 (PDT)
 Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::3:ae4b])
-        by smtp.gmail.com with ESMTPSA id o193-v6sm5153332ywd.84.2018.08.31.13.19.15
+        by smtp.gmail.com with ESMTPSA id j8-v6sm4479117ywj.6.2018.08.31.13.20.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 13:19:15 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 16:19:10 -0400
+        Fri, 31 Aug 2018 13:20:42 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 16:20:40 -0400
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Josef Bacik <josef@toxicpanda.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
@@ -68,16 +68,16 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         linux-kernel@vger.kernel.org,
         Jiufei Xue <jiufei.xue@linux.alibaba.com>,
         Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH 02/15] blkcg: delay blkg destruction until after
- writeback has finished
-Message-ID: <20180831201909.GA20194@dennisz-mbp.dhcp.thefacebook.com>
+Subject: Re: [PATCH 03/15] blkcg: use tryget logic when associating a blkg
+ with a bio
+Message-ID: <20180831202040.GB20194@dennisz-mbp.dhcp.thefacebook.com>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
- <20180831015356.69796-3-dennisszhou@gmail.com>
- <20180831152705.4mjm7xo6jq7ptdqn@destiny>
+ <20180831015356.69796-4-dennisszhou@gmail.com>
+ <20180831153007.nybnuyx43adn76rm@destiny>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831152705.4mjm7xo6jq7ptdqn@destiny>
+In-Reply-To: <20180831153007.nybnuyx43adn76rm@destiny>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -86,20 +86,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Josef,
 
-On Fri, Aug 31, 2018 at 11:27:07AM -0400, Josef Bacik wrote:
-> So the general approach is correct, but it's sort of confusing because you are
-> using nr_cgwbs as a reference counter, because it's set at 1 at blkg creation
-> time regardless of wether or not there's an assocated wb cg.  So instead why not
-> just have a refcount_t ref, set it to 1 on creation and make the wb cg take a
-> ref when it's attached, and then just do the get/put like normal and cleanup as
-> you have below?  What you are doing is a reference counter masquerading as a
-> count of the wb cg's, just add full ref counting to the blkcg and call it a day,
-> it'll be much less confusing.  Thanks,
+On Fri, Aug 31, 2018 at 11:30:08AM -0400, Josef Bacik wrote:
+> On Thu, Aug 30, 2018 at 09:53:44PM -0400, Dennis Zhou wrote:
+> > diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> > index a3eede00d302..c626e1f7cdcd 100644
+> > --- a/block/blk-throttle.c
+> > +++ b/block/blk-throttle.c
+> > @@ -2129,8 +2129,9 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
+> >  static void blk_throtl_assoc_bio(struct throtl_grp *tg, struct bio *bio)
+> >  {
+> >  #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
+> > -	if (bio->bi_css)
+> > -		bio_associate_blkg(bio, tg_to_blkg(tg));
+> > +	/* fallback to root_blkg if we fail to get a blkg ref */
+> > +	if (bio->bi_css && bio_associate_blkg(bio, tg_to_blkg(tg)))
+> > +		bio_associate_blkg(bio, bio->bi_disk->queue->root_blkg);
+> 
+> Except if we've already assocated a blkg this is just extra, can we do
+> 
+> if (bio->bi_css && (bio_associate_blkg(bio, tg_to_blkg(tg)) == -ENODEV))
+> 
+> to make it clear that we're only attaching it to the root if we failed to attach
+> a blkg at all?  Thanks,
 
-Yeah, that makes more sense. I've switched to using refcount_t and
-renamed it to wbcg_refcnt. The corresponding actions have been renamed.
-
-I've also fixed the kbuild error in v2.
+Done in v2.
 
 Thanks,
 Dennis
