@@ -3,110 +3,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B74C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE651C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BDED20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F9520837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 06:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EeuGXnoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDED20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjWUPimh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F9520837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeHaK6I (ORCPT
+        id S1727326AbeHaLAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 06:58:08 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:35312 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbeHaK6I (ORCPT
+        Fri, 31 Aug 2018 07:00:21 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:55392 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbeHaLAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 06:58:08 -0400
-Received: by mail-yb1-f193.google.com with SMTP id o17-v6so513180yba.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 23:52:09 -0700 (PDT)
+        Fri, 31 Aug 2018 07:00:20 -0400
+Received: by mail-wm0-f54.google.com with SMTP id f21-v6so4117807wmc.5;
+        Thu, 30 Aug 2018 23:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TZ/5ZVsKF6hpzEfu+yWQmFbyBRzNosTVXBr10CImg44=;
-        b=EeuGXnoFznVrYjNfnF5WTaykrX56m4WBd2foQBvzPTJF0Xmi0kYkDXvLlixdz/MSMB
-         Su2JxDeG/egZcvuWi8QyT44wD+UUHCg/DSnxgZm3VaAZXfWtLlOyMhcYMNxBT2Qv3JPs
-         PV964yFRSDqSJIH2qfZ9pxETQysm2/Dh/vECM=
+        bh=7b849tg0B2AeAQpYcHCJh3ZDwCrGblVrliBrEc/MOio=;
+        b=MjWUPimhcVuk2IvzHF+0kkrxRKyxtFghA0YdGFG91d4BeFjEfE3HPNVwvFUm7PvzQb
+         YRg5MWjOgNU1K9PkIK1BLlUaAwqglkPjSJ7Gt1Su9c90Tz7f4ePFTwsRyJpe87x0CpOg
+         tvxCMzG2g48rZYsX1B/Yt+nTrx4nSGE8NFHf+ezqVEQ0mywDooNrYFRN9hZGY0u3KZhS
+         r3UDnqWUfEzCZCiKZRJ8X/m5FAjxP2Srb+YcsWD8aDJRD1/adQtMwoV6db7DzrvjWYaD
+         F5Bnly+NA0u0PFTLHTTCMRIJ44BRvKINPlU5AXVPkmoiM7P45Y7auoIBqS8mSNce1GvB
+         sn0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TZ/5ZVsKF6hpzEfu+yWQmFbyBRzNosTVXBr10CImg44=;
-        b=HkB4g0Kv1oL0ED1r9BgVBtB4y5ozR5kDeA9JQD77hMHFZIFlHSW/H/69SnmYWlPz02
-         c1T9OsBYtffqLxXobLabdRTmHRn0XTFqDbHm4xjPkhf/WYZ184h89yhGCk5GhCFV1192
-         OFnODGTAM7fJ7YqMvrcvPTvTQbiix4aQE+PE2bJoLXXsCGLerYFmTqUeLIzymVnzFob9
-         NUntvqt6P311H4wgc4wBTimIKlE0ihaBbO4fj7yhMnrDFIVi7BVZnsSBCB0mKbyhCN3C
-         +CKg2Sep/R+5H5j1/6BWieK2uEdNOZupLxoQ313fzivKHSZwHXKN6pvYCZbT+NtHB7cx
-         qdiw==
-X-Gm-Message-State: APzg51BIRf+FJ4l7l1YfqcjIaFWD7X0n6U/zlOfhF9T61VykCXEGPcIt
-        HJiOqUDzB4/tMdc0M9mmZ3aPrkwyqXRYkg==
-X-Google-Smtp-Source: ANB0VdY7GIvbGX3LQuu1aw4QYeStRnpkQj7zoNmjcfPeeiKrHu29jmBM707Eac5VkHTMDaIpHQudjw==
-X-Received: by 2002:a25:690e:: with SMTP id e14-v6mr7826160ybc.468.1535698328344;
-        Thu, 30 Aug 2018 23:52:08 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id m82-v6sm3987724ywc.29.2018.08.30.23.52.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 23:52:07 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id f145-v6so513600ybg.4
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 23:52:06 -0700 (PDT)
-X-Received: by 2002:a25:348a:: with SMTP id b132-v6mr7857994yba.373.1535698325907;
- Thu, 30 Aug 2018 23:52:05 -0700 (PDT)
+        bh=7b849tg0B2AeAQpYcHCJh3ZDwCrGblVrliBrEc/MOio=;
+        b=clFHDB48mNlY4geZDCFX3Q3zCOH/pgkzz6h7tn9zy0kV0P2aTRyHa/MDX2/0JqEWk6
+         oWmgi7BiCAoii/MaR04cC6LUjZXirJwz/1snTqg+Byx6pboRbeRko2P3VhiNDnwT3gJU
+         r0TrbAwGuHjIGfCsq0/5n3CejC7rMkqAkIIbbpQw5i7LG3HWTK2sIGhRC2GOv4FOeEeF
+         YWbkp4OtldEbzRXTr5hZvOxXBQ4/6e0fVC4YR1avcyqq/Sa+8nQnul9lcNywNx2OUN/X
+         f3eZlQMrCwBlcyzVHqdgC0m8ralancc8vY24+TkD0/EemnWy02nVzxVctt0885nTVDlb
+         mPSQ==
+X-Gm-Message-State: APzg51B3/jT+AUIIS/okZH4dDwojhLLSDtdjNgGdS2Z3wHxpXl66jY1l
+        ZqZusXgadgFhsGD9vzv7p8gU3vNQt2Zh+UrV+ArM2xxHh1w=
+X-Google-Smtp-Source: ANB0VdZjmnbm40FazpIbk0q1ZuWqwhgGYOvnA8S6rX4RrrpLEt65Bo7dHd8xOa6TBbzwpfXTGTPY0+uTax9RBOHQjwI=
+X-Received: by 2002:a1c:aa8f:: with SMTP id t137-v6mr3637304wme.54.1535698460299;
+ Thu, 30 Aug 2018 23:54:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180830172030.23344-1-ezequiel@collabora.com>
- <20180830172030.23344-3-ezequiel@collabora.com> <20180830175850.GA11521@infradead.org>
- <4fc5107f93871599ead017af7ad50f22535a7683.camel@collabora.com> <20180831055047.GA9140@infradead.org>
-In-Reply-To: <20180831055047.GA9140@infradead.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 31 Aug 2018 15:51:54 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DhFr8ywjc41oK9q+zZXH9zsOKh_7DxWmjzcE0+5Q3hGA@mail.gmail.com>
-Message-ID: <CAAFQd5DhFr8ywjc41oK9q+zZXH9zsOKh_7DxWmjzcE0+5Q3hGA@mail.gmail.com>
-Subject: Re: [RFC 2/3] USB: core: Add non-coherent buffer allocation helpers
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-usb@vger.kernel.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+In-Reply-To: <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Fri, 31 Aug 2018 14:54:07 +0800
+Message-ID: <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+Subject: Re: Affinity managed interrupts vs non-managed interrupts
+To:     sumit.saxena@broadcom.com
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Alan Stern <stern@rowland.harvard.edu>, kernel@collabora.com,
-        keiichiw@chromium.org
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        shivasharan.srikanteshwara@broadcom.com,
+        linux-block <linux-block@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 2:50 PM Christoph Hellwig <hch@infradead.org> wrote:
+On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena <sumit.saxena@broadcom.com> wrote:
 >
-> On Thu, Aug 30, 2018 at 07:11:35PM -0300, Ezequiel Garcia wrote:
-> > On Thu, 2018-08-30 at 10:58 -0700, Christoph Hellwig wrote:
-> > > Please don't introduce new DMA_ATTR_NON_CONSISTENT users, it is
-> > > a rather horrible interface, and I plan to kill it off rather sooner
-> > > than later.  I plan to post some patches for a better interface
-> > > that can reuse the normal dma_sync_single_* interfaces for ownership
-> > > transfers.  I can happily include usb in that initial patch set based
-> > > on your work here if that helps.
+> > -----Original Message-----
+> > From: Ming Lei [mailto:ming.lei@redhat.com]
+> > Sent: Wednesday, August 29, 2018 2:16 PM
+> > To: Sumit Saxena <sumit.saxena@broadcom.com>
+> > Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
+> > Subject: Re: Affinity managed interrupts vs non-managed interrupts
 > >
-> > Please do. Until we have proper allocators that go thru the DMA API,
-> > drivers will have to kmalloc the USB transfer buffers, and have
-> > streaming mappings. Which in turns mean not using IOMMU or CMA.
+> > Hello Sumit,
+> Hi Ming,
+> Thanks for response.
+> >
+> > On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
+> > >  Affinity managed interrupts vs non-managed interrupts
+> > >
+> > > Hi Thomas,
+> > >
+> > > We are working on next generation MegaRAID product where requirement
+> > > is- to allocate additional 16 MSI-x vectors in addition to number of
+> > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID adapter
+> > > supports 128 MSI-x vectors.
+> > >
+> > > To explain the requirement and solution, consider that we have 2
+> > > socket system (each socket having 36 logical CPUs). Current driver
+> > > will allocate total 72 MSI-x vectors by calling API-
+> > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
+> > > vectors will have affinity across NUMA node s and interrupts are
+> affinity
+> > managed.
+> > >
+> > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
+> > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
+> >
+> > Could you explain a bit what the specific use case the extra 16 vectors
+> is?
+> We are trying to avoid the penalty due to one interrupt per IO completion
+> and decided to coalesce interrupts on these extra 16 reply queues.
+> For regular 72 reply queues, we will not coalesce interrupts as for low IO
+> workload, interrupt coalescing may take more time due to less IO
+> completions.
+> In IO submission path, driver will decide which set of reply queues
+> (either extra 16 reply queues or regular 72 reply queues) to be picked
+> based on IO workload.
+
+I am just wondering how you can make the decision about using extra
+16 or regular 72 queues in submission path, could you share us a bit
+your idea? How are you going to recognize the IO workload inside your
+driver? Even the current block layer doesn't recognize IO workload, such
+as random IO or sequential IO.
+
+Frankly speaking, you may reuse the 72 reply queues to do interrupt
+coalescing by configuring one extra register to enable the coalescing mode,
+and you may just use small part of the 72 reply queues under the
+interrupt coalescing mode.
+
+Or you can learn from SPDK to use one or small number of dedicated cores
+or kernel threads to poll the interrupts from all reply queues, then I
+guess you may benefit much compared with the extra 16 queue approach.
+
+Introducing extra 16 queues just for interrupt coalescing and making it
+coexisting with the regular 72 reply queues seems one very unusual use
+case, not sure the current genirq affinity can support it well.
+
+> >
+> > >
+> > > All pre_vectors (16) will be mapped to all available online CPUs but e
+> > > ffective affinity of each vector is to CPU 0. Our requirement is to
+> > > have pre _vectors 16 reply queues to be mapped to local NUMA node with
+> > > effective CPU should be spread within local node cpu mask. Without
+> > > changing kernel code, we can
+> >
+> > If all CPUs in one NUMA node is offline, can this use case work as
+> expected?
+> > Seems we have to understand what the use case is and how it works.
 >
-> dma_map_page will of course use the iommu.
+> Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
+> broken and irqbalancer takes care of migrating affected IRQs to online
+> CPUs of different NUMA node.
+> When offline CPUs are onlined again, irqbalancer restores affinity.
 
-Sure, dma_map*() will, but using kmalloc() defeats (half of) the
-purpose of it, since contiguous memory would be allocated
-unnecessarily, risking failures due to fragmentation.
+ irqbalance daemon can't cover managed interrupts, or you mean
+you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
 
-Best regards,
-Tomasz
+Thanks,
+Ming Lei
