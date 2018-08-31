@@ -2,202 +2,125 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A9FC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18F1C43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96EC520837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:49:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs4ld8PF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96EC520837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 65AFC20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 03:55:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65AFC20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeHaHxY (ORCPT
+        id S1727363AbeHaIBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 03:53:24 -0400
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:37434 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeHaHxX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 03:53:23 -0400
-Received: by mail-qt0-f172.google.com with SMTP id n6-v6so13166419qtl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 20:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=rbO3xUZdmb28g4Bhw1CgfEqi48liRjp+Yj6Kboh5QNM=;
-        b=Qs4ld8PFJrAsnFiYATVyV7egkvSCe9Tra4unbGST9Holooa06BnVY6dm6Eb86jX3eo
-         KDoOp2B+s1wd/B108aO4mQUZCk5vufhC8/VV4hSvzfeJKJx9HTgGUPF/W+KRC90dHvRV
-         zT/WPpjKfNhAtSI75DqPlK/zXb98Lz6uMyNWvB3438cvuvp/IfyCJ108nwiICMqF+mba
-         sDNXgETnCe2hlqriNUxcBsqAp4taOiY1dUcOIC7Ruqhil1nFmRosryPAjme986lFKfLw
-         +3Fqnj666hxO2+Ag5eFXN4dwn5+kblNWOeLUy3IHHr5VhkIlQey5It84Hvh70HHrOa17
-         bzJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=rbO3xUZdmb28g4Bhw1CgfEqi48liRjp+Yj6Kboh5QNM=;
-        b=mZL0MIB8qh+zIVTBJmeby35coEidTTDTPYew63E3f06PgSMgifKEVNpv6fK+a7ipqF
-         F0A4M8pcR/UzDIUBoRLNfAfcGrGXQ3Wd49umOsoAUMz9UffcznPDKTPAIBLV+w87cCZd
-         0Wl4re+xvVXTQadCryNmGdIXTm0XyNaEEnNiQXh0Wnt74vuV+ER8sSIN5y549ElV94H5
-         885mE7ubr9gBzL6GFUuoK9whEH/il1iUNJ4L9Zz10btV7Sq372o0Ed7qFkx9s/I1W6yR
-         S8Y6jqIi5eStLxfd2YNYx6X8nyJqJLQnIOdS7s/+dkmBm5T+65udkdVw9xT37vRaxM75
-         4JDA==
-X-Gm-Message-State: APzg51BUd4ffdJfryupZX8pf86ysIAKifF2+E30vp2sUCGobamw8zxax
-        vkkWXQZHt/s2xCRCWWxAoLYT3gUmnzS7UiLCz16Iu0Cy
-X-Google-Smtp-Source: ANB0Vdap/JPrwmGIl+4sc+XZCdVvtbFlBMfqh9hRPkUcigHh6nZ23cJ0QVD9/5StkA9PpqjWyUfqjm0AXgc3faDVui8=
-X-Received: by 2002:ac8:754a:: with SMTP id b10-v6mr14778217qtr.260.1535687281338;
- Thu, 30 Aug 2018 20:48:01 -0700 (PDT)
-MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 31 Aug 2018 13:47:49 +1000
-Message-ID: <CAPM=9txzSjP-Asajk5m5jR5z-wqUVCWtJDrjWjac6x7GOunkUg@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.19-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 31 Aug 2018 04:01:04 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:46368 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727098AbeHaIBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 04:01:04 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 22584200075;
+        Fri, 31 Aug 2018 05:55:39 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5D5DD200063;
+        Fri, 31 Aug 2018 05:55:35 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 60E0B402FB;
+        Fri, 31 Aug 2018 11:55:30 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH 2/3] Documentation: dt: binding: fsl: update property description for RCPM
+Date:   Fri, 31 Aug 2018 11:52:18 +0800
+Message-Id: <20180831035219.31619-2-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180831035219.31619-1-ran.wang_1@nxp.com>
+References: <20180831035219.31619-1-ran.wang_1@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Add property 'big-endian' and supportted IP's configuration info.
+Remove property 'fsl,#rcpm-wakeup-cell'.
 
-Regular fixes pull,
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+---
+ Documentation/devicetree/bindings/soc/fsl/rcpm.txt |   42 ++++++-------------
+ 1 files changed, 13 insertions(+), 29 deletions(-)
 
-Mediatek is a bunch of fixes to their RDMA and Overlay engines.
-i915 has some Cannonlake/Geminilake watermark workarounds, LSPCON fix,
-HDCP free fix, audio fix and a ppgtt reference counting fix.
-amdgpu has some SRIOV, Kasan, memory leaks and other misc fixes.
+diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+index e284e4e..7fc630a 100644
+--- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++++ b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+@@ -5,8 +5,6 @@ and power management.
+ 
+ Required properites:
+   - reg : Offset and length of the register set of the RCPM block.
+-  - fsl,#rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
+-	fsl,rcpm-wakeup property.
+   - compatible : Must contain a chip-specific RCPM block compatible string
+ 	and (if applicable) may contain a chassis-version RCPM compatible
+ 	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
+@@ -27,37 +25,23 @@ Chassis Version		Example Chips
+ ---------------		-------------------------------
+ 1.0				p4080, p5020, p5040, p2041, p3041
+ 2.0				t4240, b4860, b4420
+-2.1				t1040, ls1021
++2.1				t1040, ls1021, ls1012
++
++Optional properties:
++ - big-endian : Indicate RCPM registers is big-endian. A RCPM node
++   that doesn't have this property will be regarded as little-endian.
++ - <property 'compatible' string of consumer device> : This string
++   is referred by RCPM driver to judge if the consumer (such as flex timer)
++   is able to be regards as wakeup source or not, such as 'fsl,ls1012a-ftm'.
++   Further, this property will carry the bit mask info to control
++   coresponding wake up source.
+ 
+ Example:
+ The RCPM node for T4240:
+ 	rcpm: global-utilities@e2000 {
+ 		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+ 		reg = <0xe2000 0x1000>;
+-		fsl,#rcpm-wakeup-cells = <2>;
+-	};
+-
+-* Freescale RCPM Wakeup Source Device Tree Bindings
+--------------------------------------------
+-Required fsl,rcpm-wakeup property should be added to a device node if the device
+-can be used as a wakeup source.
+-
+-  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+-	register cells. The number of IPPDEXPCR register cells is defined in
+-	"fsl,#rcpm-wakeup-cells" in the rcpm node. The first register cell is
+-	the bit mask that should be set in IPPDEXPCR0, and the second register
+-	cell is for IPPDEXPCR1, and so on.
+-
+-	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+-	mechanism for keeping certain blocks awake during STANDBY and MEM, in
+-	order to use them as wake-up sources.
+-
+-Example:
+-	lpuart0: serial@2950000 {
+-		compatible = "fsl,ls1021a-lpuart";
+-		reg = <0x0 0x2950000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&sysclk>;
+-		clock-names = "ipg";
+-		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
++		big-endian;
++		fsl,ls1012a-ftm = <0x20000>;
++		fsl,pfe = <0xf0000020>;
+ 	};
+-- 
+1.7.1
 
-Thanks,
-Dave.
-
-drm-fixes-2018-08-31:
-drm fixes for mediatek, amdgpu and i915.
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3=
-:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-08-31
-
-for you to fetch changes up to 49a51c4b4064c8a89ffd166434696138edef6b85:
-
-  Merge tag 'drm-intel-fixes-2018-08-29' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-08-30
-11:35:03 +1000)
-
-----------------------------------------------------------------
-drm fixes for mediatek, amdgpu and i915.
-
-----------------------------------------------------------------
-Andrey Grodzovsky (1):
-      drm/amdgpu: Fix page fault and kasan warning on pci device remove.
-
-Chris Wilson (2):
-      drm/i915: Stop holding a ref to the ppgtt from each vma
-      drm/i915/audio: Hook up component bindings even if displays are disab=
-led
-
-Christian K=C3=B6nig (3):
-      drm/amdgpu: fix VM clearing for the root PD
-      drm/amdgpu: fix preamble handling
-      drm/amdgpu: fix holding mn_lock while allocating memory
-
-Dave Airlie (3):
-      Merge branch 'mediatek-drm-fixes-4.19' of
-https://github.com/ckhu-mediatek/linux.git-tags into drm-fixes
-      Merge branch 'drm-fixes-4.19' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-      Merge tag 'drm-intel-fixes-2018-08-29' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-
-Emily Deng (2):
-      amdgpu: fix multi-process hang issue
-      drm/amdgpu: Need to set moved to true when evict bo
-
-Felix Kuehling (1):
-      drm/amdgpu: Adjust the VM size based on system memory size v2
-
-Fredrik Sch=C3=B6n (1):
-      drm/i915: Increase LSPCON timeout
-
-Rex Zhu (6):
-      drm/amd/display: Fix bug use wrong pp interface
-      drm/amdgpu: Enable/disable gfx PG feature in rlc safe mode
-      drm/amdgpu: Fix vce initialize failed on Kaveri/Mullins
-      drm/amdgpu: Update power state at the end of smu hw_init.
-      drm/amdgpu: Power on uvd block when hw_fini
-      drm/amdgpu: Remove duplicated power source update
-
-Rodrigo Vivi (1):
-      drm/i915: Free write_buf that we allocated with kzalloc.
-
-SivapiriyanKumarasamy (1):
-      drm/amd/display: Fix memory leak caused by missed dc_sink_release
-
-Souptick Joarder (1):
-      drm/mediatek: Convert drm_atomic_helper_suspend/resume()
-
-Stu Hsieh (14):
-      drm/mediatek: add connection from RDMA0 to DPI1
-      drm/mediatek: add connection from RDMA0 to DSI1
-      drm/mediatek: add connection from RDMA1 to DSI0
-      drm/mediatek: add connection from RDMA2 to DSI0
-      drm/mediatek: add memory mode and layer_config for RDMA
-      drm/mediatek: add RGB color format support for RDMA
-      drm/mediatek: add the comment about color format setting for OVL
-      drm/mediatek: add YUYV/UYVY color format support for RDMA
-      drm/mediatek: add function to get layer number for component
-      drm/mediatek: add function to return OVL layer number
-      drm/mediatek: add function to return RDMA layer number
-      drm/mediatek: use layer_nr function to get layer number to init plane
-      drm/mediatek: update some variable name from ovl to comp
-      drm/mediatek: fix connection from RDMA2 to DSI1
-
-Thomas Zimmermann (1):
-      drm/mediatek: Replace drm_dev_unref with drm_dev_put
-
-Ville Syrj=C3=A4l=C3=A4 (1):
-      drm/i915: Fix glk/cnl display w/a #1175
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             | 47 ++++++-----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c             |  3 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c             |  8 --
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             | 35 ++++++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h             |  2 +-
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c              | 11 ++-
- drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c              |  9 +--
- drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c              | 16 +---
- drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c              | 16 +---
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c              | 16 +---
- drivers/gpu/drm/amd/amdgpu/kv_dpm.c                | 49 +++++++-----
- drivers/gpu/drm/amd/amdgpu/si_dpm.c                |  3 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_pp_smu.c   | 12 ++-
- drivers/gpu/drm/amd/display/dc/core/dc_link.c      |  6 +-
- drivers/gpu/drm/i915/i915_vma.c                    |  4 -
- drivers/gpu/drm/i915/intel_audio.c                 |  3 -
- drivers/gpu/drm/i915/intel_display.c               |  7 +-
- drivers/gpu/drm/i915/intel_hdmi.c                  |  8 +-
- drivers/gpu/drm/i915/intel_lspcon.c                |  2 +-
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c            | 11 +++
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c           | 92 ++++++++++++++++++=
-++++
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c            | 47 ++++++-----
- drivers/gpu/drm/mediatek/mtk_drm_crtc.h            |  3 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 18 ++++-
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  9 +++
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 27 +++----
- 26 files changed, 303 insertions(+), 161 deletions(-)
