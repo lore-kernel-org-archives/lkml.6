@@ -2,146 +2,240 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6D4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4BBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF63205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF63205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5769E205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:36:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="qeBafyHA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5769E205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeHaNmt (ORCPT
+        id S1727633AbeHaNmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:42:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726990AbeHaNmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:42:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71A797DAC2;
-        Fri, 31 Aug 2018 09:36:10 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A1632166B41;
-        Fri, 31 Aug 2018 09:36:07 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] Partially revert "HID: generic: create one input report per application type"
-Date:   Fri, 31 Aug 2018 11:36:04 +0200
-Message-Id: <20180831093604.5915-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 09:36:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 31 Aug 2018 09:36:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        Fri, 31 Aug 2018 09:42:54 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:25947 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeHaNmy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 09:42:54 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w7V9Z69d031784;
+        Fri, 31 Aug 2018 18:35:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w7V9Z69d031784
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535708107;
+        bh=4MxuXEdI9XhywhZNAR1bVd8p1o/lMqCnhZzgnSe63ic=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qeBafyHAhDLgGS3V85Kh5N2L8JQ61nOBy259UzWLGjH8E/3b/DZC/zRICI1Vb//C7
+         KrZxFxVeizswbnAZZmdVyxWTPkM1QERoFd4L7OaPDqbb7ayJFHtGaEqd54XRH7NI9H
+         N9ZCCJCqPo3HxhiUr5AwqeMp81VSuNz6VXcEjLXrehamFKuBGXe04pYiryBdVZu7ql
+         tqQUgFgGdaNR01C4FyFfSujvdQNgUEnMiHjfr3ZgnXENGmzWokyQCp9tSet6R9Uynk
+         NqwInexNfWspLhwMYGhhdpEFjSjhJy9VpS8bh3msNzP+uIuS9qkDRvdihvXGy8LwwL
+         H3fS5DQW/z5vA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Meelis Roos <mroos@linux.ee>, Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] kconfig: do not require pkg-config on make {menu,n}config
+Date:   Fri, 31 Aug 2018 18:34:55 +0900
+Message-Id: <1535708095-15847-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This partially reverts commit f07b3c1da92db108662f99417a212fc1eddc44d1.
+Meelis Roos reported a {menu,n}config regression:
 
-It looks like some mice are not correctly treated by
-HID_QUIRK_INPUT_PER_APP. Those mice have the following
-report descriptor:
+ "I have libncurses devel package installed in the default system
+  location (as do 99%+ on actual developers probably) and in this
+  case, pkg-config is useless.  pkg-config is needed only when
+  libraries and headers are installed in non-default locations but
+  it is bad to require installation of pkg-config on all the machines
+  where make menuconfig would be possibly run."
 
-0x05, 0x01,                    // Usage Page (Generic Desktop)        0
-0x09, 0x02,                    // Usage (Mouse)                       2
-0xa1, 0x01,                    // Collection (Application)            4
-0x85, 0x01,                    //  Report ID (1)                      6
-0x09, 0x01,                    //  Usage (Pointer)                    8
-0xa1, 0x00,                    //  Collection (Physical)              10
-0x95, 0x05,                    //   Report Count (5)                  12
-0x75, 0x01,                    //   Report Size (1)                   14
-0x05, 0x09,                    //   Usage Page (Button)               16
-0x19, 0x01,                    //   Usage Minimum (1)                 18
-0x29, 0x05,                    //   Usage Maximum (5)                 20
-0x15, 0x00,                    //   Logical Minimum (0)               22
-0x25, 0x01,                    //   Logical Maximum (1)               24
-0x81, 0x02,                    //   Input (Data,Var,Abs)              26
-...
-0xc0,                          //  End Collection                     57
-0x85, 0x02,                    //  Report ID (2)                      58
-0x09, 0x01,                    //  Usage (Consumer Control)           60
-0xa1, 0x00,                    //  Collection (Physical)              62
-0x75, 0x0c,                    //   Report Size (12)                  64
-0x95, 0x02,                    //   Report Count (2)                  66
-0x05, 0x01,                    //   Usage Page (Generic Desktop)      68
-0x09, 0x30,                    //   Usage (X)                         70
-0x09, 0x31,                    //   Usage (Y)                         72
-0x16, 0x01, 0xf8,              //   Logical Minimum (-2047)           74
-0x26, 0xff, 0x07,              //   Logical Maximum (2047)            77
-0x81, 0x06,                    //   Input (Data,Var,Rel)              80
-0xc0,                          //  End Collection                     82
-0xc0,                          // End Collection                      83
-...
+For {menu,n}config, do not use pkg-config if it is not installed.
+For {g,x}config, keep checking pkg-config since we really rely on it
+for finding the installation paths of the required packages.
 
-Both the cursor position and the buttons are located in the
-same application collection (Mouse) and the kernel should
-only create one input device for those.
-
-However, for an undetermined reason, the kernel splits the
-device in 2, making systemd not tagging the second mouse
-with the coordinates only as a mouse. And then userspace
-ignores it which leads to a mouse where only the buttons
-are working.
-
-Until the quirk gets properly fixed, we should probably
-revert applying it to all of the generic devices and
-re-enable it when the root reason has been found.
-
-link: https://bugzilla.kernel.org/show_bug.cgi?id=200847
-link: https://bugzilla.kernel.org/show_bug.cgi?id=200849
-link: https://bugs.archlinux.org/task/59699
-link: https://github.com/NixOS/nixpkgs/issues/45165
-
-Cc: stable@vger.kernel.org # v4.18+
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 4ab3b80159d4 ("kconfig: check for pkg-config on make {menu,n,g,x}config")
+Reported-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/hid/hid-generic.c | 15 ---------------
- 1 file changed, 15 deletions(-)
 
-diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
-index 3b6eccbc2519..c25b4718de44 100644
---- a/drivers/hid/hid-generic.c
-+++ b/drivers/hid/hid-generic.c
-@@ -56,20 +56,6 @@ static bool hid_generic_match(struct hid_device *hdev,
- 	return true;
- }
+ Documentation/process/changes.rst  |  2 +-
+ scripts/kconfig/Makefile           |  1 -
+ scripts/kconfig/check-pkgconfig.sh |  8 --------
+ scripts/kconfig/gconf-cfg.sh       |  7 +++++++
+ scripts/kconfig/mconf-cfg.sh       | 25 ++++++++++++++-----------
+ scripts/kconfig/nconf-cfg.sh       | 25 ++++++++++++++-----------
+ scripts/kconfig/qconf-cfg.sh       |  7 +++++++
+ 7 files changed, 43 insertions(+), 32 deletions(-)
+ delete mode 100644 scripts/kconfig/check-pkgconfig.sh
+
+diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
+index 61f918b..d1bf143 100644
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@ -86,7 +86,7 @@ pkg-config
  
--static int hid_generic_probe(struct hid_device *hdev,
--			     const struct hid_device_id *id)
--{
--	int ret;
--
--	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
--
--	ret = hid_parse(hdev);
--	if (ret)
--		return ret;
--
--	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
--}
--
- static const struct hid_device_id hid_table[] = {
- 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
- 	{ }
-@@ -80,7 +66,6 @@ static struct hid_driver hid_generic = {
- 	.name = "hid-generic",
- 	.id_table = hid_table,
- 	.match = hid_generic_match,
--	.probe = hid_generic_probe,
- };
- module_hid_driver(hid_generic);
+ The build system, as of 4.18, requires pkg-config to check for installed
+ kconfig tools and to determine flags settings for use in
+-'make {menu,n,g,x}config'.  Previously pkg-config was being used but not
++'make {g,x}config'.  Previously pkg-config was being used but not
+ verified or documented.
  
+ Flex
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 4a7bd21..67ed9f6 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -221,7 +221,6 @@ $(obj)/zconf.tab.o: $(obj)/zconf.lex.c
+ 
+ # check if necessary packages are available, and configure build flags
+ define filechk_conf_cfg
+-	$(CONFIG_SHELL) $(srctree)/scripts/kconfig/check-pkgconfig.sh; \
+ 	$(CONFIG_SHELL) $<
+ endef
+ 
+diff --git a/scripts/kconfig/check-pkgconfig.sh b/scripts/kconfig/check-pkgconfig.sh
+deleted file mode 100644
+index 7a1c40b..0000000
+--- a/scripts/kconfig/check-pkgconfig.sh
++++ /dev/null
+@@ -1,8 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0
+-# Check for pkg-config presence
+-
+-if [ -z $(command -v pkg-config) ]; then
+-	echo "'make *config' requires 'pkg-config'. Please install it." 1>&2
+-	exit 1
+-fi
+diff --git a/scripts/kconfig/gconf-cfg.sh b/scripts/kconfig/gconf-cfg.sh
+index 533b3d8..480ecd8 100755
+--- a/scripts/kconfig/gconf-cfg.sh
++++ b/scripts/kconfig/gconf-cfg.sh
+@@ -3,6 +3,13 @@
+ 
+ PKG="gtk+-2.0 gmodule-2.0 libglade-2.0"
+ 
++if [ -z "$(command -v pkg-config)" ]; then
++	echo >&2 "*"
++	echo >&2 "* 'make gconfig' requires 'pkg-config'. Please install it."
++	echo >&2 "*"
++	exit 1
++fi
++
+ if ! pkg-config --exists $PKG; then
+ 	echo >&2 "*"
+ 	echo >&2 "* Unable to find the GTK+ installation. Please make sure that"
+diff --git a/scripts/kconfig/mconf-cfg.sh b/scripts/kconfig/mconf-cfg.sh
+index e6f9fac..c812872d 100755
+--- a/scripts/kconfig/mconf-cfg.sh
++++ b/scripts/kconfig/mconf-cfg.sh
+@@ -4,20 +4,23 @@
+ PKG="ncursesw"
+ PKG2="ncurses"
+ 
+-if pkg-config --exists $PKG; then
+-	echo cflags=\"$(pkg-config --cflags $PKG)\"
+-	echo libs=\"$(pkg-config --libs $PKG)\"
+-	exit 0
+-fi
++if [ -n "$(command -v pkg-config)" ]; then
++	if pkg-config --exists $PKG; then
++		echo cflags=\"$(pkg-config --cflags $PKG)\"
++		echo libs=\"$(pkg-config --libs $PKG)\"
++		exit 0
++	fi
+ 
+-if pkg-config --exists $PKG2; then
+-	echo cflags=\"$(pkg-config --cflags $PKG2)\"
+-	echo libs=\"$(pkg-config --libs $PKG2)\"
+-	exit 0
++	if pkg-config --exists $PKG2; then
++		echo cflags=\"$(pkg-config --cflags $PKG2)\"
++		echo libs=\"$(pkg-config --libs $PKG2)\"
++		exit 0
++	fi
+ fi
+ 
+-# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
+-# by pkg-config.
++# Check the default paths in case pkg-config is not installed.
++# (Even if it is installed, some distributions such as openSUSE cannot
++# find ncurses by pkg-config.)
+ if [ -f /usr/include/ncursesw/ncurses.h ]; then
+ 	echo cflags=\"-D_GNU_SOURCE -I/usr/include/ncursesw\"
+ 	echo libs=\"-lncursesw\"
+diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
+index 42f5ac7..001559e 100644
+--- a/scripts/kconfig/nconf-cfg.sh
++++ b/scripts/kconfig/nconf-cfg.sh
+@@ -4,20 +4,23 @@
+ PKG="ncursesw menuw panelw"
+ PKG2="ncurses menu panel"
+ 
+-if pkg-config --exists $PKG; then
+-	echo cflags=\"$(pkg-config --cflags $PKG)\"
+-	echo libs=\"$(pkg-config --libs $PKG)\"
+-	exit 0
+-fi
++if [ -n "$(command -v pkg-config)" ]; then
++	if pkg-config --exists $PKG; then
++		echo cflags=\"$(pkg-config --cflags $PKG)\"
++		echo libs=\"$(pkg-config --libs $PKG)\"
++		exit 0
++	fi
+ 
+-if pkg-config --exists $PKG2; then
+-	echo cflags=\"$(pkg-config --cflags $PKG2)\"
+-	echo libs=\"$(pkg-config --libs $PKG2)\"
+-	exit 0
++	if pkg-config --exists $PKG2; then
++		echo cflags=\"$(pkg-config --cflags $PKG2)\"
++		echo libs=\"$(pkg-config --libs $PKG2)\"
++		exit 0
++	fi
+ fi
+ 
+-# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
+-# by pkg-config.
++# Check the default paths in case pkg-config is not installed.
++# (Even if it is installed, some distributions such as openSUSE cannot
++# find ncurses by pkg-config.)
+ if [ -f /usr/include/ncursesw/ncurses.h ]; then
+ 	echo cflags=\"-D_GNU_SOURCE -I/usr/include/ncursesw\"
+ 	echo libs=\"-lncursesw -lmenuw -lpanelw\"
+diff --git a/scripts/kconfig/qconf-cfg.sh b/scripts/kconfig/qconf-cfg.sh
+index 0862e15..02ccc0a 100755
+--- a/scripts/kconfig/qconf-cfg.sh
++++ b/scripts/kconfig/qconf-cfg.sh
+@@ -4,6 +4,13 @@
+ PKG="Qt5Core Qt5Gui Qt5Widgets"
+ PKG2="QtCore QtGui"
+ 
++if [ -z "$(command -v pkg-config)" ]; then
++	echo >&2 "*"
++	echo >&2 "* 'make xconfig' requires 'pkg-config'. Please install it."
++	echo >&2 "*"
++	exit 1
++fi
++
+ if pkg-config --exists $PKG; then
+ 	echo cflags=\"-std=c++11 -fPIC $(pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets)\"
+ 	echo libs=\"$(pkg-config --libs $PKG)\"
 -- 
-2.14.3
+2.7.4
 
