@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2D1C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8C6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E290F20658
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E290F20658
+	by mail.kernel.org (Postfix) with ESMTP id E914220658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E914220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeIACLi (ORCPT
+        id S1727688AbeIACMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:11:38 -0400
+        Fri, 31 Aug 2018 22:12:06 -0400
 Received: from mga14.intel.com ([192.55.52.115]:23515 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbeIACLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727474AbeIACLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 31 Aug 2018 22:11:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,18 +28,18 @@ Received: from orsmga004.jf.intel.com ([10.7.209.38])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 15:02:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,313,1531810800"; 
-   d="scan'208";a="229317077"
+   d="scan'208";a="229317078"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga004.jf.intel.com with ESMTP; 31 Aug 2018 15:02:09 -0700
+  by orsmga004.jf.intel.com with ESMTP; 31 Aug 2018 15:02:10 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 0015A301BFA; Fri, 31 Aug 2018 15:02:09 -0700 (PDT)
+        id 0709A30166D; Fri, 31 Aug 2018 15:02:10 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v2 07/10] perf, tools, script: Print DSO for callindent
-Date:   Fri, 31 Aug 2018 15:02:03 -0700
-Message-Id: <20180831220206.28351-8-andi@firstfloor.org>
+Subject: [PATCH v2 08/10] perf, tools, script: Make itrace script default to all calls
+Date:   Fri, 31 Aug 2018 15:02:04 -0700
+Message-Id: <20180831220206.28351-9-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180831220206.28351-1-andi@firstfloor.org>
 References: <20180831220206.28351-1-andi@firstfloor.org>
@@ -50,86 +50,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Now that we don't need to print the IP/ADDR for callindent the DSO
-is also not printed. It's useful for some cases, so add an own DSO
-printout for callindent for the case when IP/ADDR is not enabled.
+By default perf script for itrace outputs sampled instructions or
+branches. In my experience this is confusing to users because it's
+hard to correlate with real program behavior. The sampling makes
+sense for tools like report that actually sample to reduce
+the run time, but run time is normally not a problem for perf script.
+It's better to give an accurate representation of the program flow.
 
-Before:
-
-% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff,-addr
-         swapper     0 [000]  3377.917072:          1   branches: pt_config
-         swapper     0 [000]  3377.917072:          1   branches:     pt_config
-         swapper     0 [000]  3377.917072:          1   branches:     pt_event_add
-         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_enable
-         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_void
-         swapper     0 [000]  3377.917072:          1   branches:     event_sched_in.isra.107
-         swapper     0 [000]  3377.917072:          1   branches:     __x86_indirect_thunk_rax
-         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_int
-         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
-         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
-         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
-         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
-
-After:
-
-         swapper     0 [000]  3377.917072:          1   branches: ([unknown])   pt_config
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_config
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_event_add
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_enable
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_void
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_sched_in.isra.107
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       __x86_indirect_thunk_rax
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_int
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           __x86_indirect_thunk_rax
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           perf_pmu_nop_txn
-         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           event_sched_in.isra.107
-
-(in the kernel case of course it's not very useful, but it's important
-with user programs where symbols are not unique)
+Default perf script to output all calls for itrace. That's a much saner
+default. The old behavior can be still requested with
+perf script --itrace=ibxwpe100000
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/builtin-script.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/perf/Documentation/itrace.txt |  7 ++++---
+ tools/perf/builtin-script.c         |  5 ++++-
+ tools/perf/util/auxtrace.c          | 17 ++++++++++++-----
+ tools/perf/util/auxtrace.h          |  5 ++++-
+ tools/perf/util/cs-etm.c            |  3 ++-
+ tools/perf/util/intel-bts.c         |  3 ++-
+ tools/perf/util/intel-pt.c          |  3 ++-
+ 7 files changed, 30 insertions(+), 13 deletions(-)
 
+diff --git a/tools/perf/Documentation/itrace.txt b/tools/perf/Documentation/itrace.txt
+index a3abe04c779d..c2182cbabde3 100644
+--- a/tools/perf/Documentation/itrace.txt
++++ b/tools/perf/Documentation/itrace.txt
+@@ -11,10 +11,11 @@
+ 		l	synthesize last branch entries (use with i or x)
+ 		s       skip initial number of events
+ 
+-	The default is all events i.e. the same as --itrace=ibxwpe
++	The default is all events i.e. the same as --itrace=ibxwpe,
++	except for perf script where it is --itrace=ce
+ 
+-	In addition, the period (default 100000) for instructions events
+-	can be specified in units of:
++	In addition, the period (default 100000, except for perf script where it is 1)
++	for instructions events can be specified in units of:
+ 
+ 		i	instructions
+ 		t	ticks
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 129b11404a9c..0a80ae3aa33e 100644
+index 0a80ae3aa33e..bb68b0c8bfab 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -1116,6 +1116,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 	const char *name = NULL;
- 	static int spacing;
- 	int len = 0;
-+	int dlen = 0;
- 	u64 ip = 0;
+@@ -3107,7 +3107,10 @@ int cmd_script(int argc, const char **argv)
+ 	char *rec_script_path = NULL;
+ 	char *rep_script_path = NULL;
+ 	struct perf_session *session;
+-	struct itrace_synth_opts itrace_synth_opts = { .set = false, };
++	struct itrace_synth_opts itrace_synth_opts = {
++		.set = false,
++		.default_no_sample = true,
++	};
+ 	char *script_path = NULL;
+ 	const char **__argv;
+ 	int i, j, err = 0;
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index d056447520a2..4baca3a92b23 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -958,16 +958,23 @@ s64 perf_event__process_auxtrace(struct perf_tool *tool,
+ #define PERF_ITRACE_DEFAULT_LAST_BRANCH_SZ	64
+ #define PERF_ITRACE_MAX_LAST_BRANCH_SZ		1024
  
- 	/*
-@@ -1142,6 +1143,12 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 			ip = sample->ip;
+-void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts)
++void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts,
++				    bool no_sample)
+ {
+-	synth_opts->instructions = true;
+ 	synth_opts->branches = true;
+ 	synth_opts->transactions = true;
+ 	synth_opts->ptwrites = true;
+ 	synth_opts->pwr_events = true;
+ 	synth_opts->errors = true;
+-	synth_opts->period_type = PERF_ITRACE_DEFAULT_PERIOD_TYPE;
+-	synth_opts->period = PERF_ITRACE_DEFAULT_PERIOD;
++	if (no_sample) {
++		synth_opts->period_type = PERF_ITRACE_PERIOD_INSTRUCTIONS;
++		synth_opts->period = 1;
++		synth_opts->calls = true;
++	} else {
++		synth_opts->instructions = true;
++		synth_opts->period_type = PERF_ITRACE_DEFAULT_PERIOD_TYPE;
++		synth_opts->period = PERF_ITRACE_DEFAULT_PERIOD;
++	}
+ 	synth_opts->callchain_sz = PERF_ITRACE_DEFAULT_CALLCHAIN_SZ;
+ 	synth_opts->last_branch_sz = PERF_ITRACE_DEFAULT_LAST_BRANCH_SZ;
+ 	synth_opts->initial_skip = 0;
+@@ -995,7 +1002,7 @@ int itrace_parse_synth_opts(const struct option *opt, const char *str,
  	}
  
-+	if (PRINT_FIELD(DSO) && !(PRINT_FIELD(IP) || PRINT_FIELD(ADDR))) {
-+		dlen += fprintf(fp, "(");
-+		dlen += map__fprintf_dsoname(al->map, fp);
-+		dlen += fprintf(fp, ")\t");
-+	}
-+
- 	if (name)
- 		len = fprintf(fp, "%*s%s", (int)depth * 4, "", name);
- 	else if (ip)
-@@ -1160,7 +1167,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 	if (len < spacing)
- 		len += fprintf(fp, "%*s", spacing - len, "");
+ 	if (!str) {
+-		itrace_synth_opts__set_default(synth_opts);
++		itrace_synth_opts__set_default(synth_opts, false);
+ 		return 0;
+ 	}
  
--	return len;
-+	return len + dlen;
- }
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 041ee64a63bc..71c00bf468a3 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -55,6 +55,7 @@ enum itrace_period_type {
+ /**
+  * struct itrace_synth_opts - AUX area tracing synthesis options.
+  * @set: indicates whether or not options have been set
++ * @default_no_sample: Default to no sampling.
+  * @inject: indicates the event (not just the sample) must be fully synthesized
+  *          because 'perf inject' will write it out
+  * @instructions: whether to synthesize 'instructions' events
+@@ -79,6 +80,7 @@ enum itrace_period_type {
+  */
+ struct itrace_synth_opts {
+ 	bool			set;
++	bool			default_no_sample;
+ 	bool			inject;
+ 	bool			instructions;
+ 	bool			branches;
+@@ -527,7 +529,8 @@ int perf_event__process_auxtrace_error(struct perf_tool *tool,
+ 				       struct perf_session *session);
+ int itrace_parse_synth_opts(const struct option *opt, const char *str,
+ 			    int unset);
+-void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts);
++void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts,
++				    bool no_sample);
  
- static int perf_sample__fprintf_insn(struct perf_sample *sample,
+ size_t perf_event__fprintf_auxtrace_error(union perf_event *event, FILE *fp);
+ void perf_session__auxtrace_error_inc(struct perf_session *session,
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 2ae640257fdb..e32716078aeb 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1432,7 +1432,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+ 		etm->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+-		itrace_synth_opts__set_default(&etm->synth_opts);
++		itrace_synth_opts__set_default(&etm->synth_opts,
++				session->itrace_synth.default_no_sample);
+ 		etm->synth_opts.callchain = false;
+ 	}
+ 
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 7f0c83b6332b..3b3a3d55dca1 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -910,7 +910,8 @@ int intel_bts_process_auxtrace_info(union perf_event *event,
+ 	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+ 		bts->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+-		itrace_synth_opts__set_default(&bts->synth_opts);
++		itrace_synth_opts__set_default(&bts->synth_opts,
++				session->itrace_synth_opts->default_no_sample);
+ 		if (session->itrace_synth_opts)
+ 			bts->synth_opts.thread_stack =
+ 				session->itrace_synth_opts->thread_stack;
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index aec68908d604..c6c934c8f615 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -2554,7 +2554,8 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+ 	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+ 		pt->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+-		itrace_synth_opts__set_default(&pt->synth_opts);
++		itrace_synth_opts__set_default(&pt->synth_opts,
++				session->itrace_synth_opts->default_no_sample);
+ 		if (use_browser != -1) {
+ 			pt->synth_opts.branches = false;
+ 			pt->synth_opts.callchain = true;
 -- 
 2.17.1
 
