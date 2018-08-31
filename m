@@ -2,119 +2,175 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167DEC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DA7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA9120837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C389C20845
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0tfv2aE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA9120837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHWf0in2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C389C20845
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeIACZw (ORCPT
+        id S1727410AbeIAC0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 22:25:52 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41768 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbeIACZw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 22:25:52 -0400
-Received: by mail-qt0-f195.google.com with SMTP id t39-v6so16216185qtc.8;
-        Fri, 31 Aug 2018 15:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kb8jYiBKnsYyK2GOksDAJmaz5dz/XdVw7Jee/J9nrKs=;
-        b=l0tfv2aE9ZmVZ0XdcnCgGqj7x5HAxTAHYb4M9xgPmPgBQYW7WBmi9r+hbAdu6vaOKf
-         CaAIHl8McpXQgpUWNpwjBKaJybBg205pLnIepBTRRAWQH6VZDDT6Tpf82+HHqNSseDhT
-         ZEEEMp4u4Y6YY6gDyBLo5CGLHJiq/VbRUjDZNdLnu4oqaCv0uaPEVn67UO1cpu230zyg
-         900tkBdbPvuBJOQ64ylSOxHlEutQ6yLiXdhW31R1YC4kssXRKrqLqldgo/cIbA92j2G9
-         Z2WtqhdUh5mlO0FNcT2mqEuBvLWQxAG8tUONYIR+ghLYEQsIfW5rihHVDJ8kQ2DrR5js
-         5/pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kb8jYiBKnsYyK2GOksDAJmaz5dz/XdVw7Jee/J9nrKs=;
-        b=oHrTxegjZpTHToM2B/FLi7cPwveMoWIdNOd/zSdpWrTpyRzCYZpyEICqPbxElgWLCy
-         GOV6rQTlwVlkeSW/d0vHnNDU8IrUNJ0tHvqsoalvLZUeTRxC1P9Vr9cQsXjmdlIzlZDo
-         7+Dyd5zSd+UxN2cWJvl6LL+AkgagN+iJx+Bp/JdGVqKp5u6rNPc3T88E3DgrLDsFha5O
-         MpKPyBFCkr9PY8m1RYhSJH+n+n8OxB9N43eCctesIzaezw/MKsCodYa4ifTXvI7O+Qf+
-         ICSwbAuNTeeddykN7XPRF/JXKi9UT7gG6SPxV4SGZUO2tptiyAKnw8+7K9g0Ty3fJA+6
-         Hoig==
-X-Gm-Message-State: APzg51BIjE4RvYSXP0/v3AzxZPTjYSZi2qsO8L55wS2+1J/UbRTBB4gA
-        dfb2nwyS/7ZhNDBgGl90vOZcQd+Z8W/3o+cSkOM=
-X-Google-Smtp-Source: ANB0VdZ1pmFRGtzIGbP0OQyShJPlFnD0WqG0AzIQr1IxygYq9eeuEfGDvMqDxKjc0n4IBt7TxfBKS1uBahykEzUsdc0=
-X-Received: by 2002:aed:3fd3:: with SMTP id w19-v6mr17772234qth.226.1535753781550;
- Fri, 31 Aug 2018 15:16:21 -0700 (PDT)
+        Fri, 31 Aug 2018 22:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727325AbeIAC0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 22:26:08 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB81820861
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 22:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535753798;
+        bh=5JcqvgJ5R2KgZ6pLdpuoRLSxlhBC0jlWlwtyhAoCMfw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=eHWf0in22zR/F+5SRwoSi4NeknMkd0W4tEdLzm+MLOZkOgsJNulpoX/Ri+dz0BMuE
+         wNSTjm/OLAYbja83W7TBVLec4arx1fQrrljqV6sN4kxHbrsWVpBM0gN6cW7wc238nB
+         H5VQXSRDPCpr9KAsQ0LOxhV+3zK+uRZZSjZm0ogM=
+Received: by mail-wr1-f42.google.com with SMTP id k5-v6so12455439wre.10
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:16:37 -0700 (PDT)
+X-Gm-Message-State: APzg51C7DtuOM48Qopfn+1q/V6pqHVTIgKOBRjAGAzVCk6N4yDuIhxM0
+        qITi+0nHQ3xm05ULFh9be0l7uP8lufHqcIJzDwkgCw==
+X-Google-Smtp-Source: ANB0VdaIjZj/C6hV9CnxyEN2VP3iGTe1FmM03H/POMYeSNN+Eydx6s/Zotvlm88GYlF0PhZUBDxb/xscidE6ePGzJQc=
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr12543468wrh.148.1535753796032;
+ Fri, 31 Aug 2018 15:16:36 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aed:2291:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 15:16:01
+Received: by 2002:a1c:9045:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 15:16:15
  -0700 (PDT)
-In-Reply-To: <CAKwvOdk3mL87ZA_7ifGdmbztzxdFzJhFAwKoGfv6OiH0ECV0vg@mail.gmail.com>
-References: <20180730213412.242849-1-ndesaulniers@google.com>
- <20180730213412.242849-2-ndesaulniers@google.com> <CAKwvOdk3mL87ZA_7ifGdmbztzxdFzJhFAwKoGfv6OiH0ECV0vg@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 1 Sep 2018 00:16:01 +0200
-Message-ID: <CANiq72nLmTbstZq6Ley_++hhnz3g8jq=Kqy5hf83a9d=6Ab2Uw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] compiler-clang.h: Add CLANG_VERSION and __diag macros
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>, christophe.leroy@c-s.fr,
-        Stafford Horne <shorne@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
+In-Reply-To: <1535752180.31230.4.camel@intel.com>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com> <20180830143904.3168-20-yu-cheng.yu@intel.com>
+ <CAG48ez3uZrC-9uJ0uMoVPTtxRXRN8D+3zs5FknZD2woTT6mazg@mail.gmail.com>
+ <CALCETrW78UKt6AQJeN8GkhtxjuASnH1PV5QSpzQtDz9-2d3Asw@mail.gmail.com>
+ <1535646146.26689.11.camel@intel.com> <1535752180.31230.4.camel@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 31 Aug 2018 15:16:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrV_aDasfkd6LD1cT11Hs1dO064uHjROLQPyhQfy_iuS8w@mail.gmail.com>
+Message-ID: <CALCETrV_aDasfkd6LD1cT11Hs1dO064uHjROLQPyhQfy_iuS8w@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 19/24] x86/cet/shstk: Introduce WRUSS instruction
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Jann Horn <jannh@google.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Borislav Petkov <bp@suse.de>, neilb@suse.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, dwmw@amazon.co.uk,
-        sandipan@linux.vnet.ibm.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Lawrence <paullawrence@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, ghackmann@android.com,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Wei Wang <wvw@google.com>, avagin@openvz.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
-
-On Fri, Aug 31, 2018 at 11:50 PM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> + Miguel and Joe
+On Fri, Aug 31, 2018 at 2:49 PM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> On Thu, 2018-08-30 at 09:22 -0700, Yu-cheng Yu wrote:
+>> On Thu, 2018-08-30 at 08:55 -0700, Andy Lutomirski wrote:
+>> >
+>> > On Thu, Aug 30, 2018 at 8:39 AM, Jann Horn <jannh@google.com>
+>> > wrote:
+>> > >
+>> > >
+>> > > On Thu, Aug 30, 2018 at 4:44 PM Yu-cheng Yu <yu-cheng.yu@intel.c
+>> > > om
+>> > > >
+>> > > > wrote:
+>> > > >
+>> > > >
+>> > > > WRUSS is a new kernel-mode instruction but writes directly
+>> > > > to user shadow stack memory.  This is used to construct
+>> > > > a return address on the shadow stack for the signal
+>> > > > handler.
+>> > > >
+>> > > > This instruction can fault if the user shadow stack is
+>> > > > invalid shadow stack memory.  In that case, the kernel does
+>> > > > fixup.
+>> > > >
+>> > > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+>> > > [...]
+>> > > >
+>> > > >
+>> > > > +static inline int write_user_shstk_64(unsigned long addr,
+>> > > > unsigned long val)
+>> > > > +{
+>> > > > +       int err = 0;
+>> > > > +
+>> > > > +       asm volatile("1: wrussq %1, (%0)\n"
+>> > > > +                    "2:\n"
+>> > > > +                    _ASM_EXTABLE_HANDLE(1b, 2b,
+>> > > > ex_handler_wruss)
+>> > > > +                    :
+>> > > > +                    : "r" (addr), "r" (val));
+>> > > > +
+>> > > > +       return err;
+>> > > > +}
+>> > > What's up with "err"? You set it to zero, and then you return
+>> > > it,
+>> > > but
+>> > > nothing can ever set it to non-zero, right?
+>> > >
+>> > > >
+>> > > >
+>> > > > +__visible bool ex_handler_wruss(const struct
+>> > > > exception_table_entry *fixup,
+>> > > > +                               struct pt_regs *regs, int
+>> > > > trapnr)
+>> > > > +{
+>> > > > +       regs->ip = ex_fixup_addr(fixup);
+>> > > > +       regs->ax = -1;
+>> > > > +       return true;
+>> > > > +}
+>> > > And here you just write into regs->ax, but your "asm volatile"
+>> > > doesn't
+>> > > reserve that register. This looks wrong to me.
+>> > >
+>> > > I think you probably want to add something like an explicit
+>> > > `"+&a"(err)` output to the asm statements.
+>> > We require asm goto support these days.  How about using
+>> > that?  You
+>> > won't even need a special exception handler.
 >
-> This is the old patch I had sent for detecting Clang version.  If we
-> wanted to set a minimal version, this plus the actual version should
-> do it.  Probably could drop the diag stuff, as we changed clang to not
-> warn in this case, so my solution using _Pragma is obsolete.
+> Maybe something like this?  It looks simple now.
+>
+> static inline int write_user_shstk_64(unsigned long addr, unsigned
+> long val)
+> {
+>         asm_volatile_goto("wrussq %1, (%0)\n"
+>                      "jmp %l[ok]\n"
+>                      ".section .fixup,\"ax\"n"
+>                      "jmp %l[fail]\n"
+>                      ".previous\n"
+>                      :: "r" (addr), "r" (val)
+>                      :: ok, fail);
+> ok:
+>         return 0;
+> fail:
+>         return -1;
+> }
+>
 
-Nitpick: do we want to use the CLANG_VERSION notation? In some cases I
-think it is easier to simply use directly the original values (like I
-did in compiler_attributes.h for gcc).
-
-Consider that we almost never need the patchlevel (and if we do, it is
-better to *see* we are explicitly testing for it), and given the
-versioning schemes that compilers nowadays use (i.e. only major
-versions), I would bet not even the minor (except maybe for GCC in
-compiler_attributes.h until we drop gcc < 5).
-
-Cheers,
-Miguel
+I think you can get rid of 'jmp %l[ok]' and the ok label and just fall
+through.  And you don't need an explicit jmp to fail -- just set the
+_EX_HANDLER entry to land on the fail label.
