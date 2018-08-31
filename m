@@ -7,88 +7,94 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E049C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A72DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0B220652
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 175FE2083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:26:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0piOU+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C0B220652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qcw+X3Tv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175FE2083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeIABfS (ORCPT
+        id S1727586AbeIABft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:35:18 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41871 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbeIABfR (ORCPT
+        Fri, 31 Aug 2018 21:35:49 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38495 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeIABft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:35:17 -0400
-Received: by mail-lf1-f65.google.com with SMTP id l26-v6so11028269lfc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:25:57 -0700 (PDT)
+        Fri, 31 Aug 2018 21:35:49 -0400
+Received: by mail-wr1-f66.google.com with SMTP id w11-v6so12386411wrc.5;
+        Fri, 31 Aug 2018 14:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2LrPf3BZ7KKHee4dCYRYlvWOsklSuU7dFkrTWs159hs=;
-        b=b0piOU+hJ7w/d+bjzHH38huzAZwgiudJbMPk0eTkggUcfNtHmCk1/CddqqAqKB7/Yb
-         0Dz8zRjDoW/caT9dkH8oQWumuW0T0915bNHyRSDAPc8tIQ3wAU10Yn7w2mH0ANA+H6lS
-         LbxoMQSh4aSSH8FE/EkTR47ak9WYtv2JSOawxX071dHczT+xr5TtNlR/ew4O74C9CmLX
-         eea0t68C+jLfGqL55rmKAmYPIq/eZ3Um1s8H/Sp2GV4WALVlgXPD/8RlgxgUw7/hMfEm
-         mFTp8rNFuGpO5DjTAm9QneMzccocWytkYRGU8r01+yScsAdsUOG0QXvzwIZpEnO+qcow
-         jSuQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j1nSmX2lqdcK7cjjN0dtzKa3tALV9wgDsaltmPtnYBE=;
+        b=qcw+X3Tv8zcr1FVvlX9bpMFSyxhNDvcekKOlaFDFomx9pNAL4sHVrH3zDsuUkLIWIE
+         H815ZftDe3UH3c9hCoPTkKjzhoSckbryMek8bHvT1ybDM/NZQpVhGoW4ciyHgDDTo4td
+         RUMOsCq6Q83qaHJw+nb8oDAcsnmDOvla9p5nge5oXFm7Ymjnurtw+m1IDl39+Ozes+Ra
+         EVpJHxobQJ2UiAJlgm0QJppaRAhAhoVJ4HS3pVIyRFp/K7sfi1TOH3PjaZUHsLdCnuK/
+         HI4NoiJjeYgM26HQo53dxOcxGEnaCR5g5efa2sqg0T36hZWcsQgiiVWJun32y9zRn2eL
+         btUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2LrPf3BZ7KKHee4dCYRYlvWOsklSuU7dFkrTWs159hs=;
-        b=R0FZLk7Rn7SyQQNPhPtE6AAMlwjNOZDlFWxlIYbyZtkQeRrwjABqVsFk1peb/x1foe
-         8lB69ZJtSWFNMDs4eF+4iequ5Vp6REF5vvSEhT+Ja9c5IUOBmRLAuFRwypK1yH4l+Jdk
-         nWj2aigvcuacrrQr4+1KUpN01Warj7hGXjagQ5rC3JQ4n6PaFyN/s3MuP6c+rH16GqEf
-         P+UcrWFo8ktNgdNTc8k9nvDcg/mJUshOKOsjQebr/ofXjVxcKllWEtiAT/CPaVOxsufI
-         vEHHWrsWJ3kbNMk769mcGN0g/xnLZUlRmJzIJXgr8wPBQFrYHICv2jNQFWWbedZ37xl0
-         FI0Q==
-X-Gm-Message-State: APzg51CShvOclgwcULmvZZaLko8olIj2hMJgUTl+qS4QWKS76drCtnXv
-        4981YZnYHYRCg+cAcR79v9k=
-X-Google-Smtp-Source: ANB0VdbcPIaUBWsSTR8AknF0l+QSXcdnqu8qJ96KALNfK8ftyBngn2C324DnBKKr7wsGDRrjeYv7Bg==
-X-Received: by 2002:a19:870b:: with SMTP id j11-v6mr12396927lfd.4.1535750756345;
-        Fri, 31 Aug 2018 14:25:56 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id 17-v6sm1969973ljs.32.2018.08.31.14.25.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 14:25:55 -0700 (PDT)
-Subject: Re: [PATCH 05/23] selftest: vm: add unlikely() to BUG_ON()
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>, Shuah Khan <shuah@kernel.org>
-References: <20180830223429.30051-1-igor.stoppa@huawei.com>
- <20180830223429.30051-6-igor.stoppa@huawei.com>
- <1535669872.23560.73.camel@arista.com> <1535670261.23560.77.camel@arista.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <9813280a-4599-9ace-320a-f4ec5998e0a1@gmail.com>
-Date:   Sat, 1 Sep 2018 00:25:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j1nSmX2lqdcK7cjjN0dtzKa3tALV9wgDsaltmPtnYBE=;
+        b=mUpts03wvR9dFqZkkOq/avr0nYS6E02wvPV9zH93TtUtKkPZ/7gWL1BPxdc17J3lhj
+         OyUL7jNGzTonBnStlEVRhCvBoFyXmJKSMBJZDk8tNiWvDVQmdTUOa4Vn8PJl8KyNM7ga
+         8QHkAJyTbOIFRyoKvLV58n70DspvxAMLtfK3BxOy7nTye4JoHGVxMHOvGr7Q6P+4GVSy
+         3YouLicN3LeXqp7K/rKYI/NCydKmQioNIMD/2aIj2FxW2EcO3VpDAJE7YnqzzQmAtOyg
+         zdysj/dWUur2+PBVfWe/OCoowcaSAWHa9R6N0x7Wif5JwxqEDHHgsQvCg9xlRLsg042/
+         uNcQ==
+X-Gm-Message-State: APzg51ClApXkMABksCQQXbdHGxDuymj14eGEKioVw9RzHBvF+YrJovsp
+        BTpH3LvGHTbofZS76GRR1IzKotVVw2DTOGLUQxcFKA==
+X-Google-Smtp-Source: ANB0VdbQqTS1L3HRAft2bltmD4qWiEyg0tZcVdx/v5438BDyRaWfkVqzLvNqBaiI+gU+hym0OUoahmqrHb7xWrqEcII=
+X-Received: by 2002:adf:ae5a:: with SMTP id u26-v6mr3589818wrd.246.1535750787783;
+ Fri, 31 Aug 2018 14:26:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1535670261.23560.77.camel@arista.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
+In-Reply-To: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
+From:   Gregory Fong <gregory.0xf0@gmail.com>
+Date:   Fri, 31 Aug 2018 14:26:01 -0700
+Message-ID: <CADtm3G4yn2n_D8Kd8d9ohv1Fd6YFSyRtgrzLT=1xbcegNLMWCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
+To:     Justin Chen <justinpopo6@gmail.com>
+Cc:     linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+On Fri, Aug 17, 2018 at 4:48 PM <justinpopo6@gmail.com> wrote:
+>
+> From: Justin Chen <justinpopo6@gmail.com>
+>
+> Sometimes we have empty banks within the GPIO block. This commit allows
+> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+> incrementing the bank and number of GPIOs, but not initializing them.
+> This will mean a call into the non-existent GPIOs will return an error.
 
-On 31/08/18 02:04, Dmitry Safonov wrote:
+This is clearer now; thanks for rewording!
 
-> Probably, the one from "tools/include/linux/compiler.h" can be used in
-> tools directory.
+>
+> Also remove "GPIO registered" dev print. This information is misleading
+> since the incremented banks and gpio_base do not reflect the actual GPIOs
+> that get initialized. We leave this information out since it is already
+> printed with dev_dbg.
+>
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
-Thank you for the advice. It seems to work now.
+Looks like I'm a bit late on the response, but in case you feel like
+adding it Linus:
 
---
-igor
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
