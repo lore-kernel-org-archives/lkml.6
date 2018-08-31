@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C537CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D298FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8712083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8712083A
+	by mail.kernel.org (Postfix) with ESMTP id 9041B20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9041B20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeHaSmf (ORCPT
+        id S1728067AbeHaSmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:42:35 -0400
-Received: from mout.gmx.net ([212.227.17.20]:51071 "EHLO mout.gmx.net"
+        Fri, 31 Aug 2018 14:42:39 -0400
+Received: from mout.gmx.net ([212.227.17.20]:33709 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbeHaSmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:42:35 -0400
+        id S1727430AbeHaSmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:42:39 -0400
 Received: from localhost.localdomain ([113.87.91.43]) by mail.gmx.com
  (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0M8pKi-1g3Un32scm-00C9K1; Fri, 31 Aug 2018 16:34:22 +0200
+ 0M8JyQ-1fj9X11ySY-00vyDL; Fri, 31 Aug 2018 16:34:34 +0200
 From:   Chengguang Xu <cgxu519@gmx.com>
 To:     jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
         jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
@@ -33,26 +33,28 @@ Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         jfs-discussion@lists.sourceforge.net,
         Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2 1/5] ext2: cache NULL when both default_acl and acl are NULL
-Date:   Fri, 31 Aug 2018 22:33:48 +0800
-Message-Id: <20180831143352.22970-1-cgxu519@gmx.com>
+Subject: [PATCH v2 2/5] ext4: cache NULL when both default_acl and acl are NULL
+Date:   Fri, 31 Aug 2018 22:33:49 +0800
+Message-Id: <20180831143352.22970-2-cgxu519@gmx.com>
 X-Mailer: git-send-email 2.17.1
-X-Provags-ID: V03:K1:zJ61drPWzc+dm1JwAfmJn2MH0FhX2Y4YI1twJEzNLBXtS2M87tH
- iTJVvPFqE0PIZ5+oXMDTZMwo/emuhgY/uBOzf0AWz4x5+zkskaCN4f+CXJi1+w/CY8/mfS9
- wkiojIe0befJcQwS46HI5GmeuqC3kE3NWh3El6XRbmArxcy9OQ5jbnHII88Wh6sqz84OA0p
- 7Eqj00PbdUmLWlDE4n5DQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VRFLwQTDSOQ=:BTchpu3/rQZLzWXzfrlqIj
- 5NF8iZe3AiXKdPLBrR8inXP/w/VgClRkoMlEslk5/EGkIry6GDEcZHZCiWxj5zuEhTLXfZ/8H
- j5wvyVpjP1TLEc7pbWa0EQM1aIvM+EvVJh1+CfZWnskAEiuMAUQL8hHMwRb8S5nZh7LtwZngV
- 168qcTNSSd/7SHpIvtB9O62HuWnBzvxFLfejOAnQm4Zwt+4OgZVA+1Pn8sdzLHg9m7hvNdHrG
- S5xMXTZRO6hQkTyel1pfaITNVLiisssj7aY9abHzA6n08/9XIX6oGI17OYVp7nhmY8Ibe4asJ
- oSeTwz1MjDNjhZi+LJtFTP2SmjrDS8nIRI/yZAf7Qvj2FnPkJ6AHkEpmglE+HJ2yAXp34uJ1W
- k6NZnFlqngURpcDqFJokNjXtQ9mNQkGNxSvxiTxRoy58HuGA+BJiYdx/8sR2MMWVUIaz+UIGr
- F7na9o3Jqp8dr2EgxVzG1uaaHt8AVFzXoyHPNzccfDLEdROwEnUeckpVMdJ5t2upG2gdg52Z3
- aDQ0Ad06L9hAxbdx7rMyYNAz74ZKXAPlooWT+KOz6oz4YBUYGsxQ5CjtqwFGq8T/y+OFF4CV7
- e504cgwxX7lsLcpDVhQ54cVXNcULu7ydTTsixnJfht8gN2HyCPWjG9gxmt/us82ToL5h+rE/I
- oiQV2Hnf6O0QU0gtpjbLySbIHT0hwSqWRQihTIYKOk06rdFDg4AP8r9eJd5HpqXCGCLwBRyoB
- Al5QAatRxZxIheSvMQrsdYTlcdZKpQZFvsNoYFL3FsklwkLbGhyon5dnZRg=
+In-Reply-To: <20180831143352.22970-1-cgxu519@gmx.com>
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+X-Provags-ID: V03:K1:SLY8f5eIZO+8dRz4on4iY3kojrelTqPTtbHPK3e8lBKsVwRwECK
+ UKQO8kegZEdPQ64sKhO1UIbk5JyYGKa+F4rmWSbg9aohgtVv6waGHXL2fpYUTxFQYNNhWuS
+ KOpsK2AR28IZZBdqSWDnKx7Cop4PPqeQ1mp9LUBRFQNuQRGGIsKKox7u8PoWFJQ543tOE2z
+ sKJMMbs8qnbcWYWnwdIHg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Hftw/YjyDXw=:tiCCninlfF8FCnZmAZKd5Z
+ s/+fpXokK0+4OiXw4vWdvkT/iMpJETTb1W430P1OjCiFbHEWMjQA8AUGth+iKdNIkizjjjtcN
+ WxulhuP19Ug2Yb1dCZDfvwVJjHY6lPhIScUF98RXMdHxpLczS+PKoDsjhogGjCYsatZxrlQLL
+ LirwTOMrYyK3s0jluqZsl7SfuwrYQxBGNYPucq6nzBqUjhL0HhahPTIiW5BRPVwkK2tun7DkP
+ v2zaBH8m1jR4rp0GEjTP4aQvNJzLUGB/jcjfZhGn02wQaJgJUxc7NCg0MQaNUvDpUvHqk1HMG
+ H/NeAivYjb9ByKgqIpQLqd/v+LTc2iJHNNEvwgNdbfiD25029ba2G+qDl/ezupyogee/L7iEc
+ yxeIjcdqy4rRf29PmWxq4Kif2w0sbP0v6OA/YtZNzPuQRvHaP9fiDdtzEUbOwevwiuxeudZPf
+ c/SAYiyIltzZI0UiPvyp8eJ/y2K9xxnAXtKiRj5GhmxVm4vzyunFM7e3bm7XT/OGDN+Y+0UwI
+ WSiymNn2PUssYzifCJaU4U7TlJ6f6Md1YPpwrDDa5T5haq3rMjiDcjkt3LTtRd2zHXmT8PnvD
+ 7jmPFbSyscic+DEbaDmnIQFEGi8s0+Y+7JuXOYuDJldWn9oIv5ZTp3O62wPMTLUicm+0W2Ri8
+ fk3cKBML2GJqlYcvz8FMHckovpHNB+xUlutKeo4h7b4kN3QzJFWLUMOsskcp09Joh+lBnRASO
+ 81ziiDBk5W61U2ByWuXheHPegP3z5E+lxUovuJRIlpJtIfAKJp0+ZgnPlq4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,23 +72,24 @@ Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 v1->v2:
 - Coding style change.
 
- fs/ext2/acl.c | 4 ++++
+ fs/ext4/acl.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
-index 224c04abb2e5..cf4c77f8dd08 100644
---- a/fs/ext2/acl.c
-+++ b/fs/ext2/acl.c
-@@ -256,11 +256,15 @@ ext2_init_acl(struct inode *inode, struct inode *dir)
- 	if (default_acl) {
- 		error = __ext2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
+diff --git a/fs/ext4/acl.c b/fs/ext4/acl.c
+index fb50f9aa6ead..c1d570ee1d9f 100644
+--- a/fs/ext4/acl.c
++++ b/fs/ext4/acl.c
+@@ -284,12 +284,16 @@ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+ 		error = __ext4_set_acl(handle, inode, ACL_TYPE_DEFAULT,
+ 				       default_acl, XATTR_CREATE);
  		posix_acl_release(default_acl);
 +	} else {
 +		inode->i_default_acl = NULL;
  	}
  	if (acl) {
  		if (!error)
- 			error = __ext2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+ 			error = __ext4_set_acl(handle, inode, ACL_TYPE_ACCESS,
+ 					       acl, XATTR_CREATE);
  		posix_acl_release(acl);
 +	} else {
 +		inode->i_acl = NULL;
