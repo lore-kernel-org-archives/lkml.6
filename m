@@ -2,188 +2,219 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA46C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9BBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1EC02083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:28:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YnPNCLgq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1EC02083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CB7F20841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB7F20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeIABhz (ORCPT
+        id S1727539AbeIABjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:37:55 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42729 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727281AbeIABhy (ORCPT
+        Fri, 31 Aug 2018 21:39:55 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:32958 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbeIABjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:37:54 -0400
-Received: by mail-qk1-f194.google.com with SMTP id g13-v6so2333845qki.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=OPsUovlMABJGeFdHeNwnykwxvaWpvnEXhRqBdRUkVPc=;
-        b=YnPNCLgqYZpPY4/xjjhz4vQGdvZd0/YDDKa31OWMJUIBXI+Z9Fw6xmMg3SMc3cBGfn
-         JspftWs5GbpOtZNIgXzzHvym2og5cLhBNnPuiN+FOFKshcfSdyJGP+Is7YSibCNVzXi8
-         9dIlaJ/bpBo7uWN5XyXAExhreHNCyrlDcHG4k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=OPsUovlMABJGeFdHeNwnykwxvaWpvnEXhRqBdRUkVPc=;
-        b=JMrlzmYGwWx40BD1rK432cO3ZSUthLVYrpFzjM2REneU/eInLjdhinSKQRKD5c1rx1
-         mUhjCKZIBSe7FtzasT5lZ8vhAPRyHwur7MOgumcNOWVM0flUJluAUnHuYqg6jlfrAww4
-         N+3XRHniG1X/BbamL6ToRu1TxsROZZd+11HncYZOCtAvpaLNOQfQIJ4lEYFuTJJgFVpu
-         bsl4l+BXAlP6eQn70gjDvD6aGRqTSEewe5xKxNQs6Hhr0ZpTF+Q3o/uJPY0Dcf0q/tGO
-         Tt10E8KU1Y7Iof8W1ArOLzpiRUhaHRwmTUNkrxQP/DJGqwrq8tzG/RS30rKmL8vf8tlr
-         zjfQ==
-X-Gm-Message-State: APzg51Aj8a3yzKwSHXgQtLyfjlcE427LxFp6vwia8kqwC+N8mBz702b+
-        sSPR6MYSwoCc1QRRb7UNAoDFKApWPXHqGw==
-X-Google-Smtp-Source: ANB0VdYJCdaEt+dylGhW4SAOQp6Is3HJ5znQDlSEbvyIGpDAymKJh70EqdcPdjgq+DhVyLvGthHpew==
-X-Received: by 2002:a37:8106:: with SMTP id c6-v6mr16638121qkd.261.1535750913181;
-        Fri, 31 Aug 2018 14:28:33 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id c15-v6sm5998049qkm.42.2018.08.31.14.28.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 14:28:32 -0700 (PDT)
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Olof Johansson <olof@lixom.net>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
- <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
- <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com>
- <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
- <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
- <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <fa0a06bc-2a4d-000e-66ec-852e6ff3012e@broadcom.com>
-Date:   Fri, 31 Aug 2018 14:28:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 31 Aug 2018 21:39:54 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A50E38058E; Fri, 31 Aug 2018 23:30:31 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 23:30:31 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: [rfc] leds: add TI LMU backlight driver
+Message-ID: <20180831213030.GA23447@amd>
+References: <20180829212032.GB15786@amd>
+ <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com>
+ <20180830201825.GA1936@amd>
+ <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Content-Disposition: inline
+In-Reply-To: <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof/Ard,
 
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 18-08-30 09:23 AM, Ard Biesheuvel wrote:
-> On 30 August 2018 at 17:06, Olof Johansson <olof@lixom.net> wrote:
->> On Wed, Aug 29, 2018 at 10:54 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 29 August 2018 at 20:59, Scott Branden <scott.branden@broadcom.com> wrote:
->>>> Hi Olof,
->>>>
->>>>
->>>> On 18-08-29 11:44 AM, Olof Johansson wrote:
->>>>> Hi,
->>>>>
->>>>> On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
->>>>> <scott.branden@broadcom.com> wrote:
->>>>>> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
->>>>>> parameter to function with efi loader.
->>>>>>
->>>>>> Required to boot on existing bootloaders that do not support devicetree
->>>>>> provided by the platform or by the bootloader.
->>>>>>
->>>>>> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the
->>>>>> DTB loader")
->>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>>>> Why did Ard create an option for this if it's just going be turned on
->>>>> in default configs? Doesn't make sense to me.
->>>>>
->>>>> It would help to know what firmware still is crippled and how common
->>>>> it is, since it's been a few years that this has been a requirement by
->>>>> now.
->>>> Broadcom NS2 and Stingray in current development and production need this
->>>> option in the kernel enabled in order to boot.
->>> And these production systems run mainline kernels in a defconfig configuration?
->>>
->>> The simply reality is that the DTB loader has been deprecated for a
->>> good reason: it was only ever intended as a development hack anyway,
->>> and if we need to treat the EFI stub provided DTB as a first class
->>> citizen, there are things we need to fix to make things works as
->>> expected. For instance, GRUB will put a property in the /chosen node
->>> for the initramfs which will get dropped if you boot with dtb=.
->>>
->>> Don't be surprised if some future enhancements of the EFI stub code
->>> depend on !EFI_ARMSTUB_DTB_LOADER. On UEFI systems, DTBs [or ACPI
->>> tables] are used by the firmware to describe itself and the underlying
->>> platform to the OS, and the practice of booting with DTB file images
->>> (taken from the kernel build as well) conflicts with that view. Note
->>> that GRUB still permits you to load DTBs from files (and supports more
->>> sources than just the file system the kernel Image was loaded from).
->> Ard,
->>
->> Maybe a WARN() splat would be more useful as a phasing-out method than
->> removing functionality for them that needs to be reinstated through
->> changing the config?
->>
-> We don't have any of that in the stub, and inventing new ways to pass
-> such information between the stub and the kernel proper seems like a
-> cart-before-horse kind of thing to me. The EFI stub diagnostic
-> messages you get on the serial console are not recorded in the kernel
-> log buffer, so they only appear if you actually look at the serial
-> output.
+Hi!
+
+> > Aha. I did not realize that was for same hardware... I should have
+> > cc-ed you, I guess.
+>=20
+> No worries Jacek cc'd me.
+
+Good.
+
+> >> I do not like this driver.
+> >> I don't like that it smashes numerous devices into some structure with=
+ varying register maps.
+> >>
+> >=20
+> > Can you elaborate? The chips are similar enough that single driver
+> > makes sense, and we certainly want to maintain one driver, not 6
+> > drivers differing only in .. what exactly?
+>=20
+> Well I think it is justified to have independent drivers as each device h=
+as different features from
+> this basic LED driver.  If we are just looking for basic support then yes=
+ this driver is fine.
+
+> But here is where a single driver will start getting messy and support di=
+fficult
+>=20
+> LM3533 has ALS and an ADC for an ALS analog sensor
+> LM3631 has no ALS functionality
+> LM3632 has strobe functionality and no ramp support
+> LM3633 has indicator support coupled with the hvled support
+> LM3695 does not even appear to be available publicly
+> LM3697 is the only device that that this driver could be used for as is.
+
+Ok, so ... yes, I'm really interested in basic support. But drivers
+seem to have a lot in common, voltage limits, for example.=20
+
+> In addition if I wanted to only support a single device I have to pull in=
+ the full data
+> file that defines all the other devices.  That is pretty bad to increase =
+the size of the kernel
+> image to have support for devices that are not even on the target product=
+=2E  The ti-lmu data file
+> alone is ~15k, the ti-lmu code does not even build with this patch (So th=
+is is a nack on the patch as it is.)
+> but commenting out the offending code gives me at least ~23k more data on=
+ top
+> of the ti-lmu MFD framework which is ~33k.  That is ~71k of code just to =
+support 1 LED device
+> that is 3x what we have now.  That is not good for IoT devices.
+
+> The LM3697 is 22k without ramp support.
+
+Well, I don't think object file size is huge problem. First,
+"distribution" kernel with support for 6 different chips will be ~71k,
+while your proposal will result in ~136k. Second, yes, we could put
+ifdefs into ti-lmu data file to make it smaller.
+
+Anyway, clean source code and easy maintainance is more important.
+
+>=20
+> And I will continue. TI LMU really means nothing unless you know what LMU=
+ stands for.  But this
+> also now implies support for all of TI's lighting products which will con=
+fuse the heck out of
+> customers and TI support staff.  We have a similar issue in our SoC sound=
+ CODECs code that we are
+> attempting to clean up.  We have a generic driver that is supposed to sup=
+port a common set of features
+> but when extending support for other features the code gets very complica=
+ted and it is almost more
+> beneficial to re-write and create a new driver.
+>=20
+> I would be OK with creating a ti-lmu framework that commonizes the functi=
+onality and create children that
+> register to that framework but even that is over kill.
 >
->> Once the stub and the boot method is there, it's hard to undo as we
->> can see here. Being loud and warn might be more useful, and set a
->> timeline for hard removal (12 months?).
->>
-> The dtb= handling is still there, it is just not enabled by default.
-> We can keep it around if people are still using it. But as I pointed
-> out, we may decide to make new functionality available only if it is
-> disabled, and at that point, we'll have to choose between one or the
-> other in defconfig, which is annoying.
-dtb= handling does need to be enabled in the only defconfig
-upstreamed though.  ARM64 maintainers have mandated a single
-defconfig upstreamed up this point.  If another incompatible
-efistub is needed in the future then 2 kernel images would need
-to be built to support booting on all platforms.
+
+I believe there's quite a lot of code that could be shared.=20
+
+> >> Not only that but it appears that you just pulled this driver from a r=
+epo and posted it without clean up.
+> >>
+> >=20
+> > a) No I did not, feel free to generate a diff.
+> >=20
+>=20
+> No I looked at this driver before and determined a re-write was a waste o=
+f time.
+> If you look that the LM3697 driver I submitted it configures the banks vi=
+a the config file.
+>=20
+> Only the ramp code is missing and the code is much simpler in nature.  We=
+ could adopt that
+> code to extend out to the other devices as well and base the register map=
+ deltas on the=20
+> device configuration file.  I am already using the fwnode calls and setti=
+ng up the banks.
+
+Well, you may know that hardware better than I do. But if you generate
+a diff...
+
+> > b) Even if I did, why would that be a problem?
+>=20
+> So what you are saying is all I have to do is look for other peoples work=
+ pull it in to a branch
+> slap a new copyright on it, push to a list and claim support?
+
+=2E..you'll see I did quite some changes.
+
+> I don't think you checked with the original author on pushing it upstream=
+=2E  Milo has not updated
+> his email with a public one unless you sent him a private email and recei=
+ved and ack on pushing
 >
->> Scott; an alternative for you is to do a boot wrapper that bundles a
->> DT and kernel, and boot that instead of the kernel image (outside of
->> the kernel tree). Some 32-bit platforms from Marvell use that. That
->> way the kernel will just see it as a normally passed in DT.
-The EFI stub is the boot wrapper?  Everything works perfectly today
-with the upstream kernel (with the defconfig fix of the efistub regression).
-We support a single kernel image booting with multiple DTs
-(selected in UEFI and passed in via dtb= on command line).
->>
-> Or use GRUB. It comes wired up in all the distros, and let's you load
-> a DT binary from anywhere you can imagine, as opposed to the EFI stub
-> which can only load it if it happens to reside in the same file system
-> (or even directory - I can't remember) as the kernel image. Note that
-> the same reservations apply to doing that - the firmware is no longer
-> able to describe itself to the OS via the DT, which is really the only
-> conduit it has available on an arm64 system..
-Ard, GRUB is not a requirement to boot the kernel.  But, it sounds like
-using GRUB may be a solution to your problem?  You could use GRUB
-and leave the efistub alone then (or at least leave dtb= in the upstream
-defconfg).
 
-Regards,
-  Scott
+Tony Lindgren asked me to get support merged, and that's what I'm
+trying to do. I have Milo's sign off, that means he is/was ok with
+upstreaming that code; no, I did not have reason to contact him.
 
+> > Well all 6 chips this driver supports seem to be similar enough, so
+> > that single driver makes sense.
+>=20
+> See above on device differentiation. So in my opinion a single driver tha=
+t supports
+> basic functionality is good but when adding additional support this drive=
+r will get very
+> complicated as to only allow different features for different devices.
+
+Well, the devices seem to have quite a lot in common. Yes, single
+driver for all of them will be somehow complex; but I believe that's
+still better than copy&pasting code.
+
+Anyway, I showed my proposal. I need support for ti,lm3532, but I can
+get basic support for many other chips with very little code.
+
+Do you plan basic support for support other chips in near future? Is
+TI willing to maintain the LED drivers?
+
+What is your proposal for lm3532 support? Should I just cp lm3697
+lm3532, then adjust register map? (Will not that cause rather ugly
+code duplication?)
+
+Best regards,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluJs3YACgkQMOfwapXb+vK0QgCgrQkZ5TzvGqSlHPd2YifIfe4p
+CDoAniNnC95TNnqKjwmoHIBEq4jlP6wm
+=uVnF
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
