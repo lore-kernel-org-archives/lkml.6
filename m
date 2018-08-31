@@ -2,125 +2,84 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0720C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC0EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B412077C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:01:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t9mu3Ea4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B412077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AC6BA2077C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6BA2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeHaQIW (ORCPT
+        id S1727846AbeHaQK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:08:22 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46902 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeHaQIW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:08:22 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a108-v6so10943226wrc.13;
-        Fri, 31 Aug 2018 05:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MI3c9Zjxiz7+dIG4vNNVGe/6nlppwW0Vol6m0g37leE=;
-        b=t9mu3Ea4U+0R1CYh0Ugw9jKvBcPjWwJcobT8nF0yitQa9n5smMo0Fs0TLzL2pwtiZq
-         voVtHvoEfS03k457VqkjfZzKjNZAgIbvWN2Kefe1r5jopXFbCbPpOuJkP9pS1sZBGE2N
-         Rq0f0vX2Vbn/2RuAoVm/fsUGJ9EHkkCijIO5LfQQO7qfviMyrlk46gBZVu4vFJ01y/so
-         a1hrlTVArH7vTCUGb+9ZGNZhcssZzI1Z/KhLthVbesbqDNCXb/7cA49Z4P8cyzFn+Bcq
-         kOayc/69hXipl7eAXDVFdvKeT5GjHtaPAo8EIed0DWP/Kn9xEE8uYnfO8uiz9t/1Chxb
-         Trsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MI3c9Zjxiz7+dIG4vNNVGe/6nlppwW0Vol6m0g37leE=;
-        b=OW45u/gBJMmeBJYIpxcEXQny6X3trax3HaN4GJhdxyN1j3+XKV2AEsOZpLH6hCOlzC
-         csU5KdEDgixNNHmxqsqC3x23Nd9UDCBPisWtRGdukbpm/xepVXVgQrnEmSpYEZVqFCHe
-         ahOpVAIe4Zd5/TWVhEOb+Nf5b1LffbjoKXsLaXOO7OZYGWVXFxBVe3zl8F9OLrnzg5GZ
-         6uBuXTNMtC4cvhMW9u/8mckjjjq63EYSZDwDOUNjd6/jZz3nYubSi4ixI2fjLKX2ED+d
-         L1iw77aDlkhqE/XCjVq+uCBE9g+EKDlLFbQlE0ekJmiNZDLjijzgqbkvREiLG/yPWu7G
-         ybaw==
-X-Gm-Message-State: APzg51Cs9g9vl+rH+2y44KB+GvUFFANrpyQavDZjJM2TE8sRy6OFuGVl
-        Til4QcL0Gtm66gsO2m3Zi2g=
-X-Google-Smtp-Source: ANB0VdY3g3FYg/PKdiLKhA+dyfzKhFe2/MitGCSYQ/Gh2NeaW2HMXuFWAvu/SStG0rv491JU69BN2w==
-X-Received: by 2002:adf:e44e:: with SMTP id t14-v6mr10422978wrm.96.1535716871293;
-        Fri, 31 Aug 2018 05:01:11 -0700 (PDT)
-Received: from [134.60.170.20] (eduroam170-020.wlan.uni-ulm.de. [134.60.170.20])
-        by smtp.gmail.com with ESMTPSA id g126-v6sm4621605wmg.5.2018.08.31.05.01.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 05:01:10 -0700 (PDT)
-Subject: Re: [PATCH v3 21/30] iio: adc: sun4i-gpadc-iio: add support for H3
- thermal sensor
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-22-embed3d@gmail.com>
- <20180831091137.wkbbipssyd6mqfbt@flea>
-From:   Philipp Rossak <embed3d@gmail.com>
-Message-ID: <b834bc83-e3fa-511b-7c29-bd3a9af01d5b@gmail.com>
-Date:   Fri, 31 Aug 2018 14:01:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180831091137.wkbbipssyd6mqfbt@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 31 Aug 2018 12:10:59 -0400
+Received: from mout.perfora.net ([74.208.4.194]:42655 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbeHaQK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 12:10:59 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0Lp5Pe-1fSA9t2Ice-00ejDI; Fri, 31 Aug 2018 14:03:22 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Mack <daniel@zonque.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: pxa: fix power i2c base address
+Date:   Fri, 31 Aug 2018 14:03:09 +0200
+Message-Id: <20180831120309.8723-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:eDmLJ0B69IWVxihcjvSfxC4hxuxTDA63fcROwj7U6Ox05+L/Y1I
+ yBOFOJsp01kGz+46VI6MNRo4P7ok8nj4TVI3KMEg+7YMay+pZ0h0JxBDQ2+b80oErVabPzv
+ p5joKo7yX9P8OYDZLUgFgH6z7+I7fYkSCgr++g8R0/3R0etCJDVcd5v6AwDz5zI2PvBu1B9
+ Ta6iG3NsDI9WA3tQUCBPQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ihx8F3ZSrfo=:qJdYM4TvY5sZGZNZEX6Dz7
+ wx17Fmt6ZWycae7kuglBgiFUT2OfTeE5OBCMCl06cV2mS5ZyBDGomfsJvvdbf32Fifo+qjMwK
+ rxsrfnYuxz2kn/7lUcJ6dlq024LAXUolsn0gZtS+jPD8vMp5fXNMuMSYKLyKLM0qRjREaxh44
+ DMitGd695iXnUBtvWnCY7Fc5NZ7WQ0gTjma/BZZUZAMLV4gAhcwRw6QNErlA/e3YO/Vm2yhP+
+ xnMQGwjMSV1otPWLyQI0JEluTS7JMQmNXRB8SfVbpnGfc/Ls2QOEAN8eGXbw1wVgHx1G5Kmv0
+ STtjZPz9uvAt4cJCALtf8RcVpmTm4shjXxJjko1G2Wyk/mtb+um1PQUjRGx8cw5ivRFVfA6js
+ kETcrinMwuH0uKQzVG4PlymoaGKAPPKIT7Kfy/fA2jrW1FFsbL9Qp5d2tSEYw4w5vQDLj23/1
+ ruLn/BTKfwGq38NA9braFl9H5L6a+V3fN/B1v+mh2grSHtn0Ab2j9bHFjReDlkKmqCZiVqHOU
+ NETTEAJmnLa1ieeAlzLMlDVZ8QbvNsMWcWITetEPbH4+xIq8KC0RByzZGFOD/3KrncLC1D83C
+ 2CQBcgw8qXtAT/fAvhbP7dHHsMx7vcf6SCQRwHLi3ORwy6ddHVzGp1C7gV6NL4jlN2i6oHNDp
+ t9i1AnxHWh1Fox9HFLZo0QbC5aTIDsZzhOBvN7+zh8eYLqdBmfD+CQKDyWf6CI0t1z2M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.08.2018 11:11, Maxime Ripard wrote:
->> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL0,
->> +			SUN4I_GPADC_CTRL0_T_ACQ(0xff));
->> +
->> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL2,
->> +			SUN8I_H3_THS_ACQ1(0x3f));
->> +
->> +	regmap_write(info->regmap, SUN8I_H3_THS_STAT,
->> +			SUN8I_H3_THS_INTS_TDATA_IRQ_0);
->> +
->> +	regmap_write(info->regmap, SUN8I_H3_THS_FILTER,
->> +			SUN4I_GPADC_CTRL3_FILTER_EN |
->> +			SUN4I_GPADC_CTRL3_FILTER_TYPE(0x2));
->> +
->> +	regmap_write(info->regmap, SUN8I_H3_THS_INTC,
->> +			SUN8I_H3_THS_INTC_TDATA_IRQ_EN0 |
->> +			SUN8I_H3_THS_TEMP_PERIOD(0x55));
->> +
->> +	regmap_read(info->regmap, SUN8I_H3_THS_CTRL2, &value);
->> +
->> +	regmap_write(info->regmap, SUN8I_H3_THS_CTRL2,
->> +			SUN8I_H3_THS_TEMP_SENSE_EN0 | value);
-> Ideally, all these values should have a comment explaining what they
-> are.
-> 
-> And we really start to have a lot of registers defines. We'd be better
-> off using regmap_fields.
+There is one too many zeroes in the Power I2C base address. Fix this.
 
-I will rework this in the next version.
+Signed-off-by: Marcel Ziswiler <marcel@ziswiler.com>
 
-Thanks,
-Philipp
+---
+
+ arch/arm/boot/dts/pxa27x.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
+index 747f750f675d..837343370761 100644
+--- a/arch/arm/boot/dts/pxa27x.dtsi
++++ b/arch/arm/boot/dts/pxa27x.dtsi
+@@ -71,7 +71,7 @@
+ 			clocks = <&clks CLK_PWM1>;
+ 		};
+ 
+-		pwri2c: i2c@40f000180 {
++		pwri2c: i2c@40f00180 {
+ 			compatible = "mrvl,pxa-i2c";
+ 			reg = <0x40f00180 0x24>;
+ 			interrupts = <6>;
+-- 
+2.14.4
+
