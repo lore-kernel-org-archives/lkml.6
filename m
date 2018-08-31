@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58129C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C45C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0326A2083C
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D8B2083D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6KUWOUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0326A2083C
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UdmuLwj0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D8B2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbeHaWsO (ORCPT
+        id S1727273AbeHaWw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 18:48:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42376 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeHaWsO (ORCPT
+        Fri, 31 Aug 2018 18:52:26 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34877 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbeHaWw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 18:48:14 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l9-v6so5891632pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 11:39:29 -0700 (PDT)
+        Fri, 31 Aug 2018 18:52:26 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d9-v6so5860890plr.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 11:43:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rbEBSLoYYXdqkwapMaPABG8uME/HyFvOnTsz2qYUb+U=;
-        b=n6KUWOUjWk6iRpHm6Q15oaJP9GKoMGh1SXU6x341j7cHJhYNXLyIkLRy5vdqHJC7tU
-         PSKbBu/aL6ziaUcddX43g6RkFfHnKRRMGHkniMJc2qufLskIBb3vXAbtWOkhyvdKqFJW
-         xGveDEg7vprYLRCKe3YBYreYqphNbik3iGQM8F8Ji5GURXQLmoWki5TPJL3lxONZLupR
-         B+6+8CSisqeD8MhK2m1xut2JHLQhyCjlN34ByXVU3ZfRzUpbFhkLkQBPxaaeK+llBD4k
-         w5948cey/Hkj6ZV40j9XXPHgQwrXbjJFybmTOXnELAEgYQ853StcbRhXJT96iNwMsPae
-         TU8A==
+        bh=OMzGZ2Op4NcYEQUnOF+QtQxIHQ2pSMyF4605uy6pHZU=;
+        b=UdmuLwj0ZS6Y/v2NJ9yKDX07xWbuJCbvVeHqFymgW9ALu0tHcE0wULApVIf6VVn3UV
+         1zp1CcG5YCU/m12H2uQBm2SccsOdnzZrbLExkm6aXM8wI81RoXAz3ClPapWv6dWbgzjq
+         pmH1GHrFf9Qvz+gso2eOqxujSL3bb/QLcb4kIDySMx8FEVngNj2Uu/V7r6IqzsKJpsj3
+         mLtDpzAe12Q8ChJmSWnhIITvXsHH+whAmrsqvRkxahveWm+nfD/NSkSZ819HVxXm/Top
+         HK9nl+P7wbgtDaW8DuM3gCk/9j1P3Ip/WnHNWkVYT9UCx+4brVkEON7lAHT6p8QObZeC
+         O3Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rbEBSLoYYXdqkwapMaPABG8uME/HyFvOnTsz2qYUb+U=;
-        b=Ezd40swqOKuZMRNScxOgQG+L6916CFQnQYaEffkv83djJ71+XwcbFPrzEhvu4dXrkk
-         xgJvqfOznxWtaL3M5pxHzQswufHgHVdcam8yx1WT5H42iXzrY864I4srj7D5ib486+bC
-         jex4RZSyoyZ2Ac+lxMzsLY0m99TbaunAOLLldBTkH4Egjs1efjZvoMoWvYrUoBvi7k9A
-         tWYlT+g0LVMlBtbn5zLq8ud347ZvKDCLgNCST1xMSlSq7IRkJ1vpYxByuF4z2EiWbyw3
-         5MHNiYA6CISZQR7rbA1kLn3nYLmUJITjG8tgZhpMRKjtwISO5UWw7xJNzK9TGH7uN2cy
-         Dj4A==
-X-Gm-Message-State: APzg51DqNboANniKm2NxJbTKrOqAKa+DuEPkxK8vTrbQnQETBFUxWr1R
-        uMLMexpu1JuBxeA16QurYVunTUtamFyzAvH8w43IMh3dMZoNuw==
-X-Google-Smtp-Source: ANB0VdafPH8gQHIO+fdQp8UWLrrC52VAlrH9znF2JsbEP0NzLROz4tG6Qe2T1vIfcaAIAFENVVpVajE4fPtkbXRVx4Y=
-X-Received: by 2002:a63:2605:: with SMTP id m5-v6mr9659101pgm.225.1535740768913;
- Fri, 31 Aug 2018 11:39:28 -0700 (PDT)
+        bh=OMzGZ2Op4NcYEQUnOF+QtQxIHQ2pSMyF4605uy6pHZU=;
+        b=Tl/l8sxp+E4/l/BiVypPvs+vYS2zPVCbMq4Z16ihZyC6QI4HqsFV+r4KjA1Bdi13PQ
+         XgO1vONTffVCH1j6JPNYqno+Zy26zQRA/B6JQSaOGufxseYFpFD6a2vn5qVQk80twM2b
+         +r2cInzJr/AxyDjSf6CMze41xbRGrVkvLioU5PmzVvBX5NwEZBno6x2MdSOK8PCNapdJ
+         1kdYdRt2e188XgStybQ8IrBMBM+EgPnJcruZXAK/46Jygy1rNm12l7MNwVpT/mKjSPYh
+         GfJl8lUQ6aTmszBoXE/G+k1F2z9hQhxj931MxB00dFZ5ug2tC9g/PY9gQtCCX+O0XABP
+         sQdQ==
+X-Gm-Message-State: APzg51CRijlzRml7Y4Bm+BwvV6ByRLBlXO35D4IANeC4/kEa0Yx0v4Ke
+        TAKHMfVn/YYh96lpcqSyxcTQ3zS71WGX/8HRmZd7iw==
+X-Google-Smtp-Source: ANB0VdYsiMmwWbKGQvlFh14f4BdNJibB5LDSCM/P2QkvTsZzBGpVotweOZzhYpMnNXo49etStRujbhcsKtEfHbJZePM=
+X-Received: by 2002:a17:902:b7c3:: with SMTP id v3-v6mr16815969plz.238.1535741020280;
+ Fri, 31 Aug 2018 11:43:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
-In-Reply-To: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com> <a1d6922dea4f80be097fdb912a545727ff96f1b1.camel@perches.com>
+In-Reply-To: <a1d6922dea4f80be097fdb912a545727ff96f1b1.camel@perches.com>
 From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 31 Aug 2018 11:39:17 -0700
-Message-ID: <CAKwvOdk9ck_85u5-_eHwrtNu260HM5X5HRsqh8aKfK66CJH6jw@mail.gmail.com>
+Date:   Fri, 31 Aug 2018 11:43:28 -0700
+Message-ID: <CAKwvOd=kePHrDA7NJKyu8aiXVt7iRsxXNRe3tkG3rp-c0xpO5A@mail.gmail.com>
 Subject: Re: [PATCH 1/7] Compiler Attributes: remove unused attributes
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+To:     joe@perches.com
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>, efriedma@codeaurora.org,
         sparse@chrisli.org, Kees Cook <keescook@chromium.org>,
         Ingo Molnar <mingo@kernel.org>,
@@ -71,87 +72,48 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg KH <gregkh@linuxfoundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        joe@perches.com, asmadeus@codewreck.org
+        asmadeus@codewreck.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 10:05 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Fri, Aug 31, 2018 at 10:28 AM Joe Perches <joe@perches.com> wrote:
 >
-> __optimize and __deprecate_for_modules are unused in
-> the whole kernel tree. Simply drop them.
+> On Fri, 2018-08-31 at 19:05 +0200, Miguel Ojeda wrote:
+> > __optimize and __deprecate_for_modules are unused in
+> > the whole kernel tree. Simply drop them.
+>
+> Nice series, thanks Miguel.
+>
+> It'd be good to have a cover letter for the series.
+>
+> And I believe there should be the equivalent of:
+>
+> #if GCC_VERSION < 40600
+> # error Sorry, your compiler is too old - please upgrade it.
+> #endif
+>
+> for compiler-intel.h and compiler-clang.h so that
+> each supported compiler minimum version is checked.
+>
+> Is it clang > 13 and icc > 3 ?
 
-Indeed.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Eh, I'm not sure I want to commit yet to a specific minimal version of
+Clang.  Right now, we're fixing things so depending on arch's and
+configs, the answer might be Top of Tree clang builds.  For Pixel, we
+shipped with Clang-4, but pretty quickly we needed Clang-5.
+https://lkml.org/lkml/2017/11/22/943
 
->
-> Cc: Eli Friedman <efriedma@codeaurora.org>
-> Cc: Christopher Li <sparse@chrisli.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Dominique Martinet <asmadeus@codewreck.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> ---
->  include/linux/compiler-gcc.h   | 2 --
->  include/linux/compiler.h       | 4 ----
->  include/linux/compiler_types.h | 1 -
->  3 files changed, 7 deletions(-)
->
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 763bbad1e258..0a2d06677d83 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -95,8 +95,6 @@
->
->  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
->
-> -#define __optimize(level)      __attribute__((__optimize__(level)))
-> -
->  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
->
->  #ifndef __CHECKER__
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 681d866efb1e..7c0157d50964 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -301,10 +301,6 @@ static inline void *offset_to_ptr(const int *off)
->
->  #endif /* __ASSEMBLY__ */
->
-> -#ifndef __optimize
-> -# define __optimize(level)
-> -#endif
-> -
->  /* Compile time object size, -1 for unknown */
->  #ifndef __compiletime_object_size
->  # define __compiletime_object_size(obj) -1
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 3525c179698c..b6534292ea33 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -108,7 +108,6 @@ struct ftrace_likely_data {
->
->  /* Don't. Just don't. */
->  #define __deprecated
-> -#define __deprecated_for_modules
->
->  #endif /* __KERNEL__ */
->
-> --
-> 2.17.1
->
+I had sent patches previously for detecting clang version from the C
+preprocessor, maybe I should dust those off, then commit to clang 5.
 
+I don't think minimal supported versions are required for these clean
+ups, and would not block these patches from landing on that.
 
+Also, haven't found anyone using ICC yet to comment on minimal version
+requirements.
 -- 
 Thanks,
 ~Nick Desaulniers
