@@ -3,73 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAF4C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F23C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D6F20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 18:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D6F20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 12D322083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 19:01:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D322083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbeHaXCt (ORCPT
+        id S1727282AbeHaXKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 19:02:49 -0400
-Received: from smtprelay0228.hostedemail.com ([216.40.44.228]:58241 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726704AbeHaXCt (ORCPT
+        Fri, 31 Aug 2018 19:10:34 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:36891
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726704AbeHaXKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 19:02:49 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 6ECAF181D3368;
-        Fri, 31 Aug 2018 18:54:01 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: move36_5cdee059c6229
-X-Filterd-Recvd-Size: 1797
-Received: from XPS-9350 (unknown [172.58.30.189])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 31 Aug 2018 18:53:58 +0000 (UTC)
-Message-ID: <e4bb6b7be9eac45f2f0c83cc23e75a3a8e0f07e9.camel@perches.com>
-Subject: Re: [PATCH 1/7] Compiler Attributes: remove unused attributes
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, efriedma@codeaurora.org,
-        sparse@chrisli.org, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        asmadeus@codewreck.org
-Date:   Fri, 31 Aug 2018 11:53:56 -0700
-In-Reply-To: <CAKwvOd=kePHrDA7NJKyu8aiXVt7iRsxXNRe3tkG3rp-c0xpO5A@mail.gmail.com>
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
-         <a1d6922dea4f80be097fdb912a545727ff96f1b1.camel@perches.com>
-         <CAKwvOd=kePHrDA7NJKyu8aiXVt7iRsxXNRe3tkG3rp-c0xpO5A@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 31 Aug 2018 19:10:34 -0400
+X-IronPort-AV: E=Sophos;i="5.53,312,1531778400"; 
+   d="scan'208";a="277355822"
+Received: from static-72-28-92-218.gtcust.grouptelecom.net (HELO hadrien) ([72.28.92.218])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 21:01:41 +0200
+Date:   Fri, 31 Aug 2018 12:01:38 -0700 (PDT)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     dennisszhou@gmail.com
+cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+Subject: [PATCH] blkcg: fix call_kern.cocci warnings
+Message-ID: <alpine.DEB.2.21.1808311158220.2328@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 11:43 -0700, Nick Desaulniers wrote:
-> I don't think minimal supported versions are required for these clean
-> ups, and would not block these patches from landing on that.
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Nor would I, but it's one of those symmetry things.
+block/blk-cgroup.c:243:57-67: ERROR: function blkg_create called on line 1260 inside lock on line 1259 but uses GFP_KERNEL
+block/blk-cgroup.c:243:57-67: ERROR: function blkg_create called on line 922 inside lock on line 911 but uses GFP_KERNEL
 
-Likely, someone would eventually complain if their old
-icc/clang compiler failed to produce a functional kernel.
+Generated by: scripts/coccinelle/locks/call_kern.cocci
 
-If the minimum versions aren't really known and nobody
-notices, then it really doesn't matter.
+Fixes: 6ef69a3a0b4a ("blkcg: change blkg reference counting to use percpu_ref")
+CC: Dennis Zhou (Facebook) <dennisszhou@gmail.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+---
 
+url:    https://github.com/0day-ci/linux/commits/Dennis-Zhou/blkcg-ref-count-refactor-cleanup-blkcg-avg_lat/20180831-161742
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+:::::: branch date: 10 hours ago
+:::::: commit date: 10 hours ago
+
+The kbuild report doesn't include enough context to check this.  Please
+check whether this is appropriate and whether another approach would be
+better.
+
+
+ blk-cgroup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -240,7 +240,7 @@ static struct blkcg_gq *blkg_create(stru
+ 		blkg_get(blkg->parent);
+ 	}
+
+-	ret = percpu_ref_init(&blkg->refcnt, __blkg_release, 0, GFP_KERNEL);
++	ret = percpu_ref_init(&blkg->refcnt, __blkg_release, 0, GFP_ATOMIC);
+ 	if (ret)
+ 		goto err_cancel_ref;
 
