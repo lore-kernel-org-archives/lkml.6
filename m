@@ -2,125 +2,434 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3082C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FBAC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE6E2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:05:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hvMTBjvu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE6E2083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 3495820837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:05:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3495820837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbeHaNLa (ORCPT
+        id S1727954AbeHaNLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 09:11:30 -0400
-Received: from mail-eopbgr40051.outbound.protection.outlook.com ([40.107.4.51]:53088
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727334AbeHaNLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 09:11:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vn9q/nFhBobgbe0QBdNlauvTWWK1unTUFaHZyi/W+kk=;
- b=hvMTBjvulel8rpXbPPdv/dCD0wkJuGxrwghD7+VdNl6lqeAbSeRBKez7JXphfblrpWePWkSCTbxDxdEyPuqBC3m1tdpR+SPB5Eovw2dEZkrnlBOeUrmNCXmo0eBdPEBuMezm3R9gW8sVbq1f9duCGqRPUln67WrCUTEkciTtfeU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-Received: from idcbfarm.ap.freescale.net (14.143.30.134) by
- DB5PR04MB1032.eurprd04.prod.outlook.com (2a01:111:e400:510c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.17; Fri, 31 Aug
- 2018 09:04:50 +0000
-From:   Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-To:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com
-Cc:     computersforpeace@gmail.com, frieder.schrempf@exceet.de,
-        linux-kernel@vger.kernel.org, david.wolfe@nxp.com,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH 0/2] mtd: spi-nor: add entry for mt35xu512aba flash
-Date:   Fri, 31 Aug 2018 14:33:00 +0530
-Message-Id: <1535706182-26804-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 31 Aug 2018 09:11:37 -0400
+Received: from mga14.intel.com ([192.55.52.115]:5677 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbeHaNLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 09:11:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 02:05:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,309,1531810800"; 
+   d="scan'208";a="253427205"
+Received: from ssirohi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.48.112])
+  by orsmga005.jf.intel.com with ESMTP; 31 Aug 2018 02:02:16 -0700
+Date:   Fri, 31 Aug 2018 12:02:15 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] tpm: add support for nonblocking operation
+Message-ID: <20180831090215.GE12908@linux.intel.com>
+References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
+ <153419237887.8189.7276823203064056845.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [14.143.30.134]
-X-ClientProxiedBy: SG2PR06CA0128.apcprd06.prod.outlook.com
- (2603:1096:1:1d::30) To DB5PR04MB1032.eurprd04.prod.outlook.com
- (2a01:111:e400:510c::18)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c82191f2-c7fe-4ed4-bd81-08d60f20d10c
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1032;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1032;3:YWZUlLmtk0ZvXWfWcs3RuA6j0bltcoyly+iwWdiYplxU4Et/JiK0ML63WuWhCE3k53XVlH6NQTiGN5RDhyN05nl0tadohnfVXwN/wO/WeUytxLZNjiYrWgDYw1YQ+GnerosV9eGGWbRgXRZRqll3+TkFu238J3nXypF8U39Y1op8nPRZiPQB8wCvOV/+I5CIaK46BSiX8Kq9ymtW1UETELR4zAqEMFWnU5JqZioHeAmyjsBD5KTVx4JZ8FSdNSlN;25:LEOXK3tvM1VQqGSV/YqoLsmPfZpDnLg9eC30p7NMmdK2ZoDykOuR1KLOcQnk4u723ZMB81dOjAR4LhhYjmF//q2gCXEncIPwxUpi7+JY89ul2kw0GoZAfS6lsEyjjUQbm637WbPYZ+ld9TGssdHck+2CVtcrjLRZbDv292Rr+I/RtcHyahxiSPAvL8O2bq81W9HYXiv9m+cIj97hKkyr3ABDWNzi/gBMnEmrQw11tElammudp+DcCgvvafiz5QeOJXg+VCMwTe6deL3qNIBYKM1YJRXBiqIlS9mKDfC8ebIJjt2RWtWAWEm8X7fiujaP7NnKIct/032DHDtD2fURCw==;31:8/4PPCMokrdbSaLglQmGhIr1+YAFtZbxX4fkgHCOUAVdSHidEk3ZlB+m7FNJtRBeRLhFGRQMnKAKz58i0bZwCCKsJzoTL1Pre7hOU2D/VaGnQBUD1n0IfcZXfC2T+aqFNWzZgDYLS0RChIJ37Rl1Olf1254rWHhDTMsKc8XDaceyQTINCn88gKp61T46ku17JMEpGsDlmsolQCZ1CjTURTAFtdws2YZ5ghUu+5bn6Fo=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1032:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1032;20:KQ6tx8dFDY/h41a5XJwmCkK91Y+TLhSkhxORTZoujYAw5GHF8GH/NHnua1h14Bi8lPtvOYOaYiL5BRlfDLFlbSYTKIb7oIqk+rjyeJXBymWN4Ucwb4/FeHJB7MMKudvm/wUxo5Mx3NZ2sPHppid2rzJtmWZFrl/wRNGUWgh27MZraUCG0IJh8fa4A1NDHTvseWlWyL99SXm6tXT2tTYncpI2wpsQ07kBAkg/L6zYER951CjmSCPPpi6KYbG16yh7bHPboM5HOK+RLrBr/NL5iraf1OKY2BnsmZ1qSepdWfFOylOQapdCYwbOxeuYINLUaN//RRS87Hcw7e32CY2tC0jK73WL7AhFOAOvE+WT6KO6ojowRH5H2X3++elrJbkNIi4FfmpwcESjeaq23ykPzHWIk+4GVmdP0gSbGXZ84380CF8k9BK2WiiWAZmt8iCyRn8ddLiBbwDITblUjdnCvzmK1p3LPmcHoLnsaFFgzpXb8Bi8mHaqRn8YzURmmmEX;4:I4qrtJlC4mv3XLEs111uBhzUYfjesbYNJXIeCGOIF/bCFwJ0601ccS5rPs8cqrAzGbTO+2JrhQQ9zF8PbxQncbRheQegU1FOQ02T8MS9o3FP5JZZKQxU1aw8bRep+qVH1e5kW7/vmvs1+tEIBRaWoljD+c0qRCV6SWqQZstX1bll6DqQpP2YlFID23JEE7XDHsT7bUOqHA/0/YH68Jj3bUUUvyRfH9Lm153tj54/ryoTV/ogvXrqAjjqwT56MnelRd53+GAurCUvyDs9D8RsBg==
-X-Microsoft-Antispam-PRVS: <DB5PR04MB103252AB5D6CA401627F897B990F0@DB5PR04MB1032.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699016);SRVR:DB5PR04MB1032;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1032;
-X-Forefront-PRVS: 07817FCC2D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(366004)(199004)(189003)(316002)(6512007)(6116002)(55236004)(8936002)(52116002)(5660300001)(26005)(51416003)(6506007)(386003)(6666003)(50466002)(305945005)(7736002)(3846002)(2906002)(53936002)(81166006)(81156014)(5009440100003)(106356001)(8676002)(105586002)(48376002)(68736007)(478600001)(4326008)(47776003)(486006)(6486002)(476003)(86362001)(50226002)(66066001)(16586007)(16526019)(36756003)(39060400002)(956004)(186003)(2616005)(97736004)(25786009)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1032;H:idcbfarm.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1032;23:Ay33CV3Q3oaLD4tJDLmW4Do+CbPgr4WHWkM4AaCgI?=
- =?us-ascii?Q?JmqQ2BurO3BfSMFfIWwnwDZJNJOkZ6HGgsQdVmGSHvFszCpsZWNkjZ0/dQEP?=
- =?us-ascii?Q?nsT29BbvOKi93nlE7h7lP6MdvTvGDTXKVmGyrTahdwG9IHcyhnqZwiuzZIEt?=
- =?us-ascii?Q?A4MThfmr/0jp0ejAEfL/1cBOAQ/gQ2Ed1D5x6/Qi0ImfO2CWFyQ2sY+XlqVZ?=
- =?us-ascii?Q?swqbY0ga71sqx8jXeDN5m3Kn4BSboTKy005Oe0+G+8d756pKAQfa1/s/Q5MW?=
- =?us-ascii?Q?5cSQZMf247rni0wXFKv+eIuANReubgeSpcEN3pj9lm9Z3lVLN1uCLWC405Ll?=
- =?us-ascii?Q?z8+G4MQKu0cKAm3vn36RHrZxeFihCu9NC69bm8IFEWrMPK9zPLhLItvqvCdx?=
- =?us-ascii?Q?K4UvcK/9rjpoyJAZ8Ik53bMrFGgcqaU3b9dFA3mPuI4hCCAG3mRH59oilIP8?=
- =?us-ascii?Q?CKeF30fKGJZ3wov7H02HRTLTv5qR2ZL5vI10Z9a8NfgN4No+MX8jf1cJEkga?=
- =?us-ascii?Q?IJ6JTonkLiorGPK0f5BKuDEzrzkrXgFThEcy28BbAgONoQplhDlMoqhstpUA?=
- =?us-ascii?Q?qMdHEOKwZnsmk6qtY5WkylfKqlHi0lSTR7/Q/sLwHqykfBbGXA7cUP4Hje+M?=
- =?us-ascii?Q?Pju7ro2mnJvTF/sWkLa++fObGzFPZiwWHC2Z7/DfPup+/rn1teqvPEFYTB+Z?=
- =?us-ascii?Q?JBDT4NHES7mSvdH3Mvx1CouLi4ydB73l0wYw78VCjWwYOI3MonbSO/4UtcBU?=
- =?us-ascii?Q?8H6oUoLp7+3Bzfq9SKWFsjo6ZuAkXrl5HkbJUg7CaHjJgM3u9IPF4zY6Od6F?=
- =?us-ascii?Q?dmL/QSArDc7yph0obXazO79jWCd/DDKhtWR/Exwtk1Qz98LMgutlO5Jcn8rD?=
- =?us-ascii?Q?nUhcQOODIZFEKhDy8lLP0RPOkcKUBnHcjMlrKH/SyrWLVuFGagaPcNWOTYlA?=
- =?us-ascii?Q?nc/277AJF6ZK+4RwNrBzRyS1xnqTvqxlyOV6mTEgJWqSFtl0tFzNRFaQMZnV?=
- =?us-ascii?Q?L/mJh7Mju+u4UABMS8JnqxA1kMzAFGaGZViyhPi9fnYfCeIaxA+nqtymKM97?=
- =?us-ascii?Q?hftvKPvma/k8vWWNi07p2gxZyy7EDdwMYsEpxfr62w3vgI0yxAFUM27nAP9c?=
- =?us-ascii?Q?VWUUQ5IwNoOqRWzuJw9aKlOrjC2j2jn/lSNad6+ZZ4LsVuFGcnL1kvtpdWlt?=
- =?us-ascii?Q?L/LtRZVPmU7liDPGWzwJeoPxANTQqRa1ySa?=
-X-Microsoft-Antispam-Message-Info: vfPFb8SUPI6WE7Hq7o4T/zhE48MREtLMD/0pRV0vkgbVkWkmAWXGPqEDQtbStO8aJZHOX78S0LBxKDScGG2PW/V4XrOUW7FKMQEvwksRYJ1E+lsgdr10+9HK4KfsUZb2w3i8a8YTNISbgdf04bW0jXNRQmHzrfj5ax+OQAoVP4VBTLUvYPGDK4455YbquCnEvU81rMQX4k3Ej5uFQbwh+zypVl1Zm9E7tOXLEAJ90xeAqFQislxRn5PJewi5vbBBoB3jXwL2oaySAXrSugzHriE0GEv/SDvDPai6fzTZSZlxTSN128K2m7gWY6uyizsvxs5R4ih0FbIgiu82BTXK2nvmRARmpEwzyMHRgYaqngU=
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1032;6:YjK9J2PHDoQjVfUxUYrxqVLI9naYTtFeiI83Q2/6YcGC7rr/zOO7nNU8dhW/j2MFRRw3/E9ktjN8Givb46OtL30xCWQuLpmqzNpREYnXxzVTBhBDpSo1j0WqBhHOn35MKVn9D3jYxpPM9XoiTa5OI77OTDd11UrQgwKTo6hQrf+6nsWJyW8RYyjF7z1DQGFDCoX9A9ZwWOFI89X8MxMjHbew4G0mRx+GL/TRuzvZt+Hj6ijCldocGBfc3kiKbiti3NwEIxdBuGnff+xIW7v2fqGaCDO+pyxOtQzIMNNgRaVZbiUwxeFq0P/04a5QM/RL4xyXm3+o8jRu4lDVng60O3UUERPD7xN2fXUxwgviSdhuye1GvmrVFFZmtAvXymgKnIyrqOY48QUMPAloGM8ZtOkH9aUHhwMx1ZPnBUILNZyYP1dfOnb3i30rS1zUNcgXdm3dOWmvQstXV6lNkCAm9w==;5:f+1HmyGQtVGosNg7ccOzNhvgA2FYR9yYhHo0a4SNlk9i5tsdrJOTCBqyHacP+meCiUK5p9q/tbGn1uHzkrTXMqD4FL4mytSjy5OU3H0VCrdNAIdPeq5Vyo+0+SbwexOd0ZIfoJe2qyg0Nbjbpt5JS2UN2Mpa4sP13ZQm7OYC/6o=;7:6Cxgc7NCvx+Abt9UXwuiEZrLF10F861hSxljLehgSQl3uyLQYE+QzLXjnE+zcXIHeM5IjrRjpWMbTl3l0wYUdzxmTT/rhzZyIoQorxefau0hT0jgsQMzHjlSEJxotWHu/ZWC73LEag8FTti6GX2dbUzz8l2ng66OPZYeKuJ/MpC4wOJRaxWOis+qXTOcx5XG/d8Cc1gFqo6nDwBP0ek4n0wGKAb/ss9h+xVed3WR/DFpuC7u5fV+l4Frk5pOOVhN
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2018 09:04:50.7451
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c82191f2-c7fe-4ed4-bd81-08d60f20d10c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1032
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153419237887.8189.7276823203064056845.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MFR_ID information, 0x002C, related to the Micron flash.
-Currently, MFR_ID 0x0020 is being specified as Micron flash ID but
-these are actually CFI ID of STMicro flashes.
+Mon, Aug 13, 2018 at 01:32:58PM -0700, Tadeusz Struk wrote:
+> Currently the TPM driver only supports blocking calls, which doesn't allow
+> asynchronous IO operations to the TPM hardware.
+> This patch changes it and adds support for nonblocking write and a new poll
+> function to enable applications, which want to take advantage of this.
+> 
+> Tested-by: Philip Tricca <philip.b.tricca@intel.com>
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> ---
+>  drivers/char/tpm/tpm-dev-common.c |  142 ++++++++++++++++++++++++++++---------
+>  drivers/char/tpm/tpm-dev.c        |    1 
+>  drivers/char/tpm/tpm-dev.h        |   13 ++-
+>  drivers/char/tpm/tpm-interface.c  |   24 +++++-
+>  drivers/char/tpm/tpm.h            |    2 +
+>  drivers/char/tpm/tpmrm-dev.c      |    1 
+>  6 files changed, 138 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index f0c033b69b62..a7ae0072044b 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -17,11 +17,36 @@
+>   * License.
+>   *
+>   */
+> +#include <linux/poll.h>
+>  #include <linux/slab.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/workqueue.h>
+>  #include "tpm.h"
+>  #include "tpm-dev.h"
+>  
+> +static struct workqueue_struct *tpm_dev_wq;
+> +static DEFINE_MUTEX(tpm_dev_wq_lock);
+> +
+> +static void tpm_async_work(struct work_struct *work)
+> +{
+> +	struct file_priv *priv =
+> +			container_of(work, struct file_priv, async_work);
+> +	ssize_t ret;
+> +
+> +	mutex_lock(&priv->buffer_mutex);
+> +	priv->command_enqueued = false;
+> +	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+> +			   sizeof(priv->data_buffer), 0);
+> +
+> +	tpm_put_ops(priv->chip);
+> +	if (ret > 0) {
+> +		priv->data_pending = ret;
+> +		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+> +	}
+> +	mutex_unlock(&priv->buffer_mutex);
+> +	wake_up_interruptible(&priv->async_wait);
+> +}
+> +
+>  static void user_reader_timeout(struct timer_list *t)
+>  {
+>  	struct file_priv *priv = from_timer(priv, t, user_read_timer);
+> @@ -29,17 +54,19 @@ static void user_reader_timeout(struct timer_list *t)
+>  	pr_warn("TPM user space timeout is deprecated (pid=%d)\n",
+>  		task_tgid_nr(current));
+>  
+> -	schedule_work(&priv->work);
+> +	schedule_work(&priv->timeout_work);
+>  }
+>  
+> -static void timeout_work(struct work_struct *work)
+> +static void tpm_timeout_work(struct work_struct *work)
+>  {
+> -	struct file_priv *priv = container_of(work, struct file_priv, work);
+> +	struct file_priv *priv = container_of(work, struct file_priv,
+> +					      timeout_work);
+>  
+>  	mutex_lock(&priv->buffer_mutex);
+>  	priv->data_pending = 0;
+>  	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+>  	mutex_unlock(&priv->buffer_mutex);
+> +	wake_up_interruptible(&priv->async_wait);
+>  }
+>  
+>  void tpm_common_open(struct file *file, struct tpm_chip *chip,
+> @@ -50,8 +77,9 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+>  
+>  	mutex_init(&priv->buffer_mutex);
+>  	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+> -	INIT_WORK(&priv->work, timeout_work);
+> -
+> +	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
+> +	INIT_WORK(&priv->async_work, tpm_async_work);
+> +	init_waitqueue_head(&priv->async_wait);
+>  	file->private_data = priv;
+>  }
+>  
+> @@ -63,15 +91,17 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+>  	int rc;
+>  
+>  	del_singleshot_timer_sync(&priv->user_read_timer);
+> -	flush_work(&priv->work);
+> +	flush_work(&priv->timeout_work);
+>  	mutex_lock(&priv->buffer_mutex);
+>  
+>  	if (priv->data_pending) {
+>  		ret_size = min_t(ssize_t, size, priv->data_pending);
+> -		rc = copy_to_user(buf, priv->data_buffer, ret_size);
+> -		memset(priv->data_buffer, 0, priv->data_pending);
+> -		if (rc)
+> -			ret_size = -EFAULT;
+> +		if (ret_size > 0) {
+> +			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+> +			memset(priv->data_buffer, 0, priv->data_pending);
+> +			if (rc)
+> +				ret_size = -EFAULT;
+> +		}
+>  
+>  		priv->data_pending = 0;
+>  	}
+> @@ -84,10 +114,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>  			 size_t size, loff_t *off)
+>  {
+>  	struct file_priv *priv = file->private_data;
+> -	size_t in_size = size;
+> -	ssize_t out_size;
+> +	int ret = 0;
+>  
+> -	if (in_size > TPM_BUFSIZE)
+> +	if (size > TPM_BUFSIZE)
+>  		return -E2BIG;
+>  
+>  	mutex_lock(&priv->buffer_mutex);
+> @@ -96,21 +125,20 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>  	 * tpm_read or a user_read_timer timeout. This also prevents split
+>  	 * buffered writes from blocking here.
+>  	 */
+> -	if (priv->data_pending != 0) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return -EBUSY;
+> +	if (priv->data_pending != 0 || priv->command_enqueued) {
+> +		ret = -EBUSY;
+> +		goto out;
+>  	}
+>  
+> -	if (copy_from_user
+> -	    (priv->data_buffer, (void __user *) buf, in_size)) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return -EFAULT;
+> +	if (copy_from_user(priv->data_buffer, buf, size)) {
+> +		ret = -EFAULT;
+> +		goto out;
+>  	}
+>  
+> -	if (in_size < 6 ||
+> -	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return -EINVAL;
+> +	if (size < 6 ||
+> +	    size < be32_to_cpu(*((__be32 *)(priv->data_buffer + 2)))) {
+> +		ret = -EINVAL;
+> +		goto out;
+>  	}
+>  
+>  	/* atomic tpm command send and result receive. We only hold the ops
+> @@ -118,25 +146,50 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>  	 * the char dev is held open.
+>  	 */
+>  	if (tpm_try_get_ops(priv->chip)) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return -EPIPE;
+> +		ret = -EPIPE;
+> +		goto out;
+>  	}
+> -	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+> -				sizeof(priv->data_buffer), 0);
+>  
+> -	tpm_put_ops(priv->chip);
+> -	if (out_size < 0) {
+> +	/*
+> +	 * If in nonblocking mode schedule an async job to send
+> +	 * the command return the size.
+> +	 * In case of error the err code will be returned in
+> +	 * the subsequent read call.
+> +	 */
+> +	if (file->f_flags & O_NONBLOCK) {
+> +		priv->command_enqueued = true;
+> +		queue_work(tpm_dev_wq, &priv->async_work);
+>  		mutex_unlock(&priv->buffer_mutex);
+> -		return out_size;
+> +		return size;
+>  	}
+>  
+> -	priv->data_pending = out_size;
+> +	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+> +			   sizeof(priv->data_buffer), 0);
+> +	tpm_put_ops(priv->chip);
+> +
+> +	if (ret > 0) {
+> +		priv->data_pending = ret;
+> +		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+> +		ret = size;
+> +	}
+> +out:
+>  	mutex_unlock(&priv->buffer_mutex);
+> +	return ret;
+> +}
+>  
+> -	/* Set a timeout by which the reader must come claim the result */
+> -	mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+> +__poll_t tpm_common_poll(struct file *file, poll_table *wait)
+> +{
+> +	struct file_priv *priv = file->private_data;
+> +	__poll_t mask = 0;
+> +
+> +	poll_wait(file, &priv->async_wait, wait);
+>  
+> -	return in_size;
+> +	if (priv->data_pending)
+> +		mask = EPOLLIN | EPOLLRDNORM;
+> +	else
+> +		mask = EPOLLOUT | EPOLLWRNORM;
+> +
+> +	return mask;
+>  }
+>  
+>  /*
+> @@ -144,8 +197,25 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>   */
+>  void tpm_common_release(struct file *file, struct file_priv *priv)
+>  {
+> +	flush_work(&priv->async_work);
+>  	del_singleshot_timer_sync(&priv->user_read_timer);
+> -	flush_work(&priv->work);
+> +	flush_work(&priv->timeout_work);
+>  	file->private_data = NULL;
+>  	priv->data_pending = 0;
+>  }
+> +
+> +
+> +int __init tpm_dev_common_init(void)
+> +{
+> +	tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
+> +
+> +	return !tpm_dev_wq ? -ENOMEM : 0;
+> +}
+> +
+> +void __exit tpm_dev_common_exit(void)
+> +{
+> +	if (tpm_dev_wq) {
+> +		destroy_workqueue(tpm_dev_wq);
+> +		tpm_dev_wq = NULL;
+> +	}
+> +}
+> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+> index 98b9630c3a36..32f9738f1cb2 100644
+> --- a/drivers/char/tpm/tpm-dev.c
+> +++ b/drivers/char/tpm/tpm-dev.c
+> @@ -68,5 +68,6 @@ const struct file_operations tpm_fops = {
+>  	.open = tpm_open,
+>  	.read = tpm_common_read,
+>  	.write = tpm_common_write,
+> +	.poll = tpm_common_poll,
+>  	.release = tpm_release,
+>  };
+> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+> index 4048677bbd78..a126b575cb8c 100644
+> --- a/drivers/char/tpm/tpm-dev.h
+> +++ b/drivers/char/tpm/tpm-dev.h
+> @@ -2,18 +2,22 @@
+>  #ifndef _TPM_DEV_H
+>  #define _TPM_DEV_H
+>  
+> +#include <linux/poll.h>
+>  #include "tpm.h"
+>  
+>  struct file_priv {
+>  	struct tpm_chip *chip;
+>  	struct tpm_space *space;
+>  
+> -	/* Data passed to and from the tpm via the read/write calls */
+> -	size_t data_pending;
+> +	/* Holds the amount of data passed or an error code from async op */
+> +	ssize_t data_pending;
+>  	struct mutex buffer_mutex;
+>  
+>  	struct timer_list user_read_timer;      /* user needs to claim result */
+> -	struct work_struct work;
+> +	struct work_struct timeout_work;
+> +	struct work_struct async_work;
+> +	wait_queue_head_t async_wait;
+> +	bool command_enqueued;
+>  
+>  	u8 data_buffer[TPM_BUFSIZE];
+>  };
+> @@ -24,6 +28,7 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+>  			size_t size, loff_t *off);
+>  ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>  			 size_t size, loff_t *off);
+> -void tpm_common_release(struct file *file, struct file_priv *priv);
+> +__poll_t tpm_common_poll(struct file *file, poll_table *wait);
+>  
+> +void tpm_common_release(struct file *file, struct file_priv *priv);
+>  #endif
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1a803b0cf980..9e280e9b4c5b 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -1407,19 +1407,32 @@ static int __init tpm_init(void)
+>  	tpmrm_class = class_create(THIS_MODULE, "tpmrm");
+>  	if (IS_ERR(tpmrm_class)) {
+>  		pr_err("couldn't create tpmrm class\n");
+> -		class_destroy(tpm_class);
+> -		return PTR_ERR(tpmrm_class);
+> +		rc = PTR_ERR(tpmrm_class);
+> +		goto destroy_tpm_class;
+>  	}
+>  
+>  	rc = alloc_chrdev_region(&tpm_devt, 0, 2*TPM_NUM_DEVICES, "tpm");
+>  	if (rc < 0) {
+>  		pr_err("tpm: failed to allocate char dev region\n");
+> -		class_destroy(tpmrm_class);
+> -		class_destroy(tpm_class);
+> -		return rc;
+> +		goto destroy_tpmrm_class;
+> +	}
+> +
+> +	rc = tpm_dev_common_init();
+> +	if (rc) {
+> +		pr_err("tpm: failed to allocate char dev region\n");
+> +		goto unreg_chrdev;
+>  	}
+>  
+>  	return 0;
+> +
+> +unreg_chrdev:
+> +	unregister_chrdev_region(tpm_devt, 2*TPM_NUM_DEVICES);
+> +destroy_tpmrm_class:
+> +	class_destroy(tpmrm_class);
+> +destroy_tpm_class:
+> +	class_destroy(tpm_class);
 
-Rename SNOR_MFR_MICRON to SNOR_MFR_ST and add entry for
-SNOR_MFR_MICRON having CFI ID value of Micron flash.
-Add entry of mt35xu512aba flash in spi_nor_ids table.
+out_*
 
-Yogesh Gaur (2):
-  mtd: spi-nor: add macros related to MICRON flash
-  mtd: spi-nor: add entry for mt35xu512aba flash
+> +
+> +	return rc;
+>  }
+>  
+>  static void __exit tpm_exit(void)
+> @@ -1428,6 +1441,7 @@ static void __exit tpm_exit(void)
+>  	class_destroy(tpm_class);
+>  	class_destroy(tpmrm_class);
+>  	unregister_chrdev_region(tpm_devt, 2*TPM_NUM_DEVICES);
+> +	tpm_dev_common_exit();
+>  }
+>  
+>  subsys_initcall(tpm_init);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f3501d05264f..f20dc8ece348 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -604,4 +604,6 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>  
+>  int tpm_bios_log_setup(struct tpm_chip *chip);
+>  void tpm_bios_log_teardown(struct tpm_chip *chip);
+> +int tpm_dev_common_init(void);
+> +void tpm_dev_common_exit(void);
+>  #endif
+> diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
+> index 96006c6b9696..0c751a79bbed 100644
+> --- a/drivers/char/tpm/tpmrm-dev.c
+> +++ b/drivers/char/tpm/tpmrm-dev.c
+> @@ -51,5 +51,6 @@ const struct file_operations tpmrm_fops = {
+>  	.open = tpmrm_open,
+>  	.read = tpm_common_read,
+>  	.write = tpm_common_write,
+> +	.poll = tpm_common_poll,
+>  	.release = tpmrm_release,
+>  };
+> 
 
- drivers/mtd/spi-nor/spi-nor.c | 12 +++++++++---
- include/linux/mtd/cfi.h       |  1 +
- include/linux/mtd/spi-nor.h   |  3 ++-
- 3 files changed, 12 insertions(+), 4 deletions(-)
+Otherwise, I did not spot anything obviously wrong. I guess this patch
+set is about ready to be taken soon...
 
--- 
-1.9.1
-
+/Jarkko
