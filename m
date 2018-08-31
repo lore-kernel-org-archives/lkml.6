@@ -6,77 +6,66 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC03C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8F0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19EC720837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:35:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19EC720837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DAF362083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:35:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF362083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeHaMld (ORCPT
+        id S1727876AbeHaMlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:41:33 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39515 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727833AbeHaMld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:41:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2018 01:35:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,309,1531810800"; 
-   d="scan'208";a="67398523"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 31 Aug 2018 01:34:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 95CFB19E; Fri, 31 Aug 2018 11:34:32 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Fri, 31 Aug 2018 08:41:46 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:48968 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727568AbeHaMlp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:41:45 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee65b88fdc401f-7c349; Fri, 31 Aug 2018 16:35:18 +0800 (CST)
+X-RM-TRANSID: 2ee65b88fdc401f-7c349
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5b88fdc5729-5ac8b;
+        Fri, 31 Aug 2018 16:35:18 +0800 (CST)
+X-RM-TRANSID: 2eea5b88fdc5729-5ac8b
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     mark@fasheh.com, jlbec@evilplan.org, ocfs2-devel@oss.oracle.com,
         linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/2] platform/x86: intel_mid_powerbtn: Get rid of custom ICPU() macro
-Date:   Fri, 31 Aug 2018 11:34:31 +0300
-Message-Id: <20180831083432.15872-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+Subject: [PATCH] ocfs2: Fix unneeded null check
+Date:   Fri, 31 Aug 2018 16:35:14 +0800
+Message-Id: <1535704514-26559-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace custom grown macro with generic INTEL_CPU_FAM6() one.
+null check for kfree is unnecessary, so remove it.
 
-No functional change intended.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>w
 ---
- drivers/platform/x86/intel_mid_powerbtn.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/ocfs2/aops.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_mid_powerbtn.c b/drivers/platform/x86/intel_mid_powerbtn.c
-index d79fbf924b13..c93299002169 100644
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@ -121,12 +121,9 @@ static const struct mid_pb_ddata mrfld_ddata = {
- 	.setup	= mrfld_setup,
- };
- 
--#define ICPU(model, ddata)	\
--	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, (kernel_ulong_t)&ddata }
--
- static const struct x86_cpu_id mid_pb_cpu_ids[] = {
--	ICPU(INTEL_FAM6_ATOM_PENWELL,		mfld_ddata),
--	ICPU(INTEL_FAM6_ATOM_MERRIFIELD,	mrfld_ddata),
-+	INTEL_CPU_FAM6(ATOM_PENWELL,		mfld_ddata),
-+	INTEL_CPU_FAM6(ATOM_MERRIFIELD,		mrfld_ddata),
- 	{}
- };
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 302cd7c..da578ad 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -1392,8 +1392,7 @@ static int ocfs2_unwritten_check(struct inode *inode,
+ unlock:
+ 	spin_unlock(&oi->ip_lock);
+ out:
+-	if (new)
+-		kfree(new);
++	kfree(new);
+ 	return ret;
+ }
  
 -- 
-2.18.0
+1.9.1
+
+
 
