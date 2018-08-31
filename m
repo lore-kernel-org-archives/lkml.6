@@ -2,91 +2,109 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84CBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 250C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D39F20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D39F20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D506A20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 09:53:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PP3cIKmP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D506A20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbeHaOAU (ORCPT
+        id S1727956AbeHaOAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:00:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55438 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726493AbeHaOAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:00:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1285918A;
-        Fri, 31 Aug 2018 02:53:39 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D75673F721;
-        Fri, 31 Aug 2018 02:53:38 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 7288B1AE3614; Fri, 31 Aug 2018 10:53:51 +0100 (BST)
-Date:   Fri, 31 Aug 2018 10:53:51 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
- causes kernel crash
-Message-ID: <20180831095351.GD13166@arm.com>
-References: <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
- <20180830094411.GX24124@hirez.programming.kicks-ass.net>
- <20180830095148.GB5942@arm.com>
- <1535629996.4465.44.camel@synopsys.com>
- <20180830141713.GN24082@hirez.programming.kicks-ass.net>
- <20180830142354.GB13005@arm.com>
- <20180830142920.GO24082@hirez.programming.kicks-ass.net>
- <C2D7FE5348E1B147BCA15975FBA23075012B090EA4@us01wembx1.internal.synopsys.com>
- <20180830204515.GC24124@hirez.programming.kicks-ass.net>
- <C2D7FE5348E1B147BCA15975FBA23075012B090FF3@us01wembx1.internal.synopsys.com>
+        Fri, 31 Aug 2018 10:00:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45760 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbeHaOAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 10:00:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1Z9clxjW3U+Fz0CBnB0Xf1KD0++mL+Gum5NfWi0pfRE=; b=PP3cIKmP5FW8cPZQltFqraD5M
+        SBQU8PR7OlGE+W8n5eIueLjaMEnKjNuNFP5eZA5Cu37PMu73qny/kfL1O+HU7unmyruQH4XaPNO83
+        T8gQJ9kPmpC5NEhEyjfjK9y6L830NFfSOQ/hKGtXJPhJ5Yl9eUvr6+0G0cIAZmqn8Fo8wBXlwPKCU
+        q3elfpJ0qy6wFWOnkCFaNsttVrywd1grQSd1sy133xNymKAK37E6adqngjveQ+envgjiFkaY0IiWs
+        Ervf3MSWMFcWtiOhf4gqnbeUIsn7HKJKL4Q6PGyzHN9Ja+F75PhacrTMrhs6/rxhjLYbRdgTtcD3U
+        OJlOsVqjw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fvg6v-0006BR-7p; Fri, 31 Aug 2018 09:53:01 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 12B222024D700; Fri, 31 Aug 2018 11:53:00 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 11:53:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     yu-cheng.yu@intel.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+Message-ID: <20180831095300.GF24124@hirez.programming.kicks-ass.net>
+References: <ce051b5b-feef-376f-e085-11f65a5f2215@linux.intel.com>
+ <1535649960.26689.15.camel@intel.com>
+ <33d45a12-513c-eba2-a2de-3d6b630e928e@linux.intel.com>
+ <1535651666.27823.6.camel@intel.com>
+ <CAG48ez3ixWROuQc6WZze6qPL6q0e_gCnMU4XF11JUWziePsBJg@mail.gmail.com>
+ <1535660494.28258.36.camel@intel.com>
+ <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
+ <1535662366.28781.6.camel@intel.com>
+ <CAG48ez0mkr95_TbLQnDGuGUd6G+eJVLZ-fEjDkwA6dSrm+9tLw@mail.gmail.com>
+ <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075012B090FF3@us01wembx1.internal.synopsys.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:30:50AM +0000, Vineet Gupta wrote:
-> On 08/30/2018 01:45 PM, Peter Zijlstra wrote:
-> >>
-> >> Indeed this is the mother of all issues, I tried and system is clearly hosed with
-> >> and works after.
-> >> What's amazing is the commit 4aef66c8ae9 which introduced it is from 2016 ;-)
-> >> Back then we had a retry branch with backoff stuff which I'd reverted for new
-> >> cores and the merge conflict somehow missed it.
-> >>
-> >> @PeterZ I'll create a patch with you as author ? do I need any formal sign offs,
-> >> acks etc ?
-> > Well, Will spotted it, give authorship to him, you have my ack per the
-> > above.
-> 
-> Oops, sorry for the mixup. I have him as author now and pushed to ARC for-curr
-> (will trickle into linux-next eventually).
+On Thu, Aug 30, 2018 at 11:47:16PM +0200, Jann Horn wrote:
+>         do {
+>                 pte = pte_wrprotect(pte);
+>                 /* note: relies on _PAGE_DIRTY_HW < _PAGE_DIRTY_SW */
+>                 /* dirty direct bit-twiddling; you can probably write
+> this in a nicer way */
+>                 pte.pte |= (pte.pte & _PAGE_DIRTY_HW) >>
+> _PAGE_BIT_DIRTY_HW << _PAGE_BIT_DIRTY_SW;
+>                 pte.pte &= ~_PAGE_DIRTY_HW;
+>                 pte = cmpxchg(ptep, pte, new_pte);
+>         } while (pte != new_pte);
 
-Okey doke: you can have my Signed-off-by for all the diffs I sent. Just
-stick something like [vineet: wrote commit message] in there so I don't
-read it in the future and confuse myself.
+Please use the form:
 
-Will
+	pte_t new_pte, pte = READ_ONCE(*ptep);
+	do {
+		new_pte = /* ... */;
+	} while (!try_cmpxchg(ptep, &pte, new_pte);
+
+Also, this will fail to build on i386-PAE, but I suspect this code will
+be under some CONFIG option specific to x86_64 anyway.
