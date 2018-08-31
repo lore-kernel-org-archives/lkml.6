@@ -2,110 +2,104 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF01EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E65C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CAA205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C93B20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 04:07:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pjGWCFMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73CAA205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzT5WD4Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C93B20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeHaIKm (ORCPT
+        id S1727389AbeHaIMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 04:10:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37829 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeHaIKm (ORCPT
+        Fri, 31 Aug 2018 04:12:33 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37201 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbeHaIMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 04:10:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h69-v6so4871975pfd.4;
-        Thu, 30 Aug 2018 21:05:14 -0700 (PDT)
+        Fri, 31 Aug 2018 04:12:32 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 2-v6so4328994pgo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Aug 2018 21:07:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z46n0wduPsEaOdgxNWpXk3tEJ2iITByCBgWgiDu8634=;
-        b=pjGWCFMnSnjTT3ulrmq2owqOWO13ODcrrfE4ShHBMuui/6Y2esK/juXUdZU5yG6Q2c
-         cnLF6bqDjOlUEuo2G4TvClkYNeD/MRGKH+srP/jaGL9XTn/+gE9jZLLPXbpBlKA5h8Qd
-         pdtby5mHL5njdV6EvBIYSVZJZ+GrBhxM5XRqwaWblnC6/+XU2fLnqX5MP0uLL9Wx9K8b
-         FaO32SNN6+Pnj79y2xAMztM90jSn7eVR7TiDiC23J0VWhqbcLLeKTyS9z531GJdVIlKo
-         JTl6nmuIDqA8q4W7s5F73U9ZunNZ1zsW9Kd055IRrqvIT8i8EmDpJj5uw0SM0ypIfZPc
-         M7tw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JQBrcTtvzZP55kytZs/3r+01JQDNP6a75skkMQLDNjE=;
+        b=fzT5WD4QbyEOyRIhaVpo2EvVTC9R0g9MXHJQ3sASOhvbcf6qPfH8CPhlCWm7Pfa0Oe
+         QxpxkfTgD0+Ltp/Pkr7RB7iua79W3SCheAZU/GSR0FfWtRHPMjrttKOIpNAfiF8C2Fjw
+         zGBv2X1p/DxqaQaBj+qRGJDXsvuHETqOsztA8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z46n0wduPsEaOdgxNWpXk3tEJ2iITByCBgWgiDu8634=;
-        b=cf3e8PRgWIwrrdploy9cASDlu7uYuMi+yGydcTPvRbfBxTpiSr29KfmL5KYi9QeQbT
-         tvcKFOjov+7+zSY7fl5Hn5Tu969+34Mn4P00NC/GX9ZAhGdUW1uCX7tivjcQ72+RseJn
-         iv/Erg42GMFJ/bdAMHJf/FFrEbmXWQu1x5hkEsjWas1omVDL+0B9dcKU1A6upyzpMit8
-         yB+ZkepRY143evNNWGntywvb0zdSMc+Cuc93t6IY1ERJTU75aYRuckSsQw+5CdBIRDRC
-         9vaQTJY4M9ATfP14Yw7mWTO5mijxcVMFo2XS77Ixbz/Pseg8iUzQLyBDWOOytF5vXTtm
-         3JEg==
-X-Gm-Message-State: APzg51A2r/+h/9ru4Gw6JY2JFlPHtuGmwJNspRRXo3a6vUpYodGSnZlZ
-        MSJ5Hu5IZwheWoV0gRCe6KU=
-X-Google-Smtp-Source: ANB0VdYT46B9xkvL265bJUfIZgSKCvnOWR6oWAYx+vKsfHm9rF+oEXDYhVlI9OpSxNn8KSyidsCQyQ==
-X-Received: by 2002:a62:1544:: with SMTP id 65-v6mr13628522pfv.178.1535688314167;
-        Thu, 30 Aug 2018 21:05:14 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id o34-v6sm13264179pgm.44.2018.08.30.21.05.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 21:05:13 -0700 (PDT)
-Subject: Re: [PATCH v3] rpmsg: qcom_smd: Access APCS through mailbox framework
-From:   Frank Rowand <frowand.list@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JQBrcTtvzZP55kytZs/3r+01JQDNP6a75skkMQLDNjE=;
+        b=UTaSxwqSZYS3qUp/7WpudZV3HoadkceDp/FHF8psPNqBF8tGCljGy4p32SZ6eVn5+y
+         Aj85ygGHuULiM04oDPEyRqyazC3uMP5D73YrkQ2BaYNU9FmYhg3E86Sd7hw3Ge5vXcod
+         oXpdCW3CkwHd/iW7CVuBIccIPLGAUcyUG9CNL7TUxsB8G4Ulviqg2jxgFsOQ4gNtFxsf
+         4PguvJN98eTUtI371yCVVCXRSBhHut84QsKJ1wQkoIlERK3+rdc20UQK27SVTFDzn693
+         /gC1dMRqtF1BoO534gFgfpK8tjXzovAndxLiyaKgsN7RyXugLE52qQleBR1+YgiPYWeY
+         UbUA==
+X-Gm-Message-State: APzg51CXX6uzBf+H/IAamzJ7l0rkZT17e4IMjnSp2tCIuKGOY3i2e4KN
+        q36NxKQ7xYKOEAY8uVVXVTgg8g==
+X-Google-Smtp-Source: ANB0VdZZgppU+DY7WhGEIuO4Ov7ysKTBkLZDi96tAj6YCXBR8O68/iDlaPkDsMMalebWPOC8j0gcmA==
+X-Received: by 2002:a63:6a06:: with SMTP id f6-v6mr1188202pgc.63.1535688424565;
+        Thu, 30 Aug 2018 21:07:04 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id e186-v6sm18451634pfg.187.2018.08.30.21.07.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 Aug 2018 21:07:03 -0700 (PDT)
+Date:   Thu, 30 Aug 2018 21:07:01 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Subject: Re: [PATCH v3] rpmsg: qcom_smd: Access APCS through mailbox framework
+Message-ID: <20180831040701.GR2523@minitux>
 References: <20180420011757.22389-1-bjorn.andersson@linaro.org>
  <c6e2e87c-e2fd-c0ea-dbb9-5246b8694272@gmail.com>
-Message-ID: <7a9ae9a0-8d26-6968-6357-d5347cc44333@gmail.com>
-Date:   Thu, 30 Aug 2018 21:05:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <c6e2e87c-e2fd-c0ea-dbb9-5246b8694272@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/18 20:57, Frank Rowand wrote:
+On Thu 30 Aug 20:57 PDT 2018, Frank Rowand wrote:
+
 > Hi Bjorn,
 > 
 > 
 > On 04/19/18 18:17, Bjorn Andersson wrote:
->> Attempt to acquire the APCS IPC through the mailbox framework and fall
->> back to the old syscon based approach, to allow us to move away from
->> using the syscon.
->>
->> Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
->> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
->>
->> Changes since v2:
->> - Added comment about mbox_send_message() return value.
->>
->>  .../devicetree/bindings/soc/qcom/qcom,smd.txt      |  8 ++-
->>  drivers/rpmsg/Kconfig                              |  1 +
->>  drivers/rpmsg/qcom_smd.c                           | 67 ++++++++++++++++------
->>  3 files changed, 56 insertions(+), 20 deletions(-)
+> > Attempt to acquire the APCS IPC through the mailbox framework and fall
+> > back to the old syscon based approach, to allow us to move away from
+> > using the syscon.
+> > 
+> > Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> > 
+> > Changes since v2:
+> > - Added comment about mbox_send_message() return value.
+> > 
+> >  .../devicetree/bindings/soc/qcom/qcom,smd.txt      |  8 ++-
+> >  drivers/rpmsg/Kconfig                              |  1 +
+> >  drivers/rpmsg/qcom_smd.c                           | 67 ++++++++++++++++------
+> >  3 files changed, 56 insertions(+), 20 deletions(-)
 > 
 > This patch in the mainline Linux kernel as commit ab460a2e72dabecfdabd45eb7e3ee2d73fc876d4
 > causes a problem with the APQ8074 Dragonboard.  The mmc device is not set up
@@ -116,346 +110,178 @@ On 08/30/18 20:57, Frank Rowand wrote:
 > 
 > I'll reply to this email with the console messages for 4.18 and for 4.18 with
 > this commit reverted.
+> 
 
+The mmc device would fail to come up if the regulators didn't come up,
+which would be the result of smd not working. But it should fallback to
+the old mechanism if no mailbox is specified.
 
+Can you double check that CONFIG_RPMSG_QCOM_SMD is still set in your
+.config after applying and building with this commit included? And if
+not, try to enable CONFIG_MAILBOX.
 
-< snip >
+Regards,
+Bjorn
 
-Note that I have commented out the WARN_ON() in gic_irq_domain_translate()
-at drivers/irqchip/irq-gic.c:1016 to remove a lot of noise from the boot
-messages.
-
-Here are the console messages for 4.18, with ab460a2e72da reverted:
-
-Android Bootloader - UART_DM Initialized!!!
-[0] welcome to lk
-
-[10] platform_init()
-[10] target_init()
-[10] Display Init: Start
-[10] display_init(),target_id=10.
-[30] Config MIPI_VIDEO_PANEL.
-[30] Turn on MIPI_VIDEO_PANEL.
-[50] Video lane tested successfully
-[50] Display Init: Done
-[80] Loading keystore failed status 5 [80] ERROR: scm_protect_keystore Failed[200] USB init ept @ 0xf96b000
-[220] fastboot_init()
-[220] udc_start()
-[350] -- reset --
-[350] -- portchange --
-[460] -- reset --
-[460] -- portchange --
-[650] fastboot: processing commands
-[760] fastboot: download:00ed6000
-[1250] fastboot: boot
-[1270] Found Appeneded Flattened Device tree
-[1270] cmdline: console=ttyMSM0,115200,n8 androidboot.hardware=qcom user_debug=31 maxcpus=2 msm_rtb.filter=0x37 ehci-hcd.park=3 kgdboc=ttyMSM0,115200 debug and
-roidboot.emmc=true androidboot.serialno=40081c41 androidboot.baseband=apq
-[1290] Updating device tree: start
-[1300] Updating device tree: done
-[1300] booting linux @ 0x8000, ramdisk @ 0x2000000 (9533134), tags/device tree @ 0x1e00000
-[1310] Turn off MIPI_VIDEO_PANEL.
-[1310] Continuous splash enabled, keeping panel alive.
-Booting Linux on physical CPU 0x0
-Linux version 4.18.0-dirty (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #2 SMP PREEMPT Thu Aug 30 20:26:18 PDT 2018
-CPU: ARMv7 Processor [512f06f0] revision 0 (ARMv7), cr=10c5787d
-CPU: div instructions available: patching division code
-CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
-OF: fdt: Machine model: Qualcomm APQ8074 Dragonboard
-Memory policy: Data cache writealloc
-On node 0 totalpages: 491776
-  Normal zone: 1536 pages used for memmap
-  Normal zone: 0 pages reserved
-  Normal zone: 164096 pages, LIFO batch:31
-  HighMem zone: 327680 pages, LIFO batch:31
-random: get_random_bytes called from start_kernel+0x80/0x47c with crng_init=0
-percpu: Embedded 17 pages/cpu @(ptrval) s39616 r8192 d21824 u69632
-pcpu-alloc: s39616 r8192 d21824 u69632 alloc=17*4096
-pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 
-Built 1 zonelists, mobility grouping on.  Total pages: 490240
-Kernel command line: console=ttyMSM0,115200,n8 androidboot.hardware=qcom user_debug=31 maxcpus=2 msm_rtb.filter=0x37 ehci-hcd.park=3 kgdboc=ttyM
-SM0,115200 debug androidboot.emmc=true androidboot.serialno=40081c41 androidboot.baseband=apq
-Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
-Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-Memory: 1926832K/1967104K available (8192K kernel code, 793K rwdata, 3260K rodata, 1024K init, 267K bss, 40272K reserved, 0K cma-reserved, 13107
-20K highmem)
-Virtual kernel memory layout:
-    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-    fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-    vmalloc : 0xf0800000 - 0xff800000   ( 240 MB)
-    lowmem  : 0xc0000000 - 0xf0000000   ( 768 MB)
-    pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
-    modules : 0xbf000000 - 0xbfe00000   (  14 MB)
-      .text : 0x(ptrval) - 0x(ptrval)   (9184 kB)
-      .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-      .data : 0x(ptrval) - 0x(ptrval)   ( 794 kB)
-       .bss : 0x(ptrval) - 0x(ptrval)   ( 268 kB)
-SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
-Preemptible hierarchical RCU implementation.
- Tasks RCU enabled.
-NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-arch_timer: cp15 and mmio timer(s) running at 19.20MHz (virt/virt).
-clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x46d987e47, max_idle_ns: 440795202767 ns
-sched_clock: 56 bits at 19MHz, resolution 52ns, wraps every 4398046511078ns
-Switching to timer-based delay loop, resolution 52ns
-Console: colour dummy device 80x30
-Calibrating delay loop (skipped), value calculated using timer frequency.. 38.40 BogoMIPS (lpj=192000)
-pid_max: default: 32768 minimum: 301
-Mount-cache hash table entries: 2048 (order: 1, 8192 bytes)
-Mountpoint-cache hash table entries: 2048 (order: 1, 8192 bytes)
-CPU: Testing write buffer coherency: ok
-CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-Setting up static identity map for 0x300000 - 0x300060
-Hierarchical SRCU implementation.
-smp: Bringing up secondary CPUs ...
-CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-smp: Brought up 1 node, 2 CPUs
-SMP: Total of 2 processors activated (76.80 BogoMIPS).
-CPU: All CPU(s) started in SVC mode.
-devtmpfs: initialized
-VFP support v0.3: implementor 51 architecture 64 part 6f variant 2 rev 0
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-futex hash table entries: 1024 (order: 4, 65536 bytes)
-pinctrl core: initialized pinctrl subsystem
-NET: Registered protocol family 16
-DMA: preallocated 256 KiB pool for atomic coherent allocations
-cpuidle: using governor menu
-hw-breakpoint: found 5 (+1 reserved) breakpoint and 4 watchpoint registers.
-hw-breakpoint: maximum watchpoint size is 8 bytes.
-reg-fixed-voltage vreg-boost: could not find pctldev for node /soc/spmi@fc4cf000/pm8941@0/gpios@c000/boost-bypass, deferring probe
-vgaarb: loaded
-SCSI subsystem initialized
-libata version 3.00 loaded.
-usbcore: registered new interface driver usbfs
-usbcore: registered new interface driver hub
-usbcore: registered new device driver usb
-Advanced Linux Sound Architecture Driver Initialized.
-clocksource: Switched to clocksource arch_sys_counter
-NET: Registered protocol family 2
-tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 6144 bytes)
-TCP established hash table entries: 8192 (order: 3, 32768 bytes)
-TCP bind hash table entries: 8192 (order: 4, 65536 bytes)
-TCP: Hash tables configured (established 8192 bind 8192)
-UDP hash table entries: 512 (order: 2, 16384 bytes)
-UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
-NET: Registered protocol family 1
-RPC: Registered named UNIX socket transport module.
-RPC: Registered udp transport module.
-RPC: Registered tcp transport module.
-RPC: Registered tcp NFSv4.1 backchannel transport module.
-PCI: CLS 0 bytes, default 64
-Trying to unpack rootfs image as initramfs...
-Freeing initrd memory: 9312K
-hw perfevents: enabled with armv7_krait PMU driver, 5 counters available
-Initialise system trusted keyrings
-workingset: timestamp_bits=30 max_order=19 bucket_order=0
-NFS: Registering the id_resolver key type
-Key type id_resolver registered
-Key type id_legacy registered
-jffs2: version 2.2. (NAND) �© 2001-2006 Red Hat, Inc.
-fuse init (API version 7.27)
-Key type asymmetric registered
-Asymmetric key parser 'x509' registered
-bounce: pool size: 64 pages
-Block layer SCSI generic (bsg) driver version 0.4 loaded (major 250)
-io scheduler noop registered
-io scheduler deadline registered
-io scheduler cfq registered (default)
-io scheduler mq-deadline registered
-io scheduler kyber registered
-msm_serial f991e000.serial: msm_serial: detected port #0
-msm_serial f991e000.serial: uartclk = 7372800
-f991e000.serial: ttyMSM0 at MMIO 0xf991e000 (irq = 27, base_baud = 460800) is a MSM
-msm_serial: console setup on port #0
-console [ttyMSM0] enabled
-msm_serial: driver initialized
-brd: module loaded
-loop: module loaded
-SCSI Media Changer driver v0.25 
-spmi spmi-0: PMIC arbiter version v1 (0x20000002)
-s1: supplied by regulator-dummy
-s2: supplied by regulator-dummy
-s3: supplied by regulator-dummy
-s4: Bringing 5100000uV into 5000000-5000000uV
-l1: supplied by regulator-dummy
-l2: supplied by regulator-dummy
-l3: supplied by regulator-dummy
-l4: supplied by regulator-dummy
-l5: supplied by regulator-dummy
-l6: supplied by regulator-dummy
-l7: supplied by regulator-dummy
-l8: supplied by regulator-dummy
-l9: supplied by regulator-dummy
-l10: supplied by regulator-dummy
-l11: supplied by regulator-dummy
-l12: supplied by regulator-dummy
-l13: supplied by regulator-dummy
-l14: supplied by regulator-dummy
-l15: supplied by regulator-dummy
-l16: supplied by regulator-dummy
-l17: supplied by regulator-dummy
-l18: supplied by regulator-dummy
-l19: supplied by regulator-dummy
-l20: supplied by regulator-dummy
-l21: supplied by regulator-dummy
-l22: supplied by regulator-dummy
-l23: supplied by regulator-dummy
-l24: supplied by regulator-dummy
-lvs1: supplied by regulator-dummy
-lvs2: supplied by regulator-dummy
-lvs3: supplied by regulator-dummy
-5vs1: supplied by s4
-5vs2: supplied by s4
-libphy: Fixed MDIO Bus: probed
-SLIP: version 0.8.4-NET3.019-NEWTTY (dynamic channels, max=256) (6 bit encapsulation enabled).
-CSLIP: code copyright 1989 Regents of the University of California.
-usbcore: registered new interface driver ax88179_178a
-usbcore: registered new interface driver cdc_ether
-usbcore: registered new interface driver net1080
-usbcore: registered new interface driver cdc_subset
-usbcore: registered new interface driver cdc_ncm
-ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-ehci-pci: EHCI PCI platform driver
-usbcore: registered new interface driver cdc_acm
-cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters
-rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: rtc core: registered pm8xxx_rtc as rtc0
-i2c /dev entries driver
-qcom-smbb fc4cf000.spmi:pm8941@0:charger@1000: Initializing SMBB rev 3
-otg-vbus: supplied by 5vs1
-qcom-tsens fc4a8000.thermal-sensor: tsens calibration failed
-cpuidle: enable-method property 'qcom,kpss-acc-v2' found operations
-cpuidle: enable-method property 'qcom,kpss-acc-v2' found operations
-cpuidle: enable-method property 'qcom,kpss-acc-v2' found operations
-cpuidle: enable-method property 'qcom,kpss-acc-v2' found operations
-sdhci: Secure Digital Host Controller Interface driver
-sdhci: Copyright(c) Pierre Ossman
-sdhci-pltfm: SDHCI platform and OF driver helper
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-usbcore: registered new interface driver usbhid
-usbhid: USB HID core driver
-remoteproc remoteproc0: releasing adsp-pil
-oprofile: using timer interrupt.
-NET: Registered protocol family 17
-Key type dns_resolver registered
-Registering SWP/SWPB emulation handler
-Loading compiled-in X.509 certificates
-s1: supplied by regulator-dummy
-s1: Bringing 0uV into 675000-675000uV
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-remoteproc remoteproc0: releasing adsp-pil
-s2: supplied by regulator-dummy
-s2: Bringing 0uV into 500000-500000uV
-rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: setting system clock to 1970-01-01 03:12:34 UTC (11554)
-s3: supplied by regulator-dummy
-cfg80211: Loading compiled-in X.509 certificates for regulatory database
-s3: Bringing 0uV into 500000-500000uV
-s4: supplied by regulator-dummy
-cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-s4: Bringing 0uV into 500000-500000uV
-platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-s5: supplied by regulator-dummy
-ALSA device list:
-s6: supplied by regulator-dummy
-cfg80211: failed to load regulatory.db
-s7: supplied by regulator-dummy
-  No soundcard�[    2.107810] s1: supplied by regulator-dummy
-s1: Bringing 0uV into 1300000-1300000uV
-Freeing unused kernel memory: 1024K
-s2: supplied by regulator-dummy
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-s2: Bringing 0uV into 2150000-2150000uV
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-s3: supplied by regulator-dummy
-s3: Bringing 0uV into 1800000-1800000uV
-remoteproc remoteproc0: releasing adsp-pil
-l1: supplied by s1
-mkdir: can't create directory '/bin': File exists
-mkdir: can't [    2.165006] l1: Bringing 0uV into 1225000-1225000uV
-l2: supplied by s3
-create directory '/dev': File exists
-l2: Bringing 0uV into 1200000-1200000uV
-l3: supplied by s1
-l3: Bringing 0uV into 1225000-1225000uV
-l4: supplied by s1
-mdev: unknown user/group 'root:uucp' on line 34
-l4: Bringing 0uV into 1225000-1225000uV
-l5: supplied by s2
-l5: Bringing 0uV into 1800000-1800000uV
-l6: supplied by s2
-l6: Bringing 0uV into 1800000-1800000uV
-l7: supplied by s2
-l7: Bringing 0uV into 1800000-1800000uV
-l8: supplied by regulator-dummy
-l8: Bringing 0uV into 1800000-1800000uV
-l9: supplied by regulator-dummy
-l9: Bringing 0uV into 1800000-1800000uV
-l10: supplied by regulator-dummy
-l10: Bringing 0uV into 1800000-1800000uV
-l11: supplied by s1
-l11: Bringing 0uV into 1300000-1300000uV
-l12: supplied by s2
-l12: Bringing 0uV into 1800000-1800000uV
-l13: supplied by regulator-dummy
-l13: Bringing 0uV into 1800000-1800000uV
-l14: supplied by s2
-l14: Bringing 0uV into 1800000-1800000uV
-l15: supplied by s2
-l15: Bringing 0uV into 2050000-2050000uV
-l16: supplied by regulator-dummy
-l16: Bringing 0uV into 2700000-2700000uV
-l17: supplied by regulator-dummy
-l17: Bringing 0uV into 2700000-2700000uV
-l18: supplied by regulator-dummy
-l18: Bringing 0uV into 2850000-2850000uV
-l19: supplied by regulator-dummy
-l19: Bringing 0uV into 3300000-3300000uV
-l20: supplied by regulator-dummy
-l20: Bringing 0uV into 2950000-2950000uV
-l21: supplied by regulator-dummy
-l21: Bringing 0uV into 2950000-2950000uV
-l22: supplied by regulator-dummy
-l22: Bringing 0uV into 3000000-3000000uV
-l23: supplied by regulator-dummy
-l23: Bringing 0uV into 3000000-3000000uV
-l24: supplied by regulator-dummy
-l24: Bringing 0uV into 3075000-3075000uV
-lvs1: supplied by s3
-lvs2: supplied by s3
-lvs3: supplied by s3
-5vs1: supplied by s4
-5vs2: supplied by s4
-mmc0: Switching to 3.3V signalling voltage failed
-mmc0: SDHCI controller on f9824900.sdhci [f9824900.sdhci] using ADMA
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-mmc1: SDHCI controller on f98a4900.sdhci [f98a4900.sdhci] using ADMA
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-mmc0: new HS200 MMC card at address 0001
-mmcblk0: mmc0:0001 SEM16G 14.7 GiB 
-mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
-mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
-mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB, chardev (247:0)
-random: fast init done
- mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
-mmc1: new ultra high speed DDR50 SDHC card at address aaaa
-mmcblk1: mmc1:aaaa SU16G 14.8 GiB 
- mmcblk1: p1
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-Attempt to mount partitions: /usr/system /usr/data
-Mounting partitions from: /dev/mmcblk0
-EXT4-fs (mmcblk0p12): mounted filesystem with ordered data mode. Opts: (null)
-EXT4-fs (mmcblk0p13): recovery complete
-EXT4-fs (mmcblk0p13): mounted filesystem with ordered data mode. Opts: (null)
-/ # 
-/ # 
-/ # 
+> -Frank
+> 
+> 
+> > 
+> > diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+> > index ea1dc75ec9ea..234ae2256501 100644
+> > --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+> > +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+> > @@ -22,9 +22,15 @@ The edge is described by the following properties:
+> >  	Definition: should specify the IRQ used by the remote processor to
+> >  		    signal this processor about communication related updates
+> >  
+> > -- qcom,ipc:
+> > +- mboxes:
+> >  	Usage: required
+> >  	Value type: <prop-encoded-array>
+> > +	Definition: reference to the associated doorbell in APCS, as described
+> > +		    in mailbox/mailbox.txt
+> > +
+> > +- qcom,ipc:
+> > +	Usage: required, unless mboxes is specified
+> > +	Value type: <prop-encoded-array>
+> >  	Definition: three entries specifying the outgoing ipc bit used for
+> >  		    signaling the remote processor:
+> >  		    - phandle to a syscon node representing the apcs registers
+> > diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> > index 0fe6eac46512..2e4fb4ffd562 100644
+> > --- a/drivers/rpmsg/Kconfig
+> > +++ b/drivers/rpmsg/Kconfig
+> > @@ -39,6 +39,7 @@ config RPMSG_QCOM_GLINK_SMEM
+> >  
+> >  config RPMSG_QCOM_SMD
+> >  	tristate "Qualcomm Shared Memory Driver (SMD)"
+> > +	depends on MAILBOX
+> >  	depends on QCOM_SMEM
+> >  	select RPMSG
+> >  	help
+> > diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> > index bc0b30657230..3ff271a44bef 100644
+> > --- a/drivers/rpmsg/qcom_smd.c
+> > +++ b/drivers/rpmsg/qcom_smd.c
+> > @@ -14,6 +14,7 @@
+> >  
+> >  #include <linux/interrupt.h>
+> >  #include <linux/io.h>
+> > +#include <linux/mailbox_client.h>
+> >  #include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of_irq.h>
+> > @@ -107,6 +108,8 @@ static const struct {
+> >   * @ipc_regmap:		regmap handle holding the outgoing ipc register
+> >   * @ipc_offset:		offset within @ipc_regmap of the register for ipc
+> >   * @ipc_bit:		bit in the register at @ipc_offset of @ipc_regmap
+> > + * @mbox_client:	mailbox client handle
+> > + * @mbox_chan:		apcs ipc mailbox channel handle
+> >   * @channels:		list of all channels detected on this edge
+> >   * @channels_lock:	guard for modifications of @channels
+> >   * @allocated:		array of bitmaps representing already allocated channels
+> > @@ -129,6 +132,9 @@ struct qcom_smd_edge {
+> >  	int ipc_offset;
+> >  	int ipc_bit;
+> >  
+> > +	struct mbox_client mbox_client;
+> > +	struct mbox_chan *mbox_chan;
+> > +
+> >  	struct list_head channels;
+> >  	spinlock_t channels_lock;
+> >  
+> > @@ -366,7 +372,17 @@ static void qcom_smd_signal_channel(struct qcom_smd_channel *channel)
+> >  {
+> >  	struct qcom_smd_edge *edge = channel->edge;
+> >  
+> > -	regmap_write(edge->ipc_regmap, edge->ipc_offset, BIT(edge->ipc_bit));
+> > +	if (edge->mbox_chan) {
+> > +		/*
+> > +		 * We can ignore a failing mbox_send_message() as the only
+> > +		 * possible cause is that the FIFO in the framework is full of
+> > +		 * other writes to the same bit.
+> > +		 */
+> > +		mbox_send_message(edge->mbox_chan, NULL);
+> > +		mbox_client_txdone(edge->mbox_chan, 0);
+> > +	} else {
+> > +		regmap_write(edge->ipc_regmap, edge->ipc_offset, BIT(edge->ipc_bit));
+> > +	}
+> >  }
+> >  
+> >  /*
+> > @@ -1326,27 +1342,37 @@ static int qcom_smd_parse_edge(struct device *dev,
+> >  	key = "qcom,remote-pid";
+> >  	of_property_read_u32(node, key, &edge->remote_pid);
+> >  
+> > -	syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
+> > -	if (!syscon_np) {
+> > -		dev_err(dev, "no qcom,ipc node\n");
+> > -		return -ENODEV;
+> > -	}
+> > +	edge->mbox_client.dev = dev;
+> > +	edge->mbox_client.knows_txdone = true;
+> > +	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+> > +	if (IS_ERR(edge->mbox_chan)) {
+> > +		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
+> > +			return PTR_ERR(edge->mbox_chan);
+> >  
+> > -	edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
+> > -	if (IS_ERR(edge->ipc_regmap))
+> > -		return PTR_ERR(edge->ipc_regmap);
+> > +		edge->mbox_chan = NULL;
+> >  
+> > -	key = "qcom,ipc";
+> > -	ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
+> > -	if (ret < 0) {
+> > -		dev_err(dev, "no offset in %s\n", key);
+> > -		return -EINVAL;
+> > -	}
+> > +		syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
+> > +		if (!syscon_np) {
+> > +			dev_err(dev, "no qcom,ipc node\n");
+> > +			return -ENODEV;
+> > +		}
+> >  
+> > -	ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
+> > -	if (ret < 0) {
+> > -		dev_err(dev, "no bit in %s\n", key);
+> > -		return -EINVAL;
+> > +		edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
+> > +		if (IS_ERR(edge->ipc_regmap))
+> > +			return PTR_ERR(edge->ipc_regmap);
+> > +
+> > +		key = "qcom,ipc";
+> > +		ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "no offset in %s\n", key);
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
+> > +		if (ret < 0) {
+> > +			dev_err(dev, "no bit in %s\n", key);
+> > +			return -EINVAL;
+> > +		}
+> >  	}
+> >  
+> >  	ret = of_property_read_string(node, "label", &edge->name);
+> > @@ -1452,6 +1478,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+> >  	return edge;
+> >  
+> >  unregister_dev:
+> > +	if (!IS_ERR_OR_NULL(edge->mbox_chan))
+> > +		mbox_free_channel(edge->mbox_chan);
+> >  	put_device(&edge->dev);
+> >  	return ERR_PTR(ret);
+> >  }
+> > @@ -1480,6 +1508,7 @@ int qcom_smd_unregister_edge(struct qcom_smd_edge *edge)
+> >  	if (ret)
+> >  		dev_warn(&edge->dev, "can't remove smd device: %d\n", ret);
+> >  
+> > +	mbox_free_channel(edge->mbox_chan);
+> >  	device_unregister(&edge->dev);
+> >  
+> >  	return 0;
+> > 
+> 
