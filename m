@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5364AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EE8C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C8D205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:35:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C8D205C9
+	by mail.kernel.org (Postfix) with ESMTP id EA8C7205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8C7205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbeHaSnB (ORCPT
+        id S1728666AbeHaSnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:43:01 -0400
-Received: from mout.gmx.net ([212.227.17.22]:35483 "EHLO mout.gmx.net"
+        Fri, 31 Aug 2018 14:43:10 -0400
+Received: from mout.gmx.net ([212.227.17.22]:50685 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbeHaSnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:43:01 -0400
+        id S1727430AbeHaSnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:43:10 -0400
 Received: from localhost.localdomain ([113.87.91.43]) by mail.gmx.com
  (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0Lm6IP-1fMPpD2kBl-00Zbyi; Fri, 31 Aug 2018 16:34:51 +0200
+ 0MDW9x-1g7bYM0HjJ-00Gq9E; Fri, 31 Aug 2018 16:35:00 +0200
 From:   Chengguang Xu <cgxu519@gmx.com>
 To:     jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
         jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
@@ -33,28 +33,28 @@ Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         jfs-discussion@lists.sourceforge.net,
         Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2 4/5] jfs: cache NULL when both default_acl and acl are NULL
-Date:   Fri, 31 Aug 2018 22:33:51 +0800
-Message-Id: <20180831143352.22970-4-cgxu519@gmx.com>
+Subject: [PATCH v2 5/5] orangefs: cache NULL when both default_acl and acl are NULL
+Date:   Fri, 31 Aug 2018 22:33:52 +0800
+Message-Id: <20180831143352.22970-5-cgxu519@gmx.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180831143352.22970-1-cgxu519@gmx.com>
 References: <20180831143352.22970-1-cgxu519@gmx.com>
-X-Provags-ID: V03:K1:d9aJYmZgvM9aGdD5VTaWAHOHVZIrp6b9beQG8hwubkJPXUUJFnX
- TFuaJ2rexYmgfriQJskD3lhUBbemZQEJCXh7Mue2sNXhyCEDT6JqQw+vCd6YKZMYWnX5Rtd
- C0rQ+A++QtokeBrtu5hmVQTw73Ue1X2yWBL5KdJwf6uOrPZTKQ5vG9fTe/siQSdGGDWMkYC
- 2j7tJutR28N/tr4wWcswg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3IIO8lkx4pk=:htnvixdrZjP0wM2z2Ot9XI
- UDFczgEHAkig7fi20exlEoT2+jyIqQTnAyn7Bsa2gF2e4ODAKiQrY22vTSzs6W0los3+p02l1
- IgFJyde7HaBS3sjJGv1Cci+ZLAvLqKqPPezGtuIN5FN4H8kpDvH+xYj2iZNYKPKxMYC9PlYOn
- QDoafAuQPrlKTObO6/3AuOnphmnrtTPyyxKiyHbVdyasnM0809DddzDQPGmSUiRSMN05X8Bez
- qlAuFPbpqoTntgdLhux3UkfT4VTINY4eyvYgS8seCWwhb5pRxztnRJHNTr9u2nPvCOF+cE/Cy
- rI1E28lJgdGbVOvIX+SmLGtsh1Yyswi9MS8GbNfaf8nxUY0SyHGxD7PVYPuxpOXI0rTUCYC2C
- D+5DTddNK/cjWHrEcgcXXCllVEFCcJo3kjZT2bS+L5rYDs70CGg3VFpUAUHFLYP5vUYV+KOcU
- ct7ib4gfdAExd9f5R9VcnEyZpbueKvCmoxzle9zAcEcoln2kTUOLTcD6ZePuuK97XdKuhj2LG
- l14sOo/70D/q3w//TKNlHDLy16RYzERPfdNR1+yHffMnG+U48lulwmTW6eoPb7raljRO5GsqF
- 01xL4hp2N1DBTbcgIhYPUItdCt4B9VTqY3n6hRL9pn3NX+rUuoqh3jvZ/Eavunrl5iJ03Wjws
- fVZydnTYVn/h1L9tYdyZRMl6f+gRLVD4fU/mkx5IPjdZ3TjUXMPKUtHiyvfsua/TDxx15pa+w
- giGbSUsMPaFuPcbfIcpUZ/MR0MKB6zono9RyO+4dAU9gBVeTpFs5cKzJY40=
+X-Provags-ID: V03:K1:uxNQ/XKf2YUz8pgu6glf5JPalPJH5RB8lUUceXOg8ov+qMxkd+/
+ p6w5/vuj2q15inLVZBnnYAQLHib/osoBfIhr/ZXmsMZnDbUxuJDNmBnpTph6JMqc2DUsqlG
+ yXrN+qGcm66+TnAJE8i9hn4xERkOJetHBmu5eMeBKssFuVvVaxVu/lK7Eo6QUEChoS/eOX1
+ Tdzht8mI1z53FHf20IlVQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:4T70T1yxekw=:j6h4KUq6vJXHgnu+rV1KeK
+ WApSWJxPfhyh/9+kO16rka9uJEarbyllSKMlR2bG6vthxg7jA0rOClicEIKHczO+tV6WWIl+F
+ QgkqnbRzvQVLCr688sKr7RVqOJw6WyKrFw7IVx0usFf0jSkJS00F+/ZZHEYmxlum2VOqbsB79
+ louEBzxOokGPRcrskgYppjQ6wRJBOytDqKxAfu4dWxUdDPy0ZPjPlHQXMJBXT2HbmlQ1SSacO
+ VS+EjMNZ9T9Un3cPshLC/DfFb6V/G9lfpJ1F0Bwho6kPDL3sXMIVN3TLogZeVrQfTH/Szi/oH
+ eH4w5HQ9zKJshJZ+coUYb+12e7HJZdLP36fsTIqhg98jjbiAYVOuaizI9ppzVAxOvo7CGhT9e
+ +tfm+DPCH/d9/yOoa7QGah191Ygtws4InIxm/Bz6l1mLGBuWVMxbtiaCXucwcWrkolZW2Kn+N
+ d07MChpNjtWYjMxqvIa3TxmmObGg8lCaqrcMXGTWnZlT50z1IzILwrR0ZKPjrnAPTI1z2hQNi
+ 2AVbYROtSOakpscGLLAn5IbXOeFZO26FKtDl+zU45HeAtGAHlyKDHplOLBRknOk3W0x8TEAbQ
+ BiyiADId1bRsdPNoCAoL16VsUzGcw+8rDHjIZCMlEWxtHBHy9w2hszd+yL1qg3Sh+rjAvXqZ9
+ IusTVs5H5zxWASzQwdu1m6P9Oc8ObP3XWXgP5oOOypmMcBxFGi4Ll/Sz3ZhtG9YcEW+P4KrQW
+ jA4g5/1DBmrzHV5kDy6lYGqKuugvaBaegUad7w/YvFGHso1ysA8/Q1xSqXI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,30 +72,30 @@ Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 v1->v2:
 - Coding style change.
 
- fs/jfs/acl.c | 4 ++++
+ fs/orangefs/acl.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/fs/jfs/acl.c b/fs/jfs/acl.c
-index 2e71b6e7e646..8c06a6ea862d 100644
---- a/fs/jfs/acl.c
-+++ b/fs/jfs/acl.c
-@@ -146,12 +146,16 @@ int jfs_init_acl(tid_t tid, struct inode *inode, struct inode *dir)
- 	if (default_acl) {
- 		rc = __jfs_set_acl(tid, inode, ACL_TYPE_DEFAULT, default_acl);
+diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
+index 10587413b20e..72d2ff17d27b 100644
+--- a/fs/orangefs/acl.c
++++ b/fs/orangefs/acl.c
+@@ -167,12 +167,16 @@ int orangefs_init_acl(struct inode *inode, struct inode *dir)
+ 		error = __orangefs_set_acl(inode, default_acl,
+ 					   ACL_TYPE_DEFAULT);
  		posix_acl_release(default_acl);
 +	} else {
 +		inode->i_default_acl = NULL;
  	}
  
  	if (acl) {
- 		if (!rc)
- 			rc = __jfs_set_acl(tid, inode, ACL_TYPE_ACCESS, acl);
+ 		if (!error)
+ 			error = __orangefs_set_acl(inode, acl, ACL_TYPE_ACCESS);
  		posix_acl_release(acl);
 +	} else {
 +		inode->i_acl = NULL;
  	}
  
- 	JFS_IP(inode)->mode2 = (JFS_IP(inode)->mode2 & 0xffff0000) |
+ 	/* If mode of the inode was changed, then do a forcible ->setattr */
 -- 
 2.17.1
 
