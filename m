@@ -2,121 +2,120 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BF0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B880C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58CE20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:00:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULaLlgsn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58CE20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F2C0B20837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C0B20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeHaSIA (ORCPT
+        id S1728663AbeHaSIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:08:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55589 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727432AbeHaSH7 (ORCPT
+        Fri, 31 Aug 2018 14:08:17 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44010 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeHaSIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:07:59 -0400
-Received: by mail-wm0-f66.google.com with SMTP id f21-v6so5360090wmc.5;
-        Fri, 31 Aug 2018 07:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LPqjN6cSljgkmPrVeYJWfI0YjbyTpulb5xOVHYKs3wQ=;
-        b=ULaLlgsnp7aLY1QFJLXg8dq2C03BuuXSCFWBHeh6OlvHyed0nwYrIT1qL1PuvvRHs3
-         q1V8b2RhJkBxqdMDSGXdG4D3oblUKORICfmegJKw7orPn7dCmVudrbVRrAuPsJ4J6is2
-         t6myI+rGxMNWUH/4LKD2R0mFOiSxAsBr2EM0m+XED9+Ngx5ic7bIvoOHx+kg2/K7PS/I
-         zWXSOrhDdNAP8BFsS01KHihSrzsNvmPpgRHYhtGFKsvZZunkHuP65XxOywxQ0lNHkALZ
-         n8rlgZB4Rg0xdeYWf0xZropXChW4eL+inqW3F/yhD+Ka9Kcjgkq1e35jerMXel7og6iu
-         WF9A==
+        Fri, 31 Aug 2018 14:08:16 -0400
+Received: by mail-qt0-f195.google.com with SMTP id g53-v6so14574732qtg.10;
+        Fri, 31 Aug 2018 07:00:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LPqjN6cSljgkmPrVeYJWfI0YjbyTpulb5xOVHYKs3wQ=;
-        b=hAXdbZmQdNFtQ+Z7sk+CJMUsudAPUQgrOa+C+e3Q6OWMMkhuAfxcoywLiXOMkRsLss
-         MG50bGApn8fqDGUwBRSjcfeOo2AzU6zvBbb+Jtf9q/elqzJBIayAXka/a+apTnlV5cyt
-         5tj/8WBAsVZvGIJJ4HzlNFBRsPbWKtVar4mUPtSAuLNQGue6z+vPBE/utYyMEcPhRTL3
-         ft2G3dpWWvAtc41VU85EcFNl3D4CU5r9BRCcb6wwb3ht6+Sn3wuvGYFjDD3YG3D+u3v/
-         dre1oqVOIfuEgZquFUmMwWnsfgkt8S0xQRW6w90mFAL8ZwRUo16yupy/4mCRXSPDaYgq
-         tUNg==
-X-Gm-Message-State: APzg51B+Lww7zIa3qIFTTms5omwXTIVPrcYqOYCi2l/CxHztcrI7zXYa
-        w/9byLC9CP3R4xXbJhuHZBo=
-X-Google-Smtp-Source: ANB0VdZefsXJb0jeku2TXeG4KnliDY5CDjTamVW4s4ELGCffDvbVBteNtJbJXrr3SmnEmqQtw+w/WQ==
-X-Received: by 2002:a1c:398b:: with SMTP id g133-v6mr4572321wma.5.1535724020026;
-        Fri, 31 Aug 2018 07:00:20 -0700 (PDT)
-Received: from localhost (pD9E51F49.dip0.t-ipconnect.de. [217.229.31.73])
-        by smtp.gmail.com with ESMTPSA id h17-v6sm9996372wrq.73.2018.08.31.07.00.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 07:00:19 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 16:00:17 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mmc: tegra: Implement periodic pad calibration
-Message-ID: <20180831140017.GB7926@ulmo>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com>
- <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7FRvFbXtOvn8P5ZHvWPRUY4/cfx0+zZ3/J9PKl4QuPM=;
+        b=XSENr6duXpLrdfRrteFknRdTF67ATCCHGFHW0p24ffIsxf64/vBZ5D4H68QR61i3c4
+         eIYqETF+ifvM28fPy1Tb6eABBZQCfDZPxHoBO3BUy7Yw/wx9+LWSjZopG7SDgraD2Prc
+         08iCCxIZNZNsUerZqYrMwP6aH3T3bIpZ/jSKLi7snS/ULOnq8lZEDmTb0Wb33uXAVTkg
+         2g6JK/UOd81dUvA4EwPyTjeLMQTKRxlvZqixr1yaLTY80PncAO/KytrQK2Sqbmpev8KM
+         Zabl7TgAHK6P9ZctYEEGTDCdivaUsG/0CNkll26g36XhkiqfISHGebXam2iavuCyo8bw
+         S3TA==
+X-Gm-Message-State: APzg51BonHwRVyLuObPO0vCene+15vUks/VDn2wzvURStwupRXZ3zzQ7
+        LK6+lJo7H4c6yW8/pvRAWLB0XHK8NiTSJixfVefDWg==
+X-Google-Smtp-Source: ANB0VdYnlDSva9ruwfBYXS1727hVkGDoWZ5hvO5q2b66nePQO5oKveLWKNuerimUxYc25fIKtoai4SPqM26Awr6wWJQ=
+X-Received: by 2002:aed:3f22:: with SMTP id p31-v6mr15850685qtf.185.1535724038135;
+ Fri, 31 Aug 2018 07:00:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
-Content-Disposition: inline
-In-Reply-To: <1534757013-4524-3-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180829130308.3504560-1-arnd@arndb.de> <CAF=yD-J7-GumUmonrZt7s44e3bsjY2DCD6ZpmhtCx6FOBV5BNA@mail.gmail.com>
+ <CAK8P3a2XTUZJUqGu6v=SZqcoJTqM3fgtDAWBnBopX3=4NJYcRA@mail.gmail.com> <CAF=yD-+9yc838Y_DO1S4HsBpLrBk8iNt0oAj1ceO1S6sE+tCdg@mail.gmail.com>
+In-Reply-To: <CAF=yD-+9yc838Y_DO1S4HsBpLrBk8iNt0oAj1ceO1S6sE+tCdg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 31 Aug 2018 16:00:21 +0200
+Message-ID: <CAK8P3a00DLR9JyfKwbYXnKCpRf+YWuUyMbC+UfXZTfdnAJxRtg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: rework SIOCGSTAMP ioctl handling
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hams@vger.kernel.org,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        linux-can@vger.kernel.org, dccp@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-x25@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 31, 2018 at 3:38 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Fri, Aug 31, 2018 at 6:31 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thu, Aug 30, 2018 at 10:10 PM Willem de Bruijn
+> > <willemdebruijn.kernel@gmail.com> wrote:
+> > > On Wed, Aug 29, 2018 at 9:05 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > If this is the only valid implementation of .gettstamp, the indirect
+> > > call could be avoided in favor of a simple branch.
+> >
+> > I thought about that as well, but I could not come up with a
+> > good way to encode the difference between socket protocols
+> > that allow timestamping and those that don't.
+> >
+> > I think ideally we would just call sock_gettstamp() unconditonally
+> > on every socket, and have that function decide whether timestamps
+> > make sense or not. The part I did not understand is which ones
+> > actually want the timestamps or not. Most protocols that
+> > implement the ioctls also assign skb->tstamp, but there are some
+> > protocols in which I could not see skb->tstamp ever being set,
+> > and some that set it but don't seem to have the ioctls.
+>
+> These probably only use cmsgs SCM_TIMESTAMP(NS|IMG)
+> to read timestamps.
 
---jq0ap7NbKX2Kqbes
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good point. FWIW, I have discussed with Deepa how those should
+be modified for y2038, but we don't have any current patches for
+those.
 
-On Mon, Aug 20, 2018 at 12:23:33PM +0300, Aapo Vienamo wrote:
-> Rerun the pad calibration procedure before sdhci_request() if
-> the 100 ms recalibration interval has been exceeded.
->=20
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+> > Looking at it again, it seems that sock_gettstamp() should
+> > actually deal with this gracefully: it will return a -EINVAL
+> > error condition if the timestamp remains at the
+> > SK_DEFAULT_STAMP initial value, which is probably
+> > just as appropriate (or better) as the current -ENOTTY
+> > default, and if we are actually recording timestamps, we
+> > might just as well report them.
+>
+> Yes, that's a nice solution. There is always some risk in changing
+> error codes. But ioctl callers should be able to support newly
+> implemented functionality. Even if partially implemented and
+> returning ENOENT instead of ENOIOCTLCMD.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Ok, so do you think we should stay with the current version
+for now, and change the two points later, or should I rework
+it to integrate the locking and removing the callback?
 
---jq0ap7NbKX2Kqbes
-Content-Type: application/pgp-signature; name="signature.asc"
+I suppose the series actually gets nicer without the
+callback, since I can simply add the generic timestamping
+implementation first, and then remove the dead ioctl
+handlers.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluJSfEACgkQ3SOs138+
-s6HAYBAAuHulah5onbx62mnNjNsUcRcCcb40PdwDXoX1ePa1D5y/wCg2y6oFGYK8
-fArz8gAteh2LI6BN+po8zN7DRRkflZh8l7bsEr1ITXQ7UaeqbisXiA02RCnxiv/v
-8JSmuS2T51Pvy8z4vEYCvHzUSvsP05VJ+I4sGFfY19y2QPyO5R934dlFZhA+SYck
-3U4L9IRZg8/WIi2M+uBhwM0c9ZafcgIM1gHTyLAgr72+DmaXxsye/KNTgAn8h/Y0
-qWqC3+4xCHN/IhXj5/bJcqTwW2X6OeZOziBZLW6HUzU3ezCPxd8vRD9W1OcmBc5W
-m0RBg7Z5wxXfPpvag7tCwmexJUAlDl7AoH9xThfM8gY3svtvW5D4uFIvvDepvcD4
-18iEP6RmHSYrW4e2bf1PXReBxQ1N+qfPjT9tNoM+sAGxr+B8b5mUdZCGMuGrCdxo
-gLR40YMB/dqIEQe38c3kcefdzhkffb/0MEK6e/xnb7MJhTKhB9jUTRks1jykJhVB
-WFaOrVnC8EWm7IZZutV3wDsdzrsvcNAMNCrwh/az2dy0+WKDfeITIzk8t+TMCgJh
-fb0UC0N8knjzbnWfojjbJtzoS9CyVFh9BVlaM5sOauJ95Sd6V0iQyd8yao6U67le
-MAPlGP5K9fKkSkWeVULqvnxXdemF1HkLLnNqoGw7/OYr5CCc2E8=
-=j8Gh
------END PGP SIGNATURE-----
-
---jq0ap7NbKX2Kqbes--
+        Arnd
