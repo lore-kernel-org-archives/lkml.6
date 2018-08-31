@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D64CC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3013EC43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57122083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF222083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:03:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sB0LbiWU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57122083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERcBvEs8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF222083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeIADMt (ORCPT
+        id S1727968AbeIADMu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:12:49 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51964 "EHLO
+        Fri, 31 Aug 2018 23:12:50 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50650 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbeIADMs (ORCPT
+        with ESMTP id S1727466AbeIADMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:12:48 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y2-v6so6538045wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:07 -0700 (PDT)
+        Fri, 31 Aug 2018 23:12:50 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so6534726wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 16:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/wVrhZZ5plHSLk1j0gZpUxiGDkkVRhSGuBRihyKgcR8=;
-        b=sB0LbiWUIHWsl87LJaq1i/C4QqRGPFJKKmxIXSIzc5/FNXJRQtYcQZtk9bSOOSCF6g
-         h6U1dTXuv8kgax8orpz/VtLMgYvQ5lODhQyfRo489Glgdcrsv5ufXAnYJrzZuy1gpU/z
-         Pn/gHwZnhjrNqOSIPv9j8Il006sHXzfCZFsmqGinRM5ubzIykBwepiZDXPFzQCFjW9tY
-         B4wfkw7jck/+2k2LT1NeJULpRaHlLvtEZbXpvYFCLE44F8jzUQjZlUcFLaDdFad2Ft6B
-         74ZuHhA2vqujop2IHi2h/F5IUCxBVBH+QuZabuYq/ZtORBrE4IkUmI7JvTkhX1X4LJ1u
-         lJzA==
+        bh=bLEMW4E9I6Bj6oEzTvezv+N1GmIvRFJ4RBup0zti1U0=;
+        b=ERcBvEs8TUOn+BGS27dQ+3Sm2B78jAjDZT/RTy6W6pxqG0gzaFc9E5wazKxC5tUIkb
+         AXY3FDWthPTCjX7QKWB95uAfauMgO6xvy21LxLw+jMuJCx69g9HrrI3bwZtcracmRN8e
+         nvM1FGkkquEua9UxTl3XnIpEZQrfbbQnVS1M8TWL6XSqcA361HfyksBGzFoVox12qnLh
+         ZgVLQbTNncyprugY1gmNHzX01Lpgem1BYFg0Ng+IQLhXbbzQYuZ4GPQPxg9gX0Bmjlcl
+         8ML18KWRfWBXJalcHo3LZZlLyElpCMmbVIjKlPm2xN1gmFktRXMd2arSGH0Ji7Nesa/p
+         d5GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/wVrhZZ5plHSLk1j0gZpUxiGDkkVRhSGuBRihyKgcR8=;
-        b=NhwZ34StfaPJxKY7/73ct1YG7AM9/ugIyarkjPo4qH8Bqp5bZH3Bl+kvDe4UHVsM00
-         R7Fp1AUHpd/VQQ39WBiqWSoh7gkJnkEj3J9ke2LknH7/FSWDjoRWCMe5iC+D+lrR4MHp
-         mLJkmvpZJK6ZRwsH3DOBp1oAMk+u0JgFkZbU2kz538oV4bO89XlhpA8W6K9qwv/WbgIl
-         X+H7hgyZ2n/Lu8F7f2HRGurb8qd1BhAF2wds17A2ZXAyor2UaFhW2EF1KtNOpUyRlyk2
-         oYYMslhykeyH332G7idrbOK3THkEuHV5furOKAwioC61AnqAoCTOfJHPDSOZ2HOsG7ZJ
-         tuag==
-X-Gm-Message-State: APzg51Cwr8q9Yqvz+vnoeWk1l3UVz5JqbRisSa274AttExcxgJIbCKIA
-        eynIHWdFHPw3YCbVhsprwJzDI6ZA8KI=
-X-Google-Smtp-Source: ANB0VdY5HReYAgPWOAlvXx0YRfYMxdHfWZKiPEsO+Y45Fql4YXAqgBHx8jHGcbmURr13/hUPiBF1NQ==
-X-Received: by 2002:a1c:8e04:: with SMTP id q4-v6mr5960486wmd.150.1535756586051;
-        Fri, 31 Aug 2018 16:03:06 -0700 (PDT)
+        bh=bLEMW4E9I6Bj6oEzTvezv+N1GmIvRFJ4RBup0zti1U0=;
+        b=pDKOSU6GTWL3mnJZqne+5f8U5G/hlE5I6eoTnCXX9v80h6p4PXIXFVdCTHfRtfov/C
+         CtaTlzHuTzttfxj8nETGO+I+O64v77bwezFpyqa1VJaoiMFGse1X/E+/+PzlhZmDq+5F
+         Npnktkegn/f/GMEJ7W3wtwMNkD00NDwEZEMOlTl7ZrixCT1vDqBHpv+Iutt0hmiSI2bp
+         FngxZy/3PFeTYHT7TiqYp7d+pzL/ndPWT+8x/AdMZ7D834XVw+XY11oX0lct4iEkX19V
+         1AZHiBmJOrfB4lvJvITYc3qByRRs6vslpI6p5MBGvoIOsk3AvRXp9IAHJ5LdWAKUYx9D
+         JHcQ==
+X-Gm-Message-State: APzg51C/gKFKOvR2c+CUrilTSk9kjPnEqITMsloh0A+ZPQUed8DB0yzG
+        eiYfCTtzlkXFDivfUKQy2a/MqVNtWN0=
+X-Google-Smtp-Source: ANB0VdZmA4OqicF1apPmbOkET0Hvczp0VFw8ll3hkjf1ZSHKK1ApKyyJoSg7TO5+WdFbOsspv5BEsg==
+X-Received: by 2002:a1c:385:: with SMTP id 127-v6mr6170038wmd.92.1535756587755;
+        Fri, 31 Aug 2018 16:03:07 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.04
+        by smtp.gmail.com with ESMTPSA id o19-v6sm14562267wro.50.2018.08.31.16.03.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 16:03:05 -0700 (PDT)
+        Fri, 31 Aug 2018 16:03:07 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/20] staging:rtl8192u: Refactor RT_TRACE - Style
-Date:   Sat,  1 Sep 2018 00:02:37 +0100
-Message-Id: <20180831230250.16810-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 08/20] staging:rtl8192u: Fix space characters - Style
+Date:   Sat,  1 Sep 2018 00:02:38 +0100
+Message-Id: <20180831230250.16810-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180831230250.16810-1-johnfwhitmore@gmail.com>
 References: <20180831230250.16810-1-johnfwhitmore@gmail.com>
@@ -73,31 +73,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor the MACRO RT_TRACE to add parentheses around the parameter
-'component', this clears the checkpatch warning with respect to
-precedence issues.
+Fix the spacing issues, remove space after cast operation, and replace
+spaces at start of line with tab.
 
-This is a coding style change which should have no impact on runtime
-code execution.
+These changes are purely coding style changes to resolve checkpatch
+issues. There should be no impact on runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/r8192U.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index b5ad69af8dac..c613894a6088 100644
+index c613894a6088..e65a893fd084 100644
 --- a/drivers/staging/rtl8192u/r8192U.h
 +++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -52,7 +52,7 @@
- extern u32 rt_global_debug_component;
- #define RT_TRACE(component, x, args...) \
- 	do {							\
--		if (rt_global_debug_component & component)	\
-+		if (rt_global_debug_component & (component))	\
- 			pr_debug("RTL8192U: " x "\n", ##args);	\
- 	} while (0)
+@@ -112,7 +112,7 @@ extern u32 rt_global_debug_component;
+ 	do {								\
+ 		if ((rt_global_debug_component & (level)) == (level)) {	\
+ 			int i;						\
+-			u8 *pdata = (u8 *) data;			\
++			u8 *pdata = (u8 *)data;				\
+ 			pr_debug("RTL8192U: %s()\n", __func__);		\
+ 			for (i = 0; i < (int)(datalen); i++) {		\
+ 				printk("%2x ", pdata[i]);               \
+@@ -877,9 +877,9 @@ typedef struct r8192_priv {
+ 	int     rx_inx;
+ #endif
  
+-       struct sk_buff_head rx_queue;
+-       struct sk_buff_head skb_queue;
+-       struct work_struct qos_activate;
++	struct sk_buff_head rx_queue;
++	struct sk_buff_head skb_queue;
++	struct work_struct qos_activate;
+ 	short  tx_urb_index;
+ 	atomic_t tx_pending[0x10]; /* UART_PRIORITY + 1 */
+ 
+@@ -1027,7 +1027,7 @@ typedef struct r8192_priv {
+ 	u8	nrxAMPDU_aggr_num;
+ 
+ 	/* For gpio */
+-	 bool bHwRadioOff;
++	bool bHwRadioOff;
+ 
+ 	u32 reset_count;
+ 	bool bpbc_pressed;
 -- 
 2.18.0
 
