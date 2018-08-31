@@ -6,111 +6,133 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0E0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18418C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF232083D
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:19:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF232083D
+	by mail.kernel.org (Postfix) with ESMTP id C1A8E20661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A8E20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbeHaT1P (ORCPT
+        id S1728183AbeHaT2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:27:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36914 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728451AbeHaT1P (ORCPT
+        Fri, 31 Aug 2018 15:28:55 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45613 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeHaT2y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:27:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so11548010wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:19:15 -0700 (PDT)
+        Fri, 31 Aug 2018 15:28:54 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so11553115wrb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:20:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YMd+w6xu6z5E6UfjvFxCMon3HjXziUFla9i/JhUAeyI=;
-        b=aQcNBLAe63rVvApNCX7FMwH1uRMpN65x1s+mtUsGM0FTWwPTu3s7PeyAWCFHCmoj4h
-         FHCB5pfRMB/0UpQ2DW+hBuv/O3QSagBs239A4pnS6MvC1MSNK0na8TrCwzfNuVCK/Zo0
-         HBUKTKvzGOFhw00gmWhZCYqUY9+mLpZJin4BZkUD2IhWWdwyPAuDRldcFuiCw82fRR5+
-         uQy2RaboCSUjPiSEfaRGU/gyqAlyVEWo0rXz1S0HVqbws91TNqAaFCqvU0e1ygCTmOmC
-         SUgr/Ux9/Wg6Rrl8DNxTSpi2sZ/oCkDmUtM0lXQkni16CYueCBgkZSu+lxydePWx6cMX
-         wa6A==
-X-Gm-Message-State: APzg51A9ZGn4XVsCByzCxPI9CV9s6aOEJ5GrXVEEx+drEvMFS8mRjjZE
-        A9XfOSS95DyhUHH65hsPgYpzi8hrfSI=
-X-Google-Smtp-Source: ANB0VdZ9aRhrN6ckmFswpdH1PiAiKOXoqocvGG29uniVqoNZUeuYtKmzNdHqaj1lonMB6EgFpLpTRQ==
-X-Received: by 2002:adf:82c3:: with SMTP id 61-v6mr11610326wrc.131.1535728754888;
-        Fri, 31 Aug 2018 08:19:14 -0700 (PDT)
+        bh=TyoCTa8EMpKGM+YX+iYdLQKMVHxr1N7PsqhbZhZaE4w=;
+        b=lT5tEUw4m3GDsG1ztELmpNtB2Ppzm3+LUcLWBHmiPkFidfzDqnlpveGmJaFktuUgpJ
+         j7iKknUdQcCuftcwiOGwVNKD8OqAb1uOrojmG30qxNtthqvpOpEi878Fzu/s9TFKlqRV
+         fytrDHOKpt1RAFBzTf0cHDXVJNefD5sR2zDbaHRyF/0Qs9qw4+XCd9YVVoI0mq2dJHWP
+         UtrilQdTVniKm+OmlyMbdEs5/XEyATVQ8Dem3uHjS+Rxrklcm7MpG7a/3oetfMbGRH8s
+         KEJo2NPhcYilD4NoF44I2VEu7SmV1KgcL1UeoFgasQWjkXtYwekzJI8f85pxerRUjrDr
+         cXVg==
+X-Gm-Message-State: APzg51AImCstVsbGXqO/BVe/rSTR+X5xNDyzLmI7RYBXY8AqBn+iHn9Q
+        Fbbeooz/JkzbzUjs3eZ971DHEIDGR60=
+X-Google-Smtp-Source: ANB0VdZNBbbkCHtbaSU563YBTO7Kqko/IbAlJvt3QHZcZeAU6RKYnOhDG4LPaQ0YFfXCk7ZHpQ+Udg==
+X-Received: by 2002:a5d:428a:: with SMTP id k10-v6mr305354wrq.225.1535728854562;
+        Fri, 31 Aug 2018 08:20:54 -0700 (PDT)
 Received: from minerva.redhat.com ([90.168.169.92])
-        by smtp.gmail.com with ESMTPSA id q3-v6sm5788904wma.45.2018.08.31.08.19.13
+        by smtp.gmail.com with ESMTPSA id n17-v6sm3244923wmc.13.2018.08.31.08.20.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 08:19:14 -0700 (PDT)
+        Fri, 31 Aug 2018 08:20:53 -0700 (PDT)
 From:   Javier Martinez Canillas <javierm@redhat.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: ov2680: register the v4l2 subdev async at the end of probe
-Date:   Fri, 31 Aug 2018 17:19:06 +0200
-Message-Id: <20180831151906.9315-1-javierm@redhat.com>
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org
+Subject: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async notifier complete
+Date:   Fri, 31 Aug 2018 17:20:45 +0200
+Message-Id: <20180831152045.9957-1-javierm@redhat.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver registers the subdev async in the middle of the probe function
-but this has to be done at the very end of the probe function to prevent
-registering a device whose probe function could fail (i.e: the clock and
-regulators enable can fail, the I2C transfers could return errors, etc).
+Commit 9832e155f1ed ("[media] media-device: split media initialization and
+registration") split the media_device_register() function in two, to avoid
+a race condition that can happen when the media device node is accessed by
+userpace before the pending subdevices have been asynchronously registered.
 
-It could also lead to a media device driver that is waiting to bound the
-v4l2 subdevice to incorrectly expose its media device to userspace, since
-the subdev is registered but later its media entity is cleaned up on error.
+But the ipu3-cio2 driver calls the media_device_register() function right
+after calling media_device_init() which defeats the purpose of having two
+separate functions.
 
-Fixes: 3ee47cad3e69 ("media: ov2680: Add Omnivision OV2680 sensor driver")
+In that case, userspace could have a partial view of the media device if
+it opened the media device node before all the pending devices have been
+bound. So instead, only register the media device once all pending v4l2
+subdevices have been registered.
+
+Fixes: 9832e155f1ed ("media: intel-ipu3: cio2: add new MIPI-CSI2 driver")
 Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-
 ---
 
- drivers/media/i2c/ov2680.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
-index f753a1c333ef..2ef920a17278 100644
---- a/drivers/media/i2c/ov2680.c
-+++ b/drivers/media/i2c/ov2680.c
-@@ -983,10 +983,6 @@ static int ov2680_v4l2_init(struct ov2680_dev *sensor)
+diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+index 29027159eced..d936f3426c4e 100644
+--- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
++++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+@@ -1468,7 +1468,14 @@ static int cio2_notifier_complete(struct v4l2_async_notifier *notifier)
+ 		}
+ 	}
  
- 	sensor->sd.ctrl_handler = hdl;
- 
--	ret = v4l2_async_register_subdev(&sensor->sd);
--	if (ret < 0)
--		goto cleanup_entity;
--
- 	return 0;
- 
- cleanup_entity:
-@@ -1096,6 +1092,10 @@ static int ov2680_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		goto error_cleanup;
- 
-+	ret = v4l2_async_register_subdev(&sensor->sd);
-+	if (ret < 0)
-+		goto error_cleanup;
+-	return v4l2_device_register_subdev_nodes(&cio2->v4l2_dev);
++	ret = v4l2_device_register_subdev_nodes(&cio2->v4l2_dev);
++	if (ret) {
++		dev_err(&cio2->pci_dev->dev,
++			"failed to register V4L2 subdev nodes (%d)\n", ret);
++		return ret;
++	}
 +
- 	dev_info(dev, "ov2680 init correctly\n");
++	return media_device_register(&cio2->media_dev);
+ }
  
- 	return 0;
-@@ -1104,7 +1104,6 @@ static int ov2680_probe(struct i2c_client *client)
- 	dev_err(dev, "ov2680 init fail: %d\n", ret);
+ static const struct v4l2_async_notifier_operations cio2_async_ops = {
+@@ -1792,16 +1799,12 @@ static int cio2_pci_probe(struct pci_dev *pci_dev,
+ 	cio2->media_dev.hw_revision = 0;
  
- 	media_entity_cleanup(&sensor->sd.entity);
--	v4l2_async_unregister_subdev(&sensor->sd);
- 	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
+ 	media_device_init(&cio2->media_dev);
+-	r = media_device_register(&cio2->media_dev);
+-	if (r < 0)
+-		goto fail_mutex_destroy;
+-
+ 	cio2->v4l2_dev.mdev = &cio2->media_dev;
+ 	r = v4l2_device_register(&pci_dev->dev, &cio2->v4l2_dev);
+ 	if (r) {
+ 		dev_err(&pci_dev->dev,
+ 			"failed to register V4L2 device (%d)\n", r);
+-		goto fail_media_device_unregister;
++		goto fail_media_device_cleanup;
+ 	}
  
- lock_destroy:
+ 	r = cio2_queues_init(cio2);
+@@ -1831,10 +1834,8 @@ static int cio2_pci_probe(struct pci_dev *pci_dev,
+ 	cio2_queues_exit(cio2);
+ fail_v4l2_device_unregister:
+ 	v4l2_device_unregister(&cio2->v4l2_dev);
+-fail_media_device_unregister:
+-	media_device_unregister(&cio2->media_dev);
++fail_media_device_cleanup:
+ 	media_device_cleanup(&cio2->media_dev);
+-fail_mutex_destroy:
+ 	mutex_destroy(&cio2->lock);
+ 	cio2_fbpt_exit_dummy(cio2);
+ 
 -- 
 2.17.1
 
