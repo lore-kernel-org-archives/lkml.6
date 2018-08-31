@@ -2,165 +2,223 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB6C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA32AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A542083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:14:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="QDubzUyk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A542083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	by mail.kernel.org (Postfix) with ESMTP id 73EE620837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:15:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EE620837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeHaMUm (ORCPT
+        id S1727610AbeHaMWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:20:42 -0400
-Received: from mail-eopbgr680043.outbound.protection.outlook.com ([40.107.68.43]:27968
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Fri, 31 Aug 2018 08:22:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57670 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727536AbeHaMUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:20:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HFn8rgeC1vgsMFnOwppdlgQ10jgxRC9rr9awKFyZhsY=;
- b=QDubzUykpuixDTLy9EnPBdNntAjUGoiRsflkbUFdA8N1FvD6lftZmEuAAoMOYMV4YRRR9sIKC+Ik5ycUkVU9u7VQT5o2xdxHE6FBwLLzgFbaWGhQafXV4QOsA5ebzSMW49eLi0u6gm4l43buRnBHXFqk//8NNmvdsyDIMu5T57o=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- CY1PR0301MB1578.namprd03.prod.outlook.com (2a01:111:e400:529c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.15; Fri, 31 Aug
- 2018 08:14:18 +0000
-Date:   Fri, 31 Aug 2018 16:11:09 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     <thomas.petazzoni@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 3/3] net: mvneta: reduce smp_processor_id()
- calling in mvneta_tx_done_gbe
-Message-ID: <20180831161109.23db0901@xhacker.debian>
-In-Reply-To: <20180831160810.2539ef4c@xhacker.debian>
-References: <20180831160810.2539ef4c@xhacker.debian>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727258AbeHaMWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:22:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A038F4023132;
+        Fri, 31 Aug 2018 08:15:48 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F32502026E1A;
+        Fri, 31 Aug 2018 08:15:46 +0000 (UTC)
+Date:   Fri, 31 Aug 2018 09:15:45 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com>,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org, cavery@redhat.com
+Subject: Re: KASAN: use-after-free Read in vhost_work_queue
+Message-ID: <20180831081545.GA19088@stefanha-x1.localdomain>
+References: <000000000000863e0205747fdfef@google.com>
+ <20180828111055-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: OSAPR01CA0172.jpnprd01.prod.outlook.com
- (2603:1096:604:c::16) To CY1PR0301MB1578.namprd03.prod.outlook.com
- (2a01:111:e400:529c::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 84e9e948-e200-42f3-c6dd-08d60f19c0f2
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR0301MB1578;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;3:DlIc0YFZsDBMpbAsB8g6yqNuREw2NFjhpWSAl5bdtA4Etcqj7eDgaPfBwbscFeJ/muoXt6ovSB9jdclISOyVMuzSXjtn1gUOfy6hYgbCmnFTEWL+szWRmYbFoSxzb6a7D37iDDVhK6Xn1sMYJlGTiBoEYr5j2nuYeUeTBEJWPFUyc4IjYxyw/BoWPKgt97J9s55DCA3msGnlVaLrJEQKWQYVLi31sxWunyT7jVHdX+UQ6vHfIwZPn83on85o6Is6;25:6EeIkQbBa6aEkXuBrUGCpcMo4iNtqvGMTxW6eGPIxROLYMmz/qafDpFCEsZ2HxkP6s+Zn69hgd4+1ISBqjMa53S1hipCUJYlxXGJhHezXuxMvV2usI8bBNC1zRKD1MU/ujeVnZtvkVZdRi49AVBe9aWmnpkvVT6CXQHUfk94H0TlQ1zH09Hwl7AMvZRZgahuFOSLaae5wn+sU58g6l1k3kNev37OP2jaFEDzFmLgJT8/du0W8H/YMcmc+65ULnfjkfSnqw+T0E7hRC0DY1CLFncQolwBga0bmJ/MbWOyyg53KeMGdsCIsYWnjNbHt+crmdHKl+tLx/pLZi09jSShqQ==;31:ZkLr6AJ+0qwtwQ5MfnvZC01PArnAUbwHyaej/UXa3GHkywtReztLqDTzGv9dT7h+uma++a2Vdh8I8dzl9CIGIK5uI7wOP3g6ji8lpCmp+nrPOCWIvumn2n90HYOL6CahNzLgZYCO4jn8sIcACa0jOZZBEJ5N134UAp4bnCkldLImCcPVEYef+Dc6aJ8JuXJZ/DwQeVvNG8fQ7WLSA3qYHXKN9gUCiMkEninzVNvJLwA=
-X-MS-TrafficTypeDiagnostic: CY1PR0301MB1578:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;20:0+NgwjKiolxfnfx5ZYQsfjaIpEUiJhKOvrcE8N+RbUNymrSOv5l6deXe8tcgtxYvFBm5VhYWgPeBRiQfzqojBXAtOwTcmjbL10W/9++Myf6H1H8jc5clLaam/jN3nWyIUtSdggJwl6hUcpfeilk0eJdmMXjtYYH4/oZn/QStxKlDZCSAWmAP891o8VMW74XN77ylKjpNrykvOZQhAk9iouE6FdahnsaKxRb0TxqU2HPQnkXrOThQ6mM5OBzPAATWilVjZgxfo0htYYM+6gWmELKRIJxYEEErY+nZ0iN0ml382juy5/udmAcEQHoc1LdoEBsl4CTaEFR4TMSBYcMbq5OAbRsT/dpCyyC3TFHXOn9AXPJ4GIklO7f4b1+BS29zRPeTfZUvWZx4ZB+sQbrufKgIUOidPTo19aXytL/EgqIMmtt5w++B4kJMZNDMk6qEbfz0dn9hB3G5RnNki6YA2HMVR1pMHtchlcFkLSI9EpSz1J4hMZXcVhBTAR3eWcpX;4:OzAhYZvf0dhQONxrdgtlosHxCsgyimCW8yW8JVIkVT4wahILwr3a5BhiNzHbU3zFjHNNoUqfitaqt8dNcGrlEbBC+xSSQ+nmsvbOl+bDz4LMohkrJ8Rrr+O40fXhgjHRhKNb6ixnM+tQQzxDavhCVg2HvjhCAOTVzPXSmYqPVFoXN4enhYTe5zsH9q/D40L6RvhHDINucUboA9auIxEmr5/UeHX9mYNKTL3bD20Z+ndgvWeR90Mvvc7DPg6FykSM+7KddznZFLRnpTPYLoTb2A==
-X-Microsoft-Antispam-PRVS: <CY1PR0301MB15786CF26B3412A000D5751EED0F0@CY1PR0301MB1578.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:CY1PR0301MB1578;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0301MB1578;
-X-Forefront-PRVS: 07817FCC2D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39850400004)(376002)(346002)(366004)(189003)(199004)(53936002)(55016002)(956004)(476003)(11346002)(9686003)(486006)(386003)(47776003)(106356001)(105586002)(97736004)(7736002)(6506007)(66066001)(4326008)(33896004)(81166006)(25786009)(5660300001)(2906002)(8936002)(26005)(50226002)(81156014)(8746002)(72206003)(14444005)(16526019)(316002)(1076002)(7696005)(52116002)(50466002)(110136005)(6116002)(6666003)(3846002)(86362001)(23726003)(186003)(68736007)(76176011)(8676002)(305945005)(446003)(478600001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0301MB1578;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0301MB1578;23:EQLxBRhP3ZSbXnhEYVqJxiKiTJtoSnGhmm2uW61?=
- =?us-ascii?Q?hy+GDuwrkBSmOumMo5i607yNrXHEwsxLcxd/8e6NtUm3LFG/MoJQJLFF3Mi4?=
- =?us-ascii?Q?fOh/eCcv0LqfZnd4kq4sGzFBA7h8ku5pQp/JDxNELx9nqEx7bAcsTPT2p7Sq?=
- =?us-ascii?Q?o5vGKemJmKAdPYaV7ANYoAbV+xRtOOzYRJsBswDa5fY3P4Mku6cUAY2PbCsF?=
- =?us-ascii?Q?y+1/e17D3nbJ5z42yXBydN4A564DFw31h+gqjLRq/dhganFzlhORVpsaNvHm?=
- =?us-ascii?Q?EQ/uBqRNNtilFYXPaKZNilyfq1MhNgqwGU68kTJuIAcW8ytiVkGG3ObW4+cw?=
- =?us-ascii?Q?O9caNA19bh00Oql+yySeWtNZi5kgjT9YeAgtRNI0AawUcw/bVLZUNfMmXuNp?=
- =?us-ascii?Q?X4esRvz/e5nhW4d++rrsMywoS1jby7ZhN5jOpNz2DH8eqejmPdWGivjJKbUk?=
- =?us-ascii?Q?cFM3gld6nwDRxgcaDLW9kzNzZIyt54y43/sbWcvv4DhpDbni7Y6RN83TpyUW?=
- =?us-ascii?Q?Yyzv9FBQPbvKi5nrS6oNwVTgVo6JPp84tYS9txhBlj4ocnfESjfFoZEA5yu1?=
- =?us-ascii?Q?SysvyLZ5UHZepjIGjOryLNjT+s16ekVJzAQDAtEd2bR/3EAQLVuVClKp7cD5?=
- =?us-ascii?Q?6+roX+cFuwRjCsZPkgkrvqNyoEPvFomoeWREWBx+pr+Wab/571skEFb2yy+I?=
- =?us-ascii?Q?uJg6gkBBpMhO5VyRwUMQmP+0UpXO6FRvtghhQ1sjcsJdT7do1X9KnH1eWt1b?=
- =?us-ascii?Q?Z1l2W2VZFZI0sj+v6a9c5gK8avB9Zd+M8v2b2T0pHwNRcPWPzUoSHSpERnNl?=
- =?us-ascii?Q?Xds1TX7obvv04b3XU5i5edq0J6O+nAB+CEUdPTXd+kNTTjD/650t7VVkduGp?=
- =?us-ascii?Q?/CbQDzD+nxUGjtXil83KEsd+Pj0sdjcVE4c4FKj359VjXzvZ5M2VXhikuxTS?=
- =?us-ascii?Q?VJEke5dzKy51mSHhDdzY2n/DDjp6WzagzGlLWz+H7DG05EFt2c1bA2Lbwwjo?=
- =?us-ascii?Q?eImZ+IETernmg4ttFpHA3O+7VmmLVyW80HL/yHd6u10YSHhpRz6Ee418WqUu?=
- =?us-ascii?Q?styiwIduykp0Ru0g2EtAKaxpQEpSN5c6Nkhp1ufMnyputR+geE7yQFz8ITu5?=
- =?us-ascii?Q?e9pt0it83T4yUovQ+lPb+fNneYNGtTy1r4erePzDjPuYrEtczgoDRFYnB6ok?=
- =?us-ascii?Q?RgnWwUXkq+nlpQTVFU1fYTyDtjrz/Uc5OXG27rq3raB9hB7xoN9wnfOK4gw?=
- =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: YmczNd/kPny1tyzI7ZPOzgdnKa0XZNP+CIYe+3TNVyde3t54KNUzO7gk9wBkkOjx7wTMkT5B4HQea/HzzaiL14xxmVVA82OJIpXziiuKjIIFxQMgg5z4RjrZmbtbFApMTnWnRClHWb08MzFuMT79hW+trRtEDPMqltrtha5z9OohDH8UKLaktOagYO9snPO7hculXTgo26PcBye9o8Ju8EXYI0+/DXJczj/Cn7buoyEf8ViAIDlgHjLUoO1UBwLCctqVGPxhXy6Q+8N+XX6+op6CN8eEHguP8eHyIZ9rw+oJME2YSTMFcwQmE803U/R8beoIStCEF+Lc0X0+Xyq27ao3IjrtgJTvQGXMIAmWbmY=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;6:1TWmNJl9r+pd4wq1xhgsk+CPMhEu14DquXEWazO5BJu/QLbTTWnp8E3rMDTVNICyyCP6Cok1rPvzIA4sUihggMUY1XgBw50E92pM34XrcKk85wLmmKGLp04MZsEpnfB1inE/BKGTnC/uDHQAMNGi6bHNQ5fI4TijzzCjYDz3aSvUEUexjqq/b7Y8jqj8bF0ogaBxtA7Ch5NikB3POELHTCzveRgBnZBqdiaI299kYkNipEmCxMGShYcL63v7cNDnC2Mw6vpWwe/Ff4lXG/Y8votEcHb+AzNtP3+yXt24+nEWxhO7zjxq7cn1q+PxHnX9crKQldmlM4rt5Lm8ev/asysI6E/9KHq5TS4pDscYd11bC9j1i87y/GzXeN2jiFg6vXLA3fmRZJ6M7pfA++Ey9ll54ZWbS1ACuZMRwFO01+vY24lBQDk19RY1Y/ha0qlUYh37ZCWplpKv6FU25CGtnQ==;5:Cz5Y4dXF/dYszrqLNWHPL9KJzX0oOIYhMgexryvALdI66obvRqwX8bseHmnosLtSr5qTpwcJPNnZvZf1XdnW3tYXPm9SyYK3ghTlyz7192eg+/N25BRz/s+QbrblZqLXxXVpJpT/dnsXLMmDNuLpZ79Jy33ysveUeiZWCOTSa28=;7:AsyznVvcqC34oIP3abXiuLAuU2+Url+EGL1mJ6eDK1vqiOgt1tNt7IY4t5BdDhIWgqfNa6CviYOzO6Qp5IRhKOpQh3f18sEyqozGdIytnyDgOH1bgaZ62NOgKtaHo61iwqDLPbFQzDmknKlgS/J/XQi8Ucosw3dHQwZ6SBMT22gsZjfd0IQ0dyAA17iXkiBxZf+woDr7R8vS6XkhiFtlm02vxD0BOMpMZ338BvUnrW4vZWyEd+sOgppYm2zQH3hj
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2018 08:14:18.5692 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84e9e948-e200-42f3-c6dd-08d60f19c0f2
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0301MB1578
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <20180828111055-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 08:15:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 31 Aug 2018 08:15:48 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'stefanha@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the loop of mvneta_tx_done_gbe(), we call the smp_processor_id()
-each time, move the call out of the loop to optimize the code a bit.
 
-Before the patch, the loop looks like(under arm64):
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-        ldr     x1, [x29,#120]
-        ...
-        ldr     w24, [x1,#36]
-        ...
-        bl      0 <_raw_spin_lock>
-        str     w24, [x27,#132]
-        ...
+On Tue, Aug 28, 2018 at 11:11:21AM -0400, Michael S. Tsirkin wrote:
+> On Tue, Aug 28, 2018 at 07:44:03AM -0700, syzbot wrote:
+> > Hello,
+> >=20
+> > syzbot found the following crash on:
+> >=20
+> > HEAD commit:    33e17876ea4e Merge branch 'akpm' (patches from Andrew)
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12d8a20a400=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D40e5d6b26b7=
+3cd5b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd5a0a170c5069=
+658b141
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > userspace arch: i386
+> >=20
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >=20
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+d5a0a170c5069658b141@syzkaller.appspotmail.com
+> >=20
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KASAN: use-after-free in vhost_work_queue+0xc3/0xe0
+> > drivers/vhost/vhost.c:258
+> > Read of size 8 at addr ffff880193862068 by task syz-executor7/22100
+> >=20
+> > CPU: 0 PID: 22100 Comm: syz-executor7 Not tainted 4.18.0+ #108
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+> >  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+> >  kasan_report_error mm/kasan/report.c:354 [inline]
+> >  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+> >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >  vhost_work_queue+0xc3/0xe0 drivers/vhost/vhost.c:258
+> >  vhost_transport_send_pkt+0x28a/0x380 drivers/vhost/vsock.c:227
+> >  virtio_transport_send_pkt_info+0x31d/0x460
+> > net/vmw_vsock/virtio_transport_common.c:190
+> >  virtio_transport_shutdown+0x1b1/0x270
+> > net/vmw_vsock/virtio_transport_common.c:604
+> >  vsock_send_shutdown net/vmw_vsock/af_vsock.c:451 [inline]
+> >  vsock_shutdown+0x229/0x290 net/vmw_vsock/af_vsock.c:849
+> >  __sys_shutdown+0x15c/0x2c0 net/socket.c:1964
+> >  __do_sys_shutdown net/socket.c:1972 [inline]
+> >  __se_sys_shutdown net/socket.c:1970 [inline]
+> >  __ia32_sys_shutdown+0x54/0x80 net/socket.c:1970
+> >  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+> >  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+> >  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> > RIP: 0023:0xf7fa4ca9
+> > Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a=
+ 5b
+> > 5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 =
+90 90
+> > 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+> > RSP: 002b:00000000f5f7f0cc EFLAGS: 00000296 ORIG_RAX: 0000000000000175
+> > RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 0000000000000000
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> >=20
+> > Allocated by task 22094:
+> >  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >  set_track mm/kasan/kasan.c:460 [inline]
+> >  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+> >  __do_kmalloc_node mm/slab.c:3682 [inline]
+> >  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+> >  kmalloc_node include/linux/slab.h:555 [inline]
+> >  kvmalloc_node+0xb9/0xf0 mm/util.c:423
+> >  kvmalloc include/linux/mm.h:577 [inline]
+> >  vhost_vsock_dev_open+0xa2/0x5a0 drivers/vhost/vsock.c:511
+> >  misc_open+0x3ca/0x560 drivers/char/misc.c:141
+> >  chrdev_open+0x25a/0x770 fs/char_dev.c:417
+> >  do_dentry_open+0x49c/0x1140 fs/open.c:771
+> >  vfs_open+0xa0/0xd0 fs/open.c:880
+> >  do_last fs/namei.c:3418 [inline]
+> >  path_openat+0x12fb/0x5300 fs/namei.c:3534
+> >  do_filp_open+0x255/0x380 fs/namei.c:3564
+> >  do_sys_open+0x584/0x720 fs/open.c:1063
+> >  __do_compat_sys_openat fs/open.c:1109 [inline]
+> >  __se_compat_sys_openat fs/open.c:1107 [inline]
+> >  __ia32_compat_sys_openat+0x98/0xf0 fs/open.c:1107
+> >  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+> >  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+> >  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> >=20
+> > Freed by task 22093:
+> >  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >  set_track mm/kasan/kasan.c:460 [inline]
+> >  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+> >  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+> >  __cache_free mm/slab.c:3498 [inline]
+> >  kfree+0xd9/0x210 mm/slab.c:3813
+> >  kvfree+0x61/0x70 mm/util.c:449
+> >  vhost_vsock_free drivers/vhost/vsock.c:499 [inline]
+> >  vhost_vsock_dev_release+0x4fd/0x750 drivers/vhost/vsock.c:604
+> >  __fput+0x36e/0x8c0 fs/file_table.c:278
+> >  ____fput+0x15/0x20 fs/file_table.c:309
+> >  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+> >  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+> >  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+> >  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+> >  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+> >  do_syscall_32_irqs_on arch/x86/entry/common.c:341 [inline]
+> >  do_fast_syscall_32+0xcd5/0xfb2 arch/x86/entry/common.c:397
+> >  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> >=20
+> > The buggy address belongs to the object at ffff880193861fc0
+> >  which belongs to the cache kmalloc-65536 of size 65536
+> > The buggy address is located 168 bytes inside of
+> >  65536-byte region [ffff880193861fc0, ffff880193871fc0)
+> > The buggy address belongs to the page:
+> > page:ffffea00064e1800 count:1 mapcount:0 mapping:ffff8801dac02500 index=
+:0x0
+> > compound_mapcount: 0
+> > flags: 0x2fffc0000008100(slab|head)
+> > raw: 02fffc0000008100 ffffea00064c7008 ffffea00064e5008 ffff8801dac02500
+> > raw: 0000000000000000 ffff880193861fc0 0000000100000001 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >=20
+> > Memory state around the buggy address:
+> >  ffff880193861f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> >  ffff880193861f80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> > > ffff880193862000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >                                                           ^
+> >  ffff880193862080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >  ffff880193862100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Seems like a duplicate of the bug Stefan's working on now.
 
-After the patch, the loop looks like(under arm64):
+I am currently away on leave and not working on fixes.  Please contact
+Cathy about vsock syzkaller bugs while I'm away.
 
-        ...
-        bl      0 <_raw_spin_lock>
-        str     w23, [x28,#132]
-        ...
-where w23 is loaded so be ready before the loop.
+Stefan
 
-=46rom another side, mvneta_tx_done_gbe() is called from mvneta_poll()
-which is in non-preemptible context, so it's safe to call the
-smp_processor_id() function once.
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/m=
-arvell/mvneta.c
-index bcd20ebb2ebd..fe3edb3c2bf4 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2507,12 +2507,13 @@ static void mvneta_tx_done_gbe(struct mvneta_port *=
-pp, u32 cause_tx_done)
- {
- 	struct mvneta_tx_queue *txq;
- 	struct netdev_queue *nq;
-+	int cpu =3D smp_processor_id();
-=20
- 	while (cause_tx_done) {
- 		txq =3D mvneta_tx_done_policy(pp, cause_tx_done);
-=20
- 		nq =3D netdev_get_tx_queue(pp->dev, txq->id);
--		__netif_tx_lock(nq, smp_processor_id());
-+		__netif_tx_lock(nq, cpu);
-=20
- 		if (txq->count)
- 			mvneta_txq_done(pp, txq);
---=20
-2.18.0
+iQEcBAEBAgAGBQJbiPkxAAoJEJykq7OBq3PIT2EH/3otglom79fa3fNmqRgmWvuW
+6ZhoR2StqGQW8fPH0Ov/NK79GS0Xgm8CLyS5RJIglDwZLQdwc23uAjaN9bxL3DVu
+cCZ0PfVsa9HA0o09E3fLhZJUcOyoITFWue8AH0Bk91B3930Xy0zmf0T8ovLgSC/C
+Xfikaxuae+WVONzf2Z1lvapxsh03BvyKkJ8XDfTwVryR38GYW8dGLKqIUhmpkDs9
+XHxh+lKCK7zpTvjd0VUieGsMrxhf79y/Q87ZvAVtfw1YtFhK0RXeRSBa+R7hiDZx
+KnjIs0bx/lvaYYCnTkZHpEZ+iw5KN4Dki1YCubm6gU9Mi3r0YCthBFAPFOM0n3M=
+=+kRX
+-----END PGP SIGNATURE-----
 
+--9jxsPFA5p3P2qPhR--
