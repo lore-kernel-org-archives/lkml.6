@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE119C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2E9C43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988C12083E
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 688C32083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHIUDDO7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988C12083E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEXfyhc5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 688C32083B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeHaF7X (ORCPT
+        id S1727579AbeHaF7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:59:23 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44345 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeHaF7W (ORCPT
+        Fri, 31 Aug 2018 01:59:24 -0400
+Received: from mail-yb1-f175.google.com ([209.85.219.175]:41043 "EHLO
+        mail-yb1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeHaF7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:59:22 -0400
-Received: by mail-yb1-f193.google.com with SMTP id l16-v6so330501ybk.11;
-        Thu, 30 Aug 2018 18:54:20 -0700 (PDT)
+        Fri, 31 Aug 2018 01:59:23 -0400
+Received: by mail-yb1-f175.google.com with SMTP id q18-v6so330267ybg.8;
+        Thu, 30 Aug 2018 18:54:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V/nPLJiLoMbwxwUN+SeDjrPjMrJFtIi3YKNpVCr/rfI=;
-        b=cHIUDDO7zpJyjduUj1AwohQqhchaeZcF5rHzrvC830EPVE0vyg+4cTpVyh4a4QtOpU
-         +G9wWJT7qq6cToApALaQAi5T6bf1NbGO24PCuieqXgOz2/YsonS49UPFUl1UdubPctmx
-         F7rY9id1fp/KHKAJ8Tz8JTc+66obEHPfA0q+C6PiT0/7FlWtnXEtToIU4PCwJSkb4CLT
-         JUd+dM0bMrpjsOxGVs3MmiX9hfP6yeltlF/Vs+//MI2Onv+Ly3QKp2V5Fy5v8ul5qVPM
-         q4L4s3/h27gsLS0zx4y2ev2/+80AIbpNemaARAo3pBIWbTfe7+ABErERcJYDvMngGfrv
-         ALOw==
+        bh=Mj25J0UoslyA5YmwNy0OqZFtdVfhQZOp37ROGcHR3Fc=;
+        b=QEXfyhc5/2+9jk5xLBPys7D34HzM2ObH4YFt7r0EnTI0aeKtvb9LXYDRQF1lpMBMak
+         zbi8UQMIqu4nbcPSomeVaG7vwWOJN3aT9xnL5gacaY0t6uRfuQTnR7zJAyXYSP/x4Jxi
+         SkL9XTyOlWBeFFL1BYuikzyoZJPRCzRGwFvAc8wBFA3Zl80lMibBkqaM9AP7lQhddUwV
+         LKzURAPrN2AXwiBjecsqqYILKRG22PoFln2HIRIhhhZKdIhwk4rNQGdnM6waZ7oa8rXE
+         QOLelyydMejuQSOHBb4xqMC+QF8tW35E1IOcP80Ul21wmuDjap1pcLc95zEwAWRWUYtN
+         bNvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=V/nPLJiLoMbwxwUN+SeDjrPjMrJFtIi3YKNpVCr/rfI=;
-        b=NiXroOqKkgMAbd0Wofn3BkGOQ0977VwIhJ6BLqXsbziVObMc1hm10zZZ12SqRofn5/
-         6wHwQn6KBeg1vKmAGa09H+vDIN3xZgaQ7Wa6TdRnVIRp8rzpBdYId/DY+kIUs9nui2Ta
-         iIXP2mYmscyZIMu2ek+wMoaWwXGkeh4d6L/D1Eb68/u+YLkDhSYlquf/BB6k8EVT9jFN
-         cIHA0wajs+8RXtcoYpi9XjhQVWI4up3T9aMniV64SrahO/kccPF93c4B+9f5I2EVx2u6
-         flSN2+OB1u6/pOSo+P/vshB76qMTJKc23pxql78HsWSz5oGtEQLvu+Z1rSYE5yZUne8V
-         9HSQ==
-X-Gm-Message-State: APzg51BQ3l3PNBctQglkFxhVJa4wJmgiLXCUDy/ipVvedhKZ8MTGXnXU
-        GEx9jRolQ2x/EqdL5VKHuyg=
-X-Google-Smtp-Source: ANB0Vda3dIa2nQlBs/oG8+sRC7aaZ2qqZNVrEidS0io+tqU3QGrL33K0QKG7fhBse0uwNvmKB+eqDw==
-X-Received: by 2002:a25:23c3:: with SMTP id j186-v6mr832463ybj.259.1535680459994;
-        Thu, 30 Aug 2018 18:54:19 -0700 (PDT)
+        bh=Mj25J0UoslyA5YmwNy0OqZFtdVfhQZOp37ROGcHR3Fc=;
+        b=AB+MMcZR8+o1EtyLLwbggpqrf2ATyxiaNsoH7vDtP4Ex/GITN35jbqXHcbDZXpiLyI
+         N9mQ0irgSvEkADijPviovxrehKf986gIFZXntyS1vtBNejXxHKkvaDuns4j9NTkZlJdo
+         TqYSuIh+mCfoTdmWDgcs/h1SHKdh7OUt/Zz4fFe5kcHo7mJNLW4HTkVYad0FE0fQFbo/
+         g0jo4GpvyectP09i41SB1vLoG05pfmqg1j4e6YQMId3Gp3g5/9D3kXSTBa8ED0GlGO4w
+         StHyjRzRdHTEDEOHc7HbheThauD6Cs0KWo5b+TmCM+SSQYz1XfusSBCLH/mieLD/dHMw
+         JnXA==
+X-Gm-Message-State: APzg51B371J4UaF3u8TbWtvHjHZaUIvQkvS1n8Be1xCC87t7IOCT0JpN
+        wulYrR961pJ02kSqiqv6KTY=
+X-Google-Smtp-Source: ANB0VdZN2Uj/rL5lIreTV25UR+WaCxZE8TZxHXN07eljMMWLqzEQ571yC3MAelGy0mQfKVXlba3lBg==
+X-Received: by 2002:a25:7904:: with SMTP id u4-v6mr7634178ybc.365.1535680460964;
+        Thu, 30 Aug 2018 18:54:20 -0700 (PDT)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.19
+        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Aug 2018 18:54:19 -0700 (PDT)
+        Thu, 30 Aug 2018 18:54:20 -0700 (PDT)
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -65,9 +65,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 05/15] blkcg: update blkg_lookup_create to do locking
-Date:   Thu, 30 Aug 2018 21:53:46 -0400
-Message-Id: <20180831015356.69796-6-dennisszhou@gmail.com>
+Subject: [PATCH 06/15] blkcg: always associate a bio with a blkg
+Date:   Thu, 30 Aug 2018 21:53:47 -0400
+Message-Id: <20180831015356.69796-7-dennisszhou@gmail.com>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180831015356.69796-1-dennisszhou@gmail.com>
 References: <20180831015356.69796-1-dennisszhou@gmail.com>
@@ -78,114 +78,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-To know when to create a blkg, the general pattern is to do a
-blkg_lookup and if that fails, lock and then do a lookup again and if
-that fails finally create. It doesn't make much sense for everyone who
-wants to do creation to write this themselves.
+Previously, blkg's were only assigned as needed by blk-iolatency and
+blk-throttle. bio->css was also always being associated while blkg was
+being looked up and then thrown away in blkcg_bio_issue_check.
 
-This changes blkg_lookup_create to do locking and implement this
-pattern. The old blkg_lookup_create is renamed to __blkg_lookup_create.
-If a call site wants to do its own error handling or already owns the
-queue lock, they can use __blkg_lookup_create.
+This patch beings the cleanup of bio->css and bio->bi_blkg by always
+associating a blkg in blkcg_bio_issue_check. This tries to create the
+blkg, but if it is not possible, falls back to using the root_blkg of
+the request_queue. Therefore, a bio will always be associated with a
+blkg.
+
+A missing definition for bio_associate_blkg is also added for parity in
+bio.h.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
 ---
- block/blk-cgroup.c         | 31 ++++++++++++++++++++++++++++---
- block/blk-iolatency.c      |  2 +-
- include/linux/blk-cgroup.h |  4 +++-
- 3 files changed, 32 insertions(+), 5 deletions(-)
+ block/bio.c                | 41 ++++++++++++++++++++++++++++++++++++++
+ include/linux/bio.h        |  5 +++++
+ include/linux/blk-cgroup.h | 19 ++----------------
+ 3 files changed, 48 insertions(+), 17 deletions(-)
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index d7114308a480..f678cd555814 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -259,7 +259,7 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- }
- 
- /**
-- * blkg_lookup_create - lookup blkg, try to create one if not there
-+ * __blkg_lookup_create - lookup blkg, try to create one if not there
-  * @blkcg: blkcg of interest
-  * @q: request_queue of interest
-  *
-@@ -272,8 +272,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
-  * value on error.  If @q is dead, returns ERR_PTR(-EINVAL).  If @q is not
-  * dead and bypassing, returns ERR_PTR(-EBUSY).
-  */
--struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
--				    struct request_queue *q)
-+struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
-+				      struct request_queue *q)
- {
- 	struct blkcg_gq *blkg;
- 
-@@ -310,6 +310,31 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
- 	}
+diff --git a/block/bio.c b/block/bio.c
+index 09a31e4d46bb..e937f9681188 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1999,6 +1999,44 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+ 	return 0;
  }
  
 +/**
-+ * blkg_lookup_create - find or create a blkg
-+ * @blkcg: target block cgroup
-+ * @q: target request_queue
++ * bio_associate_create_blkg - associate a bio with a blkg from q
++ * @q: request_queue where bio is going
++ * @bio: target bio
 + *
-+ * This looks up or creates the blkg representing the unique pair
-+ * of the blkcg and the request_queue.
++ * Associate @bio with the blkg found from the bio's css and the request_queue.
++ * If one is not found, bio_lookup_blkg creates the blkg.
 + */
-+struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
-+				    struct request_queue *q)
++int bio_associate_create_blkg(struct request_queue *q, struct bio *bio)
 +{
-+	struct blkcg_gq *blkg = blkg_lookup(blkcg, q);
-+	unsigned long flags;
++	struct blkcg *blkcg;
++	struct blkcg_gq *blkg;
++	int ret = 0;
 +
-+	if (unlikely(!blkg)) {
-+		spin_lock_irqsave(q->queue_lock, flags);
++	/* someone has already associated this bio with a blkg */
++	if (bio->bi_blkg)
++		return ret;
 +
-+		blkg = __blkg_lookup_create(blkcg, q);
++	rcu_read_lock();
 +
-+		spin_unlock_irqrestore(q->queue_lock, flags);
++	bio_associate_blkcg(bio, NULL);
++	blkcg = bio_blkcg(bio);
++
++	if (!blkcg->css.parent) {
++		ret = bio_associate_blkg(bio, q->root_blkg);
++		goto assoc_out;
 +	}
 +
-+	return blkg;
++	blkg = blkg_lookup_create(blkcg, q);
++	if (IS_ERR(blkg))
++		blkg = q->root_blkg;
++
++	ret = bio_associate_blkg(bio, blkg);
++assoc_out:
++	rcu_read_unlock();
++	return ret;
 +}
 +
- static void blkg_destroy(struct blkcg_gq *blkg)
+ /**
+  * bio_disassociate_task - undo bio_associate_current()
+  * @bio: target bio
+@@ -2028,6 +2066,9 @@ void bio_clone_blkcg_association(struct bio *dst, struct bio *src)
  {
- 	struct blkcg *blkcg = blkg->blkcg;
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 62fdd9002c29..22b2ff0440cc 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -410,7 +410,7 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio,
- 	if (unlikely(!blkg)) {
- 		if (!lock)
- 			spin_lock_irq(q->queue_lock);
--		blkg = blkg_lookup_create(blkcg, q);
-+		blkg = __blkg_lookup_create(blkcg, q);
- 		if (IS_ERR(blkg))
- 			blkg = NULL;
- 		if (!lock)
+ 	if (src->bi_css)
+ 		WARN_ON(bio_associate_blkcg(dst, src->bi_css));
++
++	if (src->bi_blkg)
++		bio_associate_blkg(dst, src->bi_blkg);
+ }
+ EXPORT_SYMBOL_GPL(bio_clone_blkcg_association);
+ #endif /* CONFIG_BLK_CGROUP */
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 51371740d2a8..d4626108b9d7 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -556,11 +556,16 @@ static inline int bio_associate_blkcg_from_page(struct bio *bio,
+ #ifdef CONFIG_BLK_CGROUP
+ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
+ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
++int bio_associate_create_blkg(struct request_queue *q, struct bio *bio);
+ void bio_disassociate_task(struct bio *bio);
+ void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
+ #else	/* CONFIG_BLK_CGROUP */
+ static inline int bio_associate_blkcg(struct bio *bio,
+ 			struct cgroup_subsys_state *blkcg_css) { return 0; }
++static inline int bio_associate_blkg(struct bio *bio,
++				     struct blkcg_gq *blkg) { return 0; }
++static inline int bio_associate_create_blkg(struct request_queue *q,
++					    struct bio *bio) { return 0; }
+ static inline void bio_disassociate_task(struct bio *bio) { }
+ static inline void bio_clone_blkcg_association(struct bio *dst,
+ 			struct bio *src) { }
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index d3cafb1eda48..ea2dd6e6baf2 100644
+index ea2dd6e6baf2..9931ec2f4e9e 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -184,6 +184,8 @@ extern struct cgroup_subsys_state * const blkcg_root_css;
+@@ -824,29 +824,15 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
+ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 					 struct bio *bio)
+ {
+-	struct blkcg *blkcg;
+ 	struct blkcg_gq *blkg;
+ 	bool throtl = false;
  
- struct blkcg_gq *blkg_lookup_slowpath(struct blkcg *blkcg,
- 				      struct request_queue *q, bool update_hint);
-+struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
-+				      struct request_queue *q);
- struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
- 				    struct request_queue *q);
- int blkcg_init_queue(struct request_queue *q);
-@@ -835,7 +837,7 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 	blkg = blkg_lookup(blkcg, q);
- 	if (unlikely(!blkg)) {
- 		spin_lock_irq(q->queue_lock);
--		blkg = blkg_lookup_create(blkcg, q);
-+		blkg = __blkg_lookup_create(blkcg, q);
- 		if (IS_ERR(blkg))
- 			blkg = NULL;
- 		spin_unlock_irq(q->queue_lock);
+-	rcu_read_lock();
+-
+-	/* associate blkcg if bio hasn't attached one */
+-	bio_associate_blkcg(bio, NULL);
+-	blkcg = bio_blkcg(bio);
+-
+-	blkg = blkg_lookup(blkcg, q);
+-	if (unlikely(!blkg)) {
+-		spin_lock_irq(q->queue_lock);
+-		blkg = __blkg_lookup_create(blkcg, q);
+-		if (IS_ERR(blkg))
+-			blkg = NULL;
+-		spin_unlock_irq(q->queue_lock);
+-	}
++	bio_associate_create_blkg(q, bio);
++	blkg = bio->bi_blkg;
+ 
+ 	throtl = blk_throtl_bio(q, blkg, bio);
+ 
+ 	if (!throtl) {
+-		blkg = blkg ?: q->root_blkg;
+ 		/*
+ 		 * If the bio is flagged with BIO_QUEUE_ENTERED it means this
+ 		 * is a split bio and we would have already accounted for the
+@@ -858,7 +844,6 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
+ 	}
+ 
+-	rcu_read_unlock();
+ 	return !throtl;
+ }
+ 
 -- 
 2.17.1
 
