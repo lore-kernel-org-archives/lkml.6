@@ -3,85 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD8CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5029820661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5029820661
+	by mail.kernel.org (Postfix) with ESMTP id 20FF220661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 12:17:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FF220661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeHaQYz (ORCPT
+        id S1728309AbeHaQZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 12:24:55 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:40396 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeHaQYz (ORCPT
+        Fri, 31 Aug 2018 12:25:08 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41433 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727359AbeHaQZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 12:24:55 -0400
-Received: by mail-qt0-f193.google.com with SMTP id h4-v6so14230631qtj.7;
-        Fri, 31 Aug 2018 05:17:42 -0700 (PDT)
+        Fri, 31 Aug 2018 12:25:08 -0400
+Received: by mail-qt0-f194.google.com with SMTP id t39-v6so14206416qtc.8;
+        Fri, 31 Aug 2018 05:17:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EyXLS/Rpsh0mUd6C45rCziFH3sSp6YahcQ3CFWv7i68=;
-        b=oDYqywqKh+2tUbNp/TRg10QHDoZf+jO3UlucOWW/v2K3gexPSW2H4SCyGsiAmxKXE2
-         qc1uDTyjaxG+1CqQw1BW0OSPFTfO+v+R0wG3+1EkV6SrTwdKS7+z5EdEliUMAUszoBq5
-         rWGjgCOgdiokx+j9x4pHL3kJeQHJ5SMjvte+ypYvQTcVLVktj4HKS+WaKOFPVfUR4wyE
-         1/qc8R0F1lecc36h9V4p08umhwhwB0MUqv1tDigMHpJdB2q5CEBtGExOCEDx12/8OYgR
-         TCV9Z9wz96Hc0x8pqlG1/Qgiyu09iOTk8UTerBVNzfUP7uAYMMh5dArHyQt1EZxua91H
-         LIGA==
-X-Gm-Message-State: APzg51B63iD5bW7WnwNvxu/vzy7eBeZNhE1ZjeW9PgRTvEl5+bSDKMXT
-        ql2RW6YRvRJoogw18kZ/+g==
-X-Google-Smtp-Source: ANB0VdbyoXM3YK4TMLXvwROqmId/e+as3P9PJQntwryW7dvB9Z0H8QN0lYYQM5q8FjRPi3WRmm2vcg==
-X-Received: by 2002:a0c:e083:: with SMTP id l3-v6mr15262671qvk.1.1535717861941;
-        Fri, 31 Aug 2018 05:17:41 -0700 (PDT)
+        bh=0BDHD9c3sqtOqHZ83do4BeF2hzl3IWB4t57/JuXPXRs=;
+        b=ZTxJyY1Z8smZWet9tl+IBVNDxY4slcb3n0RAJ/3QucLVU3A2Rkx3BCUuhXLdJ3rcul
+         M64XbGjdsDA7GmlaxQihWDDSl6dLRaGOe9tpxwDUhp0x0kqBKn1qvUxnNYC2A21WpEL3
+         cMOzt5LTf7y8GPFOhe8rTnB5JUNgUBbrpCC9H6zdKdZSzIKOKyD83LQdO6S+if/o2ztJ
+         eB1afAME4v2iyb8ZVyzAgGU80mpNxD1RJ9yeLe5z/gtw5MX/Di+EVy4JHd6hkThpqNig
+         vVXFIIi+GpKTp2EhaEwSEWQdtXrakcARKtKmtib/wV/U+7WuP2DyRLPqW0DylF3WlDdB
+         jUjw==
+X-Gm-Message-State: APzg51AdWsdUhl12lfcZEu9za+UILATd0XRa+4vEmzRF/mre1LLzL+CR
+        S+R7KpNrKeTnvJN/oPRVNQ==
+X-Google-Smtp-Source: ANB0VdaTdC4iWPX90R1qYoa2LcNhNvKQHAgjXIuPmd5fK82fPqu8XkDEUSEnTI0wuPlmdIw7sqs9OA==
+X-Received: by 2002:ac8:392e:: with SMTP id s43-v6mr15550683qtb.68.1535717873943;
+        Fri, 31 Aug 2018 05:17:53 -0700 (PDT)
 Received: from localhost (mobile-166-170-28-234.mycingular.net. [166.170.28.234])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm5648467qkb.84.2018.08.31.05.17.41
+        by smtp.gmail.com with ESMTPSA id 15-v6sm6615392qtx.44.2018.08.31.05.17.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 05:17:41 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 08:17:40 -0400
+        Fri, 31 Aug 2018 05:17:53 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 08:17:51 -0400
 From:   Rob Herring <robh@kernel.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans de Goede <hdegoede@redhat.com>, Li Jun <jun.li@nxp.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
-Subject: Re: [PATCH 2/3] dt-bindings: usb: fusb302: Use usb-connector
- bindings for  configuration
-Message-ID: <20180831121740.GA21868@bogus>
-References: <cover.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
- <6472fd66d20df31165f9645eb49f4f30a0a51468.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 8/8] dt-binding: mtd: Document gpio-addr-flash
+Message-ID: <20180831121751.GA22256@bogus>
+References: <20180821143152.32293-1-ricardo.ribalda@gmail.com>
+ <20180821143152.32293-9-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6472fd66d20df31165f9645eb49f4f30a0a51468.1534853047.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <20180821143152.32293-9-ricardo.ribalda@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018 13:28:22 +0100, Adam Thomson wrote:
-> There are now generic usb-connector bindings which can be used
-> to define a port controllers configuration for USB-PD, so device
-> specific bindings are no longer necessary.
+On Tue, Aug 21, 2018 at 04:31:52PM +0200, Ricardo Ribalda Delgado wrote:
+> Add documentation for gpio-addr-flash. This binding allow creating
+> flash devices that are paged using GPIOs.
 > 
-> This update deprecates 'fcs,operating-sink-microwatt', and references
-> the 'usb-connector' bindings instead to achieve the required port
-> config.
-> 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 > ---
->  .../devicetree/bindings/usb/fcs,fusb302.txt        | 32 +++++++++++++++++-----
->  1 file changed, 25 insertions(+), 7 deletions(-)
+>  .../bindings/mtd/gpio-addr-flash.txt          | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
+> new file mode 100644
+> index 000000000000..4279e8cad09b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
+> @@ -0,0 +1,46 @@
+> +Memory Mapped flash with some address lines addressed using GPIOs
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+That's ugly...
+
+> +
+> +Handle the case where a flash device is mostly addressed using physical
+> +line and supplemented by GPIOs.  This way you can hook up say a 8MiB flash
+> +to a 2MiB memory range and use the GPIOs to select a particular range.
+> +
+> + - compatible : "cfi-gpio-addr-flash"
+
+Why a new compatible? Shouldn't just adding some address gpios to an 
+existing flash device binding be sufficient?
+
+> + - reg : Address range of the mtd chip that is memory mapped, this is,
+> +   on the previous example 2MiB.
+> + - bank-width : Width (in bytes) of the bank.  Equal to the
+> +   device width times the number of interleaved chips.
+> + - probe-type : (optional) "cfi_probe", "jedec_probe". How the mtd chip
+> +   is going to be probed. If omitted, assumed to be equal to "cfi_probe".
+> + - #address-cells, #size-cells : Must be present if the device has
+> +   sub-nodes representing partitions (see below).  In this case
+> +   both #address-cells and #size-cells must be equal to 1.
+> +
+> +The device tree may optionally contain sub-nodes describing partitions of the
+> +address space. See partition.txt for more detail.
+> +
+> +Example:
+> +
+> +	cfi_flash_0: cfi_flash {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		compatible = "cfi-gpio-addr-flash";
+> +		bank-width = <2>;
+> +		reg = < 0x00300000 0x00200000 >;
+> +		gpios = <&gpio_0 3 0>, <&gpio_0 4 0>;
+> +		partition@0 {
+> +			reg = < 0x0 0x200000 >;
+> +			label = "Golden Bitstream";
+> +		};
+> +		partition@200000 {
+> +			reg = < 0x200000 0x200000 >;
+> +			label = "User Bitstream";
+> +		};
+> +		partition@400000 {
+> +			reg = < 0x400000 0x200000 >;
+> +			label = "V4L Controls";
+> +		};
+> +		partition@600000 {
+> +			reg = < 0x600000 0x200000 >;
+> +			label = "Production Data";
+> +		};
+> +	} ;
+> -- 
+> 2.18.0
+> 
