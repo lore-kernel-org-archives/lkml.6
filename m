@@ -2,94 +2,97 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7041FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C537CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 289DD20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:31:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xsL5jW22"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289DD20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C8712083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 14:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8712083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeHaSjW (ORCPT
+        id S1727990AbeHaSmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 14:39:22 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:52188 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbeHaSjV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 14:39:21 -0400
-X-Greylist: delayed 24953 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Aug 2018 14:39:20 EDT
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w7VEUp9h030172;
-        Fri, 31 Aug 2018 23:30:52 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w7VEUp9h030172
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535725852;
-        bh=jBo3wS4BA/zEKJYcB1wVpZfBl26y6JDoM9tDdtPZ9Uk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xsL5jW22IxiUCteSf958nAur4ohTscf/fPVZQ7tws28ndKz/2aIgonD0lqzBV31Rm
-         ok3u2z9KUVvd3l3iwIdesBXZseMkxkeJuk80rIZfzkOmt93idua8pr8/SZHWpyrF4U
-         ZWx3fI2wnZ7D9ScHdcssudxoijyFIjsCdUfiIFLdsHKShyhkags+CdxowCFjRD4FX5
-         UH+KKFOgAOLW0yGxoAU9fF5gk/dbh1C+mBoMdHbU55C/AxlJ43Bxb54QsVdFIJcK0p
-         RPQRXJeRu8I5UGLnGNMC5kzMNKMs8GxhYgbvod16EbKdo9J2/81PACdnqy7suU+KbE
-         zcoDo4StxgVjw==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] i2c: uniphier-f: issue STOP only for last message or I2C_M_STOP
-Date:   Fri, 31 Aug 2018 23:30:48 +0900
-Message-Id: <1535725848-4076-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535725848-4076-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1535725848-4076-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 31 Aug 2018 14:42:35 -0400
+Received: from mout.gmx.net ([212.227.17.20]:51071 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727430AbeHaSmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 14:42:35 -0400
+Received: from localhost.localdomain ([113.87.91.43]) by mail.gmx.com
+ (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0M8pKi-1g3Un32scm-00C9K1; Fri, 31 Aug 2018 16:34:22 +0200
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
+        hubcap@omnibond.com, martin@omnibond.com
+Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        jfs-discussion@lists.sourceforge.net,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH v2 1/5] ext2: cache NULL when both default_acl and acl are NULL
+Date:   Fri, 31 Aug 2018 22:33:48 +0800
+Message-Id: <20180831143352.22970-1-cgxu519@gmx.com>
+X-Mailer: git-send-email 2.17.1
+X-Provags-ID: V03:K1:zJ61drPWzc+dm1JwAfmJn2MH0FhX2Y4YI1twJEzNLBXtS2M87tH
+ iTJVvPFqE0PIZ5+oXMDTZMwo/emuhgY/uBOzf0AWz4x5+zkskaCN4f+CXJi1+w/CY8/mfS9
+ wkiojIe0befJcQwS46HI5GmeuqC3kE3NWh3El6XRbmArxcy9OQ5jbnHII88Wh6sqz84OA0p
+ 7Eqj00PbdUmLWlDE4n5DQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VRFLwQTDSOQ=:BTchpu3/rQZLzWXzfrlqIj
+ 5NF8iZe3AiXKdPLBrR8inXP/w/VgClRkoMlEslk5/EGkIry6GDEcZHZCiWxj5zuEhTLXfZ/8H
+ j5wvyVpjP1TLEc7pbWa0EQM1aIvM+EvVJh1+CfZWnskAEiuMAUQL8hHMwRb8S5nZh7LtwZngV
+ 168qcTNSSd/7SHpIvtB9O62HuWnBzvxFLfejOAnQm4Zwt+4OgZVA+1Pn8sdzLHg9m7hvNdHrG
+ S5xMXTZRO6hQkTyel1pfaITNVLiisssj7aY9abHzA6n08/9XIX6oGI17OYVp7nhmY8Ibe4asJ
+ oSeTwz1MjDNjhZi+LJtFTP2SmjrDS8nIRI/yZAf7Qvj2FnPkJ6AHkEpmglE+HJ2yAXp34uJ1W
+ k6NZnFlqngURpcDqFJokNjXtQ9mNQkGNxSvxiTxRoy58HuGA+BJiYdx/8sR2MMWVUIaz+UIGr
+ F7na9o3Jqp8dr2EgxVzG1uaaHt8AVFzXoyHPNzccfDLEdROwEnUeckpVMdJ5t2upG2gdg52Z3
+ aDQ0Ad06L9hAxbdx7rMyYNAz74ZKXAPlooWT+KOz6oz4YBUYGsxQ5CjtqwFGq8T/y+OFF4CV7
+ e504cgwxX7lsLcpDVhQ54cVXNcULu7ydTTsixnJfht8gN2HyCPWjG9gxmt/us82ToL5h+rE/I
+ oiQV2Hnf6O0QU0gtpjbLySbIHT0hwSqWRQihTIYKOk06rdFDg4AP8r9eJd5HpqXCGCLwBRyoB
+ Al5QAatRxZxIheSvMQrsdYTlcdZKpQZFvsNoYFL3FsklwkLbGhyon5dnZRg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver currently emits a STOP if the next message is not
-I2C_MD_RD.  It should not do it because it disturbs the I2C_RDWR
-ioctl, where read/write transactions are combined without STOP
-between.
+default_acl and acl of newly created inode will be initiated
+as ACL_NOT_CACHED in vfs function inode_init_always() and later
+will be updated by calling xxx_init_acl() in specific filesystems.
+Howerver, when default_acl and acl are NULL then they keep the value
+of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+in this case.
 
-Issue STOP only when the message is the last one _or_ flagged with
-I2C_M_STOP.
-
-Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
+v1->v2:
+- Coding style change.
 
- drivers/i2c/busses/i2c-uniphier-f.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/ext2/acl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index 9918bdd..a403e85 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -401,11 +401,8 @@ static int uniphier_fi2c_master_xfer(struct i2c_adapter *adap,
- 		return ret;
- 
- 	for (msg = msgs; msg < emsg; msg++) {
--		/* If next message is read, skip the stop condition */
--		bool stop = !(msg + 1 < emsg && msg[1].flags & I2C_M_RD);
--		/* but, force it if I2C_M_STOP is set */
--		if (msg->flags & I2C_M_STOP)
--			stop = true;
-+		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
-+		bool stop = (msg + 1 == emsg) || (msg->flags & I2C_M_STOP);
- 
- 		ret = uniphier_fi2c_master_xfer_one(adap, msg, stop);
- 		if (ret)
+diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
+index 224c04abb2e5..cf4c77f8dd08 100644
+--- a/fs/ext2/acl.c
++++ b/fs/ext2/acl.c
+@@ -256,11 +256,15 @@ ext2_init_acl(struct inode *inode, struct inode *dir)
+ 	if (default_acl) {
+ 		error = __ext2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
+ 		posix_acl_release(default_acl);
++	} else {
++		inode->i_default_acl = NULL;
+ 	}
+ 	if (acl) {
+ 		if (!error)
+ 			error = __ext2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+ 		posix_acl_release(acl);
++	} else {
++		inode->i_acl = NULL;
+ 	}
+ 	return error;
+ }
 -- 
-2.7.4
+2.17.1
 
