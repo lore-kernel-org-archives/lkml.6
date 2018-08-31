@@ -2,121 +2,104 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD5BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 751FDC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5FC20837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E6F20841
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 20:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YfPCGbTp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5FC20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TopJtve0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E6F20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeIAA02 (ORCPT
+        id S1727496AbeIAA2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 20:26:28 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37775 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeIAA01 (ORCPT
+        Fri, 31 Aug 2018 20:28:22 -0400
+Received: from mail-yw1-f41.google.com ([209.85.161.41]:38002 "EHLO
+        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIAA2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 20:26:27 -0400
-Received: by mail-pf1-f193.google.com with SMTP id h69-v6so6003257pfd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 13:17:23 -0700 (PDT)
+        Fri, 31 Aug 2018 20:28:22 -0400
+Received: by mail-yw1-f41.google.com with SMTP id n21-v6so5489035ywh.5;
+        Fri, 31 Aug 2018 13:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4opANQdSOR1YBQ2HptujUEqJpJcFQfDZPJWhmlJDjvY=;
-        b=YfPCGbTpOH1x/zXEwZdcF+nHzpr+rdRPaHA6WJ08QdPXVFPAwvbr5TL0jtm7O0AeV7
-         WBM/94tD4YTJRzG+YJW/ILK+xZ+qO+b8t6K+xhsXM2v53UYb186GbN6Su0qtCmAGHe4c
-         +cZG3Y0tfWH3YI3u4tqHPAIweGKhel9TOz/GDiFMiweP8YmfiiAaM2H+/5T9X8gJjv9z
-         +C4wZHc97jBbwdqwuMUw8F7HsdVw+wm6ekzTixURzqAWFFyEwf5fqZSG2tvYbB6mzrS1
-         WFUjeUsFufMu1/SeNZBfAL3vbu5lbhFjF8+t0nvc1knPtEkkwO/EhR+uFZkcDIcSsGg4
-         F8CA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Vk6eJaICnaGPvd/ak8gSgiTZzuoqUM/6teuv/tKzh+w=;
+        b=TopJtve0M1jk2OYvgWWQBfCKtk+Fv0HLw7ge+DUSAoydFXq3v2J0ZbIEdj14OOcy8W
+         /0fH5/sNsnEQlGv9d8+kgosmxRSNMJzyfaJpOHI5yf35vx4blaxsaFV6E9x8xGCjN8qO
+         HXj1OG0Ox5r/j3O0djnSnz1x98dA6+EkuyVg//C1wPReRDp9YPE9vn5dNcmE17eR5fzG
+         /d7ri0mHHyRPOZCzYMnmNvGmyC46HT+FZVZmOsVYzIB0h/TS05yy8m9R70FuVGVDyBUU
+         +uzN4iiPIFES0Bo7AXF+/F6uT8VXgQH6uLuHq7lxeZtySmEXFeRFIHpynmlhFalhx/1N
+         6WMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4opANQdSOR1YBQ2HptujUEqJpJcFQfDZPJWhmlJDjvY=;
-        b=jmgHd6/BckMcgde5NclM7Xi2+ThbAtT17aZHUkLzXbf9VNlOYJKx94aTXkXY2xuFti
-         EAkdRSI4++Cc7+OsXnxH/2/kEtxZs/pcgafcW8xwbNsKX57q4eFk6aL5nGqrK4ayjZcC
-         9veJWQLsfX9CCN5ONr533BM5XE8xFO86hwdEt6ewtIoHyuOE/lFfSuxIhfmhNmXGSnuP
-         B3iicc6UCLEf0BGVTdtiJZJMWe6v3x7aS80o46HuLG4XwE2JHaI4+MOKuCHrKxf7R6dr
-         u/EeWXOTuKhNs9JnvJQh6KtkCy9uXl6wI5T+cb9R2jXBZtuhxacauNOSPnsCQtiLsIgW
-         9TVw==
-X-Gm-Message-State: APzg51Bxx+HlilIFU0rHCLXhffO08MqZjaFpz3SdnEdKmiVSf0v7Abf+
-        W+oS4kBDxvnrf6yk/vjevpOIiw==
-X-Google-Smtp-Source: ANB0VdZBhRg5FyZpzKO72M3/SEno9S7CpIDdCEs7gg5F7roMmQUG+slw2Dyug/g1OCOQ9ZtOhsbizQ==
-X-Received: by 2002:a62:4fd9:: with SMTP id f86-v6mr17707795pfj.110.1535746642188;
-        Fri, 31 Aug 2018 13:17:22 -0700 (PDT)
-Received: from hackmann.mtv.corp.google.com ([2620:0:1000:1601:82f7:8f1:8c08:a97a])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm28724100pfi.17.2018.08.31.13.17.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Vk6eJaICnaGPvd/ak8gSgiTZzuoqUM/6teuv/tKzh+w=;
+        b=GEDfI/orCzqNezJ0cYFMPAPpWdagSrEOjss+3qvrcRQQ/tY+QnThe9Da8yU4Wp6sfN
+         Um9sDthtAX21b5QQ11ifciDSIlIYbyQ7FklwaLroKfl+REeZF3E+qxtzaPOoSuJGKwVb
+         TKy/WpkSjreeuNgiCCIAwTTlLxyP9WD/a8ps5hoxc68tcqFibRlvT+Ak0l5SqXZjlhRh
+         HO2tFb4A+eFOZE25yZpWouLQg1g33DOws7sHSrZXPHjN/CrqpwYq0DOqqm4v2hpisNlV
+         bbblVcV+sSZHQ1xMZy1k9umu0RIufEABu30tetm1KUpWwYEkzsbTS0utGHfnfCeKrGIH
+         eOZA==
+X-Gm-Message-State: APzg51CoX/iZ5nBhxg+03KcdxTPVweM6qNBFmWky4BrBC+t5/4GNzxFY
+        2UleT0g3/3cgLVZJizDrzGw=
+X-Google-Smtp-Source: ANB0VdZSKuFvRZLTVXtFWUL+wGq6F3WAiKwDjD+gz/RZnlVpDYxFq5MyjNDoGimEYPNVl+Pmy5fizw==
+X-Received: by 2002:a81:83c5:: with SMTP id t188-v6mr10015697ywf.224.1535746756557;
+        Fri, 31 Aug 2018 13:19:16 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::3:ae4b])
+        by smtp.gmail.com with ESMTPSA id o193-v6sm5153332ywd.84.2018.08.31.13.19.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 13:17:21 -0700 (PDT)
-Subject: Re: [PATCH] staging: android: ion: fix ION_IOC_{MAP,SHARE}
- use-after-free
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Hackmann <ghackmann@android.com>
-Cc:     linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        devel@driverdev.osuosl.org, kernel-team@android.com,
-        stable@vger.kernel.org
-References: <20180831200627.59712-1-ghackmann@google.com>
- <20180831201232.GA23559@kroah.com>
-From:   Greg Hackmann <ghackmann@google.com>
-Message-ID: <c41f1a53-7aa1-e0e3-58eb-8c1f3d34e14d@google.com>
-Date:   Fri, 31 Aug 2018 13:17:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 31 Aug 2018 13:19:15 -0700 (PDT)
+Date:   Fri, 31 Aug 2018 16:19:10 -0400
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Subject: Re: [PATCH 02/15] blkcg: delay blkg destruction until after
+ writeback has finished
+Message-ID: <20180831201909.GA20194@dennisz-mbp.dhcp.thefacebook.com>
+References: <20180831015356.69796-1-dennisszhou@gmail.com>
+ <20180831015356.69796-3-dennisszhou@gmail.com>
+ <20180831152705.4mjm7xo6jq7ptdqn@destiny>
 MIME-Version: 1.0
-In-Reply-To: <20180831201232.GA23559@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831152705.4mjm7xo6jq7ptdqn@destiny>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/31/2018 01:12 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 31, 2018 at 01:06:27PM -0700, Greg Hackmann wrote:
->> The ION_IOC_{MAP,SHARE} ioctls drop and reacquire client->lock several
->> times while operating on one of the client's ion_handles.  This creates
->> windows where userspace can call ION_IOC_FREE on the same client with
->> the same handle, and effectively make the kernel drop its own reference.
->> For example:
->>
->> - thread A: ION_IOC_ALLOC creates an ion_handle with refcount 1
->> - thread A: starts ION_IOC_MAP and increments the refcount to 2
->> - thread B: ION_IOC_FREE decrements the refcount to 1
->> - thread B: ION_IOC_FREE decrements the refcount to 0 and frees the
->>             handle
->> - thread A: continues ION_IOC_MAP with a dangling ion_handle * to
->>             freed memory
->>
->> Fix this by holding client->lock for the duration of
->> ION_IOC_{MAP,SHARE}, preventing the concurrent ION_IOC_FREE.  Also
->> remove ion_handle_get_by_id(), since there's literally no way to use it
->> safely.
->>
->> This patch is applied on top of 4.9.y.  Kernels 4.12 and later are
->> unaffected, since all the underlying ion_handle infrastructure has been
->> ripped out.
-> 
-> Does 4.4.y or older also need this?  If so, can you send backports, as
-> this one does not apply there.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Hi Josef,
 
-Yes, 4.4.y and older will need this.  If there are no objections to this
-patch, I'll send backports ASAP.
+On Fri, Aug 31, 2018 at 11:27:07AM -0400, Josef Bacik wrote:
+> So the general approach is correct, but it's sort of confusing because you are
+> using nr_cgwbs as a reference counter, because it's set at 1 at blkg creation
+> time regardless of wether or not there's an assocated wb cg.  So instead why not
+> just have a refcount_t ref, set it to 1 on creation and make the wb cg take a
+> ref when it's attached, and then just do the get/put like normal and cleanup as
+> you have below?  What you are doing is a reference counter masquerading as a
+> count of the wb cg's, just add full ref counting to the blkcg and call it a day,
+> it'll be much less confusing.  Thanks,
+
+Yeah, that makes more sense. I've switched to using refcount_t and
+renamed it to wbcg_refcnt. The corresponding actions have been renamed.
+
+I've also fixed the kbuild error in v2.
+
+Thanks,
+Dennis
