@@ -4,107 +4,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B11FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6118DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1970D2083F
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07DF12083F
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 21:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="HHYmPZzV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1970D2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Py9D6ysI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DF12083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbeIAB6l (ORCPT
+        id S1727545AbeIAB6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 21:58:41 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:47100 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbeIAB6k (ORCPT
+        Fri, 31 Aug 2018 21:58:45 -0400
+Received: from mail-it0-f50.google.com ([209.85.214.50]:52184 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeIAB6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 21:58:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 203-v6so11134271ljj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:49:15 -0700 (PDT)
+        Fri, 31 Aug 2018 21:58:44 -0400
+Received: by mail-it0-f50.google.com with SMTP id e14-v6so8981744itf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 14:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aDPzYl/zAckhW7P5zdoYeVDnF3hCthJzwyQo2YtEgZo=;
-        b=HHYmPZzVcGFAo4EuF64/1wkoF24ylykwrOP+3MHV6BrsdBEvjgBxi+IgbNuAqtfmJs
-         fWVgdj/WYXtQvP12qcEMR+/WX0YOPUA0NuItROPvyqBc6ehXpWTAb/1dryIgsZisJufd
-         p/hPwRuCXjzbS9lr9hYNlp91BVh3+7wxm2BmM=
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=tAEEqfIiv0uUZ02rBf+ol7bFaoJs31HIId0po3oKwJo=;
+        b=Py9D6ysI9Y2BndGJWMjQifuS71WX6yeEw+tdxUJdTG7ofAq+BWoY/UrENHnNUR7apC
+         sk3tiviobBgOhh3gP3ZjjUrrHZl9hF19Ljutt7VJKcyhrRp1Asmx+ifyteMiEGisRpdQ
+         rGFmkiOB1YnKJ6vdm+wF2OPcVk+sbjbr5zOss=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aDPzYl/zAckhW7P5zdoYeVDnF3hCthJzwyQo2YtEgZo=;
-        b=tro6hupVm/cn+OorHmc/Da/3tQ+L2C9mCd7009RpMMOC+oC2Lbnj6ekkyYNLuWGPMT
-         nO19ZyofmhDUX1y4DXouHmXU/kGwSP9TSesblEeSorEXoFR2EB7c2ZtDp2e7sjrHltFp
-         fYUtOo16VvBjRKkgi4da9BY4Zlod5fSTzUaz5tF2bfzQA0SPMwPKcRQ0IOvsYLMf8TTB
-         jujGNO2onPa4Qg+Z0z5GT9yY7W5aCIse3E7lBkmGlOVtLmBQUq+G5MuEgVe23Q4sZ8Ya
-         rsZ+tNO4An0butIxpiXvhIbzrThqgJoRvJLZG9VuUZ8TFJhMB+JDlDr6LLP6nO6/uets
-         3qxQ==
-X-Gm-Message-State: APzg51BtDDO4UVF+7/qezYN7MmUYKC2p17TxgwCDwTMZB+f6J7FBRMIz
-        DNGSRYvug9VngeA8HQ3xBQ30CQ==
-X-Google-Smtp-Source: ANB0Vdb/oI2QkJdB+s9vvXZDNOPkWi5zUAoX4dghxosQcjxW+J5nXTeDLTwiIVrqxj/D+tRAdsCGDw==
-X-Received: by 2002:a2e:9095:: with SMTP id l21-v6mr12094773ljg.15.1535752154463;
-        Fri, 31 Aug 2018 14:49:14 -0700 (PDT)
-Received: from [192.168.0.189] (dhcp-5-186-114-212.cgn.ip.fibianet.dk. [5.186.114.212])
-        by smtp.gmail.com with ESMTPSA id p28-v6sm1988124ljp.90.2018.08.31.14.49.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 14:49:13 -0700 (PDT)
-Subject: Re: [PATCH 2/7] Compiler Attributes: use the no-underscores syntax
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
- <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <0a8588f3-929a-608f-1fdc-e24b90e6b59b@rasmusvillemoes.dk>
-Date:   Fri, 31 Aug 2018 23:49:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=tAEEqfIiv0uUZ02rBf+ol7bFaoJs31HIId0po3oKwJo=;
+        b=cHq9TXSe/RwSSLIttXkCfEGkRLgcZ8EsuMxl+OYOcmruT/V71aHu7azLLW90IiacZ2
+         tnGH91yagCQ7wQfCQoSQEU0AkfMGGvCLcMBfEzU+oC+CO/z9E6urvVBUysWxEgUyQgNI
+         ZWQcOijynAVJnjkOVIYy2E2FFVwKQOcag6ySlUNVA2qICjwdGJ1o31Jt3AR51e16SDfz
+         BgdVqC8Iqwxgfl9mCsQquAufhRcf0LHTvl0HqJtz3j6j5P1sq2iwBLqj500KW9LDjIe1
+         vV/8v7+FoA7Ml21M4a6I8wOH8GV7gJVZP8Rb4GjpaTwpo2QYNeFJ/qWgl2BtO4DcRVfK
+         p10Q==
+X-Gm-Message-State: APzg51AP8tNSubNQ36NU9YJnBdCa4PHxSUsawIIjxPqo7evtxDsfyRhd
+        su2e6tbss+7R4dpnPR8aqS/cBOI/Y9p3Pq+IAeW6Cg==
+X-Google-Smtp-Source: ANB0VdaekVDb3IlmpKLjpHbzOJefGtAvRU2y7a2ybsMW8AMFwHFIzUPFXcPPeeseEJuXLiKU/1l/h4ky7lWBUV5pYzI=
+X-Received: by 2002:a02:39a:: with SMTP id e26-v6mr13981783jae.135.1535752159092;
+ Fri, 31 Aug 2018 14:49:19 -0700 (PDT)
+From:   Kashyap Desai <kashyap.desai@broadcom.com>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+ <615d78004495aebc53807156d04d988c@mail.gmail.com> <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbgI3aj7TAe+rdbWiQEK9MA==
+Date:   Fri, 31 Aug 2018 15:49:17 -0600
+Message-ID: <486f94a563d63c4779498fe8829a546c@mail.gmail.com>
+Subject: RE: Affinity managed interrupts vs non-managed interrupts
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-31 19:05, Miguel Ojeda wrote:
-> The attribute syntax optionally allows to surround attribute names
-> with "__" in order to avoid collisions with macros of the same name
-> (see https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html).
-> 
-> This homogenizes all attributes to use the syntax without underscores.
+> >
+> > It is not yet finalized, but it can be based on per sdev outstanding,
+> > shost_busy etc.
+> > We want to use special 16 reply queue for IO acceleration (these
+queues are
+> > working interrupt coalescing mode. This is a h/w feature)
+>
+> TBH, this does not make any sense whatsoever. Why are you trying to have
+> extra interrupts for coalescing instead of doing the following:
 
-At the risk of bikeshedding, why not the other way around, exactly
-because of what you write above? We have convenience macros anyway, so
-those verbose leading/trailing underscores would only be in compiler*.h,
-and some of the attribute names are common words that can appear as
-#defines. E.g. error is defined
-drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c ; if that used a
-BUILD_BUG_ON somewhere, the
+Thomas,
 
-#define __compiletime_error(message) __attribute__((error(message)))
+We are using this feature mainly for performance and not for CPU hotplug
+issues.
+I read your below #1 to #4  points are more of addressing CPU hotplug
+stuffs. Right ?  We also want to make sure if we convert megaraid_sas
+driver from managed to non-managed interrupt, we can still achieve CPU
+hotplug requirement.  If we use " pci_enable_msix_range" and manually set
+affinity in driver  using irq_set_affinity_hint, cpu hotplug feature works
+as expected. <irqbalancer> is able to retain older mapping and whenever
+offlined cpu comes back, irqbalancer restore the same old mapping.
 
-would break.
+If we use all 72 reply queue (all are in interrupt coalescing mode)
+without any extra reply queues, we don't have any issue with cpu-msix
+mapping and cpu hotplug issues.
+Our major problem with that method is latency is very bad on lower QD
+and/or single worker case.
 
-Rasmus
+To solve that problem we have added extra 16 reply queue (this is a
+special h/w feature for performance only) which can be worked in interrupt
+coalescing mode vs existing 72 reply queue will work without any interrupt
+coalescing.   Best way to map additional 16 reply queue is map it to the
+local numa node.
+
+I understand that, it is unique requirement but at the same time we may be
+able to do it gracefully (in irq sub system) as you mentioned  "
+irq_set_affinity_hint" should be avoided in low level driver.
+
+
+
+>
+> 1) Allocate 72 reply queues which get nicely spread out to every CPU on
+the
+>    system with affinity spreading.
+>
+> 2) Have a configuration for your reply queues which allows them to be
+>    grouped, e.g. by phsyical package.
+>
+> 3) Have a mechanism to mark a reply queue offline/online and handle that
+on
+>    CPU hotplug. That means on unplug you have to wait for the reply
+queue
+>    which is associated to the outgoing CPU to be empty and no new
+requests
+>    to be queued, which has to be done for the regular per CPU reply
+queues
+>    anyway.
+>
+> 4) On queueing the request, flag it 'coalescing' which causes the
+>    hard/firmware to direct the reply to the first online reply queue in
+the
+>    group.
+>
+> If the last CPU of a group goes offline, then the normal hotplug
+mechanism
+> takes effect and the whole thing is put 'offline' as well. This works
+> nicely for all kind of scenarios even if you have more CPUs than queues.
+No
+> extras, no magic affinity hints, it just works.
+>
+> Hmm?
+>
+> > Yes. We did not used " pci_alloc_irq_vectors_affinity".
+> > We used " pci_enable_msix_range" and manually set affinity in driver
+using
+> > irq_set_affinity_hint.
+>
+> I still regret the day when I merged that abomination.
+
+Is it possible to have similar mapping in managed interrupt case as below
+?
+
+    for (i = 0; i < 16 ; i++)
+        irq_set_affinity_hint (pci_irq_vector(instance->pdev,
+cpumask_of_node(local_numa_node));
+
+Currently we always see managed interrupts for pre-vectors are 0-71 and
+effective cpu is always 0.
+We want some changes in current API which can allow us to  pass flags
+(like *local numa affinity*) and cpu-msix mapping are from local numa node
++ effective cpu are spread across local numa node.
+
+>
+> Thanks,
+>
+> 	tglx
