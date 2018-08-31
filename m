@@ -2,98 +2,190 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C6DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131B4C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3247B2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5390D2082C
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 01:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="2HoriVv3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3247B2083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFzxyVb1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5390D2082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeHaFyC (ORCPT
+        id S1727309AbeHaF7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 01:54:02 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46127 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeHaFyC (ORCPT
+        Fri, 31 Aug 2018 01:59:18 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:39597 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeHaF7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 01:54:02 -0400
-Received: by mail-qk1-f193.google.com with SMTP id j7-v6so486734qkd.13;
-        Thu, 30 Aug 2018 18:49:01 -0700 (PDT)
+        Fri, 31 Aug 2018 01:59:18 -0400
+Received: by mail-yw1-f65.google.com with SMTP id m62-v6so4523581ywd.6;
+        Thu, 30 Aug 2018 18:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BUgCKjozPJN3EB5eVQST3Bg8RrG5gtE+SD2gAS6kVok=;
-        b=2HoriVv3bOHgIYQQfVJJSHUol1XRmBc9FGR7Qt3Qaf7DmVZmzdtuKN1mxiUunsj4jk
-         ZhMQfAX+N4p+lI+l9OtIiBi7bh+OtGdpSw05ODcmlOcdUiQvAaOPtoMFIgRYr6uBPxFr
-         ZrAOvd7xYenRu6J7/Q8EGQny5y0AXnTuuqy6T7yFS+70a7w1Hq0PGUvwzwdCH6CdNhgP
-         68HGQOf76OO0cPD+3VRDhzSbEIHQYvfzqq0WyjRMIydUkqGbTFWtLaALUkYfi1RP6n9c
-         Y3EI/qelOnDSqaYZWAIyhedVPk1W5aA4NMtfhm6hQmU2oRVRVKcXrkkRGYK2Arq8Tbpl
-         g73A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lTD1Ps/FbavEAiwg4U+GtxM5IKlNXvp/Uhyx42P8vp8=;
+        b=WFzxyVb1cI9gSVLkDAsvn3VSewaZLYOA9M6eezx+fnI6QzkATIFXMgWqRcM3Ae+NYd
+         NIZZH8xFe21mTOpXZTyNxOPFW5G51nME5U9xqIbXzH1ZjLxJ32XzJuv8wSOEax55VcDm
+         u8fESKST2EpewrcDYhjt+mm9TAzH556dyEnuX1oQD6SooDXWI+D0544L/MtZ2TPM8++Y
+         pxxX3aLff73DDXiu7wvLPXx9bPKcdd/1LNSNqxa6Kbbd/5XR1F+tQttnBVB+chWKXYgL
+         XwWNIBD/aJdP6NyA+ZGf7Da4o6ZrwxOj/AhUPeegjjXAwJYqW4KttGaAjeE3bRFTgtK2
+         6zHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BUgCKjozPJN3EB5eVQST3Bg8RrG5gtE+SD2gAS6kVok=;
-        b=mi0Ga3e6I4AZXs4IUydw5365L5E53KIIcp5Bisc0GCiCWoMly+z9DY885w9fRfHnIb
-         jzMPYw3yd7T/p4Yr2ZYpD6gaes8cl2NCd8gsrm1DJaBFb+Pk8rHGqF7W+zpGvqt9tRWX
-         q9P5cwyDc9HbeBHRnnHvF4RV/jsxd0kSfeZeX9wYuA02/MYd7Q2WKSBue9z2TzJzN/cq
-         JIYre7jcfSlxCyLwrm19PANOZD/ePZ2s6pQZ02gNUzZVy3qwQ70pvi3xkueNC3QO2gYQ
-         BeA4/VZhU5FUUDCa82xNH9/UIDH4LS2wxOs0weaEiQ6P4OQ7NGTfttg5zkuxt7uN8FRG
-         +pwQ==
-X-Gm-Message-State: APzg51BTpWKTyzrHQXNOio17ifMJXKEjy8BrW1qE8egNOdpLp6Ln2RJg
-        jXaqOGk9+2A7tmx4gZumkMhxr0Sa7avGiUbKC5g=
-X-Google-Smtp-Source: ANB0VdZ3aSVtDzqyLiaVP4hFEN2epzg3v7FPxOKU9+BxhO3lZK9kE6RDl3oU2MRIZvllTpy2zNDuRhYtc1gW846nqNU=
-X-Received: by 2002:a37:54d:: with SMTP id 74-v6mr13386911qkf.30.1535680140913;
- Thu, 30 Aug 2018 18:49:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180830214517.29372-1-tony.luck@intel.com> <CA+55aFxVQqnFVQaCYHbnWnt3kBfVkLWgNvKFkf6qgDWCSDNpEg@mail.gmail.com>
-In-Reply-To: <CA+55aFxVQqnFVQaCYHbnWnt3kBfVkLWgNvKFkf6qgDWCSDNpEg@mail.gmail.com>
-From:   Tony Luck <tony.luck@intel.com>
-Date:   Thu, 30 Aug 2018 18:48:50 -0700
-Message-ID: <CA+8MBbLKWj0RVM5astYB7_htJZ0203cQ65BWJO_o4=WDWn2kAw@mail.gmail.com>
-Subject: Re: [PATCH] x86/mce: Fix set_mce_nospec() to avoid #GP fault
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Linux Edac Mailing List <linux-edac@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86-ML <x86@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-        dave.jiang@intel.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lTD1Ps/FbavEAiwg4U+GtxM5IKlNXvp/Uhyx42P8vp8=;
+        b=UVwvZbYDnw5S7hXsbja0Helq3w/l7F8l0v6bVpws4EnnmCLRrbhMC+kG9+gNgtF+Rd
+         bQIcmQ4PCBdya1qn3QK6tGxiwIFaf+uU5uLWKzxJ1JpZnMr2QxGMJIwQTgQg6jwLcjm0
+         p6I2OQLf4p1WweZo4S1JYq7//18jSK4U0C1GFrz2doz2w2r7Pc4PIXNvlda3T5mzVJHX
+         7thI6bnnQf31EnCwfEsQ1yHeOKm5GX8ikExsIA0S0HiMwUaa47el0yJhKW9W8peQ7x91
+         7/svWncTPneg23h0LAi1ZFSPocBGbqDxQS9SsZ5pHkWVUR/cnImYXeeGjFMA888Yr6pG
+         zIKw==
+X-Gm-Message-State: APzg51CQOy1Txu2VDMBhW8Axmy5RZuMTg3fxf7oBJk3Z/dL0ADWKNOFJ
+        9xedcQHFSvE/Y7jjqGNFpFU=
+X-Google-Smtp-Source: ANB0VdaX4QSX0pDq8oELsZFOHrvz3HEMlrgUz+CFvi/A2vIxNw0P1lTVXGu3AJm3LI+pq2vVwjcDoA==
+X-Received: by 2002:a0d:f384:: with SMTP id c126-v6mr7483262ywf.10.1535680455594;
+        Thu, 30 Aug 2018 18:54:15 -0700 (PDT)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
+        by smtp.gmail.com with ESMTPSA id j70-v6sm3274084ywb.69.2018.08.30.18.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Aug 2018 18:54:14 -0700 (PDT)
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: [PATCH 00/15] blkcg ref count refactor/cleanup + blkcg avg_lat
+Date:   Thu, 30 Aug 2018 21:53:41 -0400
+Message-Id: <20180831015356.69796-1-dennisszhou@gmail.com>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 6:30 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, Aug 30, 2018 at 2:45 PM Tony Luck <tony.luck@intel.com> wrote:
-> >
-> > Fix is to move one step at a time. First mark the page not present
-> > (using the decoy address). Then it is safe to use the actual address
-> > of the 1:1 mapping to mark it "uc", and finally as present.
->
-> Can't we do it in one step, but make sure that he clflush gets the real address?
->
+Hi everyone,
 
-I'd like to, but I'd need to have a way to mark the address as needing fixing as
-it gets passed from set_memory_uc() to _set_memory_uc() to
-change_page_attr_set()
-to change_page_attr_set_clear()
+This is a fairly lengthy patchset that aims to cleanup reference
+counting for blkcgs and blkgs. There are 4 problems that this patchset
+tries to address:
+  1. fix blkcg destruction
+  2. always associate a bio with a blkg
+  3. remove the extra css ref held by bios and utilize the blkg ref
+  4. add average latency tracking to blkcg core in io.stat.
 
-Just checking "do we have a non-canonical address" at the bottom of that
-call stack and flipping bit 63 back on again seems like a bad idea. But adding
-extra flag arguments is majorly ugly too.
+First, there is a regression in blkcg destruction where references
+weren't properly put causing blkcgs to never be destroyed. Previously,
+blkgs were destroyed during offlining of the blkcg. This puts back the
+blkcg reference a blkg holds allowing blkcg ref to reach zero. Then,
+blkcg_css_free() is called as part of the final cleanup.
 
--Tony
+To address the first problem, 0001 reverts the broken commit, 0002
+delays blkg destruction until writeback has finished, and 0003 closes
+the window on a race condition between a css migration and dying, and 
+blkg association. This should fix the issue where blkg_get() was getting
+called when a blkcg had already begun exiting. If a bio finds itself
+here, it will just fall back to root. Oddly enough at one point,
+blk-throttle was using policy data from and associating with potentially
+different blkgs, thus how this was exposed.
+
+0004 also address a similar problem with task_css(current, ...) where
+association tries to get a css of a task that is migrating with the
+cgroup dying.
+
+Second, both blk-throttle and blk-iolatency rely on blkg association
+to enable their policies. Rather than each policy (and future policies)
+implement this logic independently, this consolidates it such that
+all bios are tagged with a blkg.
+
+Third, with the addition of always having a blkg reference, the blkcg
+can now be referenced through it rather than maintaining an additional
+pointer and reference. So let's clean this up.
+
+Finally, it seems rather useful to know on average how well IOs are
+doing per cgroup. This adds the average latency statistic to core where
+it encompasses IOs from all decendants.
+
+This patchset contains the following 15 patches:
+
+  0001-Revert-blk-throttle-fix-race-between-blkcg_bio_issue.patch
+  0002-blkcg-delay-blkg-destruction-until-after-writeback-h.patch
+  0003-blkcg-use-tryget-logic-when-associating-a-blkg-with-.patch
+  0004-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
+  0005-blkcg-update-blkg_lookup_create-to-do-locking.patch
+  0006-blkcg-always-associate-a-bio-with-a-blkg.patch
+  0007-blkcg-consolidate-bio_issue_init-and-blkg-associatio.patch
+  0008-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
+  0009-blkcg-associate-writeback-bios-with-a-blkg.patch
+  0010-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
+  0011-blkcg-remove-additional-reference-to-the-css.patch
+  0012-blkcg-cleanup-and-make-blk_get_rl-use-blkg_lookup_cr.patch
+  0013-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
+  0014-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
+  0015-blkcg-add-average-latency-tracking-to-blk-cgroup.patch
+
+0001-0003 addresses the regression in the blkcg cleanup path.
+0004 fixes a small window race condition with task_css(current, ...).
+0005 is a prepatory patch that cleans up blkg lookup create.
+0006-0009 associates all bios with a blkg: regular IO, swap, writeback.
+0010 removes the extra css pointer in bios.
+0011 removes the implicit reference left behind in 0010.
+0012 cleans up blk_get_rl making use of the new blkg ref
+0013 changes blkg ref counting from atomic to percpu.
+0014 renames and makes blkg_try_get consistent with css_tryget.
+0015 adds average latency tracking as part of blk-cgroup.
+
+This patchset is on top of axboe#for-4.19/block #b86d865cb1ca.
+
+diffstats below:
+
+Dennis Zhou (Facebook) (15):
+  Revert "blk-throttle: fix race between blkcg_bio_issue_check() and
+    cgroup_rmdir()"
+  blkcg: delay blkg destruction until after writeback has finished
+  blkcg: use tryget logic when associating a blkg with a bio
+  blkcg: fix ref count issue with bio_blkcg using task_css
+  blkcg: update blkg_lookup_create to do locking
+  blkcg: always associate a bio with a blkg
+  blkcg: consolidate bio_issue_init and blkg association
+  blkcg: associate a blkg for pages being evicted by swap
+  blkcg: associate writeback bios with a blkg
+  blkcg: remove bio->bi_css and instead use bio->bi_blkg
+  blkcg: remove additional reference to the css
+  blkcg: cleanup and make blk_get_rl use blkg_lookup_create
+  blkcg: change blkg reference counting to use percpu_ref
+  blkcg: rename blkg_try_get to blkg_tryget
+  blkcg: add average latency tracking to blk-cgroup
+
+ Documentation/admin-guide/cgroup-v2.rst |  14 +-
+ block/bio.c                             | 187 +++++++++++----
+ block/blk-cgroup.c                      | 298 +++++++++++++++++-------
+ block/blk-iolatency.c                   |  26 +--
+ block/blk-throttle.c                    |  12 +-
+ block/bounce.c                          |   4 +-
+ drivers/block/loop.c                    |   5 +-
+ drivers/md/raid0.c                      |   2 +-
+ fs/buffer.c                             |  10 +-
+ fs/ext4/page-io.c                       |   2 +-
+ include/linux/bio.h                     |  23 +-
+ include/linux/blk-cgroup.h              | 167 ++++++++-----
+ include/linux/blk_types.h               |   1 -
+ include/linux/cgroup.h                  |   2 +
+ include/linux/writeback.h               |   5 +-
+ kernel/cgroup/cgroup.c                  |   4 +-
+ kernel/trace/blktrace.c                 |   4 +-
+ mm/backing-dev.c                        |   5 +
+ mm/page_io.c                            |   2 +-
+ 19 files changed, 520 insertions(+), 253 deletions(-)
+
+Thanks,
+Dennis
