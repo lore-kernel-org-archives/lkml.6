@@ -3,138 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3524BC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66841C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D524620837
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0257620837
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1LphJ2A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D524620837
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G5rTh0fQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0257620837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeHaMpU (ORCPT
+        id S1727950AbeHaMt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:45:20 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43529 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeHaMpT (ORCPT
+        Fri, 31 Aug 2018 08:49:57 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39446 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727616AbeHaMt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:45:19 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b15-v6so20324205oib.10
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:38:57 -0700 (PDT)
+        Fri, 31 Aug 2018 08:49:56 -0400
+Received: by mail-wr1-f65.google.com with SMTP id o37-v6so10439499wrf.6
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 01:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SVplp+1KkZuSODDlsy6jRypuYU9Dig4A8X4CzDpXbSY=;
-        b=D1LphJ2AUp92m+WLpv7eD/thKV2NBBsVv2YvJPxBsRxeThcffuLCxpiytECtfqZlVt
-         kk9nHNOZ93UxODqD+NOnsXD8wnuT9frAXZQn6mc3lg+C78KZc+sWJeBNINFWupZHdved
-         XS7NNTXxe5sVlgh3QuVKrG7aCA9z1VTDwnsCI=
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=edqs2yv8UfeTuyXd+Al+7UCLVVQgNfMO2RyAviqlJAY=;
+        b=G5rTh0fQqA20y92alTbdDgQq2dYVWZN4nwYXyEAoSmdwK5ZfZ0ikRKrYEDNyQv/i/+
+         0Dfrm4tzA01ELjHvMXOvGhfODZAqVsTHGOSSaxCltMcS/oq4nA6WtWSMeMkzFHI7kaxS
+         ouOjWUEspQ/Ui1Nhdkq4m2D8TuEpB0RPL198U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SVplp+1KkZuSODDlsy6jRypuYU9Dig4A8X4CzDpXbSY=;
-        b=uB70EVIn+jzrvzbNUdLtFAnB7C9wiPvC/Xz8NvVzZ+i5cWyi3Cogl2hvIlMBq/XTUB
-         gOpDKaRY0LiKFMbAN3b36t/9FmmbcR4lxbf4lHjHd6fS+6/FvUPRPujWf8wjYKA8O3C2
-         pdXwAxlXOOcfd9TlOmaSJIpCvSwTymzFm47peRkc4vCLutb72m+BwgZMjQUFD7jau+eU
-         U7UShifAilWCVlTuqkq/SwwMbVAnzjP+aJHXe7zV60umOJwoR0gv6OUSi3+9iS3wtiYT
-         vKexFcvfLqaLxKjgLZ4wPrK7dglCpqDcgq/INQXRSnQW1Fs55cQVAldKyB97jtrzWizg
-         hP9A==
-X-Gm-Message-State: APzg51DmHwCTxEu6cz/zFnI5EAaHKxQpGzJpdxQOSz5Ufwz/kyxGcKVJ
-        5Od1tHDWWcVnb2JR15Dk/bHDcA+E55MzTnFnW9eLlQ==
-X-Google-Smtp-Source: ANB0VdZgellNAGlmh8CrzMERUH8alZBullgml+/IKVwA3m2hP6b9HiKSTvEesXmwwBbSsYSo6MmqZAxoLpIu4kqlpXI=
-X-Received: by 2002:aca:ef87:: with SMTP id n129-v6mr6629318oih.161.1535704736691;
- Fri, 31 Aug 2018 01:38:56 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=edqs2yv8UfeTuyXd+Al+7UCLVVQgNfMO2RyAviqlJAY=;
+        b=CI6SeNWjpTOu5B9E359i2kFgyOg10hlPU2ee5kSndo7UXNueitCyJlnYtcAwn4XYPi
+         f5djo01u86NJ8bCwdYTq4pfKuEMz6cDz9LOC7NDP0U8cdw06KYF0SnBgxhZUVpgtQaSx
+         bcL9vOsdyp7TaeeWyF9bQPPVCmZfuYckCJeMDLlC1xvGSAbZj9QnMQNAK3VPI1yejlpP
+         CBIju37oo5/Z8AmvXO0aaQ9ed78DH9kMo98Jl00JXQdDdfT7TES8x/RHB2XLoP2KxJ5M
+         fr1oyRZjXhcwR/xG5MH/fVNEVwvPTPQ2aspaks1OnwaeUkxfFC3p4tQncTNCbdQY/jyt
+         XCNw==
+X-Gm-Message-State: APzg51CK3onoplL9Vw9FREJr/TtJgIfCj+LicKy1xUiUzCObAkZ32+w1
+        0pjbJRR9rytukM6aum1eDhbw/w==
+X-Google-Smtp-Source: ANB0Vdb4gA9xFBa+UguRlmgWaa7XAX+1A2yEBgg3kSH2hV6dGx9f9hkE5eCeUwr/lje16rEKWgkgNQ==
+X-Received: by 2002:adf:f24e:: with SMTP id b14-v6mr9428091wrp.184.1535705012141;
+        Fri, 31 Aug 2018 01:43:32 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id u40-v6sm18017476wrc.43.2018.08.31.01.43.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Aug 2018 01:43:31 -0700 (PDT)
+Subject: Re: [RFC PATCH v1 0/3] device property: Support MAC address in VPD
+To:     Brian Norris <briannorris@chromium.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     Brian Norris <computersforpeace@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Julius Werner <jwerner@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>
+References: <20180814223758.117433-1-briannorris@chromium.org>
+ <a240b3f9-d41b-30d7-ef11-5dcd1a981c0f@gmail.com>
+ <20180815002204.GA258561@ban.mtv.corp.google.com>
+ <bb1b2b7d-2c47-a6b3-7618-063351f379b2@gmail.com>
+ <20180815014436.GA17200@ban.mtv.corp.google.com>
+ <20180815221601.GB24830@rob-hp-laptop>
+ <20180831012656.GB67271@ban.mtv.corp.google.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <44c7fc7a-9c1c-e894-f27f-5320c061aafc@linaro.org>
+Date:   Fri, 31 Aug 2018 09:43:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Received: by 2002:a9d:54a:0:0:0:0:0 with HTTP; Fri, 31 Aug 2018 01:38:56 -0700 (PDT)
-In-Reply-To: <01c9b188-5b67-40c0-b08d-99a0543ddf54@cesnet.cz>
-References: <a77a6bb8b3abf1c127014c78f71533c24afacd93.1534423916.git.baolin.wang@linaro.org>
- <01c9b188-5b67-40c0-b08d-99a0543ddf54@cesnet.cz>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 31 Aug 2018 16:38:56 +0800
-Message-ID: <CAMz4kuJp=tBPubM1cWJLLMq4vRvK=-xcsH3GC5io6heQh4RG6w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] spi: Introduce one new field to set word delay
-To:     =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lanqing Liu <lanqing.liu@spreadtrum.com>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180831012656.GB67271@ban.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 August 2018 at 19:33, Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz> wrote:
-> On =C4=8Dtvrtek 16. srpna 2018 14:54:49 CEST, Baolin Wang wrote:
+Sorry for the delay!! For some reason I missed this email thread totally!
+
+On 31/08/18 02:26, Brian Norris wrote:
+>> Seems to me that nvmem needs to be extended to allow providers to
+>> retrieve and interpret data. Not everything is at some fixed offset and
+>> size. Something like this is valid dts:
 >>
->> + * @word_delay: clock cycles to inter word delay after each word size
->> + *     (set by bits_per_word) transmission.
->
->
-> I need a similar functionality for talking to a SPI device from userspace
-> -- see my attempt for implementing this in spi-orion.c at [1]. The device=
-'s
-> datasheet says that I should wait, e.g., 3=C2=B5s between each two words.=
- I
-> therefore like this patch :).
->
-> The description can be improved because it left me wondering what "clock
-> this is about. I suppose it's about the SPI clock cycles and not CPU cloc=
-k
-> cycles, right? I'll be hapy to patch this once Baolin confirms that that =
-is
-> the intended meaning.
+>> nvmem = <&phandle> "a-string";
+>>
 
-Sorry for confusing. Since our SPI word delay unit is clock cycle of
-the SPI clock, so my intention of the word_delay's unit is SPI clock
-cycles according to our previous discussion.
+There has been some discussion on extending nvmem support to MTD and 
+non-DT users in https://patchwork.kernel.org/cover/10562365/
 
->
-> It seems that this is only implemented in one newly added driver. I'm
-> interested in supporting this in spi-orion.c, but that sounds like
-> driver-specific work for something which is pretty generic. How should th=
-is
-> be implemented? Given that drivers for SPI masters can implement a functi=
-on
-> which transfers several words at once, there are not that many better
-> possibilities than adding udelay()s, though. Thoughts?
->
-> What is your plan to do with drivers which do not implement this (yet)? I=
-f a
-> spi_transfer gets queued which asks for a word_delay delay, it is silentl=
-y
-> ignored now, AFAIU.
->
-> What about userspace support, spidev and spi_ioc_transfer (that's my targ=
-et,
-> actually)? Is it OK to s/pad/word_delay/ in the spidev code and pass that=
- to
-> the generated struct spi_transfer? In my opinion, once we support specify=
-ing
-> this from userspace, one has to definitely check that the SPI controller =
-is
-> ready to honor this request. Do we want a new bit in spi_controller.flags
-> for this?
->
-> With kind regards,
-> Jan
->
-> [1] https://patchwork.kernel.org/patch/10221397/
+One of the thing which we discussed in this thread is adding compatible 
+strings to cells mainly to
+1> Differentiate between actual cells and partitions for MTD case.
+
+2> Allow provider specific bindings for each cell, in VPD instance key 
+string & value length could be one them.
+
+This means that we would endup adding xlate callback support to the 
+nvmem_config.
+
+AFAIU, From consumer side old bindings should still work!
+
+ From non-dt or ACPI side these cells can be parsed by the provider 
+driver and add it to the nvmem_config.
+
+Does this make sense? Or Did I miss anything obvious ?
 
 
-
---=20
-Baolin Wang
-Best Regards
+>> But that's pretty uncommon (I can't think of a binding that actually
+>> uses that). Perhaps the provider has an array of keys defined and the
+>> consumer just provides the index.
+> In the case of VPD, all keys are 0-terminated strings (there's also a
+> length field, but the key is still 0-terminated), so that scheme could
+> work. (I'm not sure an indexed provider is extremely relevant right now,
+> although it probably could be supported if I expand the of_nvmem
+> retrieval to support a generic of_xlate() override anyway.) The
+> information represented is almost the same as in my proposal, except that:
+> (a) now I have to give the VPD a phandle -- so far, I've avoided that,
+>      as it's just an auto-enumerated device underneath the
+>      /firmware/coreboot device (see drivers/firmware/google/vpd.c)
+> (b) this is no longer directly useful to ACPI systems -- I'm not
+>      actually sure how (if at all) nvmem provider/consumer is supposed to
+>      work there
+> 
+> But maybe this isn't really that useful to ACPI, and it's sufficient to
+> just have fwnode_get_mac_address() call of_get_nvmem_mac_address() when
+> we're using DT.
+> 
+>> Or we could do '<key>-nvmem = <&phandle>', but parsing that is a bit
+>> more complicated.
+> That doesn't seem to have much advantage to me.
