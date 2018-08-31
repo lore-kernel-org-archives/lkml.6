@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3736EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D068C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E13D220661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E13D220661
+	by mail.kernel.org (Postfix) with ESMTP id 0363120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 08:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0363120661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeHaMkd (ORCPT
+        id S1727829AbeHaMlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 08:40:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59503 "EHLO mail.bootlin.com"
+        Fri, 31 Aug 2018 08:41:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59545 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727238AbeHaMkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 08:40:33 -0400
+        id S1727238AbeHaMlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 08:41:08 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C779F207B1; Fri, 31 Aug 2018 10:34:11 +0200 (CEST)
+        id 3B37820719; Fri, 31 Aug 2018 10:34:47 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9779A203EC;
-        Fri, 31 Aug 2018 10:34:01 +0200 (CEST)
-Date:   Fri, 31 Aug 2018 10:34:00 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0B222207B1;
+        Fri, 31 Aug 2018 10:34:37 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 10:34:36 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Philipp Rossak <embed3d@gmail.com>
 Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -41,16 +41,15 @@ Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 07/30] iio: adc: remove mfd_probe & sunwi_irq_init
- function
-Message-ID: <20180831083400.fobo2c7w22fspyf4@flea>
+Subject: Re: [PATCH v3 08/30] iio: adc: remove hwmon structure
+Message-ID: <20180831083436.prcidrdli7gdtb45@flea>
 References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-8-embed3d@gmail.com>
+ <20180830154518.29507-9-embed3d@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zsi43eonrbj3zyck"
+        protocol="application/pgp-signature"; boundary="hrgudpzhyfwmlswe"
 Content-Disposition: inline
-In-Reply-To: <20180830154518.29507-8-embed3d@gmail.com>
+In-Reply-To: <20180830154518.29507-9-embed3d@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,19 +57,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zsi43eonrbj3zyck
+--hrgudpzhyfwmlswe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 30, 2018 at 05:44:55PM +0200, Philipp Rossak wrote:
-> In the previous commit we removed the function call, now we remove the
-> unused functions.
+On Thu, Aug 30, 2018 at 05:44:56PM +0200, Philipp Rossak wrote:
+> We remove the hwmon structure that was requiered for the mfd driver.
 >=20
 > Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 
-This will create a warning between the two commits, it should be
-merged in the previous patch.
+Same thing here, you should merge that in the commit that removes the
+probe_mfd call.
 
 Maxime
 
@@ -79,24 +77,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---zsi43eonrbj3zyck
+--hrgudpzhyfwmlswe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluI/XcACgkQ0rTAlCFN
-r3SVPg//a3pD3PkwWY8TWNBuE+7EddA092ScP5tA6YB1S+22IeoSs+WEHzMqkwzG
-zdykFyZ8mWg6fwfhAg+AEbidSmpdTLtEqJwP4vFu9ZjYoZeaqThrpthUwYqKgOZm
-buQswAshejCr06GqzCtnidALZD/Tc+u2MbP5+/3wgtlCkcMCyqQj4VJK0jWGkvTe
-xI0EdBTCFN0tSHKDxit3EKz/iw9Ixd3eAy7EJBxm8wCFPPWop+4/ivFGbtmU9Umj
-KE8sABW25KErtTi9gYI+YjR8JMQIb6/iApnEUl/ZMm4uwxhzoku/1c0TjIy5hDPV
-ft3iTjaEjTfA9DCSVewJFM2PwhsICfZxf7hVo8wChod0QIY8RnAVvz+etjaMTJol
-GtaREnREOecbkM23pUrVpHMVu4YXVbdkOAQj62YgCl6YqEH4gJyilt6XJ0jGJ0/d
-8970rtfWpfEzqdqLQUFbGzFnW8Lpg+iSmiZCXSIChZ1wy590aKrs64EJMKTJ1Vxk
-rohBRXenkDumCxDWP8CH1VpE+wskudfVFclU8xPHiv8QmvtEWxHa6CBPuypxyp2N
-HamB0eNXq5lDGL03JUQiOu7fJp7KMWDN9Plo3QaI2kw9g3b8GrN/TRYfKkYdmKvg
-ATp0ZE7xLcWyZC2Ahu+HgGAPPvS+6VO+nxc55HbIdbs+38aa/Tw=
-=cFLB
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluI/ZsACgkQ0rTAlCFN
+r3S6fA//WRoHHbAOcFw/N4sr4iBf4kynFp2QolCL56V3J03Q+OLkTw0ZPBhkbJDq
+7Hk6BtuykSHc+YGcYKO38TuqGYarWj4EuhN1H8sae0LdeUsg7OG8nsKfhy5LCzTA
+kDm66DCq0WhZNM9SEd3/FRXmskVjzvZ9M62GNJyYKkOVsggeh8SCps7K34abvnTp
+SEnU73uDS0x/nIlqh/JM8RfLftvBHTax2Fo88XPlRzSIk963tMfI8lnIrZZDl4Tw
+mQKY8dNHJ6WFVytQ+7FgbUQy3hhkixMMLa/mv8mZpNK86bnJZkF6H2QtcvPx8dhj
+Im1obmLnvrWcP0rDYjdTsj1e6JAVQxbj8TEUrZpcxdDF+y1IFdU5rhlv9ZxPwevi
+EQrIzZZMilRDrwf3H7OI5jGaJpm2lOZUXjV6+qPn1Ksu5F7ZaNActbfxqB5HM+aN
+UL8+0baBPZJT1C/6eezfaBedtpGwNouiiC4KcG23a7TT2/4MbDBSFs09Xjdd6EYB
++V3AadheHMbo8bLRBvxMfsnXp7zAqjA8XAKuFTkMEqTNTJA9pKEcA3c0uZflnMsr
+OpOYC2W8IP6ZC4RdRbtiIvLHpYT4qpTbh5W0pZKRiNIkI+gr7Se5EuaZGCs3UoC+
+L8MeeV/FLUrh1KgWXVE4wUgn7dsB/KAUYfsEpPmRj/vQa9xD5yA=
+=ty7p
 -----END PGP SIGNATURE-----
 
---zsi43eonrbj3zyck--
+--hrgudpzhyfwmlswe--
