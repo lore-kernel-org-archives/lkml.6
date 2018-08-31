@@ -2,107 +2,112 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB989C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95121C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7953120661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ltto8TEt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7953120661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 58F3720661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F3720661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbeHaTQo (ORCPT
+        id S1728390AbeHaTQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:16:44 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:32821 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728027AbeHaTQn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:16:43 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d8-v6so1238138edv.0;
-        Fri, 31 Aug 2018 08:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OakFLENuwgbFbDjfQEAX9HmDNCHYIGzIDhRitMT5zYY=;
-        b=Ltto8TEt5omeD5A8gFwZfNQfRqduET/fclaEV7VurgbvUWUGDz62jx4Q4OYMph6b35
-         5HQFybqd+66NOlJsOmJpKb5sNP/C5e0E271mZesCSQLHxtsavkd3SC7t5SZvzwrCWVg0
-         hFxA5Zrz+mCdKyqsPczTpR+MJQtnDo7pBXruE4XvsMy5U2rJoXY4rU6fP/WaZ+w5+4qG
-         m9HPdENUNH3E1YcWw8QvHlPuA80MhLiN+JFPW4OQPnhDD3jGK61EwgJejKuF8eqPMXkS
-         io4yIy+2FGP81NLMuDN+H/rGe+Z72DQbcseRntNTBI1wiVvbwWuDU0XraU2B/r3+VpoA
-         xLHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OakFLENuwgbFbDjfQEAX9HmDNCHYIGzIDhRitMT5zYY=;
-        b=NgM/jD3KoUCDcFA5xWHTxhJrG5oWYJ/N2KFqbBpnml1u1qlkBSA40iXaLoRiPEb8B9
-         v+9w/cJPqulpYDVzMoEGT0OOAmd1dARd6T3ET1s/VlZI8SZ8BSvQ+OukHdOZmg4Jgfgs
-         CT/y7c41i7NJcYn6O52xKlaaoGbUdRbvNjQwrt7TPPYlPHjjY5WxGtzUWwpIjskXFdy8
-         lNIctL/xCIrGLAooV92Yfpt4J/Mehq3TPYGHb1sNySPWO9faUgXG1qnEl94IPXDb0V4Z
-         JMpSKb0NEZO3LqWS9Tsr0pIMiQia1Vd+Zm4VgpW1/YWDMUwERwxZ5FdSxqoEArNCifGK
-         fYug==
-X-Gm-Message-State: APzg51Ay6nd4CGaIlrVEx/vIuf7FJLwRA9Br329kfMy0QKSbji+s9VJo
-        XojJyxBTkf8P1wjUd924+aagezRGqLcIL1dLs09fNQ==
-X-Google-Smtp-Source: ANB0Vda7tSXnYS2FL8daSoWT+JEmDh0UglQTUOSoNZIvpPevQmG2DzcFqX/CLo3aHbXIfSR2qXIPznRC4yq3dkp/zHc=
-X-Received: by 2002:a50:fc03:: with SMTP id i3-v6mr18802924edr.85.1535728125829;
- Fri, 31 Aug 2018 08:08:45 -0700 (PDT)
+        Fri, 31 Aug 2018 15:16:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46822 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728148AbeHaTQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 15:16:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 698442071E; Fri, 31 Aug 2018 17:08:49 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3712C203EC;
+        Fri, 31 Aug 2018 17:08:39 +0200 (CEST)
+Date:   Fri, 31 Aug 2018 17:08:38 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
+        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v3 02/10] net: mvpp2: phylink support
+Message-ID: <20180831150838.GE32574@kwain>
+References: <20180517082939.14598-1-antoine.tenart@bootlin.com>
+ <20180517082939.14598-3-antoine.tenart@bootlin.com>
+ <20180827165058.GD30658@n2100.armlinux.org.uk>
+ <20180831133651.GB32574@kwain>
+ <20180831141123.GM30658@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-References: <20180829130308.3504560-1-arnd@arndb.de> <CAF=yD-J7-GumUmonrZt7s44e3bsjY2DCD6ZpmhtCx6FOBV5BNA@mail.gmail.com>
- <CAK8P3a2XTUZJUqGu6v=SZqcoJTqM3fgtDAWBnBopX3=4NJYcRA@mail.gmail.com>
- <CAF=yD-+9yc838Y_DO1S4HsBpLrBk8iNt0oAj1ceO1S6sE+tCdg@mail.gmail.com> <CAK8P3a00DLR9JyfKwbYXnKCpRf+YWuUyMbC+UfXZTfdnAJxRtg@mail.gmail.com>
-In-Reply-To: <CAK8P3a00DLR9JyfKwbYXnKCpRf+YWuUyMbC+UfXZTfdnAJxRtg@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 31 Aug 2018 11:08:09 -0400
-Message-ID: <CAF=yD-+tiVeP0FA1CUrT4Jyn28tnT+bett+Dq2frvU5eS1ANPw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/3] net: rework SIOCGSTAMP ioctl handling
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Network Development <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, linux-arch@vger.kernel.org,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-hams@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
-        dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-x25@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180831141123.GM30658@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > Looking at it again, it seems that sock_gettstamp() should
-> > > actually deal with this gracefully: it will return a -EINVAL
-> > > error condition if the timestamp remains at the
-> > > SK_DEFAULT_STAMP initial value, which is probably
-> > > just as appropriate (or better) as the current -ENOTTY
-> > > default, and if we are actually recording timestamps, we
-> > > might just as well report them.
-> >
-> > Yes, that's a nice solution. There is always some risk in changing
-> > error codes. But ioctl callers should be able to support newly
-> > implemented functionality. Even if partially implemented and
-> > returning ENOENT instead of ENOIOCTLCMD.
->
-> Ok, so do you think we should stay with the current version
-> for now, and change the two points later, or should I rework
-> it to integrate the locking and removing the callback?
->
-> I suppose the series actually gets nicer without the
-> callback, since I can simply add the generic timestamping
-> implementation first, and then remove the dead ioctl
-> handlers.
+Hi Russell,
 
-Agreed. I would add the locks in a separate patch, if only on the
-off-chance that lockdep discovers something and it will be easier
-to bisect and revise independently. I can also follow up with that
-patch outside this set, of course.
+On Fri, Aug 31, 2018 at 03:11:23PM +0100, Russell King - ARM Linux wrote:
+> On Fri, Aug 31, 2018 at 03:36:51PM +0200, Antoine Tenart wrote:
+> > With the above code remove one case did not worked anymore: when the
+> > port is configured as a fixed-link because the SFP cage can't be
+> > described and used (on the 7040-db and 8040-db boards). In such cases
+> > phylink is called, mac_config() is called, but link_up() is never
+> > called. I'm not sure this is actually an issue in phylink, but the PPv2
+> > driver should probably take care of this weird case itself (by calling
+> > explicitly link_up()). What do you think?
+> 
+> Fixed link should work:
+> 
+> - when a fixed link is configured, link_config.link is set true.
+> - when phylink_start() is called, mac_config() will be called to do the
+>   initial setup, and a resolve is triggered.
+> - phylink_resolve() will read the fixed link state, which in the case
+>   of no GPIO, will inherit link_config.link.
+>   - you will then see another mac_config() call.
+> 
+> Now what happens depends whether you've set the netdev's carrier state
+> in the driver - if you haven't, the netdev's carrier state should be
+> off.  Since the state mismatches the link_state.link (which will be
+> true), you will get a mac_link_up() call.
+
+OK, that makes sense. Thanks for the explanations.
+
+> mvneta ensures this state by always calling netif_carrier_off() in
+> mvneta_open(), maybe that ought to be in phylink_start() as that's the
+> state that phylink expects when phylink_start() has been called.  So,
+> maybe it's a phylink bug.
+> 
+> Can you see any down-sides to moving the netif_carrier_off() in
+> mvneta_open() to phylink_start() ?
+
+I removed most of my previous fix, and called netif_carrier_off() just
+before phylink_start() in PPv2. I worked, and it seemed to me all cases
+were working fine.
+
+As calling netif_carrier_off() seems to be a phylink assumption, I would
+agree to call it directly from within phylink_start(). But I don't have
+the full picture here.
+
+If such a solution is OK for you, and if no one raises an issue in the
+next days, I can send a series to add a netif_carrier_off() call, fix
+PPv2, and remove mvneta's call to netif_carrier_off() in mvneta_open().
+
+Thanks!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
