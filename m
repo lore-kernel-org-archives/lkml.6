@@ -3,217 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFF9C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D696C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B1F20661
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B1F20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1683120661
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 15:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1683120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeHaTW5 (ORCPT
+        id S1728330AbeHaT0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 15:22:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52741 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbeHaTW5 (ORCPT
+        Fri, 31 Aug 2018 15:26:19 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47025 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbeHaT0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 15:22:57 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7VFDwtr2195734
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 31 Aug 2018 08:13:58 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7VFDw362195731;
-        Fri, 31 Aug 2018 08:13:58 -0700
-Date:   Fri, 31 Aug 2018 08:13:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-4012e77a903d114f915fc607d6d2ed54a3d6c9b1@git.kernel.org>
-Cc:     peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
-        jannh@google.com, tglx@linutronix.de, nadav.amit@gmail.com,
-        bp@alien8.de, luto@kernel.org, riel@surriel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-          riel@surriel.com, linux-kernel@vger.kernel.org, jannh@google.com,
-          luto@kernel.org, tglx@linutronix.de, nadav.amit@gmail.com,
-          bp@alien8.de
-In-Reply-To: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
-References: <dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/nmi: Fix NMI uaccess race against CR3
- switching
-Git-Commit-ID: 4012e77a903d114f915fc607d6d2ed54a3d6c9b1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 31 Aug 2018 15:26:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id e23-v6so10246755lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 08:18:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FYEDYOJ/BI1K4Ba3Jx7tD5KInnv7qmblNEitfg1drHk=;
+        b=PZfo/IGKGc3CCE7kSOGOsQQ5hgk3WBGtffhD8fx5S766EiEiH6pf8idfFVvPxsmHnE
+         Sqb0EFgUq3mN1w/Th4rr0W7SbNoS00lbeuSdveAcR8ObNirlWhYB7g57cWlefy2szNcG
+         uR83D3Ymsb3VfpcodN1bXhPJYl6n/DDhyFTgDJA2Mh5Kt561oOy+1Ui9RHGZoSUzZDBt
+         NceKGRKBoGHzR/WZDBQcrgYwA61OAcwYz1E0fEYmglFkr717LMtn9kXFwSHmp2Qb7g8x
+         b98VIZd7/IDsdpHGqMZa+NpO07FrRibXZcauX/3JryDt6vh3mn69++PokxV2Xdwq0KoX
+         fr9Q==
+X-Gm-Message-State: APzg51BpvH3kTf0mzg2l98vKeZ1+JA72w2fuL9ow8hJCNXx14QKwe/Oy
+        5YjtCp6XJkCaP2WFDs/wQn9HAlCgWhOefroeLttpVA==
+X-Google-Smtp-Source: ANB0Vdby7I2+U29GBUA0zRVgh8IB8d9GcytWDcGe8vQulHFhNuY1IKOvuOzLKHVX3BNfX2+VFkiN7jGBmsnyURE8og4=
+X-Received: by 2002:a19:9941:: with SMTP id b62-v6mr5051400lfe.63.1535728700291;
+ Fri, 31 Aug 2018 08:18:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
+ <20180829003539.668e514c@roar.ozlabs.ibm.com> <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
+ <20180831134943.7f516fed@roar.ozlabs.ibm.com>
+In-Reply-To: <20180831134943.7f516fed@roar.ozlabs.ibm.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Fri, 31 Aug 2018 15:17:44 +0000
+Message-ID: <CAGnkfhy9okKAfZVkbO3YWPVmWgVm2LFzR-8=S73OfJ3bK_1FxQ@mail.gmail.com>
+Subject: Re: VirtIO console hangs
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4012e77a903d114f915fc607d6d2ed54a3d6c9b1
-Gitweb:     https://git.kernel.org/tip/4012e77a903d114f915fc607d6d2ed54a3d6c9b1
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Wed, 29 Aug 2018 08:47:18 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 31 Aug 2018 17:08:22 +0200
+On Fri, Aug 31, 2018 at 3:49 AM Nicholas Piggin <npiggin@gmail.com> wrote:
+>
+> On Tue, 28 Aug 2018 15:00:14 +0000
+> Matteo Croce <mcroce@redhat.com> wrote:
+>
+> > On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:
+> > >
+> > > On Tue, 28 Aug 2018 12:54:08 +0000
+> > > Matteo Croce <mcroce@redhat.com> wrote:
+> > >
+> > > > With kernel 4.19.0-rc1 virtio_console hangs very often.
+> > > > I can always trigger the bug by pasting some characters in the
+> > > > terminal window, the console will stop receiving keypresses, but I can
+> > > > still see output from the console.
+> > > > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
+> > > > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
+> > > >
+> > > > I did a git bisect and I've found that this is the offending commit,
+> > > > reverting it fixes it.
+> > > >
+> > > > Cheers,
+> > > >
+> > > > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
+> > > > Author: Nicholas Piggin <npiggin@gmail.com>
+> > > > Date:   Tue May 1 00:55:54 2018 +1000
+> > > >
+> > > >     tty: hvc: hvc_poll() break hv read loop
+> > >
+> > > Thanks for the report. I can't immediately see what the problem
+> > > is. Can you try get a stack trace of where it is stuck?
+> > >
+> >
+> > I tried but didn't get one.
+> >
+> > > Perhaps try this patch if you have time (it's a bit of a shot
+> > > in the dark).
+> > >
+> >
+> > Yes it seems to fix. Thanks!
+>
+> Okay sorry for the delay, I can reproduce it here and found a better
+> fix, if I could trouble you to test again.
+>
+> [PATCH] tty: hvc: hvc_poll() fix read loop hang
+>
 
-x86/nmi: Fix NMI uaccess race against CR3 switching
+Hi Nicholas,
 
-A NMI can hit in the middle of context switching or in the middle of
-switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
-which could cause copy_from_user_nmi() and friends to read the wrong
-memory.
+the patch works, but now pasting text inside the terminal is extremely
+slow, it feels worse than a 9600 baud serial line.
 
-Fix it by adding a new nmi_uaccess_okay() helper and checking it in
-copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
+Btw, I had to apply the patch by hand as it was corrupted, some lines
+were collapsed into one.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
-
-
----
- arch/x86/events/core.c          |  2 +-
- arch/x86/include/asm/tlbflush.h | 40 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/lib/usercopy.c         |  5 +++++
- arch/x86/mm/tlb.c               |  7 +++++++
- 4 files changed, 53 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5f4829f10129..dfb2f7c0d019 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
- 
- 	perf_callchain_store(entry, regs->ip);
- 
--	if (!current->mm)
-+	if (!nmi_uaccess_okay())
- 		return;
- 
- 	if (perf_callchain_user32(regs, entry))
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 29c9da6c62fc..58ce5288878e 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -175,8 +175,16 @@ struct tlb_state {
- 	 * are on.  This means that it may not match current->active_mm,
- 	 * which will contain the previous user mm when we're in lazy TLB
- 	 * mode even if we've already switched back to swapper_pg_dir.
-+	 *
-+	 * During switch_mm_irqs_off(), loaded_mm will be set to
-+	 * LOADED_MM_SWITCHING during the brief interrupts-off window
-+	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
-+	 * is for nmi_uaccess_okay()'s benefit.
- 	 */
- 	struct mm_struct *loaded_mm;
-+
-+#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
-+
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
- 	/* last user mm's ctx id */
-@@ -246,6 +254,38 @@ struct tlb_state {
- };
- DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
- 
-+/*
-+ * Blindly accessing user memory from NMI context can be dangerous
-+ * if we're in the middle of switching the current user task or
-+ * switching the loaded mm.  It can also be dangerous if we
-+ * interrupted some kernel code that was temporarily using a
-+ * different mm.
-+ */
-+static inline bool nmi_uaccess_okay(void)
-+{
-+	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	struct mm_struct *current_mm = current->mm;
-+
-+	VM_WARN_ON_ONCE(!loaded_mm);
-+
-+	/*
-+	 * The condition we want to check is
-+	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
-+	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
-+	 * is supposed to be reasonably fast.
-+	 *
-+	 * Instead, we check the almost equivalent but somewhat conservative
-+	 * condition below, and we rely on the fact that switch_mm_irqs_off()
-+	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
-+	 */
-+	if (loaded_mm != current_mm)
-+		return false;
-+
-+	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
-+
-+	return true;
-+}
-+
- /* Initialize cr4 shadow for this CPU. */
- static inline void cr4_init_shadow(void)
- {
-diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
-index c8c6ad0d58b8..3f435d7fca5e 100644
---- a/arch/x86/lib/usercopy.c
-+++ b/arch/x86/lib/usercopy.c
-@@ -7,6 +7,8 @@
- #include <linux/uaccess.h>
- #include <linux/export.h>
- 
-+#include <asm/tlbflush.h>
-+
- /*
-  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
-  * nested NMI paths are careful to preserve CR2.
-@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
- 	if (__range_not_ok(from, n, TASK_SIZE))
- 		return n;
- 
-+	if (!nmi_uaccess_okay())
-+		return n;
-+
- 	/*
- 	 * Even though this function is typically called from NMI/IRQ context
- 	 * disable pagefaults so that its behaviour is consistent even when
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 9517d1b2a281..e96b99eb800c 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -305,6 +305,10 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 
- 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
- 
-+		/* Let nmi_uaccess_okay() know that we're changing CR3. */
-+		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
-+		barrier();
-+
- 		if (need_flush) {
- 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
- 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
-@@ -335,6 +339,9 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		if (next != &init_mm)
- 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
- 
-+		/* Make sure we write CR3 before loaded_mm. */
-+		barrier();
-+
- 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
- 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
- 	}
+Cheers,
+-- 
+Matteo Croce
+per aspera ad upstream
