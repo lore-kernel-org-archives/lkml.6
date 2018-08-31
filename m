@@ -2,147 +2,149 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0105C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF34AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FE520841
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FE520841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 752462084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 22:57:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQHixH3s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752462084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeIADGt (ORCPT
+        id S1727745AbeIADHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 23:06:49 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.133]:24048 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727417AbeIADGt (ORCPT
+        Fri, 31 Aug 2018 23:07:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41966 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbeIADHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 23:06:49 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id CD821400CD139
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 17:57:08 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vsLkfof2XSjJAvsLkfT9UI; Fri, 31 Aug 2018 17:57:08 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.106.191] (port=58458 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fvsLk-002pMW-CV; Fri, 31 Aug 2018 17:57:08 -0500
-Subject: Re: [PATCH] i40e: mark expected switch fall-through
-To:     "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180830185019.GA30328@embeddedor.com>
- <61CC2BC414934749BD9F5BF3D5D94044950056B7@ORSMSX112.amr.corp.intel.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <e791fe31-01ae-c208-3417-2ef6df94586b@embeddedor.com>
-Date:   Fri, 31 Aug 2018 17:57:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 31 Aug 2018 23:07:12 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h79-v6so6136807pfk.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 15:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fCkYw97l/S6o/BAIxbPEAvCYN8auUeO0UdbRXRbSSNE=;
+        b=fQHixH3sWpWaG8UkQPQN+cMqFpMolNLeNujuKUMZvApJGA/avf7I7ZEVAXh2/n4eJG
+         FqlUhYFjN9OcFh9xR/PnoPOFdNp8KUukkoxfmbG4d38Q/prQDt6t0cXChaSZrtoHS9t5
+         4XXt060nZXZXrDMkkIT6+Hpb3VKm4Kb01n6PxyEf2xY1At9yylIY6wTNT1qBuNkTXGn3
+         jCOgVNCGywERu2BRVPrKk+rDUW/199HX20+s8ZrQygyMntHhxY3N/xGhOoBH2rUdJKhr
+         ztzfMq2mBauyiiyDK/RXCWpi6P29ahCPUKN07F6iSlX96TuR5FqYkyr6keiyGy91wLs6
+         Y0JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fCkYw97l/S6o/BAIxbPEAvCYN8auUeO0UdbRXRbSSNE=;
+        b=XWhRO8KNPqAUjNWSF5R7nrup9IMrzCeQpbEmln9VtWu+nEQMYB+8Nift7Ie6Pf+SLZ
+         FAjZHn9Xsa22r2u6s0to6vb2bpw1f1k/ma/SpISB1FKXEaCiQ9aLHaGa/0KsJk0k6PfZ
+         elFJ+Rg1KOvz8K7Aw2gbMUAGXaBwHFznNEoR/GbRnlHazKJ5QFqZxiUfSD7g+hf6Lo8o
+         btcwhyg52iDPja28hSk5tWD+rsnL/vE8tSCNdgzU0CF7YdCVl1SYizQhkOHk5RMnQdkG
+         p+x6dxgHc+2s67YbNUVu6/zwgce6Uj8V0CpLreFA0ODUuG1+VRzbBy25ysYqnRTF2948
+         3gyw==
+X-Gm-Message-State: APzg51C/qGiGS1VarE5K691Gu/uLVVCyBbgJvbF9gOl1b3P9Ibzc2v/+
+        qwjiKVKJMFfie2dhjSgBazY=
+X-Google-Smtp-Source: ANB0VdbDoTgi6tQbyaJv6iY6bqRfDjkHqHTw9dT3GdSkbr/x5AhN0yk+JZJI6P+K7YUsB1PDgZyZeA==
+X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr16133221pgb.452.1535756252457;
+        Fri, 31 Aug 2018 15:57:32 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm15154288pff.128.2018.08.31.15.57.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 Aug 2018 15:57:31 -0700 (PDT)
+Date:   Sat, 1 Sep 2018 08:57:25 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Subject: Re: VirtIO console hangs
+Message-ID: <20180901085725.4dcd9cac@roar.ozlabs.ibm.com>
+In-Reply-To: <CAGnkfhy9okKAfZVkbO3YWPVmWgVm2LFzR-8=S73OfJ3bK_1FxQ@mail.gmail.com>
+References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
+        <20180829003539.668e514c@roar.ozlabs.ibm.com>
+        <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
+        <20180831134943.7f516fed@roar.ozlabs.ibm.com>
+        <CAGnkfhy9okKAfZVkbO3YWPVmWgVm2LFzR-8=S73OfJ3bK_1FxQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <61CC2BC414934749BD9F5BF3D5D94044950056B7@ORSMSX112.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.191
-X-Source-L: No
-X-Exim-ID: 1fvsLk-002pMW-CV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.106.191]:58458
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 31 Aug 2018 15:17:44 +0000
+Matteo Croce <mcroce@redhat.com> wrote:
 
-
-On 8/30/18 4:09 PM, Kirsher, Jeffrey T wrote:
->> -----Original Message-----
->> From: Gustavo A. R. Silva [mailto:gustavo@embeddedor.com]
->> Sent: Thursday, August 30, 2018 11:50
->> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; David S. Miller
->> <davem@davemloft.net>
->> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
->> kernel@vger.kernel.org; Gustavo A. R. Silva <gustavo@embeddedor.com>
->> Subject: [PATCH] i40e: mark expected switch fall-through
->>
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases where
->> we are expecting to fall through.
->>
->> Addresses-Coverity-ID: 1473099 ("Missing break in switch")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/net/ethernet/intel/i40e/i40e_xsk.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
+> On Fri, Aug 31, 2018 at 3:49 AM Nicholas Piggin <npiggin@gmail.com> wrote:
+> >
+> > On Tue, 28 Aug 2018 15:00:14 +0000
+> > Matteo Croce <mcroce@redhat.com> wrote:
+> >  
+> > > On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:  
+> > > >
+> > > > On Tue, 28 Aug 2018 12:54:08 +0000
+> > > > Matteo Croce <mcroce@redhat.com> wrote:
+> > > >  
+> > > > > With kernel 4.19.0-rc1 virtio_console hangs very often.
+> > > > > I can always trigger the bug by pasting some characters in the
+> > > > > terminal window, the console will stop receiving keypresses, but I can
+> > > > > still see output from the console.
+> > > > > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
+> > > > > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
+> > > > >
+> > > > > I did a git bisect and I've found that this is the offending commit,
+> > > > > reverting it fixes it.
+> > > > >
+> > > > > Cheers,
+> > > > >
+> > > > > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
+> > > > > Author: Nicholas Piggin <npiggin@gmail.com>
+> > > > > Date:   Tue May 1 00:55:54 2018 +1000
+> > > > >
+> > > > >     tty: hvc: hvc_poll() break hv read loop  
+> > > >
+> > > > Thanks for the report. I can't immediately see what the problem
+> > > > is. Can you try get a stack trace of where it is stuck?
+> > > >  
+> > >
+> > > I tried but didn't get one.
+> > >  
+> > > > Perhaps try this patch if you have time (it's a bit of a shot
+> > > > in the dark).
+> > > >  
+> > >
+> > > Yes it seems to fix. Thanks!  
+> >
+> > Okay sorry for the delay, I can reproduce it here and found a better
+> > fix, if I could trouble you to test again.
+> >
+> > [PATCH] tty: hvc: hvc_poll() fix read loop hang
+> >  
 > 
-> I have picked this up Dave.
+> Hi Nicholas,
 > 
+> the patch works, but now pasting text inside the terminal is extremely
+> slow, it feels worse than a 9600 baud serial line.
+> 
+> Btw, I had to apply the patch by hand as it was corrupted, some lines
+> were collapsed into one.
 
-Thanks, Jeffrey.
---
-Gustavo
+Oh, when you revert the above commit, does it fix the speed problem as
+well? I realise I'm testing with a remote machine that probably is not
+connected with much better than 9600 baud... I will set up a local test.
+
+Thanks,
+Nick
