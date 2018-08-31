@@ -3,99 +3,194 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F9C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE33C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3321620845
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3321620845
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E6C320645
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 10:23:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6C320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbeHaO2V (ORCPT
+        id S1728288AbeHaO3q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 10:28:21 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38483 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbeHaO2V (ORCPT
+        Fri, 31 Aug 2018 10:29:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727191AbeHaO3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 10:28:21 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p6-v6so9674688ljc.5;
-        Fri, 31 Aug 2018 03:21:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TYD+xqOtnjhx+b8U7hMv98xh8dj8bFLCKPFwlBspsdk=;
-        b=FqzGzUvGAfXDjFqqpdGkoaY2p/iwh8WBNYVO6sBQ1S1CsYOtPOV0BsiN7AAJ0M5r9q
-         h9yQI4PrX71lTZxRyM28vdLvMdsTF5gJ7+gcPq3ofRVGkaFSjYVm6gPJgKmBAbGxkgyC
-         66/O/1dbPMssjGwbQlFArqU9gtIP8F9A0gg1znCghHP7ajZ1fwbhbMth5QzVfEyb/Un+
-         V4IMExDl2rQlyBrECil7bRAReFQ0XubESnLSLNlY6SBPttNjhOwcEzFRr6/vaH0C7qfu
-         VsMbJtseMxgpc8o0Q3JEafNtnUC/2C1YupkTSB7N1+qKulTWNN4A82mE2yw8Z1ZfPaNq
-         X8AQ==
-X-Gm-Message-State: APzg51BqAnwlvOsbVedR1RGzEqMoyJm8MtwU3djrxW4mTXG2rwz9XqSv
-        TCzgMsR1Qq1WPvwdJ3JcRXw=
-X-Google-Smtp-Source: ANB0VdZH4em3NU2cm7DnXj0eztJ5aC5TfQvZ2SKxTmOc2mtqRlrZPPWZVo8BVghzsSzF4QO5x2txug==
-X-Received: by 2002:a2e:9cd0:: with SMTP id g16-v6mr4972577ljj.110.1535710892177;
-        Fri, 31 Aug 2018 03:21:32 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id t14-v6sm1698004ljg.17.2018.08.31.03.21.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 Aug 2018 03:21:31 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 13:21:23 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, corbet@lwn.net, mturquette@baylibre.com,
-        sboyd@kernel.org, linux@armlinux.org.uk, andrew.smirnov@gmail.com,
-        robh@kernel.org, sre@kernel.org, linux@roeck-us.net,
-        sjhuang@iluvatar.ai, mazziesaccount@gmail.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH 2/2] clk: bd718x7: Initial support for ROHM
- bd71837/bd71847 PMIC clock
-Message-ID: <20180831102123.GA2472@localhost.localdomain>
-References: <0e6f19f99a4321d37472635c9210f6c13ac53147.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
- <201808310820.GfPfChXp%fengguang.wu@intel.com>
+        Fri, 31 Aug 2018 10:29:46 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7VAEnSZ090502
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:22:56 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m73dh98rj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Aug 2018 06:22:55 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 31 Aug 2018 11:22:54 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 31 Aug 2018 11:22:51 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7VAMoVi26345670
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Aug 2018 10:22:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EDE88AE056;
+        Fri, 31 Aug 2018 13:22:18 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14B26AE045;
+        Fri, 31 Aug 2018 13:22:17 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri, 31 Aug 2018 13:22:16 +0100 (BST)
+Date:   Fri, 31 Aug 2018 03:22:48 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Andre Wild <wild@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>
+Subject: Re: [PATCH] sched/topology: Use Identity node only if required
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1533712172-11428-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180808075840.GO2494@hirez.programming.kicks-ass.net>
+ <20180810164533.GB42350@linux.vnet.ibm.com>
+ <20180829084348.GO24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <201808310820.GfPfChXp%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180829084348.GO24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18083110-0028-0000-0000-000002F24068
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18083110-0029-0000-0000-000023ABA642
+Message-Id: <20180831102248.GA8437@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=862 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808310109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello All,
+* Peter Zijlstra <peterz@infradead.org> [2018-08-29 10:43:48]:
 
-Just wanted to point out for the reviewers that this patch depends on
-not yet accepted MFD/regulator patch. (struct/defines in
-include/linux/mfd/rohm-bd718x7.h were changed)
-https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com/
-
-On Fri, Aug 31, 2018 at 09:18:19AM +0800, kbuild test robot wrote:
-> Hi Matti,
+> On Fri, Aug 10, 2018 at 09:45:33AM -0700, Srikar Dronamraju wrote:
 > 
-> Thank you for the patch! Yet something to improve:
+> > ....
+> > CPU302 attaching NULL sched-domain.
+> > CPU303 attaching NULL sched-domain.
+> > BUG: arch topology borken
+> >      the DIE domain not a subset of the NODE domain
 > 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.19-rc1 next-20180830]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-Thus this error was expected. What is the generally best way to work
-when there is changes to more than one subsystem? With this approach
-the patch set here won't compile until MFD part gets applied. But if
-I use old definitions/structs here, then clk tree gets broken when
-MFD/regulator part changes defines. I see only bad and worse options =)
-Anyways, I guess sending this patch with new defines (and applying it
-only after MFD) is still better than applying this with old defines and
-breaking it when MFD changes. (Assuming all of the patches get applied
-at some point).
-
-Br,
-	Matti Vaittinen
+> ^^^^^ CLUE!!
 > 
+> but nowhere did you show what it thinks the DIE mask is.
+> 
+> >  CPU0 attaching sched-domain(s):
+> >    domain-2: sdA, span=0-303 level=NODE
+> >     groups: sg=sgL 0:{ span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 cap=81920 }, sgM 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, sdN 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, sgO 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+> > CPU1  attaching sched-domain(s):
+> >    domain-2: sdB, span=0-303 level=NODE
+> > [  367.739387]     groups: sg=sgL 0:{ span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 cap=81920 }, sgM 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, sdN 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, sgO 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+> 
+> You forgot to provide the rest of it... what's domain-[01] look like?
+
+At boot: Before topology update.
+
+For  CPU 0 
+domain-0: span=0-7 level=SMT
+ groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }
+ domain-1: span=0-303 level=DIE
+  groups: 0:{ span=0-7 cap=8192 }, 8:{ span=8-15 cap=8192 }, 16:{ span=16-23 cap=8192 }, 24:{ span=24-31 cap=8192 }, 32:{ span=32-39 cap=8192 }, 40:{ span=40-47 cap=8192 }, 48:{ span=48-55 cap=8192 }, 56:{ span=56-63 cap=8192 }, 64:{ span=64-71 cap=8192 }, 72:{ span=72-79 cap=8192 }, 80:{ span=80-87 cap=8192 }, 88:{ span=88-95 cap=8192 }, 96:{ span=96-103 cap=8192 }, 104:{ span=104-111 cap=8192 }, 112:{ span=112-119 cap=8192 }, 120:{ span=120-127 cap=8192 }, 128:{ span=128-135 cap=8192 }, 136:{ span=136-143 cap=8192 }, 144:{ span=144-151 cap=8192 }, 152:{ span=152-159 cap=8192 }, 160:{ span=160-167 cap=8192 }, 168:{ span=168-175 cap=8192 }, 176:{ span=176-183 cap=8192 }, 184:{ span=184-191 cap=8192 }, 192:{ span=192-199 cap=8192 }, 200:{ span=200-207 cap=8192 }, 208:{ span=208-215 cap=8192 }, 216:{ span=216-223 cap=8192 }, 224:{ span=224-231 cap=8192 }, 232:{ span=232-239 cap=8192 }, 240:{ span=240-247 cap=8192 }, 248:{ span=248-255 cap=8192 }, 256:{ span=256-263 cap=8192 }, 264:{ sp
+ an=264-271 cap=8192 }, 272:{ span=272-279 cap=8192 }, 280:{ span=280-287 cap=8192 }, 288:{ span=288-295 cap=8192 }, 296:{ span=296-303 cap=8192 }
+
+For  CPU 1 
+domain-0: span=0-7 level=SMT
+ groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }, 0:{ span=0 }
+ domain-1: span=0-303 level=DIE
+  groups: 0:{ span=0-7 cap=8192 }, 8:{ span=8-15 cap=8192 }, 16:{ span=16-23 cap=8192 }, 24:{ span=24-31 cap=8192 }, 32:{ span=32-39 cap=8192 }, 40:{ span=40-47 cap=8192 }, 48:{ span=48-55 cap=8192 }, 56:{ span=56-63 cap=8192 }, 64:{ span=64-71 cap=8192 }, 72:{ span=72-79 cap=8192 }, 80:{ span=80-87 cap=8192 }, 88:{ span=88-95 cap=8192 }, 96:{ span=96-103 cap=8192 }, 104:{ span=104-111 cap=8192 }, 112:{ span=112-119 cap=8192 }, 120:{ span=120-127 cap=8192 }, 128:{ span=128-135 cap=8192 }, 136:{ span=136-143 cap=8192 }, 144:{ span=144-151 cap=8192 }, 152:{ span=152-159 cap=8192 }, 160:{ span=160-167 cap=8192 }, 168:{ span=168-175 cap=8192 }, 176:{ span=176-183 cap=8192 }, 184:{ span=184-191 cap=8192 }, 192:{ span=192-199 cap=8192 }, 200:{ span=200-207 cap=8192 }, 208:{ span=208-215 cap=8192}, 216:{ span=216-223 cap=8192 }, 224:{ span=224-231 cap=8192 }, 232:{ span=232-239 cap=8192 }, 240:{ span=240-247 cap=8192 }, 248:{ span=248-255 cap=8192 }, 256:{ span=256-263 cap=8192 }, 264:{ spa
+ n=264-271 cap=8192 }, 272:{ span=272-279 cap=8192 }, 280:{ span=280-287 cap=8192 }, 288:{ span=288-295 cap=8192 }, 296:{ span=296-303 cap=8192 }
+
+
+For  CPU 8
+domain-0: span=8-15 level=SMT
+ groups: 8:{ span=8 }, 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }
+ domain-1: span=0-303 level=DIE
+  groups: 8:{ span=8-15 cap=8192 }, 16:{ span=16-23 cap=8192 }, 24:{ span=24-31 cap=8192 }, 32:{ span=32-39 cap=8192 }, 40:{ span=40-47 cap=8192 }, 48:{ span=48-55 cap=8192 }, 56:{ span=56-63 cap=8192 }, 64:{ span=64-71 cap=8192 }, 72:{ span=72-79 cap=8192 }, 80:{ span=80-87 cap=8192 }, 88:{ span=88-95 cap=8192 }, 96:{ span=96-103 cap=8192 }, 104:{ span=104-111 cap=8192 }, 112:{ span=112-119 cap=8192 }, 120:{ span=120-127 cap=8192 }, 128:{ span=128-135 cap=8192 }, 136:{ span=136-143 cap=8192 }, 144:{ span=144-151 cap=8192 }, 152:{ span=152-159 cap=8192 }, 160:{ span=160-167 cap=8192 }, 168:{ span=168-175 cap=8192 }, 176:{ span=176-183 cap=8192 }, 184:{ span=184-191 cap=8192 }, 192:{ span=192-199 cap=8192 }, 200:{ span=200-207 cap=8192 }, 208:{ span=208-215 cap=8192 }, 216:{ span=216-223 cap=8192 }, 224:{ span=224-231 cap=8192 }, 232:{ span=232-239 cap=8192 }, 240:{ span=240-247 cap=8192 }, 248:{ span=248-255 cap=8192 }, 256:{ span=256-263 cap=8192 }, 264:{ span=264-271 cap=8192 }, 27
+ 2:{ span=272-279 cap=8192 }, 280:{ span=280-287 cap=8192 }, 288:{ span=288-295 cap=8192 }, 296:{ span=296-303 cap=8192 }, 0:{ span=0-7 cap=8192 }
+
+For  CPU 9 
+domain-0: span=8-15 level=SMT
+ groups: 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }, 8:{ span=8 }
+ domain-1: span=0-303 level=DIE
+  groups: 8:{ span=8-15 cap=8192 }, 16:{ span=16-23 cap=8192 }, 24:{ span=24-31 cap=8192 }, 32:{ span=32-39 cap=8192 }, 40:{ span=40-47 cap=8192 }, 48:{ span=48-55 cap=8192 }, 56:{ span=56-63 cap=8192 }, 64:{ span=64-71 cap=8192 }, 72:{ span=72-79 cap=8192 }, 80:{ span=80-87 cap=8192 }, 88:{ span=88-95 cap=8192 }, 96:{ span=96-103 cap=8192 }, 104:{ span=104-111 cap=8192 }, 112:{ span=112-119 cap=8192 }, 120:{ span=120-127 cap=8192 }, 128:{ span=128-135 cap=8192 }, 136:{ span=136-143 cap=8192 }, 144:{ span=144-151 cap=8192 }, 152:{ span=152-159 cap=8192 }, 160:{ span=160-167 cap=8192 }, 168:{ span=168-175 cap=8192 }, 176:{ span=176-183 cap=8192 }, 184:{ span=184-191 cap=8192 }, 192:{ span=192-199 cap=8192 }, 200:{ span=200-207 cap=8192 }, 208:{ span=208-215 cap=8192 }, 216:{ span=216-223 cap=8192 }, 224:{ span=224-231 cap=8192 }, 232:{ span=232-239 cap=8192 }, 240:{ span=240-247 cap=8192 }, 248:{ span=248-255 cap=8192 }, 256:{ span=256-263 cap=8192 }, 264:{ span=264-271 cap=8192 }, 27
+ 2:{ span=272-279 cap=8192 }, 280:{ span=280-287 cap=8192 }, 288:{ span=288-295 cap=8192 }, 296:{ span=296-303 cap=8192 }, 0:{ span=0-7 cap=8192 }
+
+
+After topology update.
+
+For CPU 0
+domain-0: span=0-7 level=SMT
+ groups: 0:{ span=0 }, 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }
+ domain-1: span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 level=DIE
+  groups: 0:{ span=0-7 cap=8192 }, 32:{ span=32-39 cap=8192 }, 64:{ span=64-71 cap=8192 }, 96:{ span=96-103 cap=8192 }, 128:{ span=128-135 cap=8192 }, 160:{ span=160-167 cap=8192 }, 192:{ span=192-199 cap=8192 }, 224:{ span=224-231 cap=8192 }, 256:{ span=256-263 cap=8192 }, 288:{ span=288-295 cap=8192 }
+  domain-2: span=0-303 level=NODE
+   groups: 0:{ span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 cap=81920 }, 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+
+For CPU 1
+domain-0: span=0-7 level=SMT
+ groups: 1:{ span=1 }, 2:{ span=2 }, 3:{ span=3 }, 4:{ span=4 }, 5:{ span=5 }, 6:{ span=6 }, 7:{ span=7 }, 0:{ span=0 }
+ domain-1: span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 level=DIE
+  groups: 0:{ span=0-7 cap=8192 }, 32:{ span=32-39 cap=8192 }, 64:{ span=64-71 cap=8192 }, 96:{ span=96-103 cap=8192 }, 128:{ span=128-135 cap=8192 }, 160:{ span=160-167 cap=8192 }, 192:{ span=192-199 cap=8192 }, 224:{ span=224-231 cap=8192 }, 256:{ span=256-263 cap=8192 }, 288:{ span=288-295 cap=8192 }
+  domain-2: span=0-303 level=NODE
+   groups: 0:{ span=0-7,32-39,64-71,96-103,128-135,160-167,192-199,224-231,256-263,288-295 cap=81920 }, 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+
+
+For CPU 8
+ domain-0: span=8-15 level=SMT
+  groups: 8:{ span=8 }, 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }
+  domain-1: span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 level=DIE
+   groups: 8:{ span=8-15 cap=8192 }, 40:{ span=40-47 cap=8192 }, 72:{ span=72-79 cap=8192 }, 104:{ span=104-111 cap=8192 }, 136:{ span=136-143 cap=8192 }, 168:{ span=168-175 cap=8192 }, 200:{ span=200-207 cap=8192 }, 232:{ span=232-239 cap=8192 }, 264:{ span=264-271 cap=8192 }, 296:{ span=296-303 cap=8192 }
+   domain-2: span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 level=NODE
+    groups: 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }
+    domain-3: span=0-303 level=NUMA
+     groups: 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+ERROR: groups don't span domain->span
+
+For CPU 9
+ domain-0: span=8-15 level=SMT
+  groups: 9:{ span=9 }, 10:{ span=10 }, 11:{ span=11 }, 12:{ span=12 }, 13:{ span=13 }, 14:{ span=14 }, 15:{ span=15 }, 8:{ span=8 }
+  domain-1: span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 level=DIE
+   groups: 8:{ span=8-15 cap=8192 }, 40:{ span=40-47 cap=8192 }, 72:{ span=72-79 cap=8192 }, 104:{ span=104-111 cap=8192 }, 136:{ span=136-143 cap=8192 }, 168:{ span=168-175 cap=8192 }, 200:{ span=200-207 cap=8192 }, 232:{ span=232-239 cap=8192 }, 264:{ span=264-271 cap=8192 }, 296:{ span=296-303 cap=8192 }
+   domain-2: span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 level=NODE
+    groups: 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }
+    domain-3: span=0-303 level=NUMA
+     groups: 8:{ span=8-15,40-47,72-79,104-111,136-143,168-175,200-207,232-239,264-271,296-303 cap=81920 }, 16:{ span=16-23,48-55,80-87,112-119,144-151,176-183,208-215,240-247,272-279 cap=73728 }, 24:{ span=24-31,56-63,88-95,120-127,152-159,184-191,216-223,248-255,280-287 cap=73728 }
+ERROR: groups don't span domain->span
+
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
