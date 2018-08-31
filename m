@@ -2,134 +2,92 @@ Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781F0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DE0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F7420839
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F7420839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EF2320658
+	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 16:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF2320658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeHaUrm (ORCPT
+        id S1728943AbeHaUrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 31 Aug 2018 16:47:42 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:55333 "EHLO wind.enjellic.com"
+        Fri, 31 Aug 2018 16:47:46 -0400
+Received: from mout.perfora.net ([74.208.4.196]:36613 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727634AbeHaUrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 Aug 2018 16:47:41 -0400
-X-Greylist: delayed 1261 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Aug 2018 16:47:41 EDT
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.14.3/8.14.3) with ESMTP id w7VGI5u7002300;
-        Fri, 31 Aug 2018 11:18:05 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.14.3/8.14.3/Submit) id w7VGI4L0002299;
-        Fri, 31 Aug 2018 11:18:04 -0500
-Date:   Fri, 31 Aug 2018 11:18:04 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Kai Huang <kai.huang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU features
-Message-ID: <20180831161804.GA1923@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Operating-System: uname -s -r
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [0.0.0.0]); Fri, 31 Aug 2018 11:18:05 -0500 (CDT)
+        id S1727258AbeHaUrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 Aug 2018 16:47:45 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0Mbzhw-1gExEG0NKI-00JNYJ; Fri, 31 Aug 2018 18:39:18 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 27/34] ARM: tegra: apalis_t30: drop module level model and compatible
+Date:   Fri, 31 Aug 2018 18:38:09 +0200
+Message-Id: <20180831163817.23970-28-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
+References: <20180831163817.23970-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:dmGCByMd7awE6CDvpkPoVANu6kiPVubwUaOy4MmC+miTiCygq3c
+ AM8Y5sBtfewCZaB8eiuSEHXzA80eMETwrbJTGSkL8LP8ws2DgPC0SJEHtQahsk54GTTOfUv
+ XCAzG/xtH9vY52wYLpnD8UMFAATnyM49ncssKRdM+ly9UAXf8rMowA+4XpKdD3w1ksuwyGp
+ 3YBf1OfCFKgXOeBp1L+pQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NP7eK6dGcGg=:H8eOYL/rSV249I5Fr0N//J
+ mOtxxMmdxxsJ49NLGZZCQfUpC2VRmsM6z60YVYp2vKHmdxESlgyp8Zz159dHSPq2/YK85LTTK
+ 2d4ePY+9YsYkdWELaxsG/TEC32JfmhP6uIOESiORoH5IDs8ty1Tjxcp+d3+0rXYS+3Rfb2piV
+ Xm01XZ9uAK9N+nAw+V4yTwkDgAQYxdTyNbrHkiXxUizPyCjVtsNrIi1c0XVelhyxatYAcRHHM
+ Vkv6ldjW+XjKYyX0jCTkWKVLLbsUzCvPjYn8LUsF7ToCoKuIviatHLYYrkEVl9++CRpwUOoSC
+ Ar6OFbYg5VdQc9/S6ukjaNYfhpFiF/vZTdNejca0nnJ2UWi5QsLZWSa5XTQrLt26qSs9kn2jM
+ 6Um2vpu14qqtO8xuWnWj/SsilDrAcg8YvgskynTdzSI62DH+J8eJ/iBVXwM5zY6m9H5qaqSdM
+ GL3bmgt1B5btySUYtwiKhiVrfq/HJqS3gAjgG58kdKkUwdP5bf8+PbMnjTSdelA0r0kLwJdNY
+ /H0xsm4eY8qihXSpzgRh7BmTs8LoQI/UuAHevD5/MSXwGEFqFuOxcH0K6OAfiGWFxRsS0CTtq
+ CYXC5gy8g91Gt8jKfCy+HhCiqUMSMuBagrt+SAji8PTw8M3/Y/rRFwF8i7+3vXxdich5fI1ul
+ LTBL/JJLv2JQIV68Sjns2ylrc0GXpbuvBhq6//q4Ix6padLpLCPVEvANEhRTAMggDG6A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 09:53:23PM +0300, Jarkko Sakkinen wrote:
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Good morning, I hope the week has gone well for everyone.
+Drop model and compatible nodes from the module level device tree as
+they get overridden by the carrier board device tree anyway.
 
-> From: Kai Huang <kai.huang@linux.intel.com>
-> 
-> Add X86_FEATURE_SGX and X86_FEATURE_SGX_LC that define the bits
-> determining whether the CPU supports SGX and user launch configuration
-> i.e. using a custom root key rather the Intel proprietary key for
-> enclave signing.
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-First of all thanks to Jarkko, Sean et.al who have been working on
-Linux SGX eco-system support.  Given the nature and apparent mystique
-surrounding this technology, we are assuming that Intel has you locked
-away in dungeons somewhere... :-)
+---
 
-I direct engineering efforts for an SGX development company.  We are a
-licensed Intel ISV, ie. we have a signing key on the launch enclave
-whitelist.  Due to the nature of our products we designed an
-independent implementation of the PSW which includes enclave loading
-and execution, EPID provisioning and remote attestation
-infrastructure.  We have also done initial engineering on the
-feasibility of developing an independent authentication and
-attestation service.
+Changes in v2:
+- New patch as suggested by Rob.
 
-So I think we understand this technology about as well as anyone.
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Our reflections on the patch series are not technical as much as
-operational.  To wit; are you guys developing this driver 'blind',
-ie. simply based on guidance from the SDM or are you testing them on
-simulators or do you actually have real live hardware with these
-capabilities?
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d80101df2228..e7793f3b19d2 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -7,9 +7,6 @@
+  * 2GB: V1.0B, V1.0C, V1.0E, V1.1A
+  */
+ / {
+-	model = "Toradex Apalis T30";
+-	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+-
+ 	memory@80000000 {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+-- 
+2.14.4
 
-If you boil these 'new' patches down they basically address three
-primary areas of functionality; Enclave Dynamic Memory Management
-(EDMM), Flexible Launch Control (Unlocked identity modulus signature
-registers) and NUMA support.  You could also throw in virtualization
-as that is another whole can of worms given a VM may not end up on the
-same die, ie. TCB base.
-
-Other then a smattering of machines which advertise basic SGX2
-instruction support for EDMM, there is virtually no hardware available
-to test any of this functionality on.  Also of interest, there is
-virtually no guidance available as to when any of this functionality
-will become available.
-
-We don't see how the Linux/SGX community can effectively debug and
-support this driver without some kind of an idea as to what hardware
-to be acquiring to test this functionality.  I'm assuming that Intel
-has 'preferred partners' which do have access to this knowledge, which
-is fine, but it would seem odd to expect general community support of
-a driver that uses this model.
-
-It would be a significant statement in support of the community if the
-documentation for the driver included a table of functionality and the
-chip and chipset versions needed to support the stated functionality.
-That would significantly increase the ability for this driver to be
-supported and tested.
-
-Once again, thanks for all the legwork on the driver, however you are
-managing to exercise its functionality.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"The couple is registered at Herbergers, Target and Fleet Farm."
-                                -- Wedding invitation
-                                   West Central Minnesota
