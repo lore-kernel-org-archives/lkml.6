@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA90C43334
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77783C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DEE320843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DEE320843
+	by mail.kernel.org (Postfix) with ESMTP id 3B8C920845
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8C920845
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeIARRh (ORCPT
+        id S1727744AbeIARRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:17:37 -0400
-Received: from mout.perfora.net ([74.208.4.194]:60503 "EHLO mout.perfora.net"
+        Sat, 1 Sep 2018 13:17:38 -0400
+Received: from mout.perfora.net ([74.208.4.197]:58993 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbeIARRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:17:36 -0400
+        id S1727652AbeIARRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 13:17:37 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0LwY1Z-1fqHcg33CZ-018KUT; Sat, 01 Sep 2018 15:05:18 +0200
+ 0LrtKS-1flaey2I2w-013ff6; Sat, 01 Sep 2018 15:05:31 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 01/19] ARM: tegra: apalis-tk1: add local-mac-address property
-Date:   Sat,  1 Sep 2018 15:04:46 +0200
-Message-Id: <20180901130504.14318-2-marcel@ziswiler.com>
+Subject: [PATCH v2 08/19] ARM: tegra: apalis-tk1: reorder backlight properties
+Date:   Sat,  1 Sep 2018 15:04:53 +0200
+Message-Id: <20180901130504.14318-9-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:RjYZmIBXgLWXT6D82hxF9P1aKepvRlti9iTVJ7CjTzKZDaF9AQp
- 4BdNXSRRj5tl3cb00RpHjxgkc2cCSdcM9tLTs4faMlkX+HeTBA63k2tBfC3IoWO9IeSkpXf
- 8VStPcY/vgoYXNxwQ7WJVvk+IM5S5yBmBqHZOoYWNYuXGJnW4kjPedtl/pnKSoEGN9KEBIA
- PnmHKIT9Y0rc4JiaMQIuQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:T6B9dNRdAd4=:91mO0LtipSPmTeGWCni5PB
- OKBTTWTDcUv9SZSePpS1+uRHt50r9lYBms7IhTLNRJfoQHHjVb/Ur6iA9V6cyrPYO8pfQC16y
- u2+aqw0ekkvGExMBe98sJwXwYZAcB0HsdRYxDp7XtSNEZpqHAkc8HvFkwYxvLN6ryBZ0nto1B
- mP1d9s/hRU+xiLd034NI6kpa8VDFgO1wVwCnyBUf2ADAX0YJCthJW3B0ryucJwQ6OMEuRZewu
- Br+mN7LgrhBhE6K0bUE4T4gc/kENdkYRtTAZEeYiu8BwhLQkj/jW5J5uOBsbJdDTaHEiyuVeT
- aWsjQ+AUsBIvmxcjmeSNyrNLKBa2NfoLNzeOvpovNWPk66w7+rmZU7FHOmFoebeE0e108Q1ce
- e2+PrSq95kQXn/WXHb22KYSId+TzcEPXChKDqXHU3RMyuWAStFUdBoLd9SaO49+2NxV+qKj8h
- TiFE47SFf+5Esjb1j+c5MEJ9GS+s760Zy7iQ6tknC+aJ/9bzp1DVoJQGez+y5Tw9x/XGlJApC
- rkYNStY2hvCfAGZ1NZe77HGz3QZ3YIWPgo7OqJ6mA9X1+7qJ/Em9V36qt/TAC8jP+WwHBDzIf
- zG2KMmMQhWkHIInLmX/YDaCXhbouy+2z4HjUycDgN51WQ4U2i7LEqtOlmRVHpJbOd7LO3+jKP
- q2dpVgJA2M8s45yMa3Mzn11NHWFHDQ5oeph9Q8Jxa76sjDQT13Y+5IMEsKB4POEdEpIA=
+X-Provags-ID: V03:K1:fkeIgvFKgoiKQTjKKNGpwsyO9SvJp0pkYlt8JTmu2+AExTdsIVb
+ lGWyK8I9OUKTUVd4O+qkiERioQNUbPlNqc0CJKZOeZlvYAizQjlU22qxcNynt5M0gem1YDH
+ q/BV7DI4Dx8CzRKejBxPn5D3y+4742jg/2I8tFOkXLX4aigrJGPeCCA63xTtXt6vjDmNtjo
+ /Ljyix0R4swOwncrHnStQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RPQhcywww7Y=:AVO4GqX9ez8TttytTNPMS8
+ ke808tm6/tJYYDMahtUDwpu6xgHIzvc9w3MG32WgggIbQcB/zoMZV/nCvsVXiY2e+ZjX3eDVM
+ YBJ11Zg2eunOAGQeDu8HtQE96SsDtiS37Gsbq0AZCIHKJPxitNm0mBY67l7BUeBQQbvgUFOAP
+ s1XnBJJUvYemkNLbzyM+dXoRllkqmYGomchOElkPo80MZziKqM5s/2WcUXKp51M+gh1KKFZxd
+ 66TlMzOrjAep0z2ZBjeYmrj223t3vJjanoMAH4Inm7ZUQdxwfWIpl1B0nWERonpRiW5Dk0dWf
+ MAxcM5NPHG7qieJzxsUJllO7EUT5vmXE5Vulj+mPlhPd3vw2rfE3aQmjRTrdzbVMMiVgdcEzo
+ bM6pSOCBbVVPkTb5PeKOdKQhx3gAJErjY99mvHuT58a0V6rmX2vaRo1E3u3aTfuxw3gXxV24T
+ BVjAAX7S6StmrAJsW4ydiZQaI1UuDmC5E/qs9bDyKqRsJPoqXruYBwxE/Aryr5YieYzmPssgd
+ eSUEytpmY7KEqVnjXFasaWHuDfuR1eK28SH/5MmXIKqC+uy6ZdOeF7WibnrDtyEaiOlEa6ipi
+ WUYrDhCQrRStH9SIo5V0K1j/zwhTrSKqlcSIwDrsHj10mzAp2XL5B3JM7H0V12r9pfI2hsS2o
+ DyEbpPGSfBtBy1zFGmVDDHvR6vsQcJ8Eon47i2zH6CXr3lNNaoaGBn4G255SHDHi61Vo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,8 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add empty local-mac-address property to be filled in by boot loader
-(e.g. U-Boot).
+Reorder backlight properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -70,42 +69,46 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 5 +++++
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 5 +++++
- 2 files changed, 10 insertions(+)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 2 +-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 573aaa50fff1..09e3641258ae 100644
---- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -42,6 +42,11 @@
- 			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>;
- 			phy-names = "pcie-0";
- 			status = "okay";
-+
-+			pcie@0 {
-+				reg = <0 0 0 0 0>;
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
- 		};
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index c2e918d345de..d9805fc97f5e 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -228,12 +228,12 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+ 		default-brightness-level = <6>;
+ 		/* BKL1_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
  	};
  
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 0f0d4a4988b9..5e7ae5e92fb8 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -77,6 +77,11 @@
- 			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>;
- 			phy-names = "pcie-0";
- 			status = "okay";
-+
-+			pcie@0 {
-+				reg = <0 0 0 0 0>;
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
- 		};
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+index eebcc013771e..aafaf2c3e195 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
+@@ -193,12 +193,12 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
+ 		default-brightness-level = <6>;
+ 		/* BKL1_ON */
+ 		enable-gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_3v3>;
++		pwms = <&pwm 3 5000000>; /* BKL1_PWM */
  	};
  
+ 	gpio-keys {
 -- 
 2.14.4
 
