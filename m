@@ -6,148 +6,82 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1C2C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 02:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F42C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 02:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC13220842
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 02:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52BF020843
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 02:46:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRF19/f1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC13220842
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xcaEn/U2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52BF020843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeIAG4J (ORCPT
+        id S1727336AbeIAG5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 02:56:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51860 "EHLO mail.kernel.org"
+        Sat, 1 Sep 2018 02:57:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbeIAG4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 02:56:09 -0400
+        id S1725870AbeIAG5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 02:57:13 -0400
 Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8618F20841;
-        Sat,  1 Sep 2018 02:45:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A41620841;
+        Sat,  1 Sep 2018 02:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535769950;
-        bh=aNvxFNm/VKHMUCMozq0LGliYHp3pCKPgA8sJHqz6DrQ=;
+        s=default; t=1535770015;
+        bh=uJvyBvVcdWB5b80VVmO2LOPhef+0oGbkkySSfNHYqTo=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=tRF19/f1H/YyPtq+RgTvgjSCa4ANNILbViGKQ88C4oq0bDYjtjJpRbEtPb3lfO1Pa
-         FXpq5NEjt27Nxlz2L2LkH0j6T/7O4LLGP4c6vw45bLQGQexQp1i+jZf+fw4vzGM7tT
-         quYKw9cK1XmAlr0oo+AJRstSzlvZhxk1Q4oSmlK4=
+        b=xcaEn/U2aVim4GBo2GuK5eFE8MSD9bzrFEP9OTYRzuQ4n7uyfhYf+cbMHto3+fVUr
+         EAeDAoZPfmgLzHdvnPl0YWTE4Z8gxPM8gT9puI8Zi1yoJ30gLmfzEQR5oYMJGmM3b9
+         puvVtdIkMgxFt0OEXbX/E4rYtLTcZHtm7O2hMd0Q=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Russell King <linux@armlinux.org.uk>
+To:     Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
- <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
-Message-ID: <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
+In-Reply-To: <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
+Cc:     linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
+        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
+ <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
+Message-ID: <153577001451.19113.16924655760277630355@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
-Date:   Fri, 31 Aug 2018 19:45:49 -0700
+Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+Date:   Fri, 31 Aug 2018 19:46:54 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Phil Edworthy (2018-08-31 07:07:22)
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 9ab3db8..4adb99e 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -54,30 +54,29 @@ EXPORT_SYMBOL(of_clk_get);
->  =
+Quoting Eddie James (2018-08-31 12:30:02)
+> =
 
->  static struct clk *__of_clk_get_by_name(struct device_node *np,
->                                         const char *dev_id,
-> -                                       const char *name)
-> +                                       const char *name,
-> +                                       bool optional)
->  {
->         struct clk *clk =3D ERR_PTR(-ENOENT);
-> +       struct device_node *child =3D np;
-> +       int index =3D 0;
->  =
+> =
 
->         /* Walk up the tree of devices looking for a clock that matches */
->         while (np) {
-> -               int index =3D 0;
->  =
+> On 08/31/2018 12:56 PM, Stephen Boyd wrote:
+> > Quoting Eddie James (2018-08-29 14:09:29)
+> > Please let me know your merge strategy here. I can ack the clk patches
+> > because they look fine from high-level clk driver perspective (maybe
+> > Joel can take a closer look) or I can merge the patches into clk-next
+> > and get them into next release while the video driver gets reviewed.
+> =
 
->                 /*
->                  * For named clocks, first look up the name in the
->                  * "clock-names" property.  If it cannot be found, then
-> -                * index will be an error code, and of_clk_get() will fai=
-l.
-> +                * index will be an error code.
->                  */
->                 if (name)
->                         index =3D of_property_match_string(np, "clock-nam=
-es", name);
-> -               clk =3D __of_clk_get(np, index, dev_id, name);
-> -               if (!IS_ERR(clk)) {
-> -                       break;
-> -               } else if (name && index >=3D 0) {
-> -                       if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
-> -                               pr_err("ERROR: could not get clock %pOF:%=
-s(%i)\n",
-> -                                       np, name ? name : "", index);
-> +               if (index >=3D 0)
-> +                       clk =3D __of_clk_get(np, index, dev_id, name);
-> +               if (!IS_ERR(clk))
+> Thanks for taking a look! Probably preferable to get the clk patches =
 
-Was this change necessary? It looks like we can leave it all alone and
-keep passing a negative number to __of_clk_get() and have that return an
-error pointer which we then return immediately as an error. But, if the
-clock is optional and we've passed a name here, shouldn't we treat an
-error from of_property_match_string() as success too? This is all
-looking pretty fragile so maybe it can be better commented and also more
-explicit instead of relying on the reader to jump through all the
-function calls to figure out what the return value is in some cases.
+> into clk-next first (though Joel reviewing would be great). I just put =
 
->                         return clk;
-> -               }
-> +               if (name && index >=3D 0)
-> +                       break;
+> everything in the same set for the sake of explaining the necessity of =
 
-And this causes us to duplicate logic down below because we have to
-check it again if it's not optional or some other error condition?
+> the clk changes.
+> =
 
->  =
 
->                 /*
->                  * No matching clock found on this node.  If the parent n=
-ode
-> @@ -89,6 +88,16 @@ static struct clk *__of_clk_get_by_name(struct device_=
-node *np,
->                         break;
->         }
->  =
+Ok. If Joel is able to review then I can easily merge it into clk-next.
 
-> +       /* The clock is not valid, but it could be optional or deferred */
-> +       if (optional && PTR_ERR(clk) =3D=3D -ENOENT) {
-> +               clk =3D NULL;
-> +               pr_info("no optional clock %pOF:%s\n", child,
-> +                       name ? name : "");
-
-Is this intentionally pr_info?
-
-> +       } else if (name && index >=3D 0 && PTR_ERR(clk) !=3D -EPROBE_DEFE=
-R) {
-> +               pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
-> +                       child, name, index);
-> +       }
-> +
->         return clk;
->  }
-> =20
