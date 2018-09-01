@@ -1,97 +1,130 @@
-Return-Path: <SRS0=Pvhj=LO=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626AAC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56E7C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 00:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE65B20843
-	for <linux-kernel@archiver.kernel.org>; Fri, 31 Aug 2018 23:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E6020841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 00:05:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/9mMmrO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE65B20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZV9TD7k7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E6020841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeIAEDX (ORCPT
+        id S1727186AbeIAEPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 00:03:23 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33447 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbeIAEDW (ORCPT
+        Sat, 1 Sep 2018 00:15:07 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36090 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbeIAEPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 00:03:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y3-v6so4886470pgv.0;
-        Fri, 31 Aug 2018 16:53:32 -0700 (PDT)
+        Sat, 1 Sep 2018 00:15:06 -0400
+Received: by mail-pl1-f193.google.com with SMTP id e11-v6so6141991plb.3;
+        Fri, 31 Aug 2018 17:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3Dzh6X1LeduszbJqJBX4HPFELRK/l+JfoD9XBMT39dE=;
-        b=f/9mMmrONaw3756VsZHYnD9lPNuRAIpZXV5H2BlWr1Xr6igLZ0FpFHlXCRbBtojtNy
-         GpwCwKuL+uqd1AcMMFO/SobXCvuw+yVasiYZb18HOAVNCjywWYAcPEKmExEU45i6SOFz
-         9iGQsDmX5CoWvyN0m+MGtOVn57yLekRTuVuLDwMA/6NUAS7FCic6Y6OKLr880N/AYBTY
-         qQmtebskBCnx5OkjmxXx6ULGZHTTJaq63ejOGWqxpP2tvkNbw6azdyTOIYHyI3Iw6q+T
-         C4Kx42hI6O1JkzQZJKVarvuraMyc6PLMWDzJaH47OVfYKZPh2DT95y5TaFPHPa5GBa6S
-         8hfg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KQKwZnemIOyJD5gMC9rF1K16eEHc6KF5w57aXS3A7CU=;
+        b=ZV9TD7k7ofQqlLMpoMCN7r6dlrXivK3Fsv/HayZwjW6SNg3g9I3Z3SjhCApzB5diLY
+         oVI6PjgRCJ8GUxvR7LGTkM4iu1KNnsoWBm91thzofIhwdq67PrbXCgRnOjVLheDaDVVY
+         oQdtpwEAzltnVx7hlM1cW4DO6t7sAOv/TPx3YCjdnV9pBGgr3xKUcQkK0wETfq7gBBHJ
+         cLpDoxOfuehjt6YrtcoVZgoQlb17Ay/9tPsyFPMINadmSWvDEEMMw3D5U7/aDUjZmEnr
+         4oTD86vVkWk5iLBakbhsgJpDm00MTT7gRAJbns6fYBIW8xfHZI2zMW6pHEOAJMFXGvk0
+         kffg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3Dzh6X1LeduszbJqJBX4HPFELRK/l+JfoD9XBMT39dE=;
-        b=QsG4fEtXzzFZotgSwuW1g+iTy0FTTYxMEHn294fbDGLbsBJKMj9oDrIRun6qnIMHJs
-         8CprmRAenkCEEoNCjTy3w7bu0Q/Y1wtGAL/Uu96avosOfvKNjzTKwwwK9kx26Ktv4H5B
-         FI39SfXBsp0QLkNAwai2nOq6TJEU3F0zzbylvShiojQ0mm79kWA+Qme4YLUokTxMcZg7
-         OdYGsvnVQuqTPkalQ1umRdbbyXAXKz9LQIgQdu4z/gc2lk8l3Dn88+ASx84ZMErBK1cr
-         GFodUQnjQRwKOSz2jg242an9GgH4Su2nUNVoS1VWs5vZtg+TQKKc2e36kt9QEHU7v6sl
-         yRig==
-X-Gm-Message-State: APzg51D2VGqt9XFcW66jyZWAzDNh/p4LaWDkyrBf/0mlelkAjnvhl+IO
-        fNF0a8V3jUd37MGW+E08AZA=
-X-Google-Smtp-Source: ANB0Vdb5V0w6e0iWptA96twrC9ynCXYuX3lieOuGp4Bgh9rCsGM8vxgZfiNQRDDJimSnkcAkS0aZwA==
-X-Received: by 2002:a62:46c8:: with SMTP id o69-v6mr18498978pfi.21.1535759611718;
-        Fri, 31 Aug 2018 16:53:31 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:180::1:a245])
-        by smtp.gmail.com with ESMTPSA id f67-v6sm46037699pfe.75.2018.08.31.16.53.30
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KQKwZnemIOyJD5gMC9rF1K16eEHc6KF5w57aXS3A7CU=;
+        b=dV/zai9rQhoNNAbkjV8b4CClJiWHe/0fDlLVrW7O5MZlIMiNRPXGa0jf1ax92MLP4v
+         YkanLw17lHLYi1EPWwoquxsMQ6bIVsdA4iXHS3XR8kbMfbPsjf7FSr6AaIiqP0VkBiib
+         UFhABFWaS8TECLiOtbOb8DXoCZzYMMPgPrU0JJ1eFexeR6LOU7jvv+ru6jPDUOK/Vk6E
+         10I8XLx93ki5iurOJVQna/og/iWnkwJyxRQmCr2QPO+zQeiMq0022bvJHEk22hjDDC4P
+         U/q/K2RLdMFjmESLKTDLoCoXn8OHr7FcyMc0HoA2STaML65Jy0S3xtSZ3H1BRxBexblX
+         LzjA==
+X-Gm-Message-State: APzg51D6fkeTEReyBbprGzyyLPB5dCOanh6ykpv4CaADbcoF30vib6hG
+        BPojqF2hyymqAIRIuxg25M4=
+X-Google-Smtp-Source: ANB0VdZ+PLG+KsVzOlZ7TIQ34Z86T7M3mXi8D/01x2XXmdIJB+yS+e0BMHvcCUYhAe0l1eLqflTm2Q==
+X-Received: by 2002:a17:902:6b83:: with SMTP id p3-v6mr17931818plk.133.1535760313601;
+        Fri, 31 Aug 2018 17:05:13 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id n29-v6sm22455461pgl.30.2018.08.31.17.05.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Aug 2018 16:53:31 -0700 (PDT)
-Date:   Fri, 31 Aug 2018 16:53:28 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Dennis Zhou <dennisszhou@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/15] blkcg: associate writeback bios with a blkg
-Message-ID: <20180831235328.GG1488037@devbig004.ftw2.facebook.com>
-References: <20180831015356.69796-1-dennisszhou@gmail.com>
- <20180831015356.69796-10-dennisszhou@gmail.com>
+        Fri, 31 Aug 2018 17:05:13 -0700 (PDT)
+Subject: Re: [PATCH 1/3] ARM: dts: qcom: Add SPMI PMIC Arbiter nodes for
+ APQ8084 and MSM8974
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     "Ivan T. Ivanov" <iivanov@mm-sol.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <1422965880-11047-1-git-send-email-iivanov@mm-sol.com>
+ <1422965880-11047-2-git-send-email-iivanov@mm-sol.com>
+ <550311ad-8f93-3e80-9706-1321482b8c19@gmail.com>
+ <20180831230125.GU2523@minitux>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <9ff8c04f-80b7-88fa-956a-d0f61809d639@gmail.com>
+Date:   Fri, 31 Aug 2018 17:05:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831015356.69796-10-dennisszhou@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180831230125.GU2523@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 09:53:50PM -0400, Dennis Zhou wrote:
-> From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+On 08/31/18 16:01, Bjorn Andersson wrote:
+> On Fri 31 Aug 15:46 PDT 2018, Frank Rowand wrote:
+>>> +		spmi_bus: spmi@fc4cf000 {
+>>> +			compatible = "qcom,spmi-pmic-arb";
+>>> +			reg-names = "core", "intr", "cnfg";
+>>> +			reg = <0xfc4cf000 0x1000>,
+>>> +			      <0xfc4cb000 0x1000>,
+>>> +			      <0xfc4ca000 0x1000>;
+>>> +			interrupt-names = "periph_irq";
+>>
+>>> +			interrupts = <0 190 0>;
+>>
+>> The final value in this interrupts property means IRQ_TYPE_NONE.
+>>
+>> A WARN_ON() was added early this year to complain about use of
+>> IRQ_TYPE_NONE: 83a86fbb5b56 "irqchip/gic: Loudly complain about
+>> the use of IRQ_TYPE_NONE", resulting in many warnings spewing
+>> forth when I boot an APQ8074 Dragonboard.  I am trying to
+>> determine whether the warning is overly aggressive, or whether
+>> the IRQ TYPE is incorrectly specified for the spmi node.
+>>
+>> The interrupt-parent for the spmi node is intc: interrupt-controller@f9000000,
+>> which has compatible = "qcom,msm-qgic2".  I do not know the architecture
+>> or implementation of this interrupt controller.  Is an IRQ_TYPE_NONE
+>> valid in this case, or should a specific type be provided?
+>>
 > 
-> One of the goals of this series is to remove a separate reference to
-> the css of the bio. This can and should be accessed via bio_blkcg. In
-> this patch, the wbc_init_bio call is changed such that it must be called
-> after a queue has been associated with the bio.
+> No, IRQ_TYPE_NONE isn't valid and the WARN_ON() is reasonable.
 > 
-> Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+> Please change it to IRQ_TYPE_LEVEL_HIGH. And while you're at it, replace
+> the first 0 with GIC_SPI.
+> 
+> 
+> If you have more of these warnings you can most likely look at e.g.
+> msm8916 (arm64) to find the right flags.
 
-Acked-by: Tejun Heo <tj@kernel.org>
-
-Thanks.
-
--- 
-tejun
+Thanks, I'll create a patch.
