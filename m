@@ -2,92 +2,107 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E23BC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50582C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01EBE20843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01EBE20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 148FB20843
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148FB20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeIARRH (ORCPT
+        id S1727568AbeIARR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:17:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:36590 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeIARRH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:17:07 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w81D508B082553;
-        Sat, 1 Sep 2018 22:05:00 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Sat, 01 Sep 2018 22:05:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w81D4ttP082393
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 1 Sep 2018 22:05:00 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH 0/8] CaitSith LSM module
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <201611231531.DGH52135.QtFVOFJLOHFOSM@I-love.SAKURA.ne.jp>
- <2908442d-90f1-7fa2-24ff-0833f6bd2d95@canonical.com>
- <201705211359.BBE26079.LSJFOMHFOVQFOt@I-love.SAKURA.ne.jp>
- <8c6da617-3325-d60d-805f-5e5c1fa322c6@canonical.com>
- <201705211459.EGB48959.OFVFOSHtFJMLQO@I-love.SAKURA.ne.jp>
- <201710211959.CEC65165.SQJOLOFVOtFFHM@I-love.SAKURA.ne.jp>
- <7cab86a5-e115-0905-4d72-8cae7f6540b9@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b72491b3-834e-e073-0e40-a61d134725db@I-love.SAKURA.ne.jp>
-Date:   Sat, 1 Sep 2018 22:04:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <7cab86a5-e115-0905-4d72-8cae7f6540b9@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Sep 2018 13:17:26 -0400
+Received: from mout.perfora.net ([74.208.4.196]:38447 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727159AbeIARR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 13:17:26 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MZmmm-1gC5ll3l2k-00LZQ0; Sat, 01 Sep 2018 15:05:16 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 00/19] ARM: dts: tegra: apalis-tk1: minor revamp
+Date:   Sat,  1 Sep 2018 15:04:45 +0200
+Message-Id: <20180901130504.14318-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:snuHS803cmD4tUDlC4Q9PrBvwI98tchN7FxW3uduJiNkWY6CXlh
+ 5ocmSGRMdxXYiORDfBJdKpqoSzU729H4krjzr8WoyXCGVtip8PzAtM+ZpjIcdxsd9Owh3GK
+ X1uZ+eCd4W490Gjq8XojcjjyBVxQMdQg1AUYtezMKMZhUrOVku5S0YgJ8s2ExubQT+VkzqX
+ Sqy06DMDyndms83veORyA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TyWxVSmF37k=:gbQgMm62Y0JNHUSPSinyWz
+ j93jUKmoZ8QBGPs5RXaAbpsowFQ2ZMdR/wEHkpAlvJ3fdbldN/R/GE/rXinjnDe+nBVKv9w6D
+ YW9dJCekbkWVBalix/l2ILCs1vDejqAjZejo41zLZAHezke0MvAcK1+ZfCHNGjFo8mK1tjxJT
+ 8tfygVSfX4T4x4NxIK1CnVAda7du40HhYf4GxrftpfXfPO8BnXdYJjLDowzA8FzBdFQkVvfhe
+ 0wxPFp7vK/ANbqrI+H68R1+xLq3knvC1fT+eluCLhKQ4uyYX4JeRrPNJu6t9y1mmHrFxDyNUM
+ kz96nYXw/JWHVGYVgdVWa0AqB2gq0DruLYBkDvrPcf7xeXy7eq6JPMezzZ9Tt5IMPISAb/T5e
+ u0MI4KQXSzsLcMPLx/P7g7SJq+v+R1B4nYiKv2/+KJ8qtpBKbmVQK9CKcUecfP3h4J0blqKAf
+ CmUlhfYEK/+9D4rzAWESthTkD3wgszUf1Nr+N8gXuCn9H+J6iYjWPytliZEMNyj2dREhGEg7A
+ CL/Io5ZO0fu11BXq17idjfNVcTZC+x9wAKq2AMBhc7R7ImmcQlFYlrkxE6CPYP1//XFmRJhZJ
+ aTrYAo2mxeCOHtWCtcFwfX/cay/h5Jr/kgc/sKgrylkdw5bKoXNn9/9tLhR2qqnvYsuBLlJEt
+ Aa5MJh2U9uvA8YJ0sVRwl15fZYwxGG372MNIzqiwOhLJNHf5s8ob39t/EMq/wTT4cX+I=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2017/10/22 2:17, Casey Schaufler wrote:
->> As one year elapsed since I proposed CaitSith for upstream, I'd like to
->> hear the status again. I looked at
->> http://schd.ws/hosted_files/lss2017/8b/201709-LinuxSecuritySummit-Stacking.pdf .
->> How is ETA for Security Module Stacking? Is it a half year or so?
-> 
-> Assuming that I can keep working on stacking at my current level,
-> and that we can work out a couple issues with audit and networking
-> there is a possibility we're looking at mid 2018 for stacking. The
-> increased interest in security module namespaces for containers is
-> helping make stacking seem important to more people.
-> 
->> If it is likely take longer, should I resume proposing CaitSith for now
->> as one of "Minor modules" except security_module_enable() check added
->> until Security Module Stacking work completes? Or should I wait for
->> completion of stacking work? I want to know it, for recent proposals are
->> rather staying silent.
-> 
-> I wouldn't wait if it was my project, but I have been known
-> to be more aggressive than is good for me from time to time.
-> 
+This series is a minor overhaul for the Toradex Apalis TK1 system on
+module.
 
-It seems that stacking needs some more time. Manual with updated patch for
-current source code is available at https://caitsith.osdn.jp/index2.html .
-John, if you can resume reviewing, I'd like to propose CaitSith as one of
-"Minor modules" except security_module_enable() check.
+Changes in v2:
+- Add Rob's reviewed-by.
+- New patch as suggested by Rob.
+- New patch.
+- Get rid of fake clocks simple bus as suggested by Rob.
+- Change cover-letter subject to indicate minor revamp.
+- Drop "[PATCH 02/15] ARM: tegra: apalis-tk1: reorder pcie properties"
+  as requested by Stefan.
+- Drop "[PATCH 13/15] ARM: tegra: apalis-tk1: fix pcie switch vendor
+  compatible" in favour of the new "[PATCH v2 26/34] dt-bindings: add
+  broadcom (formerly plx technology) vendor prefix" posted earlier as
+  part of the apalis_t30 revamp v2 as suggested by Stefan.
 
-Regards.
+Marcel Ziswiler (19):
+  ARM: tegra: apalis-tk1: add local-mac-address property
+  ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
+  ARM: tegra: apalis-tk1: reorder padctl properties
+  ARM: tegra: apalis-tk1: regulator clean-up
+  ARM: tegra: apalis-tk1: add missing regulators
+  ARM: tegra: apalis-tk1: drop unused pinmux label
+  ARM: tegra: apalis-tk1: white-space clean-up
+  ARM: tegra: apalis-tk1: reorder backlight properties
+  ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
+  ARM: tegra: apalis-tk1: enable emmc ddr52 mode
+  ARM: tegra: apalis-tk1: add toradex,apalis-tk1-v1.2 compatible
+  ARM: tegra: apalis-tk1: reorder cpu dfll clock properties
+  ARM: tegra: apalis-tk1: reorder SD card properties
+  ARM: tegra: apalis-tk1: drop module level model and compatible
+  ARM: tegra: apalis-tk1: drop obsolete spidev nodes
+  ARM: tegra: apalis-tk1: replace underscores in node names with dashes
+  ARM: tegra: apalis-tk1: get rid of fake clocks simple bus
+  ARM: tegra: apalis-tk1: shorten temperature-sensor node
+  ARM: tegra: apalis-tk1: drop unused hdmi_ddc label
+
+ Documentation/devicetree/bindings/arm/tegra.txt |   2 +
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      |  40 ++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  43 ++-
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 452 ++++++++++++------------
+ arch/arm/boot/dts/tegra124-apalis.dtsi          | 451 +++++++++++------------
+ 5 files changed, 508 insertions(+), 480 deletions(-)
+
+-- 
+2.14.4
 
