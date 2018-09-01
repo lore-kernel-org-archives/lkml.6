@@ -3,361 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6C7C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C30FEC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A6420843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:20:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71A6420843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 72B052083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:24:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B052083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeIAMbx (ORCPT
+        id S1727378AbeIAMfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 08:31:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:4583 "EHLO mga05.intel.com"
+        Sat, 1 Sep 2018 08:35:14 -0400
+Received: from verein.lst.de ([213.95.11.211]:56595 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbeIAMbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 08:31:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Sep 2018 01:17:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,314,1531810800"; 
-   d="gz'50?scan'50,208,50";a="69548679"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga007.jf.intel.com with ESMTP; 01 Sep 2018 01:17:09 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fw15F-00088H-Bv; Sat, 01 Sep 2018 16:16:41 +0800
-Date:   Sat, 1 Sep 2018 16:16:28 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     kbuild-all@01.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH 3/7] Compiler Attributes: remove unneeded tests
-Message-ID: <201809011424.cgRFPvtV%fengguang.wu@intel.com>
-References: <20180831170514.24665-3-miguel.ojeda.sandonis@gmail.com>
+        id S1725973AbeIAMfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 08:35:13 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D010668D00; Sat,  1 Sep 2018 10:27:03 +0200 (CEST)
+Date:   Sat, 1 Sep 2018 10:27:03 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v5 01/13] PCI/P2PDMA: Support peer-to-peer memory
+Message-ID: <20180901082703.GA670@lst.de>
+References: <20180830185352.3369-1-logang@deltatee.com> <20180830185352.3369-2-logang@deltatee.com> <2711b3a7-f582-0dda-8ac2-530be7bda1bb@amd.com> <439181bb-6cd6-0ab2-bca6-fc820845166e@deltatee.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="EeQfGwPcQSOJBaQU"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180831170514.24665-3-miguel.ojeda.sandonis@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <439181bb-6cd6-0ab2-bca6-fc820845166e@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 31, 2018 at 09:48:40AM -0600, Logan Gunthorpe wrote:
+> Pretty easy. P2P detection is pretty much just pci_p2pdma_distance() ,
+> which has nothing to do with the ZONE_DEVICE support.
+> 
+> (And the distance function makes use of a number of static functions
+> which could be combined into a simpler interface, should we need it.)
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Miguel,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.19-rc1 next-20180831]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Miguel-Ojeda/Compiler-Attributes-remove-unused-attributes/20180901-125644
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-Note: the linux-review/Miguel-Ojeda/Compiler-Attributes-remove-unused-attributes/20180901-125644 HEAD 4327b9ceea1b6be41cbce2c51370a365fc6a52cc builds fine.
-      It only hurts bisectibility.
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/uapi/linux/swab.h:7:0,
-                    from include/linux/swab.h:5,
-                    from include/uapi/linux/byteorder/little_endian.h:13,
-                    from include/linux/byteorder/little_endian.h:5,
-                    from arch/x86/include/uapi/asm/byteorder.h:5,
-                    from include/asm-generic/bitops/le.h:6,
-                    from arch/x86/include/asm/bitops.h:521,
-                    from include/linux/bitops.h:19,
-                    from include/linux/kernel.h:11,
-                    from include/asm-generic/bug.h:18,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/page-flags.h:10,
-                    from kernel/bounds.c:10:
->> arch/x86/include/uapi/asm/swab.h:8:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u32 __arch_swab32(__u32 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> arch/x86/include/uapi/asm/swab.h:8:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__arch_swab32'
-    static inline __attribute_const__ __u32 __arch_swab32(__u32 val)
-                                            ^~~~~~~~~~~~~
-   arch/x86/include/uapi/asm/swab.h:15:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u64 __arch_swab64(__u64 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> arch/x86/include/uapi/asm/swab.h:15:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__arch_swab64'
-    static inline __attribute_const__ __u64 __arch_swab64(__u64 val)
-                                            ^~~~~~~~~~~~~
-   In file included from include/linux/swab.h:5:0,
-                    from include/uapi/linux/byteorder/little_endian.h:13,
-                    from include/linux/byteorder/little_endian.h:5,
-                    from arch/x86/include/uapi/asm/byteorder.h:5,
-                    from include/asm-generic/bitops/le.h:6,
-                    from arch/x86/include/asm/bitops.h:521,
-                    from include/linux/bitops.h:19,
-                    from include/linux/kernel.h:11,
-                    from include/asm-generic/bug.h:18,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/page-flags.h:10,
-                    from kernel/bounds.c:10:
->> include/uapi/linux/swab.h:47:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u16 __fswab16(__u16 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> include/uapi/linux/swab.h:47:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__fswab16'
-    static inline __attribute_const__ __u16 __fswab16(__u16 val)
-                                            ^~~~~~~~~
-   include/uapi/linux/swab.h:56:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u32 __fswab32(__u32 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> include/uapi/linux/swab.h:56:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__fswab32'
-    static inline __attribute_const__ __u32 __fswab32(__u32 val)
-                                            ^~~~~~~~~
-   include/uapi/linux/swab.h:65:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u64 __fswab64(__u64 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> include/uapi/linux/swab.h:65:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__fswab64'
-    static inline __attribute_const__ __u64 __fswab64(__u64 val)
-                                            ^~~~~~~~~
-   include/uapi/linux/swab.h:78:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u32 __fswahw32(__u32 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> include/uapi/linux/swab.h:78:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__fswahw32'
-    static inline __attribute_const__ __u32 __fswahw32(__u32 val)
-                                            ^~~~~~~~~~
-   include/uapi/linux/swab.h:87:15: error: unknown type name '__attribute_const__'
-    static inline __attribute_const__ __u32 __fswahb32(__u32 val)
-                  ^~~~~~~~~~~~~~~~~~~
->> include/uapi/linux/swab.h:87:41: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__fswahb32'
-    static inline __attribute_const__ __u32 __fswahb32(__u32 val)
-                                            ^~~~~~~~~~
-   include/uapi/linux/swab.h: In function '__swahw32p':
->> include/uapi/linux/swab.h:144:2: error: implicit declaration of function '__fswahw32'; did you mean '__swahw32'? [-Werror=implicit-function-declaration]
-     __fswahw32(x))
-     ^
->> include/uapi/linux/swab.h:207:9: note: in expansion of macro '__swahw32'
-     return __swahw32(*p);
-            ^~~~~~~~~
-   include/uapi/linux/swab.h: In function '__swahb32p':
->> include/uapi/linux/swab.h:155:2: error: implicit declaration of function '__fswahb32'; did you mean '__swahb32'? [-Werror=implicit-function-declaration]
-     __fswahb32(x))
-     ^
->> include/uapi/linux/swab.h:222:9: note: in expansion of macro '__swahb32'
-     return __swahb32(*p);
-            ^~~~~~~~~
-   In file included from include/linux/kernel.h:12:0,
-                    from include/asm-generic/bug.h:18,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/page-flags.h:10,
-                    from kernel/bounds.c:10:
-   include/linux/log2.h: At top level:
->> include/linux/log2.h:202:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'int'
-    int __order_base_2(unsigned long n)
-    ^~~
-   cc1: some warnings being treated as errors
-   make[2]: *** [kernel/bounds.s] Error 1
-   make[2]: Target '__build' not remade because of errors.
-   make[1]: *** [prepare0] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [sub-make] Error 2
-
-vim +/__attribute_const__ +8 arch/x86/include/uapi/asm/swab.h
-
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06   7  
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  @8  static inline __attribute_const__ __u32 __arch_swab32(__u32 val)
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06   9  {
-e5bb8ad8 arch/x86/include/asm/swab.h H. Peter Anvin  2012-11-28  10  	asm("bswapl %0" : "=r" (val) : "0" (val));
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  11  	return val;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  12  }
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  13  #define __arch_swab32 __arch_swab32
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  14  
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06 @15  static inline __attribute_const__ __u64 __arch_swab64(__u64 val)
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  16  {
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  17  #ifdef __i386__
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  18  	union {
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  19  		struct {
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  20  			__u32 a;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  21  			__u32 b;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  22  		} s;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  23  		__u64 u;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  24  	} v;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  25  	v.u = val;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  26  	asm("bswapl %0 ; bswapl %1 ; xchgl %0,%1"
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  27  	    : "=r" (v.s.a), "=r" (v.s.b)
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  28  	    : "0" (v.s.a), "1" (v.s.b));
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  29  	return v.u;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  30  #else /* __i386__ */
-e5bb8ad8 arch/x86/include/asm/swab.h H. Peter Anvin  2012-11-28  31  	asm("bswapq %0" : "=r" (val) : "0" (val));
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  32  	return val;
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  33  #endif
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  34  }
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  35  #define __arch_swab64 __arch_swab64
-5d30a683 arch/x86/include/asm/swab.h Harvey Harrison 2009-01-06  36  
-
-:::::: The code at line 8 was first introduced by commit
-:::::: 5d30a683888c60b8f93bef3ddc139d1a91ca58f4 x86: introduce asm/swab.h
-
-:::::: TO: Harvey Harrison <harvey.harrison@gmail.com>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-G8XDtnmX5nD00vl1QkXk1kE/8x8D7DjQ/FkAAA==
-
---EeQfGwPcQSOJBaQU--
+I'd ѕay lets get things merged as-is, so that we can review the
+non-ZONE_DEVICE users.  I'm a little curious how that is going to work,
+so having it as a full series would be useful.
