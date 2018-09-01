@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30FEC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4504FC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B052083C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B052083C
+	by mail.kernel.org (Postfix) with ESMTP id EF1022083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1022083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeIAMfO (ORCPT
+        id S1727399AbeIAMgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 08:35:14 -0400
-Received: from verein.lst.de ([213.95.11.211]:56595 "EHLO newverein.lst.de"
+        Sat, 1 Sep 2018 08:36:22 -0400
+Received: from verein.lst.de ([213.95.11.211]:56610 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbeIAMfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 08:35:13 -0400
+        id S1725973AbeIAMgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 08:36:22 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id D010668D00; Sat,  1 Sep 2018 10:27:03 +0200 (CEST)
-Date:   Sat, 1 Sep 2018 10:27:03 +0200
+        id 20D1268D00; Sat,  1 Sep 2018 10:28:12 +0200 (CEST)
+Date:   Sat, 1 Sep 2018 10:28:12 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
         linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
@@ -41,28 +41,27 @@ Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Dan Williams <dan.j.williams@intel.com>,
         =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v5 01/13] PCI/P2PDMA: Support peer-to-peer memory
-Message-ID: <20180901082703.GA670@lst.de>
-References: <20180830185352.3369-1-logang@deltatee.com> <20180830185352.3369-2-logang@deltatee.com> <2711b3a7-f582-0dda-8ac2-530be7bda1bb@amd.com> <439181bb-6cd6-0ab2-bca6-fc820845166e@deltatee.com>
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+Message-ID: <20180901082812.GB670@lst.de>
+References: <20180830185352.3369-1-logang@deltatee.com> <20180830185352.3369-8-logang@deltatee.com> <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <439181bb-6cd6-0ab2-bca6-fc820845166e@deltatee.com>
+In-Reply-To: <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 09:48:40AM -0600, Logan Gunthorpe wrote:
-> Pretty easy. P2P detection is pretty much just pci_p2pdma_distance() ,
-> which has nothing to do with the ZONE_DEVICE support.
-> 
-> (And the distance function makes use of a number of static functions
-> which could be combined into a simpler interface, should we need it.)
+On Thu, Aug 30, 2018 at 01:11:18PM -0600, Jens Axboe wrote:
+> I think this belongs in the caller - both the validity check, and
+> passing in NOMERGE for this type of request. I don't want to impose
+> this overhead on everything, for a pretty niche case.
 
-I'd ѕay lets get things merged as-is, so that we can review the
-non-ZONE_DEVICE users.  I'm a little curious how that is going to work,
-so having it as a full series would be useful.
+It is just a single branch, which will be predicted as not taken
+for non-P2P users.  The benefit is that we get proper error checking
+by doing it in the block code.
