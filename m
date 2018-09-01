@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4ADC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ECCC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22CB20843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22CB20843
+	by mail.kernel.org (Postfix) with ESMTP id CED5A20841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:13:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED5A20841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeIAMZF (ORCPT
+        id S1727995AbeIAMZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 1 Sep 2018 08:25:05 -0400
-Received: from mout.perfora.net ([74.208.4.194]:60039 "EHLO mout.perfora.net"
+Received: from mout.perfora.net ([74.208.4.196]:53685 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727251AbeIAMZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 08:25:04 -0400
+        id S1727288AbeIAMZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 08:25:05 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0M4pkR-1fi4iS213l-00z1B7; Sat, 01 Sep 2018 10:13:46 +0200
+ 0MeiSs-1gFkqD1AHQ-00OIum; Sat, 01 Sep 2018 10:13:49 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 23/34] ARM: tegra: colibri_t30: annotate sd card detect
-Date:   Sat,  1 Sep 2018 10:12:37 +0200
-Message-Id: <20180901081248.22639-24-marcel@ziswiler.com>
+Subject: [PATCH v2 25/34] ARM: tegra: colibri_t30: update compatibility comment
+Date:   Sat,  1 Sep 2018 10:12:39 +0200
+Message-Id: <20180901081248.22639-26-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
 References: <20180901081248.22639-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:+Z7lNHMDsLSSn7Utup26zdhhXZLHHio5F+EqJsThoobe3H1rSKS
- eaDQN1CuG7LxERR5Ddq+yrFpTMXMoa1Zt9JMnXyGApGWXpQ0/lstmhxMPXIi6yK2uXYyVp2
- QF9Cil0vzCkwRYx+UGB17Dju5wzZnSkKFI+dKrfEy4RQ0f8upu9fwAMXkiz2LIu75d8InCo
- 1QksocLBrRNK7lnTOjbsA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/rV6Ef6d8uY=:AUwLkDt0yd4H8HDI8XPew3
- 0DS7hfY9K1iprWwxcWZ9YpEHV1icgb0Aer+kUcBBqivq4SUueOgQHDaqOUovvuN+7AkJ9/T/I
- sqQSplkzSHvISEfMVlNik0jxuZREvjr8w/ztay7FLS3qEGR5Pibdk26wsyt/KT2B4JSyk1ZvT
- HZZgzY6BREL0trYBBkKtSEhlb+XvSWGnsfIRUXXdPQ2GYAPNaMh7LyHvmquGobHtOwmrWxRte
- dJ2XaMm3kNM8OmfvxGZUhqUGg8xy6RL+WWVXjdHEd1e0pftJxot0FY1cEn/v/+Nhzm1hSeUje
- hTojhvd3351/zXyUvQMLHNSi169FauhM6PX4i67mG60mYzCn41TG/gpKM4Ed85bk2bWZ6TEO+
- c+PWsmm5PlgjTqJL8GDefQgrc1eoM/FDu+xZjMFpJc6tyuj2+PZHTQD8TwNgyZXLAAQnFwLzb
- SNR6qZ05z+h89Zg+j8ubUlfQ1dY01EiUvaCKruUkZ/z5lhiZGkd6UmIN1cAwtP7x6INcaoMJm
- iiveOuSpDa9ppUVdCZYeCTFj1MCO5pU08Il9sbniOOPrKhQQTeA5AMGupnG9jxl2+h59B3H6M
- ij7vhbRvCwZeog3Z3BGs8kW8o6uKU8ou5gwSYK+Px46Vz7XqYU3y4oJwStSK1xg3Pr6AzD17m
- +VtBX0yRRDD1fKx+nlk8aLYBv5BfE5DcQV1x3p7ypxkaY3sOYQoPE+3Q2xJTYlrVUu+A=
+X-Provags-ID: V03:K1:kR0zm2fMEbINuHEB4DCzTMWfmQjGymw1Lst37pVFPfgqDAWJCah
+ pxgfYHDoAV18gGrIBgOVj1e8Kl8VrFVihasZNZnWGbujcstNogMUdQmII2qHAIgzUlXbDuG
+ XagPfYs4PMzH6Fl0X2pMbSB+kCV4y3MG515xqULya7qeoB1LjzTRCSwlfawAZzBFdOVQqyA
+ zUkzi4tMFnFH/KjBeq3sA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qaAUaT6znVY=:eo8wvxdV3QWB7FYiMyvnii
+ A7K6zZaPWTLsl4x71mnSW3HDmFEDxsBDJoPkosOfZo7k0vjN+OM+wOlWsLEnaT1uOcl5Y2l1P
+ Rr2hEmdLnm+1OBVuCOjAJ8gytjpnlqGzpfQYR3sAX9q0qEO2r2HI1OyR3MRhrkMiPgvZxfkbW
+ jZZ99EmnlvP3+IELVr01O4IMAS9vzwKWIJ1v7B9IvMLgdR0HYiCM4RsGo/E3iNWj/IiJvIB7X
+ i0XYKQfA7X6f58P6TaKhgwcW1Vhfzzo2BY04CtAkqMOVOYRyi8ELkWgNAlhIRCqRr0wrT8Z1E
+ urjZpOVvxicPyZ8o+GdEfvNzf3V5cUbhp4TfkBTv54/jiKVJTHqN87cc6DoeuLaDOwOCShqBo
+ QfLhhho3UR/KW9ybp4P1JaiTUg4RMWxPWZBRLKlPBp2/Sv6qWrZPVwe9ofys1TKNJOVmoYEEA
+ 9Q1frdxj5/6svabpNfuKblDIY3V6giUXh3PUqfYNYpDRT/TBK19HhZwNOm+J/x8wS8ggClHML
+ hBily0Cq+LTI8zyijpmTEhyLt/8/nY0H2LNnUQkRu8W0s+yE/63je4gw9fSxDmtXy86fYJjXV
+ JYFePAxtlI5981dFHY7NMFkHsmCstjeaA82tckJLipWSGMIjeNcfBlz2WgJMTjum4YEznxSBo
+ MiQTudjJvSwKrncdcFAOs642AVsz7GEp+0SHLxw/Dgo5xtur9l/SvxyzlERyPpCYUmtg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate SD card detect.
+Update compatibility comment.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -69,22 +69,22 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 2 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-index 16f5e6af68b9..aca4cd786442 100644
---- a/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/tegra30-colibri-eval-v3.dts
-@@ -100,7 +100,7 @@
- 	sdhci@78000200 {
- 		status = "okay";
- 		bus-width = <4>;
--		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
-+		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>; /* MMCD */
- 		no-1-8-v;
- 	};
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 7a4e454a1960..9bd7034b8e66 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -3,7 +3,7 @@
  
+ /*
+  * Toradex Colibri T30 Module Device Tree
+- * Compatible for Revisions V1.1B, V1.1C, V1.1D, V1.1E; IT: V1.1A
++ * Compatible for Revisions V1.1B, V1.1C, V1.1D, V1.1E, V1.1F; IT: V1.1A, V1.1B
+  */
+ / {
+ 	model = "Toradex Colibri T30";
 -- 
 2.14.4
 
