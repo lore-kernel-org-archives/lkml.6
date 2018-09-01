@@ -2,101 +2,116 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD154C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 09:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94B4C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 09:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2832083C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 09:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD082083F
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 09:18:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AX1Osqn1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2832083C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDeScB9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD082083F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbeIANU0 (ORCPT
+        id S1727337AbeIAN3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 09:20:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41893 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbeIANUZ (ORCPT
+        Sat, 1 Sep 2018 09:29:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46097 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbeIAN3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 09:20:25 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s15-v6so6482525pgv.8;
-        Sat, 01 Sep 2018 02:09:07 -0700 (PDT)
+        Sat, 1 Sep 2018 09:29:03 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a108-v6so13214718wrc.13
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 02:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=lN4XCwO975RIo5FOR8E6anZeXFMQCOCSh3afMOb9Mjw=;
-        b=AX1Osqn1QZfzOceVPQK3YBAb37gjgix3eKqCmmtI71d+xzGtZihN0sFcxNwVCTiYw8
-         T2sdF7ML0CeRB0OkkjCfNKR9K0cRWVrB3lIZduQM0Fwt9GWMYpEEKJttWpZrulkbgB13
-         GJheAznj3pCt/ZLDxtt1wt63jAtKupOYZkrB0B6sDbxAG1ETc3V71E5/SqiIH2+rrZ/G
-         zgwwxY0UoJa6hIhfis+VeIR2Y1n5yBoLOMrs5VsXrNB08MkjqTIWNahhXUKWJo3N44Ks
-         Bd3jkshJdeNwG78YMe1RRLvmDhjW6vKNqdi3Qzmxfww+rboLgWrFXuVJIYLWAfuwtSAl
-         N5pA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/jPN7w7lJWiNLZQYHn6myG46ZhnQZvdsh/TSY0wsTPQ=;
+        b=cDeScB9tq+auktyw6Jr/usgzdWuczaXMWu//PCsDIZ59jyYorNQ1tEyD9tLLQjXSO/
+         c68EnFnNjvcDVjISH7LCTydeHSbBtKyQ6KxKmhfFjluazwgg8cB11SafB9cJjX9bQDVL
+         Ew/uQ7hsvsGcPdbPwE0wOpZOc6Sk/oQRz7pIGTHBTtl2WfrIs+OXLV++ICdtwAvJWcHT
+         38epPHFGuofLjQv6kqO17CzzT4a8sfkjgXyaVAFuiFHl+MASxyRy16YvjBK8CLz6srP1
+         2H642dyOyPqBUSvATSn1YLNW2jBt32v6/3LVapgV5dgl7I7/6YRSlrz4BZxLidLZaRTm
+         qlDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=lN4XCwO975RIo5FOR8E6anZeXFMQCOCSh3afMOb9Mjw=;
-        b=lSujKczY8Y/glNllOqgeHUdM29cqwxc8Ye6ZWkQ+U0yHUSPD2BsrDV6JWOYp88Zx+i
-         ifpvofDxE5T914Tuxrm6e2nfOgmdhJW+OsORREQXQTXhc/dYjFvxGIOxxF+zrp0Sa276
-         BVcAp5MJl7r+9vvqhAs+6WzdNflUW3FVve4hBLxNl2imc8+GfAjHENz+D/jaI1q1kVR6
-         qznNTBlomNG4zaUvPneD1ZAsGJP0nJJKvk6O8HKwR3TRbPX82/qSFj3LoC+sq/8YF+6d
-         9HJssywDuT8MkTEYGRTNoV0TyYaqlUr7qGAG0e61EbhK5loKu7qT8JnyJY1aq8m7Mbmq
-         uXEw==
-X-Gm-Message-State: APzg51BdL+jPH3SdkXXHEjx0V2CtTNTornDeAIRVcY+ENZ0907I0b3b7
-        bCNXkw38grkIMLK01i8RaLzDCAXx
-X-Google-Smtp-Source: ANB0VdbTvIafKB7HRFrrVJ9OjAR0FUZMlnUOooNvMwyrg2XZA3iwc2WxcMHa/xHgZgbqzZUGKZNTMQ==
-X-Received: by 2002:a63:7b4b:: with SMTP id k11-v6mr18418577pgn.64.1535792946607;
-        Sat, 01 Sep 2018 02:09:06 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.15? ([2402:f000:1:1501:200:5efe:a66f:470f])
-        by smtp.gmail.com with ESMTPSA id w72-v6sm39111011pfa.26.2018.09.01.02.09.04
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/jPN7w7lJWiNLZQYHn6myG46ZhnQZvdsh/TSY0wsTPQ=;
+        b=nvlaV0Rvm0xbmXnzwm56m2VFilU+fji6mB8FR4eNJUdEiNY/fiQVfw/XseICPfnTOR
+         QfXQohkL45CiLt7lYSmjiolygzuWiCWUfURsRY470YZrnc6Yr3DeXqYIhlyqN4Ap4Q2m
+         7hbKvt0WtSrxCX2cXzma+/DBkO8ZQ3zOzVCio6Kb+pd0Xg0IUNHDz+UItAYggEyRz+AQ
+         UiMiaIvlqOkTtLzk7nMzaXvcv5Jeo8HBKK75zNZrbV12t+eCoI0bukwlwu8RErdJN5AY
+         t+qoYdNwXPXBpt0I6CuY5+Q6GYetJU1Y/f0ZsG7yheyA1TLuIb6KU0loH189SSizLsy1
+         ijtA==
+X-Gm-Message-State: APzg51DUil2W2RZoaQUE4/Ead4cKAsX3AUwgMWiHVanIfGSRxefUatZL
+        Tgk0B6YMfTC8qbF28fyc7sE=
+X-Google-Smtp-Source: ANB0VdZFmfHRaS8/y2wFPa339QhTCNsG86u0y8uDZxAnlXOmQHQ8FmEnhp1I+U7GQSFX6JtmAhQY1Q==
+X-Received: by 2002:adf:8567:: with SMTP id 94-v6mr3346161wrh.223.1535793461808;
+        Sat, 01 Sep 2018 02:17:41 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4006:df00:8852:4a4c:95e8:7a2])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm4090558wmf.1.2018.09.01.02.17.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Sep 2018 02:09:06 -0700 (PDT)
-To:     amitkarwar@gmail.com, nishants@marvell.com, gbhat@marvell.com,
-        huxinming820@gmail.com, kvalo@codeaurora.org
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] net: wireless: mwifiex: A possible sleep-in-atomic-context bug
- in mwifiex_wait_queue_complete()
-Message-ID: <35980039-f268-2db3-5c7d-19ab0c917d44@gmail.com>
-Date:   Sat, 1 Sep 2018 17:08:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 01 Sep 2018 02:17:41 -0700 (PDT)
+Date:   Sat, 1 Sep 2018 11:17:40 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH 4/7] Compiler Attributes: homogenize __must_be_array
+Message-ID: <20180901091738.73dzegdenvla5crf@ltop.local>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+ <20180831170514.24665-4-miguel.ojeda.sandonis@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831170514.24665-4-miguel.ojeda.sandonis@gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mwifiex_usb_tx_complete() is a completion handler function for the
-USB driver. So it should not sleep, but it is can sleep according to the
-function call paths (from bottom to top) in Linux-4.16:
+On Fri, Aug 31, 2018 at 07:05:11PM +0200, Miguel Ojeda wrote:
+> Different definitions of __must_be_array:
+> 
+>   * gcc: disabled for __CHECKER__
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index e0e55eb3f242..e4a702f99e50 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -357,4 +357,11 @@ static inline void *offset_to_ptr(const int *off)
+>  	compiletime_assert(__native_word(t),				\
+>  		"Need native word sized stores/loads for atomicity.")
+>  
+> +#ifdef __CHECKER__
+> +#define __must_be_array(a)	0
+> +#else
+> +/* &a[0] degrades to a pointer: a different type from an array */
+> +#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+> +#endif
+> +
+>  #endif /* __LINUX_COMPILER_H */
 
-[FUNC] schedule_timeout
-drivers/net/wireless/marvell/mwifiex/sta_ioctl.c, 63:
-     schedule_timeout in mwifiex_wait_queue_complete
-drivers/net/wireless/marvell/mwifiex/cmdevt.c, 673:
-     mwifiex_wait_queue_complete in mwifiex_send_cmd
-drivers/net/wireless/marvell/mwifiex/main.c, 1046:
-     mwifiex_send_cmd in mwifiex_multi_chan_resync
-drivers/net/wireless/marvell/mwifiex/usb.c, 288:
-     mwifiex_multi_chan_resync in mwifiex_usb_tx_complete
+You can also remove the #ifdef __CHECKER__ because:
+1) even ancient version of sparse don't have a problem
+2) BUILD_BUG_ON_ZERO() is currently disabled for __CHECKER__
 
-I do not find a good way to fix this bug, so I only report it.
-
-This bug is found by my static analysis tool DSAC.
-
-
-Best wishes,
-Jia-Ju Bai
+-- Luc Van Oostenryck
