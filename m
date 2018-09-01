@@ -7,132 +7,98 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E57CC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 12:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B3FC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 12:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54CA120843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 12:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B697920845
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 12:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQ+BjKUJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CA120843
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bokOuGDM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B697920845
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeIAQdW (ORCPT
+        id S1727494AbeIAQdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 12:33:22 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39788 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbeIAQdV (ORCPT
+        Sat, 1 Sep 2018 12:33:24 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36663 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbeIAQdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 12:33:21 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so6700200pff.6;
-        Sat, 01 Sep 2018 05:21:30 -0700 (PDT)
+        Sat, 1 Sep 2018 12:33:24 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b11-v6so6717856pfo.3;
+        Sat, 01 Sep 2018 05:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FQHroXCDBgcHJgR7j2rRNMp0a4BQ/bD8Uhm3czI6kFg=;
-        b=VQ+BjKUJ+O6RJXjh4r576AeOjT41YMRDVcxZxOpGMCBIizaAnohGp7iXDZguAn/WpY
-         Gseubthy8v7GRJBpOg2OWSHF0vNFnhH8CpyafX2yjZ/pgpZrHV+lS8paxxH9myUhEdRT
-         CihqwvmZrim0aDtNfcJLZhy54clMaKr6EBlSMgJfaD2dGp52kf60kMeKJokgO+qZi+JM
-         +uT1Vw0WBRHHQyPR/xthBGo7GskTnj+QVtgX546cDIStSFW3n0s7VKf4nQg7IHiN6kJ9
-         fpTzUClmGhky+nRleovPnEGV+samaBcM1RpOePAjHwO/VwSZGyvpEQAO3ijPXMm2COEz
-         hwEw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=GNtbETmUhFnTOzHv72I2Ebs2X16NzbVqsBREibxEVF4=;
+        b=bokOuGDMqO7nEMjGEzaScLCLDvlzpD1Fkiv0f7QosUly05uwzyV9FGf2ht+AkgF5GZ
+         4oBzp0wS5s7/aA6kRSDw8GGobJOIHoGkdZVz6Q1tnO3MlNBcFqA4X0v9YhcGnFb9lCkp
+         UEdXTR654mR250sjP8xiKvcvz+xJ197ATk777KONVa+VjnbjfiUbdkHzs49nmo2EXmBp
+         XGejDR3/tkjeSiCveBiv2DAxshf6DaYTkL1E9IqtInw6CQQ/ColpZ1Ly8+uslPMy1Yg8
+         LjJHQZuIVGsy/SIvO6XyMcGPiVojy8sDKVmaO3t3lTAjaygo7WF5spDADG4SgsqUIqDL
+         kZeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FQHroXCDBgcHJgR7j2rRNMp0a4BQ/bD8Uhm3czI6kFg=;
-        b=JOmEu+FGnGNJfWTBWQHQj+SZKlFyjV3yLh3wRzYeZtunTtIVh6vJ3rjhvqndB1nfNi
-         YS4raNpwi+RDSxuH0sTT85NmRAH7Fo0yAJ7srukiDP0kbGy8znMVpwTdtXCtKBE97CPJ
-         t7KRycMUcVNCjjMqxW2JWSi84qSLeEKMD7ZQOd14rzbRFt8cXTMbc6lwfh6JWwLYbV9Z
-         7jDFcrZLJghKB6MS+KpgApxkXEjr0cp5N671J0e6igOYBNcgdbNvllq+N3kUtPMZIbrz
-         7k3tVjCYQgBu4HohXSeEBciC2mgYTxaGIeNJJ6/YuNAzEC4Fc4OL1ZsWvx0FKK/d5Tzq
-         8o3w==
-X-Gm-Message-State: APzg51AbZ0lTSAO+0dyWQXwCI6kMdkDQu923wgcPnRxhOFRtiRYfTE3r
-        LiWVm0HZE6bWWC1qqRNElAE=
-X-Google-Smtp-Source: ANB0VdaBEWb8nxiJx+MHmcEGvqJkfIqjkg/FxbZEA69wshX56ZhDGYyfmPUKqwXjdkVW1NiEHnn9Xg==
-X-Received: by 2002:a62:1192:: with SMTP id 18-v6mr20736895pfr.54.1535804489662;
-        Sat, 01 Sep 2018 05:21:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=GNtbETmUhFnTOzHv72I2Ebs2X16NzbVqsBREibxEVF4=;
+        b=B3aI9dY2tBvPC+azXchF17ECPGl/iK4ulX4WCHVRkk6Z0b7DRSj5HJRzc4xZpe/8/P
+         XIHEr4XijSMkhuin5l/fXlqMEtY3BiOyOwTXHNL+zEycvVjcJrxo6UAaQRzamDSHQkEe
+         xQlIKq/y9xH3Bk7oXIXHIKL9VYSOVb6njXT0rY8uYpqIAl1Omwuc8b7SBT5z9a2q9rEv
+         Asugi+UFJJbC+9EEkQASajlbN1uA9h8LG8KtEGAfFwrIpn3kCbpp9fmHugX1gxWQhff6
+         8AYzGkX1lGV1Wh8m5AVznfhqwIicxt1Dc4HjLFZtESJSeDTsMUw1J8KtML/aYwVslWnf
+         S9zQ==
+X-Gm-Message-State: APzg51BYEZ5T2SJMICKNcNTi3mKHtSII2hexS8DDzvk///y2mb53HkFu
+        hHIiVkXSLVbSJz8TSHwD4sI=
+X-Google-Smtp-Source: ANB0VdY8YvMuN9ZASsWhb+bJnqbdvdlBykUoczssHagRyQMSOhDCYyxFPrhB9Ndu0kPn0uDjf87IXA==
+X-Received: by 2002:a62:be03:: with SMTP id l3-v6mr20502131pff.138.1535804492003;
+        Sat, 01 Sep 2018 05:21:32 -0700 (PDT)
 Received: from bogon.didichuxing.com ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id z19-v6sm22454043pgi.33.2018.09.01.05.21.27
+        by smtp.gmail.com with ESMTPSA id z19-v6sm22454043pgi.33.2018.09.01.05.21.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Sep 2018 05:21:28 -0700 (PDT)
+        Sat, 01 Sep 2018 05:21:31 -0700 (PDT)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     edumazet@google.com, davem@davemloft.net
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next v3] tcp: propagate gso_segs to the new skb built in tcp collapse
-Date:   Sat,  1 Sep 2018 20:21:04 +0800
-Message-Id: <1535804465-11795-1-git-send-email-laoar.shao@gmail.com>
+Subject: [PATCH net-next] tcp: remove useless add operation when init sysctl_max_tw_buckets
+Date:   Sat,  1 Sep 2018 20:21:05 +0800
+Message-Id: <1535804465-11795-2-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1535804465-11795-1-git-send-email-laoar.shao@gmail.com>
+References: <1535804465-11795-1-git-send-email-laoar.shao@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gso_segs of the new built SKB in tcp collapse is inited to 0,
-that makes us hard to know the accurate segments number of this new SKB.
-We'd better propagate the gso_segs of the collapsed SKB to the new built
-one, so when this SKB is dropped (for example when doing tcp prune) the
-sk_drops will be added to the correct value.
+cp_hashinfo.ehash_mask is always an odd number, which is set in function
+alloc_large_system_hash(). See bellow,
+        if (_hash_mask)
+                *_hash_mask = (1 << log2qty) - 1; <<< always odd number
 
-If the collapsed SKB is fully copied to the new built one, we just add its
-gso_segs to the new SKB.
-While if the collapsed SKB is partially copied to the new built SKB,
-we have to calculate how many segments are copied.
-And when do the calculation we must make sure one SKB holds the same
-gso_segs.
-Furthemore, we have to reset the gso_segs of this SKB if is is partially
-copied, so in the next round when the left segments are copied it could
-propagate the correct value.
-
-The gso_size will never exceed 65536 as the max size of the new built SKB
-is 4K.
+Hence the local variable 'cnt' is a even number, as a result of that it is
+no difference to do the incrementation here.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- net/ipv4/tcp_input.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_ipv4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 62508a2..6dc8e2f 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4910,6 +4910,7 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
- 	while (before(start, end)) {
- 		int copy = min_t(int, SKB_MAX_ORDER(0, 0), end - start);
- 		struct sk_buff *nskb;
-+		int len = copy;
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index 44c09ed..09547ef 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -2549,7 +2549,7 @@ static int __net_init tcp_sk_init(struct net *net)
+ 	net->ipv4.sysctl_tcp_tw_reuse = 2;
  
- 		nskb = alloc_skb(copy, GFP_ATOMIC);
- 		if (!nskb)
-@@ -4928,12 +4929,24 @@ void tcp_rbtree_insert(struct rb_root *root, struct sk_buff *skb)
+ 	cnt = tcp_hashinfo.ehash_mask + 1;
+-	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = (cnt + 1) / 2;
++	net->ipv4.tcp_death_row.sysctl_max_tw_buckets = cnt / 2;
+ 	net->ipv4.tcp_death_row.hashinfo = &tcp_hashinfo;
  
- 		/* Copy data, releasing collapsed skbs. */
- 		while (copy > 0) {
--			int offset = start - TCP_SKB_CB(skb)->seq;
- 			int size = TCP_SKB_CB(skb)->end_seq - start;
-+			int offset = start - TCP_SKB_CB(skb)->seq;
- 
- 			BUG_ON(offset < 0);
- 			if (size > 0) {
--				size = min(copy, size);
-+				if (copy >= size) {
-+					skb_shinfo(nskb)->gso_segs +=
-+						max_t(u16, 1, skb_shinfo(skb)->gso_segs);
-+				} else {
-+					skb_shinfo(nskb)->gso_size =
-+						skb_shinfo(skb)->gso_size;
-+					skb_shinfo(nskb)->gso_segs =
-+						DIV_ROUND_UP(len, skb_shinfo(nskb)->gso_size);
-+					skb_shinfo(skb)->gso_segs =
-+						DIV_ROUND_UP(size - copy, skb_shinfo(skb)->gso_size);
-+					size = copy;
-+				}
-+
- 				if (skb_copy_bits(skb, offset, skb_put(nskb, size), size))
- 					BUG();
- 				TCP_SKB_CB(nskb)->end_seq += size;
+ 	net->ipv4.sysctl_max_syn_backlog = max(128, cnt / 256);
 -- 
 1.8.3.1
 
