@@ -2,124 +2,170 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC426C43334
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F82C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956C02083B
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956C02083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 29A3B2083B
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A3B2083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=assembler.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbeIAVVk (ORCPT
+        id S1727415AbeIAVXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 17:21:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726953AbeIAVVk (ORCPT
+        Sat, 1 Sep 2018 17:23:02 -0400
+Received: from mail.medvecky.net ([85.118.132.146]:36059 "EHLO
+        mail.medvecky.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeIAVXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 17:21:40 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w81Gx3J5058490
-        for <linux-kernel@vger.kernel.org>; Sat, 1 Sep 2018 13:09:01 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m7qaev9qb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 13:09:01 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 1 Sep 2018 13:08:59 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 1 Sep 2018 13:08:55 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w81H8sO143188372
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 1 Sep 2018 17:08:54 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 91DA6B2066;
-        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6CEE5B2064;
-        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.237.165])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0400316C0659; Sat,  1 Sep 2018 10:08:54 -0700 (PDT)
-Date:   Sat, 1 Sep 2018 10:08:54 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC LKMM 7/7] EXP tools/memory-model: Add .cfg and .cat
- files for s390
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180829211018.GA19646@linux.vnet.ibm.com>
- <20180829211053.20531-7-paulmck@linux.vnet.ibm.com>
- <20180831160630.GF30626@arm.com>
+        Sat, 1 Sep 2018 17:23:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.medvecky.net (Postfix) with ESMTP id 3AB935E2002;
+        Sat,  1 Sep 2018 19:03:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at medvecky.net
+Received: from mail.medvecky.net ([127.0.0.1])
+        by localhost (slovakia.medvecky.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qit31HmxNbmN; Sat,  1 Sep 2018 19:03:20 +0200 (CEST)
+Received: from [192.168.88.62] (ip-89-176-80-18.net.upcbroadband.cz [89.176.80.18])
+        by mail.medvecky.net (Postfix) with ESMTPSA id DFC335E2001;
+        Sat,  1 Sep 2018 19:03:19 +0200 (CEST)
+Subject: Re: [PATCH 1/1] Update AMD cpu microcode for family 15h
+From:   Rudolf Marek <r.marek@assembler.cz>
+To:     "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+        Ivan Ivanov <qmastery16@gmail.com>
+Cc:     Josh Boyer <jwboyer@kernel.org>,
+        Linux Firmware <linux-firmware@kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Grimm, Jon" <Jon.Grimm@amd.com>
+References: <1527213479-121361-1-git-send-email-sherry.hurwitz@amd.com>
+ <CA+5PVA7aPRHk=kfxsmPi-qStKEnK_HJ=rTjvtQGO1QbnLb9qBw@mail.gmail.com>
+ <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
+ <20180531220503.2jqs3oiqsnw7ye2t@khazad-dum.debian.net>
+ <6402a30f-04d3-59d9-92df-5a43e2060f5c@assembler.cz>
+ <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
+ <b01e8484-17e6-5253-5d83-9d864c66a7f9@assembler.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=r.marek@assembler.cz; prefer-encrypt=mutual; keydata=
+ xsBNBFN2VH4BCADpv+3Tkikr+X489Xso9UC719YdxgGiy0xBjDiWC22wAd3tHy6G3nEhWfh4
+ 1UNGcqscPAvJMn2GhgSJRfBzj0wALXLkoTYta78wEK+Ji+Gs7PX9VhqRKt9/OIn/2XJ1Yv9i
+ e8uo9MFBGFCB5roz+Ws8rdXq0Quu7VZylzRv7qqhxMAk9RvXCT2tyt6XY16R7ZEL9wbSLRAl
+ h8LRPMF0iiLH1YenfSCX2XkW7eA7CJSjh9pwIBFOF5cd5mcT69OPO+TuAbdvgCcZPEoQQBhk
+ QmOr2PlUOl3CSgqtTxjAjAxXhPTU7Q3xxgB2Oa7xbt3Eic2Z4lltP/dowULZqXvsC5DxABEB
+ AAHNI1J1ZG9sZiBNYXJlayA8ci5tYXJla0Bhc3NlbWJsZXIuY3o+wsB+BBMBAgAoBQJTdlR+
+ AhsjBQkJZgGABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAb22rZM9dcMf1B/97PHhB
+ YaPoM4PHlk3o3HEs0ZxiJyVqDLpmM8kOh+Pcvb40KX0uebiODfeff+RYJWOff27la7AzqG20
+ dEAi3hpHYVigZWf3BaLXwCbUKlyLLydks4qydfKBG62PnM74sW1M/sfFA/bdzC9tnjy4G9r9
+ mXNBJBDHb4XuHeukqlrMLDDGW78wrfv4tjtW9Z3Aoroja9CnxREt6c3iHA50TX65BrthPxhF
+ c+ES+4J/uuBe6pfq9PN8HZKBWgK+jhCoyCajck964ccVF1a2uTRhN39gXtA2YpKUqb+dcsp+
+ 2NH2eBVYZYaPVJIoIWPxhriOHszs+NjOkk+jBw2gVLy4bmOlzsBNBFN2VH4BCADsg91uA/mm
+ l6APO+aWyqkiPjENreT2DT2gmoaEkp07jZrzNcQrLyNhGhsH6+UtCJLV9YNHbfJb7wsfXmXh
+ IRh+TQYLJlrU4tBqvVB0F24+MEAFdt/1/jAmaihRZWKdE/Ogtt0YV7BEKfJk2KZxrG4wLB4G
+ g57kI+aVmoVRl7/WmM46JpOJhBqvI6/Pw/ZIDhJZfrOXCCWM3pYjx0ftkkULPl6E6dXv3V7N
+ 9dMV4bqNj4PDfysptFoVo02AblHqMmmBQ2LcI+o5HNm2iPyTklKMmq8Z5kblXDR6GXe2rO5c
+ 5j0vQ6q5uSyVa30JNJcfl2iUT2akFv7n+RRWhlyCItjpABEBAAHCwGUEGAECAA8FAlN2VH4C
+ GwwFCQlmAYAACgkQwG9tq2TPXXAq4Af/UhDBiEaW/s1gDmtci6ZBTDetOdWGx69dzD2rIm1b
+ OoQiO1EZ+WNFe0RFmMByfCsRVXP4iD/Ly1l0c6ZNvCBPR+ssXlnltE0Z1S43ZrR4gYjWw2GM
+ y1EcSOLv6Yvt/+8IS6YANlzR6RRBs2pM1ndM2AhI43k2rpGFarNEX7z9QrdcoZ4rY94DUGwZ
+ 0hlQ5VrGt/DAnMkJmOkr6Yriiybw8COnw4qigLfZH6b87vUqdBjRr3BR0iD3ahiXUY0bhlX2
+ bQE1IdT8+enQsm4+ePcC8Oihl8Y9JI/cBCw3eEZOl2p1+8aRq7tGkLsilWXUCDJ2kCDQixCJ
+ RoTzi/gSro2qhg==
+Message-ID: <05d222ba-768f-5095-cc7a-f48fc8b3154f@assembler.cz>
+Date:   Sat, 1 Sep 2018 19:09:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831160630.GF30626@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18090117-0040-0000-0000-00000468E05E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009652; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01082071; UDB=6.00558293; IPR=6.00862058;
- MB=3.00023059; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-01 17:08:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090117-0041-0000-0000-0000086FFE4F
-Message-Id: <20180901170854.GM4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-01_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809010190
+In-Reply-To: <b01e8484-17e6-5253-5d83-9d864c66a7f9@assembler.cz>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 05:06:30PM +0100, Will Deacon wrote:
-> Hi Paul,
-> 
-> On Wed, Aug 29, 2018 at 02:10:53PM -0700, Paul E. McKenney wrote:
-> > This commit adds s390.cat and s390.cfg files to allow users to check
-> > litmus tests for s390-specific code.  Note that this change only enables
-> > herd7 checking of C-language litmus tests.  Larger changes are required
-> > to enable the litmus7 and klitmus7 tools to check litmus tests on real
-> > hardare.
-> > 
-> > Suggested-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > Suggested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > [ paulmck: Add fixes suggested by Alan Stern. ]
-> > ---
-> >  tools/memory-model/s390.cat | 18 ++++++++++++++++++
-> >  tools/memory-model/s390.cfg | 21 +++++++++++++++++++++
-> >  2 files changed, 39 insertions(+)
-> >  create mode 100644 tools/memory-model/s390.cat
-> >  create mode 100644 tools/memory-model/s390.cfg
-> 
-> As I said before, I'd *much* prefer this to be part of the upstream
-> herdtools7 repository. It's not really anything to do with the Linux
-> kernel, so I don't think it belongs in the source tree.
+Hi again,
 
-Agreed.  As the cover letter says, "Add .cfg and .cat files for s390,
-which is a not-for-mainline placeholder."
+Here is a short summary of what is missing in the microcode containers [1] [2]. I only included AMD family 15h and 17h.
+Similar could be done for Intel CPUs. 
 
-							Thanx, Paul
+I do believe having a latest microcode is a vital for the userspace security because it provides
+IBPB barrier.
+
+Family 15h [1] container parsed with [4] (with some lines omitted)
+
+-- Processor Signature:       : 0x00600f20
+-- Processor Revision ID:     : 0x00006020
+
+-- Processor Signature:       : 0x00610f01
+-- Processor Revision ID:     : 0x00006101
+
+-- Processor Signature:       : 0x00600f12
+-- Processor Revision ID:     : 0x00006012
+
+Contains following microcodes:
+
+| # | eqrev| urev     |    date    | latest|
+| 1 | 6012 | 0600063E | 2018/02/07 |  yes  |
+| 2 | 6020 | 06000852 | 2018/02/06 |  yes  |
+| 3 | 6101 | 06001119 | 2012/07/13 |  no   |
+
+Note the #3 is what I have been complaining about.
+
+Family 17h [2] parsed with [4]
+
+The container seems to include the equivalent versions for various CPUs (not even a family17h) but only a microcode for a "Naples/EPYC" chips.
+
+Container Processor Signature Table: 
+-- Processor Signature:       : 0x00600f20 (not even a fam17h)
+-- Processor Revision ID:     : 0x00006020
+
+-- Processor Signature:       : 0x00610f01 (not even a fam17h)
+-- Processor Revision ID:     : 0x00006101
+
+-- Processor Signature:       : 0x00700f01 (not even a fam17h)
+-- Processor Revision ID:     : 0x00007001
+
+-- Processor Signature:       : 0x00800f12 (update is OK)
+-- Processor Revision ID:     : 0x00008012
+
+-- Processor Signature:       : 0x00800f11 (update is missing!)
+-- Processor Revision ID:     : 0x00008011
+
+-- Processor Signature:       : 0x00600f12 (not even a fam17h)
+-- Processor Revision ID:     : 0x00006012
+
+-- Processor Signature:       : 0x00800f13 (future CPU?)
+-- Processor Revision ID:     : 0x00008013
+
+-- Processor Signature:       : 0x00800f00 (perhaps ES?)
+-- Processor Revision ID:     : 0x00008000
+
+Microcode Type:               : 0x00000001
+Microcode Size:               : 0x00000c80
+Date                          : 2018/02/09
+Patch ID                      : 0x08001227
+Patch Data ID                 : 0x00008004
+
+| # | eqrev| urev     |    date    | latest|
+| 1 | 8004 | 08001227 | 2018/02/09 | yes   |
+
+It misses microcode update for 00800F11 - latest known should be 2018/02/14 and for other CPUs like Pinacle Ridge 00800F82 - latest known should be 2018/02/12
+Or Ryzen mobile 00810F10 etc...
+
+Thanks
+Rudolf
+
+Resources used to construct this tables:
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/amd-ucode/microcode_amd_fam15h.bin
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/amd-ucode/microcode_amd_fam17h.bin
+[3] http://users.atw.hu/instlatx64/
+[4] https://github.com/ddcc/microparse
 
