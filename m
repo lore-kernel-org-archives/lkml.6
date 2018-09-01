@@ -2,100 +2,124 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CC5C43334
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 16:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC426C43334
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300D22077C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 16:55:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLjV74Kp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300D22077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 956C02083B
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956C02083B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeIAVI0 (ORCPT
+        id S1727247AbeIAVVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 17:08:26 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35633 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeIAVI0 (ORCPT
+        Sat, 1 Sep 2018 17:21:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53822 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726953AbeIAVVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 17:08:26 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p12-v6so6889000pfh.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 09:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=nY/CXas1c2fA3vc5upsuqnbL+eYlo/bv43dBH5aUo0Q=;
-        b=gLjV74KpTln/yAmgNKMZzu8NA8led5B6wqH/YwlC+CO3Mtm8j3xNgcpJisGdKf3Ouk
-         NAulbDW5SZV37e+LXLmXG6MStTIgM/emF6dkbj7oX70lLwIR2TpOPgTu9SRieltoXMEy
-         67NajWsCIrtY7dne+N7LOWG1hxRH8OxK294QybYRgzyjLARJBMWMpWZabfNL1sWLjpk1
-         u02g9MffdfxEegd/ObufFM796TJzzirCM/shOJ37QprlkjmzX5kvZlbWwKULzFmN96tD
-         Eke/pJq/ZHhRMg+AWiiaHG1LEzYkxCHmb3NKRcxUiZK0E6aw/72YFGW3tvd6IWIMADjy
-         TTGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=nY/CXas1c2fA3vc5upsuqnbL+eYlo/bv43dBH5aUo0Q=;
-        b=WVlTYEEyfPjVTayXVgXkAXXL09hdD2Rid4uCN6a9J4Y99x4BDT1EUhp2J9I/wkUB/T
-         n9a2MJfeSQd0FlNwwdhgp/6g5AVQB6XTAHKVsmTl7eiwO98hdOfPk2F2Hw7KnanY/bwg
-         YRKp3HoGmwtH65jv3l9LTiIQOE6jn9f7SNCQOfJPpS2o4eLbI0FYCLD5r+f9KwDTbgdg
-         eynmO2LDAaM+qhEzrG3KRMxiGjA40SL9jKg0RZgozVcIhTIMx18oTY9TsVHA9paXi9bB
-         HAH8l1LDVxFLS/hsBSgf1fwsBO127X4SCbgj8Cr3nNusAYei4NCfzTKIMX1lCcqS8Fr1
-         h+mw==
-X-Gm-Message-State: APzg51B6ZZFAx3+vwoty8U+cyunFUswhDyHLjfMJ+7VoFIJ0zWcTpTSv
-        6xxaLtyE1Ebyelz8Lu1HuM0=
-X-Google-Smtp-Source: ANB0VdaroIHX37CrLZ+DGZRQAJLLjRQXxEfaHfYcmXqIdtCW/FEM7PyX4Z7EHBpinwqVrTfHLwEHfg==
-X-Received: by 2002:a65:4384:: with SMTP id m4-v6mr4781763pgp.265.1535820949540;
-        Sat, 01 Sep 2018 09:55:49 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([183.82.19.79])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm22073863pfd.117.2018.09.01.09.55.47
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 01 Sep 2018 09:55:48 -0700 (PDT)
-Date:   Sat, 1 Sep 2018 22:28:50 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: [PATCH] uio: convert to vm_fault_t
-Message-ID: <20180901165850.GA28874@jordon-HP-15-Notebook-PC>
+        Sat, 1 Sep 2018 17:21:40 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w81Gx3J5058490
+        for <linux-kernel@vger.kernel.org>; Sat, 1 Sep 2018 13:09:01 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m7qaev9qb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 13:09:01 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 1 Sep 2018 13:08:59 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 1 Sep 2018 13:08:55 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w81H8sO143188372
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 1 Sep 2018 17:08:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91DA6B2066;
+        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6CEE5B2064;
+        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.237.165])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat,  1 Sep 2018 13:07:46 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0400316C0659; Sat,  1 Sep 2018 10:08:54 -0700 (PDT)
+Date:   Sat, 1 Sep 2018 10:08:54 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu,
+        parri.andrea@gmail.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 7/7] EXP tools/memory-model: Add .cfg and .cat
+ files for s390
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829211018.GA19646@linux.vnet.ibm.com>
+ <20180829211053.20531-7-paulmck@linux.vnet.ibm.com>
+ <20180831160630.GF30626@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180831160630.GF30626@arm.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18090117-0040-0000-0000-00000468E05E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009652; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01082071; UDB=6.00558293; IPR=6.00862058;
+ MB=3.00023059; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-01 17:08:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090117-0041-0000-0000-0000086FFE4F
+Message-Id: <20180901170854.GM4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-01_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809010190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of commit 9b85e95a3080 ("uio: Change return
-type to vm_fault_t") in 4.19-rc1, this conversion
-was missed. Now converted 'ret' to vm_fault_t type.
+On Fri, Aug 31, 2018 at 05:06:30PM +0100, Will Deacon wrote:
+> Hi Paul,
+> 
+> On Wed, Aug 29, 2018 at 02:10:53PM -0700, Paul E. McKenney wrote:
+> > This commit adds s390.cat and s390.cfg files to allow users to check
+> > litmus tests for s390-specific code.  Note that this change only enables
+> > herd7 checking of C-language litmus tests.  Larger changes are required
+> > to enable the litmus7 and klitmus7 tools to check litmus tests on real
+> > hardare.
+> > 
+> > Suggested-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > Suggested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > [ paulmck: Add fixes suggested by Alan Stern. ]
+> > ---
+> >  tools/memory-model/s390.cat | 18 ++++++++++++++++++
+> >  tools/memory-model/s390.cfg | 21 +++++++++++++++++++++
+> >  2 files changed, 39 insertions(+)
+> >  create mode 100644 tools/memory-model/s390.cat
+> >  create mode 100644 tools/memory-model/s390.cfg
+> 
+> As I said before, I'd *much* prefer this to be part of the upstream
+> herdtools7 repository. It's not really anything to do with the Linux
+> kernel, so I don't think it belongs in the source tree.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/uio/uio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Agreed.  As the cover letter says, "Add .cfg and .cat files for s390,
+which is a not-for-mainline placeholder."
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 70a7981..8fae1a4 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -668,7 +668,7 @@ static vm_fault_t uio_vma_fault(struct vm_fault *vmf)
- 	struct page *page;
- 	unsigned long offset;
- 	void *addr;
--	int ret = 0;
-+	vm_fault_t ret = 0;
- 	int mi;
- 
- 	mutex_lock(&idev->info_lock);
--- 
-1.9.1
+							Thanx, Paul
 
