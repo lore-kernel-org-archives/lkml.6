@@ -2,170 +2,75 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F82C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D942C43334
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A3B2083B
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:10:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A3B2083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=assembler.cz
+	by mail.kernel.org (Postfix) with ESMTP id E8F5C2083B
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:13:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F5C2083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeIAVXC (ORCPT
+        id S1727379AbeIAV0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 17:23:02 -0400
-Received: from mail.medvecky.net ([85.118.132.146]:36059 "EHLO
-        mail.medvecky.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeIAVXB (ORCPT
+        Sat, 1 Sep 2018 17:26:15 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59266 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeIAV0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 17:23:01 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.medvecky.net (Postfix) with ESMTP id 3AB935E2002;
-        Sat,  1 Sep 2018 19:03:52 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at medvecky.net
-Received: from mail.medvecky.net ([127.0.0.1])
-        by localhost (slovakia.medvecky.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qit31HmxNbmN; Sat,  1 Sep 2018 19:03:20 +0200 (CEST)
-Received: from [192.168.88.62] (ip-89-176-80-18.net.upcbroadband.cz [89.176.80.18])
-        by mail.medvecky.net (Postfix) with ESMTPSA id DFC335E2001;
-        Sat,  1 Sep 2018 19:03:19 +0200 (CEST)
-Subject: Re: [PATCH 1/1] Update AMD cpu microcode for family 15h
-From:   Rudolf Marek <r.marek@assembler.cz>
-To:     "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-        Ivan Ivanov <qmastery16@gmail.com>
-Cc:     Josh Boyer <jwboyer@kernel.org>,
-        Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-References: <1527213479-121361-1-git-send-email-sherry.hurwitz@amd.com>
- <CA+5PVA7aPRHk=kfxsmPi-qStKEnK_HJ=rTjvtQGO1QbnLb9qBw@mail.gmail.com>
- <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
- <20180531220503.2jqs3oiqsnw7ye2t@khazad-dum.debian.net>
- <6402a30f-04d3-59d9-92df-5a43e2060f5c@assembler.cz>
- <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
- <b01e8484-17e6-5253-5d83-9d864c66a7f9@assembler.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=r.marek@assembler.cz; prefer-encrypt=mutual; keydata=
- xsBNBFN2VH4BCADpv+3Tkikr+X489Xso9UC719YdxgGiy0xBjDiWC22wAd3tHy6G3nEhWfh4
- 1UNGcqscPAvJMn2GhgSJRfBzj0wALXLkoTYta78wEK+Ji+Gs7PX9VhqRKt9/OIn/2XJ1Yv9i
- e8uo9MFBGFCB5roz+Ws8rdXq0Quu7VZylzRv7qqhxMAk9RvXCT2tyt6XY16R7ZEL9wbSLRAl
- h8LRPMF0iiLH1YenfSCX2XkW7eA7CJSjh9pwIBFOF5cd5mcT69OPO+TuAbdvgCcZPEoQQBhk
- QmOr2PlUOl3CSgqtTxjAjAxXhPTU7Q3xxgB2Oa7xbt3Eic2Z4lltP/dowULZqXvsC5DxABEB
- AAHNI1J1ZG9sZiBNYXJlayA8ci5tYXJla0Bhc3NlbWJsZXIuY3o+wsB+BBMBAgAoBQJTdlR+
- AhsjBQkJZgGABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAb22rZM9dcMf1B/97PHhB
- YaPoM4PHlk3o3HEs0ZxiJyVqDLpmM8kOh+Pcvb40KX0uebiODfeff+RYJWOff27la7AzqG20
- dEAi3hpHYVigZWf3BaLXwCbUKlyLLydks4qydfKBG62PnM74sW1M/sfFA/bdzC9tnjy4G9r9
- mXNBJBDHb4XuHeukqlrMLDDGW78wrfv4tjtW9Z3Aoroja9CnxREt6c3iHA50TX65BrthPxhF
- c+ES+4J/uuBe6pfq9PN8HZKBWgK+jhCoyCajck964ccVF1a2uTRhN39gXtA2YpKUqb+dcsp+
- 2NH2eBVYZYaPVJIoIWPxhriOHszs+NjOkk+jBw2gVLy4bmOlzsBNBFN2VH4BCADsg91uA/mm
- l6APO+aWyqkiPjENreT2DT2gmoaEkp07jZrzNcQrLyNhGhsH6+UtCJLV9YNHbfJb7wsfXmXh
- IRh+TQYLJlrU4tBqvVB0F24+MEAFdt/1/jAmaihRZWKdE/Ogtt0YV7BEKfJk2KZxrG4wLB4G
- g57kI+aVmoVRl7/WmM46JpOJhBqvI6/Pw/ZIDhJZfrOXCCWM3pYjx0ftkkULPl6E6dXv3V7N
- 9dMV4bqNj4PDfysptFoVo02AblHqMmmBQ2LcI+o5HNm2iPyTklKMmq8Z5kblXDR6GXe2rO5c
- 5j0vQ6q5uSyVa30JNJcfl2iUT2akFv7n+RRWhlyCItjpABEBAAHCwGUEGAECAA8FAlN2VH4C
- GwwFCQlmAYAACgkQwG9tq2TPXXAq4Af/UhDBiEaW/s1gDmtci6ZBTDetOdWGx69dzD2rIm1b
- OoQiO1EZ+WNFe0RFmMByfCsRVXP4iD/Ly1l0c6ZNvCBPR+ssXlnltE0Z1S43ZrR4gYjWw2GM
- y1EcSOLv6Yvt/+8IS6YANlzR6RRBs2pM1ndM2AhI43k2rpGFarNEX7z9QrdcoZ4rY94DUGwZ
- 0hlQ5VrGt/DAnMkJmOkr6Yriiybw8COnw4qigLfZH6b87vUqdBjRr3BR0iD3ahiXUY0bhlX2
- bQE1IdT8+enQsm4+ePcC8Oihl8Y9JI/cBCw3eEZOl2p1+8aRq7tGkLsilWXUCDJ2kCDQixCJ
- RoTzi/gSro2qhg==
-Message-ID: <05d222ba-768f-5095-cc7a-f48fc8b3154f@assembler.cz>
-Date:   Sat, 1 Sep 2018 19:09:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 1 Sep 2018 17:26:15 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fw9Sl-0003cq-1X; Sat, 01 Sep 2018 17:13:31 +0000
+Date:   Sat, 1 Sep 2018 18:13:31 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: Access to non-RAM pages
+Message-ID: <20180901171330.GF19965@ZenIV.linux.org.uk>
+References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
+ <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
+ <b1b5ef64-d49b-e3f7-98b4-0ae3fd57b812@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <b01e8484-17e6-5253-5d83-9d864c66a7f9@assembler.cz>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1b5ef64-d49b-e3f7-98b4-0ae3fd57b812@suse.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi again,
+On Sat, Sep 01, 2018 at 12:47:48PM +0200, Juergen Gross wrote:
+> On 31/08/18 23:18, Jiri Kosina wrote:
+> > On Wed, 29 Aug 2018, Juergen Gross wrote:
+> > 
+> >> While being very unlikely I still believe this is possible. Any
+> >> thoughts?
+> > 
+> > So in theory we should somehow test whether the next page is some form of 
+> > mmio/gart/... mapping, but I guess that by itself would kill the 
+> > performance advantage of the whole load_unaligned_zeropad() trick.
+> > 
+> > And yes, the sideffects of reading from mmio mapping is a real thing -- 
+> > see for example the issue fixed by 2a3e83c6f9.
+> > 
+> > If noone has any clever idea how to work this around (I don't), I am 
+> > afraid we'd have to ditch the whole DCACHE_WORD_ACCESS optimization, as 
+> > it's silently dangerous.
+> 
+> Are there any architectures which can still use DCACHE_WORD_ACCESS?
+> 
+> x86 shouldn't, what about powerpc, arm and arm64?
 
-Here is a short summary of what is missing in the microcode containers [1] [2]. I only included AMD family 15h and 17h.
-Similar could be done for Intel CPUs. 
-
-I do believe having a latest microcode is a vital for the userspace security because it provides
-IBPB barrier.
-
-Family 15h [1] container parsed with [4] (with some lines omitted)
-
--- Processor Signature:       : 0x00600f20
--- Processor Revision ID:     : 0x00006020
-
--- Processor Signature:       : 0x00610f01
--- Processor Revision ID:     : 0x00006101
-
--- Processor Signature:       : 0x00600f12
--- Processor Revision ID:     : 0x00006012
-
-Contains following microcodes:
-
-| # | eqrev| urev     |    date    | latest|
-| 1 | 6012 | 0600063E | 2018/02/07 |  yes  |
-| 2 | 6020 | 06000852 | 2018/02/06 |  yes  |
-| 3 | 6101 | 06001119 | 2012/07/13 |  no   |
-
-Note the #3 is what I have been complaining about.
-
-Family 17h [2] parsed with [4]
-
-The container seems to include the equivalent versions for various CPUs (not even a family17h) but only a microcode for a "Naples/EPYC" chips.
-
-Container Processor Signature Table: 
--- Processor Signature:       : 0x00600f20 (not even a fam17h)
--- Processor Revision ID:     : 0x00006020
-
--- Processor Signature:       : 0x00610f01 (not even a fam17h)
--- Processor Revision ID:     : 0x00006101
-
--- Processor Signature:       : 0x00700f01 (not even a fam17h)
--- Processor Revision ID:     : 0x00007001
-
--- Processor Signature:       : 0x00800f12 (update is OK)
--- Processor Revision ID:     : 0x00008012
-
--- Processor Signature:       : 0x00800f11 (update is missing!)
--- Processor Revision ID:     : 0x00008011
-
--- Processor Signature:       : 0x00600f12 (not even a fam17h)
--- Processor Revision ID:     : 0x00006012
-
--- Processor Signature:       : 0x00800f13 (future CPU?)
--- Processor Revision ID:     : 0x00008013
-
--- Processor Signature:       : 0x00800f00 (perhaps ES?)
--- Processor Revision ID:     : 0x00008000
-
-Microcode Type:               : 0x00000001
-Microcode Size:               : 0x00000c80
-Date                          : 2018/02/09
-Patch ID                      : 0x08001227
-Patch Data ID                 : 0x00008004
-
-| # | eqrev| urev     |    date    | latest|
-| 1 | 8004 | 08001227 | 2018/02/09 | yes   |
-
-It misses microcode update for 00800F11 - latest known should be 2018/02/14 and for other CPUs like Pinacle Ridge 00800F82 - latest known should be 2018/02/12
-Or Ryzen mobile 00810F10 etc...
-
-Thanks
-Rudolf
-
-Resources used to construct this tables:
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/amd-ucode/microcode_amd_fam15h.bin
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/amd-ucode/microcode_amd_fam17h.bin
-[3] http://users.atw.hu/instlatx64/
-[4] https://github.com/ddcc/microparse
-
+IMO that's crap.  In absolute majority of cases there is a guaranteed gap
+between the end of accessed object and the next page boundary.  Penalizing
+each syscall that does pathname resolution to deal with something that
+might only happen when the pathname length is just under 4Kb looks like
+a bloody bad idea.
