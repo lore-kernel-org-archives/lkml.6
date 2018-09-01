@@ -3,128 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53926C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC7BC43143
 	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F366520837
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 786DC20837
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 17:37:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RruPOe50"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F366520837
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwbmp179"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786DC20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeIAVmy (ORCPT
+        id S1727408AbeIAVuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 17:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53030 "EHLO mail.kernel.org"
+        Sat, 1 Sep 2018 17:50:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727286AbeIAVmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 17:42:53 -0400
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        id S1726976AbeIAVuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 17:50:14 -0400
+Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com [74.125.82.48])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03CA42084D
-        for <linux-kernel@vger.kernel.org>; Sat,  1 Sep 2018 17:30:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B38220846
+        for <linux-kernel@vger.kernel.org>; Sat,  1 Sep 2018 17:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535823011;
-        bh=Rp8enPkcw/9tdfo1GtjDKCO4T9DZurgZGx/JqIeGyJ0=;
+        s=default; t=1535823450;
+        bh=5379fYm+sbTSYGSMpKbkGcS7eO5TEf4B5fRiOxw/WYs=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=RruPOe50T2Q81hMpIQ0I7CqeJUpbGU9lFYRHLNSmvOf/sug5ytIF3NgglxPQLrwfC
-         B8b2Ue0iDkG1Y+NLC8fYz+HIvXVpjhpCpUsGl1SRt6Qt5hHo4++CxjaWTlkcohsu9f
-         PanmGOblPb/UcUs5rcIS8KAG8ESus8WWf1IaYb2Q=
-Received: by mail-wr1-f46.google.com with SMTP id 20-v6so13941661wrb.12
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 10:30:10 -0700 (PDT)
-X-Gm-Message-State: APzg51ByB7MEmhF+cG+rfjUV1px3VyIyZ+V1dV7jovQvhfrTxnJfetEA
-        yOZR731URp/tG6saILLfepWq8HeB7jUoeFYE6Us8WQ==
-X-Google-Smtp-Source: ANB0VdZWnwFWM2/z0jRcKmq7zn5USvS0JKxdZUOrnigwm0Hg9dOW4CFEcm1HwBpVkRrBeuW58dyOPuyql1btUuhNS6M=
-X-Received: by 2002:adf:c554:: with SMTP id s20-v6mr13747019wrf.46.1535823009388;
- Sat, 01 Sep 2018 10:30:09 -0700 (PDT)
+        b=dwbmp179pz/p5wOu4w02BZnQQRd3mJ0Lroyo0Jt+HbBNsTWFFqhYK6igTmLzBM6Jw
+         C2due3pnv9OLGMkH9WopUDeUyTTxDFFCf9RNaAO4rzyuWqfNb2NRAue7+06p1dH32S
+         w0SFpEEQ9yFIs+4zjQp/QY5gaX5tHCoeg9YlcKa0=
+Received: by mail-wm0-f48.google.com with SMTP id q8-v6so8062952wmq.4
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 10:37:30 -0700 (PDT)
+X-Gm-Message-State: APzg51CPhMFvPqZd2Po/bJU3DtEmzLHY1wXxfo5oZ2egfg12his1gdCn
+        wDoboOsSTueLOpTZ3mYITtY2sawHTP4Afmye5x5Vog==
+X-Google-Smtp-Source: ANB0VdZcTPpGTzy9NLEnZFFPDQQo6ZNdKbzCvMf47qfayIB0RhHWnJhDU6IzX74isrzhaSw7b4tmCEJ6Fl/FhdUlr+4=
+X-Received: by 2002:a1c:f30d:: with SMTP id q13-v6mr1112392wmq.36.1535823448627;
+ Sat, 01 Sep 2018 10:37:28 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:9045:0:0:0:0:0 with HTTP; Sat, 1 Sep 2018 10:29:48 -0700 (PDT)
-In-Reply-To: <CA+55aFwOMt7Qw4HFyBiSNpHXoP3kGRsrQhi3LA_=uxwuNz8G0Q@mail.gmail.com>
-References: <cover.1535753890.git.luto@kernel.org> <9d79fddf6bab2fc40c2472bdea47f864603c1bf4.1535753890.git.luto@kernel.org>
- <CA+55aFwOMt7Qw4HFyBiSNpHXoP3kGRsrQhi3LA_=uxwuNz8G0Q@mail.gmail.com>
+Received: by 2002:a1c:9045:0:0:0:0:0 with HTTP; Sat, 1 Sep 2018 10:37:08 -0700 (PDT)
+In-Reply-To: <0a94774a-6b8b-2014-93e6-131af9c319a6@redhat.com>
+References: <20180901015935.CCF0B18E20A9@virtux64.softrans.com.au>
+ <CALCETrU4PzskO9pE6G4EkXNRRX3Mu7Vvjv1P8XgrfRMdgGDZSg@mail.gmail.com> <0a94774a-6b8b-2014-93e6-131af9c319a6@redhat.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 1 Sep 2018 10:29:48 -0700
-X-Gmail-Original-Message-ID: <CALCETrUvz-VWpLYsYoC-buKMUBPPTHdOj6OeRE7Vv+--eZPKAQ@mail.gmail.com>
-Message-ID: <CALCETrUvz-VWpLYsYoC-buKMUBPPTHdOj6OeRE7Vv+--eZPKAQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] x86/entry/64: Use the TSS sp2 slot for rsp_scratch
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
+Date:   Sat, 1 Sep 2018 10:37:08 -0700
+X-Gmail-Original-Message-ID: <CALCETrW-LkeBUJ6zw7a30mCV2T0Pd5mjYMHjLptg1voTq0VUdA@mail.gmail.com>
+Message-ID: <CALCETrW-LkeBUJ6zw7a30mCV2T0Pd5mjYMHjLptg1voTq0VUdA@mail.gmail.com>
+Subject: Re: [PATCH v3] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 1, 2018 at 9:33 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, Aug 31, 2018 at 3:21 PM Andy Lutomirski <luto@kernel.org> wrote:
+On Sat, Sep 1, 2018 at 2:33 AM, Florian Weimer <fweimer@redhat.com> wrote:
+> On 09/01/2018 05:39 AM, Andy Lutomirski wrote:
 >>
->>  #ifdef CONFIG_X86_64
->>  # define cpu_current_top_of_stack (cpu_tss_rw + TSS_sp1)
->> +# define rsp_scratch (cpu_tss_rw + TSS_sp2)
->>  #endif
->
-> Ugh. The above gets used by *assembler* code. I was really confused by how this:
+>> Florian, do you think
+>> glibc would be willing to add some magic to turn
+>> clock_gettime(CLOCK_MONOTONIC, t) into
+>> __vdso_clock_gettime_monotonic(t) when CLOCK_MONOTONIC is a constant?
 >
 >
->> --- a/arch/x86/kernel/process_64.c
->> +++ b/arch/x86/kernel/process_64.c
->> @@ -59,8 +59,6 @@
->>  #include <asm/unistd_32_ia32.h>
->>  #endif
->>
->> -__visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
->> -
->
-> could continue to work despite the accesses to "rsp_scratch" still
-> remaining in the asm files.
->
-> Can yu humor me, and just not do something quite that subtle. I must
-> have missed this the first time around.
->
-> Please get rid of the define, and just make the asm code spell out
-> what it actually does.
+> What's the goal here?  Turn the indirect call/conditional jump/indirect call
+> sequence into a single indirect call, purely for performance reasons?
 
-Done for v2.
+Almost.  It's to bypass some of the branches in
+__vdso_clock_gettime(), which is supposed to be very fast.  AFAIK most
+user code that uses clock_gettime() passes a constant for the first
+argument, and we can squeeze out some performance by optimizing that
+case.  The indirect branches internal to the vDSO are a separate issue
+and should be solved separately.
 
->
-> We already do that for TSS_sp0 for the normal case:
->
->       movq    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %rsp
->
-> so I think this should just change
->
-> -     movq    %rsp, PER_CPU_VAR(rsp_scratch)
-> +     movq    %rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
->
-> instead of having that subtle rsp_scratch thing.
->
-> And honestly, I think we should strive to do the same thing with
-> cpu_current_top_of_stack. There at least the #define currently makes
-> sense (because on 32-bit, it's actually a percpu variable, on 64-bit
-> it's that sp1 field).
->
-> But wouldn't it be nice to just unify 32-bit and 64-bit in this
-> respect, and get rid of that subtle difference?
->
-
-Yes.  But ugh, the way that thing has worked has changed so many times
-on 32-bit and 64-bit that I've lost track a little bit.  I'll put it
-on my long list of things to clean up.
+(It's really too bad that x86 doesn't have a 64-bit call instruction.
+If it did, then the PLT could get rewritten at dynamic link time to
+avoid indirect calls entirely, and presumably glibc could use the same
+technique to call into the vDSO without indirect calls.)
