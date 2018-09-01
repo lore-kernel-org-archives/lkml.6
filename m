@@ -2,82 +2,70 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E2AC43143
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 03:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA8BC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 03:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99C8D2083C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 03:43:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C8D2083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 671D02083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 03:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671D02083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeIAHxr (ORCPT
+        id S1727352AbeIAIFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 03:53:47 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11618 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725923AbeIAHxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 03:53:47 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3001951E79BF8;
-        Sat,  1 Sep 2018 11:43:18 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.399.0; Sat, 1 Sep 2018 11:43:09 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH rdma-next] RDMA/qedr: remove set but not used variable 'ctx'
-Date:   Sat, 1 Sep 2018 03:53:46 +0000
-Message-ID: <1535774026-160694-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Sep 2018 04:05:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42266 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbeIAIFD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 04:05:03 -0400
+Received: from localhost (unknown [208.181.116.45])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D63909F0;
+        Sat,  1 Sep 2018 03:54:34 +0000 (UTC)
+Date:   Fri, 31 Aug 2018 20:54:34 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Char/Misc driver patches for 4.19-rc1
+Message-ID: <20180901035434.GF27141@kroah.com>
+References: <20180818155844.GA22720@kroah.com>
+ <20180831111936.GA18291@amd>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831111936.GA18291@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, Aug 31, 2018 at 01:19:36PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > 	- gnss, finally an in-kernel GPS subsystem to try to tame all of
+> > 	  the crazy out-of-tree drivers that have been floating around
+> > 	  for years, combined with some really hacky userspace
+> > 	  implementations.  This is only for GNSS receivers, but you
+> > 	  have to start somewhere, and this is great to see.
+> 
+> Yes, it  is labeled as a GPS subsystem, but there's nothing GPS
+> specific in there; it does not understand the data, it just passes
+> around bytes.
+> 
+> Which would not be a problem, except that it takes /dev/gnssX
+> namespace, so when we need to introduce hardware abstraction for
+> GPS, we will not have suitable names available.
 
-drivers/infiniband/hw/qedr/verbs.c: In function 'qedr_create_srq':
-drivers/infiniband/hw/qedr/verbs.c:1450:24: warning:
- variable 'ctx' set but not used [-Wunused-but-set-variable]
+Given that no such code seems to be showing up any year soon, that's a
+request that we will just have to deal with if it ever shows up.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/infiniband/hw/qedr/verbs.c | 2 --
- 1 file changed, 2 deletions(-)
+What we have now in the tree is good enough for now.
 
-diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-index 8cc3df2..9d4d165 100644
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -1447,7 +1447,6 @@ struct ib_srq *qedr_create_srq(struct ib_pd *ibpd,
- 	u64 pbl_base_addr, phy_prod_pair_addr;
- 	struct ib_ucontext *ib_ctx = NULL;
- 	struct qedr_srq_hwq_info *hw_srq;
--	struct qedr_ucontext *ctx = NULL;
- 	u32 page_cnt, page_size;
- 	struct qedr_srq *srq;
- 	int rc = 0;
-@@ -1473,7 +1472,6 @@ struct ib_srq *qedr_create_srq(struct ib_pd *ibpd,
- 
- 	if (udata && ibpd->uobject && ibpd->uobject->context) {
- 		ib_ctx = ibpd->uobject->context;
--		ctx = get_qedr_ucontext(ib_ctx);
- 
- 		if (ib_copy_from_udata(&ureq, udata, sizeof(ureq))) {
- 			DP_ERR(dev,
-
+greg k-h
