@@ -2,119 +2,133 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593CBC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16583C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7A020846
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:46:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A7A020846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id B89E620841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:53:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJSXfdTg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89E620841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbeIAP6R (ORCPT
+        id S1727175AbeIAQFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 11:58:17 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:48080 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727212AbeIAP6R (ORCPT
+        Sat, 1 Sep 2018 12:05:12 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36736 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbeIAQFM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 11:58:17 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 63EFD634C7D;
-        Sat,  1 Sep 2018 14:46:30 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fw4MI-0001Dt-3o; Sat, 01 Sep 2018 14:46:30 +0300
-Date:   Sat, 1 Sep 2018 14:46:29 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Javier Martinez Canillas <javierm@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: ov2680: register the v4l2 subdev async at the end
- of probe
-Message-ID: <20180901114629.rupnr7xaeyxjqfdk@valkosipuli.retiisi.org.uk>
-References: <20180831151906.9315-1-javierm@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831151906.9315-1-javierm@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sat, 1 Sep 2018 12:05:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id e11-v6so6632201plb.3;
+        Sat, 01 Sep 2018 04:53:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=IWiPvKQSdfz/cocXP+iDE5523lfsqoaXSAQHXVKKEnw=;
+        b=XJSXfdTgPeowQOME785lO5OL7PIcaVLnpSufnnYxl126DVJXBxXtUf6NMzhZ1nbHb4
+         8Amr11c+kH3SqndpaWjgtt0rfRJsXMwrYnCH2xQM8oKlUBH+IFkutku0xidwc/V+Dg3F
+         WMvViArSFllNrs1ui89FjhreCnl+c9I7MEbM7Y2+JYUZA2b4zG3xktk5I5xKKcvdJnJZ
+         OzA02xdM3cM2/szBTpv2RsOnC+UNAYEbeecZxCCIkgrJtSfSvj9t85kUPpoo6A1RZbO/
+         r+72351FGUAYFVjdn3zBmPlJlVMg11OpEQBnWznIP1wsl62NJCYgNufooY9lTt8G0Lfw
+         pOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IWiPvKQSdfz/cocXP+iDE5523lfsqoaXSAQHXVKKEnw=;
+        b=pnH1Zh8Zb+bMoFdIu3irfo7LDkV+yTF4JmcHE3hl8wx4cQScSAI6WMAa+tmYychL/F
+         j/RgNeS6kFe9+mImHDobo/UYIBmyETcg1Wr+Xe6o1DNJMdpxz+EPivPPG9IRiQ/H5sOh
+         Ot+TvLcrB5zVNetLi3jXLePv0c6wzF8XCiQ2i4IZiRll/sFpdPuRDSbFGbHFMWTChAOI
+         N2folB4mjpbP9CHZ2/yw9h0Nm13aS4/vntGS+AE2F2aDIVSDw+c8E4XQA3JoSM/S/2mg
+         mWR1kFuGzx1nMhtlVTzpLqPGNCsUIUKXIrVkcI3BtJ/s8BzX2Qtm9OxT1mDSJpUNXEDZ
+         k08A==
+X-Gm-Message-State: APzg51DyMFbPJ2+e26pO0xWScqY260l8we2az5AKFuDXWCkwKZsnHpK1
+        4i5VAGHda4z9XgfiSgktVRU=
+X-Google-Smtp-Source: ANB0VdZvLkZGPLywsRS30qo8EfP1BkQolsv1mM5SYpblP7ZJzAzw0KspneS4jry9WpdGj4jhgV0ZsA==
+X-Received: by 2002:a17:902:6684:: with SMTP id e4-v6mr16036198plk.50.1535802805331;
+        Sat, 01 Sep 2018 04:53:25 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:2913:cd09:aee0:380])
+        by smtp.gmail.com with ESMTPSA id w69-v6sm25114914pgd.37.2018.09.01.04.53.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Sep 2018 04:53:24 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mb@lightnvm.io
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] lightnvm: pblk: Fix two sleep-in-atomic-context bugs in pblk_line_submit_smeta_io()
+Date:   Sat,  1 Sep 2018 19:53:18 +0800
+Message-Id: <20180901115318.30416-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Javier,
+The driver may sleep with holding a spinlock.
 
-On Fri, Aug 31, 2018 at 05:19:06PM +0200, Javier Martinez Canillas wrote:
-> The driver registers the subdev async in the middle of the probe function
-> but this has to be done at the very end of the probe function to prevent
-> registering a device whose probe function could fail (i.e: the clock and
-> regulators enable can fail, the I2C transfers could return errors, etc).
-> 
-> It could also lead to a media device driver that is waiting to bound the
-> v4l2 subdevice to incorrectly expose its media device to userspace, since
-> the subdev is registered but later its media entity is cleaned up on error.
-> 
-> Fixes: 3ee47cad3e69 ("media: ov2680: Add Omnivision OV2680 sensor driver")
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> 
-> ---
-> 
->  drivers/media/i2c/ov2680.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
-> index f753a1c333ef..2ef920a17278 100644
-> --- a/drivers/media/i2c/ov2680.c
-> +++ b/drivers/media/i2c/ov2680.c
-> @@ -983,10 +983,6 @@ static int ov2680_v4l2_init(struct ov2680_dev *sensor)
->  
->  	sensor->sd.ctrl_handler = hdl;
->  
-> -	ret = v4l2_async_register_subdev(&sensor->sd);
-> -	if (ret < 0)
-> -		goto cleanup_entity;
-> -
->  	return 0;
->  
->  cleanup_entity:
-> @@ -1096,6 +1092,10 @@ static int ov2680_probe(struct i2c_client *client)
->  	if (ret < 0)
->  		goto error_cleanup;
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-How about instead moving ov2680_check_id() call earlier in probe()? That
-would seem to be a better fix: the driver should check the device is around
-before registering anything.
+[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 754: 
+	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048: 
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434: 
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980: 
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976: 
+	spin_lock in pblk_recov_l2p
 
->  
-> +	ret = v4l2_async_register_subdev(&sensor->sd);
-> +	if (ret < 0)
-> +		goto error_cleanup;
-> +
->  	dev_info(dev, "ov2680 init correctly\n");
->  
->  	return 0;
-> @@ -1104,7 +1104,6 @@ static int ov2680_probe(struct i2c_client *client)
->  	dev_err(dev, "ov2680 init fail: %d\n", ret);
->  
->  	media_entity_cleanup(&sensor->sd.entity);
-> -	v4l2_async_unregister_subdev(&sensor->sd);
->  	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
->  
->  lock_destroy:
+[FUNC] bio_map_kern(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 762: 
+	bio_map_kern in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048: 
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434: 
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980: 
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976: 
+	spin_lock in pblk_recov_l2p
 
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/lightnvm/pblk-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index ed9cc977c8b3..5d915c93b6cf 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -802,7 +802,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
+ 
+ 	memset(&rqd, 0, sizeof(struct nvm_rq));
+ 
+-	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
++	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_ATOMIC,
+ 							&rqd.dma_meta_list);
+ 	if (!rqd.meta_list)
+ 		return -ENOMEM;
+@@ -810,7 +810,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
+ 	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
+ 	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
+ 
+-	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
++	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_ATOMIC);
+ 	if (IS_ERR(bio)) {
+ 		ret = PTR_ERR(bio);
+ 		goto free_ppa_list;
 -- 
-Regards,
+2.17.0
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
