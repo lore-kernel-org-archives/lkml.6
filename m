@@ -2,115 +2,106 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DB5C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 15:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC17C43334
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 16:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5FF2083F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 15:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5FF2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=assembler.cz
+	by mail.kernel.org (Postfix) with ESMTP id 9EAE320837
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 16:18:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUKlyr4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAE320837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeIAUHU (ORCPT
+        id S1727247AbeIAUbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 16:07:20 -0400
-Received: from mail.medvecky.net ([85.118.132.146]:50636 "EHLO
-        mail.medvecky.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbeIAUHU (ORCPT
+        Sat, 1 Sep 2018 16:31:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46398 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeIAUbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 16:07:20 -0400
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Sat, 01 Sep 2018 16:07:17 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.medvecky.net (Postfix) with ESMTP id 3F9B45E2002;
-        Sat,  1 Sep 2018 17:40:30 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at medvecky.net
-Received: from mail.medvecky.net ([127.0.0.1])
-        by localhost (slovakia.medvecky.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id on7xRb6_XdbA; Sat,  1 Sep 2018 17:39:57 +0200 (CEST)
-Received: from [192.168.88.62] (ip-89-176-80-18.net.upcbroadband.cz [89.176.80.18])
-        by mail.medvecky.net (Postfix) with ESMTPSA id 958B45E2001;
-        Sat,  1 Sep 2018 17:39:56 +0200 (CEST)
-Subject: Re: [PATCH 1/1] Update AMD cpu microcode for family 15h
-To:     "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-        Ivan Ivanov <qmastery16@gmail.com>
-Cc:     Josh Boyer <jwboyer@kernel.org>,
-        Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-References: <1527213479-121361-1-git-send-email-sherry.hurwitz@amd.com>
- <CA+5PVA7aPRHk=kfxsmPi-qStKEnK_HJ=rTjvtQGO1QbnLb9qBw@mail.gmail.com>
- <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
- <20180531220503.2jqs3oiqsnw7ye2t@khazad-dum.debian.net>
- <6402a30f-04d3-59d9-92df-5a43e2060f5c@assembler.cz>
- <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
-From:   Rudolf Marek <r.marek@assembler.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=r.marek@assembler.cz; prefer-encrypt=mutual; keydata=
- xsBNBFN2VH4BCADpv+3Tkikr+X489Xso9UC719YdxgGiy0xBjDiWC22wAd3tHy6G3nEhWfh4
- 1UNGcqscPAvJMn2GhgSJRfBzj0wALXLkoTYta78wEK+Ji+Gs7PX9VhqRKt9/OIn/2XJ1Yv9i
- e8uo9MFBGFCB5roz+Ws8rdXq0Quu7VZylzRv7qqhxMAk9RvXCT2tyt6XY16R7ZEL9wbSLRAl
- h8LRPMF0iiLH1YenfSCX2XkW7eA7CJSjh9pwIBFOF5cd5mcT69OPO+TuAbdvgCcZPEoQQBhk
- QmOr2PlUOl3CSgqtTxjAjAxXhPTU7Q3xxgB2Oa7xbt3Eic2Z4lltP/dowULZqXvsC5DxABEB
- AAHNI1J1ZG9sZiBNYXJlayA8ci5tYXJla0Bhc3NlbWJsZXIuY3o+wsB+BBMBAgAoBQJTdlR+
- AhsjBQkJZgGABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAb22rZM9dcMf1B/97PHhB
- YaPoM4PHlk3o3HEs0ZxiJyVqDLpmM8kOh+Pcvb40KX0uebiODfeff+RYJWOff27la7AzqG20
- dEAi3hpHYVigZWf3BaLXwCbUKlyLLydks4qydfKBG62PnM74sW1M/sfFA/bdzC9tnjy4G9r9
- mXNBJBDHb4XuHeukqlrMLDDGW78wrfv4tjtW9Z3Aoroja9CnxREt6c3iHA50TX65BrthPxhF
- c+ES+4J/uuBe6pfq9PN8HZKBWgK+jhCoyCajck964ccVF1a2uTRhN39gXtA2YpKUqb+dcsp+
- 2NH2eBVYZYaPVJIoIWPxhriOHszs+NjOkk+jBw2gVLy4bmOlzsBNBFN2VH4BCADsg91uA/mm
- l6APO+aWyqkiPjENreT2DT2gmoaEkp07jZrzNcQrLyNhGhsH6+UtCJLV9YNHbfJb7wsfXmXh
- IRh+TQYLJlrU4tBqvVB0F24+MEAFdt/1/jAmaihRZWKdE/Ogtt0YV7BEKfJk2KZxrG4wLB4G
- g57kI+aVmoVRl7/WmM46JpOJhBqvI6/Pw/ZIDhJZfrOXCCWM3pYjx0ftkkULPl6E6dXv3V7N
- 9dMV4bqNj4PDfysptFoVo02AblHqMmmBQ2LcI+o5HNm2iPyTklKMmq8Z5kblXDR6GXe2rO5c
- 5j0vQ6q5uSyVa30JNJcfl2iUT2akFv7n+RRWhlyCItjpABEBAAHCwGUEGAECAA8FAlN2VH4C
- GwwFCQlmAYAACgkQwG9tq2TPXXAq4Af/UhDBiEaW/s1gDmtci6ZBTDetOdWGx69dzD2rIm1b
- OoQiO1EZ+WNFe0RFmMByfCsRVXP4iD/Ly1l0c6ZNvCBPR+ssXlnltE0Z1S43ZrR4gYjWw2GM
- y1EcSOLv6Yvt/+8IS6YANlzR6RRBs2pM1ndM2AhI43k2rpGFarNEX7z9QrdcoZ4rY94DUGwZ
- 0hlQ5VrGt/DAnMkJmOkr6Yriiybw8COnw4qigLfZH6b87vUqdBjRr3BR0iD3ahiXUY0bhlX2
- bQE1IdT8+enQsm4+ePcC8Oihl8Y9JI/cBCw3eEZOl2p1+8aRq7tGkLsilWXUCDJ2kCDQixCJ
- RoTzi/gSro2qhg==
-Message-ID: <b01e8484-17e6-5253-5d83-9d864c66a7f9@assembler.cz>
-Date:   Sat, 1 Sep 2018 17:46:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 1 Sep 2018 16:31:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 203-v6so12292749ljj.13;
+        Sat, 01 Sep 2018 09:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=RNNvbSLP+hmUmA/0WWWoUXUBQGPIV70EAOZPA66ceyY=;
+        b=TUKlyr4Ey0yDkLoUvP7GerMXI7SzSFQoxgbSvUGP0Kjx+rv7AaLebBNm360P0Fo7yG
+         5c+lwUOlO8p4W/99lzIyIOAa3e46bz7VFJTSu1SeOLXGqEEEP2Xx2bXYfynen/YHesCo
+         ADWP25AS3BFlsmSn8bkU1fXxeP+4ekqOHDqRrMXsX0EzIWZwbmcZZE8rT2LTjcVnb0gM
+         NTlakphpEMmqyb6sso8+Bm+Scxm6vosRtApRmPy0EmsUXBpkyfoC3aRfi7um4LFDS2Kk
+         VNU9hW1Ftv0BF4Lwi3KYcgkgRyRmhMEPBI/x8yDmNI5zsGXtjYZVw0GjMmZaF68S6QDa
+         1qaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=RNNvbSLP+hmUmA/0WWWoUXUBQGPIV70EAOZPA66ceyY=;
+        b=gHGF0uKk6X8pOQxdKN1ltsc7AzuJhsv7zG+ZffvymF54NnvqUaZu7otdwbYDygREF7
+         8N9NHUBHWhK7tgFT0QZqZulUz2sA3emLxYNhGOwbSGXVoy6YMlvd4O4/OHbzGZQ0WW/b
+         Vzd51dzRD1dOtAlTZw1/GNe9M8gUvXuXovdvYsWtixL1HaXcl8a3M73BIkKbmvr5vg/f
+         SM62wdzLUxkRQU5tTLpgQa03V1a/nBwGVdscs0GKGvTvMwgEsSVQfvWv9dkePyTy4PIp
+         jvszIfuyCrJoV5YmV+lw/xb0ZQ740IK+acJysySWiXeUthC0Bg2MLthF7gTKw2kmVlH1
+         u9tA==
+X-Gm-Message-State: APzg51D+AMz3JF7FiHKf8YDYbm6QxNAKxHPIhySaw4csEwx014SSyzpW
+        YINx12bgSmZ+cirS57HAwpEbem1fDZmdRiBSJDM=
+X-Google-Smtp-Source: ANB0VdanzIE4t0fD7tr/2pUYi9Y4q+332MRag2QGsz8hHxUyjJGYOxSVdtdugf4FTllEUB/jcAmiF018g+WF0da5tdE=
+X-Received: by 2002:a2e:5617:: with SMTP id k23-v6mr12956887ljb.86.1535818717857;
+ Sat, 01 Sep 2018 09:18:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+References: <20180830172547.GA4408@jordon-HP-15-Notebook-PC>
+ <20180830163521.728f3ff2fd3cc93b52a5dcc0@linux-foundation.org> <20180831165844.GB3303@thunk.org>
+In-Reply-To: <20180831165844.GB3303@thunk.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sat, 1 Sep 2018 21:51:28 +0530
+Message-ID: <CAFqt6zY=-fEDR606Ae-Opg3Dn+jyZ9NdAKAshuF0PmmgimhHRQ@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: Convert return type int to vm_fault_t
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>, adilger.kernel@dilger.ca,
+        Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nilfs <linux-nilfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sherry,
+> Also, the fact that the patch series involves multiple file system is
+> a massive pain.  It means I'm going to have to do a separate
+> regression test --- or preferably, I would ask *you* to run a file
+> system regression test[1] --- to make sure what is *not* a trivial
+> patch doesn't break things.  Also, it means that this patch series is
+> going to get more complicated to get into kernel, and we may have to
+> deal with patch conflicts if this goes in via some third party tree
+> (such as Andrew's tree).
+>
+> [1] https:/thunk.org/gce-xfstests
 
-Dne 5.6.2018 v 16:27 Hurwitz, Sherry napsal(a):
-> Hi Rudolf, I have been investigating the status with the AMD release
-> management, but I have not been given approval to publish any other
-> microcode.  I have been trying to track down why there might be a
-> version in the wild that I have not been given for public publishing.
-> It might have come from a BIOS update and not a OS microcode load but
+Sure, I will run the regression.
 
-Yes exactly. Why this exists? Is there some technical restriction that will prevent
-microcode loading just in Linux? I think it would be beneficial to have at least
-the IBPB protection in place via microcode updates.
+>
+> One way to make life easier is to add the new function with the new
+> interface first, and then wait a release cycle, and then move file
+> systems over in independant patches.
 
-> I don't have the definitive details on that either.  I will publish
-> whatever is released to me as soon as possible.
-
-Any news on this? The family 15h microcode revision provided for Linux is 0x06001119 but I know that 0x0600111f
-exists, which provides the IBPB.
-
-Btw I also think that Family 17h (0x00800F11) Linux microcode update has a same problem.
-
-It does not include IBPB support right? It is included in the "BIOS" only microcode revision 0x08001137.
-
-Thanks,
-Rudolf
+In last review, you left it to me either to add new function or modify the
+input parameters of block_page_mkwrite() to return err to caller.
+As block_page_mkwrite() is getting called from 2 places in ext4 & nilfs,
+I choose to add new input argument in block_page_mkwrite() rather than
+introducing new function and put everything in a single commit.
