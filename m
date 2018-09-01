@@ -3,91 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5167C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EAAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232E72083C
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:33:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232E72083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
+	by mail.kernel.org (Postfix) with ESMTP id 7ACFC2083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACFC2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbeIALoF (ORCPT
+        id S1727335AbeIALuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 07:44:05 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:40095 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725964AbeIALoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 07:44:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 8C5DD23F9F9;
-        Sat,  1 Sep 2018 09:33:01 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6mg080PzcGMG; Sat,  1 Sep 2018 09:33:00 +0200 (CEST)
-Received: from ryzen (dyndsl-037-138-238-035.ewe-ip-backbone.de [37.138.238.35])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id 47DA023F428;
-        Sat,  1 Sep 2018 09:33:00 +0200 (CEST)
-Message-ID: <5a40b453e9a419c24af1e368711d504a9086c882.camel@darmarit.de>
-Subject: Re: [PATCH] docs: tidy up TOCs and refs to license-rules.rst
-From:   Markus Heiser <markus.heiser@darmarit.de>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jonas Oberg <jonas@fsfe.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Date:   Sat, 01 Sep 2018 09:32:59 +0200
-In-Reply-To: <20180831165015.1461bdc7@lwn.net>
-References: <20180814114312.23201-1-markus.heiser@darmarit.de>
-         <20180831165015.1461bdc7@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 1 Sep 2018 07:50:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52256 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725964AbeIALuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 07:50:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8D937ABBE;
+        Sat,  1 Sep 2018 07:39:11 +0000 (UTC)
+Date:   Sat, 01 Sep 2018 09:39:09 +0200
+Message-ID: <s5hzhx1zmxu.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Xiao Yang" <YangX92@hotmail.com>
+Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "92siuyang@gmail.com" <92siuyang@gmail.com>,
+        "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>,
+        "o-takashi@sakamocchi.jp" <o-takashi@sakamocchi.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH]  ALSA: control: Make sure that id->index does not overflow in function  snd_ctl_replace
+In-Reply-To: <HK0PR01MB2163F85F844A29460C46A6F7AD0F0@HK0PR01MB2163.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB2163F85F844A29460C46A6F7AD0F0@HK0PR01MB2163.apcprd01.prod.exchangelabs.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 31.08.2018, 16:50 -0600 schrieb Jonathan Corbet:
-> On Tue, 14 Aug 2018 13:43:12 +0200
-> Markus Heiser <markus.heiser@darmarit.de> wrote:
+On Fri, 31 Aug 2018 13:00:02 +0200,
+Xiao Yang wrote:
 > 
-> > The documentation and TOCs are organized in a manner of a tree. Adding a
-> > TOC to
-> > the root, which refers to a file which is located in a subfolder forms a
-> > grid. Those TOCs are a bit confusing and thats why we get additional error
-> > messages while building partial documentation::
-> > 
-> >   $ make SPHINXDIRS=process htmldocs
-> >   ...
-> >   checking consistency... Documentation/process/license-rules.rst: \
-> >   WARNING: document isn't included in any toctree
-> > 
-> > To fix it, the *root-license-TOC* is replaced by a reference and the
-> > 'license-roles.txt' is added to the Documentation/process/index.rst TOC.
-> > 
-> > BTW: there was an old licences remark in Documentation/process/howto.rst
-> > which
-> > is also updated, mentioning SPDX and pointing to the license-rules.rst
+> From: Young_X <YangX92@hotmail.com>
 > 
-> So those are two separate changes and should really have been in two
-> different patches.  I guess we can let that slide just this
-> once...applied.
+>     The ALSA control code expects that the range of assigned indices to a 
+>     control is continuous and does not overflow. Currently there are no 
+>     checks to enforce this.
+>     If a control with a overflowing index range is created that control 
+>     becomes effectively inaccessible and unremovable since 
+>     snd_ctl_find_id() will not be able to find it. This patch adds a check 
+>     that makes sure that controls with a overflowing index range can not 
+>     be created.
+>     (same issue as CVE-2014-4656)
+> 
+> Signed-off-by: Young_X <YangX92@hotmail.com>
 
-Ah, OK .. thanks!
+Thanks for the patch.
 
-> I do have to wonder if the licensing rules are *really* the most
-> important thing in our docs - the thing that readers should encounter
-> first, before anything else.  I think I'll revisit that at another time...
+Actually this function has been never used (at least for years), hence
+the best "fix" would be just to get rid of the whole function, IMO.
 
-OT: my patch was to fix the structural licensing mess. Feel free to change,
-what you have been applied with commit #aa19a176df95
 
--- Markus --
+Takashi
 
+> ---
+>  sound/core/control.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/sound/core/control.c b/sound/core/control.c
+> index 9aa15bf..6435772 100644
+> --- a/sound/core/control.c
+> +++ b/sound/core/control.c
+> @@ -441,6 +441,11 @@ int snd_ctl_replace(struct snd_card *card, struct snd_kcontrol *kcontrol,
+>  		goto error;
+>  	}
+>  	id = kcontrol->id;
+> +	if (id.index > UINT_MAX - kcontrol->count) {
+> +		ret = -EINVAL;
+> +		goto error;
+> +	}
+> +
+>  	down_write(&card->controls_rwsem);
+>  	old = snd_ctl_find_id(card, &id);
+>  	if (!old) {
+> -- 
+> 2.7.4
+> 
+> 
