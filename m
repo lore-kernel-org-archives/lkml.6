@@ -2,93 +2,119 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B423C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F73C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3340A20841
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E54020841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 08:58:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="mWv45sVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3340A20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=linux-watchdog.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dB7u6uc5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E54020841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeIANAR (ORCPT
+        id S1727288AbeIANJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 09:00:17 -0400
-Received: from www.linux-watchdog.org ([185.87.125.42]:47156 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725964AbeIANAQ (ORCPT
+        Sat, 1 Sep 2018 09:09:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33024 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725964AbeIANJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 09:00:16 -0400
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id E2534406A0; Sat,  1 Sep 2018 10:28:36 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org E2534406A0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1535790516;
-        bh=Tm+ZrgMz8LfGdB2QAOo+ONUbzf0Jw2umAfpeEZ/rJkM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=mWv45sVfYM2JtjhsrDNWSfJNGP+rtYy2v2yBZFkDYGCV07SaKMlj5nbppQVhhSf+9
-         +HqJC7SHGErItOGNr1RdBuTWNOCQkBsw5FYahWR97vE7vV+AKoht6FGqyTPATs8AUf
-         pLUTApSIuvIpkuqIQb7XkoTtzI0W50/Z74t1TN3Q=
-Date:   Sat, 1 Sep 2018 10:28:36 +0200
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [GIT PULL REQUEST] watchdog - v4.19-rc2
-Message-ID: <20180901082836.GA21742@www.linux-watchdog.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+        Sat, 1 Sep 2018 09:09:55 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y3-v6so5264629pgv.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 01:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NT3LU3Vg6CeTQDEFsVzzJLvbD+A14oYYE+DXe0Oh854=;
+        b=dB7u6uc5jf/rEvDsRvcNmdTayQj3EQNa/I+/s2qyBqS7/TwhUWP+DdYuwTzHnKj0Op
+         BpIxcvORNJSD52eIL5GMTkGu+iDRLUi0TCF+Ou8XoWokVuRhrp5+f7ZhUXc9P7OiNg+3
+         qxwkgMJCA9ZhYUrqrSrGpgeNm+V3J4eMuQKIDFu0wc1oLzeh1ejMD0iZ0Ia3UBZV0ZNy
+         Wxeh6WMEpBFBp0I1+IoV+gjB9O3a+M/GeP9OWaxEnPn/rWI2YwA3dHGIMKKSaPmd3pRy
+         40sPM8mwrvr7/GNtzPlU4SueKaxEEpK4P7I8ZfwztgIrl4I7MGFF7iMY27T25ix3PDc3
+         qXdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NT3LU3Vg6CeTQDEFsVzzJLvbD+A14oYYE+DXe0Oh854=;
+        b=V4bN9xyZuHG7EhUBrx/pzbfMtGeEHv3HJ8tKePVtz3BTvUc8XKrP6yK/ioKa0Uo+kJ
+         titmzIh2nNy6sVowjpvX+SXeZTTZyz0dB0w5gaT/OVdi14E0z0OUejz8X9Dk158A7noM
+         n7AerGa1unZWsCZLuIUTiIkCh4Y0yYKAChv8zDBz7PJmTl9Wn/L+Pxf8HeLWaKioMTA7
+         zdGmYjzPSScnroBut+RM9TvfpI0bw7AsF6Z7DbVYncIyDkRQPZto1FJ67XmMFyNhPnlo
+         h5/CCUMRvp1qFMUViC0nDCRxbdcVZNHLMugkoCbkWAJwEbjqCKadUUj8aSRxBDmDvcf2
+         Fl6w==
+X-Gm-Message-State: APzg51DJt5iqOs34xEIvkMuyqBL+cqmDnm4G93UZxsT5w7huv2azm/g1
+        FfdLBX4d7kaiMmfO/VEufkE=
+X-Google-Smtp-Source: ANB0Vdb8tFAl+FwOcpUBEv6otA3C1IOqUE/Lelm9Ainkshsn8mGuGhLiz5a6Odp+ra0RLX7pyDoL+g==
+X-Received: by 2002:a62:5543:: with SMTP id j64-v6mr19635637pfb.188.1535792317791;
+        Sat, 01 Sep 2018 01:58:37 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:2913:cd09:aee0:380])
+        by smtp.gmail.com with ESMTPSA id g15-v6sm25933019pfg.98.2018.09.01.01.58.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Sep 2018 01:58:37 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org, jananis37@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: Fix two sleep-in-atomic-context bugs in rtw_chk_hi_queue_cmd()
+Date:   Sat,  1 Sep 2018 16:58:29 +0800
+Message-Id: <20180901085829.8246-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+usb_write_port_complete() in usb_ops_linux.c is a completion handler
+function for the USB driver. So it should not sleep, but it is can sleep 
+according to the function call paths (from bottom to top) in Linux-4.16:
 
-Please pull the watchdog changes for the v4.19 release cycle.
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8188eu/core/rtw_cmd.c, 1081: 
+	kzalloc in rtw_chk_hi_queue_cmd
+drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c, 604: 
+	rtw_chk_hi_queue_cmd in usb_write_port_complete
 
-This pull contains:
-* renesas-wdt: Document support for r8a774a1
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8188eu/core/rtw_cmd.c, 1075: 
+	kzalloc in rtw_chk_hi_queue_cmd
+drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c, 604: 
+	rtw_chk_hi_queue_cmd in usb_write_port_complete
 
-The output from git request-pull:
-----------------------------------------------------------------
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-The following changes since commit 3f16503b7d2274ac8cbab11163047ac0b4c66cfe:
+These bugs are found by my static analysis tool DSAC.
 
-  Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal (2018-08-28 16:11:34 -0700)
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-4.19-rc2
-
-for you to fetch changes up to 74081c9f16a213f8f2681c175dc6ad7d17ad16ba:
-
-  dt-bindings: watchdog: renesas-wdt: Document r8a774a1 support (2018-08-29 20:32:04 +0200)
-
-----------------------------------------------------------------
-linux-watchdog 4.19-rc2 tag
-
-----------------------------------------------------------------
-Fabrizio Castro (1):
-      dt-bindings: watchdog: renesas-wdt: Document r8a774a1 support
-
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index 72099f5d6915..526baa699a57 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -1072,13 +1072,13 @@ u8 rtw_chk_hi_queue_cmd(struct adapter *padapter)
+ 	struct cmd_priv	*pcmdpriv = &padapter->cmdpriv;
+ 	u8	res = _SUCCESS;
+ 
+-	ph2c = kzalloc(sizeof(struct cmd_obj), GFP_KERNEL);
++	ph2c = kzalloc(sizeof(struct cmd_obj), GFP_ATOMIC);
+ 	if (!ph2c) {
+ 		res = _FAIL;
+ 		goto exit;
+ 	}
+ 
+-	pdrvextra_cmd_parm = kzalloc(sizeof(struct drvextra_cmd_parm), GFP_KERNEL);
++	pdrvextra_cmd_parm = kzalloc(sizeof(struct drvextra_cmd_parm), GFP_ATOMIC);
+ 	if (!pdrvextra_cmd_parm) {
+ 		kfree(ph2c);
+ 		res = _FAIL;
+-- 
+2.17.0
 
