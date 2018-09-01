@@ -6,108 +6,88 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1B7C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 06:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5167C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4743C20837
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 06:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4743C20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 232E72083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 07:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232E72083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeIALFf (ORCPT
+        id S1727235AbeIALoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 07:05:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11215 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726044AbeIALFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 07:05:35 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0EE9079EB8334;
-        Sat,  1 Sep 2018 14:54:35 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Sat, 1 Sep 2018
- 14:54:33 +0800
-Subject: Re: [PATCH v2] rsi: remove set but not used variable 'header_size'
-To:     Siva Rebbagondla <siva8118@gmail.com>
-References: <20180831111325.16984-1-yuehaibing@huawei.com>
- <CANGSkXTDOa-TCz2wbNh7=C9px4_T7besT6jBPzfs70kVoK+PtA@mail.gmail.com>
-CC:     Kalle Valo <kvalo@codeaurora.org>, <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        Amit karwar <amit.karwar@redpinesignals.com>,
-        <pavani.muthyala@redpinesignals.com>, <keescook@chromium.org>,
-        Linux Wireless <linux-wireless@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <6216c073-dadc-e593-dbb6-7c5b1cb7ee70@huawei.com>
-Date:   Sat, 1 Sep 2018 14:54:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <CANGSkXTDOa-TCz2wbNh7=C9px4_T7besT6jBPzfs70kVoK+PtA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Sat, 1 Sep 2018 07:44:05 -0400
+Received: from smtp3-1.goneo.de ([85.220.129.38]:40095 "EHLO smtp3-1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725964AbeIALoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 07:44:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp3.goneo.de (Postfix) with ESMTP id 8C5DD23F9F9;
+        Sat,  1 Sep 2018 09:33:01 +0200 (CEST)
+X-Virus-Scanned: by goneo
+Received: from smtp3.goneo.de ([127.0.0.1])
+        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6mg080PzcGMG; Sat,  1 Sep 2018 09:33:00 +0200 (CEST)
+Received: from ryzen (dyndsl-037-138-238-035.ewe-ip-backbone.de [37.138.238.35])
+        by smtp3.goneo.de (Postfix) with ESMTPSA id 47DA023F428;
+        Sat,  1 Sep 2018 09:33:00 +0200 (CEST)
+Message-ID: <5a40b453e9a419c24af1e368711d504a9086c882.camel@darmarit.de>
+Subject: Re: [PATCH] docs: tidy up TOCs and refs to license-rules.rst
+From:   Markus Heiser <markus.heiser@darmarit.de>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Jonas Oberg <jonas@fsfe.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Date:   Sat, 01 Sep 2018 09:32:59 +0200
+In-Reply-To: <20180831165015.1461bdc7@lwn.net>
+References: <20180814114312.23201-1-markus.heiser@darmarit.de>
+         <20180831165015.1461bdc7@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/1 11:41, Siva Rebbagondla wrote:
-> On Fri, Aug 31, 2018 at 4:45 PM YueHaibing <yuehaibing@huawei.com> wrote:
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/net/wireless/rsi/rsi_91x_hal.c: In function 'rsi_send_data_pkt':
->> drivers/net/wireless/rsi/rsi_91x_hal.c:288:5: warning:
->>  variable 'header_size' set but not used [-Wunused-but-set-variable]
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->> v2: remove unused 'tx_params'
->> ---
->>  drivers/net/wireless/rsi/rsi_91x_hal.c | 4 ----
->>  1 file changed, 4 deletions(-)
->>
->> diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
->> index 01edf96..182b066 100644
->> --- a/drivers/net/wireless/rsi/rsi_91x_hal.c
->> +++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
->> @@ -282,10 +282,8 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
->>         struct rsi_hw *adapter = common->priv;
->>         struct ieee80211_vif *vif;
->>         struct ieee80211_tx_info *info;
->> -       struct skb_info *tx_params;
->>         struct ieee80211_bss_conf *bss;
->>         int status = -EINVAL;
->> -       u8 header_size;
->>
->>         if (!skb)
->>                 return 0;
->> @@ -297,8 +295,6 @@ int rsi_send_data_pkt(struct rsi_common *common, struct sk_buff *skb)
->>                 goto err;
->>         vif = info->control.vif;
->>         bss = &vif->bss_conf;
->> -       tx_params = (struct skb_info *)info->driver_data;
->> -       header_size = tx_params->internal_hdr_size;
-> Yes, These redundant variables shall be removed.
->>
->>         if (((vif->type == NL80211_IFTYPE_STATION) ||
->>              (vif->type == NL80211_IFTYPE_P2P_CLIENT)) &&
->> --
->> 2.7.0
->>
->>
-> Also, Patch title also can be changed to "[v2] rsi: remove unused variables"
-
-Ok, will fix in v3.
-
-Thank you.
-
+Am Freitag, den 31.08.2018, 16:50 -0600 schrieb Jonathan Corbet:
+> On Tue, 14 Aug 2018 13:43:12 +0200
+> Markus Heiser <markus.heiser@darmarit.de> wrote:
 > 
-> Thanks,
-> Siva Rebbagondla
+> > The documentation and TOCs are organized in a manner of a tree. Adding a
+> > TOC to
+> > the root, which refers to a file which is located in a subfolder forms a
+> > grid. Those TOCs are a bit confusing and thats why we get additional error
+> > messages while building partial documentation::
+> > 
+> >   $ make SPHINXDIRS=process htmldocs
+> >   ...
+> >   checking consistency... Documentation/process/license-rules.rst: \
+> >   WARNING: document isn't included in any toctree
+> > 
+> > To fix it, the *root-license-TOC* is replaced by a reference and the
+> > 'license-roles.txt' is added to the Documentation/process/index.rst TOC.
+> > 
+> > BTW: there was an old licences remark in Documentation/process/howto.rst
+> > which
+> > is also updated, mentioning SPDX and pointing to the license-rules.rst
 > 
-> .
-> 
+> So those are two separate changes and should really have been in two
+> different patches.  I guess we can let that slide just this
+> once...applied.
+
+Ah, OK .. thanks!
+
+> I do have to wonder if the licensing rules are *really* the most
+> important thing in our docs - the thing that readers should encounter
+> first, before anything else.  I think I'll revisit that at another time...
+
+OT: my patch was to fix the structural licensing mess. Feel free to change,
+what you have been applied with commit #aa19a176df95
+
+-- Markus --
 
