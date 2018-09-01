@@ -2,109 +2,145 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AFDC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 10:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BFFC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 10:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A2512083F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 10:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3Fw3YsJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2512083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3458320841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 10:22:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3458320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeIAOMF (ORCPT
+        id S1727261AbeIAO0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 10:12:05 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36161 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeIAOMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 10:12:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e11-v6so6554832plb.3;
-        Sat, 01 Sep 2018 03:00:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=j9cDap1HW/F+JokRW7P2bqq7Yy5kZvZQGSg9p1J42uI=;
-        b=L3Fw3YsJXC/n8P2PW3PjBrwoStt1x6fgHVkM0F9Av6hiSoVwuQqOyEJ0IL9SoDBBK/
-         0m6k00MSvwjjaTRSXpnxT8JfmP/cz2Uw91NtyF+qdzja/Y7sdd080n5S8NgwAieEPxxL
-         ZipZun4XnU5y0PO2RW1zmk5VuVeuwRGPnZAmMt7zoUXYVXEZyYzEG8SH09AJkREbkQJh
-         bcBS696OtWvGKFc6TZltqENRU7ZrtiWQTn1mtoJQJUqs3bKlLoG+ur4hLAgwMtIEnFDY
-         VQbvWy6F82P32u5ZIptCv1X1yU27vT5sAB5+NPKH8lARMVwqKZbQbyVqiMQSirShv7xw
-         6CrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=j9cDap1HW/F+JokRW7P2bqq7Yy5kZvZQGSg9p1J42uI=;
-        b=abf+tW2px/UDKUtU5pjRgQQKx7zHb4uxNLvsxBceL0MXDZH4DtenFpfttrDnKPZUEf
-         izxt3PudHJglmi4PN2CGuhc5pos0wxDrC2xbDC1yNV5/Gg5zCIZj4poeXZfqn1Nf+M4K
-         AF4DTT1y0cxjj5qZufhQVzBFr2e8x7rOa+rCUa5VZLa7oHIb2FiO1jDA3Cfxzsaajilf
-         1/qpJHIYumJortDo4BxPoohIidcW8pDQ9WQKZo1zfnMiBya/BcT/0CQnTubjVOslIT14
-         6Z7yQ0LDPKtW+oD/MkAnTdssGZ/O5lzzqNocHE/QXhhjqswXitPoRaAgq/Tld9iPMR1b
-         f3HQ==
-X-Gm-Message-State: APzg51Bk/OMXxqyaWNuNyx9mwxxUmJwhd7TKHKz9xPtKGrajxl6BrFjW
-        YBS/Fq9yzqN+hnOgCcPErhQ=
-X-Google-Smtp-Source: ANB0Vdb++XgYWX0KBLy1cz93Yrq7wza61arVnHsaHBg4guGBpSyF8csykSBCThxrzvlPQQekrGkKxg==
-X-Received: by 2002:a17:902:a5cc:: with SMTP id t12-v6mr19135616plq.6.1535796036964;
-        Sat, 01 Sep 2018 03:00:36 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:2913:cd09:aee0:380])
-        by smtp.gmail.com with ESMTPSA id x3-v6sm14413798pgv.61.2018.09.01.03.00.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Sep 2018 03:00:36 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     davem@davemloft.net, ktkhai@virtuozzo.com, viro@zeniv.linux.org.uk,
-        adobriyan@gmail.com, dvlasenk@redhat.com, xiyou.wangcong@gmail.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: scm: Fix a possible sleep-in-atomic-context bug in scm_fp_copy()
-Date:   Sat,  1 Sep 2018 18:00:26 +0800
-Message-Id: <20180901100026.16956-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 1 Sep 2018 10:26:19 -0400
+Received: from nautica.notk.org ([91.121.71.147]:53657 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbeIAO0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 10:26:19 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 1640AC009; Sat,  1 Sep 2018 12:14:45 +0200 (CEST)
+Date:   Sat, 1 Sep 2018 12:14:30 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH 7/7] Compiler Attributes: use feature checks instead of
+ version checks
+Message-ID: <20180901101430.GA21877@nautica>
+References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
+ <20180831170514.24665-7-miguel.ojeda.sandonis@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180831170514.24665-7-miguel.ojeda.sandonis@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel module may sleep with holding a spinlock.
+Miguel Ojeda wrote on Fri, Aug 31, 2018:
+> Instead of using version checks per-compiler to define (or not)
+> each attribute, use __has_attribute to test for them, following
+> the cleanup started with commit 815f0ddb346c
+> ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
+> 
+> All the attributes that are fairly common/standard (i.e. those that
+> do not require extra logic to define them) have been moved
+> to a new file include/linux/compiler_attributes.h.
+> 
+> In an effort to make the file as regular as possible, comments
+> stating the purpose of attributes have been removed. Instead,
+> links to the compiler docs have been added (i.e. to gcc and,
+> if available, to clang as well). In addition, they have been sorted.
+> 
+> Finally, if an attribute is optional (i.e. if it is guarded
+> by __has_attribute), the reason has been stated for future reference.
+> 
+> Cc: Eli Friedman <efriedma@codeaurora.org>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dominique Martinet <asmadeus@codewreck.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+Nice work!
+Since I'm being Cc'd I took the time to test this as well, and have no
+problem with libbcc-building-with-clang (or native x86 gcc build)
 
-[FUNC] kmalloc(GFP_KERNEL)
-net/core/scm.c, 85: kmalloc in scm_fp_copy
-net/core/scm.c, 161: scm_fp_copy in __scm_send
-./include/net/scm.h, 88: __scm_send in scm_send
-net/unix/af_unix.c, 1600: scm_send in maybe_init_creds
-net/unix/af_unix.c, 1983: maybe_init_creds in unix_stream_sendpage
-net/unix/af_unix.c, 1973: spin_lock in unix_stream_sendpage
+Nick already made many comments so I only have one more.
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+> [...]
+> diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> new file mode 100644
+> index 000000000000..a9dfafc8fd19
+> --- /dev/null
+> +++ b/include/linux/compiler_attributes.h
+> [...]
+> +/*
+> + * To check for optional attributes, we use __has_attribute, which is supported
+> + * on gcc >= 5, clang >= 2.9 and icc >= 17. In the meantime, to support
+> + * 4.6 <= gcc < 5, we implement __has_attribute by hand.
+> + */
+> +#ifndef __has_attribute
+> +#define __has_attribute(x) __GCC4_has_attribute_##x
+> +#define __GCC4_has_attribute_externally_visible 1
+> +#define __GCC4_has_attribute_noclone 1
+> +#define __GCC4_has_attribute_optimize 1
+> +#if __GNUC_MINOR__ >= 8
+> +#define __GCC4_has_attribute_no_sanitize_address 1
+> +#endif
+> +#if __GNUC_MINOR__ >= 9
+> +#define __GCC4_has_attribute_assume_aligned 1
+> +#endif
+> +#endif
 
-This bug is found by my static analysis tool DSAC.
+Hmm, if this is in this file and not compiler-gcc, I am not sure about
+using GNUC_MINOR without checking the major -- I have no idea what kind
+of versions e.g. icc will use (or what attributes ancients version of
+clang or old icc support, actually)
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- net/core/scm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/scm.c b/net/core/scm.c
-index b1ff8a441748..49548f81c45b 100644
---- a/net/core/scm.c
-+++ b/net/core/scm.c
-@@ -82,7 +82,7 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct scm_fp_list **fplp)
- 
- 	if (!fpl)
- 	{
--		fpl = kmalloc(sizeof(struct scm_fp_list), GFP_KERNEL);
-+		fpl = kmalloc(sizeof(struct scm_fp_list), GFP_ATOMIC);
- 		if (!fpl)
- 			return -ENOMEM;
- 		*fplp = fpl;
+It's a bit of research work but I think it'd be cleaner to define
+similar macros for all three compilers, if we care about the old
+versions... Or actually..
+
+For clang you've implicitely required clang >= 3.0 in patch 3 of this
+serie, so presumabely it wouldn't need this compat macro at all.
+
+For icc I think icc 17 is still fairly recent... But I just abused work
+to test and linux fails to compile with icc 15/17/18 for other reasons
+(unrelated to this patch), so unless anyone helps with this I'm tempted
+to suggest leaving it at it, and whoever that is will probably have a
+better idea of how far back they want to make icc work / what attributes
+are defined there.
+It's a bit of a shame there's no linux-compilers list to reach out to :)
+
+(this would need to move the include of this file after the
+compiler-specific headers, but from what I can see there is no problem
+with that)
+
 -- 
-2.17.0
-
+Dominique
