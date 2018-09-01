@@ -2,94 +2,101 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85373C43334
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 21:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAB0C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 21:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C7792083F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 21:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C7792083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 03C4220837
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 21:24:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHAInkLU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C4220837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeIBBUW (ORCPT
+        id S1727212AbeIBBhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 21:20:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36965 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeIBBUW (ORCPT
+        Sat, 1 Sep 2018 21:37:55 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37149 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeIBBhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 21:20:22 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w81L6pV42676493
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 1 Sep 2018 14:06:51 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w81L6oba2676490;
-        Sat, 1 Sep 2018 14:06:50 -0700
-Date:   Sat, 1 Sep 2018 14:06:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Samuel Neves <tipbot@zytor.com>
-Message-ID: <tip-e78e5a91456fcecaa2efbb3706572fe043766f4d@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, luto@kernel.org,
-        sneves@dei.uc.pt, hpa@zytor.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-          sneves@dei.uc.pt, luto@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180901201452.27828-1-sneves@dei.uc.pt>
-References: <20180901201452.27828-1-sneves@dei.uc.pt>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/vdso: Fix lsl operand order
-Git-Commit-ID: e78e5a91456fcecaa2efbb3706572fe043766f4d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 1 Sep 2018 21:37:55 -0400
+Received: by mail-oi0-f65.google.com with SMTP id p84-v6so27647529oic.4
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 14:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VkLdXV5yAiboEuM7R0yTOXbnV/Crj6RJa1fIJHi1tsA=;
+        b=iHAInkLUjkypxMIUaWar/n27LWhBUdLMYhTWUX3Ro4E03VPMxbLoHSNR2avYOhoPI3
+         PqxafsAVReLgqEbEX7xfRzXx2crlGdngNPrmXplezsgzVy1bNa97WrrCHLx/loDj79Gu
+         YBgrZX1cGiY5ExFbdpoWQftLiTS2LtFHtn0E7DE1Y2sh6pVpZi+aMdQXu3/cKyxgbZ4f
+         0CCKQxuf3OIT/8+WlEIGXJNwUO51EYuDVInBf417MpoAFXSrSPZFgRVw6JWuldLmCmU4
+         Lhj98Y5Z88reT3xWslIQHveCWN5P0p3peazd834rJc3xyXODykRwlzFE0SENqQYYaAYE
+         ZhKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VkLdXV5yAiboEuM7R0yTOXbnV/Crj6RJa1fIJHi1tsA=;
+        b=YHqWTZtENwtUMtPxtzFjWt+25T20BOQ/T0vmL1ZdPcgYGV3jJYgdmjHJuUiWQAzgNf
+         Ypbe1O6xRKqbCnK0W04VFgo7lE+WBUlaiktKKx5Hlit6+eTo7jDmCwWLTivET3l4OU5P
+         QPobFaSJYbb6Aa4sxrkoE0I5L3zQql/cif3I5gH9GJAfRdnL+tQdMPeZdMe0/81ih9wG
+         DvipEwMC/EpyQH4/SJRLqSvViFlzAm7Yem9tAwhDZSIJy2WwUNUWQig+hb3iSvUgPEEa
+         R1Rym1FsDCQjdWL64QWhfdZr6q6yQGEmSO8K+JeBODs59s15SYXCRM5j87z2QIVDHlmD
+         oSBA==
+X-Gm-Message-State: APzg51C9a6/V4UPNNNy5fkqy6tXoDWJEFGFtkaYkvKM8m1djO9dNOorP
+        h72DL0U74/qvRicKmBK2EpLWucfDrvzV5vWscyBsSA==
+X-Google-Smtp-Source: ANB0VdYt0iZ9L+dg5Djq0IjqSyok4B9PdI8qSCdyfhI2mtgwA9E5kXr9ibGnvesbVNMd8E5GR1GnTh9Aa8NAwfkHu8A=
+X-Received: by 2002:a54:4017:: with SMTP id x23-v6mr9942476oie.25.1535837079458;
+ Sat, 01 Sep 2018 14:24:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:a9d:588b:0:0:0:0:0 with HTTP; Sat, 1 Sep 2018 14:24:38 -0700 (PDT)
+In-Reply-To: <20180831150218.8307-3-jbrunet@baylibre.com>
+References: <20180831150218.8307-1-jbrunet@baylibre.com> <20180831150218.8307-3-jbrunet@baylibre.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 1 Sep 2018 18:24:38 -0300
+Message-ID: <CAOMZO5BOMOB6LaRs1fnmm-Ghu7pMkXW=sH_NOEWK3pqHAbUMCg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: meson-axg: s400: add dmic codec
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e78e5a91456fcecaa2efbb3706572fe043766f4d
-Gitweb:     https://git.kernel.org/tip/e78e5a91456fcecaa2efbb3706572fe043766f4d
-Author:     Samuel Neves <sneves@dei.uc.pt>
-AuthorDate: Sat, 1 Sep 2018 21:14:52 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 1 Sep 2018 23:01:56 +0200
+Hi Jerome,
 
-x86/vdso: Fix lsl operand order
+On Fri, Aug 31, 2018 at 12:02 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> There are 7 digital mics on the MIC daughter board attached
+> to the s400 board, so add the digital microphone codec to
+> its DTS
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> index ff64c429d432..f3e16cbbc61e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> @@ -86,6 +86,15 @@
+>                 sound-name-prefix = "DIT";
+>         };
+>
+> +       dmics: audio-codec@3 {
 
-In the __getcpu function, lsl is using the wrong target and destination
-registers. Luckily, the compiler tends to choose %eax for both variables,
-so it has been working so far.
-
-Fixes: a582c540ac1b ("x86/vdso: Use RDPID in preference to LSL when available")
-Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Lutomirski <luto@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180901201452.27828-1-sneves@dei.uc.pt
-
----
- arch/x86/include/asm/vgtod.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-index fb856c9f0449..53748541c487 100644
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -93,7 +93,7 @@ static inline unsigned int __getcpu(void)
- 	 *
- 	 * If RDPID is available, use it.
- 	 */
--	alternative_io ("lsl %[p],%[seg]",
-+	alternative_io ("lsl %[seg],%[p]",
- 			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
- 			X86_FEATURE_RDPID,
- 			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
+You pass @3 without a corresponding reg = <3>, which causes dtc
+warnings with W=1.
