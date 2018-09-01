@@ -7,128 +7,104 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16583C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4114FC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89E620841
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D118620841
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 11:57:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJSXfdTg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89E620841
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="soRnJkdV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D118620841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeIAQFM (ORCPT
+        id S1727352AbeIAQJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 12:05:12 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36736 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbeIAQFM (ORCPT
+        Sat, 1 Sep 2018 12:09:00 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41825 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbeIAQI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 12:05:12 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e11-v6so6632201plb.3;
-        Sat, 01 Sep 2018 04:53:25 -0700 (PDT)
+        Sat, 1 Sep 2018 12:08:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b12-v6so6620754plr.8;
+        Sat, 01 Sep 2018 04:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=IWiPvKQSdfz/cocXP+iDE5523lfsqoaXSAQHXVKKEnw=;
-        b=XJSXfdTgPeowQOME785lO5OL7PIcaVLnpSufnnYxl126DVJXBxXtUf6NMzhZ1nbHb4
-         8Amr11c+kH3SqndpaWjgtt0rfRJsXMwrYnCH2xQM8oKlUBH+IFkutku0xidwc/V+Dg3F
-         WMvViArSFllNrs1ui89FjhreCnl+c9I7MEbM7Y2+JYUZA2b4zG3xktk5I5xKKcvdJnJZ
-         OzA02xdM3cM2/szBTpv2RsOnC+UNAYEbeecZxCCIkgrJtSfSvj9t85kUPpoo6A1RZbO/
-         r+72351FGUAYFVjdn3zBmPlJlVMg11OpEQBnWznIP1wsl62NJCYgNufooY9lTt8G0Lfw
-         pOFA==
+        bh=3d0J28Vb3WA0wmPtWbShWTMZQB/NfXKpkJhNO0HBgaU=;
+        b=soRnJkdVNCTroW9a2qD7K1mUt8l7qNso/vh+cYlnmP+vqH5tDSHx7ctxQI/2PfX5FD
+         E1w0I5jNjWrXpavV40ZJqhZtEEvF/+JPiih8ulZBrxGBRXulvs6MWUUNwIrpXX/HF8eF
+         sCGGtTSmzBdR69S99oLTAx5b2KubnWEtdZvRimLQe3qZxHQfms6Us4ZZzKNG+rB/ua6I
+         5IHNy9imCsk3JgetSlAO5c67LoN53TTq/N/rPlPyyOAYO8oXmkwxOj2NXofZ1UiofHsV
+         htej22WST5l3qZmPs1t1Rr+RPlND/BBb291bBBJ+P9inSxSHY7tFtaGZTMsC939g/ifN
+         50dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IWiPvKQSdfz/cocXP+iDE5523lfsqoaXSAQHXVKKEnw=;
-        b=pnH1Zh8Zb+bMoFdIu3irfo7LDkV+yTF4JmcHE3hl8wx4cQScSAI6WMAa+tmYychL/F
-         j/RgNeS6kFe9+mImHDobo/UYIBmyETcg1Wr+Xe6o1DNJMdpxz+EPivPPG9IRiQ/H5sOh
-         Ot+TvLcrB5zVNetLi3jXLePv0c6wzF8XCiQ2i4IZiRll/sFpdPuRDSbFGbHFMWTChAOI
-         N2folB4mjpbP9CHZ2/yw9h0Nm13aS4/vntGS+AE2F2aDIVSDw+c8E4XQA3JoSM/S/2mg
-         mWR1kFuGzx1nMhtlVTzpLqPGNCsUIUKXIrVkcI3BtJ/s8BzX2Qtm9OxT1mDSJpUNXEDZ
-         k08A==
-X-Gm-Message-State: APzg51DyMFbPJ2+e26pO0xWScqY260l8we2az5AKFuDXWCkwKZsnHpK1
-        4i5VAGHda4z9XgfiSgktVRU=
-X-Google-Smtp-Source: ANB0VdZvLkZGPLywsRS30qo8EfP1BkQolsv1mM5SYpblP7ZJzAzw0KspneS4jry9WpdGj4jhgV0ZsA==
-X-Received: by 2002:a17:902:6684:: with SMTP id e4-v6mr16036198plk.50.1535802805331;
-        Sat, 01 Sep 2018 04:53:25 -0700 (PDT)
+        bh=3d0J28Vb3WA0wmPtWbShWTMZQB/NfXKpkJhNO0HBgaU=;
+        b=i9FOK60UbP1MHXgIrF/JfQuoF5xmSV4VfCVyNCIJNR/cRM/LIfEV0avxTni9Lx9Dbu
+         uE0Q1T8DcL5PE/oGqR/8auIqPBqU/4m5oXZLhQQvsCHnXyB4NDNXYBS4TIo+wzAlZ7Jx
+         i2uddogMV9+P3MOe4I9pMMEMlkOTWTi04SE9bC8LQ7npUH5W2hW2zzaSBv69OmoxhmkU
+         peR052T+Sey6LaygBEseXGjEiXES4Vke4EAXiW0kyNjTzmMHUvf4UOqNi1dMu/3d3hbJ
+         GJANeeYB0MgESFLSF6FAsHCuUcVoxbD1GnLse7nRIHUSFHsBchH7JUdK/9qtZZTVsFNP
+         n03A==
+X-Gm-Message-State: APzg51DazCGfnXJj77rBql9tpBqPI9AZb8pwwgpa/p0u0B7pxInoUP/r
+        QCXvSUD+xyN2rw3MTujiKJkUzN5x
+X-Google-Smtp-Source: ANB0VdZ629PZy2mjJQfLxBINEV/rpIbvku6socEpMmscPb+SR7s1aTZSHbeAW3a1lRAJE2XQOOtr5A==
+X-Received: by 2002:a17:902:9687:: with SMTP id n7-v6mr19753017plp.33.1535803032361;
+        Sat, 01 Sep 2018 04:57:12 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:2913:cd09:aee0:380])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm25114914pgd.37.2018.09.01.04.53.23
+        by smtp.gmail.com with ESMTPSA id p1-v6sm16320878pfn.53.2018.09.01.04.57.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Sep 2018 04:53:24 -0700 (PDT)
+        Sat, 01 Sep 2018 04:57:11 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     mb@lightnvm.io
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     isdn@linux-pingi.de
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] lightnvm: pblk: Fix two sleep-in-atomic-context bugs in pblk_line_submit_smeta_io()
-Date:   Sat,  1 Sep 2018 19:53:18 +0800
-Message-Id: <20180901115318.30416-1-baijiaju1990@gmail.com>
+Subject: [PATCH] isdn: mISDN: layer2: Fix a sleep-in-atomic-context bug in create_l2()
+Date:   Sat,  1 Sep 2018 19:57:05 +0800
+Message-Id: <20180901115705.31050-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
+The kernel module may sleep with holding a spinlock.
 
 The function call paths (from bottom to top) in Linux-4.16 are:
 
-[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 754: 
-	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048: 
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434: 
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980: 
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976: 
-	spin_lock in pblk_recov_l2p
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/isdn/mISDN/layer2.c, 2126: kzalloc in create_l2
+drivers/isdn/mISDN/tei.c, 1054: create_l2 in create_teimgr
+drivers/isdn/mISDN/tei.c, 1278: create_teimgr in mgr_ctrl
+drivers/isdn/mISDN/tei.c, 1048: [FUNC_PTR]mgr_ctrl in create_teimgr
+drivers/isdn/mISDN/tei.c, 1045: _raw_read_lock_irqsave in create_teimgr
 
-[FUNC] bio_map_kern(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 762: 
-	bio_map_kern in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048: 
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434: 
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980: 
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976: 
-	spin_lock in pblk_recov_l2p
+Note that [FUNC_PTR] means a function pointer call is used.
 
-To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-These bugs are found by my static analysis tool DSAC.
+This bug is found by my static analysis tool DSAC
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/lightnvm/pblk-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/isdn/mISDN/layer2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index ed9cc977c8b3..5d915c93b6cf 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -802,7 +802,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
+diff --git a/drivers/isdn/mISDN/layer2.c b/drivers/isdn/mISDN/layer2.c
+index 9ff0903a0e89..383f31ae4b92 100644
+--- a/drivers/isdn/mISDN/layer2.c
++++ b/drivers/isdn/mISDN/layer2.c
+@@ -2123,7 +2123,7 @@ create_l2(struct mISDNchannel *ch, u_int protocol, u_long options, int tei,
+ 	struct layer2		*l2;
+ 	struct channel_req	rq;
  
- 	memset(&rqd, 0, sizeof(struct nvm_rq));
- 
--	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
-+	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_ATOMIC,
- 							&rqd.dma_meta_list);
- 	if (!rqd.meta_list)
- 		return -ENOMEM;
-@@ -810,7 +810,7 @@ static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
- 	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
- 	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
- 
--	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
-+	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_ATOMIC);
- 	if (IS_ERR(bio)) {
- 		ret = PTR_ERR(bio);
- 		goto free_ppa_list;
+-	l2 = kzalloc(sizeof(struct layer2), GFP_KERNEL);
++	l2 = kzalloc(sizeof(struct layer2), GFP_ATOMIC);
+ 	if (!l2) {
+ 		printk(KERN_ERR "kzalloc layer2 failed\n");
+ 		return NULL;
 -- 
 2.17.0
 
