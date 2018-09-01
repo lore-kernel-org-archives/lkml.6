@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 515F4C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B78C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1446620843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1446620843
+	by mail.kernel.org (Postfix) with ESMTP id D80F120843
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80F120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeIARRk (ORCPT
+        id S1727802AbeIARRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:17:40 -0400
-Received: from mout.perfora.net ([74.208.4.196]:60545 "EHLO mout.perfora.net"
+        Sat, 1 Sep 2018 13:17:43 -0400
+Received: from mout.perfora.net ([74.208.4.194]:53455 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbeIARRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:17:39 -0400
+        id S1727652AbeIARRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 13:17:41 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MXoiP-1gRpMZ1UbH-00Wnof; Sat, 01 Sep 2018 15:05:32 +0200
+ 0LxMyK-1fouZe35vm-016xRk; Sat, 01 Sep 2018 15:05:29 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 09/19] ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
-Date:   Sat,  1 Sep 2018 15:04:54 +0200
-Message-Id: <20180901130504.14318-10-marcel@ziswiler.com>
+Subject: [PATCH v2 07/19] ARM: tegra: apalis-tk1: white-space clean-up
+Date:   Sat,  1 Sep 2018 15:04:52 +0200
+Message-Id: <20180901130504.14318-8-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:MeuFZFqCKofeD/GfMdF85t3tLAnQJMwjjKyakbKS0WA2bkz5nU7
- MpztQtSuLuwTy/TCdT0p53ZDCwuti2S2pgLEq+VqXz+iziNKHs3TKHU/sFzW3oGYtE6RCcA
- nq/PVM7jTGCvgOVa7takz8bSF5Td9gImBttAgVDatM6rN2Ri6HSRydp7jpfASdEaw+sZPIP
- NWHc5nLpAmbdcUkSAZYtQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rvnQWmlDDKM=:9sOusggGjKfLT1M/HhSXId
- axpHZYG0OiPjdv+YMhlm2V8yoCS7pn6FiXORoS5bWfz3RdCAUIW3LrxprFIysWSIBj94oraXD
- DnHU6rnKYqMnJ4oJFALaKfDPuZvJ1RpYJXSpWBoMz6G+wSWDHq6a1vje8aBeUROt2ofbDcRTn
- a9ZR1IsxMnOV2F7lktJ0QbCgv6eH8NYnw0ckfZdGo4bMptsxiwqGnTFci3JiHS77Om+pM/eiy
- Y7MOaM+pv1FljIrmiNBn5UqufJBRrL2jLkohdokDHuqekveHcquzT/m28VqFKDyK1s+WItb5R
- r9NPoNCXqC/H1ExZG8keAcxzKJ0s1JyHlw/42FZ/Q2wsjE33i9z4FaRxaZ6ysev4QUoDRAujm
- 5QC9/YQUeEV9ilMsITOZHCtanTd6ju8zagj7NP9/jzhHCsQcrqH3xDiR9IqG5K8s6uYLwJvTK
- +Dsc/0MfHbphWy3KaQU+h4kPi50xa94OStCZO5RJ9iktHTry60ADaufv7CdfZyYGcqXgc6C59
- 1UIWuykjoMnbcsAUoccFmebmCa2w0I0j6/7pM/UG36tOmZSsFMngeuESdgxMBet4iAHeXBBjv
- bfBfIrLYVvf//UQdeyz0VZY2/Mm3Z4KnU1hikbIgMCxUPu/yBe931eb7AkIvrujRTF842ExmZ
- yUdSr6afNO1s7kK9nGhw/O/D3AXleWDHkyBkDN3YSLJ1lkrGdUAd7YAelqkmUorpRSnE=
+X-Provags-ID: V03:K1:FQAm+kIBo7f+p0rqSPIdiHswijRghiSTPuJlXKrgBUzP34iPUmk
+ Cm/v4ky+aQO/tVnd2jc1Pw4LZzl18O3xm3ooux5eaP178xI9lpBgPomM/Zd8E+atFRC3emH
+ u/6xf67W6lr+PpUVzpJUVAlhtkCthmZGUgnDtOyP3BXFZUkbDQ7VlW9gY7QaTsPXFl85qz+
+ 9MGLDb67ilsGtD/b7k3Ww==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+/mfKyDYfVY=:YoMlFfxiJ/MgD5tVqz1++4
+ Fq7z9hkEkeJyE/u3AEcOFwDmDekEsoCjG4JqiO+tyZMiYoTc1rBUqnDwReC6Y/SrtHnUoZ1F4
+ v1R9APBo4885rYuPJry/gb0EB27LYB1FbkD19ZK1EMGL/VJu4lVIFf7QionriP6Bi1xAJbHw2
+ kwRBg2nIMRBJcSjBEg1zWa5ztMhSyk7P5wkNNsCiEiNBrfd5ydZdxZRTz+TMdaVIv+X9B1cNt
+ EWubql4M+e34zOdWEzZnxwpSAWKBpkW60jmSpBWiotXSl3XyvJjUusYk/9OFRQRHWRwmt/D3F
+ u1A9oFhC21SDg6OsU6eWzwYhwz2065z6pZg5OSMZdWU4xnJej2ktMKZLk6CQeFcyOnYhuGhuy
+ W88Ampzm72tnGiDmphEl+YM5qQZawRnKUe7nG1CzEwwrjKe/AWAGX78Tbubcfr+ukpdl8MsXz
+ 6XMLtELGvxXasFlGQjpG7QbvDe7qXXiEFmhndAqVVOB6vuU7LBWHddyMB0vnFXZ9+KsGp9OQb
+ hO324cdGcWUoUXCfe725khKOiDg8Cb78WB1CPdIpgOqzIFgMx04E+wgK1Mwvl1M/YPVQ+0NqZ
+ /skz7rW88PxTc0+WZO0gzg7BhpkSSwT7m05tlNC/8AWUw/UYTt+pO00OSnIkBdWz/Ck+MzUhm
+ JY1EqjRaAfbyen1bFxwBuunCaq65EDMzmBy5WRmlBBK/TBefZqkxnGDg83o/cUstpbDw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add proper eMMC vmmc and vqmmc supplies e.g. fixing signalling voltage.
+White-space clean-up.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -69,36 +69,66 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 2 ++
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 2 ++
- 2 files changed, 4 insertions(+)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ---
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ---
+ 2 files changed, 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 14114bc43e38..3408317c0f00 100644
+index aaedc83a11bc..14114bc43e38 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -1917,6 +1917,8 @@
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		vmmc-supply = <&reg_module_3v3>; /* VCC */
-+		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
- 	};
+@@ -1881,7 +1881,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
- 	/* CPU DFLL clock */
+@@ -1889,7 +1888,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1897,7 +1895,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 955adebc9e90..ba6fc2e51b2d 100644
+index 208411692bdc..955adebc9e90 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1946,6 +1946,8 @@
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		vmmc-supply = <&reg_module_3v3>; /* VCC */
-+		vqmmc-supply = <&reg_1v8_vddio>; /* VCCQ */
- 	};
+@@ -1910,7 +1910,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
+ 			};
  
- 	/* CPU DFLL clock */
+@@ -1918,7 +1917,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
+@@ -1926,7 +1924,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
 -- 
 2.14.4
 
