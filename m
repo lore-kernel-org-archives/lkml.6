@@ -2,387 +2,160 @@ Return-Path: <SRS0=kg8+=LP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B16C43334
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7EEC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 14:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0482083F
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:38:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6OcrPDh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0482083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 021E82083C
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 14:04:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021E82083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeIARul (ORCPT
+        id S1727255AbeIASQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:50:41 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34337 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeIARul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:50:41 -0400
-Received: by mail-qt0-f193.google.com with SMTP id m13-v6so17612775qth.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 06:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JbNd6nTZGVQ/G/HoADVOhGQvkDreoZDDpJpiAkaciWU=;
-        b=A6OcrPDhDbZYM7VVSLmVE27/qAYJuc2RquDieXWOjurFfIZGia1RidlGiApEo8igk8
-         rHqbR2SYEG+lVdNQnuF62k6ARCFZvu8vgneTVe56iN60cENPFfeDiu6EtyMFXog20XEx
-         c/Bp6LjIm0gVRxSpR6AFdxbP4POVTf81t8BdVmhnaduhuEoz6Ggg3MfxJRm8/7IC8fGd
-         pqXCmVbUTAPgKaJ7t1tdy4OvVJ8heXTH7+gfZmEIoDW5NoSoEyx1EHBLywV3eneyUzty
-         dy6MHft0xp1l/45j2xxGO4J8OIDRSny0LAe0ytHCIcMch3/YO9rRJjeD9/V0tfbC4gJf
-         aEFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JbNd6nTZGVQ/G/HoADVOhGQvkDreoZDDpJpiAkaciWU=;
-        b=mOPpzPTRVat1bSHcXp2fOlSYo7rkwyNgWTl3YWV7Q4+mSVVHhyGGDq5PO6aJVtuiZp
-         3t43F1rYjrK0pj/x0ZcqfO2JMg0Jxt1M/I+h1Jd6hnDYeJNHqiAgZyVOuCoOaeiY/1vd
-         36VbzNMnkKQNFObJqvAGMLpfr+zP93yzAXM8oAgesNm9fHf/by4myoeKZxjBeC7rDj5i
-         QblMBLYFxUwwV8ti4mMDfM5i9op4lGk/1f1TFqGDGtFJORKUhl2+D0oY9d7nprQum5jS
-         hjGCGzN8NzFtKBYfdk/q5YIR+iIP6JxGdmn+TT6mAn/CCIzX0r7EcU17zV9xy26qRKjD
-         PBLw==
-X-Gm-Message-State: APzg51Bo8kvFdcuC2I6I7ls9tzYmUajs0TPCjKzkSEeI022Od2gTwKAS
-        f7HEqKDBIFwiZDZZKm45vrJfodbpZXsf56T2gT4=
-X-Google-Smtp-Source: ANB0Vda5JU4yTNHolbb+6TZXwRbFQGC+jxMXGvvECJ/ZSuygWcwMfTPEpiiCF1wlmdzYA5ZTuE+W9CgghJKL3FZYaBo=
-X-Received: by 2002:ac8:304a:: with SMTP id g10-v6mr20287649qte.136.1535809114135;
- Sat, 01 Sep 2018 06:38:34 -0700 (PDT)
+        Sat, 1 Sep 2018 14:16:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726926AbeIASQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 14:16:19 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0F9C085748;
+        Sat,  1 Sep 2018 14:04:08 +0000 (UTC)
+Received: from [10.36.116.60] (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1B0884457;
+        Sat,  1 Sep 2018 14:03:58 +0000 (UTC)
+Subject: Re: [PATCH RFCv2 0/6] mm: online/offline_pages called w.o.
+ mem_hotplug_lock
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-acpi@vger.kernel.org, xen-devel@lists.xenproject.org,
+        devel@linuxdriverproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Allen <jallen@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+References: <20180821104418.12710-1-david@redhat.com>
+ <20180831205457.GB3945@techadventures.net>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <d4b6608b-0b21-b925-4adc-d11e4706f69d@redhat.com>
+Date:   Sat, 1 Sep 2018 16:03:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:aed:2291:0:0:0:0:0 with HTTP; Sat, 1 Sep 2018 06:38:13 -0700 (PDT)
-In-Reply-To: <CAKwvOdmF7bPJvnf38HYvnzdo8vO4K5=qkFwdTqwNnKA6PUVwpQ@mail.gmail.com>
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
- <20180831170514.24665-7-miguel.ojeda.sandonis@gmail.com> <CAKwvOdmF7bPJvnf38HYvnzdo8vO4K5=qkFwdTqwNnKA6PUVwpQ@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 1 Sep 2018 15:38:13 +0200
-Message-ID: <CANiq72mfuJ2=v8U9vUs1vJVEjY2sp7f-WbTRZRHNvgh+VbAgnA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] Compiler Attributes: use feature checks instead of
- version checks
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180831205457.GB3945@techadventures.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 01 Sep 2018 14:04:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sat, 01 Sep 2018 14:04:08 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+On 31.08.2018 22:54, Oscar Salvador wrote:
+> On Tue, Aug 21, 2018 at 12:44:12PM +0200, David Hildenbrand wrote:
+>> This is the same approach as in the first RFC, but this time without
+>> exporting device_hotplug_lock (requested by Greg) and with some more
+>> details and documentation regarding locking. Tested only on x86 so far.
+> 
+> Hi David,
+> 
+> I would like to review this but I am on vacation, so I will not be able to get to it
+> soon.
+> I plan to do it once I am back.
 
-On Sat, Sep 1, 2018 at 1:07 AM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> Overall, pretty happy with this patch.  Still some thoughts for a v3,
->> -#define __visible      __attribute__((externally_visible))
->> diff --git a/include/linux/compiler_attributes.h b/include/linux/compile=
-r_attributes.h
->> new file mode 100644
->> index 000000000000..a9dfafc8fd19
->> --- /dev/null
->> +++ b/include/linux/compiler_attributes.h
->> @@ -0,0 +1,226 @@
->
-> New file needs an SPDX license identifier right?
+Sure, I won't be resending within next two weeks either way, as I am
+also on vacation.
 
-Yeah, but I wasn't sure of adding it, since the code I moved (even if
-rearranged) from _types.h does not have it either. Any legal expert
-here? Is _types.h it implicitly GPL 2? We should add the identifier to
-both if so.
+Have a nice vacation!
 
->
->> +#ifndef __LINUX_COMPILER_ATTRIBUTES_H
->> +#define __LINUX_COMPILER_ATTRIBUTES_H
->> +
->> +/*
->> + * This file is meant to be sorted (by actual attribute name,
->> + * not by #define identifier).
->> + *
->> + * Do not add here attributes which depend on others or require extra l=
-ogic.
->> + *
->> + * If an attribute is optional, state the reason in the comment.
->
-> A lot of newlines in this comment. Can be condensed?
->
+> 
+> Thanks
+> 
 
-I tried to write it as "bullet points", but as you guys prefer!
 
->> + */
->> +
->> +/*
->> + * To check for optional attributes, we use __has_attribute, which is s=
-upported
->> + * on gcc >=3D 5, clang >=3D 2.9 and icc >=3D 17. In the meantime, to s=
-upport
->> + * 4.6 <=3D gcc < 5, we implement __has_attribute by hand.
->> + */
->> +#ifndef __has_attribute
->> +#define __has_attribute(x) __GCC4_has_attribute_##x
->> +#define __GCC4_has_attribute_externally_visible 1
->> +#define __GCC4_has_attribute_noclone 1
->> +#define __GCC4_has_attribute_optimize 1
->> +#if __GNUC_MINOR__ >=3D 8
->> +#define __GCC4_has_attribute_no_sanitize_address 1
->> +#endif
->> +#if __GNUC_MINOR__ >=3D 9
->> +#define __GCC4_has_attribute_assume_aligned 1
->> +#endif
->> +#endif
->
-> I'm quite happy with this. Kudos.
+-- 
 
-Thanks! :-)
+Thanks,
 
->
->> +
->> +/*
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes=
-.html#index-alias-function-attribute
->> + */
->> +#define __alias(symbol)         __attribute__((alias(#symbol)))
->> +
->> +/*
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes=
-.html#index-aligned-function-attribute
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.htm=
-l#index-aligned-type-attribute
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes=
-.html#index-aligned-variable-attribute
->> + */
->> +#define __aligned(x)            __attribute__((aligned(x)))
->> +#define __aligned_largest       __attribute__((aligned))
->> +
->> +/*
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes=
-.html#index-always_005finline-function-attribute
->> + * clang: mentioned but no proper documentation
->
-> What?! Ok, I'll add to my TODO list, but I think we can leave out that
-> clang doesn't have docs (yet!).
->
-
-If you are going to do that -- please also check noinline (same thing
-happens: you can find it mentioned in an example, but it is not
-documented). Anyway, the clang docs state:
-
-"""
-Clang supports GCC=E2=80=99s gnu attribute namespace. All GCC attributes wh=
-ich
-are accepted with the __attribute__((foo)) syntax are also accepted
-as[[gnu::foo]]. This only extends to attributes which are specified by
-GCC (see the list of GCC function attributes, GCC variable attributes,
-and GCC type attributes). As with the GCC implementation, these
-attributes must appertain to the declarator-id in a declaration, which
-means they must go either at the start of the declaration or
-immediately after the name being declared.
-"""
-
-in https://clang.llvm.org/docs/LanguageExtensions.html, so I guess it
-is fair ;-) In any case, the GNU/C++/C2x/declspec/... compatibility
-tables provided in https://clang.llvm.org/docs/AttributeReference.html
-are great, and it would be *very* nice to complete that document to
-have a reference for all developers accross all platforms, not just
-kernel ones.
-
->> +
->> +/*
->> + * Note the long name.
->> + *
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes=
-.html#index-const-function-attribute
->> + */
->> +#define __attribute_const__     __attribute__((const))
->
-> So I manually wrote down the list of attributes removed from one file,
-> and added to another, to make sure they balance out and that none were
-> missed.  I'm quite confident that nothing was missed moving from one
-> file to another.  Except this.  You've renamed __const to
-> __attribute_const__.  But you renamed __attribute_const_ to __const in
-> patch 3/7 in this series.  Surely one of them is a mistake?
-
-D'oh! It seems I confused myself when rebasing stuff to split the
-patches. Good catch! 3/7 has the typo, which then triggers a second
-rename. The end result of the series is the good state (i.e. no change
-should happen to the identifiers).
-
->> +/*
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.htm=
-l#index-mode-type-attribute
->> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes=
-.html#index-mode-variable-attribute
->> + */
->> +#define __mode(x)               __attribute__((mode(x)))
->> +
->> +/*
->> + * Optional: not supported by clang
->> + * Note: icc does not recognize gcc's no-tracer
->
-> In that case, can you provide 3 definitions for __noclone? Something like=
-:
->
-> if has noclone
->   if has optimize
->     noclone =3D noclone optimize
->   else
->     noclone =3D noclone
-> else
->   noclone =3D
->
-
-So what happened here is that icc recognizes the attribute itself (not
-sure if it honors it or not), so there would be no compiler using the
-"noclone && !optimize" definition, which is why I left it at that.
-
-But I see the point in your idea in case there is a 4th compiler around...
-
->>  #ifdef CONFIG_ENABLE_MUST_CHECK
->>  #define __must_check           __attribute__((warn_unused_result))
->
-> Can this attribute be hoisted to your new header?  I guess there's a
-> few other __attributes__ still in this file even after this change.
-> Maybe not something that needs to be in this patch set, but what are
-> your thoughts on them?
-
-This is something I gave quite some thought... I am still not sure
-what is the right idea.
-
-The decision I took (for the moment, at least) was to leave
-compiler_attributes.h as "regular" and "simple" as possible, defining
-whatever attributes that are common enough (i.e. those that can be
-defined simply with __has_attribute at most) -- which is why I added
-the "Do not add here..." comment in the top of the file, and leaving
-the CONFIG- / PLUGIN-dependent definitions out of it.
-
-Because of that logic, I tried to simplify as much as possible all
-existing things (e.g. assume_aligned by removing __CHECKER__) so that
-they could be moved to compiler_attributes.h. In a way,
-compiler_attributes.h defines some extensions to the C language that
-all code could use anywhere (actually whether we can move them out of
-__KERNEL__ etc. is another question); and I tried as well to only move
-those attributes that have a direct mapping to a "standard" attribute
-(e.g. "noclone" was borderline :-).
-
-The other alternative is moving everything to compiler_attributes.h
-and keeping all logic there for all attributes and pseudo-attributes,
-but I thought we could risk ending up with a complex mess there as in
-_types.h; and end up with the pseudo-attributes which do not map to
-real attributes and that are disabled in many configurations. Again,
-the "C programming language extensions" idea could be a nice one (I
-actually wrote a Documentation/ file to guide newcomers on this which
-I didn't include in the series yet, see below [*]).
-
-I would like to hear opinions on this!
-
->>  /*
->>   * Force always-inline if the user requests it so via the .config.
->>   * GCC does not warn about unused static inline functions for
->> @@ -240,17 +184,13 @@ struct ftrace_likely_data {
->>   */
->>  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
->>         !defined(CONFIG_OPTIMIZE_INLINING)
->> -#define inline \
->> -       inline __attribute__((always_inline, unused)) notrace __gnu_inli=
-ne
->> +#define inline __always_inline __gnu_inline __maybe_unused notrace
->>  #else
->> -#define inline inline  __attribute__((unused)) notrace __gnu_inline
->> +#define inline          inline __gnu_inline __maybe_unused notrace
->
-> This seems to have different spacing after the first `inline` than the
-> line 2 lines above.
->
-
-Take a look at it in fixed-sized font (the idea is that
-__always_inline contains inline, so it replaces the inline below in
-that case to avoid warnings about duplicated specifiers). Does that
-explain it?
-
->>  #endif
->>
->>  #define __inline__ inline
->> -#define __inline inline
->> -#define noinline       __attribute__((noinline))
->> -
->> -#define __always_inline inline __attribute__((always_inline))
->> +#define __inline   inline
->>
->>  /*
->>   * Rather then using noinline to prevent stack consumption, use
->> --
->> 2.17.1
->>
->
-> Thank you again for this patch.
-
-You are welcome! I am glad these series is getting a warm welcome.
-
-Cheers,
-Miguel
-
-[*]
-
-Documentation/process/programming-language.rst:
-
-.. _programming_language:
-
-Programming Language
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-The kernel is written in the C programming language [c-language]_.
-More precisely, the kernel is typically compiled with ``gcc`` [gcc]_
-under ``-std=3Dgnu89`` [gcc-c-dialect-options]_: the GNU dialect of ISO C90
-(including some C99 features).
-
-This dialect contains many extensions to the language [gnu-extensions]_,
-and many of them are used within the kernel as a matter of course.
-
-There is some support for compiling the kernel with ``clang`` [clang]_
-and ``icc`` [icc]_, although at the time of writing it is not completed,
-requiring third-party patches.
-
-Attributes
-----------
-
-One of the common extensions used throughout the kernel are attributes
-[gcc-attribute-syntax]_. Attributes allow to introduce
-implementation-defined semantics to language entities (like variables,
-functions or types) without having to make significant syntactic changes
-to the language (e.g. adding a new keyword) [n2049]_.
-
-In many cases, attributes are optional (i.e. a compiler not supporting them
-should still produce proper code, even if it is slower or does not perform
-as many compile-time checks/diagnostics).
-
-The kernel defines pseudo-keywords (e.g. ``__pure``) instead of using
-directly the GNU attribute syntax (e.g. ``__attribute__((pure))``).
-
-Please refer to ``include/linux/compiler_attributes.h`` to see a reference
-of all the common supported attributes.
-
-.. [c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
-.. [gcc] https://gcc.gnu.org
-.. [clang] https://clang.llvm.org
-.. [icc] https://software.intel.com/en-us/c-compilers
-.. [gcc-c-dialect-options]
-https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
-.. [gnu-extensions]: https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
-.. [gcc-attribute-syntax]
-https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
-.. [n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
+David / dhildenb
