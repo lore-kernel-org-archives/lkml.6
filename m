@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A47CC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0E6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39D2920843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39D2920843
+	by mail.kernel.org (Postfix) with ESMTP id 3ED4220845
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED4220845
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeIARRt (ORCPT
+        id S1727946AbeIARRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:17:49 -0400
-Received: from mout.perfora.net ([74.208.4.194]:46593 "EHLO mout.perfora.net"
+        Sat, 1 Sep 2018 13:17:51 -0400
+Received: from mout.perfora.net ([74.208.4.194]:41801 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbeIARRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:17:49 -0400
+        id S1727389AbeIARRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 13:17:50 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MYMgJ-1gRHes3ej3-00V9ep; Sat, 01 Sep 2018 15:05:40 +0200
+ 0M7rcM-1fiq2R21zM-00vRvy; Sat, 01 Sep 2018 15:05:43 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 13/19] ARM: tegra: apalis-tk1: reorder SD card properties
-Date:   Sat,  1 Sep 2018 15:04:58 +0200
-Message-Id: <20180901130504.14318-14-marcel@ziswiler.com>
+Subject: [PATCH v2 15/19] ARM: tegra: apalis-tk1: drop obsolete spidev nodes
+Date:   Sat,  1 Sep 2018 15:05:00 +0200
+Message-Id: <20180901130504.14318-16-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:h0kvUykim3i3r9D8AfeGlIklFg9qTvP9jPGQjWEtX//gxQNnqH7
- OWH2ejiJKEjCg/GEKHYMCYSXLcKqPlhKia5WED0UnbpXowTvub3bRjgN6Q8uxhbKSFIEPiP
- 5EmuZdm2nJArMqO62KzEhUNksZ/tXIpJDGgrWD6TLFLAkRP2KOrN13X8S1hEYpksJx9OmsR
- XCSd9MdDUyms9NBGZJIWg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6YeXCvv0huk=:TYUMwm2J79MR5CJoMuQBDt
- 17cJTbFSAOiO/WfPhGwtDYkYrIJqL3/ocHadxTE0lddbPAO4NWqdDtb4MX85YDEmalXWykg26
- 3TSQ0/awqOmszxF3I172L/PtgFVS8BXdBlZEo0T0NDi6jFCyv+Ea3j4/OlUh+yfKCENyZG8Ap
- VogRbH2+S6eiBJFa0/AWVxZs6rmqsZ7C5OBGflynbHsX+czrkZfXQ8jakWiO+368bHEK0ZtjN
- +oE4X74+lwcUgT6/13jq/ms+B56TPADkQjuMOL0MfqhE96pqAPUD5jy7qNhH8BgBdJJoRVkyf
- zRu8q+w+TZ87A/ibTK5mqm67dphTjdc7Ayoiomp+xbyMCkPtiPx980GixEHVWJlfLNOT1u1nr
- 5ltY06Nfo7uUzu1Djd8fnB+ilQ8t6o1zzKLUtRA6E9OB6QGPMG0xwSwmdOQAB/bT4RpI7epIt
- S7ZSzdM8WVOaChhsq/K77w+yhcP9iAB5hGxS4qab1KjoH42AATnV3+FtI9VB/hw3FNyGxXH+n
- MQfrjDQMXA4230ZRau3wLaE3RJat2adf4tna+pFUNyM/o9OAMg8Pdrcr2EV63ND8LV1SpNi2P
- GHH9o1Ns32jpIVQFhKofTci0kTCdc5YOXn9LYVD92LrhVqyHnpHTSum8s9AADrypieo2kpbpw
- As82s+JLiLB2WfkdTn4GkjDun5mVgYB3mIBBE1Jj3xyWdYh54tL3og47AN0XsaWxqGY4=
+X-Provags-ID: V03:K1:KOBDsPwlc/fFjht9++CFl13jhTVKO8/2u5fSVC6KAcXoitfWjUT
+ 8ZTKsxyeZjKsNTxMDcHl2ZJCpMzU+UWCmtYj9m6hdkIE9OM/cpdfB3qDu5C/Kj6H0F5Nllv
+ FD4BVhhiDrakbVfzR5QqHJQFTFeHfuWOHxKoC+vZ6pFZJUf8IRT11BWW0yqtALML9JPC2iT
+ TSfPFjVB8Qu96fzk7i2aw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2qBiZIP9okE=:PXfv/bNqNLcArnEQbXYirP
+ YR3HFy3Z1sEvVjXnpHE+aTk0VMBsIWcYsz5LSvcIPbi/iiP305+rzFfmP/tMx7sw+D7jEJZwy
+ +ExS4ndEpQus7S/sk1UBKUmKNs263r5KnNqDbbCYqtc26C7GzNx3Cha9MEve0hlPi3lBRA4lr
+ ccDeCREgtoIez9lpvgmGR2Drt7eE/ddXtYVeZ+aJPvs61EK9JCc+KE0nnVI2q1sGxgqkCnJih
+ 9e3S+edeulRflyP76qO9HDKyfRxF3p23JBBHGGlZbg88nCM4f2Pu1tF3S8GlJ8TVIYMdEgzNu
+ yDzkWelw3M1ARcYlh0Q46je08/QrBx+h5wewGJQO2VlgCF8VcbyPb7ySshg8/OPBH7u8/QJnH
+ mlhvGtzDgEpzhW8Y0tVltA4CSM1ZSF5vNN32DaQ2sWoGpzQOz8GeAKbLHXr/RKotaD08LMZ/9
+ iX4he6XtLiE/bMkeNTseFg9QzTkyY5XoaZINMhM2NDTkV84y32YUf3oibjAhDzEYl/TQJsXrO
+ PKQFFaNjVU4UviNBJzjmd9XmZ1w0rVayN8oglxofY9I2dh0xrS/mVKn7voSbaVimJRv2Eoha/
+ cdJK30BM6/iq6hmok9nsvYx5pWnGSQWoYuRO7tUykYevxPiIZhwssKlV7V0qO/p9PxourRlOG
+ y523S3YtHEn3AVE/g0i2FKWNApW6Q1nmZPQRKBwTfIWE/OwHXceSWaEbh19adzf0fmwE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,68 +61,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder SD card properties.
+Drop obsolete spidev device tree nodes as nowadays one should do this
+by binding the spidev driver to specific instances/chip selects at
+runtime.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- New patch.
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts      | 4 ++--
- arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts      | 12 ------------
+ arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts | 12 ------------
+ 2 files changed, 24 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index d9805fc97f5e..08f60636441d 100644
+index 08f60636441d..2710eb79b63e 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
 +++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -180,18 +180,18 @@
- 	/* Apalis MMC1 */
- 	sdhci@700b0000 {
+@@ -142,24 +142,12 @@
+ 	spi@7000d400 {
  		status = "okay";
-+		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc1>;
+ 		spi-max-frequency = <50000000>;
+-
+-		spidev0: spidev@0 {
+-			compatible = "spidev";
+-			reg = <0>;
+-			spi-max-frequency = <50000000>;
+-		};
  	};
  
- 	/* Apalis SD1 */
- 	sdhci@700b0400 {
+ 	/* SPI4: Apalis SPI2 */
+ 	spi@7000da00 {
  		status = "okay";
-+		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc3>;
+ 		spi-max-frequency = <50000000>;
+-
+-		spidev1: spidev@0 {
+-			compatible = "spidev";
+-			reg = <0>;
+-			spi-max-frequency = <50000000>;
+-		};
  	};
  
+ 	/* Apalis Serial ATA */
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-index 89783fe76f65..97c56e82c51d 100644
+index 97c56e82c51d..574780250031 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
-@@ -146,18 +146,18 @@
- 	/* Apalis MMC1 */
- 	sdhci@700b0000 {
+@@ -108,24 +108,12 @@
+ 	spi@7000d400 {
  		status = "okay";
-+		bus-width = <4>;
- 		/* MMC1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc1>;
+ 		spi-max-frequency = <50000000>;
+-
+-		spidev0: spidev@0 {
+-			compatible = "spidev";
+-			reg = <0>;
+-			spi-max-frequency = <50000000>;
+-		};
  	};
  
- 	/* Apalis SD1 */
- 	sdhci@700b0400 {
+ 	/* SPI4: Apalis SPI2 */
+ 	spi@7000da00 {
  		status = "okay";
-+		bus-width = <4>;
- 		/* SD1_CD# */
- 		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
--		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc3>;
+ 		spi-max-frequency = <50000000>;
+-
+-		spidev1: spidev@0 {
+-			compatible = "spidev";
+-			reg = <0>;
+-			spi-max-frequency = <50000000>;
+-		};
  	};
  
+ 	/* Apalis Serial ATA */
 -- 
 2.14.4
 
