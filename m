@@ -6,408 +6,119 @@ X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_12_24,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3126BC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47767C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE0BB2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0BB2084A
+	by mail.kernel.org (Postfix) with ESMTP id 08A8720845
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:21:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A8720845
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbeIBGfR (ORCPT
+        id S1727064AbeIBGfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 02:35:17 -0400
+        Sun, 2 Sep 2018 02:35:09 -0400
 Received: from mga18.intel.com ([134.134.136.126]:13094 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727105AbeIBGfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 02:35:10 -0400
+        id S1725941AbeIBGfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 02:35:09 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Sep 2018 19:21:10 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Sep 2018 19:21:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,318,1531810800"; 
-   d="scan'208";a="80211552"
+   d="scan'208";a="80211544"
 Received: from dbxu-mobl.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.212.218])
   by orsmga003.jf.intel.com with ESMTP; 01 Sep 2018 19:20:58 -0700
 Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
         (envelope-from <fengguang.wu@intel.com>)
-        id 1fwI0X-0003Zm-76; Sun, 02 Sep 2018 10:20:57 +0800
-Message-Id: <20180901124811.644382292@intel.com>
+        id 1fwI0X-0003Za-5R; Sun, 02 Sep 2018 10:20:57 +0800
+Message-Id: <20180901124811.469883138@intel.com>
 User-Agent: quilt/0.63-1
-Date:   Sat, 01 Sep 2018 19:28:22 +0800
+Date:   Sat, 01 Sep 2018 19:28:19 +0800
 From:   Fengguang Wu <fengguang.wu@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@intel.com>,
         Fengguang Wu <fengguang.wu@intel.com>
 cc:     Peng DongX <dongx.peng@intel.com>
 cc:     Liu Jingqi <jingqi.liu@intel.com>
 cc:     Dong Eddie <eddie.dong@intel.com>
+CC:     Dave Hansen <dave.hansen@intel.com>
 cc:     Huang Ying <ying.huang@intel.com>
 CC:     Brendan Gregg <bgregg@netflix.com>
 cc:     kvm@vger.kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC][PATCH 4/5] [PATCH 4/5] kvm-ept-idle: EPT page table walk for A bits
+Subject: [RFC][PATCH 1/5] [PATCH 1/5] kvm: register in task_struct
 References: <20180901112818.126790961@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0004-kvm-ept-idle-EPT-page-table-walk-for-A-bits.patch
+Content-Disposition: inline; filename=0001-kvm-register-in-task_struct.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This borrows host page table walk macros/functions to do EPT walk.
-So it depends on them using the same level.
+The added pointer will be used by the /proc/PID/idle_bitmap code to
+quickly identify QEMU task and walk EPT/NPT accordingly. For virtual
+machines, the A bits will be set in guest page tables and EPT/NPT,
+rather than the QEMU task page table.
 
-Dave Hansen raised the concern that hottest pages may be cached in TLB and
-don't frequently set the accessed bits. The solution would be to invalidate TLB
-for the mm being walked, when finished one round of scan.
+This costs 8 bytes in task_struct which could be wasteful for the
+majority normal tasks. The alternative is to add a flag only, and
+let it find the corresponding VM in kvm vm_list.
 
-Warning: read() also clears the accessed bit btw, in order to avoid one more
-page table walk for write(). That may not be desirable for some use cases, so
-we can avoid clearing accessed bit when opened in readonly mode.
-
-The interface should be further improved to
-
-1) report holes and huge pages in one go
-2) represent huge pages and sparse page tables efficiently
-
-(1) can be trivially fixed by extending the bitmap to more bits per PAGE_SIZE.
-
-(2) would need fundemental changes to the interface. It seems existing solutions
-for sparse files like SEEK_HOLE/SEEK_DATA and FIEMAP ioctl may not serve this
-situation well. The most efficient way could be to fill user space read()
-buffer with an array of small extents:
-
-	struct idle_extent {
-		unsigned type :  4; 
-		unsigned nr   :  4; 
-	};
-
-where type can be one of
-
-	4K_HOLE
-	4K_IDLE
-	4K_ACCESSED
-	2M_HOLE
-	2M_IDLE
-	2M_ACCESSED
-	1G_OR_LARGER_PAGE
-	...
-
-There can be up to 16 types, so more page sizes can be defined. The above names
-are just for easy understanding the typical case. It's also possible that
-PAGE_SIZE is not 4K, or PMD represents 4M pages. In which case we change type
-names to more suitable ones like PTE_HOLE, PMD_ACCESSED. Since it's page table
-walking, the user space should better know the exact page sizes. Either the
-accessed bit or page migration are tied to the real page size.
-
-Anyone interested in adding PTE_DIRTY or more types?
-
-The main problem with such extent reporting interface is, the number of bytes
-returned by read (variable extents) will mismatch the advanced file position
-(fixed VA indexes), which is not POSIX compliant. Simple cp/cat may still work,
-as they don't lseek based on read return value. If that's really a concern, we
-may use ioctl() instead..
-
-CC: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- arch/x86/kvm/ept_idle.c | 211 ++++++++++++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/ept_idle.h |  55 +++++++++++++
- 2 files changed, 266 insertions(+)
+ include/linux/sched.h | 10 ++++++++++
+ virt/kvm/kvm_main.c   |  1 +
+ 2 files changed, 11 insertions(+)
 
-diff --git a/arch/x86/kvm/ept_idle.c b/arch/x86/kvm/ept_idle.c
-index 5b97dd01011b..8a233ab8656d 100644
---- a/arch/x86/kvm/ept_idle.c
-+++ b/arch/x86/kvm/ept_idle.c
-@@ -9,6 +9,217 @@
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 43731fe51c97..26c8549bbc28 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -38,6 +38,7 @@ struct cfs_rq;
+ struct fs_struct;
+ struct futex_pi_state;
+ struct io_context;
++struct kvm;
+ struct mempolicy;
+ struct nameidata;
+ struct nsproxy;
+@@ -1179,6 +1180,9 @@ struct task_struct {
+ 	/* Used by LSM modules for access restriction: */
+ 	void				*security;
+ #endif
++#if IS_ENABLED(CONFIG_KVM)
++        struct kvm                      *kvm;
++#endif
  
- #include "ept_idle.h"
+ 	/*
+ 	 * New fields for task_struct should be added above here, so that
+@@ -1898,4 +1902,10 @@ static inline void rseq_syscall(struct pt_regs *regs)
  
-+static int add_to_idle_bitmap(struct ept_idle_ctrl *eic,
-+			      int idle, unsigned long addr_range)
-+{
-+	int nbits = addr_range >> PAGE_SHIFT;
-+	int bits_left = EPT_IDLE_KBUF_BITS - eic->bits_read;
-+	int ret = 0;
-+
-+	if (nbits >= bits_left) {
-+		ret = EPT_IDLE_KBUF_FULL;
-+		nbits = bits_left;
-+	}
-+
-+	// TODO: this assumes u64 == unsigned long
-+	if (!idle)
-+		__bitmap_clear((unsigned long *)eic->kbuf, eic->bits_read, nbits);
-+	eic->bits_read += nbits;
-+
-+	return ret;
-+}
-+
-+static int ept_pte_range(struct ept_idle_ctrl *eic,
-+			 pmd_t *pmd, unsigned long addr, unsigned long end)
-+{
-+	pte_t *pte;
-+	int err = 0;
-+	int idle;
-+
-+	pte = pte_offset_kernel(pmd, addr);
-+	do {
-+		if (!ept_pte_present(*pte) ||
-+		    !ept_pte_accessed(*pte))
-+			idle = 1;
-+		else {
-+			idle = 0;
-+			pte_clear_flags(*pte, _PAGE_EPT_ACCESSED);
-+		}
-+
-+		err = add_to_idle_bitmap(eic, idle, PAGE_SIZE);
-+		if (err)
-+			break;
-+	} while (pte++, addr += PAGE_SIZE, addr != end);
-+
-+	return err;
-+}
-+
-+static int ept_pmd_range(struct ept_idle_ctrl *eic,
-+			 pud_t *pud, unsigned long addr, unsigned long end)
-+{
-+	pmd_t *pmd;
-+	unsigned long next;
-+	int err = 0;
-+	int idle;
-+
-+	pmd = pmd_offset(pud, addr);
-+	do {
-+		next = pmd_addr_end(addr, end);
-+		idle = -1;
-+		if (!ept_pmd_present(*pmd) ||
-+		    !ept_pmd_accessed(*pmd)) {
-+			idle = 1;
-+		} else if (pmd_large(*pmd)) {
-+			idle = 0;
-+			pmd_clear_flags(*pmd, _PAGE_EPT_ACCESSED);
-+		}
-+		if (idle >= 0)
-+			err = add_to_idle_bitmap(eic, idle, next - addr);
-+		else
-+			err = ept_pte_range(eic, pmd, addr, next);
-+		if (err)
-+			break;
-+	} while (pmd++, addr = next, addr != end);
-+
-+	return err;
-+}
-+
-+static int ept_pud_range(struct ept_idle_ctrl *eic,
-+			 p4d_t *p4d, unsigned long addr, unsigned long end)
-+{
-+	pud_t *pud;
-+	unsigned long next;
-+	int err = 0;
-+	int idle;
-+
-+	pud = pud_offset(p4d, addr);
-+	do {
-+		next = pud_addr_end(addr, end);
-+		idle = -1;
-+		if (!ept_pud_present(*pud) ||
-+		    !ept_pud_accessed(*pud)) {
-+			idle = 1;
-+		} else if (pud_large(*pud)) {
-+			idle = 0;
-+			pud_clear_flags(*pud, _PAGE_EPT_ACCESSED);
-+		}
-+		if (idle >= 0)
-+			err = add_to_idle_bitmap(eic, idle, next - addr);
-+		else
-+			err = ept_pmd_range(eic, pud, addr, next);
-+		if (err)
-+			break;
-+	} while (pud++, addr = next, addr != end);
-+
-+	return err;
-+}
-+
-+static int ept_p4d_range(struct ept_idle_ctrl *eic,
-+			 pgd_t *pgd, unsigned long addr, unsigned long end)
-+{
-+	p4d_t *p4d;
-+	unsigned long next;
-+	int err = 0;
-+
-+	p4d = p4d_offset(pgd, addr);
-+	do {
-+		next = p4d_addr_end(addr, end);
-+		if (!ept_p4d_present(*p4d))
-+			err = add_to_idle_bitmap(eic, 1, next - addr);
-+		else
-+			err = ept_pud_range(eic, p4d, addr, next);
-+		if (err)
-+			break;
-+	} while (p4d++, addr = next, addr != end);
-+
-+	return err;
-+}
-+
-+static int ept_page_range(struct ept_idle_ctrl *eic,
-+			  pgd_t *ept_root, unsigned long addr, unsigned long end)
-+{
-+	pgd_t *pgd;
-+	unsigned long next;
-+	int err = 0;
-+
-+	BUG_ON(addr >= end);
-+	pgd = pgd_offset_pgd(ept_root, addr);
-+	do {
-+		next = pgd_addr_end(addr, end);
-+		if (!ept_pgd_present(*pgd))
-+			err = add_to_idle_bitmap(eic, 1, next - addr);
-+		else
-+			err = ept_p4d_range(eic, pgd, addr, next);
-+		if (err)
-+			break;
-+	} while (pgd++, addr = next, addr != end);
-+
-+	return err;
-+}
-+
-+static void init_ept_idle_ctrl_buffer(struct ept_idle_ctrl *eic)
-+{
-+	eic->bits_read = 0;
-+	memset(eic->kbuf, 0xff, EPT_IDLE_KBUF_BYTES);
-+}
-+
-+static int ept_idle_walk_gfn_range(struct ept_idle_ctrl *eic,
-+				   unsigned long gfn_start,
-+				   unsigned long gfn_end)
-+{
-+	struct kvm_vcpu *vcpu = kvm_get_vcpu(eic->kvm, 0);
-+	struct kvm_mmu *mmu = &vcpu->arch.mmu;
-+	pgd_t *ept_root;
-+	unsigned long gpa_start = gfn_to_gpa(gfn_start);
-+	unsigned long gpa_end = gfn_to_gpa(gfn_end);
-+	unsigned long gpa_addr;
-+	int bytes_read;
-+	int ret = -EINVAL;
-+
-+	init_ept_idle_ctrl_buffer(eic);
-+
-+	spin_lock(&eic->kvm->mmu_lock);
-+	if (mmu->base_role.ad_disabled) {
-+		printk(KERN_NOTICE "CPU does not support EPT A/D bits tracking\n");
-+		goto out_unlock;
-+	}
-+
-+	if (mmu->shadow_root_level != 4 + (!!pgtable_l5_enabled())) {
-+		printk(KERN_NOTICE "Unsupported EPT level %d\n", mmu->shadow_root_level);
-+		goto out_unlock;
-+	}
-+
-+	if (!VALID_PAGE(mmu->root_hpa)) {
-+		goto out_unlock;
-+	}
-+
-+	ept_root = __va(mmu->root_hpa);
-+
-+	for (gpa_addr = gpa_start;
-+	     gpa_addr < gpa_end;
-+	     gpa_addr += EPT_IDLE_KBUF_BITS << PAGE_SHIFT) {
-+		ept_page_range(eic, ept_root, gpa_addr, gpa_end);
-+		spin_unlock(&eic->kvm->mmu_lock);
-+
-+		bytes_read = eic->bits_read / 8;
-+
-+		ret = copy_to_user(eic->buf, eic->kbuf, bytes_read);
-+		if (ret)
-+			return -EFAULT;
-+
-+		eic->buf += bytes_read;
-+		eic->bytes_copied += bytes_read;
-+		if (eic->bytes_copied >= eic->buf_size)
-+			return 0;
-+
-+		init_ept_idle_ctrl_buffer(eic);
-+		cond_resched();
-+		spin_lock(&eic->kvm->mmu_lock);
-+	}
-+out_unlock:
-+	spin_unlock(&eic->kvm->mmu_lock);
-+	return ret;
-+}
+ #endif
  
- // mindless copy from kvm_handle_hva_range().
- // TODO: handle order and hole.
-diff --git a/arch/x86/kvm/ept_idle.h b/arch/x86/kvm/ept_idle.h
-index e0b9dcecf50b..b715ec7b7513 100644
---- a/arch/x86/kvm/ept_idle.h
-+++ b/arch/x86/kvm/ept_idle.h
-@@ -1,6 +1,61 @@
- #ifndef _EPT_IDLE_H
- #define _EPT_IDLE_H
- 
-+#define _PAGE_BIT_EPT_ACCESSED 8
-+#define _PAGE_EPT_ACCESSED	(_AT(pteval_t, 1) << _PAGE_BIT_EPT_ACCESSED)
++#if IS_ENABLED(CONFIG_KVM)
++static inline struct kvm *task_kvm(struct task_struct *t) { return t->kvm; }
++#else
++static inline struct kvm *task_kvm(struct task_struct *t) { return NULL; }
++#endif
 +
-+#define _PAGE_EPT_PRESENT	(_AT(pteval_t, 7))
-+
-+static inline int ept_pte_present(pte_t a)
-+{
-+	return pte_flags(a) & _PAGE_EPT_PRESENT;
-+}
-+
-+static inline int ept_pmd_present(pmd_t a)
-+{
-+	return pmd_flags(a) & _PAGE_EPT_PRESENT;
-+}
-+
-+static inline int ept_pud_present(pud_t a)
-+{
-+	return pud_flags(a) & _PAGE_EPT_PRESENT;
-+}
-+
-+static inline int ept_p4d_present(p4d_t a)
-+{
-+	return p4d_flags(a) & _PAGE_EPT_PRESENT;
-+}
-+
-+static inline int ept_pgd_present(pgd_t a)
-+{
-+	return pgd_flags(a) & _PAGE_EPT_PRESENT;
-+}
-+
-+static inline int ept_pte_accessed(pte_t a)
-+{
-+	return pte_flags(a) & _PAGE_EPT_ACCESSED;
-+}
-+
-+static inline int ept_pmd_accessed(pmd_t a)
-+{
-+	return pmd_flags(a) & _PAGE_EPT_ACCESSED;
-+}
-+
-+static inline int ept_pud_accessed(pud_t a)
-+{
-+	return pud_flags(a) & _PAGE_EPT_ACCESSED;
-+}
-+
-+static inline int ept_p4d_accessed(p4d_t a)
-+{
-+	return p4d_flags(a) & _PAGE_EPT_ACCESSED;
-+}
-+
-+static inline int ept_pgd_accessed(pgd_t a)
-+{
-+	return pgd_flags(a) & _PAGE_EPT_ACCESSED;
-+}
-+
- #define IDLE_BITMAP_CHUNK_SIZE	sizeof(u64)
- #define IDLE_BITMAP_CHUNK_BITS	(IDLE_BITMAP_CHUNK_SIZE * BITS_PER_BYTE)
- 
+ #endif
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 8b47507faab5..0c483720de8d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3892,6 +3892,7 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
+ 	if (type == KVM_EVENT_CREATE_VM) {
+ 		add_uevent_var(env, "EVENT=create");
+ 		kvm->userspace_pid = task_pid_nr(current);
++		current->kvm = kvm;
+ 	} else if (type == KVM_EVENT_DESTROY_VM) {
+ 		add_uevent_var(env, "EVENT=destroy");
+ 	}
 -- 
 2.15.0
 
