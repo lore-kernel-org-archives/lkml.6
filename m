@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6ADC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30AAC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973C420843
-	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973C420843
+	by mail.kernel.org (Postfix) with ESMTP id B3B8C2084A
+	for <linux-kernel@archiver.kernel.org>; Sat,  1 Sep 2018 13:05:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B8C2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeIARRa (ORCPT
+        id S1727625AbeIARRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 1 Sep 2018 13:17:30 -0400
-Received: from mout.perfora.net ([74.208.4.194]:44751 "EHLO mout.perfora.net"
+        Sat, 1 Sep 2018 13:17:32 -0400
+Received: from mout.perfora.net ([74.208.4.194]:52885 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeIARR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Sep 2018 13:17:27 -0400
+        id S1727159AbeIARRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Sep 2018 13:17:30 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0M8jj0-1g3oIN2Jau-00C7Eo; Sat, 01 Sep 2018 15:05:20 +0200
+ 0LyTxo-1fsDQd1d1a-015rWC; Sat, 01 Sep 2018 15:05:21 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 02/19] ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
-Date:   Sat,  1 Sep 2018 15:04:47 +0200
-Message-Id: <20180901130504.14318-3-marcel@ziswiler.com>
+Subject: [PATCH v2 03/19] ARM: tegra: apalis-tk1: reorder padctl properties
+Date:   Sat,  1 Sep 2018 15:04:48 +0200
+Message-Id: <20180901130504.14318-4-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
 References: <20180901130504.14318-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:LlRmvptvAvvwz3TW0MoIkGufGMLwcvy3wlhezebcsLOsu/XYoyk
- 1yiIJKvaJgIF6c/dkYMikpwRkrcFgCtUfoczcIq+WxbYD3mUOhFj4HOYc9xoC41hCHprT8S
- dS32qaSjoxZTdKiFtERAQL6N7YMIeuEyZH0Pxf4Fk/LcrNZYdOXlmwQq3lhW+MW6U3smRFP
- XiOrF4kQds903kE+/B+xA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OwGeXWW/8oM=:Kc8kN4bzTbZFLycHaZf7Qi
- ue0ABXaoghOCua01dSBUPq0qV9H4ybjROwpiHKs/CyWMe+mg2igBxc9a9YZEV1SOIA4FWDhMv
- e3V2fNU6n+6CgzkaXdPlTrY0DWUlcJyoBMwSB6x3Z8ygSune4Bn6GW+066/SeroZCdzSP1IND
- decMA795CLFaewvfPnvxWhmvhEvBGzfD0pdjBsu4hiTnza81qDOiMQGIgVOoRXvl6niC2J990
- YNUGjsL7srJS+ADNGiVwUdyj2LGbYcoZeMzdHUsinBNJRkxILdUmQQ8K0Ja8iMe9XrgIvpPpi
- IuDPGc3NhsdIRt4Ak0obh+Eo3LOSXvOk39CBraEZvIsUPNrUJneImvC+xQzB3+QrrXTrbR4On
- D1/5UTx9Z8Xe3ohMmjqKSg1WRUZJeQsB+TqougckTkvEmujW5iPIytXWit14/Ky1vSoxXVCFU
- J3cDD0hep+MhmrN8oxeyZeTcJuoWitvSdwIH9MT2b2YYU/FTbgAOB5/ISgUWpAgt3ypZRwtxi
- lhWm/VRZq5yZzd7AUP6Mscr1O3OanCJFix7uCUPd8Gh/Wp9eFaK8hwmuAGwmpPDL2NUoGjGuZ
- WDNk2ls12sCkMJm8TFTyAUt6AB32CcDn/fxH6Pj8Od/LWpRILQw+XkBHfGKLWa0M4IiSuBaS+
- xxIncAMg54R8P6Eui7I2+cY3/8XnByOHXl/hygGC5JTwDRbZuKPgrLmesZMgK8iPU74Y=
+X-Provags-ID: V03:K1:pT5Amx1X/yj31hUYkuSjkVRdNOj6JyCSOt0jITerkCqvVJ6RyxW
+ 0yhPqpZvHxkuHs27JXsthKCn3HZEPaJeSsvL33kHGPLycs+fm1fZUj3G3s8haBTQ7oOHrjD
+ O88ThvJDVqgPSczR5tk2T8DIPmKxBZCjo2uoe9ERU2Rg0YrnAayhQtTUMRI4Auinv+8Vocc
+ 3MNavOZVdaLxBdtog7FoA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OoI7IZwGKRw=:a7UIy6RuA5lhB+aiiaGF45
+ wsbOyzhGxDDAFrXf3GR9/HnqEMZjRm3+wQa3N8EVgCqjQdm6hYkX/sBcTU+jRh8bUgiCaiwfj
+ G7YK8rw7Ag+nVkIrcCT4EIG7xnV4qubwD288ixF1vdKSZ2XinR0+Ui4+WHJr/OrAr6IorgYY9
+ tUQ5XBggVJuAFtQcjrCs15K+zV76q1Tb2lBDZEn2174e2XS5E8fk5QysQnsEbFteF7ROY2YCE
+ HgZ1zdulXxzDoQUL9gfEBmEBIQBXehKTgeEcpkp2WkFrg+TaL/Y3qIn47FldnFk1TqMBmm22+
+ 0Mz0wN5yxuSzfrfjM8GDEG8KFp4GtjYgxAGWmp/6yFjYdiAltVi8MM9qGpelUmEKi/UGMbM9w
+ BKqElobe8ACX/g0AoCHr6gyGXXr982WRFJUSHIlcrdRUVAoN3AAkX91bziVvRkB4WZSkdQzZ6
+ AtAn02F4RnuYhdXnw/ZW8bWX09iVixL/zVCzodg0J8uwN8bq+lz8N1q1RRn18sOdAvuymcZ+t
+ KLYL0+sq/CsrRvg5oRgmckVbLKGv5v5QP+O6f0oLX9GDWLz80/oOrpQ/lbp3g7s+AJ+9EkWwk
+ iCV7Htm3YYNug/IWZoeVL5guT2dUQXdzw/drQfeetKx7VPTk1PGmpwhAiO+PNdBPAiRCwx425
+ JYdFjVv85DV562+vRC+zJyR3wlwm0SZfaU2ywU6pIP7Co6ZbR949HNuqtfD1JtIXlxr8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reorder Host1x/HDMI properties.
+Reorder padctl properties.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -69,46 +69,182 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 4 ++--
- arch/arm/boot/dts/tegra124-apalis.dtsi      | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 22 +++++++++++-----------
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 22 +++++++++++-----------
+ 2 files changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-index 09e3641258ae..86768ba28d67 100644
+index 86768ba28d67..f6459588d845 100644
 --- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
-@@ -52,11 +52,11 @@
+@@ -1815,18 +1815,18 @@
  
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
--			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
-+			vdd-supply = <&reg_3v3_avdd_hdmi>;
+ 				lanes {
+ 					usb2-0 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-1 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-2 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 				};
+ 			};
+@@ -1836,28 +1836,28 @@
+ 
+ 				lanes {
+ 					pcie-0 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-1 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-2 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-3 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-4 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 				};
+ 			};
+@@ -1867,8 +1867,8 @@
+ 
+ 				lanes {
+ 					sata-0 {
+-						nvidia,function = "sata";
+ 						status = "okay";
++						nvidia,function = "sata";
+ 					};
+ 				};
+ 			};
+@@ -1900,13 +1900,13 @@
+ 			};
+ 
+ 			usb3-0 {
+-				nvidia,usb2-companion = <2>;
+ 				status = "okay";
++				nvidia,usb2-companion = <2>;
+ 			};
+ 
+ 			usb3-1 {
+-				nvidia,usb2-companion = <0>;
+ 				status = "okay";
++				nvidia,usb2-companion = <0>;
+ 			};
  		};
  	};
- 
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 5e7ae5e92fb8..2c291d210677 100644
+index 2c291d210677..8919213d8312 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -87,11 +87,11 @@
+@@ -1844,18 +1844,18 @@
  
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
--			vdd-supply = <&reg_3v3_avdd_hdmi>;
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
-+			vdd-supply = <&reg_3v3_avdd_hdmi>;
+ 				lanes {
+ 					usb2-0 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-1 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 
+ 					usb2-2 {
+-						nvidia,function = "xusb";
+ 						status = "okay";
++						nvidia,function = "xusb";
+ 					};
+ 				};
+ 			};
+@@ -1865,28 +1865,28 @@
+ 
+ 				lanes {
+ 					pcie-0 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-1 {
+-						nvidia,function = "usb3-ss";
+ 						status = "okay";
++						nvidia,function = "usb3-ss";
+ 					};
+ 
+ 					pcie-2 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-3 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 
+ 					pcie-4 {
+-						nvidia,function = "pcie";
+ 						status = "okay";
++						nvidia,function = "pcie";
+ 					};
+ 				};
+ 			};
+@@ -1896,8 +1896,8 @@
+ 
+ 				lanes {
+ 					sata-0 {
+-						nvidia,function = "sata";
+ 						status = "okay";
++						nvidia,function = "sata";
+ 					};
+ 				};
+ 			};
+@@ -1929,13 +1929,13 @@
+ 			};
+ 
+ 			usb3-0 {
+-				nvidia,usb2-companion = <2>;
+ 				status = "okay";
++				nvidia,usb2-companion = <2>;
+ 			};
+ 
+ 			usb3-1 {
+-				nvidia,usb2-companion = <0>;
+ 				status = "okay";
++				nvidia,usb2-companion = <0>;
+ 			};
  		};
  	};
- 
 -- 
 2.14.4
 
