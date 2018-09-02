@@ -6,52 +6,54 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF2FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09509C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C46D20855
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAB5620841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QkqXUoB3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C46D20855
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="A9/p7kQS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB5620841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeIBRTe (ORCPT
+        id S1727612AbeIBRTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:19:34 -0400
+        Sun, 2 Sep 2018 13:19:36 -0400
 Received: from mail-cys01nam02on0094.outbound.protection.outlook.com ([104.47.37.94]:40784
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726155AbeIBRTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:19:32 -0400
+        id S1727573AbeIBRTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:19:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Ytbx7twZWDv+rageEX1UaZBdi+/6dw3bLcrbgYjWxs=;
- b=QkqXUoB3uM1gkXugsqFUkRaR6Q0BgR5vCI7KWhqUq1+JiK5U6S1XbX7bo+9ONvGCpMPu9GShIzzg8KQ2AEpaxkVwTpKPbOi6xZ0QwGJumBYWuWyvX9ArshDi9Z91iDVtZPxBw44Pak+SNyz7L8vVAxUG+VUiPkNTv7T2c/fc830=
+ bh=i4jHx47NtKnncj6ZzjqnZNWwIcVcppMyU2J0QBHMmlc=;
+ b=A9/p7kQScdq9opmJUjEWmi1lx/MLbspUgDzEiG/qN4bcHWcBiT/ZaJasAJD8FE3ZOtItwjgdHNUDCkvwT1WGT8hy20E2f8d50aABLRxvd1eEyVvcLLsG2iDG4eDN9bnQ5vaWOm8bUFGGB2tdUw6PdlE+0WTqFMEyTkab3i3OoGg=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0150.namprd21.prod.outlook.com (10.173.189.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.4; Sun, 2 Sep 2018 13:03:27 +0000
+ 15.20.1122.4; Sun, 2 Sep 2018 13:03:30 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:03:27 +0000
+ 13:03:30 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     Gaurav Kohli <gkohli@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 023/131] media: usbtv: use irqsave() in USB's
- complete callback
-Thread-Topic: [PATCH AUTOSEL 4.18 023/131] media: usbtv: use irqsave() in
- USB's complete callback
-Thread-Index: AQHUQr1XMJiNwqt7F0W1mA0oF8IsIQ==
-Date:   Sun, 2 Sep 2018 13:03:27 +0000
-Message-ID: <20180902064601.183036-23-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 025/131] timers: Clear
+ timer_base::must_forward_clk with timer_base::lock held
+Thread-Topic: [PATCH AUTOSEL 4.18 025/131] timers: Clear
+ timer_base::must_forward_clk with timer_base::lock held
+Thread-Index: AQHUQr1YB2oGADKO80emED/U7OSKqA==
+Date:   Sun, 2 Sep 2018 13:03:30 +0000
+Message-ID: <20180902064601.183036-25-alexander.levin@microsoft.com>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +62,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:/eO9ufLs6g97WI9Z0flRepJg7faUIesgH14J/0tpeJClp8yQ/BQvvqlCDgG1cJi6jKzaj54SnsB1cei3hLpJwQ6deC6xvDB/zUywz8JIXpcPPyXZ+NT8MJzuSpuCoyaHyf+Pm1E6+k8Xs0NZKFSsicFy5tbc0Ji7+8yD9wLnZE2EJ+72qiOrwVuoo6TXw5dgdrBbHeyamsvWwj7/JA94isljldYq/IsvWzpNaC7N8Uhm21vbpCU9M9CKfUG/2sOSoUbXMVKMAujxQXjQbI2pto5p1cMAouAiU/ArceW0P/uPa631Y/AlaDKbCnlwXhphc2X16i3Ql5YfBCjflWzoHBm+QqJk9Ms6B5sZQUycogbm1EZavFX94XjZ9ywDT1GGPdVkqyauAbQcGL+AauriM7aEb3SIi/mZfcimomyKSGXHaRrK/FtszmxL1agMaCnZ0OPNf1ptcuIlprlJsth3Kw==;5:uaUU2aBL+w8WDYadBN0MX/fIKcgJ3BBVhPIqQ7SNzbtcd8kX+IiOY09nCaje09SiY5slKrKrWErVPVkHesvs71YES/9IegTW7pnTVu10RzLtdoejYeEPVUfySDR5d+mbkuG8ubtS8GBNuK4v4sNlPjJ7Whtq1RCrXlCCUuQJ+ew=;7:eFsSdZKlJAbEv81dPAcAVGY5g5j6qOT2k6unOI2wDWNgNgawEYlxvJzAcgYO8cK3N7wI3DyvmA50BguqCbnzMh0rSQbYwVpGUywbG2F5m+PpMdRkKGsVF96QtG4wNMEje8jQeeJ9C7WcsGanoLlPdVef/jqBuHymtEHukfKv/F4bhtkZcQRDEnfLAsaDFOUPjw3/5dOS5nJbUJGQdI+sFKsGXueAiBF6JrqJAXLT0RNQ09DFpg/nMB16skurhv8s
-x-ms-office365-filtering-correlation-id: ea0c15df-a882-4b91-01f4-08d610d479a0
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:K7OMZBuxzY8//HQqglyh8OQL5lNnyr8Kl6QIx5RIp71u9nxcoXlimuP6XVlgaQC+j4xoQ/8zCkSoSuHO6yHszw3Zvx7yqzJnPG5QYBf1BLpjKALc4YmTaWwQVAtMtOhr6qfIeVBKok8Ith42Rog01KKAKXWniIgJkAKFXMwppQeQJgWL3fTcpWe/o1zVsmYoXB3/4XdVhAdF70MS6d6usPfa9jWWo3bPImPOBz5oqmJgN9JEnIVZ9YS/8l1w78UzVAadi6b2BV5yZURy7ETevkWaMrUStiPpeItmf+i/MlRSfh/yPOli+D3UtbvBdGyKSvUA/OGikM1qlEMmFYMKzKw14GvT3ZidZtfsI9dVNdnOi7AzqxG+abquIhbcJcpalbg7/LLcxv7WHTx0M7lQYjOZG9lU9V3M2MPOxPL4W1dfZb/cgbMr/15Nja4FCyHgu5U6DzmEoPT+iVMvJG6cHg==;5:UOPYk1NHbRGQZWFKuQDdmmaGd2QVBzCxRcoClD/kWKJLVU3xS6hQqkLcqXJLCeMNm3YiSSBxm0PWa3CgaG4D5wihEyFFzThpw/RzKpP8DBY8b3dcmgkYyZix+kOo9FW4xkOs/q253Wr+I+xu8tFyTZW5spQ3iygXjMJYWiWK4uo=;7:/Z3rA8NYazmmcsUArnu4LvLA3B+O43LIYjVfhr0A/+6F5zgcSFBZjN4meHRw78eSg5A+iz8flK50+SKROT2n4WQrSmdGhina0wjrZZemmpyh3rU90V95pIFeED4NwGhYszKfnfw5SCGZx5iSSHBfKy+eKHRk8BZeNY+jpTh76hA2Pi5zaUSVjDccJojmcWogvyjff7pBNMIS6V+GBx3knWNk6krGiNBOb0WUoc40BkHTN0h32iSZWuqrv0IL6gRz
+x-ms-office365-filtering-correlation-id: 4c703536-d458-4c68-c81c-08d610d47b14
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0150;
 x-ms-traffictypediagnostic: CY4PR21MB0150:
-x-microsoft-antispam-prvs: <CY4PR21MB0150E635BAE3E22535D79846FB0D0@CY4PR21MB0150.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(95692535739014);
+x-microsoft-antispam-prvs: <CY4PR21MB0150474A38029D2A4BB546E7FB0D0@CY4PR21MB0150.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(42068640409301);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0150;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0150;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(376002)(346002)(136003)(199004)(189003)(256004)(22452003)(2906002)(217873002)(3846002)(68736007)(10090500001)(6506007)(6116002)(1076002)(6436002)(102836004)(486006)(53936002)(76176011)(106356001)(105586002)(14444005)(7736002)(305945005)(8676002)(316002)(5660300001)(6512007)(99286004)(36756003)(4326008)(97736004)(5250100002)(2616005)(476003)(2900100001)(11346002)(186003)(2501003)(81166006)(26005)(8936002)(81156014)(110136005)(54906003)(107886003)(66066001)(478600001)(86612001)(14454004)(6346003)(6486002)(10290500003)(86362001)(72206003)(25786009)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(376002)(346002)(136003)(199004)(189003)(256004)(22452003)(2906002)(217873002)(3846002)(68736007)(10090500001)(6506007)(6116002)(1076002)(6436002)(102836004)(486006)(53936002)(76176011)(106356001)(105586002)(14444005)(7736002)(305945005)(8676002)(316002)(5660300001)(6306002)(6512007)(99286004)(36756003)(4326008)(97736004)(5250100002)(2616005)(476003)(2900100001)(11346002)(186003)(2501003)(575784001)(81166006)(26005)(8936002)(81156014)(110136005)(54906003)(107886003)(66066001)(478600001)(86612001)(14454004)(6346003)(6486002)(10290500003)(86362001)(72206003)(966005)(25786009)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: i1T1F6TjpNu6Viy2pL7qPi4EvU//hJA8xaZSsTsdIfDyyQSGk6Ly82oDVsUPEU/CpuczMBrHKdq6tLGEFAqOXrwQoRYUvhof6brnQn8YfvJGls6CXx5/fdw9TKAfCyCFBxHSM9FUI/1mE+qpJJv2bLxdU6HJREr3aVI20tNfYdc4b86o7Npkoza/X+62Hem8Q7ttTGGV3PZ0cnqnfD83xPQD/gQkdttZ61wLt171AATmCcnDhYOgfDy93LL/FD0zyPt4M/VA6PQL46fxwTX2rv5DpCcVL1DzaS9JBDCpSb4R0v/m2acZOykzCCqGEzf9N49fXwSGFnLHn8oyTqwiUzsypXqzNPzfja4F2r337yg=
+x-microsoft-antispam-message-info: ny7mTKksamCT5aqNoafMRswRnZLrnY0/D1O36DCA9ypeY14/LweNN8FNy2S7q76EIVxDO+ADUPegH0I2X+dvM4iSHrI+rAk4g3MsPRKqs/+66tji/oyaI50SUh3eM9wegKv7xXvKXOisSjxF+6TUguyCWpxL/Wl726FJe6xAcgYs9v7wwaJkpq/oeLRZ75APKwZYd9aOCWuraTGCb40vlG7/K7YcmE7zpFxnm8K1V0Rjrvr4Su1DAf+xCmcWqUtlHC4LAbQrm2mw2qmnc2SSoz82XnR1hmUOgCs2IKR+C5uwcCCtCjl/SlrufL9B4Jm7s4rTsDzTLY7x3JDMrsTMolRttsF7dntHOW9gfuxGfzE=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea0c15df-a882-4b91-01f4-08d610d479a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:03:27.7683
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c703536-d458-4c68-c81c-08d610d47b14
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:03:30.1632
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,53 +95,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Gaurav Kohli <gkohli@codeaurora.org>
 
-[ Upstream commit 320905baa1dbddd3991c287432176d536e1d5b79 ]
+[ Upstream commit 363e934d8811d799c88faffc5bfca782fd728334 ]
 
-The USB completion callback does not disable interrupts while acquiring
-the lock. We want to remove the local_irq_disable() invocation from
-__usb_hcd_giveback_urb() and therefore it is required for the callback
-handler to disable the interrupts while acquiring the lock.
-The callback may be invoked either in IRQ or BH context depending on the
-USB host controller.
-Use the _irqsave() variant of the locking primitives.
+timer_base::must_forward_clock is indicating that the base clock might be
+stale due to a long idle sleep.
 
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The forwarding of the base clock takes place in the timer softirq or when a
+timer is enqueued to a base which is idle. If the enqueue of timer to an
+idle base happens from a remote CPU, then the following race can happen:
+
+  CPU0					CPU1
+  run_timer_softirq			mod_timer
+
+					base =3D lock_timer_base(timer);
+  base->must_forward_clk =3D false
+					if (base->must_forward_clk)
+				       	    forward(base); -> skipped
+
+					enqueue_timer(base, timer, idx);
+					-> idx is calculated high due to
+					   stale base
+					unlock_timer_base(timer);
+  base =3D lock_timer_base(timer);
+  forward(base);
+
+The root cause is that timer_base::must_forward_clk is cleared outside the
+timer_base::lock held region, so the remote queuing CPU observes it as
+cleared, but the base clock is still stale. This can cause large
+granularity values for timers, i.e. the accuracy of the expiry time
+suffers.
+
+Prevent this by clearing the flag with timer_base::lock held, so that the
+forwarding takes place before the cleared flag is observable by a remote
+CPU.
+
+Signed-off-by: Gaurav Kohli <gkohli@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: john.stultz@linaro.org
+Cc: sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Link: https://lkml.kernel.org/r/1533199863-22748-1-git-send-email-gkohli@co=
+deaurora.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/usb/usbtv/usbtv-audio.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/time/timer.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/media/usb/usbtv/usbtv-audio.c b/drivers/media/usb/usbt=
-v/usbtv-audio.c
-index 2c2ca77fa01f..4ce38246ed64 100644
---- a/drivers/media/usb/usbtv/usbtv-audio.c
-+++ b/drivers/media/usb/usbtv/usbtv-audio.c
-@@ -126,6 +126,7 @@ static void usbtv_audio_urb_received(struct urb *urb)
- 	struct snd_pcm_runtime *runtime =3D substream->runtime;
- 	size_t i, frame_bytes, chunk_length, buffer_pos, period_pos;
- 	int period_elapsed;
-+	unsigned long flags;
- 	void *urb_current;
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index cc2d23e6ff61..786f8c014e7e 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1657,6 +1657,22 @@ static inline void __run_timers(struct timer_base *b=
+ase)
 =20
- 	switch (urb->status) {
-@@ -179,12 +180,12 @@ static void usbtv_audio_urb_received(struct urb *urb)
- 		}
- 	}
+ 	raw_spin_lock_irq(&base->lock);
 =20
--	snd_pcm_stream_lock(substream);
-+	snd_pcm_stream_lock_irqsave(substream, flags);
++	/*
++	 * timer_base::must_forward_clk must be cleared before running
++	 * timers so that any timer functions that call mod_timer() will
++	 * not try to forward the base. Idle tracking / clock forwarding
++	 * logic is only used with BASE_STD timers.
++	 *
++	 * The must_forward_clk flag is cleared unconditionally also for
++	 * the deferrable base. The deferrable base is not affected by idle
++	 * tracking and never forwarded, so clearing the flag is a NOOP.
++	 *
++	 * The fact that the deferrable base is never forwarded can cause
++	 * large variations in granularity for deferrable timers, but they
++	 * can be deferred for long periods due to idle anyway.
++	 */
++	base->must_forward_clk =3D false;
++
+ 	while (time_after_eq(jiffies, base->clk)) {
 =20
- 	chip->snd_buffer_pos =3D buffer_pos;
- 	chip->snd_period_pos =3D period_pos;
+ 		levels =3D collect_expired_timers(base, heads);
+@@ -1676,19 +1692,6 @@ static __latent_entropy void run_timer_softirq(struc=
+t softirq_action *h)
+ {
+ 	struct timer_base *base =3D this_cpu_ptr(&timer_bases[BASE_STD]);
 =20
--	snd_pcm_stream_unlock(substream);
-+	snd_pcm_stream_unlock_irqrestore(substream, flags);
-=20
- 	if (period_elapsed)
- 		snd_pcm_period_elapsed(substream);
+-	/*
+-	 * must_forward_clk must be cleared before running timers so that any
+-	 * timer functions that call mod_timer will not try to forward the
+-	 * base. idle trcking / clock forwarding logic is only used with
+-	 * BASE_STD timers.
+-	 *
+-	 * The deferrable base does not do idle tracking at all, so we do
+-	 * not forward it. This can result in very large variations in
+-	 * granularity for deferrable timers, but they can be deferred for
+-	 * long periods due to idle.
+-	 */
+-	base->must_forward_clk =3D false;
+-
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
 --=20
 2.17.1
