@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D73FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FCDC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5DC204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC71620855
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="E7q2eEj0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5DC204FD
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Hs7ueTzc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC71620855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729645AbeIBRYb (ORCPT
+        id S1729653AbeIBRYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:24:31 -0400
-Received: from mail-dm3nam03on0131.outbound.protection.outlook.com ([104.47.41.131]:2512
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:24:34 -0400
+Received: from mail-bn3nam01on0104.outbound.protection.outlook.com ([104.47.33.104]:53408
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728146AbeIBRYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:24:31 -0400
+        id S1728146AbeIBRYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:24:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fHH/pi1sQZSaBy+eoNSjGCnWWz8y2YFIAJXZ1YGMSiE=;
- b=E7q2eEj0SdzhfT7N1OsTivuVVXuWRPmY6NYMlhsGh3IElDzEhum1KxM7LBQvqu0tO7C5m5HbaLqxzYQ5FbMCLAdHMhfQi+aucSERvhNfP/Oxokd/vq1wnC8FxJqAyfo4OidHhGabuUlo18Ppp1RfeK3oxwLHsNQ/h4fX6xZQ07U=
+ bh=OaQqtBveHKs11hQ7gIgRfbecdPpUpn7BukjMXSs4coI=;
+ b=Hs7ueTzchli+Po5+fAyEcn4qgwnR2ay8+HsTIEG7hJXiW2nmDXXHNoa5TyDpbHcxLTQfdRaaYiQd8YlNleZFX2V3URKMvHjCikdpBhGIEBylkmfJwhJyO7WC3pJ2dslCtEC+xNT93hZ8lUyskmI7i59jEcFvlkMPm/FTEheWkI8=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0149.namprd21.prod.outlook.com (10.173.189.19) with Microsoft SMTP
+ CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:08:43 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:08:46 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:08:43 +0000
+ 13:08:46 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 80/89] ALSA: sb: Fix PCM format bit calculation
-Thread-Topic: [PATCH AUTOSEL 4.14 80/89] ALSA: sb: Fix PCM format bit
- calculation
-Thread-Index: AQHUQr3xjvPbNhQ+D0a1HrCfuTrUfA==
-Date:   Sun, 2 Sep 2018 13:07:47 +0000
-Message-ID: <20180902064918.183387-80-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 81/89] ALSA: asihpi: Fix PCM format notations
+Thread-Topic: [PATCH AUTOSEL 4.14 81/89] ALSA: asihpi: Fix PCM format
+ notations
+Thread-Index: AQHUQr3yAyxHCcem/0+lAsR6LiwzfQ==
+Date:   Sun, 2 Sep 2018 13:07:48 +0000
+Message-ID: <20180902064918.183387-81-alexander.levin@microsoft.com>
 References: <20180902064918.183387-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064918.183387-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -57,34 +57,34 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0149;6:BNoEDYQDsNnitUp507XoINfBRm5+QD8EEOHs3kYJ+tKbk6eTON+SnsRAWnL1QZhSbmvBvJbXlmOKN0cwkLBt8wJDb2ylRzyH5I32mkNrxTAIv1KdYLQdhFJcgLonEHHAZhVZiLoIF3wMJaG/4QMq19g0qmG9ZBjURkF2ODC+Ea1vmoeuSd3DAPMQBNISezj6B45TcF+cExRHmSbldxMgS5wDTMGYQOlj56XU0S+JmPWd5FKstzrTkwYcBXnLO/MfCkeLMVCvHZ2smaqk4ubdXx00hRI5iDv2qGsFm55nc1FXjYW9lS+2ih1plbF7LWg0fY33wtk8/YliEZYQHDarCL7pMvInUqpB/kaohL0ytgCg0YMG1WULcAzh+tMkOCBb/FuJ54WEkEO+NhIdki2TU04WSd8r82QUi81pJ1GqBYFYF6ncNRmGkrw8vp4sxnOBybYOUiBwrynYOsAOgsY3BA==;5:BVEjQlNIFyNLiisMVBMuMijvf4cvcIHQdHJz6ikW7rI/9a3SK24sy3dExjdvFRxDHHYcQ1Zoc1+hpSPF6M85Vdaa2Qyi3sTLE4akWaQ3V4viGs6rHZ+Jk5jPCFwLjMkk11k+MHe7hBx/uX9lCJB7sm+VFv93qCrCpdaw72BmV+E=;7:8EgGIO9fpyj3jvhZXmrN0iJdYgsstKSyaS/o2GrvUZAZ5/HGPqxj/TuNrGPJmPkXCfOLycN+pKwZPPeFJrQPR8nMq89VtAj7FaFM0ILb5qtm2ZoJKikjtlZYdkMQKTAYPdOrfmPetvx+fqZg62qiXtQIPUReQ0+bec85FTjNUJtwkd7te3usd1mso/ALvAyjZhyDSPKMHhMj/OV3mYKJZZen8vVE/8xOjuK7zKTrjFsjUwyuoAEDPoCBSVh3Ij1S
-x-ms-office365-filtering-correlation-id: cd522b21-800e-4f88-a050-08d610d535f8
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:cV/aNJFwj9G95nPIbx4+5F/q6dPX2F/97+DbF4UiXYgu9HTERiYrAeSBvc3jLgDeLdm4VIkGpj782AuhI+nYvoWgfX9vk+txwkF732mAVovZKpqu1Omwo7vyltGhdb0gIOuigNHNVzXOVweDap86eMFitSVpACWvAtXqv8csz6h4G+WSOpN5hNKj4vZlLf1Uj/dfrzvs4kedDSTfGpvFZ9xVVhpBmfeRnjW0phs+MoGTNEB+3lbBXrDc175+WAVR6LQNdcl4Kojj6NuaPtWJCGf7+wKxvCBRYcqH5N1WVck7CW2yy4oqoNTtFjZX8Ws9apFfNaaJS9R2X5R6x/tKihouPvr6OkLVnQcPmBuQjG7LrnY4aUGs9vtbERIoRFbzr/1FcPsUVpTYoF5AdKJPw7iysvzQiTquu+21ifc/YOzuIFZbuyGnosVtGm3jNG7gN1BqSj+sBJUdMAvGHI2S0w==;5:RDnIHbL8UMBPZcEACESxP8axBJJoEV38OMBTXf3pCZkO7hppaiGzhkUk/hiTWO98jMp8XuvPNhs7oW5f1SM/84ZAMph6CIojMMXtaYL44KQWeMRcOfVb73AtRxJTvXxVl1hzRWuIYTQcahoUwbA9ZBT+/wLFVzWmN/MDBAPBb34=;7:Uxanv0zBaP5ZtnsWSXauIQtZ2pes0AqE7bbV55yFefRjHtaUQPl8kfepsZPYC0VuvIBSuAEO4QGZt5LSGtd+lKLNJCluNRNilQq9RktplaL2KYv4TV8yMLCKHrRn8/hc3Fv5SFiiK741AmRxBQiILN3OLMwCYz8l1F3fjRFLCBFrBHIOvQNYWFoapgOqabjjcBUBc2PL0wI3zJe9Dea17SNXduOLuwSjd51ABTnde9Liw1HHD6doHdEy48xH0FlJ
+x-ms-office365-filtering-correlation-id: 1a2f7c10-45de-4d3e-ab45-08d610d53785
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0149;
-x-ms-traffictypediagnostic: CY4PR21MB0149:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
+x-ms-traffictypediagnostic: CY4PR21MB0469:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB014967B6E56F813D6FFA79D3FB0D0@CY4PR21MB0149.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB046962D58ED0A107E5E61A70FB0D0@CY4PR21MB0469.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0149;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0149;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231340)(944501410)(52105095)(2018427008)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(136003)(346002)(396003)(199004)(189003)(76176011)(6116002)(446003)(11346002)(3846002)(5660300001)(110136005)(54906003)(102836004)(26005)(22452003)(316002)(99286004)(6506007)(186003)(107886003)(25786009)(1076002)(4326008)(305945005)(2501003)(7736002)(66066001)(97736004)(10090500001)(68736007)(5250100002)(8676002)(81156014)(81166006)(6486002)(6512007)(6436002)(2906002)(53936002)(256004)(14444005)(217873002)(36756003)(86362001)(10290500003)(105586002)(106356001)(72206003)(14454004)(478600001)(2616005)(476003)(486006)(2900100001)(8936002)(86612001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0149;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(136003)(366004)(346002)(199004)(189003)(110136005)(68736007)(36756003)(316002)(72206003)(54906003)(2501003)(81166006)(81156014)(8936002)(14454004)(97736004)(10090500001)(25786009)(106356001)(7736002)(2900100001)(4326008)(2906002)(8676002)(105586002)(305945005)(5660300001)(53936002)(1076002)(6116002)(478600001)(5250100002)(3846002)(107886003)(10290500003)(76176011)(11346002)(99286004)(6486002)(6512007)(6436002)(2616005)(66066001)(6506007)(22452003)(446003)(26005)(186003)(86362001)(575784001)(217873002)(476003)(486006)(256004)(102836004)(86612001)(14444005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: FE+uRl7rT/FfdemSkvW3OE5BzDEkaDtvdcnMk3VbFi0yWJDeZDuDsvNLAoHumVKJcvXIt0KJSmjWd6SEf6W98JVJOxCf79qwJcGGaRNJZO3eiSWJlJpvT3BpoDNfwPJlHS7OPJXAufNq/NxHHWFcObqDHzRhiDfDKvh1odqU3wX83yo2IRUNJd82vLcY+z1IFwopgPRXylkglSAJRS+EsXFuOWp0XSBir5A8rrZ/yVNwDCQPomG7N6UrYp6vP3yJOm6xdtNOyZdqm5V/TPSxLNJfUsJh989XPCmZs/Hil0PqccJGNiH7eu7bPboO8lwcnZ6BdIMVHoypLC09X60jNjUh9JXsJ6zplgX4JGbEXDU=
+x-microsoft-antispam-message-info: FEDCagZRsw+GJYqmW9S6UTP7hisdMJsFqXJ6lY2vRyVQXR4st3vxxEYVfL/CkBHIPJru8p3iHhEVOWy1/DY6dcHZHBGMyO90FLlRfDXwpcFQoFnZE5C30JW3iIclw8PhUphZiXC14qJZzLBfa7hu+OdrIY3zB9WUu+vwbJ74MNpvhTaK1yH6uXFKgsyMokZHI4nOPESyE/awFpegeozL19VUrsKxT5YWJ7zS50IeGyo/ahFS81XrmXSIOlcgMjCkcD9G0qNVaxn/hh0lHYySzWmNcqaIpG1Vm3QPSxX/bbT+54Z7Nq6kTCGHSvaW2BTUTSdA+Iz9KjrqEacusqpnzicRTyCCXcBpbIEDyOuLmEY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd522b21-800e-4f88-a050-08d610d535f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:07:47.4795
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a2f7c10-45de-4d3e-ab45-08d610d53785
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:07:48.5845
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0149
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -92,71 +92,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 55ff2d1ea5487fe131cce399baf4503dcf5cc8e1 ]
+[ Upstream commit a91a0e774984aa57090c39dc3269a812417737ed ]
 
-The PCM format type in snd_pcm_format_t can't be treated as integer
-implicitly since it's with __bitwise.  We have already a helper
-function to get the bit index of the given type, and use it in each
-place instead.
+asihpi driver treats -1 as an own invalid PCM format, but this needs
+a proper cast with __force prefix since PCM format type is __bitwise.
+Define a constant with the proper type and use it allover.
 
 This fixes sparse warnings like:
-  sound/isa/sb/sb16_main.c:61:44: warning: restricted snd_pcm_format_t degr=
-ades to integer
+  sound/pci/asihpi/asihpi.c:315:9: warning: incorrect type in initializer (=
+different base types)
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/isa/sb/sb16_main.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ sound/pci/asihpi/asihpi.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/sound/isa/sb/sb16_main.c b/sound/isa/sb/sb16_main.c
-index 3e39ba220c39..11ed4a6e5bf1 100644
---- a/sound/isa/sb/sb16_main.c
-+++ b/sound/isa/sb/sb16_main.c
-@@ -49,6 +49,9 @@ MODULE_AUTHOR("Jaroslav Kysela <perex@perex.cz>");
- MODULE_DESCRIPTION("Routines for control of 16-bit SoundBlaster cards and =
-clones");
- MODULE_LICENSE("GPL");
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index 70d023a85bf5..b86b0b5c00df 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -311,27 +311,29 @@ static void print_hwparams(struct snd_pcm_substream *=
+substream,
+ 		snd_pcm_format_width(params_format(p)) / 8);
+ }
 =20
-+#define runtime_format_bits(runtime) \
-+	((unsigned int)pcm_format_to_bits((runtime)->format))
++#define INVALID_FORMAT	(__force snd_pcm_format_t)(-1)
 +
- #ifdef CONFIG_SND_SB16_CSP
- static void snd_sb16_csp_playback_prepare(struct snd_sb *chip, struct snd_=
-pcm_runtime *runtime)
- {
-@@ -58,7 +61,7 @@ static void snd_sb16_csp_playback_prepare(struct snd_sb *=
-chip, struct snd_pcm_ru
- 		if (csp->running & SNDRV_SB_CSP_ST_LOADED) {
- 			/* manually loaded codec */
- 			if ((csp->mode & SNDRV_SB_CSP_MODE_DSP_WRITE) &&
--			    ((1U << runtime->format) =3D=3D csp->acc_format)) {
-+			    (runtime_format_bits(runtime) =3D=3D csp->acc_format)) {
- 				/* Supported runtime PCM format for playback */
- 				if (csp->ops.csp_use(csp) =3D=3D 0) {
- 					/* If CSP was successfully acquired */
-@@ -66,7 +69,7 @@ static void snd_sb16_csp_playback_prepare(struct snd_sb *=
-chip, struct snd_pcm_ru
- 				}
- 			} else if ((csp->mode & SNDRV_SB_CSP_MODE_QSOUND) && (csp->q_enabled)) =
-{
- 				/* QSound decoder is loaded and enabled */
--				if ((1 << runtime->format) & (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_U=
-8 |
-+				if (runtime_format_bits(runtime) & (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FM=
-TBIT_U8 |
- 							      SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_U16_LE)) {
- 					/* Only for simple PCM formats */
- 					if (csp->ops.csp_use(csp) =3D=3D 0) {
-@@ -106,7 +109,7 @@ static void snd_sb16_csp_capture_prepare(struct snd_sb =
-*chip, struct snd_pcm_run
- 		if (csp->running & SNDRV_SB_CSP_ST_LOADED) {
- 			/* manually loaded codec */
- 			if ((csp->mode & SNDRV_SB_CSP_MODE_DSP_READ) &&
--			    ((1U << runtime->format) =3D=3D csp->acc_format)) {
-+			    (runtime_format_bits(runtime) =3D=3D csp->acc_format)) {
- 				/* Supported runtime PCM format for capture */
- 				if (csp->ops.csp_use(csp) =3D=3D 0) {
- 					/* If CSP was successfully acquired */
+ static snd_pcm_format_t hpi_to_alsa_formats[] =3D {
+-	-1,			/* INVALID */
++	INVALID_FORMAT,		/* INVALID */
+ 	SNDRV_PCM_FORMAT_U8,	/* HPI_FORMAT_PCM8_UNSIGNED        1 */
+ 	SNDRV_PCM_FORMAT_S16,	/* HPI_FORMAT_PCM16_SIGNED         2 */
+-	-1,			/* HPI_FORMAT_MPEG_L1              3 */
++	INVALID_FORMAT,		/* HPI_FORMAT_MPEG_L1              3 */
+ 	SNDRV_PCM_FORMAT_MPEG,	/* HPI_FORMAT_MPEG_L2              4 */
+ 	SNDRV_PCM_FORMAT_MPEG,	/* HPI_FORMAT_MPEG_L3              5 */
+-	-1,			/* HPI_FORMAT_DOLBY_AC2            6 */
+-	-1,			/* HPI_FORMAT_DOLBY_AC3            7 */
++	INVALID_FORMAT,		/* HPI_FORMAT_DOLBY_AC2            6 */
++	INVALID_FORMAT,		/* HPI_FORMAT_DOLBY_AC3            7 */
+ 	SNDRV_PCM_FORMAT_S16_BE,/* HPI_FORMAT_PCM16_BIGENDIAN      8 */
+-	-1,			/* HPI_FORMAT_AA_TAGIT1_HITS       9 */
+-	-1,			/* HPI_FORMAT_AA_TAGIT1_INSERTS   10 */
++	INVALID_FORMAT,		/* HPI_FORMAT_AA_TAGIT1_HITS       9 */
++	INVALID_FORMAT,		/* HPI_FORMAT_AA_TAGIT1_INSERTS   10 */
+ 	SNDRV_PCM_FORMAT_S32,	/* HPI_FORMAT_PCM32_SIGNED        11 */
+-	-1,			/* HPI_FORMAT_RAW_BITSTREAM       12 */
+-	-1,			/* HPI_FORMAT_AA_TAGIT1_HITS_EX1  13 */
++	INVALID_FORMAT,		/* HPI_FORMAT_RAW_BITSTREAM       12 */
++	INVALID_FORMAT,		/* HPI_FORMAT_AA_TAGIT1_HITS_EX1  13 */
+ 	SNDRV_PCM_FORMAT_FLOAT,	/* HPI_FORMAT_PCM32_FLOAT         14 */
+ #if 1
+ 	/* ALSA can't handle 3 byte sample size together with power-of-2
+ 	 *  constraint on buffer_bytes, so disable this format
+ 	 */
+-	-1
++	INVALID_FORMAT
+ #else
+ 	/* SNDRV_PCM_FORMAT_S24_3LE */ /* HPI_FORMAT_PCM24_SIGNED 15 */
+ #endif
+@@ -1026,7 +1028,7 @@ static u64 snd_card_asihpi_playback_formats(struct sn=
+d_card_asihpi *asihpi,
+ 					format, sample_rate, 128000, 0);
+ 		if (!err)
+ 			err =3D hpi_outstream_query_format(h_stream, &hpi_format);
+-		if (!err && (hpi_to_alsa_formats[format] !=3D -1))
++		if (!err && (hpi_to_alsa_formats[format] !=3D INVALID_FORMAT))
+ 			formats |=3D pcm_format_to_bits(hpi_to_alsa_formats[format]);
+ 	}
+ 	return formats;
+@@ -1209,7 +1211,7 @@ static u64 snd_card_asihpi_capture_formats(struct snd=
+_card_asihpi *asihpi,
+ 					format, sample_rate, 128000, 0);
+ 		if (!err)
+ 			err =3D hpi_instream_query_format(h_stream, &hpi_format);
+-		if (!err && (hpi_to_alsa_formats[format] !=3D -1))
++		if (!err && (hpi_to_alsa_formats[format] !=3D INVALID_FORMAT))
+ 			formats |=3D pcm_format_to_bits(hpi_to_alsa_formats[format]);
+ 	}
+ 	return formats;
 --=20
 2.17.1
