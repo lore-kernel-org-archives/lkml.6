@@ -2,111 +2,109 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F26C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDA2C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A67EE20843
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A67EE20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CEA320856
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:37:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nmvw2+Y+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CEA320856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeIBVuO (ORCPT
+        id S1727220AbeIBVxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 17:50:14 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36915 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726065AbeIBVuN (ORCPT
+        Sun, 2 Sep 2018 17:53:37 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34115 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbeIBVxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 17:50:13 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Sun, 2 Sep 2018 10:33:40 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id B4F1540713;
-        Sun,  2 Sep 2018 10:33:42 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-arch@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Nadav Amit <namit@vmware.com>, Jiri Kosina <jkosina@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v2 1/6] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-Date:   Sun, 2 Sep 2018 10:32:19 -0700
-Message-ID: <20180902173224.30606-2-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180902173224.30606-1-namit@vmware.com>
-References: <20180902173224.30606-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+        Sun, 2 Sep 2018 17:53:37 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f8-v6so13631529ljk.1;
+        Sun, 02 Sep 2018 10:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=AQs9iA8kJ7oLjyevSTBzW3O1Et4jejjaNADnrlZa8RQ=;
+        b=Nmvw2+Y+YorC0xoY6oqE21xKROEMIjHnjb7xwZ8Z0JiSXfWa5vloeLgsVJN1Uhhw6K
+         sjBwpMZrypWtpBlA8lF3IrGyVsSCXV+/DqtvXLzS7wUBCtB5i5Dr8Et41LVioN+eF26Z
+         qSuJLJ5Vh+kQOSGDaU6WYVsnu7/aaAAqpuuBaLoJjXjgRTGgG5J2NKugQ/aak4a3asmN
+         HEQzsdCbtXD6QzhWpTnRIlKqgi2IaDirxliRTBxAZAvBjjAjPwcEaWEmBTKMEpAIgqu/
+         KSwdZzxDXAq5qJgUD7a2ZI6uqX7lydNEPkm9kNc+MoHS4MEFhqUAPAxt3VjB5eyM9sg5
+         4ujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AQs9iA8kJ7oLjyevSTBzW3O1Et4jejjaNADnrlZa8RQ=;
+        b=S8qrET/gV0ZpVaOOgP4Nwlfgr9FOy34Ir5JfVghGSdsgyQoXWheDPlL7duH8jGIAvX
+         eE05NoKHKYVrURCPDXRxM84B6Rxg1eUo1dqK+qCMBKEA3e3XrgMm5ohz8Tbm68NtDCWG
+         89WxRKRjBO06jwUtC1N58sbhHnaCn09E4uDIZ/K/7oQvPstn9H53FYYr+zuGdGvENQlR
+         87HT9uozlMEQ3Bj/pr1VRY6dUQb1YTMDROSj/EJUUBbKNCzxbRdsWQadTZm0EuotT0n6
+         dcz5d0KKY9zXuQLIqfMXOXzzgC9Jr1sUZQJ7Y+pfmngbUbQuFF8fdJWkHUsgghGTy03v
+         y/CA==
+X-Gm-Message-State: APzg51BaGrwRw8KxR34DKN2egJluJOR5hLg36eoLvk4AQZcKBCDZ8ntu
+        XxGaJ5WYNlsDBiWOc8Zekpg=
+X-Google-Smtp-Source: ANB0VdY5JD3c/p37vr9Wg+qI5LOKG50KblMHb98NGn6H/5eLazekx6eXoawDqWqW73fCCBiVXWI+XQ==
+X-Received: by 2002:a2e:144c:: with SMTP id 12-v6mr16274267lju.122.1535909824310;
+        Sun, 02 Sep 2018 10:37:04 -0700 (PDT)
+Received: from localhost.localdomain (213-238-244-10.customers.ownit.se. [213.238.244.10])
+        by smtp.gmail.com with ESMTPSA id y85-v6sm3097619lfi.46.2018.09.02.10.37.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Sep 2018 10:37:02 -0700 (PDT)
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH] usb: chipidea: imx: make MODULE_LICENCE and SPDX-identifier match
+Date:   Sun,  2 Sep 2018 19:36:50 +0200
+Message-Id: <20180902173650.5514-1-marcus.folkesson@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-text_mutex is expected to be held before text_poke() is called, but we
-cannot add a lockdep assertion since kgdb does not take it, and instead
-*supposedly* ensures the lock is not taken and will not be acquired by
-any other core while text_poke() is running.
+The SPDX-License-Identifier is set to GPL-2.0+, which correspond to
+MODULE_LICENSE "GPL".
 
-The reason for the "supposedly" comment is that it is not entirely clear
-that this would be the case if gdb_do_roundup is zero.
-
-Add a comment to clarify this behavior, and restore the assertions as
-they were before the recent commit.
-
-This partially reverts commit 9222f606506c ("x86/alternatives:
-Lockdep-enforce text_mutex in text_poke*()")
-
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
- arch/x86/kernel/alternative.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/chipidea/ci_hdrc_imx.c | 2 +-
+ drivers/usb/chipidea/usbmisc_imx.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index b9d5e7c9ef43..e9be18245698 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -684,6 +684,11 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
-  * It means the size must be writable atomically and the address must be aligned
-  * in a way that permits an atomic write. It also makes sure we fit on a single
-  * page.
-+ *
-+ * Context: Must be called under text_mutex. kgdb is an exception: it does not
-+ *	    hold the mutex, as it *supposedly* ensures that no other core is
-+ *	    holding the mutex and ensures that none of them will acquire the
-+ *	    mutex while the code runs.
-  */
- void *text_poke(void *addr, const void *opcode, size_t len)
- {
-@@ -698,8 +703,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	 */
- 	BUG_ON(!after_bootmem);
+diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+index 19f5f5f2a48a..555d398fbfa7 100644
+--- a/drivers/usb/chipidea/ci_hdrc_imx.c
++++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+@@ -492,7 +492,7 @@ static struct platform_driver ci_hdrc_imx_driver = {
+ module_platform_driver(ci_hdrc_imx_driver);
  
--	lockdep_assert_held(&text_mutex);
--
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+ MODULE_ALIAS("platform:imx-usb");
+-MODULE_LICENSE("GPL v2");
++MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("CI HDRC i.MX USB binding");
+ MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
+ MODULE_AUTHOR("Richard Zhao <richard.zhao@freescale.com>");
+diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
+index 34ad5bf8acd8..d9cfa00b8a6c 100644
+--- a/drivers/usb/chipidea/usbmisc_imx.c
++++ b/drivers/usb/chipidea/usbmisc_imx.c
+@@ -633,6 +633,6 @@ static struct platform_driver usbmisc_imx_driver = {
+ module_platform_driver(usbmisc_imx_driver);
+ 
+ MODULE_ALIAS("platform:usbmisc-imx");
+-MODULE_LICENSE("GPL v2");
++MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("driver for imx usb non-core registers");
+ MODULE_AUTHOR("Richard Zhao <richard.zhao@freescale.com>");
 -- 
-2.17.1
+2.18.0
 
