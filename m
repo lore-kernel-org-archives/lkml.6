@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56502C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267FCC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B764F20855
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B764F20855
+	by mail.kernel.org (Postfix) with ESMTP id AC01720841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC01720841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeIBOZC (ORCPT
+        id S1727405AbeIBO1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:25:02 -0400
-Received: from mout.perfora.net ([74.208.4.194]:46511 "EHLO mout.perfora.net"
+        Sun, 2 Sep 2018 10:27:55 -0400
+Received: from mout.perfora.net ([74.208.4.196]:59505 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeIBOZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:25:02 -0400
+        id S1727357AbeIBOYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:24:55 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Lop6D-1fOR9r0MkV-00geSu; Sun, 02 Sep 2018 12:09:40 +0200
+ 0MJV9h-1ftOFR2j5n-003AuW; Sun, 02 Sep 2018 12:09:35 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 12/37] ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
-Date:   Sun,  2 Sep 2018 12:08:41 +0200
-Message-Id: <20180902100906.25792-13-marcel@ziswiler.com>
+Subject: [PATCH v2 09/37] ARM: tegra: colibri_t20: add missing regulators
+Date:   Sun,  2 Sep 2018 12:08:38 +0200
+Message-Id: <20180902100906.25792-10-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:QZg6sD1H+m8MJlOwS2jTzzhDT1Tb1NFiJCnS/i4LAaFiT0aSIl7
- UM3sMqEJ2Q1zl9s7eaChGb8naA8Bqx43z536OOBIq3i9Y760CCX/ptHk8w9VYL9aXzF/3CQ
- zGwCuUm2lAOZYvK5j8tPCtkdPe0hF2GW5fc/f4C8eiYIJcQkKPIkz93tJ2IZTj/1gGAi/yP
- NRVGddmZpzEM2JwA//9Uw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NYaOf9iArAc=:Wwmf/VFOYniVFuEEnU/F5y
- WzalLqi7aXB7iwdYhWlHfrzyTrwTgx/De4/zDVspmDEoRM7QOZKmbaEdfW0ei7wVKOmTqUziF
- LzzQKLrLBtKbGrLYN9NodPIv1Hg9q9qso2Q29Wx9hBveQzM0Qkema8l6oEQBfPRupYudbmMXp
- 4oiolNsOsHSQS5Z1MVinuJ6qm7YELvJqtyk8B46FnFSbw4NVqGGJtU8bNVaMSQXhiuzXi0k15
- UGXZyqHJIdfkPerfYqNigS3NpsabRnnLAKKbZRVchIT6PqEi1hrMJHIfs2OTSWGkq78f+BqNZ
- MV2hG9V2/BrkkNl7hjZy+121EsPx4lf7EbdXYPDGZj9El7/6k2MxpCxmvU+qxrvnbajC/9Itb
- 31ga1LVqhQ9R8f0c0nvmkhVYZBuJfMWyUxlok2pJFrPIEXvwQoLkPzhSLaDQNF8zja+p+Bit6
- w5HKA8OOoo/OUCaXVRi5cgcEMUOcPL+BzX1C7jxHpXtwH0uujqTLyjKKSpZGqnqsBJelq1OZf
- Abeq58LuSNl3rh2mzf0D2tqbIzTJGMD8zhogwCrKlAqlSeL4sSK4ECkaMydvH8BDZJpcBwf0U
- Y37SpBa2gzvHE33pURSzZFIpAX5qVWqIMbc7t429jpk+3Qe0ABtUm+84GoIUktufrk7vR/lJc
- bmox4qw0P6pDZJRSU5Gh7XFBomH4g2DZW9e8TDey+avRvtzSCTsN3lVNCXRHDJMToB7w=
+X-Provags-ID: V03:K1:8Lal8Tu61boKioVqeCyCu74CsD+so6DpS51tQ/mQ8FBaXYWqMWP
+ 2IqbV+4D9BXKsqeHUMxfLPoW7oyfSLCHOQn+5qwAOFhRS/6LdO5LSVU1GGrJszIvM0h8yq2
+ /jEZzE0WSY1XmWPmW0F3M1dZSiwn7f4TxGbDYb2ACWI+3B/CQqcLbe7x/qGxi+oWFCwOhXA
+ r4QAcWiNr70TTqR63uBBg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:axr7QiYHNqs=:HmTg0TjaqYoOjtHh28UYjx
+ dXW8tGRHFyPdKlvqVba/BgeGA0vhp5gRjDvDlFcWoWZuOCxWT88aRrhZflvq3tSOwypjdMPMd
+ 6LZf418zzK9jO4miSQkoWz46B2GouljvDyQL1N6f0P80ZdyXTlV9H5ezpjEi7RuErcvcUZ/38
+ 9EWFUUAB7uUS2491tgmI+M3IYhdIK4Y6lErIIMS4KFGBpwDror7opGBSClfxtQ/mX+4Aek7d4
+ VcLBhQPaO/y0WV2H7L1xcKdBsMQSqXZGm7aEYiBuIOPunU4FzJKZWL2VTaUOr7WTzf7eJ3p7f
+ bt12MXpcZuDUSfAwtMIQUIjQmmf8QFoUmOwsCapj47qlQfjOA6EC9xR1y5eNC7aT4TYfdqNOy
+ l5Hxpm+fLuKzR6idFbuPg/y2AEsFy+/9PM2xIdo6mD2i9GLrO0YZDxqCrBEyo6uaIO4jn8K4e
+ IV5hxfh3sxI5QSVrfUpJpZklBUbT3EuQkuvTWYRpD5EJ5bJ8DwM6UWHqmLZ8rwszjTw3rDoI4
+ dKtx7mg6rMkgsJy4GuWOON+fFkA0oQ1KHhS6cWi//10Xw3zuNSsrqaxvybZsP8sKKcTAGueOu
+ 7/ozyva/blcIYK6U1A5TuqeaW36ITbByTPeFxLZBrBFiDvjVQY3GKej5BjMvzFeOwZoAt9Hhq
+ ZD5pp2jjL3CYmNtFUoWQdkcOeA9vYgDavhhK1Ro/xUU7yKQW9mI3n5MXVYlLh2PcJY04=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Cleaning up indentation, line-feed and white-space.
+Add missing regulators:
+- reg_lan_v_bus being USB Ethernet chip vbus supply
+- carrier board reg_3v3 to be used as backlight and panel power supply
+- carrier board HDMI supply being reg_5v0
+- reg_usbc_vbus being the USB vbus supply of the EHCI instance 0
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
@@ -69,69 +73,88 @@ Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 28 ++++++++++++++++++++++++++--
+ arch/arm/boot/dts/tegra20-colibri.dtsi     |  1 +
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 6f89a417b0f2..9f0a819c68f2 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -23,6 +23,7 @@
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+ 			status = "okay";
++			hdmi-supply = <&reg_5v0>;
+ 		};
+ 	};
+ 
+@@ -88,6 +89,7 @@
+ 
+ 	usb-phy@c5000000 {
+ 		status = "okay";
++		vbus-supply = <&reg_usbc_vbus>;
+ 	};
+ 
+ 	usb@c5008000 {
+@@ -96,6 +98,7 @@
+ 
+ 	usb-phy@c5008000 {
+ 		status = "okay";
++		vbus-supply = <&reg_usbh_vbus>;
+ 	};
+ 
+ 	sdhci@c8000600 {
+@@ -104,14 +107,35 @@
+ 		no-1-8-v;
+ 	};
+ 
++	reg_3v3: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	reg_5v0: regulator-5v0 {
++		compatible = "regulator-fixed";
++		regulator-name = "5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	reg_usbc_vbus: regulator-usbc-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_USB2";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&reg_5v0>;
++	};
++
+ 	/* USBH_PEN resp. USB_P_EN */
+ 	reg_usbh_vbus: regulator-usbh-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VCC_USB1";
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+ 		gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
++		vin-supply = <&reg_5v0>;
+ 	};
+ };
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 06d0be29c0b4..5559008efc5f 100644
+index 1cf64f197c08..5e98f225322b 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -206,10 +206,10 @@
- 
- 	ac97: ac97@70002000 {
+@@ -471,6 +471,7 @@
  		status = "okay";
--		nvidia,codec-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
--			GPIO_ACTIVE_HIGH>;
--		nvidia,codec-sync-gpio = <&gpio TEGRA_GPIO(P, 0)
--			GPIO_ACTIVE_HIGH>;
-+		nvidia,codec-reset-gpio =
-+			<&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_HIGH>;
-+		nvidia,codec-sync-gpio =
-+			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 			GPIO_ACTIVE_LOW>;
++		vbus-supply = <&reg_lan_v_bus>;
  	};
  
- 	nand-controller@70008000 {
-@@ -254,12 +254,9 @@
- 			compatible = "ti,tps6586x";
- 			reg = <0x34>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
--
- 			ti,system-power-controller;
--
- 			#gpio-cells = <2>;
- 			gpio-controller;
--
- 			sys-supply = <&reg_module_3v3>;
- 			vin-sm0-supply = <&reg_3v3_vsys>;
- 			vin-sm1-supply = <&reg_3v3_vsys>;
-@@ -468,8 +465,8 @@
- 
- 	usb-phy@c5004000 {
- 		status = "okay";
--		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
--			GPIO_ACTIVE_LOW>;
-+		nvidia,phy-reset-gpio =
-+			<&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_LOW>;
- 		vbus-supply = <&reg_lan_v_bus>;
- 	};
- 
-@@ -511,16 +508,13 @@
- 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
- 			     "nvidia,tegra-audio-wm9712";
- 		nvidia,model = "Colibri T20 AC97 Audio";
--
- 		nvidia,audio-routing =
- 			"Headphone", "HPOUTL",
- 			"Headphone", "HPOUTR",
- 			"LineIn", "LINEINL",
- 			"LineIn", "LINEINR",
- 			"Mic", "MIC1";
--
- 		nvidia,ac97-controller = <&ac97>;
--
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 	sdhci@c8000600 {
 -- 
 2.14.4
 
