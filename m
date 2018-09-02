@@ -2,122 +2,185 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5598AC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C32C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1044320658
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 17:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCF020856
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:02:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UCuKlGIH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1044320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEXKH+Yh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCF020856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbeIBWMH (ORCPT
+        id S1727055AbeIBWS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 18:12:07 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:42085 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeIBWMG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 18:12:06 -0400
-Received: by mail-io0-f171.google.com with SMTP id n18-v6so14211503ioa.9;
-        Sun, 02 Sep 2018 10:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nyhWyYVLeXxsm5jta3Rs0eGxTrHuILH40AqO8R7l5G8=;
-        b=UCuKlGIHQJBOsOH6kzcP85bWXlCKGBk7RJRdrBefQ1Iy/cezySZhXw58+qrQRAynUM
-         iO4w7QLt2+OUUClvFAZZ9/3mFOOlLQp1mb/oCdK+h+v90TWguGn1Q15TaqWbqBLlkvv0
-         YanOOTWttuSvSlKG+sWR5+34XKYTeQfWmhLNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nyhWyYVLeXxsm5jta3Rs0eGxTrHuILH40AqO8R7l5G8=;
-        b=ZmLK0fDjFD7J+K2iO/+uMTZkcPLSNZdok19aGY4mxMXIuZ3AZsuXSqs87pOgzDqd1r
-         0LuAEq/QyuYVN5geC9tUSjnWWHIL7pz1Tzrcw2RxxUuUFm7A4UwNM/gjlqjBSfZvVClI
-         mA/fye+ezA6f3gd6+XEEFl+tWtAtgyni7uyWtSzFWow3Hr69yJen+nzqpR8p0BhwAizI
-         V28TuHT/9IKGriEXPZCpN1RgySHJi0bDh85DxIiZ3kHRHSRhNNzcd5lpYknC8YoRgt+i
-         8a0glyR+8TBGZ6nJlcXO9NCJ/ZCD8E7M7TcWYfFCZGEmRaq3Fj1L2s+hMSi/RlzYkZpO
-         CQrg==
-X-Gm-Message-State: APzg51AuUYSO01on6oda4BVkL8oiaOM929T81OC5gbNWw/Ga29vrj2lv
-        4HK7rmAQ0Lhyy7bAZo7tXEaYCoz4EbHDSmt1Quw=
-X-Google-Smtp-Source: ANB0VdbqWP3fze1KywF4onC0F+2xxQbPEn6EjuoyxMV02vqw9X115gDO4Hb3yfcHdigLthA7YzN/xeG8qj/UJWX5AKY=
-X-Received: by 2002:a6b:7a49:: with SMTP id k9-v6mr18245282iop.238.1535910932112;
- Sun, 02 Sep 2018 10:55:32 -0700 (PDT)
+        Sun, 2 Sep 2018 18:18:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbeIBWS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 18:18:57 -0400
+Received: from archlinux (unknown [176.12.107.132])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8C3020835;
+        Sun,  2 Sep 2018 18:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535911340;
+        bh=NIprCD9qe6te+diqs9tREvaAVPD6+S+HiisV3O6kljg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tEXKH+YhiHwHPjpBbsXZaW88v3JbyyN5QOy8vGt8RAyr2T9YhwHUWTYhnhylRzJLt
+         jzVXCx/qWDrifDkppSkHVzT75TCxblNrZKw/N1qmceizC3ZIEr1k59TRN95vRQguxW
+         8IA4v5CS7y8pvHAdWJk3Z2G1A0ZDmdEYdHYzwF0s=
+Date:   Sun, 2 Sep 2018 19:02:14 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     <robh+dt@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <mark.rutland@arm.com>,
+        <Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: dac: ad5758: Add support for hard reset
+Message-ID: <20180902190214.116f2160@archlinux>
+In-Reply-To: <1535554722-1094-1-git-send-email-stefan.popa@analog.com>
+References: <1535554722-1094-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
- <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
-In-Reply-To: <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 2 Sep 2018 10:55:21 -0700
-Message-ID: <CA+55aFyLC8PhjZ+iV7MucSZ1aGKMT=S9=EkEAQ6T1=ZRqD-xLA@mail.gmail.com>
-Subject: Re: Recent removal of bsg read/write support
-To:     richard -rw- weinberger <richard.weinberger@gmail.com>
-Cc:     drorl@infinidat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 4:44 AM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> CC'ing relevant people. Otherwise your mail might get lost.
+On Wed, 29 Aug 2018 17:58:42 +0300
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-Indeed.
+> The ad5758 has a hardware reset active low input pin. This patch adds a
+> devicetree entry for a reset GPIO and a new ad5758_reset() function.
+> During
+> initialization, it is checked if the reset property is specified and the
+> the GPIO is being asserted, therefore the device will become active.
+> 
+> When the reset function is called, if the gpio_reset var is set, then
+> the
+> GPIO will be toggled, otherwise a software reset is performed.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 
-> On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
-> >
-> > We have an internal tool that uses the bsg read/write interface to
-> > issue SCSI commands as part of a test suite for a storage device.
-> >
-> > After recently reading on LWN that this interface is to be removed we
-> > tried porting our code to use sg instead. However, that raises new
-> > issues - mainly getting ENOMEM over iSCSI for unknown reasons.
+Two minors inline. I'll tidy it up whilst applying.
 
-Is there any chance that you can make more data available?
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
-I'd rather fix the sg interface (which while also broken garbage, we
-can't get rid of) than re-surrect the bsg interface.
+I'm taking the view that the binding addition is very straight forward
+but happy to have input from the DT maintainers if they wish to give
+it!
 
-That said, the removed bsg code looks a hell of a lot prettier than
-the nasty sg interface code does, although it also lacks ansolutely
-_any_ kind of security checking.
+Thanks,
 
-> > Because of this we would like to continue using the bsg interface,
-> > even if some changes are required to meet security concerns.
+Jonathan
+> ---
+>  .../devicetree/bindings/iio/dac/ad5758.txt         |  5 ++++
+>  drivers/iio/dac/ad5758.c                           | 27 ++++++++++++++++++++--
+>  2 files changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ad5758.txt b/Documentation/devicetree/bindings/iio/dac/ad5758.txt
+> index bba01a5..bbcd789 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/ad5758.txt
+> +++ b/Documentation/devicetree/bindings/iio/dac/ad5758.txt
+> @@ -50,6 +50,9 @@ Required properties:
+>  
+>  Optional properties:
+>  
+> + - reset-gpios : GPIO spec for the RESET pin. If specified, it will be
+> + 		 asserted during driver probe.
+There is a space at the start of the line above that shouldn't be there.
 
-I wonder if we could at least try to unify the bsg/sg code - possibly
-by making sg use the prettier bsg code (but definitely have to add all
-the security measures).
+Fixed up.
 
-And dammit, the SCSI people need to get their heads out of their
-arses. This whole "stream random commands over read/write" needs to go
-the f*ck away.
+> +
+>   - adi,dc-dc-ilim-microamp: The dc-to-dc converter current limit
+>  		   The following values are currently supported [uA]:
+>  			* 150000
+> @@ -71,6 +74,8 @@ AD5758 Example:
+>  		spi-max-frequency = <1000000>;
+>  		spi-cpha;
+>  
+> +		reset-gpios = <&gpio 22 0>;
+> +
+>  		adi,dc-dc-mode = <2>;
+>  		adi,range-microvolt = <0 10000000>;
+>  		adi,dc-dc-ilim-microamp = <200000>;
+> diff --git a/drivers/iio/dac/ad5758.c b/drivers/iio/dac/ad5758.c
+> index bd36333..b5cc5bd 100644
+> --- a/drivers/iio/dac/ad5758.c
+> +++ b/drivers/iio/dac/ad5758.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/module.h>
+>  #include <linux/property.h>
+>  #include <linux/spi/spi.h>
+> +#include <linux/gpio/consumer.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -108,6 +109,7 @@ struct ad5758_range {
+>  struct ad5758_state {
+>  	struct spi_device *spi;
+>  	struct mutex lock;
+> +	struct gpio_desc *gpio_reset;
+>  	struct ad5758_range out_range;
+>  	unsigned int dc_dc_mode;
+>  	unsigned int dc_dc_ilim;
+> @@ -474,6 +476,22 @@ static int ad5758_internal_buffers_en(struct ad5758_state *st, bool enable)
+>  					     AD5758_CAL_MEM_UNREFRESHED_MSK);
+>  }
+>  
+> +static int ad5758_reset(struct ad5758_state *st)
+> +{
+> +	if (st->gpio_reset) {
+> +		gpiod_set_value(st->gpio_reset, 0);
+> +		usleep_range(100, 1000);
+> +		gpiod_set_value(st->gpio_reset, 1);
 
-Could we perhaps extend the SG_IO interace to have an async mode?
-Instead of "read/write", have "SG_IOSUBMIT" and "SG_IORECEIVE" and
-have the SG_IO ioctl just be a shorthand of "both".
+This feels like an odd construct.  I would bring the usleep_range
+and final return into this if block.
 
-And have a model that actually checks that "yeah, this command is ok
-for a normal user", so that it's actually useful for things like CD
-burning etc, without making it a huge gaping security hole that is
-only useful for crazy special cases?
+> +	} else {
+> +		/* Perform a software reset */
+> +		return ad5758_soft_reset(st);
+> +	}
+> +
+> +	usleep_range(100, 1000);
+> +
+> +	return 0;
+> +}
+> +
+>  static int ad5758_reg_access(struct iio_dev *indio_dev,
+>  			     unsigned int reg,
+>  			     unsigned int writeval,
+> @@ -768,13 +786,18 @@ static int ad5758_init(struct ad5758_state *st)
+>  {
+>  	int regval, ret;
+>  
+> +	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
+> +						 GPIOD_OUT_HIGH);
+> +	if (IS_ERR(st->gpio_reset))
+> +		return PTR_ERR(st->gpio_reset);
+> +
+>  	/* Disable CRC checks */
+>  	ret = ad5758_crc_disable(st);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Perform a software reset */
+> -	ret = ad5758_soft_reset(st);
+> +	/* Perform a reset */
+> +	ret = ad5758_reset(st);
+>  	if (ret < 0)
+>  		return ret;
+>  
 
-Maybe that - otherwise reasonably pretty - block/bsg.c code could be
-joined with the SG_IO code that actually understands security issues?
-
-                 Linus
