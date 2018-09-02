@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0246DC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44598C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A470B20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80D4205F4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gFCxrWbm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A470B20837
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="aFpveSTt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80D4205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbeIBRag (ORCPT
+        id S1729868AbeIBRai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:30:36 -0400
+        Sun, 2 Sep 2018 13:30:38 -0400
 Received: from mail-eopbgr680125.outbound.protection.outlook.com ([40.107.68.125]:33856
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728758AbeIBRaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:30:35 -0400
+        id S1728081AbeIBRah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:30:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H0ogWI8uQujzj/2bxJCzR1HhPn3ePFOhTFXDVS3HhPo=;
- b=gFCxrWbmCCmYw5HkUGACmqSszSoGhAUo5PQ/DGXzxAowF93J2gGuEK88l3qQDll7pLM2h9367Sp8dIxuFuq/W9d9XT4cyqDhT0Zq1ialKWJqdRQ3RLuA9Rpp7nYHamCNdG8JcJZAYcmipb33KO9MhcoAL+BIkLdl3Xv7nH9DQgE=
+ bh=ThsxxdtUcivFQxkEsIVaGDYLGvdw58fgbdIXgCtgFDE=;
+ b=aFpveSTt/lY2EvMbOJRg2GwCLu47f/hH/eBCcwyJJM2XYPwfOq5HOBLk3TZzQhd97qVoxI55/PnCzF+38GTx/pNgMsK2Ut17JFmalFSGPDWcHNnEbWtSYMTmUyZ1ZZd5Wf0jmYh4Enpa2vcOMb71J8DWzEPf9L60tGmg0Gb7yAE=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:14:46 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:14:48 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:14:46 +0000
+ 13:14:48 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+CC:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 34/62] tpm/tpm_i2c_infineon: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Topic: [PATCH AUTOSEL 4.9 34/62] tpm/tpm_i2c_infineon: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Index: AQHUQr7rskxPIOW4/0yRrXeOeZ21kw==
-Date:   Sun, 2 Sep 2018 13:14:46 +0000
-Message-ID: <20180902131411.183978-24-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 35/62] f2fs: fix to do sanity check with reserved
+ blkaddr of inline inode
+Thread-Topic: [PATCH AUTOSEL 4.9 35/62] f2fs: fix to do sanity check with
+ reserved blkaddr of inline inode
+Thread-Index: AQHUQr7sG8K6Sz3P7k6SRMQQi6/Afg==
+Date:   Sun, 2 Sep 2018 13:14:48 +0000
+Message-ID: <20180902131411.183978-25-alexander.levin@microsoft.com>
 References: <20180902131411.183978-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131411.183978-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -58,30 +58,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:u7DQhBv02KwdUB3oyENmWzQNf8jTwbL5wvYI2TV2UUUaLOzSmtgXTXbrWeuM5CqUaAetdCe9r3M1Am9E5ptsOlGnKkEXU+bT+W0CUvVxRHmnaJhFnZfiLfnJ9L+KzovG+cgWt70zAxJz2v84pcA2w88kxFhHAMJFK2+HtzeqG2tGzz3K2wd7IZIwkoCq8cdPOTS6ZjZESlWtnOR56hKS/ZiejKnjq0VH5qA1BEz2nCVghZkrg5z65YAIbgvKVE50r6beNxASeiGRdC/QxRNz53/kwNOKEmAjjD0wIV8RbZLJ4RFwwH0E9iYHghCqjuWEnkLCmJOI5Ux3zXjDAvSex1dYDkrkFC7PnJVEIXfJFjs3cuhopKYGIPA4w1xIx1eMQ/RbVkWqep8VNTU1kFrAYNbnfK8RtCQjl25qRoF2V2YhdWHwoJCamxdSZrQsj9h6SmpRKFHUlLIzj6FPbD36XQ==;5:A2CZ6h36lRnq+ZIBbzupVFsvPFjV2YwcSJCOM5fb63pRy87bK414+a2e5hTHezuHO3hlJRE5mVYCu5A8JJeeAIivoE8mDd1j3KJoBgUQtD7x1n4Lf8faLtDSD1VM3jlzjihfHK6XEf0EGB+bxXQX8M64jTXPBFxSiWfiABkt+P8=;7:IXCTnv2AphiUWdz3lFqIn/45oVI8NxOaIGh90SNwaJyom7gr0iHx3HzhCv8VarL2nw1NznSeLCkKLbLZygStVc3CUNmOp0eRNljgdwMFWCyZS3hLc9veFSy2tnI1VogzjDCkqLqj39LWtmCiq5cAuTTW1Fg6ISM4tFW4/DCldGn/RSQAu99VgC5R8WVSXEWN4HRFM08z510wQPCD+uANv0YB3NPZWbRSqOd+xGsMtfOCKZa7/nfWkB2hKG5uA8b9
-x-ms-office365-filtering-correlation-id: 001ca7ed-887c-430d-b286-08d610d60e40
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:9PXW46f1aBxEA9nBNtYPvL5Utvx+4rPEplZlJ/D+CcODQ5/mk7ZGMOSj8WvmPhiLy/gk9guRHRTqUkk4FnmYO76klOwtLAXS5fsSogx6O4xozEeGMI19BZHZiupK7FKPKx9DKzLI34Wf7TkQOW4xrd9guGXBfMWTaYm1Cndl/KphpHkNHXHxHMFAQF03xyw5SXk99RBkyIFOvP+SQMnGSUwhY3KvTgj2XWNpPYUle4Ha843Gi3tBGGe/eyJRFomgr42pewZFsAlUtGmyKEJ/n9jOvxdUBLBFQqAzh0f+UK2R+BIYk27eYc4WN1lAo3a6FHy1KEcp6MLDzCrcjTX+xddver0l4s936p84tmKoXcsrYzQRT+rIwzf6X7Dpbrf084/UV/whvOQzWjvmYlwYU9Rjj1/tyOpOUCROz55YJ/PARQ4w7iAdLWQ95R/zMmVqaf4TDFH2Z4DPEjkqIY+A/g==;5:SuqOFIbJBdE1IzcboRhU6VzUjAd5thxq3j9RMo1OqgFbUczKYBDkLnOoiGL9l5Vorqwp0hQGR1AB7OZefdf2nOFn2ZJJ4sYbMOzkWx/wOpdu38E0YujimVIyY5nAFcDQoVJZJftgJ+6H5Yqd66vg9qClOgw820SUZrz2y5Hn3XY=;7:eLVv4qM/1ak+uRf+RWh0RQq85mNp24WH5k8J5eOSmYtU5ne+naF8BlWmxWks5aQe+R7+FEbLcJu2dh0DtOSoF8edSXQOwbGVWAjXvvNQ55L7BR54jkkrDz08kThOrg8Ynxj1827ooGEHvrGzZ8YeTbHf631VJ09f8GUn4TEFFkdtW5MTG7e73J/To3xUWWYz6LzJ11gOAdeu0zqC5uv9gWA5BBGwgrBfr6WrUDXVAhVYy9nCHB9asqjciYjXtA2I
+x-ms-office365-filtering-correlation-id: bb25a31b-cac8-431f-831a-08d610d60f33
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
 x-ms-traffictypediagnostic: CY4PR21MB0741:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB074120F19C7ADC05F2274E59FB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-microsoft-antispam-prvs: <CY4PR21MB07415A5A35011C9466766162FB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(108815179253565)(17755550239193);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(43544003)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(15760500003)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(575784001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(10290500003)(70780200001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(6306002)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(966005)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: +aB/jK3hQ4AaUyv/BzvPTiG86G4mFSdb+ocrX0/Tanh8dpTERB6HcoY5U9ew0EcMJDg38vLwPE9kUoOQpvm4OgUtvUpQAKW54zUzzjFof9QkcPlOvv6VYlqWp4fvs8E7oZbJUz9WOgmJ934KusUXGp1F6k3Okwwh0ZM3OllWBjst5d+O5AONt0luY4/fdolvtWEdanlfH2qf8PWqRqTGp1alln0C3N90LvFI1UvYWBzfuagQu1jvmfpHi7fPaaU2Y1ZseRAdhVf+qAAUSyWau2tLYIe9XS6CecQdObui4Y2UwBLniGGSbh60AtaCiSuXMDklu916QHhyMJGgT8etstAd7Vd6XnbhqejdgviYbEY=
+x-microsoft-antispam-message-info: RHKjMIbhu3eGycL8M+aGoW9Wr6N8AzoXgR7ZCa/fqAyjVgCY1K4FtUaijioUgPdIRTp0u8XYGsn2S5dxZdDY2uv0buYPUKlFdLVceppQglotFqV9TPBVyOMmBk1v9q6HnzMDHSplYSAYmf6oVkIPH1EP4zjV33Kz3eFp07f3ZXnGz9YDtdw/FZAv7drWKw7emFCC9KpfAqziaDop/r2C84I1K0GRJtEA3V4OxKHsvGTKPICT+vvhYDborEyzY7tYZWDOwMoDh5m7dZBQfupc1uWoSVNOjK/TCICyhKVgMPK14nxy6uAi30+ZGRIzbxnwIukETNfQEXUKNV2DYsi3V85fkRYFgDPBVpSQvU7EXXI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 001ca7ed-887c-430d-b286-08d610d60e40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:46.5889
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb25a31b-cac8-431f-831a-08d610d60f33
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:48.1732
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -91,68 +91,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit bb853aac2c478ce78116128263801189408ad2a8 ]
+[ Upstream commit 4dbe38dc386910c668c75ae616b99b823b59f3eb ]
 
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-sit behind a mux-locked mux, the two locking variants are equivalent.
+As Wen Xu reported in bugzilla, after image was injected with random data
+by fuzzing, inline inode would contain invalid reserved blkaddr, then
+during inline conversion, we will encounter illegal memory accessing
+reported by KASAN, the root cause of this is when writing out converted
+inline page, we will use invalid reserved blkaddr to update sit bitmap,
+result in accessing memory beyond sit bitmap boundary.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+In order to fix this issue, let's do sanity check with reserved block
+address of inline inode to avoid above condition.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=3D200179
+
+[ 1428.846352] BUG: KASAN: use-after-free in update_sit_entry+0x80/0x7f0
+[ 1428.846618] Read of size 4 at addr ffff880194483540 by task a.out/2741
+
+[ 1428.846855] CPU: 0 PID: 2741 Comm: a.out Tainted: G        W         4.1=
+7.0+ #1
+[ 1428.846858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[ 1428.846860] Call Trace:
+[ 1428.846868]  dump_stack+0x71/0xab
+[ 1428.846875]  print_address_description+0x6b/0x290
+[ 1428.846881]  kasan_report+0x28e/0x390
+[ 1428.846888]  ? update_sit_entry+0x80/0x7f0
+[ 1428.846898]  update_sit_entry+0x80/0x7f0
+[ 1428.846906]  f2fs_allocate_data_block+0x6db/0xc70
+[ 1428.846914]  ? f2fs_get_node_info+0x14f/0x590
+[ 1428.846920]  do_write_page+0xc8/0x150
+[ 1428.846928]  f2fs_outplace_write_data+0xfe/0x210
+[ 1428.846935]  ? f2fs_do_write_node_page+0x170/0x170
+[ 1428.846941]  ? radix_tree_tag_clear+0xff/0x130
+[ 1428.846946]  ? __mod_node_page_state+0x22/0xa0
+[ 1428.846951]  ? inc_zone_page_state+0x54/0x100
+[ 1428.846956]  ? __test_set_page_writeback+0x336/0x5d0
+[ 1428.846964]  f2fs_convert_inline_page+0x407/0x6d0
+[ 1428.846971]  ? f2fs_read_inline_data+0x3b0/0x3b0
+[ 1428.846978]  ? __get_node_page+0x335/0x6b0
+[ 1428.846987]  f2fs_convert_inline_inode+0x41b/0x500
+[ 1428.846994]  ? f2fs_convert_inline_page+0x6d0/0x6d0
+[ 1428.847000]  ? kasan_unpoison_shadow+0x31/0x40
+[ 1428.847005]  ? kasan_kmalloc+0xa6/0xd0
+[ 1428.847024]  f2fs_file_mmap+0x79/0xc0
+[ 1428.847029]  mmap_region+0x58b/0x880
+[ 1428.847037]  ? arch_get_unmapped_area+0x370/0x370
+[ 1428.847042]  do_mmap+0x55b/0x7a0
+[ 1428.847048]  vm_mmap_pgoff+0x16f/0x1c0
+[ 1428.847055]  ? vma_is_stack_for_current+0x50/0x50
+[ 1428.847062]  ? __fsnotify_update_child_dentry_flags.part.1+0x160/0x160
+[ 1428.847068]  ? do_sys_open+0x206/0x2a0
+[ 1428.847073]  ? __fget+0xb4/0x100
+[ 1428.847079]  ksys_mmap_pgoff+0x278/0x360
+[ 1428.847085]  ? find_mergeable_anon_vma+0x50/0x50
+[ 1428.847091]  do_syscall_64+0x73/0x160
+[ 1428.847098]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1428.847102] RIP: 0033:0x7fb1430766ba
+[ 1428.847103] Code: 89 f5 41 54 49 89 fc 55 53 74 35 49 63 e8 48 63 da 4d =
+89 f9 49 89 e8 4d 63 d6 48 89 da 4c 89 ee 4c 89 e7 b8 09 00 00 00 0f 05 <48=
+> 3d 00 f0 ff ff 77 56 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 1f 00
+[ 1428.847162] RSP: 002b:00007ffc651d9388 EFLAGS: 00000246 ORIG_RAX: 000000=
+0000000009
+[ 1428.847167] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb1430=
+766ba
+[ 1428.847170] RDX: 0000000000000001 RSI: 0000000000001000 RDI: 00000000000=
+00000
+[ 1428.847173] RBP: 0000000000000003 R08: 0000000000000003 R09: 00000000000=
+00000
+[ 1428.847176] R10: 0000000000008002 R11: 0000000000000246 R12: 00000000000=
+00000
+[ 1428.847179] R13: 0000000000001000 R14: 0000000000008002 R15: 00000000000=
+00000
+
+[ 1428.847252] Allocated by task 2683:
+[ 1428.847372]  kasan_kmalloc+0xa6/0xd0
+[ 1428.847380]  kmem_cache_alloc+0xc8/0x1e0
+[ 1428.847385]  getname_flags+0x73/0x2b0
+[ 1428.847390]  user_path_at_empty+0x1d/0x40
+[ 1428.847395]  vfs_statx+0xc1/0x150
+[ 1428.847401]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847405]  do_syscall_64+0x73/0x160
+[ 1428.847411]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847466] Freed by task 2683:
+[ 1428.847566]  __kasan_slab_free+0x137/0x190
+[ 1428.847571]  kmem_cache_free+0x85/0x1e0
+[ 1428.847575]  filename_lookup+0x191/0x280
+[ 1428.847580]  vfs_statx+0xc1/0x150
+[ 1428.847585]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847590]  do_syscall_64+0x73/0x160
+[ 1428.847596]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847648] The buggy address belongs to the object at ffff880194483300
+                which belongs to the cache names_cache of size 4096
+[ 1428.847946] The buggy address is located 576 bytes inside of
+                4096-byte region [ffff880194483300, ffff880194484300)
+[ 1428.848234] The buggy address belongs to the page:
+[ 1428.848366] page:ffffea0006512000 count:1 mapcount:0 mapping:ffff8801f35=
+86380 index:0x0 compound_mapcount: 0
+[ 1428.848606] flags: 0x17fff8000008100(slab|head)
+[ 1428.848737] raw: 017fff8000008100 dead000000000100 dead000000000200 ffff=
+8801f3586380
+[ 1428.848931] raw: 0000000000000000 0000000000070007 00000001ffffffff 0000=
+000000000000
+[ 1428.849122] page dumped because: kasan: bad access detected
+
+[ 1428.849305] Memory state around the buggy address:
+[ 1428.849436]  ffff880194483400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
+ fb fb
+[ 1428.849620]  ffff880194483480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
+ fb fb
+[ 1428.849804] >ffff880194483500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
+ fb fb
+[ 1428.849985]                                            ^
+[ 1428.850120]  ffff880194483580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
+ fb fb
+[ 1428.850303]  ffff880194483600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
+ fb fb
+[ 1428.850498] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/char/tpm/tpm_i2c_infineon.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/inline.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c=
-_infineon.c
-index da69ddea56cf..b15479ac0f90 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -115,7 +115,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len=
-)
- 	/* Lock the adapter for the duration of the whole sequence. */
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index a21faa1c6817..482888ee8942 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -124,6 +124,16 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn,=
+ struct page *page)
+ 	if (err)
+ 		return err;
 =20
- 	if (tpm_dev.chip_type =3D=3D SLB9645) {
- 		/* use a combined read for newer chips
-@@ -156,7 +156,7 @@ static int iic_tpm_read(u8 addr, u8 *buffer, size_t len=
-)
- 	}
++	if (unlikely(dn->data_blkaddr !=3D NEW_ADDR)) {
++		f2fs_put_dnode(dn);
++		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
++		f2fs_msg(fio.sbi->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=3D%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dn->inode->i_ino, dn->data_blkaddr);
++		return -EINVAL;
++	}
++
+ 	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
 =20
- out:
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
+ 	read_inline_data(page, dn->inode_page);
+@@ -351,6 +361,17 @@ static int f2fs_move_inline_dirents(struct inode *dir,=
+ struct page *ipage,
+ 	if (err)
+ 		goto out;
 =20
-@@ -188,7 +188,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, s=
-ize_t len,
-=20
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
- 		return -EOPNOTSUPP;
--	i2c_lock_adapter(tpm_dev.client->adapter);
-+	i2c_lock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
-=20
- 	/* prepend the 'register address' to the buffer */
- 	tpm_dev.buf[0] =3D addr;
-@@ -207,7 +207,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, s=
-ize_t len,
- 		usleep_range(sleep_low, sleep_hi);
- 	}
-=20
--	i2c_unlock_adapter(tpm_dev.client->adapter);
-+	i2c_unlock_bus(tpm_dev.client->adapter, I2C_LOCK_SEGMENT);
- 	/* take care of 'guard time' */
- 	usleep_range(SLEEP_DURATION_LOW, SLEEP_DURATION_HI);
++	if (unlikely(dn.data_blkaddr !=3D NEW_ADDR)) {
++		f2fs_put_dnode(&dn);
++		set_sbi_flag(F2FS_P_SB(page), SBI_NEED_FSCK);
++		f2fs_msg(F2FS_P_SB(page)->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=3D%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dir->i_ino, dn.data_blkaddr);
++		err =3D -EINVAL;
++		goto out;
++	}
++
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_SIZE);
 =20
 --=20
 2.17.1
