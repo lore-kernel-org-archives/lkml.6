@@ -6,138 +6,128 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 122DBC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C73CC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12E82077B
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:25:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E4BB2077B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nBnGDsq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12E82077B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="KJm4bvqO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4BB2077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbeIBRld (ORCPT
+        id S1729023AbeIBRWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:41:33 -0400
-Received: from mail-by2nam01on0107.outbound.protection.outlook.com ([104.47.34.107]:36283
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:22:51 -0400
+Received: from mail-eopbgr680114.outbound.protection.outlook.com ([40.107.68.114]:16944
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726991AbeIBRW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:22:57 -0400
+        id S1727487AbeIBRWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:22:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NAkjcfewxpI2QlG19WEufUMyDX8xZOWLvvRwYidC080=;
- b=nBnGDsq+vLLa4rF2FSna00DuepTOqMMCvnLTgc2061UT9UsI13l6H9s4ahYArMNdZaaabHlKoAM3s8BF0NxMkoINO4T3X5S7etc6u0vi5f61U6Cy6y0upYvgvoBN+pvmlfBoPJPmpajZtH1Z9Q4k0ODUdKlSgbNLX23vqCw07Ec=
+ bh=gqwB6XGOcGnNpMaje7n/PF+XKnd7MrjnV+t7a37U0jA=;
+ b=KJm4bvqOODM2hVsPt+uimg3lI96hMn0wO7matb/W/dvt0s5M+ON+zKdyLnXXztjI5m5LIbTEJRq0A+yyp8oSuD3CeEAq+MVtSCL7XYo4Zwrg+nm3u3ylHUrPMCXhC98d496Tyv4H1BnTDyFIv4vcIcZsUGtVxvIqByBDI+fzggA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
+ CY4PR21MB0629.namprd21.prod.outlook.com (10.175.115.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:06:18 +0000
+ 15.20.1122.7; Sun, 2 Sep 2018 13:07:03 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:06:18 +0000
+ 13:07:03 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Paul Burton <paul.burton@imgtec.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+CC:     Anton Vasilyev <vasilyev@ispras.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 128/131] MIPS: WARN_ON invalid DMA cache
- maintenance, not BUG_ON
-Thread-Topic: [PATCH AUTOSEL 4.18 128/131] MIPS: WARN_ON invalid DMA cache
- maintenance, not BUG_ON
-Thread-Index: AQHUQr2o0cW1N74qFUON7rFlHO4Ggw==
-Date:   Sun, 2 Sep 2018 13:05:44 +0000
-Message-ID: <20180902064601.183036-128-alexander.levin@microsoft.com>
-References: <20180902064601.183036-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 20/89] misc: ti-st: Fix memory leak in the error
+ path of probe()
+Thread-Topic: [PATCH AUTOSEL 4.14 20/89] misc: ti-st: Fix memory leak in the
+ error path of probe()
+Thread-Index: AQHUQr3FyuTggBE3vk2AFZGnwyav+A==
+Date:   Sun, 2 Sep 2018 13:06:32 +0000
+Message-ID: <20180902064918.183387-20-alexander.levin@microsoft.com>
+References: <20180902064918.183387-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180902064918.183387-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:pjuC7Br13qdD3rAmGW/z+P/9mODf3woWAAVHbZisOaC1HIZ4V5oXmW6vY0NenHXgIGk4s1PumexjzUUqcnVYq0hjWQwdl8pEZtnlH+BxiHKbdOTnaotm4yxtKLEC/HhFl8YzC09T5LrsIWhA1Ho7B8p44xUBJuIHJdo3qvko3a8UV1k7knXJyn8OjuJujjO02iHzQjkIgZvqbEYUutqSf8zrJMMycG4yjYZ/s5YaWR48c1jOeHfrS/uN1zindKOhncO7szVWHigc7kGGFDnLZEw8AMY8geh2CwswND1bbQ+uca1UEdSxjqbXvos2NOWMruk3p9u5HzkHAVghLl+O0ZIGn3GtNy8YI8rrvummCQZrC4JqrlmBqzMN8HBK9zyPkygUvok2gyvpePJ05jJSzn5w/K60vvziX8spPlNvPL0XRov1FY8dHljF7XKHSwGof3cu8pv0eK8RYHprEALBQg==;5:ZjatJU06p6ju15XD8Wv+mMnKHc6g7CRhDRHGD1ZL+GhktPOeCLA5+WyDhjmYCtt9wZyjxk4En/8LGA7qOFe9c+R/VNTChRxvUIca1o98XvZWMKrxSRnV2kBp4pzXi52Ab2Kh+6DyZi0meu8ksYrjr39yRsumffGXK873hglNAh8=;7:2d2c6ArcJmm2D1odpo5Q9CK7zL4BEl5yysUmb7EsIv8vBLdQH7n4eqxQXvX/ciB969sXmNJzGur+PB4RcZDuHeaZTavbpgCbTVNop1LJ6vR66+1lYYbJqvRRVE+H3IG7SN4DM4QavE95lMGZ3Z/NAzM7VPQcUvcLn9sjJ/fSy2enlvUTACw+1Kf4UzxoI5ddIQH/pWX60NNz1XZEx0Eh5aICVPaxjOMLvphdcwQZ1RKQFsYC0XRKVpZwjohC5Q66
-x-ms-office365-filtering-correlation-id: 741cbd2e-b82a-4529-1282-08d610d4df79
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0629;6:UEnrvyo3a9RUupfuHHWtHlj+CirV4lPJV0SeW/wZqAvhhSqQ47LrIXFGQ5LeH4aSN4gv9QukPDhp0FReRao5OGtHIYBuDUEyTzkeQAEoB0Y140utc8aEUi9psl/2FTK7fmWco2rms6Cotyao+r4cZ7tkRG5y0yK4t0C5Z+Dd6I+pUFhuvHDG/6GmYKoEFGSUSQGx8iXWCBaJ5IjP6eUSyUUBscagQQfFw9pOp4Mg5E6ySjQmGWDunpHzeMsqJE6rs4JkWxqb62vn3rQrbW/8JsM8YLF30F4oEPoMamWwRj7WT7aPh9hvrOByKOYvDioLUUScd3DFaLjYGJHoSnBjBpm5e344feiNydLBlQqgGifgTVOSOEgITZv7G5wPYneq+R0Mr4adyqH1A7Ta9LtnmySL8gIUpn5ktx6TgVXssc/T5LmyHzgTpvpa+djxhG1VTfqmCw2Box9B/HfjKGk95Q==;5:1wjd0fSQPxYX4wtu/Tg0HSXdrpslh+EnoBiaALWrRgOhuqqi5cMaV0Z6M+5/5O6YZbkMfIOjfG6NzMRh0K9McRByDPF5cCOhPQdHIzk7JWIu6vsvBgfJeTmBJFqK6BmAPufHIRQg8cn2tsKi7SeXceRth7C8o3NlebjkYsXwW2A=;7:ctIVTqsdXUOR0ETaazzqDjiWHlXwZvflleyKyRh9U1NagnLLlYUMCzTbOx1gTZ8HCbmZ2yhQSg5l8s7xL77Co5v8mvW5XOglpB2NBU8/0ZzlaQ4siGyRrIdCnYNI5kttkYhhmgnrM7leJ89TWpJ4XWy2b5WF82Mv+gimkevHfvSCF6rlkd1Y6XlG6O2rxpzSAdKjMYWogJ0DKbbnHoTl7E7Ncvi24sc+BDdUn56AjigYySwKzQZVgz855qyciVf8
+x-ms-office365-filtering-correlation-id: 6a09f911-a5f1-4317-2fb3-08d610d4f9e6
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
-x-ms-traffictypediagnostic: CY4PR21MB0822:
-x-microsoft-antispam-prvs: <CY4PR21MB0822AFB447C298C876B71F11FB0D0@CY4PR21MB0822.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0629;
+x-ms-traffictypediagnostic: CY4PR21MB0629:
+x-microsoft-antispam-prvs: <CY4PR21MB062931EA9E411F888559CDACFB0D0@CY4PR21MB0629.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0629;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0629;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(366004)(39860400002)(189003)(199004)(256004)(14444005)(6512007)(486006)(86612001)(97736004)(68736007)(478600001)(446003)(11346002)(25786009)(8676002)(10090500001)(8936002)(2906002)(575784001)(110136005)(86362001)(107886003)(4326008)(186003)(26005)(6346003)(6306002)(76176011)(966005)(6486002)(53936002)(2616005)(476003)(72206003)(10290500003)(6506007)(81166006)(81156014)(66066001)(22452003)(99286004)(102836004)(5660300001)(217873002)(106356001)(2900100001)(1076002)(6666003)(7736002)(2501003)(14454004)(5250100002)(305945005)(3846002)(54906003)(36756003)(6436002)(105586002)(316002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(396003)(39860400002)(189003)(199004)(6486002)(8936002)(6512007)(22452003)(53936002)(6436002)(66066001)(4326008)(186003)(25786009)(86362001)(2900100001)(107886003)(76176011)(486006)(68736007)(36756003)(99286004)(2501003)(6666003)(5250100002)(110136005)(54906003)(106356001)(316002)(105586002)(10290500003)(72206003)(10090500001)(8676002)(478600001)(14454004)(5660300001)(476003)(1076002)(3846002)(305945005)(446003)(6116002)(217873002)(6346003)(11346002)(97736004)(81156014)(7736002)(81166006)(2906002)(14444005)(4477795004)(102836004)(86612001)(26005)(6506007)(256004)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0629;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: Y1RMpUNHh4GbP1Qt2IBNDpnNrWVp94CdZwhN51mfEzNaeweSweXhnpY0nXwRTiEl8HmhRdyTgyhgokjGFSVoF/cMHTxz+TlzHogPYGfGqUcdPfSb19aOzuemLC7TDoFIK3SQ1lbEQ761AiJJ0IxzZFhiB/UlNkAO4w70cR7duJXHUqCSsBF0HdjjtMlW3yBKlED+T84+SH2js2dXeZT9g5OzlMzro4icR0ps3N9BttbY9/e9d/coaWnh4r0O2fV+uoRlKmMyFlOJBVDkKhh8KHlK3i57wHEa/olot7uxkPNcDa7h062iha+wBfd7IDBpYHWozlbkHROWmua1pERUedaMnMMMnPmQ+tWloGARz2g=
+x-microsoft-antispam-message-info: B59KxU1cPMjIclIf97IOe1BCam8iDp5mMPc+bybA6Dq5Yk3zIg7KUMWrr5SQddyAZlFreYNpgsLPZRK1oSFW8FQyRjytidPWD1VUdGqM0khEK2zfwj+XFIDXG9kAXwWvX4IlBb08oM981hgOsWnb+RlZh7Tr2uk5IRH8Wp8wbRinK7iM/XY1Y4Cvn8yi+LOihzrjsXc43TPeeJLZsVn1j0gTc8h3mbYOuFS5P2S2Iq1B5zR3WNWaWBPxMoY7CIa+fkBpaDEfGAfshGWLHmNhY//mVoSvP8LW4MbUwEa6zDfMBp/PM5NEEcia62+Kaz4NHAb4dqBE1SjYpbkRAEtYYJcp19yIq5x6Xm6mFbFkW/Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 741cbd2e-b82a-4529-1282-08d610d4df79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:05:44.0169
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a09f911-a5f1-4317-2fb3-08d610d4f9e6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:06:32.7885
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0822
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0629
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@imgtec.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit d4da0e97baea8768b3d66ccef3967bebd50dfc3b ]
+[ Upstream commit 81ae962d7f180c0092859440c82996cccb254976 ]
 
-If a driver causes DMA cache maintenance with a zero length then we
-currently BUG and kill the kernel. As this is a scenario that we may
-well be able to recover from, WARN & return in the condition instead.
+Free resources instead of direct return of the error code if kim_probe
+fails.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Patchwork: https://patchwork.linux-mips.org/patch/14623/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/mm/c-r4k.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/misc/ti-st/st_kim.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
-index e12dfa48b478..a5893b2cdc0e 100644
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -835,7 +835,8 @@ static void r4k_flush_icache_user_range(unsigned long s=
-tart, unsigned long end)
- static void r4k_dma_cache_wback_inv(unsigned long addr, unsigned long size=
-)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size =3D=3D 0);
-+	if (WARN_ON(size =3D=3D 0))
-+		return;
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index b77aacafc3fc..dda3ed72d05b 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -756,14 +756,14 @@ static int kim_probe(struct platform_device *pdev)
+ 	err =3D gpio_request(kim_gdata->nshutdown, "kim");
+ 	if (unlikely(err)) {
+ 		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
 =20
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
-@@ -871,7 +872,8 @@ static void r4k_dma_cache_wback_inv(unsigned long addr,=
- unsigned long size)
- static void r4k_dma_cache_inv(unsigned long addr, unsigned long size)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size =3D=3D 0);
-+	if (WARN_ON(size =3D=3D 0))
-+		return;
-=20
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
+ 	/* Configure nShutdown GPIO as output=3D0 */
+ 	err =3D gpio_direction_output(kim_gdata->nshutdown, 0);
+ 	if (unlikely(err)) {
+ 		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
+ 	/* get reference of pdev for request_firmware
+ 	 */
 --=20
 2.17.1
