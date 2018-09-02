@@ -2,164 +2,133 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA00CC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862B1C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7448020835
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B1A920658
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQn/cmwo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7448020835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DoPdcX++";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DnG0Ncug"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B1A920658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeIBOd1 (ORCPT
+        id S1726708AbeIBOth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:33:27 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46475 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbeIBOd0 (ORCPT
+        Sun, 2 Sep 2018 10:49:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60992 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeIBOth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:33:26 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 203-v6so13160714ljj.13;
-        Sun, 02 Sep 2018 03:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=h3fMok0crc1QBKbOP4mhqwOxX6VMu2jrrFK5Ca4q0QI=;
-        b=aQn/cmwoPsTt28eG1Kz8hukFvQsbxBS7ZY+d6T2/EgUQiJRfRbfU9iVLPk7O7IwCOs
-         48zfFWQyx5iA50C2d9Cw22K8zfHCJqySXD5dIoxR63EJPPNjCaxqHy2bq3YiyFW9Csdy
-         XxNKhItcExvLDFDJIPXjm2Wd98TzxJtHVcZUNCYPYaqgQ+JKGEEBmn8t8WyImJRqiH97
-         6oxqoQULxCBtk9ofaNSucXmgNUWFfixNWmWd58bhvxTDwuwodDF749RFYooXGFzP4tWv
-         s0yVoEW+YnwVA08eFFrrCrd6ypNvKV2TGIxw4FnPwJXXTkwdx7gln5Xq3cpf/T9sUwKK
-         Ohpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h3fMok0crc1QBKbOP4mhqwOxX6VMu2jrrFK5Ca4q0QI=;
-        b=hN840/pO6HZgjZyAbNNX8+haKZJpzg+7MygvgcuSFybSRwkXy/XCqhkHlDts5xXujj
-         0IAfwz/xN+wDP7E0YmaWc0Dp13fBJsMstg2oKoSepHwI4Qlhw8M+fOeCKUwBPN7zjLhF
-         +t8/BA6QqhNLxFQqSHMnRKOGaD50sAdSLrzHo3P/fmnWS/xkZNZv/9yqqVrQ/kWgz0qp
-         iwEXcdvEsMOlohvGci2SuGaCLuy1xwa3oSJM6tOxzEfTU+0aDnGKyu0ii9zGMB2yZ95t
-         074M9nL+tAsWy9kHjbEb2JfsXrABquqsGrBHu1Mbh4pb2VcxR1hSuLx+PdaWoRcQYnaB
-         7yzw==
-X-Gm-Message-State: APzg51Cy8P5ZfGVaaUeMVUujQXb/XbI+kXvrLi1HTK9rSwX0SRicP14+
-        YHkejWBJFUf1NyEZ4+1ss8k=
-X-Google-Smtp-Source: ANB0VdZssjmXQjNvrAVDa+Nn16fD2vH/0bm7fRqRBXJ13wzJqbyvdlvQEQxED3xy++MdXlvv7gB6rg==
-X-Received: by 2002:a2e:5687:: with SMTP id k7-v6mr15730301lje.105.1535883487344;
-        Sun, 02 Sep 2018 03:18:07 -0700 (PDT)
-Received: from z50.localnet (apn-37-248-210-194.dynamic.gprs.plus.pl. [37.248.210.194])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm2770411ljc.6.2018.09.02.03.18.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 03:18:06 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to get/set array
-Date:   Sun, 02 Sep 2018 12:19:11 +0200
-Message-ID: <2195152.WzNjLO0DAH@z50>
-In-Reply-To: <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
-References: <20180820234341.5271-1-jmkrzyszt@gmail.com> <20180829204900.19390-2-jmkrzyszt@gmail.com> <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
+        Sun, 2 Sep 2018 10:49:37 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 83DBF60242; Sun,  2 Sep 2018 10:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535884457;
+        bh=Cf3WF48+aAlsZdVhfDphBMGwSwegn6kox31GV7aJl4U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DoPdcX++bGqyALGZkXR3MYXGLCMQiVHMjd/mlv2qKR1j5i2Y/RUn1yiR7PWUCRaoV
+         SiSlEIPg9SQkg+Quhr0bz6UpL2DO1KCu9ZMY7rJzok3Dn67EemOzZ9XoDBnQOWA672
+         W39U9o0Tmd4bM/rbEMGMZKnqe7cV3qj8dfnkiENs=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F315360242;
+        Sun,  2 Sep 2018 10:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535884456;
+        bh=Cf3WF48+aAlsZdVhfDphBMGwSwegn6kox31GV7aJl4U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DnG0NcugP32BT2ewu7ufOz9U54zX97VqkPMlK3Dk5T/zhvrlN+rIUFmpBsGYZtLZC
+         ZXJxliS+ZFUawZWLoE/ZPeLLswoIW9IxHSwmRw1FR6m+48VxzYWfQOj0ePm4EAh5e/
+         JqM65Fa1msdMEN4OALJ6AEnOKGGvP0g2jCFtTb04=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F315360242
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Sun, 2 Sep 2018 16:04:11 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix unnecessary periodic wakeup of
+ discard thread when dev is busy
+Message-ID: <20180902103411.GE12489@codeaurora.org>
+References: <1535708366-11318-1-git-send-email-stummala@codeaurora.org>
+ <ae0ec622-1fd3-d28a-019b-75a507e551f6@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae0ec622-1fd3-d28a-019b-75a507e551f6@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miguel,
-
-On Thursday, August 30, 2018 1:10:59 PM CEST Miguel Ojeda wrote:
-> Hi Janusz,
+On Sun, Sep 02, 2018 at 04:52:40PM +0800, Chao Yu wrote:
+> On 2018/8/31 17:39, Sahitya Tummala wrote:
+> > When dev is busy, discard thread wake up timeout can be aligned with the
+> > exact time that it needs to wait for dev to come out of busy. This helps
+> > to avoid unnecessary periodic wakeups and thus save some power.
+> > 
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > ---
+> >  fs/f2fs/segment.c | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 8bcbb50..df14030 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1379,6 +1379,8 @@ static int issue_discard_thread(void *data)
+> >  	struct discard_policy dpolicy;
+> >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+> >  	int issued;
+> > +	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+> > +	long delta;
+> >  
+> >  	set_freezable();
+> >  
+> > @@ -1410,7 +1412,11 @@ static int issue_discard_thread(void *data)
+> >  			__wait_all_discard_cmd(sbi, &dpolicy);
+> >  			wait_ms = dpolicy.min_interval;
+> >  		} else if (issued == -1){
+> > -			wait_ms = dpolicy.mid_interval;
+> > +			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
 > 
-> On Wed, Aug 29, 2018 at 10:48 PM, Janusz Krzysztofik
-> <jmkrzyszt@gmail.com> wrote:
-> > ...
-> >         /* High nibble + RS, RW */
-> > -       for (i = 4; i < 8; i++)
-> > -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> > -       values[PIN_CTRL_RS] = rs;
-> > +       value_bitmap[0] = val;
-> > +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
-> >         n = 5;
-> >         if (hd->pins[PIN_CTRL_RW]) {
-> > -               values[PIN_CTRL_RW] = 0;
-> > +               __clear_bit(PIN_CTRL_RW, value_bitmap);
-> >                 n++;
-> >         }
-> > +       value_bitmap[0] >>= PIN_DATA4;
-> >
-> >         /* Present the data to the port */
-> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
-> > -                                      &values[PIN_DATA4]);
-> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], 
-value_bitmap);
-> >
-> >         hd44780_strobe_gpio(hd);
-> >
-> >         /* Low nibble */
-> > -       for (i = 0; i < 4; i++)
-> > -               values[PIN_DATA4 + i] = !!(val & BIT(i));
-> > +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
-> > +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
+> I agree that we need to consider power consumption. One more consideration is
+> that discard thread may need different submission frequency comparing to garbage
+> collection thread, maybe a little fast, would it be better to split
+> sbi->interval_time[REQ_TIME] according to gc/discard type.
 > 
-> This is still wrong! What I originally meant in my v4 review is that
-> there is an extra ~ in the second line.
-
-Indeed, that's wrong, I missed your original point, sorry.
-
-> Also, a couple of general comments:
+> How do you think?
 > 
->  - Please review the list of CCs (I was not CC'd originally, so maybe
-> there are other maintainers that aren't, either)
+> Thanks,
+> 
 
-That's probably because early versions of the series, prior to v4, were not 
-touching existing GPIO API so there were no changes to users of gpiod_get/
-set_array_value() and their variants. From v4 on, you are in the loop so don't 
-worry, you haven't missed anything.
-But anyway, thanks for your suggestion to review the Cc; list, I've done that 
-for v7 and added still a few people who contributed most to the code being 
-changed.
+Thanks for the review.
 
->  - In general, the new code seems harder to read than the original one
-> (but that is my impression).
+You mean when GC type is urgent? I see that for that case, the discard policy is
+changed to DPOLICY_FORCE, which sets dpolicy->io_aware as false and hence,
+cannot fall into this (issued == -1) case at all.
 
-I hope we are slowly approaching acceptable readability in recent iterations.
+> > +			if (delta > 0)
+> > +				wait_ms = jiffies_to_msecs(delta);
+> > +			else
+> > +				wait_ms = dpolicy.mid_interval;
+> >  		} else {
+> >  			wait_ms = dpolicy.max_interval;
+> >  		}
+> > 
 
-Thanks,
-Janusz
-
-
-
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
