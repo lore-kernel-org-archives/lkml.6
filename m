@@ -6,50 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44598C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB521C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D80D4205F4
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACAD20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="aFpveSTt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80D4205F4
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="C3HjyzSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACAD20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbeIBRai (ORCPT
+        id S1729881AbeIBRal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:30:38 -0400
-Received: from mail-eopbgr680125.outbound.protection.outlook.com ([40.107.68.125]:33856
+        Sun, 2 Sep 2018 13:30:41 -0400
+Received: from mail-eopbgr680103.outbound.protection.outlook.com ([40.107.68.103]:45024
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728081AbeIBRah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:30:37 -0400
+        id S1729864AbeIBRaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:30:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ThsxxdtUcivFQxkEsIVaGDYLGvdw58fgbdIXgCtgFDE=;
- b=aFpveSTt/lY2EvMbOJRg2GwCLu47f/hH/eBCcwyJJM2XYPwfOq5HOBLk3TZzQhd97qVoxI55/PnCzF+38GTx/pNgMsK2Ut17JFmalFSGPDWcHNnEbWtSYMTmUyZ1ZZd5Wf0jmYh4Enpa2vcOMb71J8DWzEPf9L60tGmg0Gb7yAE=
+ bh=Axv9/f215bohpog8R5xOtJwtX6zVxkShRa9sq1Ll/74=;
+ b=C3HjyzSDL7WirA/9/Sm4uFsUDj5Jym2INJWzlRyIOdoyU6KI2UtFdeWB+YlhsTzRDKRfD1/WMBPHiK1IXJYL6A7tAJRNOb+Fx44cpF+scARb4axi0EyqKKadpT1VqJN4C7H2ZAQ2Lp+4704QOS1YAn60noC90z4T1cCbLYlPaZM=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:14:48 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:14:49 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:14:48 +0000
+ 13:14:49 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+CC:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 35/62] f2fs: fix to do sanity check with reserved
- blkaddr of inline inode
-Thread-Topic: [PATCH AUTOSEL 4.9 35/62] f2fs: fix to do sanity check with
- reserved blkaddr of inline inode
-Thread-Index: AQHUQr7sG8K6Sz3P7k6SRMQQi6/Afg==
-Date:   Sun, 2 Sep 2018 13:14:48 +0000
-Message-ID: <20180902131411.183978-25-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 36/62] MIPS: Octeon: add missing of_node_put()
+Thread-Topic: [PATCH AUTOSEL 4.9 36/62] MIPS: Octeon: add missing
+ of_node_put()
+Thread-Index: AQHUQr7tuXcV6eS0MUuVej0Gi22fSg==
+Date:   Sun, 2 Sep 2018 13:14:49 +0000
+Message-ID: <20180902131411.183978-26-alexander.levin@microsoft.com>
 References: <20180902131411.183978-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131411.183978-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -58,30 +61,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:9PXW46f1aBxEA9nBNtYPvL5Utvx+4rPEplZlJ/D+CcODQ5/mk7ZGMOSj8WvmPhiLy/gk9guRHRTqUkk4FnmYO76klOwtLAXS5fsSogx6O4xozEeGMI19BZHZiupK7FKPKx9DKzLI34Wf7TkQOW4xrd9guGXBfMWTaYm1Cndl/KphpHkNHXHxHMFAQF03xyw5SXk99RBkyIFOvP+SQMnGSUwhY3KvTgj2XWNpPYUle4Ha843Gi3tBGGe/eyJRFomgr42pewZFsAlUtGmyKEJ/n9jOvxdUBLBFQqAzh0f+UK2R+BIYk27eYc4WN1lAo3a6FHy1KEcp6MLDzCrcjTX+xddver0l4s936p84tmKoXcsrYzQRT+rIwzf6X7Dpbrf084/UV/whvOQzWjvmYlwYU9Rjj1/tyOpOUCROz55YJ/PARQ4w7iAdLWQ95R/zMmVqaf4TDFH2Z4DPEjkqIY+A/g==;5:SuqOFIbJBdE1IzcboRhU6VzUjAd5thxq3j9RMo1OqgFbUczKYBDkLnOoiGL9l5Vorqwp0hQGR1AB7OZefdf2nOFn2ZJJ4sYbMOzkWx/wOpdu38E0YujimVIyY5nAFcDQoVJZJftgJ+6H5Yqd66vg9qClOgw820SUZrz2y5Hn3XY=;7:eLVv4qM/1ak+uRf+RWh0RQq85mNp24WH5k8J5eOSmYtU5ne+naF8BlWmxWks5aQe+R7+FEbLcJu2dh0DtOSoF8edSXQOwbGVWAjXvvNQ55L7BR54jkkrDz08kThOrg8Ynxj1827ooGEHvrGzZ8YeTbHf631VJ09f8GUn4TEFFkdtW5MTG7e73J/To3xUWWYz6LzJ11gOAdeu0zqC5uv9gWA5BBGwgrBfr6WrUDXVAhVYy9nCHB9asqjciYjXtA2I
-x-ms-office365-filtering-correlation-id: bb25a31b-cac8-431f-831a-08d610d60f33
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:U7TDvTA3CB5v8SU8gYcw/fWKuNar1kXcPtP8t1ZcODcwnbcpaEjEc5cxXOriOoHtWmbPHkcYBQ6IN+6XLrhIaKPpEx+P2hHkInenXTukolnCVEqt9j5LcYks6uTTijwFqENYgJ/YIDtzrNXeNePqs+YLiQNyGEsrGPoPLmYcrsMT78jZvGQx2vz6IVIRCUDWD8y2ntGP8w+z//UUFMDS8nTyoJA5sWXiVdbK43BABkXYuWeFY3nLloMqoAon1IYCoFScSy8/C8X+fvq5ISo/ISoUvx5e+u7ZnRXrHFc7t+EAljqYSU7bCaiJO1iELUQp6b0JOH5XMt9VsU6mauXw+JJPEvqCfUTpCs7N/YF7SKTM8PZW5iXYeXxMVTsJ6+S1T2CHq/jitBYdG2sl/XnRngykUqS8ZxfCBxQdi2S0+YRBtafffLsXuBLYKMpo4qsMCMXWLr886unrYRuhhD/LRQ==;5:vPUYBcoa9d7UXJnr7ES3x5T7RqFV2hY+P+DRSWDXnMr/0zfluH4VvEe/c/UszPZxHEinn9zgT5lVJZS8WP8iJhrhU6mcHUmvAVCmABUqIhcfSodGnWXWZaOKVLQtmSaJHR2O5mnlkVgaqVj1IzljBVCIf4SFvbywp3Qo7OA7A1w=;7:n83Jpwu9wMQPlLhCvb6BfQufZeMqIm2ezUaQ7EfrZMoI8cmsuTeSy2HHkr/Pp6Wk3/OsMSGoiue0X5amEoIuqpoXOBcigGxG1PzYmX4nwzR12Rzk/m4++zlZokGBiCqBPBtdowYKErWuC7QmEYs8bp+VLP/qFv7nK5YDCMSBLAtkIGevpV8y6ZLR9kwcDob4eLr+PStEWisr5FiMCvrJAwJaEeAjmy7csUz/hbzH3AiqQlsvPP+SfNI+6rzSRiNz
+x-ms-office365-filtering-correlation-id: edcf1edc-8da1-40bf-001c-08d610d60ff5
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
 x-ms-traffictypediagnostic: CY4PR21MB0741:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB07415A5A35011C9466766162FB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(108815179253565)(17755550239193);
+x-microsoft-antispam-prvs: <CY4PR21MB0741DAD2C05E0AA3467E87BAFB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(6306002)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(966005)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(575784001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(6306002)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(966005)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: RHKjMIbhu3eGycL8M+aGoW9Wr6N8AzoXgR7ZCa/fqAyjVgCY1K4FtUaijioUgPdIRTp0u8XYGsn2S5dxZdDY2uv0buYPUKlFdLVceppQglotFqV9TPBVyOMmBk1v9q6HnzMDHSplYSAYmf6oVkIPH1EP4zjV33Kz3eFp07f3ZXnGz9YDtdw/FZAv7drWKw7emFCC9KpfAqziaDop/r2C84I1K0GRJtEA3V4OxKHsvGTKPICT+vvhYDborEyzY7tYZWDOwMoDh5m7dZBQfupc1uWoSVNOjK/TCICyhKVgMPK14nxy6uAi30+ZGRIzbxnwIukETNfQEXUKNV2DYsi3V85fkRYFgDPBVpSQvU7EXXI=
+x-microsoft-antispam-message-info: 3lyIf2P6PxgjI797/qfMgAb8yvafmLTI/BL3Jlv76DfLz1LQZFBMNhhxxpj+ZAU/DGzmpywD3e01Ta49i8gEWVIacCHE0WAQC/bh5j3PZvV+9eCRP+12nLqwtVexCrOBRVGo1rA7VjaCIaDvoYzULMA+9AS+oM5XNMYBwwjTLyOhObjtO0teh3ds/MWNnlC6va0zTxZMKczPtuaME6Qk/zHva2lKCX847UuYcHeBGC6h48hNjEKJ4vMlH+siqNTyACUBVThbLavmU4MiKcwkRznjsDQksyk7R2GFtSJRgehELgRKgcFwk8mRZT1bgLKFLOeX/7Qr5VtPg6wAyFLIQ+NK3JPK3PvgvZhJCpk1yQk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb25a31b-cac8-431f-831a-08d610d60f33
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:48.1732
+X-MS-Exchange-CrossTenant-Network-Message-Id: edcf1edc-8da1-40bf-001c-08d610d60ff5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:49.4292
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -91,178 +94,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 4dbe38dc386910c668c75ae616b99b823b59f3eb ]
+[ Upstream commit b1259519e618d479ede8a0db5474b3aff99f5056 ]
 
-As Wen Xu reported in bugzilla, after image was injected with random data
-by fuzzing, inline inode would contain invalid reserved blkaddr, then
-during inline conversion, we will encounter illegal memory accessing
-reported by KASAN, the root cause of this is when writing out converted
-inline page, we will use invalid reserved blkaddr to update sit bitmap,
-result in accessing memory beyond sit bitmap boundary.
+The call to of_find_node_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
 
-In order to fix this issue, let's do sanity check with reserved block
-address of inline inode to avoid above condition.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=3D200179
-
-[ 1428.846352] BUG: KASAN: use-after-free in update_sit_entry+0x80/0x7f0
-[ 1428.846618] Read of size 4 at addr ffff880194483540 by task a.out/2741
-
-[ 1428.846855] CPU: 0 PID: 2741 Comm: a.out Tainted: G        W         4.1=
-7.0+ #1
-[ 1428.846858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[ 1428.846860] Call Trace:
-[ 1428.846868]  dump_stack+0x71/0xab
-[ 1428.846875]  print_address_description+0x6b/0x290
-[ 1428.846881]  kasan_report+0x28e/0x390
-[ 1428.846888]  ? update_sit_entry+0x80/0x7f0
-[ 1428.846898]  update_sit_entry+0x80/0x7f0
-[ 1428.846906]  f2fs_allocate_data_block+0x6db/0xc70
-[ 1428.846914]  ? f2fs_get_node_info+0x14f/0x590
-[ 1428.846920]  do_write_page+0xc8/0x150
-[ 1428.846928]  f2fs_outplace_write_data+0xfe/0x210
-[ 1428.846935]  ? f2fs_do_write_node_page+0x170/0x170
-[ 1428.846941]  ? radix_tree_tag_clear+0xff/0x130
-[ 1428.846946]  ? __mod_node_page_state+0x22/0xa0
-[ 1428.846951]  ? inc_zone_page_state+0x54/0x100
-[ 1428.846956]  ? __test_set_page_writeback+0x336/0x5d0
-[ 1428.846964]  f2fs_convert_inline_page+0x407/0x6d0
-[ 1428.846971]  ? f2fs_read_inline_data+0x3b0/0x3b0
-[ 1428.846978]  ? __get_node_page+0x335/0x6b0
-[ 1428.846987]  f2fs_convert_inline_inode+0x41b/0x500
-[ 1428.846994]  ? f2fs_convert_inline_page+0x6d0/0x6d0
-[ 1428.847000]  ? kasan_unpoison_shadow+0x31/0x40
-[ 1428.847005]  ? kasan_kmalloc+0xa6/0xd0
-[ 1428.847024]  f2fs_file_mmap+0x79/0xc0
-[ 1428.847029]  mmap_region+0x58b/0x880
-[ 1428.847037]  ? arch_get_unmapped_area+0x370/0x370
-[ 1428.847042]  do_mmap+0x55b/0x7a0
-[ 1428.847048]  vm_mmap_pgoff+0x16f/0x1c0
-[ 1428.847055]  ? vma_is_stack_for_current+0x50/0x50
-[ 1428.847062]  ? __fsnotify_update_child_dentry_flags.part.1+0x160/0x160
-[ 1428.847068]  ? do_sys_open+0x206/0x2a0
-[ 1428.847073]  ? __fget+0xb4/0x100
-[ 1428.847079]  ksys_mmap_pgoff+0x278/0x360
-[ 1428.847085]  ? find_mergeable_anon_vma+0x50/0x50
-[ 1428.847091]  do_syscall_64+0x73/0x160
-[ 1428.847098]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 1428.847102] RIP: 0033:0x7fb1430766ba
-[ 1428.847103] Code: 89 f5 41 54 49 89 fc 55 53 74 35 49 63 e8 48 63 da 4d =
-89 f9 49 89 e8 4d 63 d6 48 89 da 4c 89 ee 4c 89 e7 b8 09 00 00 00 0f 05 <48=
-> 3d 00 f0 ff ff 77 56 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 1f 00
-[ 1428.847162] RSP: 002b:00007ffc651d9388 EFLAGS: 00000246 ORIG_RAX: 000000=
-0000000009
-[ 1428.847167] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb1430=
-766ba
-[ 1428.847170] RDX: 0000000000000001 RSI: 0000000000001000 RDI: 00000000000=
-00000
-[ 1428.847173] RBP: 0000000000000003 R08: 0000000000000003 R09: 00000000000=
-00000
-[ 1428.847176] R10: 0000000000008002 R11: 0000000000000246 R12: 00000000000=
-00000
-[ 1428.847179] R13: 0000000000001000 R14: 0000000000008002 R15: 00000000000=
-00000
-
-[ 1428.847252] Allocated by task 2683:
-[ 1428.847372]  kasan_kmalloc+0xa6/0xd0
-[ 1428.847380]  kmem_cache_alloc+0xc8/0x1e0
-[ 1428.847385]  getname_flags+0x73/0x2b0
-[ 1428.847390]  user_path_at_empty+0x1d/0x40
-[ 1428.847395]  vfs_statx+0xc1/0x150
-[ 1428.847401]  __do_sys_newlstat+0x7e/0xd0
-[ 1428.847405]  do_syscall_64+0x73/0x160
-[ 1428.847411]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-[ 1428.847466] Freed by task 2683:
-[ 1428.847566]  __kasan_slab_free+0x137/0x190
-[ 1428.847571]  kmem_cache_free+0x85/0x1e0
-[ 1428.847575]  filename_lookup+0x191/0x280
-[ 1428.847580]  vfs_statx+0xc1/0x150
-[ 1428.847585]  __do_sys_newlstat+0x7e/0xd0
-[ 1428.847590]  do_syscall_64+0x73/0x160
-[ 1428.847596]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-[ 1428.847648] The buggy address belongs to the object at ffff880194483300
-                which belongs to the cache names_cache of size 4096
-[ 1428.847946] The buggy address is located 576 bytes inside of
-                4096-byte region [ffff880194483300, ffff880194484300)
-[ 1428.848234] The buggy address belongs to the page:
-[ 1428.848366] page:ffffea0006512000 count:1 mapcount:0 mapping:ffff8801f35=
-86380 index:0x0 compound_mapcount: 0
-[ 1428.848606] flags: 0x17fff8000008100(slab|head)
-[ 1428.848737] raw: 017fff8000008100 dead000000000100 dead000000000200 ffff=
-8801f3586380
-[ 1428.848931] raw: 0000000000000000 0000000000070007 00000001ffffffff 0000=
-000000000000
-[ 1428.849122] page dumped because: kasan: bad access detected
-
-[ 1428.849305] Memory state around the buggy address:
-[ 1428.849436]  ffff880194483400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb
-[ 1428.849620]  ffff880194483480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb
-[ 1428.849804] >ffff880194483500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb
-[ 1428.849985]                                            ^
-[ 1428.850120]  ffff880194483580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb
-[ 1428.850303]  ffff880194483600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb=
- fb fb
-[ 1428.850498] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19558/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/f2fs/inline.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/mips/cavium-octeon/octeon-platform.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index a21faa1c6817..482888ee8942 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -124,6 +124,16 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn,=
- struct page *page)
- 	if (err)
- 		return err;
+diff --git a/arch/mips/cavium-octeon/octeon-platform.c b/arch/mips/cavium-o=
+cteon/octeon-platform.c
+index 37a932d9148c..1ba6bcf98570 100644
+--- a/arch/mips/cavium-octeon/octeon-platform.c
++++ b/arch/mips/cavium-octeon/octeon-platform.c
+@@ -366,6 +366,7 @@ static int __init octeon_ehci_device_init(void)
+ 		return 0;
 =20
-+	if (unlikely(dn->data_blkaddr !=3D NEW_ADDR)) {
-+		f2fs_put_dnode(dn);
-+		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
-+		f2fs_msg(fio.sbi->sb, KERN_WARNING,
-+			"%s: corrupted inline inode ino=3D%lx, i_addr[0]:0x%x, "
-+			"run fsck to fix.",
-+			__func__, dn->inode->i_ino, dn->data_blkaddr);
-+		return -EINVAL;
-+	}
-+
- 	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
+ 	pd =3D of_find_device_by_node(ehci_node);
++	of_node_put(ehci_node);
+ 	if (!pd)
+ 		return 0;
 =20
- 	read_inline_data(page, dn->inode_page);
-@@ -351,6 +361,17 @@ static int f2fs_move_inline_dirents(struct inode *dir,=
- struct page *ipage,
- 	if (err)
- 		goto out;
+@@ -428,6 +429,7 @@ static int __init octeon_ohci_device_init(void)
+ 		return 0;
 =20
-+	if (unlikely(dn.data_blkaddr !=3D NEW_ADDR)) {
-+		f2fs_put_dnode(&dn);
-+		set_sbi_flag(F2FS_P_SB(page), SBI_NEED_FSCK);
-+		f2fs_msg(F2FS_P_SB(page)->sb, KERN_WARNING,
-+			"%s: corrupted inline inode ino=3D%lx, i_addr[0]:0x%x, "
-+			"run fsck to fix.",
-+			__func__, dir->i_ino, dn.data_blkaddr);
-+		err =3D -EINVAL;
-+		goto out;
-+	}
-+
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_SIZE);
+ 	pd =3D of_find_device_by_node(ohci_node);
++	of_node_put(ohci_node);
+ 	if (!pd)
+ 		return 0;
 =20
 --=20
 2.17.1
