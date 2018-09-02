@@ -2,96 +2,103 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B18C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE6FC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B016120856
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AD620837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:52:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdCOj6Jz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B016120856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Odgfe4VV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AD620837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeICBJA (ORCPT
+        id S1727368AbeICBJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 21:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727111AbeICBI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 21:08:59 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1365620837;
-        Sun,  2 Sep 2018 20:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535921517;
-        bh=xcp8pgtWeLi7KyB1+ZLYwT7jhwTiPYpjVuT07om7xwo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BdCOj6JziEihWH35XB4SsCXdiDBV71b7I8Jy31VW1kvdRcvdtKPxuCDkzTMaJ4TRw
-         aCbA0RUYWJEqexB6qEjd6DSBEPg2DTovnwYWoQy2dE8g5E1MFCYMGyxaUveLWSO309
-         CHZwMku5xDvMnMLhXkD+Y/qrOixQ0wn/t27xN1ys=
-Date:   Sun, 2 Sep 2018 21:51:53 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Afonso Bordado <afonsobordado@az8.co>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] MAINTAINERS: add entry for fxas21002c gyro
- driver
-Message-ID: <20180902215153.6c02e121@archlinux>
-In-Reply-To: <20180830211825.12202-4-afonsobordado@az8.co>
-References: <20180830211825.12202-1-afonsobordado@az8.co>
-        <20180830211825.12202-4-afonsobordado@az8.co>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 2 Sep 2018 21:09:52 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32886 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbeICBJv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 21:09:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so7764554pfn.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 13:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u+OBcL5rMV/K8y0qLFCjWMA+1PU4ot9UR0N5Vb5LiMU=;
+        b=Odgfe4VVcmU4AWmy1q3d0RL37Ot+lc4YixWjPjxJmDEMfMJLC3FoU6ZHtp2VOA5nAC
+         UFx+DwwXqULPj9fdbFfMpccfqe2JUtRycjtZS8i+slF0LeWki9/GFED8SyInOZiYMTiQ
+         ezYaKjEL6Rd7CTGemOogIR7QOlS1FlhhxK1Y0GOg6eU6qYPPhesYp5ll+uRzwR5RZFI/
+         x2tovgmOvhjTth/FX8q/CoaGW5h7LgWvg2+E7K0atn9h7xxyiT+Y+QwH9Dn+Gus4icSK
+         yB1hZqtuuhyOsYZnJBqdY/Y8VkemRMhQgos+kdtpovbcVMG3pXvgLBXzBJ5IlhhJwK25
+         YUqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u+OBcL5rMV/K8y0qLFCjWMA+1PU4ot9UR0N5Vb5LiMU=;
+        b=kykBV0486f8khXyFE1oNRX68aPVEVmmNqlfRuiL/Qt6fjNFti5rumX3aR5fzpz8zTy
+         ZYDAZGljhR+T8P7hrayDAMyjX7N4HjsrOgNqb6TSkNLNMIpiDRPg80TJ9sXPlv+UaBcU
+         3Ci33mBnFOPcrKLFXwY4c3HSpKrh/CR5Tc71Qt9O+F/D/lVGxt7gNM+FKVy47EjnBk7K
+         h4am37NxABL6Xm/czjf+w3TtYGhVg0fa7FXIFMpaHOf5ZjscGtRdNPADYGHlQP7rq0Nc
+         zEj4qfM/z6l+Vh9BDZ743bhydQ0ev/E9KuulkeZk+OqEKRSiY7VQ9yFfh18Ax2wIqJw4
+         CHqg==
+X-Gm-Message-State: APzg51C43rdi2ViqDoY6yzyCpRL2fNLa+UN1A1z2TsRlFd4bSHfMcxwV
+        ie7Enh9uR4tyVuGrtLKP4+UWQg==
+X-Google-Smtp-Source: ANB0VdZ8oeW2+XnP94FZPK3QVm/HiAB7xSJyrYWdW4Yb6tBqh4hZH/5V7ze7gIdJmyZ2h+onOpF01w==
+X-Received: by 2002:a62:e511:: with SMTP id n17-v6mr25972432pff.210.1535921569023;
+        Sun, 02 Sep 2018 13:52:49 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr03-ext.fm.intel.com. [192.55.54.38])
+        by smtp.gmail.com with ESMTPSA id 6-v6sm27549035pfs.58.2018.09.02.13.52.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Sep 2018 13:52:47 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id E10A3300D89; Sun,  2 Sep 2018 23:52:42 +0300 (+03)
+Date:   Sun, 2 Sep 2018 23:52:42 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
+ <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+ <20180830152512.GE14702@192.168.1.2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180830152512.GE14702@192.168.1.2>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018 22:18:25 +0100
-Afonso Bordado <afonsobordado@az8.co> wrote:
-
-> Add entry for fxas21002c gyroscope driver and add myself as
-> maintainer of this driver.
+On Thu, Aug 30, 2018 at 11:25:12PM +0800, Baoquan He wrote:
+> Hi Kirill,
 > 
-I'll take a final look at V3, once you have tidied up the
-various review comments, but this looks nearly ready to
-merge to me.
-
-Thanks,
-
-Jonathan
-
-> Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+> I made a new version according to your suggestion, just a little
+> different, I didn't make 1TB as default, just calculate with the actual
+> size, then align up to 1TB boundary.  Just found kcore is printing more
+> entries than before, I thought it's caused by my code, later got it was
+> touchde by other people.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2b7b24b145f0..faf5f41b1465 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5838,6 +5838,13 @@ L:	linuxppc-dev@lists.ozlabs.org
->  S:	Maintained
->  F:	drivers/usb/gadget/udc/fsl*
->  
-> +FREESCALE FXAS21002C
-> +M:	Afonso Bordado <afonsobordado@az8.co>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/iio/gyro/fxas21002.c
-> +F:	Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt
-> +
->  FREEVXFS FILESYSTEM
->  M:	Christoph Hellwig <hch@infradead.org>
->  W:	ftp://ftp.openlinux.org/pub/people/hch/vxfs
+> Any comment about this? I can change accordingly.
 
+Looks good to me.
+
+But there's corner case when struct page is unreasonably large and
+vmemmap_size will be way to large. We probably have to report an error if
+we cannot fit vmemmap properly into virtual memory layout.
+
+-- 
+ Kirill A. Shutemov
