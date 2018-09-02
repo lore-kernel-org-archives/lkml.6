@@ -2,197 +2,106 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,UPPERCASE_50_75,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6658EC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F48C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909A220856
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B6B220855
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwLA4lXc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909A220856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRI3abis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B6B220855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbeIBNGw (ORCPT
+        id S1726961AbeIBNH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 09:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58068 "EHLO mail.kernel.org"
+        Sun, 2 Sep 2018 09:07:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbeIBNGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 09:06:51 -0400
-Received: from archlinux (82-132-217-68.dab.02.net [82.132.217.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725834AbeIBNH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 09:07:59 -0400
+Received: from [192.168.0.101] (unknown [49.77.178.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55DE42077C;
-        Sun,  2 Sep 2018 08:51:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 831D92077C;
+        Sun,  2 Sep 2018 08:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535878310;
-        bh=aOc1tkTpFuQ64KyoeCKD0GAs3eKHUAGalOVrc3bgaWw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AwLA4lXcRU06PhzeHhCpbRLAkmZhV/2QLrQc2qQiQNHwn0XeZ2PqFmucA+/Wt6hk5
-         4zVcrltuevWM6FP7RWN1sE6pjRCGykX+Y+YcnjMMurRMHEGvUjHMyhMd4Y+A6/RlrF
-         4QQrc/ebI/Om4ylykQ1mGfLk9ie4cqZPSqfUxU+A=
-Date:   Sun, 2 Sep 2018 09:51:40 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, freeman.liu@spreadtrum.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iio: adc: sc27xx: Add raw data support
-Message-ID: <20180902095140.70b6fd5e@archlinux>
-In-Reply-To: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
-References: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        s=default; t=1535878378;
+        bh=ORYRmp7XvZNceMFVVyDNeNUqZnpIo8F+RNdd/HHbGtg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hRI3abisOJuALg3Cr3eJNCMvX6GTr9IMk+vYGbuVQ3sStctjSmx/kn+KFtDzBeb1u
+         r4XNaEmyPm6YfbFwBDvVAzb28lgJ2Ipkz6HiMi7KiX4ncg3kgx/Elg7dnN61Iak2wO
+         mowf3K6v1k19rn6Ho2Ofz29rhqd/QbkTx0Xxy0qI=
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix unnecessary periodic wakeup of
+ discard thread when dev is busy
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org
+References: <1535708366-11318-1-git-send-email-stummala@codeaurora.org>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <ae0ec622-1fd3-d28a-019b-75a507e551f6@kernel.org>
+Date:   Sun, 2 Sep 2018 16:52:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1535708366-11318-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 14:04:04 +0800
-Baolin Wang <baolin.wang@linaro.org> wrote:
-
-> The headset device will use channel 20 of ADC controller to detect events,
-> but it needs the raw ADC data to do conversion according to its own formula.
+On 2018/8/31 17:39, Sahitya Tummala wrote:
+> When dev is busy, discard thread wake up timeout can be aligned with the
+> exact time that it needs to wait for dev to come out of busy. This helps
+> to avoid unnecessary periodic wakeups and thus save some power.
 > 
-> Thus we should configure the channel mask separately and configure channel
-> 20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fs/f2fs/segment.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-I'm still a little unclear on whether there is fundamentally something different
-about this channel or whether this is just a policy decision for particular
-(possibly all) board.  For now we'll go with this change, but if anyone screams
-we will have to then go the nasty route of supporting both processed and raw
-for channel 20.
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 8bcbb50..df14030 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1379,6 +1379,8 @@ static int issue_discard_thread(void *data)
+>  	struct discard_policy dpolicy;
+>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+>  	int issued;
+> +	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+> +	long delta;
+>  
+>  	set_freezable();
+>  
+> @@ -1410,7 +1412,11 @@ static int issue_discard_thread(void *data)
+>  			__wait_all_discard_cmd(sbi, &dpolicy);
+>  			wait_ms = dpolicy.min_interval;
+>  		} else if (issued == -1){
+> -			wait_ms = dpolicy.mid_interval;
+> +			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+I agree that we need to consider power consumption. One more consideration is
+that discard thread may need different submission frequency comparing to garbage
+collection thread, maybe a little fast, would it be better to split
+sbi->interval_time[REQ_TIME] according to gc/discard type.
+
+How do you think?
 
 Thanks,
 
-Jonathan
-
-> ---
-> Changes from v1:
->  - None.
+> +			if (delta > 0)
+> +				wait_ms = jiffies_to_msecs(delta);
+> +			else
+> +				wait_ms = dpolicy.mid_interval;
+>  		} else {
+>  			wait_ms = dpolicy.max_interval;
+>  		}
 > 
-> ---
->  drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
->  1 file changed, 45 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
-> index 2b60efe..153c311 100644
-> --- a/drivers/iio/adc/sc27xx_adc.c
-> +++ b/drivers/iio/adc/sc27xx_adc.c
-> @@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
->  	int ret, tmp;
->  
->  	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		mutex_lock(&indio_dev->mlock);
-> +		ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
-> +		mutex_unlock(&indio_dev->mlock);
-> +
-> +		if (ret)
-> +			return ret;
-> +
-> +		*val = tmp;
-> +		return IIO_VAL_INT;
-> +
->  	case IIO_CHAN_INFO_PROCESSED:
->  		mutex_lock(&indio_dev->mlock);
->  		ret = sc27xx_adc_read_processed(data, chan->channel, scale,
-> @@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
->  	.write_raw = &sc27xx_adc_write_raw,
->  };
->  
-> -#define SC27XX_ADC_CHANNEL(index) {				\
-> +#define SC27XX_ADC_CHANNEL(index, mask) {			\
->  	.type = IIO_VOLTAGE,					\
->  	.channel = index,					\
-> -	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |	\
-> -			      BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),	\
->  	.datasheet_name = "CH##index",				\
->  	.indexed = 1,						\
->  }
->  
->  static const struct iio_chan_spec sc27xx_channels[] = {
-> -	SC27XX_ADC_CHANNEL(0),
-> -	SC27XX_ADC_CHANNEL(1),
-> -	SC27XX_ADC_CHANNEL(2),
-> -	SC27XX_ADC_CHANNEL(3),
-> -	SC27XX_ADC_CHANNEL(4),
-> -	SC27XX_ADC_CHANNEL(5),
-> -	SC27XX_ADC_CHANNEL(6),
-> -	SC27XX_ADC_CHANNEL(7),
-> -	SC27XX_ADC_CHANNEL(8),
-> -	SC27XX_ADC_CHANNEL(9),
-> -	SC27XX_ADC_CHANNEL(10),
-> -	SC27XX_ADC_CHANNEL(11),
-> -	SC27XX_ADC_CHANNEL(12),
-> -	SC27XX_ADC_CHANNEL(13),
-> -	SC27XX_ADC_CHANNEL(14),
-> -	SC27XX_ADC_CHANNEL(15),
-> -	SC27XX_ADC_CHANNEL(16),
-> -	SC27XX_ADC_CHANNEL(17),
-> -	SC27XX_ADC_CHANNEL(18),
-> -	SC27XX_ADC_CHANNEL(19),
-> -	SC27XX_ADC_CHANNEL(20),
-> -	SC27XX_ADC_CHANNEL(21),
-> -	SC27XX_ADC_CHANNEL(22),
-> -	SC27XX_ADC_CHANNEL(23),
-> -	SC27XX_ADC_CHANNEL(24),
-> -	SC27XX_ADC_CHANNEL(25),
-> -	SC27XX_ADC_CHANNEL(26),
-> -	SC27XX_ADC_CHANNEL(27),
-> -	SC27XX_ADC_CHANNEL(28),
-> -	SC27XX_ADC_CHANNEL(29),
-> -	SC27XX_ADC_CHANNEL(30),
-> -	SC27XX_ADC_CHANNEL(31),
-> +	SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
-> +	SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
-> +	SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
->  };
->  
->  static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
-> -- 
-> 1.7.9.5
-> 
-
