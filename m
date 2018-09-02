@@ -2,194 +2,112 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334AAC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93228C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA3E720855
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3E720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4607B20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:49:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4607B20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeIBODM (ORCPT
+        id S1727368AbeIBOEV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:03:12 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58896 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbeIBOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:02:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 02:47:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,319,1531810800"; 
-   d="scan'208";a="69718302"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga007.jf.intel.com with ESMTP; 02 Sep 2018 02:47:46 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V2 5/6] x86/mm: If in_atomic(), allocate pages without sleeping
-Date:   Sun,  2 Sep 2018 02:46:33 -0700
-Message-Id: <1535881594-25469-6-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        Sun, 2 Sep 2018 10:04:21 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:43598 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeIBOEV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:04:21 -0400
+Received: by mail-ua1-f65.google.com with SMTP id f4-v6so11184838uao.10;
+        Sun, 02 Sep 2018 02:49:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=g25akXDdGiXrD35dmFnUdga22B27oLphtxx6Y8I9AN4=;
+        b=S47EpXm7P3fKOSG51A0U8IQKUwcotVYqeHVZHSVEdtTXP45yBKy8eq8IPmUj6oAL3f
+         q9IdcwLCDNq+G9QkktQ+2ESJ6IazV+sTaqyYvq+mZXyvvNMTRhoi/CBdargUZNDUspVh
+         gAmqaPqlCBV5iy1S7tWzuNXPkRu2boZMhPSu4tR2NQzZ0dH8V/lwZfrY8g9J3B0v2RXK
+         9a4UmYT3CRqbS6zWafx6u6cal8UqI8G6iPcVh8HQ7VeUcv2dJDRIBibrRi8uwcI1FZBQ
+         LsS6Dl0xzj4pWeTgP2exDwSxsIRsMNsWk5oAYU+M3xM3wb+pfi5DUNhXuYm/1O3ugKUS
+         eTGw==
+X-Gm-Message-State: APzg51Dogfn9R7hKo5gVoWLzvz5W6KE3WeBo6IWTfILO3zQF8Kejh5MA
+        vRW5Fzj75fYrV9ROUu0EjqnM9oaHgX31l1oFmZNzYQ==
+X-Google-Smtp-Source: ANB0VdbSfElCpR+LxsYF7pEeHvZQ9JKm1wHUjh0m52Q3dS9LNtlUdhENKTk4O9+j4ZQ4AeweHDFyP7IlCJzFXZDHlcE=
+X-Received: by 2002:ab0:13c7:: with SMTP id n7-v6mr13583714uae.47.1535881750824;
+ Sun, 02 Sep 2018 02:49:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180823212436.17423-1-geert@linux-m68k.org> <20180825093055.2cee2159@archlinux>
+ <20180902095916.6aa5e5f6@archlinux>
+In-Reply-To: <20180902095916.6aa5e5f6@archlinux>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 2 Sep 2018 11:48:57 +0200
+Message-ID: <CAMuHMdWY3cjDHOGzMoh9maYJRq_RwerLzD4=eFnsE6yz5CjEYw@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: isl29501: Simplify code to kill compiler warning
+To:     jic23@jic23.retrosnub.co.uk
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>, m.othacehe@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+Hi Jonathan,
 
-A page fault occurs when any EFI Runtime Service tries to reference a
-memory region which it shouldn't. If the illegally accessed region
-is EFI_BOOT_SERVICES_<CODE/DATA>, the efi specific page fault handler
-fixes it up by dynamically creating VA->PA mappings using
-efi_map_region().
+On Sun, Sep 2, 2018 at 10:59 AM Jonathan Cameron
+<jic23@jic23.retrosnub.co.uk> wrote:
+> On Sat, 25 Aug 2018 09:30:55 +0100
+> Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> > On Thu, 23 Aug 2018 23:24:35 +0200
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > > With gcc 4.1.2:
+> > >
+> > >     drivers/iio/proximity/isl29501.c: In function ‘isl29501_register_write’:
+> > >     drivers/iio/proximity/isl29501.c:235: warning: ‘msb’ may be used uninitialized in this function
+> > >
+> > > While this is a false positive, it can easily be avoided by removing the
+> > > "msb" intermediate variable.
+> > > Remove the "lsb" intermediate variable for consistency.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >
+> > Looks sensible to me, but I'd obviously like to leave a little time for
+> > Mathieu to comment as it's his driver.
+> Long enough. I guess Mathieu is busy so I'll apply this (mostly before
+> it goes so far back in my email that I loose it)
+>
+> Applied to the togreg branch of iio.git and pushed out as testing for
+> the autobuilders to play with it.  I thought about marking for stable
+> to reduce noise but decided that compiler is old enough (and I've not
+> seen it with GCC 8 IIRC) that I wouldn't bother.
 
-Originally, efi_map_region() and hence the functionality of creating
-mappings for efi regions was intended to be used *only* during boot time
-(please note __init modifier) and hence when called during runtime (i.e.
-from efi page fault handler), the page allocators complain. Calling
-efi_map_region() during runtime complains because "gfp_allowed_mask"
-value changes from boot time to runtime (GFP_BOOT_MASK to
-__GFP_BITS_MASK). During boot, even though efi_map_region() calls
-alloc_<pte/pmd>_page with GFP_KERNEL, the page allocator doesn't
-complain because "__GFP_RECLAIM" flag is cleared by "gfp_allowed_mask",
-but during runtime it isn't cleared and hence prints below stack trace.
+Thanks!
 
-BUG: sleeping function called from invalid context at mm/page_alloc.c:4320
-in_atomic(): 1, irqs_disabled(): 1, pid: 2022, name: fwts
-1 lock held by fwts/2022:
-irq event stamp: 45714
-hardirqs last  enabled at (45713): [<ffffffff81c00a54>] restore_regs_and_return_to_kernel+0x0/0x2c
-hardirqs last disabled at (45714): [<ffffffff81c0112c>] error_entry+0x7c/0x100
-softirqs last  enabled at (44732): [<ffffffff81e00387>] __do_softirq+0x387/0x49a
-softirqs last disabled at (44707): [<ffffffff8106fabb>] irq_exit+0xbb/0xc0
-CPU: 0 PID: 2022 Comm: fwts Not tainted 4.17.0-rc4-efitest+ #405
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-Call Trace:
-dump_stack+0x5e/0x8b
-___might_sleep+0x20c/0x240
-__alloc_pages_nodemask+0xc2/0x330
-get_zeroed_page+0x12/0x40
-alloc_pmd_page+0x13/0x50
-populate_pmd+0xc0/0x2e0
-? __lock_acquire+0x439/0x740
-__cpa_process_fault+0x2e1/0x5d0
-__change_page_attr_set_clr+0x7c3/0xcd0
-? console_unlock+0x34d/0x660
-? kernel_map_pages_in_pgd+0x8c/0x160
-kernel_map_pages_in_pgd+0x8c/0x160
-? printk+0x43/0x4b
-? __map_region+0x3c/0x60
-__map_region+0x3c/0x60
-efi_map_region+0x83/0xd0
-efi_illegal_accesses_fixup+0x1ca/0x1e0
-no_context+0x112/0x390
-__do_page_fault+0xc7/0x4f0
-page_fault+0x1e/0x30
-RIP: 0010:0xfffffffeffc7ccf1
-RSP: 0018:ffffc9000075bbf0 EFLAGS: 00010282
-RAX: 0000000000000048 RBX: ffffc9000075be10 RCX: ffffc9000075bad0
-RDX: 00000000000003f8 RSI: ffffc9000075be10 RDI: fffffffeffc7cccf
-RBP: ffffc9000075bdc8 R08: 0000000000000048 R09: 0000000000000048
-R10: 00000000000003fd R11: 00000000000003f8 R12: ffff880032a92d80
-R13: 0000000000000003 R14: 00007ffcf1eb9d50 R15: 0000000000000000
-? efi_call+0xd1/0x160
-? __lock_acquire+0x439/0x740
-? _raw_spin_unlock+0x24/0x30
-? virt_efi_get_next_high_mono_count+0x77/0xf0
-? efi_test_ioctl+0x1ab/0xc20
-? selinux_file_ioctl+0x122/0x1c0
-? do_vfs_ioctl+0x92/0x6b0
-? do_vfs_ioctl+0x92/0x6b0
-? security_file_ioctl+0x3c/0x50
-? selinux_capable+0x20/0x20
-? ksys_ioctl+0x66/0x70
-? __x64_sys_ioctl+0x16/0x20
-? do_syscall_64+0x50/0x170
-? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> Basically I'm taking this on the merits of it being better code rather
+> than the warning fix :)
 
-Fix the above warning by conditionally changing the allocation from
-GFP_KERNEL to GFP_ATOMIC, so that efi page fault handler could use
-efi_map_region() during runtime. This change shouldn't effect any other
-generic page allocations because this allocation is used only by efi
-functions [1].
+JFTR: I only send patches for these warnings if they (a) fix a real bug, or (b)
+improve the code.
 
-[1] Comment in __cpa_process_fault() at arch/x86/mm/pageattr.c
+Gr{oetje,eeting}s,
 
-if (cpa->pgd) {
-	/*
-	 * Right now, we only execute this code path when mapping
-	 * the EFI virtual memory map regions, no other users
-	 * provide a ->pgd value. This may change in the future.
-	 */
-	return populate_pgd(cpa, vaddr);
-}
+                        Geert
 
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/mm/pageattr.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 3bded76e8d5c..1b28a333c8ce 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -926,7 +926,13 @@ static void unmap_pud_range(p4d_t *p4d, unsigned long start, unsigned long end)
- 
- static int alloc_pte_page(pmd_t *pmd)
- {
--	pte_t *pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
-+	pte_t *pte;
-+
-+	if (in_atomic())
-+		pte = (pte_t *)get_zeroed_page(GFP_ATOMIC);
-+	else
-+		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
-+
- 	if (!pte)
- 		return -1;
- 
-@@ -936,7 +942,13 @@ static int alloc_pte_page(pmd_t *pmd)
- 
- static int alloc_pmd_page(pud_t *pud)
- {
--	pmd_t *pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
-+	pmd_t *pmd;
-+
-+	if (in_atomic())
-+		pmd = (pmd_t *)get_zeroed_page(GFP_ATOMIC);
-+	else
-+		pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
-+
- 	if (!pmd)
- 		return -1;
- 
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
