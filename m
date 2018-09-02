@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE05AC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6618BC04ABE
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9073820841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1521520841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:03:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Zv7GQRzw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9073820841
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="GFcW8lEC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1521520841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeIBRTD (ORCPT
+        id S1727410AbeIBRTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:19:03 -0400
-Received: from mail-sn1nam01on0111.outbound.protection.outlook.com ([104.47.32.111]:46915
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:19:05 -0400
+Received: from mail-eopbgr720097.outbound.protection.outlook.com ([40.107.72.97]:28208
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727048AbeIBRTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:19:02 -0400
+        id S1727356AbeIBRTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:19:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e+KEywYQkB6QXO7q6iKk2p1rXOgMUcoOphVPtf62Qa0=;
- b=Zv7GQRzwHRjCjgbSePNu+Kdujq4q4L+EMfO24OIQVegHK/3sLJi1DNZmXNSBIhn0sd7fNmPkEVjV6Lrwc91Z3xmfIVrYxgLbhgdIapkGxE16gG9jd9oji02bFfsGOUOHDkD7S27779FwX/s0Sx3DuZnXmXN8QvNmnEef/2CzPQs=
+ bh=jHmto9UCOH2aD8F0gqOWED0sUOk3SsX+dGycu3yem1U=;
+ b=GFcW8lEC518spAw0c2S7x2Ujpm6nhKh7by1CxQnjbiHpWao64k6E+dNpQhYWWjAETwPkwxKyq3POUn8icUnCRkXkLAFtmU0iyRZmsU4p8c1F+KcyDG61WfgmU11t1JQPi5dtr+sgrmPPWCZFE4UGy1YV13mkBIjZdzZE2SFOvpA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0150.namprd21.prod.outlook.com (10.173.189.20) with Microsoft SMTP
+ CY4PR21MB0837.namprd21.prod.outlook.com (10.173.192.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.4; Sun, 2 Sep 2018 13:03:16 +0000
+ 15.20.1122.3; Sun, 2 Sep 2018 13:03:07 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:03:16 +0000
+ 13:03:07 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 014/131] media: dw2102: Fix memleak on sequence
- of probes
-Thread-Topic: [PATCH AUTOSEL 4.18 014/131] media: dw2102: Fix memleak on
- sequence of probes
-Thread-Index: AQHUQr1Q/TbXQWvQ8UiB5zVvVxKc3g==
-Date:   Sun, 2 Sep 2018 13:03:15 +0000
-Message-ID: <20180902064601.183036-14-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 008/131] pinctrl: berlin: fix 'pctrl->functions'
+ allocation in berlin_pinctrl_build_state
+Thread-Topic: [PATCH AUTOSEL 4.18 008/131] pinctrl: berlin: fix
+ 'pctrl->functions' allocation in berlin_pinctrl_build_state
+Thread-Index: AQHUQr1Kl66ku2QzMUaIM4kAlI4DrQ==
+Date:   Sun, 2 Sep 2018 13:03:07 +0000
+Message-ID: <20180902064601.183036-8-alexander.levin@microsoft.com>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,127 +59,107 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:29rvGt3PLENTOQHzcthiJcN+bX2oRshtRM0b1inF3wzHiriSD6S32ryGOtZkX92cnRAOPxtf4qsF5e+NhW0IQ63+mDnhxA9GZ4dKb1LOC+KulSa38h+w0gpwm0ymELXKdjmSlGqeoypZ7loA4LN/NN6URTCw67oa6KAXMJhX/gUuy8AOJxANSGrTohgE77fr45FQLMQSi1VfTNERxDAsBw5pLFQRCWXpzprsTEy8HkU8FN7ikMLuFry9gIov34GwVZ8NqFY0YP5Ue2Gr2FOadHhW2Ua5ShXhGytnQ4H6Yp1Xa1hVsRrc/6WL5ILbLbBll9o9JqbPw03g/qbEtqmEIDpar2ocpD16ZdeXponZZ2FW45BgHAZh8P+cVCt5410/3c5e3WkOHWiXBndx1xlWMopcwdacgBsTi++BP+mDDRVGeTnL20s1+fYYW7vDvmJdxMPQFDulprzcQzlJoHarVg==;5:fgmS5IGy/tHoZEH1Dusn/H1lrLm/TeAqr/sBoA6BXHDleNdlfuF4N6Uq98MEmrMLSlJOaphygVS+nCR8Tx1hQ3+7Ta442gIf+6sOedmSdOleArsTPdrYPuTCAx3+KwHrNjyBtoIPSOnxG7mPT0ZASHHVcKh3qjViJAzqTzi6zzI=;7:FHczPjUMuTZUJ50nAqCvJx4p13ty7ZFAwzR2QNJCVrHrVap+FJfPXJpdLOtJ303brxHo2yC0wkHwNC/I8v2WFH2scNGMSnJG22gYH0CbxWnzPRKw2iUEP1KO4bASqqgfWZ5FtyqAEMEGgH/XeNXwnz2RV0PPgPFPgI4IiGTbRbzTHEmGLZZNZyVq3TwqflBPOc8C476Xsb/Xjmb3u3d/vRyMlsUIMKzLPs9cQWefytPb7DCbm83bFgrl2cNofhqG
-x-ms-office365-filtering-correlation-id: 787b7083-bbc0-424f-7980-08d610d472b1
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0837;6:HS1F+uLgmNY2Sp+3TpMkW/km/RqOwAZuUMruaCdMbfjWjDDULNwCl/ct5Q1X4fU6n+m3M4otGPvha+KEl4a05XOJv8/smXkekJn3xPYFRsHwLMG3OVirq7Qn7GB76KsSlY2YjWPAVjSdhI6qBWvzhNFqyYPFWLVMgb6TiVzAC7sva7VH/7sibuQpb28SuSuU5MClydv07Lkb1e1P3uT4dYTQg6fXbUjzABpvLi5ySj8faUPNBtxBA/jabvrJeDNX+AYTEH97+NZOFu9nEKtZnSrVbtKauK19UGepPzmgITFN5ce5uOy5fJWmYmjLIV9rG1QY2mWhnSBP3DD9oDv7415Q/3WlWPgPERz0X8ROwDROOIMxjASSfa9x02QrCI+q6iAtlnMMlFqb8aiJ+OsFmct5X9a7la7VxoMpZZFt9i1lfMQRXrg312wz/HRwXLxo75B6RLX3YY69g2hp9NTzbw==;5:StZZsjMnpwMe6CBDYuCkOfoJtmaFZ3x8wx7Nv1baNIH/AbbDX4TD9PlCj070jHT///gFd2MeltaK6mUSE8Eoe0H8vowTK4NoVRZksl4os+NhWhdu8v8B+m2zYs9x2Ab15v37QzQnNvC35bqEiVFmsSnQAF+YxcVgfdRyHzhpSBM=;7:D9nBjSqtFWHVsRDrnGzj8SGOe8oyfsCewakzfyxVc9oJlkg4fc7XU4MPXC/BcD9XjsdheP2QA/ZG+Y26hahLhsMiR+5LVmSs836CeuDnLoP97K1vSEu/giioljgqpQ4J6XJv/d368yfWhyc+4StQo9I/bmUdsXS5oaBPBeBaNLgnmK79tGnMCN+PWz1NtzsfsfSubrwgXOFpv/kCKyU8BenzsmSdyQza707DbF8h7kNTEC3nEIMe7CmR6rKuUDUc
+x-ms-office365-filtering-correlation-id: 0201ec80-73b0-4e5e-b185-08d610d46d8d
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0150;
-x-ms-traffictypediagnostic: CY4PR21MB0150:
-x-microsoft-antispam-prvs: <CY4PR21MB01501A73107F6A9CBE229D1EFB0D0@CY4PR21MB0150.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0150;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0150;
-x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(376002)(346002)(136003)(199004)(189003)(256004)(22452003)(2906002)(217873002)(3846002)(68736007)(10090500001)(6506007)(6116002)(1076002)(6436002)(102836004)(486006)(53936002)(76176011)(106356001)(105586002)(14444005)(7736002)(305945005)(8676002)(316002)(5660300001)(6512007)(99286004)(36756003)(4326008)(97736004)(5250100002)(2616005)(4477795004)(476003)(2900100001)(11346002)(186003)(2501003)(81166006)(26005)(8936002)(81156014)(110136005)(54906003)(107886003)(66066001)(478600001)(86612001)(14454004)(6346003)(6486002)(10290500003)(86362001)(72206003)(25786009)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:CY4PR21MB0837;
+x-ms-traffictypediagnostic: CY4PR21MB0837:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: VVZ3lzVm7xlpsCIav5GPb8cf5ctAgmoveXNyXQLt7Gqbf9Jo9B4UQzWQmXh2spEDc5+EBTAydJ9wUrV59hrTW7sBAmV0zCLVtSDQE4bc5F/gJMpD2MUUz4r44Qvp58m68HhphC7OwJT0mVE232rlrUXgjmrnUtFjNk6AbF41P/3JPszbzOEVJd6RKepbaniIijd+45OOXQTPurJzywBlgwMI0dijfapqM3W13uPPf3/U1XdvAsOTHvF0Jyn4dxFQodX53bL90PjnjEATfU9i/IKsAVFzMf2mj/qZRFnp1XI7O8M1xcCkJ8xL7Tn8+aZs2QhnwD2jfuCrNrYg+NAcs2SMNMlAHDjmtPF5fd8MqQc=
+x-microsoft-antispam-prvs: <CY4PR21MB083774647C5F66306CE5063EFB0D0@CY4PR21MB0837.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0837;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0837;
+x-forefront-prvs: 078310077C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(376002)(136003)(366004)(346002)(189003)(199004)(6506007)(2616005)(25786009)(476003)(2900100001)(4326008)(6116002)(1076002)(3846002)(106356001)(305945005)(66066001)(7736002)(105586002)(10290500003)(2501003)(72206003)(478600001)(5250100002)(217873002)(11346002)(10090500001)(446003)(76176011)(6512007)(6486002)(256004)(53936002)(81156014)(14444005)(8676002)(81166006)(68736007)(14454004)(22452003)(8936002)(99286004)(316002)(102836004)(54906003)(110136005)(2906002)(107886003)(86612001)(5660300001)(186003)(486006)(575784001)(36756003)(86362001)(97736004)(26005)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0837;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ccGdmMbvdYx7jASYDOYXZ+zBHyjwRHtsfc5kwMHIJZF7DbQHl20uU3RzVQNZ5iiH9oBOtJrtp2mdDYXUk2qArsdPfIqqjqseupyCzkqGSobtEGf1IkbTbkKiIOUPSzY6pittG6qaoJc0UnXHtvDQ/b/OgZs6IEWxOtq2Oeu7FDU9nZwclw84JjoY/rgIWXt9IXgEKe/l4hl3jOG8XcsOs3yz/qNOYZlF28CJw/esBeA3h6NzYwe0HvqSlsLHEtTBifx6Ob/HnZHCi2+/aTWZASTDQ2XBBrVgCmrLMbB7BAFC9DdjSnrTsz8FRQMYXa38c+XfpuNj1mI8xy53QjLClIwYPjLDRYnD76Yq/ABqUxg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 787b7083-bbc0-424f-7980-08d610d472b1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:03:16.0796
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0201ec80-73b0-4e5e-b185-08d610d46d8d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:03:07.4565
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0150
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0837
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 299c7007e93645067e1d2743f4e50156de78c4ff ]
+[ Upstream commit b5031b7db77dc47f474f0efc2b2552c32b7bb59d ]
 
-Each call to dw2102_probe() allocates memory by kmemdup for structures
-p1100, s660, p7500 and s421, but there is no their deallocation.
-dvb_usb_device_init() copies the corresponding structure into
-dvb_usb_device->props, so there is no use of original structure after
-dvb_usb_device_init().
+fixes following Smatch static check warning:
 
-The patch moves structures from global scope to local and adds their
-deallocation.
+ drivers/pinctrl/berlin/berlin.c:237 berlin_pinctrl_build_state()
+ warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
 
-Found by Linux Driver Verification project (linuxtesting.org).
+As we will be calling krealloc() on pointer 'pctrl->functions', which means
+kfree() will be called in there, devm_kzalloc() shouldn't be used with
+the allocation in the first place.  Fix the warning by calling kcalloc()
+and managing the free procedure in error path on our own.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 3de68d331c24 ("pinctrl: berlin: add the core pinctrl driver for Marv=
+ell Berlin SoCs")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/usb/dvb-usb/dw2102.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/pinctrl/berlin/berlin.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb/dw2102.c b/drivers/media/usb/dvb-usb=
-/dw2102.c
-index 0d4fdd34a710..9ce8b4d79d1f 100644
---- a/drivers/media/usb/dvb-usb/dw2102.c
-+++ b/drivers/media/usb/dvb-usb/dw2102.c
-@@ -2101,14 +2101,12 @@ static struct dvb_usb_device_properties s6x0_proper=
-ties =3D {
+diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berli=
+n.c
+index d6d183e9db17..b5903fffb3d0 100644
+--- a/drivers/pinctrl/berlin/berlin.c
++++ b/drivers/pinctrl/berlin/berlin.c
+@@ -216,10 +216,8 @@ static int berlin_pinctrl_build_state(struct platform_=
+device *pdev)
  	}
- };
 =20
--static struct dvb_usb_device_properties *p1100;
- static const struct dvb_usb_device_description d1100 =3D {
- 	"Prof 1100 USB ",
- 	{&dw2102_table[PROF_1100], NULL},
- 	{NULL},
- };
+ 	/* we will reallocate later */
+-	pctrl->functions =3D devm_kcalloc(&pdev->dev,
+-					max_functions,
+-					sizeof(*pctrl->functions),
+-					GFP_KERNEL);
++	pctrl->functions =3D kcalloc(max_functions,
++				   sizeof(*pctrl->functions), GFP_KERNEL);
+ 	if (!pctrl->functions)
+ 		return -ENOMEM;
 =20
--static struct dvb_usb_device_properties *s660;
- static const struct dvb_usb_device_description d660 =3D {
- 	"TeVii S660 USB",
- 	{&dw2102_table[TEVII_S660], NULL},
-@@ -2127,14 +2125,12 @@ static const struct dvb_usb_device_description d480=
-_2 =3D {
- 	{NULL},
- };
+@@ -257,8 +255,10 @@ static int berlin_pinctrl_build_state(struct platform_=
+device *pdev)
+ 				function++;
+ 			}
 =20
--static struct dvb_usb_device_properties *p7500;
- static const struct dvb_usb_device_description d7500 =3D {
- 	"Prof 7500 USB DVB-S2",
- 	{&dw2102_table[PROF_7500], NULL},
- 	{NULL},
- };
+-			if (!found)
++			if (!found) {
++				kfree(pctrl->functions);
+ 				return -EINVAL;
++			}
 =20
--static struct dvb_usb_device_properties *s421;
- static const struct dvb_usb_device_description d421 =3D {
- 	"TeVii S421 PCI",
- 	{&dw2102_table[TEVII_S421], NULL},
-@@ -2334,6 +2330,11 @@ static int dw2102_probe(struct usb_interface *intf,
- 		const struct usb_device_id *id)
- {
- 	int retval =3D -ENOMEM;
-+	struct dvb_usb_device_properties *p1100;
-+	struct dvb_usb_device_properties *s660;
-+	struct dvb_usb_device_properties *p7500;
-+	struct dvb_usb_device_properties *s421;
-+
- 	p1100 =3D kmemdup(&s6x0_properties,
- 			sizeof(struct dvb_usb_device_properties), GFP_KERNEL);
- 	if (!p1100)
-@@ -2402,8 +2403,16 @@ static int dw2102_probe(struct usb_interface *intf,
- 	    0 =3D=3D dvb_usb_device_init(intf, &t220_properties,
- 			 THIS_MODULE, NULL, adapter_nr) ||
- 	    0 =3D=3D dvb_usb_device_init(intf, &tt_s2_4600_properties,
--			 THIS_MODULE, NULL, adapter_nr))
-+			 THIS_MODULE, NULL, adapter_nr)) {
-+
-+		/* clean up copied properties */
-+		kfree(s421);
-+		kfree(p7500);
-+		kfree(s660);
-+		kfree(p1100);
-+
- 		return 0;
-+	}
+ 			if (!function->groups) {
+ 				function->groups =3D
+@@ -267,8 +267,10 @@ static int berlin_pinctrl_build_state(struct platform_=
+device *pdev)
+ 						     sizeof(char *),
+ 						     GFP_KERNEL);
 =20
- 	retval =3D -ENODEV;
- 	kfree(s421);
+-				if (!function->groups)
++				if (!function->groups) {
++					kfree(pctrl->functions);
+ 					return -ENOMEM;
++				}
+ 			}
+=20
+ 			groups =3D function->groups;
 --=20
 2.17.1
