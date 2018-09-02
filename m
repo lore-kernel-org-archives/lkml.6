@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277F2C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F5320837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA0EC20856
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JqxVBCM9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F5320837
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="L9JU76oy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0EC20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbeIBRao (ORCPT
+        id S1729932AbeIBRar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:30:44 -0400
+        Sun, 2 Sep 2018 13:30:47 -0400
 Received: from mail-eopbgr680103.outbound.protection.outlook.com ([40.107.68.103]:45024
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728978AbeIBRan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:30:43 -0400
+        id S1729368AbeIBRap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:30:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qSK3J22/k0pCMerqWX7etcn4BZO7jrWo6lU9HTIpI2E=;
- b=JqxVBCM98w4hI5WWahHC2b0rIwJPSXZEQ+P97gpGEFiFFCv1VlYy6pMgK2cmQsKGz44/5cfbntqWq4RQtlrvKQPeAPCKravodyRwivTj0m4T5jMpQumMU4jvkvTPeTmIyN8o9VbAFaKJ3hvf1jNe0NYLhH3ZXhc2OxSVLFpNaM8=
+ bh=pFzBx3sFYqVaTp4LHhLCH0CaoQ5bMsFsIyT7kwZ10aA=;
+ b=L9JU76oyFHgpFuVVbXx2Zb8/W3flLggsu9lUF5ZAHslFJZ3a95dFDJUGFmjrNRXtExGkQ7vyvsEU9xlasqO8mPHU71r78+CmFCoM+U/t0VplulrRlzh2OL8wqWI2IBPehC7Ku/2Lsu+mJM7d2mK5J/JfFStcd9eE4MJ2Kg+CQ7s=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:14:54 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:14:53 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:14:54 +0000
+ 13:14:53 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Nick Dyer <nick.dyer@itdev.co.uk>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+CC:     Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 40/62] Input: atmel_mxt_ts - only use first T9
- instance
-Thread-Topic: [PATCH AUTOSEL 4.9 40/62] Input: atmel_mxt_ts - only use first
- T9 instance
-Thread-Index: AQHUQr7wzpP5eIhjFkCVHGQlVZgWvg==
-Date:   Sun, 2 Sep 2018 13:14:54 +0000
-Message-ID: <20180902131411.183978-30-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 39/62] net: dcb: For wild-card lookups, use
+ priority -1, not 0
+Thread-Topic: [PATCH AUTOSEL 4.9 39/62] net: dcb: For wild-card lookups, use
+ priority -1, not 0
+Thread-Index: AQHUQr7vlxgJosKlWkCkLGfpgrNzIw==
+Date:   Sun, 2 Sep 2018 13:14:53 +0000
+Message-ID: <20180902131411.183978-29-alexander.levin@microsoft.com>
 References: <20180902131411.183978-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131411.183978-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:W4JDAZVEGneSBmrp4M1EHUFSw2TXuJK8Ki2lDfbexQz1waBMm1iFvUioQFHdt3lU6U0ytRzepHE683EJPz0S3AWF7RAcwNrjE7VYnK2EFOCXEGInSpYshymbTjkOl/k/qOK1w8MMcP2Ciac8VuMIP6W8rzKABDXTtcHSIROD3aXFxM1Sf7rXy7hr53F+KBSWX340OBygIIpvxqDx1irVcJRaWK2rLk6FEuntpVAIyg759y/uQEBNVmFMXAf3fGntB7CU9RwkysT6LUFXTrr5LVCm9aEcssJ0WzkBbdKRBdP/X9GYLO19Fx9Ko/27Um5qNLM0q7WipoUaPm7gWgz8RkJ1bFZU3OwYuX2SO6aLxsZcXkkkiGbS2LMNVUwd3Y/E/BKgL7BGm3YkaKWrxfKvm1upyWMRTMjf9Do3beChH3sNmbnI2WwICo+gY4v6lG0la4mqLdiivk9RWAbNTPh3OQ==;5:vEllmngYXON+/1BauGmTSHRGyMEd7PwtnLAlUoTuXCMTF7X9PXQILIHXBvmqNjtKpGRgEjNuAGd+m8StTNks0OAsVsFCwotldO4EVC/O2m0ZEN82QUF+rqanuQ9dsIIbPLA21qL0D1KJKF8Cwxu6wWv17ADXcoQgigA8pDrgPpY=;7:g+Qqo8vxZEAlfIbhwAczaWADe5ytpnvgUzXetdhnCkn0M7Bl4v3Vrb/t34sUYvYvMUj5vifgp/4aGSJx4+b9boZ3FhQgXhXBOYXeC09TYJOyy3+E25N06TgMi6fkC02lbXcFSEyjeoVJANXCeoU551MA8tM7/pgr4NFBTipJD17S4mznQNCkoDPb9AjCsULdrP/EtUlicge5l+pMzNoqnEbNUwOm4opJuxx/o27SBNYeoBi79K3JwBCStkTVaJJ9
-x-ms-office365-filtering-correlation-id: ca6e74da-5ae5-441c-3a40-08d610d612c1
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:MPo0K6f0KBKWR42VN9sGnCm11opXzRfg+GLR9FSPdzHx6YCZs7Z+RzMU3ZNa0xhUBEdVMU2JVPkaJ7Iy1Zf6VWeVD4uhmJOinjKCycM/EtAuIVWykBU+EiVlX3bihAwLj1krBAKoPyjN7+y4pZNtn83iSpdVm5F6Qo/47ZnIMGK5I8gLdnTEc2452Lhczqg4uswZ9o4tHLgR2uR3n7vSSqVS4a2xcI2jkTM0OXDsjsa7xWINKrLkHMZxTA1/OgKeyAxbZHYBKen2XUZl+rz1zmBeg1s/BjjGTnzyg2yh/jxxozdKXHP10aoQ5iv0YUtWgyZ2XojKonvtst8WeqYhFnLj5CR3NRDqzOW8TPf3oU2Oec64dDl6nohXNKvy6atTFJnp8aMf49Ek8b6UHMkAeGQdwYt16SrK/KvgdD695OYtgCGiz2/MPU3qaHnyCX31W6Uu8ZXCQ2HTQfFS4Eq6DQ==;5:zgKE3Vvm59OcQ5lCnEqjCg2kC0VG5f0b1/7OKqp2K15lS3t79L5CWlS3jhg8wkUWwGGKQqNdplVMnBsJ1+mZK7aMY5iP1i3InKJ20UckUTXTz2R+2EcfmZBSxvXIw1IGw3BdYHhsyBJ/wJub83O8Nekgpa3oK9QUYV6CuJExOzA=;7:OEzWwI+4w8YVq/zdTQC/bZ5coxVYaSyxfLbamYZagVI1u5voWNxTJOswli6D+lFB/LAyRA0d78d59fZ9eMegKvFQAeCuqAMWIyFUA4J8I+yeKv8MaeVbBipblfY83WtBjjJBAWYYBx9hdgxuDhCbvuGb+Rkq0c/s34FRVgFdE8FRSBknX4k9C5kFMtIn0uXBP3H4GQL5k4Bv6ogi3ebG9fDRI6YM8rM21X1TRov8DoEcHeDn7wKO/FptkrNRVx2Q
+x-ms-office365-filtering-correlation-id: 0ec68b34-9ecb-4dc8-d2eb-08d610d6121d
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
 x-ms-traffictypediagnostic: CY4PR21MB0741:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0741DD2771FE5FA5AC990FAFFB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(20558992708506)(89211679590171)(85827821059158);
+x-microsoft-antispam-prvs: <CY4PR21MB0741577F02DF4C28E05BE0ABFB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(788757137089);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(99286004)(6486002)(39060400002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(575784001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: t8Sz9Efza6gQY2ftAAp2CFgoTVg/InFnk6+WleDDcJC9le412qJ3n9xaI8qgLsOKRDOytaGYMnxJeE4naDdGxP1xO9/ZcMwW1TxRJSvwbQTq+fT2NczOm60y6HHLYrX3yC5adJGfoirh+xqJeeLfRpWWSIyfCueDsy+kvV0pPzUMx4fgLVhHMeAHOaMafpY6IngpyG/CQc8ghWHziJwIP/kiujki4gaeV5rdfUB6mxvFFewYNyGsr25HFDmMCc7wbsPbkol/N8ATsUNORIiFooVGTSABaLdM/l+DfMbh2LsiZbvGRc08+6FAj5FLQOkiTFGNTboEy2BJTkQmbGjStK2yYKHoMSAQGl0Nw+FXmBM=
+x-microsoft-antispam-message-info: BYXf8lPOM3gVwMB5yvCvt9rTAv/hKHJIqAi1ELV2sj/60xxRmVBE0XHV2IVzHH3bEEThkb4Y0zxwUY18YcoRR/gfkOgv5JzXlMCMfOE9wHl/AJ4c5hz6yJoaf8ANFZl6qMm61PwHMnbOFLV55K8wz+YJLP6v1Az6TMV3LJYv1AlOaCh4IqeCOEEj3g6murxosFR38+ClGX6Qi86asYNSCVaz29Qra7qPmaVSN3KU1wyHPXaF1anqomJqIRVs8SlQWp4zmF/EdroPIRUS64YBa7iWh3nCo9P/ti+Gp9XrbgkYoe9B4yLtZz/8X2deiTOX85h9i8VzoWN+mJZMhT+6tCvvwRmnicoh9cePMypCgDs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca6e74da-5ae5-441c-3a40-08d610d612c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:54.1341
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ec68b34-9ecb-4dc8-d2eb-08d610d6121d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:53.0982
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,52 +93,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 36f5d9ef26e52edff046b4b097855db89bf0cd4a ]
+[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
 
-The driver only registers one input device, which uses the screen
-parameters from the first T9 instance. The first T63 instance also uses
-those parameters.
+The function dcb_app_lookup walks the list of specified DCB APP entries,
+looking for one that matches a given criteria: ifindex, selector,
+protocol ID and optionally also priority. The "don't care" value for
+priority is set to 0, because that priority has not been allowed under
+CEE regime, which predates the IEEE standardization.
 
-It is incorrect to send input reports from the second instances of these
-objects if they are enabled: the input scaling will be wrong and the
-positions will be mashed together.
+Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
+considers zero a wild card, attempts to add an APP entry with priority 0
+fail when other entries exist for a given ifindex / selector / PID
+triplet.
 
-This also causes problems on Android if the number of slots exceeds 32.
+Fix by changing the wild-card value to -1.
 
-In the future, this could be handled by looking for enabled touch object
-instances and creating an input device for each one.
-
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-Acked-by: Benson Leung <bleung@chromium.org>
-Acked-by: Yufeng Shen <miletus@chromium.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/dcb/dcbnl.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touch=
-screen/atmel_mxt_ts.c
-index 26132402fdf9..c2fb0236a47c 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1671,10 +1671,11 @@ static int mxt_get_object_table(struct mxt_data *da=
-ta)
- 			break;
- 		case MXT_TOUCH_MULTI_T9:
- 			data->multitouch =3D MXT_TOUCH_MULTI_T9;
-+			/* Only handle messages from first T9 instance */
- 			data->T9_reportid_min =3D min_id;
--			data->T9_reportid_max =3D max_id;
--			data->num_touchids =3D object->num_report_ids
--						* mxt_obj_instances(object);
-+			data->T9_reportid_max =3D min_id +
-+						object->num_report_ids - 1;
-+			data->num_touchids =3D object->num_report_ids;
- 			break;
- 		case MXT_SPT_MESSAGECOUNT_T44:
- 			data->T44_address =3D object->start_address;
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index 3202d75329b5..a1116701287f 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1764,7 +1764,7 @@ static struct dcb_app_type *dcb_app_lookup(const stru=
+ct dcb_app *app,
+ 		if (itr->app.selector =3D=3D app->selector &&
+ 		    itr->app.protocol =3D=3D app->protocol &&
+ 		    itr->ifindex =3D=3D ifindex &&
+-		    (!prio || itr->app.priority =3D=3D prio))
++		    ((prio =3D=3D -1) || itr->app.priority =3D=3D prio))
+ 			return itr;
+ 	}
+=20
+@@ -1799,7 +1799,8 @@ u8 dcb_getapp(struct net_device *dev, struct dcb_app =
+*app)
+ 	u8 prio =3D 0;
+=20
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr =3D dcb_app_lookup(app, dev->ifindex, 0)))
++	itr =3D dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio =3D itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+=20
+@@ -1827,7 +1828,8 @@ int dcb_setapp(struct net_device *dev, struct dcb_app=
+ *new)
+=20
+ 	spin_lock_bh(&dcb_lock);
+ 	/* Search for existing match and replace */
+-	if ((itr =3D dcb_app_lookup(new, dev->ifindex, 0))) {
++	itr =3D dcb_app_lookup(new, dev->ifindex, -1);
++	if (itr) {
+ 		if (new->priority)
+ 			itr->app.priority =3D new->priority;
+ 		else {
+@@ -1860,7 +1862,8 @@ u8 dcb_ieee_getapp_mask(struct net_device *dev, struc=
+t dcb_app *app)
+ 	u8 prio =3D 0;
+=20
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr =3D dcb_app_lookup(app, dev->ifindex, 0)))
++	itr =3D dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio |=3D 1 << itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+=20
 --=20
 2.17.1
