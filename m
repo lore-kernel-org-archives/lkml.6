@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A343AC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971C9C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6B120837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6B120837
+	by mail.kernel.org (Postfix) with ESMTP id 547972064D
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547972064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeIBLmi (ORCPT
+        id S1727593AbeIBLmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 07:42:38 -0400
-Received: from mailoutvs62.siol.net ([185.57.226.253]:54980 "EHLO
+        Sun, 2 Sep 2018 07:42:42 -0400
+Received: from mailoutvs61.siol.net ([185.57.226.252]:55009 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727415AbeIBLmh (ORCPT
+        with ESMTP id S1727415AbeIBLml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 07:42:37 -0400
+        Sun, 2 Sep 2018 07:42:41 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 4E826520D1A;
-        Sun,  2 Sep 2018 09:27:47 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id AEFD7520CF4;
+        Sun,  2 Sep 2018 09:27:50 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id VPRvZ81Ikhqn; Sun,  2 Sep 2018 09:27:46 +0200 (CEST)
+        with ESMTP id lF0fyhRDT_iZ; Sun,  2 Sep 2018 09:27:50 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C2937520D11;
-        Sun,  2 Sep 2018 09:27:46 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 37FCA520D11;
+        Sun,  2 Sep 2018 09:27:50 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 83CD5520CF4;
-        Sun,  2 Sep 2018 09:27:42 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 1F852520CF4;
+        Sun,  2 Sep 2018 09:27:46 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     robh+dt@kernel.org, maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -44,10 +44,10 @@ Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
         jernej.skrabec@siol.net, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 18/27] dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
-Date:   Sun,  2 Sep 2018 09:26:34 +0200
-Message-Id: <20180902072643.4917-19-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 19/27] drm/sun4i: Add support for H6 DW HDMI controller
+Date:   Sun,  2 Sep 2018 09:26:35 +0200
+Message-Id: <20180902072643.4917-20-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
 References: <20180902072643.4917-1-jernej.skrabec@siol.net>
@@ -56,58 +56,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+H6 has DW HDMI 2.0 controller v2.12a.
 
-The Allwinner H6 SoC uses a v2.12a DesignWare HDMI controller, with
-dedicated CEC and HDCP clocks added; the PHY connected is a standard
-DesignWare HDMI PHY.
+It supports 4K at 60 Hz and HDCP 2.2.
 
-Add binding for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[added HDCP clock and reset]
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt   | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index dec2f8a6da9c..278410e43940 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 16a0c7a88ea8..44143c9f20d0 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -43,6 +43,16 @@ sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
  
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-h6-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
-@@ -85,9 +86,14 @@ Required properties:
-     * iahb: the HDMI bus clock
-     * isfr: the HDMI register clock
-     * tmds: TMDS clock
-+    * cec: HDMI CEC clock (H6 only)
-+    * hdcp: HDCP clock (H6 only)
-+    * hdcp-bus: HDCP bus clock (H6 only)
-   - clock-names: the clock names mentioned above
--  - resets: phandle to the reset controller
--  - reset-names: must be "ctrl"
-+  - resets:
-+    * ctrl: HDMI controller reset
-+    * hdcp: HDCP reset (H6 only)
-+  - reset-names: reset names mentioned above
-   - phys: phandle to the DWC HDMI PHY
-   - phy-names: must be "phy"
++static enum drm_mode_status
++sun8i_dw_hdmi_mode_valid_h6(struct drm_connector *connector,
++			    const struct drm_display_mode *mode)
++{
++	if (mode->clock > 600000)
++		return MODE_CLOCK_HIGH;
++
++	return MODE_OK;
++}
++
+ static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
+ {
+ 	return IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
+@@ -220,12 +230,20 @@ static int sun8i_dw_hdmi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
-@@ -104,6 +110,7 @@ Required properties:
-     * allwinner,sun8i-a83t-hdmi-phy
-     * allwinner,sun8i-h3-hdmi-phy
-     * allwinner,sun50i-a64-hdmi-phy
-+    * allwinner,sun50i-h6-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
++static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks = {
++	.mode_valid = sun8i_dw_hdmi_mode_valid_h6,
++};
++
+ static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks = {
+ 	.mode_valid = sun8i_dw_hdmi_mode_valid_a83t,
+ 	.set_rate = true,
+ };
+ 
+ static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
++	{
++		.compatible = "allwinner,sun50i-h6-dw-hdmi",
++		.data = &sun50i_h6_quirks,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-dw-hdmi",
+ 		.data = &sun8i_a83t_quirks,
 -- 
 2.18.0
 
