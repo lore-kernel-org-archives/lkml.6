@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB09C43143
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0627C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F369C20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F369C20837
+	by mail.kernel.org (Postfix) with ESMTP id 6190B20837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6190B20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeIBOC6 (ORCPT
+        id S1727330AbeIBODF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:02:58 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58897 "EHLO mga07.intel.com"
+        Sun, 2 Sep 2018 10:03:05 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58895 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbeIBOC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:02:58 -0400
+        id S1726869AbeIBODE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:03:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 02:47:47 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 02:47:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,319,1531810800"; 
-   d="scan'208";a="69718305"
+   d="scan'208";a="69718295"
 Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga007.jf.intel.com with ESMTP; 02 Sep 2018 02:47:47 -0700
+  by orsmga007.jf.intel.com with ESMTP; 02 Sep 2018 02:47:46 -0700
 From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
@@ -41,9 +41,9 @@ Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
         Bhupesh Sharma <bhsharma@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V2 6/6] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESS
-Date:   Sun,  2 Sep 2018 02:46:34 -0700
-Message-Id: <1535881594-25469-7-git-send-email-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V2 3/6] x86/efi: Permanently save the EFI_MEMORY_MAP passed by the firmware
+Date:   Sun,  2 Sep 2018 02:46:31 -0700
+Message-Id: <1535881594-25469-4-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
 References: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
@@ -54,39 +54,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-There may exist some buggy UEFI firmware implementations that might
-access efi regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even
-after the kernel has assumed control of the platform. This violates UEFI
-specification.
-
-If selected, this debug option will print a warning message if the UEFI
-firmware tries to access any memory region which it shouldn't. Along
-with the warning, the efi page fault handler will also try to
-fixup/recover from the page fault triggered by the firmware so that the
-machine doesn't hang.
-
-To support this feature, two changes should be made to the existing efi
-subsystem
-1. Map EFI_BOOT_SERVICES_<CODE/DATA> regions only when
-   EFI_WARN_ON_ILLEGAL_ACCESS is disabled
-    Presently, the kernel maps EFI_BOOT_SERVICES_<CODE/DATA> regions as
-    a workaround for buggy firmware that accesses them even when they
-    shouldn't. With EFI_WARN_ON_ILLEGAL_ACCESS enabled (and hence efi
-    page fault handler) kernel can now detect and handle such accesses
-    dynamically. Hence, rather than safely mapping
-    EFI_BOOT_SERVICES_<CODE/DATA> regions *all* the time, map them on
-    demand.
-
-2. If EFI_WARN_ON_ILLEGAL_ACCESS is enabled don't call
-   efi_free_boot_services()
-    Presently, during early boot phase EFI_BOOT_SERVICES_<CODE/DATA>
-    regions are marked as reserved by kernel
-    (see efi_reserve_boot_services()) and are freed before entering
-    runtime (see efi_free_boot_services()). But, while dynamically
-    fixing page faults caused by the firmware, efi page fault handler
-    assumes that EFI_BOOT_SERVICES_<CODE/DATA> regions are still intact.
-    Hence, to make this assumption true, don't call
-    efi_free_boot_services() if EFI_WARN_ON_ILLEGAL_ACCESS is enabled.
+The efi page fault handler that fixes up page faults caused by the
+firmware needs the original memory map passed by the firmware. It looks
+up this memory map to find the type of the memory region at which the
+page fault occurred. Presently, EFI subsystem discards the original
+memory map passed by the firmware and replaces it with a new memory map
+that has only EFI_RUNTIME_SERVICES_<CODE/DATA> regions. But illegal
+accesses by firmware can occur at any region. Hence, _only_ if
+CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is defined, create a backup of the
+original memory map passed by the firmware, so that efi page fault
+handler could detect/fix illegal accesses to *any* efi region.
 
 Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
 Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
@@ -100,75 +77,98 @@ Cc: Bhupesh Sharma <bhsharma@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/Kconfig               | 21 +++++++++++++++++++++
- arch/x86/platform/efi/efi.c    |  4 ++++
- arch/x86/platform/efi/quirks.c |  3 +++
- 3 files changed, 28 insertions(+)
+ arch/x86/include/asm/efi.h     |  6 ++++++
+ arch/x86/platform/efi/efi.c    |  2 ++
+ arch/x86/platform/efi/quirks.c | 49 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index f1dbb4ee19d7..0fb1309d510d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1957,6 +1957,27 @@ config EFI_MIXED
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index 9b70743400f3..d9e5d9a6d138 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -142,6 +142,12 @@ extern int __init efi_reuse_config(u64 tables, int nr_tables);
+ extern void efi_delete_dummy_variable(void);
+ extern void efi_switch_mm(struct mm_struct *mm);
  
- 	   If unsure, say N.
- 
-+config EFI_WARN_ON_ILLEGAL_ACCESS
-+	bool "Warn about illegal memory accesses by firmware" if EXPERT
-+	depends on EFI
-+	help
-+	  Enable this debug feature so that the kernel can detect illegal
-+	  memory accesses by firmware and issue a warning. Also,
-+	  1. If the illegally accessed region is EFI_BOOT_SERVICES_<CODE/DATA>,
-+	     the kernel fixes it up by mapping the requested region.
-+	  2. If the illegally accessed region is any other region (Eg:
-+	     EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>), then the
-+	     kernel freezes efi_rts_wq and schedules a new process. Also, it
-+	     disables EFI Runtime Services, so that it will never again call
-+	     buggy firmware.
-+	  3. If the access is to any other efi region like above but if the
-+	     buggy efi runtime service is efi_reset_system(), then the
-+	     platform is rebooted through BIOS.
-+	  Please see the UEFI specification for details on the expectations
-+	  of memory usage.
++#ifdef CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS
++extern void __init efi_save_original_memmap(void);
++#else
++static inline void __init efi_save_original_memmap(void) { }
++#endif /* CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS */
 +
-+	  If unsure, say N.
-+
- config SECCOMP
- 	def_bool y
- 	prompt "Enable seccomp to safely compute untrusted bytecode"
+ struct efi_setup_data {
+ 	u64 fw_vendor;
+ 	u64 runtime;
 diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 7d18b7ed5d41..77fbcb798f4e 100644
+index 439c2c40bf03..7d18b7ed5d41 100644
 --- a/arch/x86/platform/efi/efi.c
 +++ b/arch/x86/platform/efi/efi.c
-@@ -768,9 +768,13 @@ static bool should_map_region(efi_memory_desc_t *md)
- 	/*
- 	 * Map boot services regions as a workaround for buggy
- 	 * firmware that accesses them even when they shouldn't.
-+	 * (only if CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is disabled)
- 	 *
- 	 * See efi_{reserve,free}_boot_services().
- 	 */
-+	if (IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS))
-+		return false;
+@@ -946,6 +946,8 @@ static void __init __efi_enter_virtual_mode(void)
+ 
+ 	pa = __pa(new_memmap);
+ 
++	efi_save_original_memmap();
 +
- 	if (md->type == EFI_BOOT_SERVICES_CODE ||
- 	    md->type == EFI_BOOT_SERVICES_DATA)
- 		return true;
+ 	/*
+ 	 * Unregister the early EFI memmap from efi_init() and install
+ 	 * the new EFI memory map that we are about to pass to the
 diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index e38e823382ba..60cb7a8d5371 100644
+index 844d31cb8a0c..7fd53fa8c4dd 100644
 --- a/arch/x86/platform/efi/quirks.c
 +++ b/arch/x86/platform/efi/quirks.c
-@@ -377,6 +377,9 @@ void __init efi_free_boot_services(void)
- 	int num_entries = 0;
- 	void *new, *new_md;
+@@ -654,3 +654,52 @@ int efi_capsule_setup_info(struct capsule_info *cap_info, void *kbuff,
+ }
  
-+	if (IS_ENABLED(CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS))
-+		return;
+ #endif
 +
- 	for_each_efi_memory_desc(md) {
- 		unsigned long long start = md->phys_addr;
- 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
++#ifdef CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS
++
++static bool original_memory_map_present;
++static struct efi_memory_map original_memory_map;
++
++/*
++ * The page fault handler that fixes up page faults caused by buggy
++ * firmware needs original memory map (memory map passed by firmware).
++ * Hence, build a new EFI memmap that has *all* entries and save it for
++ * later use.
++ */
++void __init efi_save_original_memmap(void)
++{
++	efi_memory_desc_t *md;
++	void *remapped_phys, *new_md;
++	phys_addr_t new_phys, new_size;
++
++	new_size = efi.memmap.desc_size * efi.memmap.nr_map;
++	new_phys = efi_memmap_alloc(efi.memmap.nr_map);
++	if (!new_phys) {
++		pr_err("Failed to allocate new EFI memmap\n");
++		return;
++	}
++
++	remapped_phys = memremap(new_phys, new_size, MEMREMAP_WB);
++	if (!remapped_phys) {
++		pr_err("Failed to remap new EFI memmap\n");
++		__free_pages(pfn_to_page(PHYS_PFN(new_phys)), get_order(new_size));
++		return;
++	}
++
++	new_md = remapped_phys;
++	for_each_efi_memory_desc(md) {
++		memcpy(new_md, md, efi.memmap.desc_size);
++		new_md += efi.memmap.desc_size;
++	}
++
++	original_memory_map.late = 1;
++	original_memory_map.phys_map = new_phys;
++	original_memory_map.map = remapped_phys;
++	original_memory_map.nr_map = efi.memmap.nr_map;
++	original_memory_map.desc_size = efi.memmap.desc_size;
++	original_memory_map.map_end = remapped_phys + new_size;
++	original_memory_map.desc_version = efi.memmap.desc_version;
++
++	original_memory_map_present = true;
++}
++#endif /* CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS */
 -- 
 2.7.4
 
