@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43797C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFD4C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76822077B
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC7B52077B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="aJKdh59/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E76822077B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="DE2R7Pfz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7B52077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeIBRUt (ORCPT
+        id S1728588AbeIBRsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:20:49 -0400
+        Sun, 2 Sep 2018 13:48:43 -0400
 Received: from mail-eopbgr700093.outbound.protection.outlook.com ([40.107.70.93]:58944
         "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727495AbeIBRUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:20:47 -0400
+        id S1726426AbeIBRUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:20:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J6DYLF6UWwzDdKs9+RSjEq7q1Uv9aTqX9FJ5tFPPlnU=;
- b=aJKdh59/Pmq44dMkOEcHzXwi+H153cRB2MSHj3zp1oYt9KE81fTPUAH305AY+o0DW1ITMOMlLQwtBtH2fH/S3Kas4loYDqG4Yh5B9Ia97L7UTkY7cPcSlrHg1CQmhmD+RNjEoNoyPIveo8i45SbwTN6/56aEgm64d9dNOrtWV/o=
+ bh=u09aW+bdqGND2zMIPBMFSjCX1hKGsmRvUBlQNV6ksu4=;
+ b=DE2R7PfzrgtKfHwKoIewJjunvUuLT+lJYYj7t4RuF4/XJPP8IhFs3r7QBAg7bhv5sCq32tb4MWhbO1Lj4ZI77V8hcfYyGzf0MIo1eyOs/aX6Y4amCNbBva/7+n2V0tCgP24i7i9j0gd1LWHqstWyN+zZPRPx6y548ieoqMe0Jjo=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:04:49 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:04:50 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:04:49 +0000
+ 13:04:50 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Calum Mackay <calum.mackay@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+CC:     Anton Vasilyev <vasilyev@ispras.ru>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 063/131] nfs: Referrals not inheriting proto
- setting from parent
-Thread-Topic: [PATCH AUTOSEL 4.18 063/131] nfs: Referrals not inheriting proto
- setting from parent
-Thread-Index: AQHUQr12NzP4tAHU9kenUmQJsdcBmg==
-Date:   Sun, 2 Sep 2018 13:04:21 +0000
-Message-ID: <20180902064601.183036-63-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 064/131] scsi: 3ware: fix return 0 on the error
+ path of probe
+Thread-Topic: [PATCH AUTOSEL 4.18 064/131] scsi: 3ware: fix return 0 on the
+ error path of probe
+Thread-Index: AQHUQr13G4XNdwTB8ECcWEZdI2twHA==
+Date:   Sun, 2 Sep 2018 13:04:22 +0000
+Message-ID: <20180902064601.183036-64-alexander.levin@microsoft.com>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +59,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:tvxlBSbj2O2Yfe2up8O62cWD2UGYQB6lSn80kwKQnqe3nEJjWgNbBI+hEjdcg27XDOEwWU3CrM9fL9fleey6nqVGqRwF5bozIcjCuFrwHgoI9X9xgufymkehNYXENhD8s0DwDkQzPIca1PKAHUtEzub4OpoRzNSahjDLrpvbrWDAYApY37DDWYXdVliksj/ROnsUs/Y0ptHFYPH9OIAlGZ8p2PyQrmg4AzQqcMytS0BkzWNrnbyTTA2Sw6gp9Xa4JnKGVfJ1hQ7KaJ2+3oxyfYVlJDGC/fkS+BTdttrDXsi9ERTEM67mqw6pRRIO/vBJ2zqDi5mOzfGW/DjCnmOAwn1Bk1G7xgH+cuzxw0LMSkZ+J/jTFle2rkrcF4drVVGuGOD2N0lcA4Q0NvSHgEFz3ndoWkhJK3ITAyQ05YVMmpQrO4uFV7lCq2ClrnD4z8aoVRwysqiQ2SSbA/Uja7se2Q==;5:8rJ5gHp3L8pp8dwsQBj0Jcj4oQUBZd7XJR2nW4/OCCEtJ7o77ldRZjCFklnmJN5z4YBkK2qMAVf7qqyXrHgtnysT2A7VkYF5Ana5cRKUm0FNLqCAjuOmULt8daLu/RBu+YwCmtBJUDcokpqbJySlovxHbowTBq+KHy1OlfRSpOI=;7:LurgJULbUS2Eu1CRC9iGWIxr2hknDSX421lPAifZUVRsf8dMqGT2h+cDeGqjZEkEJ0XdQYYVGJ3bu0hdY04GuO+NHi/snlnSVyj9jTdaAkDIb1O/sOtw8P/hZJtTfp++I1SC4fkEAXWkmOKtzMb8J5DhbizJ8WhlrfGNh15ibXdkyMkYsMNpZklFAqk5Bg1qiYrGaHZGI7D8DKtR88hPoioaGBSFUBf15thJjq8oZABbSj0JmpSd2uUqbrSz9J6N
-x-ms-office365-filtering-correlation-id: b8abb831-0819-4e07-fb7a-08d610d4aa81
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:h+xwTXqbZ0snxWjI84k60Ff95A5eFQj8hS3MnbewzhB3N8FiT7GhksETgvYbI5xe8Mv9PfyjN/PH/tJfNjaa4lkydpVVSNtlxnOaXZyKMRlLfDmo+KJEf1p173M+pG4cfzUulVlMudFlFMAiBK7oI7/h9Q2tBnSvePmysmlRdilt+qRUzSkz+5azCVx2eQ5DmH/PGEtc+S8d2eLbpaatmJmsRxQui1dCy/3wA+/rs9EcVloBrof7l808CzJ1N3rWLX9c8/PpZ1Zae6INpRMEwQEVUFAg7K0dCLs9PDiqVsZlf0fjPBh9i3z3ZIMiCTMRnJsA2qB2ZEsnjoeBRd2f6VkUvfxMatZTyCIV+vZgGEqEXHNQbn28iuJgJI5RuPvcnmgGlE2IGwdpaq7OuEF0Dy0D7EIFOJelXZCQKBD+r0TUXUJNc/cOseAfRxwU3+DKzMtSyLLLSWzq8SHIlbMofQ==;5:gAbuNN6WukKXsHKNQrMkAK7ddqOZPhYpuqAz8LOGanuOVmW5fMpPzxU2lkkQHoIoUlLFkaJC2GP9Dqs+OUiTx5FqaWfRTLKcYdFYLPp3yoPRt0Atl2oFPxiG/6u2jZ3iNj9kB+0HNOUxHsJxidAINR5xcFUYjEZoEHsTqqSvojA=;7:V64XLZyoh1lawE2dugAK3FOlNA9RjEC6ET0Sn/5zqvWMPR/ErOxPGL/gJK+WFW9fkkUdton+usKNSKwSkee8gbuik9ZMLf6H6PnvRhQYnP7596xOtlWeC3Ny126nTgfrvxBV6wQffS4ApLY0CxelXZKBBlVR0pjHhCtJWvQb01jaI6G+LFQ374gdoC/BIkVC7HdVry6NgkcDReg6n5t5TjpqpW6YgyqH4cWtQoPE0gUYAMK6edP0zX36Lq2qmNC+
+x-ms-office365-filtering-correlation-id: f96795e9-1bc1-4074-998e-08d610d4aab5
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
 x-ms-traffictypediagnostic: CY4PR21MB0120:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB012081C27450276B0E7FE3CAFB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(150554046322364)(146099531331640);
+x-microsoft-antispam-prvs: <CY4PR21MB0120263347E57F76F4246C6CFB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(146099531331640);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(110136005)(5660300001)(107886003)(26005)(6506007)(6666003)(2900100001)(8936002)(68736007)(66066001)(99286004)(76176011)(217873002)(2906002)(1076002)(316002)(3846002)(6116002)(86612001)(54906003)(6436002)(305945005)(7736002)(256004)(575784001)(86362001)(6486002)(25786009)(10290500003)(478600001)(14454004)(476003)(22452003)(5250100002)(97736004)(106356001)(72206003)(53936002)(2501003)(2616005)(446003)(11346002)(6512007)(10090500001)(4326008)(36756003)(105586002)(102836004)(8676002)(81156014)(81166006)(186003)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(110136005)(5660300001)(107886003)(26005)(6506007)(6666003)(2900100001)(8936002)(68736007)(66066001)(99286004)(76176011)(217873002)(2906002)(1076002)(316002)(3846002)(6116002)(86612001)(14444005)(54906003)(6436002)(305945005)(7736002)(256004)(575784001)(86362001)(6486002)(25786009)(10290500003)(478600001)(14454004)(4477795004)(476003)(22452003)(5250100002)(97736004)(106356001)(72206003)(53936002)(2501003)(2616005)(446003)(11346002)(6512007)(10090500001)(4326008)(36756003)(105586002)(102836004)(8676002)(81156014)(81166006)(186003)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 5ktrRhDRak2EGv+eAPff+JRLZsbpkp6EkFHboX63Yn3LtSIs0k5RNl6sCIG1xPEUVgRkMX31JiEiB1116LfZg28Cma7tYqLEJk8yPAmXYvMub1Jspe38Pt3cXG+8N/xdfYC0yIaPeOYOOKfuWWPUEa9BGp6bByu5K7TgzOZotgQWjTvpq2bUfFDFkTWnF0B8jrRZ5zYWEcl2fok5Ex2VDHJK3qGxrTWfOMtvnECOV/vQoPFIroKIhG+AD8Xddm7QVj1a9ZhzDEIpFSk+XMPUWJpBRWPZP8i2V9sCR1YKG8GSLYhiHLVJ3gDqVvycqTecvQyfgYVW05Mj5n33e7GlZHf5F/9Z5Iwp4bl8rmExkyA=
+x-microsoft-antispam-message-info: cTBC7gp9RqZjdXQxpFU5Ip6LjmHpY59Nn58L+enFbRp8W4Tz8OJPHXyS2SZWGN+xDEtCtQFNNlUyqHRGNsaeGEY9bYOpwJtgPVLjGCL5poDPdqUvE1V3L20w5yQEoai47XIHSI/f+ZiTgBc0pVWs6A+0fsG0FSc61gUHNg/RbZ+BJ22uRfJzuCNkkKXpjuEx/3w4mcAqAd5Pf868wLxv0blojF2+FLJifmHpZAZT2axI/NfZCiGaNPPFstKi1sLhSGxwbvrXAYFGGxBok8p7g02zrtqp+P5SVj7hGHapfnWbovlO/AvNu6CtGkvMXjFdB6FfM9X6TsmMOQEitXKwp+hVy3HqmxF6XLgd+KlPbr8=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8abb831-0819-4e07-fb7a-08d610d4aa81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:21.0201
+X-MS-Exchange-CrossTenant-Network-Message-Id: f96795e9-1bc1-4074-998e-08d610d4aab5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:22.2702
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,63 +92,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Calum Mackay <calum.mackay@oracle.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 23a88ade7131aa259c532ab17685c76de562242b ]
+[ Upstream commit 4dc98c1995482262e70e83ef029135247fafe0f2 ]
 
-Commit 530ea4219231 ("nfs: Referrals should use the same proto setting
-as their parent") encloses the fix with #ifdef CONFIG_SUNRPC_XPRT_RDMA.
+tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
+pci_resource_start() or tw_reset_sequence() and releases resources.
+twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
+pci_iomap() and twl_reset_sequence().  twa_probe() returns 0 in case of
+fail of tw_initialize_device_extension(), ioremap() and
+twa_reset_sequence().
 
-CONFIG_SUNRPC_XPRT_RDMA is a tristate option, so it should be tested
-with #if IS_ENABLED().
+The patch adds retval initialization for these cases.
 
-Fixes: 530ea4219231 ("nfs: Referrals should use the same proto setting as t=
-heir parent")
-Reported-by: Helen Chao <helen.chao@oracle.com>
-Tested-by: Helen Chao <helen.chao@oracle.com>
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Reviewed-by: Bill Baker <bill.baker@oracle.com>
-Signed-off-by: Calum Mackay <calum.mackay@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/nfs/nfs4client.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/3w-9xxx.c | 6 +++++-
+ drivers/scsi/3w-sas.c  | 3 +++
+ drivers/scsi/3w-xxxx.c | 2 ++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index 979631411a0e..d7124fb12041 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -1127,7 +1127,7 @@ struct nfs_server *nfs4_create_referral_server(struct=
- nfs_clone_mount *data,
- 	nfs_server_copy_userdata(server, parent_server);
+diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
+index 99ba4a770406..27521fc3ef5a 100644
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -2038,6 +2038,7 @@ static int twa_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *dev_id)
 =20
- 	/* Get a client representation */
--#ifdef CONFIG_SUNRPC_XPRT_RDMA
-+#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
- 	rpc_set_port(data->addr, NFS_RDMA_PORT);
- 	error =3D nfs4_set_client(server, data->hostname,
- 				data->addr,
-@@ -1139,7 +1139,7 @@ struct nfs_server *nfs4_create_referral_server(struct=
- nfs_clone_mount *data,
- 				parent_client->cl_net);
- 	if (!error)
- 		goto init_server;
--#endif	/* CONFIG_SUNRPC_XPRT_RDMA */
-+#endif	/* IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA) */
+ 	if (twa_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device ex=
+tension");
++		retval =3D -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
 =20
- 	rpc_set_port(data->addr, NFS_PORT);
- 	error =3D nfs4_set_client(server, data->hostname,
-@@ -1153,7 +1153,7 @@ struct nfs_server *nfs4_create_referral_server(struct=
- nfs_clone_mount *data,
- 	if (error < 0)
- 		goto error;
+@@ -2060,6 +2061,7 @@ static int twa_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *dev_id)
+ 	tw_dev->base_addr =3D ioremap(mem_addr, mem_len);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
++		retval =3D -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
 =20
--#ifdef CONFIG_SUNRPC_XPRT_RDMA
-+#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
- init_server:
- #endif
- 	error =3D nfs_init_server_rpcclient(server, parent_server->client->cl_tim=
-eout, data->authflavor);
+@@ -2067,8 +2069,10 @@ static int twa_probe(struct pci_dev *pdev, const str=
+uct pci_device_id *dev_id)
+ 	TW_DISABLE_INTERRUPTS(tw_dev);
+=20
+ 	/* Initialize the card */
+-	if (twa_reset_sequence(tw_dev, 0))
++	if (twa_reset_sequence(tw_dev, 0)) {
++		retval =3D -ENOMEM;
+ 		goto out_iounmap;
++	}
+=20
+ 	/* Set host specific parameters */
+ 	if ((pdev->device =3D=3D PCI_DEVICE_ID_3WARE_9650SE) ||
+diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
+index cf9f2a09b47d..40c1e6e64f58 100644
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1594,6 +1594,7 @@ static int twl_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *dev_id)
+=20
+ 	if (twl_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device ex=
+tension");
++		retval =3D -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+=20
+@@ -1608,6 +1609,7 @@ static int twl_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *dev_id)
+ 	tw_dev->base_addr =3D pci_iomap(pdev, 1, 0);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
++		retval =3D -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+=20
+@@ -1617,6 +1619,7 @@ static int twl_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *dev_id)
+ 	/* Initialize the card */
+ 	if (twl_reset_sequence(tw_dev, 0)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during=
+ probe");
++		retval =3D -ENOMEM;
+ 		goto out_iounmap;
+ 	}
+=20
+diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+index f6179e3d6953..961ea6f7def8 100644
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -2280,6 +2280,7 @@ static int tw_probe(struct pci_dev *pdev, const struc=
+t pci_device_id *dev_id)
+=20
+ 	if (tw_initialize_device_extension(tw_dev)) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
++		retval =3D -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+=20
+@@ -2294,6 +2295,7 @@ static int tw_probe(struct pci_dev *pdev, const struc=
+t pci_device_id *dev_id)
+ 	tw_dev->base_addr =3D pci_resource_start(pdev, 0);
+ 	if (!tw_dev->base_addr) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
++		retval =3D -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+=20
 --=20
 2.17.1
