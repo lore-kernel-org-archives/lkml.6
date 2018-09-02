@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28A6C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE4CC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C3D20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C788A20841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:05:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nhu6yizZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C3D20841
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="R3KEzBo8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C788A20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbeIBRUm (ORCPT
+        id S1728243AbeIBRUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:20:42 -0400
-Received: from mail-eopbgr680109.outbound.protection.outlook.com ([40.107.68.109]:62112
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:20:44 -0400
+Received: from mail-eopbgr700098.outbound.protection.outlook.com ([40.107.70.98]:16799
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728001AbeIBRUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:20:41 -0400
+        id S1727467AbeIBRUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:20:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wphOC7OYj7eEYUFMTbV6oGDyKHNrEMlZaOwHpiBsdlE=;
- b=nhu6yizZzURvwLj7N9THwk+nKzep0GMBXg0/37CFw8vZHiurvcKSGcq2CusjX3xSrZLwRKXS09hYFLNyL4V/nqVYBDL6N1Arvbc/C8rw4QXylKvzRzGgEyOq9bPASHtl2eTX09+w0R+4GfZBg8nyQD07yqiPpkTmzWyTYeP3RYs=
+ bh=N3Zl6jV0/VWv4dZOkfI4PgFiOykC5JnNnMoEzY8KT1s=;
+ b=R3KEzBo859pUIMN2yQ74LD4pgJN6QEpaGAtMopjKVz+/AGEoMsUDk/5Z5MjAnFjpu/EQSnnW3ZSr9AoXRDqDyosW28Mx/3wgnPSV8GucBJmpEM2pSOFOGtt5oGVIKyzinvaYUtjI8V2wPbVUbBMhGCghp3KRSy135zbo/XFeX1E=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
+ CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:04:54 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:04:17 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:04:54 +0000
+ 13:04:17 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Mark Brown <broonie@kernel.org>,
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 075/131] regulator: tps65217: Fix NULL pointer
- dereference on probe
-Thread-Topic: [PATCH AUTOSEL 4.18 075/131] regulator: tps65217: Fix NULL
- pointer dereference on probe
-Thread-Index: AQHUQr2Bs+3VPWSqD0i75bJgHkdq3g==
-Date:   Sun, 2 Sep 2018 13:04:39 +0000
-Message-ID: <20180902064601.183036-75-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 058/131] mtd: rawnand: make subop helpers return
+ unsigned values
+Thread-Topic: [PATCH AUTOSEL 4.18 058/131] mtd: rawnand: make subop helpers
+ return unsigned values
+Thread-Index: AQHUQr1yyc3vR1gYG0mf9TSWuSP/oA==
+Date:   Sun, 2 Sep 2018 13:04:14 +0000
+Message-ID: <20180902064601.183036-58-alexander.levin@microsoft.com>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,70 +58,183 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:A/qBqaEjrn++H1qHspYqxGy7qKv1rAB9U2rsCMzUZDjWgWwgKubyucSk6yxqtUg1cKpYZq677O0y1gP/5eLfuPgNwp+ZCmtMtdHD6TyxAIm26J2cVW4qAcUMtzfL3n3kPfrDBamxT8Na38mf9GFJVFY+ja8whpx5BVVjfDtd/GMNxtHBAsXP1OnXL9mVedFIjEHk4mzzkEkKDZGgzy0QpT6trzYGUc3tPCyFnl0PTJnT9OfNJyjgxC7g+bro5bsnKE1kGE6kCaHRizY3Zg3Wf6eiAY3AIhtLmho2qjyJj7ZwHMqD5YfgEa+XJHVrC1ldLwTFCVZBzwrKMMubgQXg1u7Lq5S6uBDmK34VnPvFWOQgeKV6PWAwkpyVgsQF8wVgEHleqFdlP6FHcrcNffoCsm+6qza+xlgX8vmWC+h8IOupfZ7XQ8SR+wtUC14YlljJ3K/OKwuP3/Kfwx5iiX3gJw==;5:Jvfr6O9cBYsz72O/9RaAcIGtclVWSi5S1moPG+Hcn7ioomKGyJGfNy85HtDSnxPbor59bA1dGofvu8kJVk05iqDta/5LHMArQXgxYxBud4q1dnO7OsIWcSanf74ivJa0ZNeLeyoK0ZEwgI6utAw50ohke5iaVHgTgm2y57K0CGU=;7:wU/zdWDJhb96Br6OFRXBJ2dDhSwf25hUTSrBrL2lDTjTaKMmZvMiXclcHtPUHWX10aKncMN5Hf2GDCRfnoajOjBSpfuzu7Uhq5TdpY7Qsl+pRBJj3YUjc/Zgt3ttZkQ/8n5yaYk0CxpDddGbB/bTMBOaGiaNLT+GxpDdVji3HpDIaIP1Ex0lfs66yVAd+3NvE+/lg1ky9OsU/uFlAo6fhgfnmOSdcdKlwK3DlahqM1Ri2wVYuQcoMtCHPacE2G8A
-x-ms-office365-filtering-correlation-id: 3dae98fe-083b-4436-f936-08d610d4ad59
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:DLiHf8xL4bkHnvJEwQEstx41jrBYxtWdDlKChW1O/BXYE03fjS2KikvtX0h0Ra/Shcyr4VcYNb1tXcDkFeYs8RGBp1yJY/XniJ3C2R/BpZrYgOBdwIOBNQOyac67n5dA5WHOJSHVcucp4/Saw1Mwo7/r99MW2lqBNaQkNsh29LjFkMez1ztq/u9Hx43+iFWMmOlU3q7fodxiFCIK+sKES2Az7Ob7nHjrTHWt2IlMIDJVPcEJrb9wRToYILHeWPz889iK5TTs39EJ6+2hAH4/ZVYrVF9Lgr3SYyHiMmTcpExWwUgwcc2pY2ky7Jk7946sVFddNiKXAhspLvGefopx1wOAlspAmGDe8KufnCmJbIDJmjaKI7yDyRqzjMuafBXZxnFhTdfgi0yT0MZntd3zH38bf4qy9YiF3Ws+8Ss0OG7Sy3zWQiUPij17SloJW7Y+mOblgUM6I54D7EQnJfgMlw==;5:99aObaMWNpWciMmUnOGZ7zBrswzmZVZqs0yya3y8T0b9OdhtXarQ1YuIBb2WZFgVtTtCiyHH/DYl3oRKP96C4QekgZzsyAgRP82qiL0iXiwv4KBox4rtsvyLM+B2HNJF0X8uU81oFoqI3F8jPdw9JgRQIrqtMNQvlst7Y/aRS20=;7:vZDhanlDoQ5trth97fM07prurXE974Qp0+SLX9mOBuVxDPmY7umFqsFY/PAFzBjnZwKkrvml6F+Ese0hYo0tVt2zYHGGog4aFWFv8Pg/IUy/LdATcx9DdxD85Rnn3Th4GMgo1iBlIBql7P48hh1PNymMoGDpg99+Qy6gfKQdu/a6gUnUkqGxWt7V59BJaJoU88GKV/xEJHBR8X8y8DsUfoDSbfX1OL9tyj6EQaq4HQGElqU8kZsA7j9AUcUMN6qN
+x-ms-office365-filtering-correlation-id: 1bcef3a6-f0a6-4e13-7954-08d610d49748
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
-x-ms-traffictypediagnostic: CY4PR21MB0741:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
+x-ms-traffictypediagnostic: CY4PR21MB0120:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB074171F325111EF9E38CB04BFB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0120DA7D411CDE3B834C55F1FB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(4477795004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(6666003)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(110136005)(5660300001)(107886003)(26005)(6506007)(6666003)(2900100001)(8936002)(68736007)(66066001)(99286004)(76176011)(217873002)(2906002)(1076002)(316002)(3846002)(6116002)(86612001)(54906003)(6436002)(305945005)(7736002)(256004)(575784001)(86362001)(6486002)(25786009)(10290500003)(478600001)(14454004)(476003)(22452003)(5250100002)(97736004)(106356001)(72206003)(53936002)(2501003)(2616005)(446003)(11346002)(6512007)(10090500001)(4326008)(36756003)(105586002)(102836004)(8676002)(81156014)(81166006)(186003)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 1CnyxEtXqvzSbFjYZCVIwqqfOGq6c03kauZ1DrIfTeA07zORQDxOsgIKOdAvIFDKzP4a08wVbk+ZdiAHzeO2dOa7ubkN7NiEQscqkhJeMVvuvlWuaDEf6s04NQCV+Gq1v1slqqOzNd+Shur/idlTbEdhS5Bp7GeU360eq2W3t4T4a8G1D4Oh0nmhXX2I9DCnxbrDJqF0p24PBoQ77PUqQEmCIlzVpXLyzSrn3e8q42Mo84+F23TQSlWf+neI2KT6iITz08DupF/H71k75ZTknDg9lpKZ7C3v3JaukUL0c+YB+w+Yj4m69mhPKAYK9YUhfS1XNX/tqyprXnPOu9yrNP55jBiSgUW6IVN1ONXCt5w=
+x-microsoft-antispam-message-info: MomRW1aKvcsq7vtDJgRRfJCoNOO3MwGOMEoEiQIiqIBFYD7x31edmtxmwy6/PNSBgsMq5BFaUsUFHirwWgv387qhk71jznY5OsGoluTmWEIMVRuoLskF6RQJaYFUiaQN64vOwnAWuLiyYhZREUDhBBnWIW2qMqG9wnN6subJz8WlMDLqU/ZWj1oTay4RBdcGjZvmJWkKwL9XWrKqKcMovIpXbuqj+DhFxlC6dnXMkIKW/F7bAUG56SujYOxZcZP7NnSySKE4cmBdEu0w6RBu8NcrKIF+KJAlPMueUnlJNA8Rcixu2Gq352HxaVIslBi9dWzQU2YlWG6SlnBOMhSywpbobvx9MUoCcp42HAv+NuA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dae98fe-083b-4436-f936-08d610d4ad59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:39.3372
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bcef3a6-f0a6-4e13-7954-08d610d49748
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:14.3837
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-[ Upstream commit 4f919ca2bf6da826ba1a4316e1b8e9c94e5dbeb2 ]
+[ Upstream commit 760c435e0f85ed19e48a90d746ce1de2cd02def7 ]
 
-There is no check that tps->strobes is allocated successfully in
-tps65217_regulator_probe().
-The patch adds corresponding check.
+A report from Colin Ian King pointed a CoverityScan issue where error
+values on these helpers where not checked in the drivers. These
+helpers can error out only in case of a software bug in driver code,
+not because of a runtime/hardware error. Hence, let's WARN_ON() in this
+case and return 0 which is harmless anyway.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/regulator/tps65217-regulator.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/nand/raw/nand_base.c | 44 ++++++++++++++++----------------
+ include/linux/mtd/rawnand.h      | 16 ++++++------
+ 2 files changed, 30 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/regulator/tps65217-regulator.c b/drivers/regulator/tps=
-65217-regulator.c
-index fc12badf3805..d84fab616abf 100644
---- a/drivers/regulator/tps65217-regulator.c
-+++ b/drivers/regulator/tps65217-regulator.c
-@@ -232,6 +232,8 @@ static int tps65217_regulator_probe(struct platform_dev=
-ice *pdev)
- 	tps->strobes =3D devm_kcalloc(&pdev->dev,
- 				    TPS65217_NUM_REGULATOR, sizeof(u8),
- 				    GFP_KERNEL);
-+	if (!tps->strobes)
-+		return -ENOMEM;
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_b=
+ase.c
+index b01d15ec4c56..3e3e6a8f1abc 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -2668,8 +2668,8 @@ static bool nand_subop_instr_is_valid(const struct na=
+nd_subop *subop,
+ 	return subop && instr_idx < subop->ninstrs;
+ }
 =20
- 	platform_set_drvdata(pdev, tps);
+-static int nand_subop_get_start_off(const struct nand_subop *subop,
+-				    unsigned int instr_idx)
++static unsigned int nand_subop_get_start_off(const struct nand_subop *subo=
+p,
++					     unsigned int instr_idx)
+ {
+ 	if (instr_idx)
+ 		return 0;
+@@ -2688,12 +2688,12 @@ static int nand_subop_get_start_off(const struct na=
+nd_subop *subop,
+  *
+  * Given an address instruction, returns the offset of the first cycle to =
+issue.
+  */
+-int nand_subop_get_addr_start_off(const struct nand_subop *subop,
+-				  unsigned int instr_idx)
++unsigned int nand_subop_get_addr_start_off(const struct nand_subop *subop,
++					   unsigned int instr_idx)
+ {
+-	if (!nand_subop_instr_is_valid(subop, instr_idx) ||
+-	    subop->instrs[instr_idx].type !=3D NAND_OP_ADDR_INSTR)
+-		return -EINVAL;
++	if (WARN_ON(!nand_subop_instr_is_valid(subop, instr_idx) ||
++		    subop->instrs[instr_idx].type !=3D NAND_OP_ADDR_INSTR))
++		return 0;
 =20
+ 	return nand_subop_get_start_off(subop, instr_idx);
+ }
+@@ -2710,14 +2710,14 @@ EXPORT_SYMBOL_GPL(nand_subop_get_addr_start_off);
+  *
+  * Given an address instruction, returns the number of address cycle to is=
+sue.
+  */
+-int nand_subop_get_num_addr_cyc(const struct nand_subop *subop,
+-				unsigned int instr_idx)
++unsigned int nand_subop_get_num_addr_cyc(const struct nand_subop *subop,
++					 unsigned int instr_idx)
+ {
+ 	int start_off, end_off;
+=20
+-	if (!nand_subop_instr_is_valid(subop, instr_idx) ||
+-	    subop->instrs[instr_idx].type !=3D NAND_OP_ADDR_INSTR)
+-		return -EINVAL;
++	if (WARN_ON(!nand_subop_instr_is_valid(subop, instr_idx) ||
++		    subop->instrs[instr_idx].type !=3D NAND_OP_ADDR_INSTR))
++		return 0;
+=20
+ 	start_off =3D nand_subop_get_addr_start_off(subop, instr_idx);
+=20
+@@ -2742,12 +2742,12 @@ EXPORT_SYMBOL_GPL(nand_subop_get_num_addr_cyc);
+  *
+  * Given a data instruction, returns the offset to start from.
+  */
+-int nand_subop_get_data_start_off(const struct nand_subop *subop,
+-				  unsigned int instr_idx)
++unsigned int nand_subop_get_data_start_off(const struct nand_subop *subop,
++					   unsigned int instr_idx)
+ {
+-	if (!nand_subop_instr_is_valid(subop, instr_idx) ||
+-	    !nand_instr_is_data(&subop->instrs[instr_idx]))
+-		return -EINVAL;
++	if (WARN_ON(!nand_subop_instr_is_valid(subop, instr_idx) ||
++		    !nand_instr_is_data(&subop->instrs[instr_idx])))
++		return 0;
+=20
+ 	return nand_subop_get_start_off(subop, instr_idx);
+ }
+@@ -2764,14 +2764,14 @@ EXPORT_SYMBOL_GPL(nand_subop_get_data_start_off);
+  *
+  * Returns the length of the chunk of data to send/receive.
+  */
+-int nand_subop_get_data_len(const struct nand_subop *subop,
+-			    unsigned int instr_idx)
++unsigned int nand_subop_get_data_len(const struct nand_subop *subop,
++				     unsigned int instr_idx)
+ {
+ 	int start_off =3D 0, end_off;
+=20
+-	if (!nand_subop_instr_is_valid(subop, instr_idx) ||
+-	    !nand_instr_is_data(&subop->instrs[instr_idx]))
+-		return -EINVAL;
++	if (WARN_ON(!nand_subop_instr_is_valid(subop, instr_idx) ||
++		    !nand_instr_is_data(&subop->instrs[instr_idx])))
++		return 0;
+=20
+ 	start_off =3D nand_subop_get_data_start_off(subop, instr_idx);
+=20
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 3e8ec3b8a39c..87c635d6c773 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -986,14 +986,14 @@ struct nand_subop {
+ 	unsigned int last_instr_end_off;
+ };
+=20
+-int nand_subop_get_addr_start_off(const struct nand_subop *subop,
+-				  unsigned int op_id);
+-int nand_subop_get_num_addr_cyc(const struct nand_subop *subop,
+-				unsigned int op_id);
+-int nand_subop_get_data_start_off(const struct nand_subop *subop,
+-				  unsigned int op_id);
+-int nand_subop_get_data_len(const struct nand_subop *subop,
+-			    unsigned int op_id);
++unsigned int nand_subop_get_addr_start_off(const struct nand_subop *subop,
++					   unsigned int op_id);
++unsigned int nand_subop_get_num_addr_cyc(const struct nand_subop *subop,
++					 unsigned int op_id);
++unsigned int nand_subop_get_data_start_off(const struct nand_subop *subop,
++					   unsigned int op_id);
++unsigned int nand_subop_get_data_len(const struct nand_subop *subop,
++				     unsigned int op_id);
+=20
+ /**
+  * struct nand_op_parser_addr_constraints - Constraints for address instru=
+ctions
 --=20
 2.17.1
