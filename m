@@ -2,132 +2,159 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C751CC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3EAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EAFE20847
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4746F2083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 02:37:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="1srtefVM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EAFE20847
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Wyl7xMJG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4746F2083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeIBGt7 (ORCPT
+        id S1726963AbeIBGui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 02:49:59 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44752 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeIBGt7 (ORCPT
+        Sun, 2 Sep 2018 02:50:38 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46655 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeIBGui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 02:49:59 -0400
-Received: by mail-lf1-f66.google.com with SMTP id g6-v6so12660369lfb.11
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 19:35:55 -0700 (PDT)
+        Sun, 2 Sep 2018 02:50:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so12811887ljj.13
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 19:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=p8w4jSbjkZqEagZMMJ/CTLchE9OB8JVUasc6oXa5qrc=;
-        b=1srtefVMW8bZTt/A4PrF8enodAiK/l/7PqxXvQPpRWpMXFH8WWgU+zd0bHfRTDb/Dk
-         LQssGBjuhAExlBkaT8qeu58eNaO1BwnC1mp8gOfIQHF6u65LxIsXYRrwqHrReR+CkNcz
-         ER7BGbBfIKugZsQoGHlJoqG9EToX5wD8qHjCLjePzyvVJ8h0xgkQjkMVfZHWfmeK5EQO
-         KEmoLSzJXTJw+RLKhUMJPXTIbZEZdBHfwG4PPdJYWaV3cwEzd7aGmiBqgDuuszAL6h28
-         rlD8TZYbSTm4RwmOfP9lZkdC6TUcWyGWKUk/42JV6mUr90u1h3Pml23OCePezA4lb5cV
-         T3tA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=mBeYwEV2SRGHBZy9jnreGn8jGfkQoey+Ea1hdmlqIOA=;
+        b=Wyl7xMJGuwxkh+wMIVc9b8yCe2j5HmR4cjKcFp36gS8w4O/rKAPC3uJyGpK9+cktK8
+         akmn6IxRaeR3U/oLJ9f4p8SGKcZDLQ3qHBCDQbcNvqegSJDsk7hnNOmlRQ16K5MFLFxO
+         OBTHQtRramsq6rcq8aweEmDRNua5aCB7kWGjbMdduRTVgdABwDPn+fvWSrPW2kMti8lV
+         rLnUMy/GEVzvy3bAJjAY6QcedXeVM96Bhq8H7mBSYknyZbacKBaOyjz0xU9TuS3JlAxR
+         wlcNER/bdVQIV7tp8KzFeTl4Bm1+cipFdUpVzb3J6zJeKktMir/jtEiisG1mwJH1k5Um
+         3B7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=p8w4jSbjkZqEagZMMJ/CTLchE9OB8JVUasc6oXa5qrc=;
-        b=QIa+YUC7PQif2Vhxwx6aACoehW85FobRNJZGiqn79TWwYjQ8EQAZiO2kcdsmM6AQlr
-         UTIZ/d99LvhCvcyuKvwx5ZefVYe+z0k6M/GJLuIF2t8XETaR17YgglZcDQI28FXbBeey
-         cEug65pjxAgIPdytQH/PHBmuDoN6Gq47UmKh52sINZyaBNhfV04aEN145VmHDkgYy+Q6
-         DnfT9NZicY95u9J3Cem4lq3oq9SPz2tLtJ7bWMSeQ0URZxYCfPwH6cxrILUs/2It8/Gl
-         6z+wdlBHpJfgD7A1Dq8Ub7kGuLr1Kt+mHElX69c9tIk8sJfLepDrToYymihfxcl1kWqT
-         52fg==
-X-Gm-Message-State: APzg51APAzWscJs6EUaHC2qohDjl5vO2LMn+nuP7G9b7LRyODLP+yqab
-        yGVDGtxaWwDXRV0UkKUA+ez3YOt/jE/yL7ymaoXp4A==
-X-Google-Smtp-Source: ANB0VdYhE4p5JErtZ61mBExfX2rlWWQlRw6Ng3zd/LTd07gSudjA0UPnMJ+Fw6eijPJWKV6U94wW04s7WnTxrbVsACk=
-X-Received: by 2002:a19:5f54:: with SMTP id a20-v6mr2323153lfj.42.1535855755136;
- Sat, 01 Sep 2018 19:35:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:cc08:0:0:0:0:0 with HTTP; Sat, 1 Sep 2018 19:35:53 -0700 (PDT)
-X-Originating-IP: [99.152.116.91]
-In-Reply-To: <20180825041647.GA726@sol.localdomain>
-References: <20180824161642.1144-1-ebiggers@kernel.org> <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com> <20180825041647.GA726@sol.localdomain>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=mBeYwEV2SRGHBZy9jnreGn8jGfkQoey+Ea1hdmlqIOA=;
+        b=n6FufsB2VeortTuYfBZbbY9OE5WyCS3BP+fPrE+sDce6egxmRJN39q7b8fdiBwerp6
+         joGPoxMTDKIBsY6zopIZuko4F8iLFGBubY3nsr+16k/OEhItdvRirB/CoIYa/dwygmfQ
+         YdlQgAV7ySeL7e08iLVfnAtYwlIl69TRCMXaIrN6W/Xuc1kXm6QAVvtvXgc4am1Ib9gs
+         AO9aNvrOEQJVPVMgPuWwrhoC1vLSODYIRe+gFehfER8w332WhDj1kaI8v0xoAL7xi3wc
+         TCyna9GkCtUk6FFnbNWji+SlgzTTZYe9HG/E1HCHDqyz+QsO7KTrU/M4vpAW+GyYktGt
+         Ms2w==
+X-Gm-Message-State: APzg51AsPG1o3Id609BIrKvbFEy94ONJZEpa6oGnluqIYzIMqZvvFnjJ
+        hEIR3jt7CFmq2ChDjYOZZg2AeA==
+X-Google-Smtp-Source: ANB0VdYGFsZPQ2E8BuecDyXqHkAF3/k/LxdIYYsD5VdIydjmTQEmqPU40SmXKd5y3HQ2yrAwtcsepA==
+X-Received: by 2002:a2e:b007:: with SMTP id y7-v6mr13797664ljk.22.1535855793675;
+        Sat, 01 Sep 2018 19:36:33 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id a18-v6sm2593747ljk.47.2018.09.01.19.36.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Sep 2018 19:36:31 -0700 (PDT)
+Date:   Sat, 1 Sep 2018 19:36:03 -0700
 From:   Olof Johansson <olof@lixom.net>
-Date:   Sat, 1 Sep 2018 19:35:53 -0700
-Message-ID: <CAOesGMhGfesVQHHMpqW5r7gMOZccX4RsZZex6y-kfkmuA6K0ow@mail.gmail.com>
-Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for ->readpages()
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20180902023603.2krvellhztpkoj67@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-On Fri, Aug 24, 2018 at 9:16 PM, Eric Biggers <ebiggers@kernel.org> wrote:
-> Hi Gao,
->
-> On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
->> Hi,
->>
->> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
->> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
->
-> In theory it would be a much cleaner design to store verity metadata separately
-> from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
-> using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
-> extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
-> and most filesystems further limit xattr sizes in their on-disk format to as
-> little as 4 KB.  Furthermore, even if both of these limits were to be increased,
-> the xattrs functions (both the syscalls, and the internal functions that
-> filesystems have) are all based around getting/setting the entire xattr value.
->
-> Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
-> be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
-> tree to be paged into memory, just like the file contents, to take advantage of
-> the usual Linux memory management.
->
-> What we really need is *streams*, like NTFS has.  But the filesystems we're
-> targetting don't support streams, nor does the Linux syscall interface have any
-> API for accessing streams, nor does the VFS support them.
->
-> Adding streams support to all those things would be a huge multi-year effort,
-> controversial, and almost certainly not worth it just for fs-verity.
->
-> So simply storing the verity metadata past i_size seems like the best solution
-> for now.
->
-> That being said, in the future we could pretty easily swap out the calls to
-> read_mapping_page() with something else if a particular filesystem wanted to
-> store the metadata somewhere else.  We actually even originally had a function
-> ->read_metadata_page() in the filesystem's fsverity_operations, but it turned
-> out to be unnecessary and I replaced it with directly calling
-> read_mapping_page(), but it could be changed back at any time.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-What about an xattr not to hold the Merkle tree, but to contain a
-suitable reference to a file/inode+offset that contains it (+ toplevel
-hash for said tree/file or the descriptor/struct)?
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-If you also expose said file in the directory structure, things such
-as backups might be easier to handle. For where the tree is appended
-to the file, you could self-reference.
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
--Olof
+for you to fetch changes up to a72b44a871c218e2a0580e68affa1d3528c0587a:
+
+  Merge tag 'omap-for-v4.19/fixes-v2-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into fixes (2018-09-01 18:22:19 -0700)
+
+----------------------------------------------------------------
+ARM: SoC fixes
+
+First batch of fixes post-merge window:
+
+ - A handful of devicetree changes for i.MX2{3,8} to change over to new
+   panel bindings. The platforms were moved from legacy framebuffers
+   to DRM and some development board panels hadn't yet been converted.
+ - OMAP fixes related to ti-sysc driver conversion fallout, fixing some
+   register offsets, no_console_suspend fixes, etc.
+ - Droid4 changes to fix flaky eMMC probing and vibrator DTS mismerge.
+ - Fixed 0755->0644 permissions on a newly added file.
+ - Defconfig changes to make ARM Versatile more useful with QEMU
+   (helps testing).
+ - Enable defconfig options for new TI SoC platform that was merged this
+   window (AM6).
+
+----------------------------------------------------------------
+Fabio Estevam (6):
+      ARM: dts: imx28-evk: Move regulators outside simple-bus
+      ARM: dts: imx28-evk: Convert to the new display bindings
+      ARM: dts: imx23-evk: Move regulators outside simple-bus
+      ARM: dts: imx23-evk: Convert to the new display bindings
+      ARM: mxs_defconfig: Select CONFIG_DRM_PANEL_SEIKO_43WVF1G
+      ARM: imx_v6_v7_defconfig: Select CONFIG_DRM_PANEL_SEIKO_43WVF1G
+
+Keerthy (1):
+      arm: dts: am4372: setup rtc as system-power-controller
+
+Leonard Crestez (1):
+      Revert "ARM: dts: imx7d: Invert legacy PCI irq mapping"
+
+Linus Walleij (1):
+      ARM: defconfig: Update the ARM Versatile defconfig
+
+Neeraj Dantu (1):
+      ARM: dts: Fix file permission for am335x-osd3358-sm-red.dts
+
+Nishanth Menon (1):
+      arm64: defconfig: Enable TI's AM6 SoC platform
+
+Olof Johansson (2):
+      Merge tag 'imx-fixes-4.19' of git://git.kernel.org/.../shawnguo/linux into fixes
+      Merge tag 'omap-for-v4.19/fixes-v2-signed' of git://git.kernel.org/.../tmlind/linux-omap into fixes
+
+Pavel Machek (1):
+      ARM: dts: omap4-droid4: fix vibrations on Droid 4
+
+Tony Lindgren (6):
+      ARM: OMAP2+: Fix null hwmod for ti-sysc debug
+      ARM: OMAP2+: Fix module address for modules using mpu_rt_idx
+      bus: ti-sysc: Fix module register ioremap for larger offsets
+      bus: ti-sysc: Fix no_console_suspend handling
+      Merge branch 'perm-fix' into omap-for-v4.19/fixes-v2
+      ARM: dts: omap4-droid4: Fix emmc errors seen on some devices
+
+ arch/arm/boot/dts/am335x-osd3358-sm-red.dts |   0
+ arch/arm/boot/dts/am4372.dtsi               |   1 +
+ arch/arm/boot/dts/imx23-evk.dts             |  90 +++++++-------
+ arch/arm/boot/dts/imx28-evk.dts             | 183 +++++++++++++---------------
+ arch/arm/boot/dts/imx7d.dtsi                |  12 +-
+ arch/arm/boot/dts/omap4-droid4-xt894.dts    |  20 +--
+ arch/arm/configs/imx_v6_v7_defconfig        |   1 +
+ arch/arm/configs/mxs_defconfig              |   1 +
+ arch/arm/configs/versatile_defconfig        |  14 ++-
+ arch/arm/mach-omap2/omap_hwmod.c            |  39 +++++-
+ arch/arm64/configs/defconfig                |   3 +
+ drivers/bus/ti-sysc.c                       |  37 +++---
+ 12 files changed, 213 insertions(+), 188 deletions(-)
+ mode change 100755 => 100644 arch/arm/boot/dts/am335x-osd3358-sm-red.dts
