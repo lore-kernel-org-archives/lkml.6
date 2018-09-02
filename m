@@ -2,63 +2,77 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A60C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 05:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C46C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 05:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1268220652
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 05:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1268220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 2D07E20841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 05:46:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D07E20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeIBJpr (ORCPT
+        id S1726123AbeIBKAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 05:45:47 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56110 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbeIBJpq (ORCPT
+        Sun, 2 Sep 2018 06:00:36 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:60193 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbeIBKAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 05:45:46 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 37784143BE232;
-        Sat,  1 Sep 2018 22:31:14 -0700 (PDT)
-Date:   Sat, 01 Sep 2018 22:31:13 -0700 (PDT)
-Message-Id: <20180901.223113.1797049678988828770.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     f.fainelli@gmail.com, andrew@lunn.ch, colin.king@canonical.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: bgmac: remove set but not used variable
- 'err'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1535771590-158413-1-git-send-email-yuehaibing@huawei.com>
-References: <1535771590-158413-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 01 Sep 2018 22:31:14 -0700 (PDT)
+        Sun, 2 Sep 2018 06:00:36 -0400
+Received: by mail-it0-f70.google.com with SMTP id a10-v6so9326183itc.9
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 22:46:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=lh5uiGxRESp7cH5CH/z1eWukMXvXDnxfuySVk+aMVxI=;
+        b=H67yYz7mxbkiiF5OsATqasaAAC4SInDGmKqsHlpTIJ1h6ZOudEWjWnPIEIXgw1KXcZ
+         JUhUzrJeCAve+7OM7DU1/TZZHx7SaEmcU/qYtDsByBKg7gPVi6Ea4hRg54/GjxG2+t5G
+         L/nrAPFQMd5kDExqd4IXom/8GUdD1g/hPWDl8EBqtwNAsJoZy1cph+CheMttl3GD7Lhi
+         NKEdN/p5jB6zx2L+Ls55PO3mXs2d3yp5j+lr4ghoht6eavv6NPBy8wVzocqKYCR2kun+
+         sZSCyXC8ZdzTMe9YN4XC2i6pwFLE22NX5EH6J/bqnyPsVtjtMcc5wt0gr02x+RRa/PX+
+         1jbw==
+X-Gm-Message-State: APzg51AxyPaWPS6pl3MH7Rq8HlMnwdmX/A7YXdDcOFgxg42FOpxUq7Xx
+        UBveQ4/gPIZ64ZiWW06ImpCSjOqH7zn1g3MOI14hS4Ihgnjh
+X-Google-Smtp-Source: ANB0Vdb7ZxBONDBY/Nx34DMSaYmF/Cb26Bbm3qo6Ohb8tNjhl5KtWsB83YHAzlwgY03HdEMFOyjLsxZiKD4r/g2o2TPYZI8iIPx4
+MIME-Version: 1.0
+X-Received: by 2002:a24:691:: with SMTP id 139-v6mr1687729itv.53.1535867161966;
+ Sat, 01 Sep 2018 22:46:01 -0700 (PDT)
+Date:   Sat, 01 Sep 2018 22:46:01 -0700
+In-Reply-To: <CACT4Y+Y-wWVPYU0auia=u+XM9AS+JTxf1n8JfGLF-KTCBvNGvw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009c848f0574dcf06c@google.com>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+From:   syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>
+To:     dvyukov@google.com, jmorris@namei.org, john.johansen@canonical.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 1 Sep 2018 03:13:10 +0000
+Hello,
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/broadcom/bgmac.c: In function 'bgmac_dma_alloc':
-> drivers/net/ethernet/broadcom/bgmac.c:619:6: warning:
->  variable 'err' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-Applied.
+Reported-and-tested-by:  
+syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         22dad84baabf apparmor: fix apparmor_secid_to_secctx incorr..
+git tree:        
+git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor.git/4.18-syzbot-secid
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a7c5a36688323465
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Note: testing is done by a robot and is best-effort only.
