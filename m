@@ -2,68 +2,119 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACA5C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852C1C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 19:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B73E20857
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:21:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4EsP+KDa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B73E20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2839720837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 19:16:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2839720837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeIBWi3 (ORCPT
+        id S1727205AbeIBXdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 18:38:29 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50120 "EHLO vps0.lunn.ch"
+        Sun, 2 Sep 2018 19:33:03 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:51405 "EHLO smtp.infotech.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbeIBWi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 18:38:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=J7nH309r/0kP9BRWaewatVPHYXU5Eu77IKdQX6y78M0=;
-        b=4EsP+KDaQIosoEK/abLrSxKPR6kn2O5JDjQiuIoQrwCRTcHTaGgzJEh19cBKODUNdOGDNeXCDaS0G3AWISH/tFiBAJS2zwFOMrwazoSeGpPPOjYyxpoOqtWzntF4B5Osi4VZsDoui2mWgRhBwikU2Rpe0uPQ1OEIVwCPczUhDgw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fwX08-0005Ar-7L; Sun, 02 Sep 2018 20:21:32 +0200
-Date:   Sun, 2 Sep 2018 20:21:32 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     thomas.petazzoni@bootlin.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/3] net: mvneta: enable NETIF_F_RXCSUM by
- default
-Message-ID: <20180902182132.GA18764@lunn.ch>
-References: <20180831160810.2539ef4c@xhacker.debian>
- <20180831161003.3f0dc351@xhacker.debian>
+        id S1727050AbeIBXdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 19:33:03 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id AAC0720423F;
+        Sun,  2 Sep 2018 21:16:14 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id kzAIKD4eko6I; Sun,  2 Sep 2018 21:16:12 +0200 (CEST)
+Received: from [10.0.0.9] (ti0116a330-1202.bb.online.no [88.90.229.191])
+        by smtp.infotech.no (Postfix) with ESMTPA id 89C0B204179;
+        Sun,  2 Sep 2018 21:16:12 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: Recent removal of bsg read/write support
+To:     Richard Weinberger <richard.weinberger@gmail.com>,
+        drorl@infinidat.com
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>
+References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
+ <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <6b907fed-d83f-de75-bde4-11270a0b1b0b@interlog.com>
+Date:   Sun, 2 Sep 2018 21:16:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831161003.3f0dc351@xhacker.debian>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 04:10:03PM +0800, Jisheng Zhang wrote:
-> The code and HW supports NETIF_F_RXCSUM, so let's enable it by default.
+On 2018-09-02 01:44 PM, Richard Weinberger wrote:
+> CC'ing relevant people. Otherwise your mail might get lost.
 > 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
+>>
+>> Note: I am not subscribed to LKML so please CC replies to this email.
+>>
+>> Hi,
+>>
+>> We have an internal tool that uses the bsg read/write interface to
+>> issue SCSI commands as part of a test suite for a storage device.
+>>
+>> After recently reading on LWN that this interface is to be removed we
+>> tried porting our code to use sg instead. However, that raises new
+>> issues - mainly getting ENOMEM over iSCSI for unknown reasons.
+>>
+>> Because of this we would like to continue using the bsg interface,
+>> even if some changes are required to meet security concerns.
+>>
+>> Is there any chance for this removal to be reverted? I saw it was
+>> already included in 4.19-rc1.
 
-Hi Jisheng
+Hi,
+Both bsg and sg are relatively thin shims over the same block layer
+pass-through calls. And neither driver will themselves generate ENOMEM
+unless the CPU is running low of memory.
 
-I ran some quick tests on a 370RD devel board, which uses a Marvell
-switch connected to mvneta. I did no see any obvious regressions.
+In my experience, the main reason for unexpected ENOMEMs *** is from
+blk_rq_map_user_iov() in block/blk_map.c called from both drivers.
+That is a particular resource shortage rather than memory in general.
+I do notice the blk_rq_map_user_iov() is/was called with GFP_KERNEL
+in bsg and GFP_ATOMIC by sg. That suggests when you call write() on
+a sg device and get ENOMEM, then wait a little (depends on your app)
+and try again.
 
-Tested-by: Andrew Lunn <andrew@lunn.ch>
+Could you share a test program that illustrates the problem with us?
 
-    Andrew
+One way of limiting user space programs that used bsg's write()/read()
+interface (via the sg v4 interface), from needing a significant rewrite
+would be to implement the sg_v4 interface in the sg driver. Currently the
+sg driver supports the sg v1 (sort of), sg v2 and sg v3 (typically used)
+interfaces.
+
+Doug Gilbert
+
+
+*** Prior to around February this year, that block layer resource
+shortage resulted in a EINVAL being returned to the sg driver. That
+had perplexed me for some time, as it happened only under heavy
+testing, typically with the same SCSI command being repeated
+(e.g. REQUEST SENSE). It was really a ENOMEM error that was being
+inadvertently overwritten.
+
+
+
+
+
+
+
+
