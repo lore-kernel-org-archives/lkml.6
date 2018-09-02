@@ -6,54 +6,55 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 134DBC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372DFC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC87F20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC87F20841
+	by mail.kernel.org (Postfix) with ESMTP id EE1ED20857
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1ED20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeIBOZ2 (ORCPT
+        id S1727807AbeIBOZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:25:28 -0400
-Received: from mout.perfora.net ([74.208.4.196]:45689 "EHLO mout.perfora.net"
+        Sun, 2 Sep 2018 10:25:30 -0400
+Received: from mout.perfora.net ([74.208.4.197]:51331 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeIBOZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:25:24 -0400
+        id S1727727AbeIBOZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:25:29 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MdMQ9-1gDFUW2991-00IdMe; Sun, 02 Sep 2018 12:10:04 +0200
+ 0LsAe1-1fla9u0AJj-013pci; Sun, 02 Sep 2018 12:10:09 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 25/37] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
-Date:   Sun,  2 Sep 2018 12:08:54 +0200
-Message-Id: <20180902100906.25792-26-marcel@ziswiler.com>
+Subject: [PATCH v2 28/37] ARM: tegra: colibri_t20: simplify model and compatible properties
+Date:   Sun,  2 Sep 2018 12:08:57 +0200
+Message-Id: <20180902100906.25792-29-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:MdY14yE8XR9FlqYu3hFYaJMvW+9myzzQcy2gKNmifn/k+us9vat
- llMOqITR9wMjXD/hpPk65UZyivDBdmCA91+zmSwTzoYAGNm/mz12SXf/LPBupLeioKLEVPc
- /i0F0xgUeDLQBKbiaVjchg7MCkRCwZ7LuzCZ19g5hfrnYp3QUSrSmU3ZJeYUY0nJgDguxCQ
- KWwqr0vb0Sy0+LLqZnVLA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+Y+ca8vidq8=:1W4smz63ssxYWmZJVGFL07
- a/qTemBV+xpp4Z+MDipa5zn6ZGImYdYM4fACtW+tJEh7qK2TmXo3kR9AAd5D+C9VUOhlE6231
- 8qUPW+2juD0oKf6zYzqvEjOtEJjVGo6fYhAYugvkLJMPKK2WGiWgdHCdMjgK3JLoI7+a+BTEX
- UEB5DWpFe4+e4y3S0r8AaUO4cDS2MSyJq47q34Y3GDIDFazFEtkdsC3m4Dk/ZUJaDy6RhH0RD
- oimYXkoMZKkR7nLP2rG5limUsLFdFEg8/jJRV5zfuKKeNzYbYkqpiIaHd9lhJ6FGHyq08PpGF
- aMdL/FUqLaQh3q6Nmew4QRAFt+gWjNkMCxQF8i5Fm/1HO/hxPaJJvO6+CCtlRi3YvlyeJEVIs
- r7aHuP19AnrY2t2J658DlGMHh1JRoZDOxVvBXXM5wEfZhFj2H4f16RSq3/4Fgb7sAI+v/trmU
- 9px/n4RiTq6hxk+jkqDOZ08z70/qo44V/gXSN0Eqy9PELPAF+q7Qs1Sz+qnvl6lk6a7a+QTqQ
- 3hrbGWdpWd+92XxmWN087talNgVJ60UzXhAbYilv5uEBrxlpOBAeVeLIPNgkytID4sNd10YDF
- m47h+jWnS6syxyW8TyMF0TXA+Hua1hjmkM1P21S1dxtdQQcvGIkU6IgsO6X/lbMZrLCy5p6q9
- CwhBYKy6XfOTXSRTGGZBCghFTOHAbg0LuNcvZte1WZsDGx2GAL313I389MGw3bS60tbY=
+X-Provags-ID: V03:K1:g4p6nmuyYhjSBZg5aIG6XobmQ0fFQm9madx3osLLX/x4HaRl+G1
+ H47o4149opL4B6yBiJc5sTftTRRPON1MkNndVvAhr8gBMKZwGGps2nOEk47pAbLG95bx0d4
+ HfwHQKOOSLb1r+bo9gtapuwdAEXHY7Yzyt4U+WqYt4ew2BL3GK+Uv0R62p/AzYhoa+ZXatA
+ G6TXF2SwuwkJo9o942fdg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Sao88or5CLo=:vT9080wXfg1UWoGIG6umef
+ fA1hrYc89EyPBPdB8xeQC6RB+ie0S7g/EJA9fcQXJmp55xt+Z7fcRxU02CYBtWBsIp2finP24
+ rO8RFPp5rdJJBtl3XcxZjZCRlQpjI0nHJzg0PRQ+2mRN2FmAeJi8V6N0kYQeibiqy+OprJUlP
+ OiW1C9ksNHw2rej/6h5UOJ8W2acVN/pwyeZsje2Ov7z73PJFS6ARaKm3ONzHXfcugsL3Nh6G5
+ fX/3mefgZ+tEgRhoOogUGmNtGOYfsfRvqfE2nxGGwRQhlrlscHulAtb9wPBKqaUlW7ftSgElD
+ 4vBLq1I03G3Qroq8fjvPqR5Y+mckbg2AGiov+39BeJ+I3kFQ5X17tDxsgtp1zblJgYzXMj75F
+ sOaKdZJHCu8qgv2Pewn9iMQf2qvlsKzOVbh0lzMrRQZfccZodOU1sh6j94bN28XCNn9GT8L0+
+ bAe1t5ptZ+rI4s/5nGSV/VzxPBBwTnSzrgCb+0gA60PfDdLF6pLuGuqXfHtq48tA5JVQo1jeP
+ rcSDu+XS2Tu4j89Gb2NG/rHxkkgh+ktrxgLjmpP2iuOF94COlTmFc8dHzb/tMvFLISXquKgQt
+ O8v1BtbK/m6j8D2Z9hV1eWVassEGQISnPwP94rqMVs3AcgRcXKf79JvZjerDrVgjtBh82TJ+u
+ znJf48cEDMQ9ojPDfjy7y1TbQOT2sPR1IOyTAzxAR0ZIbkd+AHaLnqr8qq75LYQq5mOA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,44 +62,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hogs for GMI_WR_N buffers:
-- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
-- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
+Simplify model and compatible by dropping the 256/512 MB from the model
+and -512 from the compatible properties to be more in-line with all our
+other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- Also reflect this change in the Iris device tree.
+- Also reflect this change in the device tree bindings documentation.
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.txt | 2 +-
+ arch/arm/boot/dts/tegra20-colibri-iris.dts      | 4 ++--
+ arch/arm/boot/dts/tegra20-colibri.dtsi          | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+index 1c90cb32da19..5e1b0b30ece2 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.txt
++++ b/Documentation/devicetree/bindings/arm/tegra.txt
+@@ -53,7 +53,7 @@ board-specific compatible values:
+   toradex,apalis-tk1-eval
+   toradex,apalis-tk1-v1.2
+   toradex,apalis-tk1-v1.2-eval
+-  toradex,colibri_t20-512
++  toradex,colibri_t20
+   toradex,colibri_t30
+   toradex,colibri_t30-eval-v3
+   toradex,iris
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 1583d5118302..cd47ac5b528f 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -5,8 +5,8 @@
+ #include "tegra20-colibri.dtsi"
+ 
+ / {
+-	model = "Toradex Colibri T20 256/512 MB on Iris";
+-	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
++	model = "Toradex Colibri T20 on Iris";
++	compatible = "toradex,iris", "toradex,colibri_t20", "nvidia,tegra20";
+ 
+ 	aliases {
+ 		rtc0 = "/i2c@7000c000/rtc@68";
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 281e0dd11565..aba56b447bcd 100644
+index ea785f65c89f..53e06f31dbea 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -757,4 +757,20 @@
- 		output-high;
- 		line-name = "LAN_RESET#";
- 	};
-+
-+	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
-+	npwe {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "Tri-state nPWE";
-+	};
-+
-+	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
-+	rdnwr {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "Not tri-state RDnWR";
-+	};
- };
+@@ -8,8 +8,8 @@
+  * Colibri T20 512MB IT V1.2A
+  */
+ / {
+-	model = "Toradex Colibri T20 256/512 MB";
+-	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
++	model = "Toradex Colibri T20";
++	compatible = "toradex,colibri_t20", "nvidia,tegra20";
+ 
+ 	memory@0 {
+ 		/*
 -- 
 2.14.4
 
