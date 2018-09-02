@@ -2,181 +2,161 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DB2C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72E92077C
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:32:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72E92077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 5645020837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:47:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5645020837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeIBNrN (ORCPT
+        id S1726749AbeIBOC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 09:47:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43568 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeIBNrN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 09:47:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id z27-v6so11943200edb.10;
-        Sun, 02 Sep 2018 02:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BIhQRxJRyD7iv3XZSdxL641fDlGG0nYGOChAx0vzNJU=;
-        b=pXpm1+hPVAUYMIZ6oMpkyTbUOmMw5ID0K9rmXK5zPCJLkXtBluH/oGGFqLkc/WmUVx
-         qTKU3pW94I9cBKH1iUpprWpDpfN8i24M8AEnUup0Nq8RPdojS1MXtQE0DHbA/mB8ucRU
-         VW5RIbNF6z5yYYvkm16z0seG/zqhj7WwO0ZMUAJIwewgznsTUWAjzdPSwpzMmGm7/EKA
-         y0xkkIsvRXjaBJCML/BEUBhT5RNcej1AoaAGMarCRiNYCV5QTZxybhsGE9uDu5a0Zy2o
-         Lw3zL47otlbHJXFLWbFSMct9hOjOx/UB/HFS4K3TrZprK/i+9AsTgxGMyh3cdeu7kNL+
-         Hnfw==
-X-Gm-Message-State: APzg51BamUIoDkhT6bbawfZ2PjJsujiKdclKCkeMFHFOtat7PhQsuW4q
-        aue59NWJ4Q5ic2Ne3kn1dJsyXszm
-X-Google-Smtp-Source: ANB0Vdab6HGlEc8wmIltehpblyCEKAjgGT0DecoEAXl52cbIv4x68AjegyEwDXgZKqSMTKUq4NQm/g==
-X-Received: by 2002:a50:b6e3:: with SMTP id f32-v6mr26624642ede.147.1535880723295;
-        Sun, 02 Sep 2018 02:32:03 -0700 (PDT)
-Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
-        by smtp.gmail.com with ESMTPSA id s41-v6sm8474444edd.61.2018.09.02.02.32.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 02:32:02 -0700 (PDT)
-Received: by mail-wm0-f43.google.com with SMTP id n11-v6so8924001wmc.2;
-        Sun, 02 Sep 2018 02:32:01 -0700 (PDT)
-X-Received: by 2002:a1c:e4c3:: with SMTP id b186-v6mr2349892wmh.116.1535880721662;
- Sun, 02 Sep 2018 02:32:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 2 Sep 2018 17:31:50 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66coQW2vNgEkcLeN0VuV4r18baqYVrgqspLA5FvRfgcEg@mail.gmail.com>
-Message-ID: <CAGb2v66coQW2vNgEkcLeN0VuV4r18baqYVrgqspLA5FvRfgcEg@mail.gmail.com>
-Subject: Re: [PATCH 00/27] Allwinner H6 DE3 and HDMI support
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 2 Sep 2018 10:02:56 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58895 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbeIBOCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:02:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 02:47:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,319,1531810800"; 
+   d="scan'208";a="69718287"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
+  by orsmga007.jf.intel.com with ESMTP; 02 Sep 2018 02:47:45 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH V2 0/6] Add efi page fault handler to fix/recover from
+Date:   Sun,  2 Sep 2018 02:46:28 -0700
+Message-Id: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> can be found on H6 SoC.
->
-> Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> displaying and processing 10-bit and AFBC formats, which are not yet
-> supported by this series.
->
-> This series is based on linux-next at next-20180828, which has working
-> R40 display pipeline support. I'll rebase series on later linux-next, if
-> needed, once R40 display pipeline support is reintroduced.
->
-> I suggest all patches go through allwinner tree, except DRM patches,
-> which should go through drm-misc tree.
->
-> Last detail, PineH64 model A schematic has DDC_EN signal, which enables
-> DDC voltage level shifter. TL Lim, PINE64 founder, said that this
-> signal is not actually present on PineH64 model A board. It is, however
-> present on PineH64 model B engineering samples, but it will be removed
-> in production version. Because of that, I didn't include any code for
-> it.
->
-> Please take a look.
->
-> Best regards,
-> Jernej
->
-> Icenowy Zheng (7):
->   dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
->   arm64: allwinner: h6: add system controller device tree node
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Prefix should be "arm64: dts: allwinner: h6: ".
+There may exist some buggy UEFI firmware implementations that access efi
+memory regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even after
+the kernel has assumed control of the platform. This violates UEFI
+specification. Hence, provide a debug config option which when enabled
+detects and fixes/recovers from page faults caused by buggy firmware.
 
->   dt-bindings: bus: add H6 DE3 bus binding
->   dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
->   drm: sun4i: add quirks for TCON TOP
->   dt-bindings: display: sun4i-drm: document H6 TCON TOP
->   drm: sun4i: add support for H6 TCON TOP
->
-> Jernej Skrabec (20):
->   clk: sunxi-ng: Adjust MP clock parent rate when allowed
->   clk: sunxi-ng: Use u64 for calculation of NM rate
->   clk: sunxi-ng: h6: Set video PLLs limits
->   dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
->   clk: sunxi-ng: Add support for H6 DE3 clocks
->   dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
->   drm/sun4i: Add compatible for H6 display engine
->   drm/sun4i: Rework DE2 register defines
->   drm/sun4i: Add basic support for DE3
->   drm/sun4i: Add support for H6 DE3 mixer 0
->   drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
->   drm/sun4i: Not all DW HDMI controllers has scrambled addresses
->   drm/sun4i: dw-hdmi: Make mode_valid function configurable
->   drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
->   drm/sun4i: Add support for H6 DW HDMI controller
->   drm/sun4i: Add support for Synopsys HDMI PHY
->   drm/sun4i: Add support for H6 HDMI PHY
->   drm/sun4i: Initialize registers in tcon-top driver
->   arm64: dts: sun50i: h6: Add HDMI pipeline
->   arm64: dts: sun50i: h6: Enable HDMI output on Pine H64 board
+The above said illegal accesses trigger page fault in ring 0 because
+firmware executes at ring 0 and if unhandled it hangs the kernel. We
+provide an efi specific page fault handler to:
+1. Avoid panics/hangs caused by buggy firmware.
+2. Shout loud that the firmware is buggy and hence is not a kernel bug.
 
-Same here.
+Depending on the illegally accessed efi region, the efi page fault
+handler handles illegal accesses differently.
+1. If the illegally accessed region is EFI_BOOT_SERVICES_<CODE/DATA>,
+   the efi page fault handler fixes it up by mapping the requested
+   region.
+2. If any other region (Eg: EFI_CONVENTIONAL_MEMORY or
+   EFI_LOADER_<CODE/DATA>), then the efi page fault handler freezes
+   efi_rts_wq and schedules a new process.
+3. If the access is to any other efi region like above but if the efi
+   runtime service is efi_reset_system(), then the efi page fault
+   handler will reboot the machine through BIOS.
 
-ChenYu
+Illegal accesses to EFI_BOOT_SERVICES_<CODE/DATA> and to other regions
+are dealt differently in efi page fault handler because, *generally*
+EFI_BOOT_SERVICES_<CODE/DATA> regions are smaller in size relative to
+other efi regions and hence could be reserved and can be dynamically
+mapped. But other EFI regions like EFI_CONVENTIONAL_MEMORY and
+EFI_LOADER_<CODE/DATA> cannot be reserved as they are very huge in size
+and reserving them will make the kernel un-bootable.
 
->
->  .../bindings/bus/sun50i-de2-bus.txt           |   9 +-
->  .../devicetree/bindings/clock/sun8i-de2.txt   |   5 +-
->  .../bindings/display/sunxi/sun4i-drm.txt      |  30 ++-
->  .../devicetree/bindings/sram/sunxi-sram.txt   |   4 +
->  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  25 ++
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 224 ++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   4 +
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  65 +++++
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.h          |   1 +
->  drivers/clk/sunxi-ng/ccu_mp.c                 |  64 ++++-
->  drivers/clk/sunxi-ng/ccu_nm.c                 |  18 +-
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |   1 +
->  drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
->  drivers/gpu/drm/sun4i/sun8i_csc.c             |  96 +++++++-
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  45 +++-
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |  14 +-
->  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        | 178 +++++++++++++-
->  drivers/gpu/drm/sun4i/sun8i_mixer.c           |  44 +++-
->  drivers/gpu/drm/sun4i/sun8i_mixer.h           |  61 +++--
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.c        |  58 ++++-
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  47 ++--
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.h        |  37 +--
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |  45 ++--
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.h       |  28 +--
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  55 +++--
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.h        |  25 +-
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |  85 +++++--
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |  68 ++++--
->  include/dt-bindings/clock/sun8i-de2.h         |   3 +
->  include/dt-bindings/reset/sun8i-de2.h         |   1 +
->  30 files changed, 1127 insertions(+), 214 deletions(-)
->
-> --
-> 2.18.0
->
+This issue was reported by Al Stone when he saw that reboot via EFI hangs
+the machine. Upon debugging, I found that it's efi_reset_system() that's
+touching memory regions which it shouldn't. To reproduce the same
+behavior, I have hacked OVMF and made efi_reset_system() buggy. Along
+with efi_reset_system(), I have also modified get_next_high_mono_count()
+and set_virtual_address_map(). They illegally access both boot time and
+other efi regions.
+
+Testing the patch set:
+----------------------
+1. Download buggy firmware from here [1].
+2. Run a qemu instance with this buggy BIOS and boot mainline kernel.
+Add reboot=efi to the kernel command line arguments and after the kernel
+is up and running, type "reboot". The kernel should hang while rebooting.
+3. With the same setup, boot kernel after applying patches and the
+reboot should work fine. Also please notice warning/error messages
+printed by kernel.
+
+Changes from RFC to V1:
+-----------------------
+1. Drop "long jump" technique of dealing with illegal access and instead
+   use scheduling away from efi_rts_wq.
+
+Changes from V1 to V2:
+-----------------------
+1. Shortened config name to CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS from
+   CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES.
+2. Made the config option available only to expert users.
+3. efi_free_boot_services() should be called only when
+   CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is not enabled. Previously, this
+   was part of init/main.c file. As it is an architecture agnostic code,
+   moved the change to arch/x86/platform/efi/quirks.c file.
+
+Note:
+-----
+Patch set based on "next" branch in efi tree.
+
+[1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+
+Sai Praneeth (6):
+  efi: Make efi_rts_work accessible to efi page fault handler
+  x86/efi: Remove __init attribute from memory mapping functions
+  x86/efi: Permanently save the EFI_MEMORY_MAP passed by the firmware
+  x86/efi: Add efi page fault handler to fixup/recover from page faults
+    caused by firmware
+  x86/mm: If in_atomic(), allocate pages without sleeping
+  x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESS
+
+ arch/x86/Kconfig                        |  21 ++++
+ arch/x86/include/asm/efi.h              |  24 +++-
+ arch/x86/mm/fault.c                     |   9 ++
+ arch/x86/mm/pageattr.c                  |  16 ++-
+ arch/x86/platform/efi/efi.c             |  10 +-
+ arch/x86/platform/efi/efi_32.c          |   2 +-
+ arch/x86/platform/efi/efi_64.c          |   9 +-
+ arch/x86/platform/efi/quirks.c          | 204 ++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/efi.c              |   6 +-
+ drivers/firmware/efi/runtime-wrappers.c |  60 +++-------
+ include/linux/efi.h                     |  53 ++++++++-
+ 11 files changed, 351 insertions(+), 63 deletions(-)
+
+Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Al Stone <astone@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+-- 
+2.7.4
+
