@@ -3,79 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E063C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 12:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66DFC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 12:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ACB920658
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 12:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ACB920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 76DB120835
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 12:13:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DB120835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbeIBQSK (ORCPT
+        id S1726711AbeIBQ2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 12:18:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54001 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeIBQSK (ORCPT
+        Sun, 2 Sep 2018 12:28:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34769 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeIBQ2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 12:18:10 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fwR5L-000109-QU; Sun, 02 Sep 2018 14:02:31 +0200
-Date:   Sun, 2 Sep 2018 14:02:30 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Kashyap Desai <kashyap.desai@broadcom.com>
-cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-In-Reply-To: <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com>
- <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de> <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 2 Sep 2018 12:28:47 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w82CCvPL2913737
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sun, 2 Sep 2018 05:12:57 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w82CCt392913734;
+        Sun, 2 Sep 2018 05:12:55 -0700
+Date:   Sun, 2 Sep 2018 05:12:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jacek Tomaka <tipbot@zytor.com>
+Message-ID: <tip-f4661d293eb2d01dfc742982761a36fafe456d46@git.kernel.org>
+Cc:     tglx@linutronix.de, timb@dug.com, mingo@kernel.org, bp@suse.de,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, jacek.tomaka@poczta.fm
+Reply-To: bp@suse.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, jacek.tomaka@poczta.fm, tglx@linutronix.de,
+          timb@dug.com
+In-Reply-To: <20180825035039.14409-1-jacekt@dugeo.com>
+References: <20180825035039.14409-1-jacekt@dugeo.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/microcode] x86/microcode: Make revision and processor
+ flags world-readable
+Git-Commit-ID: f4661d293eb2d01dfc742982761a36fafe456d46
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018, Kashyap Desai wrote:
-> > Ok. I misunderstood the whole thing a bit. So your real issue is that you
-> > want to have reply queues which are instantaneous, the per cpu ones, and
-> > then the extra 16 which do batching and are shared over a set of CPUs,
-> > right?
-> 
-> Yes that is correct.  Extra 16 or whatever should be shared over set of
-> CPUs of *local* numa node of the PCI device.
+Commit-ID:  f4661d293eb2d01dfc742982761a36fafe456d46
+Gitweb:     https://git.kernel.org/tip/f4661d293eb2d01dfc742982761a36fafe456d46
+Author:     Jacek Tomaka <jacek.tomaka@poczta.fm>
+AuthorDate: Sat, 25 Aug 2018 11:50:39 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 2 Sep 2018 14:09:13 +0200
 
-Why restricting it to the local NUMA node of the device? That doesn't
-really make sense if you queue lots of requests from CPUs on a different
-node.
+x86/microcode: Make revision and processor flags world-readable
 
-Why don't you spread these extra interrupts accross all nodes and keep the
-locality for the request/reply?
+The microcode revision is already readable for non-root users via
+/proc/cpuinfo. Thus, there's no reason to keep the same information
+readable by root only in /sys/devices/system/cpu/cpuX/microcode/.
 
-That also would allow to make them properly managed interrupts as you could
-shutdown the per node batching interrupts when all CPUs of that node are
-offlined and you'd avoid the whole affinity hint irq balancer hackery.
+Make .../processor_flags world-readable too, while at it.
 
-Thanks,
+Reported-by: Tim Burgess <timb@dug.com>
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180825035039.14409-1-jacekt@dugeo.com
 
-	tglx
+---
+ arch/x86/kernel/cpu/microcode/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index b9bc8a1a584e..2637ff09d6a0 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -666,8 +666,8 @@ static ssize_t pf_show(struct device *dev,
+ }
+ 
+ static DEVICE_ATTR_WO(reload);
+-static DEVICE_ATTR(version, 0400, version_show, NULL);
+-static DEVICE_ATTR(processor_flags, 0400, pf_show, NULL);
++static DEVICE_ATTR(version, 0444, version_show, NULL);
++static DEVICE_ATTR(processor_flags, 0444, pf_show, NULL);
+ 
+ static struct attribute *mc_default_attrs[] = {
+ 	&dev_attr_version.attr,
