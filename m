@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54929C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC48C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9D72077B
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E03F62077B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:21:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YeoetoN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9D72077B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Ws0s2h0P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03F62077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbeIBRhT (ORCPT
+        id S1730028AbeIBRbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:37:19 -0400
-Received: from mail-cys01nam02on0104.outbound.protection.outlook.com ([104.47.37.104]:45376
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:31:25 -0400
+Received: from mail-co1nam03on0122.outbound.protection.outlook.com ([104.47.40.122]:34400
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729401AbeIBRb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:31:28 -0400
+        id S1729995AbeIBRbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:31:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VqtSfdcHk9mQLuLTbQznC2PDcmrSDf96lNAqqtV4IkU=;
- b=YeoetoN7RSTUCUZxe5PwbdY9tsaUggtZSOtxdwNHoFM+NiuiPKIKe75F5L5hqIMzv6t1ty1FcjxsSWRT9dGo1ITrcS5n3qZO+Nm7jU+ckjWZlyKxGe89cLjpDcMpLTZNdqT1Ama30rdr9jRVLc9g8rRG2mz4ST3USPhg361th00=
+ bh=T6nidgAwlmiFOZFuHdluerbThSIMGxlpSuU/swtN8tw=;
+ b=Ws0s2h0PFpSHYmLanIP9y2R+m1F3VJoHyd3mOCg32beDeivYbgmrLoXYaD1vz5/zYdHUNWhoJUcf8ZwFc1Rimvenn/Ts+9OD5EnvhkKUh8lD24TadhrgLPD0utjaGSndgqpAySzpZKaWWeOs3wMquia82CnHu6fYlVOIVzf+c9c=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0184.namprd21.prod.outlook.com (10.173.193.10) with Microsoft SMTP
+ CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:15:32 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:15:30 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:15:32 +0000
+ 13:15:30 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Takashi Iwai <tiwai@suse.de>,
+CC:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 56/62] ALSA: hda: Fix implicit PCM format type
- conversion
-Thread-Topic: [PATCH AUTOSEL 4.9 56/62] ALSA: hda: Fix implicit PCM format
- type conversion
-Thread-Index: AQHUQr76i5DfQhJbXU+nKUaogRHQRg==
-Date:   Sun, 2 Sep 2018 13:15:11 +0000
-Message-ID: <20180902131411.183978-46-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 50/62] f2fs: fix to do sanity check with
+ {sit,nat}_ver_bitmap_bytesize
+Thread-Topic: [PATCH AUTOSEL 4.9 50/62] f2fs: fix to do sanity check with
+ {sit,nat}_ver_bitmap_bytesize
+Thread-Index: AQHUQr73x/VXnlnCAE+fr9XGEQ2t5w==
+Date:   Sun, 2 Sep 2018 13:15:05 +0000
+Message-ID: <20180902131411.183978-40-alexander.levin@microsoft.com>
 References: <20180902131411.183978-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131411.183978-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -58,93 +58,309 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0184;6:29G2EisBiDbe6HHclnGrTa/Zn0yCGtxlQ2XHNHoDBtfzPYz7MZBJi+teDnvSF7IP/dl8m0Ic5k44J+cMg0f7U72QMgr+zAV5kEl2Dp+IKbEH/U+EhKtf7zP+DSda43ybAcAwfFiuwK/1A17eAOADrjtJsZeElELvXnjviNuq0ikeWZjbRWCubYrP4EP92PTAoUcR897r7DQDqrOTwOU+kUQom6pmuJTpm37neOjL0rVUv5kzsxgzAD0/boqonExOEDlkGFTsDElh9wv+wx9VeXaugbrqwQpvxQosZTHc34rUYok7z3xGlVslUYeIJ+9BYukfCvBG1SuVj7/HDdGo00E4jLPl8eU4P51s7Jt6K/ywTmPJvZ6CC28ptet4ksLmYJE93a1qelqY7KGI1jRclbIqdJXhldrCMW0cCZod5IZc2erw0s1vyw/XhnuaV9Xjurx3iDtEkkWiE4R+bKU9Ug==;5:mhHRtD8lDhPKzcl0UuK50TTk3a2WgiutlsiCjcwADoPDnH0hJP/S6hBIvY3Xd9LqJeQq4ljU8V09f1JhffpHHcZ7vUeyqZh7lt4K+fT2gCjfv+nkQwa9cfEQL9QJxPrZvhBcI6Llwb5B5dEo7Dto+zz8ObQBvaDI/0kIiaECwTo=;7:nL7/Ho4wbb7TpiJxjYMLpzvVjv6HxZITICtgr0f9UZcj7FsVDBr4Bh5TD7GFUiD2C42SscfcUcSt/79umlNxPWk/D4b03Cckwtihwd093MsedZp5oOvO0oXBgZsizBpg8Lsyf//5bRB7IL83aC0i1QJ+0AGsP47dIQr4ttY8D8Tj5AUJctTW9TVtRviwUNI/jIBk04mBkQjyFBx/S1reuLq9XmRv513IciAZJchwQliNq9jVLEZyrPVrNvhoIhsj
-x-ms-office365-filtering-correlation-id: b3da637f-5a85-423f-20e7-08d610d629c8
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:yl38mvZEJDQzGnTwzZfuwmj5d5MV09+PF6iKECVLVt5w0vJgT7vAVupdLmuRRUobOh7gEFDAA5aiochTXokihJzNAFz5639TZsEc+6+gYNdxRUF2pPWp/uTuxEaxgkxwujRC81fQy+rFi0uQ2CuC5yaEUyAAYFzafS401/gqvBj+1jEN/1FZQOYpW6d28ll7hH1pbup+BQL9I+A/QTlEjfAcfabG4c2sQwLUlGxTA+qPp4dO1Y+lEiHI/s9vTzU+4l3Zop8GRcbENqw+eKYpvn+mrGWyvr3/b3NwnshgQ11im6PAgRfSzbTjhGyJ4bGiLnDUP+J0D3s3wj2gwY6xyHxwCCyC0kB5YH14cU091gmxSWlV+esgH7t4lXfErT2o0gPxeI/LD4bX7SCAm4tB3M2uB4qQDC/kp8ea6NYPrGZtIxyvKfaamShpAZ1Gl4Tqet1JCkB0WW6FdAw+a0TphQ==;5:h2HXaOwbcNdunYhDxx7tBE4mv32XVjN0ctR8T8+AOlDqQCJxeqdDgU56oFojUROoZTzMYyup1l9sHyRRsH2MwKWFM6lB3CpW8tDfpl6nrGOsLX2ucQbdxiCyEkQC/67uRS/6TsXJX7bLeHzPPbwFqrBvdoiIlcE7NCk0mn+i6l8=;7:Qff8DoqteSq7nJq9mxrrtJxDpUX3MsAUMRwok4oHzDHmqaVgLn1hZ5OhU6YDCE6oRsGioTcvdTV3VDL+W6QIksypd8dCDkU3nOvPG5Sp8uAfAtnasFVpzBb8dXSs8W+XRDHkoU5x7J5JmTEdUr4hJtwBWhxFkI0PFyNMzsMNzJfZt5lxHowMI1ByoykVrihdyQTjSNvzRCsSiL6DT3NEH7/tUhriVYaQOXGVBWMOPc4pu5y8UGekUJuotr/pwtwl
+x-ms-office365-filtering-correlation-id: 9155c253-91d1-490c-16aa-08d610d62858
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0184;
-x-ms-traffictypediagnostic: CY4PR21MB0184:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
+x-ms-traffictypediagnostic: CY4PR21MB0741:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0184C2E1B87F695F8E0B3CB6FB0D0@CY4PR21MB0184.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB074115A4B3C5406DC9FD5D36FB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(108815179253565);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0184;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0184;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(366004)(136003)(39860400002)(199004)(189003)(2616005)(10290500003)(68736007)(476003)(81166006)(11346002)(2906002)(8936002)(76176011)(3846002)(6506007)(5660300001)(81156014)(1076002)(8676002)(99286004)(102836004)(14454004)(446003)(2900100001)(86612001)(478600001)(186003)(305945005)(7736002)(72206003)(217873002)(86362001)(486006)(6666003)(4326008)(97736004)(6436002)(6512007)(53936002)(107886003)(22452003)(25786009)(105586002)(106356001)(36756003)(66066001)(14444005)(5250100002)(316002)(10090500001)(256004)(6116002)(26005)(2501003)(6486002)(54906003)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0184;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(6666003)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(575784001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(6306002)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(966005)(10290500003)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 0CfppdVin4cPTmNqcTcYTO+2KxXu0ILh3xNXBcEye7CB13dnNaCCfui6+8W4Njfa9FPXfcJwUUJTRy8XS4nB2/6lopFtviz1gA1n4VQGGXIr8JjfWRghEofuFlOlRih9qKzenu+W0s+5O6pGClrGwcCgQ3TlZbhiCGYpJ7X+o+1o/85492Vr/SGRyJcUV6ph7I/yhitmZnJr6ZDOF2SJE2HjVNft6ge/HoYZvZLaynoyHohTeANp4vMMqhnh2W3CZ08HkiuFA1HnBUuHPC39dy6Z+Ui2xSgcAFYHrBc9wJNyk+U0F3DwscZEIRLijH3DOq4WeCVfZ0IqygVfm7fvtYxRD78pEWjRGA8PcxzUxxs=
+x-microsoft-antispam-message-info: u9nTChKn0euiMZLqJ2+nAJDBVC44o2UgwzDd9yrjNc/d0XzmUYp1ZIxUHvn+TxA+Ms3Fw6wWEpQlB0heMpld5NmeDEC76bfXF2hqQYFq3p5ZU76VwiPu5JN3J4phEYzaVFO1gn4T70SjqrQxYdYe++r6uwYFgZIIuJyDAmoAxxmsPuleFUkLtMb46NR4N14gWiyqRpE8yGwEwwTYYrvhicpKITkFlEDAWRz0X1oUkfLJljZm8CBncNJju0heKao6xWgt054rtEzvkrCdxr2Qr4QaFFfT5vnCvhBCbFVt+NFRH3N9T+ANsXtdnsfRZJf0yQiiyG9EzpIjrGgvDndhX6kM9Yc5kGL6AHYBYX/+5Kw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3da637f-5a85-423f-20e7-08d610d629c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:15:11.4614
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9155c253-91d1-490c-16aa-08d610d62858
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:15:05.7817
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0184
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit a6ea5fe95ab4a1a7af6d57429fe3ecde9acf5b5a ]
+[ Upstream commit c77ec61ca0a49544ca81881cc5d5529858f7e196 ]
 
-The PCM format type is defined with __bitwise, hence it can't be
-passed as integer but needs an explicit cast.  In this patch, instead
-of the messy cast flood, define the format argument of
-snd_hdac_calc_stream_format() to be the proper snd_pcm_format_t type.
+This patch adds to do sanity check with {sit,nat}_ver_bitmap_bytesize
+during mount, in order to avoid accessing across cache boundary with
+this abnormal bitmap size.
 
-This fixes sparse warnings like:
-  sound/hda/hdac_device.c:760:38: warning: incorrect type in argument 1 (di=
-fferent base types)
+- Overview
+buffer overrun in build_sit_info() when mounting a crafted f2fs image
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+- Reproduce
+
+- Kernel message
+[  548.580867] F2FS-fs (loop0): Invalid log blocks per segment (8201)
+
+[  548.580877] F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th sup=
+erblock
+[  548.584979] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  548.586568] BUG: KASAN: use-after-free in kmemdup+0x36/0x50
+[  548.587715] Read of size 64 at addr ffff8801e9c265ff by task mount/1295
+
+[  548.589428] CPU: 1 PID: 1295 Comm: mount Not tainted 4.18.0-rc1+ #4
+[  548.589432] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  548.589438] Call Trace:
+[  548.589474]  dump_stack+0x7b/0xb5
+[  548.589487]  print_address_description+0x70/0x290
+[  548.589492]  kasan_report+0x291/0x390
+[  548.589496]  ? kmemdup+0x36/0x50
+[  548.589509]  check_memory_region+0x139/0x190
+[  548.589514]  memcpy+0x23/0x50
+[  548.589518]  kmemdup+0x36/0x50
+[  548.589545]  f2fs_build_segment_manager+0x8fa/0x3410
+[  548.589551]  ? __asan_loadN+0xf/0x20
+[  548.589560]  ? f2fs_sanity_check_ckpt+0x1be/0x240
+[  548.589566]  ? f2fs_flush_sit_entries+0x10c0/0x10c0
+[  548.589587]  ? __put_user_ns+0x40/0x40
+[  548.589604]  ? find_next_bit+0x57/0x90
+[  548.589610]  f2fs_fill_super+0x194b/0x2b40
+[  548.589617]  ? f2fs_commit_super+0x1b0/0x1b0
+[  548.589637]  ? set_blocksize+0x90/0x140
+[  548.589651]  mount_bdev+0x1c5/0x210
+[  548.589655]  ? f2fs_commit_super+0x1b0/0x1b0
+[  548.589667]  f2fs_mount+0x15/0x20
+[  548.589672]  mount_fs+0x60/0x1a0
+[  548.589683]  ? alloc_vfsmnt+0x309/0x360
+[  548.589688]  vfs_kern_mount+0x6b/0x1a0
+[  548.589699]  do_mount+0x34a/0x18c0
+[  548.589710]  ? lockref_put_or_lock+0xcf/0x160
+[  548.589716]  ? copy_mount_string+0x20/0x20
+[  548.589728]  ? memcg_kmem_put_cache+0x1b/0xa0
+[  548.589734]  ? kasan_check_write+0x14/0x20
+[  548.589740]  ? _copy_from_user+0x6a/0x90
+[  548.589744]  ? memdup_user+0x42/0x60
+[  548.589750]  ksys_mount+0x83/0xd0
+[  548.589755]  __x64_sys_mount+0x67/0x80
+[  548.589781]  do_syscall_64+0x78/0x170
+[  548.589797]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  548.589820] RIP: 0033:0x7f76fc331b9a
+[  548.589821] Code: 48 8b 0d 01 c3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 =
+2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48=
+> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ce c2 2b 00 f7 d8 64 89 01 48
+[  548.589880] RSP: 002b:00007ffd4f0a0e48 EFLAGS: 00000206 ORIG_RAX: 000000=
+00000000a5
+[  548.589890] RAX: ffffffffffffffda RBX: 000000000146c030 RCX: 00007f76fc3=
+31b9a
+[  548.589892] RDX: 000000000146c210 RSI: 000000000146df30 RDI: 00000000014=
+74ec0
+[  548.589895] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
+00013
+[  548.589897] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 00000000014=
+74ec0
+[  548.589900] R13: 000000000146c210 R14: 0000000000000000 R15: 00000000000=
+00003
+
+[  548.590242] The buggy address belongs to the page:
+[  548.591243] page:ffffea0007a70980 count:0 mapcount:0 mapping:00000000000=
+00000 index:0x0
+[  548.592886] flags: 0x2ffff0000000000()
+[  548.593665] raw: 02ffff0000000000 dead000000000100 dead000000000200 0000=
+000000000000
+[  548.595258] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000=
+000000000000
+[  548.603713] page dumped because: kasan: bad access detected
+
+[  548.605203] Memory state around the buggy address:
+[  548.606198]  ffff8801e9c26480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff=
+ ff ff
+[  548.607676]  ffff8801e9c26500: ff ff ff ff ff ff ff ff ff ff ff ff ff ff=
+ ff ff
+[  548.609157] >ffff8801e9c26580: ff ff ff ff ff ff ff ff ff ff ff ff ff ff=
+ ff ff
+[  548.610629]                                                             =
+    ^
+[  548.612088]  ffff8801e9c26600: ff ff ff ff ff ff ff ff ff ff ff ff ff ff=
+ ff ff
+[  548.613674]  ffff8801e9c26680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff=
+ ff ff
+[  548.615141] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  548.616613] Disabling lock debugging due to kernel taint
+[  548.622871] WARNING: CPU: 1 PID: 1295 at mm/page_alloc.c:4065 __alloc_pa=
+ges_slowpath+0xe4a/0x1420
+[  548.622878] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_h=
+da_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 sou=
+ndcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi =
+scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq=
+ async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul c=
+rc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgbl=
+t fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii =
+pata_acpi floppy
+[  548.623217] CPU: 1 PID: 1295 Comm: mount Tainted: G    B             4.1=
+8.0-rc1+ #4
+[  548.623219] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  548.623226] RIP: 0010:__alloc_pages_slowpath+0xe4a/0x1420
+[  548.623227] Code: ff ff 01 89 85 c8 fe ff ff e9 91 fc ff ff 41 89 c5 e9 =
+5c fc ff ff 0f 0b 89 f8 25 ff ff f7 ff 89 85 8c fe ff ff e9 d5 f2 ff ff <0f=
+> 0b e9 65 f2 ff ff 65 8b 05 38 81 d2 47 f6 c4 01 74 1c 65 48 8b
+[  548.623281] RSP: 0018:ffff8801f28c7678 EFLAGS: 00010246
+[  548.623284] RAX: 0000000000000000 RBX: 00000000006040c0 RCX: ffffffffb82=
+f73b7
+[  548.623287] RDX: 1ffff1003e518eeb RSI: 000000000000000c RDI: 00000000000=
+00000
+[  548.623290] RBP: ffff8801f28c7880 R08: 0000000000000000 R09: ffffed0047f=
+ff2c5
+[  548.623292] R10: 0000000000000001 R11: ffffed0047fff2c4 R12: ffff8801e88=
+de040
+[  548.623295] R13: 00000000006040c0 R14: 000000000000000c R15: ffff8801f28=
+c7938
+[  548.623299] FS:  00007f76fca51840(0000) GS:ffff8801f6f00000(0000) knlGS:=
+0000000000000000
+[  548.623302] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  548.623304] CR2: 00007f19b9171760 CR3: 00000001ed952000 CR4: 00000000000=
+006e0
+[  548.623317] Call Trace:
+[  548.623325]  ? kasan_check_read+0x11/0x20
+[  548.623330]  ? __zone_watermark_ok+0x92/0x240
+[  548.623336]  ? get_page_from_freelist+0x1c3/0x1d90
+[  548.623347]  ? _raw_spin_lock_irqsave+0x2a/0x60
+[  548.623353]  ? warn_alloc+0x250/0x250
+[  548.623358]  ? save_stack+0x46/0xd0
+[  548.623361]  ? kasan_kmalloc+0xad/0xe0
+[  548.623366]  ? __isolate_free_page+0x2a0/0x2a0
+[  548.623370]  ? mount_fs+0x60/0x1a0
+[  548.623374]  ? vfs_kern_mount+0x6b/0x1a0
+[  548.623378]  ? do_mount+0x34a/0x18c0
+[  548.623383]  ? ksys_mount+0x83/0xd0
+[  548.623387]  ? __x64_sys_mount+0x67/0x80
+[  548.623391]  ? do_syscall_64+0x78/0x170
+[  548.623396]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  548.623401]  __alloc_pages_nodemask+0x3c5/0x400
+[  548.623407]  ? __alloc_pages_slowpath+0x1420/0x1420
+[  548.623412]  ? __mutex_lock_slowpath+0x20/0x20
+[  548.623417]  ? kvmalloc_node+0x31/0x80
+[  548.623424]  alloc_pages_current+0x75/0x110
+[  548.623436]  kmalloc_order+0x24/0x60
+[  548.623442]  kmalloc_order_trace+0x24/0xb0
+[  548.623448]  __kmalloc_track_caller+0x207/0x220
+[  548.623455]  ? f2fs_build_node_manager+0x399/0xbb0
+[  548.623460]  kmemdup+0x20/0x50
+[  548.623465]  f2fs_build_node_manager+0x399/0xbb0
+[  548.623470]  f2fs_fill_super+0x195e/0x2b40
+[  548.623477]  ? f2fs_commit_super+0x1b0/0x1b0
+[  548.623481]  ? set_blocksize+0x90/0x140
+[  548.623486]  mount_bdev+0x1c5/0x210
+[  548.623489]  ? f2fs_commit_super+0x1b0/0x1b0
+[  548.623495]  f2fs_mount+0x15/0x20
+[  548.623498]  mount_fs+0x60/0x1a0
+[  548.623503]  ? alloc_vfsmnt+0x309/0x360
+[  548.623508]  vfs_kern_mount+0x6b/0x1a0
+[  548.623513]  do_mount+0x34a/0x18c0
+[  548.623518]  ? lockref_put_or_lock+0xcf/0x160
+[  548.623523]  ? copy_mount_string+0x20/0x20
+[  548.623528]  ? memcg_kmem_put_cache+0x1b/0xa0
+[  548.623533]  ? kasan_check_write+0x14/0x20
+[  548.623537]  ? _copy_from_user+0x6a/0x90
+[  548.623542]  ? memdup_user+0x42/0x60
+[  548.623547]  ksys_mount+0x83/0xd0
+[  548.623552]  __x64_sys_mount+0x67/0x80
+[  548.623557]  do_syscall_64+0x78/0x170
+[  548.623562]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  548.623566] RIP: 0033:0x7f76fc331b9a
+[  548.623567] Code: 48 8b 0d 01 c3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 =
+2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48=
+> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ce c2 2b 00 f7 d8 64 89 01 48
+[  548.623632] RSP: 002b:00007ffd4f0a0e48 EFLAGS: 00000206 ORIG_RAX: 000000=
+00000000a5
+[  548.623636] RAX: ffffffffffffffda RBX: 000000000146c030 RCX: 00007f76fc3=
+31b9a
+[  548.623639] RDX: 000000000146c210 RSI: 000000000146df30 RDI: 00000000014=
+74ec0
+[  548.623641] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
+00013
+[  548.623643] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 00000000014=
+74ec0
+[  548.623646] R13: 000000000146c210 R14: 0000000000000000 R15: 00000000000=
+00003
+[  548.623650] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  548.623656] F2FS-fs (loop0): Failed to initialize F2FS node manager
+[  548.627936] F2FS-fs (loop0): Invalid log blocks per segment (8201)
+
+[  548.627940] F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th sup=
+erblock
+[  548.635835] F2FS-fs (loop0): Failed to initialize F2FS node manager
+
+- Location
+https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.c#L3578
+
+	sit_i->sit_bitmap =3D kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
+
+Buffer overrun happens when doing memcpy. I suspect there is missing (incon=
+sistent) checks on bitmap_size.
+
+Reported by Wen Xu (wen.xu@gatech.edu) from SSLab, Gatech.
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/sound/hdaudio.h | 3 ++-
- sound/hda/hdac_device.c | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
-index 56004ec8d441..4b93a9c1ae87 100644
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/timecounter.h>
- #include <sound/core.h>
-+#include <sound/pcm.h>
- #include <sound/memalloc.h>
- #include <sound/hda_verbs.h>
- #include <drm/i915_component.h>
-@@ -132,7 +133,7 @@ int snd_hdac_get_sub_nodes(struct hdac_device *codec, h=
-da_nid_t nid,
- 			   hda_nid_t *start_id);
- unsigned int snd_hdac_calc_stream_format(unsigned int rate,
- 					 unsigned int channels,
--					 unsigned int format,
-+					 snd_pcm_format_t format,
- 					 unsigned int maxbps,
- 					 unsigned short spdif_ctls);
- int snd_hdac_query_supported_pcm(struct hdac_device *codec, hda_nid_t nid,
-diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
-index 03c9872c31cf..18509478d4e4 100644
---- a/sound/hda/hdac_device.c
-+++ b/sound/hda/hdac_device.c
-@@ -759,7 +759,7 @@ static struct hda_rate_tbl rate_bits[] =3D {
-  */
- unsigned int snd_hdac_calc_stream_format(unsigned int rate,
- 					 unsigned int channels,
--					 unsigned int format,
-+					 snd_pcm_format_t format,
- 					 unsigned int maxbps,
- 					 unsigned short spdif_ctls)
- {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e627671f0183..91bf72334722 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1425,12 +1425,17 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	struct f2fs_super_block *raw_super =3D F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_checkpoint *ckpt =3D F2FS_CKPT(sbi);
+ 	unsigned int main_segs, blocks_per_seg;
++	unsigned int sit_segs, nat_segs;
++	unsigned int sit_bitmap_size, nat_bitmap_size;
++	unsigned int log_blocks_per_seg;
+ 	int i;
+=20
+ 	total =3D le32_to_cpu(raw_super->segment_count);
+ 	fsmeta =3D le32_to_cpu(raw_super->segment_count_ckpt);
+-	fsmeta +=3D le32_to_cpu(raw_super->segment_count_sit);
+-	fsmeta +=3D le32_to_cpu(raw_super->segment_count_nat);
++	sit_segs =3D le32_to_cpu(raw_super->segment_count_sit);
++	fsmeta +=3D sit_segs;
++	nat_segs =3D le32_to_cpu(raw_super->segment_count_nat);
++	fsmeta +=3D nat_segs;
+ 	fsmeta +=3D le32_to_cpu(ckpt->rsvd_segment_count);
+ 	fsmeta +=3D le32_to_cpu(raw_super->segment_count_ssa);
+=20
+@@ -1451,6 +1456,18 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 			return 1;
+ 	}
+=20
++	sit_bitmap_size =3D le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
++	nat_bitmap_size =3D le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
++	log_blocks_per_seg =3D le32_to_cpu(raw_super->log_blocks_per_seg);
++
++	if (sit_bitmap_size !=3D ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
++		nat_bitmap_size !=3D ((nat_segs / 2) << log_blocks_per_seg) / 8) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"Wrong bitmap size: sit: %u, nat:%u",
++			sit_bitmap_size, nat_bitmap_size);
++		return 1;
++	}
++
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
+ 		return 1;
 --=20
 2.17.1
