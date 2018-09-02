@@ -2,99 +2,119 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8AEC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 23:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1C3C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 23:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA94A20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 23:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE43620837
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 23:47:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZuyQXp+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA94A20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tQu73SFz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE43620837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeICDsE (ORCPT
+        id S1725869AbeICEEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 23:48:04 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38365 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeICDsE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 23:48:04 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u11-v6so7771989plq.5;
-        Sun, 02 Sep 2018 16:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sFaPtY6nI7qDQThR+HnBM/AIrP7kAf9zPQVSwd4WFro=;
-        b=UZuyQXp+vZlyU+kv/moj5oJNA3T3olN85ySmDTxpWdqlGBEuKMpbZd63Q94ULZa1sW
-         37iulkiEntrNWIorUWcnwfxcMqlPVj4nLYtN9TpHC6MeOtWxdEa6Whuup3dav2n5aCzy
-         yjSda13KgYgWnTf2AllkAjvbWFJMIdWQqUJAfasHnNk2yTp/PNDFb3/nHZintH8KxFq8
-         GThxBynawjbicOgw7/bLAihzs3o+vroBLcKpdNCIJwIKXp2IHRjEnkn+w1B12hIa6zbe
-         oQBI7UcfQGWmzmg7Hf+KysfGlDkg5zOM9PlVasqQVb+V+oPPVPkJR9kk9ycG2iTSGENu
-         zI6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sFaPtY6nI7qDQThR+HnBM/AIrP7kAf9zPQVSwd4WFro=;
-        b=oxNZk+eBhhFA73sSFJ3fvl/J5TkGn8oe+k3QjWs6IPdl6Tz/0a/mkVudenWpE9pZZ+
-         z/dcw+oKYTB7cUTh0XkrrPgOD9Z+LwJAd9YTAIE0cxwlCtlVsgIn1Wd5JK4Gc16TaOlh
-         bIlFDQg8wkxCw3tgrthz3gPr1yvTqyux/IiPXWwbwKHMlB7LpqmVdauVBob8C1p7r4Kn
-         AMOfmqZ1OWswCPqt/G6Tqexv8EEo9gaVc/FHgakv35gfftRKweU5pZKGcjd9wkKBPiyf
-         y20iYY4wpF/PjZa6mH6NwsdkItnUTkiQauou04l6HBqlVPTIyLIJPgtvxeSZG4K/b4OY
-         biog==
-X-Gm-Message-State: APzg51DGg5f/f+zifxvCZWnsui+xMLHVHpdMzfkBqgXuSfOlGyd4txFv
-        9Mm5V6UNhXedjJjg3KVlD1JYGpfH
-X-Google-Smtp-Source: ANB0VdZWWUQIycFni68NbJgm7YfyKMfErFphiOJbgrfviG0ZejZPEAPTJBKsV1NZh0mop2xiQhyzOw==
-X-Received: by 2002:a17:902:8ec8:: with SMTP id x8-v6mr25700197plo.308.1535931036420;
-        Sun, 02 Sep 2018 16:30:36 -0700 (PDT)
-Received: from localhost.localdomain ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm25345583pgi.50.2018.09.02.16.30.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 16:30:35 -0700 (PDT)
-From:   Taeung Song <treeze.taeung@gmail.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH bpf-next v2] libbpf: Remove the duplicate checking of function storage
-Date:   Mon,  3 Sep 2018 08:30:07 +0900
-Message-Id: <20180902233007.3003-1-treeze.taeung@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Sep 2018 00:04:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:36053 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725759AbeICEEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 00:04:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 423VBc019rz9s2P;
+        Mon,  3 Sep 2018 09:47:19 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535932040;
+        bh=C1godOuQMF8DAsSBvbEMrA0GlCBdLzY0Zwo7BEXXB8k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tQu73SFzSvcUFYVlsnFTg/NSoz0eqnD+yL3HQdB/d+VQjj5yh/JW1YVECzfBoALTv
+         ++tJ4wI5pbqklS2ccmduhOgOfcmQaCfxqjKiphajFWOb6IaVcxSWyHf7JU+4jcnX6M
+         bBvs4T9N804YoN3m3rYk1KzkpGZXwJd0lVpzxsRNXOMI1C6OeXe/2RdEZTD4a/lCnC
+         FhWO4PowXHi40NVKa70OS534SJX07kFRHSfhIJUcwLFIZ0bSR8Xor7GDACDJeU43yb
+         PHtmcGV4qvatUnQWkw/u2PGFUIJkWDtUKm71jLB5l9bdqpX9PTY/I/UzNRi2iXPtE2
+         BS+jguHFuJWPQ==
+Date:   Mon, 3 Sep 2018 09:47:02 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20180903094702.3e32d8f5@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZNNK2TVTwXRyyUCbaVN90rD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the commit eac7d84519a3 ("tools: libbpf: don't return '.text'
-as a program for multi-function programs"), bpf_program__next()
-in bpf_object__for_each_program skips the function storage such as .text,
-so eliminate the duplicate checking.
+--Sig_/ZNNK2TVTwXRyyUCbaVN90rD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 2abd0f112627..8476da7f2720 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -2336,7 +2336,7 @@ int bpf_prog_load_xattr(const struct bpf_prog_load_attr *attr,
- 		bpf_program__set_expected_attach_type(prog,
- 						      expected_attach_type);
- 
--		if (!bpf_program__is_function_storage(prog, obj) && !first_prog)
-+		if (!first_prog)
- 			first_prog = prog;
- 	}
- 
--- 
-2.17.1
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+In file included from drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:
+drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function '__i40e_add_sta=
+t_strings':
+drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error: functio=
+n '__i40e_add_stat_strings' can never be inlined because it uses variable a=
+rgument lists
+ static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats=
+ stats[],
+                    ^~~~~~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  8fd75c58a09a ("i40e: move ethtool stats boiler plate code to i40e_ethtool=
+_stats.h")
+
+It is not clear this patch has any value anyway as the moved functions
+are only used in the file they were moved from.
+
+I reverted that commit for today.
+
+The same problem would exist in drivers/net/ethernet/intel/i40evf (where
+a lot of code is duplicated from drivers/net/ethernet/intel/i40e) except
+that this function is not declared inline there.
+Luckily, i40e_ethtool_stats.h is only included my one file
+drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c, otherwise there
+would be multiple copies of __i40e_add_stat_strings().
+
+Surely there is some scope for factoring out some common code between
+these two drivers?
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZNNK2TVTwXRyyUCbaVN90rD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMdnYACgkQAVBC80lX
+0Gwb4Qf+MOMSL1ycz0LwsoSipwGk2jGgeSx71ZWrO2jhOxYqHLUR/naoHD+NSvDN
+Gxyyf2RTHXp2liEFCBPjw4s5QTrrwvtbxjvy9Q/70/39XoCsnQ1/c/4VmRU+PcRN
+iMXEcr2FqZbdi+m1aD562Z5UPfnnYrxzWD1QHidugrG7NnRqh5o4mKcbT8A858od
+0yPRUMp1Y+/bhTd+LZOqqb1HjLaf6AXdXqw1F/C2zdiInHdaGjqEjY9GV/vFjbUb
+nSWAuPqyA7HaZ/vgkQgW0HxDAdU2TRnJvXHsAyyij1STYJ6eK/Md5Rcu8HI1NI4C
+wR1ps8IxXcKLGpbUGB8Nv/UR2r/TYw==
+=sU4X
+-----END PGP SIGNATURE-----
+
+--Sig_/ZNNK2TVTwXRyyUCbaVN90rD--
