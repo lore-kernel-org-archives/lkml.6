@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F626C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FC8C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD3B20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD3B20837
+	by mail.kernel.org (Postfix) with ESMTP id 589532064D
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589532064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbeIBLly (ORCPT
+        id S1727105AbeIBLl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 07:41:54 -0400
-Received: from mailoutvs43.siol.net ([185.57.226.234]:54469 "EHLO
+        Sun, 2 Sep 2018 07:41:57 -0400
+Received: from mailoutvs11.siol.net ([185.57.226.202]:54512 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725905AbeIBLlx (ORCPT
+        with ESMTP id S1725905AbeIBLl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 07:41:53 -0400
+        Sun, 2 Sep 2018 07:41:57 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id EAC1D520AAB;
-        Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id 82B71520920;
+        Sun,  2 Sep 2018 09:27:06 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BFRhrmzEGPPE; Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
+        with ESMTP id 1K984D-BA13u; Sun,  2 Sep 2018 09:27:06 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 7DF80520920;
-        Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 15738520B05;
+        Sun,  2 Sep 2018 09:27:06 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id CFE05520AAB;
-        Sun,  2 Sep 2018 09:27:00 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 86EDC520AE7;
+        Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     robh+dt@kernel.org, maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -45,9 +45,9 @@ Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 02/27] arm64: allwinner: h6: add system controller device tree node
-Date:   Sun,  2 Sep 2018 09:26:18 +0200
-Message-Id: <20180902072643.4917-3-jernej.skrabec@siol.net>
+Subject: [PATCH 03/27] dt-bindings: bus: add H6 DE3 bus binding
+Date:   Sun,  2 Sep 2018 09:26:19 +0200
+Message-Id: <20180902072643.4917-4-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
 References: <20180902072643.4917-1-jernej.skrabec@siol.net>
@@ -58,50 +58,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Icenowy Zheng <icenowy@aosc.io>
 
-As we have already binding for the H6 system controller, add its node
-to the device tree.
+The Allwinner H6 DE3 bus is similar to the A64 DE2 one.
+
+Add its compatible string with the A64 string as fallback to the
+binding.
+
+Some description of the binding is modified to make it more generic.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[fixed compatible string]
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index cfa5fffcf62b..040828d2e2c0 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -92,6 +92,29 @@
- 		#size-cells = <1>;
- 		ranges;
+diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+index 87dfb33fb3be..ac1445b95f41 100644
+--- a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
++++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+@@ -1,11 +1,14 @@
+-Device tree bindings for Allwinner A64 DE2 bus
++Device tree bindings for Allwinner DE2/3 bus
  
-+		syscon: syscon@3000000 {
-+			compatible = "allwinner,sun50i-h6-system-control",
-+				     "allwinner,sun50i-a64-system-control";
-+			reg = <0x03000000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_c: sram@28000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00028000 0x1e000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00028000 0x1e000>;
-+
-+				de2_sram: sram-section@0 {
-+					compatible = "allwinner,sun50i-h6-sram-c",
-+						     "allwinner,sun50i-a64-sram-c";
-+					reg = <0x0000 0x1e000>;
-+				};
-+			};
-+		};
-+
- 		ccu: clock@3001000 {
- 			compatible = "allwinner,sun50i-h6-ccu";
- 			reg = <0x03001000 0x1000>;
+ The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SRAM C)
+-to be claimed for enabling the access.
++to be claimed for enabling the access. The DE3 on Allwinner H6 is at the same
++situation, and the binding also applies.
+ 
+ Required properties:
+ 
+- - compatible:		Should contain "allwinner,sun50i-a64-de2"
++ - compatible:		Should be one of:
++				- "allwinner,sun50i-a64-de2"
++				- "allwinner,sun50i-a6-de3", "allwinner,sun50i-a64-de2"
+  - reg:			A resource specifier for the register space
+  - #address-cells:	Must be set to 1
+  - #size-cells:		Must be set to 1
 -- 
 2.18.0
 
