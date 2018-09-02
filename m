@@ -2,144 +2,147 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BD9C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 06:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18253C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716FC20835
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 06:59:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zf6Caumx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716FC20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BB57F2064D
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB57F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeIBLNs (ORCPT
+        id S1726155AbeIBLlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 07:13:48 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33456 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbeIBLNs (ORCPT
+        Sun, 2 Sep 2018 07:41:51 -0400
+Received: from mailoutvs41.siol.net ([185.57.226.232]:54389 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725904AbeIBLlu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 07:13:48 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b92-v6so2213359plb.0;
-        Sat, 01 Sep 2018 23:59:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BfDrHFhMMGp4YbOjXL4+FJ5Lbow2qPk9kolnnl3aPx8=;
-        b=Zf6Caumxx4BidYsuyoYi5jfwQ9B2yyf3LRfwMeiSTOyf4tVrgmiTBObPcI/O6BlDwP
-         0Q+BxGXIE7wTjGJMA8aJ/4FCIHLxTedCleflcPOwx3gLOCVuPHntUNFOTOeh54jDts2q
-         PIyfLi8ld+cqgB6LPyBlDd6MNAqsJ07Z12tgs61kw1Tiru3ZHeLuGreSs5fCTwLKvDbX
-         EJta4kvaE1tCaVKjNmEg529YIUt71xYd8PUyhep6E3D+OTxPU2GLPIjzrWs4AzaKq2t5
-         uaC8lu7Mv8ipRuGzbg4iCaqKUzRMSn1fHeguie9l3IHPSQqxA+3fk94ZihLoWauZI9A0
-         t7sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=BfDrHFhMMGp4YbOjXL4+FJ5Lbow2qPk9kolnnl3aPx8=;
-        b=cTis0Ajx7aeFOgtya/s9MjHwvOPZr4djWWKBrs/kp8qnOyF29f5zc8T0Yyo0X1QYhG
-         H/8rm3FBg/SSR+idNy7r5MNmuVeueJB1VfGhOZZTSpKdEbGJCvPlfj06DO0UuxsOo6UF
-         P2/xJnOdfUYp/7fcdcPojF53idYa3qgTGPlDe1LclN8m7pAj6MotHKySVpd0woOQmO5Y
-         MHW5EUIvJtpTvg/ZY7vGUzlahN8yqAWckHdDTePR5Vq5sLucRZjHl7DeV1CiQkBrl4+N
-         /TBFgdFsDs7Rvq08KjX/Y/luMZr306uGAAUGPuzE62/YLWVxUXcap+qHNHy9Sni5IoWd
-         C5HQ==
-X-Gm-Message-State: APzg51Cn7NzOpfZNFDbFVAaCLDGrqBxBn4ZT9+7FrTl941OE6WnqJzSF
-        b7CuelJvwcYqz6rxL0QSyjk=
-X-Google-Smtp-Source: ANB0VdbwZTyKsJj3QOo8IgqFWlGvoOHv58c8we4xV3yiIEwT/15dExm+445Lh8OGeTa1kDEho/hDzQ==
-X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr22531386plg.57.1535871543808;
-        Sat, 01 Sep 2018 23:59:03 -0700 (PDT)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id d81-v6sm19890941pfj.122.2018.09.01.23.59.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Sep 2018 23:59:03 -0700 (PDT)
-Date:   Sun, 2 Sep 2018 16:58:59 +1000
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 3/7] mm/rmap: map_pte() was not handling private
- ZONE_DEVICE page properly v2
-Message-ID: <20180902065859.GE28695@350D>
-References: <20180824192549.30844-3-jglisse@redhat.com>
- <20180830144156.7226-1-jglisse@redhat.com>
- <20180831092724.GD28695@350D>
- <20180831161935.GB4111@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180831161935.GB4111@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sun, 2 Sep 2018 07:41:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id E684F520286;
+        Sun,  2 Sep 2018 09:26:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id c1khIFjiZFZ6; Sun,  2 Sep 2018 09:26:58 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 26A0952037D;
+        Sun,  2 Sep 2018 09:26:58 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 3829D520286;
+        Sun,  2 Sep 2018 09:26:56 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     robh+dt@kernel.org, maxime.ripard@bootlin.com, wens@csie.org
+Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        jernej.skrabec@siol.net, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 00/27] Allwinner H6 DE3 and HDMI support
+Date:   Sun,  2 Sep 2018 09:26:16 +0200
+Message-Id: <20180902072643.4917-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:19:35PM -0400, Jerome Glisse wrote:
-> On Fri, Aug 31, 2018 at 07:27:24PM +1000, Balbir Singh wrote:
-> > On Thu, Aug 30, 2018 at 10:41:56AM -0400, jglisse@redhat.com wrote:
-> > > From: Ralph Campbell <rcampbell@nvidia.com>
-> > > 
-> > > Private ZONE_DEVICE pages use a special pte entry and thus are not
-> > > present. Properly handle this case in map_pte(), it is already handled
-> > > in check_pte(), the map_pte() part was lost in some rebase most probably.
-> > > 
-> > > Without this patch the slow migration path can not migrate back private
-> > > ZONE_DEVICE memory to regular memory. This was found after stress
-> > > testing migration back to system memory. This ultimatly can lead the
-> > > CPU to an infinite page fault loop on the special swap entry.
-> > > 
-> > > Changes since v1:
-> > >     - properly lock pte directory in map_pte()
-> > > 
-> > > Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-> > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Cc: Balbir Singh <bsingharora@gmail.com>
-> > > Cc: stable@vger.kernel.org
-> > > ---
-> > >  mm/page_vma_mapped.c | 9 ++++++++-
-> > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-> > > index ae3c2a35d61b..bd67e23dce33 100644
-> > > --- a/mm/page_vma_mapped.c
-> > > +++ b/mm/page_vma_mapped.c
-> > > @@ -21,7 +21,14 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw)
-> > >  			if (!is_swap_pte(*pvmw->pte))
-> > >  				return false;
-> > >  		} else {
-> > > -			if (!pte_present(*pvmw->pte))
-> > > +			if (is_swap_pte(*pvmw->pte)) {
-> > > +				swp_entry_t entry;
-> > > +
-> > > +				/* Handle un-addressable ZONE_DEVICE memory */
-> > > +				entry = pte_to_swp_entry(*pvmw->pte);
-> > > +				if (!is_device_private_entry(entry))
-> > > +					return false;
-> > 
-> > OK, so we skip this pte from unmap since it's already unmapped? This prevents
-> > try_to_unmap from unmapping it and it gets restored with MIGRATE_PFN_MIGRATE
-> > flag cleared?
-> > 
-> > Sounds like the right thing, if I understand it correctly
-> 
-> Well not exactly we do not skip it, we replace it with a migration
+This series adds support for Display Engine 3.0 and HDMI 2.0a, which
+can be found on H6 SoC.
 
-I think I missed the !is_device_private_entry and missed the ! part,
-so that seems reasonable
+Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
+displaying and processing 10-bit and AFBC formats, which are not yet
+supported by this series.
 
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+This series is based on linux-next at next-20180828, which has working
+R40 display pipeline support. I'll rebase series on later linux-next, if
+needed, once R40 display pipeline support is reintroduced.
+
+I suggest all patches go through allwinner tree, except DRM patches,
+which should go through drm-misc tree.
+
+Last detail, PineH64 model A schematic has DDC_EN signal, which enables
+DDC voltage level shifter. TL Lim, PINE64 founder, said that this
+signal is not actually present on PineH64 model A board. It is, however
+present on PineH64 model B engineering samples, but it will be removed
+in production version. Because of that, I didn't include any code for
+it.
+
+Please take a look.
+
+Best regards,
+Jernej
+
+Icenowy Zheng (7):
+  dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
+  arm64: allwinner: h6: add system controller device tree node
+  dt-bindings: bus: add H6 DE3 bus binding
+  dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
+  drm: sun4i: add quirks for TCON TOP
+  dt-bindings: display: sun4i-drm: document H6 TCON TOP
+  drm: sun4i: add support for H6 TCON TOP
+
+Jernej Skrabec (20):
+  clk: sunxi-ng: Adjust MP clock parent rate when allowed
+  clk: sunxi-ng: Use u64 for calculation of NM rate
+  clk: sunxi-ng: h6: Set video PLLs limits
+  dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
+  clk: sunxi-ng: Add support for H6 DE3 clocks
+  dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
+  drm/sun4i: Add compatible for H6 display engine
+  drm/sun4i: Rework DE2 register defines
+  drm/sun4i: Add basic support for DE3
+  drm/sun4i: Add support for H6 DE3 mixer 0
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
+  drm/sun4i: Not all DW HDMI controllers has scrambled addresses
+  drm/sun4i: dw-hdmi: Make mode_valid function configurable
+  drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
+  drm/sun4i: Add support for H6 DW HDMI controller
+  drm/sun4i: Add support for Synopsys HDMI PHY
+  drm/sun4i: Add support for H6 HDMI PHY
+  drm/sun4i: Initialize registers in tcon-top driver
+  arm64: dts: sun50i: h6: Add HDMI pipeline
+  arm64: dts: sun50i: h6: Enable HDMI output on Pine H64 board
+
+ .../bindings/bus/sun50i-de2-bus.txt           |   9 +-
+ .../devicetree/bindings/clock/sun8i-de2.txt   |   5 +-
+ .../bindings/display/sunxi/sun4i-drm.txt      |  30 ++-
+ .../devicetree/bindings/sram/sunxi-sram.txt   |   4 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  25 ++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 224 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   4 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  65 +++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h          |   1 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |  64 ++++-
+ drivers/clk/sunxi-ng/ccu_nm.c                 |  18 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |   1 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
+ drivers/gpu/drm/sun4i/sun8i_csc.c             |  96 +++++++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  45 +++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |  14 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        | 178 +++++++++++++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  44 +++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |  61 +++--
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c        |  58 ++++-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  47 ++--
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.h        |  37 +--
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |  45 ++--
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.h       |  28 +--
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  55 +++--
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.h        |  25 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |  85 +++++--
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |  68 ++++--
+ include/dt-bindings/clock/sun8i-de2.h         |   3 +
+ include/dt-bindings/reset/sun8i-de2.h         |   1 +
+ 30 files changed, 1127 insertions(+), 214 deletions(-)
+
+-- 
+2.18.0
+
