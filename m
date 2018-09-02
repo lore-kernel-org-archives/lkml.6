@@ -2,76 +2,197 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,UPPERCASE_50_75,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56380C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6658EC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000712077B
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:24:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000712077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 909A220856
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 08:51:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwLA4lXc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909A220856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeIBMjR (ORCPT
+        id S1726193AbeIBNGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 08:39:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39249 "EHLO mga05.intel.com"
+        Sun, 2 Sep 2018 09:06:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbeIBMjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 08:39:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 01:24:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,319,1531810800"; 
-   d="scan'208";a="77370694"
-Received: from dbxu-mobl.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.212.218])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Sep 2018 01:24:03 -0700
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1fwNft-0006Bx-7K; Sun, 02 Sep 2018 16:24:01 +0800
-Date:   Sun, 2 Sep 2018 16:24:01 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        kvm@vger.kernel.org, Peng DongX <dongx.peng@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/5] introduce /proc/PID/idle_bitmap
-Message-ID: <20180902082401.jaz3dcumtxekwide@wfg-t540p.sh.intel.com>
-References: <20180901112818.126790961@intel.com>
+        id S1725834AbeIBNGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 09:06:51 -0400
+Received: from archlinux (82-132-217-68.dab.02.net [82.132.217.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DE42077C;
+        Sun,  2 Sep 2018 08:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535878310;
+        bh=aOc1tkTpFuQ64KyoeCKD0GAs3eKHUAGalOVrc3bgaWw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AwLA4lXcRU06PhzeHhCpbRLAkmZhV/2QLrQc2qQiQNHwn0XeZ2PqFmucA+/Wt6hk5
+         4zVcrltuevWM6FP7RWN1sE6pjRCGykX+Y+YcnjMMurRMHEGvUjHMyhMd4Y+A6/RlrF
+         4QQrc/ebI/Om4ylykQ1mGfLk9ie4cqZPSqfUxU+A=
+Date:   Sun, 2 Sep 2018 09:51:40 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, freeman.liu@spreadtrum.com,
+        broonie@kernel.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iio: adc: sc27xx: Add raw data support
+Message-ID: <20180902095140.70b6fd5e@archlinux>
+In-Reply-To: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+References: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180901112818.126790961@intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here are the diffstat:
+On Wed, 29 Aug 2018 14:04:04 +0800
+Baolin Wang <baolin.wang@linaro.org> wrote:
 
- arch/x86/kvm/Kconfig    |   11 +
- arch/x86/kvm/Makefile   |    4
- arch/x86/kvm/ept_idle.c |  329 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/ept_idle.h |   79 +++++++++
- fs/proc/base.c          |    2
- fs/proc/internal.h      |    1
- fs/proc/task_mmu.c      |   63 +++++++
- include/linux/sched.h   |   10 +
- virt/kvm/kvm_main.c     |    1
- 9 files changed, 500 insertions(+)
+> The headset device will use channel 20 of ADC controller to detect events,
+> but it needs the raw ADC data to do conversion according to its own formula.
+> 
+> Thus we should configure the channel mask separately and configure channel
+> 20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+I'm still a little unclear on whether there is fundamentally something different
+about this channel or whether this is just a policy decision for particular
+(possibly all) board.  For now we'll go with this change, but if anyone screams
+we will have to then go the nasty route of supporting both processed and raw
+for channel 20.
 
-Regards,
-Fengguang
+Applied to the togreg branch of iio.git and pushed out as testing for the
+autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
+> ---
+> Changes from v1:
+>  - None.
+> 
+> ---
+>  drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
+>  1 file changed, 45 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
+> index 2b60efe..153c311 100644
+> --- a/drivers/iio/adc/sc27xx_adc.c
+> +++ b/drivers/iio/adc/sc27xx_adc.c
+> @@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
+>  	int ret, tmp;
+>  
+>  	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		mutex_lock(&indio_dev->mlock);
+> +		ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
+> +		mutex_unlock(&indio_dev->mlock);
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = tmp;
+> +		return IIO_VAL_INT;
+> +
+>  	case IIO_CHAN_INFO_PROCESSED:
+>  		mutex_lock(&indio_dev->mlock);
+>  		ret = sc27xx_adc_read_processed(data, chan->channel, scale,
+> @@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
+>  	.write_raw = &sc27xx_adc_write_raw,
+>  };
+>  
+> -#define SC27XX_ADC_CHANNEL(index) {				\
+> +#define SC27XX_ADC_CHANNEL(index, mask) {			\
+>  	.type = IIO_VOLTAGE,					\
+>  	.channel = index,					\
+> -	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |	\
+> -			      BIT(IIO_CHAN_INFO_SCALE),		\
+> +	.info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),	\
+>  	.datasheet_name = "CH##index",				\
+>  	.indexed = 1,						\
+>  }
+>  
+>  static const struct iio_chan_spec sc27xx_channels[] = {
+> -	SC27XX_ADC_CHANNEL(0),
+> -	SC27XX_ADC_CHANNEL(1),
+> -	SC27XX_ADC_CHANNEL(2),
+> -	SC27XX_ADC_CHANNEL(3),
+> -	SC27XX_ADC_CHANNEL(4),
+> -	SC27XX_ADC_CHANNEL(5),
+> -	SC27XX_ADC_CHANNEL(6),
+> -	SC27XX_ADC_CHANNEL(7),
+> -	SC27XX_ADC_CHANNEL(8),
+> -	SC27XX_ADC_CHANNEL(9),
+> -	SC27XX_ADC_CHANNEL(10),
+> -	SC27XX_ADC_CHANNEL(11),
+> -	SC27XX_ADC_CHANNEL(12),
+> -	SC27XX_ADC_CHANNEL(13),
+> -	SC27XX_ADC_CHANNEL(14),
+> -	SC27XX_ADC_CHANNEL(15),
+> -	SC27XX_ADC_CHANNEL(16),
+> -	SC27XX_ADC_CHANNEL(17),
+> -	SC27XX_ADC_CHANNEL(18),
+> -	SC27XX_ADC_CHANNEL(19),
+> -	SC27XX_ADC_CHANNEL(20),
+> -	SC27XX_ADC_CHANNEL(21),
+> -	SC27XX_ADC_CHANNEL(22),
+> -	SC27XX_ADC_CHANNEL(23),
+> -	SC27XX_ADC_CHANNEL(24),
+> -	SC27XX_ADC_CHANNEL(25),
+> -	SC27XX_ADC_CHANNEL(26),
+> -	SC27XX_ADC_CHANNEL(27),
+> -	SC27XX_ADC_CHANNEL(28),
+> -	SC27XX_ADC_CHANNEL(29),
+> -	SC27XX_ADC_CHANNEL(30),
+> -	SC27XX_ADC_CHANNEL(31),
+> +	SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
+> +	SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
+> +	SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
+>  };
+>  
+>  static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
+> -- 
+> 1.7.9.5
+> 
 
