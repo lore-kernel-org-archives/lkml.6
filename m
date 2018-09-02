@@ -6,52 +6,76 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB9DC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574E5C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EFAB20837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7368205F4
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BxBQpbF4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EFAB20837
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="f0WmudwB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7368205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbeIBRav (ORCPT
+        id S1729920AbeIBRar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:30:51 -0400
+        Sun, 2 Sep 2018 13:30:47 -0400
 Received: from mail-co1nam03on0097.outbound.protection.outlook.com ([104.47.40.97]:50844
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729910AbeIBRau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:30:50 -0400
+        id S1729355AbeIBRap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:30:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E/jawX3MdtdM1CG+j/9S6TU3oSTNc56hUj9AW3IkBWk=;
- b=BxBQpbF47U8y9yUrlOErMnOTseI7RGb7LVtJvwNkbmVE9bdD3WmtNorAaonyUNyle58SHFZNHp0AH7fYnDpcQmZ0O2kaEd5zmBs/mfEW8icsL5Ddtu3X5yFv84teN9L0qqWDSB3szDK6pnuqzh4apfEQpiEZLzIjnKybtuNSh1Y=
+ bh=U5zfbb2/wNo2xPTtgYa9lD3IJrnve2w/0AcqYcsK+6Y=;
+ b=f0WmudwBfIKzRXf5wfiltHc6aiPzWr/9WuPPp/fAlJpDXgy2M0eObJeVDODPCwk62UKO6Ma8QHoOffQVhsSh+eGm1gebb2cK2x1y0GOA2dROKTweguuJY/9RwJ7yB9zJq1TRC+PnuADy/b8s0ePJ61Ud1KTjtTOe/K3oe7Z8tU0=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:14:42 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:14:40 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:14:42 +0000
+ 13:14:40 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Yelena Krivosheev <yelena@marvell.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "aliguori@amazon.com" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        "hughd@google.com" <hughd@google.com>,
+        "keescook@google.com" <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 30/62] net: mvneta: fix mtu change on port without
- link
-Thread-Topic: [PATCH AUTOSEL 4.9 30/62] net: mvneta: fix mtu change on port
- without link
-Thread-Index: AQHUQr7oVNGX19gubU6HXGvVMIVddg==
-Date:   Sun, 2 Sep 2018 13:14:41 +0000
-Message-ID: <20180902131411.183978-20-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 28/62] x86/kexec: Allocate 8k PGDs for PTI
+Thread-Topic: [PATCH AUTOSEL 4.9 28/62] x86/kexec: Allocate 8k PGDs for PTI
+Thread-Index: AQHUQr7nqJCRfp8UbESRexJG3yb+dQ==
+Date:   Sun, 2 Sep 2018 13:14:39 +0000
+Message-ID: <20180902131411.183978-18-alexander.levin@microsoft.com>
 References: <20180902131411.183978-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131411.183978-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +84,31 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:yStGfT5ptiL2+i3TaRlMchgXwqXwcVTrlq18eEdo/8/z06dIWkiDczAoz8olAC4rPIFMrXpdTE5hR8cdtjmIem1tJwCH+vQFt+LohhGCmuwZcza++KIJu/7uCmqsNS//axJmdHxJ2a/FgS/MOylEYW+zT7uTIucNJXdavDgdbY0dWXTh+k1mx4X1QPZGjHp0461rgKiCaBdeenIT+nvSSgboQjvQ8UXoMf/HW/E0ibzc2er5jO3URmekzVURwcIG9Ua3i5G3rfzHkl0jgNATGLbZjtC/yUtE3aLIZ/1N5m+lUF1zT/nkhlr0m+hXuOLxWRpElHM7N8f64X5EKjswfDm90RA3V7b7Dd41azbJX2surXy/eOQlAzzae1GUR05Huhyhv2uETJ7prm/b/YtJug10eaPk+SU4N6sFWRZ4u16dEsYrpH0ZpTVAEqvGPZMQCryyLbmRNXtA0Uj2jwe46A==;5:fIvDORw37tVKPCexCNyuyDQqWDm08dC1Rwg9feWyqc3gdJt0pYg/kONokk6kGRBRy1DpESDVAIZKV4uF7r2NeRn1nfcDhkdOZDv7m+8YgbEs5u3F995VueZyzCkHInvgsw4caD0lXBuIDbN5VpKWAEecOFS6WseW1XW4uSOeDq8=;7:h0iRvVaLPTAhYY2CnYDvp6Plpr05RxpPNqyq2S5EZ2jfb21AdrY2LrHtIPKHBqAYYMwTNYX0V48qBeWNWA6kAkmXElq05mGnTvd5CD4/3HqE3oPt2ReI6M3kc8nBlxfP6XZWiQht4qPJpV3fB1ChjE/JHUzyABNBs1W7ZW5qRQYwntVERAoMET76ayOj6ayTVmjjCuSqt5Bpsa4t2a3mZ9Pcqab4EC88tax7PSylfxMewufzOHM0XBdifDidTftt
-x-ms-office365-filtering-correlation-id: a3fc70f4-6962-4141-2a2d-08d610d60b74
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:bzq61ImjHO+RxrJMLDsFy/QnijkVMB8GaG/cxY8zWRYSWMl3qrtHZOamHs3eCSq8eAGcx9D0njBDwDjOtCxP9S8uHtXWQHl5PNT7XFHkTZUwV27qmdpR/Cd5I5u0za4NoicalyUdRUFXMXIlxcVa8Zex1Sz72M1A4QiWnt4yycIJLw4am/1iI8jNCWUPhUfVQrkctOHTGn4J1yRZdaFPrBR7negyJ06jsuczOhPN5UU1hFez5fSFTbDhuS+e4gzyz2xQ8JvvUtWR2h65Kr1dys33rVgiYkgaVozmJY+fW6IMiXaR3jrrOlZm1jv2cZMT7sKTDqs7/tr6pge0Qn5rxIp4dVlqo3/SmrDsFzyNEKUZt0+dLOhnvmz8C/6VL5kJQIwDKd3iAsVWiIMtSzTxck0V64ZO0QRhCnjz9x2VvEV9fIxziVVtvO4SWlMbupUn7u6TmuCMzycxwiLC1PZEVQ==;5:yl9v7lC+vAsDEXlO5p5FrJwlFs4rXDcuzyBEHo4L5LdVFwsxuPqCh6+JfFMFNlipkRTxBoTUHtMDdu+UaFEvrxfBXLv7gDvLwoDU4IgqMcUe/Nfakysu4vvsPBoArCyIkll61Dbcr3o9tw23LkwiOW2V1YqLkB1whB/z3v7EwaY=;7:wW9S50bupYqEAhVs2msDoPFs9QvqeCkMwe7caDJ3LF8lYPev0FM3RwmHJD2vHH/d6LoAVsortJZtbNyNmGiPqNyy7EGtp+wwpljK3XFPGAYum68saGSD8NRe9cAUdW0QMoIUCO6NrcfLI2n0Ag8RgRCeyqwpY30lEiA/+jHFFHga3H/hX2fKFcGGoH0RobxpqCV9pTdn4zgCg9qsESb2eWQ/JQ9n9LyQXz/HbOpKB5C9/wCpHUHEG6js2eQH//oM
+x-ms-office365-filtering-correlation-id: 502c3bc9-4219-4d95-7622-08d610d60a3e
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
 x-ms-traffictypediagnostic: CY4PR21MB0120:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0120432EA433078F68DC7BC0FB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <CY4PR21MB012015DA3F917665427651A8FB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(20283166320243)(28532068793085)(180628864354917)(89211679590171)(33061846794335)(85827821059158)(211936372134217)(42068640409301)(146099531331640)(47284530071512);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(1496009)(39860400002)(346002)(136003)(376002)(396003)(366004)(189003)(199004)(106356001)(53936002)(72206003)(5250100002)(22452003)(97736004)(6512007)(10090500001)(2616005)(2501003)(446003)(11346002)(478600001)(10290500003)(476003)(14454004)(81166006)(186003)(486006)(25786009)(4326008)(36756003)(102836004)(8676002)(81156014)(105586002)(8936002)(2900100001)(99286004)(66066001)(68736007)(110136005)(26005)(107886003)(6506007)(5660300001)(76176011)(14444005)(54906003)(316002)(1076002)(86612001)(3846002)(6116002)(256004)(7736002)(6486002)(575784001)(86362001)(6436002)(305945005)(217873002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(136003)(376002)(396003)(366004)(189003)(199004)(106356001)(53936002)(72206003)(966005)(5250100002)(22452003)(97736004)(6306002)(6512007)(10090500001)(2616005)(2501003)(446003)(11346002)(478600001)(10290500003)(476003)(14454004)(81166006)(186003)(486006)(25786009)(4326008)(36756003)(102836004)(8676002)(81156014)(105586002)(8936002)(2900100001)(99286004)(66066001)(68736007)(110136005)(7416002)(26005)(107886003)(6506007)(7406005)(5660300001)(76176011)(14444005)(54906003)(316002)(1076002)(86612001)(3846002)(6116002)(256004)(7736002)(6486002)(86362001)(6436002)(305945005)(39060400002)(217873002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: w175NP4qi7WH4UP6IqqwRQ03gY6WWbqNdECTRo3xaXSTQgP2sBcZN7H00gs7wGgJHuIoaKsCZhbGXW1almGWaHE87Mr/prlKhlsnVeydiLPXa8ovEwilKbpdOm+uyIhJrztbK+8QYc7+AZMwAbQp+o2+EDzRlNLMzIH0H8OGUfejGMv5byB/Y9e/lu2SGPcpmCvog/uls0iDKJbSNslHpzfMblqx6GvHZx5EouZ8AP1T55NevmIYOhEpLLoq7NhtuVkuFNhTKfyi+nS4aTU5tfu/D5/fvZ1nLOYlNgVLLaVbEyG2gAMkXtusjT4XvYzEIG4c5Pz33FlIZnV1r8L5nDvBnZJjRHuDmpo5WESwG8I=
+x-microsoft-antispam-message-info: wo8SuRiYLQ3XWBMGq49mVRzSZ1nukkGCDmP/Eo8rbpfQhoA/tVpypWEDnsEy2RhM/NfvbIC2K2nexJshWfD1BLXxceJJQnx9/tE1v4M3/xxj+1OJ3VrgfIyMO/2gIdIQvnxltv0sRgkE1o8YQMx6NBsZP+nMWCC7E7MNY7jF5LYKJSN7Z59TVMYoHn7rQEGwLc86qtkIykirnGoXZ9SFd4KtsJd1WPNaOZbOg9FWlt58Aswyfj0rX9/xg8pGso/oADPu3ktsNYfrYXiciVHc6ZfpxCp3OdVCUrQGu0361fd12PS7yZz3gzYLid0QRPIbH3ZgiwrzwdJQPOXdZmn3+IiuqVAuLaXP1lgvU/4SGMw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3fc70f4-6962-4141-2a2d-08d610d60b74
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:41.8780
+X-MS-Exchange-CrossTenant-Network-Message-Id: 502c3bc9-4219-4d95-7622-08d610d60a3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:14:39.7472
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,38 +118,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
+[ Upstream commit ca38dc8f2724d101038b1205122c93a1c7f38f11 ]
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+Fuzzing the PTI-x86-32 code with trinity showed unhandled
+kernel paging request oops-messages that looked a lot like
+silent data corruption.
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Lot's of debugging and testing lead to the kexec-32bit code,
+which is still allocating 4k PGDs when PTI is enabled. But
+since it uses native_set_pud() to build the page-table, it
+will unevitably call into __pti_set_user_pgtbl(), which
+writes beyond the allocated 4k page.
+
+Use PGD_ALLOCATION_ORDER to allocate PGDs in the kexec code
+to fix the issue.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1532533683-5988-4-git-send-email-joro@8byte=
+s.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/machine_kexec_32.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/m=
-arvell/mvneta.c
-index 17b81780d12f..c92ffdf91065 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -3117,7 +3117,6 @@ static int mvneta_change_mtu(struct net_device *dev, =
-int mtu)
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_k=
+exec_32.c
+index fd7e9937ddd6..e9359272c5cb 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -70,7 +70,7 @@ static void load_segments(void)
 =20
- 	on_each_cpu(mvneta_percpu_enable, pp, true);
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
+ static void machine_kexec_free_page_tables(struct kimage *image)
+ {
+-	free_page((unsigned long)image->arch.pgd);
++	free_pages((unsigned long)image->arch.pgd, PGD_ALLOCATION_ORDER);
+ 	image->arch.pgd =3D NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
+@@ -86,7 +86,8 @@ static void machine_kexec_free_page_tables(struct kimage =
+*image)
 =20
- 	netdev_update_features(dev);
-=20
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+ {
+-	image->arch.pgd =3D (pgd_t *)get_zeroed_page(GFP_KERNEL);
++	image->arch.pgd =3D (pgd_t *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
++						    PGD_ALLOCATION_ORDER);
+ #ifdef CONFIG_X86_PAE
+ 	image->arch.pmd0 =3D (pmd_t *)get_zeroed_page(GFP_KERNEL);
+ 	image->arch.pmd1 =3D (pmd_t *)get_zeroed_page(GFP_KERNEL);
 --=20
 2.17.1
