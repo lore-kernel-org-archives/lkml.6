@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFCFC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C691C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5175120841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:13:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5175120841
+	by mail.kernel.org (Postfix) with ESMTP id 6151320841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:13:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6151320841
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeIBO21 (ORCPT
+        id S1727043AbeIBOYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:28:27 -0400
-Received: from mout.perfora.net ([74.208.4.196]:40303 "EHLO mout.perfora.net"
+        Sun, 2 Sep 2018 10:24:47 -0400
+Received: from mout.perfora.net ([74.208.4.197]:46593 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726195AbeIBOYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726007AbeIBOYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 2 Sep 2018 10:24:47 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MBkrR-1g5RTf2i6J-00Atci; Sun, 02 Sep 2018 12:09:25 +0200
+ 0Lu5Nw-1fo30z0i98-011Lif; Sun, 02 Sep 2018 12:09:19 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 04/37] ARM: tegra: colibri_t20: iris: annotate i2c busses
-Date:   Sun,  2 Sep 2018 12:08:33 +0200
-Message-Id: <20180902100906.25792-5-marcel@ziswiler.com>
+Subject: [PATCH v2 01/37] ARM: tegra: colibri_t20: move aliases from module to carrier board
+Date:   Sun,  2 Sep 2018 12:08:30 +0200
+Message-Id: <20180902100906.25792-2-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:N5VI6ED0bgo1ychLu2RYpGLSF3MYxsdOwKDjAtU4mSl3S1iSyLB
- E2dKwxlIMCD9CmXmKpStLGojtONeHKRLbnDuag5so/fXv1ET9CTgZZfHDEgLKegEKKBL96w
- +ruOn4BpMQr1kE5glMM9DXpou+S2NHaiBWnf7NRKv5ap2ar76wSjP78w2sUFiVREJHEkk3C
- zystico2pGwH4tFkLOAzw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:m3os0d+0hlc=:OQuD1n4oKS6Re7Gb6ZGGlS
- 7sNXxhQLvqONQobeXt1xxezMjWKt1b0D7cvNc7fv2TbZh9bIivigaowCN/qywHIKBLDzOEO78
- W9O4CxF9P50E8b3P76QI8DW0SzVYKyznhREHli1aB1aU/jc88XNsc8MCaI66qHC/gFnEiroQ4
- LYaBfKgmmeF78exUeHQ135nnAr+leyR5nbC3Tg5j1C5z3LQG562/B9H7E1ftK5w1ph7SCT0EC
- QVyMlP7AQYQ9tCWh1wTLpb9bhjSmY2i6kHBoq1qWcY8HUvzycbAg9ivNjENQkdWO5VWh2GQPB
- 4kLBtAfZif6T8Z9mhWuPnqAihkZY2ZTKs5UKXrorI8LPfY3G6Oh+HcQufEe1HlI1gr4RqD+UN
- RG7f7qEAAnoivl8NYXt3teuE/fLDzb+lN9nfE/XCYulIGdPerJrps4ZuJZUzXS/xlWmeFXSjf
- QuAItDGdi+qYQyNKzKcGoQ5Ixa5mijsDBgLBdlGC3fxhPAEjRG/NE/yDk/z1DgofMQ52jf556
- JBa29uK1a2LUhQHyT1EdNPt7RbMn4HIuYtpJuxQoLNucLlxF4Zis5E6pRBsQ/+Ux9geVpTAGO
- 3WZDZz6t4XY4noJXSU8+5LpYtTryro+qUbKiKOQCyZD4yXqI69DBqj9MBsz3nNnLROgqXvhFy
- Mf6nRxvbS9Seqt4oZhlfiBOD3TRrj9hLgnMuAFR5XeuppSacB+O8WX5HpUeAMqvaDGVw=
+X-Provags-ID: V03:K1:Vi2OWs/iqy8ZAJ/PHvYSTdYj0taKa24vWvtqjSvu1Zlt/xvmfxn
+ 92z56Ei+6csQ4OF4BmBVYYOOw55pmOHvavsVgaGPlns82b5qCN/XLCjq87QIcCUrTh9Kfri
+ /8KQ3xGxTesjtSJ9+Pr2SJ2Jws74VuEQuv6dt0OaBSBxsfpAPdjLWZ4h1llHBdDkHK3+68i
+ VRwNygDj0PD3EOugfZ2Yw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TkgL0K6bBj0=:68k1DTQnPbreONBm1MNf2V
+ mJPMvKiJaFQy/42A8O5GhMyThwRa7wNBbAzDqYhyVNpodxJGeKjJzlaN0Mz26vHmwjBTEvw5F
+ VzWMhqk9+5fffrv9SIHKo6yenZBiWELTu31rnCgALtRrjwXoM7e5JhRgLPiiT6jRaYQXkgp5n
+ xsCxQL1+F1daeYlft+9ilG22jCUVJyT2ulDlKL3Nbm4F6H+m/gGLOnK99qtnUeuUCKNPOpCHy
+ uFrMypRVQMG+7vXaZbjj1bRt3kxc+Trj6fMWuB2AWTd17UyyeqLC1vONgLO66Z0dzhFEBg7Nt
+ UV6VfvukRbJ2gZEHsFqSpqdMxMS30lCfcsy6mQ9pxP/UwuDL/tSW5ugvV1jU3tI+bAFn6BSEB
+ WJPU7UCxtQpi/TzHvxf9kkKm7U80Bif08tzfa5Qik8tR51Afag0UIYJAL1VsG6S8YSx3EQsW4
+ OeEyiVbTZQfgCG8++sRqzGC+IFzM9E0qbVD5AyrxCx7Itueq5YHoOBkHN0nN36itOpHT44RE0
+ Mpcl30P6MGXDH2jdCoi/Qp/KxcD2DGc+rqtrQfdZQYQ5jSqJADX7y0y0t2iLrhAmHvGXGQzyy
+ rqH4sPMUDxuqXvXmY26DZW4W8TLdXAinc45wpEvUG4uy1ghW/C+JjwuqZ6z5vNzJPRx8d+RS5
+ 49mT/8LuW5NJpgZvagyQf4DfnYzYtKHwG384f9DcPC6R9zyPc67zoFV7wsXS8lzs2SLU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,37 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Annotate I2C busses: GEN2_I2C and CAM_I2C (I2C3) being unused and
-DDC_CLOCK/DATA on X3 pin 15/16 e.g. used for display EDID.
+Move RTC aliases from module to carrier board to be more in-line with
+all our other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2:
-- Fix commit message which was mixed up between "[PATCH 03/31] ARM:
-  tegra: colibri_t20: iris: annotate i2c busses" and "[PATCH 04/31] ARM:
-  tegra: colibri_t20: iris: add missing aliases".
+Changes in v2: None
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
+ arch/arm/boot/dts/tegra20-colibri.dtsi     | 5 -----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index cbf1f4d76813..cc9e372a3b58 100644
+index 57f16c0e9917..496b96e229d2 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
 +++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -73,6 +73,11 @@
- 		};
- 	};
+@@ -8,6 +8,8 @@
+ 	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
  
-+	/* GEN2_I2C: unused */
-+
-+	/* CAM_I2C (I2C3): unused */
-+
-+	/* DDC_CLOCK/DATA on X3 pin 15/16 (e.g. display EDID) */
- 	i2c_ddc: i2c@7000c400 {
- 		status = "okay";
+ 	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
+ 		serial0 = &uarta;
+ 		serial1 = &uartd;
  	};
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index fa1af2dc276c..e34ab4a76158 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -5,11 +5,6 @@
+ 	model = "Toradex Colibri T20 256/512 MB";
+ 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+ 
+-	aliases {
+-		rtc0 = "/i2c@7000d000/tps6586x@34";
+-		rtc1 = "/rtc@7000e000";
+-	};
+-
+ 	memory@0 {
+ 		/*
+ 		 * Set memory to 256 MB to be safe as this could be used on
 -- 
 2.14.4
 
