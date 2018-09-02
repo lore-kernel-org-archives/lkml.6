@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C90C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E006420837
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E006420837
+	by mail.kernel.org (Postfix) with ESMTP id 6B3252064D
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3252064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeIBLmX (ORCPT
+        id S1727486AbeIBLmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 07:42:23 -0400
-Received: from mailoutvs19.siol.net ([185.57.226.210]:54820 "EHLO
+        Sun, 2 Sep 2018 07:42:25 -0400
+Received: from mailoutvs11.siol.net ([185.57.226.202]:54843 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727415AbeIBLmX (ORCPT
+        with ESMTP id S1727415AbeIBLmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 07:42:23 -0400
+        Sun, 2 Sep 2018 07:42:24 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 94664520C3A;
-        Sun,  2 Sep 2018 09:27:32 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id 1AE0D520C10;
+        Sun,  2 Sep 2018 09:27:35 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id tDCwOhBR2itl; Sun,  2 Sep 2018 09:27:32 +0200 (CEST)
+        with ESMTP id um4txu6hG8-8; Sun,  2 Sep 2018 09:27:34 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 26BE6520C00;
-        Sun,  2 Sep 2018 09:27:32 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id B2609520C54;
+        Sun,  2 Sep 2018 09:27:34 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 9531C520C05;
-        Sun,  2 Sep 2018 09:27:29 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 2EF79520C10;
+        Sun,  2 Sep 2018 09:27:32 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     robh+dt@kernel.org, maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -45,9 +45,9 @@ Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
-Date:   Sun,  2 Sep 2018 09:26:29 +0200
-Message-Id: <20180902072643.4917-14-jernej.skrabec@siol.net>
+Subject: [PATCH 14/27] drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
+Date:   Sun,  2 Sep 2018 09:26:30 +0200
+Message-Id: <20180902072643.4917-15-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
 References: <20180902072643.4917-1-jernej.skrabec@siol.net>
@@ -56,45 +56,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
-4K image @60Hz. It also support 10 bit colors.
+It turns out that even new DW HDMI controllers exhibits same mangenta
+line issues as older versions.
+
+Enable workaround for v2.12a.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index a9218abf0935..54eca2dd4b33 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.is_de3		= true,
-+	.mod_rate	= 600000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
- 	.ccsc		= 0,
- 	.scaler_mask	= 0xf,
-@@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- };
- 
- static const struct of_device_id sun8i_mixer_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun50i-h6-de3-mixer-0",
-+		.data = &sun50i_h6_mixer0_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
- 		.data = &sun8i_a83t_mixer0_cfg,
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 5971976284bf..df1c7a2d6961 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1664,6 +1664,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 	case 0x131a:
+ 	case 0x132a:
+ 	case 0x201a:
++	case 0x212a:
+ 		count = 1;
+ 		break;
+ 	default:
 -- 
 2.18.0
 
