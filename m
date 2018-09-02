@@ -2,123 +2,113 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9727DC43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8D4C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4687320835
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:27:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4687320835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A06C20841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:31:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A06C20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-pingi.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeIBUny (ORCPT
+        id S1727055AbeIBUrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 16:43:54 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:49091 "EHLO
+        Sun, 2 Sep 2018 16:47:31 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:40311 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeIBUnx (ORCPT
+        with ESMTP id S1726065AbeIBUrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 16:43:53 -0400
-Received: from null ([172.19.249.48]) by mrelayeu.kundenserver.de (mreue101
- [212.227.15.183]) with ESMTPSA (Nemesis) id 0LpfQU-1fRIrR1raI-00fQaa; Sun, 02
- Sep 2018 18:26:47 +0200
-Date:   Sun, 2 Sep 2018 18:26:44 +0200 (CEST)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Eric Anholt <eric@anholt.net>,
-        Phil Elwell <phil@raspberrypi.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, serge@raspberrypi.org
-Message-ID: <67224834.51159.1535905604770@email.1und1.de>
-In-Reply-To: <99ca4f6d-d2b2-36e7-9f27-189df379cfaf@roeck-us.net>
-References: <1535887251-29515-1-git-send-email-stefan.wahren@i2se.com>
- <99ca4f6d-d2b2-36e7-9f27-189df379cfaf@roeck-us.net>
-Subject: Re: [PATCH RFC 0/2] hwmon: Add RPi PoE HAT fan driver
+        Sun, 2 Sep 2018 16:47:31 -0400
+Received: from mailone.linux-pingi.de ([84.176.100.82]) by
+ mrelayeu.kundenserver.de (mreue101 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 0M7sUy-1fjUfk3TlI-00vRtE; Sun, 02 Sep 2018 18:31:08 +0200
+Received: from [10.23.200.0] (pingi.linux-pingi.de [10.23.200.0])
+        by mailone.linux-pingi.de (Postfix) with ESMTPSA id D801772005;
+        Sun,  2 Sep 2018 18:31:59 +0200 (CEST)
+Subject: Re: [PATCH] isdn: mISDN: tei: Fix a sleep-in-atomic-context bug in
+ create_teimgr()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180901120019.31664-1-baijiaju1990@gmail.com>
+From:   isdn@linux-pingi.de
+Message-ID: <3ecd32b2-81e5-038e-edc9-fd06d6e21851@linux-pingi.de>
+Date:   Sun, 2 Sep 2018 18:31:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180901120019.31664-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev36
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:LTgnAS8jHHrrF7tFzN0pG89q9GehcS3SdTfIixEUuBJgTc0m0e4
- zLybO//WIkXNMXsrvOzSJ1eJxeeiaFB5oD+C3ywj04Au2gp6cNwTwt8IN+YE/IlY3pLZ5Dm
- rUliUjbZSne5/fQKybNct6/pc3oiDQmzFeGZV2qfPgwP5l18uFQkQN8G8l7aZP7cZ2QFaQu
- vOfmPEKTVTqoXNfBryMbw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ntaQTbIg/yo=:DP3sxTYD6Ver9uPk2nLVVJ
- EyX/MaReI689PznWULWFKtUas+b5B92HwflcWMrv7tKx5Gy85PmmAVdE3aPvx9hOruHd109B9
- zMuxVHtwqvdkiCl79AJ3mW1ND3PcQLu5xjqS8vIFKvMANl9z+AgF13M2FbjbOLqwrW0vws2U8
- YE+MjKQsZwQQIROCexlcvwJi3YeYr6hFNcMSL7J/wY2t5Wq7vaLJ/2hYwibaCSiBwZg6gtEDu
- rf8mNaHxuUZG3wTDjQr3D0J5QH/Rr5DMZg2fTmEfaQA6Xfmi460wPT88V0NX4von/M5EPFLoM
- EEegBZwkQLxosbiZbbalkazMi3nmA7Y3KNq2lHwpVbIjGFAM6V/I2mkDHg0D1kDwZtzyFBYdP
- eFgvajO/Sx3dmnJ2So2JbSTAECVA24H1yllJTLqu4/vgoObkJfbMgaF9gepjue4M/BiaJ7pq5
- NCM6YwC5iHi0l2riIJ47vyygidgnyAJqLpmYFHTedBlhIIXckd0V6/32n4OdB0CP4ukT5dlsh
- KgpwARLrps2W5X9KMPOyABtINQxn8wBkzoafw9AqwMIHsIz81joppitQk3E1uPQQkcqCa+FTV
- 9O7DS1SnwYyqb+IBamC6uwtBrq3k8fcsEJzfGYWStFQ5A4gokO6uOqhHBqpdyohgNQYJ7FGwD
- NjEpHqekKztmjjtPW6+h2Gvfmo3bYaWNylbo5KpkXApghCFof0jmjlwvosiDXfNBImgAtab8X
- lam19Nh8kfqOVVSq
+X-Provags-ID: V03:K1:/rL/6r+2jH/8bTewqfByN2RSZiad6zbfJPT/a1SbnxYeM/gygNn
+ Y0n+/SzY+p4+yuGYiNzM/bn99H5zsVTGG8/hPW6LgmxtSITolyIJSkXTqW5r81sDOS5AGPi
+ C0w0ccP0VCuEyItiNwCrdajbkhg3DlLXWWitMuQHcdml7CwdEGJjDVIMu7jv0TaJaWJP1kE
+ COlUYSJJgPhMjqov5D1pw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:am8LP3aVpyw=:hQf+X4OrTvQnP2RyFH70YX
+ Yz3VYTPfLgmBpChh6KaY8VbS3kB6ZitcB3MtcQ59kzmit6872XhOpcxJsSD6EjjHSH/af1VO+
+ yqwuM7kUUvl9hP241sxwT324gDM7Z6HFMhsGp18aL/YZTv4K9CUxBQ7bBPB7rW0VAUnHm7YBq
+ 6pZHSinxKQI6QpwxVG0m91NYqETE5IfZGE5VVS92ancnVJ1Lj9j2Xflpu4pKcmEubMJA+ZbVT
+ l60nptKy76l5wGGx4htpPn6U+9ILu6q+YhAR+vKAy42uGlQXWSbsLI6MibOZW2xJSU7bPqS7P
+ xc9lflT+l/qTvdMGkpG+lj7iqE73nF9UiyyAM2LlVKNvWnlO6TrBvNNV4Q/89gosv308Wtrz8
+ dGroqh2Jw7WHGZqx1MrpQhtZQK4XznOAhUrBvZdiuDwt9U1jHbWlptH9DLHkyM1xATx/AFK76
+ 6fAhOxj7YguNa0inPjzmBS6AzwPBF1CIa9ZTJzc8qM/JpMcij6SsKdgRAcSwshdTKYY02qxVJ
+ yQ2gK9ul8yfY6heNUZO5c9JTtw76a5dHym+soVfmjJ5YymKEOUtARm7EyRdSRbGqrcD20qcND
+ eKBaF4wLKQC8+RAdBKa7lpjOR7aKEdxUA0QxJjmzJSBP5xEnYgGEW5OlusEfgkxwR6XYwYPVJ
+ yMb8IJ1CtgROT/LfZaOJKGwsMO/dzBYbd+kpduSb7s5nxD2CTdbMEV0lt2hMpfqlrOzfMhKoE
+ R1QIWRkqhR8Ur1d5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+Hi,
 
-> Guenter Roeck <linux@roeck-us.net> hat am 2. September 2018 um 16:23 geschrieben:
-> 
-> 
-> On 09/02/2018 04:20 AM, Stefan Wahren wrote:
-> > This series is an early stage of the hwmon driver for the fan on the
-> > Raspberry Pi Power over Ethernet HAT [1]. At the end this should use a
-> > Device Tree Overlay.
-> > 
-> > Changes by Stefan based on [2]:
-> > - reformat the downstream patches for submission
-> > - drop reboot notification
-> > - fix remaining checkpatch issues
-> > - add COMPILE_TEST to Kconfig
-> > 
-> > The driver is mostly copy & paste from pwm-fan, which isn't good. Personally
-> > i see two options:
-> > 
-> > 1) integrate the driver function into the pwm-fan driver (new compatible)
-> > 2) implement the core function as a PWM driver and use the pwm-fan driver on top
-> > 
-> 
-> I don't really see the point of thise driver. Why not implement either of those ?
+I do not understand the analysis and do not see that the spinlock is a
+problem here.
+I think your DSAC analyzer assumes that the FUNC_PTR mgr_ctrl call calls
+the  mgr_ctrl in tei.c, but in real it calls l2->ch.ctrl() which is the
+function in layer2.c, not tei.c. And the function in layer2.c should not
+do any GFP_KERNEL allocation.
 
-i'm not sure about your question. Since the fan is placed over the SoC, the fan should takes care of the SoC temperature. AFAIK the firmware should have exclusive access to the I2C. So why we need this mailbox interface instead of a I2C driver.
+Same for your 2. reported issue.
 
-> 2) sounds like a perfect fit to me.
+Am 01.09.2018 um 14:00 schrieb Jia-Ju Bai:
+> The kernel module may sleep with holding a spinlock.
 > 
-> Guenter
+> The function call paths (from bottom to top) in Linux-4.16 are:
 > 
-> > [1] - https://www.raspberrypi.org/products/poe-hat/
-> > [2] - https://github.com/raspberrypi/linux/commit/0f937c8dc3201ebffa6c617c616fd7c65db65959
-> > 
-> > Serge Schneider (2):
-> >    dt-bindings: hwmon: Add RPi PoE HAT documentation
-> >    hwmon: Add RPi PoE HAT fan driver
-> > 
-> >   .../devicetree/bindings/hwmon/rpi-poe-fan.txt      |  55 +++
-> >   Documentation/hwmon/rpi-poe-fan                    |  15 +
-> >   drivers/hwmon/Kconfig                              |  11 +
-> >   drivers/hwmon/Makefile                             |   1 +
-> >   drivers/hwmon/rpi-poe-fan.c                        | 414 +++++++++++++++++++++
-> >   include/soc/bcm2835/raspberrypi-firmware.h         |   2 +
-> >   6 files changed, 498 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/hwmon/rpi-poe-fan.txt
-> >   create mode 100644 Documentation/hwmon/rpi-poe-fan
-> >   create mode 100644 drivers/hwmon/rpi-poe-fan.c
-> > 
->
+> [FUNC] kzalloc(GFP_KERNEL)
+> drivers/isdn/mISDN/tei.c, 1058: kzalloc in create_teimgr
+> drivers/isdn/mISDN/tei.c, 1278: create_teimgr in mgr_ctrl
+> drivers/isdn/mISDN/tei.c, 1048: [FUNC_PTR]mgr_ctrl in create_teimgr
+> drivers/isdn/mISDN/tei.c, 1045: _raw_read_lock_irqsave in create_teimgr
+> 
+> Note that [FUNC_PTR] means a function pointer call is used.
+> 
+> To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+> 
+> This bug is found by my static analysis tool DSAC.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/isdn/mISDN/tei.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
+> index 12d9e5f4beb1..6d95ee639fdb 100644
+> --- a/drivers/isdn/mISDN/tei.c
+> +++ b/drivers/isdn/mISDN/tei.c
+> @@ -1055,7 +1055,7 @@ create_teimgr(struct manager *mgr, struct channel_req *crq)
+>  		       crq->adr.tei, crq->adr.sapi);
+>  	if (!l2)
+>  		return -ENOMEM;
+> -	l2->tm = kzalloc(sizeof(struct teimgr), GFP_KERNEL);
+> +	l2->tm = kzalloc(sizeof(struct teimgr), GFP_ATOMIC);
+>  	if (!l2->tm) {
+>  		kfree(l2);
+>  		printk(KERN_ERR "kmalloc teimgr failed\n");
+> 
+
