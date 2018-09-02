@@ -2,78 +2,95 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8152DC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A062C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D4E20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 09:59:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D4E20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 24EC620855
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24EC620855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbeIBOOM (ORCPT
+        id S1727307AbeIBOYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:14:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726003AbeIBOOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:14:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A43D2636E;
-        Sun,  2 Sep 2018 09:58:59 +0000 (UTC)
-Received: from localhost (ovpn-204-28.brq.redhat.com [10.40.204.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F4E610EE822;
-        Sun,  2 Sep 2018 09:58:53 +0000 (UTC)
-Date:   Sun, 2 Sep 2018 11:58:51 +0200
-From:   Jiri Benc <jbenc@redhat.com>
-To:     Christian Brauner <christian.brauner@canonical.com>
-Cc:     David Miller <davem@davemloft.net>, nicolas.dichtel@6wind.com,
-        ktkhai@virtuozzo.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, pombredanne@nexb.com,
-        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-        dsahern@gmail.com, fw@strlen.de, lucien.xin@gmail.com,
-        jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next 0/5] rtnetlink: add IFA_IF_NETNSID for
- RTM_GETADDR
-Message-ID: <20180902115851.2b224c23@redhat.com>
-In-Reply-To: <20180901184704.lzynbw5zkyiqc6wb@gmail.com>
-References: <81379a4f-7149-10ff-2453-886314d0b0c4@virtuozzo.com>
-        <20180830144544.tpross4jd6awou4u@gmail.com>
-        <ba6a1b18-959e-e307-45fa-e0da9d6f0b0f@6wind.com>
-        <20180831.175847.339882322459287210.davem@davemloft.net>
-        <20180901184704.lzynbw5zkyiqc6wb@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 02 Sep 2018 09:58:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Sun, 02 Sep 2018 09:58:59 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jbenc@redhat.com' RCPT:''
+        Sun, 2 Sep 2018 10:24:48 -0400
+Received: from mout.perfora.net ([74.208.4.196]:45011 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbeIBOYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:24:47 -0400
+Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MPnbo-1g0Enk1ssk-0056rJ; Sun, 02 Sep 2018 12:09:26 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 05/37] ARM: tegra: colibri_t20: add local-mac-address property
+Date:   Sun,  2 Sep 2018 12:08:34 +0200
+Message-Id: <20180902100906.25792-6-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
+References: <20180902100906.25792-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:mRtjbxPOI9lB9IcH8jzIDaVHePlJVbbocP9BlJJPQrnml5Hj3rM
+ m9663xzHGcsx5UmFRGKhNRRRKcRHMLfsCQ+y0GRee8QeXMAYWkFCw1Jjqe2r+uecZ7vpawx
+ Da4SmxgH+FzAz6vAdGsSMKyrWfRFdJRxLhzAnXTt3+dyC177SLUD6qWQ96w07KyKZjtUl7+
+ v+44JCQieMQPKTpaxr7Ag==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BiizVfONw1o=:ebjCU0AbXcGLL7QGHP7jKl
+ GRNxGGZV/2YfG6zhNb+9w5A3yFy+iFsuDi9gvD6k6u5FTaJ+Iyd/p3j6is7sAsG8Nx0jPLxrx
+ 6GXmDjtbC32YPDgDyemJ59JmhXsShnQVRKnjEbva524x3EgchEL1QFP0bBn3uWxZZ1FySsDbx
+ C/TRkz4lZeETEifZBGMWcq7Pq6bMG9l2HBjq/kyezLj1vlnbp6Fyh3XHkxTi38V0G0xZDAXpH
+ BTb5iaxItsVK4hyZeL7uUJf3yzTDrpc7u3wXby4Qi7ZjCkNMjlR79Nwhz+vEI9t4cnDXcF47h
+ Z+eUm9sQUXOhg/l+T95jbjc3HLHXS5qXTIQp2Z9W/3rhfpcaraFO2FpwUGHPoICep35gU4yo2
+ CskFDbZn+ZBpxak6TQ5aJzK+RzKVqPeStnYR8ZeEl0wWHwmqckyF6wFcEcweMDKZbW4tpHKY7
+ NHg4thAe5vTCRCd6jgkuxs5c1KDM01NI+Kxs7wBvgUkq8lX3GVqawBJlxlaHFc/+q2UKgHG3F
+ U0D6hODcwS4XsrPxLLGX/lEJ0xUeOklQayLV5OoJrONCybnhZ7JVKz6gt1DLzsfpkl8ZgtO+k
+ OB80S+vMXWcgUzXp68gzb2/KR133KPzZfW9THNoIxfg1DD/pKM1IBAjGHU3jyvUsJriBoprGy
+ 0spfWmJVsTkEKcHyDoSoPeWwHFR86fKFfEZYy/9Lm1zTPVSYA6ecShqOMJQgsNicTmV0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 1 Sep 2018 20:47:05 +0200, Christian Brauner wrote:
-> Sorry for the late reply. Yup, sounds good to me.
-> But maybe IFA_TARGET_NETNSID to indicate that we're talking network
-> namespaces here? Seems to me that NSID might give the wrong impression.
-> I'll send v1 soon. I expect tomorrow or sometime next week.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-On the other hand, we currently have IFLA_IF_NETNSID for the link
-operations. IFA_IF_NETNSID is more consistent with the existing
-attribute. It may be confusing to authors of user space programs to
-have attribute names doing the same thing constructed differently for
-different calls (IFLA_IF_NETNSID and IFA_TARGET_NETNSID).
+Add empty local-mac-address property to be filled in by boot loader
+(e.g. U-Boot).
 
-As for the patch set itself, it makes sense to me, whatever the
-final attribute name is.
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Thanks,
+---
 
- Jiri
+Changes in v2: None
+
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index e34ab4a76158..ad816fa827f7 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -482,6 +482,13 @@
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 			GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		asix@1 {
++			reg = <1>;
++			local-mac-address = [00 00 00 00 00 00];
++		};
+ 	};
+ 
+ 	usb-phy@c5004000 {
+-- 
+2.14.4
+
