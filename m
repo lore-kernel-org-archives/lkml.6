@@ -2,113 +2,136 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8D4C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476C0C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A06C20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:31:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A06C20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-pingi.de
+	by mail.kernel.org (Postfix) with ESMTP id CE95B20841
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 16:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="oPWlRULr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE95B20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeIBUrb (ORCPT
+        id S1726978AbeIBVDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 16:47:31 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:40311 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeIBUrb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 16:47:31 -0400
-Received: from mailone.linux-pingi.de ([84.176.100.82]) by
- mrelayeu.kundenserver.de (mreue101 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 0M7sUy-1fjUfk3TlI-00vRtE; Sun, 02 Sep 2018 18:31:08 +0200
-Received: from [10.23.200.0] (pingi.linux-pingi.de [10.23.200.0])
-        by mailone.linux-pingi.de (Postfix) with ESMTPSA id D801772005;
-        Sun,  2 Sep 2018 18:31:59 +0200 (CEST)
-Subject: Re: [PATCH] isdn: mISDN: tei: Fix a sleep-in-atomic-context bug in
- create_teimgr()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180901120019.31664-1-baijiaju1990@gmail.com>
-From:   isdn@linux-pingi.de
-Message-ID: <3ecd32b2-81e5-038e-edc9-fd06d6e21851@linux-pingi.de>
-Date:   Sun, 2 Sep 2018 18:31:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180901120019.31664-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Sun, 2 Sep 2018 17:03:15 -0400
+Received: from mail-co1nam03on0052.outbound.protection.outlook.com ([104.47.40.52]:28448
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726065AbeIBVDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 17:03:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F2i3uYuf4xJMOVruNao+lGNdJE0YFKMHxTs1X7rep4M=;
+ b=oPWlRULrC04HdY+8Kt4O9REJZ57940PpZdY5+R3+JgpIgaooY4B6mgZFQaoXwYGP1doCHUbKDQh0rat4fkbiUEJh8OYHvDlqxJ6UyKEQlMcS6CaksYxzFWbfHK4dIh+54/riysifosfj1nzEjNjKkFoiIKgS7vHUOr5W18o3aaU=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4694.namprd05.prod.outlook.com (52.135.233.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.9; Sun, 2 Sep 2018 16:46:46 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3%3]) with mapi id 15.20.1101.016; Sun, 2 Sep 2018
+ 16:46:46 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH 0/6] x86/alternatives: text_poke() fixes
+Thread-Topic: [PATCH 0/6] x86/alternatives: text_poke() fixes
+Thread-Index: AQHUQIeqdSq3pYEU2E2efUzn1pdHnKTZSiGAgAAAwACAA+0fAA==
+Date:   Sun, 2 Sep 2018 16:46:46 +0000
+Message-ID: <FF03F7AC-B7D0-4A45-BC73-D67FEED7A976@vmware.com>
+References: <20180830173218.238900-1-namit@vmware.com>
+ <20180831134635.35b6c2a919449adf4b63a133@kernel.org>
+ <20180831134916.f8c409da94baa492008b188e@kernel.org>
+In-Reply-To: <20180831134916.f8c409da94baa492008b188e@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:/rL/6r+2jH/8bTewqfByN2RSZiad6zbfJPT/a1SbnxYeM/gygNn
- Y0n+/SzY+p4+yuGYiNzM/bn99H5zsVTGG8/hPW6LgmxtSITolyIJSkXTqW5r81sDOS5AGPi
- C0w0ccP0VCuEyItiNwCrdajbkhg3DlLXWWitMuQHcdml7CwdEGJjDVIMu7jv0TaJaWJP1kE
- COlUYSJJgPhMjqov5D1pw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:am8LP3aVpyw=:hQf+X4OrTvQnP2RyFH70YX
- Yz3VYTPfLgmBpChh6KaY8VbS3kB6ZitcB3MtcQ59kzmit6872XhOpcxJsSD6EjjHSH/af1VO+
- yqwuM7kUUvl9hP241sxwT324gDM7Z6HFMhsGp18aL/YZTv4K9CUxBQ7bBPB7rW0VAUnHm7YBq
- 6pZHSinxKQI6QpwxVG0m91NYqETE5IfZGE5VVS92ancnVJ1Lj9j2Xflpu4pKcmEubMJA+ZbVT
- l60nptKy76l5wGGx4htpPn6U+9ILu6q+YhAR+vKAy42uGlQXWSbsLI6MibOZW2xJSU7bPqS7P
- xc9lflT+l/qTvdMGkpG+lj7iqE73nF9UiyyAM2LlVKNvWnlO6TrBvNNV4Q/89gosv308Wtrz8
- dGroqh2Jw7WHGZqx1MrpQhtZQK4XznOAhUrBvZdiuDwt9U1jHbWlptH9DLHkyM1xATx/AFK76
- 6fAhOxj7YguNa0inPjzmBS6AzwPBF1CIa9ZTJzc8qM/JpMcij6SsKdgRAcSwshdTKYY02qxVJ
- yQ2gK9ul8yfY6heNUZO5c9JTtw76a5dHym+soVfmjJ5YymKEOUtARm7EyRdSRbGqrcD20qcND
- eKBaF4wLKQC8+RAdBKa7lpjOR7aKEdxUA0QxJjmzJSBP5xEnYgGEW5OlusEfgkxwR6XYwYPVJ
- yMb8IJ1CtgROT/LfZaOJKGwsMO/dzBYbd+kpduSb7s5nxD2CTdbMEV0lt2hMpfqlrOzfMhKoE
- R1QIWRkqhR8Ur1d5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4694;20:ctiSaGrJ64C0CRP+r+12VpqPBe30K7siIbSZzYYj6Mit9qoSpD9klST+MfXRLsgiPbNXs48M9PmAAQpl6l1S1RG5EQ2he+fZWXuGlu34R41iNK0yxTSYt3tPSvMggihr0RTbMrWoluqvknS69qy303CtFsPUncAr6sIo9jmU32E=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 91d81deb-714d-4d4b-1161-08d610f3ac0c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4694;
+x-ms-traffictypediagnostic: BYAPR05MB4694:
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB469478519C5341A8A6BEF8EBD00D0@BYAPR05MB4694.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150)(192374486261705);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BYAPR05MB4694;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4694;
+x-forefront-prvs: 078310077C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(366004)(376002)(51914003)(199004)(189003)(6436002)(26005)(6116002)(14454004)(102836004)(3846002)(54906003)(7416002)(316002)(2900100001)(186003)(68736007)(36756003)(6486002)(6916009)(66066001)(83716003)(6512007)(25786009)(4326008)(229853002)(8936002)(5660300001)(82746002)(6506007)(81166006)(33656002)(81156014)(97736004)(53936002)(6246003)(446003)(2906002)(99286004)(486006)(105586002)(2616005)(7736002)(5250100002)(106356001)(476003)(305945005)(76176011)(478600001)(8676002)(14444005)(86362001)(256004)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4694;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: iW4HqTV/ZtHaE3K789slHEvQ+QC2CzEYzUpNDhv4K0a88jP7qqpHa4yZGeeUoqKPtnjhnbTrxRM0o9RpZ+hOzZ4C/q3PxhjCKcW2aQAHcNwX7kbm8neCudwFfuJEEwW9W6CD753iDyT2hmSekI/uy0CHi4kjV+xVpCtj2ZKeDXqtLaPzaIx46/7alSiwmV5Q5fqyOkuU+sS7eroaNDjtN3SvEZOfhSGKZpkCSuJEAOaFS31BGX3AB0sX92C7ZqHqtzMWB9QsGCivKAa8buD3enmyEKpf3vnq55qSN2Ye1W9z4Jn+JHcgL+A+7EDxQC6mM55tUEDvjI9oCmcNurf+UalUdLdE0+Dd/xlda1KlzR4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4EE168CDBCA8804B800A6709F16EB968@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91d81deb-714d-4d4b-1161-08d610f3ac0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 16:46:46.6885
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4694
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I do not understand the analysis and do not see that the spinlock is a
-problem here.
-I think your DSAC analyzer assumes that the FUNC_PTR mgr_ctrl call calls
-the  mgr_ctrl in tei.c, but in real it calls l2->ch.ctrl() which is the
-function in layer2.c, not tei.c. And the function in layer2.c should not
-do any GFP_KERNEL allocation.
-
-Same for your 2. reported issue.
-
-Am 01.09.2018 um 14:00 schrieb Jia-Ju Bai:
-> The kernel module may sleep with holding a spinlock.
-> 
-> The function call paths (from bottom to top) in Linux-4.16 are:
-> 
-> [FUNC] kzalloc(GFP_KERNEL)
-> drivers/isdn/mISDN/tei.c, 1058: kzalloc in create_teimgr
-> drivers/isdn/mISDN/tei.c, 1278: create_teimgr in mgr_ctrl
-> drivers/isdn/mISDN/tei.c, 1048: [FUNC_PTR]mgr_ctrl in create_teimgr
-> drivers/isdn/mISDN/tei.c, 1045: _raw_read_lock_irqsave in create_teimgr
-> 
-> Note that [FUNC_PTR] means a function pointer call is used.
-> 
-> To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
-> 
-> This bug is found by my static analysis tool DSAC.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/isdn/mISDN/tei.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
-> index 12d9e5f4beb1..6d95ee639fdb 100644
-> --- a/drivers/isdn/mISDN/tei.c
-> +++ b/drivers/isdn/mISDN/tei.c
-> @@ -1055,7 +1055,7 @@ create_teimgr(struct manager *mgr, struct channel_req *crq)
->  		       crq->adr.tei, crq->adr.sapi);
->  	if (!l2)
->  		return -ENOMEM;
-> -	l2->tm = kzalloc(sizeof(struct teimgr), GFP_KERNEL);
-> +	l2->tm = kzalloc(sizeof(struct teimgr), GFP_ATOMIC);
->  	if (!l2->tm) {
->  		kfree(l2);
->  		printk(KERN_ERR "kmalloc teimgr failed\n");
-> 
-
+YXQgOTo0OSBQTSwgTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4gd3JvdGU6
+DQoNCj4gT24gRnJpLCAzMSBBdWcgMjAxOCAxMzo0NjozNSArMDkwMA0KPiBNYXNhbWkgSGlyYW1h
+dHN1IDxtaGlyYW1hdEBrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+PiBPbiBUaHUsIDMwIEF1ZyAy
+MDE4IDEwOjMyOjEyIC0wNzAwDQo+PiBOYWRhdiBBbWl0IDxuYW1pdEB2bXdhcmUuY29tPiB3cm90
+ZToNCj4+IA0KPj4+IFRoaXMgcGF0Y2gtc2V0IGFkZHJlc3NlcyBzb21lIGlzc3VlcyB0aGF0IHdl
+cmUgcmFpc2VkIGluIGEgcmVjZW50DQo+Pj4gY29ycmVzcG9uZGVuY2UgYW5kIG1pZ2h0IGFmZmVj
+dCB0aGUgc2VjdXJpdHkgYW5kIHRoZSBjb3JyZWN0bmVzcyBvZiBjb2RlDQo+Pj4gcGF0Y2hpbmcu
+IChOb3RlIHRoYXQgcGF0Y2hpbmcgcGVyZm9ybWFuY2UgaXMgbm90IGFkZHJlc3NlZCBieSB0aGlz
+DQo+Pj4gcGF0Y2gtc2V0KS4NCj4+PiANCj4+PiBUaGUgbWFpbiBpc3N1ZSB0aGF0IHRoZSBwYXRj
+aGVzIGRlYWwgd2l0aCBpcyB0aGUgZmFjdCB0aGF0IHRoZSBmaXhtYXANCj4+PiBQVEVzIHRoYXQg
+YXJlIHVzZWQgZm9yIHBhdGNoaW5nIGFyZSBhdmFpbGFibGUgZm9yIGFjY2VzcyBmcm9tIG90aGVy
+DQo+Pj4gY29yZXMgYW5kIG1pZ2h0IGJlIGV4cGxvaXRlZC4gVGhleSBhcmUgbm90IGV2ZW4gZmx1
+c2hlZCBmcm9tIHRoZSBUTEIgaW4NCj4+PiByZW1vdGUgY29yZXMsIHNvIHRoZSByaXNrIGlzIGV2
+ZW4gaGlnaGVyLiBBZGRyZXNzIHRoaXMgaXNzdWUgYnkNCj4+PiBpbnRyb2R1Y2luZyBhIHRlbXBv
+cmFyeSBtbSB0aGF0IGlzIG9ubHkgdXNlZCBkdXJpbmcgcGF0Y2hpbmcuDQo+Pj4gVW5mb3J0dW5h
+dGVseSwgZHVlIHRvIGluaXQgb3JkZXJpbmcsIGZpeG1hcCBpcyBzdGlsbCB1c2VkIGR1cmluZw0K
+Pj4+IGJvb3QtdGltZSBwYXRjaGluZy4gRnV0dXJlIHBhdGNoZXMgY2FuIGVsaW1pbmF0ZSB0aGUg
+bmVlZCBmb3IgaXQuDQo+Pj4gDQo+Pj4gVGhlIHNlY29uZCBpc3N1ZSBpcyB0aGUgbWlzc2luZyBs
+b2NrZGVwIGFzc2VydGlvbiB0byBlbnN1cmUgdGV4dF9tdXRleA0KPj4+IGlzIHRha2VuLiBJdCBp
+cyBhY3R1YWxseSBub3QgYWx3YXlzIHRha2VuLCBzbyBmaXggdGhlIGluc3RhbmNlcyB0aGF0DQo+
+Pj4gd2VyZSBmb3VuZCBub3QgdG8gdGFrZSB0aGUgbG9jayAoYWx0aG91Z2ggdGhleSBzaG91bGQg
+YmUgc2FmZSBldmVuDQo+Pj4gd2l0aG91dCB0YWtpbmcgdGhlIGxvY2spLg0KPj4+IA0KPj4+IEZp
+bmFsbHksIHRyeSB0byBiZSBtb3JlIGNvbnNlcnZhdGl2ZSBhbmQgdG8gbWFwIGEgc2luZ2xlIHBh
+Z2UsIGluc3RlYWQNCj4+PiBvZiB0d28sIHdoZW4gcG9zc2libGUuIFRoaXMgaGVscHMgYm90aCBz
+ZWN1cml0eSBhbmQgcGVyZm9ybWFuY2UuDQo+Pj4gDQo+Pj4gSW4gYWRkaXRpb24sIHRoZXJlIGlz
+IHNvbWUgY2xlYW51cCBvZiB0aGUgcGF0Y2hpbmcgY29kZSB0byBtYWtlIGl0IG1vcmUNCj4+PiBy
+ZWFkYWJsZS4NCj4+IA0KPj4gT0ssIHRoaXMgc2VyaWVzIGxvb2tzIGdvb2QgdG8gbWUsIGFuZCB0
+ZXN0ZWQgd2l0aCBmdHJhY2V0ZXN0LCBrcHJvYmUgdGVzdHNldHMuDQo+PiANCj4+IFJldmlld2Vk
+LWJ5OiBNYXNhbWkgSGlyYW1hdHN1IDxtaGlyYW1hdEBrZXJuZWwub3JnPg0KPj4gVGVzdGVkLWJ5
+OiBNYXNhbWkgSGlyYW1hdHN1IDxtaGlyYW1hdEBrZXJuZWwub3JnPg0KPiANCj4gT2gsIEkgbWlz
+c2VkIGEgbm90ZS4NCj4gDQo+IFRvIGFwcGx5IHRoaXMgc2VyaWVzIG9uIC10aXAgdHJlZSwgd2Ug
+aGF2ZSB0byByZXZlcnQgSmlyaSdzIHRleHRfbXV0ZXgNCj4gY2hlY2tlci4NCj4gDQo+IDkyMjJm
+NjA2NTA2YyAoIng4Ni9hbHRlcm5hdGl2ZXM6IExvY2tkZXAtZW5mb3JjZSB0ZXh0X211dGV4IGlu
+IHRleHRfcG9rZSooKSIpDQoNClRoYW5rcyBmb3IgdGhlIGhlYWRzLXVwLiBJ4oCZbGwgYWRkIGEg
+cmV2ZXJ0IGZvciB0aGlzIHBhdGNoIGFuZCBzZW5kIHYyLg0KDQpSZWdhcmRzLA0KTmFkYXYNCg0K
