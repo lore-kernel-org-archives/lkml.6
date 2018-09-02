@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD03AC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F626C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC5E2064D
+	by mail.kernel.org (Postfix) with ESMTP id CCD3B20837
 	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 07:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC5E2064D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD3B20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeIBLlw (ORCPT
+        id S1727048AbeIBLly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 07:41:52 -0400
-Received: from mailoutvs13.siol.net ([185.57.226.204]:54439 "EHLO
+        Sun, 2 Sep 2018 07:41:54 -0400
+Received: from mailoutvs43.siol.net ([185.57.226.234]:54469 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725905AbeIBLlv (ORCPT
+        with ESMTP id S1725905AbeIBLlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 07:41:51 -0400
+        Sun, 2 Sep 2018 07:41:53 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 413C7520AC0;
-        Sun,  2 Sep 2018 09:27:01 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id EAC1D520AAB;
+        Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id E7OT4ipN9f4D; Sun,  2 Sep 2018 09:27:00 +0200 (CEST)
+        with ESMTP id BFRhrmzEGPPE; Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C9B4B52037D;
-        Sun,  2 Sep 2018 09:27:00 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 7DF80520920;
+        Sun,  2 Sep 2018 09:27:03 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 2B948520834;
-        Sun,  2 Sep 2018 09:26:58 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id CFE05520AAB;
+        Sun,  2 Sep 2018 09:27:00 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     robh+dt@kernel.org, maxime.ripard@bootlin.com, wens@csie.org
 Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -45,9 +45,9 @@ Cc:     mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 01/27] dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
-Date:   Sun,  2 Sep 2018 09:26:17 +0200
-Message-Id: <20180902072643.4917-2-jernej.skrabec@siol.net>
+Subject: [PATCH 02/27] arm64: allwinner: h6: add system controller device tree node
+Date:   Sun,  2 Sep 2018 09:26:18 +0200
+Message-Id: <20180902072643.4917-3-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
 References: <20180902072643.4917-1-jernej.skrabec@siol.net>
@@ -58,42 +58,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Icenowy Zheng <icenowy@aosc.io>
 
-The Allwinner H6 SoC's DE3 needs the SRAM C section being claimed in the
-system controller to work, like A64 DE2.
-
-As H6 and A64 system controller are quite similar, code is reused now,
-and the A64 fallback compatible string is added after the H6 compatible
-string.
+As we have already binding for the H6 system controller, add its node
+to the device tree.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[fixed typo in compatible string]
+[fixed compatible string]
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-index c51ade86578c..62dd0748f0ef 100644
---- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-+++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-@@ -18,6 +18,7 @@ Required properties:
-     - "allwinner,sun8i-h3-system-control"
-     - "allwinner,sun50i-a64-sram-controller" (deprecated)
-     - "allwinner,sun50i-a64-system-control"
-+    - "allwinner,sun50i-h6-system-control", "allwinner,sun50i-a64-system-control"
- - reg : sram controller register offset + length
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index cfa5fffcf62b..040828d2e2c0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -92,6 +92,29 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
- SRAM nodes
-@@ -54,6 +55,9 @@ The valid sections compatible for H3 are:
- The valid sections compatible for A64 are:
-     - allwinner,sun50i-a64-sram-c
- 
-+The valid sections compatible for H6 are:
-+    - allwinner,sun50i-h6-sram-c, allwinner,sun50i-a64-sram-c
++		syscon: syscon@3000000 {
++			compatible = "allwinner,sun50i-h6-system-control",
++				     "allwinner,sun50i-a64-system-control";
++			reg = <0x03000000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
 +
- Devices using SRAM sections
- ---------------------------
- 
++			sram_c: sram@28000 {
++				compatible = "mmio-sram";
++				reg = <0x00028000 0x1e000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x00028000 0x1e000>;
++
++				de2_sram: sram-section@0 {
++					compatible = "allwinner,sun50i-h6-sram-c",
++						     "allwinner,sun50i-a64-sram-c";
++					reg = <0x0000 0x1e000>;
++				};
++			};
++		};
++
+ 		ccu: clock@3001000 {
+ 			compatible = "allwinner,sun50i-h6-ccu";
+ 			reg = <0x03001000 0x1000>;
 -- 
 2.18.0
 
