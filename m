@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3785C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 11:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E06AC43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 11:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8160520658
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 11:23:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8160520658
+	by mail.kernel.org (Postfix) with ESMTP id F358B20658
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 11:23:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F358B20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeIBPiZ (ORCPT
+        id S1726978AbeIBPiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 11:38:25 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:58219 "EHLO
+        Sun, 2 Sep 2018 11:38:22 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:56433 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeIBPiY (ORCPT
+        with ESMTP id S1726020AbeIBPiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 11:38:24 -0400
+        Sun, 2 Sep 2018 11:38:22 -0400
 Received: from localhost.localdomain ([37.4.249.97]) by
  mrelayeu.kundenserver.de (mreue101 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 0MAvMi-1g6M4b2Pie-009vbV; Sun, 02 Sep 2018 13:22:09 +0200
+ id 0MTQ5X-1gN3Zv1b3X-00SPxa; Sun, 02 Sep 2018 13:22:08 +0200
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 To:     Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -38,541 +38,65 @@ Cc:     Eric Anholt <eric@anholt.net>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Serge Schneider <serge@raspberrypi.org>,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RFC 2/2] hwmon: Add RPi PoE HAT fan driver
-Date:   Sun,  2 Sep 2018 13:20:51 +0200
-Message-Id: <1535887251-29515-3-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH RFC 0/2] hwmon: Add RPi PoE HAT fan driver
+Date:   Sun,  2 Sep 2018 13:20:49 +0200
+Message-Id: <1535887251-29515-1-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535887251-29515-1-git-send-email-stefan.wahren@i2se.com>
-References: <1535887251-29515-1-git-send-email-stefan.wahren@i2se.com>
-X-Provags-ID: V03:K1:DuSB3nLZ4QfAPIb3/BwRTBNEfTPAWBSjR6qh0suJh5GzKd5Nsan
- V2NWcE3gxSU5LkHjY6lhSBTqArQchyqyq0lvS+z2OMYYVSfRHO3JAt4Lk57YPXQXF8rwXvH
- dNPaXPsyrsqK8jtmYKsRa2z9gsEgEvbgatMq3tEp1QV+rrmhm1hcCTK3eaD8KGj719Jpojm
- utLvYm2X/WdEJPC8hwAxA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6eeHOG/PSbs=:VtRtV9A8WKB3Ya12HATK7u
- V90a8EuMWaiHWu2oUK8iGnwT0CcKGOxdGJb8hmAtAJFKnnzzitwoolJAxPnDTqmX9y62qfLGB
- OMnzqDZ1NH2Fk+2E1asnDFx8r0dh6CVs1vgEv9S6T04vDwDD732zJT1UnlwdyrFGDM7JZHIqb
- P3dYy1Rdz4Puu6seYEJ948Jq4g72PCUn3qqvhKZVOuay3A7m+4mqiafzBTTRy/+UlLCCNhZbX
- yj0t8UNuJx+UqMctFZ6g4tXnTRAui04Dklk2ij/ZxhIs3fb9S1qI5xxVmpRdPztOTH3x3DDcU
- dz0MFJObmhq3bUV5hQmWaCfsUNU0HrzKhYboJbLePh47H2i969WAHbkYe6iGwsNC0GMkjJSx8
- ZpAM083tvksKuJKh4YRBmzHHYs5madxXFovxkoHgyYJrAq4+7bDEI34C55SdIM8jiz3M21YKN
- bpaVQMXr9sAWcxs484bkwy2XGRcro5Ag54jHX8+OSVydzbo3iBNUIphxSgdwFIAnVrsxr9Wxz
- EtwKbxmXr0lWJYLSOT0+wS5oRmqJPkiEfBiUBESYQW9MP8wr9rZhbuYt7JtOTPGr/1arAcrch
- SzrVVbSxnH/X3uy155idrCFez4dkEGyxkvBt+jUU8DyEyK8cRgJjS4w6T+C0YFQVkZOBogNZl
- /dhZ06drBqvdoCl8I3TsBZVFcbqB8SH2G8gV7YfzVwazANiELTrc1xmgj9eIyhOFGBsk=
+X-Provags-ID: V03:K1:TpjAAA3/EXvRpMTq2O4xqR89lOWOYoXF/FOZeK0Esf5GpLpisIV
+ xAzqg8sIRgXCocI/sEVzpcBm3YYs5hM+kmKBC0nvTcQXe8mjZ/YKqwRwxG0dmOj/zxYJEMw
+ DDVVvJ6Rg0+GFfVWolJ9dZ9/cIF9pMn2xYQPkPzPpY+VPEkSuGROLv9nM6f7PB/3tVEnj5m
+ N8WdXBZNpot2uhHqwYEsA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qNQLwyNTlus=:pGArnJ1m6H6CmYPP10XP8E
+ l83iJmuSJtZLei7irhqs/UPR3AIiyJWwy/pxJ4B/iFpAomgDnwevlZBpK+Wslwh8RFyxpb3oA
+ PiC8qH5f4/2Vzct1vb57fzC6JI93bv3qIHFQ6jwVuhwA3xcwgjw9FDUhyAc26fnOy/CV8JmqJ
+ /JX/ERZKrqEL7YvnalVGC8VgxoUNlUE9wDDcuftbrImlXrZgPTvPhY5p/08RbkH7KFrkueSBM
+ 2XXhj01asvH17YOKbYuAHxp+xbaZBiOTr/+Did55tDQpMq3za2Dh4nAxNgDyu1W/02gRH3bWo
+ vOHL64XChnBVvek2+IMOYnM/zcThP6OQBw3Jhp9Ww9Ep9F/K/p9/OBCHjO7Pcdatc71NeeqeG
+ psI9lJ/R6tamke3jUOkFsYL6LgzEGb/+2VyzpoHmqB3IY1QAPMEIsNN/TUj5JkVsN0KVD7U2e
+ tWcNCJXlaYMRg1HjZpf/29TfirZi96zuO26UB3NzEr1HmxVf9U4DAX1fAnkVO34utbyHAg3Tr
+ PZzeyptSsQsxR+JQwsk9B/F6vOjgOeZJRjO/ml1pvIyLqjMnmV6rJecXHmSguGJiCv4ReiE0i
+ XVpHsq+G2YkISO2pB5ndVkCZEfG0ckN7CwU6a51pXrQMj9ETT71gS3Dkoi3Cc0/mDjgAF0yjv
+ 3G3eGQtfO+EIxwarsesZD+j5R/DgX8+++yZpbdooQjTF8kDAm4cziEzUmw37GiK5OVuw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Schneider <serge@raspberrypi.org>
+This series is an early stage of the hwmon driver for the fan on the
+Raspberry Pi Power over Ethernet HAT [1]. At the end this should use a
+Device Tree Overlay.
 
-This adds support for the fan located on the Raspberry Pi Power over
-Ethernet HAT. The driver passes commands the Raspberry Pi firmware
-through the mailbox property interface. The firmware then forwards
-the commands to the board over I2C on the ID_EEPROM pins.
+Changes by Stefan based on [2]:
+- reformat the downstream patches for submission
+- drop reboot notification
+- fix remaining checkpatch issues
+- add COMPILE_TEST to Kconfig
 
-Signed-off-by: Serge Schneider <serge@raspberrypi.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- Documentation/hwmon/rpi-poe-fan            |  15 ++
- drivers/hwmon/Kconfig                      |  11 +
- drivers/hwmon/Makefile                     |   1 +
- drivers/hwmon/rpi-poe-fan.c                | 414 +++++++++++++++++++++++++++++
- include/soc/bcm2835/raspberrypi-firmware.h |   2 +
- 5 files changed, 443 insertions(+)
+The driver is mostly copy & paste from pwm-fan, which isn't good. Personally
+i see two options:
+
+1) integrate the driver function into the pwm-fan driver (new compatible)
+2) implement the core function as a PWM driver and use the pwm-fan driver on top
+
+[1] - https://www.raspberrypi.org/products/poe-hat/
+[2] - https://github.com/raspberrypi/linux/commit/0f937c8dc3201ebffa6c617c616fd7c65db65959
+
+Serge Schneider (2):
+  dt-bindings: hwmon: Add RPi PoE HAT documentation
+  hwmon: Add RPi PoE HAT fan driver
+
+ .../devicetree/bindings/hwmon/rpi-poe-fan.txt      |  55 +++
+ Documentation/hwmon/rpi-poe-fan                    |  15 +
+ drivers/hwmon/Kconfig                              |  11 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/rpi-poe-fan.c                        | 414 +++++++++++++++++++++
+ include/soc/bcm2835/raspberrypi-firmware.h         |   2 +
+ 6 files changed, 498 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/rpi-poe-fan.txt
  create mode 100644 Documentation/hwmon/rpi-poe-fan
  create mode 100644 drivers/hwmon/rpi-poe-fan.c
 
-diff --git a/Documentation/hwmon/rpi-poe-fan b/Documentation/hwmon/rpi-poe-fan
-new file mode 100644
-index 0000000..9182ab6
---- /dev/null
-+++ b/Documentation/hwmon/rpi-poe-fan
-@@ -0,0 +1,15 @@
-+Kernel driver rpi-poe-fan
-+=====================
-+
-+This driver enables the use of the Raspberry Pi PoE HAT fan.
-+
-+Author: Serge Schneider <serge@raspberrypi.org>
-+
-+Description
-+-----------
-+
-+The driver implements a simple interface for driving the Raspberry Pi PoE
-+(Power over Ethernet) HAT fan. The driver passes commands to the Raspberry Pi
-+firmware through the mailbox property interface. The firmware then forwards
-+the commands to the board over I2C on the ID_EEPROM pins. The driver exposes
-+the fan to the user space through the hwmon sysfs interface.
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 81da17a..f8b5572 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1330,6 +1330,17 @@ config SENSORS_RASPBERRYPI_HWMON
- 	  This driver can also be built as a module. If so, the module
- 	  will be called raspberrypi-hwmon.
- 
-+config SENSORS_RPI_POE_FAN
-+	tristate "Raspberry Pi PoE HAT fan"
-+	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-+	depends on THERMAL || THERMAL=n
-+	help
-+	  If you say yes here you get support for Raspberry Pi PoE (Power over
-+	  Ethernet) HAT fan.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called rpi-poe-fan.
-+
- config SENSORS_SHT15
- 	tristate "Sensiron humidity and temperature sensors. SHT15 and compat."
- 	depends on GPIOLIB || COMPILE_TEST
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index 93f7f41..3e2a504 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -144,6 +144,7 @@ obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
- obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
- obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
- obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
-+obj-$(CONFIG_SENSORS_RPI_POE_FAN)	+= rpi-poe-fan.o
- obj-$(CONFIG_SENSORS_S3C)	+= s3c-hwmon.o
- obj-$(CONFIG_SENSORS_SCH56XX_COMMON)+= sch56xx-common.o
- obj-$(CONFIG_SENSORS_SCH5627)	+= sch5627.o
-diff --git a/drivers/hwmon/rpi-poe-fan.c b/drivers/hwmon/rpi-poe-fan.c
-new file mode 100644
-index 0000000..192afa4
---- /dev/null
-+++ b/drivers/hwmon/rpi-poe-fan.c
-@@ -0,0 +1,414 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rpi-poe-fan.c - Hwmon driver for Raspberry Pi PoE HAT fan.
-+ *
-+ * Copyright (C) 2018 Raspberry Pi (Trading) Ltd.
-+ * Based on pwm-fan.c by Kamil Debski <k.debski@samsung.com>
-+ *
-+ * Author: Serge Schneider <serge@raspberrypi.org>
-+ */
-+
-+#include <linux/hwmon.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sysfs.h>
-+#include <linux/thermal.h>
-+#include <soc/bcm2835/raspberrypi-firmware.h>
-+
-+#define MAX_PWM 255
-+
-+#define POE_CUR_PWM 0x0
-+#define POE_DEF_PWM 0x1
-+
-+struct rpi_poe_fan_ctx {
-+	struct mutex lock;
-+	struct rpi_firmware *fw;
-+	unsigned int pwm_value;
-+	unsigned int def_pwm_value;
-+	unsigned int rpi_poe_fan_state;
-+	unsigned int rpi_poe_fan_max_state;
-+	unsigned int *rpi_poe_fan_cooling_levels;
-+	struct thermal_cooling_device *cdev;
-+};
-+
-+struct fw_tag_data_s {
-+	u32 reg;
-+	u32 val;
-+	u32 ret;
-+};
-+
-+static int write_reg(struct rpi_firmware *fw, u32 reg, u32 *val)
-+{
-+	struct fw_tag_data_s fw_tag_data = {
-+		.reg = reg,
-+		.val = *val
-+	};
-+	int ret;
-+
-+	ret = rpi_firmware_property(fw, RPI_FIRMWARE_SET_POE_HAT_VAL,
-+				    &fw_tag_data, sizeof(fw_tag_data));
-+	if (ret)
-+		return ret;
-+	else if (fw_tag_data.ret)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static int read_reg(struct rpi_firmware *fw, u32 reg, u32 *val)
-+{
-+	struct fw_tag_data_s fw_tag_data = {
-+		.reg = reg,
-+	};
-+	int ret;
-+
-+	ret = rpi_firmware_property(fw, RPI_FIRMWARE_GET_POE_HAT_VAL,
-+				    &fw_tag_data, sizeof(fw_tag_data));
-+	if (ret)
-+		return ret;
-+	else if (fw_tag_data.ret)
-+		return -EIO;
-+
-+	*val = fw_tag_data.val;
-+	return 0;
-+}
-+
-+static int  __set_pwm(struct rpi_poe_fan_ctx *ctx, u32 pwm)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&ctx->lock);
-+	if (ctx->pwm_value == pwm)
-+		goto exit_set_pwm_err;
-+
-+	ret = write_reg(ctx->fw, POE_CUR_PWM, &pwm);
-+	if (!ret)
-+		ctx->pwm_value = pwm;
-+exit_set_pwm_err:
-+	mutex_unlock(&ctx->lock);
-+	return ret;
-+}
-+
-+static int  __set_def_pwm(struct rpi_poe_fan_ctx *ctx, u32 def_pwm)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&ctx->lock);
-+	if (ctx->def_pwm_value == def_pwm)
-+		goto exit_set_def_pwm_err;
-+
-+	ret = write_reg(ctx->fw, POE_CUR_PWM, &def_pwm);
-+	if (!ret)
-+		ctx->def_pwm_value = def_pwm;
-+exit_set_def_pwm_err:
-+	mutex_unlock(&ctx->lock);
-+	return ret;
-+}
-+
-+static void rpi_poe_fan_update_state(struct rpi_poe_fan_ctx *ctx,
-+				     unsigned long pwm)
-+{
-+	int i;
-+
-+	for (i = 0; i < ctx->rpi_poe_fan_max_state; ++i)
-+		if (pwm < ctx->rpi_poe_fan_cooling_levels[i + 1])
-+			break;
-+
-+	ctx->rpi_poe_fan_state = i;
-+}
-+
-+static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
-+		       const char *buf, size_t count)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+	unsigned long pwm;
-+	int ret;
-+
-+	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
-+		return -EINVAL;
-+
-+	ret = __set_pwm(ctx, pwm);
-+	if (ret)
-+		return ret;
-+
-+	rpi_poe_fan_update_state(ctx, pwm);
-+	return count;
-+}
-+
-+static ssize_t set_def_pwm(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t count)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+	unsigned long def_pwm;
-+	int ret;
-+
-+	if (kstrtoul(buf, 10, &def_pwm) || def_pwm > MAX_PWM)
-+		return -EINVAL;
-+
-+	ret = __set_def_pwm(ctx, def_pwm);
-+	if (ret)
-+		return ret;
-+	return count;
-+}
-+
-+static ssize_t show_pwm(struct device *dev,
-+			struct device_attribute *attr, char *buf)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%u\n", ctx->pwm_value);
-+}
-+
-+static ssize_t show_def_pwm(struct device *dev,
-+			struct device_attribute *attr, char *buf)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%u\n", ctx->def_pwm_value);
-+}
-+
-+
-+static SENSOR_DEVICE_ATTR(pwm1, 0644, show_pwm, set_pwm, 0);
-+static SENSOR_DEVICE_ATTR(def_pwm1, 0644, show_def_pwm, set_def_pwm, 1);
-+
-+static struct attribute *rpi_poe_fan_attrs[] = {
-+	&sensor_dev_attr_pwm1.dev_attr.attr,
-+	&sensor_dev_attr_def_pwm1.dev_attr.attr,
-+	NULL,
-+};
-+
-+ATTRIBUTE_GROUPS(rpi_poe_fan);
-+
-+/* thermal cooling device callbacks */
-+static int rpi_poe_fan_get_max_state(struct thermal_cooling_device *cdev,
-+				     unsigned long *state)
-+{
-+	struct rpi_poe_fan_ctx *ctx = cdev->devdata;
-+
-+	if (!ctx)
-+		return -EINVAL;
-+
-+	*state = ctx->rpi_poe_fan_max_state;
-+
-+	return 0;
-+}
-+
-+static int rpi_poe_fan_get_cur_state(struct thermal_cooling_device *cdev,
-+				     unsigned long *state)
-+{
-+	struct rpi_poe_fan_ctx *ctx = cdev->devdata;
-+
-+	if (!ctx)
-+		return -EINVAL;
-+
-+	*state = ctx->rpi_poe_fan_state;
-+
-+	return 0;
-+}
-+
-+static int rpi_poe_fan_set_cur_state(struct thermal_cooling_device *cdev,
-+				     unsigned long state)
-+{
-+	struct rpi_poe_fan_ctx *ctx = cdev->devdata;
-+	int ret;
-+
-+	if (!ctx || (state > ctx->rpi_poe_fan_max_state))
-+		return -EINVAL;
-+
-+	if (state == ctx->rpi_poe_fan_state)
-+		return 0;
-+
-+	ret = __set_pwm(ctx, ctx->rpi_poe_fan_cooling_levels[state]);
-+	if (ret) {
-+		dev_err(&cdev->device, "Cannot set pwm!\n");
-+		return ret;
-+	}
-+
-+	ctx->rpi_poe_fan_state = state;
-+
-+	return ret;
-+}
-+
-+static const struct thermal_cooling_device_ops rpi_poe_fan_cooling_ops = {
-+	.get_max_state = rpi_poe_fan_get_max_state,
-+	.get_cur_state = rpi_poe_fan_get_cur_state,
-+	.set_cur_state = rpi_poe_fan_set_cur_state,
-+};
-+
-+static int rpi_poe_fan_of_get_cooling_data(struct device *dev,
-+				       struct rpi_poe_fan_ctx *ctx)
-+{
-+	struct device_node *np = dev->of_node;
-+	int num, i, ret;
-+
-+	if (!of_find_property(np, "cooling-levels", NULL))
-+		return 0;
-+
-+	ret = of_property_count_u32_elems(np, "cooling-levels");
-+	if (ret <= 0) {
-+		dev_err(dev, "cooling-levels property missing or invalid: %d\n",
-+			ret);
-+		return ret ? : -EINVAL;
-+	}
-+
-+	num = ret;
-+	ctx->rpi_poe_fan_cooling_levels = devm_kzalloc(dev, num * sizeof(u32),
-+						   GFP_KERNEL);
-+	if (!ctx->rpi_poe_fan_cooling_levels)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u32_array(np, "cooling-levels",
-+					 ctx->rpi_poe_fan_cooling_levels, num);
-+	if (ret) {
-+		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		if (ctx->rpi_poe_fan_cooling_levels[i] > MAX_PWM) {
-+			dev_err(dev, "PWM fan state[%d]:%d > %d\n", i,
-+				ctx->rpi_poe_fan_cooling_levels[i], MAX_PWM);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	ctx->rpi_poe_fan_max_state = num - 1;
-+
-+	return 0;
-+}
-+
-+static int rpi_poe_fan_probe(struct platform_device *pdev)
-+{
-+	struct thermal_cooling_device *cdev;
-+	struct rpi_poe_fan_ctx *ctx;
-+	struct device *hwmon;
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *fw_node;
-+	int ret;
-+
-+	fw_node = of_parse_phandle(np, "firmware", 0);
-+	if (!fw_node) {
-+		dev_err(&pdev->dev, "Missing firmware node\n");
-+		return -ENOENT;
-+	}
-+
-+	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	mutex_init(&ctx->lock);
-+
-+	ctx->fw = rpi_firmware_get(fw_node);
-+	if (!ctx->fw)
-+		return -EPROBE_DEFER;
-+
-+	platform_set_drvdata(pdev, ctx);
-+
-+	ret = read_reg(ctx->fw, POE_DEF_PWM, &ctx->def_pwm_value);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get default PWM value: %i\n",
-+			ret);
-+		return ret;
-+	}
-+	ret = read_reg(ctx->fw, POE_CUR_PWM, &ctx->pwm_value);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get current PWM value: %i\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	hwmon = devm_hwmon_device_register_with_groups(&pdev->dev, "rpipoefan",
-+						       ctx, rpi_poe_fan_groups);
-+	if (IS_ERR(hwmon)) {
-+		dev_err(&pdev->dev, "Failed to register hwmon device\n");
-+		return PTR_ERR(hwmon);
-+	}
-+
-+	ret = rpi_poe_fan_of_get_cooling_data(&pdev->dev, ctx);
-+	if (ret)
-+		return ret;
-+
-+	rpi_poe_fan_update_state(ctx, ctx->pwm_value);
-+	if (!IS_ENABLED(CONFIG_THERMAL))
-+		return 0;
-+
-+	cdev = thermal_of_cooling_device_register(np,
-+						  "rpi-poe-fan", ctx,
-+						  &rpi_poe_fan_cooling_ops);
-+	if (IS_ERR(cdev)) {
-+		dev_err(&pdev->dev,
-+			"Failed to register rpi-poe-fan as cooling device");
-+		return PTR_ERR(cdev);
-+	}
-+	ctx->cdev = cdev;
-+	thermal_cdev_update(cdev);
-+
-+	return 0;
-+}
-+
-+static int rpi_poe_fan_remove(struct platform_device *pdev)
-+{
-+	struct rpi_poe_fan_ctx *ctx = platform_get_drvdata(pdev);
-+	u32 value = ctx->def_pwm_value;
-+
-+	thermal_cooling_device_unregister(ctx->cdev);
-+	if (ctx->pwm_value != value)
-+		write_reg(ctx->fw, POE_CUR_PWM, &value);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int rpi_poe_fan_suspend(struct device *dev)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+	u32 value = 0;
-+	int ret = 0;
-+
-+	if (ctx->pwm_value != value)
-+		ret = write_reg(ctx->fw, POE_CUR_PWM, &value);
-+
-+	return ret;
-+}
-+
-+static int rpi_poe_fan_resume(struct device *dev)
-+{
-+	struct rpi_poe_fan_ctx *ctx = dev_get_drvdata(dev);
-+	u32 value = ctx->pwm_value;
-+	int ret = 0;
-+
-+	if (value != 0)
-+		ret = write_reg(ctx->fw, POE_CUR_PWM, &value);
-+
-+	return ret;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(rpi_poe_fan_pm, rpi_poe_fan_suspend,
-+			 rpi_poe_fan_resume);
-+
-+static const struct of_device_id of_rpi_poe_fan_match[] = {
-+	{ .compatible = "raspberrypi,rpi-poe-fan", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_rpi_poe_fan_match);
-+
-+static struct platform_driver rpi_poe_fan_driver = {
-+	.probe		= rpi_poe_fan_probe,
-+	.remove		= rpi_poe_fan_remove,
-+	.driver	= {
-+		.name		= "rpi-poe-fan",
-+		.pm		= &rpi_poe_fan_pm,
-+		.of_match_table	= of_rpi_poe_fan_match,
-+	},
-+};
-+
-+module_platform_driver(rpi_poe_fan_driver);
-+
-+MODULE_AUTHOR("Serge Schneider <serge@raspberrypi.org>");
-+MODULE_ALIAS("platform:rpi-poe-fan");
-+MODULE_DESCRIPTION("Raspberry Pi PoE HAT fan driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index c4a5c9e..f70d08a 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -89,6 +89,8 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_SET_GPIO_CONFIG =                        0x00038043,
- 	RPI_FIRMWARE_GET_PERIPH_REG =                         0x00030045,
- 	RPI_FIRMWARE_SET_PERIPH_REG =                         0x00038045,
-+	RPI_FIRMWARE_GET_POE_HAT_VAL =                        0x00030049,
-+	RPI_FIRMWARE_SET_POE_HAT_VAL =                        0x00030050,
- 
- 
- 	/* Dispmanx TAGS */
 -- 
 2.7.4
 
