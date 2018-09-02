@@ -6,47 +6,59 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C32C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A72EC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCF020856
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C50C420857
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 18:15:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEXKH+Yh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCF020856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBu+6fGI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50C420857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeIBWS5 (ORCPT
+        id S1727059AbeIBWbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 18:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51840 "EHLO mail.kernel.org"
+        Sun, 2 Sep 2018 18:31:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbeIBWS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 18:18:57 -0400
+        id S1726101AbeIBWbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 18:31:45 -0400
 Received: from archlinux (unknown [176.12.107.132])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8C3020835;
-        Sun,  2 Sep 2018 18:02:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51D7720843;
+        Sun,  2 Sep 2018 18:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535911340;
-        bh=NIprCD9qe6te+diqs9tREvaAVPD6+S+HiisV3O6kljg=;
+        s=default; t=1535912107;
+        bh=csh8erRommbsesy8wMRWaZTeTauBXkvMUuZzJwWGhN8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tEXKH+YhiHwHPjpBbsXZaW88v3JbyyN5QOy8vGt8RAyr2T9YhwHUWTYhnhylRzJLt
-         jzVXCx/qWDrifDkppSkHVzT75TCxblNrZKw/N1qmceizC3ZIEr1k59TRN95vRQguxW
-         8IA4v5CS7y8pvHAdWJk3Z2G1A0ZDmdEYdHYzwF0s=
-Date:   Sun, 2 Sep 2018 19:02:14 +0100
+        b=LBu+6fGIqZM651TanQ0Ds47db2f2hjmA7lRLK34SgenyxUte2AcEQLvYK08bD1ZWn
+         xXfmyXKMLVptbvZCW6tHTX837hpevcRdmqh7XiYfVVRlsBaOXRMNfZOSAbOfEFSbf2
+         pGLSt2INuDmb94fldtA6+KZTurM7z8RzNosZwtko=
+Date:   Sun, 2 Sep 2018 19:14:59 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <mark.rutland@arm.com>,
-        <Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: dac: ad5758: Add support for hard reset
-Message-ID: <20180902190214.116f2160@archlinux>
-In-Reply-To: <1535554722-1094-1-git-send-email-stefan.popa@analog.com>
-References: <1535554722-1094-1-git-send-email-stefan.popa@analog.com>
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <michal.simek@xilinx.com>, <leoyang.li@nxp.com>,
+        <sudeep.holla@arm.com>, <amit.kucheria@linaro.org>,
+        <broonie@kernel.org>, <arnaud.pouliquen@st.com>,
+        <geert@linux-m68k.org>, <eugen.hristev@microchip.com>,
+        <rdunlap@infradead.org>, <lukas@wunner.de>,
+        <freeman.liu@spreadtrum.com>, <vilhelm.gray@gmail.com>,
+        <tglx@linutronix.de>, <baolin.wang@linaro.org>,
+        <gregkh@linuxfoundation.org>, <sgoud@xilinx.com>,
+        <anirudh@xilinx.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add Xilinx AMS binding
+ documentation
+Message-ID: <20180902191459.5f597c94@archlinux>
+In-Reply-To: <1535624539-7839-2-git-send-email-manish.narani@xilinx.com>
+References: <1535624539-7839-1-git-send-email-manish.narani@xilinx.com>
+        <1535624539-7839-2-git-send-email-manish.narani@xilinx.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -56,131 +68,203 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 17:58:42 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+On Thu, 30 Aug 2018 15:52:17 +0530
+Manish Narani <manish.narani@xilinx.com> wrote:
 
-> The ad5758 has a hardware reset active low input pin. This patch adds a
-> devicetree entry for a reset GPIO and a new ad5758_reset() function.
-> During
-> initialization, it is checked if the reset property is specified and the
-> the GPIO is being asserted, therefore the device will become active.
+> Xilinx AMS have several ADC channels that can be used for measurement of
+> different voltages and temperatures. Document the same in the bindings.
 > 
-> When the reset function is called, if the gpio_reset var is set, then
-> the
-> GPIO will be toggled, otherwise a software reset is performed.
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+> ---
+>  .../devicetree/bindings/iio/adc/xilinx-ams.txt     | 159 +++++++++++++++++++++
+>  1 file changed, 159 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
 > 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt b/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
+> new file mode 100644
+> index 0000000..8cc96f0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
+> @@ -0,0 +1,159 @@
+> +Xilinx AMS controller
+> +
+> +The AMS includes an ADC as well as on-chip sensors that can be used to
+> +sample external voltages and monitor on-die operating conditions, such as
+> +temperature and supply voltage levels. The AMS has two SYSMON blocks.
+> +PL-SYSMON block is capable of monitoring off chip voltage and temperature.
+> +PL-SYSMON block has DRP, JTAG and I2C interface to enable monitoring from
+> +external master. Out of this interface currently only DRP is supported.
+> +Other block PS-SYSMON is memory mapped to PS. Both of block has built-in
+> +alarm generation logic that is used to interrupt the processor based on
+> +condition set.
 
-Two minors inline. I'll tidy it up whilst applying.
+I guess anyone reading this because they have the hardware would know what
+PS and PL are, but it would still be nice to define those acronyms!
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+Google suggest, Programmable Logic (FPGA bit I guess) and Process Space
+(Arm core bit?)  As I read this, from a driver point of view it doesn't
+really matter - these are just blocks of channels that are there?
 
-I'm taking the view that the binding addition is very straight forward
-but happy to have input from the DT maintainers if they wish to give
-it!
+This binding is complex enough I definitely want some DT binding
+review. 
+
+
+
+> +
+> +All designs should have AMS registers, but PS and PL are optional. The
+> +AMS controller can work with only PS, only PL and both PS and PL
+> +configurations. Please specify registers according to your design. Devicetree
+> +should always have AMS module property. Providing PS & PL module is optional.
+> +
+> +Required properties:
+> +	- compatible: Should be "xlnx,zynqmp-ams"
+> +	- reg:  Should specify AMS register space
+> +	- interrupts: Interrupt number for the AMS control interface
+> +	- interrupt-names: Interrupt name, must be "ams-irq"
+> +	- clocks: Should contain a clock specifier for the device
+> +	- ranges: keep the property empty to map child address space
+> +	          (for PS and/or PL) nodes 1:1 onto the parent address
+> +	          space
+> +
+> +AMS device tree subnode:
+> +	- compatible: Should be "xlnx,zynqmp-ams-ps" or "xlnx,zynqmp-ams-pl"
+> +	- reg:  Register space for PS or PL
+> +
+> +Optional properties:
+> +
+> +Following optional property only valid for PL.
+> +	- xlnx,ext-channels: List of external channels that are connected to the
+> +	                     AMS PL module.
+> +
+> +	  The child nodes of this node represent the external channels which are
+> +	  connected to the AMS Module. If the property is not present
+> +	  no external channels will be assumed to be connected.
+> +
+> +	  Each child node represents one channel and has the following
+> +	  properties:
+> +		Required properties:
+> +			* reg: Pair of pins the channel is connected to.
+> +				0: VP/VN
+Hmm. So we have this table here of the ones that may or may not be connected
+with different numbering from the overall table.  Given these indexes
+are arbitrary can we unify them?
+
+I.e. use the index from below but state here which values can be used?
+
+> +				1: VUSER0
+> +				2: VUSER1
+> +				3: VUSER3
+> +				4: VUSER4
+> +				5: VAUXP[0]/VAUXN[0]
+> +				6: VAUXP[1]/VAUXN[1]
+> +				...
+> +				20: VAUXP[15]/VAUXN[15]
+> +			  Note each channel number should only be used at most
+> +			  once.
+> +		Optional properties:
+> +			* xlnx,bipolar: If set the channel is used in bipolar
+> +			  mode.
+> +
+> +
+> +Example:
+> +	xilinx_ams: ams@ffa50000 {
+> +		compatible = "xlnx,zynqmp-ams";
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 56 4>;
+> +		interrupt-names = "ams-irq";
+> +		clocks = <&clkc 70>;
+> +		reg = <0x0 0xffa50000 0x0 0x800>;
+> +		reg-names = "ams-base";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		ams_ps: ams_ps@ffa50800 {
+> +			compatible = "xlnx,zynqmp-ams-ps";
+> +			reg = <0x0 0xffa50800 0x0 0x400>;
+> +		};
+> +
+> +		ams_pl: ams_pl@ffa50c00 {
+> +			compatible = "xlnx,zynqmp-ams-pl";
+> +			reg = <0x0 0xffa50c00 0x0 0x400>;
+> +			xlnx,ext-channels {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				channel@0 {
+> +					reg = <0>;
+> +					xlnx,bipolar;
+> +				};
+> +				channel@1 {
+> +					reg = <1>;
+> +				};
+> +				channel@8 {
+> +					reg = <8>;
+> +					xlnx,bipolar;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +AMS Channels Details:
+> +
+> +Sysmon Block	|Channel|			Details					|Measurement
+> +		 Number									 Type
+> +---------------------------------------------------------------------------------------------------------
+> +AMS CTRL	|0	|System PLLs voltage measurement, VCC_PSPLL.			|Voltage
+> +		|1	|Battery voltage measurement, VCC_PSBATT.			|Voltage
+> +		|2	|PL Internal voltage measurement, VCCINT.			|Voltage
+> +		|3	|Block RAM voltage measurement, VCCBRAM.			|Voltage
+> +		|4	|PL Aux voltage measurement, VCCAUX.				|Voltage
+> +		|5	|Voltage measurement for six DDR I/O PLLs, VCC_PSDDR_PLL.	|Voltage
+> +		|6	|VCC_PSINTFP_DDR voltage measurement.				|Voltage
+> +---------------------------------------------------------------------------------------------------------
+> +PS Sysmon	|7	|LPD temperature measurement.					|Temperature
+> +		|8	|FPD Temperature Measurment (REMOTE).				|Temperature
+> +		|9	|VCC PS LPD voltage measurement (supply1).			|Voltage
+> +		|10	|VCC PS FPD voltage measurement (supply2).			|Voltage
+> +		|11	|PS Aux voltage reference (supply3).				|Voltage
+> +		|12	|DDR I/O VCC voltage measurement.				|Voltage
+> +		|13	|PS IO Bank 503 voltage measurement (supply5).			|Voltage
+> +		|14	|PS IO Bank 500 voltage measurement (supply6).			|Voltage
+> +		|15	|VCCO_PSIO1 voltage measurement.				|Voltage
+> +		|16	|VCCO_PSIO2 voltage measurement.				|Voltage
+> +		|17	|VCC_PS_GTR voltage measurement (VPS_MGTRAVCC).			|Voltage
+> +		|18	|VTT_PS_GTR voltage measurement (VPS_MGTRAVTT).			|Voltage
+> +		|19	|VCC_PSADC voltage measurement.					|Voltage
+> +---------------------------------------------------------------------------------------------------------
+> +PL Sysmon	|20	|PL Temperature measurement.					|Temperature
+> +		|21	|PL Internal Voltage Voltage measurement, VCCINT.		|Voltage
+> +		|22	|PL Auxiliary Voltage measurement, VCCAUX.			|Voltage
+> +		|23	|ADC Reference P+ Voltage measurement.				|Voltage
+> +		|24	|ADC Reference N- Voltage measurement.				|Voltage
+> +		|25	|PL Block RAM Voltage measurement, VCCBRAM.			|Voltage
+> +		|26	|LPD Internal Voltage measurement, VCC_PSINTLP (supply4).	|Voltage
+> +		|27	|FPD Internal Voltage measurement, VCC_PSINTFP (supply5).	|Voltage
+> +		|28	|PS Auxiliary Voltage measurement (supply6).			|Voltage
+> +		|29	|PL VCCADC Voltage measurement (vccams).			|Voltage
+> +		|30	|Differencial analog input signal Voltage measurment.		|Voltage
+> +		|31	|VUser0 Voltage measurement (supply7).				|Voltage
+> +		|32	|VUser1 Voltage measurement (supply8).				|Voltage
+> +		|33	|VUser2 Voltage measurement (supply9).				|Voltage
+> +		|34	|VUser3 Voltage measurement (supply10).				|Voltage
+> +		|35	|Auxiliary ch 0 Voltage measurement (VAux0).			|Voltage
+> +		|36	|Auxiliary ch 1 Voltage measurement (VAux1).			|Voltage
+> +		|37	|Auxiliary ch 2 Voltage measurement (VAux2).			|Voltage
+> +		|38	|Auxiliary ch 3 Voltage measurement (VAux3).			|Voltage
+> +		|39	|Auxiliary ch 4 Voltage measurement (VAux4).			|Voltage
+> +		|40	|Auxiliary ch 5 Voltage measurement (VAux5).			|Voltage
+> +		|41	|Auxiliary ch 6 Voltage measurement (VAux6).			|Voltage
+> +		|42	|Auxiliary ch 7 Voltage measurement (VAux7).			|Voltage
+> +		|43	|Auxiliary ch 8 Voltage measurement (VAux8).			|Voltage
+> +		|44	|Auxiliary ch 9 Voltage measurement (VAux9).			|Voltage
+> +		|45	|Auxiliary ch 10 Voltage measurement (VAux10).			|Voltage
+> +		|46	|Auxiliary ch 11 Voltage measurement (VAux11).			|Voltage
+> +		|47	|Auxiliary ch 12 Voltage measurement (VAux12).			|Voltage
+> +		|48	|Auxiliary ch 13 Voltage measurement (VAux13).			|Voltage
+> +		|49	|Auxiliary ch 14 Voltage measurement (VAux14).			|Voltage
+> +		|50	|Auxiliary ch 15 Voltage measurement (VAux15).			|Voltage
+> +---------------------------------------------------------------------------------------------------------
 
 Thanks,
 
 Jonathan
-> ---
->  .../devicetree/bindings/iio/dac/ad5758.txt         |  5 ++++
->  drivers/iio/dac/ad5758.c                           | 27 ++++++++++++++++++++--
->  2 files changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/ad5758.txt b/Documentation/devicetree/bindings/iio/dac/ad5758.txt
-> index bba01a5..bbcd789 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/ad5758.txt
-> +++ b/Documentation/devicetree/bindings/iio/dac/ad5758.txt
-> @@ -50,6 +50,9 @@ Required properties:
->  
->  Optional properties:
->  
-> + - reset-gpios : GPIO spec for the RESET pin. If specified, it will be
-> + 		 asserted during driver probe.
-There is a space at the start of the line above that shouldn't be there.
-
-Fixed up.
-
-> +
->   - adi,dc-dc-ilim-microamp: The dc-to-dc converter current limit
->  		   The following values are currently supported [uA]:
->  			* 150000
-> @@ -71,6 +74,8 @@ AD5758 Example:
->  		spi-max-frequency = <1000000>;
->  		spi-cpha;
->  
-> +		reset-gpios = <&gpio 22 0>;
-> +
->  		adi,dc-dc-mode = <2>;
->  		adi,range-microvolt = <0 10000000>;
->  		adi,dc-dc-ilim-microamp = <200000>;
-> diff --git a/drivers/iio/dac/ad5758.c b/drivers/iio/dac/ad5758.c
-> index bd36333..b5cc5bd 100644
-> --- a/drivers/iio/dac/ad5758.c
-> +++ b/drivers/iio/dac/ad5758.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/property.h>
->  #include <linux/spi/spi.h>
-> +#include <linux/gpio/consumer.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -108,6 +109,7 @@ struct ad5758_range {
->  struct ad5758_state {
->  	struct spi_device *spi;
->  	struct mutex lock;
-> +	struct gpio_desc *gpio_reset;
->  	struct ad5758_range out_range;
->  	unsigned int dc_dc_mode;
->  	unsigned int dc_dc_ilim;
-> @@ -474,6 +476,22 @@ static int ad5758_internal_buffers_en(struct ad5758_state *st, bool enable)
->  					     AD5758_CAL_MEM_UNREFRESHED_MSK);
->  }
->  
-> +static int ad5758_reset(struct ad5758_state *st)
-> +{
-> +	if (st->gpio_reset) {
-> +		gpiod_set_value(st->gpio_reset, 0);
-> +		usleep_range(100, 1000);
-> +		gpiod_set_value(st->gpio_reset, 1);
-
-This feels like an odd construct.  I would bring the usleep_range
-and final return into this if block.
-
-> +	} else {
-> +		/* Perform a software reset */
-> +		return ad5758_soft_reset(st);
-> +	}
-> +
-> +	usleep_range(100, 1000);
-> +
-> +	return 0;
-> +}
-> +
->  static int ad5758_reg_access(struct iio_dev *indio_dev,
->  			     unsigned int reg,
->  			     unsigned int writeval,
-> @@ -768,13 +786,18 @@ static int ad5758_init(struct ad5758_state *st)
->  {
->  	int regval, ret;
->  
-> +	st->gpio_reset = devm_gpiod_get_optional(&st->spi->dev, "reset",
-> +						 GPIOD_OUT_HIGH);
-> +	if (IS_ERR(st->gpio_reset))
-> +		return PTR_ERR(st->gpio_reset);
-> +
->  	/* Disable CRC checks */
->  	ret = ad5758_crc_disable(st);
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* Perform a software reset */
-> -	ret = ad5758_soft_reset(st);
-> +	/* Perform a reset */
-> +	ret = ad5758_reset(st);
->  	if (ret < 0)
->  		return ret;
->  
-
