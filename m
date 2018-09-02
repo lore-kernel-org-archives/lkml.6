@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B355C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B43320652
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1626220652
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:17:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EgL4ByXs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B43320652
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="VKAxPCxK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1626220652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbeIBRd0 (ORCPT
+        id S1729507AbeIBRdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:33:26 -0400
-Received: from mail-sn1nam01on0111.outbound.protection.outlook.com ([104.47.32.111]:9515
+        Sun, 2 Sep 2018 13:33:39 -0400
+Received: from mail-sn1nam01on0115.outbound.protection.outlook.com ([104.47.32.115]:32096
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728698AbeIBRcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:32:52 -0400
+        id S1729340AbeIBRc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:32:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qRrpAhkinkQREQi1h3GTBse7aXP/LzYmnsQ35dfmvRY=;
- b=EgL4ByXs+pEcjdunoNaglhji4R8y2P+efPrYQLCXH1n56rWCInlkatdzRXW7KCDwA6tViHXoNfXpy7Ou3EjyQgDSI6U2wtMnQx53bQH/tFPRfdZzpaUFd2BF19kYdav7fkx2yL73jA66Ik5mCFHhDkuFG0WekVWlt62rkFAi47U=
+ bh=B/syL/sL8H8qmwlFTlLi6vDTU9NVmDBut+MrcwxKmCw=;
+ b=VKAxPCxKlSaFlGMXh7x5pDHF8WT84xtu4F+wWDK8PNhdl9Z4+XZyVIJziUQ0YTn9VWvFd0HZrKRWt7TU7OnzjLeOs5DcrQMKyA+7MIztiSy0oyOs/uy9iIwg9QmLQF/1tC4zX5v/PdikDEGszwwIO7+P9GP9TCPr6rXo015cdEg=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0167.namprd21.prod.outlook.com (10.173.192.149) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:17:02 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:16:30 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:17:02 +0000
+ 13:16:30 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 42/47] ALSA: hda: Fix implicit PCM format type
- conversion
-Thread-Topic: [PATCH AUTOSEL 4.4 42/47] ALSA: hda: Fix implicit PCM format
- type conversion
-Thread-Index: AQHUQr8o95Xkykg7T02ye55B8bpHKg==
-Date:   Sun, 2 Sep 2018 13:16:29 +0000
-Message-ID: <20180902131533.184092-42-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 37/47] ALSA: riptide: Properly endian notations
+Thread-Topic: [PATCH AUTOSEL 4.4 37/47] ALSA: riptide: Properly endian
+ notations
+Thread-Index: AQHUQr8l3xmJvN6uE0WpZmBBKHlNnA==
+Date:   Sun, 2 Sep 2018 13:16:24 +0000
+Message-ID: <20180902131533.184092-37-alexander.levin@microsoft.com>
 References: <20180902131533.184092-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902131533.184092-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -58,30 +57,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0167;6:4FlTqEV9BIqTvgOq10shjx2pvrsdxRkUE2YbFktYO/uwcDGon635sf4wUit/qxYJE5RB/GOikNj3EbEKm/pnUUrY11QS1oaHAKxRuxiJqrcI0XdJ8t3GVMjktikhe1zzDEoeQ8FxUMmfWL7WWa9nfHeUVV0INmFsY1BjRiWBYZKTGcFhzPmhYwfVMPicznHBzMvkWTZRZouuCKMRLy4J4UrNevPv8UU0O5RtgcwJ8vT3oxGcSVMkhh1DcaupK6TS1fHMvw035PDZ/kePJaQjZsyA6bkEthU5PW287qJ3ekNIBvdfBK/5S0f6pK6hamG3IqnYnsLMYJutit6S2bQ5I9n62H9MU6/R2WJU/xix5XRUlQLC3O1MSI47z3cs1EnTqV4b5WX1ETRihK203Ws8LEUWB4Bt/SgG8T4T4G8LF48t2LsIIxR4momts+kqzr1XYt5vkY3WvKrggwUOn4htJA==;5:4ciDtW424ssEW3KKlUiNamo/0kgV1qG3mNwjKBPGbA5VApPEmq5lzOYOV9gvmOo7AFm/I2s8RrQn42dT8ELHXG2nLJJQ7G6nAMRCOsD/5eBjTY9xEDqcMTk7YSnW9iJ64HvWUVUJFzu+GEvtkFlbxfYxxW3dD3LdAj3jPgXizVQ=;7:/5m1j107QjRCJHLIaSaZP+e7iUPJa9z3dXwYU8pMMdvr6Gfj3CDE4QDVZ5yqzrMTn71DIRcMBl+fvYssvaSUHQM9UT0HqH6MYv4ucOWu8RnDN4QdO0oSs7r1ftZQt4HBXxXTA3gNeevGj3C9a1WR0a7fj9PGJF3wv4K1Xef9J6sMJZs39gY1P6KbzmIFPdM2pi06D26uDcZIobsH05eAB7/VKLPAVjBmXKdLPijmz15A4cMGANhbE/rwapQ0zuu0
-x-ms-office365-filtering-correlation-id: a50e70cb-2b37-4c4f-47cf-08d610d65f11
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0167;6:abeASDs1fcFTEuTdmC1ASYNKKDEYk7qLu1E/AAz9Pp8cjbDnGHzqEGRrZ1EBs+BS7gtfyTfJJqvjXdsfqbKRPvqAIuEI7E3XMm+utW7ZhrywRPbMKfgB/44mEdLA60FLZz4C5u1/yh7kfOy6GJUi6N7ZzDUNZAcRmKUbPyBWlKRM/NckhnfcQylfxx+erIUad7roWfAzaQTPc5K4PTrH7B6RfiBUurnZF2ZT3bzJQixVB5x8xkfOepa0/xHJAcXmuZolKNTw0h06tTVPKsZyuaNVN13v/xdIVIt3D/jET1B2yC6db6XnmXb5Z9LqbeINpfWe6xZv7gEwJDWJ354nhzGpfd2Wq5Gv4Yr6WGCCoc6xcjGijl5yAu3UXi3HSNBfRvJ0vJAo557IVLervguNTPruKb2NKUFWsf2MPde18PknxxMzQNqwf+fK0gUoF0XkMZNB7zgz+bN43dzYAdNzSg==;5:4o/LxWOqb6QKoG/hsjLRF2i8WVnKreqrUx0yUBXRj2TGgK1eLsEqAErwxlB98ByQnegXaxYTdvSOaN+GN7G5tFnS5KdboqScITk14jqRWbTsjA15mYFyGLJnaWMj/m0nQ4hIsIxjqLxtA9hqJs35+nxLNAXWHfL00MWrJ9c+t4g=;7:reNcZOFtOpybR9JT3Covg1XQdtF2SWD+5l1mrDzabjkblV5f+bWBWcr/ldZAXCHi2qaavPbcjPFAB7g1Vc4H34iXNLJrWsOP64IxRPqG/ACMpY4tBjKEIUrx1Su/XUajUp9p0emL2NJ55KNvtG4GVuSVGcuxoU1uxM9ckGun3ZBxXWpI4fJAMBl1wttkTR3owvhKfiYy1US2adkKKw5SW8wLBH/IfrTHaP2/4wpIXpd0jhNHLeJbIw4xKe9hGrHG
+x-ms-office365-filtering-correlation-id: 1f6d31aa-5702-4913-ecf0-08d610d64c01
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0167;
 x-ms-traffictypediagnostic: CY4PR21MB0167:
-x-microsoft-antispam-prvs: <CY4PR21MB016728A708CFCA120F6AEC2FFB0D0@CY4PR21MB0167.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0167A42507D543DAD45140CEFB0D0@CY4PR21MB0167.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0167;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0167;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(189003)(305945005)(6436002)(7736002)(6486002)(106356001)(105586002)(6512007)(53936002)(8676002)(36756003)(6666003)(6346003)(186003)(476003)(486006)(26005)(2616005)(11346002)(446003)(5660300001)(2501003)(5250100002)(10090500001)(102836004)(97736004)(6506007)(2900100001)(81156014)(316002)(81166006)(66066001)(22452003)(217873002)(2906002)(99286004)(54906003)(1076002)(8936002)(76176011)(68736007)(110136005)(3846002)(10290500003)(4326008)(25786009)(478600001)(6116002)(86612001)(575784001)(86362001)(107886003)(72206003)(14454004)(14444005)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0167;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(189003)(305945005)(6436002)(7736002)(6486002)(106356001)(105586002)(6512007)(53936002)(8676002)(36756003)(6666003)(6346003)(186003)(476003)(486006)(26005)(2616005)(11346002)(446003)(5660300001)(2501003)(5250100002)(10090500001)(102836004)(97736004)(6506007)(2900100001)(81156014)(316002)(81166006)(66066001)(22452003)(217873002)(2906002)(99286004)(54906003)(1076002)(8936002)(76176011)(68736007)(110136005)(3846002)(10290500003)(4326008)(25786009)(478600001)(6116002)(86612001)(86362001)(107886003)(72206003)(14454004)(14444005)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0167;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: Sb3x9qJIh9SvDinQeKOpEKLBY13zUfx8Jbxxn72GnGCf1w2u/RiKtFj+Ulo/+RrOpGvlWu1N2EtOCIwamIMWfGQgazlITGh0ECw+pFzbzz7QbZwhfAMnKvlaPWzzZGVPujbpHOASgW0VzZ3oWRjqrmK8tVWwzXI+NERZhDGB2fMgOi4hOUdVJXf0ZSzjrXb6RErhzYFAjYlCxNSX8l6lVp51UVR65zXRdPuJgSNDZQ3bt3OdkCi02CRcboEZdqJQ/MLl/wlZrqGiqgE675l7Y1eqgZ3377wQrLxPrYEDisxFeBp7lI90SZD1wshS4vOrtkrC7ox7Km5Z2BZ3XUixrp+vwXSFeX9ePa+3pPcaCOM=
+x-microsoft-antispam-message-info: ZH3xLMec3dWeNHv0bNehi2rAPJ7MTTBsxJlI8SQ5QI8B1JuBUNgr6PXellBjuiR/SORfU4kv/Nt5KNGEzRxiySr7zodzwa4NAgkdXRlTVZcPqnfwh/XhOQhAip7yDfqYfbwKJBiX3zBdiaRjiLZv2GS7iIgotMwhBxy0/qKbT46E7zauv2T1YjljwNL+cVvlFjVtc0fg+1xJr5JnxoWDzHH8TTeyeAdMkLztSi6qFQiZhB3zLzlAhGGFimyNcuTql4LlRuZQwoqHaGMzY5hEIWWuFKGJg3njeS3wEGUgYIcXTYqy1sHmvgKDd5AlZlY8VQDrou9ZB8FG4aXa9PDkTqyWQN6ad9AH/W7Fgcu0xT0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a50e70cb-2b37-4c4f-47cf-08d610d65f11
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:16:29.1914
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f6d31aa-5702-4913-ecf0-08d610d64c01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:16:24.0382
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,58 +92,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit a6ea5fe95ab4a1a7af6d57429fe3ecde9acf5b5a ]
+[ Upstream commit be05e3de3a933156d472127f659d4473c461dcc5 ]
 
-The PCM format type is defined with __bitwise, hence it can't be
-passed as integer but needs an explicit cast.  In this patch, instead
-of the messy cast flood, define the format argument of
-snd_hdac_calc_stream_format() to be the proper snd_pcm_format_t type.
-
-This fixes sparse warnings like:
-  sound/hda/hdac_device.c:760:38: warning: incorrect type in argument 1 (di=
-fferent base types)
+The SG descriptor of Riptide contains the little-endian values, hence
+we need to define with __le32 properly.  This fixes sparse warnings
+like:
+  sound/pci/riptide/riptide.c:1112:40: warning: cast to restricted __le32
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/sound/hdaudio.h | 3 ++-
- sound/hda/hdac_device.c | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ sound/pci/riptide/riptide.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
-index e2b712c90d3f..5afe0e3d2553 100644
---- a/include/sound/hdaudio.h
-+++ b/include/sound/hdaudio.h
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/timecounter.h>
- #include <sound/core.h>
-+#include <sound/pcm.h>
- #include <sound/memalloc.h>
- #include <sound/hda_verbs.h>
- #include <drm/i915_component.h>
-@@ -132,7 +133,7 @@ int snd_hdac_get_sub_nodes(struct hdac_device *codec, h=
-da_nid_t nid,
- 			   hda_nid_t *start_id);
- unsigned int snd_hdac_calc_stream_format(unsigned int rate,
- 					 unsigned int channels,
--					 unsigned int format,
-+					 snd_pcm_format_t format,
- 					 unsigned int maxbps,
- 					 unsigned short spdif_ctls);
- int snd_hdac_query_supported_pcm(struct hdac_device *codec, hda_nid_t nid,
-diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
-index e361024eabb6..f7e31b1fe8d8 100644
---- a/sound/hda/hdac_device.c
-+++ b/sound/hda/hdac_device.c
-@@ -745,7 +745,7 @@ static struct hda_rate_tbl rate_bits[] =3D {
-  */
- unsigned int snd_hdac_calc_stream_format(unsigned int rate,
- 					 unsigned int channels,
--					 unsigned int format,
-+					 snd_pcm_format_t format,
- 					 unsigned int maxbps,
- 					 unsigned short spdif_ctls)
- {
+diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
+index 94639d6b5fb5..38c01cc061a0 100644
+--- a/sound/pci/riptide/riptide.c
++++ b/sound/pci/riptide/riptide.c
+@@ -470,10 +470,10 @@ struct snd_riptide {
+ };
+=20
+ struct sgd {			/* scatter gather desriptor */
+-	u32 dwNextLink;
+-	u32 dwSegPtrPhys;
+-	u32 dwSegLen;
+-	u32 dwStat_Ctl;
++	__le32 dwNextLink;
++	__le32 dwSegPtrPhys;
++	__le32 dwSegLen;
++	__le32 dwStat_Ctl;
+ };
+=20
+ struct pcmhw {			/* pcm descriptor */
 --=20
 2.17.1
