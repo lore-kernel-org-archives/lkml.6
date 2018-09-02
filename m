@@ -6,146 +6,163 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DA1C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CAAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D07204FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BFE5204FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:06:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="HPftPCI/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D07204FD
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="U1Bq7qdi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFE5204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbeIBRWP (ORCPT
+        id S1728910AbeIBRWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:22:15 -0400
-Received: from mail-eopbgr720115.outbound.protection.outlook.com ([40.107.72.115]:16848
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:22:17 -0400
+Received: from mail-eopbgr680128.outbound.protection.outlook.com ([40.107.68.128]:38064
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727222AbeIBRWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727355AbeIBRWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 2 Sep 2018 13:22:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pbu//Wpi7PxYiQC+vElA9DI5p3gi5mQZ0/UKOXRIwNU=;
- b=HPftPCI/l/j3ZbXWS/oFDGkdkHu62AyJGtFcchhqKIguXxHhrlG66n+8i7QWDUuwWnE9TT19gFltVxy7goFf6iVlyZ1amrQ+xy+vNulSWwYadODtasM9APjMfpi3QokXRUDzpl878Fh4ev5NClW+pOAux90nKx+vfY0eDTFrSNI=
+ bh=jg/id7omxsP2DmdbUG5BD9WOPT5g/vufIL6iqbN8fNQ=;
+ b=U1Bq7qdiamZ0Iyo7Lwsvv8RwHOAqxqqxb/GvGP8/9v+JIjJL0UA9Ev0jkf+qCKMtZ+RJscJBX9kXuRZGn6E4YgIInZQbq0/rRwLm3CF2lsQhDbPganaSktV2aRfwqEDKkzVUghJ/2IV7sikzm7hCXaCvJWx5OSl4nii+EA7fBfA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
+ CY4PR21MB0629.namprd21.prod.outlook.com (10.175.115.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:06:20 +0000
+ 15.20.1122.7; Sun, 2 Sep 2018 13:06:28 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:06:20 +0000
+ 13:06:28 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+CC:     BingJing Chang <bingjingc@synology.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 01/89] misc: mic: SCIF Fix scif_get_new_port()
- error handling
-Thread-Topic: [PATCH AUTOSEL 4.14 01/89] misc: mic: SCIF Fix
- scif_get_new_port() error handling
-Thread-Index: AQHUQr24vhN/ki3C5E+qLxt2uSx3gg==
-Date:   Sun, 2 Sep 2018 13:06:10 +0000
-Message-ID: <20180902064918.183387-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 16/89] md/raid5: fix data corruption of
+ replacements after originals dropped
+Thread-Topic: [PATCH AUTOSEL 4.14 16/89] md/raid5: fix data corruption of
+ replacements after originals dropped
+Thread-Index: AQHUQr3C8RvhpHt8wkCx1wDbjT7JXA==
+Date:   Sun, 2 Sep 2018 13:06:28 +0000
+Message-ID: <20180902064918.183387-16-alexander.levin@microsoft.com>
+References: <20180902064918.183387-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180902064918.183387-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:4F8XETKsD5/fOeYTDB9ByAy+PoPGk7FDaqBZXDpNH3AK3vNavpNZa2OO3hcXla0H9YcxB6284zqVikQYANucpG/ZqSIQZINUg5h6FCpRkpgZvdSe+KspHBsAdRebEpvHuMptAIwp7OE7VSnajWMTCsULB1J6K4Qyyf+Rjf2z/aEwPRpNuNoNOE+zVgcEGWIBm9ATmiIc5rE9V0+2ecT/e9FqMjCsnToYRslcdbJg8nU59pZZe4W/xKa+JyXyvGYUpzNJe+Sl/Kdn+yEc+dUlJgGBp5REmZPnuwlQ5G+fsdEDbmXCxFgBdnjJkgMhRSy81d+RbMskK+wXa8pCNvfKHqpof9iSTkM+VvsAR451qvbMqJJLaphigtV7Fuqanm2PxVCiEjmnxW7mtzuedmJxIwnLtvqgcJWhd86340b7DdQtWUUovQvIleYF5DkgvvjTPJoL7vNgbUVPN0vkLOAz/A==;5:Cns1spLVHlAyC3dCvpxuWWqimEXWpc+wY8LRhNCwFJ0OW5BKj/taTuNmE8hsLLMvpTUyBuM6Ptq4PqZh4uG00KpZWr49j2mNy3EcdJVg7ipc4g5i6eoJ++J9MrNeyrSZmsKEZrbEFy259izecp2niiJtk39VzCI+IvPQCRQgSg4=;7:7AJxI+HaaaHJgptVs277rtxLX+SmlJ0CRyh8qA7GPqx2i0cQ6+CaAb/Zm/Ut4Pw0U39h+DMpfKMQQsc24WeNaWHDA459Q0o8gwH097Q+4/7IU0AS2CTTNF9kXSmyYS9WywYdvHO0YAxWuBjpR046IrDz4ySv7U+T7Cr6Gbni3MdHE4StcZuFRSVN39tn5wRxqNbSpmhbj+TfiXsAyYRhWysnipJ5ATgcmNwbZSplO/NspsUjQ8pFwPtYOL5HXoer
-x-ms-office365-filtering-correlation-id: 6f91cc01-fb63-4166-d982-08d610d4e066
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0629;6:eMFgGRt9RLmSVyCXisIg7x7QTbd60/OMpuYjQxaLeJNiHdcaQNJKuJHgehIgS9TTRS+nS4joo/cr0rt/K1paB335RHfH11MWdbHguukotYt5eBoFS+t9LID58eFjmLzv+6UWq7htTuiClM31RB0xVRJilMiOO2dGTb6131HZxDMegovpRxT23U+n45+Z4DhQZXzwBp1PgMRAHwBZfrExE48YnkBybkmrtuvF4I5lElQXAzf/sJrQC+FPk6sth/ihXO6LPOr87+V5OpF5bcEukJhX4gKD3obowMAbXEFYm2lguzlfoBN0WXB2AXz7M1N9/rX2ynB6ty0EgaCxhUxIlnmZ9sgD5qOjyg8c1v/YlyG7l09PdkmQrCStEP//wtqdTC9v4Jev7FMM68MQhntXkD2/k4ISkRerJVdqQEU2agZWf6NDMA9FCnpWsouv1n4vhqtILX49CjCC7/+meZlscg==;5:GTOePZS8mikaccP6Sy1fv4clmb94RXlpykWbMyAw6mRpxDKeTEbs4og1aHI/t9NkiycbqCPNxMwYtBMg189IbbFOWvbccYiKynwK8JvEYnhev/PjLUbylW3rsqF9hjltm8RvW4XbUtNeQRyBvrc2K8rs9kLDAU2srHYJbEnxqTY=;7:06pDgfGYp1MvpXEpeUZkrd9e17Aew8ortDdYm6U2nbZdlhV0M4QHFsCx5PtRgJhdzPkxWqZtazLx+xoLbgMQ76T9YOzuM9U4UBbKZS9a/Wwo4T+b6g9dXcejrKBfWkNdaDkTldXcufvLu9AxJRbZOva59Fs32hdMkbXrVFsMp4wjZG5pjOEJHYQ9F3ncL5FYF1n3ot4CDCAcUzGjGrnPUAgxZF5FhWVDIcZmw+aXsSzEHPSM6KNBgoPgfjpuCPll
+x-ms-office365-filtering-correlation-id: 17b7a7a3-4302-4897-1eb1-08d610d4e535
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
-x-ms-traffictypediagnostic: CY4PR21MB0822:
-x-microsoft-antispam-prvs: <CY4PR21MB0822A63547FAC07998F3FA2FFB0D0@CY4PR21MB0822.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0629;
+x-ms-traffictypediagnostic: CY4PR21MB0629:
+x-microsoft-antispam-prvs: <CY4PR21MB062949B85D965C40BEEC3D11FB0D0@CY4PR21MB0629.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(788757137089)(67672495146484);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0629;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0629;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(366004)(39860400002)(189003)(199004)(256004)(14444005)(6512007)(486006)(86612001)(97736004)(68736007)(478600001)(25786009)(8676002)(10090500001)(8936002)(2906002)(575784001)(110136005)(86362001)(107886003)(4326008)(186003)(26005)(6346003)(6486002)(53936002)(2616005)(476003)(72206003)(10290500003)(6506007)(81166006)(81156014)(66066001)(22452003)(99286004)(102836004)(5660300001)(217873002)(106356001)(2900100001)(1076002)(6666003)(7736002)(2501003)(14454004)(5250100002)(305945005)(3846002)(54906003)(36756003)(6436002)(105586002)(316002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(396003)(39860400002)(189003)(199004)(6486002)(8936002)(6512007)(22452003)(53936002)(6436002)(66066001)(4326008)(186003)(25786009)(86362001)(2900100001)(107886003)(76176011)(486006)(68736007)(36756003)(99286004)(2501003)(5250100002)(110136005)(54906003)(106356001)(316002)(105586002)(10290500003)(72206003)(10090500001)(8676002)(478600001)(14454004)(5660300001)(476003)(1076002)(3846002)(305945005)(446003)(6116002)(217873002)(6346003)(11346002)(97736004)(81156014)(7736002)(81166006)(2906002)(14444005)(102836004)(86612001)(26005)(6506007)(256004)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0629;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: KBT1zzXQB/NQ6CPZcrmKfB6FtsnVs6lEgGHLUyhVrUowZFhGj+vCd3hY5IsdoB4dV0xt/oOVZWxtzaT9dKQnUcFdrp5zVTsCVwI0aHr9S9qe4Wu0KlV130Vdcwagh26Td8nEMXcR3SZ6A1rjT3FUMqoomcB36Oh/zX3z7nP2NjRoaK0kZnTDIRowmQdU93PpvtrvcpwOMDe/uSyDeAilptin6oNA6X0sslVcP+ZUbh758lxyx6qFIxPvnwaboBstXm7Yk0zYy0SSdJr6/8fus3U5co4DzURW9RZwI03hdaaiVPv0Rir399jn5saCWyBfELzlrq1v+SB5D17+r2l6I/AEIuuX2GWwvTjWxeWqn/o=
+x-microsoft-antispam-message-info: YiHtE/9f75RpHFi3wKpzR287E/we7kevBzGgJOEMSr+ZjQJrIedqKa4dLEfWs6VIJCFk6rN/oOALQiTIVdkrhL6XRQ409fA395uNsOJeriDRg26KIwD7HFa1OdnXVx+9x0/U0ROq5wVbrywaU3a01BrOnPQHXE9ISxBqilnnUrLAqfOsUbKSWRiZGmYWHB4drPc9GYg4tpMlJh95dT2EDmoHjxGjvk3SjL9k2qM6uTDn0esUBfrBVw3sLipnafSxnMft81KKJmDfNv6+5LXTlfOQmnhgjuIdGGxxFLHmTOlq5T9hj4nfbOuqAkxSEviv5ASkEb0fUT2hot/Yfn5A0crioqaDeQo4e8phjBioaHA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f91cc01-fb63-4166-d982-08d610d4e066
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:06:10.9904
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17b7a7a3-4302-4897-1eb1-08d610d4e535
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:06:28.2237
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0822
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0629
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: BingJing Chang <bingjingc@synology.com>
 
-[ Upstream commit a39284ae9d2ad09975c8ae33f1bd0f05fbfbf6ee ]
+[ Upstream commit d63e2fc804c46e50eee825c5d3a7228e07048b47 ]
 
-There are only 2 callers of scif_get_new_port() and both appear to get
-the error handling wrong.  Both treat zero returns as error, but it
-actually returns negative error codes and >=3D 0 on success.
+During raid5 replacement, the stripes can be marked with R5_NeedReplace
+flag. Data can be read from being-replaced devices and written to
+replacing spares without reading all other devices. (It's 'replace'
+mode. s.replacing =3D 1) If a being-replaced device is dropped, the
+replacement progress will be interrupted and resumed with pure recovery
+mode. However, existing stripes before being interrupted cannot read
+from the dropped device anymore. It prints lots of WARN_ON messages.
+And it results in data corruption because existing stripes write
+problematic data into its replacement device and update the progress.
 
-Fixes: e9089f43c9a7 ("misc: mic: SCIF open close bind and listen APIs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+\# Erase disks (1MB + 2GB)
+dd if=3D/dev/zero of=3D/dev/sda bs=3D1MB count=3D2049
+dd if=3D/dev/zero of=3D/dev/sdb bs=3D1MB count=3D2049
+dd if=3D/dev/zero of=3D/dev/sdc bs=3D1MB count=3D2049
+dd if=3D/dev/zero of=3D/dev/sdd bs=3D1MB count=3D2049
+mdadm -C /dev/md0 -amd -R -l5 -n3 -x0 /dev/sd[abc] -z 2097152
+\# Ensure array stores non-zero data
+dd if=3D/root/data_4GB.iso of=3D/dev/md0 bs=3D1MB
+\# Start replacement
+mdadm /dev/md0 -a /dev/sdd
+mdadm /dev/md0 --replace /dev/sda
+
+Then, Hot-plug out /dev/sda during recovery, and wait for recovery done.
+echo check > /sys/block/md0/md/sync_action
+cat /sys/block/md0/md/mismatch_cnt # it will be greater than 0.
+
+Soon after you hot-plug out /dev/sda, you will see many WARN_ON
+messages. The replacement recovery will be interrupted shortly. After
+the recovery finishes, it will result in data corruption.
+
+Actually, it's just an unhandled case of replacement. In commit
+<f94c0b6658c7> (md/raid5: fix interaction of 'replace' and 'recovery'.),
+if a NeedReplace device is not UPTODATE then that is an error, the
+commit just simply print WARN_ON but also mark these corrupted stripes
+with R5_WantReplace. (it means it's ready for writes.)
+
+To fix this case, we can leverage 'sync and replace' mode mentioned in
+commit <9a3e1101b827> (md/raid5: detect and handle replacements during
+recovery.). We can add logics to detect and use 'sync and replace' mode
+for these stripes.
+
+Reported-by: Alex Chen <alexchen@synology.com>
+Reviewed-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+Signed-off-by: BingJing Chang <bingjingc@synology.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/misc/mic/scif/scif_api.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/md/raid5.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/misc/mic/scif/scif_api.c b/drivers/misc/mic/scif/scif_=
-api.c
-index ddc9e4b08b5c..56efa9d18a9a 100644
---- a/drivers/misc/mic/scif/scif_api.c
-+++ b/drivers/misc/mic/scif/scif_api.c
-@@ -370,11 +370,10 @@ int scif_bind(scif_epd_t epd, u16 pn)
- 			goto scif_bind_exit;
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 07ca2fd10189..5018fb2352c2 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4516,6 +4516,12 @@ static void analyse_stripe(struct stripe_head *sh, s=
+truct stripe_head_state *s)
+ 			s->failed++;
+ 			if (rdev && !test_bit(Faulty, &rdev->flags))
+ 				do_recovery =3D 1;
++			else if (!rdev) {
++				rdev =3D rcu_dereference(
++				    conf->disks[i].replacement);
++				if (rdev && !test_bit(Faulty, &rdev->flags))
++					do_recovery =3D 1;
++			}
  		}
- 	} else {
--		pn =3D scif_get_new_port();
--		if (!pn) {
--			ret =3D -ENOSPC;
-+		ret =3D scif_get_new_port();
-+		if (ret < 0)
- 			goto scif_bind_exit;
--		}
-+		pn =3D ret;
- 	}
 =20
- 	ep->state =3D SCIFEP_BOUND;
-@@ -648,13 +647,12 @@ int __scif_connect(scif_epd_t epd, struct scif_port_i=
-d *dst, bool non_block)
- 			err =3D -EISCONN;
- 		break;
- 	case SCIFEP_UNBOUND:
--		ep->port.port =3D scif_get_new_port();
--		if (!ep->port.port) {
--			err =3D -ENOSPC;
--		} else {
--			ep->port.node =3D scif_info.nodeid;
--			ep->conn_async_state =3D ASYNC_CONN_IDLE;
--		}
-+		err =3D scif_get_new_port();
-+		if (err < 0)
-+			break;
-+		ep->port.port =3D err;
-+		ep->port.node =3D scif_info.nodeid;
-+		ep->conn_async_state =3D ASYNC_CONN_IDLE;
- 		/* Fall through */
- 	case SCIFEP_BOUND:
- 		/*
+ 		if (test_bit(R5_InJournal, &dev->flags))
 --=20
 2.17.1
