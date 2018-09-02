@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D854C43334
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44413C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F02F22077B
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B412077B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 13:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Ya/Rs+SW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F02F22077B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="UO7N+XCE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B412077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeIBRtA (ORCPT
+        id S1728586AbeIBRtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 13:49:00 -0400
-Received: from mail-eopbgr680117.outbound.protection.outlook.com ([40.107.68.117]:50363
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Sun, 2 Sep 2018 13:49:09 -0400
+Received: from mail-eopbgr700093.outbound.protection.outlook.com ([40.107.70.93]:58944
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727467AbeIBRUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 13:20:47 -0400
+        id S1728037AbeIBRUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 13:20:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d/t6VhKVEmzSppjw0t7zh+wWmMxTb4pGmNuGf1Cj1fo=;
- b=Ya/Rs+SWtbUtQCNeW08U43bVrspcYmvo63MY7Kp8K9R2CQbRIB7tS7RoQNzgMhqFdfCuGKzAmw8WGk6CuXHAqe7X3C5qgc4FU89E66mGHqjBNplHersFeygWxJlja4ANUsWN8jfErHkywnCJQCCyfff+f771VOizwa6SRFt4m8Q=
+ bh=8movVkFd11BFbwEzn83QjVr6cJBPOMaHE9q6TWK0H48=;
+ b=UO7N+XCEGuB8iHvC7EThha3kuMYJTWpPZlvNOK6sLNrQ2V8rRtfSxEN1IPjC7SpWbV7zlIQH8WGixEIkjs+QMqpUNAsySx5wY1bYWyx+kjby5Ibgv1QJb9tvWmxhh+T5OL7z3svJd1sE+Tfahx3oXuIkPSF9cISUpGX9uF3UII4=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
+ CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.2; Sun, 2 Sep 2018 13:04:55 +0000
+ 15.20.1122.2; Sun, 2 Sep 2018 13:04:16 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.000; Sun, 2 Sep 2018
- 13:04:55 +0000
+ 13:04:16 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Linus Walleij <linus.walleij@linaro.org>,
+CC:     Loic Poulain <loic.poulain@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 078/131] gpio: ml-ioh: Fix buffer underwrite on
- probe error path
-Thread-Topic: [PATCH AUTOSEL 4.18 078/131] gpio: ml-ioh: Fix buffer underwrite
- on probe error path
-Thread-Index: AQHUQr2DAv029JZaQkeAMaZRLECz9A==
-Date:   Sun, 2 Sep 2018 13:04:43 +0000
-Message-ID: <20180902064601.183036-78-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 056/131] wlcore: Set rx_status boottime_ns field
+ on rx
+Thread-Topic: [PATCH AUTOSEL 4.18 056/131] wlcore: Set rx_status boottime_ns
+ field on rx
+Thread-Index: AQHUQr1xTCPRg7oR8ESovdBZKReQgw==
+Date:   Sun, 2 Sep 2018 13:04:11 +0000
+Message-ID: <20180902064601.183036-56-alexander.levin@microsoft.com>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,75 +59,93 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:l89w53PwIjHmZzJLWXFW3L4Q2H8NU29o4kPYc1N4uvdC+TbSZK5yi3mu/PGRTx3xLEa3TcgF4kau2EUk5DCeXE0mrwgsKPe4XWoQf7cWi8j13iTiYi1M7xhmFpCdOFbdFc585WkptqSLDRChZV04DiHsmbd2AJ7mARwT4SgR7G1JRASVANW+cqs4jtpwGU7eW2yyAtJyhlO394kJqXZ/Aie0gFY9YS06C86UAyhgy6ctZTCqf86kzj1xRGUI3YfAyZTUR5Br6hY/qT+1VSzkxpWsY3txpm4s3suDRHqa/lwChf9nkaEKpR5hXOVaYmldNDZZ9Y37Jm17BR6tLmy0t8qa4VdcglSTmKjZi5lAtv3zLiSZbETZdzqasYt0ou9PTh8/6jxs2OZaQjRgprQvcWXgGPNjSa1MwSxMFa27R+k3RHUx9nmKrcwFmTSF6flkSqVbZNXo8M+fVb0/rVMSXQ==;5:0cDr1E0yH80kthbBSimu6dSUVwIT0tHrl3lYWxgCxeRuNQVLZy5wG7NTyDKbBVPwp2wwl6g/5ot2W1hBmzQK+DVj4/oyUlIRr5n59K6r+onlYVn/OM91tHKm0YcLEkiJYpo7wa6ZHR+Y+vpC5qVTk8WBUHp5A8ubBMQcvNK7cP4=;7:DMZ7EHHWc+oCWzwZpkXX2GthYHuzMglHr4qyAnLN7+t2g8gnFBA44ngxDeQp4ajSH66VogjhcyPKjaxZJRThfm+5oEss7XviI0oMGqjT/w8+5IkU5giyEXVFV+HXOGO6M8Ced150URfMEG4MfXGt8BYe2XRXvf1NvO033H7eSmwsQ/bg8m236VGFkEcCHgJ+8Vbrw5ZZnxnOuAvNOJ6XPlPbwizi2zgV63bRbn7RESGz5bPbp893i98OMC6hnE0f
-x-ms-office365-filtering-correlation-id: d4ec94ef-1d79-4e34-2e91-08d610d4ae03
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:FJfzGlYnFkSPDXeRtsKQArTFfSYCpVfrHIC6KiFZx1F+1qs62qNXcF2ngV/ZSpPQJ67X4eXtGHQEJkMFNcjM+fuD7yiRd+9oXAuiB4EnuoLT7xuZW53wCCiYSUJuL/W9vMXO9MlQApmlkv24L2SvbWwX21lI/8QUeoW5kcijjilY9ikjGNNoEZEYhW5erQIipCN4rVppcu87hAaA+5zS9ooXsgEUPTKif30osaicGRHrVRabAM9yzs/yKgSju+9zr463K1GIisbgmnwnFxSkVTke/UdAC7NqCtxZd6fKL8ERqJ6j7I7Tsgsokgv30fl819gGhzXSxRGZRdTHT9wPPsFetr6udUqK98WfcMNyFdBqIa7iUJPjvmv4wzmWwStJJh4TMa0rvhj+1bE1+MqLJMAyVGPuLkHcw1WmYBUUNK2VIW3W6zRjBD9NmhMYi2dmv86DfU4mGP47kmBXdakVVg==;5:76lYTZ2p3aHAM0OGNNtao4rraG1aAUKUMtjBh1IrNc2jaFenJKwM4/DVnNeZa7QRPZaA9Z12bmWCazZCHf+qg3voLfzPjOsLM2UQzwaqgI51JzaymbbWl4120suhdFOZ9LrT9c/1VB1mWXYE9vd9A3JJxUQnbmqxS/LJMiLLzqA=;7:Kt2GCpzkRr/6JxJ9HnienaFJbahv11/4K10qpCcw/96Lw+7vMqlDicrLGZc02prY5IKFDkM8tnih8OC9vQ3kR5DuJZsKtD+c0jR154oQLXWkApl/MVaybNebPOd8/XyWehPdynlIWfvJAEd3SxNWNzqT6z1gCA/JxAzxA6GtRu9MXIIt4295rhZG7o7KqnmaIV1MFFKYbb115xAJGviraLUD7HdQ0o2nFzn/WKHhxJ9ZVqWF9g9WHhA6otipCgpp
+x-ms-office365-filtering-correlation-id: 9c222fb5-12a0-44a4-290f-08d610d496d7
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
-x-ms-traffictypediagnostic: CY4PR21MB0741:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
+x-ms-traffictypediagnostic: CY4PR21MB0120:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0741171F87840FD09ACCF634FB0D0@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB01200D85CBB3356067E790C3FB0D0@CY4PR21MB0120.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231340)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231340)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
 x-forefront-prvs: 078310077C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(97736004)(2906002)(186003)(26005)(256004)(4477795004)(14444005)(102836004)(11346002)(25786009)(476003)(486006)(2616005)(446003)(305945005)(66066001)(5250100002)(2501003)(7736002)(6506007)(8676002)(68736007)(76176011)(6666003)(99286004)(6486002)(105586002)(81156014)(81166006)(53936002)(5660300001)(22452003)(478600001)(6436002)(86362001)(14454004)(54906003)(36756003)(106356001)(110136005)(6512007)(4326008)(107886003)(217873002)(3846002)(2900100001)(316002)(8936002)(1076002)(10090500001)(6116002)(72206003)(86612001)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(110136005)(5660300001)(107886003)(26005)(6506007)(6666003)(2900100001)(8936002)(68736007)(66066001)(99286004)(76176011)(217873002)(2906002)(1076002)(316002)(3846002)(6116002)(86612001)(14444005)(54906003)(6436002)(305945005)(7736002)(256004)(86362001)(6486002)(25786009)(10290500003)(478600001)(14454004)(476003)(22452003)(5250100002)(97736004)(106356001)(72206003)(53936002)(2501003)(2616005)(446003)(11346002)(6512007)(10090500001)(4326008)(36756003)(105586002)(102836004)(8676002)(81156014)(81166006)(186003)(486006)(83323001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: c9aQ70grrQWiih+w6DQ0r3/4apD71vHofMHA2uGdHGKPmBAWUr26IBdaB6l3VFu14tWoqo3ACsAAiMqSIgrC3AKc8RJjqYWZTrwfzRy2BuJfRhvSiXzWzjGVgMy4fGiGJ3UX0nc5BPWbnQXbOwsGsEv/kCvfDmDcsTw5h0YhR7eEbv9dCBwoCNm4x4YLhGwrXCrqOYuDdujn3v/M7EFC+rB0BdYhYckKJT6l30HrGTdTE3jYa1DSarfLCLx4VcTkuhhxXZUYSwsCQPpUbIXLd/9d13jvcb+nWd87YvK0QXXsd2VH9+QNqKymYcE/RU0bK+2YB4IYgAcmr+Gdq2AaPhep5B4DsXTuuJRh0injl/I=
+x-microsoft-antispam-message-info: EV2nLmhVJ3UzvkAAvZp2BGpOoYpIvJleQA7V5Y6y3yNcDkiJbsYoUn7b5fBhgi9HDCKzw16dREIcJzEHIBbt6imZCCQqhN9/4WrlTLc4a08TIc3XHwxh8WWPPh6hAWWaFylyK6Vz79v0mqRnBW7GGz0CuLBddpQGxJIJrQKpuIGHHs0DyGNJWXdC0QHrfZOgGX84mmaNf/mMpj+CCl831CWNfljeJ6ITZh2QA7a4YhTpfwwssW/FIE85FGZA/8tiIpeTNsRuSZIjmJAdVdTV/r4U7104uN+9auQj/UX8JdRVXhaV+pBLNUOEkRm73nUWW//Ypm6O2ZRSpmZlVsnmHMWeXCxdIwL/K9cZRHHOIn0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4ec94ef-1d79-4e34-2e91-08d610d4ae03
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:43.0953
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c222fb5-12a0-44a4-290f-08d610d496d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2018 13:04:11.6955
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
+[ Upstream commit 37a634f60fd6dfbda2c312657eec7ef0750546e7 ]
 
-If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
-to any element of chip_save array, so reverse iteration from pointer chip
-may become chip_save[-1] and gpiochip_remove() will operate with wrong
-memory.
+When receiving a beacon or probe response, we should update the
+boottime_ns field which is the timestamp the frame was received at.
+(cf mac80211.h)
 
-The patch fix the error path of ioh_gpio_probe() to correctly bypass
-chip_save array.
+This fixes a scanning issue with Android since it relies on this
+timestamp to determine when the AP has been seen for the last time
+(via the nl80211 BSS_LAST_SEEN_BOOTTIME parameter).
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpio/gpio-ml-ioh.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ti/wlcore/rx.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
-index b23d9a36be1f..51c7d1b84c2e 100644
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -496,9 +496,10 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 	return 0;
+diff --git a/drivers/net/wireless/ti/wlcore/rx.c b/drivers/net/wireless/ti/=
+wlcore/rx.c
+index 0f15696195f8..078a4940bc5c 100644
+--- a/drivers/net/wireless/ti/wlcore/rx.c
++++ b/drivers/net/wireless/ti/wlcore/rx.c
+@@ -59,7 +59,7 @@ static u32 wlcore_rx_get_align_buf_size(struct wl1271 *wl=
+, u32 pkt_len)
+ static void wl1271_rx_status(struct wl1271 *wl,
+ 			     struct wl1271_rx_descriptor *desc,
+ 			     struct ieee80211_rx_status *status,
+-			     u8 beacon)
++			     u8 beacon, u8 probe_rsp)
+ {
+ 	memset(status, 0, sizeof(struct ieee80211_rx_status));
 =20
- err_gpiochip_add:
-+	chip =3D chip_save;
- 	while (--i >=3D 0) {
--		chip--;
- 		gpiochip_remove(&chip->gpio);
-+		chip++;
+@@ -106,6 +106,9 @@ static void wl1271_rx_status(struct wl1271 *wl,
+ 		}
  	}
- 	kfree(chip_save);
 =20
++	if (beacon || probe_rsp)
++		status->boottime_ns =3D ktime_get_boot_ns();
++
+ 	if (beacon)
+ 		wlcore_set_pending_regdomain_ch(wl, (u16)desc->channel,
+ 						status->band);
+@@ -191,7 +194,8 @@ static int wl1271_rx_handle_data(struct wl1271 *wl, u8 =
+*data, u32 length,
+ 	if (ieee80211_is_data_present(hdr->frame_control))
+ 		is_data =3D 1;
+=20
+-	wl1271_rx_status(wl, desc, IEEE80211_SKB_RXCB(skb), beacon);
++	wl1271_rx_status(wl, desc, IEEE80211_SKB_RXCB(skb), beacon,
++			 ieee80211_is_probe_resp(hdr->frame_control));
+ 	wlcore_hw_set_rx_csum(wl, desc, skb);
+=20
+ 	seq_num =3D (le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_SEQ) >> 4;
 --=20
 2.17.1
