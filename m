@@ -2,115 +2,77 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CF0C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B76C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE55C20856
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:32:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="czWMnFGg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE55C20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id B219620843
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 20:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B219620843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbeICAta (ORCPT
+        id S1727255AbeICAuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 20:49:30 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33139 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeICAta (ORCPT
+        Sun, 2 Sep 2018 20:50:55 -0400
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:56264 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbeICAuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 20:49:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so7754851pfn.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 13:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kq+jt5n5gDAGAHCmHd3b6Ss0kzC3LhEgsBkl7v4x1nI=;
-        b=czWMnFGgLIDSP3423fIr4i5ntB56pqZDkQQav6XF96EjelcNoAD9awkJTsc4GMNnZu
-         7sUPQgyc7kfwICzkBpvGD3XyYOzbV83lR7w2MU84PbSMn0ElMhvdzlFHTsSNxLdkAa3E
-         vBPKiZFM3zqwOF9GinzZ4aA56G8B+Ff1/nR0Pt2ZcdF6hhNdwLHOh7ODkqppjOCFOxkZ
-         nXf80D2hfVlfEPUcLurMHHKuEXyZzb/gFrbUyHAMT3ShrKacqTPZvCA77x85ow+R4qCr
-         Q8Cug+Sh7dMc40ALmiQgJvFHBtw5LZqRo+PAfevznjM5OobzZmuffASmMVa/3Jqduu7N
-         dc5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kq+jt5n5gDAGAHCmHd3b6Ss0kzC3LhEgsBkl7v4x1nI=;
-        b=q27CN72QJMwh6M5C5n83LTCDPAxc1Jv8Pmxo3NVHhFvbKIZp/NDTHdXRGhDv+FipRh
-         YqmFj2F7f0bxmUL/vtEWMmDwJCX0R1tAwVP7rwAuPKRQfLP1O+xV8GA89B7RYnjO6LPT
-         Id4q7hfKAVhiZXxLVIZZxLqkN1hKn/S4NtwOi5flFJk7Ic9pChYyVV5+HJfbBsCkur/L
-         f0cLOaazuzPAjied8Gt3gt/Vo8pmuAFkR+Cv4HI9mDOF8Ux+HzRVpvovJAM2K7HIadSn
-         U95JlsotTLBBLvG38nmufEdjpoxXcfHHpp3U+0IwshSv9Ega+d/eM1JAozngOXvpj0Re
-         4v+Q==
-X-Gm-Message-State: APzg51BiLeKlWzurIvfvsjZo5Y/w0jzkdH9iaKQZYrGcRPnPPPlisLnx
-        8ZqLJfTWur0H4HiZ/z8hBwNQ0g==
-X-Google-Smtp-Source: ANB0Vdbxh0a/hwRQRRA7XqscaXxV5o8nMXRdOfXdf+/ZzaVkDSGr9Z2dk7AqeS6YvRiYVb/S5sOsog==
-X-Received: by 2002:a63:2bc9:: with SMTP id r192-v6mr3496087pgr.386.1535920350943;
-        Sun, 02 Sep 2018 13:32:30 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm28638567pfk.149.2018.09.02.13.32.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 02 Sep 2018 13:32:30 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fwZ2r-0004TG-D1; Sun, 02 Sep 2018 14:32:29 -0600
-Date:   Sun, 2 Sep 2018 14:32:29 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     dledford@redhat.com, leon@kernel.org, ira.weiny@intel.com,
-        pravin.shedge4linux@gmail.com, hal@mellanox.com,
-        parav@mellanox.com, haakon.bugge@oracle.com,
-        bart.vanassche@sandisk.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] infiniband: core: mad: Fix a sleep-in-atomic-context bug
- in ib_mad_recv_done()
-Message-ID: <20180902203229.GA13946@ziepe.ca>
-References: <20180901120659.32509-1-baijiaju1990@gmail.com>
+        Sun, 2 Sep 2018 20:50:55 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id E590A9E78DA;
+        Sun,  2 Sep 2018 21:33:54 +0100 (BST)
+Date:   Sun, 2 Sep 2018 21:33:53 +0100
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: bh1750: switch to SPDX identifier
+Message-ID: <20180902213353.1c21a78a@archlinux>
+In-Reply-To: <20180901195144.11389-1-tduszyns@gmail.com>
+References: <20180901195144.11389-1-tduszyns@gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180901120659.32509-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 01, 2018 at 08:06:59PM +0800, Jia-Ju Bai wrote:
-> The driver may sleep with holding a spinlock.
-> 
-> The function call paths (from bottom to top) in Linux-4.16 are:
-> 
-> [FUNC] alloc_mad_private(GFP_KERNEL)
-> drivers/infiniband/core/mad.c, 2264: 
-> 	alloc_mad_private in ib_mad_recv_done
-> drivers/infiniband/core/cq.c, 45: 
-> 	[FUNC_PTR]ib_mad_recv_done in __ib_process_cq
-> drivers/infiniband/core/cq.c, 77: 
-> 	__ib_process_cq in ib_process_cq_direct
-> drivers/infiniband/ulp/srp/ib_srp.c, 2010: 
-> 	ib_process_cq_direct in __srp_get_tx_iu
-> drivers/infiniband/ulp/srp/ib_srp.c, 2353: 
-> 	__srp_get_tx_iu in srp_queuecommand
-> drivers/infiniband/ulp/srp/ib_srp.c, 2352: 
-> 	_raw_spin_lock_irqsave in srp_queuecommand
-> 
-> [FUNC] alloc_mad_private(GFP_KERNEL)
-> drivers/infiniband/core/mad.c, 2264: 
-> 	alloc_mad_private in ib_mad_recv_done
-> drivers/infiniband/core/cq.c, 45: 
-> 	[FUNC_PTR]ib_mad_recv_done in __ib_process_cq
-> drivers/infiniband/core/cq.c, 77: 
-> 	__ib_process_cq in ib_process_cq_direct
+On Sat,  1 Sep 2018 21:51:44 +0200
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
 
-This trace doesn't seem right, the CQ used by SRP will never have
-ib_mad_recv_done as a function pointer.
+> Drop boilerplate license text and use SPDX identifier instead.
+> 
+> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+Applied.  Thanks,
 
-Jason
+Jonathan
+
+> ---
+>  drivers/iio/light/bh1750.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
+> index a814828e69f5..493ca7420602 100644
+> --- a/drivers/iio/light/bh1750.c
+> +++ b/drivers/iio/light/bh1750.c
+> @@ -1,12 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * ROHM BH1710/BH1715/BH1721/BH1750/BH1751 ambient light sensor driver
+>   *
+>   * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+>   * Data sheets:
+>   *  http://rohmfs.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1710fvc-e.pdf
+>   *  http://rohmfs.rohm.com/en/products/databook/datasheet/ic/sensor/light/bh1715fvc-e.pdf
+
