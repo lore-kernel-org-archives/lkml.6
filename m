@@ -2,221 +2,237 @@ Return-Path: <SRS0=aodX=LQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20EDC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 04:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB3C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 04:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC2120843
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 04:45:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V2mMPjvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC2120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 50C612077C
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 04:52:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C612077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeIBI7w (ORCPT
+        id S1726426AbeIBJGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 04:59:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43430 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeIBI7w (ORCPT
+        Sun, 2 Sep 2018 05:06:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52017 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbeIBJGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 04:59:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v66-v6so7142491pgb.10
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Sep 2018 21:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=MG6CY8MJJ7V/sdWopg5Les5NQi2mMBfKk9YTQHD8ygE=;
-        b=V2mMPjvx7pvztfuOPsvVUHoQaX9N1lyR6y/tupkUNG5QCXS+zupSYKlXkxwtoaMciL
-         k5aGqDh+i7lzFlSlMSYJk5GhtpxFtqbMra/trGVIIBfj5DPcZZCgdIWtSOrmOUKJbNxE
-         CygHku3hZVZphB/4XDHMKordLBlDmroKNEPyHWtgTbD/RTsm4fvMztmodBqJqA4ZB46z
-         31ZKMDlGd7SESaAd7PfwB0KkOfzwmnflzLuGmv7vPJIGE3DsuEO7k5JNvJ42yOCsKoNN
-         yxcA+Lvf7JdRjkWyzQ6Ka9z0vV3QA3eo+rzUMDtzjixQan39ZiwMfhDoMzbjAFRlCbkq
-         /c1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=MG6CY8MJJ7V/sdWopg5Les5NQi2mMBfKk9YTQHD8ygE=;
-        b=hPq/x1mj8hxgNoyFLT5Cv3HrjqsjTsOHam1QZmk9yQ4bkclTM2KmIkpSIcSZYejFtr
-         5PQ5vMifENMIL/vzyRbYiWahfR8Z3oChqwUrbK4cVFzOlgxjOzEd7ml9o/WKVa1HJe+P
-         MTPKsl9WINXp9w6FAcLn6zfcZcnwbjhL5FVb/6WjK9xvsBwa4l7TRHtSYEU0hWns9BrE
-         BRB5Uw168otTiV56VPBn85g0lEgCL+UD9adOMz3rrAFON0z8KSfhcdAb1BrtMWGD2FQQ
-         vE/PIffDS1bxbcL0GQIMitfIJs2qBAfNsXXGq9QKNAY3HefDxE+N8114Fx08AUknEs5n
-         ULww==
-X-Gm-Message-State: APzg51DGA2mwvJqOLBqNkqJeboEPP2Kt/WJAtmK924x7fJ0gQsmC4zhg
-        B34EMbET0WdBhtxpa1rz+peHfus9NpfVoLqSo+s06Q==
-X-Google-Smtp-Source: ANB0VdYYRY4YvOvr9MMnyx+U3UwvJnZ4P1ZYFTTO5lCmRZrQko8Evc9i/JspZbVLoIxc9Nt/x2TrXtD1m/SO+iruU68=
-X-Received: by 2002:a63:4702:: with SMTP id u2-v6mr20328830pga.95.1535863527169;
- Sat, 01 Sep 2018 21:45:27 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Sat, 1 Sep 2018 21:45:06
- -0700 (PDT)
-In-Reply-To: <0000000000003658b00574dc08cc@google.com>
-References: <0000000000003658b00574dc08cc@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 2 Sep 2018 06:45:06 +0200
-Message-ID: <CACT4Y+aVZNLrXwjYF6MGB7TMHEPwfc_Fx5cgDv4s8WiZQ-FxsQ@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in _decode_session6
-To:     syzbot <syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Sun, 2 Sep 2018 05:06:42 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1fwKMw-0008MN-76; Sun, 02 Sep 2018 04:52:14 +0000
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     James Morris <jmorris@namei.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000c178e305749daba4@google.com>
+ <45dda774-fd57-3e60-fb67-ad855f2360c9@canonical.com>
+ <CACT4Y+Za_M8yQ9j0aUDyZ2rrgJtNHuzeFf3dwmeL5kyb3T5UBQ@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <09def4f1-7dd8-ba41-139a-0c6f3be2db78@canonical.com>
+Date:   Sat, 1 Sep 2018 21:52:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+Za_M8yQ9j0aUDyZ2rrgJtNHuzeFf3dwmeL5kyb3T5UBQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 6:41 AM, syzbot
-<syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    93ee30f3e8b4 xsk: i40e: get rid of useless struct xdp_umem..
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11f2115a400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-> dashboard link: https://syzkaller.appspot.com/bug?extid=acffccec848dc13fe459
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116b3492400000
-
-Potentially this is bpf-related because the repro just runs a bpf
-program. +bpf maintainers.
-
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com
->
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> 8021q: adding VLAN 0 to HW filter on device team0
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in _decode_session6+0x1331/0x14e0
-> net/ipv6/xfrm6_policy.c:161
-> Read of size 1 at addr ffff8801d882eec7 by task syz-executor1/6667
->
-> CPU: 0 PID: 6667 Comm: syz-executor1 Not tainted 4.19.0-rc1+ #86
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  _decode_session6+0x1331/0x14e0 net/ipv6/xfrm6_policy.c:161
->  __xfrm_decode_session+0x71/0x140 net/xfrm/xfrm_policy.c:2299
->  xfrm_decode_session include/net/xfrm.h:1232 [inline]
->  vti6_tnl_xmit+0x3c3/0x1bc1 net/ipv6/ip6_vti.c:542
->  __netdev_start_xmit include/linux/netdevice.h:4313 [inline]
->  netdev_start_xmit include/linux/netdevice.h:4322 [inline]
->  xmit_one net/core/dev.c:3217 [inline]
->  dev_hard_start_xmit+0x272/0xc10 net/core/dev.c:3233
->  __dev_queue_xmit+0x2ab2/0x3870 net/core/dev.c:3803
->  dev_queue_xmit+0x17/0x20 net/core/dev.c:3836
->  __bpf_tx_skb net/core/filter.c:2012 [inline]
->  __bpf_redirect_common net/core/filter.c:2050 [inline]
->  __bpf_redirect+0x5b7/0xae0 net/core/filter.c:2057
->  ____bpf_clone_redirect net/core/filter.c:2090 [inline]
->  bpf_clone_redirect+0x2f6/0x490 net/core/filter.c:2062
->  bpf_prog_c39d1ba309a769f7+0x749/0x1000
->
-> Allocated by task 6667:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc_node mm/slab.c:3682 [inline]
->  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3696
->  __kmalloc_reserve.isra.41+0x3a/0xe0 net/core/skbuff.c:137
->  pskb_expand_head+0x230/0x10e0 net/core/skbuff.c:1463
->  skb_ensure_writable+0x3dd/0x640 net/core/skbuff.c:5129
->  __bpf_try_make_writable net/core/filter.c:1633 [inline]
->  bpf_try_make_writable net/core/filter.c:1639 [inline]
->  bpf_try_make_head_writable net/core/filter.c:1647 [inline]
->  ____bpf_clone_redirect net/core/filter.c:2084 [inline]
->  bpf_clone_redirect+0x14a/0x490 net/core/filter.c:2062
->  bpf_prog_c39d1ba309a769f7+0x749/0x1000
->
-> Freed by task 5493:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xd9/0x210 mm/slab.c:3813
->  skb_free_head+0x99/0xc0 net/core/skbuff.c:550
->  skb_release_data+0x6a4/0x880 net/core/skbuff.c:570
->  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
->  __kfree_skb net/core/skbuff.c:641 [inline]
->  consume_skb+0x190/0x4e0 net/core/skbuff.c:701
->  netlink_dump+0xb14/0xd50 net/netlink/af_netlink.c:2269
->  netlink_recvmsg+0xf84/0x1490 net/netlink/af_netlink.c:1991
->  sock_recvmsg_nosec net/socket.c:794 [inline]
->  sock_recvmsg+0xd0/0x110 net/socket.c:801
->  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2276
->  __sys_recvmsg+0x11a/0x290 net/socket.c:2325
->  __do_sys_recvmsg net/socket.c:2335 [inline]
->  __se_sys_recvmsg net/socket.c:2332 [inline]
->  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2332
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801d882ecc0
->  which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 7 bytes to the right of
->  512-byte region [ffff8801d882ecc0, ffff8801d882eec0)
-> The buggy address belongs to the page:
-> page:ffffea0007620b80 count:1 mapcount:0 mapping:ffff8801dac00940 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffffea00070fc048 ffffea00075f9c08 ffff8801dac00940
-> raw: 0000000000000000 ffff8801d882e040 0000000100000006 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801d882ed80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffff8801d882ee00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+On 09/01/2018 09:33 PM, Dmitry Vyukov wrote:
+> On Sat, Sep 1, 2018 at 11:18 AM, John Johansen
+> <john.johansen@canonical.com> wrote:
+>> On 08/29/2018 07:17 PM, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
+>>> git tree:       net-next
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>
+>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
+>>>
 >>
->> ffff8801d882ee80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
->
->                                            ^
->  ffff8801d882ef00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801d882ef80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000003658b00574dc08cc%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>> << snip >>
+>>
+>> Patch sent directly to syzbot for testing
+> 
+> Hi John,
+> 
+> What do you mean? syzbot has not received any test requests for this,
+> and it would reply within half an hour or so. Where is that patch?
+> 
+
+Hrmmm strange I followed the web instruction and attached the patch to the
+reply. The patch is below, its also available at
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor 4.18-syzbot-secid
+
+---
+
+From 22dad84baabf4174f11f5e9b34a05529084fa29c Mon Sep 17 00:00:00 2001
+From: John Johansen <john.johansen@canonical.com>
+Date: Sat, 1 Sep 2018 01:57:52 -0700
+Subject: [PATCH] apparmor: fix apparmor_secid_to_secctx incorrect debug
+ triggering  WARN_ON
+
+apparmor_secid_to_secctx() has a bad debug statement tripping on a
+condition handle by the code.  When kconfig SECURITY_APPARMOR_DEBUG is
+enabled the debug WARN_ON will trip when **secdata is NULL resulting
+in the following trace.
+
+------------[ cut here ]------------
+AppArmor WARN apparmor_secid_to_secctx: ((!secdata)):
+WARNING: CPU: 0 PID: 14826 at security/apparmor/secid.c:82 apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 14826 Comm: syz-executor1 Not tainted 4.19.0-rc1+ #193
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ panic+0x238/0x4e7 kernel/panic.c:184
+ __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+ report_bug+0x252/0x2d0 lib/bug.c:186
+ fixup_bug arch/x86/kernel/traps.c:178 [inline]
+ do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+ invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+RIP: 0010:apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+Code: c7 c7 40 66 58 87 e8 6a 6d 0f fe 0f 0b e9 6c fe ff ff e8 3e aa 44 fe 48 c7 c6 80 67 58 87 48 c7 c7 a0 65 58 87 e8 4b 6d 0f fe <0f> 0b e9 3f fe ff ff 48 89 df e8 fc a7 83 fe e9 ed fe ff ff bb f4
+RSP: 0018:ffff8801ba1bed10 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8801ba1beed0 RCX: ffffc9000227e000
+RDX: 0000000000018482 RSI: ffffffff8163ac01 RDI: 0000000000000001
+RBP: ffff8801ba1bed30 R08: ffff8801b80ec080 R09: ffffed003b603eca
+R10: ffffed003b603eca R11: ffff8801db01f657 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801ba1beed0
+ security_secid_to_secctx+0x63/0xc0 security/security.c:1314
+ ctnetlink_secctx_size net/netfilter/nf_conntrack_netlink.c:621 [inline]
+ ctnetlink_nlmsg_size net/netfilter/nf_conntrack_netlink.c:659 [inline]
+ ctnetlink_conntrack_event+0x303/0x1470 net/netfilter/nf_conntrack_netlink.c:706
+ nf_conntrack_eventmask_report+0x55f/0x930 net/netfilter/nf_conntrack_ecache.c:151
+ nf_conntrack_event_report include/net/netfilter/nf_conntrack_ecache.h:112 [inline]
+ nf_ct_delete+0x33c/0x5d0 net/netfilter/nf_conntrack_core.c:601
+ nf_ct_iterate_cleanup+0x48c/0x5e0 net/netfilter/nf_conntrack_core.c:1892
+ nf_ct_iterate_cleanup_net+0x23c/0x2d0 net/netfilter/nf_conntrack_core.c:1974
+ ctnetlink_flush_conntrack net/netfilter/nf_conntrack_netlink.c:1226 [inline]
+ ctnetlink_del_conntrack+0x66c/0x850 net/netfilter/nf_conntrack_netlink.c:1258
+ nfnetlink_rcv_msg+0xd88/0x1070 net/netfilter/nfnetlink.c:228
+ netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
+ nfnetlink_rcv+0x1c0/0x4d0 net/netfilter/nfnetlink.c:560
+ netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+ netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
+ netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:631
+ ___sys_sendmsg+0x7fd/0x930 net/socket.c:2114
+ __sys_sendmsg+0x11d/0x290 net/socket.c:2152
+ __do_sys_sendmsg net/socket.c:2161 [inline]
+ __se_sys_sendmsg net/socket.c:2159 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457089
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7bc6e03c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f7bc6e046d4 RCX: 0000000000457089
+RDX: 0000000000000000 RSI: 0000000020d65000 RDI: 0000000000000003
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d4588 R14: 00000000004c8d5c R15: 0000000000000000
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
+Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+---
+ security/apparmor/secid.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index f2f22d00db18..4ccec1bcf6f5 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -79,7 +79,6 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ 	struct aa_label *label = aa_secid_to_label(secid);
+ 	int len;
+ 
+-	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
+ 
+ 	if (!label)
+-- 
+2.17.1
+
+
+
+
+
