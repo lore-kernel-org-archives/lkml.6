@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC1DC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 964C5C43334
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B2C20841
-	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B2C20841
+	by mail.kernel.org (Postfix) with ESMTP id 57D702086B
+	for <linux-kernel@archiver.kernel.org>; Sun,  2 Sep 2018 10:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D702086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeIBOZe (ORCPT
+        id S1727870AbeIBOZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 2 Sep 2018 10:25:34 -0400
-Received: from mout.perfora.net ([74.208.4.196]:56719 "EHLO mout.perfora.net"
+        Sun, 2 Sep 2018 10:25:37 -0400
+Received: from mout.perfora.net ([74.208.4.196]:59307 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeIBOZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Sep 2018 10:25:33 -0400
+        id S1727727AbeIBOZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Sep 2018 10:25:37 -0400
 Received: from localhost.localdomain.ziswiler.net ([89.217.215.226]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MMERP-1fzQ0f350X-0088jG; Sun, 02 Sep 2018 12:10:13 +0200
+ 0Lh4nx-1faUKV1ZDD-00oNB6; Sun, 02 Sep 2018 12:10:16 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 30/37] ARM: tegra: colibri_t20: iris: add colibri ssp support
-Date:   Sun,  2 Sep 2018 12:08:59 +0200
-Message-Id: <20180902100906.25792-31-marcel@ziswiler.com>
+Subject: [PATCH v2 32/37] ARM: tegra: colibri_t20: rename i2c_ddc to hdmi_ddc
+Date:   Sun,  2 Sep 2018 12:09:01 +0200
+Message-Id: <20180902100906.25792-33-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
 References: <20180902100906.25792-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:wblQJFnePNaQnhsw+QoKUTwkeB/+ZjGUbb+AVI3tgmPVDWoE2lp
- utBgOHR2T1+7Y37O65x7fG5OQUVufM+daL5r+JFSTo50/4qfIBQOcei0+MTqoICswmEnnEm
- a0yMPVMzS0EXoxOqKQ6qXej7Wtgn3L9KUbTqEm0vHo6jZptJW9pSJJOx8Yb/Hb2NSNMoRb9
- A57QUFVU5wIYMd2j3zXcQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+3Y+hnkGEgw=:sdPdRPL5cC//ET+6vrMzhS
- 9YTugs/br9dgZQj3KLGUECsMMW8wB01q91MHal08PbHub+4MDvBSqt8ayd+oCnxNEUXhbdun2
- FzwXEA292JKkr1UVrF1hcHck2w/veAKFpo2AwJhQ2F3HdGIwhUc3o/3Qc02J9WqmAj4l/VLa8
- a6Ubu6DHsjssM7vh8zyKDAZrGxTSYAuD2y6fBAAWv5eNETTUcfGy66K2mCL1+VOQLnuMqOAq8
- g8E1kHKzeY1MoY+qwsLjGkg9shN5KlIokzY7rM7yzf29iRcbkwXnmVL8Qr2fP8ybaTgR4dW2Z
- EAGWfHl8za9fRg7GZdvumInoADbqFmT2UFLfa+BFr4kjN1D7aLhf+wr8WfPBEDkKK1Cx52US8
- lCxS4IGMvUN4tW6VHACTund35WlOdqORvqyZFTcbij8SIpjVAER8Mkm/0X4nRc2hofCrxgxH0
- 6fnc3P1oy1r3+40nR8p8bZSj6cnCel4gwpSSZVqjlP873rQ26RJS1YfyifNp341MGe+o4BdDT
- OZpgRJggE6saMPCxra76j8mdzDMO7sa6krKyA447+6kvoTOa1OCtstMR+KyifKUyFjPHkSbt8
- 33sa42v65yQ0R5NbAHmj7Az3U+37jF22n3x2M4bHwN/UHMQ3IBjaRgkOi+67uGcPVHZzI/Maf
- M1zxT5cp/C/NniKmCiJW0TWzG2o0xBTUlZ7lmJZppQ5gqUAc+TBNv0k9SXLPwqro+8cM=
+X-Provags-ID: V03:K1:ZmdHG7kBt3hkmBXHuthkadXVtX7nY2at1WS4OoBLw/R+dN/olQz
+ hkzdeUWEkFs81krBNfxpSicXlXyei8acSMRWZPJ+t0xHUQpTcyWAS0Ib67Iq241JnFpP+qt
+ xlcT/cSr/+3gWlk0gvLSEoPstn7Qz2zvn7yOYV46dUlaYHnUpSOREdmtz6z8fi8CYmvPF4a
+ q1ydU7wqLfkIIGYqJdhog==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9ol6k8EK6Ko=:p/spS9TBL14wDubL51CY3+
+ GTVx8d+ftBuPsczYNiL2+9PC8Lveo9Kve6fNxh8qgJ2iRua8VWMWi6qCUurKkQ/Bc8xsSv9yG
+ S5VnfQBQ+rcLS9x4I/AI4P/ruPQSwBpdICrPPTxCRA+zKS47B/rY6yDH+/wIHa1WE2dhG9elB
+ d0B2uC7w1ZYiGMSgfPJSQI/f7cgg9Ja+GJ9HUX69x5TwvQI9a3/Tk5Lm1+H08uMomn/SQpPCZ
+ pOQH1nqZYYY3019AdBO3zm78gcbP4TDPjEHBifJGqmYM4MDLBqstbMFvWYFn8hMuhiaMRyTV3
+ 0Lwj9SjckOJ9lCh6zgV7cgY4+Ym0DDi9Xy+ssi7f3REp2efhNkz571WPbFS9wU1Qvk9MenMOW
+ taq1T5ER9P1RxXsoZ7Aj1guQs41/zbCFxYGSYUFE2y3EowmE1SnKSzGVK7frcpVJaSwi0psQu
+ 6G77tJOdW0Pz57gndwqg8l/OU+tgffNWGjJNER53AUS5CJJQ4l87CNxlWQ9xZZKNtTH67H5pg
+ DygXuBEBCvdScdKkKDvfQ4CXbpiZvCelVQi92GFtMLh2I4o3ofiJH2TiczIoji8H3G46UYT/p
+ cKcZ9OSoQmiiR0l7xbtC89DFIHzqpgA6KntfI+22jVfbwPuhClS505RLWuHrlZR56CmHhCN5J
+ rRmbSdhP4XRJ4tv+OfInh/wVcPc81XLX7mB+88n9aH2zvIr0Y/h9xE8iFdCz4wQJsVbA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,34 +61,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add Colibri SSP aka SPI support using the SPI4 instance.
+Rename i2c_ddc to hdmi_ddc to be more in-line with other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
-Changes in v2: None
+Changes in v2:
+- New patch.
 
- arch/arm/boot/dts/tegra20-colibri-iris.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-index dbdf596dd151..b16e04dfa31f 100644
---- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
-+++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
-@@ -164,6 +164,12 @@
- 		vbus-supply = <&reg_usbh_vbus>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
+index b4d429f672da..36463fb3c0b3 100644
+--- a/arch/arm/boot/dts/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+@@ -19,7 +19,7 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			nvidia,ddc-i2c-bus = <&i2c_ddc>;
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+ 			pll-supply = <&reg_1v8_avdd_hdmi_pll>;
+@@ -459,7 +459,7 @@
  	};
  
-+	/* SPI4: Colibri SSP */
-+	spi@7000da00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+	};
-+
- 	/* SD/MMC */
- 	sdhci@c8000600 {
- 		status = "okay";
+ 	/* DDC_SCL/SDA on X3 pin 15/16 (e.g. display EDID) */
+-	i2c_ddc: i2c@7000c400 {
++	hdmi_ddc: i2c@7000c400 {
+ 		clock-frequency = <10000>;
+ 	};
+ 
 -- 
 2.14.4
 
