@@ -6,83 +6,198 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251EEC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A185C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF4002086C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4002086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 54EFD2086C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EFD2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeICVnf (ORCPT
+        id S1730359AbeICVni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:43:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45304 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728636AbeICVne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:43:34 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93191D00;
-        Mon,  3 Sep 2018 17:22:28 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 085/165] cifs: check kmalloc before use
-Date:   Mon,  3 Sep 2018 18:56:11 +0200
-Message-Id: <20180903165659.379463886@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
-References: <20180903165655.003605184@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 3 Sep 2018 17:43:38 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45147 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727873AbeICVni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:43:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 10:19:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
+   d="scan'208";a="67231488"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Sep 2018 10:19:29 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 5BC5E301B65; Mon,  3 Sep 2018 10:19:29 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     stable@vger.kernel.org
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Michael Hocko <mhocko@suse.com>,
+        vbabka@suse.cz
+Subject: [STABLE 4.4] x86/speculation/l1tf: Increase l1tf memory limit for Nehalem+
+Date:   Mon,  3 Sep 2018 10:19:13 -0700
+Message-Id: <20180903171913.36570-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Andi Kleen <ak@linux.intel.com>
 
-------------------
+[upstream cc51e5428ea54f575d49cfcede1d4cb3a72b4ec4 for 4.4.
+Note there might be still a trivial conflict with the backport
+for b0a182f875689647b014bc01d36b340217792852, but should
+be easy to resolve]
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+On Nehalem and newer core CPUs the CPU cache internally uses 44 bits
+physical address space. The L1TF workaround is limited by this internal
+cache address width, and needs to have one bit free there for the
+mitigation to work.
 
-commit 126c97f4d0d1b5b956e8b0740c81a2b2a2ae548c upstream.
+Older client systems report only 36bit physical address space so the range
+check decides that L1TF is not mitigated for a 36bit phys/32GB system with
+some memory holes.
 
-The kmalloc was not being checked - if it fails issue a warning
-and return -ENOMEM to the caller.
+But since these actually have the larger internal cache width this warning
+is bogus because it would only really be needed if the system had more than
+43bits of memory.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: b8da344b74c8 ("cifs: dynamic allocation of ntlmssp blob")
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-cc: Stable <stable@vger.kernel.org>`
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Add a new internal x86_cache_bits field. Normally it is the same as the
+physical bits field reported by CPUID, but for Nehalem and newerforce it to
+be at least 44bits.
 
+Change the L1TF memory size warning to use the new cache_bits field to
+avoid bogus warnings and remove the bogus comment about memory size.
+
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
+Reported-by: Christopher Snowhill <kode54@gmail.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Michael Hocko <mhocko@suse.com>
+Cc: vbabka@suse.cz
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180824170351.34874-1-andi@firstfloor.org
 ---
- fs/cifs/sess.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/processor.h |  4 ++-
+ arch/x86/kernel/cpu/bugs.c       | 47 ++++++++++++++++++++++++++++----
+ arch/x86/kernel/cpu/common.c     |  2 ++
+ 3 files changed, 47 insertions(+), 6 deletions(-)
 
---- a/fs/cifs/sess.c
-+++ b/fs/cifs/sess.c
-@@ -398,6 +398,12 @@ int build_ntlmssp_auth_blob(unsigned cha
- 		goto setup_ntlmv2_ret;
- 	}
- 	*pbuffer = kmalloc(size_of_ntlmssp_blob(ses), GFP_KERNEL);
-+	if (!*pbuffer) {
-+		rc = -ENOMEM;
-+		cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
-+		*buflen = 0;
-+		goto setup_ntlmv2_ret;
-+	}
- 	sec_blob = (AUTHENTICATE_MESSAGE *)*pbuffer;
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index a3a53955f01c..cb07d3f618ca 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -104,6 +104,8 @@ struct cpuinfo_x86 {
+ 	__u8			x86_phys_bits;
+ 	/* CPUID returned core id bits: */
+ 	__u8			x86_coreid_bits;
++
++	__u8			x86_cache_bits;
+ 	/* Max extended CPUID function supported: */
+ 	__u32			extended_cpuid_level;
+ 	/* Maximum supported CPUID level, -1=no CPUID: */
+@@ -174,7 +176,7 @@ extern void cpu_detect(struct cpuinfo_x86 *c);
  
- 	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
-
+ static inline unsigned long l1tf_pfn_limit(void)
+ {
+-	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_cache_bits - 1 - PAGE_SHIFT);
+ }
+ 
+ extern void early_cpu_init(void);
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 34e4aaaf03d2..2a41a86aa5c2 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -634,6 +634,46 @@ void x86_spec_ctrl_setup_ap(void)
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"L1TF: " fmt
++
++/*
++ * These CPUs all support 44bits physical address space internally in the
++ * cache but CPUID can report a smaller number of physical address bits.
++ *
++ * The L1TF mitigation uses the top most address bit for the inversion of
++ * non present PTEs. When the installed memory reaches into the top most
++ * address bit due to memory holes, which has been observed on machines
++ * which report 36bits physical address bits and have 32G RAM installed,
++ * then the mitigation range check in l1tf_select_mitigation() triggers.
++ * This is a false positive because the mitigation is still possible due to
++ * the fact that the cache uses 44bit internally. Use the cache bits
++ * instead of the reported physical bits and adjust them on the affected
++ * machines to 44bit if the reported bits are less than 44.
++ */
++static void override_cache_bits(struct cpuinfo_x86 *c)
++{
++	if (c->x86 != 6)
++		return;
++
++	switch (c->x86_model) {
++	case INTEL_FAM6_NEHALEM:
++	case INTEL_FAM6_WESTMERE:
++	case INTEL_FAM6_SANDYBRIDGE:
++	case INTEL_FAM6_IVYBRIDGE:
++	case INTEL_FAM6_HASWELL_CORE:
++	case INTEL_FAM6_HASWELL_ULT:
++	case INTEL_FAM6_HASWELL_GT3E:
++	case INTEL_FAM6_BROADWELL_CORE:
++	case INTEL_FAM6_BROADWELL_GT3E:
++	case INTEL_FAM6_SKYLAKE_MOBILE:
++	case INTEL_FAM6_SKYLAKE_DESKTOP:
++	case INTEL_FAM6_KABYLAKE_MOBILE:
++	case INTEL_FAM6_KABYLAKE_DESKTOP:
++		if (c->x86_cache_bits < 44)
++			c->x86_cache_bits = 44;
++		break;
++	}
++}
++
+ static void __init l1tf_select_mitigation(void)
+ {
+ 	u64 half_pa;
+@@ -641,16 +681,13 @@ static void __init l1tf_select_mitigation(void)
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return;
+ 
++	override_cache_bits(&boot_cpu_data);
++
+ #if CONFIG_PGTABLE_LEVELS == 2
+ 	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
+ 	return;
+ #endif
+ 
+-	/*
+-	 * This is extremely unlikely to happen because almost all
+-	 * systems have far more MAX_PA/2 than RAM can be fit into
+-	 * DIMM slots.
+-	 */
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+ 	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 4d3fa79c0f09..b12c0287d6cf 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -798,6 +798,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_phys_bits = 36;
+ #endif
+ 
++	c->x86_cache_bits = c->x86_phys_bits;
++
+ 	if (c->extended_cpuid_level >= 0x8000000a)
+ 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
+ 
+-- 
+2.17.1
 
