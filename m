@@ -2,235 +2,106 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F4FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C19C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9759920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9759920862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F4A52077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4A52077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeICNnW (ORCPT
+        id S1727169AbeICNvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:43:22 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:34148 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeICNnV (ORCPT
+        Mon, 3 Sep 2018 09:51:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38594 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbeICNvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:43:21 -0400
-Received: by mail-io0-f197.google.com with SMTP id z20-v6so17344636iol.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:24:05 -0700 (PDT)
+        Mon, 3 Sep 2018 09:51:43 -0400
+Received: from mail-wm0-f69.google.com ([74.125.82.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@canonical.com>)
+        id 1fwlDc-0004xK-4f
+        for linux-kernel@vger.kernel.org; Mon, 03 Sep 2018 09:32:24 +0000
+Received: by mail-wm0-f69.google.com with SMTP id t79-v6so236206wmt.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:32:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=dz4w8jNErdcSFHV6Q0H7UXBaUX++Q3yR53o/EcpRFCo=;
-        b=B6oNnzeT1KFqmY5ovyXFNdzMjcuLcmNSl9ZX0NEJ0EiX5QNSKmU99m+LxLZFDR5rpe
-         llq2o4mh9K/RqKsXPiBSZVyZWUMeUiSYnyqd2oJspz9ySOHUQXQpXdUO349WYfvXO5l0
-         yxrO7WOn/JJsHaM20kLvKyS5aX+0/KHyJHJvkhsOIZ9NC44NVwfSXrsHIhD4mWZuGB2r
-         JjCJhzzoDiqExew65GInep6C8bZv3Y5RXEIPzGAbCKEAiA1iUMxuclzTErARjP5aYLl7
-         vZJC10nXfhHBdThwC3Ihe0Vwr3s2lNuP9n8e07D77NdMldP+BHnfPO9bt1+7doOotJVK
-         nfUQ==
-X-Gm-Message-State: APzg51A29xcDM7WiOPSvQUyLHTJEC/i9eEWQYgjbbyq9GcWtSaZRGsji
-        ZigrGbbZHcHSBwwOLIZABjvSDyJev9wlxjWEqcLc+xiLN+0U
-X-Google-Smtp-Source: ANB0VdbzrWzN7c4RBIowgAJXAL9sHTjuyIem9BpwcZDjl3/k0MG9HvwDGHlJW1i9FJ1oQjaSYrSkubZk8bQKHyBAUo9uG1ITLq5t
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gA4CMHFpx3SYhrx7jxOLbG6PPLI8KyDREbDB3/8PSCs=;
+        b=H2QHEYzrA8V4t4Wlfnnb7+NDaIB/8qen2q4+OxTWviCXFvz2Qe6DUrja3w9TrzbsVP
+         tkrcCAYZTnHsrxhJfrzUKgn5Y+EeEP6orah6Sqo7myRdCB5swWwNDzarXOBlc0Uy8zI/
+         NujAtQGLCK8D+IAH9TysJMgUovuc5wAxjEe/YoNFbXHIi6en9wuDPkQjrF0ohQEx2Xur
+         aqBZKZFlGJyzT+IigrapZp9Pfz2NzvDM1iVkt4oLoCtawNPtA0aV/gaEGryW5yQQPXkT
+         /d/kyJ5HgVFxAOBqBiltpUGxFTVAEgYnnKwzMke6r94fWW8Kg07MqXFmInJ9nio7/65i
+         uZ+A==
+X-Gm-Message-State: APzg51A1VG8Q8taylM6x1fgfifGyPWQjhxCL3su4vht1hljKwYQvHCbD
+        uys6rQF4Z4WdXEzJT+3HdLE+Rjc8HZl7q4XpagVJTZHGUAuMFBWbZcbOw1KUORtvKueRGGNRgwU
+        9v9cMd4pvQwML7po4+wd7tGlyX778qCWzW5HvKKUeZw==
+X-Received: by 2002:adf:f749:: with SMTP id z9-v6mr18536959wrp.85.1535967143825;
+        Mon, 03 Sep 2018 02:32:23 -0700 (PDT)
+X-Google-Smtp-Source: ANB0VdYkby4v4fE+v8oLgw0K7TTep75/ELuG4k5sYyeu6L1J2f0VidTBcgSKjgrLkz/41ZbvDYsEKQ==
+X-Received: by 2002:adf:f749:: with SMTP id z9-v6mr18536948wrp.85.1535967143598;
+        Mon, 03 Sep 2018 02:32:23 -0700 (PDT)
+Received: from gmail.com ([88.128.83.136])
+        by smtp.gmail.com with ESMTPSA id c15-v6sm8037570wmb.2.2018.09.03.02.32.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 02:32:23 -0700 (PDT)
+From:   Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian@brauner.io>
+Date:   Mon, 3 Sep 2018 11:32:22 +0200
+To:     Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Cc:     Jiri Benc <jbenc@redhat.com>, David Miller <davem@davemloft.net>,
+        ktkhai@virtuozzo.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, pombredanne@nexb.com,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        dsahern@gmail.com, fw@strlen.de, lucien.xin@gmail.com,
+        jakub.kicinski@netronome.com
+Subject: Re: [PATCH net-next 0/5] rtnetlink: add IFA_IF_NETNSID for
+ RTM_GETADDR
+Message-ID: <20180903093221.bxdqw2iwvxli4dhf@gmail.com>
+References: <81379a4f-7149-10ff-2453-886314d0b0c4@virtuozzo.com>
+ <20180830144544.tpross4jd6awou4u@gmail.com>
+ <ba6a1b18-959e-e307-45fa-e0da9d6f0b0f@6wind.com>
+ <20180831.175847.339882322459287210.davem@davemloft.net>
+ <20180901184704.lzynbw5zkyiqc6wb@gmail.com>
+ <20180902115851.2b224c23@redhat.com>
+ <d9efff32-4138-5645-c610-7f2051085d7b@6wind.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:678d:: with SMTP id u135-v6mr3608486itc.55.1535966643309;
- Mon, 03 Sep 2018 02:24:03 -0700 (PDT)
-Date:   Mon, 03 Sep 2018 02:24:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029554c0574f41ae4@google.com>
-Subject: KASAN: slab-out-of-bounds Write in __ext4_expand_extra_isize
-From:   syzbot <syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d9efff32-4138-5645-c610-7f2051085d7b@6wind.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Sep 03, 2018 at 09:50:00AM +0200, Nicolas Dichtel wrote:
+> Le 02/09/2018 à 11:58, Jiri Benc a écrit :
+> > On Sat, 1 Sep 2018 20:47:05 +0200, Christian Brauner wrote:
+> >> Sorry for the late reply. Yup, sounds good to me.
+> >> But maybe IFA_TARGET_NETNSID to indicate that we're talking network
+> >> namespaces here? Seems to me that NSID might give the wrong impression.
+> >> I'll send v1 soon. I expect tomorrow or sometime next week.
+> > 
+> > On the other hand, we currently have IFLA_IF_NETNSID for the link
+> > operations. IFA_IF_NETNSID is more consistent with the existing
+> > attribute. It may be confusing to authors of user space programs to
+> > have attribute names doing the same thing constructed differently for
+> > different calls (IFLA_IF_NETNSID and IFA_TARGET_NETNSID).
+> Yep, I also thought to this. It had sense because it was the link family.
+> What about adding an alias (#define IFLA_TARGET_NETNSID IFLA_IF_NETNSID) in the
+> uapi to better document this?
 
-syzbot found the following crash on:
-
-HEAD commit:    a880148cb2af Add linux-next specific files for 20180831
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=135f5e0a400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a059d319ef7d83f6
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8d6f8386ceacdbfff57
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memset include/linux/string.h:330 [inline]
-BUG: KASAN: slab-out-of-bounds in __ext4_expand_extra_isize+0x178/0x240  
-fs/ext4/inode.c:5863
-Write of size 167772160 at addr ffff8801c3a03480 by task syz-executor1/27592
-BUG: unable to handle kernel paging request at ffff8801d7ff9da8
-
-PGD a5e9067
-CPU: 0 PID: 27592 Comm: syz-executor1 Not tainted 4.19.0-rc1-next-20180831+  
-#53
-P4D a5e9067 PUD 1d9ea8063
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-PMD 1c6294063
-Call Trace:
-PTE 0
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-Oops: 0000 [#1] SMP KASAN
-CPU: 1 PID: 27610 Comm: syz-executor2 Not tainted 4.19.0-rc1-next-20180831+  
-#53
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:lookup_object lib/debugobjects.c:157 [inline]
-RIP: 0010:debug_object_deactivate+0x19b/0x450 lib/debugobjects.c:543
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-Code: 00 00 48 85 db 74 46 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 18 41 83  
-c7 01 48 89 fe 48 c1 ee 03 80 3c 06 00 0f 85 04 02 00 00 <48> 3b 53 18 0f  
-84 53 01 00 00 48 89 de 48 c1 ee 03 80 3c 06 00 0f
-RSP: 0018:ffff8801db107a90 EFLAGS: 00010046
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-RAX: dffffc0000000000 RBX: ffff8801d7ff9d90 RCX: ffffffff8160b0d1
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-RDX: ffff8801db1265a0 RSI: 1ffff1003afff3b5 RDI: ffff8801d7ff9da8
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-RBP: ffff8801db107b48 R08: fffffbfff13a35da R09: fffffbfff13a35d9
-  memset include/linux/string.h:330 [inline]
-  __ext4_expand_extra_isize+0x178/0x240 fs/ext4/inode.c:5863
-R10: fffffbfff13a35d9 R11: ffffffff89d1aecb R12: 1ffff1003b620f54
-  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5915 [inline]
-  ext4_mark_inode_dirty+0x88f/0xab0 fs/ext4/inode.c:5991
-R13: ffffffff89d1aec8 R14: ffffffff881a1ea0 R15: 000000000000000b
-FS:  0000000001368940(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8801d7ff9da8 CR3: 00000001cc9bc000 CR4: 00000000001406e0
-Call Trace:
-  <IRQ>
-  debug_hrtimer_deactivate kernel/time/hrtimer.c:421 [inline]
-  debug_deactivate kernel/time/hrtimer.c:471 [inline]
-  __run_hrtimer kernel/time/hrtimer.c:1368 [inline]
-  __hrtimer_run_queues+0x2b6/0xff0 kernel/time/hrtimer.c:1460
-  ext4_dirty_inode+0x97/0xc0 fs/ext4/inode.c:6025
-  __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1029 [inline]
-  smp_apic_timer_interrupt+0x16d/0x6a0 arch/x86/kernel/apic/apic.c:1054
-  mark_inode_dirty_sync include/linux/fs.h:2088 [inline]
-  dquot_free_space include/linux/quotaops.h:373 [inline]
-  dquot_free_block include/linux/quotaops.h:383 [inline]
-  ext4_free_blocks+0x1828/0x2980 fs/ext4/mballoc.c:4919
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:867
-  </IRQ>
-RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65
-Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48  
-ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8  
-c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-RSP: 0018:ffff88018874f3c0 EFLAGS: 00010282
-  ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: ffff8801c3a03580 RCX: 0000000007677c40
-RDX: 000000000a000000 RSI: 0000000000000000 RDI: ffff8801c638b940
-  ext4_remove_blocks fs/ext4/extents.c:2561 [inline]
-  ext4_ext_rm_leaf fs/ext4/extents.c:2717 [inline]
-  ext4_ext_remove_space+0x2372/0x49e0 fs/ext4/extents.c:2950
-RBP: ffff88018874f3e0 R08: ffffed0038780008 R09: ffff8801c3a03580
-R10: ffffed0039b406af R11: ffff8801cda0357f R12: 000000000a000000
-R13: 0000000000000000 R14: ffff8801c3a03580 R15: 000000000a000000
-  memset include/linux/string.h:330 [inline]
-  __ext4_expand_extra_isize+0x178/0x240 fs/ext4/inode.c:5863
-  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5915 [inline]
-  ext4_mark_inode_dirty+0x88f/0xab0 fs/ext4/inode.c:5991
-  ext4_ext_tree_init+0x105/0x140 fs/ext4/extents.c:856
-  __ext4_new_inode+0x5433/0x64e0 fs/ext4/ialloc.c:1169
-  ext4_ext_truncate+0x1d1/0x220 fs/ext4/extents.c:4644
-  ext4_truncate+0xe8d/0x1550 fs/ext4/inode.c:4500
-  ext4_setattr+0x1821/0x2850 fs/ext4/inode.c:5606
-  notify_change+0xbde/0x1110 fs/attr.c:334
-  do_truncate+0x1ac/0x2b0 fs/open.c:63
-  handle_truncate fs/namei.c:3008 [inline]
-  do_last fs/namei.c:3424 [inline]
-  path_openat+0x34e3/0x5340 fs/namei.c:3534
-  ext4_symlink+0x4d6/0x1170 fs/ext4/namei.c:3093
-  vfs_symlink+0x37a/0x5d0 fs/namei.c:4127
-  do_symlinkat+0x242/0x2d0 fs/namei.c:4154
-  __do_sys_symlink fs/namei.c:4173 [inline]
-  __se_sys_symlink fs/namei.c:4171 [inline]
-  __x64_sys_symlink+0x59/0x80 fs/namei.c:4171
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  do_filp_open+0x255/0x380 fs/namei.c:3564
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x456dc7
-  do_sys_open+0x584/0x720 fs/open.c:1063
-Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 00 00 00 00  
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-RSP: 002b:00007ffea49403a8 EFLAGS: 00000202
-  ORIG_RAX: 0000000000000058
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000456dc7
-  __do_sys_openat fs/open.c:1090 [inline]
-  __se_sys_openat fs/open.c:1084 [inline]
-  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
-RDX: 00007ffea49403f7 RSI: 00000000004c280c RDI: 00007ffea49403e0
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000017
-R10: 0000000000000075 R11: 0000000000000202 R12: 000000000000000d
-R13: 0000000000089efb R14: 000000000000014c R15: badc0ffeebadface
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-CR2: ffff8801d7ff9da8
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
----[ end trace 5682ca918272dd25 ]---
-RIP: 0033:0x457099
-RIP: 0010:lookup_object lib/debugobjects.c:157 [inline]
-RIP: 0010:debug_object_deactivate+0x19b/0x450 lib/debugobjects.c:543
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-Code: 00 00 48 85 db 74 46 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 18 41 83  
-c7 01 48 89 fe 48 c1 ee 03 80 3c 06 00 0f 85 04 02 00 00 <48> 3b 53 18 0f  
-84 53 01 00 00 48 89 de 48 c1 ee 03 80 3c 06 00 0f
-RSP: 002b:00007f6a539afc78 EFLAGS: 00000246
-RSP: 0018:ffff8801db107a90 EFLAGS: 00010046
-  ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f6a539b06d4 RCX: 0000000000457099
-RAX: dffffc0000000000 RBX: ffff8801d7ff9d90 RCX: ffffffff8160b0d1
-RDX: 0000000000002761 RSI: 0000000020000200 RDI: ffffffffffffffff
-RDX: ffff8801db1265a0 RSI: 1ffff1003afff3b5 RDI: ffff8801d7ff9da8
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-RBP: ffff8801db107b48 R08: fffffbfff13a35da R09: fffffbfff13a35d9
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R10: fffffbfff13a35d9 R11: ffffffff89d1aecb R12: 1ffff1003b620f54
-R13: 00000000004d3318 R14: 00000000004c819c R15: 0000000000000000
-R13: ffffffff89d1aec8 R14: ffffffff881a1ea0 R15: 000000000000000b
-
-FS:  0000000001368940(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-The buggy address belongs to the page:
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-page:ffffea00070e80c0 count:2 mapcount:0 mapping:ffff8801cd439658  
-index:0x4ab
-CR2: ffff8801d7ff9da8 CR3: 00000001cc9bc000 CR4: 00000000001406e0
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Sounds good to me.
