@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2594C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8B5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942C020645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942C020645
+	by mail.kernel.org (Postfix) with ESMTP id 7DAF220645
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAF220645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbeIDBHR (ORCPT
+        id S1729095AbeIDBHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:07:17 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:50357 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728386AbeIDBHR (ORCPT
+        Mon, 3 Sep 2018 21:07:21 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:44262 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728386AbeIDBHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:07:17 -0400
+        Mon, 3 Sep 2018 21:07:21 -0400
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fwvis-00063e-Dv; Mon, 03 Sep 2018 14:45:22 -0600
+        id 1fwviw-0004y2-Ls; Mon, 03 Sep 2018 14:45:26 -0600
 Received: from [105.225.206.69] (helo=x220.Home)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1fwvir-0008G7-5a; Mon, 03 Sep 2018 14:45:22 -0600
+        id 1fwviv-0008G7-Kh; Mon, 03 Sep 2018 14:45:26 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Oleg Nesterov <oleg@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-api@vger.kernel.org,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon,  3 Sep 2018 22:44:24 +0200
-Message-Id: <20180903204430.25473-4-ebiederm@xmission.com>
+Date:   Mon,  3 Sep 2018 22:44:25 +0200
+Message-Id: <20180903204430.25473-5-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <87musyl3fa.fsf@xmission.com>
 References: <87musyl3fa.fsf@xmission.com>
-X-XM-SPF: eid=1fwvir-0008G7-5a;;;mid=<20180903204430.25473-4-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19qfMbRMxy3SzUutpexWj6/atc4t8Vq3x8=
+X-XM-SPF: eid=1fwviv-0008G7-Kh;;;mid=<20180903204430.25473-5-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+R4kB7DDxxkwY0WFKRCr7gKz1lcTF6gJI=
 X-SA-Exim-Connect-IP: 105.225.206.69
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 04/10] signal: Always deliver the kernel's SIGKILL and SIGSTOP to a pid namespace init
+Subject: [PATCH 05/10] signal: send_sig_all no longer needs SEND_SIG_FORCED
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,32 +56,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of playing whack-a-mole and changing SEND_SIG_PRIV to
-SEND_SIG_FORCED throughout the kernel to ensure a pid namespace init
-gets signals sent by the kernel, stop allowing a pid namespace init to
-ignore SIGKILL or SIGSTOP sent by the kernel.  A pid namespace init is
-only supposed to be able to ignore signals sent from itself and
-children with SIG_DFL.
+Now that send_signal always delivers SEND_SIG_PRIV signals to a pid
+namespace init it is no longer necessary to use SEND_SIG_FORCED when
+calling do_send_sig_info to ensure that pid namespace inits are
+signaled and possibly killed.  Using SEND_SIG_PRIV is sufficient.
 
-Fixes: 921cf9f63089 ("signals: protect cinit from unblocked SIG_DFL signals")
+So use SEND_SIG_PRIV so that userspace when it receives a SIGTERM can
+tell that the kernel sent the signal and not some random userspace
+application.
+
+Fixes: b82c32872db2 ("sysrq: use SEND_SIG_FORCED instead of force_sig()")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- kernel/signal.c | 2 +-
+ drivers/tty/sysrq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index b33264bb2064..8081ab79e97d 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1039,7 +1039,7 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index 06ed20dd01ba..ad1ee5d01b53 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -348,7 +348,7 @@ static void send_sig_all(int sig)
+ 		if (is_global_init(p))
+ 			continue;
  
- 	result = TRACE_SIGNAL_IGNORED;
- 	if (!prepare_signal(sig, t,
--			from_ancestor_ns || (info == SEND_SIG_FORCED)))
-+			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
- 		goto ret;
- 
- 	pending = (type != PIDTYPE_PID) ? &t->signal->shared_pending : &t->pending;
+-		do_send_sig_info(sig, SEND_SIG_FORCED, p, PIDTYPE_MAX);
++		do_send_sig_info(sig, SEND_SIG_PRIV, p, PIDTYPE_MAX);
+ 	}
+ 	read_unlock(&tasklist_lock);
+ }
 -- 
 2.17.1
 
