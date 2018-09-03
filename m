@@ -2,87 +2,48 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC548C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7206BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4148220856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+My7R7M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4148220856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E598E20868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:39:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E598E20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeICWx2 (ORCPT
+        id S1727614AbeICXAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:53:28 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37579 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbeICWx1 (ORCPT
+        Mon, 3 Sep 2018 19:00:48 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:46474 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbeICXAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:53:27 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f1-v6so502391plt.4;
-        Mon, 03 Sep 2018 11:32:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0jZJ0JBmB3TAdm0LG7EBuyxLYRy3bCh9BozrnB1RkrQ=;
-        b=O+My7R7MIRDAWHFtXXqgVvN5UKs9aoRSyasgctFJY7JaDJ92yXmqVvS22a2VB6yXlT
-         iMlpuBJKxruKos7OLaYkz4e7T5XFknXfL58GBhHnTaRQ0uwXjT45RH+eSG3pti750orV
-         7/apeLJ+HQ+MncbChOTgiCotQYduOVuKAaAEUgxkaPR5ece3KTXlO+YtyB0OxZUHAf+1
-         X/BAzf6UB7ED5dw54eMGQZABacH5rQaVGycnlBRQu1E6wyUfaOhrl97grEUfRrNO0HZ7
-         Cr8nEvgHlKqLJMtUorNo2gKMkV0O5BMQH3U7vNWGZ9qH8sSDpbcyWzfcbzdfq97YJCSw
-         97FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0jZJ0JBmB3TAdm0LG7EBuyxLYRy3bCh9BozrnB1RkrQ=;
-        b=NJBEtJiCi0HnEDvncvo1MZOPzJLE6SGzw5eyVZPV0c2IPPXo5B+4ggjSGCPSlYITJs
-         8yIMsSrhzLeCZR33KhrgZ/bwj1jRX/UftbJruNjieDq3Lgz+1i5G6P6g5Tr7g8a0HhvY
-         uFJTjS+bJIIykz9sAeNNcoDhp9rzKYu5IirfJX6NnGcjQvjaNxLLRY6hK0sGEnosyp4m
-         ngkovGFm5CjgBOjQ7PLm6qVSDVC6j0dubF8txrTuo3NsaO9FEI+Zryow82rm0YjK6+JW
-         +dleKwBUQPBtYKFAykcc5AmO6/ttuiLcHWyKk7vp9B0TzKPXtCZLBItYj0Hispq06zVN
-         EBCg==
-X-Gm-Message-State: APzg51AKPLvi//cM1WYH46vWvDBZMcxcZl9BnQ2WVzXkV4irAHQLvaBZ
-        bisojkDtb3ERceTYuF2Y4MY=
-X-Google-Smtp-Source: ANB0VdYoZPjofX7sy8irBq163ttqsfKO4q8IX0movD4Sc4zKC8iKIv/Ye+O/sX7L3SCdXelN2j1H7Q==
-X-Received: by 2002:a17:902:7586:: with SMTP id j6-v6mr29425119pll.295.1535999522705;
-        Mon, 03 Sep 2018 11:32:02 -0700 (PDT)
-Received: from [10.10.115.170] ([192.19.218.250])
-        by smtp.gmail.com with ESMTPSA id g15-v6sm38244650pfg.98.2018.09.03.11.31.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 11:32:01 -0700 (PDT)
-Subject: Re: [PATCH RFC 0/2] hwmon: Add RPi PoE HAT fan driver
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Rob Herring <robh+dt@kernel.org>, Eric Anholt <eric@anholt.net>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, serge@raspberrypi.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Elwell <phil@raspberrypi.org>,
-        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1535887251-29515-1-git-send-email-stefan.wahren@i2se.com>
- <99ca4f6d-d2b2-36e7-9f27-189df379cfaf@roeck-us.net>
- <67224834.51159.1535905604770@email.1und1.de>
- <e8d4e69c-2668-2794-6474-79749bf8b577@roeck-us.net>
- <829194253.51526.1535908415057@email.1und1.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <642d46f3-7c1d-2b97-5d49-8772c75be530@gmail.com>
-Date:   Mon, 3 Sep 2018 11:31:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 3 Sep 2018 19:00:48 -0400
+Received: from tux.wizards.de (p3EE2F86E.dip0.t-ipconnect.de [62.226.248.110])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id DC06B4160200;
+        Mon,  3 Sep 2018 20:39:18 +0200 (CEST)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 6B216F015F9;
+        Mon,  3 Sep 2018 20:39:18 +0200 (CEST)
+Subject: Re: [PATCH 4.18 000/123] 4.18.6-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180903165719.499675257@linuxfoundation.org>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <64889a4a-c095-3db8-b496-631acbafcf9a@applied-asynchrony.com>
+Date:   Mon, 3 Sep 2018 20:39:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <829194253.51526.1535908415057@email.1und1.de>
+In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -91,54 +52,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/03/18 18:55, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.18.6 release.
 
+Unfortunately this is busted. First blamed my custom patches, but as it
+turns out a 100% vanilla 4.18.6 build crashes as well. Single-user starts,
+but later when starting services and esp. autofs (I think - too much output)
+explodes with:
 
-On 9/2/2018 10:13 AM, Stefan Wahren wrote:
-> Hi Guenter,
-> 
->> Guenter Roeck <linux@roeck-us.net> hat am 2. September 2018 um 18:49 geschrieben:
->>
->>
->> On 09/02/2018 09:26 AM, Stefan Wahren wrote:
->>> Hi Guenter,
->>>
->>>> Guenter Roeck <linux@roeck-us.net> hat am 2. September 2018 um 16:23 geschrieben:
->>>>
->>>>
->>>> On 09/02/2018 04:20 AM, Stefan Wahren wrote:
->>>>> This series is an early stage of the hwmon driver for the fan on the
->>>>> Raspberry Pi Power over Ethernet HAT [1]. At the end this should use a
->>>>> Device Tree Overlay.
->>>>>
->>>>> Changes by Stefan based on [2]:
->>>>> - reformat the downstream patches for submission
->>>>> - drop reboot notification
->>>>> - fix remaining checkpatch issues
->>>>> - add COMPILE_TEST to Kconfig
->>>>>
->>>>> The driver is mostly copy & paste from pwm-fan, which isn't good. Personally
->>>>> i see two options:
->>>>>
->>>>> 1) integrate the driver function into the pwm-fan driver (new compatible)
->>>>> 2) implement the core function as a PWM driver and use the pwm-fan driver on top
->>>>>
->>>>
->>>> I don't really see the point of thise driver. Why not implement either of those ?
->>>
->>> i'm not sure about your question. Since the fan is placed over the SoC, the fan should takes care of the SoC temperature. AFAIK the firmware should have exclusive access to the I2C. So why we need this mailbox interface instead of a I2C driver.
->>>
->>
->> The driver sets pwm values. The pwm-fan driver sets pwm values. A pwm driver
->> sets pwm values. The pwm-fan driver uses a pwm driver to set pwm values.
->> You appear to be arguing that the pwm-fan driver for Rpi is different than
->> a pwm-fan driver for all other hardware and should _not_ use a pwm driver
->> to set pwm values.
-> 
-> thanks for your explanation. Now i think i understand and sorry for the confusion. We need a driver which translate the pwm values into the mailbox properties. "My" RFC series is only a starting point (not intended for merge and not an option) for a discussion and i'm perfectly fine with 2).
-> Both options would be feasible in general. I only wanted to know your opinion before i start to implement one of them.
+...
+Sep  3 20:19:36 ragnarok kernel: IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+Sep  3 20:19:38 ragnarok kernel: BUG: stack guard page was hit at 00000000ab58c99c (stack is 00000000382b9464..00000000d642b9d6)
+Sep  3 20:19:38 ragnarok kernel: kernel stack overflow (double-fault): 0000 [#1] SMP
+Sep  3 20:19:38 ragnarok kernel: CPU: 4 PID: 3634 Comm: automount Tainted: G           O      4.18.6 #1
+Sep  3 20:19:38 ragnarok kernel: Hardware name: Gigabyte Technology Co., Ltd. P67-DS3-B3/P67-DS3-B3, BIOS F1 05/06/2011
+Sep  3 20:19:38 ragnarok kernel: RIP: 0010:flush_tlb_func_common.constprop.4+0x23/0x260
+Sep  3 20:19:38 ragnarok kernel: Code: 0b eb e5 0f 1f 40 00 66 66 66 66 90 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 f0 48 83 ec 20 65 48 8b 04 25 28 00 00 00 <48> 89 44 24 18 31 c0 65 66 8b 1d 96 fd fc 7e 0f b7 c3 65 48 8b 15
+Sep  3 20:19:38 ragnarok kernel: RSP: 0018:ffffc9000326bfe0 EFLAGS: 00010082
+Sep  3 20:19:38 ragnarok kernel: RAX: cf0a75e3a0e78e00 RBX: ffff880601006cc0 RCX: 0000000000000000
+Sep  3 20:19:38 ragnarok kernel: RDX: 00007fb464e7e000 RSI: 0000000000000003 RDI: ffffc9000326c040
+Sep  3 20:19:38 ragnarok kernel: RBP: ffffc9000326c030 R08: 00000005fca490e7 R09: 00000000004fa811
+Sep  3 20:19:38 ragnarok kernel: R10: 0000000000000002 R11: 0000000000000000 R12: 0000000000000004
+Sep  3 20:19:38 ragnarok kernel: R13: ffff8805fbab7600 R14: ffff880601006cc0 R15: ffff880602dfb540
+Sep  3 20:19:38 ragnarok kernel: FS:  00007fb469245240(0000) GS:ffff88061f500000(0000) knlGS:0000000000000000
+Sep  3 20:19:38 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep  3 20:19:38 ragnarok kernel: CR2: ffffc9000326bfd8 CR3: 00000005feadb001 CR4: 00000000000606e0
+Sep  3 20:19:38 ragnarok kernel: Call Trace:
+Sep  3 20:19:38 ragnarok kernel:  flush_tlb_mm_range+0xff/0x110
+Sep  3 20:19:38 ragnarok kernel:  ? cpumask_any_but+0x1f/0x40
+Sep  3 20:19:38 ragnarok kernel:  ? cpumask_any_but+0x1f/0x40
+Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x76/0xc0
+Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
+Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
+..a few hundred times..
+Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
+Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
+Sep  3 20:19:38 ragnarok kernel:  arch_tlb_finish_mmu+0x3a/0x70
+Sep  3 20:19:38 ragnarok kernel:  tlb_finish_mmu+0x1f/0x30
+Sep  3 20:19:38 ragnarok kernel:  unmap_region+0xdd/0x110
+Sep  3 20:19:38 ragnarok kernel:  ? __vma_rb_erase+0x128/0x250
+Sep  3 20:19:38 ragnarok kernel:  do_munmap+0x273/0x3f0
+Sep  3 20:19:38 ragnarok kernel:  vm_munmap+0x5f/0xa0
+Sep  3 20:19:38 ragnarok kernel:  __x64_sys_munmap+0x22/0x30
+Sep  3 20:19:38 ragnarok kernel:  do_syscall_64+0x3e/0xe0
+Sep  3 20:19:38 ragnarok kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Sep  3 20:19:38 ragnarok kernel: RIP: 0033:0x7fb469081187
+Sep  3 20:19:38 ragnarok kernel: Code: ff ff ff f7 d8 89 05 58 df 20 00 48 c7 c0 ff ff ff ff eb 8a 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 0b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8d 0d 29 df 20 00 f7 d8 89 01 48 83
+Sep  3 20:19:38 ragnarok kernel: RSP: 002b:00007ffef83ba548 EFLAGS: 00000206 ORIG_RAX: 000000000000000b
+Sep  3 20:19:38 ragnarok kernel: RAX: ffffffffffffffda RBX: 0000562a1dca9010 RCX: 00007fb469081187
+Sep  3 20:19:38 ragnarok kernel: RDX: 0000000000000002 RSI: 0000000000204028 RDI: 00007fb464c79000
+Sep  3 20:19:38 ragnarok kernel: RBP: 00007ffef83ba720 R08: 00007fb46928e930 R09: 0000000000000000
+Sep  3 20:19:38 ragnarok kernel: R10: 00007fb464e7d000 R11: 0000000000000206 R12: 00007ffef83ba654
+Sep  3 20:19:38 ragnarok kernel: R13: 00007ffef83ba610 R14: 00007ffef83ba655 R15: 00007fb46928e000
+Sep  3 20:19:38 ragnarok kernel: Modules linked in: autofs4 tcp_bbr sch_fq_codel pci_stub vboxpci(O) vboxnetadp(O) vboxnetflt(O) vboxdrv(O) it87 hwmon_vid x86_pkg_temp_thermal uvcvideo videobuf2_vmalloc videobuf2_memops snd_usb_audio videobuf2_v4l2 snd_hwdep bfq snd_usbmidi_lib videodev snd_rawmidi coretemp snd_seq_device videobuf2_common radeon usbhid kvm_intel i2c_algo_bit kvm snd_hda_codec_realtek irqbypass drm_kms_helper snd_hda_codec_hdmi snd_hda_codec_generic pcbc syscopyarea sysfillrect sysimgblt mq_deadline fb_sys_fops ttm snd_hda_intel aesni_intel snd_hda_codec drm snd_hda_core aes_x86_64 crypto_simd drm_panel_orientation_quirks cryptd snd_pcm glue_helper backlight snd_timer snd i2c_i801 soundcore i2c_core r8169 parport_pc parport mii
+Sep  3 20:19:38 ragnarok kernel: ---[ end trace cf25033b43d98311 ]---
+Sep  3 20:19:38 ragnarok kernel: RIP: 0010:flush_tlb_func_common.constprop.4+0x23/0x260
+Sep  3 20:19:38 ragnarok kernel: Code: 0b eb e5 0f 1f 40 00 66 66 66 66 90 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 f0 48 83 ec 20 65 48 8b 04 25 28 00 00 00 <48> 89 44 24 18 31 c0 65 66 8b 1d 96 fd fc 7e 0f b7 c3 65 48 8b 15
+Sep  3 20:19:38 ragnarok kernel: RSP: 0018:ffffc9000326bfe0 EFLAGS: 00010082
+Sep  3 20:19:38 ragnarok kernel: RAX: cf0a75e3a0e78e00 RBX: ffff880601006cc0 RCX: 0000000000000000
+Sep  3 20:19:38 ragnarok kernel: RDX: 00007fb464e7e000 RSI: 0000000000000003 RDI: ffffc9000326c040
+Sep  3 20:19:38 ragnarok kernel: RBP: ffffc9000326c030 R08: 00000005fca490e7 R09: 00000000004fa811
+Sep  3 20:19:38 ragnarok kernel: R10: 0000000000000002 R11: 0000000000000000 R12: 0000000000000004
+Sep  3 20:19:38 ragnarok kernel: R13: ffff8805fbab7600 R14: ffff880601006cc0 R15: ffff880602dfb540
+Sep  3 20:19:38 ragnarok kernel: FS:  00007fb469245240(0000) GS:ffff88061f500000(0000) knlGS:0000000000000000
+Sep  3 20:19:38 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep  3 20:19:38 ragnarok kernel: CR2: ffffc9000326bfd8 CR3: 00000005feadb001 CR4: 00000000000606e0
+Sep  3 20:19:40 ragnarok kernel: r8169 0000:04:00.0 eth0: link up
+Sep  3 20:19:40 ragnarok kernel: IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
 
-Is not there a way to expose the PWM pins directly to the kernel instead 
-of going through the firmware to do that for us? I am just asking 
-because sometimes this appears to be possible, guess not in this case?
--- 
-Florian
+This is repeatable; full log is available on request.
+
+Reverting "mm-tlb-x86-mm-support-invalidating-tlb-caches-for-rcu_table_free"
+makes everything work.
+
+I'm now going back to my custom tree with lazy TLB handling, that worked as
+advertised. :D
+
+cheers
+Holger
