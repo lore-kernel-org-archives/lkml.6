@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A530C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14486C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16A6820658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A6820658
+	by mail.kernel.org (Postfix) with ESMTP id C7F7F20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F7F20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731174AbeICVti (ORCPT
+        id S1731178AbeICVts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:49:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46436 "EHLO
+        Mon, 3 Sep 2018 17:49:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46450 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731162AbeICVth (ORCPT
+        with ESMTP id S1728613AbeICVtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:49:37 -0400
+        Mon, 3 Sep 2018 17:49:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34071D18;
-        Mon,  3 Sep 2018 17:28:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 877CFCF4;
+        Mon,  3 Sep 2018 17:28:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Lance Albertson <lance@osuosl.org>
-Subject: [PATCH 4.14 165/165] gcc-plugins: Use dynamic initializers
-Date:   Mon,  3 Sep 2018 18:57:31 +0200
-Message-Id: <20180903165705.371605015@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Neves <sneves@dei.uc.pt>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 4.14 135/165] x86/vdso: Fix lsl operand order
+Date:   Mon,  3 Sep 2018 18:57:01 +0200
+Message-Id: <20180903165702.321599261@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,176 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Samuel Neves <sneves@dei.uc.pt>
 
-commit b86729109c5fd0a480300f40608aac68764b5adf upstream.
+commit e78e5a91456fcecaa2efbb3706572fe043766f4d upstream.
 
-GCC 8 changed the order of some fields and is very picky about ordering
-in static initializers, so instead just move to dynamic initializers,
-and drop the redundant already-zero field assignments.
+In the __getcpu function, lsl is using the wrong target and destination
+registers. Luckily, the compiler tends to choose %eax for both variables,
+so it has been working so far.
 
-Suggested-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Cc: Lance Albertson <lance@osuosl.org>
+Fixes: a582c540ac1b ("x86/vdso: Use RDPID in preference to LSL when available")
+Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180901201452.27828-1-sneves@dei.uc.pt
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/gcc-plugins/latent_entropy_plugin.c   |   17 +----
- scripts/gcc-plugins/randomize_layout_plugin.c |   75 +++++++-------------------
- scripts/gcc-plugins/structleak_plugin.c       |   19 ++----
- 3 files changed, 33 insertions(+), 78 deletions(-)
+ arch/x86/include/asm/vgtod.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/scripts/gcc-plugins/latent_entropy_plugin.c
-+++ b/scripts/gcc-plugins/latent_entropy_plugin.c
-@@ -255,21 +255,14 @@ static tree handle_latent_entropy_attrib
- 	return NULL_TREE;
- }
- 
--static struct attribute_spec latent_entropy_attr = {
--	.name				= "latent_entropy",
--	.min_length			= 0,
--	.max_length			= 0,
--	.decl_required			= true,
--	.type_required			= false,
--	.function_type_required		= false,
--	.handler			= handle_latent_entropy_attribute,
--#if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity		= false
--#endif
--};
-+static struct attribute_spec latent_entropy_attr = { };
- 
- static void register_attributes(void *event_data __unused, void *data __unused)
- {
-+	latent_entropy_attr.name		= "latent_entropy";
-+	latent_entropy_attr.decl_required	= true;
-+	latent_entropy_attr.handler		= handle_latent_entropy_attribute;
-+
- 	register_attribute(&latent_entropy_attr);
- }
- 
---- a/scripts/gcc-plugins/randomize_layout_plugin.c
-+++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-@@ -580,68 +580,35 @@ static void finish_type(void *event_data
- 	return;
- }
- 
--static struct attribute_spec randomize_layout_attr = {
--	.name		= "randomize_layout",
--	// related to args
--	.min_length	= 0,
--	.max_length	= 0,
--	.decl_required	= false,
--	// need type declaration
--	.type_required	= true,
--	.function_type_required = false,
--	.handler		= handle_randomize_layout_attr,
--#if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity  = true
--#endif
--};
-+static struct attribute_spec randomize_layout_attr = { };
-+static struct attribute_spec no_randomize_layout_attr = { };
-+static struct attribute_spec randomize_considered_attr = { };
-+static struct attribute_spec randomize_performed_attr = { };
- 
--static struct attribute_spec no_randomize_layout_attr = {
--	.name		= "no_randomize_layout",
--	// related to args
--	.min_length	= 0,
--	.max_length	= 0,
--	.decl_required	= false,
--	// need type declaration
--	.type_required	= true,
--	.function_type_required = false,
--	.handler		= handle_randomize_layout_attr,
-+static void register_attributes(void *event_data, void *data)
-+{
-+	randomize_layout_attr.name		= "randomize_layout";
-+	randomize_layout_attr.type_required	= true;
-+	randomize_layout_attr.handler		= handle_randomize_layout_attr;
- #if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity  = true
-+	randomize_layout_attr.affects_type_identity = true;
- #endif
--};
- 
--static struct attribute_spec randomize_considered_attr = {
--	.name		= "randomize_considered",
--	// related to args
--	.min_length	= 0,
--	.max_length	= 0,
--	.decl_required	= false,
--	// need type declaration
--	.type_required	= true,
--	.function_type_required = false,
--	.handler		= handle_randomize_considered_attr,
-+	no_randomize_layout_attr.name		= "no_randomize_layout";
-+	no_randomize_layout_attr.type_required	= true;
-+	no_randomize_layout_attr.handler	= handle_randomize_layout_attr;
- #if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity  = false
-+	no_randomize_layout_attr.affects_type_identity = true;
- #endif
--};
- 
--static struct attribute_spec randomize_performed_attr = {
--	.name		= "randomize_performed",
--	// related to args
--	.min_length	= 0,
--	.max_length	= 0,
--	.decl_required	= false,
--	// need type declaration
--	.type_required	= true,
--	.function_type_required = false,
--	.handler		= handle_randomize_performed_attr,
--#if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity  = false
--#endif
--};
-+	randomize_considered_attr.name		= "randomize_considered";
-+	randomize_considered_attr.type_required	= true;
-+	randomize_considered_attr.handler	= handle_randomize_considered_attr;
-+
-+	randomize_performed_attr.name		= "randomize_performed";
-+	randomize_performed_attr.type_required	= true;
-+	randomize_performed_attr.handler	= handle_randomize_performed_attr;
- 
--static void register_attributes(void *event_data, void *data)
--{
- 	register_attribute(&randomize_layout_attr);
- 	register_attribute(&no_randomize_layout_attr);
- 	register_attribute(&randomize_considered_attr);
---- a/scripts/gcc-plugins/structleak_plugin.c
-+++ b/scripts/gcc-plugins/structleak_plugin.c
-@@ -57,21 +57,16 @@ static tree handle_user_attribute(tree *
- 	return NULL_TREE;
- }
- 
--static struct attribute_spec user_attr = {
--	.name			= "user",
--	.min_length		= 0,
--	.max_length		= 0,
--	.decl_required		= false,
--	.type_required		= false,
--	.function_type_required	= false,
--	.handler		= handle_user_attribute,
--#if BUILDING_GCC_VERSION >= 4007
--	.affects_type_identity	= true
--#endif
--};
-+static struct attribute_spec user_attr = { };
- 
- static void register_attributes(void *event_data, void *data)
- {
-+	user_attr.name			= "user";
-+	user_attr.handler		= handle_user_attribute;
-+#if BUILDING_GCC_VERSION >= 4007
-+	user_attr.affects_type_identity	= true;
-+#endif
-+
- 	register_attribute(&user_attr);
- }
- 
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -93,7 +93,7 @@ static inline unsigned int __getcpu(void
+ 	 *
+ 	 * If RDPID is available, use it.
+ 	 */
+-	alternative_io ("lsl %[p],%[seg]",
++	alternative_io ("lsl %[seg],%[p]",
+ 			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
+ 			X86_FEATURE_RDPID,
+ 			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
 
 
