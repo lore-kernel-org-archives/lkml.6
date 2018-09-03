@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B54FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8104DC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F9020661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F9020661
+	by mail.kernel.org (Postfix) with ESMTP id 453E42077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453E42077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730609AbeICVqT (ORCPT
+        id S1730635AbeICVq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45692 "EHLO
+        Mon, 3 Sep 2018 17:46:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728556AbeICVqS (ORCPT
+        with ESMTP id S1728380AbeICVqZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:18 -0400
+        Mon, 3 Sep 2018 17:46:25 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFE61D38;
-        Mon,  3 Sep 2018 17:25:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F442D3A;
+        Mon,  3 Sep 2018 17:25:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rian Hunter <rian@alum.mit.edu>,
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.14 115/165] x86/process: Re-export start_thread()
-Date:   Mon,  3 Sep 2018 18:56:41 +0200
-Message-Id: <20180903165701.310870470@linuxfoundation.org>
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 117/165] x86/kvm/vmx: Remove duplicate l1d flush definitions
+Date:   Mon,  3 Sep 2018 18:56:43 +0200
+Message-Id: <20180903165701.407590746@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -57,42 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rian Hunter <rian@alum.mit.edu>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit dc76803e57cc86589c4efcb5362918f9b0c0436f upstream.
+commit 94d7a86c21a3d6046bf4616272313cb7d525075a upstream.
 
-The consolidation of the start_thread() functions removed the export
-unintentionally. This breaks binfmt handlers built as a module.
+These are already defined higher up in the file.
 
-Add it back.
-
-Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
-Signed-off-by: Rian Hunter <rian@alum.mit.edu>
+Fixes: 7db92e165ac8 ("x86/kvm: Move l1tf setup function")
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
+Link: https://lkml.kernel.org/r/d7ca03ae210d07173452aeed85ffe344301219a5.1534253536.git.jpoimboe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/process_64.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -370,6 +370,7 @@ start_thread(struct pt_regs *regs, unsig
- 	start_thread_common(regs, new_ip, new_sp,
- 			    __USER_CS, __USER_DS, 0);
- }
-+EXPORT_SYMBOL_GPL(start_thread);
- 
- #ifdef CONFIG_COMPAT
- void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9170,9 +9170,6 @@ static int vmx_handle_exit(struct kvm_vc
+  * information but as all relevant affected CPUs have 32KiB L1D cache size
+  * there is no point in doing so.
+  */
+-#define L1D_CACHE_ORDER 4
+-static void *vmx_l1d_flush_pages;
+-
+ static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+ {
+ 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
 
 
