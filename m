@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C27C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E45C20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E45C20658
+	by mail.kernel.org (Postfix) with ESMTP id EB04B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB04B2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbeICVxf (ORCPT
+        id S1731237AbeICVxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:53:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47508 "EHLO
+        Mon, 3 Sep 2018 17:53:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730697AbeICVxe (ORCPT
+        with ESMTP id S1728303AbeICVxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:53:34 -0400
+        Mon, 3 Sep 2018 17:53:40 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A9DFD1B;
-        Mon,  3 Sep 2018 17:32:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A47F0D1B;
+        Mon,  3 Sep 2018 17:32:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Reichl <hias@horus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 023/123] regulator: arizona-ldo1: Use correct device to get enable GPIO
-Date:   Mon,  3 Sep 2018 18:56:07 +0200
-Message-Id: <20180903165720.479439043@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Subject: [PATCH 4.18 024/123] iommu/arm-smmu: Error out only if not enough context interrupts
+Date:   Mon,  3 Sep 2018 18:56:08 +0200
+Message-Id: <20180903165720.522579160@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,94 +53,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-commit a9191579ba1086d91842199263e6fe6bb5eec1ba upstream.
+commit d1e20222d5372e951bbb2fd3f6489ec4a6ea9b11 upstream.
 
-Currently the enable GPIO is being looked up on the regulator
-device itself but that does not have its own DT node, this causes
-the lookup to fail and the regulator not to get its GPIO. The DT
-node is shared across the whole MFD and as such the lookup needs
-to happen on that parent device. Moving the lookup to the parent
-device also means devres can no longer be used as the life time
-would attach to the wrong device.
+Currently we check if the number of context banks is not equal to
+num_context_interrupts. However, there are booloaders such as, one
+on sdm845 that reserves few context banks and thus kernel views
+less than the total available context banks.
+So, although the hardware definition in device tree would mention
+the correct number of context interrupts, this number can be
+greater than the number of context banks visible to smmu in kernel.
+We should therefore error out only when the number of context banks
+is greater than the available number of context interrupts.
 
-Additionally, the enable GPIO is active high so we should be passing
-GPIOD_OUT_LOW to ensure the regulator starts in its off state allowing
-the driver to enable it when it is ready.
-
-Fixes: e1739e86f0cb ("regulator: arizona-ldo1: Look up a descriptor and pass to the core")
-Reported-by: Matthias Reichl <hias@horus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Suggested-by: Tomasz Figa <tfiga@chromium.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+[will: drop useless printk]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Cc: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Matthias Reichl <hias@horus.com>
 
 ---
- drivers/regulator/arizona-ldo1.c |   27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ drivers/iommu/arm-smmu.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -36,6 +36,8 @@ struct arizona_ldo1 {
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -2103,12 +2103,16 @@ static int arm_smmu_device_probe(struct
+ 	if (err)
+ 		return err;
  
- 	struct regulator_consumer_supply supply;
- 	struct regulator_init_data init_data;
+-	if (smmu->version == ARM_SMMU_V2 &&
+-	    smmu->num_context_banks != smmu->num_context_irqs) {
+-		dev_err(dev,
+-			"found only %d context interrupt(s) but %d required\n",
+-			smmu->num_context_irqs, smmu->num_context_banks);
+-		return -ENODEV;
++	if (smmu->version == ARM_SMMU_V2) {
++		if (smmu->num_context_banks > smmu->num_context_irqs) {
++			dev_err(dev,
++			      "found only %d context irq(s) but %d required\n",
++			      smmu->num_context_irqs, smmu->num_context_banks);
++			return -ENODEV;
++		}
 +
-+	struct gpio_desc *ena_gpiod;
- };
- 
- static int arizona_ldo1_hc_list_voltage(struct regulator_dev *rdev,
-@@ -253,12 +255,17 @@ static int arizona_ldo1_common_init(stru
- 		}
++		/* Ignore superfluous interrupts */
++		smmu->num_context_irqs = smmu->num_context_banks;
  	}
  
--	/* We assume that high output = regulator off */
--	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
--						   GPIOD_OUT_HIGH);
-+	/* We assume that high output = regulator off
-+	 * Don't use devm, since we need to get against the parent device
-+	 * so clean up would happen at the wrong time
-+	 */
-+	config.ena_gpiod = gpiod_get_optional(parent_dev, "wlf,ldoena",
-+					      GPIOD_OUT_LOW);
- 	if (IS_ERR(config.ena_gpiod))
- 		return PTR_ERR(config.ena_gpiod);
- 
-+	ldo1->ena_gpiod = config.ena_gpiod;
-+
- 	if (pdata->init_data)
- 		config.init_data = pdata->init_data;
- 	else
-@@ -276,6 +283,9 @@ static int arizona_ldo1_common_init(stru
- 	of_node_put(config.of_node);
- 
- 	if (IS_ERR(ldo1->regulator)) {
-+		if (config.ena_gpiod)
-+			gpiod_put(config.ena_gpiod);
-+
- 		ret = PTR_ERR(ldo1->regulator);
- 		dev_err(&pdev->dev, "Failed to register LDO1 supply: %d\n",
- 			ret);
-@@ -334,8 +344,19 @@ static int arizona_ldo1_probe(struct pla
- 	return ret;
- }
- 
-+static int arizona_ldo1_remove(struct platform_device *pdev)
-+{
-+	struct arizona_ldo1 *ldo1 = platform_get_drvdata(pdev);
-+
-+	if (ldo1->ena_gpiod)
-+		gpiod_put(ldo1->ena_gpiod);
-+
-+	return 0;
-+}
-+
- static struct platform_driver arizona_ldo1_driver = {
- 	.probe = arizona_ldo1_probe,
-+	.remove = arizona_ldo1_remove,
- 	.driver		= {
- 		.name	= "arizona-ldo1",
- 	},
+ 	for (i = 0; i < smmu->num_global_irqs; ++i) {
 
 
