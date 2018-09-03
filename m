@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C0FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B71C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D6CF20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D6CF20658
+	by mail.kernel.org (Postfix) with ESMTP id 7407620658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7407620658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbeICV7A (ORCPT
+        id S1731756AbeICV7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48756 "EHLO
+        Mon, 3 Sep 2018 17:59:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48764 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV66 (ORCPT
+        with ESMTP id S1726384AbeICV7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:58:58 -0400
+        Mon, 3 Sep 2018 17:59:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06D9DA95;
-        Mon,  3 Sep 2018 17:37:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2410CA95;
+        Mon,  3 Sep 2018 17:37:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 4.18 092/123] s390/pci: fix out of bounds access during irq setup
-Date:   Mon,  3 Sep 2018 18:57:16 +0200
-Message-Id: <20180903165723.417050071@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.18 093/123] s390/purgatory: Fix crash with expoline enabled
+Date:   Mon,  3 Sep 2018 18:57:17 +0200
+Message-Id: <20180903165723.458137274@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,36 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.ibm.com>
+From: Philipp Rudo <prudo@linux.ibm.com>
 
-commit 866f3576a72b2233a76dffb80290f8086dc49e17 upstream.
+commit ad03b821fbc30395b72af438f5bb41676a5f891d upstream.
 
-During interrupt setup we allocate interrupt vectors, walk the list of msi
-descriptors, and fill in the message data. Requesting more interrupts than
-supported on s390 can lead to an out of bounds access.
+When the kernel is built with CONFIG_EXPOLINE=y and a compiler with
+indirect branch mitigation enabled the purgatory crashes. The reason for
+that is that the macros defined for expoline are used in mem.S. These
+macros define new sections (.text.__s390x_indirect_*) which are marked
+executable. Due to the missing linker script those sections are linked to
+address 0, just as the .text section. In combination with the entry point
+also being at address 0 this causes the purgatory load code
+(kernel/kexec_file.c: kexec_purgatory_setup_sechdrs) to update the entry
+point twice. Thus the old kernel jumps to some 'random' address causing the
+crash.
 
-When we restrict the number of interrupts we should also stop walking the
-msi list after all supported interrupts are handled.
+To fix this turn off expolines for the purgatory. There is no problem with
+this in this case due to the fact that the purgatory only runs once and the
+tlb is purged (diag 308) in the end.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Fixes: 840798a1f5299 ("s390/kexec_file: Add purgatory")
+Cc: <stable@vger.kernel.org> # 4.17
+Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/pci/pci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/s390/purgatory/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/s390/pci/pci.c
-+++ b/arch/s390/pci/pci.c
-@@ -421,6 +421,8 @@ int arch_setup_msi_irqs(struct pci_dev *
- 	hwirq = 0;
- 	for_each_pci_msi_entry(msi, pdev) {
- 		rc = -EIO;
-+		if (hwirq >= msi_vecs)
-+			break;
- 		irq = irq_alloc_desc(0);	/* Alloc irq on node 0 */
- 		if (irq < 0)
- 			return -ENOMEM;
+--- a/arch/s390/purgatory/Makefile
++++ b/arch/s390/purgatory/Makefile
+@@ -23,6 +23,7 @@ KBUILD_CFLAGS += -Wno-pointer-sign -Wno-
+ KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
+ KBUILD_CFLAGS += -c -MD -Os -m64 -msoft-float
+ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
++KBUILD_AFLAGS := $(filter-out -DCC_USING_EXPOLINE,$(KBUILD_AFLAGS))
+ 
+ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ 		$(call if_changed,ld)
 
 
