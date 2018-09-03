@@ -6,147 +6,102 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5130C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B9DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99C2520658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:42:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C2520658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 1E4CA2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:43:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4CA2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbeICV4n (ORCPT
+        id S1731483AbeICV43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:56:43 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:48866 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730945AbeICV4m (ORCPT
+        Mon, 3 Sep 2018 17:56:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47982 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730662AbeICV42 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:56:42 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id X5bY1y0093XaVaC065bYpQ; Mon, 03 Sep 2018 19:35:32 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fwslA-0001BP-11; Mon, 03 Sep 2018 19:35:32 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fwslA-00023b-03; Mon, 03 Sep 2018 19:35:32 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Jiri Kosina <trivial@kernel.org>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH trivial] scsi: arcmsr: Spelling s/rebulid/rebuild/
-Date:   Mon,  3 Sep 2018 19:35:29 +0200
-Message-Id: <20180903173529.7865-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Sep 2018 17:56:28 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D6E8D1B;
+        Mon,  3 Sep 2018 17:35:17 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.18 060/123] fuse: fix double request_end()
+Date:   Mon,  3 Sep 2018 18:56:44 +0200
+Message-Id: <20180903165721.975040144@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
+References: <20180903165719.499675257@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/scsi/arcmsr/arcmsr_hba.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index 12316ef4c8931853..cc0be46511281050 100644
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -1798,7 +1798,7 @@ static void arcmsr_hbaA_stop_bgrb(struct AdapterControlBlock *acb)
- 	writel(ARCMSR_INBOUND_MESG0_STOP_BGRB, &reg->inbound_msgaddr0);
- 	if (!arcmsr_hbaA_wait_msgint_ready(acb)) {
- 		printk(KERN_NOTICE
--			"arcmsr%d: wait 'stop adapter background rebulid' timeout\n"
-+			"arcmsr%d: wait 'stop adapter background rebuild' timeout\n"
- 			, acb->host->host_no);
- 	}
- }
-@@ -1811,7 +1811,7 @@ static void arcmsr_hbaB_stop_bgrb(struct AdapterControlBlock *acb)
+------------------
+
+From: Miklos Szeredi <mszeredi@redhat.com>
+
+commit 87114373ea507895a62afb10d2910bd9adac35a8 upstream.
+
+Refcounting of request is broken when fuse_abort_conn() is called and
+request is on the fpq->io list:
+
+ - ref is taken too late
+ - then it is not dropped
+
+Fixes: 0d8e84b0432b ("fuse: simplify request abort")
+Cc: <stable@vger.kernel.org> # v4.2
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/fuse/dev.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -371,7 +371,7 @@ static void request_end(struct fuse_conn
+ 	struct fuse_iqueue *fiq = &fc->iq;
  
- 	if (!arcmsr_hbaB_wait_msgint_ready(acb)) {
- 		printk(KERN_NOTICE
--			"arcmsr%d: wait 'stop adapter background rebulid' timeout\n"
-+			"arcmsr%d: wait 'stop adapter background rebuild' timeout\n"
- 			, acb->host->host_no);
- 	}
- }
-@@ -1824,7 +1824,7 @@ static void arcmsr_hbaC_stop_bgrb(struct AdapterControlBlock *pACB)
- 	writel(ARCMSR_HBCMU_DRV2IOP_MESSAGE_CMD_DONE, &reg->inbound_doorbell);
- 	if (!arcmsr_hbaC_wait_msgint_ready(pACB)) {
- 		printk(KERN_NOTICE
--			"arcmsr%d: wait 'stop adapter background rebulid' timeout\n"
-+			"arcmsr%d: wait 'stop adapter background rebuild' timeout\n"
- 			, pACB->host->host_no);
- 	}
- 	return;
-@@ -1837,7 +1837,7 @@ static void arcmsr_hbaD_stop_bgrb(struct AdapterControlBlock *pACB)
- 	pACB->acb_flags &= ~ACB_F_MSG_START_BGRB;
- 	writel(ARCMSR_INBOUND_MESG0_STOP_BGRB, reg->inbound_msgaddr0);
- 	if (!arcmsr_hbaD_wait_msgint_ready(pACB))
--		pr_notice("arcmsr%d: wait 'stop adapter background rebulid' "
-+		pr_notice("arcmsr%d: wait 'stop adapter background rebuild' "
- 			"timeout\n", pACB->host->host_no);
- }
+ 	if (test_and_set_bit(FR_FINISHED, &req->flags))
+-		return;
++		goto out_put_req;
  
-@@ -1850,7 +1850,7 @@ static void arcmsr_hbaE_stop_bgrb(struct AdapterControlBlock *pACB)
- 	pACB->out_doorbell ^= ARCMSR_HBEMU_DRV2IOP_MESSAGE_CMD_DONE;
- 	writel(pACB->out_doorbell, &reg->iobound_doorbell);
- 	if (!arcmsr_hbaE_wait_msgint_ready(pACB)) {
--		pr_notice("arcmsr%d: wait 'stop adapter background rebulid' "
-+		pr_notice("arcmsr%d: wait 'stop adapter background rebuild' "
- 			"timeout\n", pACB->host->host_no);
- 	}
- }
-@@ -3927,7 +3927,7 @@ static void arcmsr_hbaA_start_bgrb(struct AdapterControlBlock *acb)
- 	writel(ARCMSR_INBOUND_MESG0_START_BGRB, &reg->inbound_msgaddr0);
- 	if (!arcmsr_hbaA_wait_msgint_ready(acb)) {
- 		printk(KERN_NOTICE "arcmsr%d: wait 'start adapter background \
--				rebulid' timeout \n", acb->host->host_no);
-+				rebuild' timeout \n", acb->host->host_no);
- 	}
+ 	spin_lock(&fiq->waitq.lock);
+ 	list_del_init(&req->intr_entry);
+@@ -400,6 +400,7 @@ static void request_end(struct fuse_conn
+ 	wake_up(&req->waitq);
+ 	if (req->end)
+ 		req->end(fc, req);
++out_put_req:
+ 	fuse_put_request(fc, req);
  }
  
-@@ -3938,7 +3938,7 @@ static void arcmsr_hbaB_start_bgrb(struct AdapterControlBlock *acb)
- 	writel(ARCMSR_MESSAGE_START_BGRB, reg->drv2iop_doorbell);
- 	if (!arcmsr_hbaB_wait_msgint_ready(acb)) {
- 		printk(KERN_NOTICE "arcmsr%d: wait 'start adapter background \
--				rebulid' timeout \n",acb->host->host_no);
-+				rebuild' timeout \n",acb->host->host_no);
- 	}
- }
+@@ -2108,6 +2109,7 @@ void fuse_abort_conn(struct fuse_conn *f
+ 				set_bit(FR_ABORTED, &req->flags);
+ 				if (!test_bit(FR_LOCKED, &req->flags)) {
+ 					set_bit(FR_PRIVATE, &req->flags);
++					__fuse_get_request(req);
+ 					list_move(&req->list, &to_end1);
+ 				}
+ 				spin_unlock(&req->waitq.lock);
+@@ -2134,7 +2136,6 @@ void fuse_abort_conn(struct fuse_conn *f
  
-@@ -3950,7 +3950,7 @@ static void arcmsr_hbaC_start_bgrb(struct AdapterControlBlock *pACB)
- 	writel(ARCMSR_HBCMU_DRV2IOP_MESSAGE_CMD_DONE, &phbcmu->inbound_doorbell);
- 	if (!arcmsr_hbaC_wait_msgint_ready(pACB)) {
- 		printk(KERN_NOTICE "arcmsr%d: wait 'start adapter background \
--				rebulid' timeout \n", pACB->host->host_no);
-+				rebuild' timeout \n", pACB->host->host_no);
- 	}
- 	return;
- }
-@@ -3963,7 +3963,7 @@ static void arcmsr_hbaD_start_bgrb(struct AdapterControlBlock *pACB)
- 	writel(ARCMSR_INBOUND_MESG0_START_BGRB, pmu->inbound_msgaddr0);
- 	if (!arcmsr_hbaD_wait_msgint_ready(pACB)) {
- 		pr_notice("arcmsr%d: wait 'start adapter "
--			"background rebulid' timeout\n", pACB->host->host_no);
-+			"background rebuild' timeout\n", pACB->host->host_no);
- 	}
- }
- 
-@@ -3977,7 +3977,7 @@ static void arcmsr_hbaE_start_bgrb(struct AdapterControlBlock *pACB)
- 	writel(pACB->out_doorbell, &pmu->iobound_doorbell);
- 	if (!arcmsr_hbaE_wait_msgint_ready(pACB)) {
- 		pr_notice("arcmsr%d: wait 'start adapter "
--			"background rebulid' timeout \n", pACB->host->host_no);
-+			"background rebuild' timeout \n", pACB->host->host_no);
- 	}
- }
- 
--- 
-2.17.1
+ 		while (!list_empty(&to_end1)) {
+ 			req = list_first_entry(&to_end1, struct fuse_req, list);
+-			__fuse_get_request(req);
+ 			list_del_init(&req->list);
+ 			request_end(fc, req);
+ 		}
+
 
