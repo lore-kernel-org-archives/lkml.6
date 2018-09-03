@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54469C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEBEC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1737120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1737120658
+	by mail.kernel.org (Postfix) with ESMTP id C92F220658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbeICV6V (ORCPT
+        id S1731689AbeICV6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:58:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48674 "EHLO
+        Mon, 3 Sep 2018 17:58:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbeICV6U (ORCPT
+        with ESMTP id S1728430AbeICV6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:58:20 -0400
+        Mon, 3 Sep 2018 17:58:24 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1612DA95;
-        Mon,  3 Sep 2018 17:37:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CEAEBAE;
+        Mon,  3 Sep 2018 17:37:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>, kasan-dev@googlegroups.com
-Subject: [PATCH 4.18 085/123] x86/entry/64: Wipe KASAN stack shadow before rewind_stack_do_exit()
-Date:   Mon,  3 Sep 2018 18:57:09 +0200
-Message-Id: <20180903165723.128204100@linuxfoundation.org>
+        stable@vger.kernel.org, Helmut Grohne <helmutg@debian.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.18 086/123] x86: Allow generating user-space headers without a compiler
+Date:   Mon,  3 Sep 2018 18:57:10 +0200
+Message-Id: <20180903165723.167642010@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -55,60 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit f12d11c5c184626b4befdee3d573ec8237405a33 upstream.
+commit 829fe4aa9ac16417a904ad1de1307de906854bcf upstream.
 
-Reset the KASAN shadow state of the task stack before rewinding RSP.
-Without this, a kernel oops will leave parts of the stack poisoned, and
-code running under do_exit() can trip over such poisoned regions and cause
-nonsensical false-positive KASAN reports about stack-out-of-bounds bugs.
+When bootstrapping an architecture, it's usual to generate the kernel's
+user-space headers (make headers_install) before building a compiler.  Move
+the compiler check (for asm goto support) to the archprepare target so that
+it is only done when building code for the target.
 
-This does not wipe the exception stacks; if an oops happens on an exception
-stack, it might result in random KASAN false-positives from other tasks
-afterwards. This is probably relatively uninteresting, since if the kernel
-oopses on an exception stack, there are most likely bigger things to worry
-about. It'd be more interesting if vmapped stacks and KASAN were
-compatible, since then handle_stack_overflow() would oops from exception
-stack context.
-
-Fixes: 2deb4be28077 ("x86/dumpstack: When OOPSing, rewind the stack before do_exit()")
-Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: e501ce957a78 ("x86: Force asm-goto")
+Reported-by: Helmut Grohne <helmutg@debian.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kasan-dev@googlegroups.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180828184033.93712-1-jannh@google.com
+Link: https://lkml.kernel.org/r/20180829194317.GA4765@decadent.org.uk
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/dumpstack.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/Makefile |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -17,6 +17,7 @@
- #include <linux/bug.h>
- #include <linux/nmi.h>
- #include <linux/sysfs.h>
-+#include <linux/kasan.h>
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -180,10 +180,6 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
+   endif
+ endif
  
- #include <asm/cpu_entry_area.h>
- #include <asm/stacktrace.h>
-@@ -356,7 +357,10 @@ void oops_end(unsigned long flags, struc
- 	 * We're not going to return, but we might be on an IST stack or
- 	 * have very little stack space left.  Rewind the stack and kill
- 	 * the task.
-+	 * Before we rewind the stack, we have to tell KASAN that we're going to
-+	 * reuse the task stack and that existing poisons are invalid.
- 	 */
-+	kasan_unpoison_task_stack(current);
- 	rewind_stack_do_exit(signr);
- }
- NOKPROBE_SYMBOL(oops_end);
+-ifndef CC_HAVE_ASM_GOTO
+-  $(error Compiler lacks asm-goto support.)
+-endif
+-
+ #
+ # Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent a
+ # GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46226).  There's no way
+@@ -317,6 +313,13 @@ PHONY += vdso_install
+ vdso_install:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/vdso $@
+ 
++archprepare: checkbin
++checkbin:
++ifndef CC_HAVE_ASM_GOTO
++	@echo Compiler lacks asm-goto support.
++	@exit 1
++endif
++
+ archclean:
+ 	$(Q)rm -rf $(objtree)/arch/i386
+ 	$(Q)rm -rf $(objtree)/arch/x86_64
 
 
