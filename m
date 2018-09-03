@@ -6,127 +6,114 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D777C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC7BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0EA20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0EA20843
+	by mail.kernel.org (Postfix) with ESMTP id 8047520843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8047520843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeICOVF (ORCPT
+        id S1727574AbeICOVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:52804 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbeICOVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:05 -0400
+        Mon, 3 Sep 2018 10:21:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52816 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727459AbeICOVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:21:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8560080D;
-        Mon,  3 Sep 2018 03:01:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4658FED1;
+        Mon,  3 Sep 2018 03:01:41 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.emea.arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0CB143F575;
-        Mon,  3 Sep 2018 03:01:37 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C25C83F575;
+        Mon,  3 Sep 2018 03:01:39 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     stable@vger.kernel.org
 Cc:     suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
         will.deacon@arm.com, mark.rutland@arm.com,
         linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
         gregkh@linuxfoundation.org
-Subject: [PATCH stable 1/2] arm64: Fix mismatched cache line size detection
-Date:   Mon,  3 Sep 2018 11:01:32 +0100
-Message-Id: <1535968893-5455-1-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH stable 2/2] arm64: Handle mismatched cache type
+Date:   Mon,  3 Sep 2018 11:01:33 +0100
+Message-Id: <1535968893-5455-2-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535968893-5455-1-git-send-email-suzuki.poulose@arm.com>
+References: <1535968893-5455-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 4c4a39dd5fe2d13e2d2fa5fceb8ef95d19fc389a upstream
+commit 314d53d297980676011e6fd83dac60db4a01dc70 upstream
 
-If there is a mismatch in the I/D min line size, we must
-always use the system wide safe value both in applications
-and in the kernel, while performing cache operations. However,
-we have been checking more bits than just the min line sizes,
-which triggers false negatives. We may need to trap the user
-accesses in such cases, but not necessarily patch the kernel.
-
-This patch fixes the check to do the right thing as advertised.
-A new capability will be added to check mismatches in other
-fields and ensure we trap the CTR accesses.
+Track mismatches in the cache type register (CTR_EL0), other
+than the D/I min line sizes and trap user accesses if there are any.
 
 Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
 Cc: <stable@vger.kernel.org> # v4.14
 Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Reported-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/cache.h | 5 +++++
- arch/arm64/kernel/cpu_errata.c | 6 ++++--
- arch/arm64/kernel/cpufeature.c | 4 ++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ arch/arm64/include/asm/cpucaps.h |  3 ++-
+ arch/arm64/kernel/cpu_errata.c   | 17 ++++++++++++++---
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-index ea9bb4e..e40f8a2 100644
---- a/arch/arm64/include/asm/cache.h
-+++ b/arch/arm64/include/asm/cache.h
-@@ -20,9 +20,14 @@
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index 76c0d23..7d6425d 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -44,7 +44,8 @@
+ #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+ #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+ #define ARM64_SSBD				26
++#define ARM64_MISMATCHED_CACHE_TYPE		27
  
- #define CTR_L1IP_SHIFT		14
- #define CTR_L1IP_MASK		3
-+#define CTR_DMINLINE_SHIFT	16
-+#define CTR_IMINLINE_SHIFT	0
- #define CTR_CWG_SHIFT		24
- #define CTR_CWG_MASK		15
+-#define ARM64_NCAPS				27
++#define ARM64_NCAPS				28
  
-+#define CTR_CACHE_MINLINE_MASK	\
-+	(0xf << CTR_DMINLINE_SHIFT | 0xf << CTR_IMINLINE_SHIFT)
-+
- #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
- 
- #define ICACHE_POLICY_VPIPT	0
+ #endif /* __ASM_CPUCAPS_H */
 diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index eccdb28..3d1569c 100644
+index 3d1569c..762b1ad 100644
 --- a/arch/arm64/kernel/cpu_errata.c
 +++ b/arch/arm64/kernel/cpu_errata.c
-@@ -48,9 +48,11 @@ static bool
- has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
- 				int scope)
- {
-+	u64 mask = CTR_CACHE_MINLINE_MASK;
-+
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
--	return (read_cpuid_cachetype() & arm64_ftr_reg_ctrel0.strict_mask) !=
--		(arm64_ftr_reg_ctrel0.sys_val & arm64_ftr_reg_ctrel0.strict_mask);
-+	return (read_cpuid_cachetype() & mask) !=
-+	       (arm64_ftr_reg_ctrel0.sys_val & mask);
+@@ -45,11 +45,15 @@ is_kryo_midr(const struct arm64_cpu_capabilities *entry, int scope)
  }
  
- static int cpu_enable_trap_ctr_access(void *__unused)
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 376cf12..003dd39 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -180,14 +180,14 @@ static const struct arm64_ftr_bits ftr_ctr[] = {
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMINLINE_SHIFT, 4, 1),
- 	/*
- 	 * Linux can handle differing I-cache policies. Userspace JITs will
- 	 * make use of *minLine.
- 	 * If we have differing I-cache policies, report it as the weakest - VIPT.
- 	 */
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_EXACT, 14, 2, ICACHE_POLICY_VIPT),	/* L1Ip */
--	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 0, 4, 0),	/* IminLine */
-+	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IMINLINE_SHIFT, 4, 0),
- 	ARM64_FTR_END,
- };
+ static bool
+-has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+-				int scope)
++has_mismatched_cache_type(const struct arm64_cpu_capabilities *entry,
++			  int scope)
+ {
+ 	u64 mask = CTR_CACHE_MINLINE_MASK;
  
++	/* Skip matching the min line sizes for cache type check */
++	if (entry->capability == ARM64_MISMATCHED_CACHE_TYPE)
++		mask ^= arm64_ftr_reg_ctrel0.strict_mask;
++
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+ 	return (read_cpuid_cachetype() & mask) !=
+ 	       (arm64_ftr_reg_ctrel0.sys_val & mask);
+@@ -513,7 +517,14 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.desc = "Mismatched cache line size",
+ 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
+-		.matches = has_mismatched_cache_line_size,
++		.matches = has_mismatched_cache_type,
++		.def_scope = SCOPE_LOCAL_CPU,
++		.enable = cpu_enable_trap_ctr_access,
++	},
++	{
++		.desc = "Mismatched cache type",
++		.capability = ARM64_MISMATCHED_CACHE_TYPE,
++		.matches = has_mismatched_cache_type,
+ 		.def_scope = SCOPE_LOCAL_CPU,
+ 		.enable = cpu_enable_trap_ctr_access,
+ 	},
 -- 
 2.7.4
 
