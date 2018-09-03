@@ -7,57 +7,58 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6597C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD6EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF862086E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE64220862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="g9nzNJfh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF862086E
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="gmCoYTzu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE64220862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbeICVOB (ORCPT
+        id S1728637AbeICVN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:14:01 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37881 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728640AbeICVOA (ORCPT
+        Mon, 3 Sep 2018 17:13:58 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45649 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727803AbeICVN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:14:00 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a20-v6so1239985edd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 09:53:03 -0700 (PDT)
+        Mon, 3 Sep 2018 17:13:58 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p52-v6so1213351eda.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 09:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7/xDAv4nmvZM6/MSUvhwMtYq6DkyvBAstjsxswpf2i0=;
-        b=g9nzNJfh9mHewg/e6MdLX7nSvvdht7dtf6cFFA6JT9J6yMrw5iDNqdbYiTp0/fZeHB
-         tvke5/ey3IGv0CgL/4uRQ33rOozi47VdN2bR3EusgQA/Bp0QRG6J78t750VM2O6nfQkc
-         K06qNAww4Nr8HmgUbYOys8NQAjt0lFRKsZjNMn9nyYe9Gln8stL/p8TkP8HtStWd5bxY
-         Rmf7HwW49qRfV/Re9+xgqjZ8Hvyil/GDA4N2ZxLSpgr/JRqhYuMAiJ/FP8hhKn3MzU9L
-         uJKEwJtzqkqQVeW7HX0qIbP9hc5HbTxKNuH7qsW15fxIZyG8bWSodUJrjl4AAEBURrne
-         aOww==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wCAQX/U066t3wgneanUlVYEY20WkU8L8GJUwnaFQMPg=;
+        b=gmCoYTzuPRPf2cpFV1c1J14jmQicsb8ZLyaDW5OK1/xK0UP7BGiczpdRSz5iGb+Sdc
+         fCUydkNTs/24I4idwTRBoRcUZwr5FlsHPu5cVtoZfQX5bHJt/fTxfeb1kyuSzwKj4//L
+         wo4AEDCBymQ2IYDXIpTbK2+G2CJQda5rk0cl2PWFJVZtSraP5XZMeEwnVBk6/HVe5qXD
+         m5DsfJQrCeXIkTHzeIMmckHXGMiyeNpJ+dwIDwNqsBqE+SVw7T48mmiO/GtFrT1lsPB4
+         pkSfdD3E7u/LJJxKdv+iRqS7JIYIDdK+0tgtTw0JF0nD5RMcp/NzC8rY8EizLN+BYL6S
+         lasQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7/xDAv4nmvZM6/MSUvhwMtYq6DkyvBAstjsxswpf2i0=;
-        b=HwUNpHaPzoFJuUV612vm3HWzDEmsUfsKycH+Zid7/+vHSUNF3+4qk1UB8999Sr23q1
-         OEOzMujU98wFhyvrjBikMFFUgKn3/3srhk/e0vXC0VfAJzf205ZhsIfj06NmYvh70Kjw
-         Nch+pLbzF06zf5r8qLzPPZsVHjHMr+AWzKUWLOwiyuXLVDOXhQ4oxwVH+G0pY84YL3P+
-         IApvKHf0nacaGsJzS4r3rxUCp81I6kaY9064fSy+9F364Fp4l33BY/qyw058gbcxp2a6
-         ohZR1s38CwfJxjHl3QuY8qub9iPoU1hYfQgatXu2MHx5ZT6y78wJTYfOeBMqkBqD3pbc
-         lLkw==
-X-Gm-Message-State: APzg51BFmpiGYi4Z0mI58YOjFne0W2RGOaT6HMRLNVN0bak6U0V4I61Y
-        rLNsfdFvPoZezL4zjqQ4KBFz2WNTt44=
-X-Google-Smtp-Source: ANB0VdZAsJjUjiijKxoHtSsXyhoW1q6/VNwQYuGdJB+OQ+Z86BHGi269oWw8o7NDNjQUdwJ+Xy+m6g==
-X-Received: by 2002:a50:f297:: with SMTP id f23-v6mr33437770edm.40.1535993582809;
-        Mon, 03 Sep 2018 09:53:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wCAQX/U066t3wgneanUlVYEY20WkU8L8GJUwnaFQMPg=;
+        b=SHlcV7xoRxdXUlnb7HO59uebmaK7thXdstHfrjPDvcegL5V3t6g90M54ty8I56KR9I
+         H9yAuN0ymtrjPJAwJ3wTGNQ/IlsxnaZ8lxD1OGfuUf4UGBwBrzwFyPsLXEw5MbTgarPp
+         UheIaQqbTUhjBxzDBkrXqj9fcmkJK8lHBQ4AOJnt3aH9QFHyjRpjvr+VeOSBW683e77O
+         cM8ICo2tJcY0Gh1wH9Zxy/YiqNaXG0phKhoE2k0e0gAhvRqoLEqDujKwETpqeAk3qIKc
+         HZGBs1HyBnIOCWBrMT+frBmPRfN46jMIe/2BmFz4Cxc08szxoHtvxc2f5/zc6uFMcgD6
+         slkQ==
+X-Gm-Message-State: APzg51CLz5xuxS+F9lE/uYoQsdEzScX/tMdKyxQYO/n44puMlZiBGuii
+        JeHOkoe8QBmMkkuzJM3kxPxfA97gVnY=
+X-Google-Smtp-Source: ANB0VdbEdPIrmDYAqGuQdf4Gaw/FYdmgisXDOlti4kS6amKtjVzdaKjPqzpQ6M94xzzPX5WwsxxSpg==
+X-Received: by 2002:aa7:d391:: with SMTP id x17-v6mr32682044edq.144.1535993579741;
+        Mon, 03 Sep 2018 09:52:59 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id m35-v6sm8085745ede.14.2018.09.03.09.53.01
+        by smtp.gmail.com with ESMTPSA id m35-v6sm8085745ede.14.2018.09.03.09.52.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 09:53:02 -0700 (PDT)
+        Mon, 03 Sep 2018 09:52:59 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -72,88 +73,62 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
-Subject: [PATCHv2 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
-Date:   Mon,  3 Sep 2018 17:52:55 +0100
-Message-Id: <20180903165257.29227-3-dima@arista.com>
+        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Subject: [PATCHv2 0/4] tty: Hold write ldisc sem in tty_reopen()
+Date:   Mon,  3 Sep 2018 17:52:53 +0100
+Message-Id: <20180903165257.29227-1-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180903165257.29227-1-dima@arista.com>
-References: <20180903165257.29227-1-dima@arista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
-nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
-But it races with anyone who expects line discipline to be the same
-after hoding read semaphore in tty_ldisc_ref().
+The first two fixes are worth to have in stables as we've hit it
+on v4.9 stable.
 
-We've seen the following crash on v4.9.108 stable:
+And for linux-next - adding lockdep asserts for line discipline changing
+code, verifying that write ldisc sem will be held forthwith.
 
-BUG: unable to handle kernel paging request at 0000000000002260
-IP: [..] n_tty_receive_buf_common+0x5f/0x86d
-Workqueue: events_unbound flush_to_ldisc
-Call Trace:
- [..] n_tty_receive_buf2
- [..] tty_ldisc_receive_buf
- [..] flush_to_ldisc
- [..] process_one_work
- [..] worker_thread
- [..] kthread
- [..] ret_from_fork
+Changes since v1:
+- Added tested-by/reported-by tags
+- Dropped 3/4 (locking tty pair for lockdep sake),
+  Because of that - not adding lockdep_assert_held() in tty_ldisc_open()
+- Added 4/4 cleanup to inc tty->count only on success of
+  tty_ldisc_reinit()
+- lock ldisc without (5*HZ) timeout in tty_reopen()
 
-tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
-which will protect any reader against line discipline changes.
+v1 link: 
+lkml.kernel.org/r/<20180829022353.23568-1-dima@arista.com>
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: stable@vger.kernel.org # depends on commit b027e2298bd5 ("tty: fix
-data race between tty_init_dev and flush of buf")
-Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/tty/tty_io.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Huuge cc list:
+Cc: Daniel Axtens <dja@axtens.net>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Michael Neuling <mikey@neuling.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Nathan March <nathan@gt.net>
+Cc: Pasi Kärkkäinen <pasik@iki.fi>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+(please, ignore if I Cc'ed you mistakenly)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 5e5da9acaf0a..a947719b4626 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1255,7 +1255,7 @@ static void tty_driver_remove_tty(struct tty_driver *driver, struct tty_struct *
- static int tty_reopen(struct tty_struct *tty)
- {
- 	struct tty_driver *driver = tty->driver;
--	int retval;
-+	int retval = 0;
- 
- 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
- 	    driver->subtype == PTY_TYPE_MASTER)
-@@ -1267,15 +1267,18 @@ static int tty_reopen(struct tty_struct *tty)
- 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
- 		return -EBUSY;
- 
--	tty->count++;
-+	tty_ldisc_lock(tty, MAX_SCHEDULE_TIMEOUT);
- 
-+	tty->count++;
- 	if (tty->ldisc)
--		return 0;
-+		goto out_unlock;
- 
- 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
- 	if (retval)
- 		tty->count--;
- 
-+out_unlock:
-+	tty_ldisc_unlock(tty);
- 	return retval;
- }
- 
+Dmitry Safonov (4):
+  tty: Drop tty->count on tty_reopen() failure
+  tty: Hold tty_ldisc_lock() during tty_reopen()
+  tty/lockdep: Add ldisc_sem asserts
+  tty: Simplify tty->count math in tty_reopen()
+
+ drivers/tty/tty_io.c    | 12 ++++++++----
+ drivers/tty/tty_ldisc.c |  5 +++++
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
 -- 
 2.13.6
 
