@@ -2,97 +2,189 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874CBC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DCFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4836C20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4836C20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2EF672077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:11:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF672077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbeICVbw (ORCPT
+        id S1729303AbeICVZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:31:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40700 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729446AbeICVbv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:31:51 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52D0CD06;
-        Mon,  3 Sep 2018 17:10:49 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rian Hunter <rian@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.9 070/107] x86/process: Re-export start_thread()
-Date:   Mon,  3 Sep 2018 18:56:34 +0200
-Message-Id: <20180903165640.684912800@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
-References: <20180903165637.293735109@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 3 Sep 2018 17:25:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59224 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728915AbeICVZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:25:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1507618A;
+        Mon,  3 Sep 2018 10:04:00 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D989B3F5BC;
+        Mon,  3 Sep 2018 10:03:59 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 99D4C1AE3046; Mon,  3 Sep 2018 18:04:13 +0100 (BST)
+Date:   Mon, 3 Sep 2018 18:04:13 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180903170412.GL6954@arm.com>
+References: <20180831091641.GA3634@andrea>
+ <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
+ <20180831160640.GG30626@arm.com>
+ <20180831182845.GA4673@andrea>
+ <20180903090153.GA4560@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903090153.GA4560@andrea>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Andrea,
 
-------------------
+On Mon, Sep 03, 2018 at 11:01:53AM +0200, Andrea Parri wrote:
+> On Fri, Aug 31, 2018 at 08:28:46PM +0200, Andrea Parri wrote:
+> > > > Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
+> > > > should be correct on all existing architectures.  And Paul has invited 
+> > > > a patch to modify the LKMM accordingly.  If you feel that such a change 
+> > > > would be a useful enhancement to the LKMM's applicability, please write 
+> > > > it.
+> > > 
+> > > Yes, please! That would be the "RmW" discussion which Andrea partially
+> > > quoted earlier on, so getting that going independently from this patch
+> > > sounds like a great idea to me.
+> > 
+> > That was indeed one of the proposal we discussed.  As you recalled, that
+> > proposal only covered RmWs load-acquire (and ordinary store-release); in
+> > particular, I realized that comments such as:
+> > 
+> >   "The atomic_cond_read_acquire() call above has provided the
+> >    necessary acquire semantics required for locking."
+> > 
+> >    [from kernel/locking/qspinlock.c]
+> > 
+> > (for example)  would still _not have "generic validity" _if we added the
+> > above po-unlock-rf-lock-po term... (which, again, makes me somehow uncon-
+> > fortable);  Would to have _all_ the acquire be admissible for you?
+> 
+> In Cat speak,
+> 
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index 59b5cbe6b6240..fd9c0831adf0a 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -38,7 +38,7 @@ let strong-fence = mb | gp
+>  (* Release Acquire *)
+>  let acq-po = [Acquire] ; po ; [M]
+>  let po-rel = [M] ; po ; [Release]
+> -let rfi-rel-acq = [Release] ; rfi ; [Acquire]
+> +let po-rel-rf-acq-po = po ; [Release] ; rf ; [Acquire] ; po
+>  
+>  (**********************************)
+>  (* Fundamental coherence ordering *)
+> @@ -60,13 +60,13 @@ let dep = addr | data
+>  let rwdep = (dep | ctrl) ; [W]
+>  let overwrite = co | fr
+>  let to-w = rwdep | (overwrite & int)
+> -let to-r = addr | (dep ; rfi) | rfi-rel-acq
+> +let to-r = addr | (dep ; rfi)
+>  let fence = strong-fence | wmb | po-rel | rmb | acq-po
+> -let ppo = to-r | to-w | fence
+> +let ppo = to-r | to-w | fence | (po-rel-rf-acq-po & int)
+>  
+>  (* Propagation: Ordering from release operations and strong fences. *)
+>  let A-cumul(r) = rfe? ; r
+> -let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
+> +let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-rel-rf-acq-po
+>  let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+>  
+>  (*
 
-From: Rian Hunter <rian@alum.mit.edu>
+Isn't the job of the memory model to formalise the guarantees provided by
+the implementation? Your diff appears to do exactly the opposite.
 
-commit dc76803e57cc86589c4efcb5362918f9b0c0436f upstream.
+> I take this opportunity to summarize my viewpoint on these matters:
+> 
+> Someone would have to write the commit message for the above diff ...
+> that is, to describe -why- we should go RCtso (and update the documen-
+> tation accordingly); by now, the only argument for this appears to be:
+> "(most) people expect strong ordering" _and they will be "lazy enough"
+> to not check their expectations by using the LKMM tool (paraphrasing
+> from [1]); IAC, Linux "might work" better if we add this ordering to
+> the LKMM.  Agreeing on such an approach would mean agreeing that this
+> argument "wins" over:
+> 
+>   "We want new architectures to implement acquire/release efficiently,
+>    and it's not unlikely that they will have acquire loads that are
+>    similar in semantics to LDAPR." [2]
+> 
+>   "RISC-V probably would have been RCpc [...]  it takes extra fences
+>    to go from RCpc to either "RCtso" or RCsc." [3]
+> 
+> (or similar instances) since, of course, there is no such thing as a
+> "free strong ordering"; and I'm not only talking about "efficiency",
+> I'm also thinking at the fact that someone will have to maintain that
+> ordering across all the architectures and in the LKMM.
+> 
+> If, OTOH, we agree that the above "win"/assumption is valid only for
+> locks or, in other/better words, if we agree that we should maintain
+> _two_ distinct release-acquire orderings (a first one for unlock-lock
+> sequences and a second one for ordinary/atomic release-acquire, say,
+> as proposed in the patch under RFC), I ask that we audit and modify
+> the generic code accordingly/as suggested in other posts _before_ we
+> upstream the changes for the LKMM: we should identify those places
+> where (the newly introduced) _gap_ between unlock-lock and the other
+> release-acquire is not admissible and fix those places (notice that
+> this entails, in part., agreeing on what/where the generic code is).
 
-The consolidation of the start_thread() functions removed the export
-unintentionally. This breaks binfmt handlers built as a module.
+This is completely unrealistic. Have we already audited the kernel for the
+current definition of the memory model? Should we revert it until we have?
 
-Add it back.
+Of course not.
 
-Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
-Signed-off-by: Rian Hunter <rian@alum.mit.edu>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Right now, LKMM offers stronger guarantees that can portably be relied upon
+in the codebase. Alan's patch fixes that, and holding back a fix for a known
+issue runs counter to kernel development best practices.
 
----
- arch/x86/kernel/process_64.c |    1 +
- 1 file changed, 1 insertion(+)
+> Finally, if we don't agree with the above assumption at all (that is,
+> no matter if we are considering unlock-lock or other release-acquire
+> sequences), then we should go RCpc [4].
+> 
+> I described three different approaches (which are NOT "independent",
+> clearly; let us find an agreement...); even though some of them look
+> insane to me, I'm currently open to all of them: thoughts?
 
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -360,6 +360,7 @@ start_thread(struct pt_regs *regs, unsig
- 	start_thread_common(regs, new_ip, new_sp,
- 			    __USER_CS, __USER_DS, 0);
- }
-+EXPORT_SYMBOL_GPL(start_thread);
- 
- #ifdef CONFIG_COMPAT
- void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
+I'm very confused by your statements hypothesising about where our opinions
+may lie. We've discussed this to death, and it's clear that everybody who's
+commented apart from you is happy to weaken acquire/release but leave
+locking alone. Alan's written a patch to that effect which, again, only you
+seem to have a problem with.
 
+The problem isn't about "if we agree foo" or "if we don't agree bar", the
+problem is that you're the only person raising an objection, so please can
+you provide a constructive argument against Alan's patch, rather than a
+confusing monologue of "what-if"s and unreasonable demands of anonymous
+contributors? We don't have to solve all of our problems before we can
+make any progress.
 
+Thanks,
+
+Will
