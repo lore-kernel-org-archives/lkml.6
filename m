@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC47FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F52FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934A52077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 934A52077C
+	by mail.kernel.org (Postfix) with ESMTP id 660AF2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660AF2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbeICWBF (ORCPT
+        id S1731839AbeICWBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:01:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49330 "EHLO
+        Mon, 3 Sep 2018 18:01:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729170AbeICWBF (ORCPT
+        with ESMTP id S1728906AbeICWBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:05 -0400
+        Mon, 3 Sep 2018 18:01:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4013BC75;
-        Mon,  3 Sep 2018 17:39:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A582C9B;
+        Mon,  3 Sep 2018 17:40:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>, security@kernel.org
-Subject: [PATCH 4.18 122/123] x86/dumpstack: Dont dump kernel memory based on usermode RIP
-Date:   Mon,  3 Sep 2018 18:57:46 +0200
-Message-Id: <20180903165724.647650510@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.18 123/123] x86: kvm: avoid unused variable warning
+Date:   Mon,  3 Sep 2018 18:57:47 +0200
+Message-Id: <20180903165724.690099200@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,104 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 342db04ae71273322f0011384a9ed414df8bdae4 upstream.
+commit 7288bde1f9df6c1475675419bdd7725ce84dec56 upstream.
 
-show_opcodes() is used both for dumping kernel instructions and for dumping
-user instructions. If userspace causes #PF by jumping to a kernel address,
-show_opcodes() can be reached with regs->ip controlled by the user,
-pointing to kernel code. Make sure that userspace can't trick us into
-dumping kernel memory into dmesg.
+Removing one of the two accesses of the maxphyaddr variable led to
+a harmless warning:
 
-Fixes: 7cccf0725cf7 ("x86/dumpstack: Add a show_ip() function")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: security@kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180828154901.112726-1-jannh@google.com
+arch/x86/kvm/x86.c: In function 'kvm_set_mmio_spte_mask':
+arch/x86/kvm/x86.c:6563:6: error: unused variable 'maxphyaddr' [-Werror=unused-variable]
+
+Removing the #ifdef seems to be the nicest workaround, as it
+makes the code look cleaner than adding another #ifdef.
+
+Fixes: 28a1f3ac1d0c ("kvm: x86: Set highest physical address bits in non-present/reserved SPTEs")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org # L1TF
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/x86/include/asm/stacktrace.h |    2 +-
- arch/x86/kernel/dumpstack.c       |   21 +++++++++++++++------
- arch/x86/mm/fault.c               |    2 +-
- 3 files changed, 17 insertions(+), 8 deletions(-)
+ arch/x86/kvm/x86.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/stacktrace.h
-+++ b/arch/x86/include/asm/stacktrace.h
-@@ -111,6 +111,6 @@ static inline unsigned long caller_frame
- 	return (unsigned long)frame;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6512,14 +6512,12 @@ static void kvm_set_mmio_spte_mask(void)
+ 	/* Set the present bit. */
+ 	mask |= 1ull;
+ 
+-#ifdef CONFIG_X86_64
+ 	/*
+ 	 * If reserved bit is not supported, clear the present bit to disable
+ 	 * mmio page fault.
+ 	 */
+-	if (maxphyaddr == 52)
++	if (IS_ENABLED(CONFIG_X86_64) && maxphyaddr == 52)
+ 		mask &= ~1ull;
+-#endif
+ 
+ 	kvm_mmu_set_mmio_spte_mask(mask, mask);
  }
- 
--void show_opcodes(u8 *rip, const char *loglvl);
-+void show_opcodes(struct pt_regs *regs, const char *loglvl);
- void show_ip(struct pt_regs *regs, const char *loglvl);
- #endif /* _ASM_X86_STACKTRACE_H */
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -92,23 +92,32 @@ static void printk_stack_address(unsigne
-  * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
-  * guesstimate in attempt to achieve all of the above.
-  */
--void show_opcodes(u8 *rip, const char *loglvl)
-+void show_opcodes(struct pt_regs *regs, const char *loglvl)
- {
- 	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
- 	u8 opcodes[OPCODE_BUFSIZE];
--	u8 *ip;
-+	unsigned long ip;
- 	int i;
-+	bool bad_ip;
- 
- 	printk("%sCode: ", loglvl);
- 
--	ip = (u8 *)rip - code_prologue;
--	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
-+	ip = regs->ip - code_prologue;
-+
-+	/*
-+	 * Make sure userspace isn't trying to trick us into dumping kernel
-+	 * memory by pointing the userspace instruction pointer at it.
-+	 */
-+	bad_ip = user_mode(regs) &&
-+		 __chk_range_not_ok(ip, OPCODE_BUFSIZE, TASK_SIZE_MAX);
-+
-+	if (bad_ip || probe_kernel_read(opcodes, (u8 *)ip, OPCODE_BUFSIZE)) {
- 		pr_cont("Bad RIP value.\n");
- 		return;
- 	}
- 
- 	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
--		if (ip == rip)
-+		if (ip == regs->ip)
- 			pr_cont("<%02x> ", opcodes[i]);
- 		else
- 			pr_cont("%02x ", opcodes[i]);
-@@ -123,7 +132,7 @@ void show_ip(struct pt_regs *regs, const
- #else
- 	printk("%sRIP: %04x:%pS\n", loglvl, (int)regs->cs, (void *)regs->ip);
- #endif
--	show_opcodes((u8 *)regs->ip, loglvl);
-+	show_opcodes(regs, loglvl);
- }
- 
- void show_iret_regs(struct pt_regs *regs)
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -838,7 +838,7 @@ show_signal_msg(struct pt_regs *regs, un
- 
- 	printk(KERN_CONT "\n");
- 
--	show_opcodes((u8 *)regs->ip, loglvl);
-+	show_opcodes(regs, loglvl);
- }
- 
- static void
 
 
