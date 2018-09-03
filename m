@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C27C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35681C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB04B2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB04B2077C
+	by mail.kernel.org (Postfix) with ESMTP id E30AB20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30AB20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731237AbeICVxl (ORCPT
+        id S1731257AbeICVxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:53:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47518 "EHLO
+        Mon, 3 Sep 2018 17:53:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbeICVxk (ORCPT
+        with ESMTP id S1728303AbeICVxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:53:40 -0400
+        Mon, 3 Sep 2018 17:53:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A47F0D1B;
-        Mon,  3 Sep 2018 17:32:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C345CD1B;
+        Mon,  3 Sep 2018 17:32:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-Subject: [PATCH 4.18 024/123] iommu/arm-smmu: Error out only if not enough context interrupts
-Date:   Mon,  3 Sep 2018 18:56:08 +0200
-Message-Id: <20180903165720.522579160@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.18 025/123] printk: Split the code for storing a message into the log buffer
+Date:   Mon,  3 Sep 2018 18:56:09 +0200
+Message-Id: <20180903165720.560164940@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,57 +53,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Petr Mladek <pmladek@suse.com>
 
-commit d1e20222d5372e951bbb2fd3f6489ec4a6ea9b11 upstream.
+commit ba552399954dde1b388f7749fecad5c349216981 upstream.
 
-Currently we check if the number of context banks is not equal to
-num_context_interrupts. However, there are booloaders such as, one
-on sdm845 that reserves few context banks and thus kernel views
-less than the total available context banks.
-So, although the hardware definition in device tree would mention
-the correct number of context interrupts, this number can be
-greater than the number of context banks visible to smmu in kernel.
-We should therefore error out only when the number of context banks
-is greater than the available number of context interrupts.
+It is just a preparation step. The patch does not change
+the existing behavior.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Suggested-by: Tomasz Figa <tfiga@chromium.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-[will: drop useless printk]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Link: http://lkml.kernel.org/r/20180627140817.27764-2-pmladek@suse.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/arm-smmu.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ kernel/printk/printk.c |   43 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2103,12 +2103,16 @@ static int arm_smmu_device_probe(struct
- 	if (err)
- 		return err;
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1824,28 +1824,16 @@ static size_t log_output(int facility, i
+ 	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
+ }
  
--	if (smmu->version == ARM_SMMU_V2 &&
--	    smmu->num_context_banks != smmu->num_context_irqs) {
--		dev_err(dev,
--			"found only %d context interrupt(s) but %d required\n",
--			smmu->num_context_irqs, smmu->num_context_banks);
--		return -ENODEV;
-+	if (smmu->version == ARM_SMMU_V2) {
-+		if (smmu->num_context_banks > smmu->num_context_irqs) {
-+			dev_err(dev,
-+			      "found only %d context irq(s) but %d required\n",
-+			      smmu->num_context_irqs, smmu->num_context_banks);
-+			return -ENODEV;
-+		}
+-asmlinkage int vprintk_emit(int facility, int level,
+-			    const char *dict, size_t dictlen,
+-			    const char *fmt, va_list args)
++/* Must be called under logbuf_lock. */
++int vprintk_store(int facility, int level,
++		  const char *dict, size_t dictlen,
++		  const char *fmt, va_list args)
+ {
+ 	static char textbuf[LOG_LINE_MAX];
+ 	char *text = textbuf;
+ 	size_t text_len;
+ 	enum log_flags lflags = 0;
+-	unsigned long flags;
+-	int printed_len;
+-	bool in_sched = false;
+-
+-	if (level == LOGLEVEL_SCHED) {
+-		level = LOGLEVEL_DEFAULT;
+-		in_sched = true;
+-	}
+-
+-	boot_delay_msec(level);
+-	printk_delay();
+ 
+-	/* This stops the holder of console_sem just where we want him */
+-	logbuf_lock_irqsave(flags);
+ 	/*
+ 	 * The printf needs to come first; we need the syslog
+ 	 * prefix which might be passed-in as a parameter.
+@@ -1886,8 +1874,29 @@ asmlinkage int vprintk_emit(int facility
+ 	if (dict)
+ 		lflags |= LOG_PREFIX|LOG_NEWLINE;
+ 
+-	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
++	return log_output(facility, level, lflags,
++			  dict, dictlen, text, text_len);
++}
+ 
++asmlinkage int vprintk_emit(int facility, int level,
++			    const char *dict, size_t dictlen,
++			    const char *fmt, va_list args)
++{
++	int printed_len;
++	bool in_sched = false;
++	unsigned long flags;
 +
-+		/* Ignore superfluous interrupts */
-+		smmu->num_context_irqs = smmu->num_context_banks;
- 	}
++	if (level == LOGLEVEL_SCHED) {
++		level = LOGLEVEL_DEFAULT;
++		in_sched = true;
++	}
++
++	boot_delay_msec(level);
++	printk_delay();
++
++	/* This stops the holder of console_sem just where we want him */
++	logbuf_lock_irqsave(flags);
++	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
+ 	logbuf_unlock_irqrestore(flags);
  
- 	for (i = 0; i < smmu->num_global_irqs; ++i) {
+ 	/* If called from the scheduler, we can not call up(). */
 
 
