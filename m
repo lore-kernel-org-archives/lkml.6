@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E439C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ABFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1711020867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1711020867
+	by mail.kernel.org (Postfix) with ESMTP id 2AF222077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF222077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbeICVgt (ORCPT
+        id S1729761AbeICVgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42436 "EHLO
+        Mon, 3 Sep 2018 17:36:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42448 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728279AbeICVgs (ORCPT
+        with ESMTP id S1727811AbeICVgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:48 -0400
+        Mon, 3 Sep 2018 17:36:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C2E3D02;
-        Mon,  3 Sep 2018 17:15:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1B98D02;
+        Mon,  3 Sep 2018 17:15:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 015/165] nbd: handle unexpected replies better
-Date:   Mon,  3 Sep 2018 18:55:01 +0200
-Message-Id: <20180903165655.780253457@linuxfoundation.org>
+Subject: [PATCH 4.14 016/165] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
+Date:   Mon,  3 Sep 2018 18:55:02 +0200
+Message-Id: <20180903165655.837225607@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,228 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 8f3ea35929a0806ad1397db99a89ffee0140822a ]
+[ Upstream commit 0602088b10a7c0b4e044a810678ef93d7cc5bf48 ]
 
-If the server or network is misbehaving and we get an unexpected reply
-we can sometimes miss the request not being started and wait on a
-request and never get a response, or even double complete the same
-request.  Fix this by replacing the send_complete completion with just a
-per command lock.  Add a per command cookie as well so that we can know
-if we're getting a double completion for a previous event.  Also check
-to make sure we dont have REQUEUED set as that means we raced with the
-timeout handler and need to just let the retry occur.
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 839:
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96:
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93:
+		spin_lock in r8a66597_usb_disconnect
+
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 835:
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96:
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93:
+		spin_lock in r8a66597_usb_disconnect
+
+To fix these bugs, msleep() is replaced with mdelay().
+
+This bug is found by my static analysis tool (DSAC-2) and checked by
+my code review.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/nbd.c |   75 ++++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 61 insertions(+), 14 deletions(-)
+ drivers/usb/gadget/udc/r8a66597-udc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -116,11 +116,12 @@ struct nbd_device {
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -835,11 +835,11 @@ static void init_controller(struct r8a66
  
- struct nbd_cmd {
- 	struct nbd_device *nbd;
-+	struct mutex lock;
- 	int index;
- 	int cookie;
--	struct completion send_complete;
- 	blk_status_t status;
- 	unsigned long flags;
-+	u32 cmd_cookie;
- };
+ 		r8a66597_bset(r8a66597, XCKE, SYSCFG0);
  
- #if IS_ENABLED(CONFIG_DEBUG_FS)
-@@ -157,6 +158,27 @@ static void nbd_requeue_cmd(struct nbd_c
- 		blk_mq_requeue_request(req, true);
- }
+-		msleep(3);
++		mdelay(3);
  
-+#define NBD_COOKIE_BITS 32
-+
-+static u64 nbd_cmd_handle(struct nbd_cmd *cmd)
-+{
-+	struct request *req = blk_mq_rq_from_pdu(cmd);
-+	u32 tag = blk_mq_unique_tag(req);
-+	u64 cookie = cmd->cmd_cookie;
-+
-+	return (cookie << NBD_COOKIE_BITS) | tag;
-+}
-+
-+static u32 nbd_handle_to_tag(u64 handle)
-+{
-+	return (u32)handle;
-+}
-+
-+static u32 nbd_handle_to_cookie(u64 handle)
-+{
-+	return (u32)(handle >> NBD_COOKIE_BITS);
-+}
-+
- static const char *nbdcmd_to_ascii(int cmd)
- {
- 	switch (cmd) {
-@@ -317,6 +339,9 @@ static enum blk_eh_timer_return nbd_xmit
- 	}
- 	config = nbd->config;
+ 		r8a66597_bset(r8a66597, PLLC, SYSCFG0);
  
-+	if (!mutex_trylock(&cmd->lock))
-+		return BLK_EH_RESET_TIMER;
-+
- 	if (config->num_connections > 1) {
- 		dev_err_ratelimited(nbd_to_dev(nbd),
- 				    "Connection timed out, retrying\n");
-@@ -339,6 +364,7 @@ static enum blk_eh_timer_return nbd_xmit
- 					nbd_mark_nsock_dead(nbd, nsock, 1);
- 				mutex_unlock(&nsock->tx_lock);
- 			}
-+			mutex_unlock(&cmd->lock);
- 			nbd_requeue_cmd(cmd);
- 			nbd_config_put(nbd);
- 			return BLK_EH_NOT_HANDLED;
-@@ -349,6 +375,7 @@ static enum blk_eh_timer_return nbd_xmit
- 	}
- 	set_bit(NBD_TIMEDOUT, &config->runtime_flags);
- 	cmd->status = BLK_STS_IOERR;
-+	mutex_unlock(&cmd->lock);
- 	sock_shutdown(nbd);
- 	nbd_config_put(nbd);
+-		msleep(1);
++		mdelay(1);
  
-@@ -425,9 +452,9 @@ static int nbd_send_cmd(struct nbd_devic
- 	struct iov_iter from;
- 	unsigned long size = blk_rq_bytes(req);
- 	struct bio *bio;
-+	u64 handle;
- 	u32 type;
- 	u32 nbd_cmd_flags = 0;
--	u32 tag = blk_mq_unique_tag(req);
- 	int sent = nsock->sent, skip = 0;
- 
- 	iov_iter_kvec(&from, WRITE | ITER_KVEC, &iov, 1, sizeof(request));
-@@ -469,6 +496,8 @@ static int nbd_send_cmd(struct nbd_devic
- 			goto send_pages;
- 		}
- 		iov_iter_advance(&from, sent);
-+	} else {
-+		cmd->cmd_cookie++;
- 	}
- 	cmd->index = index;
- 	cmd->cookie = nsock->cookie;
-@@ -477,7 +506,8 @@ static int nbd_send_cmd(struct nbd_devic
- 		request.from = cpu_to_be64((u64)blk_rq_pos(req) << 9);
- 		request.len = htonl(size);
- 	}
--	memcpy(request.handle, &tag, sizeof(tag));
-+	handle = nbd_cmd_handle(cmd);
-+	memcpy(request.handle, &handle, sizeof(handle));
- 
- 	dev_dbg(nbd_to_dev(nbd), "request %p: sending control (%s@%llu,%uB)\n",
- 		cmd, nbdcmd_to_ascii(type),
-@@ -570,10 +600,12 @@ static struct nbd_cmd *nbd_read_stat(str
- 	struct nbd_reply reply;
- 	struct nbd_cmd *cmd;
- 	struct request *req = NULL;
-+	u64 handle;
- 	u16 hwq;
- 	u32 tag;
- 	struct kvec iov = {.iov_base = &reply, .iov_len = sizeof(reply)};
- 	struct iov_iter to;
-+	int ret = 0;
- 
- 	reply.magic = 0;
- 	iov_iter_kvec(&to, READ | ITER_KVEC, &iov, 1, sizeof(reply));
-@@ -591,8 +623,8 @@ static struct nbd_cmd *nbd_read_stat(str
- 		return ERR_PTR(-EPROTO);
- 	}
- 
--	memcpy(&tag, reply.handle, sizeof(u32));
--
-+	memcpy(&handle, reply.handle, sizeof(handle));
-+	tag = nbd_handle_to_tag(handle);
- 	hwq = blk_mq_unique_tag_to_hwq(tag);
- 	if (hwq < nbd->tag_set.nr_hw_queues)
- 		req = blk_mq_tag_to_rq(nbd->tag_set.tags[hwq],
-@@ -603,11 +635,25 @@ static struct nbd_cmd *nbd_read_stat(str
- 		return ERR_PTR(-ENOENT);
- 	}
- 	cmd = blk_mq_rq_to_pdu(req);
-+
-+	mutex_lock(&cmd->lock);
-+	if (cmd->cmd_cookie != nbd_handle_to_cookie(handle)) {
-+		dev_err(disk_to_dev(nbd->disk), "Double reply on req %p, cmd_cookie %u, handle cookie %u\n",
-+			req, cmd->cmd_cookie, nbd_handle_to_cookie(handle));
-+		ret = -ENOENT;
-+		goto out;
-+	}
-+	if (test_bit(NBD_CMD_REQUEUED, &cmd->flags)) {
-+		dev_err(disk_to_dev(nbd->disk), "Raced with timeout on req %p\n",
-+			req);
-+		ret = -ENOENT;
-+		goto out;
-+	}
- 	if (ntohl(reply.error)) {
- 		dev_err(disk_to_dev(nbd->disk), "Other side returned error (%d)\n",
- 			ntohl(reply.error));
- 		cmd->status = BLK_STS_IOERR;
--		return cmd;
-+		goto out;
- 	}
- 
- 	dev_dbg(nbd_to_dev(nbd), "request %p: got reply\n", cmd);
-@@ -632,18 +678,18 @@ static struct nbd_cmd *nbd_read_stat(str
- 				if (nbd_disconnected(config) ||
- 				    config->num_connections <= 1) {
- 					cmd->status = BLK_STS_IOERR;
--					return cmd;
-+					goto out;
- 				}
--				return ERR_PTR(-EIO);
-+				ret = -EIO;
-+				goto out;
- 			}
- 			dev_dbg(nbd_to_dev(nbd), "request %p: got %d bytes data\n",
- 				cmd, bvec.bv_len);
- 		}
--	} else {
--		/* See the comment in nbd_queue_rq. */
--		wait_for_completion(&cmd->send_complete);
- 	}
--	return cmd;
-+out:
-+	mutex_unlock(&cmd->lock);
-+	return ret ? ERR_PTR(ret) : cmd;
- }
- 
- static void recv_work(struct work_struct *work)
-@@ -843,7 +889,7 @@ static blk_status_t nbd_queue_rq(struct
- 	 * that the server is misbehaving (or there was an error) before we're
- 	 * done sending everything over the wire.
- 	 */
--	init_completion(&cmd->send_complete);
-+	mutex_lock(&cmd->lock);
- 	clear_bit(NBD_CMD_REQUEUED, &cmd->flags);
- 
- 	/* We can be called directly from the user space process, which means we
-@@ -856,7 +902,7 @@ static blk_status_t nbd_queue_rq(struct
- 		ret = BLK_STS_IOERR;
- 	else if (!ret)
- 		ret = BLK_STS_OK;
--	complete(&cmd->send_complete);
-+	mutex_unlock(&cmd->lock);
- 
- 	return ret;
- }
-@@ -1461,6 +1507,7 @@ static int nbd_init_request(struct blk_m
- 	struct nbd_cmd *cmd = blk_mq_rq_to_pdu(rq);
- 	cmd->nbd = set->driver_data;
- 	cmd->flags = 0;
-+	mutex_init(&cmd->lock);
- 	return 0;
- }
+ 		r8a66597_bset(r8a66597, SCKE, SYSCFG0);
  
 
 
