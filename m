@@ -6,152 +6,145 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D156DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E6FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E2620867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E2620867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A449920779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A449920779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=polito.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeICVX1 (ORCPT
+        id S1729003AbeICVX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:23:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38940 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeICVX1 (ORCPT
+        Mon, 3 Sep 2018 17:23:28 -0400
+Received: from fm2nodo1.polito.it ([130.192.180.17]:49776 "EHLO
+        fm2nodo1.polito.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbeICVX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 17:23:27 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90431CFC;
-        Mon,  3 Sep 2018 17:02:26 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 77/80] scsi: sysfs: Introduce sysfs_{un,}break_active_protection()
-Date:   Mon,  3 Sep 2018 18:49:55 +0200
-Message-Id: <20180903164937.224695301@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
-References: <20180903164934.171677301@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: from polito.it (frontmail2.polito.it [130.192.180.42])
+        by fm2nodo1.polito.it  with ESMTP id w83H25JO026335-w83H25JQ026335
+        (version=TLSv1.0 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=CAFAIL);
+        Mon, 3 Sep 2018 19:02:05 +0200
+X-ExtScanner: Niversoft's FindAttachments (free)
+Received: from [130.192.225.241] (account d040768@polito.it HELO localhost.localdomain)
+  by polito.it (CommuniGate Pro SMTP 6.2.5)
+  with ESMTPSA id 78881517; Mon, 03 Sep 2018 19:02:05 +0200
+From:   Mauricio Vasquez B <mauricio.vasquez@polito.it>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf] selftests/bpf/test_progs: do not check errno == 0
+Date:   Mon,  3 Sep 2018 19:01:59 +0200
+Message-Id: <1535994119-4853-1-git-send-email-mauricio.vasquez@polito.it>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+The errno man page states: "The value in errno is significant only when
+the return value of the call indicated an error..." then it is not correct
+to check it, it could be different than zero even if the function
+succeeded.
 
-------------------
+It causes some false positives if errno is set by a previous function.
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
-
-commit 2afc9166f79b8f6da5f347f48515215ceee4ae37 upstream.
-
-Introduce these two functions and export them such that the next patch
-can add calls to these functions from the SCSI core.
-
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Mauricio Vasquez B <mauricio.vasquez@polito.it>
 ---
- fs/sysfs/file.c       |   44 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/sysfs.h |   14 ++++++++++++++
- 2 files changed, 58 insertions(+)
+ tools/testing/selftests/bpf/test_progs.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/fs/sysfs/file.c
-+++ b/fs/sysfs/file.c
-@@ -408,6 +408,50 @@ int sysfs_chmod_file(struct kobject *kob
- EXPORT_SYMBOL_GPL(sysfs_chmod_file);
+diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+index 0ef68204c84b..63a671803ed6 100644
+--- a/tools/testing/selftests/bpf/test_progs.c
++++ b/tools/testing/selftests/bpf/test_progs.c
+@@ -112,13 +112,13 @@ static void test_pkt_access(void)
  
- /**
-+ * sysfs_break_active_protection - break "active" protection
-+ * @kobj: The kernel object @attr is associated with.
-+ * @attr: The attribute to break the "active" protection for.
-+ *
-+ * With sysfs, just like kernfs, deletion of an attribute is postponed until
-+ * all active .show() and .store() callbacks have finished unless this function
-+ * is called. Hence this function is useful in methods that implement self
-+ * deletion.
-+ */
-+struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
-+						  const struct attribute *attr)
-+{
-+	struct kernfs_node *kn;
-+
-+	kobject_get(kobj);
-+	kn = kernfs_find_and_get(kobj->sd, attr->name);
-+	if (kn)
-+		kernfs_break_active_protection(kn);
-+	return kn;
-+}
-+EXPORT_SYMBOL_GPL(sysfs_break_active_protection);
-+
-+/**
-+ * sysfs_unbreak_active_protection - restore "active" protection
-+ * @kn: Pointer returned by sysfs_break_active_protection().
-+ *
-+ * Undo the effects of sysfs_break_active_protection(). Since this function
-+ * calls kernfs_put() on the kernfs node that corresponds to the 'attr'
-+ * argument passed to sysfs_break_active_protection() that attribute may have
-+ * been removed between the sysfs_break_active_protection() and
-+ * sysfs_unbreak_active_protection() calls, it is not safe to access @kn after
-+ * this function has returned.
-+ */
-+void sysfs_unbreak_active_protection(struct kernfs_node *kn)
-+{
-+	struct kobject *kobj = kn->parent->priv;
-+
-+	kernfs_unbreak_active_protection(kn);
-+	kernfs_put(kn);
-+	kobject_put(kobj);
-+}
-+EXPORT_SYMBOL_GPL(sysfs_unbreak_active_protection);
-+
-+/**
-  * sysfs_remove_file_ns - remove an object attribute with a custom ns tag
-  * @kobj: object we're acting for
-  * @attr: attribute descriptor
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -238,6 +238,9 @@ int __must_check sysfs_create_files(stru
- 				   const struct attribute **attr);
- int __must_check sysfs_chmod_file(struct kobject *kobj,
- 				  const struct attribute *attr, umode_t mode);
-+struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
-+						  const struct attribute *attr);
-+void sysfs_unbreak_active_protection(struct kernfs_node *kn);
- void sysfs_remove_file_ns(struct kobject *kobj, const struct attribute *attr,
- 			  const void *ns);
- bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr);
-@@ -351,6 +354,17 @@ static inline int sysfs_chmod_file(struc
- 	return 0;
- }
+ 	err = bpf_prog_test_run(prog_fd, 100000, &pkt_v4, sizeof(pkt_v4),
+ 				NULL, NULL, &retval, &duration);
+-	CHECK(err || errno || retval, "ipv4",
++	CHECK(err || retval, "ipv4",
+ 	      "err %d errno %d retval %d duration %d\n",
+ 	      err, errno, retval, duration);
  
-+static inline struct kernfs_node *
-+sysfs_break_active_protection(struct kobject *kobj,
-+			      const struct attribute *attr)
-+{
-+	return NULL;
-+}
-+
-+static inline void sysfs_unbreak_active_protection(struct kernfs_node *kn)
-+{
-+}
-+
- static inline void sysfs_remove_file_ns(struct kobject *kobj,
- 					const struct attribute *attr,
- 					const void *ns)
-
+ 	err = bpf_prog_test_run(prog_fd, 100000, &pkt_v6, sizeof(pkt_v6),
+ 				NULL, NULL, &retval, &duration);
+-	CHECK(err || errno || retval, "ipv6",
++	CHECK(err || retval, "ipv6",
+ 	      "err %d errno %d retval %d duration %d\n",
+ 	      err, errno, retval, duration);
+ 	bpf_object__close(obj);
+@@ -153,14 +153,14 @@ static void test_xdp(void)
+ 	err = bpf_prog_test_run(prog_fd, 1, &pkt_v4, sizeof(pkt_v4),
+ 				buf, &size, &retval, &duration);
+ 
+-	CHECK(err || errno || retval != XDP_TX || size != 74 ||
++	CHECK(err || retval != XDP_TX || size != 74 ||
+ 	      iph->protocol != IPPROTO_IPIP, "ipv4",
+ 	      "err %d errno %d retval %d size %d\n",
+ 	      err, errno, retval, size);
+ 
+ 	err = bpf_prog_test_run(prog_fd, 1, &pkt_v6, sizeof(pkt_v6),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != XDP_TX || size != 114 ||
++	CHECK(err || retval != XDP_TX || size != 114 ||
+ 	      iph6->nexthdr != IPPROTO_IPV6, "ipv6",
+ 	      "err %d errno %d retval %d size %d\n",
+ 	      err, errno, retval, size);
+@@ -185,13 +185,13 @@ static void test_xdp_adjust_tail(void)
+ 	err = bpf_prog_test_run(prog_fd, 1, &pkt_v4, sizeof(pkt_v4),
+ 				buf, &size, &retval, &duration);
+ 
+-	CHECK(err || errno || retval != XDP_DROP,
++	CHECK(err || retval != XDP_DROP,
+ 	      "ipv4", "err %d errno %d retval %d size %d\n",
+ 	      err, errno, retval, size);
+ 
+ 	err = bpf_prog_test_run(prog_fd, 1, &pkt_v6, sizeof(pkt_v6),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != XDP_TX || size != 54,
++	CHECK(err || retval != XDP_TX || size != 54,
+ 	      "ipv6", "err %d errno %d retval %d size %d\n",
+ 	      err, errno, retval, size);
+ 	bpf_object__close(obj);
+@@ -254,14 +254,14 @@ static void test_l4lb(const char *file)
+ 
+ 	err = bpf_prog_test_run(prog_fd, NUM_ITER, &pkt_v4, sizeof(pkt_v4),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != 7/*TC_ACT_REDIRECT*/ || size != 54 ||
++	CHECK(err || retval != 7/*TC_ACT_REDIRECT*/ || size != 54 ||
+ 	      *magic != MAGIC_VAL, "ipv4",
+ 	      "err %d errno %d retval %d size %d magic %x\n",
+ 	      err, errno, retval, size, *magic);
+ 
+ 	err = bpf_prog_test_run(prog_fd, NUM_ITER, &pkt_v6, sizeof(pkt_v6),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != 7/*TC_ACT_REDIRECT*/ || size != 74 ||
++	CHECK(err || retval != 7/*TC_ACT_REDIRECT*/ || size != 74 ||
+ 	      *magic != MAGIC_VAL, "ipv6",
+ 	      "err %d errno %d retval %d size %d magic %x\n",
+ 	      err, errno, retval, size, *magic);
+@@ -343,14 +343,14 @@ static void test_xdp_noinline(void)
+ 
+ 	err = bpf_prog_test_run(prog_fd, NUM_ITER, &pkt_v4, sizeof(pkt_v4),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != 1 || size != 54 ||
++	CHECK(err || retval != 1 || size != 54 ||
+ 	      *magic != MAGIC_VAL, "ipv4",
+ 	      "err %d errno %d retval %d size %d magic %x\n",
+ 	      err, errno, retval, size, *magic);
+ 
+ 	err = bpf_prog_test_run(prog_fd, NUM_ITER, &pkt_v6, sizeof(pkt_v6),
+ 				buf, &size, &retval, &duration);
+-	CHECK(err || errno || retval != 1 || size != 74 ||
++	CHECK(err || retval != 1 || size != 74 ||
+ 	      *magic != MAGIC_VAL, "ipv6",
+ 	      "err %d errno %d retval %d size %d magic %x\n",
+ 	      err, errno, retval, size, *magic);
+-- 
+2.7.4
 
