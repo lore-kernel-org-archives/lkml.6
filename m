@@ -2,66 +2,95 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC70C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED44C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1AD720867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:19:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AD720867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AE9520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE9520862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeICQjk (ORCPT
+        id S1727784AbeICQsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 12:39:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54626 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbeICQjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 12:39:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BC7318A;
-        Mon,  3 Sep 2018 05:19:46 -0700 (PDT)
-Received: from [10.4.13.76] (ostrya.emea.arm.com [10.4.13.76])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 208783F614;
-        Mon,  3 Sep 2018 05:19:43 -0700 (PDT)
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
-To:     Auger Eric <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
-Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
-        christoffer.dall@arm.com
-References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
- <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
- <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
- <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
- <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
-Message-ID: <58418b7b-44f4-9659-98df-b5f24bed3e15@arm.com>
-Date:   Mon, 3 Sep 2018 13:19:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 3 Sep 2018 12:48:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56790 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727186AbeICQsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 12:48:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73C80AFE7;
+        Mon,  3 Sep 2018 12:28:08 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 14:28:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Douglas Gilbert <dgilbert@interlog.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        drorl@infinidat.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: Recent removal of bsg read/write support
+Message-ID: <20180903122804.GA15074@dhcp22.suse.cz>
+References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
+ <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
+ <6b907fed-d83f-de75-bde4-11270a0b1b0b@interlog.com>
 MIME-Version: 1.0
-In-Reply-To: <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b907fed-d83f-de75-bde4-11270a0b1b0b@interlog.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/08/2018 14:52, Auger Eric wrote:
-> Do we agree here we can get rid of the struct device * parameter?
+On Sun 02-09-18 21:16:10, Douglas Gilbert wrote:
+> On 2018-09-02 01:44 PM, Richard Weinberger wrote:
+> > CC'ing relevant people. Otherwise your mail might get lost.
+> > 
+> > On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
+> > > 
+> > > Note: I am not subscribed to LKML so please CC replies to this email.
+> > > 
+> > > Hi,
+> > > 
+> > > We have an internal tool that uses the bsg read/write interface to
+> > > issue SCSI commands as part of a test suite for a storage device.
+> > > 
+> > > After recently reading on LWN that this interface is to be removed we
+> > > tried porting our code to use sg instead. However, that raises new
+> > > issues - mainly getting ENOMEM over iSCSI for unknown reasons.
+> > > 
+> > > Because of this we would like to continue using the bsg interface,
+> > > even if some changes are required to meet security concerns.
+> > > 
+> > > Is there any chance for this removal to be reverted? I saw it was
+> > > already included in 4.19-rc1.
+> 
+> Hi,
+> Both bsg and sg are relatively thin shims over the same block layer
+> pass-through calls. And neither driver will themselves generate ENOMEM
+> unless the CPU is running low of memory.
+> 
+> In my experience, the main reason for unexpected ENOMEMs *** is from
+> blk_rq_map_user_iov() in block/blk_map.c called from both drivers.
+> That is a particular resource shortage rather than memory in general.
+> I do notice the blk_rq_map_user_iov() is/was called with GFP_KERNEL
+> in bsg and GFP_ATOMIC by sg. That suggests when you call write() on
+> a sg device and get ENOMEM, then wait a little (depends on your app)
+> and try again.
 
-That's fine by me, in my opinion the bind operation should only be on
-the domain, like map/unmap. For the invalidation however, I think we
-need to keep the device as an optional parameter, because the guest may
-want to invalidate the ATC (DTLB) of a single device.
-
-Thanks,
-Jean
+Well, what is the reason to use GFP_ATOMIC in the first place? I am not
+familiar with the code so I might be easily wrong but sg_start_req which
+calls blk_rq_map_user_iov resp. blk_rq_map_user with GFP_ATOMIC uses
+mutex. It is a conditional usage so the sleeping context might depend
+on the caller. But I guess it would be better to double check. It looks
+suspicious to me.
+-- 
+Michal Hocko
+SUSE Labs
