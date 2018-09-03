@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D3AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8AEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AEDD2054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEDD2054F
+	by mail.kernel.org (Postfix) with ESMTP id 147272054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147272054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeICLl6 (ORCPT
+        id S1727587AbeICLmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:58 -0400
+        Mon, 3 Sep 2018 07:42:01 -0400
 Received: from mga12.intel.com ([192.55.52.136]:48351 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeICLl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:57 -0400
+        id S1725887AbeICLmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:42:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:23:07 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:23:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
-   d="scan'208";a="70146989"
+   d="scan'208";a="70146997"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
-  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:23:04 -0700
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:23:07 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 18/21] swap: Support PMD swap mapping in mincore()
-Date:   Mon,  3 Sep 2018 15:22:11 +0800
-Message-Id: <20180903072214.24602-19-ying.huang@intel.com>
+Subject: [PATCH -V5 19/21] swap: Support PMD swap mapping in common path
+Date:   Mon,  3 Sep 2018 15:22:12 +0800
+Message-Id: <20180903072214.24602-20-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
 References: <20180903072214.24602-1-ying.huang@intel.com>
@@ -57,9 +57,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During mincore(), for PMD swap mapping, swap cache will be looked up.
-If the resulting page isn't compound page, the PMD swap mapping will
-be split and fallback to PTE swap mapping processing.
+Original code is only for PMD migration entry, it is revised to
+support PMD swap mapping.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -75,99 +74,157 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/mincore.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+ fs/proc/task_mmu.c | 12 +++++-------
+ mm/gup.c           | 36 ++++++++++++++++++++++++------------
+ mm/huge_memory.c   |  7 ++++---
+ mm/mempolicy.c     |  2 +-
+ 4 files changed, 34 insertions(+), 23 deletions(-)
 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index aa0e542569f9..1d861fac82ee 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -48,7 +48,8 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
-  * and is up to date; i.e. that no page-in operation would be required
-  * at this time if an application were to map and access this page.
-  */
--static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
-+static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff,
-+				  bool *compound)
- {
- 	unsigned char present = 0;
- 	struct page *page;
-@@ -86,6 +87,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
- #endif
- 	if (page) {
- 		present = PageUptodate(page);
-+		if (compound)
-+			*compound = PageCompound(page);
- 		put_page(page);
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 669abb617321..8759cb746261 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -972,7 +972,7 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+ 		pmd = pmd_clear_soft_dirty(pmd);
+ 
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
+-	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
++	} else if (is_swap_pmd(pmd)) {
+ 		pmd = pmd_swp_clear_soft_dirty(pmd);
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
  	}
+@@ -1302,9 +1302,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			if (pm->show_pfn)
+ 				frame = pmd_pfn(pmd) +
+ 					((addr & ~PMD_MASK) >> PAGE_SHIFT);
+-		}
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+-		else if (is_swap_pmd(pmd)) {
++		} else if (IS_ENABLED(CONFIG_HAVE_PMD_SWAP_ENTRY) &&
++			   is_swap_pmd(pmd)) {
+ 			swp_entry_t entry = pmd_to_swp_entry(pmd);
+ 			unsigned long offset;
  
-@@ -103,7 +106,8 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
+@@ -1317,10 +1316,9 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			flags |= PM_SWAP;
+ 			if (pmd_swp_soft_dirty(pmd))
+ 				flags |= PM_SOFT_DIRTY;
+-			VM_BUG_ON(!is_pmd_migration_entry(pmd));
+-			page = migration_entry_to_page(entry);
++			if (is_pmd_migration_entry(pmd))
++				page = migration_entry_to_page(entry);
+ 		}
+-#endif
  
- 		pgoff = linear_page_index(vma, addr);
- 		for (i = 0; i < nr; i++, pgoff++)
--			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
-+			vec[i] = mincore_page(vma->vm_file->f_mapping,
-+					      pgoff, NULL);
- 	} else {
- 		for (i = 0; i < nr; i++)
- 			vec[i] = 0;
-@@ -127,14 +131,36 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pte_t *ptep;
- 	unsigned char *vec = walk->private;
- 	int nr = (end - addr) >> PAGE_SHIFT;
+ 		if (page && page_mapcount(page) == 1)
+ 			flags |= PM_MMAP_EXCLUSIVE;
+diff --git a/mm/gup.c b/mm/gup.c
+index 1abc8b4afff6..b35b7729b1b7 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -216,6 +216,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	spinlock_t *ptl;
+ 	struct page *page;
+ 	struct mm_struct *mm = vma->vm_mm;
 +	swp_entry_t entry;
  
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
--		memset(vec, 1, nr);
-+		unsigned char val = 1;
-+		bool compound;
-+
-+		if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(*pmd)) {
-+			entry = pmd_to_swp_entry(*pmd);
-+			if (!non_swap_entry(entry)) {
-+				val = mincore_page(swap_address_space(entry),
-+						   swp_offset(entry),
-+						   &compound);
-+				/*
-+				 * The huge swap cluster has been
-+				 * split under us
-+				 */
-+				if (!compound) {
-+					__split_huge_swap_pmd(vma, addr, pmd);
-+					spin_unlock(ptl);
-+					goto fallback;
-+				}
-+			}
+ 	pmd = pmd_offset(pudp, address);
+ 	/*
+@@ -243,18 +244,22 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	if (!pmd_present(pmdval)) {
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(pmdval));
+-		if (is_pmd_migration_entry(pmdval))
++		entry = pmd_to_swp_entry(pmdval);
++		if (thp_migration_supported() && is_migration_entry(entry)) {
+ 			pmd_migration_entry_wait(mm, pmd);
+-		pmdval = READ_ONCE(*pmd);
+-		/*
+-		 * MADV_DONTNEED may convert the pmd to null because
+-		 * mmap_sem is held in read mode
+-		 */
+-		if (pmd_none(pmdval))
++			pmdval = READ_ONCE(*pmd);
++			/*
++			 * MADV_DONTNEED may convert the pmd to null because
++			 * mmap_sem is held in read mode
++			 */
++			if (pmd_none(pmdval))
++				return no_page_table(vma, flags);
++			goto retry;
 +		}
-+		memset(vec, val, nr);
- 		spin_unlock(ptl);
- 		goto out;
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
+ 			return no_page_table(vma, flags);
+-		goto retry;
++		WARN_ON(1);
++		return no_page_table(vma, flags);
  	}
+ 	if (pmd_devmap(pmdval)) {
+ 		ptl = pmd_lock(mm, pmd);
+@@ -276,11 +281,18 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_present(*pmd))) {
++		entry = pmd_to_swp_entry(*pmd);
+ 		spin_unlock(ptl);
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		pmd_migration_entry_wait(mm, pmd);
+-		goto retry_locked;
++		if (thp_migration_supported() && is_migration_entry(entry)) {
++			pmd_migration_entry_wait(mm, pmd);
++			goto retry_locked;
++		}
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
++			return no_page_table(vma, flags);
++		WARN_ON(1);
++		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_trans_huge(*pmd))) {
+ 		spin_unlock(ptl);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c9ab96711b59..c825f470d58a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2086,7 +2086,7 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+ static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+ {
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-	if (unlikely(is_pmd_migration_entry(pmd)))
++	if (unlikely(is_swap_pmd(pmd)))
+ 		pmd = pmd_swp_mksoft_dirty(pmd);
+ 	else if (pmd_present(pmd))
+ 		pmd = pmd_mksoft_dirty(pmd);
+@@ -2172,11 +2172,12 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 	preserve_write = prot_numa && pmd_write(*pmd);
+ 	ret = 1;
  
-+fallback:
- 	if (pmd_trans_unstable(pmd)) {
- 		__mincore_unmapped_range(addr, end, vma, vec);
- 		goto out;
-@@ -150,8 +176,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 		else if (pte_present(pte))
- 			*vec = 1;
- 		else { /* pte is a swap entry */
--			swp_entry_t entry = pte_to_swp_entry(pte);
--
-+			entry = pte_to_swp_entry(pte);
- 			if (non_swap_entry(entry)) {
- 				/*
- 				 * migration or hwpoison entries are always
-@@ -161,7 +186,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 			} else {
- #ifdef CONFIG_SWAP
- 				*vec = mincore_page(swap_address_space(entry),
--						    swp_offset(entry));
-+						    swp_offset(entry), NULL);
- #else
- 				WARN_ON(1);
- 				*vec = 1;
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
+ 	if (is_swap_pmd(*pmd)) {
+ 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+ 
+-		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
++		VM_BUG_ON(!IS_ENABLED(CONFIG_THP_SWAP) &&
++			  !is_migration_entry(entry));
+ 		if (is_write_migration_entry(entry)) {
+ 			pmd_t newpmd;
+ 			/*
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index da858f794eb6..dbd8bb77d78c 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -436,7 +436,7 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
+ 	struct queue_pages *qp = walk->private;
+ 	unsigned long flags;
+ 
+-	if (unlikely(is_pmd_migration_entry(*pmd))) {
++	if (unlikely(is_swap_pmd(*pmd))) {
+ 		ret = 1;
+ 		goto unlock;
+ 	}
 -- 
 2.16.4
 
