@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF06C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C305C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E792077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E792077C
+	by mail.kernel.org (Postfix) with ESMTP id 4215F20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4215F20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731058AbeICVsq (ORCPT
+        id S1731070AbeICVst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:48:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46302 "EHLO
+        Mon, 3 Sep 2018 17:48:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46316 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeICVsp (ORCPT
+        with ESMTP id S1728175AbeICVss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:48:45 -0400
+        Mon, 3 Sep 2018 17:48:48 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 525F3CF4;
-        Mon,  3 Sep 2018 17:27:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61962D01;
+        Mon,  3 Sep 2018 17:27:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.14 153/165] tpm: Return the actual size when receiving an unsupported command
-Date:   Mon,  3 Sep 2018 18:57:19 +0200
-Message-Id: <20180903165704.757026790@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 154/165] scsi: mpt3sas: Fix _transport_smp_handler() error path
+Date:   Mon,  3 Sep 2018 18:57:20 +0200
+Message-Id: <20180903165704.813212166@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,34 +55,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 36a11029b07ee30bdc4553274d0efea645ed9d91 upstream.
+commit 91b7bdb2c0089cbbb817df6888ab1458c645184e upstream.
 
-The userpace expects to read the number of bytes stated in the header.
-Returning the size of the buffer instead would be unexpected.
+This patch avoids that smatch complains about a double unlock on
+ioc->transport_cmds.mutex.
 
+Fixes: 651a01364994 ("scsi: scsi_transport_sas: switch to bsg-lib for SMP passthrough")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>
+Cc: Chaitra P B <chaitra.basappa@broadcom.com>
+Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
 Cc: stable@vger.kernel.org
-Fixes: 095531f891e6 ("tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented")
-Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/mpt3sas/mpt3sas_transport.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -423,7 +423,7 @@ static ssize_t tpm_try_transmit(struct t
- 		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
- 		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
- 						  TSS2_RESMGR_TPM_RC_LAYER);
--		return bufsiz;
-+		return sizeof(*header);
+--- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+@@ -1936,12 +1936,12 @@ _transport_smp_handler(struct bsg_job *j
+ 		pr_info(MPT3SAS_FMT "%s: host reset in progress!\n",
+ 		    __func__, ioc->name);
+ 		rc = -EFAULT;
+-		goto out;
++		goto job_done;
  	}
  
- 	if (bufsiz > TPM_BUFSIZE)
+ 	rc = mutex_lock_interruptible(&ioc->transport_cmds.mutex);
+ 	if (rc)
+-		goto out;
++		goto job_done;
+ 
+ 	if (ioc->transport_cmds.status != MPT3_CMD_NOT_USED) {
+ 		pr_err(MPT3SAS_FMT "%s: transport_cmds in use\n", ioc->name,
+@@ -2066,6 +2066,7 @@ _transport_smp_handler(struct bsg_job *j
+  out:
+ 	ioc->transport_cmds.status = MPT3_CMD_NOT_USED;
+ 	mutex_unlock(&ioc->transport_cmds.mutex);
++job_done:
+ 	bsg_job_done(job, rc, reslen);
+ }
+ 
 
 
