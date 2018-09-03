@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB106C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD33CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4486120856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4645920856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2ojUcCl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4486120856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzFsIRv3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4645920856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeICFKC (ORCPT
+        id S1726328AbeICFKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 01:10:02 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41330 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbeICFKC (ORCPT
+        Mon, 3 Sep 2018 01:10:13 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45360 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeICFKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 01:10:02 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b12-v6so7823294plr.8;
-        Sun, 02 Sep 2018 17:52:21 -0700 (PDT)
+        Mon, 3 Sep 2018 01:10:12 -0400
+Received: by mail-pl1-f196.google.com with SMTP id j8-v6so7806435pll.12;
+        Sun, 02 Sep 2018 17:52:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sa17iEnf/25lNE7MuUyFrCggJ8HGDk9yuNb+pUO+7vk=;
-        b=G2ojUcCl9aw/F1TuaQOD1xrg0vx7RUkVuTkc8vfoUxHVPSaR8bfuEjeavLWcfIQwI/
-         O171Qwo32R6YBkogZybmwVQt6N1SQ7eHjocaTgRUnFzNzBFs/SCdrFQLOHEmBJYGtY+X
-         wvfTZqAa6qi02txnUbnsx31qkZb+NzgFtKT9PtBJcPezs4+6Gx97VgFQrsipGPE6hpUZ
-         kSbXG2LAto53pnx20LbnBGAiZL2vn4tcGu0WT+BGeF0IY5qSUDHAfVP9Y428VCrp5axc
-         0DtZubl6KVnkPZt2U5gakqhJp7pxEJKUuzGFgusqp1p3G+46coH09MiHjZ6aI9arh+R0
-         Vw/A==
+        bh=WC1/Ye6nyqnNK5M/Q9663vlqezVLsdl9y22w3LpCMyM=;
+        b=VzFsIRv3xv9FXt/2O4v7wNInmgAls/clR1HscE2dz1F07b0LQurcURL0kwPU/CStB9
+         PCpdOm1o0gqxpihcbZQTYTjtpryglIhA0X+ICkQ3z8aIEkAJyr2BUOaezKgE6Fm1Xdhw
+         xHB5xsPXbmxQ09S/cAlkhqg/rUZtK/ymyRwYHfXfnFoq8VQD28IU4MjlJI0UYc25OYJG
+         fakH2Hv44UpTaZtO9caUQbWnf5DQa/Hn+QeAP6KxM7Qq79NrbV2unQVEmrtrNRDrsxHl
+         wzSs7Ts1pso41ldIriVJktoibcexQ+KaP362Q/ropPybeX5QBVs/051BJVBWlPAQ9RlL
+         RCAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sa17iEnf/25lNE7MuUyFrCggJ8HGDk9yuNb+pUO+7vk=;
-        b=cnzFu0zdN1zTgmaeSUdz0D3LjfBzN+gUyCiA1fWQwDviQHeA6o44IOXEigV0vrlr0v
-         l3sK50pWKKK6UO5KXMY8r+1o9GJ+3D/RDQN+Rbj5cxHdtvGGPMxo1eU1JYiro4E++VC1
-         YR0Qwa8pXBWcqyXtxooTiMz3E1Aqj53IjcwXee+sRYHl7K3VFMS06TdRrIJskhvOs580
-         G4gmN+GYfaDqRKzxlqFM+Z0upf+Piss4B9LZQGyPi5VNKsxymNIihdGEtaVBH9UOpI5g
-         p/cjhESioGJC5gHHzfvCW28L+OkXBhVQiY+whgBZM/FswykNYmoBfdU5pfK4b6kTKMM6
-         dIMA==
-X-Gm-Message-State: APzg51CvAtZHqIJVnEN9RddGQU9d+48ckn2gH2aWQvGfbDa6wLLsRMmo
-        RvHg+PwCfIVJyJFQ4cZ24Y0=
-X-Google-Smtp-Source: ANB0VdbxQC6AJB0LNRw9lvvgLbXbJAUASikk7TL6L1CRxoa2i6E0JqxQVhJtSUkeCFmADhV5JPgtiA==
-X-Received: by 2002:a17:902:261:: with SMTP id 88-v6mr25736392plc.331.1535935940956;
-        Sun, 02 Sep 2018 17:52:20 -0700 (PDT)
+        bh=WC1/Ye6nyqnNK5M/Q9663vlqezVLsdl9y22w3LpCMyM=;
+        b=kKkc1pEXvKvKC7XLYpTxPRn4fjimultPrhfMO/ixG+9Tlmze7Ddy+t7ncm5Vg2o8L+
+         sFqjBNZg+cU9EFx3Fp2yJePTma8M3+Xb2FiGcI0z76lQStqXCnY2I1MP6C5Xsl/d7PqK
+         DgC8xyb5pECROjryCO/ky1cAYJ4Sb+qj4poa1qks5n1YI6KyZrbofN9sXajF5anQa+Kp
+         fKaXfhFFPtOy1u5noqeswFOq6XbmyIIrtjq0T1xg0OedTvlvs9bUy4zp4s5H0o52l9Ws
+         QTGdEqZOrOxAgpEDYh8OMAsQY5edC5XAZRYre+8+SddXUXXqQEKmBNpCysIq1WJ4MBXJ
+         67VA==
+X-Gm-Message-State: APzg51A70xuQu+UbmIQcDuvyVEjgH+LwiLjZv1VoXyhTqs/Kc1pBXV4C
+        skJ6QkUEgrs2NAMFnoB9iUk=
+X-Google-Smtp-Source: ANB0VdYvNQEkE38nfIANGoGko2knMBa2xQuzZoDBCckSgLR66RzKHFbRr8yiLWdy2F61isnldYdcRA==
+X-Received: by 2002:a17:902:b089:: with SMTP id p9-v6mr25092603plr.254.1535935951678;
+        Sun, 02 Sep 2018 17:52:31 -0700 (PDT)
 Received: from localhost.localdomain ([203.160.89.93])
-        by smtp.gmail.com with ESMTPSA id w81-v6sm31487064pfk.92.2018.09.02.17.52.15
+        by smtp.gmail.com with ESMTPSA id w81-v6sm31487064pfk.92.2018.09.02.17.52.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 17:52:20 -0700 (PDT)
+        Sun, 02 Sep 2018 17:52:31 -0700 (PDT)
 From:   Kenneth Lee <nek.in.cn@gmail.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -77,9 +77,9 @@ To:     Jonathan Corbet <corbet@lwn.net>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Sanjay Kumar <sanjay.k.kumar@intel.com>
 Cc:     linuxarm@huawei.com
-Subject: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
-Date:   Mon,  3 Sep 2018 08:51:58 +0800
-Message-Id: <20180903005204.26041-2-nek.in.cn@gmail.com>
+Subject: [PATCH 3/7] vfio: add sdmdev support
+Date:   Mon,  3 Sep 2018 08:52:00 +0800
+Message-Id: <20180903005204.26041-4-nek.in.cn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903005204.26041-1-nek.in.cn@gmail.com>
 References: <20180903005204.26041-1-nek.in.cn@gmail.com>
@@ -90,881 +90,820 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kenneth Lee <liguozhu@hisilicon.com>
 
-WarpDrive is a common user space accelerator framework.  Its main component
-in Kernel is called sdmdev, Share Domain Mediated Device. It exposes
-the hardware capabilities to the user space via vfio-mdev. So processes in
-user land can obtain a "queue" by open the device and direct access the
-hardware MMIO space or do DMA operation via VFIO interface.
+SDMDEV is "Share Domain Mdev". It is a vfio-mdev. But differ from
+the general vfio-mdev, it shares its parent's IOMMU. If Multi-PASID
+support is enabled in the IOMMU (not yet in the current kernel HEAD),
+multiple process can share the IOMMU by different PASID. If it is not
+support, only one process can share the IOMMU with the kernel driver.
 
-WarpDrive is intended to be used with Jean Philippe Brucker's SVA
-patchset to support multi-process. But This is not a must.  Without the
-SVA patches, WarpDrive can still work for one process for every hardware
-device.
-
-This patch add detail documents for the framework.
+Currently only the vfio type-1 driver is updated to make it to be aware
+of.
 
 Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
 ---
- Documentation/00-INDEX                |   2 +
- Documentation/warpdrive/warpdrive.rst | 100 ++++
- Documentation/warpdrive/wd-arch.svg   | 728 ++++++++++++++++++++++++++
- 3 files changed, 830 insertions(+)
- create mode 100644 Documentation/warpdrive/warpdrive.rst
- create mode 100644 Documentation/warpdrive/wd-arch.svg
+ drivers/vfio/Kconfig              |   1 +
+ drivers/vfio/Makefile             |   1 +
+ drivers/vfio/sdmdev/Kconfig       |  10 +
+ drivers/vfio/sdmdev/Makefile      |   3 +
+ drivers/vfio/sdmdev/vfio_sdmdev.c | 363 ++++++++++++++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c   | 151 ++++++++++++-
+ include/linux/vfio_sdmdev.h       |  96 ++++++++
+ include/uapi/linux/vfio_sdmdev.h  |  29 +++
+ 8 files changed, 648 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/vfio/sdmdev/Kconfig
+ create mode 100644 drivers/vfio/sdmdev/Makefile
+ create mode 100644 drivers/vfio/sdmdev/vfio_sdmdev.c
+ create mode 100644 include/linux/vfio_sdmdev.h
+ create mode 100644 include/uapi/linux/vfio_sdmdev.h
 
-diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
-index 2754fe83f0d4..9959affab599 100644
---- a/Documentation/00-INDEX
-+++ b/Documentation/00-INDEX
-@@ -410,6 +410,8 @@ vm/
- 	- directory with info on the Linux vm code.
- w1/
- 	- directory with documents regarding the 1-wire (w1) subsystem.
-+warpdrive/
-+	- directory with documents about WarpDrive accelerator framework.
- watchdog/
- 	- how to auto-reboot Linux if it has "fallen and can't get up". ;-)
- wimax/
-diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
+diff --git a/drivers/vfio/Kconfig b/drivers/vfio/Kconfig
+index c84333eb5eb5..5af7d1db505e 100644
+--- a/drivers/vfio/Kconfig
++++ b/drivers/vfio/Kconfig
+@@ -47,4 +47,5 @@ menuconfig VFIO_NOIOMMU
+ source "drivers/vfio/pci/Kconfig"
+ source "drivers/vfio/platform/Kconfig"
+ source "drivers/vfio/mdev/Kconfig"
++source "drivers/vfio/sdmdev/Kconfig"
+ source "virt/lib/Kconfig"
+diff --git a/drivers/vfio/Makefile b/drivers/vfio/Makefile
+index de67c4725cce..678592360a7a 100644
+--- a/drivers/vfio/Makefile
++++ b/drivers/vfio/Makefile
+@@ -9,3 +9,4 @@ obj-$(CONFIG_VFIO_SPAPR_EEH) += vfio_spapr_eeh.o
+ obj-$(CONFIG_VFIO_PCI) += pci/
+ obj-$(CONFIG_VFIO_PLATFORM) += platform/
+ obj-$(CONFIG_VFIO_MDEV) += mdev/
++obj-$(CONFIG_VFIO_SDMDEV) += sdmdev/
+diff --git a/drivers/vfio/sdmdev/Kconfig b/drivers/vfio/sdmdev/Kconfig
 new file mode 100644
-index 000000000000..6d2a5d1e08c4
+index 000000000000..51474272870d
 --- /dev/null
-+++ b/Documentation/warpdrive/warpdrive.rst
-@@ -0,0 +1,100 @@
-+Introduction of WarpDrive
-+=========================
++++ b/drivers/vfio/sdmdev/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++config VFIO_SDMDEV
++	tristate "Support for Share Domain MDEV"
++	depends on VFIO_MDEV_DEVICE
++	help
++	  Support for VFIO Share Domain MDEV, which enables the kernel to
++	  support light weight hardware accelerator framework, WarpDrive.
 +
-+*WarpDrive* is a general accelerator framework for user space. It intends to
-+provide interface for the user process to send request to hardware
-+accelerator without heavy user-kernel interaction cost.
-+
-+The *WarpDrive* user library is supposed to provide a pipe-based API, such as:
-+        ::
-+        int wd_request_queue(struct wd_queue *q);
-+        void wd_release_queue(struct wd_queue *q);
-+
-+        int wd_send(struct wd_queue *q, void *req);
-+        int wd_recv(struct wd_queue *q, void **req);
-+        int wd_recv_sync(struct wd_queue *q, void **req);
-+        int wd_flush(struct wd_queue *q);
-+
-+*wd_request_queue* creates the pipe connection, *queue*, between the
-+application and the hardware. The application sends request and pulls the
-+answer back by asynchronized wd_send/wd_recv, which directly interact with the
-+hardware (by MMIO or share memory) without syscall.
-+
-+*WarpDrive* maintains a unified application address space among all involved
-+accelerators.  With the following APIs: ::
-+
-+        int wd_mem_share(struct wd_queue *q, const void *addr,
-+                         size_t size, int flags);
-+        void wd_mem_unshare(struct wd_queue *q, const void *addr, size_t size);
-+
-+The referred process space shared by these APIs can be directly referred by the
-+hardware. The process can also dedicate its whole process space with flags,
-+*WD_SHARE_ALL* (not in this patch yet).
-+
-+The name *WarpDrive* is simply a cool and general name meaning the framework
-+makes the application faster. As it will be explained in this text later, the
-+facility in kernel is called *SDMDEV*, namely "Share Domain Mediated Device".
-+
-+
-+How does it work
-+================
-+
-+*WarpDrive* is built upon *VFIO-MDEV*. The queue is wrapped as *mdev* in VFIO.
-+So memory sharing can be done via standard VFIO standard DMA interface.
-+
-+The architecture is illustrated as follow figure:
-+
-+.. image:: wd-arch.svg
-+        :alt: WarpDrive Architecture
-+
-+Accelerator driver shares its capability via *SDMDEV* API: ::
-+
-+        vfio_sdmdev_register(struct vfio_sdmdev *sdmdev);
-+        vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev);
-+        vfio_sdmdev_wake_up(struct spimdev_queue *q);
-+
-+*vfio_sdmdev_register* is a helper function to register the hardware to the
-+*VFIO_MDEV* framework. The queue creation is done by *mdev* creation interface.
-+
-+*WarpDrive* User library mmap the mdev to access its mmio space and shared
-+memory. Request can be sent to, or receive from, hardware in this mmap-ed
-+space until the queue is full or empty.
-+
-+The user library can wait on the queue by ioctl(VFIO_SDMDEV_CMD_WAIT) the mdev
-+if the queue is full or empty. If the queue status is changed, the hardware
-+driver use *vfio_sdmdev_wake_up* to wake up the waiting process.
-+
-+
-+Multiple processes support
-+==========================
-+
-+In the latest mainline kernel (4.18) when this document is written,
-+multi-process is not supported in VFIO yet.
-+
-+Jean Philippe Brucker has a patchset to enable it[1]_. We have tested it
-+with our hardware (which is known as *D06*). It works well. *WarpDrive* rely
-+on them to support multiple processes. If it is not enabled, *WarpDrive* can
-+still work, but it support only one mdev for a process, which will share the
-+same io map table with kernel. (But it is not going to be a security problem,
-+since the user application cannot access the kernel address space)
-+
-+When multiprocess is support, mdev can be created based on how many
-+hardware resource (queue) is available. Because the VFIO framework accepts only
-+one open from one mdev iommu_group. Mdev become the smallest unit for process
-+to use queue. And the mdev will not be released if the user process exist. So
-+it will need a resource agent to manage the mdev allocation for the user
-+process. This is not in this document's range.
-+
-+
-+Legacy Mode Support
-+===================
-+For the hardware on which IOMMU is not support, WarpDrive can run on *NOIOMMU*
-+mode. That require some update to the mdev driver, which is not included in
-+this version yet.
-+
-+
-+References
-+==========
-+.. [1] https://patchwork.kernel.org/patch/10394851/
-+
-+.. vim: tw=78
-diff --git a/Documentation/warpdrive/wd-arch.svg b/Documentation/warpdrive/wd-arch.svg
++	  To compile this as a module, choose M here: the module will be called
++	  sdmdev.
+diff --git a/drivers/vfio/sdmdev/Makefile b/drivers/vfio/sdmdev/Makefile
 new file mode 100644
-index 000000000000..2b0c467ee399
+index 000000000000..ccaaa03f3184
 --- /dev/null
-+++ b/Documentation/warpdrive/wd-arch.svg
-@@ -0,0 +1,728 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-+<!-- Created with Inkscape (http://www.inkscape.org/) -->
++++ b/drivers/vfio/sdmdev/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++sdmdev-y := sdmdev.o
++obj-$(CONFIG_VFIO_SDMDEV) += vfio_sdmdev.o
+diff --git a/drivers/vfio/sdmdev/vfio_sdmdev.c b/drivers/vfio/sdmdev/vfio_sdmdev.c
+new file mode 100644
+index 000000000000..c6eb5d4bdab0
+--- /dev/null
++++ b/drivers/vfio/sdmdev/vfio_sdmdev.c
+@@ -0,0 +1,363 @@
++// SPDX-License-Identifier: GPL-2.0+
++#include <linux/module.h>
++#include <linux/vfio_sdmdev.h>
 +
-+<svg
-+   xmlns:dc="http://purl.org/dc/elements/1.1/"
-+   xmlns:cc="http://creativecommons.org/ns#"
-+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-+   xmlns:svg="http://www.w3.org/2000/svg"
-+   xmlns="http://www.w3.org/2000/svg"
-+   xmlns:xlink="http://www.w3.org/1999/xlink"
-+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-+   width="210mm"
-+   height="193mm"
-+   viewBox="0 0 744.09449 683.85823"
-+   id="svg2"
-+   version="1.1"
-+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-+   sodipodi:docname="wd-arch.svg">
-+  <defs
-+     id="defs4">
-+    <linearGradient
-+       inkscape:collect="always"
-+       id="linearGradient6830">
-+      <stop
-+         style="stop-color:#000000;stop-opacity:1;"
-+         offset="0"
-+         id="stop6832" />
-+      <stop
-+         style="stop-color:#000000;stop-opacity:0;"
-+         offset="1"
-+         id="stop6834" />
-+    </linearGradient>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient5026"
-+       id="linearGradient5032"
-+       x1="353"
-+       y1="211.3622"
-+       x2="565.5"
-+       y2="174.8622"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(-89.949614,405.94594)" />
-+    <linearGradient
-+       inkscape:collect="always"
-+       id="linearGradient5026">
-+      <stop
-+         style="stop-color:#f2f2f2;stop-opacity:1;"
-+         offset="0"
-+         id="stop5028" />
-+      <stop
-+         style="stop-color:#f2f2f2;stop-opacity:0;"
-+         offset="1"
-+         id="stop5030" />
-+    </linearGradient>
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter4169-3"
-+       x="-0.031597666"
-+       width="1.0631953"
-+       y="-0.099812768"
-+       height="1.1996255">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="1.3307599"
-+         id="feGaussianBlur4171-6" />
-+    </filter>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient5026"
-+       id="linearGradient5032-1"
-+       x1="353"
-+       y1="211.3622"
-+       x2="565.5"
-+       y2="174.8622"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(175.77842,400.29111)" />
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter4169-3-0"
-+       x="-0.031597666"
-+       width="1.0631953"
-+       y="-0.099812768"
-+       height="1.1996255">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="1.3307599"
-+         id="feGaussianBlur4171-6-9" />
-+    </filter>
-+    <marker
-+       markerWidth="18.960653"
-+       markerHeight="11.194658"
-+       refX="9.4803267"
-+       refY="5.5973287"
-+       orient="auto"
-+       id="marker4613">
-+      <rect
-+         y="-5.1589785"
-+         x="5.8504119"
-+         height="10.317957"
-+         width="10.317957"
-+         id="rect4212"
-+         style="fill:#ffffff;stroke:#000000;stroke-width:0.69143367;stroke-miterlimit:4;stroke-dasharray:none"
-+         transform="matrix(0.86111274,0.50841405,-0.86111274,0.50841405,0,0)">
-+        <title
-+           id="title4262">generation</title>
-+      </rect>
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient5026"
-+       id="linearGradient5032-3-9"
-+       x1="353"
-+       y1="211.3622"
-+       x2="565.5"
-+       y2="174.8622"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="matrix(1.2452511,0,0,0.98513016,-190.95632,540.33156)" />
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter4169-3-5-8"
-+       x="-0.031597666"
-+       width="1.0631953"
-+       y="-0.099812768"
-+       height="1.1996255">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="1.3307599"
-+         id="feGaussianBlur4171-6-3-9" />
-+    </filter>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2-1">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9-9"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient5026"
-+       id="linearGradient5032-3-9-7"
-+       x1="353"
-+       y1="211.3622"
-+       x2="565.5"
-+       y2="174.8622"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="matrix(1.3742742,0,0,0.97786398,-234.52617,654.63367)" />
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter4169-3-5-8-5"
-+       x="-0.031597666"
-+       width="1.0631953"
-+       y="-0.099812768"
-+       height="1.1996255">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="1.3307599"
-+         id="feGaussianBlur4171-6-3-9-0" />
-+    </filter>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2-6">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9-1"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient5026"
-+       id="linearGradient5032-3-9-4"
-+       x1="353"
-+       y1="211.3622"
-+       x2="565.5"
-+       y2="174.8622"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="matrix(1.3742912,0,0,2.0035845,-468.34428,342.56603)" />
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter4169-3-5-8-54"
-+       x="-0.031597666"
-+       width="1.0631953"
-+       y="-0.099812768"
-+       height="1.1996255">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="1.3307599"
-+         id="feGaussianBlur4171-6-3-9-7" />
-+    </filter>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2-1-8">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9-9-6"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2-1-8-8">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9-9-6-9"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-0">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-93"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-0-2">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-93-6"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+    <filter
-+       inkscape:collect="always"
-+       style="color-interpolation-filters:sRGB"
-+       id="filter5382"
-+       x="-0.089695387"
-+       width="1.1793908"
-+       y="-0.10052069"
-+       height="1.2010413">
-+      <feGaussianBlur
-+         inkscape:collect="always"
-+         stdDeviation="0.86758925"
-+         id="feGaussianBlur5384" />
-+    </filter>
-+    <linearGradient
-+       inkscape:collect="always"
-+       xlink:href="#linearGradient6830"
-+       id="linearGradient6836"
-+       x1="362.73923"
-+       y1="700.04059"
-+       x2="340.4751"
-+       y2="678.25488"
-+       gradientUnits="userSpaceOnUse"
-+       gradientTransform="translate(-23.771026,-135.76835)" />
-+    <marker
-+       markerWidth="11.227358"
-+       markerHeight="12.355258"
-+       refX="10"
-+       refY="6.177629"
-+       orient="auto"
-+       id="marker4825-6-2-6-2">
-+      <path
-+         inkscape:connector-curvature="0"
-+         id="path4757-1-9-1-9"
-+         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
-+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-+    </marker>
-+  </defs>
-+  <sodipodi:namedview
-+     id="base"
-+     pagecolor="#ffffff"
-+     bordercolor="#666666"
-+     borderopacity="1.0"
-+     inkscape:pageopacity="0.0"
-+     inkscape:pageshadow="2"
-+     inkscape:zoom="1.4"
-+     inkscape:cx="313.72367"
-+     inkscape:cy="307.5947"
-+     inkscape:document-units="px"
-+     inkscape:current-layer="layer1"
-+     showgrid="false"
-+     inkscape:window-width="1916"
-+     inkscape:window-height="1033"
-+     inkscape:window-x="1920"
-+     inkscape:window-y="22"
-+     inkscape:window-maximized="0"
-+     fit-margin-right="0.3"
-+     inkscape:snap-global="false" />
-+  <metadata
-+     id="metadata7">
-+    <rdf:RDF>
-+      <cc:Work
-+         rdf:about="">
-+        <dc:format>image/svg+xml</dc:format>
-+        <dc:type
-+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-+        <dc:title />
-+      </cc:Work>
-+    </rdf:RDF>
-+  </metadata>
-+  <g
-+     inkscape:label="Layer 1"
-+     inkscape:groupmode="layer"
-+     id="layer1"
-+     transform="translate(0,-368.50374)">
-+    <rect
-+       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3)"
-+       id="rect4136-3-6"
-+       width="101.07784"
-+       height="31.998148"
-+       x="283.01144"
-+       y="588.80896" />
-+    <rect
-+       style="fill:url(#linearGradient5032);fill-opacity:1;stroke:#000000;stroke-width:0.6465112"
-+       id="rect4136-2"
-+       width="101.07784"
-+       height="31.998148"
-+       x="281.63498"
-+       y="586.75739" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="294.21747"
-+       y="612.50073"
-+       id="text4138-6"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1"
-+         x="294.21747"
-+         y="612.50073"
-+         style="font-size:15px;line-height:1.25">WarpDrive</tspan></text>
-+    <rect
-+       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-0)"
-+       id="rect4136-3-6-3"
-+       width="101.07784"
-+       height="31.998148"
-+       x="548.7395"
-+       y="583.15417" />
-+    <rect
-+       style="fill:url(#linearGradient5032-1);fill-opacity:1;stroke:#000000;stroke-width:0.6465112"
-+       id="rect4136-2-60"
-+       width="101.07784"
-+       height="31.998148"
-+       x="547.36304"
-+       y="581.1026" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="557.83484"
-+       y="602.32745"
-+       id="text4138-6-6"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-2"
-+         x="557.83484"
-+         y="602.32745"
-+         style="font-size:15px;line-height:1.25">user_driver</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4613)"
-+       d="m 547.36304,600.78954 -156.58203,0.0691"
-+       id="path4855"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <rect
-+       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8)"
-+       id="rect4136-3-6-5-7"
-+       width="101.07784"
-+       height="31.998148"
-+       x="128.74678"
-+       y="80.648842"
-+       transform="matrix(1.2452511,0,0,0.98513016,113.15182,641.02594)" />
-+    <rect
-+       style="fill:url(#linearGradient5032-3-9);fill-opacity:1;stroke:#000000;stroke-width:0.71606314"
-+       id="rect4136-2-6-3"
-+       width="125.86729"
-+       height="31.522341"
-+       x="271.75983"
-+       y="718.45435" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="306.29599"
-+       y="746.50073"
-+       id="text4138-6-2-6"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1"
-+         x="306.29599"
-+         y="746.50073"
-+         style="font-size:15px;line-height:1.25">sdmdev</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2)"
-+       d="m 329.57309,619.72453 5.0373,97.14447"
-+       id="path4661-3"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-1)"
-+       d="m 342.57219,830.63108 -5.67699,-79.2841"
-+       id="path4661-3-4"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <rect
-+       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-5)"
-+       id="rect4136-3-6-5-7-3"
-+       width="101.07784"
-+       height="31.998148"
-+       x="128.74678"
-+       y="80.648842"
-+       transform="matrix(1.3742742,0,0,0.97786398,101.09126,754.58534)" />
-+    <rect
-+       style="fill:url(#linearGradient5032-3-9-7);fill-opacity:1;stroke:#000000;stroke-width:0.74946606"
-+       id="rect4136-2-6-3-6"
-+       width="138.90866"
-+       height="31.289837"
-+       x="276.13297"
-+       y="831.44263" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="295.67819"
-+       y="852.98224"
-+       id="text4138-6-2-6-1"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0"
-+         x="295.67819"
-+         y="852.98224"
-+         style="font-size:15px;line-height:1.25">Device Driver</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="349.31198"
-+       y="829.46118"
-+       id="text4138-6-2-6-1-6"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0-3"
-+         x="349.31198"
-+         y="829.46118"
-+         style="font-size:15px;line-height:1.25">*</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="349.98282"
-+       y="768.698"
-+       id="text4138-6-2-6-1-6-2"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0-3-0"
-+         x="349.98282"
-+         y="768.698"
-+         style="font-size:15px;line-height:1.25">1</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-6)"
-+       d="m 568.1238,614.05402 0.51369,333.80219"
-+       id="path4661-3-5"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="371.8013"
-+       y="664.62476"
-+       id="text4138-6-2-6-1-6-2-5"><tspan
-+         sodipodi:role="line"
-+         x="371.8013"
-+         y="664.62476"
-+         id="tspan4274"
-+         style="font-size:15px;line-height:1.25">&lt;&lt;vfio&gt;&gt;</tspan><tspan
-+         sodipodi:role="line"
-+         x="371.8013"
-+         y="683.37476"
-+         id="tspan4305"
-+         style="font-size:15px;line-height:1.25">resource management</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="389.92969"
-+       y="587.44836"
-+       id="text4138-6-2-6-1-6-2-56"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0-3-0-9"
-+         x="389.92969"
-+         y="587.44836"
-+         style="font-size:15px;line-height:1.25">1</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="528.64813"
-+       y="600.08429"
-+       id="text4138-6-2-6-1-6-3"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0-3-7"
-+         x="528.64813"
-+         y="600.08429"
-+         style="font-size:15px;line-height:1.25">*</tspan></text>
-+    <rect
-+       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-54)"
-+       id="rect4136-3-6-5-7-4"
-+       width="101.07784"
-+       height="31.998148"
-+       x="128.74678"
-+       y="80.648842"
-+       transform="matrix(1.3745874,0,0,1.8929066,-132.7754,556.04505)" />
-+    <rect
-+       style="fill:url(#linearGradient5032-3-9-4);fill-opacity:1;stroke:#000000;stroke-width:1.07280123"
-+       id="rect4136-2-6-3-4"
-+       width="138.91039"
-+       height="64.111"
-+       x="42.321312"
-+       y="704.8371" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="110.30745"
-+       y="722.94025"
-+       id="text4138-6-2-6-3"><tspan
-+         sodipodi:role="line"
-+         x="111.99202"
-+         y="722.94025"
-+         id="tspan4366"
-+         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle">other standard </tspan><tspan
-+         sodipodi:role="line"
-+         x="110.30745"
-+         y="741.69025"
-+         id="tspan4368"
-+         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle">framework</tspan><tspan
-+         sodipodi:role="line"
-+         x="110.30745"
-+         y="760.44025"
-+         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle"
-+         id="tspan6840">(crypto/nic/others)</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-1-8)"
-+       d="M 276.29661,849.04109 134.04449,771.90853"
-+       id="path4661-3-4-8"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="313.70813"
-+       y="730.06366"
-+       id="text4138-6-2-6-36"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-7"
-+         x="313.70813"
-+         y="730.06366"
-+         style="font-size:10px;line-height:1.25">&lt;&lt;lkm&gt;&gt;</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="343.81625"
-+       y="786.44141"
-+       id="text4138-6-2-6-1-6-2-5-7-5"><tspan
-+         sodipodi:role="line"
-+         x="343.81625"
-+         y="786.44141"
-+         style="font-size:15px;line-height:1.25;text-align:start;text-anchor:start"
-+         id="tspan2357">register as mdev with</tspan><tspan
-+         sodipodi:role="line"
-+         x="343.81625"
-+         y="805.19141"
-+         style="font-size:15px;line-height:1.25;text-align:start;text-anchor:start"
-+         id="tspan1462">&quot;share domain&quot; attribute</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="29.145819"
-+       y="833.44244"
-+       id="text4138-6-2-6-1-6-2-5-7-5-2"><tspan
-+         sodipodi:role="line"
-+         x="29.145819"
-+         y="833.44244"
-+         id="tspan4301"
-+         style="font-size:15px;line-height:1.25">register to other subsystem</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="301.20813"
-+       y="597.29437"
-+       id="text4138-6-2-6-36-1"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-7-2"
-+         x="301.20813"
-+         y="597.29437"
-+         style="font-size:10px;line-height:1.25">&lt;&lt;user_lib&gt;&gt;</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="649.09613"
-+       y="774.4798"
-+       id="text4138-6-2-6-1-6-2-5-3"><tspan
-+         sodipodi:role="line"
-+         id="tspan4140-1-9-1-0-3-0-4-6"
-+         x="649.09613"
-+         y="774.4798"
-+         style="font-size:15px;line-height:1.25">&lt;&lt;vfio&gt;&gt;</tspan><tspan
-+         sodipodi:role="line"
-+         x="649.09613"
-+         y="793.2298"
-+         id="tspan4274-7"
-+         style="font-size:15px;line-height:1.25">Hardware Accessing</tspan></text>
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="371.01291"
-+       y="529.23682"
-+       id="text4138-6-2-6-1-6-2-5-36"><tspan
-+         sodipodi:role="line"
-+         x="371.01291"
-+         y="529.23682"
-+         id="tspan4305-3"
-+         style="font-size:15px;line-height:1.25">wd user api</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       d="m 328.19325,585.87943 0,-23.57142"
-+       id="path4348"
-+       inkscape:connector-curvature="0" />
-+    <ellipse
-+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
-+       id="path4350"
-+       cx="328.01468"
-+       cy="551.95081"
-+       rx="11.607142"
-+       ry="10.357142" />
-+    <path
-+       style="opacity:0.444;fill:url(#linearGradient6836);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter5382)"
-+       id="path4350-2"
-+       sodipodi:type="arc"
-+       sodipodi:cx="329.44327"
-+       sodipodi:cy="553.37933"
-+       sodipodi:rx="11.607142"
-+       sodipodi:ry="10.357142"
-+       sodipodi:start="0"
-+       sodipodi:end="6.2509098"
-+       d="m 341.05041,553.37933 a 11.607142,10.357142 0 0 1 -11.51349,10.35681 11.607142,10.357142 0 0 1 -11.69928,-10.18967 11.607142,10.357142 0 0 1 11.32469,-10.52124 11.607142,10.357142 0 0 1 11.88204,10.01988"
-+       sodipodi:open="true" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="543.91455"
-+       y="978.22363"
-+       id="text4138-6-2-6-1-6-2-5-36-3"><tspan
-+         sodipodi:role="line"
-+         x="543.91455"
-+         y="978.22363"
-+         id="tspan4305-3-67"
-+         style="font-size:15px;line-height:1.25">Device(Hardware)</tspan></text>
-+    <path
-+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-6-2)"
-+       d="m 347.51164,865.4527 153.19752,91.52439"
-+       id="path4661-3-5-1"
-+       inkscape:connector-curvature="0"
-+       sodipodi:nodetypes="cc" />
-+    <text
-+       xml:space="preserve"
-+       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-+       x="343.6398"
-+       y="716.47754"
-+       id="text4138-6-2-6-1-6-2-5-7-5-2-6"><tspan
-+         sodipodi:role="line"
-+         x="343.6398"
-+         y="716.47754"
-+         id="tspan4301-4"
-+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:1px">Share Domain mdev</tspan></text>
-+  </g>
-+</svg>
++static struct class *sdmdev_class;
++
++static int vfio_sdmdev_dev_exist(struct device *dev, void *data)
++{
++	return !strcmp(dev_name(dev), dev_name((struct device *)data));
++}
++
++#ifdef CONFIG_IOMMU_SVA
++static bool vfio_sdmdev_is_valid_pasid(int pasid)
++{
++	struct mm_struct *mm;
++
++	mm = iommu_sva_find(pasid);
++	if (mm) {
++		mmput(mm);
++		return mm == current->mm;
++	}
++
++	return false;
++}
++#endif
++
++/* Check if the device is a mediated device belongs to vfio_sdmdev */
++int vfio_sdmdev_is_sdmdev(struct device *dev)
++{
++	struct mdev_device *mdev;
++	struct device *pdev;
++
++	mdev = mdev_from_dev(dev);
++	if (!mdev)
++		return 0;
++
++	pdev = mdev_parent_dev(mdev);
++	if (!pdev)
++		return 0;
++
++	return class_for_each_device(sdmdev_class, NULL, pdev,
++			vfio_sdmdev_dev_exist);
++}
++EXPORT_SYMBOL_GPL(vfio_sdmdev_is_sdmdev);
++
++struct vfio_sdmdev *vfio_sdmdev_pdev_sdmdev(struct device *dev)
++{
++	struct device *class_dev;
++
++	if (!dev)
++		return ERR_PTR(-EINVAL);
++
++	class_dev = class_find_device(sdmdev_class, NULL, dev,
++		(int(*)(struct device *, const void *))vfio_sdmdev_dev_exist);
++	if (!class_dev)
++		return ERR_PTR(-ENODEV);
++
++	return container_of(class_dev, struct vfio_sdmdev, cls_dev);
++}
++EXPORT_SYMBOL_GPL(vfio_sdmdev_pdev_sdmdev);
++
++struct vfio_sdmdev *mdev_sdmdev(struct mdev_device *mdev)
++{
++	struct device *pdev = mdev_parent_dev(mdev);
++
++	return vfio_sdmdev_pdev_sdmdev(pdev);
++}
++EXPORT_SYMBOL_GPL(mdev_sdmdev);
++
++static ssize_t iommu_type_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	struct vfio_sdmdev *sdmdev = vfio_sdmdev_pdev_sdmdev(dev);
++
++	if (!sdmdev)
++		return -ENODEV;
++
++	return sprintf(buf, "%d\n", sdmdev->iommu_type);
++}
++
++static DEVICE_ATTR_RO(iommu_type);
++
++static ssize_t dma_flag_show(struct device *dev,
++			     struct device_attribute *attr, char *buf)
++{
++	struct vfio_sdmdev *sdmdev = vfio_sdmdev_pdev_sdmdev(dev);
++
++	if (!sdmdev)
++		return -ENODEV;
++
++	return sprintf(buf, "%d\n", sdmdev->dma_flag);
++}
++
++static DEVICE_ATTR_RO(dma_flag);
++
++/* mdev->dev_attr_groups */
++static struct attribute *vfio_sdmdev_attrs[] = {
++	&dev_attr_iommu_type.attr,
++	&dev_attr_dma_flag.attr,
++	NULL,
++};
++static const struct attribute_group vfio_sdmdev_group = {
++	.name  = VFIO_SDMDEV_PDEV_ATTRS_GRP_NAME,
++	.attrs = vfio_sdmdev_attrs,
++};
++const struct attribute_group *vfio_sdmdev_groups[] = {
++	&vfio_sdmdev_group,
++	NULL,
++};
++
++/* default attributes for mdev->supported_type_groups, used by registerer*/
++#define MDEV_TYPE_ATTR_RO_EXPORT(name) \
++		MDEV_TYPE_ATTR_RO(name); \
++		EXPORT_SYMBOL_GPL(mdev_type_attr_##name);
++
++#define DEF_SIMPLE_SDMDEV_ATTR(_name, sdmdev_member, format) \
++static ssize_t _name##_show(struct kobject *kobj, struct device *dev, \
++			    char *buf) \
++{ \
++	struct vfio_sdmdev *sdmdev = vfio_sdmdev_pdev_sdmdev(dev); \
++	if (!sdmdev) \
++		return -ENODEV; \
++	return sprintf(buf, format, sdmdev->sdmdev_member); \
++} \
++MDEV_TYPE_ATTR_RO_EXPORT(_name)
++
++DEF_SIMPLE_SDMDEV_ATTR(flags, flags, "%d");
++DEF_SIMPLE_SDMDEV_ATTR(name, name, "%s"); /* this should be algorithm name, */
++		/* but you would not care if you have only one algorithm */
++DEF_SIMPLE_SDMDEV_ATTR(device_api, api_ver, "%s");
++
++static ssize_t
++available_instances_show(struct kobject *kobj, struct device *dev, char *buf)
++{
++	struct vfio_sdmdev *sdmdev = vfio_sdmdev_pdev_sdmdev(dev);
++	int nr_inst = 0;
++
++	nr_inst = sdmdev->ops->get_available_instances ?
++		sdmdev->ops->get_available_instances(sdmdev) : 0;
++	return sprintf(buf, "%d", nr_inst);
++}
++MDEV_TYPE_ATTR_RO_EXPORT(available_instances);
++
++static int vfio_sdmdev_mdev_create(struct kobject *kobj,
++	struct mdev_device *mdev)
++{
++	struct device *pdev = mdev_parent_dev(mdev);
++	struct vfio_sdmdev_queue *q;
++	struct vfio_sdmdev *sdmdev = mdev_sdmdev(mdev);
++	int ret;
++
++	if (!sdmdev->ops->get_queue)
++		return -ENODEV;
++
++	ret = sdmdev->ops->get_queue(sdmdev, &q);
++	if (ret)
++		return ret;
++
++	q->sdmdev = sdmdev;
++	q->mdev = mdev;
++	init_waitqueue_head(&q->wait);
++
++	mdev_set_drvdata(mdev, q);
++	get_device(pdev);
++
++	return 0;
++}
++
++static int vfio_sdmdev_mdev_remove(struct mdev_device *mdev)
++{
++	struct vfio_sdmdev_queue *q =
++		(struct vfio_sdmdev_queue *)mdev_get_drvdata(mdev);
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++	struct device *pdev = mdev_parent_dev(mdev);
++
++	put_device(pdev);
++
++	if (sdmdev->ops->put_queue);
++		sdmdev->ops->put_queue(q);
++
++	return 0;
++}
++
++/* Wake up the process who is waiting this queue */
++void vfio_sdmdev_wake_up(struct vfio_sdmdev_queue *q)
++{
++	wake_up_all(&q->wait);
++}
++EXPORT_SYMBOL_GPL(vfio_sdmdev_wake_up);
++
++static int vfio_sdmdev_mdev_mmap(struct mdev_device *mdev,
++				 struct vm_area_struct *vma)
++{
++	struct vfio_sdmdev_queue *q =
++		(struct vfio_sdmdev_queue *)mdev_get_drvdata(mdev);
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++
++	if (sdmdev->ops->mmap)
++		return sdmdev->ops->mmap(q, vma);
++
++	dev_err(sdmdev->dev, "no driver mmap!\n");
++	return -EINVAL;
++}
++
++static inline int vfio_sdmdev_wait(struct vfio_sdmdev_queue *q,
++				   unsigned long timeout)
++{
++	int ret;
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++
++	if (!sdmdev->ops->mask_notify)
++		return -ENODEV;
++
++	sdmdev->ops->mask_notify(q, VFIO_SDMDEV_EVENT_Q_UPDATE);
++
++	ret = timeout ?  wait_event_interruptible_timeout(q->wait,
++			sdmdev->ops->is_q_updated(q), timeout) :
++		     wait_event_interruptible(q->wait,
++			sdmdev->ops->is_q_updated(q));
++
++	sdmdev->ops->mask_notify(q, 0);
++
++	return ret;
++}
++
++static long vfio_sdmdev_mdev_ioctl(struct mdev_device *mdev, unsigned int cmd,
++			       unsigned long arg)
++{
++	struct vfio_sdmdev_queue *q =
++		(struct vfio_sdmdev_queue *)mdev_get_drvdata(mdev);
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++
++	switch (cmd) {
++	case VFIO_SDMDEV_CMD_WAIT:
++		return vfio_sdmdev_wait(q, arg);
++
++#ifdef CONFIG_IOMMU_SVA
++	case VFIO_SDMDEV_CMD_BIND_PASID:
++		int ret;
++
++		if (!vfio_sdmdev_is_valid_pasid(arg))
++			return -EINVAL;
++
++		mutex_lock(&q->mutex);
++		q->pasid = arg;
++
++		if (sdmdev->ops->start_queue)
++			ret = sdmdev->ops->start_queue(q);
++
++		mutex_unlock(&q->mutex);
++
++		return ret;
++#endif
++
++	default:
++		if (sdmdev->ops->ioctl)
++			return sdmdev->ops->ioctl(q, cmd, arg);
++
++		dev_err(sdmdev->dev, "ioctl cmd (%d) is not supported!\n", cmd);
++		return -EINVAL;
++	}
++}
++
++static void vfio_sdmdev_release(struct device *dev) { }
++
++static void vfio_sdmdev_mdev_release(struct mdev_device *mdev)
++{
++	struct vfio_sdmdev_queue *q =
++		(struct vfio_sdmdev_queue *)mdev_get_drvdata(mdev);
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++
++	if (sdmdev->ops->stop_queue)
++		sdmdev->ops->stop_queue(q);
++}
++
++static int vfio_sdmdev_mdev_open(struct mdev_device *mdev)
++{
++#ifndef CONFIG_IOMMU_SVA
++	struct vfio_sdmdev_queue *q =
++		(struct vfio_sdmdev_queue *)mdev_get_drvdata(mdev);
++	struct vfio_sdmdev *sdmdev = q->sdmdev;
++
++	if (sdmdev->ops->start_queue)
++		sdmdev->ops->start_queue(q);
++#endif
++
++	return 0;
++}
++
++/**
++ *	vfio_sdmdev_register - register a sdmdev
++ *	@sdmdev: device structure
++ */
++int vfio_sdmdev_register(struct vfio_sdmdev *sdmdev)
++{
++	int ret;
++
++	if (!sdmdev->dev)
++		return -ENODEV;
++
++	atomic_set(&sdmdev->ref, 0);
++	sdmdev->cls_dev.parent = sdmdev->dev;
++	sdmdev->cls_dev.class = sdmdev_class;
++	sdmdev->cls_dev.release = vfio_sdmdev_release;
++	dev_set_name(&sdmdev->cls_dev, "%s", dev_name(sdmdev->dev));
++	ret = device_register(&sdmdev->cls_dev);
++	if (ret)
++		goto err;
++
++	sdmdev->mdev_fops.owner			= THIS_MODULE;
++	sdmdev->mdev_fops.dev_attr_groups	= vfio_sdmdev_groups;
++	WARN_ON(!sdmdev->mdev_fops.supported_type_groups);
++	sdmdev->mdev_fops.create		= vfio_sdmdev_mdev_create;
++	sdmdev->mdev_fops.remove		= vfio_sdmdev_mdev_remove;
++	sdmdev->mdev_fops.ioctl			= vfio_sdmdev_mdev_ioctl;
++	sdmdev->mdev_fops.open			= vfio_sdmdev_mdev_open;
++	sdmdev->mdev_fops.release		= vfio_sdmdev_mdev_release;
++	sdmdev->mdev_fops.mmap			= vfio_sdmdev_mdev_mmap,
++
++	ret = mdev_register_device(sdmdev->dev, &sdmdev->mdev_fops);
++	if (ret)
++		goto err_with_cls_dev;
++
++	return 0;
++
++err_with_cls_dev:
++	device_unregister(&sdmdev->cls_dev);
++err:
++	return ret;
++}
++EXPORT_SYMBOL_GPL(vfio_sdmdev_register);
++
++/**
++ * vfio_sdmdev_unregister - unregisters a sdmdev
++ * @sdmdev: device to unregister
++ *
++ * Unregister a sdmdev that wat previously successully registered with
++ * vfio_sdmdev_register().
++ */
++void vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev)
++{
++	mdev_unregister_device(sdmdev->dev);
++	device_unregister(&sdmdev->cls_dev);
++}
++EXPORT_SYMBOL_GPL(vfio_sdmdev_unregister);
++
++static int __init vfio_sdmdev_init(void)
++{
++	sdmdev_class = class_create(THIS_MODULE, VFIO_SDMDEV_CLASS_NAME);
++	return PTR_ERR_OR_ZERO(sdmdev_class);
++}
++
++static __exit void vfio_sdmdev_exit(void)
++{
++	class_destroy(sdmdev_class);
++}
++
++module_init(vfio_sdmdev_init);
++module_exit(vfio_sdmdev_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Hisilicon Tech. Co., Ltd.");
++MODULE_DESCRIPTION("VFIO Share Domain Mediated Device");
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index d9fd3188615d..ba73231d8692 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -41,6 +41,7 @@
+ #include <linux/notifier.h>
+ #include <linux/dma-iommu.h>
+ #include <linux/irqdomain.h>
++#include <linux/vfio_sdmdev.h>
+ 
+ #define DRIVER_VERSION  "0.2"
+ #define DRIVER_AUTHOR   "Alex Williamson <alex.williamson@redhat.com>"
+@@ -89,6 +90,8 @@ struct vfio_dma {
+ };
+ 
+ struct vfio_group {
++	/* iommu_group of mdev's parent device */
++	struct iommu_group	*parent_group;
+ 	struct iommu_group	*iommu_group;
+ 	struct list_head	next;
+ };
+@@ -1327,6 +1330,109 @@ static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
+ 	return ret;
+ }
+ 
++/* return 0 if the device is not sdmdev.
++ * return 1 if the device is sdmdev, the data will be updated with parent
++ *	device's group.
++ * return -errno if other error.
++ */
++static int vfio_sdmdev_type(struct device *dev, void *data)
++{
++	struct iommu_group **group = data;
++	struct iommu_group *pgroup;
++	int (*_is_sdmdev)(struct device *dev);
++	struct device *pdev;
++	int ret = 1;
++
++	/* vfio_sdmdev module is not configurated */
++	_is_sdmdev = symbol_get(vfio_sdmdev_is_sdmdev);
++	if (!_is_sdmdev)
++		return 0;
++
++	/* check if it belongs to vfio_sdmdev device */
++	if (!_is_sdmdev(dev)) {
++		ret = 0;
++		goto out;
++	}
++
++	pdev = dev->parent;
++	pgroup = iommu_group_get(pdev);
++	if (!pgroup) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	if (group) {
++		/* check if all parent devices is the same */
++		if (*group && *group != pgroup)
++			ret = -ENODEV;
++		else
++			*group = pgroup;
++	}
++
++	iommu_group_put(pgroup);
++
++out:
++	symbol_put(vfio_sdmdev_is_sdmdev);
++
++	return ret;
++}
++
++/* return 0 or -errno */
++static int vfio_sdmdev_bus(struct device *dev, void *data)
++{
++	struct bus_type **bus = data;
++
++	if (!dev->bus)
++		return -ENODEV;
++
++	/* ensure all devices has the same bus_type */
++	if (*bus && *bus != dev->bus)
++		return -EINVAL;
++
++	*bus = dev->bus;
++	return 0;
++}
++
++/* return 0 means it is not sd group, 1 means it is, or -EXXX for error */
++static int vfio_iommu_type1_attach_sdgroup(struct vfio_domain *domain,
++					    struct vfio_group *group,
++					    struct iommu_group *iommu_group)
++{
++	int ret;
++	struct bus_type *pbus = NULL;
++	struct iommu_group *pgroup = NULL;
++
++	ret = iommu_group_for_each_dev(iommu_group, &pgroup,
++				       vfio_sdmdev_type);
++	if (ret < 0)
++		goto out;
++	else if (ret > 0) {
++		domain->domain = iommu_group_share_domain(pgroup);
++		if (IS_ERR(domain->domain))
++			goto out;
++		ret = iommu_group_for_each_dev(pgroup, &pbus,
++				       vfio_sdmdev_bus);
++		if (ret < 0)
++			goto err_with_share_domain;
++
++		if (pbus && iommu_capable(pbus, IOMMU_CAP_CACHE_COHERENCY))
++			domain->prot |= IOMMU_CACHE;
++
++		group->parent_group = pgroup;
++		INIT_LIST_HEAD(&domain->group_list);
++		list_add(&group->next, &domain->group_list);
++
++		return 1;
++	}
++
++	return 0;
++
++err_with_share_domain:
++	iommu_group_unshare_domain(pgroup);
++out:
++	return ret;
++}
++
+ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 					 struct iommu_group *iommu_group)
+ {
+@@ -1335,8 +1441,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	struct vfio_domain *domain, *d;
+ 	struct bus_type *bus = NULL, *mdev_bus;
+ 	int ret;
+-	bool resv_msi, msi_remap;
+-	phys_addr_t resv_msi_base;
++	bool resv_msi = false, msi_remap;
++	phys_addr_t resv_msi_base = 0;
+ 
+ 	mutex_lock(&iommu->lock);
+ 
+@@ -1373,6 +1479,14 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	if (mdev_bus) {
+ 		if ((bus == mdev_bus) && !iommu_present(bus)) {
+ 			symbol_put(mdev_bus_type);
++
++			ret = vfio_iommu_type1_attach_sdgroup(domain, group,
++					iommu_group);
++			if (ret < 0)
++				goto out_free;
++			else if (ret > 0)
++				goto replay_check;
++
+ 			if (!iommu->external_domain) {
+ 				INIT_LIST_HEAD(&domain->group_list);
+ 				iommu->external_domain = domain;
+@@ -1451,12 +1565,13 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 
+ 	vfio_test_domain_fgsp(domain);
+ 
++replay_check:
+ 	/* replay mappings on new domains */
+ 	ret = vfio_iommu_replay(iommu, domain);
+ 	if (ret)
+ 		goto out_detach;
+ 
+-	if (resv_msi) {
++	if (!group->parent_group && resv_msi) {
+ 		ret = iommu_get_msi_cookie(domain->domain, resv_msi_base);
+ 		if (ret)
+ 			goto out_detach;
+@@ -1471,7 +1586,10 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ out_detach:
+ 	iommu_detach_group(domain->domain, iommu_group);
+ out_domain:
+-	iommu_domain_free(domain->domain);
++	if (group->parent_group)
++		iommu_group_unshare_domain(group->parent_group);
++	else
++		iommu_domain_free(domain->domain);
+ out_free:
+ 	kfree(domain);
+ 	kfree(group);
+@@ -1527,12 +1645,25 @@ static void vfio_sanity_check_pfn_list(struct vfio_iommu *iommu)
+ 	WARN_ON(iommu->notifier.head);
+ }
+ 
++static void vfio_iommu_undo(struct vfio_iommu *iommu,
++			    struct iommu_domain *domain)
++{
++	struct rb_node *n = rb_first(&iommu->dma_list);
++	struct vfio_dma *dma;
++
++	for (; n; n = rb_next(n)) {
++		dma = rb_entry(n, struct vfio_dma, node);
++		iommu_unmap(domain, dma->iova, dma->size);
++	}
++}
++
+ static void vfio_iommu_type1_detach_group(void *iommu_data,
+ 					  struct iommu_group *iommu_group)
+ {
+ 	struct vfio_iommu *iommu = iommu_data;
+ 	struct vfio_domain *domain;
+ 	struct vfio_group *group;
++	struct iommu_domain *sdomain = NULL;
+ 
+ 	mutex_lock(&iommu->lock);
+ 
+@@ -1560,7 +1691,12 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
+ 		if (!group)
+ 			continue;
+ 
+-		iommu_detach_group(domain->domain, iommu_group);
++		if (group->parent_group)
++			sdomain = iommu_group_unshare_domain(
++					group->parent_group);
++		else
++			iommu_detach_group(domain->domain, iommu_group);
++
+ 		list_del(&group->next);
+ 		kfree(group);
+ 		/*
+@@ -1577,7 +1713,10 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
+ 				else
+ 					vfio_iommu_unmap_unpin_reaccount(iommu);
+ 			}
+-			iommu_domain_free(domain->domain);
++			if (domain->domain != sdomain)
++				iommu_domain_free(domain->domain);
++			else
++				vfio_iommu_undo(iommu, sdomain);
+ 			list_del(&domain->next);
+ 			kfree(domain);
+ 		}
+diff --git a/include/linux/vfio_sdmdev.h b/include/linux/vfio_sdmdev.h
+new file mode 100644
+index 000000000000..fbc9fb3f4abc
+--- /dev/null
++++ b/include/linux/vfio_sdmdev.h
+@@ -0,0 +1,96 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++#ifndef __VFIO_SDMDEV_H
++#define __VFIO_SDMDEV_H
++
++#include <linux/device.h>
++#include <linux/iommu.h>
++#include <linux/mdev.h>
++#include <linux/vfio.h>
++#include <uapi/linux/vfio_sdmdev.h>
++
++struct vfio_sdmdev_queue;
++struct vfio_sdmdev;
++
++/* event bit used to mask the hardware irq */
++#define VFIO_SDMDEV_EVENT_Q_UPDATE BIT(0) /* irq if queue is updated */
++
++/**
++ * struct vfio_sdmdev_ops - WD device operations
++ * @get_queue: get a queue from the device according to algorithm
++ * @put_queue: free a queue to the device
++ * @start_queue: put queue into action with current process's pasid.
++ * @stop_queue: stop queue from running state
++ * @is_q_updated: check whether the task is finished
++ * @mask_notify: mask the task irq of queue
++ * @mmap: mmap addresses of queue to user space
++ * @reset: reset the WD device
++ * @reset_queue: reset the queue
++ * @ioctl:   ioctl for user space users of the queue
++ * @get_available_instances: get numbers of the queue remained
++ */
++struct vfio_sdmdev_ops {
++	int (*get_queue)(struct vfio_sdmdev *sdmdev,
++			 struct vfio_sdmdev_queue **q);
++	void (*put_queue)(struct vfio_sdmdev_queue *q);
++	int (*start_queue)(struct vfio_sdmdev_queue *q);
++	void (*stop_queue)(struct vfio_sdmdev_queue *q);
++	int (*is_q_updated)(struct vfio_sdmdev_queue *q);
++	void (*mask_notify)(struct vfio_sdmdev_queue *q, int event_mask);
++	int (*mmap)(struct vfio_sdmdev_queue *q, struct vm_area_struct *vma);
++	int (*reset)(struct vfio_sdmdev *sdmdev);
++	int (*reset_queue)(struct vfio_sdmdev_queue *q);
++	long (*ioctl)(struct vfio_sdmdev_queue *q, unsigned int cmd,
++			unsigned long arg);
++	int (*get_available_instances)(struct vfio_sdmdev *sdmdev);
++};
++
++struct vfio_sdmdev_queue {
++	struct mutex mutex;
++	struct vfio_sdmdev *sdmdev;
++	__u32 flags;
++	void *priv;
++	wait_queue_head_t wait;
++	struct mdev_device *mdev;
++	int fd;
++	int container;
++#ifdef CONFIG_IOMMU_SVA
++	int pasid;
++#endif
++};
++
++struct vfio_sdmdev {
++	const char *name;
++	int status;
++	atomic_t ref;
++	const struct vfio_sdmdev_ops *ops;
++	struct device *dev;
++	struct device cls_dev;
++	bool is_vf;
++	u32 iommu_type;
++	u32 dma_flag;
++	void *priv;
++	int flags;
++	const char *api_ver;
++	struct mdev_parent_ops mdev_fops;
++};
++
++int vfio_sdmdev_register(struct vfio_sdmdev *sdmdev);
++void vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev);
++void vfio_sdmdev_wake_up(struct vfio_sdmdev_queue *q);
++int vfio_sdmdev_is_sdmdev(struct device *dev);
++struct vfio_sdmdev *vfio_sdmdev_pdev_sdmdev(struct device *dev);
++struct vfio_sdmdev *mdev_sdmdev(struct mdev_device *mdev);
++
++extern struct mdev_type_attribute mdev_type_attr_flags;
++extern struct mdev_type_attribute mdev_type_attr_name;
++extern struct mdev_type_attribute mdev_type_attr_device_api;
++extern struct mdev_type_attribute mdev_type_attr_available_instances;
++#define VFIO_SDMDEV_DEFAULT_MDEV_TYPE_ATTRS \
++	&mdev_type_attr_name.attr, \
++	&mdev_type_attr_device_api.attr, \
++	&mdev_type_attr_available_instances.attr, \
++	&mdev_type_attr_flags.attr
++
++#define _VFIO_SDMDEV_REGION(vm_pgoff)	(vm_pgoff & 0xf)
++
++#endif
+diff --git a/include/uapi/linux/vfio_sdmdev.h b/include/uapi/linux/vfio_sdmdev.h
+new file mode 100644
+index 000000000000..79fa33fbc8c0
+--- /dev/null
++++ b/include/uapi/linux/vfio_sdmdev.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++#ifndef _UAPIVFIO_SDMDEV_H
++#define _UAPIVFIO_SDMDEV_H
++
++#include <linux/ioctl.h>
++
++#define VFIO_SDMDEV_CLASS_NAME		"sdmdev"
++
++/* Device ATTRs in parent dev SYSFS DIR */
++#define VFIO_SDMDEV_PDEV_ATTRS_GRP_NAME	"params"
++
++/* Parent device attributes */
++#define SDMDEV_IOMMU_TYPE	"iommu_type"
++#define SDMDEV_DMA_FLAG		"dma_flag"
++
++/* Maximum length of algorithm name string */
++#define VFIO_SDMDEV_ALG_NAME_SIZE		64
++
++/* the bits used in SDMDEV_DMA_FLAG attributes */
++#define VFIO_SDMDEV_DMA_INVALID			0
++#define	VFIO_SDMDEV_DMA_SINGLE_PROC_MAP		1
++#define	VFIO_SDMDEV_DMA_MULTI_PROC_MAP		2
++#define	VFIO_SDMDEV_DMA_SVM			4
++#define	VFIO_SDMDEV_DMA_SVM_NO_FAULT		8
++#define	VFIO_SDMDEV_DMA_PHY			16
++
++#define VFIO_SDMDEV_CMD_WAIT		_IO('W', 1)
++#define VFIO_SDMDEV_CMD_BIND_PASID	_IO('W', 2)
++#endif
 -- 
 2.17.1
 
