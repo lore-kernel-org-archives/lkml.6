@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C291C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C4BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A972086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B748220869
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZ8lRtcq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A972086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3ZeJBUU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B748220869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbeIDA4b (ORCPT
+        id S1728930AbeIDAzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 20:56:31 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54350 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbeIDAzp (ORCPT
+        Mon, 3 Sep 2018 20:55:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45527 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeIDAzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 20:55:45 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so2242981wmb.4;
-        Mon, 03 Sep 2018 13:33:53 -0700 (PDT)
+        Mon, 3 Sep 2018 20:55:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so1712696wrb.12;
+        Mon, 03 Sep 2018 13:33:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5ELqCquol9uLIAR1HjMyJP27IPe/3rVJEhfvVxeS1Hw=;
-        b=PZ8lRtcqCAREJWRk7OxHdLuKGL+jzw1ZlDYOrrlBzTe/zJ3OId2+DCFk/hheMvFJze
-         MJoyCY4mGKR24QbUfRkTJDA3Vj2tmCbQiiW0+lczSfEmp5CmkRfqPWFa21sMQbj/qppz
-         KVOwRfQQT3B7zSjqUzxoPNmRPMbguD9V9LmkocXOIs9mu3mAC+WYbgCu6wb5mOogArmn
-         5u2b85UYjehJ/XYANLn0vCcTrwUBOO8FomriMxyguHOr5UJUwqIIIoqZotbtroHexW1X
-         EPds6Ced997TL+QYG3DspwJkOXHIRFKdIO6CTxF+YmbwFs8ZjyzIhX1yPsB3Fl99PsvH
-         UbbA==
+        bh=DF6EgP2im+TL2Bj+0aBYVQPMWJB603xa+lUoFLMY8Fw=;
+        b=N3ZeJBUUTuoGb3LLWWOs3VIwCM49YoDhwtHAGNM4msavD6YT9RCx33qsSpzbACBN6t
+         KAzcIdLB61VIXGAtRyIgkTvFbO6ZSbHXG+JflQzL4jq+QnF2DrmGA9FhQ2W2aUTu7LEj
+         vBLbmKCfRYXqGJljckX4235jYDM2YiWNtSRuG1MbXH0xD6O/bWxJKaoZFpgAcG4BiHv8
+         GzZctzko2W14rXEkCQnEuV+apaxQRl+q70aMLCeoMH/IcLVNfJQmz3KAn/qS60yZA7Xz
+         h0Tbz8L0kgUFxU8PKLF9SJ+n5G7+uNrVHk0P/LowPq9zuPk0UJdlDB90vla6i2qKI0Nq
+         mvRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5ELqCquol9uLIAR1HjMyJP27IPe/3rVJEhfvVxeS1Hw=;
-        b=IRqgWvZnhxluAT5x2qZ1frIYK8BVojHIw2PDtefqJM/eedw/zHymd39qu726QGkTOu
-         iI1tuMKIQsIf4vgdcclGD7wME404E61X1kNrpGxCzpoEI4ChDCSJuoTl7kSDn6d7k2Sp
-         txXpwUo1g+/W8/L1/m9M6rW6K8eiM9h5CztRHexMMEs/8iQq4Ov3QWx6pAolhGQYxFOO
-         Y9dOHpGhR1zqiXu0QEE9wGwNx2laZGEfBG9SbsMzShiJRe7b/PhfJEiGxsUDCAZHfiAk
-         WmFmCrDPSp5uRwc/5/NtRkKIJmdQmdzn8LJQnvSTQUzfF+AzB/pRabHW5E7Pp/4sD9du
-         7Dpw==
-X-Gm-Message-State: APzg51BB1y2Bb7xrh6D9OXRSCwlSVidsgpX1IUpCXdqGd268xf0b/ZV8
-        wB7hNz9g/z1DjZMz02F0Vy4=
-X-Google-Smtp-Source: ANB0VdaUn36qgIxj0m4yhJJofzQE3fQN9+UIPEVgqfvXEdDIq3n8tlld4j5U9SglnXPaQMEes7+vJQ==
-X-Received: by 2002:a1c:cf08:: with SMTP id f8-v6mr6412283wmg.27.1536006832580;
-        Mon, 03 Sep 2018 13:33:52 -0700 (PDT)
-Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id 132-v6sm12354870wmd.13.2018.09.03.13.33.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=DF6EgP2im+TL2Bj+0aBYVQPMWJB603xa+lUoFLMY8Fw=;
+        b=aZAAn1/dOhuuGNrfwTUWDFLjjvEx0SWGro7yKYyqgd1JHY7j67/Sw/6A4Led9TSeXH
+         GuF6Pu00hxRZ/Wh7neVJmzeUTMBWVtDTAJx0QEikkHG/DSL035ppZ91gjEGnbvP7mfwc
+         mxfHH6Z/DQ+Fm/C7SiU2iC6/eCnyD8jxUmaPtzRYC2aw4ifshSMoWWFiV4187X9y+TSZ
+         rK1lPpETYPTkm+zqSEbDEV1x/l4lLIFQ7AuHt9qBJQa738keQx7MX28f9Fi3qQUfJn82
+         Hl8gOYdWmMi32WdAVx+vzahNF9KX2T36m5sjfalFwWCe35yiX7QfL3doNOXl4J9xUZ+g
+         8hYA==
+X-Gm-Message-State: APzg51Dd+0+sGOGaUK/NKBwNPMseAYhXTgXc3sQb3lcjth4MZgodxy29
+        +Uqxj8afqpMuTQpoinl5+y4=
+X-Google-Smtp-Source: ANB0VdajEQG88h/5EjDl4FcNGP04S1HHL2onUqoMdqD+iGOA3RZ5GBELkQxzB8t38HN9GQ9y/VH4Ow==
+X-Received: by 2002:a5d:66d2:: with SMTP id k18-v6mr20496480wrw.154.1536006831167;
         Mon, 03 Sep 2018 13:33:51 -0700 (PDT)
+Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
+        by smtp.gmail.com with ESMTPSA id 132-v6sm12354870wmd.13.2018.09.03.13.33.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 13:33:50 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         linux-sparse@vger.kernel.org
-Subject: [PATCH 04/12] Compiler Attributes: homogenize __must_be_array
-Date:   Mon,  3 Sep 2018 22:33:08 +0200
-Message-Id: <20180903203316.16183-5-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH 03/12] Compiler Attributes: remove unneeded tests
+Date:   Mon,  3 Sep 2018 22:33:07 +0200
+Message-Id: <20180903203316.16183-4-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,18 +85,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Different definitions of __must_be_array:
+Attributes const and always_inline have tests around them
+which are unneeded, since they are supported by gcc >= 4.6,
+clang >= 3 and icc >= 13. https://godbolt.org/z/DFPq37
 
-  * gcc: disabled for __CHECKER__
-
-  * clang: same definition as gcc's, but without __CHECKER__
-
-  * intel: the comment claims __builtin_types_compatible_p()
-    is unsupported; but icc seems to support it since 13.0.1
-    (released in 2012). See https://godbolt.org/z/S0l6QQ
-
-Therefore, we can remove all of them and have a single definition
-in compiler.h
+In the case of gnu_inline, we do not need to test for
+__GNUC_STDC_INLINE__ because, regardless of the current
+inlining behavior, we can simply always force the old
+GCC inlining behavior by using the attribute in all cases.
 
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
@@ -115,71 +111,72 @@ Cc: linux-sparse@vger.kernel.org
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-clang.h | 1 -
- include/linux/compiler-gcc.h   | 7 -------
- include/linux/compiler-intel.h | 3 ---
- include/linux/compiler.h       | 7 +++++++
- 4 files changed, 7 insertions(+), 11 deletions(-)
+ include/linux/compiler_types.h | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index d11cad61ba5c..fa9532f8d885 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -41,6 +41,5 @@
-  * compilers, like ICC.
-  */
- #define barrier() __asm__ __volatile__("" : : : "memory")
--#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- #define __assume_aligned(a, ...)	\
- 	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 371b6fa2d074..76f4907ef707 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -68,13 +68,6 @@
-  */
- #define uninitialized_var(x) x = x
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 2bc0f94df38e..759b3fea9216 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -158,10 +158,6 @@ struct ftrace_likely_data {
+ 	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
+ 	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
  
--#ifdef __CHECKER__
--#define __must_be_array(a)	0
--#else
--/* &a[0] degrades to a pointer: a different type from an array */
--#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+-#ifndef __attribute_const__
+-#define __attribute_const__	__attribute__((__const__))
 -#endif
 -
- #ifdef RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
+ #ifndef __noclone
+ #define __noclone
  #endif
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index fef8bb3e53ef..6004b4588bd4 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -29,9 +29,6 @@
+@@ -196,6 +192,7 @@ struct ftrace_likely_data {
+  * [...]
   */
- #define OPTIMIZER_HIDE_VAR(var) barrier()
- 
--/* Intel ECC compiler doesn't support __builtin_types_compatible_p() */
--#define __must_be_array(a) 0
+ #define __pure			__attribute__((__pure__))
++#define __attribute_const__	__attribute__((__const__))
+ #define __aligned(x)		__attribute__((__aligned__(x)))
+ #define __aligned_largest	__attribute__((__aligned__))
+ #define __printf(a, b)		__attribute__((__format__(printf, a, b)))
+@@ -211,7 +208,8 @@ struct ftrace_likely_data {
+ #define __alias(symbol)		__attribute__((__alias__(#symbol)))
+ #define __cold			__attribute__((__cold__))
+ #define __section(S)		__attribute__((__section__(#S)))
 -
- #endif
++#define __gnu_inline		__attribute__((__gnu_inline__))
++#define __always_inline		inline __attribute__((__always_inline__))
  
- /* icc has this, but it's called _bswap16 */
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ec4a28bad2c6..165b1d5683ed 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -357,4 +357,11 @@ static inline void *offset_to_ptr(const int *off)
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
+ #ifdef CONFIG_ENABLE_MUST_CHECK
+ #define __must_check		__attribute__((__warn_unused_result__))
+@@ -227,18 +225,6 @@ struct ftrace_likely_data {
  
-+#ifdef __CHECKER__
-+#define __must_be_array(a)	0
-+#else
-+/* &a[0] degrades to a pointer: a different type from an array */
-+#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-+#endif
-+
- #endif /* __LINUX_COMPILER_H */
+ #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
+ 
+-/*
+- * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
+- * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
+- * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
+- * defined so the gnu89 semantics are the default.
+- */
+-#ifdef __GNUC_STDC_INLINE__
+-# define __gnu_inline	__attribute__((__gnu_inline__))
+-#else
+-# define __gnu_inline
+-#endif
+-
+ /*
+  * Force always-inline if the user requests it so via the .config.
+  * GCC does not warn about unused static inline functions for
+@@ -263,10 +249,6 @@ struct ftrace_likely_data {
+ #define __inline inline
+ #define noinline	__attribute__((__noinline__))
+ 
+-#ifndef __always_inline
+-#define __always_inline inline __attribute__((__always_inline__))
+-#endif
+-
+ /*
+  * Rather then using noinline to prevent stack consumption, use
+  * noinline_for_stack instead.  For documentation reasons.
 -- 
 2.17.1
 
