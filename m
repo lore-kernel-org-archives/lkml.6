@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E332C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7E1C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239862077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239862077C
+	by mail.kernel.org (Postfix) with ESMTP id 55A8520658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A8520658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730950AbeICVsR (ORCPT
+        id S1730936AbeICVsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 3 Sep 2018 17:48:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46024 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45994 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730917AbeICVsQ (ORCPT
+        with ESMTP id S1730921AbeICVsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 17:48:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4A31D14;
-        Mon,  3 Sep 2018 17:19:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C78A6D19;
+        Mon,  3 Sep 2018 17:19:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Calvin Walton <calvin.walton@kepstin.ca>,
+        Len Brown <len.brown@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/165] drivers: net: lmc: fix case value for target abort error
-Date:   Mon,  3 Sep 2018 18:56:01 +0200
-Message-Id: <20180903165658.855687152@linuxfoundation.org>
+Subject: [PATCH 4.14 058/165] tools/power turbostat: Read extended processor family from CPUID
+Date:   Mon,  3 Sep 2018 18:55:44 +0200
+Message-Id: <20180903165658.038173908@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,35 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Calvin Walton <calvin.walton@kepstin.ca>
 
-[ Upstream commit afb41bb039656f0cecb54eeb8b2e2088201295f5 ]
+[ Upstream commit 5aa3d1a20a233d4a5f1ec3d62da3f19d9afea682 ]
 
-Current value for a target abort error is 0x010, however, this value
-should in fact be 0x002.  As it stands, the range of error is 0..7 so
-it is currently never being detected.  This bug has been in the driver
-since the early 2.6.12 days (or before).
+This fixes the reported family on modern AMD processors (e.g. Ryzen,
+which is family 0x17). Previously these processors all showed up as
+family 0xf.
 
-Detected by CoverityScan, CID#744290 ("Logically dead code")
+See the document
+https://support.amd.com/TechDocs/56255_OSRR.pdf
+section CPUID_Fn00000001_EAX for how to calculate the family
+from the BaseFamily and ExtFamily values.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This matches the code in arch/x86/lib/cpu.c
+
+Signed-off-by: Calvin Walton <calvin.walton@kepstin.ca>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/lmc/lmc_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/power/x86/turbostat/turbostat.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wan/lmc/lmc_main.c
-+++ b/drivers/net/wan/lmc/lmc_main.c
-@@ -1371,7 +1371,7 @@ static irqreturn_t lmc_interrupt (int ir
-             case 0x001:
-                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
-                 break;
--            case 0x010:
-+            case 0x002:
-                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
-                 break;
-             default:
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4029,7 +4029,9 @@ void process_cpuid()
+ 	family = (fms >> 8) & 0xf;
+ 	model = (fms >> 4) & 0xf;
+ 	stepping = fms & 0xf;
+-	if (family == 6 || family == 0xf)
++	if (family == 0xf)
++		family += (fms >> 20) & 0xff;
++	if (family >= 6)
+ 		model += ((fms >> 16) & 0xf) << 4;
+ 
+ 	if (!quiet) {
 
 
