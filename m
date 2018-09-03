@@ -2,73 +2,89 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F8DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5853C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC0020843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:16:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC0020843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A045A20856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A045A20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbeICLf1 (ORCPT
+        id S1726205AbeICLgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:35:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54456 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeICLf1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:35:27 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fwj6B-00034x-Mj; Mon, 03 Sep 2018 09:16:35 +0200
-Date:   Mon, 3 Sep 2018 09:16:32 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.18 023/131] media: usbtv: use irqsave() in
- USB's complete callback
-Message-ID: <20180903071631.phvvuwxu5ozstq6g@linutronix.de>
-References: <20180902064601.183036-1-alexander.levin@microsoft.com>
- <20180902064601.183036-23-alexander.levin@microsoft.com>
+        Mon, 3 Sep 2018 07:36:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38462 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725794AbeICLgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:36:11 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 284498575B;
+        Mon,  3 Sep 2018 07:17:22 +0000 (UTC)
+Received: from krava (unknown [10.43.17.81])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 41D762026D6B;
+        Mon,  3 Sep 2018 07:17:21 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 09:17:20 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 06/10] perf, tools, script: Implement - for typed
+ fields
+Message-ID: <20180903071720.GB24575@krava>
+References: <20180831220206.28351-1-andi@firstfloor.org>
+ <20180831220206.28351-7-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180902064601.183036-23-alexander.levin@microsoft.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180831220206.28351-7-andi@firstfloor.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 03 Sep 2018 07:17:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 03 Sep 2018 07:17:22 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-02 13:03:27 [+0000], Sasha Levin wrote:
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+On Fri, Aug 31, 2018 at 03:02:02PM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> [ Upstream commit 320905baa1dbddd3991c287432176d536e1d5b79 ]
-> 
-> The USB completion callback does not disable interrupts while acquiring
-> the lock. We want to remove the local_irq_disable() invocation from
-> __usb_hcd_giveback_urb() and therefore it is required for the callback
-> handler to disable the interrupts while acquiring the lock.
-> The callback may be invoked either in IRQ or BH context depending on the
-> USB host controller.
-> Use the _irqsave() variant of the locking primitives.
-> 
-> Cc: Hans Verkuil <hans.verkuil@cisco.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> For perf script -F the - removal of fields didn't work for typed
+> fields, only for untyped. Add the REMOVE case for this variant too.
 
-This change (among the others that do the same in different drivers)
-does not fix a bug; it is just needed for "other reasons". While this
-series uncovered a few bugs, this is not one of them.
-There is no need to backport this stable.
+missing changelog example
 
-Sebastian
+jirka
+
+> 
+> v2: Use correct index
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/builtin-script.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index d7d454d10074..129b11404a9c 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -2502,6 +2502,10 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+>  				rc = -EINVAL;
+>  				goto out;
+>  			}
+> +			if (change == REMOVE)
+> +				output[type].fields &= ~all_output_options[i].field;
+> +			else
+> +				output[type].fields |= all_output_options[i].field;
+>  			output[type].user_set = true;
+>  			output[type].wildcard_set = true;
+>  		}
+> -- 
+> 2.17.1
+> 
