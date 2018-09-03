@@ -3,39 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27599C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E75DC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D799220779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D799220779
+	by mail.kernel.org (Postfix) with ESMTP id 2236420867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2236420867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeICVVx (ORCPT
+        id S1728562AbeICVV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:21:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38592 "EHLO
+        Mon, 3 Sep 2018 17:21:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38616 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728349AbeICVVw (ORCPT
+        with ESMTP id S1728349AbeICVV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:21:52 -0400
+        Mon, 3 Sep 2018 17:21:56 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D537CFB;
-        Mon,  3 Sep 2018 17:00:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CEE3CFB;
+        Mon,  3 Sep 2018 17:00:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.4 52/80] KVM: arm/arm64: Skip updating PMD entry if no change
-Date:   Mon,  3 Sep 2018 18:49:30 +0200
-Message-Id: <20180903164936.226916392@linuxfoundation.org>
+        stable@vger.kernel.org, Dominique Leuenberger <dimstar@suse.de>,
+        Adrian Schroeter <adrian@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 4.4 53/80] x86/speculation/l1tf: Fix overflow in l1tf_pfn_limit() on 32bit
+Date:   Mon,  3 Sep 2018 18:49:31 +0200
+Message-Id: <20180903164936.267728657@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -52,87 +58,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 86658b819cd0a9aa584cd84453ed268a6f013770 upstream.
+commit 9df9516940a61d29aedf4d91b483ca6597e7d480 upstream.
 
-Contention on updating a PMD entry by a large number of vcpus can lead
-to duplicate work when handling stage 2 page faults. As the page table
-update follows the break-before-make requirement of the architecture,
-it can lead to repeated refaults due to clearing the entry and
-flushing the tlbs.
+On 32bit PAE kernels on 64bit hardware with enough physical bits,
+l1tf_pfn_limit() will overflow unsigned long. This in turn affects
+max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
+observed in a 32bit guest with 42 bits physical address size, where
+max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces
+the following warning to dmesg:
 
-This problem is more likely when -
+[    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
 
-* there are large number of vcpus
-* the mapping is large block mapping
+Fix this by using unsigned long long instead.
 
-such as when using PMD hugepages (512MB) with 64k pages.
-
-Fix this by skipping the page table update if there is no change in
-the entry being updated.
-
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Reported-by: Dominique Leuenberger <dimstar@suse.de>
+Reported-by: Adrian Schroeter <adrian@suse.de>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
 Cc: stable@vger.kernel.org
-Fixes: ad361f093c1e ("KVM: ARM: Support hugetlbfs backed huge pages")
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/20180820095835.5298-1-vbabka@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm/kvm/mmu.c |   38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/processor.h |    4 ++--
+ arch/x86/mm/init.c               |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -892,19 +892,35 @@ static int stage2_set_pmd_huge(struct kv
- 	pmd = stage2_get_pmd(kvm, cache, addr);
- 	VM_BUG_ON(!pmd);
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -172,9 +172,9 @@ extern const struct seq_operations cpuin
  
--	/*
--	 * Mapping in huge pages should only happen through a fault.  If a
--	 * page is merged into a transparent huge page, the individual
--	 * subpages of that huge page should be unmapped through MMU
--	 * notifiers before we get here.
--	 *
--	 * Merging of CompoundPages is not supported; they should become
--	 * splitting first, unmapped, merged, and mapped back in on-demand.
--	 */
--	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
--
- 	old_pmd = *pmd;
- 	if (pmd_present(old_pmd)) {
-+		/*
-+		 * Multiple vcpus faulting on the same PMD entry, can
-+		 * lead to them sequentially updating the PMD with the
-+		 * same value. Following the break-before-make
-+		 * (pmd_clear() followed by tlb_flush()) process can
-+		 * hinder forward progress due to refaults generated
-+		 * on missing translations.
-+		 *
-+		 * Skip updating the page table if the entry is
-+		 * unchanged.
-+		 */
-+		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
-+			return 0;
-+
-+		/*
-+		 * Mapping in huge pages should only happen through a
-+		 * fault.  If a page is merged into a transparent huge
-+		 * page, the individual subpages of that huge page
-+		 * should be unmapped through MMU notifiers before we
-+		 * get here.
-+		 *
-+		 * Merging of CompoundPages is not supported; they
-+		 * should become splitting first, unmapped, merged,
-+		 * and mapped back in on-demand.
-+		 */
-+		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
-+
- 		pmd_clear(pmd);
- 		kvm_tlb_flush_vmid_ipa(kvm, addr);
- 	} else {
+ extern void cpu_detect(struct cpuinfo_x86 *c);
+ 
+-static inline unsigned long l1tf_pfn_limit(void)
++static inline unsigned long long l1tf_pfn_limit(void)
+ {
+-	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
+ }
+ 
+ extern void early_cpu_init(void);
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -779,7 +779,7 @@ unsigned long max_swapfile_size(void)
+ 
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
+ 		/*
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+@@ -787,7 +787,7 @@ unsigned long max_swapfile_size(void)
+ #if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+-		pages = min_t(unsigned long, l1tf_limit, pages);
++		pages = min_t(unsigned long long, l1tf_limit, pages);
+ 	}
+ 	return pages;
+ }
 
 
