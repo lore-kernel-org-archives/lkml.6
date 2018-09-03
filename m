@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EFBC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528D2C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFE62077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFE62077C
+	by mail.kernel.org (Postfix) with ESMTP id 0B4C120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4C120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbeICV7h (ORCPT
+        id S1731831AbeICV7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48940 "EHLO
+        Mon, 3 Sep 2018 17:59:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48954 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV7g (ORCPT
+        with ESMTP id S1726384AbeICV7l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:59:36 -0400
+        Mon, 3 Sep 2018 17:59:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9780BAE;
-        Mon,  3 Sep 2018 17:38:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDA20BC4;
+        Mon,  3 Sep 2018 17:38:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
         Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
         James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-fsdevel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH 4.18 099/123] MIPS: Correct the 64-bit DSP accumulator register size
-Date:   Mon,  3 Sep 2018 18:57:23 +0200
-Message-Id: <20180903165723.697586429@linuxfoundation.org>
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.18 100/123] MIPS: memset.S: Fix byte_fixup for MIPSr6
+Date:   Mon,  3 Sep 2018 18:57:24 +0200
+Message-Id: <20180903165723.741516165@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -54,71 +52,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
 
-commit f5958b4cf4fc38ed4583ab83fb7c4cd1ab05f47b upstream.
+commit b1c03f1ef48d36ff28afb06e8f0c1233ef072f1d upstream.
 
-Use the `unsigned long' rather than `__u32' type for DSP accumulator
-registers, like with the regular MIPS multiply/divide accumulator and
-general-purpose registers, as all are 64-bit in 64-bit implementations
-and using a 32-bit data type leads to contents truncation on context
-saving.
+The __clear_user function is defined to return the number of bytes that
+could not be cleared. From the underlying memset / bzero implementation
+this means setting register a2 to that number on return. Currently if a
+page fault is triggered within the MIPSr6 version of setting of initial
+unaligned bytes, the value loaded into a2 on return is meaningless.
 
-Update `arch_ptrace' and `compat_arch_ptrace' accordingly, removing
-casts that are similarly not used with multiply/divide accumulator or
-general-purpose register accesses.
+During the MIPSr6 version of the initial unaligned bytes block, register
+a2 contains the number of bytes to be set beyond the initial unaligned
+bytes. The t0 register is initally set to the number of unaligned bytes
+- STORSIZE, effectively a negative version of the number of unaligned
+bytes. This is then incremented before each byte is saved.
 
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+The label .Lbyte_fixup\@ is jumped to on page fault. Currently the value
+in a2 is incorrectly replaced by 0 - t0 + 1, effectively the number of
+unaligned bytes remaining. This leads to the failures being reported by
+the following test code:
+
+static int __init test_clear_user(void)
+{
+	int j, k;
+
+	pr_info("\n\n\nTesting clear_user\n");
+	for (j = 0; j < 512; j++) {
+		if ((k = clear_user(NULL+3, j)) != j) {
+			pr_err("clear_user (NULL %d) returned %d\n", j, k);
+		}
+	}
+	return 0;
+}
+late_initcall(test_clear_user);
+
+Which reports:
+[    3.965439] Testing clear_user
+[    3.973169] clear_user (NULL 8) returned 6
+[    3.976782] clear_user (NULL 9) returned 6
+[    3.980390] clear_user (NULL 10) returned 6
+[    3.984052] clear_user (NULL 11) returned 6
+[    3.987524] clear_user (NULL 12) returned 6
+
+Fix this by subtracting t0 from a2 (rather than $0), effectivey giving:
+unset_bytes = (#bytes - (#unaligned bytes)) - (-#unaligned bytes remaining + 1) + 1
+     a2     =             a2                -              t0                   + 1
+
+This fixes the value returned from __clear user when the number of bytes
+to set is > LONGSIZE and the address is invalid and unaligned.
+
+Unfortunately, this breaks the fixup handling for unaligned bytes after
+the final long, where register a2 still contains the number of bytes
+remaining to be set and the t0 register is to 0 - the number of
+unaligned bytes remaining.
+
+Because t0 is now is now subtracted from a2 rather than 0, the number of
+bytes unset is reported incorrectly:
+
+static int __init test_clear_user(void)
+{
+	char *test;
+	int j, k;
+
+	pr_info("\n\n\nTesting clear_user\n");
+	test = vmalloc(PAGE_SIZE);
+
+	for (j = 256; j < 512; j++) {
+		if ((k = clear_user(test + PAGE_SIZE - 254, j)) != j - 254) {
+			pr_err("clear_user (%px %d) returned %d\n",
+				test + PAGE_SIZE - 254, j, k);
+		}
+	}
+	return 0;
+}
+late_initcall(test_clear_user);
+
+[    3.976775] clear_user (c00000000000df02 256) returned 4
+[    3.981957] clear_user (c00000000000df02 257) returned 6
+[    3.986425] clear_user (c00000000000df02 258) returned 8
+[    3.990850] clear_user (c00000000000df02 259) returned 10
+[    3.995332] clear_user (c00000000000df02 260) returned 12
+[    3.999815] clear_user (c00000000000df02 261) returned 14
+
+Fix this by ensuring that a2 is set to 0 during the set of final
+unaligned bytes.
+
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: e50c0a8fa60d ("Support the MIPS32 / MIPS64 DSP ASE.")
-Patchwork: https://patchwork.linux-mips.org/patch/19329/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Fixes: 8c56208aff77 ("MIPS: lib: memset: Add MIPS R6 support")
+Patchwork: https://patchwork.linux-mips.org/patch/19338/
 Cc: James Hogan <jhogan@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-mips@linux-mips.org
 Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # 2.6.15+
+Cc: stable@vger.kernel.org # v4.0+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/processor.h |    2 +-
- arch/mips/kernel/ptrace.c         |    2 +-
- arch/mips/kernel/ptrace32.c       |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/lib/memset.S |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -141,7 +141,7 @@ struct mips_fpu_struct {
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -195,6 +195,7 @@
+ #endif
+ #else
+ 	 PTR_SUBU	t0, $0, a2
++	move		a2, zero		/* No remaining longs */
+ 	PTR_ADDIU	t0, 1
+ 	STORE_BYTE(0)
+ 	STORE_BYTE(1)
+@@ -231,7 +232,7 @@
  
- #define NUM_DSP_REGS   6
- 
--typedef __u32 dspreg_t;
-+typedef unsigned long dspreg_t;
- 
- struct mips_dsp_state {
- 	dspreg_t	dspr[NUM_DSP_REGS];
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -856,7 +856,7 @@ long arch_ptrace(struct task_struct *chi
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -142,7 +142,7 @@ long compat_arch_ptrace(struct task_stru
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
+ #ifdef CONFIG_CPU_MIPSR6
+ .Lbyte_fixup\@:
+-	PTR_SUBU	a2, $0, t0
++	PTR_SUBU	a2, t0
+ 	jr		ra
+ 	 PTR_ADDIU	a2, 1
+ #endif /* CONFIG_CPU_MIPSR6 */
 
 
