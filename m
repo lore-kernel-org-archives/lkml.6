@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A509EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28E8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6507F20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6507F20779
+	by mail.kernel.org (Postfix) with ESMTP id 6737F20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6737F20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbeICVZx (ORCPT
+        id S1729461AbeICVZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39384 "EHLO
+        Mon, 3 Sep 2018 17:25:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39392 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728333AbeICVZx (ORCPT
+        with ESMTP id S1728333AbeICVZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:53 -0400
+        Mon, 3 Sep 2018 17:25:59 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 475CDD00;
-        Mon,  3 Sep 2018 17:04:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83048D00;
+        Mon,  3 Sep 2018 17:04:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 007/107] scsi: libiscsi: fix possible NULL pointer dereference in case of TMF
-Date:   Mon,  3 Sep 2018 18:55:31 +0200
-Message-Id: <20180903165637.645075437@linuxfoundation.org>
+Subject: [PATCH 4.9 008/107] drm/imx: imx-ldb: disable LDB on driver bind
+Date:   Mon,  3 Sep 2018 18:55:32 +0200
+Message-Id: <20180903165637.687374547@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,69 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Varun Prakash <varun@chelsio.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit a17037e7d59075053b522048742a08ac9500bde8 ]
+[ Upstream commit b58262396fabd43dc869b576e3defdd23b32fe94 ]
 
-In iscsi_check_tmf_restrictions() task->hdr is dereferenced to print the
-opcode, it is possible that task->hdr is NULL.
+The LVDS signal integrity is only guaranteed when the correct enable
+sequence (first IPU DI, then LDB) is used. If the LDB display output was
+active before the imx-drm driver is loaded (like when a bootsplash was
+active) the DI will be disabled by the full IPU reset we do when loading
+the driver. The LDB control registers are not part of the IPU range and
+thus will remain unchanged.
 
-There are two cases based on opcode argument:
+This leads to the LDB still being active when the DI is getting enabled,
+effectively reversing the required enable sequence. Fix this by also
+disabling the LDB on driver bind.
 
-1. ISCSI_OP_SCSI_CMD - In this case alloc_pdu() is called
-after iscsi_check_tmf_restrictions()
-
-iscsi_prep_scsi_cmd_pdu() -> iscsi_check_tmf_restrictions() -> alloc_pdu().
-
-Transport drivers allocate memory for iSCSI hdr in alloc_pdu() and assign
-it to task->hdr. In case of TMF task->hdr will be NULL resulting in NULL
-pointer dereference.
-
-2. ISCSI_OP_SCSI_DATA_OUT - In this case transport driver can free the
-memory for iSCSI hdr after transmitting the pdu so task->hdr can be NULL or
-invalid.
-
-This patch fixes this issue by removing task->hdr->opcode from the printk
-statement.
-
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libiscsi.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/imx/imx-ldb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -283,11 +283,11 @@ static int iscsi_check_tmf_restrictions(
- 		 */
- 		if (opcode != ISCSI_OP_SCSI_DATA_OUT) {
- 			iscsi_conn_printk(KERN_INFO, conn,
--					  "task [op %x/%x itt "
-+					  "task [op %x itt "
- 					  "0x%x/0x%x] "
- 					  "rejected.\n",
--					  task->hdr->opcode, opcode,
--					  task->itt, task->hdr_itt);
-+					  opcode, task->itt,
-+					  task->hdr_itt);
- 			return -EACCES;
- 		}
- 		/*
-@@ -296,10 +296,10 @@ static int iscsi_check_tmf_restrictions(
- 		 */
- 		if (conn->session->fast_abort) {
- 			iscsi_conn_printk(KERN_INFO, conn,
--					  "task [op %x/%x itt "
-+					  "task [op %x itt "
- 					  "0x%x/0x%x] fast abort.\n",
--					  task->hdr->opcode, opcode,
--					  task->itt, task->hdr_itt);
-+					  opcode, task->itt,
-+					  task->hdr_itt);
- 			return -EACCES;
- 		}
- 		break;
+--- a/drivers/gpu/drm/imx/imx-ldb.c
++++ b/drivers/gpu/drm/imx/imx-ldb.c
+@@ -634,6 +634,9 @@ static int imx_ldb_bind(struct device *d
+ 		return PTR_ERR(imx_ldb->regmap);
+ 	}
+ 
++	/* disable LDB by resetting the control register to POR default */
++	regmap_write(imx_ldb->regmap, IOMUXC_GPR2, 0);
++
+ 	imx_ldb->dev = dev;
+ 
+ 	if (of_id)
 
 
