@@ -2,479 +2,273 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF29C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D4FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A4A2077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A4A2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 588982075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588982075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbeICJxk (ORCPT
+        id S1726167AbeICJx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 05:53:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41906 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725782AbeICJxj (ORCPT
+        Mon, 3 Sep 2018 05:53:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37850 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbeICJx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 05:53:39 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w835YFld058317
-        for <linux-kernel@vger.kernel.org>; Mon, 3 Sep 2018 01:35:04 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m8xvm04ap-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 01:35:04 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 3 Sep 2018 06:35:02 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 3 Sep 2018 06:34:58 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w835Ywg645350938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 3 Sep 2018 05:34:58 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99ABD11C050;
-        Mon,  3 Sep 2018 08:34:51 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 060D011C04C;
-        Mon,  3 Sep 2018 08:34:50 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.79])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  3 Sep 2018 08:34:49 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Sep 2018 08:34:55 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-alpha <linux-alpha@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [RESEND PATCH v2] alpha: switch to NO_BOOTMEM
-Date:   Mon,  3 Sep 2018 08:34:54 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18090305-0020-0000-0000-000002C029A4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090305-0021-0000-0000-0000210D45E3
-Message-Id: <1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809030061
+        Mon, 3 Sep 2018 05:53:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a20-v6so10431118edd.4;
+        Sun, 02 Sep 2018 22:35:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+hvKE3M5SyH1heE1Yw+hOKNFWL+yKNN0VwxygNZtMuA=;
+        b=LFbsTQRqB1inXBHOPUpFrelOQFelMNnVvUl0rU3t3VZLlpeBMHuKuJW9OvWAZUjEC1
+         QB9QkDmaaVaAlkULSm7zIm+nfZashZOp7CBFFLb8V5wSDg63gZJYuFbDNOs2ckkDhR2g
+         sL/d+vU8Auajdn56x6QApWWGW1mpevmNxwO+PzUm41dxnXKzb4Endb+33gdCx5mPCFmP
+         /gfaWXTcVjPSiic9B6NJ7TOoojVuIOXTGh5r0hkzjYpbV6HpnPLjrgtdlUow059pSxT1
+         MkxjTw5B6lrRHBSvFfcFd+acfaf9wCeCFOJdLoW6/dzUuhjcwFU/GRDG1ECQPvQTmF4N
+         irEw==
+X-Gm-Message-State: APzg51AHT/Y5XhKnMF19TTV4LKm6x56VFcq1HK3mDczsMzsqSEiOpnxh
+        zKWrS1MEkrz2/JlymDQYMRIdoYSM2Fs=
+X-Google-Smtp-Source: ANB0VdapXpChtg+ZhyCl73bGBPox14JZdCAw/jq3h/mBYzI1OE7oslhwGPdWgnwT9d1+9RNIFoepHA==
+X-Received: by 2002:a50:ad5a:: with SMTP id z26-v6mr29163323edc.142.1535952924812;
+        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id k28-v6sm8021729ede.11.2018.09.02.22.35.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id 20-v6so16431988wrb.12;
+        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
+X-Received: by 2002:adf:d84a:: with SMTP id k10-v6mr16596734wrl.26.1535952924109;
+ Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180728182615.20845-1-jagan@amarulasolutions.com>
+ <20180730090048.gl7fkduztjkxacqq@flea> <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
+ <CAMty3ZBNM7mdtkBSq5BGuGoa5jKdSuuSVxkOoqPhDJZ-NM2THQ@mail.gmail.com> <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
+In-Reply-To: <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 3 Sep 2018 13:35:12 +0800
+X-Gmail-Original-Message-ID: <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
+Message-ID: <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: allwinner: h6: Add OrangePi One Plus initial support
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
-on most other architectures.
+On Tue, Jul 31, 2018 at 9:42 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Tue, Jul 31, 2018 at 9:41 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > On Mon, Jul 30, 2018 at 2:47 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> >> On Mon, Jul 30, 2018 at 5:00 PM, Maxime Ripard
+> >> <maxime.ripard@bootlin.com> wrote:
+> >>> Hi,
+> >>>
+> >>> On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
+> >>>> OrangePi One Plus is Allwinner H6 based open-source SBC,
+> >>>> which support:
+> >>>> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
+> >>>> - GPU Mali-T720
+> >>>> - 1GB LPDDR3 RAM
+> >>>> - AXP805 PMIC
+> >>>> - 1Gbps GMAC via RTL8211
+> >>>> - USB 2.0 Host, OTG
+> >>>> - HDMI port
+> >>>> - 5V/2A DC power supply
+> >>>>
+> >>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>> ---
+> >>>>  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+> >>>>  .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
+> >>>>  2 files changed, 151 insertions(+)
+> >>>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>>
+> >>>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> >>>> index 9ffa7a038791..c38f326e7fec 100644
+> >>>> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> >>>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> >>>> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
+> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+> >>>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
+> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+> >>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>> new file mode 100644
+> >>>> index 000000000000..0612c19cd994
+> >>>> --- /dev/null
+> >>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>> @@ -0,0 +1,150 @@
+> >>>> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> >>>> +/*
+> >>>> + * Copyright (C) 2018 Amarula Solutions
+> >>>> + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> >>>> + */
+> >>>> +
+> >>>> +/dts-v1/;
+> >>>> +
+> >>>> +#include "sun50i-h6.dtsi"
+> >>>> +
+> >>>> +#include <dt-bindings/gpio/gpio.h>
+> >>>> +
+> >>>> +/ {
+> >>>> +     model = "OrangePi One Plus";
+> >>>> +     compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
+> >>>> +
+> >>>> +     aliases {
+> >>>> +             serial0 = &uart0;
+> >>>> +     };
+> >>>> +
+> >>>> +     chosen {
+> >>>> +             stdout-path = "serial0:115200n8";
+> >>>> +     };
+> >>>> +};
+> >>>> +
+> >>>> +&mmc0 {
+> >>>> +     pinctrl-names = "default";
+> >>>> +     pinctrl-0 = <&mmc0_pins>;
+> >>>> +     vmmc-supply = <&reg_cldo1>;
+> >>>> +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+> >>>> +     bus-width = <4>;
+> >>>> +     status = "okay";
+> >>>> +};
+> >>>> +
+> >>>> +&r_i2c {
+> >>>> +     status = "okay";
+> >>>> +
+> >>>> +     axp805: pmic@36 {
+> >>>> +             compatible = "x-powers,axp805", "x-powers,axp806";
+> >>>> +             reg = <0x36>;
+> >>>> +             interrupt-parent = <&r_intc>;
+> >>>> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> >>>> +             interrupt-controller;
+> >>>> +             #interrupt-cells = <1>;
+> >>>> +             x-powers,self-working-mode;
+> >>>> +
+> >>>> +             regulators {
+> >>>> +                     reg_aldo1: aldo1 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc-pl";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_aldo2: aldo2 {
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc-ac200";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_aldo3: aldo3 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc25-dram";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_bldo1: bldo1 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <1800000>;
+> >>>> +                             regulator-max-microvolt = <1800000>;
+> >>>> +                             regulator-name = "vcc-bias-pll";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_bldo2: bldo2 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <1800000>;
+> >>>> +                             regulator-max-microvolt = <1800000>;
+> >>>> +                             regulator-name = "vcc-efuse-pcie-hdmi-io";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_bldo3: bldo3 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <1800000>;
+> >>>> +                             regulator-max-microvolt = <1800000>;
+> >>>> +                             regulator-name = "vcc-dcxoio";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     bldo4 {
+> >>>> +                             /* unused */
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_cldo1: cldo1 {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc-3v3";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_cldo2: cldo2 {
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc-wifi-1";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_cldo3: cldo3 {
+> >>>> +                             regulator-min-microvolt = <3300000>;
+> >>>> +                             regulator-max-microvolt = <3300000>;
+> >>>> +                             regulator-name = "vcc-wifi-2";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_dcdca: dcdca {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <810000>;
+> >>>> +                             regulator-max-microvolt = <1080000>;
+> >>>> +                             regulator-name = "vdd-cpu";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_dcdcc: dcdcc {
+> >>>> +                             regulator-min-microvolt = <810000>;
+> >>>> +                             regulator-max-microvolt = <1080000>;
+> >>>> +                             regulator-name = "vdd-gpu";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_dcdcd: dcdcd {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <960000>;
+> >>>> +                             regulator-max-microvolt = <960000>;
+> >>>> +                             regulator-name = "vdd-sys";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     reg_dcdce: dcdce {
+> >>>> +                             regulator-always-on;
+> >>>> +                             regulator-min-microvolt = <1200000>;
+> >>>> +                             regulator-max-microvolt = <1200000>;
+> >>>> +                             regulator-name = "vcc-dram";
+> >>>> +                     };
+> >>>> +
+> >>>> +                     sw {
+> >>>> +                             /* unused */
+> >>>> +                     };
+> >>>
+> >>> Can't we have a DTSI for this PMIC too?
+> >>
+> >> Back when we started adding the regulators, Mark wasn't too happy with
+> >> all the placeholders we put in the dtsi. I think we got away with it
+> >> because we had other things in there as well. That's not true for this
+> >> particular PMIC.
+> >
+> > So we need separate dtsi for this PMIC as well?
+>
+> I don't think we do. We don't gain much.
 
-Alpha gets the description of the physical memory from the firmware as an
-array of memory clusters. Each cluster that is not reserved by the firmware
-is added to memblock.memory.
+Merged with Maxime's ack, and the subject prefix fixed.
+Also squashed in the Ethernet patch for this board.
 
-Once the memblock.memory is set up, we reserve the kernel and initrd pages
-with memblock reserve.
-
-Since we don't need the bootmem bitmap anymore, the code that finds an
-appropriate place is removed.
-
-The conversion does not take care of NUMA support which is marked broken
-for more than 10 years now.
-
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
-v2: describe the conversion as per Michal's request
-
-Tested with qemu-system-alpha. I've added some tweaks to sys_dp264 to force
-memory split for testing with CONFIG_DISCONTIGMEM=y
-
- arch/alpha/Kconfig                |   2 +
- arch/alpha/kernel/core_irongate.c |   4 +-
- arch/alpha/kernel/setup.c         |  98 ++++-----------------------------
- arch/alpha/mm/numa.c              | 113 +++++---------------------------------
- 4 files changed, 29 insertions(+), 188 deletions(-)
-
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index 5b4f883..620b0a7 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -31,6 +31,8 @@ config ALPHA
- 	select ODD_RT_SIGACTION
- 	select OLD_SIGSUSPEND
- 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
-+	select HAVE_MEMBLOCK
-+	select NO_BOOTMEM
- 	help
- 	  The Alpha is a 64-bit general-purpose processor designed and
- 	  marketed by the Digital Equipment Corporation of blessed memory,
-diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
-index aec7572..f709866 100644
---- a/arch/alpha/kernel/core_irongate.c
-+++ b/arch/alpha/kernel/core_irongate.c
-@@ -21,6 +21,7 @@
- #include <linux/init.h>
- #include <linux/initrd.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- 
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -241,8 +242,7 @@ albacore_init_arch(void)
- 				       size / 1024);
- 		}
- #endif
--		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
--				pci_mem, BOOTMEM_DEFAULT);
-+		memblock_reserve(pci_mem, memtop - pci_mem);
- 		printk("irongate_init_arch: temporarily reserving "
- 			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
- 	}
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index 5576f76..4f0d944 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -30,6 +30,7 @@
- #include <linux/ioport.h>
- #include <linux/platform_device.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- #include <linux/pci.h>
- #include <linux/seq_file.h>
- #include <linux/root_dev.h>
-@@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
- {
- 	struct memclust_struct * cluster;
- 	struct memdesc_struct * memdesc;
--	unsigned long start_kernel_pfn, end_kernel_pfn;
--	unsigned long bootmap_size, bootmap_pages, bootmap_start;
--	unsigned long start, end;
-+	unsigned long kernel_size;
- 	unsigned long i;
- 
- 	/* Find free clusters, and init and free the bootmem accordingly.  */
-@@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
- 	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
- 
- 	for_each_mem_cluster(memdesc, cluster, i) {
-+		unsigned long end;
-+
- 		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
- 		       i, cluster->usage, cluster->start_pfn,
- 		       cluster->start_pfn + cluster->numpages);
-@@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
- 		end = cluster->start_pfn + cluster->numpages;
- 		if (end > max_low_pfn)
- 			max_low_pfn = end;
-+
-+		memblock_add(PFN_PHYS(cluster->start_pfn),
-+			     cluster->numpages << PAGE_SHIFT);
- 	}
- 
- 	/*
-@@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
- 		max_low_pfn = mem_size_limit;
- 	}
- 
--	/* Find the bounds of kernel memory.  */
--	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
--	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
--	bootmap_start = -1;
--
-- try_again:
--	if (max_low_pfn <= end_kernel_pfn)
--		panic("not enough memory to boot");
--
--	/* We need to know how many physically contiguous pages
--	   we'll need for the bootmap.  */
--	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
--
--	/* Now find a good region where to allocate the bootmap.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = start + cluster->numpages;
--		if (start >= max_low_pfn)
--			continue;
--		if (end > max_low_pfn)
--			end = max_low_pfn;
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn
--			    && end - end_kernel_pfn >= bootmap_pages) {
--				bootmap_start = end_kernel_pfn;
--				break;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (end - start >= bootmap_pages) {
--			bootmap_start = start;
--			break;
--		}
--	}
--
--	if (bootmap_start == ~0UL) {
--		max_low_pfn >>= 1;
--		goto try_again;
--	}
--
--	/* Allocate the bootmap and mark the whole MM as reserved.  */
--	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
--
--	/* Mark the free regions.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = cluster->start_pfn + cluster->numpages;
--		if (start >= max_low_pfn)
--			continue;
--		if (end > max_low_pfn)
--			end = max_low_pfn;
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn) {
--				free_bootmem(PFN_PHYS(start),
--					     (PFN_PHYS(start_kernel_pfn)
--					      - PFN_PHYS(start)));
--				printk("freeing pages %ld:%ld\n",
--				       start, start_kernel_pfn);
--				start = end_kernel_pfn;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (start >= end)
--			continue;
--
--		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
--		printk("freeing pages %ld:%ld\n", start, end);
--	}
--
--	/* Reserve the bootmap memory.  */
--	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
--			BOOTMEM_DEFAULT);
--	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-+	/* Reserve the kernel memory. */
-+	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-+	memblock_reserve(KERNEL_START_PHYS, kernel_size);
- 
- #ifdef CONFIG_BLK_DEV_INITRD
- 	initrd_start = INITRD_START;
-@@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
- 				       initrd_end,
- 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
- 		} else {
--			reserve_bootmem(virt_to_phys((void *)initrd_start),
--					INITRD_SIZE, BOOTMEM_DEFAULT);
-+			memblock_reserve(virt_to_phys((void *)initrd_start),
-+					INITRD_SIZE);
- 		}
- 	}
- #endif /* CONFIG_BLK_DEV_INITRD */
-diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
-index a9e8647..26cd925 100644
---- a/arch/alpha/mm/numa.c
-+++ b/arch/alpha/mm/numa.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/bootmem.h>
-+#include <linux/memblock.h>
- #include <linux/swap.h>
- #include <linux/initrd.h>
- #include <linux/pfn.h>
-@@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_end)
- 	struct memclust_struct * cluster;
- 	struct memdesc_struct * memdesc;
- 	unsigned long start_kernel_pfn, end_kernel_pfn;
--	unsigned long bootmap_size, bootmap_pages, bootmap_start;
- 	unsigned long start, end;
- 	unsigned long node_pfn_start, node_pfn_end;
- 	unsigned long node_min_pfn, node_max_pfn;
- 	int i;
--	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
- 	int show_init = 0;
- 
- 	/* Find the bounds of current node */
-@@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_end)
- 	/* Cute trick to make sure our local node data is on local memory */
- 	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
- #endif
--	/* Quasi-mark the pg_data_t as in-use */
--	node_min_pfn += node_datasz;
--	if (node_min_pfn >= node_max_pfn) {
--		printk(" not enough mem to reserve NODE_DATA");
--		return;
--	}
--	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
--
- 	printk(" Detected node memory:   start %8lu, end %8lu\n",
- 	       node_min_pfn, node_max_pfn);
- 
- 	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
--	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
- 
- 	/* Find the bounds of kernel memory.  */
- 	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
- 	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
--	bootmap_start = -1;
- 
- 	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
- 		panic("kernel loaded out of ram");
-@@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_end)
- 	   has much larger alignment than 8Mb, so it's safe. */
- 	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
- 
--	/* We need to know how many physically contiguous pages
--	   we'll need for the bootmap.  */
--	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
--
--	/* Now find a good region where to allocate the bootmap.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = start + cluster->numpages;
--
--		if (start >= node_max_pfn || end <= node_min_pfn)
--			continue;
--
--		if (end > node_max_pfn)
--			end = node_max_pfn;
--		if (start < node_min_pfn)
--			start = node_min_pfn;
--
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn
--			    && end - end_kernel_pfn >= bootmap_pages) {
--				bootmap_start = end_kernel_pfn;
--				break;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (end - start >= bootmap_pages) {
--			bootmap_start = start;
--			break;
--		}
--	}
--
--	if (bootmap_start == -1)
--		panic("couldn't find a contiguous place for the bootmap");
--
--	/* Allocate the bootmap and mark the whole MM as reserved.  */
--	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
--					 node_min_pfn, node_max_pfn);
--	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
--		 bootmap_start, bootmap_size, bootmap_pages);
-+	memblock_add(PFN_PHYS(node_min_pfn),
-+		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
- 
--	/* Mark the free regions.  */
--	for_each_mem_cluster(memdesc, cluster, i) {
--		if (cluster->usage & 3)
--			continue;
--
--		start = cluster->start_pfn;
--		end = cluster->start_pfn + cluster->numpages;
--
--		if (start >= node_max_pfn || end <= node_min_pfn)
--			continue;
--
--		if (end > node_max_pfn)
--			end = node_max_pfn;
--		if (start < node_min_pfn)
--			start = node_min_pfn;
--
--		if (start < start_kernel_pfn) {
--			if (end > end_kernel_pfn) {
--				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
--					     (PFN_PHYS(start_kernel_pfn)
--					      - PFN_PHYS(start)));
--				printk(" freeing pages %ld:%ld\n",
--				       start, start_kernel_pfn);
--				start = end_kernel_pfn;
--			} else if (end > start_kernel_pfn)
--				end = start_kernel_pfn;
--		} else if (start < end_kernel_pfn)
--			start = end_kernel_pfn;
--		if (start >= end)
--			continue;
--
--		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
--		printk(" freeing pages %ld:%ld\n", start, end);
--	}
--
--	/* Reserve the bootmap memory.  */
--	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
--			bootmap_size, BOOTMEM_DEFAULT);
--	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
-+	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
-+	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
- 
- 	node_set_online(nid);
- }
-@@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_end)
- void __init
- setup_memory(void *kernel_end)
- {
-+	unsigned long kernel_size;
- 	int nid;
- 
- 	show_mem_layout();
-@@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
- 	for (nid = 0; nid < MAX_NUMNODES; nid++)
- 		setup_memory_node(nid, kernel_end);
- 
-+	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
-+	memblock_reserve(KERNEL_START_PHYS, kernel_size);
-+
- #ifdef CONFIG_BLK_DEV_INITRD
- 	initrd_start = INITRD_START;
- 	if (initrd_start) {
-@@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
- 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
- 		} else {
- 			nid = kvaddr_to_nid(initrd_start);
--			reserve_bootmem_node(NODE_DATA(nid),
--					     virt_to_phys((void *)initrd_start),
--					     INITRD_SIZE, BOOTMEM_DEFAULT);
-+			memblock_reserve(virt_to_phys((void *)initrd_start),
-+					 INITRD_SIZE);
- 		}
- 	}
- #endif /* CONFIG_BLK_DEV_INITRD */
-@@ -303,9 +217,8 @@ void __init paging_init(void)
- 	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
- 
- 	for_each_online_node(nid) {
--		bootmem_data_t *bdata = &bootmem_node_data[nid];
--		unsigned long start_pfn = bdata->node_min_pfn;
--		unsigned long end_pfn = bdata->node_low_pfn;
-+		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
-+		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
- 
- 		if (dma_local_pfn >= end_pfn - start_pfn)
- 			zones_size[ZONE_DMA] = end_pfn - start_pfn;
--- 
-2.7.4
-
+ChenYu
