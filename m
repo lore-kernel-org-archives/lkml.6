@@ -2,81 +2,101 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A35C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCB6C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559DC20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:11:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559DC20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0AF6720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF6720843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbeICLaI (ORCPT
+        id S1725982AbeICLeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:30:08 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37072 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeICLaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:30:08 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HpNjWtvDASEP; Mon,  3 Sep 2018 09:11:02 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCF4100329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:4100:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 3 Sep 2018 07:34:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38364 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725794AbeICLeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:34:02 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3C541EC01AF;
-        Mon,  3 Sep 2018 09:11:01 +0200 (CEST)
-Date:   Mon, 3 Sep 2018 09:12:07 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH V2 2/6] x86/efi: Remove __init attribute from memory
- mapping functions
-Message-ID: <20180903071207.GA10249@zn.tnic>
-References: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1535881594-25469-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180902105602.GA19431@zn.tnic>
- <FFF73D592F13FD46B8700F0A279B802F485B9142@ORSMSX114.amr.corp.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 999A18575B;
+        Mon,  3 Sep 2018 07:15:12 +0000 (UTC)
+Received: from krava (unknown [10.43.17.81])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 695462166BA1;
+        Mon,  3 Sep 2018 07:15:11 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 09:15:10 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 04/10] perf, tools, script: Allow sym and dso without
+ ip, addr
+Message-ID: <20180903071510.GA24575@krava>
+References: <20180831220206.28351-1-andi@firstfloor.org>
+ <20180831220206.28351-5-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F485B9142@ORSMSX114.amr.corp.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180831220206.28351-5-andi@firstfloor.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 03 Sep 2018 07:15:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 03 Sep 2018 07:15:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 05:03:56AM +0000, Prakhya, Sai Praneeth wrote:
-> Hmm.. thought that __efi_init might be confusing with the normal __init attribute
+On Fri, Aug 31, 2018 at 03:02:00PM -0700, Andi Kleen wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> Currently sym and dso require printing ip and addr because
+> the print function is tied to those outputs. With callindent
+> it makes sense to print the symbol or dso without numerical
+> IP or ADDR. So change the dependency check to only check the
+> underlying attribute.
+> 
+> This allows to remove a lot of noise in callindent output by
+> dropping the numerical addresses, which are not all that useful.
+> 
+> Before
+> 
+> % perf script --itrace=cr -F +callindent
+>          swapper     0 [000] 156546.354971:          1   branches: pt_config                                       0 [unknown] ([unknown]) => ffffffff81010486 pt_config ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     pt_config                    ffffffff81010499 pt_config ([kernel.kallsyms]) => ffffffff8101063e pt_event_add ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     pt_event_add                 ffffffff81010635 pt_event_add ([kernel.kallsyms]) => ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_enable              ffffffff8115e726 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff811579b0 perf_pmu_enable ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_nop_void            ffffffff81151730 perf_pmu_nop_void ([kernel.kallsyms]) => ffffffff8115e72b event_sched_in.isra.107 ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     event_sched_in.isra.107      ffffffff8115e737 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff8115e7a5 group_sched_in ([kernel.kallsyms])
+>          swapper     0 [000] 156546.354971:          1   branches:     __x86_indirect_thunk_rax     ffffffff8115e7f6 group_sched_in ([kernel.kallsyms]) => ffffffff81a03000 __x86_indirect_thunk_rax ([kernel.kallsyms])
+> 
+> After
+> 
+> % perf script --itrace=cr -F +callindent,-ip,-sym,-symoff
+>        swapper     0 [000] 156546.354971:          1   branches:  pt_config
+>          swapper     0 [000] 156546.354971:          1   branches:      pt_config
+>          swapper     0 [000] 156546.354971:          1   branches:      pt_event_add
+>          swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_enable
+>          swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_void
+>          swapper     0 [000] 156546.354971:          1   branches:       event_sched_in.isra.107
+>          swapper     0 [000] 156546.354971:          1   branches:       __x86_indirect_thunk_rax
+>          swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_int
+>          swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
+>          swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
+>          swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
+>          swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
 
-How would that be confusing? It has "__efi" prepended?!
+I'm getting different output than advertised
 
-All I'm saying is, if you're going to define your own function
-attributes, do them generic and short. "_fixup" is too specific IMO. It
-also enlarges function definitions unnecessarily.
+[jolsa@krava perf]$ ./perf script --itrace=cr -F +callindent,-ip,-sym,-symoff | head -3
+              ls  1926 [000] 55509.544711:          1 branches:uhH: _start                           =>     7f9722fa0f60 (/usr/lib64/ld-2.27.so)
+              ls  1926 [000] 55509.544711:          1 branches:uhH: _start                           =>                0 ([unknown])
+              ls  1926 [000] 55509.544716:          1 branches:uhH: _start                           =>     7f9722fa0f60 (/usr/lib64/ld-2.27.so)
 
-With "__efi_init" you already denote that it is a special attribute
-which has relevance in the EFI code only. What you do about it - the
-*fixup* - is the thing you do with the attribute. But you don't have to
-have the "what you do" in the attribute name too.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+jirka
