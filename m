@@ -2,117 +2,100 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F21AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1ECC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA2020843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB1B220843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:41:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="emRamXuU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA2020843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="CypCJV9r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1B220843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbeICK6P (ORCPT
+        id S1726183AbeICLAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 06:58:15 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34198 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeICK6P (ORCPT
+        Mon, 3 Sep 2018 07:00:39 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:51418 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725927AbeICLAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 06:58:15 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k19-v6so8255634pfi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 23:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z4ve4EgeoinRXXJsFU9DAlQrZrrJ0q9VszNQQ4iZTeA=;
-        b=emRamXuUnrhV0xkq3RIO4sX4h+mBdZVxedP4t6CR4dEZc301ATiLZ/MAwMrXkYc3m0
-         zecYN2X6QD9hhxafA0HDwO3P/9XrvaFoBzvkIJLBFWZkvUvDg++aW9z/Cmdbf8+MLkNH
-         jzEP7jW1YA8rX9P0djSGVXG5ODaTDD2WDvZGg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z4ve4EgeoinRXXJsFU9DAlQrZrrJ0q9VszNQQ4iZTeA=;
-        b=QEDrpD8dYJ+XrkByv5ygi/lv969C7dNqbb2mfOZ8rrXVPqcW/hYmPtQGNsbR4l6kaD
-         MSHKsGXJ0KMRw/M32GNfx7eix4YNOtDR116CXRjC9kLXK5n+xWuw1vrfYNxhx/wDSap0
-         UwdmigJ+huqU3Bg3z6qWT5xRV2XjwoDk6k+wUg1TF0ShcPerFLiicX9B9mUuBDki98b2
-         BIgK4lPV1qjFrFZJ3o/S8aCGvZdmFaAO41i4ZV0npFpDffChl5E10KEoCTB02U52bdbA
-         ET/qovkP9IRpSyAQnNSPIHb9fIBOKPOov/vDqyyBmRA6sCtw46fd4e2LFPpJhIjSE6sC
-         fdBg==
-X-Gm-Message-State: APzg51DnfBbIMBoQH3lXpihUHitYAQj7CMXOXRoOKmFIkEQ05mWWDVnl
-        6srxCujTatcfL6IEL6FiLtsuvQ==
-X-Google-Smtp-Source: ANB0VdYs77y2SFRk/7P752tWOB2gXOpk9XWg70uKLMw+9jupgd3hfLzhmY6Wi6Y2+9UexNtHrgUCjw==
-X-Received: by 2002:a65:4043:: with SMTP id h3-v6mr20674138pgp.207.1535956771904;
-        Sun, 02 Sep 2018 23:39:31 -0700 (PDT)
-Received: from localhost ([122.171.76.41])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm28966638pfo.164.2018.09.02.23.39.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 23:39:31 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 12:09:29 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, punit.agrawal@arm.com,
-        edubezval@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] dt-binding: arm/cpus.txt: fix
- dynamic-power-coefficient unit
-Message-ID: <20180903063929.oic5rgynzos2a4s2@vireshk-i7>
-References: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
+        Mon, 3 Sep 2018 07:00:38 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w836ZU1S019504;
+        Sun, 2 Sep 2018 23:41:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=zRBXIeD2ZKACgtTGnAokZMBl8ywP4Erjj6NaBA4/uzw=;
+ b=CypCJV9rmmbBT4HeuT8sD6GVNFhY4TTaMNytmntbxodOgPyWh7/c3KuS34PAUaWcgmem
+ Ye+v4Ry+tyPLGx9lhLJ7jupTBkIxZwWJtx4Mv9+MaxZiN0LRlMD6on06gRLY1/eLsvW1
+ Hbd9MuN9g7rtph7igNw+pyt9taJaImSfWV8UuET3vgoPoc3irPdxsj0NKY694ChPIadK
+ ismCES5p6o/TAc4qtgN6WnlJutmzyQsCh7v75ReVEqGXHpaIJfH5TLdHlpTcxZ+lDCIm
+ UlYQsGbe2g1LuRH1XFuS/HA/f1mhT1luaBySJKEGJkDoRJWrHZPtN/FLnp6Zr2Tx7cBg 9A== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2m7r4jw5kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sun, 02 Sep 2018 23:41:51 -0700
+Received: from SC-EXCH02.marvell.com (10.93.176.82) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Sun, 2 Sep
+ 2018 23:41:50 -0700
+Received: from SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95]) by
+ SC-EXCH02.marvell.com ([fe80::980b:63cf:b3c0:7c95%20]) with mapi id
+ 15.00.1210.000; Sun, 2 Sep 2018 23:41:50 -0700
+From:   Ganapathi Bhat <gbhat@marvell.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "amitkarwar@gmail.com" <amitkarwar@gmail.com>,
+        "nishants@marvell.com" <nishants@marvell.com>,
+        "huxinming820@gmail.com" <huxinming820@gmail.com>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>
+CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [BUG] net: wireless: mwifiex: A possible
+ sleep-in-atomic-context bug in mwifiex_wait_queue_complete()
+Thread-Topic: [EXT] [BUG] net: wireless: mwifiex: A possible
+ sleep-in-atomic-context bug in mwifiex_wait_queue_complete()
+Thread-Index: AQHUQdNwQvzOjf1e6kuCtEe7W+Tzl6TeHe+Q
+Date:   Mon, 3 Sep 2018 06:41:50 +0000
+Message-ID: <5fbe17917c344f318c25a688f2e94823@SC-EXCH02.marvell.com>
+References: <35980039-f268-2db3-5c7d-19ab0c917d44@gmail.com>
+In-Reply-To: <35980039-f268-2db3-5c7d-19ab0c917d44@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.93.176.43]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535526518-29022-1-git-send-email-vincent.guittot@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-03_04:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809030073
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-08-18, 09:08, Vincent Guittot wrote:
-> The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
-> its usage in the code assumes that unit is uW/MHz/V^2
-> 
-> In drivers/thermal/cpu_cooling.c, the code is :
-> 
-> power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
-> do_div(power, 1000000000);
-> 
-> which can be summarized as :
-> power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
-> or
-> power (mW) = (capacitance * freq_mhz * (voltage_mv/1000)^2) / 1000
-> then
-> power (mW) = power (uW) / 1000
-> so
-> power (uW) = capacitance * freq_mhz * (voltage_mv/1000)^2
-> 
-> Furthermore, if we test basic values like :
-> voltage_mv = 1000mV = 1V
-> freq_mhz = 1000Mhz
-> 
-> The minimum possible power, when dynamic-power-coefficient equals 1, will
-> be with current unit:
-> min power = 1 * 1000  * (1000000)^2 = 10^15 mW
-> which is not realistic
-> 
-> With the unit used by the code, the min power is
-> min power =  1 * 1000 * 1^2 = 1000uW = 1mW which is far more realistic
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+SGkgSmlhLUp1LA0KDQo+DQo+IFtGVU5DXSBzY2hlZHVsZV90aW1lb3V0DQo+IGRyaXZlcnMvbmV0
+L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC9zdGFfaW9jdGwuYywgNjM6DQo+ICAgICAgc2NoZWR1
+bGVfdGltZW91dCBpbiBtd2lmaWV4X3dhaXRfcXVldWVfY29tcGxldGUNCj4gZHJpdmVycy9uZXQv
+d2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L2NtZGV2dC5jLCA2NzM6DQo+ICAgICAgbXdpZmlleF93
+YWl0X3F1ZXVlX2NvbXBsZXRlIGluIG13aWZpZXhfc2VuZF9jbWQNCkhlcmUsIG13aWZpZXhfc2Vu
+ZF9jbWQgZG9lcyBub3QgY2FsbCBtd2lmaWV4X3dhaXRfcXVldWVfY29tcGxldGUsIGJlY2F1c2Ug
+dGhlIHN5bmMgcGFyYW1ldGVyIGlzIGZhbHNlLg0KTm90ZSB0aGF0IHRoZSBmdW5jdGlvbiBtd2lm
+aWV4X211bHRpX2NoYW5fcmVzeW5jIGRpZCBjYWxsIG13aWZpZXhfc2VuZF9jbWQgd2l0aCBzeW5j
+ID0gZmFsc2UuDQo+IGRyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC9tYWluLmMs
+IDEwNDY6DQo+ICAgICAgbXdpZmlleF9zZW5kX2NtZCBpbiBtd2lmaWV4X211bHRpX2NoYW5fcmVz
+eW5jDQo+IGRyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC91c2IuYywgMjg4Og0K
+PiAgICAgIG13aWZpZXhfbXVsdGlfY2hhbl9yZXN5bmMgaW4gbXdpZmlleF91c2JfdHhfY29tcGxl
+dGUNCj4NClRoYW5rcywNCkdhbmFwYXRoaQ0K
