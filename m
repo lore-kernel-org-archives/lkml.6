@@ -2,226 +2,153 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A31C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B666C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0CD20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4A5C20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:11:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hx/m/PhQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF0CD20867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vKMsLhn/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A5C20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeICTbK (ORCPT
+        id S1727552AbeICTcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:31:10 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54082 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICTbK (ORCPT
+        Mon, 3 Sep 2018 15:32:12 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:36264 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:31:10 -0400
-Received: by mail-wm0-f67.google.com with SMTP id b19-v6so1535990wme.3;
-        Mon, 03 Sep 2018 08:10:32 -0700 (PDT)
+        Mon, 3 Sep 2018 15:32:12 -0400
+Received: by mail-io0-f177.google.com with SMTP id q5-v6so661532iop.3;
+        Mon, 03 Sep 2018 08:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QBXk9LfSk2rzR+02HunmKWC22g9u1K2qTiC55tmSV/U=;
-        b=Hx/m/PhQl2ObRiumf7sdeHhyGRuOCwOt++13PXUIs+KuspSimS4HFbw/veyR9+/vtf
-         d1iIA+8edBk9BdCNe7/N0pVjiSDvLQY1ENHEFKYqTwZ6QmwORGIV+b92hxmhp+ETWH2f
-         NOeKRIhBaUxsW+p+5qrU22PjCek95EO1cRkKyOyPaNVRwkdJGcaoYSsPXCI1XmMsVxn/
-         +elj1XhiPY29pC9CLGSqvvW67bUJ4UOSAY/QJIvpyPtlDjEi2rx+Yg4ktcdC9HR2NOMF
-         b/CvVtCQZ1VU2x4aqYVSGsnKZE4qCTPjzpWUAmCFUXPgl8jSPVCHEs5ba70vv7TNyKDA
-         EOiQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qb8K/qhM08+8LbmFEFyZMFZh2Dvf9853JXYmu1ZGGoo=;
+        b=vKMsLhn/Pzfp0q2Ch4GUMDHD2ZWtnHbCJZQ5vHy419prVjwzlscngeRTiXWjM48NQq
+         qvEd7xVycBX0l+eFDM4aD53rF7jXRDzGQ5j5QRTbh5Zmkcra+O6MEmZsCERu3/8lJzjv
+         tMq0QsjHbWQbn0Fs8QqVucmV/mAcwAC6kkJboYa5QCbiQtWZPh1pnSX2DOMOPbrEyguz
+         eyvAFvVhBUkPaE3GoZaZmqWLOYH2DgFYH/uDsNe/t81EXaNXgLF8Zgfs/2tIwVynsIb3
+         aC2xQ6BeM+G2dfMKaFPjsvbH0TsaFD2ZQQQQFo7Nyk0zOkHz1H63F46qmZW5v+2y/M82
+         YzYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QBXk9LfSk2rzR+02HunmKWC22g9u1K2qTiC55tmSV/U=;
-        b=WNTl9WVsL1T+PZZXyNOpZPvuutXE8rgSHR3bIOTYynrM0dBel5LnyWGxeUf2DRFxih
-         lSNd5Kz/atH2pWCU38rYNZQ7z4uNBL81gneWO8DRqf58t/xNgn84gLsri7u35nIRVWIh
-         /09RJeSjWAT1ExjQ3AZmJvltdGdIqCM1+ct4KI1W/1eccgKgv3FRDuDjfOyhYVOpLxhe
-         ivmOn4CyLnGiuoHeUojKSkPuLQCFKSRn289UrZuMjQES6OHmXXyiJtebWswmvdMwPsgo
-         n0Stm33THFMmz8CVENE0yPXmde5GR1hUP+ki2A5ZNN4bP27ZHvH/CXc+iLMkRXY7ip6X
-         mivg==
-X-Gm-Message-State: APzg51AzBJ1eq1pDP3ocq8V/oukPOWImdKSIMaN6ep4DnPEecnxTFN5r
-        frmLuvCE2lFcWnkvZ1OUYuI=
-X-Google-Smtp-Source: ANB0VdYzzGu72Lwq9prC544xqTcfBUpv3OV9gn8QXk20TTwlWqgfwQxEJJBYhiB42UR926ZJEDcqQg==
-X-Received: by 2002:a1c:a401:: with SMTP id n1-v6mr5788614wme.125.1535987431534;
-        Mon, 03 Sep 2018 08:10:31 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:4006:df00:113f:adbd:9f65:1637])
-        by smtp.gmail.com with ESMTPSA id 204-v6sm17256494wmh.25.2018.09.03.08.10.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 08:10:30 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 17:10:27 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
- sparse
-Message-ID: <20180903151026.n2jak3e4yqusnogt@ltop.local>
-References: <cover.1535629099.git.andreyknvl@google.com>
- <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
- <20180831081123.6mo62xnk54pvlxmc@ltop.local>
- <20180831134244.GB19965@ZenIV.linux.org.uk>
- <CAAeHK+w86m6YztnTGhuZPKRczb-+znZ1hiJskPXeQok4SgcaOw@mail.gmail.com>
- <01cadefd-c929-cb45-500d-7043cf3943f6@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qb8K/qhM08+8LbmFEFyZMFZh2Dvf9853JXYmu1ZGGoo=;
+        b=I+LGrI7b+jv0cWbrtfZ2zvagWMeR79Tk8XsPhSvUj/ynsIzDxTNwfQd4uWiqfD8tEQ
+         todGJBKxG7fX0oYnKWIadOA1QEs2VonI/6RIjJm49MG506WUPK784TWa8pvGqQXpK3EI
+         Jg5dEmdzkBsAGyyYhZ2lLmPumyxnve21OQZp9k1zVh/FcV58PKNo/XHPBmR1JgzW4kwz
+         x9mYKukUItl/3hz1DUHvlROMzyinMbYt+T3eaGzfBBUuZj7S+Sb7Vpewg1THlGIZJ4UL
+         i8ESsq/QaU55UXjMlp9zihSO8YxdvAg9XAQn/zqe0V/0LAdQKVfhr1LgwIsp4iuySnBH
+         zt5g==
+X-Gm-Message-State: APzg51Dpjlv6Jfw6z1tEr2PL+PT9cHXNl41hF0Pqo8bAli1hoQwpr+3A
+        owvQP8iyQikZw7HzOa1PnJICuUBQ0+KeMidxQT0=
+X-Google-Smtp-Source: ANB0Vda0N43S8gJDcDS9iG1Z5PJg6koe/HOiqnrz/Ngyp+lgVEpQXg5xLoHHf59S7fW/aEdFWDBFw0uxibGKUMNRXRc=
+X-Received: by 2002:a6b:27c9:: with SMTP id n192-v6mr18223016ion.138.1535987495469;
+ Mon, 03 Sep 2018 08:11:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01cadefd-c929-cb45-500d-7043cf3943f6@arm.com>
-User-Agent: NeoMutt/20180622
+References: <CGME20180903132353epcas4p373e876f1b52dbed6df7bd3acc73fcdf4@epcas4p3.samsung.com>
+ <CANq1E4QwNg0VuAZZtatOTXspv7Y-z_HSa-9CHzK2Y28CGK8W4Q@mail.gmail.com>
+ <1982440.Fn0LzJ7a3l@amdc3058> <dc7f08d7-77fc-92ca-b6ec-f9d5a8f24cf3@redhat.com>
+In-Reply-To: <dc7f08d7-77fc-92ca-b6ec-f9d5a8f24cf3@redhat.com>
+From:   David Herrmann <dh.herrmann@gmail.com>
+Date:   Mon, 3 Sep 2018 17:11:23 +0200
+Message-ID: <CANq1E4TiMSY=udGJWZoDzMhdsRjC==QCRFPO+Oja7KoyBX-6fg@mail.gmail.com>
+Subject: Re: [REGRESSION] boot-screen override by "34db50e55656 efifb: Copy
+ the ACPI BGRT"
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org, linux-efi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 02:49:38PM +0100, Vincenzo Frascino wrote:
-> On 03/09/18 13:34, Andrey Konovalov wrote:
-> > On Fri, Aug 31, 2018 at 3:42 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >> On Fri, Aug 31, 2018 at 10:11:24AM +0200, Luc Van Oostenryck wrote:
-> >>> On Thu, Aug 30, 2018 at 01:41:16PM +0200, Andrey Konovalov wrote:
-> >>>> This patch adds __force annotations for __user pointers casts detected by
-> >>>> sparse with the -Wcast-from-as flag enabled (added in [1]).
-> >>>>
-> >>>> [1] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
-> >>>
-> >>> Hi,
-> >>>
-> >>> It would be nice to have some explanation for why these added __force
-> >>> are useful.
-> > 
-> > I'll add this in the next version, thanks!
-> > 
-> >>         It would be even more useful if that series would either deal with
-> >> the noise for real ("that's what we intend here, that's what we intend there,
-> >> here's a primitive for such-and-such kind of cases, here we actually
-> >> ought to pass __user pointer instead of unsigned long", etc.) or left it
-> >> unmasked.
+Hey
+
+On Mon, Sep 3, 2018 at 4:47 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 03-09-18 16:16, Bartlomiej Zolnierkiewicz wrote:
+> >
+> > Hi,
+> >
+> > On Monday, September 03, 2018 03:23:38 PM David Herrmann wrote:
+> >> Hey
 > >>
-> >>         As it is, __force says only one thing: "I know the code is doing
-> >> the right thing here".  That belongs in primitives, and I do *not* mean the
-> >> #define cast_to_ulong(x) ((__force unsigned long)(x))
-> >> kind.
+> >> Since this commit:
 > >>
-> >>         Folks, if you don't want to deal with that - leave the warnings be.
-> >> They do carry more information than "someone has slapped __force in that place".
+> >>      34db50e55656 efifb: Copy the ACPI BGRT
 > >>
-> >> Al, very annoyed by that kind of information-hiding crap...
-> > 
-> > This patch only adds __force to hide the reports I've looked at and
-> > decided that the code does the right thing. The cases where this is
-> > not the case are handled by the previous patches in the patchset. I'll
-> > this to the patch description as well. Is that OK?
-> > 
-> I think as well that we should make explicit the information that
-> __force is hiding.
-> A possible solution could be defining some new address spaces and use
-> them where it is relevant in the kernel. Something like:
-> 
-> # define __compat_ptr __attribute__((noderef, address_space(5)))
-> # define __tagged_ptr __attribute__((noderef, address_space(6)))
-> 
-> In this way sparse can still identify the casting and trigger a warning.
-> 
-> We could at that point modify sparse to ignore these conversions when a
-> specific flag is passed (i.e. -Wignore-compat-ptr, -Wignore-tagged-ptr)
-> to exclude from the generated warnings the ones we have already dealt
-> with.
-> 
-> What do you think about this approach?
+> >> the kernel will override boot-splashs unasked. This breaks the
+> >> graphical boot-process on our setups. In particular, we have a setup
+> >> where an efi-boot-entry draws the early boot-splash on-screen, then
+> >> hands-over to the linux-kernel + initrd. The boot-splash daemon in the
+> >> initrd then takes over control of possible animations.
+> >>
+> >> With the mentioned commit compiled in, the kernel will redraw the
+> >> firmware logo on screen at a random time without any way to intervene.
+> >
+> > You have CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y (the deferred
+> > console takeover support introduced in v4,19-rc1). I assume that this
+> > is intended?
+> >
+> >> What is the intention of this commit? Why is the kernel re-drawing the
+> >> firmware logo unasked? If someone during the boot-process draws
+> >> content on the screen, I would prefer if the kernel does not clear
+> >> that on driver load.
+> >
+> > +/*
+> > + * If fbcon deffered console takeover is configured, the intent is for the
+> > + * framebuffer to show the boot graphics (e.g. vendor logo) until there is some
+> > + * (error) message to display. But the boot graphics may have been destroyed by
+> > + * e.g. option ROM output, detect this and restore the boot graphics.
+> > + */
+> > +#if defined CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER && \
+> > +    defined CONFIG_ACPI_BGRT
+> > ...
+> > +static void efifb_show_boot_graphics(struct fb_info *info)
+> > ...
+> > +#else
+> > +static inline void efifb_show_boot_graphics(struct fb_info *info) {}
+> > +#endif
+> >
+> >> Can we either provide an option to disable this feature, or revert the commit?
+> >
+> > Hans?
+>
+> We use the ACPI bgrt extension to get the logo to draw and then
+> draw it since some devices rely on the OS to draw it and otherwise we
+> just end up with a blackscreen when doing silent / flickerfree boot.
+>
+> Ideally you would be able to get your vendor to put the logo in firmware
+> in the ACPI bgrt extension, then you also do not need to play any tricks
+> with an EFI binary drawing your own logo. But I can understand if you don't
+> have control over this, so you need to do this with the EFI binary trick.
+>
+> I can also understand that you want to use deferred console takeover
+> in a setup like yours to avoid fbcon messing up what is on the display
+> during boot, that is exactly what it is for. So I think a reasonable
+> approach here is to add a kernel commandline option, say:
+>
+> video=efifb:nobgrt
+>
+> David, would that work for you?
 
-I'll be happy to add such warnings to sparse if it is useful to detect
-(and correct!) problems. I'm also thinking to other possiblities, like
-having some weaker form of __force (maybe simply __force_as (which will
-'only' force the address space) or even __force_as(TO, FROM) (with TO
-and FROM being a mask of the address space allowed).
+That would be perfect!
 
-However, for the specific situation here, I'm not sure that using
-address spaces is the right choice because I suspect that the concept
-of tagged pointer is orthogonal to the one of (the usual) address space
-(it won't be possible for a pointer to be __tagged_ptr *and* __user).
-
-OTOH, when I see already the tons of warnings for concepts established
-since many years (I'm thinking especially at __bitwise, see [1]) I'm a
-bit affraid of adding new, more specialized ones that people will
-understand even less how/when they need to use them.
-
-
--- Luc
-
-[1] Here are the warnings reported on v18-rc1 x86-64 with defconfig:
-    469 symbol was not declared. Should it be static?
-    241 incorrect type in argument (different address spaces)
-    186 context imbalance - unexpected unlock
-    147 restricted type degrades to integer
-    122 incompatible types in comparison expression (different address spaces)
-    117 context imbalance - different lock contexts for basic block
-    102 incorrect type in assignment (different address spaces)
-    101 incorrect type in initializer (different address spaces)
-     82 dereference of noderef expression
-     79 cast to restricted type
-     74 incorrect type in argument (different base types)
-     72 bad integer constant expression
-     68 context imbalance - wrong count at exit
-     65 incorrect type in assignment (different base types)
-     44 cast removes address space of expression
-     38 Using plain integer as NULL pointer
-     20 Variable length array is used.
-     14 symbol redeclared with different type - different modifiers
-     14 cast from restricted type
-     13 function with external linkage has definition
-     12 subtraction of functions? Share your drugs
-     11 directive in argument list
-      8 incorrect type in return expression (different address spaces)
-      6 cast truncates bits from constant value
-      5 invalid assignement
-      5 incorrect type in return expression (different base types)
-      5 incorrect type in initializer (different base types)
-      4 "Sparse checking disabled for this file"
-      3 memset with byte count of ...
-      3 incorrect type in initializer (different modifiers)
-      2 Initializer entry defined twice
-      2 incorrect type in assignment (different modifiers)
-      2 incorrect type in argument (different modifiers)
-      2 arithmetics on pointers to functions
-      1 trying to concatenate long character string (8191 bytes max)
-      1 too long token expansion
-      1 symbol redeclared with different type - incompatible argument (different address spaces)
-      1 memcpy with byte count of ...
-      1 marked inline, but without a definition
-      1 invalid initializer
-      1 incorrect type in argument (incompatible argument (different signedness))
-      1 incompatible types in comparison expression (different base types)
-      1 dubious: !x | y
-      1 constant is so big it is ...
+Thanks
+David
