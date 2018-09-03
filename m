@@ -2,88 +2,137 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C366BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8187C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACDD20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:15:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACDD20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C3D920856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:22:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ri4uR0C7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3D920856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeICWgh (ORCPT
+        id S1727498AbeICWn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:36:37 -0400
-Received: from mga04.intel.com ([192.55.52.120]:49506 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727338AbeICWgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:36:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 11:15:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
-   d="scan'208";a="229870078"
-Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
-  by orsmga004.jf.intel.com with ESMTP; 03 Sep 2018 11:15:10 -0700
-Date:   Mon, 3 Sep 2018 21:15:09 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180903181509.GA9265@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
- <20180829210901.GA7176@linux.intel.com>
- <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
+        Mon, 3 Sep 2018 18:43:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44946 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727327AbeICWn1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 18:43:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so470609pgp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 11:22:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RxKV2hCqxXyuXRvqtbBUdObCDD+oLD1M9subWdqBoOc=;
+        b=Ri4uR0C7JWEIYSsUm8nqreKHK8fxyTLuS/6sSx3GoeDrxm6Lc/Odf4bKK8N7gP//MY
+         1eE+azqK/lCTYH+npHEi7tEdUBxrvdnQC+u8/Rzxt1XgjjPgiXgDtFxFN/qDaNAOq8u8
+         iCSpQ84FvaBonmCbr5xDiCWpaKcXdgVSl/R49ZFNlRiH2daURBSdjmk28E/cRTLGgaF1
+         dH5BC096qVIt6FCGXMffpPH4LVE/FT/sstHTAd8IpEgttsgH93Y6Al6oGjjNqswZ2jxC
+         YNSdq1auYtpJ51/TbFm+LTRKYE7aQreKfLiAeBONRJIGfgI7qbUVwUVnOCqRFdKQObVR
+         Xolw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RxKV2hCqxXyuXRvqtbBUdObCDD+oLD1M9subWdqBoOc=;
+        b=Y5drq+B4V7+6dRK/8+Bi1CdbwnAcA8oe8uIhwdcrG7O7hiHVMRRi9eLCBkgO2C9vEr
+         SAOLtN1DrxB30RJaroGTiqMiCsyBnBCFmLlremndATInPxD8U1hb4GrrR24G5pcgHKS8
+         OAicPINYDLrQn4nioxFjDpFc15M3FA3/y/FiTy+ISkpU2Zc8C8KKdsqONzC7seW7PlEn
+         EEEsTuiMzZKndsgxfrVkC2JRf7m1temxfxf8eWnQ8cNYYsc5jVAv0tHLGsa0yxcBNJ29
+         lsYKMWTtbWUxCbYLBl/9SwMWPlKfUK7LUCD6QOP/y9i1z8g9kjVAgZ3TBiymFm96urma
+         9zLw==
+X-Gm-Message-State: APzg51C6mhWzuBmmVfCYnrCvw6CKkyBqlTKpXcC0tf+aMhmMp5i7OHpe
+        TT22DKgCSjLvbCz9Q3zfjYhnDXWD
+X-Google-Smtp-Source: ANB0VdYHb4PDANVoaaM0pLajH+4U8I+fn75oBfRGuEmvI9wahOd6Ya4OakENNOqEVQCWOMEEwsJ0oQ==
+X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr19885673pgl.302.1535998924589;
+        Mon, 03 Sep 2018 11:22:04 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id u25-v6sm27200264pfk.177.2018.09.03.11.22.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 11:22:03 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 11:22:02 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: Linux 4.19-rc2
+Message-ID: <20180903182202.GA14258@roeck-us.net>
+References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 01:45:29AM +0000, Huang, Kai wrote:
-> > > > Refresh my brain, does hardware reset the MSRs on a transition to S3 or
-> > lower?
+On Sun, Sep 02, 2018 at 02:45:22PM -0700, Linus Torvalds wrote:
+> As usual, the rc2 release is pretty small. People are taking a
+> breather after the merge window, and it takes a bit of time for bug
+> reports to start coming in and get identified.  Plus people were
+> probably still on vacation (particularly Europe), and some people were
+> at Open Source Summit NA last week too. Having a calm week was good.
 > 
-> Sorry I missed this one. To be honest I don't know. I checked the SDM and all I can find is:
+> Regardless of the reason, it's pretty quiet/ The bulk of it is drivers
+> (network and gpu stand out), with the rest being a random collection
+> all over (arch/x86 and generic networking stands out, but there's misc
+> stuff all over).
 > 
-> "On reset, the default value is the digest of Intel's signing key."
+> Go out and test.
 > 
-> Jarkko may know.
 
-I found this out by testing. The cached MSR values stop working after
-waking up from S3. Have not found anything better from the SDM but it
-is the behavior that I've observed on my GLK NUC at least.
+Build results:
+	total: 134 pass: 133 fail: 1
+Failed builds: 
+	sparc32:allmodconfig 
+Qemu test results:
+	total: 302 pass: 301 fail: 1
+Failed tests: 
+	riscv:virt:defconfig:initrd
 
-/Jarkko
+The sparc32:allmodconfig build problem is the same as last week.
+David - any interest/plan to get this fixed, or should I just drop
+the build ?
+
+The riscv:virt:defconfig:initrd boot test is known to fail. The patch
+fixing it is in -next.
+
+---
+Runtime warnings:
+
+arm:
+
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 drm_gem_cma_create+0x13c/0x158
+
+This is seen now due to a newly enabled configuration option.
+Fix is in -next.
+
+---
+sh4:
+
+WARNING: CPU: 0 PID: 932 at mm/slab.c:2666 cache_alloc_refill+0x8a/0x594
+
+Same as before. I'll try to dig up the patch and ask for the status.
+
+---
+sparc32:
+
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 esp_sbus_probe+0x408/0x6e8
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 sparc_lance_probe_one+0x428/0x4f4
+
+Fix is in -next.
+
+Detailed logs are available at https://kerneltests.org/builders/.
+
+Guenter
