@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E5CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EF5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE962054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AE962054F
+	by mail.kernel.org (Postfix) with ESMTP id 4912320867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4912320867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbeICLlW (ORCPT
+        id S1727284AbeICLl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:22 -0400
-Received: from mga12.intel.com ([192.55.52.136]:48305 "EHLO mga12.intel.com"
+        Mon, 3 Sep 2018 07:41:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48311 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeICLlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:22 -0400
+        id S1727216AbeICLlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:41:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:32 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
-   d="scan'208";a="70146848"
+   d="scan'208";a="70146890"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
-  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:14 -0700
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:31 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 01/21] swap: Enable PMD swap operations for CONFIG_THP_SWAP
-Date:   Mon,  3 Sep 2018 15:21:54 +0800
-Message-Id: <20180903072214.24602-2-ying.huang@intel.com>
+Subject: [PATCH -V5 07/21] swap: Support PMD swap mapping in split_swap_cluster()
+Date:   Mon,  3 Sep 2018 15:22:00 +0800
+Message-Id: <20180903072214.24602-8-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
 References: <20180903072214.24602-1-ying.huang@intel.com>
@@ -57,18 +57,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, "the swap entry" in the page tables is used for a number of
-things outside of actual swap, like page migration, etc.  We support
-the THP/PMD "swap entry" for page migration currently and the
-functions behind this are tied to page migration's config
-option (CONFIG_ARCH_ENABLE_THP_MIGRATION).
+When splitting a THP in swap cache or failing to allocate a THP when
+swapin a huge swap cluster, the huge swap cluster will be split.  In
+addition to clear the huge flag of the swap cluster, the PMD swap
+mapping count recorded in cluster_count() will be set to 0.  But we
+will not touch PMD swap mappings themselves, because it is hard to
+find them all sometimes.  When the PMD swap mappings are operated
+later, it will be found that the huge swap cluster has been split and
+the PMD swap mappings will be split at that time.
 
-But, we also need them for THP swap optimization.  So a new config
-option (CONFIG_HAVE_PMD_SWAP_ENTRY) is added.  It is enabled when
-either CONFIG_ARCH_ENABLE_THP_MIGRATION or CONFIG_THP_SWAP is enabled.
-And PMD swap entry functions are tied to this new config option
-instead.  Some functions enabled by CONFIG_ARCH_ENABLE_THP_MIGRATION
-are for page migration only, they are still enabled only for that.
+Unless splitting a THP in swap cache (specified via "force"
+parameter), split_swap_cluster() will return -EEXIST if there is
+SWAP_HAS_CACHE flag in swap_map[offset].  Because this indicates there
+is a THP corresponds to this huge swap cluster, and it isn't desired
+to split the THP.
+
+When splitting a THP in swap cache, the position to call
+split_swap_cluster() is changed to before unlocking sub-pages.  So
+that all sub-pages will be kept locked from the THP has been split to
+the huge swap cluster is split.  This makes the code much easier to be
+reasoned.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -84,126 +92,143 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- arch/x86/include/asm/pgtable.h |  2 +-
- include/asm-generic/pgtable.h  |  2 +-
- include/linux/swapops.h        | 44 ++++++++++++++++++++++--------------------
- mm/Kconfig                     |  8 ++++++++
- 4 files changed, 33 insertions(+), 23 deletions(-)
+ include/linux/swap.h |  6 ++++--
+ mm/huge_memory.c     | 18 ++++++++++------
+ mm/swapfile.c        | 58 +++++++++++++++++++++++++++++++++++++---------------
+ 3 files changed, 57 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e4ffa565a69f..194f97dc4583 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1334,7 +1334,7 @@ static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
- 	return pte_clear_flags(pte, _PAGE_SWP_SOFT_DIRTY);
- }
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 7ee8bfdd0861..1ab197a0e065 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -612,11 +612,13 @@ static inline swp_entry_t get_swap_page(struct page *page)
  
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#ifdef CONFIG_HAVE_PMD_SWAP_ENTRY
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd_set_flags(pmd, _PAGE_SWP_SOFT_DIRTY);
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 88ebc6102c7c..bf207f915967 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -675,7 +675,7 @@ static inline void ptep_modify_prot_commit(struct mm_struct *mm,
- #endif
+ #endif /* CONFIG_SWAP */
  
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
--#ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#ifndef CONFIG_HAVE_PMD_SWAP_ENTRY
- static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
- {
- 	return pmd;
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 4d961668e5fc..905ddc65caa3 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -254,17 +254,7 @@ static inline int is_write_migration_entry(swp_entry_t entry)
- 
- #endif
- 
--struct page_vma_mapped_walk;
--
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
--extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
--		struct page *page);
--
--extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
--		struct page *new);
--
--extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
--
-+#ifdef CONFIG_HAVE_PMD_SWAP_ENTRY
- static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
- {
- 	swp_entry_t arch_entry;
-@@ -282,6 +272,28 @@ static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
- 	arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
- 	return __swp_entry_to_pmd(arch_entry);
- }
-+#else
-+static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
-+{
-+	return swp_entry(0, 0);
-+}
++#define SSC_SPLIT_CACHED	0x1
 +
-+static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
-+{
-+	return __pmd(0);
-+}
-+#endif
-+
-+struct page_vma_mapped_walk;
-+
-+#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
-+		struct page *page);
-+
-+extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
-+		struct page *new);
-+
-+extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
- 
- static inline int is_pmd_migration_entry(pmd_t pmd)
- {
-@@ -302,16 +314,6 @@ static inline void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
- 
- static inline void pmd_migration_entry_wait(struct mm_struct *m, pmd_t *p) { }
- 
--static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
--{
--	return swp_entry(0, 0);
--}
--
--static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
--{
--	return __pmd(0);
--}
--
- static inline int is_pmd_migration_entry(pmd_t pmd)
+ #ifdef CONFIG_THP_SWAP
+-extern int split_swap_cluster(swp_entry_t entry);
++extern int split_swap_cluster(swp_entry_t entry, unsigned long flags);
+ extern int split_swap_cluster_map(swp_entry_t entry);
+ #else
+-static inline int split_swap_cluster(swp_entry_t entry)
++static inline int split_swap_cluster(swp_entry_t entry, unsigned long flags)
  {
  	return 0;
-diff --git a/mm/Kconfig b/mm/Kconfig
-index ce5782ff3110..0163ff069fd1 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -430,6 +430,14 @@ config THP_SWAP
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 956c49bfd208..9341c90aa286 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2496,6 +2496,17 @@ static void __split_huge_page(struct page *page, struct list_head *list,
  
- 	  For selection by architectures with reasonable THP sizes.
+ 	unfreeze_page(head);
  
-+#
-+# "PMD swap entry" in the page table is used both for migration and
-+# actual swap.
-+#
-+config HAVE_PMD_SWAP_ENTRY
-+	def_bool y
-+	depends on THP_SWAP || ARCH_ENABLE_THP_MIGRATION
++	/*
++	 * Split swap cluster before unlocking sub-pages.  So all
++	 * sub-pages will be kept locked from THP has been split to
++	 * swap cluster is split.
++	 */
++	if (PageSwapCache(head)) {
++		swp_entry_t entry = { .val = page_private(head) };
 +
- config	TRANSPARENT_HUGE_PAGECACHE
- 	def_bool y
- 	depends on TRANSPARENT_HUGEPAGE
++		split_swap_cluster(entry, SSC_SPLIT_CACHED);
++	}
++
+ 	for (i = 0; i < HPAGE_PMD_NR; i++) {
+ 		struct page *subpage = head + i;
+ 		if (subpage == page)
+@@ -2719,12 +2730,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 			__dec_node_page_state(page, NR_SHMEM_THPS);
+ 		spin_unlock(&pgdata->split_queue_lock);
+ 		__split_huge_page(page, list, flags);
+-		if (PageSwapCache(head)) {
+-			swp_entry_t entry = { .val = page_private(head) };
+-
+-			ret = split_swap_cluster(entry);
+-		} else
+-			ret = 0;
++		ret = 0;
+ 	} else {
+ 		if (IS_ENABLED(CONFIG_DEBUG_VM) && mapcount) {
+ 			pr_alert("total_mapcount: %u, page_count(): %u\n",
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 242f70c9e1f2..a16cd903d3ef 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1469,23 +1469,6 @@ void put_swap_page(struct page *page, swp_entry_t entry)
+ 	unlock_cluster_or_swap_info(si, ci);
+ }
+ 
+-#ifdef CONFIG_THP_SWAP
+-int split_swap_cluster(swp_entry_t entry)
+-{
+-	struct swap_info_struct *si;
+-	struct swap_cluster_info *ci;
+-	unsigned long offset = swp_offset(entry);
+-
+-	si = _swap_info_get(entry);
+-	if (!si)
+-		return -EBUSY;
+-	ci = lock_cluster(si, offset);
+-	cluster_clear_huge(ci);
+-	unlock_cluster(ci);
+-	return 0;
+-}
+-#endif
+-
+ static int swp_entry_cmp(const void *ent1, const void *ent2)
+ {
+ 	const swp_entry_t *e1 = ent1, *e2 = ent2;
+@@ -4064,6 +4047,47 @@ int split_swap_cluster_map(swp_entry_t entry)
+ 	unlock_cluster(ci);
+ 	return 0;
+ }
++
++/*
++ * We will not try to split all PMD swap mappings to the swap cluster,
++ * because we haven't enough information available for that.  Later,
++ * when the PMD swap mapping is duplicated or swapin, etc, the PMD
++ * swap mapping will be split and fallback to the PTE operations.
++ */
++int split_swap_cluster(swp_entry_t entry, unsigned long flags)
++{
++	struct swap_info_struct *si;
++	struct swap_cluster_info *ci;
++	unsigned long offset = swp_offset(entry);
++	int ret = 0;
++
++	si = get_swap_device(entry);
++	if (!si)
++		return -EINVAL;
++	ci = lock_cluster(si, offset);
++	/* The swap cluster has been split by someone else, we are done */
++	if (!cluster_is_huge(ci))
++		goto out;
++	VM_BUG_ON(!IS_ALIGNED(offset, SWAPFILE_CLUSTER));
++	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
++	/*
++	 * If not requested, don't split swap cluster that has SWAP_HAS_CACHE
++	 * flag.  When the flag is cleared later, the huge swap cluster will
++	 * be split if there is no PMD swap mapping.
++	 */
++	if (!(flags & SSC_SPLIT_CACHED) &&
++	    si->swap_map[offset] & SWAP_HAS_CACHE) {
++		ret = -EEXIST;
++		goto out;
++	}
++	cluster_set_swapcount(ci, 0);
++	cluster_clear_huge(ci);
++
++out:
++	unlock_cluster(ci);
++	put_swap_device(si);
++	return ret;
++}
+ #endif
+ 
+ static int __init swapfile_init(void)
 -- 
 2.16.4
 
