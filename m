@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC63C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1534CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B3020843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B3020843
+	by mail.kernel.org (Postfix) with ESMTP id CACD720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACD720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbeICV0n (ORCPT
+        id S1729605AbeICV0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:26:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39552 "EHLO
+        Mon, 3 Sep 2018 17:26:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbeICV0n (ORCPT
+        with ESMTP id S1728663AbeICV0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:26:43 -0400
+        Mon, 3 Sep 2018 17:26:49 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D50FCFE;
-        Mon,  3 Sep 2018 17:05:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C441CFE;
+        Mon,  3 Sep 2018 17:05:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, chen jie <chenjie6@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Li Zefan <lizefan@huawei.com>, Yang Shi <shy828301@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        stable@vger.kernel.org,
+        James Puthukattukaran <james.puthukattukaran@oracle.com>,
+        Ethan Zhao <ethan.zhao@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 048/107] mm/memory.c: check return value of ioremap_prot
-Date:   Mon,  3 Sep 2018 18:56:12 +0200
-Message-Id: <20180903165639.615094995@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de,
+        ethan.kernel@gmail.com, keescook@chromium.org, mcgrof@kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Steve Muckle <smuckle@google.com>
+Subject: [PATCH 4.9 049/107] sched/sysctl: Check user input value of sysctl_sched_time_avg
+Date:   Mon,  3 Sep 2018 18:56:13 +0200
+Message-Id: <20180903165639.660667612@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -54,38 +57,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "jie@chenjie6@huwei.com" <jie@chenjie6@huwei.com>
+From: Ethan Zhao <ethan.zhao@oracle.com>
 
-[ Upstream commit 24eee1e4c47977bdfb71d6f15f6011e7b6188d04 ]
+commit 5ccba44ba118a5000cccc50076b0344632459779 upstream.
 
-ioremap_prot() can return NULL which could lead to an oops.
+System will hang if user set sysctl_sched_time_avg to 0:
 
-Link: http://lkml.kernel.org/r/1533195441-58594-1-git-send-email-chenjie6@huawei.com
-Signed-off-by: chen jie <chenjie6@huawei.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Li Zefan <lizefan@huawei.com>
-Cc: chenjie <chenjie6@huawei.com>
-Cc: Yang Shi <shy828301@gmail.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  [root@XXX ~]# sysctl kernel.sched_time_avg_ms=0
+
+  Stack traceback for pid 0
+  0xffff883f6406c600 0 0 1 3 R 0xffff883f6406cf50 *swapper/3
+  ffff883f7ccc3ae8 0000000000000018 ffffffff810c4dd0 0000000000000000
+  0000000000017800 ffff883f7ccc3d78 0000000000000003 ffff883f7ccc3bf8
+  ffffffff810c4fc9 ffff883f7ccc3c08 00000000810c5043 ffff883f7ccc3c08
+  Call Trace:
+  <IRQ> [<ffffffff810c4dd0>] ? update_group_capacity+0x110/0x200
+  [<ffffffff810c4fc9>] ? update_sd_lb_stats+0x109/0x600
+  [<ffffffff810c5507>] ? find_busiest_group+0x47/0x530
+  [<ffffffff810c5b84>] ? load_balance+0x194/0x900
+  [<ffffffff810ad5ca>] ? update_rq_clock.part.83+0x1a/0xe0
+  [<ffffffff810c6d42>] ? rebalance_domains+0x152/0x290
+  [<ffffffff810c6f5c>] ? run_rebalance_domains+0xdc/0x1d0
+  [<ffffffff8108a75b>] ? __do_softirq+0xfb/0x320
+  [<ffffffff8108ac85>] ? irq_exit+0x125/0x130
+  [<ffffffff810b3a17>] ? scheduler_ipi+0x97/0x160
+  [<ffffffff81052709>] ? smp_reschedule_interrupt+0x29/0x30
+  [<ffffffff8173a1be>] ? reschedule_interrupt+0x6e/0x80
+   <EOI> [<ffffffff815bc83c>] ? cpuidle_enter_state+0xcc/0x230
+  [<ffffffff815bc80c>] ? cpuidle_enter_state+0x9c/0x230
+  [<ffffffff815bc9d7>] ? cpuidle_enter+0x17/0x20
+  [<ffffffff810cd6dc>] ? cpu_startup_entry+0x38c/0x420
+  [<ffffffff81053373>] ? start_secondary+0x173/0x1e0
+
+Because divide-by-zero error happens in function:
+
+update_group_capacity()
+  update_cpu_capacity()
+    scale_rt_capacity()
+     {
+          ...
+          total = sched_avg_period() + delta;
+          used = div_u64(avg, total);
+          ...
+     }
+
+To fix this issue, check user input value of sysctl_sched_time_avg, keep
+it unchanged when hitting invalid input, and set the minimum limit of
+sysctl_sched_time_avg to 1 ms.
+
+Reported-by: James Puthukattukaran <james.puthukattukaran@oracle.com>
+Signed-off-by: Ethan Zhao <ethan.zhao@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: efault@gmx.de
+Cc: ethan.kernel@gmail.com
+Cc: keescook@chromium.org
+Cc: mcgrof@kernel.org
+Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1504504774-18253-1-git-send-email-ethan.zhao@oracle.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Steve Muckle <smuckle@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/memory.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3861,6 +3861,9 @@ int generic_access_phys(struct vm_area_s
- 		return -EINVAL;
- 
- 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
-+	if (!maddr)
-+		return -ENOMEM;
-+
- 	if (write)
- 		memcpy_toio(maddr + offset, buf, len);
- 	else
+---
+ kernel/sysctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -345,7 +345,8 @@ static struct ctl_table kern_table[] = {
+ 		.data		= &sysctl_sched_time_avg,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &one,
+ 	},
+ 	{
+ 		.procname	= "sched_shares_window_ns",
 
 
