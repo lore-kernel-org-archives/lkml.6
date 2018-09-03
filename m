@@ -2,112 +2,106 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AC4C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B001C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E232220867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:42:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E232220867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0E57F20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E57F20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeICSCk (ORCPT
+        id S1727462AbeICSDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:02:40 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57092 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeICSCj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:02:39 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id F3E4280638; Mon,  3 Sep 2018 15:42:22 +0200 (CEST)
-Date:   Mon, 3 Sep 2018 15:42:22 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "aliguori@amazon.com" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        "hughd@google.com" <hughd@google.com>,
-        "keescook@google.com" <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>
-Subject: Re: [PATCH AUTOSEL 4.4 22/47] x86/mm: Remove in_nmi() warning from
- vmalloc_fault()
-Message-ID: <20180903134222.GA9051@amd>
-References: <20180902131533.184092-1-alexander.levin@microsoft.com>
- <20180902131533.184092-22-alexander.levin@microsoft.com>
+        Mon, 3 Sep 2018 14:03:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45342 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725982AbeICSDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 14:03:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CE834AE46;
+        Mon,  3 Sep 2018 13:43:14 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 15:43:13 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Harry Cutts <hcutts@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc:     linux-input <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jiri Kosina <jiri.kosina@suse.cz>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2 1/5] Add the `REL_WHEEL_HI_RES` event code
+In-Reply-To: <20180830215622.47550-2-hcutts@chromium.org>
+Message-ID: <nycvar.YFH.7.76.1809031542370.25787@cbobk.fhfr.pm>
+References: <20180830215622.47550-1-hcutts@chromium.org> <20180830215622.47550-2-hcutts@chromium.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Content-Disposition: inline
-In-Reply-To: <20180902131533.184092-22-alexander.levin@microsoft.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 30 Aug 2018, Harry Cutts wrote:
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This event code represents scroll reports from high-resolution wheels,
+> and will be used by future patches in this series. See the linux-input
+> "Reporting high-resolution scroll events" thread [0] for more details.
+> 
+> [0]: https://www.spinics.net/lists/linux-input/msg57380.html
+> 
+> Signed-off-by: Harry Cutts <hcutts@chromium.org>
+> ---
+> 
+> Changes in v2: None
+> 
+>  Documentation/input/event-codes.rst    | 11 ++++++++++-
+>  include/uapi/linux/input-event-codes.h |  1 +
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
+> index a8c0873beb95..cef220c176a4 100644
+> --- a/Documentation/input/event-codes.rst
+> +++ b/Documentation/input/event-codes.rst
+> @@ -190,7 +190,16 @@ A few EV_REL codes have special meanings:
+>  * REL_WHEEL, REL_HWHEEL:
+>  
+>    - These codes are used for vertical and horizontal scroll wheels,
+> -    respectively.
+> +    respectively. The value is the number of "notches" moved on the wheel, the
+> +    physical size of which varies by device. For high-resolution wheels (which
+> +    report multiple events for each notch of movement, or do not have notches)
+> +    this may be an approximation based on the high-resolution scroll events.
+> +
+> +* REL_WHEEL_HI_RES:
+> +
+> +  - If a vertical scroll wheel supports high-resolution scrolling, this code
+> +    will be emitted in addition to REL_WHEEL. The value is the (approximate)
+> +    distance travelled by the user's finger, in microns.
+>  
+>  EV_ABS
+>  ------
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 53fbae27b280..dad8d3890a3a 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -708,6 +708,7 @@
+>  #define REL_DIAL		0x07
+>  #define REL_WHEEL		0x08
+>  #define REL_MISC		0x09
+> +#define REL_WHEEL_HI_RES	0x0a
+>  #define REL_MAX			0x0f
+>  #define REL_CNT			(REL_MAX+1)
 
-On Sun 2018-09-02 13:16:04, Sasha Levin wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->=20
-> [ Upstream commit 6863ea0cda8725072522cd78bda332d9a0b73150 ]
->=20
-> It is perfectly okay to take page-faults, especially on the
-> vmalloc area while executing an NMI handler. Remove the
-> warning.
+Dmitry, is this OK with you?
 
-I don't think this meets stable kernel criteria, as documented.
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Thanks,
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- 
+Jiri Kosina
+SUSE Labs
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluNOj4ACgkQMOfwapXb+vLQ5ACggisQLs6xPNkrhLyLzaD65oRe
-eN0An2dy6POaB9++gQ4es36+ZqRbEOTc
-=gAlJ
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
