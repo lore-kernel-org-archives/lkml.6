@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA18CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D557BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3E12077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3E12077C
+	by mail.kernel.org (Postfix) with ESMTP id 9A1722077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1722077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbeICViP (ORCPT
+        id S1730134AbeICViS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42720 "EHLO
+        Mon, 3 Sep 2018 17:38:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728774AbeICViO (ORCPT
+        with ESMTP id S1728154AbeICViS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:14 -0400
+        Mon, 3 Sep 2018 17:38:18 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55A5ED13;
-        Mon,  3 Sep 2018 17:17:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DBA3D10;
+        Mon,  3 Sep 2018 17:17:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 040/165] can: m_can: Move accessing of message ram to after clocks are enabled
-Date:   Mon,  3 Sep 2018 18:55:26 +0200
-Message-Id: <20180903165657.110812303@linuxfoundation.org>
+Subject: [PATCH 4.14 041/165] i2c: davinci: Avoid zero value of CLKH
+Date:   Mon,  3 Sep 2018 18:55:27 +0200
+Message-Id: <20180903165657.184121399@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,58 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-[ Upstream commit 54e4a0c486041dc1c20593d997fafd67089e8408 ]
+[ Upstream commit cc8de9a68599b261244ea453b38678229f06ada7 ]
 
-MCAN message ram should only be accessed once clocks are enabled.
-Therefore, move the call to parse/init the message ram to after
-clocks are enabled.
+If CLKH is set to 0 I2C clock is not generated at all, so avoid this value
+and stretch the clock in this case.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/m_can/m_can.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-davinci.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1637,8 +1637,6 @@ static int m_can_plat_probe(struct platf
- 	priv->can.clock.freq = clk_get_rate(cclk);
- 	priv->mram_base = mram_addr;
- 
--	m_can_of_parse_mram(priv, mram_config_vals);
--
- 	platform_set_drvdata(pdev, dev);
- 	SET_NETDEV_DEV(dev, &pdev->dev);
- 
-@@ -1649,6 +1647,8 @@ static int m_can_plat_probe(struct platf
- 		goto failed_free_dev;
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -234,12 +234,16 @@ static void i2c_davinci_calc_clk_divider
+ 	/*
+ 	 * It's not always possible to have 1 to 2 ratio when d=7, so fall back
+ 	 * to minimal possible clkh in this case.
++	 *
++	 * Note:
++	 * CLKH is not allowed to be 0, in this case I2C clock is not generated
++	 * at all
+ 	 */
+-	if (clk >= clkl + d) {
++	if (clk > clkl + d) {
+ 		clkh = clk - clkl - d;
+ 		clkl -= d;
+ 	} else {
+-		clkh = 0;
++		clkh = 1;
+ 		clkl = clk - (d << 1);
  	}
  
-+	m_can_of_parse_mram(priv, mram_config_vals);
-+
- 	devm_can_led_init(dev);
- 
- 	dev_info(&pdev->dev, "%s device registered (irq=%d, version=%d)\n",
-@@ -1698,8 +1698,6 @@ static __maybe_unused int m_can_resume(s
- 
- 	pinctrl_pm_select_default_state(dev);
- 
--	m_can_init_ram(priv);
--
- 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
- 
- 	if (netif_running(ndev)) {
-@@ -1709,6 +1707,7 @@ static __maybe_unused int m_can_resume(s
- 		if (ret)
- 			return ret;
- 
-+		m_can_init_ram(priv);
- 		m_can_start(ndev);
- 		netif_device_attach(ndev);
- 		netif_start_queue(ndev);
 
 
