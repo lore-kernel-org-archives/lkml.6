@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2A5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D600FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9355420843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9355420843
+	by mail.kernel.org (Postfix) with ESMTP id 9717620779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9717620779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbeICV0Z (ORCPT
+        id S1729539AbeICV0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:26:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39484 "EHLO
+        Mon, 3 Sep 2018 17:26:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39498 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729090AbeICV0Y (ORCPT
+        with ESMTP id S1729124AbeICV03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:26:24 -0400
+        Mon, 3 Sep 2018 17:26:29 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DECCD07;
-        Mon,  3 Sep 2018 17:05:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CFDFCFE;
+        Mon,  3 Sep 2018 17:05:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 043/107] drivers: net: lmc: fix case value for target abort error
-Date:   Mon,  3 Sep 2018 18:56:07 +0200
-Message-Id: <20180903165639.366766932@linuxfoundation.org>
+Subject: [PATCH 4.9 044/107] memcg: remove memcg_cgroup::id from IDR on mem_cgroup_css_alloc() failure
+Date:   Mon,  3 Sep 2018 18:56:08 +0200
+Message-Id: <20180903165639.410421065@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,35 +55,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit afb41bb039656f0cecb54eeb8b2e2088201295f5 ]
+[ Upstream commit 7e97de0b033bcac4fa9a35cef72e0c06e6a22c67 ]
 
-Current value for a target abort error is 0x010, however, this value
-should in fact be 0x002.  As it stands, the range of error is 0..7 so
-it is currently never being detected.  This bug has been in the driver
-since the early 2.6.12 days (or before).
+In case of memcg_online_kmem() failure, memcg_cgroup::id remains hashed
+in mem_cgroup_idr even after memcg memory is freed.  This leads to leak
+of ID in mem_cgroup_idr.
 
-Detected by CoverityScan, CID#744290 ("Logically dead code")
+This patch adds removal into mem_cgroup_css_alloc(), which fixes the
+problem.  For better readability, it adds a generic helper which is used
+in mem_cgroup_alloc() and mem_cgroup_id_put_many() as well.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/152354470916.22460.14397070748001974638.stgit@localhost.localdomain
+Fixes 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure after many small jobs")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/lmc/lmc_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memcontrol.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wan/lmc/lmc_main.c
-+++ b/drivers/net/wan/lmc/lmc_main.c
-@@ -1372,7 +1372,7 @@ static irqreturn_t lmc_interrupt (int ir
-             case 0x001:
-                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
-                 break;
--            case 0x010:
-+            case 0x002:
-                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
-                 break;
-             default:
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4072,6 +4072,14 @@ static struct cftype mem_cgroup_legacy_f
+ 
+ static DEFINE_IDR(mem_cgroup_idr);
+ 
++static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
++{
++	if (memcg->id.id > 0) {
++		idr_remove(&mem_cgroup_idr, memcg->id.id);
++		memcg->id.id = 0;
++	}
++}
++
+ static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
+ {
+ 	VM_BUG_ON(atomic_read(&memcg->id.ref) <= 0);
+@@ -4082,8 +4090,7 @@ static void mem_cgroup_id_put_many(struc
+ {
+ 	VM_BUG_ON(atomic_read(&memcg->id.ref) < n);
+ 	if (atomic_sub_and_test(n, &memcg->id.ref)) {
+-		idr_remove(&mem_cgroup_idr, memcg->id.id);
+-		memcg->id.id = 0;
++		mem_cgroup_id_remove(memcg);
+ 
+ 		/* Memcg ID pins CSS */
+ 		css_put(&memcg->css);
+@@ -4208,8 +4215,7 @@ static struct mem_cgroup *mem_cgroup_all
+ 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+ 	return memcg;
+ fail:
+-	if (memcg->id.id > 0)
+-		idr_remove(&mem_cgroup_idr, memcg->id.id);
++	mem_cgroup_id_remove(memcg);
+ 	__mem_cgroup_free(memcg);
+ 	return NULL;
+ }
+@@ -4268,6 +4274,7 @@ mem_cgroup_css_alloc(struct cgroup_subsy
+ 
+ 	return &memcg->css;
+ fail:
++	mem_cgroup_id_remove(memcg);
+ 	mem_cgroup_free(memcg);
+ 	return ERR_PTR(-ENOMEM);
+ }
 
 
