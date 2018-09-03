@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D328C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2542077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2542077C
+	by mail.kernel.org (Postfix) with ESMTP id 3F6EA20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6EA20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbeICVg4 (ORCPT
+        id S1729783AbeICVg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42456 "EHLO
+        Mon, 3 Sep 2018 17:36:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeICVg4 (ORCPT
+        with ESMTP id S1727944AbeICVg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:56 -0400
+        Mon, 3 Sep 2018 17:36:58 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C206CD06;
-        Mon,  3 Sep 2018 17:15:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C96EBD06;
+        Mon,  3 Sep 2018 17:15:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Eyal Birger <eyal.birger@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 017/165] usb: gadget: r8a66597: Fix a possible sleep-in-atomic-context bugs in r8a66597_queue()
-Date:   Mon,  3 Sep 2018 18:55:03 +0200
-Message-Id: <20180903165655.891250346@linuxfoundation.org>
+Subject: [PATCH 4.14 002/165] vti6: fix PMTU caching and reporting on xmit
+Date:   Mon,  3 Sep 2018 18:54:48 +0200
+Message-Id: <20180903165655.128471631@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,46 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Eyal Birger <eyal.birger@gmail.com>
 
-[ Upstream commit f36b507c14c4b6e634463a610294e9cb0065c8ea ]
+[ Upstream commit d6990976af7c5d8f55903bfb4289b6fb030bf754 ]
 
-The driver may sleep in an interrupt handler.
-The function call path (from bottom to top) in Linux-4.16.7 is:
+When setting the skb->dst before doing the MTU check, the route PMTU
+caching and reporting is done on the new dst which is about to be
+released.
 
-[FUNC] r8a66597_queue(GFP_KERNEL)
-drivers/usb/gadget/udc/r8a66597-udc.c, 1193:
-		r8a66597_queue in get_status
-drivers/usb/gadget/udc/r8a66597-udc.c, 1301:
-		get_status in setup_packet
-drivers/usb/gadget/udc/r8a66597-udc.c, 1381:
-		setup_packet in irq_control_stage
-drivers/usb/gadget/udc/r8a66597-udc.c, 1508:
-		irq_control_stage in r8a66597_irq (interrupt handler)
+Instead, PMTU handling should be done using the original dst.
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+This is aligned with IPv4 VTI.
 
-This bug is found by my static analysis tool (DSAC-2) and checked by
-my code review.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: ccd740cbc6 ("vti6: Add pmtu handling to vti6_xmit.")
+Signed-off-by: Eyal Birger <eyal.birger@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/r8a66597-udc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_vti.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/gadget/udc/r8a66597-udc.c
-+++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-@@ -1193,7 +1193,7 @@ __acquires(r8a66597->lock)
- 	r8a66597->ep0_req->length = 2;
- 	/* AV: what happens if we get called again before that gets through? */
- 	spin_unlock(&r8a66597->lock);
--	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_KERNEL);
-+	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_ATOMIC);
- 	spin_lock(&r8a66597->lock);
- }
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -480,10 +480,6 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 		goto tx_err_dst_release;
+ 	}
  
+-	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
+-	skb_dst_set(skb, dst);
+-	skb->dev = skb_dst(skb)->dev;
+-
+ 	mtu = dst_mtu(dst);
+ 	if (!skb->ignore_df && skb->len > mtu) {
+ 		skb_dst_update_pmtu(skb, mtu);
+@@ -498,9 +494,14 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 				  htonl(mtu));
+ 		}
+ 
+-		return -EMSGSIZE;
++		err = -EMSGSIZE;
++		goto tx_err_dst_release;
+ 	}
+ 
++	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
++	skb_dst_set(skb, dst);
++	skb->dev = skb_dst(skb)->dev;
++
+ 	err = dst_output(t->net, skb->sk, skb);
+ 	if (net_xmit_eval(err) == 0) {
+ 		struct pcpu_sw_netstats *tstats = this_cpu_ptr(dev->tstats);
 
 
