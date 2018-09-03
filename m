@@ -4,115 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CD9C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071FBC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E8920868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:42:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 924C320843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5aoeOv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E8920868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZUZKoPI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924C320843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeICTCe (ORCPT
+        id S1727254AbeICTE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:02:34 -0400
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:44299 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeICTCd (ORCPT
+        Mon, 3 Sep 2018 15:04:57 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37325 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:02:33 -0400
-Received: by mail-qt0-f181.google.com with SMTP id k38-v6so780625qtk.11;
-        Mon, 03 Sep 2018 07:42:05 -0700 (PDT)
+        Mon, 3 Sep 2018 15:04:57 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f1-v6so310556plt.4;
+        Mon, 03 Sep 2018 07:44:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vIJpQ2/7/Bxl3yv8ey/sS46SNy0nhZkBUnQ7/EnnyAA=;
-        b=l5aoeOv7hVZ428cimtP4wyzFSPKN5WmYQ25s8FIkfd4xX+HA9T6DcDMOM96zoxbvHp
-         Xbs6Vuy9UAe2SUCzac1VeoCFg67sxbvQ1PEmYGeCQdrXaha3wyXrCrbhcP2MgCLyLc0P
-         9JwmaIe2PR0BpfNoBL5AQ25Qij7qQlicBIcPlRC1cMf0DJkZGCJne5C8SgggISDr4uH6
-         DdOmZSOqjGOesqb/QrqnIJqhHTgD19rw8VsSJdYzhtjBazwwwSbcC9H16x9wxEzcMT5J
-         ludlHePjCRHVJa1kpsxx2PfLzjecX2lxe8C6gt364F8lhWBV4NX3NYGvoRBvTrWuAi6O
-         OSAw==
+         :cc:content-transfer-encoding;
+        bh=zFIa4yTHD2cv+PEcsrYAmx8BGULwCR2msK+b5KYdg+I=;
+        b=OZUZKoPIHPZsEW4Cqqo7SnfaA6Brmc9dRedk8cEiKnWhQYJmjGuaqUbDPuINe1BYjn
+         x2ZPwxUqnUdBsC59kx8gF9hBtW3D+tCODOv/vZgY3mJGIs43RVcWxNWvlc8HmubpEmBA
+         c2A9iCTjHjNVAg8wfWNjRGov7ckAtRIhYFpFwa0XRt3br15sCC7F5KMQ8CINvcUabW3R
+         PwiBxAJFuDkK3KgKMIelV/RxL5lp1PjLX6A/sUgbHesFUgi+K9y4HgX5cMEP2HFZ4bgD
+         Ide2mrPKh0+3jLZhhC6r2FyhHqLsXideeJRw/LYWRA8iqne+vOMlQQ02euebl0pVRlss
+         JaaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vIJpQ2/7/Bxl3yv8ey/sS46SNy0nhZkBUnQ7/EnnyAA=;
-        b=JZgoilOO/pa27ciIEKRpk0+2Nr3qhs0ak6BeyYdNNy1FrrZ4pxlh87B1YLnkq5DLz+
-         DlJUzTWccWzhm6pYptt+Q9HOT0FZQ0IeR+euC77UKyukjecRo7hbT75k4FnbYxV6+MYV
-         21RGUxnguuhqa2jKxWnXKQd9gjEgf5JuDpLqanpAt5zvDIA1aW7+/gTYVElBCiKXfs/1
-         xcpe5Kj8zj2MotWPX9ukZtJVV7R4D4LzaM4lcPpEx+7BwLAzV0iQc1tqltLySupMQRSF
-         VUnPrSfHzINBS++7lyWglIqQXHVzYr5KrmxH7EvaXjzOp8CuhWeDi4YAif+AplwseQ87
-         uT8Q==
-X-Gm-Message-State: APzg51AWA9zXeU7tMlmVjZWb5xE1bPSJPgdR2xcjzrwsgo2AGbYEj962
-        YyvAP+riBbsN6vTtS1i9iq03klaMt2DCPathC64=
-X-Google-Smtp-Source: ANB0VdYWEj44kv/QEZozJCQ8pK5swwVTNCfjgsbD93SV2F8jinziA60FG/xxl81yOKVjliCtAMybnw8WdVH4UgMN05g=
-X-Received: by 2002:a0c:e985:: with SMTP id z5-v6mr25946319qvn.136.1535985724616;
- Mon, 03 Sep 2018 07:42:04 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zFIa4yTHD2cv+PEcsrYAmx8BGULwCR2msK+b5KYdg+I=;
+        b=IVmk/XhKB74ZsqsOUMUYy36gckOE0ow/DANWMzF2xaQQFW72xkyRwKH+dujSijjsp0
+         36tNrjeWZ/JLqBClowqkbZ8tdzGbrlRyHK5ig8z5l/nfGWc64ASgiloplrSt8N83LxX6
+         q1mcBkBRMwsaFkO9vv13jsozdo1zszSgyHnDdByWuRxxG4A0RS53a+qkeQ7RBCO9majd
+         VE84BfJ0J1th4qo5+cy0qOTij7THVs+mrIg2ixG9W1nvSfNB25LhFcbLBPnZzbWwqDiW
+         SJPRBxQ3EGVeWntuHp6MBVAK1g0/2imWLW9QJfp7Upxt/zs45JkuxShk7LGfq310oGKU
+         v9fQ==
+X-Gm-Message-State: APzg51DGAzBxs9+UkdR10tlVR6UhzEkhfyLL8kHesWp6XEQh9ba+4M/T
+        +LCK+hCeIJ5qsEMNpEAyGPGGqjCpZyaLCIB3eHeH5A==
+X-Google-Smtp-Source: ANB0VdaK+qbAXK2IcZa/YChQr02zS60OFlF+h0dqyQJ9Z6YDZZfNPpk8rh1AdobPej83ZIwkSQV+uAMABHY+OoWhBAI=
+X-Received: by 2002:a17:902:ac1:: with SMTP id 59-v6mr28778422plp.18.1535985868266;
+ Mon, 03 Sep 2018 07:44:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 3 Sep 2018 17:41:53 +0300
-Message-ID: <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
-Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
- EPC pages
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        serge.ayoun@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180903131558.21cdeb35@canb.auug.org.au>
+In-Reply-To: <20180903131558.21cdeb35@canb.auug.org.au>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 3 Sep 2018 09:44:17 -0500
+Message-ID: <CAH2r5mu99E39iwx=70w6F5MxvNh1MrzbVwTRb2e8dmz9WU52sw@mail.gmail.com>
+Subject: Re: [PATCH] fs/cifs: suppress a string overflow warning
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+Merged into cifs-2.6.git for-next
+
+Is the message annoying enough on powerpc to merit going into
+4.19-rc3, presumably should wait for 4.20?
+On Sun, Sep 2, 2018 at 10:24 PM Stephen Rothwell <sfr@canb.auug.org.au> wro=
+te:
 >
-> Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
-> divided into multiple banks (1-N) of which addresses and sizes can be
-> enumerated with CPUID by the OS.
+> A powerpc build of cifs with gcc v8.2.0 produces this warning:
 >
-> On NUMA systems a node can have at most bank. A bank can be at most part of
-> two nodes. SGX supports both nodes with a single memory controller and also
-> sub-cluster nodes with severals memory controllers on a single die.
+> fs/cifs/cifssmb.c: In function =E2=80=98CIFSSMBNegotiate=E2=80=99:
+> fs/cifs/cifssmb.c:605:3: warning: =E2=80=98strncpy=E2=80=99 writing 16 by=
+tes into a region of size 1 overflows the destination [-Wstringop-overflow=
+=3D]
+>    strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Since we are already doing a strlen() on the source, change the strncpy
+> to a memcpy().
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/cifs/cifssmb.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+> index dc2f4cf08fe9..dcf939cb9d2f 100644
+> --- a/fs/cifs/cifssmb.c
+> +++ b/fs/cifs/cifssmb.c
+> @@ -601,10 +601,14 @@ CIFSSMBNegotiate(const unsigned int xid, struct cif=
+s_ses *ses)
+>         }
+>
+>         count =3D 0;
+> +       /*
+> +        * We know that all the name entries in the protocols array
+> +        * are short (< 16 bytes anyway) and are NUL terminated.
+> +        */
+>         for (i =3D 0; i < CIFS_NUM_PROT; i++) {
+> -               strncpy(pSMB->DialectsArray+count, protocols[i].name, 16)=
+;
+> -               count +=3D strlen(protocols[i].name) + 1;
+> -               /* null at end of source and target buffers anyway */
+> +               size_t len =3D strlen(protocols[i].name) + 1;
+> +               memcpy(pSMB->DialectsArray+count, protocols[i].name, len)=
+;
+> +               count +=3D len;
+>         }
+>         inc_rfc1001_len(pSMB, count);
+>         pSMB->ByteCount =3D cpu_to_le16(count);
+> --
+> 2.19.0.rc1
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-> -#include <asm/sgx.h>
-> -#include <asm/sgx_pr.h>
->  #include <linux/freezer.h>
->  #include <linux/highmem.h>
->  #include <linux/kthread.h>
-> +#include <linux/pagemap.h>
->  #include <linux/ratelimit.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/shmem_fs.h>
->  #include <linux/slab.h>
-> +#include <asm/sgx.h>
-> +#include <asm/sgx_pr.h>
 
-Squash issues?
 
-> +       va = ioremap_cache(addr, size);
-> +       if (!va)
-> +               return -ENOMEM;
+--=20
+Thanks,
 
-I'm not sure this is a right API. Do we operate with memory? Does it
-have I/O side effects?
-If no, memremap() would be better to use.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Steve
