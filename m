@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5875C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7599C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 874CB20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874CB20779
+	by mail.kernel.org (Postfix) with ESMTP id 96F9E20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F9E20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeICVMl (ORCPT
+        id S1728326AbeICVMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:12:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36380 "EHLO
+        Mon, 3 Sep 2018 17:12:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727740AbeICVMk (ORCPT
+        with ESMTP id S1727648AbeICVMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:12:40 -0400
+        Mon, 3 Sep 2018 17:12:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D69A6CF3;
-        Mon,  3 Sep 2018 16:51:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BD6BCEE;
+        Mon,  3 Sep 2018 16:51:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 3.18 39/56] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
-Date:   Mon,  3 Sep 2018 18:49:29 +0200
-Message-Id: <20180903164926.005307025@linuxfoundation.org>
+        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 3.18 40/56] KVM: arm/arm64: Skip updating PTE entry if no change
+Date:   Mon,  3 Sep 2018 18:49:30 +0200
+Message-Id: <20180903164926.049897187@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -50,59 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Hackmann <ghackmann@android.com>
+From: Punit Agrawal <punit.agrawal@arm.com>
 
-commit 5ad356eabc47d26a92140a0c4b20eba471c10de3 upstream.
+commit 976d34e2dab10ece5ea8fe7090b7692913f89084 upstream.
 
-ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
-before seeing if the PFN is valid.  This leads to false positives when
-some of the upper bits are set, but the lower bits match a valid PFN.
+When there is contention on faulting in a particular page table entry
+at stage 2, the break-before-make requirement of the architecture can
+lead to additional refaulting due to TLB invalidation.
 
-For example, the following userspace code looks up a bogus entry in
-/proc/kpageflags:
+Avoid this by skipping a page table update if the new value of the PTE
+matches the previous value.
 
-    int pagemap = open("/proc/self/pagemap", O_RDONLY);
-    int pageflags = open("/proc/kpageflags", O_RDONLY);
-    uint64_t pfn, val;
-
-    lseek64(pagemap, [...], SEEK_SET);
-    read(pagemap, &pfn, sizeof(pfn));
-    if (pfn & (1UL << 63)) {        /* valid PFN */
-        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
-        pfn |= (1UL << 55);
-        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
-        read(pageflags, &val, sizeof(val));
-    }
-
-On ARM64 this causes the userspace process to crash with SIGSEGV rather
-than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
-valid, and stable_page_flags() will try to access an address between the
-user and kernel address ranges.
-
-Fixes: c1cc1552616d ("arm64: MMU initialisation")
 Cc: stable@vger.kernel.org
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: d5d8184d35c9 ("KVM: ARM: Memory virtualization setup")
+Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/init.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/kvm/mmu.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -116,7 +116,11 @@ static void __init zone_sizes_init(unsig
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
- int pfn_valid(unsigned long pfn)
- {
--	return memblock_is_memory(pfn << PAGE_SHIFT);
-+	phys_addr_t addr = pfn << PAGE_SHIFT;
+--- a/arch/arm/kvm/mmu.c
++++ b/arch/arm/kvm/mmu.c
+@@ -898,6 +898,10 @@ static int stage2_set_pte(struct kvm *kv
+ 	/* Create 2nd stage page table mapping - Level 3 */
+ 	old_pte = *pte;
+ 	if (pte_present(old_pte)) {
++		/* Skip page table update if there is no change */
++		if (pte_val(old_pte) == pte_val(*new_pte))
++			return 0;
 +
-+	if ((addr >> PAGE_SHIFT) != pfn)
-+		return 0;
-+	return memblock_is_memory(addr);
- }
- EXPORT_SYMBOL(pfn_valid);
- #endif
+ 		kvm_set_pte(pte, __pte(0));
+ 		kvm_tlb_flush_vmid_ipa(kvm, addr);
+ 	} else {
 
 
