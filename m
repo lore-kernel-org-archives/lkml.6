@@ -2,99 +2,101 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C02C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742CCC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E5720645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E5720645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id 0690F20856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="trc9vU0P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0690F20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbeICI6o (ORCPT
+        id S1726090AbeICJCi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 04:58:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53822 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeICI6o (ORCPT
+        Mon, 3 Sep 2018 05:02:38 -0400
+Received: from sonic317-21.consmr.mail.gq1.yahoo.com ([98.137.66.147]:38062
+        "EHLO sonic317-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbeICJCi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 04:58:44 -0400
-Received: by mail-wm0-f68.google.com with SMTP id b19-v6so10103723wme.3;
-        Sun, 02 Sep 2018 21:40:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0Ttasv9wAA50TWH1RmglYBXDp2m1htM+fUMfHro5KZg=;
-        b=sbB2COJyBJg8BtdrFr3O1uz3867NMXApilNuhN2LkcqKkLun9/kQRXkzkNklxcZrnv
-         tN/2MP8f/jbl6RDWMhtw3FeE0ppujI5iI9UEqTiYbcGdCpYA8ZsniT+rPrQK8ka7jTxl
-         kEWXTWDAaZCJ/xH8Hn7RQO4skHd8abD2etvmbp/xfH1aW1sZFqJRQeP1/ZeujtTNTr5a
-         zUAlXgl5IPs8kVgsqntdvbZt1+hELd5N9VL9rU2WodChmfxsMmibG9IX2UTKIvp3K/vT
-         wzaaHitzJWOShEHsNCLkRjbP4cDB54khIRdZQDcYG8N40EyG7ThC51HXw0XdiajJHlGC
-         kQiA==
-X-Gm-Message-State: APzg51AzJtPwcuz42ysBLr0nfAY3D0wupfLek/3XH1LIm6ubpI3arDGL
-        tvOzRl0F49JKA0oeg976NbH4PvfRuy2+lw==
-X-Google-Smtp-Source: ANB0VdZawAX0s1mdbLGugqOsIrHxb88cKb9qNHcYNMRm/8qt/xBm5htH3xrs5VL6O0hA5R5+yvMDXw==
-X-Received: by 2002:a1c:ae94:: with SMTP id x142-v6mr4239910wme.125.1535949618361;
-        Sun, 02 Sep 2018 21:40:18 -0700 (PDT)
-Received: from localhost.localdomain ([88.128.81.0])
-        by smtp.gmail.com with ESMTPSA id j66-v6sm22453364wrj.28.2018.09.02.21.40.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 21:40:17 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, dsahern@gmail.com, fw@strlen.de,
-        ktkhai@virtuozzo.com, lucien.xin@gmail.com,
-        jakub.kicinski@netronome.com, jbenc@redhat.com,
-        nicolas.dichtel@6wind.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next v1 5/5] rtnetlink: move type calculation out of loop
-Date:   Mon,  3 Sep 2018 06:37:17 +0200
-Message-Id: <20180903043717.20136-6-christian@brauner.io>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180903043717.20136-1-christian@brauner.io>
-References: <20180903043717.20136-1-christian@brauner.io>
+        Mon, 3 Sep 2018 05:02:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535949853; bh=+tdaBhvfA6ACIzYropgbQHNpkuA78VFj1YyZ/OxSz0U=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=trc9vU0P7Blj1oXflibLE4RXNCNuAWUtwh5LW0DMKYZCbnRZ23SzMrE0b7BQMrKye1CmMr9JOW9be8qpkE7DX+o2ZsJfSO7Fr3vJnYW6aYegVg3/zZs97Z6va1AmKmBsG+SO6qEaJRiX4L1WRoVeS+se/jP2bz1DBUPyrH7jY8NhchRhXAgvRFaAyVscj5a1RRv5L5RFcSwYlmpiYoPyK/FFE3wbVTV8aCwv9ZiXC9kLKHmw9d5Kq9uYb1XEys5g66AgzdJXjYlnoa218zBGebkyT6YXhz4riTByjaWXp7s9SCj6nvNk6BukeF+9sqzEQjDHhcd7m3zS3OqqdMzGPA==
+X-YMail-OSG: dx7nWyoVM1mlp69BN4y1cWf.s8KWObTS.giAXbxonlXLWZwZtev0HpHVtp2lrFc
+ sLTo7gAVbz6poVATv42EvoAnXtQpWrhRc.IEKXF7iwXSIJykfECEZ3LFh.grAOsVsXVB4IrHasIL
+ _WQDfcVH0mrXQ5ypQ95njLtvCbeGcV4AVWZHw3myteEh2hFnS2862VIJVzqheyb6D66FXDth2wk6
+ PONYu5FI4SxEobq7uU9A2hrgkfNyHJhmVH909akIYhZOYqXZzDZCvTZEtbvUG8Cwlk7S15CWmYwB
+ mDM1sCcRK9ni3Ar0ruAi.nFPTGu3RSI1sVX.F5fbOBhgABs8ooUVJnQjIQnRl7uGazkLj4BB4Yw6
+ MyLDWSFVFhX_N1o489zFqR.nSqBnsdDSslQr.pvf3ZaffEXAn7euwxCRi.FyOxIO9lS5VIULUtyO
+ Hl1l9iF8n_.WHu8aztj4vLYbdwVU_ZICS5jqv0DDEgt4xIxGrHwDv5ef5khhc_lmPYulSRONyidK
+ M5IFUMCUPxhfpuQjtoBBOp3VUoJU0ZR2YV_6NLknGXLKvpB7T6Sxz9R9Om7gxcZJvnWiPtOnGEyK
+ htLAVaqkp9MYK95EwQcqpEKDTCMesAv4Y27e._u7mNcy8khm7RzdBdV853VhfpUL7ypoTpnDiv7p
+ zgQ2Jqwt.gWvOiEQkmGqiAEm9WtbF2CZAat3ZxvcAFZRahe6l1urq4vAusSB0Kx_YpK.QS6YiDU7
+ zOMvhYSdDeKB8.BMIyjljAzaXzH4LO35bKOUTxcMfaC7Rb_zkAsY49g9aIfZzspy2dcSOr.86LiA
+ 2ejccs4iY5i_NN8r952VS7miZm7GHmq58hbCxh57vgHwHJrtEoB0hZWC7XhaiwO.6vCBAbBGG8WB
+ sfwYnBhHUfDRSLRs_OCt.dSxz1yOry5kVtJDQM6G3d7X8NZYiciqPWHEcma2Oy9.jnGiwSrjSJid
+ lmQfszwwrdV0FCpsEhxb8XYU71MIp8bd1LRIB9S3WPBgEoFoJx_mqhjCmARGd7wMsnrd2ih9XndR
+ hFgs-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.gq1.yahoo.com with HTTP; Mon, 3 Sep 2018 04:44:13 +0000
+Received: from 112.65.61.168 (EHLO [192.168.43.103]) ([112.65.61.168])
+          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 90111a54ab897a406ba6a648e23b194d;
+          Mon, 03 Sep 2018 04:44:08 +0000 (UTC)
+Subject: Re: [PATCH 5/6] staging: erofs: formatting alignment parenthesis
+To:     Chao Yu <yuchao0@huawei.com>,
+        Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ldv-project@linuxtesting.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
+ <1535642042-5336-5-git-send-email-zemlyanoy@ispras.ru>
+ <aaa483c4-2bb1-97fa-fcea-2970c9ea5444@huawei.com>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <2d7869f6-bff2-ef40-b2b6-b5e73cb92bb5@aol.com>
+Date:   Mon, 3 Sep 2018 12:43:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <aaa483c4-2bb1-97fa-fcea-2970c9ea5444@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't see how the type - which is one of
-RTM_{GETADDR,GETROUTE,GETNETCONF} - can change. So do the message type
-calculation once before entering the for loop.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v0->v1:
-- unchanged
----
- net/core/rtnetlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 30645d9a9801..b36dab7507a0 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3265,13 +3265,13 @@ static int rtnl_dump_all(struct sk_buff *skb, struct netlink_callback *cb)
- {
- 	int idx;
- 	int s_idx = cb->family;
-+	int type = cb->nlh->nlmsg_type - RTM_BASE;
- 
- 	if (s_idx == 0)
- 		s_idx = 1;
- 
- 	for (idx = 1; idx <= RTNL_FAMILY_MAX; idx++) {
- 		struct rtnl_link **tab;
--		int type = cb->nlh->nlmsg_type-RTM_BASE;
- 		struct rtnl_link *link;
- 		rtnl_dumpit_func dumpit;
- 
--- 
-2.17.1
+On 2018/9/3 9:49, Chao Yu wrote:
+> On 2018/8/30 23:14, Pavel Zemlyanoy wrote:
+>> This patch does not change the logic, it only
+>> corrects the formatting and checkpatch check by
+>> alignment should match open parenthesis.
+>>
+>> The patch fixes 2 check of type:
+>> "Check: Alignment should match open parenthesis".
+>>
+>> Signed-off-by: Pavel Zemlyanoy <zemlyanoy@ispras.ru>
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
 
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+
+Thanks,
+Gao Xiang
+
+> Thanks,
+> 
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> 
