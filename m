@@ -2,137 +2,95 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A41C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0698C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7218B20857
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:50:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHRGNaWJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7218B20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FFD320857
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FFD320857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeICHIs (ORCPT
+        id S1727266AbeICHKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 03:08:48 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42366 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbeICHIr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 03:08:47 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g23-v6so7923801plq.9
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 19:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JKzEOEUO2DRxfTwskQ84j7TNDFgiRDD87gcOymPsLks=;
-        b=NHRGNaWJ1Q4g5YT6hkmOFsMPEO8jF28eX4LmvDo4GCuO8XUmr/VAfgpGjzqnqfAoyu
-         HVsadhsQq3lvh7WSFt8yd0ZGsuqdEMut+2NggfsFN8y9dbc5cdaWWv2Hm1NhiANPm1oE
-         /ejGxsYK+2mb7Tn++bB5BudQ1mEhtDAGmBtzqxmxmquIHRUOTjeyLG7RDQa987sev1Sm
-         FTCeUfZ3ckzGuVb8G+cixZfolaLbhurJCyPYey8BGzpQZBgRUFsG9vGIDIx4kRUXLRF1
-         WGoQjkv4f87TCXIjK/vOxjwyg4krDwRKWExMDlZEC/Vfnu5kUEwgL2kMfe7EybxljFHo
-         S07w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JKzEOEUO2DRxfTwskQ84j7TNDFgiRDD87gcOymPsLks=;
-        b=DuSeOmJZ1AP/5zpttLy7ooE/9B4Mm8KY2qAf9sW22Oqc0HNIBA37S44yomRrL8eoaj
-         UvPQS9zp5v2NY0vJ2HmbDbB//s0KRyTGky3hKDqUHnLmtHHEOWaadnGUA+ljtlChT5mF
-         JQ7In+QgKi+T7aLwExU5aoDXvzDdMdwC4j7ny8K+XlPuRvkqci3BvX9+GVoV6AEpXEea
-         8DwLmdDq+f2O6xyTpvw26nSV0ICdtaVEQATJZIpef4tZLzBF8Rzuh/9rm/WW6VX7ImpJ
-         pCVgehROTuxruHCHQL05jTf5V6BVXmUtGLCJwIiAQQHejbFZOiHMj+gN7rasOLhcdRcV
-         X3oQ==
-X-Gm-Message-State: APzg51Aby5AF2W8xOhAadOJx4dprhkY6DZmXykKeOq/CrztiWm6IxY6h
-        pR6yjqzAYLvUS8YjgVwX6aQ=
-X-Google-Smtp-Source: ANB0VdbyZ2t8tiB3o+JGNn+XG2P9LD62uHE7f03N7db/N6NV7WvoPFan1ACkFqYvqh+npHxKuKiAiw==
-X-Received: by 2002:a17:902:8506:: with SMTP id bj6-v6mr25915476plb.210.1535943043760;
-        Sun, 02 Sep 2018 19:50:43 -0700 (PDT)
-Received: from localhost (45.62.100.246.16clouds.com. [45.62.100.246])
-        by smtp.gmail.com with ESMTPSA id j15-v6sm20794512pfn.52.2018.09.02.19.50.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 19:50:42 -0700 (PDT)
-From:   Lei YU <mine260309@gmail.com>
-To:     Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lei YU <mine260309@gmail.com>, linux-kernel@vger.kernel.org,
-        Joel Stanley <joel@jms.id.au>
-Subject: [PATCH v2] perf: Fix clean error
-Date:   Mon,  3 Sep 2018 10:50:28 +0800
-Message-Id: <1535943028-60049-1-git-send-email-mine260309@gmail.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 3 Sep 2018 03:10:03 -0400
+Received: from gate.crashing.org ([63.228.1.57]:53971 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725780AbeICHKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 03:10:03 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w832PAI5005868;
+        Sun, 2 Sep 2018 21:25:11 -0500
+Message-ID: <ca2ffedd94f7ca2a53c4417c801efbdd7c40eaef.camel@kernel.crashing.org>
+Subject: Re: Access to non-RAM pages
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>
+Date:   Mon, 03 Sep 2018 12:25:10 +1000
+In-Reply-To: <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
+References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
+         <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
+         <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
+         <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
+         <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
+         <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
+         <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
+         <CA+55aFwSfXu1LXjLZe4gddY2VybEGLbPpx-PWinF19LjbevEgQ@mail.gmail.com>
+         <a2b20fc447e0b2cd208dc82081cb24e38bf71f68.camel@kernel.crashing.org>
+         <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When make perf with -O, it gets error when make clean with below log:
+On Sun, 2018-09-02 at 19:10 -0700, Linus Torvalds wrote:
+> On Sun, Sep 2, 2018 at 7:01 PM Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> > 
+> > Still, I can potentially see an issue with DEBUG_PAGEALLOC
+> 
+> An unmapped page isn't a problem. That's what the whole
+> load_unaligned_zeropad() is about: it's ok to take a fault on the part
+> that crosses a page, and we'll just fill the value with zeroes (that's
+> the "zeropad" part).
 
- $ make -C tools/perf O=<output/dir> # OK
- $ make -C tools/perf O=<output/dir> clean # Got below error
+Ah, my bad reading, I was looking at read_word_at_a_time() instead of
+load_unaligned_zeropad(). I'm not familiar enough with the dentry qstr
+stuff, I assume this is safe ?
 
-    find: cannot delete ‘<output/dir>/builtin-script.o’: No such file or directory
-    find: cannot delete ‘<output/dir>/.subcmd-config.o.cmd’: No such file or directory
-    ...
-    Makefile:38: recipe for target 'clean' failed
-    make[2]: *** [clean] Error 1
-    make[1]: *** [fixdep-clean] Error 2
-    Makefile:90: recipe for target 'clean' failed
-    make: *** [clean] Error 2
+> So as long as it's rare (and it is), it's all fine.
+> 
+> That said, I think we turn off for DEBUG_PAGEALLOC simply because it's
+> not rare _enough_.
+> 
+> And vmalloc() should actually be safe too, simply because I think we
+> strive for a guard page between vmalloc areas.
+> 
+> So only a *mapped* page after the page that matters, and only if it's
+> something you can't read without side effects.
+> 
+> Which basically doesn't happen on x86 in reality. BIOSes just don't
+> put MMIO right after the last page of RAM. I think this is why it only
+> triggered on Xen, due to some crazy "Xen reacts badly" case where we
+> do the speculation into a balloon address.
+> 
+> So _practically_ this is just a Xen bug, nothing more.
+> 
+> But since in _theory_ you could have MMIO abut regular RAM directly,
+> it's worth maybe making sure it's purely theory.
 
-It happens because both fixdep-clean and libsubcmd-clean will delete
-files by `find`, where libsubcmd-clean uses `| xargs $(RM)` and
-fixdep-clean uses `-delete`.
-When a file is find by fixdep-clean, and tries to delete it, it's found
-that the file does not exist because it is deleted by libsubcmd-clean.
-
-This commit changes the delete method of fixdep-clean to use
-`| xargs $(RM)` as well, where RM is defined as `rm -f` so it does not
-return error when file does not exist.
-
-Signed-off-by: Lei YU <mine260309@gmail.com>
-
----
-v2: Fix missing "make clean" in commit message
----
- tools/build/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/tools/build/Makefile b/tools/build/Makefile
-index 5edf65e..ae38db2 100644
---- a/tools/build/Makefile
-+++ b/tools/build/Makefile
-@@ -18,6 +18,7 @@ $(call allow-override,LD,$(CROSS_COMPILE)ld)
- HOSTCC ?= gcc
- HOSTLD ?= ld
- HOSTAR ?= ar
-+RM = rm -f
- 
- export HOSTCC HOSTLD HOSTAR
- 
-@@ -36,7 +37,7 @@ all: $(OUTPUT)fixdep
- 
- clean:
- 	$(call QUIET_CLEAN, fixdep)
--	$(Q)find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
-+	$(Q)find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -o -name '\.*.cmd' -o -name '\.*.d' | xargs $(RM)
- 	$(Q)rm -f $(OUTPUT)fixdep
- 
- $(OUTPUT)fixdep-in.o: FORCE
--- 
-2.7.4
 
