@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B93C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C087C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BA12077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BA12077C
+	by mail.kernel.org (Postfix) with ESMTP id C7C7320658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C7320658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731693AbeICV6a (ORCPT
+        id S1731704AbeICV6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:58:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48714 "EHLO
+        Mon, 3 Sep 2018 17:58:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbeICV6a (ORCPT
+        with ESMTP id S1728430AbeICV6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:58:30 -0400
+        Mon, 3 Sep 2018 17:58:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4A71A95;
-        Mon,  3 Sep 2018 17:37:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A234A95;
+        Mon,  3 Sep 2018 17:37:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.18 087/123] s390/mm: fix addressing exception after suspend/resume
-Date:   Mon,  3 Sep 2018 18:57:11 +0200
-Message-Id: <20180903165723.209069269@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.18 070/123] b43legacy/leds: Ensure NUL-termination of LED name string
+Date:   Mon,  3 Sep 2018 18:56:54 +0200
+Message-Id: <20180903165722.384943922@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,40 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Michael Buesch <m@bues.ch>
 
-commit 37a366face294facb9c9d9fdd9f5b64a27456cbd upstream.
+commit 4d77a89e3924b12f4a5628b21237e57ab4703866 upstream.
 
-Commit c9b5ad546e7d "s390/mm: tag normal pages vs pages used in page tables"
-accidentally changed the logic in arch_set_page_states(), which is used by
-the suspend/resume code. set_page_stable(page, order) was changed to
-set_page_stable_dat(page, 0). After this, only the first page of higher order
-pages will be set to stable, and a write to one of the unstable pages will
-result in an addressing exception.
+strncpy might not NUL-terminate the string, if the name equals the buffer size.
+Use strlcpy instead.
 
-Fix this by using "order" again, instead of "0".
-
-Fixes: c9b5ad546e7d ("s390/mm: tag normal pages vs pages used in page tables")
-Cc: stable@vger.kernel.org # 4.14+
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Michael Buesch <m@bues.ch>
+Cc: stable@vger.kernel.org
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/mm/page-states.c |    2 +-
+ drivers/net/wireless/broadcom/b43legacy/leds.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/mm/page-states.c
-+++ b/arch/s390/mm/page-states.c
-@@ -271,7 +271,7 @@ void arch_set_page_states(int make_stabl
- 			list_for_each(l, &zone->free_area[order].free_list[t]) {
- 				page = list_entry(l, struct page, lru);
- 				if (make_stable)
--					set_page_stable_dat(page, 0);
-+					set_page_stable_dat(page, order);
- 				else
- 					set_page_unused(page, order);
- 			}
+--- a/drivers/net/wireless/broadcom/b43legacy/leds.c
++++ b/drivers/net/wireless/broadcom/b43legacy/leds.c
+@@ -101,7 +101,7 @@ static int b43legacy_register_led(struct
+ 	led->dev = dev;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
+ 
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
 
 
