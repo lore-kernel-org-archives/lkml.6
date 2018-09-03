@@ -2,132 +2,94 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA5BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2547C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5282520862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:34:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vApzQ0RZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5282520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 882AF20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882AF20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeICQy0 (ORCPT
+        id S1727009AbeICQ4M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 12:54:26 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44075 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbeICQyZ (ORCPT
+        Mon, 3 Sep 2018 12:56:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46806 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbeICQ4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 12:54:25 -0400
-Received: by mail-io0-f194.google.com with SMTP id 75-v6so278947iou.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 05:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Op5rprZXqxsDaY0yzNUnJilPlVxPCIJ7drovmWT86dQ=;
-        b=vApzQ0RZdg/YQ9Yyjr02onu1NyHkuDllZiAcnOpsvtd5pg6j+c0M+vPZgJsrkvd+gc
-         JFNf96JoPMdDNrqUdsbAmQ245rxM4Sul4PsD42hshb3u2NY/G0UCR7+hfsmmpHdfp+Ab
-         x4vFVG61XZurnusb1TWXs0Vn4waZi3gIT9p9GerW8kJhGB1Wbo6QyIyc9rQhkW3rcc2Y
-         EbpF1HQudQPtiiDIfqUltCPBdt8ZcEFjeWy2ohys0Sug2Ss99UJSLC4CQBBDHNVkXas7
-         2aEpAlbbRieBq+aIi5P+akSrD33iYpRxoa2jSsUdJMDawsUa+OJtagTssHDBM3NnqtaO
-         LJOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Op5rprZXqxsDaY0yzNUnJilPlVxPCIJ7drovmWT86dQ=;
-        b=Qf/XlKeCuxLRLAIgCnK4zfIz8+7hStq3a1RzowZ7ID8SMy84/cbEDBOLIn4+9ng1OC
-         pQ5NeKtB1OQSgBTwiQQZWdGcoo3AOTfsI4kFYN70JrDR2Rjx34vkh0f/YEFhqCdf6nYx
-         38W/rt37cNDnBF8MF41cLIYkaJ8O0zq85RQBFSrZzTsSQZ5M24oErqDk0I19kOIR0xxF
-         DoBxd9NNJr0BpW9SAvHqnaxLEcmTG0cjI92TpnKirsSZutYypU9pVmFkJ+CuKG+vJur+
-         nvcOeFTrw61QzAkpJHOyesKegB3SfAuBP5FPm42iHDlPZoItsANjvEZNDxaGNdMq48D5
-         NaVQ==
-X-Gm-Message-State: APzg51AXtCnNU/pEtSOVH6GHQ3OwEL/Urf18gzfQ83he/tyvELViYi46
-        Zu9rghWi2zrQQSVswEMZi7yo0Imvnz13FiFMChuanw==
-X-Google-Smtp-Source: ANB0VdZHMcXiWjaag0oWnNY7KCsAxfTjolYzoSRPrsmT9dn+jwUQ4z+0ygkn7h1gbqEACT4T1sIrT2mXpK20GzRNhQw=
-X-Received: by 2002:a6b:2147:: with SMTP id h68-v6mr18964210ioh.192.1535978068101;
- Mon, 03 Sep 2018 05:34:28 -0700 (PDT)
+        Mon, 3 Sep 2018 12:56:12 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF0F5D30;
+        Mon,  3 Sep 2018 12:36:13 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 14:36:11 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Peter Chen <peter.chen@nxp.com>
+Cc:     Marcus Folkesson <marcus.folkesson@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: chipidea: imx: make MODULE_LICENCE and
+ SPDX-identifier match
+Message-ID: <20180903123611.GA9660@kroah.com>
+References: <20180902173650.5514-1-marcus.folkesson@gmail.com>
+ <AM0PR04MB53146633EA4508612434DCCB8B0C0@AM0PR04MB5314.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Received: by 2002:a02:8482:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 05:34:27 -0700 (PDT)
-In-Reply-To: <20180831134244.GB19965@ZenIV.linux.org.uk>
-References: <cover.1535629099.git.andreyknvl@google.com> <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
- <20180831081123.6mo62xnk54pvlxmc@ltop.local> <20180831134244.GB19965@ZenIV.linux.org.uk>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 3 Sep 2018 14:34:27 +0200
-Message-ID: <CAAeHK+w86m6YztnTGhuZPKRczb-+znZ1hiJskPXeQok4SgcaOw@mail.gmail.com>
-Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by sparse
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-doc@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB53146633EA4508612434DCCB8B0C0@AM0PR04MB5314.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 3:42 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Aug 31, 2018 at 10:11:24AM +0200, Luc Van Oostenryck wrote:
->> On Thu, Aug 30, 2018 at 01:41:16PM +0200, Andrey Konovalov wrote:
->> > This patch adds __force annotations for __user pointers casts detected by
->> > sparse with the -Wcast-from-as flag enabled (added in [1]).
->> >
->> > [1] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
->>
->> Hi,
->>
->> It would be nice to have some explanation for why these added __force
->> are useful.
+On Mon, Sep 03, 2018 at 04:14:41AM +0000, Peter Chen wrote:
+>  
+> > 
+> > The SPDX-License-Identifier is set to GPL-2.0+, which correspond to
+> > MODULE_LICENSE "GPL".
+> > 
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > ---
+> >  drivers/usb/chipidea/ci_hdrc_imx.c | 2 +-  drivers/usb/chipidea/usbmisc_imx.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+> > index 19f5f5f2a48a..555d398fbfa7 100644
+> > --- a/drivers/usb/chipidea/ci_hdrc_imx.c
+> > +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+> > @@ -492,7 +492,7 @@ static struct platform_driver ci_hdrc_imx_driver =
+> > {  module_platform_driver(ci_hdrc_imx_driver);
+> > 
+> >  MODULE_ALIAS("platform:imx-usb");
+> > -MODULE_LICENSE("GPL v2");
+> > +MODULE_LICENSE("GPL");
+> >  MODULE_DESCRIPTION("CI HDRC i.MX USB binding");
+> > MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
+> > MODULE_AUTHOR("Richard Zhao <richard.zhao@freescale.com>"); diff --git
+> > a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
+> > index 34ad5bf8acd8..d9cfa00b8a6c 100644
+> > --- a/drivers/usb/chipidea/usbmisc_imx.c
+> > +++ b/drivers/usb/chipidea/usbmisc_imx.c
+> > @@ -633,6 +633,6 @@ static struct platform_driver usbmisc_imx_driver =
+> > {  module_platform_driver(usbmisc_imx_driver);
+> > 
+> >  MODULE_ALIAS("platform:usbmisc-imx");
+> > -MODULE_LICENSE("GPL v2");
+> > +MODULE_LICENSE("GPL");
+> >  MODULE_DESCRIPTION("driver for imx usb non-core registers");
+> > MODULE_AUTHOR("Richard Zhao <richard.zhao@freescale.com>");
+> 
+> Greg, does this is a useful change? I am not sure.
 
-I'll add this in the next version, thanks!
+As the two licenses are not matching, something needs to be fixed here,
+don't you agree?
 
->         It would be even more useful if that series would either deal with
-> the noise for real ("that's what we intend here, that's what we intend there,
-> here's a primitive for such-and-such kind of cases, here we actually
-> ought to pass __user pointer instead of unsigned long", etc.) or left it
-> unmasked.
->
->         As it is, __force says only one thing: "I know the code is doing
-> the right thing here".  That belongs in primitives, and I do *not* mean the
-> #define cast_to_ulong(x) ((__force unsigned long)(x))
-> kind.
->
->         Folks, if you don't want to deal with that - leave the warnings be.
-> They do carry more information than "someone has slapped __force in that place".
->
-> Al, very annoyed by that kind of information-hiding crap...
+Please read include/linux/modules.h for what the strings mean, that
+should help explain things more.
 
-This patch only adds __force to hide the reports I've looked at and
-decided that the code does the right thing. The cases where this is
-not the case are handled by the previous patches in the patchset. I'll
-this to the patch description as well. Is that OK?
+greg k-h
