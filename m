@@ -2,48 +2,42 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E84C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48655C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29CF720779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CF720779
+	by mail.kernel.org (Postfix) with ESMTP id 090AD20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090AD20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbeICVZP (ORCPT
+        id S1729370AbeICVZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39258 "EHLO
+        Mon, 3 Sep 2018 17:25:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39276 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbeICVZO (ORCPT
+        with ESMTP id S1728752AbeICVZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:14 -0400
+        Mon, 3 Sep 2018 17:25:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD0E4CFE;
-        Mon,  3 Sep 2018 17:04:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BF51D00;
+        Mon,  3 Sep 2018 17:04:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Jiri Olsa <jolsa@redhat.com>,
+        stable@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 024/107] perf/x86/amd/ibs: Dont access non-started event
-Date:   Mon,  3 Sep 2018 18:55:48 +0200
-Message-Id: <20180903165638.467919737@linuxfoundation.org>
+Subject: [PATCH 4.9 025/107] media: staging: omap4iss: Include asm/cacheflush.h after generic includes
+Date:   Mon,  3 Sep 2018 18:55:49 +0200
+Message-Id: <20180903165638.517388210@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -60,76 +54,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit d2753e6b4882a637a0e8fb3b9c2e15f33265300e ]
+[ Upstream commit 0894da849f145af51bde88a6b84f95b9c9e0bc66 ]
 
-Paul Menzel reported the following bug:
+Including asm/cacheflush.h first results in the following build error
+when trying to build sparc32:allmodconfig, because 'struct page' has not
+been declared, and the function declaration ends up creating a separate
+(private) declaration of struct page (as a result of function arguments
+being in the scope of the function declaration and definition, not in
+global scope).
 
-> Enabling the undefined behavior sanitizer and building GNU/Linux 4.18-rc5+
-> (with some unrelated commits) with GCC 8.1.0 from Debian Sid/unstable, the
-> warning below is shown.
->
-> > [    2.111913]
-> > ================================================================================
-> > [    2.111917] UBSAN: Undefined behaviour in arch/x86/events/amd/ibs.c:582:24
-> > [    2.111919] member access within null pointer of type 'struct perf_event'
-> > [    2.111926] CPU: 0 PID: 144 Comm: udevadm Not tainted 4.18.0-rc5-00316-g4864b68cedf2 #104
-> > [    2.111928] Hardware name: ASROCK E350M1/E350M1, BIOS TIMELESS 01/01/1970
-> > [    2.111930] Call Trace:
-> > [    2.111943]  dump_stack+0x55/0x89
-> > [    2.111949]  ubsan_epilogue+0xb/0x33
-> > [    2.111953]  handle_null_ptr_deref+0x7f/0x90
-> > [    2.111958]  __ubsan_handle_type_mismatch_v1+0x55/0x60
-> > [    2.111964]  perf_ibs_handle_irq+0x596/0x620
+The C scoping rules do not just affect variable visibility, they also
+affect type declaration visibility.
 
-The code dereferences event before checking the STARTED bit. Patch
-below should cure the issue.
+The end result is that when the actual call site is seen in
+<linux/highmem.h>, the 'struct page' type in the caller is not the same
+'struct page' that the function was declared with, resulting in:
 
-The warning should not trigger, if I analyzed the thing correctly.
-(And Paul's testing confirms this.)
+  In file included from arch/sparc/include/asm/page.h:10:0,
+                   ...
+                   from drivers/staging/media/omap4iss/iss_video.c:15:
+  include/linux/highmem.h: In function 'clear_user_highpage':
+  include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible
+	pointer type
 
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1807200958390.1580@nanos.tec.linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Include generic includes files first to fix the problem.
+
+Fixes: fc96d58c10162 ("[media] v4l: omap4iss: Add support for OMAP4 camera interface - Video devices")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: David S. Miller <davem@davemloft.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+[ Added explanation of C scope rules - Linus ]
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/amd/ibs.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/staging/media/omap4iss/iss_video.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -578,7 +578,7 @@ static int perf_ibs_handle_irq(struct pe
- {
- 	struct cpu_perf_ibs *pcpu = this_cpu_ptr(perf_ibs->pcpu);
- 	struct perf_event *event = pcpu->event;
--	struct hw_perf_event *hwc = &event->hw;
-+	struct hw_perf_event *hwc;
- 	struct perf_sample_data data;
- 	struct perf_raw_record raw;
- 	struct pt_regs regs;
-@@ -601,6 +601,10 @@ fail:
- 		return 0;
- 	}
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -11,7 +11,6 @@
+  * (at your option) any later version.
+  */
  
-+	if (WARN_ON_ONCE(!event))
-+		goto fail;
+-#include <asm/cacheflush.h>
+ #include <linux/clk.h>
+ #include <linux/mm.h>
+ #include <linux/pagemap.h>
+@@ -24,6 +23,8 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-mc.h>
+ 
++#include <asm/cacheflush.h>
 +
-+	hwc = &event->hw;
- 	msr = hwc->config_base;
- 	buf = ibs_data.regs;
- 	rdmsrl(msr, *buf);
+ #include "iss_video.h"
+ #include "iss.h"
+ 
 
 
