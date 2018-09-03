@@ -2,187 +2,180 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55271C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A76C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BA420856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BA420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 99C1920843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m070xjmT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C1920843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeICOV7 (ORCPT
+        id S1727694AbeICOVi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:59 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:48108 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeICOV6 (ORCPT
+        Mon, 3 Sep 2018 10:21:38 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40694 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbeICOVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:58 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.232])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 80A2631A;
-        Mon,  3 Sep 2018 18:02:27 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id B8B1539A;
-        Mon,  3 Sep 2018 18:02:15 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <4e00674d2ec9691faceb240c1e781797>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 201250KK8ZH;
-        Mon, 03 Sep 2018 18:02:23 +0800 (CST)
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v4 5/5] clk: RK808: add RK809 and RK817 support.
-Date:   Mon,  3 Sep 2018 18:04:00 +0800
-Message-Id: <1535969040-19528-1-git-send-email-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
-References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+        Mon, 3 Sep 2018 10:21:36 -0400
+Received: by mail-wm0-f68.google.com with SMTP id 207-v6so515520wme.5;
+        Mon, 03 Sep 2018 03:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=t7Yy96h1CNLQsmpPB+gBtt+3MwMJX3o+4LyGaKYq94s=;
+        b=m070xjmTV8oB18DF8XHLMSb11OXMKQs4HbkTJBzGsA/kkCepsrdAH/620RDjGWUxkr
+         fVxM32Xk6O2ToADYUpC/Bq1fbBsqzz92WEv6rSx+LGrz9kYfmE73CQe85+DXUqdmUBaE
+         uWoKO6TxQ4k8oheINrk/Jq9Ac6XrtY5d2/O2jLgsq96FdD8xXuF2Nl9aLvUQghs7ofoe
+         nUoBZa99VKNQ+jcvmjSFELfUQbPnZ9lmh/l7UQq3nnfTTZ7kPUdp65SqiBqvf8gtq69B
+         YqDJdpoLk/EmwXZcd40Kii785c1BHBSZ6eKnbDhQ+TROcSG2r8uN4HXB0TjMrtLBAFWt
+         4xwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=t7Yy96h1CNLQsmpPB+gBtt+3MwMJX3o+4LyGaKYq94s=;
+        b=nCiuma0+0eRTyFISjGCPXZBS/57wRf+bsCquqBvD+Ne2Nh9F0m0WQcT4ayoc4kfWOX
+         OBtuvaKH7QveiZ5Q4NzIkp+b4+GB1Crhly3p3qlE4q7oWv21gHXXrS1+zfTz7BTmTpH5
+         R4wG8zvA3UKdPwtpiQRN4fPjd6tv1J7qcczhpd1yVB0vKQp+OsSRHDUphNgLLGxnmovL
+         JuuQnhsOs4EC71oBjOY6G7w5IRC37k18LeyHN5BXfJiy8MZrhhS/kPmP6lK5K0lL8D32
+         sSCpeHFqU/MgfHMpEZGh1Fw7SOt9sPxPZ0Nch397EDMgJQSdgPzd0Y5IxgyuWyDVwsPX
+         P/gg==
+X-Gm-Message-State: APzg51BukSDwVKW+gz12jpNjWXXLFTSTih7FHtQlxYqScmIddP2aULCa
+        uWq+Ykt6j7CtVaCGTfKYHOA=
+X-Google-Smtp-Source: ANB0VdaOCrX22FEezBJWtRmBN94RtIe219A0b5ROX8xCmEYZdUsBkS2c17wZUAYKwtPmJevJ1M10EQ==
+X-Received: by 2002:a1c:1d87:: with SMTP id d129-v6mr4492426wmd.34.1535968928948;
+        Mon, 03 Sep 2018 03:02:08 -0700 (PDT)
+Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 03:02:08 -0700 (PDT)
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     axboe@kernel.dk, hdegoede@redhat.com, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, robh+dt@kernel.org, wens@csie.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH v5 2/9] ata: ahci_platform: add support for AHCI controller regulator
+Date:   Mon,  3 Sep 2018 12:01:54 +0200
+Message-Id: <20180903100201.23131-3-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
+References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+The SoC R40 AHCI controller need a regulator to work.
+So this patch add a way to add an optional regulator on AHCI controller.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- drivers/clk/Kconfig     |  9 ++++---
- drivers/clk/clk-rk808.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 67 insertions(+), 6 deletions(-)
+ drivers/ata/ahci.h             |  1 +
+ drivers/ata/libahci_platform.c | 26 ++++++++++++++++++++++++--
+ 2 files changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..92cf5ad 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,13 +46,12 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
--	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
--	  by control register.
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-+	  Clkout1 is always on, Clkout2 can off by control register.
- 
- config COMMON_CLK_HI655X
- 	tristate "Clock driver for Hi655x" if EXPERT
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..7f9a56b 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,68 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return 0;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	/*
-+	 * For the default case, it match the following PMIC type.
-+	 * RK805_ID
-+	 * RK808_ID
-+	 * RK818_ID
-+	 */
-+	default:
-+		return &rk808_clkout2_ops;
-+	}
-+}
-+
- static int rk808_clkout_probe(struct platform_device *pdev)
+diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
+index 6a1515f0da40..1415f1012de5 100644
+--- a/drivers/ata/ahci.h
++++ b/drivers/ata/ahci.h
+@@ -352,6 +352,7 @@ struct ahci_host_priv {
+ 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
+ 	struct reset_control	*rsts;		/* Optional */
+ 	struct regulator	**target_pwrs;	/* Optional */
++	struct regulator	*ahci_regulator;/* Optional */
+ 	/*
+ 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
+ 	 * the PHY position in this array.
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index c92c10d55374..a886b61476a3 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -139,7 +139,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_clks);
+  * ahci_platform_enable_regulators - Enable regulators
+  * @hpriv: host private area to store config values
+  *
+- * This function enables all the regulators found in
++ * This function enables all the regulators found in controller and
+  * hpriv->target_pwrs, if any.  If a regulator fails to be enabled, it
+  * disables all the regulators already enabled in reverse order and
+  * returns an error.
+@@ -151,6 +151,12 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
  {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +189,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
+ 	int rc, i;
  
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
++	if (hpriv->ahci_regulator) {
++		rc = regulator_enable(hpriv->ahci_regulator);
++		if (rc)
++			return rc;
++	}
++
+ 	for (i = 0; i < hpriv->nports; i++) {
+ 		if (!hpriv->target_pwrs[i])
+ 			continue;
+@@ -167,6 +173,8 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
+ 		if (hpriv->target_pwrs[i])
+ 			regulator_disable(hpriv->target_pwrs[i]);
  
- 	/* optional override of the clockname */
++	if (hpriv->ahci_regulator)
++		regulator_disable(hpriv->ahci_regulator);
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(ahci_platform_enable_regulators);
+@@ -175,7 +183,8 @@ EXPORT_SYMBOL_GPL(ahci_platform_enable_regulators);
+  * ahci_platform_disable_regulators - Disable regulators
+  * @hpriv: host private area to store config values
+  *
+- * This function disables all regulators found in hpriv->target_pwrs.
++ * This function disables all regulators found in hpriv->target_pwrs and
++ * AHCI controller.
+  */
+ void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
+ {
+@@ -186,6 +195,9 @@ void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
+ 			continue;
+ 		regulator_disable(hpriv->target_pwrs[i]);
+ 	}
++
++	if (hpriv->ahci_regulator)
++		regulator_disable(hpriv->ahci_regulator);
+ }
+ EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
+ /**
+@@ -351,6 +363,7 @@ static int ahci_platform_get_regulator(struct ahci_host_priv *hpriv, u32 port,
+  *
+  * 1) mmio registers (IORESOURCE_MEM 0, mandatory)
+  * 2) regulator for controlling the targets power (optional)
++ *    regulator for controlling the AHCI controller (optional)
+  * 3) 0 - AHCI_MAX_CLKS clocks, as specified in the devs devicetree node,
+  *    or for non devicetree enabled platforms a single clock
+  * 4) resets, if flags has AHCI_PLATFORM_GET_RESETS (optional)
+@@ -408,6 +421,15 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 		hpriv->clks[i] = clk;
+ 	}
+ 
++	hpriv->ahci_regulator = devm_regulator_get_optional(dev, "ahci");
++	if (IS_ERR(hpriv->ahci_regulator)) {
++		rc = PTR_ERR(hpriv->ahci_regulator);
++		if (rc == -EPROBE_DEFER)
++			goto err_out;
++		rc = 0;
++		hpriv->ahci_regulator = NULL;
++	}
++
+ 	if (flags & AHCI_PLATFORM_GET_RESETS) {
+ 		hpriv->rsts = devm_reset_control_array_get_optional_shared(dev);
+ 		if (IS_ERR(hpriv->rsts)) {
 -- 
-1.9.1
-
+2.16.4
 
