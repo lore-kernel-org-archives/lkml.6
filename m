@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BCCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E87C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CC720867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CC720867
+	by mail.kernel.org (Postfix) with ESMTP id 6BA0E20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA0E20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbeICVYK (ORCPT
+        id S1729160AbeICVYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39040 "EHLO
+        Mon, 3 Sep 2018 17:24:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39048 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbeICVYJ (ORCPT
+        with ESMTP id S1728266AbeICVYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:09 -0400
+        Mon, 3 Sep 2018 17:24:12 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28CF2CEE;
-        Mon,  3 Sep 2018 17:03:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42BA8CF5;
+        Mon,  3 Sep 2018 17:03:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.4 67/80] ASoC: sirf: Fix potential NULL pointer dereference
-Date:   Mon,  3 Sep 2018 18:49:45 +0200
-Message-Id: <20180903164936.823979360@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.4 58/80] fuse: fix double request_end()
+Date:   Mon,  3 Sep 2018 18:49:36 +0200
+Message-Id: <20180903164936.467556808@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,44 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit ae1c696a480c67c45fb23b35162183f72c6be0e1 upstream.
+commit 87114373ea507895a62afb10d2910bd9adac35a8 upstream.
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+Refcounting of request is broken when fuse_abort_conn() is called and
+request is on the fpq->io list:
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
+ - ref is taken too late
+ - then it is not dropped
 
-This code was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Fixes: 2bd8d1d5cf89 ("ASoC: sirf: Add audio usp interface driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 0d8e84b0432b ("fuse: simplify request abort")
+Cc: <stable@vger.kernel.org> # v4.2
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/sirf/sirf-usp.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/fuse/dev.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/sound/soc/sirf/sirf-usp.c
-+++ b/sound/soc/sirf/sirf-usp.c
-@@ -367,10 +367,9 @@ static int sirf_usp_pcm_probe(struct pla
- 	platform_set_drvdata(pdev, usp);
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -382,7 +382,7 @@ static void request_end(struct fuse_conn
+ 	struct fuse_iqueue *fiq = &fc->iq;
  
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap(&pdev->dev, mem_res->start,
--		resource_size(mem_res));
--	if (base == NULL)
--		return -ENOMEM;
-+	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 					    &sirf_usp_regmap_config);
- 	if (IS_ERR(usp->regmap))
+ 	if (test_and_set_bit(FR_FINISHED, &req->flags))
+-		return;
++		goto out_put_req;
+ 
+ 	spin_lock(&fiq->waitq.lock);
+ 	list_del_init(&req->intr_entry);
+@@ -412,6 +412,7 @@ static void request_end(struct fuse_conn
+ 	wake_up(&req->waitq);
+ 	if (req->end)
+ 		req->end(fc, req);
++out_put_req:
+ 	fuse_put_request(fc, req);
+ }
+ 
+@@ -2154,6 +2155,7 @@ void fuse_abort_conn(struct fuse_conn *f
+ 				set_bit(FR_ABORTED, &req->flags);
+ 				if (!test_bit(FR_LOCKED, &req->flags)) {
+ 					set_bit(FR_PRIVATE, &req->flags);
++					__fuse_get_request(req);
+ 					list_move(&req->list, &to_end1);
+ 				}
+ 				spin_unlock(&req->waitq.lock);
+@@ -2180,7 +2182,6 @@ void fuse_abort_conn(struct fuse_conn *f
+ 
+ 		while (!list_empty(&to_end1)) {
+ 			req = list_first_entry(&to_end1, struct fuse_req, list);
+-			__fuse_get_request(req);
+ 			list_del_init(&req->list);
+ 			request_end(fc, req);
+ 		}
 
 
