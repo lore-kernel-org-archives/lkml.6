@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABADC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1088CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 192BB2077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192BB2077B
+	by mail.kernel.org (Postfix) with ESMTP id C26F62077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:50:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26F62077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeICNJI (ORCPT
+        id S1727288AbeICNIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:09:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53345 "EHLO mail.bootlin.com"
+        Mon, 3 Sep 2018 09:08:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53337 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbeICNIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726203AbeICNIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 09:08:30 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9E07D20DEA; Mon,  3 Sep 2018 10:49:21 +0200 (CEST)
+        id 645A222A3E; Mon,  3 Sep 2018 10:49:21 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 575ED215E6;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 19D9320DEA;
         Mon,  3 Sep 2018 10:49:11 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -34,9 +34,9 @@ Cc:     allan.nielsen@microchip.com, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v2 3/7] net: phy: mscc: read 'vsc8531,vddmac' as an u32
-Date:   Mon,  3 Sep 2018 10:48:49 +0200
-Message-Id: <20180903084853.18092-3-quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v2 2/7] net: phy: mscc: factorize function for getting LED mode from DT
+Date:   Mon,  3 Sep 2018 10:48:48 +0200
+Message-Id: <20180903084853.18092-2-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903084853.18092-1-quentin.schulz@bootlin.com>
 References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
@@ -45,51 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the DT binding, it is specified nowhere that 'vsc8531,vddmac' is an
-u16, even though it's read as an u16 in the driver.
-
-Let's update the driver to take into consideration that the
-'vsc8531,vddmac' property is of the default type u32.
+Microsemi PHYs support different LED modes depending on the variant, so
+let's factorize the code so we just have to give the supported modes
+while the logic behind getting the mode remains identical.
 
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
 
 added in v2
 
- drivers/net/phy/mscc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/phy/mscc.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index aa37e8547cd0..49dc23117732 100644
+index af433f226ef4..aa37e8547cd0 100644
 --- a/drivers/net/phy/mscc.c
 +++ b/drivers/net/phy/mscc.c
-@@ -128,7 +128,7 @@ struct vsc8531_private {
+@@ -104,8 +104,24 @@ enum rgmii_rx_clock_delay {
+ #define DOWNSHIFT_COUNT_MAX		  5
  
- #ifdef CONFIG_OF_MDIO
- struct vsc8531_edge_rate_table {
--	u16 vddmac;
-+	u32 vddmac;
- 	u8 slowdown[8];
+ #define MAX_LEDS			  4
++#define VSC85XX_SUPP_LED_MODES (BIT(VSC8531_LINK_ACTIVITY) | \
++				BIT(VSC8531_LINK_1000_ACTIVITY) | \
++				BIT(VSC8531_LINK_100_ACTIVITY) | \
++				BIT(VSC8531_LINK_10_ACTIVITY) | \
++				BIT(VSC8531_LINK_100_1000_ACTIVITY) | \
++				BIT(VSC8531_LINK_10_1000_ACTIVITY) | \
++				BIT(VSC8531_LINK_10_100_ACTIVITY) | \
++				BIT(VSC8531_DUPLEX_COLLISION) | \
++				BIT(VSC8531_COLLISION) | \
++				BIT(VSC8531_ACTIVITY) | \
++				BIT(VSC8531_AUTONEG_FAULT) | \
++				BIT(VSC8531_SERIAL_MODE) | \
++				BIT(VSC8531_FORCE_LED_OFF) | \
++				BIT(VSC8531_FORCE_LED_ON))
++
+ struct vsc8531_private {
+ 	int rate_magic;
++	u16 supp_led_modes;
+ 	u8 leds_mode[MAX_LEDS];
+ 	u8 nleds;
  };
- 
-@@ -387,7 +387,7 @@ static void vsc85xx_wol_get(struct phy_device *phydev,
- static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
+@@ -401,6 +417,7 @@ static int vsc85xx_dt_led_mode_get(struct phy_device *phydev,
+ 				   char *led,
+ 				   u8 default_mode)
  {
- 	u8 sd;
--	u16 vdd;
-+	u32 vdd;
- 	int rc, i, j;
++	struct vsc8531_private *priv = phydev->priv;
  	struct device *dev = &phydev->mdio.dev;
  	struct device_node *of_node = dev->of_node;
-@@ -396,7 +396,7 @@ static int vsc85xx_edge_rate_magic_get(struct phy_device *phydev)
- 	if (!of_node)
- 		return -ENODEV;
+ 	u8 led_mode;
+@@ -411,7 +428,7 @@ static int vsc85xx_dt_led_mode_get(struct phy_device *phydev,
  
--	rc = of_property_read_u16(of_node, "vsc8531,vddmac", &vdd);
-+	rc = of_property_read_u32(of_node, "vsc8531,vddmac", &vdd);
- 	if (rc != 0)
- 		vdd = MSCC_VDDMAC_3300;
+ 	led_mode = default_mode;
+ 	err = of_property_read_u8(of_node, led, &led_mode);
+-	if (!err && (led_mode > 15 || led_mode == 7 || led_mode == 11)) {
++	if (!err && !(BIT(led_mode) & priv->supp_led_modes)) {
+ 		phydev_err(phydev, "DT %s invalid\n", led);
+ 		return -EINVAL;
+ 	}
+@@ -655,6 +672,7 @@ static int vsc85xx_probe(struct phy_device *phydev)
  
+ 	vsc8531->rate_magic = rate_magic;
+ 	vsc8531->nleds = 2;
++	vsc8531->supp_led_modes = VSC85XX_SUPP_LED_MODES;
+ 
+ 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
+ }
 -- 
 2.17.1
 
