@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081E6C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C56C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F57B20870
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20A82086C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifyk71us"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F57B20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKUxFcYJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20A82086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeIDDWE (ORCPT
+        id S1727164AbeIDDWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 23:22:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32772 "EHLO mail.kernel.org"
+        Mon, 3 Sep 2018 23:22:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeIDDWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726133AbeIDDWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 23:22:04 -0400
 Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B66C20862;
+        by mail.kernel.org (Postfix) with ESMTPSA id B94BE2086B;
         Mon,  3 Sep 2018 22:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1536015585;
-        bh=IGDLh+j1Mhi83y0uJgq7fVnCkr1/yJqvHVhUSJxuLzw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ifyk71usDxWMHL2ZH2i4WjCGAQV/cjoD2kD9T/DQeTuxqi8seqy8WSDLK2fqatlE8
-         j4DOKHX0RKIO83r3jhiQrV1RDxXx0HzIS9CfZncJVplL4GnriniHfqxgOjpyMVzazH
-         1Z/aqlKikQ/JNZX/tOhuZLrR8GXWZLSQ3/jdNVgk=
+        bh=yiuM0LmMCNa0Zcfc0pDNNpkzNuU0GVpMUTBN14M5TKo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=IKUxFcYJYBvAyKK/ETpaPjJXsl2ErCfLAwhtvdkGkgro1cMqFbt7oRLtV4QKDAhYx
+         atl0adewsHN35xslC8UBKX6NVZN0SiTJMVNGYyDkk/jWgQPN5IT7usilKX3vi6UJNN
+         TsdJJsR34hJjfrP+2haDxa7+LC5WjjYSgSgIWB3U=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     Borislav Petkov <bp@alien8.de>,
@@ -50,43 +51,90 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Andi Kleen <ak@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 0/3] x86/pti: Get rid of entry trampolines and add some docs
-Date:   Mon,  3 Sep 2018 15:59:41 -0700
-Message-Id: <cover.1536015544.git.luto@kernel.org>
+Subject: [PATCH v2 1/3] x86/entry/64: Document idtentry
+Date:   Mon,  3 Sep 2018 15:59:42 -0700
+Message-Id: <6e56c3ad94879e41afe345750bc28ccc0e820ea8.1536015544.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1536015544.git.luto@kernel.org>
+References: <cover.1536015544.git.luto@kernel.org>
+In-Reply-To: <cover.1536015544.git.luto@kernel.org>
+References: <cover.1536015544.git.luto@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This gets rid of entry trampolines.  It's more or less the same as
-the RFC version, except that I rebased it to v4.19-rc1 due to
-massive conflicts with some perf changes.  I have *not* reverted all
-of the perf support for entry trampolines -- I leave that to the
-perf crew, if needed.
+The idtentry macro is complicated and magical.  Document what it
+does to help future readers and to allow future patches to adjust
+the code and docs at the same time.
 
-Changes from v1: Get rid of the rsp_scratch macro
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/entry/entry_64.S | 35 +++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/traps.c   |  4 ++++
+ 2 files changed, 39 insertions(+)
 
-Andy Lutomirski (3):
-  x86/entry/64: Document idtentry
-  x86/entry/64: Use the TSS sp2 slot for SYSCALL/SYSRET scratch space
-  x86/pti/64: Remove the SYSCALL64 entry trampoline
-
- arch/x86/entry/entry_64.S             | 116 ++++++++++----------------
- arch/x86/include/asm/cpu_entry_area.h |   2 -
- arch/x86/include/asm/processor.h      |   6 ++
- arch/x86/include/asm/sections.h       |   1 -
- arch/x86/kernel/asm-offsets.c         |   5 +-
- arch/x86/kernel/cpu/common.c          |  11 +--
- arch/x86/kernel/kprobes/core.c        |  10 +--
- arch/x86/kernel/process_64.c          |   2 -
- arch/x86/kernel/traps.c               |   4 +
- arch/x86/kernel/vmlinux.lds.S         |  10 ---
- arch/x86/mm/cpu_entry_area.c          |  36 --------
- arch/x86/mm/pti.c                     |  33 +++++++-
- arch/x86/xen/xen-asm_64.S             |   8 +-
- 13 files changed, 95 insertions(+), 149 deletions(-)
-
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 957dfb693ecc..1796c42e08af 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -900,6 +900,41 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
+  */
+ #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
+ 
++/**
++ * idtentry - Generate an IDT entry stub
++ * @sym: Name of the generated entry point
++ * @do_sym: C function to be called
++ * @has_error_code: True if this IDT vector has an error code on the stack
++ * @paranoid: non-zero means that this vector may be invoked from kernel
++ *            mode with user GSBASE and/or user CR3.  2 is special -- see below.
++ * @shift_ist: Set to an IST index if entries from kernel mode should
++ *             decrement the IST stack so that nested entries get a fresh
++ *             stack.  (This is for #DB, which has a nasty habit of
++ *             recursing.)
++ *
++ * idtentry generates an IDT stub that sets up a usable kernel context,
++ * creates struct pt_regs, and calls @do_sym.  The stub has the following
++ * special behaviors:
++ *
++ * On an entry from user mode, the stub switches from the trampoline or
++ * IST stack to the normal thread stack.  On an exit to user mode, the
++ * normal exit-to-usermode path is invoked.
++ *
++ * On an exit to kernel mode, if paranoid == 0, we check for preemption,
++ * whereas we omit the preemption check if @paranoid != 0.  This is purely
++ * because the implementation is simpler this way.  The kernel only needs
++ * to check for asynchronous kernel preemption when IRQ handlers return.
++ *
++ * If @paranoid == 0, then the stub will handle IRET faults by pretending
++ * that the fault came from user mode.  It will handle gs_change faults by
++ * pretending that the fault happened with kernel GSBASE.  Since this handling
++ * is omitted for @paranoid != 0, the #GP, #SS, and #NP stubs must have
++ * @paranoid == 0.  This special handling will do the wrong thing for
++ * espfix-induced #DF on IRET, so #DF must not use @paranoid == 0.
++ *
++ * @paranoid == 2 is special: the stub will never switch stacks.  This is for
++ * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
++ */
+ .macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
+ ENTRY(\sym)
+ 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index e6db475164ed..1a90821c0b74 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -383,6 +383,10 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code)
+ 		 * we won't enable interupts or schedule before we invoke
+ 		 * general_protection, so nothing will clobber the stack
+ 		 * frame we just set up.
++		 *
++		 * We will enter general_protection with kernel GSBASE,
++		 * which is what the stub expects, given that the faulting
++		 * RIP will be the IRET instruction.
+ 		 */
+ 		regs->ip = (unsigned long)general_protection;
+ 		regs->sp = (unsigned long)&gpregs->orig_ax;
 -- 
 2.17.1
 
