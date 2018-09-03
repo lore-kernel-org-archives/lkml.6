@@ -2,95 +2,134 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E42DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A454C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E0720867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:16:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FXmLsnT1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E0720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 157B320862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:18:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157B320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeICThX (ORCPT
+        id S1727522AbeICTix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:37:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38600 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICThX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:37:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ls9qG+SvqHi51ykDR814ilYBe51OtRVQ99/MGG/RgA0=; b=FXmLsnT1ee24Iv+cW5lCoxSFM
-        IayRX/1HIFsrxD+sfEPr2huwJECn/Zwo9DCwzoRFPQedbCdFqeQ14Ki5KzhuNJtHmylSTj1bJvM3x
-        vVD3CcNfeIYjmSBv94rBGAGQROKPT37m4I2lGpRRlNuHbYi15lUZ2AOuf40vJKCfPWO30=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fwqap-0000R7-IZ; Mon, 03 Sep 2018 15:16:43 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3D48F11227AE; Mon,  3 Sep 2018 16:16:43 +0100 (BST)
-Date:   Mon, 3 Sep 2018 16:16:43 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] regualtors: Fix suspend/resume issues since v4.16
-Message-ID: <20180903151643.GP10302@sirena.org.uk>
-References: <CGME20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12@eucas1p2.samsung.com>
- <20180903144937.16507-1-m.szyprowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FbmEh7Ek6NM6xKh/"
-Content-Disposition: inline
-In-Reply-To: <20180903144937.16507-1-m.szyprowski@samsung.com>
-X-Cookie: Inside, I'm already SOBBING!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 3 Sep 2018 15:38:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34900 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725949AbeICTix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:38:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 94902AFA3;
+        Mon,  3 Sep 2018 15:18:13 +0000 (UTC)
+Date:   Mon, 03 Sep 2018 17:18:12 +0200
+Message-ID: <s5hlg8ifw3v.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+In-Reply-To: <CACT4Y+YMetgDkFtqOuPJzfniKBfnq4-RAYE_AJkvMVTLAUx5-Q@mail.gmail.com>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de>
+        <000000000000a25ae50574f76ff0@google.com>
+        <s5h7ek2hfp6.wl-tiwai@suse.de>
+        <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+        <s5h4lf6hfcq.wl-tiwai@suse.de>
+        <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
+        <s5h1saahe2p.wl-tiwai@suse.de>
+        <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
+        <s5hwos2fybs.wl-tiwai@suse.de>
+        <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
+        <s5ho9defwxf.wl-tiwai@suse.de>
+        <CACT4Y+YMetgDkFtqOuPJzfniKBfnq4-RAYE_AJkvMVTLAUx5-Q@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 03 Sep 2018 17:06:05 +0200,
+Dmitry Vyukov wrote:
+> 
+> On Mon, Sep 3, 2018 at 5:00 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> > On Mon, 03 Sep 2018 16:54:23 +0200,
+> > Dmitry Vyukov wrote:
+> >>
+> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> >> is meant to be a complement to the previous generic descriptions of
+> >> patch testing process, which is:
+> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+> >>
+> >> So, you always reply to the syzbot+HASH email address so that syzbot
+> >> understands which bug we are talking about.
+> >> Then you do either (omitting # so that syzbot won't consider that as
+> >> actual test requests):
+> >>
+> >> syz test: git://repo/address.git branch
+> >>
+> >> or:
+> >>
+> >> syz test: git://repo/address.git commit-hash
+> >>
+> >> And then you can either attach a patch that needs to be applied on
+> >> top, or not attach it (if it's already in the tree, or you just want
+> >> to get another crash report).
+> >
+> > OK, so far, so good, it's what I knew and have done a few times.
+> >
+> >
+> >> For KMSAN you need to issue test request against
+> >> "https//github.com/google/kmsan.git master" (that's the only tree that
+> >> has KMSAN tool in it) and you need to attach/inline the patch (because
+> >> your patch is obviously not there yet).
+> >>
+> >> Does this make things more clear?
+> >
+> > Sorry, the part "issue test request against https..." still isn't
+> > clear.
+> >
+> > Do you mean to open an issue entry on github, and attach the patch
+> > there?
+> 
+> By "issue test request" I mean sending email with "syz test" command.
+> So overall you send "syz test https//github.com/google/kmsan.git
+> master" and attach the patch.
+> The workflow is all the same, and no github involved. It's just that
+> you can't ask to test it against
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git because
+> it does not have KMSAN tool and so no KMSAN bugs will be detected
+> there.
 
---FbmEh7Ek6NM6xKh/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, this finally made me understanding the whole picture!
 
-On Mon, Sep 03, 2018 at 04:49:35PM +0200, Marek Szyprowski wrote:
+> Since I did all of this, it's hard for me to write clear docs for others. Sorry.
+> If you can suggest some improved wording, it would be great.
 
-> I've been really surprised that no-one noticed those issues for almost
-> 4 kernel releases. Please review my fixes and apply to v4.19-rcX if
-> possible.
+Well, how about like below?
 
-I suspect this is down to relatively few systems having devices with
-suspend operations, and fewer actually ever suspending in use.
 
---FbmEh7Ek6NM6xKh/
-Content-Type: application/pgp-signature; name="signature.asc"
+KMSAN is not upstream yet, though, we want to upstream it later. For
+now, it lives in github.com/google/kmsan and is based on a reasonably
+fresh upstream tree. As the result, any patch testing requests for
+KMSAN bugs need to go to KMSAN tree
+(https://github.com/google/kmsan.git repo, master branch).
+A standard way for triggering the test with KMSAN tree is to send an
+email to syzbot+HASH address containing the following line:
 
------BEGIN PGP SIGNATURE-----
+  #syz test: https://github.com/google/kmsan.git master
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluNUFoACgkQJNaLcl1U
-h9CNpAf+P2OEKKAyn9WshbzavcLbwFirZi2c86bl4YldaC4/rhA5hNqE7VLVoFGP
-FBon9ZFY9yrtDsHYwICL4kCtM3dVp4Ku0p6ylnoWHpl+1DPCLRGYeSnCzbvUQkgJ
-z97OyDJn9M/rVu5Ma4BblVL/2JiyIei99FRZRIFXQslJy8kKCsd5oCwnTUvfq8JT
-OrdEvs2rVuXL8zQs48UQnd4CJ+G+QwVgwseg/iAlxNAzXAtjMed/Z2fSkIev6GrZ
-jo8TMTTkQ6hzsmse5yoo8UQ/UV+roVzrqZGfMOTnsQM08qByAfBCL1BdQ5vd6G6R
-vWcTsR0QToJHc6kUE5Hrkmytpii5tg==
-=Cumb
------END PGP SIGNATURE-----
+and attach/inline your test patch in the same mail.
 
---FbmEh7Ek6NM6xKh/--
+
+Takashi
