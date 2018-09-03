@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592ADC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7014AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC6C20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC6C20658
+	by mail.kernel.org (Postfix) with ESMTP id 285D22077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285D22077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731477AbeICV40 (ORCPT
+        id S1731499AbeICV4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:56:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47974 "EHLO
+        Mon, 3 Sep 2018 17:56:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbeICV4Z (ORCPT
+        with ESMTP id S1727972AbeICV4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:56:25 -0400
+        Mon, 3 Sep 2018 17:56:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCFFFD1B;
-        Mon,  3 Sep 2018 17:35:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E9C8D1B;
+        Mon,  3 Sep 2018 17:35:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.18 059/123] fuse: fix initial parallel dirops
-Date:   Mon,  3 Sep 2018 18:56:43 +0200
-Message-Id: <20180903165721.931355955@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.18 061/123] fuse: fix unlocked access to processing queue
+Date:   Mon,  3 Sep 2018 18:56:45 +0200
+Message-Id: <20180903165722.018550967@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,100 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 63576c13bd17848376c8ba4a98f5d5151140c4ac upstream.
+commit 45ff350bbd9d0f0977ff270a0d427c71520c0c37 upstream.
 
-If parallel dirops are enabled in FUSE_INIT reply, then first operation may
-leave fi->mutex held.
+fuse_dev_release() assumes that it's the only one referencing the
+fpq->processing list, but that's not true, since fuse_abort_conn() can be
+doing the same without any serialization between the two.
 
-Reported-by: syzbot <syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com>
-Fixes: 5c672ab3f0ee ("fuse: serialize dirops by default")
-Cc: <stable@vger.kernel.org> # v4.7
+Fixes: c3696046beb3 ("fuse: separate pqueue for clones")
+Cc: <stable@vger.kernel.org> # v4.2
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dir.c    |   10 ++++++----
- fs/fuse/fuse_i.h |    4 ++--
- fs/fuse/inode.c  |   14 ++++++++++----
- 3 files changed, 18 insertions(+), 10 deletions(-)
+ fs/fuse/dev.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -355,11 +355,12 @@ static struct dentry *fuse_lookup(struct
- 	struct inode *inode;
- 	struct dentry *newent;
- 	bool outarg_valid = true;
-+	bool locked;
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2153,9 +2153,15 @@ int fuse_dev_release(struct inode *inode
+ 	if (fud) {
+ 		struct fuse_conn *fc = fud->fc;
+ 		struct fuse_pqueue *fpq = &fud->pq;
++		LIST_HEAD(to_end);
  
--	fuse_lock_inode(dir);
-+	locked = fuse_lock_inode(dir);
- 	err = fuse_lookup_name(dir->i_sb, get_node_id(dir), &entry->d_name,
- 			       &outarg, &inode);
--	fuse_unlock_inode(dir);
-+	fuse_unlock_inode(dir, locked);
- 	if (err == -ENOENT) {
- 		outarg_valid = false;
- 		err = 0;
-@@ -1340,6 +1341,7 @@ static int fuse_readdir(struct file *fil
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	struct fuse_req *req;
- 	u64 attr_version = 0;
-+	bool locked;
- 
- 	if (is_bad_inode(inode))
- 		return -EIO;
-@@ -1367,9 +1369,9 @@ static int fuse_readdir(struct file *fil
- 		fuse_read_fill(req, file, ctx->pos, PAGE_SIZE,
- 			       FUSE_READDIR);
- 	}
--	fuse_lock_inode(inode);
-+	locked = fuse_lock_inode(inode);
- 	fuse_request_send(fc, req);
--	fuse_unlock_inode(inode);
-+	fuse_unlock_inode(inode, locked);
- 	nbytes = req->out.args[0].size;
- 	err = req->out.h.error;
- 	fuse_put_request(fc, req);
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -974,8 +974,8 @@ int fuse_do_setattr(struct dentry *dentr
- 
- void fuse_set_initialized(struct fuse_conn *fc);
- 
--void fuse_unlock_inode(struct inode *inode);
--void fuse_lock_inode(struct inode *inode);
-+void fuse_unlock_inode(struct inode *inode, bool locked);
-+bool fuse_lock_inode(struct inode *inode);
- 
- int fuse_setxattr(struct inode *inode, const char *name, const void *value,
- 		  size_t size, int flags);
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -357,15 +357,21 @@ int fuse_reverse_inval_inode(struct supe
- 	return 0;
- }
- 
--void fuse_lock_inode(struct inode *inode)
-+bool fuse_lock_inode(struct inode *inode)
- {
--	if (!get_fuse_conn(inode)->parallel_dirops)
-+	bool locked = false;
++		spin_lock(&fpq->lock);
+ 		WARN_ON(!list_empty(&fpq->io));
+-		end_requests(fc, &fpq->processing);
++		list_splice_init(&fpq->processing, &to_end);
++		spin_unlock(&fpq->lock);
 +
-+	if (!get_fuse_conn(inode)->parallel_dirops) {
- 		mutex_lock(&get_fuse_inode(inode)->mutex);
-+		locked = true;
-+	}
++		end_requests(fc, &to_end);
 +
-+	return locked;
- }
- 
--void fuse_unlock_inode(struct inode *inode)
-+void fuse_unlock_inode(struct inode *inode, bool locked)
- {
--	if (!get_fuse_conn(inode)->parallel_dirops)
-+	if (locked)
- 		mutex_unlock(&get_fuse_inode(inode)->mutex);
- }
- 
+ 		/* Are we the last open device? */
+ 		if (atomic_dec_and_test(&fc->dev_count)) {
+ 			WARN_ON(fc->iq.fasync != NULL);
 
 
