@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F44CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ED7C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4543D2086E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4543D2086E
+	by mail.kernel.org (Postfix) with ESMTP id 3DD632086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD632086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbeICVPn (ORCPT
+        id S1729111AbeICVPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:15:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38400 "EHLO
+        Mon, 3 Sep 2018 17:15:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38414 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbeICVPm (ORCPT
+        with ESMTP id S1728569AbeICVPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:15:42 -0400
+        Mon, 3 Sep 2018 17:15:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF8E4CFE;
-        Mon,  3 Sep 2018 16:54:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1106DCF5;
+        Mon,  3 Sep 2018 16:54:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Elad Kanfi <eladkan@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Ofer Levi <oferle@mellanox.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 36/80] arc: fix type warnings in arc/mm/cache.c
-Date:   Mon,  3 Sep 2018 18:49:14 +0200
-Message-Id: <20180903164935.591013044@linuxfoundation.org>
+Subject: [PATCH 4.4 37/80] drivers: net: lmc: fix case value for target abort error
+Date:   Mon,  3 Sep 2018 18:49:15 +0200
+Message-Id: <20180903164935.628668708@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -55,55 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit ec837d620c750c0d4996a907c8c4f7febe1bbeee ]
+[ Upstream commit afb41bb039656f0cecb54eeb8b2e2088201295f5 ]
 
-Fix type warnings in arch/arc/mm/cache.c.
+Current value for a target abort error is 0x010, however, this value
+should in fact be 0x002.  As it stands, the range of error is 0..7 so
+it is currently never being detected.  This bug has been in the driver
+since the early 2.6.12 days (or before).
 
-../arch/arc/mm/cache.c: In function 'flush_anon_page':
-../arch/arc/mm/cache.c:1062:55: warning: passing argument 2 of '__flush_dcache_page' makes integer from pointer without a cast [-Wint-conversion]
-  __flush_dcache_page((phys_addr_t)page_address(page), page_address(page));
-                                                       ^~~~~~~~~~~~~~~~~~
-../arch/arc/mm/cache.c:1013:59: note: expected 'long unsigned int' but argument is of type 'void *'
- void __flush_dcache_page(phys_addr_t paddr, unsigned long vaddr)
-                                             ~~~~~~~~~~~~~~^~~~~
+Detected by CoverityScan, CID#744290 ("Logically dead code")
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Elad Kanfi <eladkan@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Ofer Levi <oferle@mellanox.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/mm/cache.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/wan/lmc/lmc_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/mm/cache.c
-+++ b/arch/arc/mm/cache.c
-@@ -821,7 +821,7 @@ void flush_cache_mm(struct mm_struct *mm
- void flush_cache_page(struct vm_area_struct *vma, unsigned long u_vaddr,
- 		      unsigned long pfn)
- {
--	unsigned int paddr = pfn << PAGE_SHIFT;
-+	phys_addr_t paddr = pfn << PAGE_SHIFT;
- 
- 	u_vaddr &= PAGE_MASK;
- 
-@@ -841,8 +841,9 @@ void flush_anon_page(struct vm_area_stru
- 		     unsigned long u_vaddr)
- {
- 	/* TBD: do we really need to clear the kernel mapping */
--	__flush_dcache_page(page_address(page), u_vaddr);
--	__flush_dcache_page(page_address(page), page_address(page));
-+	__flush_dcache_page((phys_addr_t)page_address(page), u_vaddr);
-+	__flush_dcache_page((phys_addr_t)page_address(page),
-+			    (phys_addr_t)page_address(page));
- 
- }
- 
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -1385,7 +1385,7 @@ static irqreturn_t lmc_interrupt (int ir
+             case 0x001:
+                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
+                 break;
+-            case 0x010:
++            case 0x002:
+                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
+                 break;
+             default:
 
 
