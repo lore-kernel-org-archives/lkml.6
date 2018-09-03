@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5223C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E439C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF102075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF102075E
+	by mail.kernel.org (Postfix) with ESMTP id 1711020867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1711020867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbeICVgp (ORCPT
+        id S1729738AbeICVgt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42424 "EHLO
+        Mon, 3 Sep 2018 17:36:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbeICVgo (ORCPT
+        with ESMTP id S1728279AbeICVgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:44 -0400
+        Mon, 3 Sep 2018 17:36:48 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79D9AD02;
-        Mon,  3 Sep 2018 17:15:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C2E3D02;
+        Mon,  3 Sep 2018 17:15:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
         Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 014/165] nbd: dont requeue the same request twice.
-Date:   Mon,  3 Sep 2018 18:55:00 +0200
-Message-Id: <20180903165655.718803447@linuxfoundation.org>
+Subject: [PATCH 4.14 015/165] nbd: handle unexpected replies better
+Date:   Mon,  3 Sep 2018 18:55:01 +0200
+Message-Id: <20180903165655.780253457@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,112 +53,224 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <josef@toxicpanda.com>
 
-[ Upstream commit d7d94d48a272fd7583dc3c83acb8f5ed4ef456a4 ]
+[ Upstream commit 8f3ea35929a0806ad1397db99a89ffee0140822a ]
 
-We can race with the snd timeout and the per-request timeout and end up
-requeuing the same request twice.  We can't use the send_complete
-completion to tell if everything is ok because we hold the tx_lock
-during send, so the timeout stuff will block waiting to mark the socket
-dead, and we could be marked complete and still requeue.  Instead add a
-flag to the socket so we know whether we've been requeued yet.
+If the server or network is misbehaving and we get an unexpected reply
+we can sometimes miss the request not being started and wait on a
+request and never get a response, or even double complete the same
+request.  Fix this by replacing the send_complete completion with just a
+per command lock.  Add a per command cookie as well so that we can know
+if we're getting a double completion for a previous event.  Also check
+to make sure we dont have REQUEUED set as that means we raced with the
+timeout handler and need to just let the retry occur.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/nbd.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ drivers/block/nbd.c |   75 ++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 14 deletions(-)
 
 --- a/drivers/block/nbd.c
 +++ b/drivers/block/nbd.c
-@@ -112,12 +112,15 @@ struct nbd_device {
- 	struct task_struct *task_setup;
- };
+@@ -116,11 +116,12 @@ struct nbd_device {
  
-+#define NBD_CMD_REQUEUED	1
-+
  struct nbd_cmd {
  	struct nbd_device *nbd;
++	struct mutex lock;
  	int index;
  	int cookie;
- 	struct completion send_complete;
+-	struct completion send_complete;
  	blk_status_t status;
-+	unsigned long flags;
+ 	unsigned long flags;
++	u32 cmd_cookie;
  };
  
  #if IS_ENABLED(CONFIG_DEBUG_FS)
-@@ -146,6 +149,14 @@ static inline struct device *nbd_to_dev(
- 	return disk_to_dev(nbd->disk);
+@@ -157,6 +158,27 @@ static void nbd_requeue_cmd(struct nbd_c
+ 		blk_mq_requeue_request(req, true);
  }
  
-+static void nbd_requeue_cmd(struct nbd_cmd *cmd)
++#define NBD_COOKIE_BITS 32
++
++static u64 nbd_cmd_handle(struct nbd_cmd *cmd)
 +{
 +	struct request *req = blk_mq_rq_from_pdu(cmd);
++	u32 tag = blk_mq_unique_tag(req);
++	u64 cookie = cmd->cmd_cookie;
 +
-+	if (!test_and_set_bit(NBD_CMD_REQUEUED, &cmd->flags))
-+		blk_mq_requeue_request(req, true);
++	return (cookie << NBD_COOKIE_BITS) | tag;
++}
++
++static u32 nbd_handle_to_tag(u64 handle)
++{
++	return (u32)handle;
++}
++
++static u32 nbd_handle_to_cookie(u64 handle)
++{
++	return (u32)(handle >> NBD_COOKIE_BITS);
 +}
 +
  static const char *nbdcmd_to_ascii(int cmd)
  {
  	switch (cmd) {
-@@ -328,7 +339,7 @@ static enum blk_eh_timer_return nbd_xmit
+@@ -317,6 +339,9 @@ static enum blk_eh_timer_return nbd_xmit
+ 	}
+ 	config = nbd->config;
+ 
++	if (!mutex_trylock(&cmd->lock))
++		return BLK_EH_RESET_TIMER;
++
+ 	if (config->num_connections > 1) {
+ 		dev_err_ratelimited(nbd_to_dev(nbd),
+ 				    "Connection timed out, retrying\n");
+@@ -339,6 +364,7 @@ static enum blk_eh_timer_return nbd_xmit
  					nbd_mark_nsock_dead(nbd, nsock, 1);
  				mutex_unlock(&nsock->tx_lock);
  			}
--			blk_mq_requeue_request(req, true);
-+			nbd_requeue_cmd(cmd);
++			mutex_unlock(&cmd->lock);
+ 			nbd_requeue_cmd(cmd);
  			nbd_config_put(nbd);
  			return BLK_EH_NOT_HANDLED;
+@@ -349,6 +375,7 @@ static enum blk_eh_timer_return nbd_xmit
+ 	}
+ 	set_bit(NBD_TIMEDOUT, &config->runtime_flags);
+ 	cmd->status = BLK_STS_IOERR;
++	mutex_unlock(&cmd->lock);
+ 	sock_shutdown(nbd);
+ 	nbd_config_put(nbd);
+ 
+@@ -425,9 +452,9 @@ static int nbd_send_cmd(struct nbd_devic
+ 	struct iov_iter from;
+ 	unsigned long size = blk_rq_bytes(req);
+ 	struct bio *bio;
++	u64 handle;
+ 	u32 type;
+ 	u32 nbd_cmd_flags = 0;
+-	u32 tag = blk_mq_unique_tag(req);
+ 	int sent = nsock->sent, skip = 0;
+ 
+ 	iov_iter_kvec(&from, WRITE | ITER_KVEC, &iov, 1, sizeof(request));
+@@ -469,6 +496,8 @@ static int nbd_send_cmd(struct nbd_devic
+ 			goto send_pages;
  		}
-@@ -484,6 +495,7 @@ static int nbd_send_cmd(struct nbd_devic
- 				nsock->pending = req;
- 				nsock->sent = sent;
- 			}
-+			set_bit(NBD_CMD_REQUEUED, &cmd->flags);
- 			return BLK_STS_RESOURCE;
- 		}
- 		dev_err_ratelimited(disk_to_dev(nbd->disk),
-@@ -525,6 +537,7 @@ send_pages:
- 					 */
- 					nsock->pending = req;
- 					nsock->sent = sent;
-+					set_bit(NBD_CMD_REQUEUED, &cmd->flags);
- 					return BLK_STS_RESOURCE;
+ 		iov_iter_advance(&from, sent);
++	} else {
++		cmd->cmd_cookie++;
+ 	}
+ 	cmd->index = index;
+ 	cmd->cookie = nsock->cookie;
+@@ -477,7 +506,8 @@ static int nbd_send_cmd(struct nbd_devic
+ 		request.from = cpu_to_be64((u64)blk_rq_pos(req) << 9);
+ 		request.len = htonl(size);
+ 	}
+-	memcpy(request.handle, &tag, sizeof(tag));
++	handle = nbd_cmd_handle(cmd);
++	memcpy(request.handle, &handle, sizeof(handle));
+ 
+ 	dev_dbg(nbd_to_dev(nbd), "request %p: sending control (%s@%llu,%uB)\n",
+ 		cmd, nbdcmd_to_ascii(type),
+@@ -570,10 +600,12 @@ static struct nbd_cmd *nbd_read_stat(str
+ 	struct nbd_reply reply;
+ 	struct nbd_cmd *cmd;
+ 	struct request *req = NULL;
++	u64 handle;
+ 	u16 hwq;
+ 	u32 tag;
+ 	struct kvec iov = {.iov_base = &reply, .iov_len = sizeof(reply)};
+ 	struct iov_iter to;
++	int ret = 0;
+ 
+ 	reply.magic = 0;
+ 	iov_iter_kvec(&to, READ | ITER_KVEC, &iov, 1, sizeof(reply));
+@@ -591,8 +623,8 @@ static struct nbd_cmd *nbd_read_stat(str
+ 		return ERR_PTR(-EPROTO);
+ 	}
+ 
+-	memcpy(&tag, reply.handle, sizeof(u32));
+-
++	memcpy(&handle, reply.handle, sizeof(handle));
++	tag = nbd_handle_to_tag(handle);
+ 	hwq = blk_mq_unique_tag_to_hwq(tag);
+ 	if (hwq < nbd->tag_set.nr_hw_queues)
+ 		req = blk_mq_tag_to_rq(nbd->tag_set.tags[hwq],
+@@ -603,11 +635,25 @@ static struct nbd_cmd *nbd_read_stat(str
+ 		return ERR_PTR(-ENOENT);
+ 	}
+ 	cmd = blk_mq_rq_to_pdu(req);
++
++	mutex_lock(&cmd->lock);
++	if (cmd->cmd_cookie != nbd_handle_to_cookie(handle)) {
++		dev_err(disk_to_dev(nbd->disk), "Double reply on req %p, cmd_cookie %u, handle cookie %u\n",
++			req, cmd->cmd_cookie, nbd_handle_to_cookie(handle));
++		ret = -ENOENT;
++		goto out;
++	}
++	if (test_bit(NBD_CMD_REQUEUED, &cmd->flags)) {
++		dev_err(disk_to_dev(nbd->disk), "Raced with timeout on req %p\n",
++			req);
++		ret = -ENOENT;
++		goto out;
++	}
+ 	if (ntohl(reply.error)) {
+ 		dev_err(disk_to_dev(nbd->disk), "Other side returned error (%d)\n",
+ 			ntohl(reply.error));
+ 		cmd->status = BLK_STS_IOERR;
+-		return cmd;
++		goto out;
+ 	}
+ 
+ 	dev_dbg(nbd_to_dev(nbd), "request %p: got reply\n", cmd);
+@@ -632,18 +678,18 @@ static struct nbd_cmd *nbd_read_stat(str
+ 				if (nbd_disconnected(config) ||
+ 				    config->num_connections <= 1) {
+ 					cmd->status = BLK_STS_IOERR;
+-					return cmd;
++					goto out;
  				}
- 				dev_err(disk_to_dev(nbd->disk),
-@@ -793,7 +806,7 @@ again:
- 	 */
- 	blk_mq_start_request(req);
- 	if (unlikely(nsock->pending && nsock->pending != req)) {
--		blk_mq_requeue_request(req, true);
-+		nbd_requeue_cmd(cmd);
- 		ret = 0;
- 		goto out;
+-				return ERR_PTR(-EIO);
++				ret = -EIO;
++				goto out;
+ 			}
+ 			dev_dbg(nbd_to_dev(nbd), "request %p: got %d bytes data\n",
+ 				cmd, bvec.bv_len);
+ 		}
+-	} else {
+-		/* See the comment in nbd_queue_rq. */
+-		wait_for_completion(&cmd->send_complete);
  	}
-@@ -806,7 +819,7 @@ again:
- 		dev_err_ratelimited(disk_to_dev(nbd->disk),
- 				    "Request send failed, requeueing\n");
- 		nbd_mark_nsock_dead(nbd, nsock, 1);
--		blk_mq_requeue_request(req, true);
-+		nbd_requeue_cmd(cmd);
- 		ret = 0;
- 	}
- out:
-@@ -831,6 +844,7 @@ static blk_status_t nbd_queue_rq(struct
+-	return cmd;
++out:
++	mutex_unlock(&cmd->lock);
++	return ret ? ERR_PTR(ret) : cmd;
+ }
+ 
+ static void recv_work(struct work_struct *work)
+@@ -843,7 +889,7 @@ static blk_status_t nbd_queue_rq(struct
+ 	 * that the server is misbehaving (or there was an error) before we're
  	 * done sending everything over the wire.
  	 */
- 	init_completion(&cmd->send_complete);
-+	clear_bit(NBD_CMD_REQUEUED, &cmd->flags);
+-	init_completion(&cmd->send_complete);
++	mutex_lock(&cmd->lock);
+ 	clear_bit(NBD_CMD_REQUEUED, &cmd->flags);
  
  	/* We can be called directly from the user space process, which means we
- 	 * could possibly have signals pending so our sendmsg will fail.  In
-@@ -1446,6 +1460,7 @@ static int nbd_init_request(struct blk_m
- {
+@@ -856,7 +902,7 @@ static blk_status_t nbd_queue_rq(struct
+ 		ret = BLK_STS_IOERR;
+ 	else if (!ret)
+ 		ret = BLK_STS_OK;
+-	complete(&cmd->send_complete);
++	mutex_unlock(&cmd->lock);
+ 
+ 	return ret;
+ }
+@@ -1461,6 +1507,7 @@ static int nbd_init_request(struct blk_m
  	struct nbd_cmd *cmd = blk_mq_rq_to_pdu(rq);
  	cmd->nbd = set->driver_data;
-+	cmd->flags = 0;
+ 	cmd->flags = 0;
++	mutex_init(&cmd->lock);
  	return 0;
  }
  
