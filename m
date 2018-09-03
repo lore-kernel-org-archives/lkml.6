@@ -2,280 +2,170 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE927C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3957C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8091320843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E6B20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:18:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNUWCB1y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8091320843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="ZQD4Brer"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E6B20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbeICNde (ORCPT
+        id S1726135AbeICNhv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:33:34 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35967 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeICNdd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:33:33 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d1-v6so8333345pgo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:14:19 -0700 (PDT)
+        Mon, 3 Sep 2018 09:37:51 -0400
+Received: from mail-dm3nam03on0067.outbound.protection.outlook.com ([104.47.41.67]:52939
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725866AbeICNhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:37:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=t++vTVhu9ygKCY2NSZpL+hZ41FR2WUk/Lah+sgjU5so=;
-        b=uNUWCB1ydX2/sZ6Jlyd/oYX62bdfU7Au5zcBEYQy5GjFc6PYiEVHdZr1B7JAOegWoE
-         2epaD0zKzOJQbGhSRoAzUIHkL6SZdAZV4vpCUCeQTxvYe0xdEzojMXoHzgfW/Dkm3cXV
-         ucJw2Dx4/fpReg+4T5Jhq3nhnMoBZnAG4+HU7MAJkj9cx3G22FzmPxvosMdwc799nfyL
-         pqJf6MsepMFe82Krtlxd2V1kNwJbdbL5ly3R5jr2O1uFfjwG08LWPeEcOwbzuTPzzOx3
-         AsZz3p9wNP6y+MKBsch9Z/+CYtZ3CY9JqY7lM847uH1NU2klBk+y1kKWDdmyHQi8rVvH
-         M9eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=t++vTVhu9ygKCY2NSZpL+hZ41FR2WUk/Lah+sgjU5so=;
-        b=iAi5qnXLnAy82Plo3nm+Ga6nFq8leOdjbyAZd9lw+YNlHmA+LS8YycKuDkwwWVojpX
-         7SvepaW5dMyuEhBYUsOQUhZj9DYwx2UxDq/8HZ7Kco1mc1tn1PlJ1P7dkdDEedBdlO/X
-         QJTIBq/MZP6jq7p+2yZjPvwocWO9bRRPYwyz/IHC8CMLEf/1gUBawGh+byiNoZFo33N5
-         3N4sXhpPvtVx9TqUxLLolD/FjRW3yGEWsoLqpvhsFTd+2UoWc7lYjui50cu1cWiDRw8c
-         x5R+Oxtil4+felqEZIwXF2XW5GycxdzC7fC25K8MpxFRmeKa5xoO4TLBtk3Je9by82Iw
-         uzpg==
-X-Gm-Message-State: APzg51BE4iIsAvloEBhqITBU+fXlcuMuuf0kw6+2+hSdqcY/j9lz75X6
-        kr571pg//giQUBzfpSEXYBXyseCEDHgQnXrCznA6aQ==
-X-Google-Smtp-Source: ANB0Vdbt45TH02EJ3lR8PsCrm6TfoeSgivj1JW1ba8xlqpKqT1+2ybrynjB5nlFly0hPnr0Hbj/+hXvkR0CM/GC6qbk=
-X-Received: by 2002:a63:6183:: with SMTP id v125-v6mr25876201pgb.242.1535966058571;
- Mon, 03 Sep 2018 02:14:18 -0700 (PDT)
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UOvIKXKksmNMi71OK55uMNTXCZb8gjQPrOBRK+Aghn0=;
+ b=ZQD4Brery+gcTzUW86nzDMdj5fPmiZTsCf9M9D6ZzQ0smPGku50Iz725rmoWIT4AzGy1JkUWKr3M9zNeuUmmauQsxLDyfvH3FA5ivefSLbmbLN9StYNeOHhxJOMJfcSYVb4MFtBhhYGXWQG+Iawhl5su0Fcr7stq3FIV1JcHNag=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB460.namprd06.prod.outlook.com (10.141.196.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.14; Mon, 3 Sep 2018 09:16:54 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1101.016; Mon, 3 Sep 2018
+ 09:16:53 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: Re: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
+ erase
+Thread-Topic: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
+ erase
+Thread-Index: AQHUQS9kK77UY0ca10mNeY2WW/uzcqTZ4p6AgARotAA=
+Date:   Mon, 3 Sep 2018 09:16:53 +0000
+Message-ID: <7FBEB635-C943-484D-A970-D3BF870BAFFB@cnexlabs.com>
+References: <1535722477-31288-1-git-send-email-javier@cnexlabs.com>
+ <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
+In-Reply-To: <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [185.245.84.227]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB460;6:DCyq8LPHmOSwuDOPSAfj5N0mN8wObG522UfY4Vvweu1a5/zgszpVyy7avrfPYt0M1mb0LgPzDIspX/yJgxMxv2JsE6peUC/NPK9qOKUGuTWUt4nMPmRJEcktmPpISg22W2RcQpmncqSL1+AXpYg+3J/qzvXdlFjIHKB+/zCcTlaHoJWhkaTWJJf1tAETOhbZ30C7YZeo7NDHGTrd7RINy+vardHLhL/V20OH+Ki9v/X2BGfhF9S481XFZFG0famSDnaM3jG5eVHwdY4GLXPqlZXmqnfQMOUxNUhFp1vJ66TFepSQYHI+DabZI0YGa8LXmJo1gSWN4F6sK82j0T2HGNKBB1pbuG2URI1zzh5r5GJkQkFvPnVi7ZMtpEWyqPgy2y50pajB5JgYAJ9u3JleqBgHQkbmyp22f1xVjxg34docceE4cDYT2O55b2E1C3j+qYxzUukwM3D8iKi3gcv0IQ==;5:0+xxcMmeK7cFeJgwqYNGtKc1kMyzse5G34yfOKgIqpdH3kZ/B42Is1Zc2yuE8OY14rWocxvSRvKrUUQ7JY706dzmb5q+99UUjoT1Ez7hK7PLDnASVR/srgbKruELT4iz1IdJikcjtM2gD6nR1+hklsuUCtm8vUVavNMJnCUlVpo=;7:6Ek97s9wcvuCCI3wdLzssciVbHmTl2rZEKAJiUH91t3/P4r+ujmhSiuJp8fZxfrdxwxT7sPvGMid5hjpG1grTwP/njW+/z7ETX8uhko+OpgcjdEfapC3YEco4tfPHi0J5FcObxwsEtJNirDL68lYI/sAcnYe4armGJAIuKVk2DJRBYdnpsoyULdN7m1hqxbpKBoaugbDC1Mtym/GWJjnKR0vR5/c1Xl/e915OZxpPaYBYodahX0vP9jcGQd4L+AF
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39830400003)(346002)(136003)(189003)(199004)(14454004)(68736007)(76176011)(8936002)(99286004)(2906002)(2616005)(6436002)(6512007)(229853002)(3846002)(53936002)(6116002)(486006)(476003)(99936001)(4326008)(11346002)(8676002)(33656002)(36756003)(446003)(6486002)(5250100002)(6916009)(66066001)(316002)(7736002)(83716003)(106356001)(6506007)(53546011)(26005)(102836004)(105586002)(54906003)(25786009)(305945005)(186003)(86362001)(81156014)(6246003)(2900100001)(97736004)(14444005)(107886003)(478600001)(82746002)(81166006)(256004)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB460;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 5e065b88-98a8-43ec-7e02-08d6117dfd43
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB460;
+x-ms-traffictypediagnostic: CO2PR06MB460:
+x-microsoft-antispam-prvs: <CO2PR06MB4605D87F3F303E59EA33110BA0C0@CO2PR06MB460.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:CO2PR06MB460;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB460;
+x-forefront-prvs: 0784C803FD
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: XJAGrvZAwO/MOf0SELLsFap/OZRmJJTtSzXhULmIDFOSuCwHbEUgi68oNqxR9fg5e4l26tvgFH/KbYSjYbzGwNvJ0J2+bspFmrmS9UXAUhpwkNZ5qvWow+UvrhCDS6O5AKtyJoAluVZdOSxeH5vpFGMTzRhPxLk2tudoYUGhxrhJ/ToLXEm7lBqiF5aeg827WcxbQ2Q3Qw2SF9Ol1pw1wdKGQoVq8TSgEOvYHypb+w0UoiT+spTkO9j8LZmPcZiSA61BIR0439WJCxcOXnOmzV0OFsfqpsTt1JIuxwSPG7zewY0dGE1Ld4Ys9a+du4pwxlhbD6a73i72IHeBeUipyrtFSgjbhPl7jikHLoS8TWU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 02:13:58
- -0700 (PDT)
-In-Reply-To: <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
-References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com> <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 3 Sep 2018 11:13:58 +0200
-Message-ID: <CACT4Y+YGa5riLQavMw4vQ55CeYzakQHSLgEE29RRKi47=J21Ow@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp functions
-To:     Kyeongdon Kim <kyeongdon.kim@lge.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Potapenko <glider@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rob Herring <robh@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e065b88-98a8-43ec-7e02-08d6117dfd43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2018 09:16:53.6006
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB460
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 11:02 AM, Kyeongdon Kim <kyeongdon.kim@lge.com> wrot=
-e:
-> Dear all,
->
-> Could anyone review this and provide me appropriate approach ?
-> I think str[n]cmp are frequently used functions so I believe very useful =
-w/
-> arm64 KASAN.
+--Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Hi Kyeongdon,
+> On 31 Aug 2018, at 15.57, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 08/31/2018 03:34 PM, Javier Gonz=C3=A1lez wrote:
+>> Matias,
+>> This patchset implements support for retrieving chunk metadata when
+>> submitting a reset/erase command. Patches 0 and 1 are small fixes =
+that
+>> can be directly merged into your patch:
+>>      lightnvm: move bad block and chunk state logic to core
+>> Also, note that these do not apply on top of your for-4.20/core due =
+them
+>> depending on patches that I sent before that you have not picked up =
+yet.
+>> You can see them though in for-4.20/pblk. I'll rebase as patches in =
+the
+>> list appear in your tree.
+>=20
+> Thanks. It is really confusing when you guys maintains an implicit =
+order and posts the patches separately. I will appreciate that patches =
+that are related are posted together, such that I don't have to manually =
+track what comes before another. That makes it less of a pain for me to =
+keep track of and we can keep the reviews together.
+>=20
+> This is the patches that I have in the pipeline (from before the =
+e-mails from today):
+>=20
+>  - This serie - Pending review
+>  - Serie: pblk: support variable OOB size - Waiting on review from =
+Igor
+>  - lightnvm: pblk: recover open lines on 2.0 devices. Which doesn't =
+apply due to the fixes to the pad distance patch.
+>=20
 
-Please add tests for this to lib/test_kasan.c.
+Yes, I know and I apologize - we should have a better flow. What do you
+say that for windows like this, where we have a number of patches that
+have dependencies that we post them in meaningful patchsets and point to
+a branch where they are ordered, like in a PR? Then we can rebase and
+propagate changes properly?
 
-> On 2018-08-23 =EC=98=A4=ED=9B=84 5:56, Kyeongdon Kim wrote:
->>
->> This patch declares strcmp/strncmp as weak symbols.
->> (2 of them are the most used string operations)
->>
->> Original functions declared as weak and
->> strong ones in mm/kasan/kasan.c could replace them.
->>
->> Assembly optimized strcmp/strncmp functions cannot detect KASan bug.
->> But, now we can detect them like the call trace below.
->>
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> BUG: KASAN: use-after-free in platform_match+0x1c/0x5c at addr
->> ffffffc0ad313500
->> Read of size 1 by task swapper/0/1
->> CPU: 3 PID: 1 Comm: swapper/0 Tainted: G B 4.9.77+ #1
->> Hardware name: Generic (DT) based system
->> Call trace:
->> dump_backtrace+0x0/0x2e0
->> show_stack+0x14/0x1c
->> dump_stack+0x88/0xb0
->> kasan_object_err+0x24/0x7c
->> kasan_report+0x2f0/0x484
->> check_memory_region+0x20/0x14c
->> strcmp+0x1c/0x5c
->> platform_match+0x40/0xe4
->> __driver_attach+0x40/0x130
->> bus_for_each_dev+0xc4/0xe0
->> driver_attach+0x30/0x3c
->> bus_add_driver+0x2dc/0x328
->> driver_register+0x118/0x160
->> __platform_driver_register+0x7c/0x88
->> alarmtimer_init+0x154/0x1e4
->> do_one_initcall+0x184/0x1a4
->> kernel_init_freeable+0x2ec/0x2f0
->> kernel_init+0x18/0x10c
->> ret_from_fork+0x10/0x50
->>
->> In case of xtensa and x86_64 kasan, no need to use this patch now.
->>
->> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
->> ---
->> arch/arm64/include/asm/string.h | 5 +++++
->> arch/arm64/kernel/arm64ksyms.c | 2 ++
->> arch/arm64/kernel/image.h | 2 ++
->> arch/arm64/lib/strcmp.S | 3 +++
->> arch/arm64/lib/strncmp.S | 3 +++
->> mm/kasan/kasan.c | 23 +++++++++++++++++++++++
->> 6 files changed, 38 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/string.h
->> b/arch/arm64/include/asm/string.h
->> index dd95d33..ab60349 100644
->> --- a/arch/arm64/include/asm/string.h
->> +++ b/arch/arm64/include/asm/string.h
->> @@ -24,9 +24,11 @@ extern char *strchr(const char *, int c);
->>
->> #define __HAVE_ARCH_STRCMP
->> extern int strcmp(const char *, const char *);
->> +extern int __strcmp(const char *, const char *);
->>
->> #define __HAVE_ARCH_STRNCMP
->> extern int strncmp(const char *, const char *, __kernel_size_t);
->> +extern int __strncmp(const char *, const char *, __kernel_size_t);
->>
->> #define __HAVE_ARCH_STRLEN
->> extern __kernel_size_t strlen(const char *);
->> @@ -68,6 +70,9 @@ void memcpy_flushcache(void *dst, const void *src,
->> size_t cnt);
->> #define memmove(dst, src, len) __memmove(dst, src, len)
->> #define memset(s, c, n) __memset(s, c, n)
->>
->> +#define strcmp(cs, ct) __strcmp(cs, ct)
->> +#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
->> +
->> #ifndef __NO_FORTIFY
->> #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
->> #endif
->> diff --git a/arch/arm64/kernel/arm64ksyms.c
->> b/arch/arm64/kernel/arm64ksyms.c
->> index d894a20..10b1164 100644
->> --- a/arch/arm64/kernel/arm64ksyms.c
->> +++ b/arch/arm64/kernel/arm64ksyms.c
->> @@ -50,6 +50,8 @@ EXPORT_SYMBOL(strcmp);
->> EXPORT_SYMBOL(strncmp);
->> EXPORT_SYMBOL(strlen);
->> EXPORT_SYMBOL(strnlen);
->> +EXPORT_SYMBOL(__strcmp);
->> +EXPORT_SYMBOL(__strncmp);
->> EXPORT_SYMBOL(memset);
->> EXPORT_SYMBOL(memcpy);
->> EXPORT_SYMBOL(memmove);
->> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
->> index a820ed0..5ef7a57 100644
->> --- a/arch/arm64/kernel/image.h
->> +++ b/arch/arm64/kernel/image.h
->> @@ -110,6 +110,8 @@ __efistub___flush_dcache_area =3D
->> KALLSYMS_HIDE(__pi___flush_dcache_area);
->> __efistub___memcpy =3D KALLSYMS_HIDE(__pi_memcpy);
->> __efistub___memmove =3D KALLSYMS_HIDE(__pi_memmove);
->> __efistub___memset =3D KALLSYMS_HIDE(__pi_memset);
->> +__efistub___strcmp =3D KALLSYMS_HIDE(__pi_strcmp);
->> +__efistub___strncmp =3D KALLSYMS_HIDE(__pi_strncmp);
->> #endif
->>
->> __efistub__text =3D KALLSYMS_HIDE(_text);
->> diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
->> index 471fe61..0dffef7 100644
->> --- a/arch/arm64/lib/strcmp.S
->> +++ b/arch/arm64/lib/strcmp.S
->> @@ -60,6 +60,8 @@ tmp3 .req x9
->> zeroones .req x10
->> pos .req x11
->>
->> +.weak strcmp
->> +ENTRY(__strcmp)
->> ENTRY(strcmp)
->> eor tmp1, src1, src2
->> mov zeroones, #REP8_01
->> @@ -232,3 +234,4 @@ CPU_BE( orr syndrome, diff, has_nul )
->> sub result, data1, data2, lsr #56
->> ret
->> ENDPIPROC(strcmp)
->> +ENDPROC(__strcmp)
->> diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
->> index e267044..b2648c7 100644
->> --- a/arch/arm64/lib/strncmp.S
->> +++ b/arch/arm64/lib/strncmp.S
->> @@ -64,6 +64,8 @@ limit_wd .req x13
->> mask .req x14
->> endloop .req x15
->>
->> +.weak strncmp
->> +ENTRY(__strncmp)
->> ENTRY(strncmp)
->> cbz limit, .Lret0
->> eor tmp1, src1, src2
->> @@ -308,3 +310,4 @@ CPU_BE( orr syndrome, diff, has_nul )
->> mov result, #0
->> ret
->> ENDPIPROC(strncmp)
->> +ENDPROC(__strncmp)
->> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
->> index c3bd520..61ad7f1 100644
->> --- a/mm/kasan/kasan.c
->> +++ b/mm/kasan/kasan.c
->> @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, size_t le=
-n)
->>
->> return __memcpy(dest, src, len);
->> }
->> +#ifdef CONFIG_ARM64
->> +/*
->> + * Arch arm64 use assembly variant for strcmp/strncmp,
->> + * xtensa use inline asm operations and x86_64 use c one,
->> + * so now this interceptors only for arm64 kasan.
->> + */
->> +#undef strcmp
->> +int strcmp(const char *cs, const char *ct)
->> +{
->> + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
->> + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
->> +
->> + return __strcmp(cs, ct);
->> +}
->> +#undef strncmp
->> +int strncmp(const char *cs, const char *ct, size_t len)
->> +{
->> + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
->> + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
->> +
->> + return __strncmp(cs, ct, len);
->> +}
->> +#endif
->>
->> void kasan_alloc_pages(struct page *page, unsigned int order)
->> {
->> --
->> 2.6.2
->
->
+For this window, I'll rebase the rest of the patches in for-4.20/pblk on
+top of your for-4.20/core, then we can propagate changes as they come.
+
+Javier
+
+--Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluM/AIACgkQIX4xUKFR
+nnSPlw/+LWvj9fJ0ivtsAUDOw6HK29PlpTwm16Pk6L0RComF25n2l/kTitrm9D2M
+h1JpGMk8I9x2aq4cmrqJ+dL5AUPNYzhUyWQVMiTuBJpoa3SxSO62+pxW67K59g3C
+xj0HRHl6UNfYXbp0is1OkqlDsTgDqfe7kp6tQhUjR48BhC4r/BDNZSJMe8lor4nQ
+YWDT57j++hoiguVNpb/TRIuTFw2eUkTX1hVH2nuCoUluLcGU0koxxZTby+501ewJ
+44AUyUSWqVaCV5w9+L/yonAn41pzOrxGkMZXVVd75zHzVjS22bX6i/q5oh7U6YuT
+saaQKB3JI3J6Czal61t/Aol2eNxmV/S4LH0R09X+bawTToHkZKnth1PUl9mzKroW
+6U9eYPd9PVhCB64aNKwGaNBtfYs42XJYcPY0/G+bu77tNMFPop1EcEp05Magnl0I
+ZTISZMijT6wnk+KGYW6ci9+mRw3/Krt9N1NFtkkzHB6e9JjbSA4h5j1mV0RVfBLN
+jcQyk0QKUyhoL9liwCxLzz4BPE2bNqKhvpupy1o8maMirTWU/O1ECZmrt2jbx6MQ
+0RbYoWpgfKV2fafB93iQ+t7A/FjNKQP91bAqJkQWegUsEzxBF3uz6tPgprizUGcj
+rb80G/FeeYh+6X61cUGTkxoluyPGXuxK2LVHDjBK4Fj4w97E5vw=
+=VjXM
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB--
