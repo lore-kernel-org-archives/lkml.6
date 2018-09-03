@@ -2,120 +2,121 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6816EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D33BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9C920868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:26:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIEKXTo0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9C920868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B7BE320868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7BE320868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeICSrV (ORCPT
+        id S1727072AbeICSsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:47:21 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:47082 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeICSrU (ORCPT
+        Mon, 3 Sep 2018 14:48:45 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41192 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbeICSsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:47:20 -0400
-Received: by mail-qk1-f196.google.com with SMTP id j7-v6so430586qkd.13;
-        Mon, 03 Sep 2018 07:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eIz3ru3BIoAJgmBeNcPV1BqkrrZ5jlFDgUli4Ftuweg=;
-        b=fIEKXTo08YLd+EEzNtGN/tI6K7KPNJVfCvPCNkdXJdnE+shEAYV8EeVKSB5vm6ib7R
-         wNo1j1JWDNh30d2JWJ9OwSvqR+XR3/wXAXd2TLfymgNlZMIQwVSWIwoFbCjfdDE4fBWf
-         RM9qw64rWt084/VDz1KkhQoKZTlnWJPoslAWhkNVQtKP1GJEc67xf5rVrnJzLxSadSLE
-         rhl5kUprofTMHi/1Xv2wugTi5aarzmP1ifOihWUvXJZpZkak6fTKT0hEjg8CVWv4Fevn
-         JryqtCIdKF/4S0+UkaQdgWE4iXjCm6aw4lDwTZvqvf4DovJ0OuMoQskmRSJjci0FwAIZ
-         iYUA==
+        Mon, 3 Sep 2018 14:48:45 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z96-v6so862663wrb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:28:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eIz3ru3BIoAJgmBeNcPV1BqkrrZ5jlFDgUli4Ftuweg=;
-        b=GIXpWip5zWIc9FmVf8Yx1sX/juvQoWmh+DdFYnfoR50Ghc/Z5cp7ECOrZuKG6WaP0F
-         gmUVyyHIvxkeskiMm7eZwdN0FQkMj+Z/ZYmfqDj1WaKo5IsRhW6UJH059sUDB4UDDJKh
-         gzJJuwaZwhUxcN6PVXu0VQjeC1kpCm4S2WYaDsh+4glH80Po6uLRhvMPrXjCnmxVJmgy
-         JS+qCkKU3JIH5s0ZoiiNd4/bvEov6NfG4ou3ALtuLT3wh8W2XY9woCFYl4y5ar4rFqar
-         aSoLNrufeR1ur1ooIMz3zfUSzCq2QrCwCNyUDn7CcwuGqKuJMeTnO/avlLo0OP8DtQjZ
-         dqGw==
-X-Gm-Message-State: APzg51CTztD2N9TdafzuA1YANrJC8iD3pMo1Kp/oTjZymenXgi/9mDuY
-        bb23airo5Cqt/H8NlCWb9CFSeRVZX/agYuIf+3o=
-X-Google-Smtp-Source: ANB0VdZjymbQp1PPgDeyxdra/wgKau57XDi+XRijZ+n0klJUcGVzY3Vry93Jb7qVblPtjykWMshX7hGOFLNlPgqeCAg=
-X-Received: by 2002:a37:d992:: with SMTP id q18-v6mr25231794qkl.101.1535984815111;
- Mon, 03 Sep 2018 07:26:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 3 Sep 2018 17:26:43 +0300
-Message-ID: <CAHp75VeN7QoftgkqP-L6JRZi=MRpQkVioBLP7VDLwH=rpnEp_w@mail.gmail.com>
-Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        suresh.b.siddha@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, serge.ayoun@intel.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ej7dARzLP/rqxdCr4eqfg0VPjClpkECnxSzRdiDawP8=;
+        b=QhJVYkpOvfziAHkgiMtRgvpkKmE82xp57PQn4Be1zjyBkie4tzbxsqpVbuXAlXc+j2
+         rxZ1Fn1yTjkWS+x0Z/9r91rVhOYnqcwumD/0ig2jkJKOpPtUWKWhLvl8XRghbi1wNasK
+         dhcxG6+F9/j9sPxlSSXVkdvLWBJUJxDfZrN9sa+DNZl/MXvpwB08aYHVozQ4fY0U7cfU
+         LSyjpZLooXau9lGiC0MYo3Fv6tXtvRNfkNjU4KGJK0Cc7BQ5qkZsoEJEV79zHWPWebDi
+         QL9SU0cioQtSALj/iHuXU/W+s1KuRm0+62TgbI6llNe8TSAN0v+d6cb7A8pEx2EGZBHb
+         /+UA==
+X-Gm-Message-State: APzg51D/Gf0rd8G6S7g++pT55OHXKl8AxFG7hWnbLfL2OJmlJCkXVeqY
+        oK1F4E3WY/3FKRbXE1fbc0+vQw==
+X-Google-Smtp-Source: ANB0VdaTzVEHUzaavNMmlvUyO1WboEvuukmA/wfC7ac2qjCKw+FNsRnRuYwRpe6Y1IaGEi+aIlnQog==
+X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr8683391wrm.21.1535984899038;
+        Mon, 03 Sep 2018 07:28:19 -0700 (PDT)
+Received: from localhost.localdomain.com ([151.15.227.30])
+        by smtp.gmail.com with ESMTPSA id b74-v6sm14175880wma.8.2018.09.03.07.28.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 07:28:18 -0700 (PDT)
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
+Subject: [PATCH v5 0/5] sched/deadline: fix cpusets bandwidth accounting
+Date:   Mon,  3 Sep 2018 16:27:56 +0200
+Message-Id: <20180903142801.20046-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:57 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Intel(R) SGX is a set of CPU instructions that can be used by applications
-> to set aside private regions of code and data. The code outside the enclave
-> is disallowed to access the memory inside the enclave by the CPU access
-> control.
->
-> Add a check for SGX to arch/x86 and a new config option, INTEL_SGX_CORE.
-> Expose a boolean variable 'sgx_enabled' to query whether or not the SGX
-> support is available.
+Hi,
 
-> +       prompt "Intel SGX core functionality"
-> +       def_bool n
+v5 of a series of patches, originally authored by Mathieu, with the intent
+of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
+As originally reported by Steve [1], when hotplug and/or (certain)
+cpuset reconfiguration operations take place, DEADLINE bandwidth
+accounting information is lost since root domains are destroyed and
+recreated.
 
-Default 'default' is 'n'. Perhaps changing prompt to bool will make it
-one line less.
+Mathieu's approach is based on restoring bandwidth accounting info on
+the newly created root domains by iterating through the (DEADLINE) tasks
+belonging to the configured cpuset(s).
 
-> +#include <asm/sgx.h>
-> +#include <asm/sgx_pr.h>
+Main problem of v4 was caused by the trylocking of cpuset_mutex. As
+noticed by Steve [2], if multiple tasks are created at they same time
+only the first gets to grab the mutex, the other get -EBUSY and need to
+retry. Not really nice. So, in v5 I'm proposing to use callback_lock
+instead of cpuset_mutex, which AFAIU should be enough to grant read-only
+safe access to cpusets.
 
-Don't we put linux/* followed by asm/* ?
+01/05 has been dropped because it wasn't really adding much and was
+only causing false positives.
 
-> +#include <linux/freezer.h>
-> +#include <linux/highmem.h>
-> +#include <linux/kthread.h>
-> +#include <linux/ratelimit.h>
-> +#include <linux/sched/signal.h>
-> +#include <linux/slab.h>
+05/05 is still too much DEADLINE specific I guess, but let's first agree
+on foundations patches.
+
+Set also available at
+
+ https://github.com/jlelli/linux.git fixes/deadline/root-domain-accounting-v5
+
+Thanks,
+
+- Juri
+
+[1] https://lkml.org/lkml/2016/2/3/966
+[2] https://lore.kernel.org/lkml/20180614161142.69f186a6@gandalf.local.home/
+
+Juri Lelli (1):
+  cgroup/cpuset: make callback_lock raw
+
+Mathieu Poirier (4):
+  sched/topology: Adding function partition_sched_domains_locked()
+  sched/core: Streamlining calls to task_rq_unlock()
+  sched/core: Prevent race condition between cpuset and
+    __sched_setscheduler()
+  cpuset: Rebuild root domain deadline accounting information
+
+ include/linux/cpuset.h         |   6 ++
+ include/linux/sched.h          |   5 ++
+ include/linux/sched/deadline.h |   8 ++
+ include/linux/sched/topology.h |  10 +++
+ kernel/cgroup/cpuset.c         | 147 +++++++++++++++++++++++++--------
+ kernel/sched/core.c            |  34 +++++---
+ kernel/sched/deadline.c        |  31 +++++++
+ kernel/sched/sched.h           |   3 -
+ kernel/sched/topology.c        |  30 +++++--
+ 9 files changed, 222 insertions(+), 52 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
