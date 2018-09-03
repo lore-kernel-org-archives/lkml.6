@@ -2,136 +2,139 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0487C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E894C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E58B20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E8dlA/kz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gvj5tELY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E58B20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C13420779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C13420779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeICVLA (ORCPT
+        id S1727718AbeICVLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:11:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49132 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbeICVLA (ORCPT
+        Mon, 3 Sep 2018 17:11:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36054 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727611AbeICVLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:11:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 009B960445; Mon,  3 Sep 2018 16:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535993404;
-        bh=9tPWLCMSgpuieD0ARdaDYsX/uNdWnAay1fLw/f0LQos=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=E8dlA/kzWopFwr107vCpWTVU7vYizcMvKuUeTaEmcpGd3IE0+Zkf435uD8QCY8sSc
-         R0z+GNbOG1MNR8ETa/+LRqAJT3G6jL1pDnJWttJL50cuRnLfS5O+SArk/txNQp3Rev
-         53E382Wuxb/p+gi8Q4gxHx+ggnpECKc7eoHHSR8U=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AC7C760445;
-        Mon,  3 Sep 2018 16:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535993403;
-        bh=9tPWLCMSgpuieD0ARdaDYsX/uNdWnAay1fLw/f0LQos=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Gvj5tELYMlHvAQxIC6LIfyRt377fq1Z2nHFVCiVKF1dyO7E4HITPoI6J0NJrFcoOj
-         GdRB7PXmz9qDbKmUSrJ3bz5fJwpymTfdkjAjpnYQw3ig475NDF4ucDbcd4YyHmI6xV
-         4r9Hn63OIYUeGm7v3Hfa27wZ/UVEsXTH0lcg2UjM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC7C760445
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        govinds@codeaurora.org, linux-wireless@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        ath10k@lists.infradead.org
-Subject: Re: [PATCH] ath10k: retrieve MAC address from firmware if provided
-References: <20180810233948.144792-1-briannorris@chromium.org>
-        <5B6F2A47.7070502@broadcom.com>
-        <CA+ASDXOeybJAsWJtVBdLdQ=6xThJja5MaEoa3dERKZ-shkbDkg@mail.gmail.com>
-        <5B71CDFB.60408@broadcom.com>
-        <878t4qftnm.fsf@kamboji.qca.qualcomm.com>
-        <20180829001453.GA173345@ban.mtv.corp.google.com>
-Date:   Mon, 03 Sep 2018 19:49:58 +0300
-In-Reply-To: <20180829001453.GA173345@ban.mtv.corp.google.com> (Brian Norris's
-        message of "Tue, 28 Aug 2018 17:14:54 -0700")
-Message-ID: <87ftyq8r0p.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 3 Sep 2018 17:11:08 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2487CCBF;
+        Mon,  3 Sep 2018 16:50:11 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        James Puthukattukaran <james.puthukattukaran@oracle.com>,
+        Ethan Zhao <ethan.zhao@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de,
+        ethan.kernel@gmail.com, keescook@chromium.org, mcgrof@kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Steve Muckle <smuckle@google.com>
+Subject: [PATCH 3.18 01/56] sched/sysctl: Check user input value of sysctl_sched_time_avg
+Date:   Mon,  3 Sep 2018 18:48:51 +0200
+Message-Id: <20180903164924.147484297@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
+References: <20180903164924.078355019@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> writes:
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-> On Tue, Aug 28, 2018 at 05:33:01PM +0300, Kalle Valo wrote:
->> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
->> 
->> > On 8/13/2018 7:14 PM, Brian Norris wrote:
->> >> On Sat, Aug 11, 2018 at 11:26 AM Arend van Spriel
->> >> <arend.vanspriel@broadcom.com> wrote:
->> >>>
->> >>> On 8/11/2018 1:39 AM, Brian Norris wrote:
->> >>>> Devices may provide their own MAC address via system firmware (e.g.,
->> >>>
->> >>> You got me confused by using just "firmware" in the subject.
->> >>
->> >> Yeah...I started by writing this patch with device tree specifically
->> >> (of_get_mac_address()), and then later found that there were generic
->> >> "device" helpers for this, which can assist with other sorts of
->> >> firmware nodes. It was easier to put a name on a device tree patch
->> >> than on a "device" patch. I suppose "system firmware" might be a
->> >> better description?
->> >>
->> >>>> device tree), especially in the case where the device doesn't have a
->> >>>> useful EEPROM on which to store its MAC address (e.g., for integrated
->> >>>> Wifi).
->> >>>>
->> >>>> Use the generic device helper to retrieve the MAC address, and (if
->> >>>> present) honor it above the MAC address advertised by the card.
->> >>>
->> >>> But this put me back on track ;-)
->> >>
->> >> Let me know if you have a better way to clarify. I can resend with a
->> >> slightly modified subject (s/firmware/system firmware/), or let Kalle
->> >> do it, if that's the only thing to change.
->> >
->> > "system firmware" substitution works for me.
->> 
->> What about:
->> 
->> ath10k: retrieve MAC address from Device Tree if provided
->> 
->> Because from ath10k point of view we use Device Tree functions and don't
->> care if it's delivered by pidgeons or by system firmware :)
->
-> I don't care too much, but note that Device Tree is a loaded term,
-> usually referring specifically to a method of describing system hardware
-> via the Flattened Device Tree format. If I were specifically targeting
-> Device Tree, I'd use helpers like of_get_mac_address() instead. (The
-> 'of_*' prefix is a relic of OpenFirmware, an early firmware
-> implementation that used the Device Tree format.)
+------------------
 
-My bad, I read your patch hastily and somehow understood you were using
-of_get_mac_address() but you were actually using
-device_get_mac_address(). So I'll change this to "system firmware" as
-originally suggested.
+From: Ethan Zhao <ethan.zhao@oracle.com>
 
-Sorry for the confusion.
+commit 5ccba44ba118a5000cccc50076b0344632459779 upstream.
 
--- 
-Kalle Valo
+System will hang if user set sysctl_sched_time_avg to 0:
+
+  [root@XXX ~]# sysctl kernel.sched_time_avg_ms=0
+
+  Stack traceback for pid 0
+  0xffff883f6406c600 0 0 1 3 R 0xffff883f6406cf50 *swapper/3
+  ffff883f7ccc3ae8 0000000000000018 ffffffff810c4dd0 0000000000000000
+  0000000000017800 ffff883f7ccc3d78 0000000000000003 ffff883f7ccc3bf8
+  ffffffff810c4fc9 ffff883f7ccc3c08 00000000810c5043 ffff883f7ccc3c08
+  Call Trace:
+  <IRQ> [<ffffffff810c4dd0>] ? update_group_capacity+0x110/0x200
+  [<ffffffff810c4fc9>] ? update_sd_lb_stats+0x109/0x600
+  [<ffffffff810c5507>] ? find_busiest_group+0x47/0x530
+  [<ffffffff810c5b84>] ? load_balance+0x194/0x900
+  [<ffffffff810ad5ca>] ? update_rq_clock.part.83+0x1a/0xe0
+  [<ffffffff810c6d42>] ? rebalance_domains+0x152/0x290
+  [<ffffffff810c6f5c>] ? run_rebalance_domains+0xdc/0x1d0
+  [<ffffffff8108a75b>] ? __do_softirq+0xfb/0x320
+  [<ffffffff8108ac85>] ? irq_exit+0x125/0x130
+  [<ffffffff810b3a17>] ? scheduler_ipi+0x97/0x160
+  [<ffffffff81052709>] ? smp_reschedule_interrupt+0x29/0x30
+  [<ffffffff8173a1be>] ? reschedule_interrupt+0x6e/0x80
+   <EOI> [<ffffffff815bc83c>] ? cpuidle_enter_state+0xcc/0x230
+  [<ffffffff815bc80c>] ? cpuidle_enter_state+0x9c/0x230
+  [<ffffffff815bc9d7>] ? cpuidle_enter+0x17/0x20
+  [<ffffffff810cd6dc>] ? cpu_startup_entry+0x38c/0x420
+  [<ffffffff81053373>] ? start_secondary+0x173/0x1e0
+
+Because divide-by-zero error happens in function:
+
+update_group_capacity()
+  update_cpu_capacity()
+    scale_rt_capacity()
+     {
+          ...
+          total = sched_avg_period() + delta;
+          used = div_u64(avg, total);
+          ...
+     }
+
+To fix this issue, check user input value of sysctl_sched_time_avg, keep
+it unchanged when hitting invalid input, and set the minimum limit of
+sysctl_sched_time_avg to 1 ms.
+
+Reported-by: James Puthukattukaran <james.puthukattukaran@oracle.com>
+Signed-off-by: Ethan Zhao <ethan.zhao@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: efault@gmx.de
+Cc: ethan.kernel@gmail.com
+Cc: keescook@chromium.org
+Cc: mcgrof@kernel.org
+Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1504504774-18253-1-git-send-email-ethan.zhao@oracle.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Steve Muckle <smuckle@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/sysctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -341,7 +341,8 @@ static struct ctl_table kern_table[] = {
+ 		.data		= &sysctl_sched_time_avg,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &one,
+ 	},
+ 	{
+ 		.procname	= "sched_shares_window_ns",
+
+
