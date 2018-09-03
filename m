@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07711C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4DAC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C162120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C162120658
+	by mail.kernel.org (Postfix) with ESMTP id C4A4120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A4120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731211AbeICVze (ORCPT
+        id S1731397AbeICVzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:55:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47762 "EHLO
+        Mon, 3 Sep 2018 17:55:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47776 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeICVze (ORCPT
+        with ESMTP id S1728335AbeICVzi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:55:34 -0400
+        Mon, 3 Sep 2018 17:55:38 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 720B2D16;
-        Mon,  3 Sep 2018 17:34:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93BDED18;
+        Mon,  3 Sep 2018 17:34:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Wnukowski <wnukowski@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.18 046/123] nvme-pci: add a memory barrier to nvme_dbbuf_update_and_check_event
-Date:   Mon,  3 Sep 2018 18:56:30 +0200
-Message-Id: <20180903165721.410878907@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.18 047/123] x86/gpu: reserve ICLs graphics stolen memory
+Date:   Mon,  3 Sep 2018 18:56:31 +0200
+Message-Id: <20180903165721.453010260@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,70 +54,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Wnukowski <wnukowski@google.com>
+From: Paulo Zanoni <paulo.r.zanoni@intel.com>
 
-commit f1ed3df20d2d223e0852cc4ac1f19bba869a7e3c upstream.
+commit db0c8d8b031d2b5960f6407f7f2ca20e97e00605 upstream.
 
-In many architectures loads may be reordered with older stores to
-different locations.  In the nvme driver the following two operations
-could be reordered:
+ICL changes the registers and addresses to 64 bits.
 
- - Write shadow doorbell (dbbuf_db) into memory.
- - Read EventIdx (dbbuf_ei) from memory.
+I also briefly looked at implementing an u64 version of the PCI config
+read functions, but I concluded this wouldn't be trivial, so it's not
+worth doing it for a single user that can't have any racing problems
+while reading the register in two separate operations.
 
-This can result in a potential race condition between driver and VM host
-processing requests (if given virtual NVMe controller has a support for
-shadow doorbell).  If that occurs, then the NVMe controller may decide to
-wait for MMIO doorbell from guest operating system, and guest driver may
-decide not to issue MMIO doorbell on any of subsequent commands.
+v2:
+ - Scrub the development (non-public) changelog (Joonas).
+ - Remove the i915.ko bits so this can be easily backported in order
+   to properly avoid stolen memory even on machines without i915.ko
+   (Joonas).
+ - CC stable for the reasons above.
 
-This issue is purely timing-dependent one, so there is no easy way to
-reproduce it. Currently the easiest known approach is to run "Oracle IO
-Numbers" (orion) that is shipped with Oracle DB:
-
-orion -run advanced -num_large 0 -size_small 8 -type rand -simulate \
-	concat -write 40 -duration 120 -matrix row -testname nvme_test
-
-Where nvme_test is a .lun file that contains a list of NVMe block
-devices to run test against. Limiting number of vCPUs assigned to given
-VM instance seems to increase chances for this bug to occur. On test
-environment with VM that got 4 NVMe drives and 1 vCPU assigned the
-virtual NVMe controller hang could be observed within 10-20 minutes.
-That correspond to about 400-500k IO operations processed (or about
-100GB of IO read/writes).
-
-Orion tool was used as a validation and set to run in a loop for 36
-hours (equivalent of pushing 550M IO operations). No issues were
-observed. That suggest that the patch fixes the issue.
-
-Fixes: f9f38e33389c ("nvme: improve performance for virtual NVMe devices")
-Signed-off-by: Michal Wnukowski <wnukowski@google.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-[hch: updated changelog and comment a bit]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Issue: VIZ-9250
+CC: stable@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Signed-off-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Fixes: 412310019a20 ("drm/i915/icl: Add initial Icelake definitions.")
+Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180504203252.28048-1-paulo.r.zanoni@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/pci.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/early-quirks.c |   18 ++++++++++++++++++
+ include/drm/i915_drm.h         |    4 +++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -316,6 +316,14 @@ static bool nvme_dbbuf_update_and_check_
- 		old_value = *dbbuf_db;
- 		*dbbuf_db = value;
+--- a/arch/x86/kernel/early-quirks.c
++++ b/arch/x86/kernel/early-quirks.c
+@@ -338,6 +338,18 @@ static resource_size_t __init gen3_stole
+ 	return bsm & INTEL_BSM_MASK;
+ }
  
-+		/*
-+		 * Ensure that the doorbell is updated before reading the event
-+		 * index from memory.  The controller needs to provide similar
-+		 * ordering to ensure the envent index is updated before reading
-+		 * the doorbell.
-+		 */
-+		mb();
++static resource_size_t __init gen11_stolen_base(int num, int slot, int func,
++						resource_size_t stolen_size)
++{
++	u64 bsm;
 +
- 		if (!nvme_dbbuf_need_event(*dbbuf_ei, value, old_value))
- 			return false;
- 	}
++	bsm = read_pci_config(num, slot, func, INTEL_GEN11_BSM_DW0);
++	bsm &= INTEL_BSM_MASK;
++	bsm |= (u64)read_pci_config(num, slot, func, INTEL_GEN11_BSM_DW1) << 32;
++
++	return bsm;
++}
++
+ static resource_size_t __init i830_stolen_size(int num, int slot, int func)
+ {
+ 	u16 gmch_ctrl;
+@@ -498,6 +510,11 @@ static const struct intel_early_ops chv_
+ 	.stolen_size = chv_stolen_size,
+ };
+ 
++static const struct intel_early_ops gen11_early_ops __initconst = {
++	.stolen_base = gen11_stolen_base,
++	.stolen_size = gen9_stolen_size,
++};
++
+ static const struct pci_device_id intel_early_ids[] __initconst = {
+ 	INTEL_I830_IDS(&i830_early_ops),
+ 	INTEL_I845G_IDS(&i845_early_ops),
+@@ -529,6 +546,7 @@ static const struct pci_device_id intel_
+ 	INTEL_CFL_IDS(&gen9_early_ops),
+ 	INTEL_GLK_IDS(&gen9_early_ops),
+ 	INTEL_CNL_IDS(&gen9_early_ops),
++	INTEL_ICL_11_IDS(&gen11_early_ops),
+ };
+ 
+ struct resource intel_graphics_stolen_res __ro_after_init = DEFINE_RES_MEM(0, 0);
+--- a/include/drm/i915_drm.h
++++ b/include/drm/i915_drm.h
+@@ -95,7 +95,9 @@ extern struct resource intel_graphics_st
+ #define    I845_TSEG_SIZE_512K	(2 << 1)
+ #define    I845_TSEG_SIZE_1M	(3 << 1)
+ 
+-#define INTEL_BSM 0x5c
++#define INTEL_BSM		0x5c
++#define INTEL_GEN11_BSM_DW0	0xc0
++#define INTEL_GEN11_BSM_DW1	0xc4
+ #define   INTEL_BSM_MASK	(-(1u << 20))
+ 
+ #endif				/* _I915_DRM_H_ */
 
 
