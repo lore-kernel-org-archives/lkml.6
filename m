@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C59AC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB48CC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 636072077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636072077C
+	by mail.kernel.org (Postfix) with ESMTP id B26DD20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26DD20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbeICVuU (ORCPT
+        id S1731270AbeICVuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:50:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46540 "EHLO
+        Mon, 3 Sep 2018 17:50:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46740 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbeICVuT (ORCPT
+        with ESMTP id S1728746AbeICVuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:50:19 -0400
+        Mon, 3 Sep 2018 17:50:24 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F595D01;
-        Mon,  3 Sep 2018 17:29:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BA03D24;
+        Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.18 001/123] PATCH scripts/kernel-doc
-Date:   Mon,  3 Sep 2018 18:55:45 +0200
-Message-Id: <20180903165719.557078764@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.18 010/123] cifs: check kmalloc before use
+Date:   Mon,  3 Sep 2018 18:55:54 +0200
+Message-Id: <20180903165719.924063868@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,44 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit 701b3a3c0ac42630f74a5efba8545d61ac0e3293 upstream.
+commit 126c97f4d0d1b5b956e8b0740c81a2b2a2ae548c upstream.
 
-Fix a warning whinge from Perl introduced by "scripts: kernel-doc: parse next structs/unions"
+The kmalloc was not being checked - if it fails issue a warning
+and return -ENOMEM to the caller.
 
-Unescaped left brace in regex is deprecated here (and will be fatal in Perl 5.32), passed through in regex; marked by <-- HERE in m/({ <-- HERE [^\{\}]*})/ at ./scripts/kernel-doc line 1155.
-Unescaped left brace in regex is deprecated here (and will be fatal in Perl 5.32), passed through in regex; marked by <-- HERE in m/({ <-- HERE )/ at ./scripts/kernel-doc line 1179.
-
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: b8da344b74c8 ("cifs: dynamic allocation of ntlmssp blob")
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+cc: Stable <stable@vger.kernel.org>`
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/kernel-doc |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/sess.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -1152,7 +1152,7 @@ sub dump_struct($$) {
+--- a/fs/cifs/sess.c
++++ b/fs/cifs/sess.c
+@@ -398,6 +398,12 @@ int build_ntlmssp_auth_blob(unsigned cha
+ 		goto setup_ntlmv2_ret;
  	}
+ 	*pbuffer = kmalloc(size_of_ntlmssp_blob(ses), GFP_KERNEL);
++	if (!*pbuffer) {
++		rc = -ENOMEM;
++		cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
++		*buflen = 0;
++		goto setup_ntlmv2_ret;
++	}
+ 	sec_blob = (AUTHENTICATE_MESSAGE *)*pbuffer;
  
- 	# Ignore other nested elements, like enums
--	$members =~ s/({[^\{\}]*})//g;
-+	$members =~ s/(\{[^\{\}]*})//g;
- 
- 	create_parameterlist($members, ';', $file, $declaration_name);
- 	check_sections($file, $declaration_name, $decl_type, $sectcheck, $struct_actual);
-@@ -1176,7 +1176,7 @@ sub dump_struct($$) {
- 			$declaration .= "\t" x $level;
- 		}
- 		$declaration .= "\t" . $clause . "\n";
--		$level++ if ($clause =~ m/({)/ && !($clause =~m/}/));
-+		$level++ if ($clause =~ m/(\{)/ && !($clause =~m/}/));
- 	}
- 	output_declaration($declaration_name,
- 			   'struct',
+ 	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
 
 
