@@ -6,37 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C382C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC275C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C229B2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C229B2077C
+	by mail.kernel.org (Postfix) with ESMTP id A8D922077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D922077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbeICVio (ORCPT
+        id S1730211AbeICVir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42850 "EHLO
+        Mon, 3 Sep 2018 17:38:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728685AbeICVim (ORCPT
+        with ESMTP id S1728730AbeICVir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:42 -0400
+        Mon, 3 Sep 2018 17:38:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87E75D12;
-        Mon,  3 Sep 2018 17:17:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 775D6D12;
+        Mon,  3 Sep 2018 17:17:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, John Sperbeck <jsperbeck@google.com>,
+        Peter Rosin <peda@axentia.se>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Deepa Dinamani <deepadinamani@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Chang <dpf@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/165] usb: gadget: u_audio: remove caching of stream buffer parameters
-Date:   Mon,  3 Sep 2018 18:55:07 +0200
-Message-Id: <20180903165656.098169851@linuxfoundation.org>
+Subject: [PATCH 4.14 048/165] i2c/mux, locking/core: Annotate the nested rt_mutex usage
+Date:   Mon,  3 Sep 2018 18:55:34 +0200
+Message-Id: <20180903165657.533076792@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,115 +61,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit 96afb54ece0ee903d23a7ac04ddc461413b972c4 ]
+[ Upstream commit 7b94ea50514d1a0dc94f02723b603c27bc0ea597 ]
 
-There is no necessity to copy PCM stream ring buffer area and size
-properties to UAC private data structure, these values can be got
-from substream itself.
+If an i2c topology has instances of nested muxes, then a lockdep splat
+is produced when when i2c_parent_lock_bus() is called.  Here is an
+example:
 
-The change gives more control on substream and avoid stale caching.
+  ============================================
+  WARNING: possible recursive locking detected
+  --------------------------------------------
+  insmod/68159 is trying to acquire lock:
+    (i2c_register_adapter#2){+.+.}, at: i2c_parent_lock_bus+0x32/0x50 [i2c_mux]
 
-Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+  but task is already holding lock:
+    (i2c_register_adapter#2){+.+.}, at: i2c_parent_lock_bus+0x32/0x50 [i2c_mux]
+
+  other info that might help us debug this:
+    Possible unsafe locking scenario:
+
+          CPU0
+          ----
+     lock(i2c_register_adapter#2);
+     lock(i2c_register_adapter#2);
+
+    *** DEADLOCK ***
+
+    May be due to missing lock nesting notation
+
+  1 lock held by insmod/68159:
+    #0:  (i2c_register_adapter#2){+.+.}, at: i2c_parent_lock_bus+0x32/0x50 [i2c_mux]
+
+  stack backtrace:
+  CPU: 13 PID: 68159 Comm: insmod Tainted: G           O
+  Call Trace:
+    dump_stack+0x67/0x98
+    __lock_acquire+0x162e/0x1780
+    lock_acquire+0xba/0x200
+    rt_mutex_lock+0x44/0x60
+    i2c_parent_lock_bus+0x32/0x50 [i2c_mux]
+    i2c_parent_lock_bus+0x3e/0x50 [i2c_mux]
+    i2c_smbus_xfer+0xf0/0x700
+    i2c_smbus_read_byte+0x42/0x70
+    my2c_init+0xa2/0x1000 [my2c]
+    do_one_initcall+0x51/0x192
+    do_init_module+0x62/0x216
+    load_module+0x20f9/0x2b50
+    SYSC_init_module+0x19a/0x1c0
+    SyS_init_module+0xe/0x10
+    do_syscall_64+0x6c/0x1a0
+    entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Reported-by: John Sperbeck <jsperbeck@google.com>
+Tested-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Deepa Dinamani <deepadinamani@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Chang <dpf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Link: http://lkml.kernel.org/r/20180720083914.1950-3-peda@axentia.se
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/u_audio.c |   30 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+ drivers/i2c/i2c-core-base.c |    2 +-
+ drivers/i2c/i2c-mux.c       |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/gadget/function/u_audio.c
-+++ b/drivers/usb/gadget/function/u_audio.c
-@@ -41,9 +41,6 @@ struct uac_req {
- struct uac_rtd_params {
- 	struct snd_uac_chip *uac; /* parent chip */
- 	bool ep_enabled; /* if the ep is enabled */
--	/* Size of the ring buffer */
--	size_t dma_bytes;
--	unsigned char *dma_area;
- 
- 	struct snd_pcm_substream *ss;
- 
-@@ -99,6 +96,7 @@ static void u_audio_iso_complete(struct
- 	int status = req->status;
- 	struct uac_req *ur = req->context;
- 	struct snd_pcm_substream *substream;
-+	struct snd_pcm_runtime *runtime;
- 	struct uac_rtd_params *prm = ur->pp;
- 	struct snd_uac_chip *uac = prm->uac;
- 
-@@ -120,6 +118,7 @@ static void u_audio_iso_complete(struct
- 	if (!substream)
- 		goto exit;
- 
-+	runtime = substream->runtime;
- 	spin_lock_irqsave(&prm->lock, flags);
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-@@ -156,29 +155,31 @@ static void u_audio_iso_complete(struct
- 	spin_unlock_irqrestore(&prm->lock, flags);
- 
- 	/* Pack USB load in ALSA ring buffer */
--	pending = prm->dma_bytes - hw_ptr;
-+	pending = runtime->dma_bytes - hw_ptr;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		if (unlikely(pending < req->actual)) {
--			memcpy(req->buf, prm->dma_area + hw_ptr, pending);
--			memcpy(req->buf + pending, prm->dma_area,
-+			memcpy(req->buf, runtime->dma_area + hw_ptr, pending);
-+			memcpy(req->buf + pending, runtime->dma_area,
- 			       req->actual - pending);
- 		} else {
--			memcpy(req->buf, prm->dma_area + hw_ptr, req->actual);
-+			memcpy(req->buf, runtime->dma_area + hw_ptr,
-+			       req->actual);
- 		}
- 	} else {
- 		if (unlikely(pending < req->actual)) {
--			memcpy(prm->dma_area + hw_ptr, req->buf, pending);
--			memcpy(prm->dma_area, req->buf + pending,
-+			memcpy(runtime->dma_area + hw_ptr, req->buf, pending);
-+			memcpy(runtime->dma_area, req->buf + pending,
- 			       req->actual - pending);
- 		} else {
--			memcpy(prm->dma_area + hw_ptr, req->buf, req->actual);
-+			memcpy(runtime->dma_area + hw_ptr, req->buf,
-+			       req->actual);
- 		}
- 	}
- 
- 	spin_lock_irqsave(&prm->lock, flags);
- 	/* update hw_ptr after data is copied to memory */
--	prm->hw_ptr = (hw_ptr + req->actual) % prm->dma_bytes;
-+	prm->hw_ptr = (hw_ptr + req->actual) % runtime->dma_bytes;
- 	spin_unlock_irqrestore(&prm->lock, flags);
- 
- exit:
-@@ -260,11 +261,8 @@ static int uac_pcm_hw_params(struct snd_
- 
- 	err = snd_pcm_lib_malloc_pages(substream,
- 					params_buffer_bytes(hw_params));
--	if (err >= 0) {
--		prm->dma_bytes = substream->runtime->dma_bytes;
--		prm->dma_area = substream->runtime->dma_area;
-+	if (err >= 0)
- 		prm->period_size = params_period_bytes(hw_params);
--	}
- 
- 	return err;
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -638,7 +638,7 @@ static int i2c_check_addr_busy(struct i2
+ static void i2c_adapter_lock_bus(struct i2c_adapter *adapter,
+ 				 unsigned int flags)
+ {
+-	rt_mutex_lock(&adapter->bus_lock);
++	rt_mutex_lock_nested(&adapter->bus_lock, i2c_adapter_depth(adapter));
  }
-@@ -279,8 +277,6 @@ static int uac_pcm_hw_free(struct snd_pc
- 	else
- 		prm = &uac->c_prm;
  
--	prm->dma_area = NULL;
--	prm->dma_bytes = 0;
- 	prm->period_size = 0;
+ /**
+--- a/drivers/i2c/i2c-mux.c
++++ b/drivers/i2c/i2c-mux.c
+@@ -144,7 +144,7 @@ static void i2c_mux_lock_bus(struct i2c_
+ 	struct i2c_mux_priv *priv = adapter->algo_data;
+ 	struct i2c_adapter *parent = priv->muxc->parent;
  
- 	return snd_pcm_lib_free_pages(substream);
+-	rt_mutex_lock(&parent->mux_lock);
++	rt_mutex_lock_nested(&parent->mux_lock, i2c_adapter_depth(adapter));
+ 	if (!(flags & I2C_LOCK_ROOT_ADAPTER))
+ 		return;
+ 	i2c_lock_bus(parent, flags);
+@@ -181,7 +181,7 @@ static void i2c_parent_lock_bus(struct i
+ 	struct i2c_mux_priv *priv = adapter->algo_data;
+ 	struct i2c_adapter *parent = priv->muxc->parent;
+ 
+-	rt_mutex_lock(&parent->mux_lock);
++	rt_mutex_lock_nested(&parent->mux_lock, i2c_adapter_depth(adapter));
+ 	i2c_lock_bus(parent, flags);
+ }
+ 
 
 
