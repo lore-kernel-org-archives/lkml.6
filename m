@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EA7C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EB1C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABEED2086C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:20:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEED2086C
+	by mail.kernel.org (Postfix) with ESMTP id 2121C2086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:21:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2121C2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbeICVlh (ORCPT
+        id S1729132AbeICVnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:41:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43184 "EHLO
+        Mon, 3 Sep 2018 17:43:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729941AbeICVkN (ORCPT
+        with ESMTP id S1727873AbeICVm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:40:13 -0400
+        Mon, 3 Sep 2018 17:42:59 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69392D10;
-        Mon,  3 Sep 2018 17:19:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 280EED29;
+        Mon,  3 Sep 2018 17:21:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        ard <ard@kwaak.net>, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 073/165] mm: delete historical BUG from zap_pmd_range()
-Date:   Mon,  3 Sep 2018 18:55:59 +0200
-Message-Id: <20180903165658.757763061@linuxfoundation.org>
+Subject: [PATCH 4.14 080/165] scsi: fcoe: clear FC_RP_STARTED flags when receiving a LOGO
+Date:   Mon,  3 Sep 2018 18:56:06 +0200
+Message-Id: <20180903165659.096147070@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -54,55 +52,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit 53406ed1bcfdabe4b5bc35e6d17946c6f9f563e2 ]
+[ Upstream commit 1550ec458e0cf1a40a170ab1f4c46e3f52860f65 ]
 
-Delete the old VM_BUG_ON_VMA() from zap_pmd_range(), which asserted
-that mmap_sem must be held when splitting an "anonymous" vma there.
-Whether that's still strictly true nowadays is not entirely clear,
-but the danger of sometimes crashing on the BUG is now fairly clear.
+When receiving a LOGO request we forget to clear the FC_RP_STARTED flag
+before starting the rport delete routine.
 
-Even with the new stricter rules for anonymous vma marking, the
-condition it checks for can possible trigger. Commit 44960f2a7b63
-("staging: ashmem: Fix SIGBUS crash when traversing mmaped ashmem
-pages") is good, and originally I thought it was safe from that
-VM_BUG_ON_VMA(), because the /dev/ashmem fd exposed to the user is
-disconnected from the vm_file in the vma, and madvise(,,MADV_REMOVE)
-insists on VM_SHARED.
+As the started flag was not cleared, we're not deleting the rport but
+waiting for a restart and thus are keeping the reference count of the rdata
+object at 1.
 
-But after I read John's earlier mail, drawing attention to the
-vfs_fallocate() in there: I may be wrong, and I don't know if Android
-has THP in the config anyway, but it looks to me like an
-unmap_mapping_range() from ashmem's vfs_fallocate() could hit precisely
-the VM_BUG_ON_VMA(), once it's vma_is_anonymous().
+This leads to the following kmemleak report:
+unreferenced object 0xffff88006542aa00 (size 512):
+  comm "kworker/0:2", pid 24, jiffies 4294899222 (age 226.880s)
+  hex dump (first 32 bytes):
+    68 96 fe 65 00 88 ff ff 00 00 00 00 00 00 00 00  h..e............
+    01 00 00 00 08 00 00 00 02 c5 45 24 ac b8 00 10  ..........E$....
+  backtrace:
+    [<(____ptrval____)>] fcoe_ctlr_vn_add.isra.5+0x7f/0x770 [libfcoe]
+    [<(____ptrval____)>] fcoe_ctlr_vn_recv+0x12af/0x27f0 [libfcoe]
+    [<(____ptrval____)>] fcoe_ctlr_recv_work+0xd01/0x32f0 [libfcoe]
+    [<(____ptrval____)>] process_one_work+0x7ff/0x1420
+    [<(____ptrval____)>] worker_thread+0x87/0xef0
+    [<(____ptrval____)>] kthread+0x2db/0x390
+    [<(____ptrval____)>] ret_from_fork+0x35/0x40
+    [<(____ptrval____)>] 0xffffffffffffffff
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reported-by: ard <ard@kwaak.net>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/memory.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/scsi/libfc/fc_rport.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1417,11 +1417,9 @@ static inline unsigned long zap_pmd_rang
- 	do {
- 		next = pmd_addr_end(addr, end);
- 		if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)) {
--			if (next - addr != HPAGE_PMD_SIZE) {
--				VM_BUG_ON_VMA(vma_is_anonymous(vma) &&
--				    !rwsem_is_locked(&tlb->mm->mmap_sem), vma);
-+			if (next - addr != HPAGE_PMD_SIZE)
- 				__split_huge_pmd(vma, pmd, addr, false, NULL);
--			} else if (zap_huge_pmd(tlb, vma, pmd, addr))
-+			else if (zap_huge_pmd(tlb, vma, pmd, addr))
- 				goto next;
- 			/* fall through */
- 		}
+--- a/drivers/scsi/libfc/fc_rport.c
++++ b/drivers/scsi/libfc/fc_rport.c
+@@ -2164,6 +2164,7 @@ static void fc_rport_recv_logo_req(struc
+ 		FC_RPORT_DBG(rdata, "Received LOGO request while in state %s\n",
+ 			     fc_rport_state(rdata));
+ 
++		rdata->flags &= ~FC_RP_STARTED;
+ 		fc_rport_enter_delete(rdata, RPORT_EV_STOP);
+ 		mutex_unlock(&rdata->rp_mutex);
+ 		kref_put(&rdata->kref, fc_rport_destroy);
 
 
