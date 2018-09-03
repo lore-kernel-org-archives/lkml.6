@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F212EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C12C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4FA20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C05620856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASc6T1XR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4FA20856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="laD9dgft"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C05620856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeICOVj (ORCPT
+        id S1727793AbeICOVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:39 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40696 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbeICOVi (ORCPT
+        Mon, 3 Sep 2018 10:21:41 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53679 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbeICOVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:38 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 207-v6so515685wme.5;
-        Mon, 03 Sep 2018 03:02:12 -0700 (PDT)
+        Mon, 3 Sep 2018 10:21:40 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b19-v6so547421wme.3;
+        Mon, 03 Sep 2018 03:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9LXnz2fUikvXtzGPguMQqVne60eSM6Bi3/wfM9ERA6c=;
-        b=ASc6T1XRSP/kNEywFxw90OG1YnpHJ4VQZ+PqmR+SWLpIB9Wh7pYhzG+vAE0G+Ebi1E
-         O5QFT4TH9NSfb3jjSv/9OSYhX+jnrslrUWNL53S/hupKMjmjeMhpkRiT+NOv0g8lW8ph
-         1i32SWXceUoP9UE1h/LfZ2HzgstomtNjVbMZ1EDd5MZGWa3Xg8/jwK2/yaD4EGQfyjMZ
-         90gwkayHWTrzAnglB96xpKyFTX/JpaKlRU3DCa9mRuesMayYa0Gr3hT6TnNluM26PzCy
-         XFY+IozKXf/TTz32pTRbCaF4UUR7w15OV6yp+E2G8VXuJbqvrnlntVgD76CNEgTbh151
-         dBGA==
+        bh=RUdmpyjvYH/P3gTVki1Kcr+96q6wklBBPgCeGs+6Dmc=;
+        b=laD9dgftVxceZOvDHfCHlcltULXv1fqRzKjtuF6i1CuYCH/3IpLneIU0UA4HTWLzbm
+         k7/KWF2eyedhidhT7l8W32vTlv/h6ybsNUqQ8XjhXKsPQIL2jwEMbZK9JkJAeP8oRTMp
+         qtxIfTf4Xe9bG+2LoPGO5i7T1WKibKTBMdw7e85Dxt98zyvdOpHGBWdcZz5wEGhhxtuC
+         xPt4t22anO0uGSCM0Ghc5YX9pyZzcBYVBWuBAa5UKUdfEV6eAiha9zB8YTjWTWSs1bqC
+         lwdGAFQsJ1Clf7KWTH97gmoIQ6Bl6TPY+/21UW3JLhiJipizln9AfdYWnDldNzBxyFiI
+         T+lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9LXnz2fUikvXtzGPguMQqVne60eSM6Bi3/wfM9ERA6c=;
-        b=mlPVooPOSBVaSN/lkM7+T8vGZI7UAWdlOu95E1ozf9yVr3pjkElQc7SQDoSVQKuqF3
-         r38OLS2lPByICHn76GDUN0RchzYNvlIxnmtHNYwj/y3GzwKpC/Qitn++KWQWRtv/mR1P
-         VA2akB/H48czRvoZdR6hy53re07Ou02V7XZamwQG21pSUZEKfrx39XtF5pD4M2Hkexhn
-         ukjWBgaJLW84ZW2lsRMoJtHskkoi5H/jjRNyYKgv7+7SYJ90Yzvog38Lg94TCaO9Pqgs
-         EegSbdqmleh6HoRYpG+/qrn10kxi86IihDQH3FKO49LHOr4tKBirZity8LG4cKpWopGv
-         QOZg==
-X-Gm-Message-State: APzg51D9KOtm6/4STyYRGu8MuQSJKJqnwYTmNQvf0+B14ofBhg6EUjQS
-        VjBEIb0mFU8bvfuVmsOq/vM=
-X-Google-Smtp-Source: ANB0VdZI120x0VHUXWNAWmRFu+EcW5fHDIy9v8o9znsWpScJc35G4xbJN0WpuA+55izJLaYmVUDo5Q==
-X-Received: by 2002:a1c:32c4:: with SMTP id y187-v6mr4447461wmy.31.1535968931627;
-        Mon, 03 Sep 2018 03:02:11 -0700 (PDT)
+        bh=RUdmpyjvYH/P3gTVki1Kcr+96q6wklBBPgCeGs+6Dmc=;
+        b=p5jwA1njYneRudRMErrjbrYV0UrkyWuhSIw9MEq///cZzOXPeOUdvIVCEfH+VwhNx1
+         5ZePCadHSNjptQpkIl+VCeCETclL1k7ALb3QlGqskDW/zRv4keA4W7UAFVFKgdijihbw
+         9XLMbg2CV7rqKs9BYsvFyL/g24t5HeV2aVntzNcutgg9zzR9jEq2xxpwjD55ohxmN9GK
+         3IvlmRcxCNOx9Mevkzqs2SJIAJe4geech6DmXM1PQzW3Byh5XV7SXlEM2IKKOnNqVDCe
+         SWasKa2ejX4kv8IT+D1aFVTsv5M1vOOOStK7tpsTxkChDf0XlIeKLoXg6ITGqThtPtNg
+         wbCw==
+X-Gm-Message-State: APzg51AHRYR/YvVSU+CeJzpUZfz5PhF0Q6ctO1mpkSa7muPbpEuibgKO
+        W3/w0s0HATVp53riClhH8GEos+ir
+X-Google-Smtp-Source: ANB0VdYO7WlmRYurEh9tWRufF7iTZ5egaNo4eHQzghRCOy6uc+EMDSvuAWuAJCI1AcCDdzcCYZnuJg==
+X-Received: by 2002:a1c:2e11:: with SMTP id u17-v6mr4638794wmu.102.1535968933093;
+        Mon, 03 Sep 2018 03:02:13 -0700 (PDT)
 Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.10
+        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 03:02:10 -0700 (PDT)
+        Mon, 03 Sep 2018 03:02:12 -0700 (PDT)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     axboe@kernel.dk, hdegoede@redhat.com, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, robh+dt@kernel.org, wens@csie.org
@@ -65,9 +65,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com,
         Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v5 4/9] ata: ahci_platform: add support for PHY controller regulator
-Date:   Mon,  3 Sep 2018 12:01:56 +0200
-Message-Id: <20180903100201.23131-5-clabbe.montjoie@gmail.com>
+Subject: [PATCH v5 5/9] dt-bindings: ata: ahci-platform: document phy-supply
+Date:   Mon,  3 Sep 2018 12:01:57 +0200
+Message-Id: <20180903100201.23131-6-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
 References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
@@ -76,81 +76,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SoC R40 AHCI controller need a PHY regulator to work.
-But since the PHY is embedded in the controller, we cannot do a DT node for it,
-since phy-supply works only in node with a PHY compatible.
-So this patch adds a way to add an optional phy-supply regulator on AHCI controller node.
+This patch document the new optional phy-supply.
 
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- drivers/ata/ahci.h             |  1 +
- drivers/ata/libahci_platform.c | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
+ Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-index 1415f1012de5..ef356e70e6de 100644
---- a/drivers/ata/ahci.h
-+++ b/drivers/ata/ahci.h
-@@ -353,6 +353,7 @@ struct ahci_host_priv {
- 	struct reset_control	*rsts;		/* Optional */
- 	struct regulator	**target_pwrs;	/* Optional */
- 	struct regulator	*ahci_regulator;/* Optional */
-+	struct regulator	*phy_regulator;/* Optional */
- 	/*
- 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
- 	 * the PHY position in this array.
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index a886b61476a3..dc4d79b1c9ae 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -157,6 +157,12 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
- 			return rc;
- 	}
- 
-+	if (hpriv->phy_regulator) {
-+		rc = regulator_enable(hpriv->phy_regulator);
-+		if (rc)
-+			goto disable_ahci_pwrs;
-+	}
-+
- 	for (i = 0; i < hpriv->nports; i++) {
- 		if (!hpriv->target_pwrs[i])
- 			continue;
-@@ -173,6 +179,9 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
- 		if (hpriv->target_pwrs[i])
- 			regulator_disable(hpriv->target_pwrs[i]);
- 
-+	if (hpriv->phy_regulator)
-+		regulator_disable(hpriv->phy_regulator);
-+disable_ahci_pwrs:
- 	if (hpriv->ahci_regulator)
- 		regulator_disable(hpriv->ahci_regulator);
- 	return rc;
-@@ -198,6 +207,8 @@ void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
- 
- 	if (hpriv->ahci_regulator)
- 		regulator_disable(hpriv->ahci_regulator);
-+	if (hpriv->phy_regulator)
-+		regulator_disable(hpriv->phy_regulator);
- }
- EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
- /**
-@@ -430,6 +441,15 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
- 		hpriv->ahci_regulator = NULL;
- 	}
- 
-+	hpriv->phy_regulator = devm_regulator_get_optional(dev, "phy");
-+	if (IS_ERR(hpriv->phy_regulator)) {
-+		rc = PTR_ERR(hpriv->phy_regulator);
-+		if (rc == -EPROBE_DEFER)
-+			goto err_out;
-+		rc = 0;
-+		hpriv->phy_regulator = NULL;
-+	}
-+
- 	if (flags & AHCI_PLATFORM_GET_RESETS) {
- 		hpriv->rsts = devm_reset_control_array_get_optional_shared(dev);
- 		if (IS_ERR(hpriv->rsts)) {
+diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+index f495774c8af9..45b451961612 100644
+--- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
++++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+@@ -31,6 +31,7 @@ Optional properties:
+ - clocks            : a list of phandle + clock specifier pairs
+ - resets            : a list of phandle + reset specifier pairs
+ - target-supply     : regulator for SATA target power
++- phy-supply        : regulator for PHY power
+ - phys              : reference to the SATA PHY node
+ - phy-names         : must be "sata-phy"
+ - ahci-supply       : regulator for AHCI controller
 -- 
 2.16.4
 
