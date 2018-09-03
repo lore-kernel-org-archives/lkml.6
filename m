@@ -2,170 +2,196 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23128C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD79C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC4012077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:26:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="IyB7O7bT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC4012077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 871532075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871532075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeICOqU (ORCPT
+        id S1726103AbeICOxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:46:20 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40050 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbeICOqU (ORCPT
+        Mon, 3 Sep 2018 10:53:38 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53675 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeICOxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:46:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l63-v6so32796pga.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 03:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qSZqueompcOQmme62pm3nN7LsB9nZ0fRRDlYkCiKIfo=;
-        b=IyB7O7bTc8vKS+Xke1FHCKmiaC8XhwL5QyN95NnNWv/w7qxnELMNTwQ/5v+tWrAoi0
-         yVWCyK962WPK0I2FEkFIoEInj/Wz2JQBeYWkLt9+CgK3DoeQzePQVZoz2fjmDiX8p02Q
-         S5SwgsetubYmZ6RVv96CKHd73cLPwrIZwnVhAXSJUgp1rDj9f2EegCgu5fNrbPCyc2EZ
-         bhs0m8748/ajIjHpFJNQDsAVY/vE/xCJ7zS/EaKEFd4cp57Fo/fbH+s925Ygsmvgo2oU
-         alHQ49SshYrnqcJOmimobIYMqLgxM5DN9qRTe2QvnQTZHR9TYL8otVlhpSJ7i7FweSWB
-         tCmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qSZqueompcOQmme62pm3nN7LsB9nZ0fRRDlYkCiKIfo=;
-        b=S22PfeFKYGvNLs/YipQo+0aNFEB/xn6tz19nPyc5+vbfRkFmNbp4VJ6CFgryPo2iXp
-         f9phh7G+Fyc9pzwsUtd4OFYbTZmF8wM97RDt7ug9/kmHDG5oDHTn62A0dbHNbn16NBTJ
-         /GyElIJUC3+0JU5TB+rkvHNkrmdqQzddmFE4nvThqs6z0SzO41af/cYG3sdRsF6sY5Jg
-         JFtlR8ANqcLS7MhsvsUPTAeazSfrnzuWNCNVrrY5LuAJBfMYV1ipSeLaN7atVowUbOvN
-         VOvVqPM75jyFaPGG+mF2rUFruj/nZ6VfMYrUXDSR0UQDqtY9QngeXGE5lMs70szf814y
-         QGRg==
-X-Gm-Message-State: APzg51DoqFjdqoVKTxdiolOscK6SNljGdKfEpMEvnhgIzpcczmlR5KYx
-        nJS9ddLz7fcygvOTgweclnjUzBKDZubeEA==
-X-Google-Smtp-Source: ANB0VdZkrUGms1gp56U7nb/gNvpmQcPv9dG7reE5hItonWUmaMlgQwKWTAvE52uPKRORcklncvLLRw==
-X-Received: by 2002:a63:1b4e:: with SMTP id b14-v6mr25520197pgm.303.1535970408327;
-        Mon, 03 Sep 2018 03:26:48 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm34252256pfb.11.2018.09.03.03.26.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 03:26:47 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 5C0F9300D89; Mon,  3 Sep 2018 13:26:42 +0300 (+03)
-Date:   Mon, 3 Sep 2018 13:26:42 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        thgarnie@google.com, kirill.shutemov@linux.intel.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
- paging mode
-Message-ID: <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
-References: <20180829021754.21850-1-bhe@redhat.com>
- <20180829021754.21850-2-bhe@redhat.com>
- <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
- <20180830152512.GE14702@192.168.1.2>
- <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
- <20180903074718.GD1740@192.168.1.3>
+        Mon, 3 Sep 2018 10:53:38 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 053DE60002;
+        Mon,  3 Sep 2018 10:33:59 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 12:33:58 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Message-ID: <20180903103358.GC20333@w540>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WK3l2KTTmXPVedZ6"
 Content-Disposition: inline
-In-Reply-To: <20180903074718.GD1740@192.168.1.3>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 03:47:18PM +0800, Baoquan He wrote:
-> On 09/02/18 at 11:52pm, Kirill A. Shutemov wrote:
-> > On Thu, Aug 30, 2018 at 11:25:12PM +0800, Baoquan He wrote:
-> > > Hi Kirill,
-> > > 
-> > > I made a new version according to your suggestion, just a little
-> > > different, I didn't make 1TB as default, just calculate with the actual
-> > > size, then align up to 1TB boundary.  Just found kcore is printing more
-> > > entries than before, I thought it's caused by my code, later got it was
-> > > touchde by other people.
-> > > 
-> > > Any comment about this? I can change accordingly.
-> > 
-> > Looks good to me.
-> > 
-> > But there's corner case when struct page is unreasonably large and
-> > vmemmap_size will be way to large. We probably have to report an error if
-> > we cannot fit vmemmap properly into virtual memory layout.
-> 
-> Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
-> system bootup can't go over vmemmap initlization. Except of this, we may
-> need think about the virtual memory layout which vmemmap can be allowed
-> to occupy.
-> 
-> If KASAN enabled, KASLR disabled,
-> 4-level 1TB + 1TB hole (2TB)
-> 5-level 512TB + 2034TB hole (2.5PB)
-> 
-> If KASAN disabled, KASLR enabled,
-> 4-level 1TB + 1TB hole + 16TB  (18TB)
-> 5-level 512TB + 2034TB hole + 8PB (10.5PB)
-> 
-> So, as you can see, if add check in memory KASLR code, we should only
-> consider KASLR enabled case. We possibly don't need to worry about
-> 5-level case since the size 10.5PB is even bigger than the maximum
-> physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
-> will be 32 times of the current 1TB, then we usually assume 64 as the
-> default value of sizeof(struct page), then 64*32 == 1024. So we can add
-> check like this, what do you think? Or any other idea?
 
-Looks reasonable to me.
+--WK3l2KTTmXPVedZ6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-But I would have the BUILD_BUG_ON() in generic code. If you struct page is
-more than 1/4 of PAGE_SIZE something is horribly broken.
+Hi Phil,
 
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index 1db8e166455e..776ec759a87c 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -90,6 +90,7 @@ void __init kernel_randomize_memory(void)
->         BUILD_BUG_ON(vaddr_start >= vaddr_end);
->         BUILD_BUG_ON(vaddr_end != CPU_ENTRY_AREA_BASE);
->         BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
-> +       BUILD_BUG_ON(sizeof(struct page ) > PAGE_SIZE/4);
+On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
+> This implements the pinctrl driver for the RZ/N1 family of devices, including
+> the R9A06G032 (RZ/N1D) device.
+>
+> One area that is likely to be contentious is the use of 'virtual pins' for the
+> MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exist on the
+> device to configure the MDIO source within the RZ/N1 devices. On these devices,
+> there are two Ethernet MACs, a 5-Port Switch, numerous industrial Ethernet
+> peripherals, any of which can be the MDIO source. Configuring the MDIO source
+> could be done without the virtual pins, e.g. by extending the functions to
+> cover all MDIO variants (a total of 32 additional functions), but this would
+> allow users to misconfigure individual MDIO pins, rather than assign all MDIO
+> pins to a MDIO source. The choice of how to implement this will affect the
+> DT bindings.
+>
+> This series was originally written by Michel Pollet whilst at Renesas, and I
+> have taken over this work.
+>
+> One point from Michel's v1 series:
+> "Note, I used renesas,rzn1-pinmux node to specify the pinmux constants,
+> and I also don't use some of the properties documented in
+> pinctrl-bindings.txt on purpose, as they are too limited for my use
+> (I need to be able to set, clear, ignore or reset level, pull up/down
+> and function as the pinmux might be set by another OS/core running
+> concurently)."
+>
 
-Nitpick: redundant space before ')'.
+I start by saying that I don't know this HW pin controller well, so
+I might be missing something, but as commented on the original series from
+Micheal, I still don't see why you need a custom property here...
 
->  
->         if (!kaslr_memory_enabled())
->                 return;
-> 
-> 
-> For 5-level paging mode, we
-> may not need to worry about that. Since KASAN 
-> 
-> ***4-level***
-> ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
-> ... unused hole ...
-> ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
-> ... unused hole ...
-> 
-> 
-> 
-> ***5-level***
-> ffd4000000000000 - ffd5ffffffffffff (=49 bits) virtual memory map (512TB)
-> ... unused hole ...
-> ffdf000000000000 - fffffc0000000000 (=53 bits) kasan shadow memory (8PB) 
-> 
-> > 
-> > -- 
-> >  Kirill A. Shutemov
+My understanding, looking at this comment and the header provided by
+patch [1/3] (include/dt-bindings/pinctrl/rzn1-pinctrl.h) is that
+basically need to control pull-up/down and the output driver strength.
 
--- 
- Kirill A. Shutemov
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt reports
+a set of generic pin configuration properties to be applied to a pin
+configuration (and multiplexing) pin controller child node that fully
+express all (most?) of your needs.
+
+Eg. a pin configuration with pull up applied, using examples from your
+cover letter should be expressed as
+
+Your example:
+         &pinctrl {
+                 pinsuart0: pinsuart0 {
+                         renesas,rzn1-pinmux-ids = <
+                                 RZN1_MUX(103, UART0_I)  /* UART0_TXD */
+                                 RZN1_MUX_PUP(104, UART0_I)      /* UART0_RXD */
+                         >;
+                 };
+         };
+
+Using standard pinctroller bindings pin configuration properties:
+
+         &pinctrl {
+                 pinsuart0: uart0  {
+                        pinsuart_tx0 {
+                                pinmux = <103, UART0_I>;  /* UART0_TXD */
+                        };
+
+                        pinsuart_rx0 {
+                                 pinmux = <104, UART0_I>; /* UART0_RXD */
+                                 bias-pull-up;
+                        };
+                 };
+         };
+
+Is there anything I am missing? Maybe from the interaction with
+"another OS/core running concurrently" you mentioned? In this case if
+you only have to perform pin configuration (because muxing is handled
+already) things are even simpler, just use the pin configuration
+bindings, without involving muxing at all:
+
+        &pinctrl {
+                pinsuart_conf: uart0 {
+                        pins = <103, 104>;
+                        bias-pull-up;
+                 };
+         };
+
+Thanks
+  j
+
+> Patch 0003 should really be applied after patch:
+>  "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
+>  https://www.spinics.net/lists/arm-kernel/msg673525.html
+>
+> Main changes:
+> v2:
+>  - Change to generic rzn1 family driver, instead of device specific.
+>  - Review comments fixed.
+>  - Fix error handling during probe
+>
+> Phil Edworthy (3):
+>   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+>   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+>   ARM: dts: r9a06g032: Add pinctrl node
+>
+>  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
+>  arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
+>  drivers/pinctrl/Kconfig                            |  10 +
+>  drivers/pinctrl/Makefile                           |   1 +
+>  drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++++++++++++
+>  include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
+>  6 files changed, 1151 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+>  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+>
+> --
+> 2.7.4
+>
+
+--WK3l2KTTmXPVedZ6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbjQ4WAAoJEHI0Bo8WoVY809sQAI2sohCacWR23p07ZrJpZVLa
+Mj+sQnALW+urUxXGXITgFyABscYBZzpbvXUhDYjwkd0MAn+GLCdG6kEJnRgZA1c9
+0E5FN8j9Bn3vdsD6xvktZ/pdcUIH9+bvunHhZCzrW4s6UHx7mtReqB1Ih8oQoi2D
+y7K1bR/1pxtHQ3VboZSs2aIhUIV8eDzk5L/ZAjgitibH7gcrafNAXJMgi+nO2ioA
+RdmzqCNaJ7smkeWrNrlbWjJ2XIJXueSuyY/7XY2sFolljFls48TVWYZG5okYHSyo
+bYDfuV2fTfGVfYy9cfvyYZpZXrbXIj9tOoPm6K6qzEnfaK76TMs0EIeFGvyw9Flu
+Ym4hQ5af7ELr03sEt/2I18T+3tZ55lPxYbeg/Uisxv39w2q6LvEScR0emuzm+IfW
+c+ucfZplP9UadQ+0UVxHFlZqPNAeXuuUly4Y4WW4EN6exXEO0ekjCSRqSm59Vdby
+l5B4PTAhpTY602WkabLxvQop9Uk1BNRlwC4sNFN1SXOqqq09bvWmhPDZx5oPKG42
+dZccD9inF70DVAmY9lk+HDN0cjfMZz8zmzlFCDwvOLYY/M7C8mIPOGAoXFOy3ivg
+OaTO79F00LPpwVN2PiuXW43X2QP0BsMIpAFVvsmOlf8Y1IOe3Ms5H4iXE2xTJZle
+HbB1RzvkUR6CH434QdzA
+=7OGs
+-----END PGP SIGNATURE-----
+
+--WK3l2KTTmXPVedZ6--
