@@ -6,51 +6,49 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420ECC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1844C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D463720862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7308120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:52:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ExP49swB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D463720862
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kv8iCY/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7308120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeIDAHn (ORCPT
+        id S1728705AbeIDANv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 20:07:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41896 "EHLO
+        Mon, 3 Sep 2018 20:13:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41936 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbeIDAHn (ORCPT
+        with ESMTP id S1728445AbeIDANv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 20:07:43 -0400
+        Mon, 3 Sep 2018 20:13:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
         MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OoNVG1W8+GVzNGV2nMAA8fnz5LjIW2oJwC2knq2hpyc=; b=ExP49swBhn7zJ+mUAKeUkTH+MS
-        Fi18XlFfn1WPsyelqTVX/rn3I5WWSlWR/hm+S4u3c4QXiPh+l6ArFyXq2Vt0k6QUgUxvS81/k/CQq
-        evpzWptMjq235AhAbiaj3FJ8UX5pJmUVNAHlFGhbfJ/YLfMz1RCim1dfCHomiZpSjQFtyZQavMNZi
-        +JsVsU138FLusJbf4nY4rVOaZ2ePAKACintkgUYlWEsf7hRlwcQqsnSPQPq5+ITY092KxOO59mcY4
-        ryJvgULq83p3/nB3y4ImyAJAh/q3K/IVu7tLROFJf3c3GUm4B7Lbir9ElVjHCqaiGiecDsY84lLbj
-        YYhbTJIw==;
+        bh=kkQDTDh2R9Jp2Dqhvu4mbr66XQM0WL6IxjBpzmZ4b4k=; b=kv8iCY/uliAJrd/oFK62Gh+/bR
+        lOiD5gN9Lo9I7Ez0YWodbXxYN28DPxoml1ulxIgHN/haurbpks62vBUxZ4XwZM6+xSyXGJeG94CLJ
+        qhDV0NICpHhilEPz/dUxBa3CHWRtBhO/eYrmdngL4zAPLe09ugdr49JkvhhkSsWPQoXs7cEWhF6P4
+        y1DONp8mKrVMWqIC+LGgIO1WT8AW6hMzxcbn0tbt/mJ78d44Xmu0opx96YWgl7shOpGevXTGZvkQE
+        6PEwv17+q2AMPTz7ZRiiCiAJg7hTHxXI8XOSfbja/UNexLg+2+Nn19j8IOMJ6CvukWgQYdrL0BTc2
+        8y+N/82w==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fwunD-0001wk-R2; Mon, 03 Sep 2018 19:45:48 +0000
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+        id 1fwutK-0001yT-9X; Mon, 03 Sep 2018 19:52:06 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] srcu: fix kernel-doc missing notation
-Message-ID: <b3068192-4690-284f-3062-0a2fb7bb32b7@infradead.org>
-Date:   Mon, 3 Sep 2018 12:45:45 -0700
+Subject: [PATCH] linux/mod_devicetable.h: fix kernel-doc missing notation for
+ typec_device_id
+Message-ID: <ab0e079b-0160-8d67-3aa9-0205372df3ca@infradead.org>
+Date:   Mon, 3 Sep 2018 12:51:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -64,35 +62,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-Fix kernel-doc warnings for missing parameter descriptions:
+Fix kernel-doc warning for missing struct member description:
 
-../include/linux/srcu.h:175: warning: Function parameter or member 'p' not described in 'srcu_dereference_notrace'
-../include/linux/srcu.h:175: warning: Function parameter or member 'sp' not described in 'srcu_dereference_notrace'
+../include/linux/mod_devicetable.h:763: warning: Function parameter or member 'driver_data' not described in 'typec_device_id'
 
-Fixes: 0b764a6e4e19d ("srcu: Add notrace variant of srcu_dereference")
+Fixes: 8a37d87d72f0c ("usb: typec: Bus type for alternate modes")
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- include/linux/srcu.h |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/mod_devicetable.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- lnx-419-rc2.orig/include/linux/srcu.h
-+++ lnx-419-rc2/include/linux/srcu.h
-@@ -171,6 +171,9 @@ static inline int srcu_read_lock_held(co
- 
- /**
-  * srcu_dereference_notrace - no tracing and no lockdep calls from here
-+ * @p: the pointer to fetch and protect for later dereferencing
-+ * @sp: pointer to the srcu_struct, which is used to check that we
-+ *	really are in an SRCU read-side critical section.
+--- lnx-419-rc2.orig/include/linux/mod_devicetable.h
++++ lnx-419-rc2/include/linux/mod_devicetable.h
+@@ -754,6 +754,7 @@ struct tb_service_id {
+  * struct typec_device_id - USB Type-C alternate mode identifiers
+  * @svid: Standard or Vendor ID
+  * @mode: Mode index
++ * @driver_data: Driver specific data
   */
- #define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
- 
+ struct typec_device_id {
+ 	__u16 svid;
 
 
