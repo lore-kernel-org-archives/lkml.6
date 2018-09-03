@@ -2,162 +2,289 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C0CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102EDC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013ED20652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8524B20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="DGj+yWiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013ED20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnfCywYf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8524B20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeICTOB (ORCPT
+        id S1727338AbeICTPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:14:01 -0400
-Received: from mail-eopbgr70122.outbound.protection.outlook.com ([40.107.7.122]:52396
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbeICTOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:14:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ylmQN3HDIUiaYXXBpDbwfUlrudst/flGrkXKNOkcRUU=;
- b=DGj+yWiD2fWDlA68SVcy0FetmUJ2H/MDxvdfCWNFk74erujYpcpRSQeD2F6uQt6Wq0Q08fIcrh2BEX8MTm06/SRFDbqEn3sPxVR1+VN7E8rZnPiuOwan6DI27DMqmFLk5+Yhjk9SORT2YXh/OMVQKcL+snFiw26ibZfrQpALvDc=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-Received: from [172.16.25.169] (185.231.240.5) by
- AM5PR0801MB2017.eurprd08.prod.outlook.com (2603:10a6:203:4b::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.18; Mon, 3 Sep
- 2018 14:53:22 +0000
-Subject: Re: [PATCH net-next 0/5] rtnetlink: add IFA_IF_NETNSID for
- RTM_GETADDR
-To:     Jiri Benc <jbenc@redhat.com>
-Cc:     Christian Brauner <christian.brauner@canonical.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, dsahern@gmail.com, fw@strlen.de,
-        lucien.xin@gmail.com, jakub.kicinski@netronome.com,
-        nicolas.dichtel@6wind.com
-References: <20180828231859.29758-1-christian@brauner.io>
- <adc2fae5-e22b-3a74-d531-01570e7970ee@virtuozzo.com>
- <20180829181303.4sacopk7y3p5xyou@gmail.com>
- <81379a4f-7149-10ff-2453-886314d0b0c4@virtuozzo.com>
- <20180830144544.tpross4jd6awou4u@gmail.com>
- <20180901013427.tj3t2mlik4t7hlt5@gmail.com>
- <2319a029-7aca-b7aa-2e8f-4dfdeedcb6df@virtuozzo.com>
- <20180903155020.6112f773@redhat.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <5e6ff247-e6c0-a5ce-e9a2-4c0bb2daf790@virtuozzo.com>
-Date:   Mon, 3 Sep 2018 17:53:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Sep 2018 15:15:16 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42818 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:15:16 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so309196pff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4RVLBIOYDKzs3dZldQRe4DrWQIzbCWRga5PXMNGSIDE=;
+        b=DnfCywYfkaS2Qe5X1u6dD9LRuAVUd+44FA/JvDye0ymZJtOaxMcJOvTl5S6YfNDPoG
+         J/9QxVTqoYRitsC8b3jKGWB9ZTdzxhpwgm7SOVXAWlzCw54LpCwO9clSr/sSvRYoPGlE
+         pXdMgGTrh4hD5JghZykdrvN60BFHTvELbRuzNckbbbwevUCLPd42pP6Mjf/yBsRWoukl
+         xnPAo+xQUzR6L2FOEf6/0da3K5O5S7Tmv+WQcNVJbRA2RupnMA3OUJbIm5rANs+I2/nD
+         UZ3eVoVAsfXXkAnCZkDoLofbNrDT70EBr8jutE23HVshY4ttNUhdEcn/HnxaUi5JAKNk
+         IZVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4RVLBIOYDKzs3dZldQRe4DrWQIzbCWRga5PXMNGSIDE=;
+        b=DUiDTFvEQcijPj8+n3ldost7zAHhXg9cYDtMZXZ3O2WgtVMwUe46Q78+DGcho/gYvz
+         0MM6C0ONR0FyDXQ7QV0VKti9vC9Fh9cr0TGL/zMEWR8E6PAkd8+OOB42srLZOmSr3q1C
+         uOxBR4Wg63I8e0pAIxBUXZ/uTRtTpT/lsigNueozC8TwZl494L30bngwx5xShXvv4noe
+         k9USUFkwpTTkpT02tcRjKXd0FmBqxYPdyGzk0LCuyxxoLKNUmF6zc5cG83F/qBk0ca1o
+         muC+ISku94/NvID5/Bir/RHoZC/7MvbF5/yiCZM9RUyY/pk62Zn6fp5p8LAa9u8Ctmev
+         eYDg==
+X-Gm-Message-State: APzg51C+Ub9cR5Jm4aQBUgF4qj6XDUQqxoA5vqZacVKfvaY0Xlme24XN
+        IrvdSm3XrRbR/uArC7ZZ1SLD7a4Z4w8GXcNQ9/HNMQ==
+X-Google-Smtp-Source: ANB0VdYjzJE1nVv8+oJktE1xHbN++u271BfNZsHO6Wh50rq81N10jXG1+WuSrwQ5WPXKLZ/FS43l9Na7KZjCcQJIqtU=
+X-Received: by 2002:a62:a05:: with SMTP id s5-v6mr30268059pfi.147.1535986483616;
+ Mon, 03 Sep 2018 07:54:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180903155020.6112f773@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: VI1P18901CA0017.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:801::27) To AM5PR0801MB2017.eurprd08.prod.outlook.com
- (2603:10a6:203:4b::20)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9e030e7d-b5b7-4259-1fbe-08d611acff76
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB2017;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;3:L6coXxvyP7WeyW5zfHieia6Qb+tMIqOg4LXfDwR1T3Of+fwIOPjXt9ytKQ/mH0ydHbWBhKUDTfcoqmAYL0PwucPG8X4wwAOMgsGKgFrHJAckaYvfq560vmeLIPE48yapT3X5nHSlolAcCY+x+GjcZCq+IbrcNjIVDp78u1/vhdihyLB/Fb3bxU7Nf2esxuzs51GP4xYaVPbz2Dgwgq4pgoJelgy573Kuo0kEyDMSFO829333qzSrjD8XKLRHaC9t;25:cHtF7jNETnW16qcGMiOZQjJr3VUX9rUCLlL/MQnwe2iIrFYvfh1MLYNWEu1ScAFLRpEPNhbW80Y3VI4UCuUyOaenpiYw21mOFcQslyu2DYzF7wbJp029PyeLBcBZ9F9KJrLijNofaSu+yiklJ9n0pPmHnMkqYNfRgr+C1345BaMMVPvBqiw8Ih7de/LjW3nYlt1rjiDrFgAOiuFkObO1ePQPx+qUZ3Icc4bZkamQIyfWglY+jT8CSDF4P4GYjPPy2pXi6tl2ldaqWn75Ehe0CxFVPUxjkQR+D/OhzuobyOu+T4g4gM9jpILfZGOc7VyDL4SDQcK/tHjtNEjwVg6ZvA==;31:rV5fmTRbccPY/R7NqgN278UUYRvIrOwEMFZ4jVQTX9Q3OYouD2byD5QrQHgNi7TLylcPxVO3F4dwi9UwLFygVorTGLmq+rajI3aOXW3Kx/K2iuGnQeEYc+l3EW4Myj/H/UBjgDoTemkuOr0rRzpvKEn0Fs6iU71R7OCLF31liTt8pertd0KVlhjNkbsCatgAkaoNYH7l+EchjThT+N4LNFzL6mov9kLt4At56lHg+hE=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB2017:
-X-LD-Processed: 0bc7f26d-0264-416e-a6fc-8352af79c58f,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;20:eZYoy5hU1iNLb2Z/TEI+BRj/uMWzC2TUD0TIR9V7YjiRr4tnidSu39GmO2OwmjWgaNjOhKbQgcQNEsKW7EObNW8ZoKa9oSv9o+I2KoQVRWqSMyT2WF8LarqpngVZinXTb7EQ92u40W5/7niWgQPitsqs5kOfeANPTWPgnwNVxL/l9w9Jsqd/NKh7cBfyQrb3+OyAujjhcW5wFrmuUNMpex9CFxaZotiP+lk+fe3XXwkmNkJpXvMuLNk5w3gOQ82ri5HtecvbOE5jAIR5fexpq1MtoQ3d6odNaFQLSeirQsDY077Mtkcd2e6IwvQXjlZCjJ+8N1wjBj5jqmRFBaKuqMdtgqwEfWV7KzHo/euodhLT3v5jbnZBcWjy5mQ5lteBMlKvEB0mXQbBA8m9UeSHSCfX9xp4PGSAXGl5NwA6y6kkq38YMIqURfhDQ/oZ46j5nvaA519n9X/hnlKVlGk57KbXO5jcYe+8WwzNblXLS/Bbv9NtzvYYPronTJq3kmME;4:pee8eDKAf/FPdV+TTMLNE3SPUXdfJBJXtsodkuAk29W9brBG117qUhvx5xKE465vrdYqw4cMRLYIh2aI+4Qv0y68+aQmbrICTIsxXkKeU3b6x25zSzDJLwvusE69Xl7NMI4G8zXRaPmjxEWAM2jsgPVe9fouN9an/6mJzaMj11R1iIe61vPrYJ+5FTfpGNomBSabtKiabWq/JjvSBf1ZOPWypZvOKCtftv5iB5GOBOwCj7YjMfnXFmlHfydH+hQqJ5wl4mxALTxf7fZK/wnFaQ==
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB2017F56612CD88DB3B6AC3EFCD0C0@AM5PR0801MB2017.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:AM5PR0801MB2017;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB2017;
-X-Forefront-PRVS: 0784C803FD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(39840400004)(376002)(366004)(136003)(396003)(189003)(199004)(478600001)(8936002)(4326008)(81166006)(36756003)(486006)(97736004)(64126003)(106356001)(7416002)(25786009)(229853002)(6666003)(6246003)(6916009)(68736007)(105586002)(16576012)(5660300001)(39060400002)(58126008)(65826007)(93886005)(6486002)(316002)(8676002)(47776003)(52116002)(52146003)(23676004)(2486003)(76176011)(65806001)(230700001)(31686004)(2906002)(66066001)(81156014)(7736002)(65956001)(305945005)(3846002)(6116002)(53546011)(476003)(16526019)(77096007)(2616005)(11346002)(186003)(86362001)(31696002)(26005)(446003)(50466002)(956004)(53936002)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB2017;H:[172.16.25.169];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjIwMTc7MjM6Tnp1V2prNnQ1d25JaC9XVURDTkliQ0hE?=
- =?utf-8?B?bDVXcEhoRHFzUnR2cU1YUXg5a1RhVXdXOTEzR1o5WWNHbyt4TmFLaC9hYTIw?=
- =?utf-8?B?SGQrZlY4RlY5TDh5dm8xbFFDQ21QZHo2QWV4YS92NVllT1k5aFduYXpjRTBx?=
- =?utf-8?B?dnphV3RIQXFpUWF5dElwV25ERWtlbDB6SC9mYmxVY0lNM2RwTXJZWmREZmln?=
- =?utf-8?B?WTVEUlJPVHVrbytDMVhFZ0o0RXNhYzhaQlVQTFNIdGZlc1dCMHpMR25uZ2pO?=
- =?utf-8?B?WHFLY2hKakY0LzQxRkJuVnQwNGdGcDlBU1NrR0VPbFQ2cjFaU3hGT2J1YnM0?=
- =?utf-8?B?akpWTGQ2THlTSjNBd2lxOGdOUGV4eitsVVNVTTlGQm9zaWdldjR1WTRCOWx5?=
- =?utf-8?B?NW9xaGFxcS80bVpzSnVIM0p2a0xTL1dwNlRvR1hFWHNjOUlxNHBLSDh2dWww?=
- =?utf-8?B?SkQ0eXZKQ3RJaks5RlAxcmxxcGVVQ08vUFJwYWpmWjRKVzJHbE03NjkybGdo?=
- =?utf-8?B?c21uSHFRUzlYTjdOOGVDMC9WU1pwNWJSUnRDUUkyUnM1TFRwcm10c0tOZmlF?=
- =?utf-8?B?UjEzenpmUURjNmkzNjVJSkdoWll3TUlvbkZMbzFhTTZ4dUdWcmZJY2hZTURn?=
- =?utf-8?B?ZzcxRlZOc2Q2RlpmWm5JbmNtbUlnQUVQa1lDZ2Z6cTFhS1VHaDdRUTEzSzNw?=
- =?utf-8?B?TXFPeXljR0lJbGV4Mk1UZlh1dFAxaGdENklDOWxYTVdIYnFCWGFiekl5RG56?=
- =?utf-8?B?WGJ1QkxtVlJqalhnV05ERGVEWnNybjhhQm00cU1JUVR5R0o4aEYrQklEVlBC?=
- =?utf-8?B?Vkk1UDU5SkRqQjhHWTltdDJNaHcrY2pvTDNTVDMzNThiQXVQbDc3a3BsL2tw?=
- =?utf-8?B?Rnh4RTB3UnMxUUVXZDB4MHo3MnNsYWErM3dZQlRrakhHRmlwUzdtd1A1empT?=
- =?utf-8?B?SGd0RER3YWRRcHBDYlNWUWNyWjN3RVZTZE9VQXhXTjRmbWtkVDRhSEJ5eUJN?=
- =?utf-8?B?WXhRY3EzY3dUSjBvN3JwdHRVSHl5RGdmOVRZNE5IUUtOWGFDams2d3VsNXJD?=
- =?utf-8?B?Szcvck1hSCtPbFovd1RhYWVoUFRDWWFPeTI0TzVPMXpqNXVjNWtxZTNKblNa?=
- =?utf-8?B?SFFNVmxhV0FjSWJPZ2xNWG5scEpYdEUwdmNaaUpydHRsYWN2RG5veERIczFL?=
- =?utf-8?B?M2xjRjVlNEpRVTZIc0s5dDEyUXU0ZE8zVitjUWZKcXpNUzUzbU5nWS9sYk5j?=
- =?utf-8?B?UHVvYTVFZXF2Rkc5ZE41S3B2bEk1Znp0YlM4dGdLeUgzSkVLQzZBSGg0OUNK?=
- =?utf-8?B?eC80cFVPd0szeGplbkExZ2kwTjVDR2FyL2o1MnFNOHpLSThJYVI1d1psMEtz?=
- =?utf-8?B?MUJrMDdUUUp0cm1mRHZib1NpbFZFZWtzT1BnTGpsZkJTaHh6a0o1VTg1ME5Y?=
- =?utf-8?B?MXR0ZFAxSHU4dFNZWk5yVmtXVEZjbFErOHhIMnYva3hFUjR6MU1EM1AwZ292?=
- =?utf-8?B?RGg3d0NmcVRORmM2MEMvOElnbFBHNTFkRk1WcWRCaUhVODZWRStyUW0xR3Za?=
- =?utf-8?B?ajFLM1Y3bjhPV2pxOHVvQ3N5MFVxbXNuRlEwNzV5MGhwdXZOazBkRnZOWjRU?=
- =?utf-8?B?bmdjMlgvcDlZekhmMUxOd3h2UkhDcXgxRDdlMVkyQUlTQUVwencxQ3NSRitx?=
- =?utf-8?B?aEt0M0dsVTcwNkYzRFJac3J2Z0lsdXdoZmVGVm1MNC9zK3lLZHpUMXFBK0gv?=
- =?utf-8?B?SXZ0cWpnYjBSZEU0ckxHdlFYU05ZNGlCT0dvNUFkRThnVERnamhFdllOSVhR?=
- =?utf-8?B?Y1dRK0ZKcUZ4bEtnRUtyU3YwaDJDRC9hZGJhbWdCb3JxY2x3UW5pWEx3Vkpw?=
- =?utf-8?B?ajJYekRXeUkyNjFrUmVIZWRaQTE0MVNuUms4cktxQ2N5SjZpR2Y0WnQrcDV1?=
- =?utf-8?B?OU9sMzdYVmtib3QrbnV2eExzNzZYQUdjYkd5MlVWTE1wbU1xUUVjNWFHYW5P?=
- =?utf-8?Q?Jfgtniyu?=
-X-Microsoft-Antispam-Message-Info: BOa50FixzjhP96w/kLvMlHOONbmqBKfmrzqp/GUXBNXyaCNixYXUruIJbUdl5crM4yzQZO4nz4HEpu1ySd2UOFxxJk6YqNXmt0rj6s3VI8xIwv4bHIZLsuqIBKF14HHfyPWLrbm8EzoiJM/W6Hy7CFhNoa/oBCEb7ky2hRCkKwY8POVYKtptN8by7wkLFm//PC5aWVeCALSk0fkgUiv+CzBpiLm/9HZIslTK26D7F+LuSmHdkchA/ucWpjbXhOMlzIuIuU74t+aegFj5/QlQQU7n6XE7sFm8QOdQA4RmOwuhFpClAkXYy4w+rPY27eugAVWLrGWqDT64F+nBmsSJ7vhlrUeXe93ZX9DIfsHRoM0=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;6:G67hyJBZ7WI81lMohZjESz2iki7FvlcsZ6Griio1Ep/18xSoHN3ycK8lsqtnjY2VlK0TK7g87FJe9AkM7vYpGAdmAYi3M5Q1kR4ZD4GjGNnPxwWD/nHpv1AFmRE5cbI+TU2vRAwmZW2H8FJLXGWFIG/fzxkCJtLPPQEHs8eWTcvAIVi4+Ve7oItZ8IXXUNgriDIbxkS5tbOEkQOZSOINMlhPn7Hp2HGQjrLY5mT2e4HkewgScVDFw255tzjpx6++Am1PEil9Guo1t4GtarK9qjrucF3fMZXoCohsI7qH54m9ru5cqh00C+eBsfdWRjHu/4TRzCe6y1OfpWBkr76/i/tzgLbJtDyu+WU8Jku2uITDomBWMrpvx7L+cUCq+l0AH1Bv0NV6bhaUZu0TWVqew1G21cRKUFkiWmYhqZMSYSLfO8TW/fP1ROhmk7qO/A6nf9Y4S+ROPJvg5fqCFh1Bhg==;5:UpW+4ZUN4tN4xzIj3o1hl960aCkrJjvrmRsVdzpyPLVI/Jj3qVEmmt0iFyXHzVVbiUJmBnLrsLk7Hw1JzW2ioAv7lLeUeBcbeLtZraJCgGyBYhY0GpOZ1rEau3I7SpCbstBj8vRz3oXwc2rsluY6odYpm/xXDrC8QS9oyyNwZS8=;7:mjOthOXq5+BEV4l9XyENR6sTN+65rJZjcQm+t8eMw+8LCiu8JfRhhGOMyri1hyW7uZBYhsNE1bbP9Odvm/wunxBOj0hYqmsl9CIPsMpVJ6TncDv1DRwp6ShQLMr+iJyvGc1Qs1OuNp3S8R/06njx26l2XxnPSxkaAzZ6Yo+VFjagFGhHTnlXlzJOVUd5GlGQRFa5wFSKZUdAnrcekHUEvTWpCMcfjgq44dZnqQ2ulqjNUaFX0iu1aK3ahBDt2Wxb
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;20:qJgmYeWMSlcUCer02ridQx/ypXa1yoz/gDXB/QKI5ahWwMI4RNUHyO9L682qqZg2hiFbdeMXGCjopcN3XIyglDpC6tTaKCbveinq8AO5exM+aFqLwd6rBn5W8RXBKuoXAy9719LMyKRa/QVHrJWQPJ7hqrBZmX1+lsXJn1CN83E=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2018 14:53:22.3889 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e030e7d-b5b7-4259-1fbe-08d611acff76
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB2017
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 07:54:23
+ -0700 (PDT)
+In-Reply-To: <s5hwos2fybs.wl-tiwai@suse.de>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de> <000000000000a25ae50574f76ff0@google.com>
+ <s5h7ek2hfp6.wl-tiwai@suse.de> <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+ <s5h4lf6hfcq.wl-tiwai@suse.de> <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
+ <s5h1saahe2p.wl-tiwai@suse.de> <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
+ <s5hwos2fybs.wl-tiwai@suse.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 3 Sep 2018 16:54:23 +0200
+Message-ID: <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.09.2018 16:50, Jiri Benc wrote:
-> On Mon, 3 Sep 2018 16:41:45 +0300, Kirill Tkhai wrote:
->> But this is a synthetic test, while I asked about real workflow.
->> Is this real problem for lxd, and there is observed performance
->> decrease?
-> 
-> It's actually not as much a performance problem but rather the only way
-> to get the data in some situations. Namely, when you have only netnsid.
-> This happens e.g. when you want to query a veth peer in another netns.
-> 
-> setns() requires a file descriptor which you don't have. Nor there is
-> a way to convert netnsid to a fd.
-> 
-> While developing the IFLA_IF_NETNSID patch, I was first thinking about
-> implementing an API doing the conversion. The problem is there's no
-> good place to put this into. It can't be done over netlink: netlink is
-> unreliable and you can't have the kernel open a fd for you and lose it.
-> There's no ioctl to use. So we'd be left with a procfs/sysfs or a
-> syscall.
-> 
-> Using netnsid to refer to the target netns seems to be a nice solution -
-> after all, netnsid is the identifier to use in netlink.
+On Mon, Sep 3, 2018 at 4:30 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Mon, 03 Sep 2018 16:19:23 +0200,
+> Dmitry Vyukov wrote:
+>>
+>> On Mon, Sep 3, 2018 at 4:04 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>> > On Mon, 03 Sep 2018 15:41:36 +0200,
+>> > Dmitry Vyukov wrote:
+>> >>
+>> >> On Mon, Sep 3, 2018 at 3:37 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>> >> > On Mon, 03 Sep 2018 15:33:12 +0200,
+>> >> > Dmitry Vyukov wrote:
+>> >> >>
+>> >> >> On Mon, Sep 3, 2018 at 3:29 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>> >> >> > On Mon, 03 Sep 2018 15:22:42 +0200,
+>> >> >> > syzbot wrote:
+>> >> >> >>
+>> >> >> >> > On Mon, 03 Sep 2018 03:53:03 +0200,
+>> >> >> >> > syzbot wrote:
+>> >> >> >>
+>> >> >> >> >> syzbot has found a reproducer for the following crash on:
+>> >> >> >>
+>> >> >> >> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
+>> >> >> >> >> do_syscall_64() and  _..
+>> >> >> >> >> git tree:       https://github.com/google/kmsan.git/master
+>> >> >> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
+>> >> >> >> >> kernel config:
+>> >> >> >> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
+>> >> >> >> >> dashboard link:
+>> >> >> >> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
+>> >> >> >> >> compiler:       clang version 8.0.0 (trunk 339414)
+>> >> >> >> >> syz repro:
+>> >> >> >> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
+>> >> >> >> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
+>> >> >> >>
+>> >> >> >> >> IMPORTANT: if you fix the bug, please add the following tag to the
+>> >> >> >> >> commit:
+>> >> >> >> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
+>> >> >> >>
+>> >> >> >> >> ==================================================================
+>> >> >> >> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
+>> >> >> >> >> sound/core/seq/seq_midi_event.c:195
+>> >> >> >> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
+>> >> >> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
+>> >> >> >> >> BIOS  Google 01/01/2011
+>> >> >> >> >> Workqueue: events_highpri snd_vmidi_output_work
+>> >> >> >> >> Call Trace:
+>> >> >> >> >>   __dump_stack lib/dump_stack.c:77 [inline]
+>> >> >> >> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
+>> >> >> >> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+>> >> >> >> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+>> >> >> >> >>   snd_midi_event_encode_byte+0x569/0xff0
+>> >> >> >> >> sound/core/seq/seq_midi_event.c:195
+>> >> >> >> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
+>> >> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+>> >> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+>> >> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+>> >> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+>> >> >> >>
+>> >> >> >> >> Uninit was stored to memory at:
+>> >> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+>> >> >> >> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+>> >> >> >> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
+>> >> >> >> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
+>> >> >> >> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
+>> >> >> >> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
+>> >> >> >> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
+>> >> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+>> >> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+>> >> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+>> >> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+>> >> >> >>
+>> >> >> >> >> Uninit was created at:
+>> >> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+>> >> >> >> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+>> >> >> >> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+>> >> >> >> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
+>> >> >> >> >>   kmalloc_node include/linux/slab.h:555 [inline]
+>> >> >> >> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
+>> >> >> >> >>   kvmalloc include/linux/mm.h:577 [inline]
+>> >> >> >> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
+>> >> >> >> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
+>> >> >> >> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
+>> >> >> >> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
+>> >> >> >> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
+>> >> >> >> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
+>> >> >> >> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
+>> >> >> >> >>   vfs_open+0xaf/0xe0 fs/open.c:880
+>> >> >> >> >>   do_last fs/namei.c:3418 [inline]
+>> >> >> >> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
+>> >> >> >> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
+>> >> >> >> >>   do_sys_open+0x630/0x940 fs/open.c:1063
+>> >> >> >> >>   __do_sys_open fs/open.c:1081 [inline]
+>> >> >> >> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
+>> >> >> >> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
+>> >> >> >> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+>> >> >> >> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>> >> >> >> >> ==================================================================
+>> >> >> >>
+>> >> >> >> > This looks like some small race at virmidi reading and the buffer
+>> >> >> >> > handling, which should be almost harmless by itself.
+>> >> >> >> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
+>> >> >> >> > kvzalloc(), as below.
+>> >> >> >>
+>> >> >> >> > Let's check whether this works.
+>> >> >> >>
+>> >> >> >> > #syz test:
+>> >> >> >> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+>> >> >> >> > topic/rawmidi-fixes
+>> >> >> >>
+>> >> >> >> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
+>> >> >> >> because KMSAN tool is not upstreamed yet.
+>> >> >> >> See
+>> >> >> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+>> >> >> >> for details.
+>> >> >> >
+>> >> >> > So how is the procedure to test a patch for bugs spotted by KMSAN?
+>> >> >> >
+>> >> >> > In this case, the fix is trivial, so I can put it to my tree for the
+>> >> >> > next pull request.  Of course, it'd be better if it can be confirmed
+>> >> >> > to work beforehand...
+>> >> >>
+>> >> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+>> >> >>
+>> >> >> Which means you need to attach a patch because it's not in that tree.
+>> >> >
+>> >> > OK, it would have been helpful if the description there was more clear
+>> >> > :)
+>> >> >
+>> >> > And no automated way for that?
+>> >>
+>> >> What exactly do you mean? Please elaborate.
+>> >
+>> > Well, it's not clear which action is required to let syzbot testing
+>> > some patch.  The description says:
+>> >
+>> >  "KMSAN is not upstream yet, though, we want to upstream it later. For
+>> >   now, it lives in github.com/google/kmsan and is based on a
+>> >   reasonably fresh upstream tree. As the result, any patch testing
+>> >   requests for KMSAN bugs need to go to KMSAN tree
+>> >   (https://github.com/google/kmsan.git repo, master branch)."
+>> >
+>> > Here, "need to go to KMSAN tree" part doesn't explain what exactly to
+>> > do.  Remember that many kernel devs (including the man in the mirror)
+>> > don't use github, at least, not dealing github PRs for kernel
+>> > development itself, so it's a pretty unfamiliar process.
+>>
+>> It's not patches that need to go into that tree (i.e. no PRs). It's
+>> patch testing requests.
+>>
+>> Tried to clarify doc:
+>>
+>> https://github.com/google/syzkaller/commit/bfe906cbb9c73c326f24327e1a89bc0cd0c314c7#diff-5b3b5ff5f03b01e1d31ec93aafd2f3d5
+>>
+>> Does this look better?
+>
+> Erm, sorry, still unclear to me.  I'd need to explicitl attch/inline
+> the patch for testing *to where*?  Attach the test patch to the e-mail
+> replying to the bug?
+>
+> Also, now you've put an example referring to
+> https://github.com/google/kmsan.git master.  What does it mean?
+> I should have put that line in my reply?
+>
+>> >> > I mean, I already attached patch in
+>> >> > the previous reply (together with syz-magic command to point the git
+>> >> > branch URL).  Do I need anything else?
+>> >>
+>> >> Just issue the command against "https://github.com/google/kmsan.git
+>> >> master" and attach the patch.
+>> >
+>> > But it's basically a fix for the upstream tree, not about KMSAN
+>> > itself.  A PR to that tree doesn't sound right to me...
+>>
+>> You don't need to send a PR. You attach a patch (or inline in email)
+>> and request to apply and test it in KMSAN tree.
+>
+> Then I must have understood "just issue the command against..."
+> Does it mean the "syz test: https//github.com/google/kmsan.git
+> master"?
+>
+> I need to learn the basic for understanding the black magic...
 
-Ok, I have no objections, just mentioning that generic problem.
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+is meant to be a complement to the previous generic descriptions of
+patch testing process, which is:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
 
-Thanks,
-Kirill
+So, you always reply to the syzbot+HASH email address so that syzbot
+understands which bug we are talking about.
+Then you do either (omitting # so that syzbot won't consider that as
+actual test requests):
+
+syz test: git://repo/address.git branch
+
+or:
+
+syz test: git://repo/address.git commit-hash
+
+And then you can either attach a patch that needs to be applied on
+top, or not attach it (if it's already in the tree, or you just want
+to get another crash report).
+
+For KMSAN you need to issue test request against
+"https//github.com/google/kmsan.git master" (that's the only tree that
+has KMSAN tool in it) and you need to attach/inline the patch (because
+your patch is obviously not there yet).
+
+Does this make things more clear?
