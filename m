@@ -2,64 +2,210 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E07C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55F3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1F92075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:28:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C+gJFPoR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1F92075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 5D7E32075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:29:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7E32075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeICRsN (ORCPT
+        id S1727247AbeICRty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:48:13 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50720 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbeICRsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:48:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=qwJ0g7p+6d2rrXVRsnjLJ57GvFcZbRZjDuN0fpomP5c=;
-        b=C+gJFPoRtZh6Z1ihvZJTTKLwisRkKnj+yW80+udEy2hc4drLmSl/ekUuba2QLe+B3sDhMowDrS44esDD5RzRYRu/bEvgMf1mmTcjVLnytl94dmbJItyjmtyOOkTHHYSwalSyW2ZSvyP+ZsnrXqLRfsdIaGw/kt18UpWrBguBJk8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fwotY-0001UH-EW; Mon, 03 Sep 2018 15:27:56 +0200
-Date:   Mon, 3 Sep 2018 15:27:56 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v2 4/7] net: phy: mscc: read
- 'vsc8531,edge-slowdown' as an u32
-Message-ID: <20180903132756.GD4445@lunn.ch>
-References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
- <20180903084853.18092-4-quentin.schulz@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903084853.18092-4-quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 3 Sep 2018 13:49:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42584 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbeICRty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:49:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4CAEAB01C;
+        Mon,  3 Sep 2018 13:29:41 +0000 (UTC)
+Date:   Mon, 03 Sep 2018 15:29:41 +0200
+Message-ID: <s5h7ek2hfp6.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Dmitry Vyukov" <dvyukov@google.com>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, perex@perex.cz,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+In-Reply-To: <000000000000a25ae50574f76ff0@google.com>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de>
+        <000000000000a25ae50574f76ff0@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 10:48:50AM +0200, Quentin Schulz wrote:
-> In the DT binding, it is specified nowhere that 'vsc8531,edge-slowdown'
-> is an u8, even though it's read as an u8 in the driver.
+On Mon, 03 Sep 2018 15:22:42 +0200,
+syzbot wrote:
+> 
+> > On Mon, 03 Sep 2018 03:53:03 +0200,
+> > syzbot wrote:
+> 
+> >> syzbot has found a reproducer for the following crash on:
+> 
+> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
+> >> do_syscall_64() and  _..
+> >> git tree:       https://github.com/google/kmsan.git/master
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
+> >> kernel config:
+> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
+> >> dashboard link:
+> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
+> >> compiler:       clang version 8.0.0 (trunk 339414)
+> >> syz repro:
+> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
+> 
+> >> IMPORTANT: if you fix the bug, please add the following tag to the
+> >> commit:
+> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
+> 
+> >> ==================================================================
+> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
+> >> sound/core/seq/seq_midi_event.c:195
+> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> >> BIOS  Google 01/01/2011
+> >> Workqueue: events_highpri snd_vmidi_output_work
+> >> Call Trace:
+> >>   __dump_stack lib/dump_stack.c:77 [inline]
+> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
+> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+> >>   snd_midi_event_encode_byte+0x569/0xff0
+> >> sound/core/seq/seq_midi_event.c:195
+> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
+> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> 
+> >> Uninit was stored to memory at:
+> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
+> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
+> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
+> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
+> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
+> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> 
+> >> Uninit was created at:
+> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
+> >>   kmalloc_node include/linux/slab.h:555 [inline]
+> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
+> >>   kvmalloc include/linux/mm.h:577 [inline]
+> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
+> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
+> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
+> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
+> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
+> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
+> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
+> >>   vfs_open+0xaf/0xe0 fs/open.c:880
+> >>   do_last fs/namei.c:3418 [inline]
+> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
+> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
+> >>   do_sys_open+0x630/0x940 fs/open.c:1063
+> >>   __do_sys_open fs/open.c:1081 [inline]
+> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
+> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
+> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> >> ==================================================================
+> 
+> > This looks like some small race at virmidi reading and the buffer
+> > handling, which should be almost harmless by itself.
+> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
+> > kvzalloc(), as below.
+> 
+> > Let's check whether this works.
+> 
+> > #syz test:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+> > topic/rawmidi-fixes
+> 
+> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
+> because KMSAN tool is not upstreamed yet.
+> See
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> for details.
 
-Hi Quentin
+So how is the procedure to test a patch for bugs spotted by KMSAN?
 
-of_property_read_u8() will perform bounds checking. Is that important
-here?
+In this case, the fix is trivial, so I can put it to my tree for the
+next pull request.  Of course, it'd be better if it can be confirmed
+to work beforehand...
 
-	Thanks
-		Andrew
+
+thanks,
+
+Takashi
+
+> 
+> 
+> 
+> > Takashi
+> 
+> > -- 8< --
+> > From: Takashi Iwai <tiwai@suse.de>
+> > Subject: [PATCH] ALSA: rawmidi: Initialize allocated buffers
+> 
+> > syzbot reported the uninitialized value exposure in certain situations
+> > using virmidi loop.  It's likely a very small race at writing and
+> > reading, and the influence is almost negligible.  But it's safer to
+> > paper over this just by replacing the existing kvmalloc() with
+> > kvzalloc().
+> 
+> > Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
+> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > ---
+> >   sound/core/rawmidi.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> > diff --git a/sound/core/rawmidi.c b/sound/core/rawmidi.c
+> > index 69517e18ef07..08d5662039e3 100644
+> > --- a/sound/core/rawmidi.c
+> > +++ b/sound/core/rawmidi.c
+> > @@ -129,7 +129,7 @@ static int snd_rawmidi_runtime_create(struct
+> > snd_rawmidi_substream *substream)
+> >   		runtime->avail = 0;
+> >   	else
+> >   		runtime->avail = runtime->buffer_size;
+> > -	runtime->buffer = kvmalloc(runtime->buffer_size, GFP_KERNEL);
+> > +	runtime->buffer = kvzalloc(runtime->buffer_size, GFP_KERNEL);
+> >   	if (!runtime->buffer) {
+> >   		kfree(runtime);
+> >   		return -ENOMEM;
+> > @@ -655,7 +655,7 @@ static int resize_runtime_buffer(struct
+> > snd_rawmidi_runtime *runtime,
+> >   	if (params->avail_min < 1 || params->avail_min > params->buffer_size)
+> >   		return -EINVAL;
+> >   	if (params->buffer_size != runtime->buffer_size) {
+> > -		newbuf = kvmalloc(params->buffer_size, GFP_KERNEL);
+> > +		newbuf = kvzalloc(params->buffer_size, GFP_KERNEL);
+> >   		if (!newbuf)
+> >   			return -ENOMEM;
+> >   		spin_lock_irq(&runtime->lock);
+> > --
+> > 2.18.0
+> 
