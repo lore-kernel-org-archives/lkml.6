@@ -2,190 +2,104 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E14C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900B6C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B087E2075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:33:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRV/Vvir"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B087E2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 521DD20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:34:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521DD20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeICRxq (ORCPT
+        id S1727408AbeICRyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:53:46 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45471 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeICRxp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:53:45 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x26-v6so217229pge.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 06:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lxsE1a28nFQd4G/mHvUKjGfglToGpL9wInSqVnkKfEw=;
-        b=vRV/VvirU6xbVSUhza8iAqzLzcxsXr2mXkfU4Eu2c8x8M6jRf8KUl83pcaqIHP2oxv
-         HHnCbFuzqx8YpeFyFcdkoZqG+rSzJj7PkGVyWVsPCpFQEnhpqLJrxGH+oEAXuqGhcLXp
-         wkhhYwBBF9Wd1Z+tMlLoWaimgwy+U/yTpm6+cVHIBg1P164TEhAolMBsoBZiIsVHD9tw
-         Yn+TNBeh3zZEsOxW7T4kPo9VZd7s52L66zYpF+Zbtg/PTN4xA1Et2TUqE9qFWaCog6nZ
-         dLng7z7ox2lBStldS4THQgHiYgZGekSfS2+da30zk/IYe9abo7h2kUU8Zvo7Mo/E7Ybi
-         FmIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lxsE1a28nFQd4G/mHvUKjGfglToGpL9wInSqVnkKfEw=;
-        b=Fwn6CcsgA0OmPl4XaPiRT+s3qTY4+hRqS4bAl1telZKiytAvjgofUkV3knewq2LFj0
-         ZhzTFnu4n0WMJ1jKsXXsUZ0cEh7Xeb8Jaqu/kryqA+Z38OQPnBcpzo5cBSXYX1bH1zXQ
-         LZVweL6Ac+8JSxuFVIKcW6vELafpEOJSjNGJRFIRftl9BAsn9h91TTNU+uDSao8wl53x
-         X/Ri2Tgz4YB49/iwL9rT1FVFBY2dKQuSCexYyPmDuXG6m6ZS+obs6mHDsFskMkxI/cwB
-         4bq+rIEIAYa7A6ZA0RHoURbGVEXwTuHeeiQEJbPITRRqm745Lbthzv/8hSuoAu6AP6jI
-         ZlpQ==
-X-Gm-Message-State: APzg51Ax5h5e8TtAAvThqLI+dA6JPBdP2/GUebmD4tcpDgETipWHLZhM
-        ODheMntYxIbfSlkikUWMuUyQwGuU18T+AI6yMqm5HQ==
-X-Google-Smtp-Source: ANB0VdYYN13JW2jVZj6hKa4UBWKTCgftC9lOHQEIW6BONHexwlCC/ZswBOyyqGBMge0ymUSTcACBlMa7BV0ok4uyVoE=
-X-Received: by 2002:a62:71c4:: with SMTP id m187-v6mr1472588pfc.232.1535981613395;
- Mon, 03 Sep 2018 06:33:33 -0700 (PDT)
+        Mon, 3 Sep 2018 13:54:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35437 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbeICRyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:54:12 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 504D920799; Mon,  3 Sep 2018 15:34:00 +0200 (CEST)
+Received: from qschulz (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0E29520618;
+        Mon,  3 Sep 2018 15:34:00 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 15:33:58 +0200
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        f.fainelli@gmail.com, allan.nielsen@microchip.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next v2 6/7] dt-bindings: net: phy: mscc: vsc8531:
+ remove compatible from required properties
+Message-ID: <20180903133358.b2zsdytyjpentnuj@qschulz>
+References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
+ <20180903084853.18092-6-quentin.schulz@bootlin.com>
+ <20180903133020.GE4445@lunn.ch>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 06:33:12
- -0700 (PDT)
-In-Reply-To: <s5h7ek2hfp6.wl-tiwai@suse.de>
-References: <s5ha7oyhg0v.wl-tiwai@suse.de> <000000000000a25ae50574f76ff0@google.com>
- <s5h7ek2hfp6.wl-tiwai@suse.de>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 3 Sep 2018 15:33:12 +0200
-Message-ID: <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
-        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hezqfp2ga7x4qn5u"
+Content-Disposition: inline
+In-Reply-To: <20180903133020.GE4445@lunn.ch>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 3:29 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Mon, 03 Sep 2018 15:22:42 +0200,
-> syzbot wrote:
->>
->> > On Mon, 03 Sep 2018 03:53:03 +0200,
->> > syzbot wrote:
->>
->> >> syzbot has found a reproducer for the following crash on:
->>
->> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
->> >> do_syscall_64() and  _..
->> >> git tree:       https://github.com/google/kmsan.git/master
->> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
->> >> kernel config:
->> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
->> >> dashboard link:
->> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
->> >> compiler:       clang version 8.0.0 (trunk 339414)
->> >> syz repro:
->> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
->> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
->>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the
->> >> commit:
->> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
->>
->> >> ==================================================================
->> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
->> >> sound/core/seq/seq_midi_event.c:195
->> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
->> >> BIOS  Google 01/01/2011
->> >> Workqueue: events_highpri snd_vmidi_output_work
->> >> Call Trace:
->> >>   __dump_stack lib/dump_stack.c:77 [inline]
->> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
->> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
->> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
->> >>   snd_midi_event_encode_byte+0x569/0xff0
->> >> sound/core/seq/seq_midi_event.c:195
->> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
->> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
->> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
->> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
->> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
->>
->> >> Uninit was stored to memory at:
->> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
->> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
->> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
->> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
->> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
->> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
->> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
->> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
->> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
->> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
->> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
->>
->> >> Uninit was created at:
->> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
->> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
->> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
->> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
->> >>   kmalloc_node include/linux/slab.h:555 [inline]
->> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
->> >>   kvmalloc include/linux/mm.h:577 [inline]
->> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
->> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
->> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
->> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
->> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
->> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
->> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
->> >>   vfs_open+0xaf/0xe0 fs/open.c:880
->> >>   do_last fs/namei.c:3418 [inline]
->> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
->> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
->> >>   do_sys_open+0x630/0x940 fs/open.c:1063
->> >>   __do_sys_open fs/open.c:1081 [inline]
->> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
->> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
->> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
->> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
->> >> ==================================================================
->>
->> > This looks like some small race at virmidi reading and the buffer
->> > handling, which should be almost harmless by itself.
->> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
->> > kvzalloc(), as below.
->>
->> > Let's check whether this works.
->>
->> > #syz test:
->> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->> > topic/rawmidi-fixes
->>
->> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
->> because KMSAN tool is not upstreamed yet.
->> See
->> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
->> for details.
->
-> So how is the procedure to test a patch for bugs spotted by KMSAN?
->
-> In this case, the fix is trivial, so I can put it to my tree for the
-> next pull request.  Of course, it'd be better if it can be confirmed
-> to work beforehand...
 
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+--hezqfp2ga7x4qn5u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Which means you need to attach a patch because it's not in that tree.
+Hi Andrew,
+
+On Mon, Sep 03, 2018 at 03:30:20PM +0200, Andrew Lunn wrote:
+> On Mon, Sep 03, 2018 at 10:48:52AM +0200, Quentin Schulz wrote:
+> > Compatible isn't a required property for PHYs so let's remove it from
+> > the binding DT of the VSC8531 PHYs.
+>=20
+> Hi Quentin
+>=20
+> It is actually a optional property. So you could move it into that
+> section of the binding documentation. But removing it is also O.K.
+>=20
+
+It's a property that is already defined in
+Documentation/devicetree/bindings/net/phy.txt
+
+I don't think it's actually useful to redefine it there (on the same
+principle that we don't redefine/re-explain the reg property).
+
+What do we do? Do I put it in optional properties and refer to the
+aforementioned doc or do I just remove it as it's done in this patch?
+
+Thanks,
+Quentin
+
+--hezqfp2ga7x4qn5u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAluNOEYACgkQhLiadT7g
+8aMeYQ//bfFfqiuHWAzloS7a3NN50nCAhkAxl75esGMNBcKdDzptnxoO2iNEjjQA
+0GxOWAn+ZWxYkiZbyxBkJ59R1RCvVk+qazByTZgQiRBAhn8OQQO5zfpt990radPN
+J7x7uGfyygohsvq2sMtRZYQ/69OHJYigSmLO4ZtpIyl20zlgL/V7a0Ozz1FkJ43V
+N7UPc3pR2vMaPQlulDrrqmc97UFDvbE5E2Ff990mM0qyoWtkO4Qby2O5MolKsiNd
+GzOO5cxKeWfwV4TXqO02NEceJ8NbqNUg6FxmIMECLDYWDCX75ins3rTVVtI9HNI/
+D5otmaQQg4OuHVfrdJbgLAHzw+Bk/0wftnlMGu8bfN/RNwLS8QZu7MxGxnqGulEb
+Y7F7jdBhgdjoIOcxL+QpbpCkEwtthIqYUIicgDerQjbv9b9E7IN/PuUGMxrHpV2g
+txq04iWZEggsOAwsYCzY6T8hslEpBZ+xcnAvscPVIHoBFRs6CJdJBCBcqifZN+PM
+n4UC2ZBnfumaXYthjyiDYBYrUYnL+POH+KChhftMDZvdsk6GqAXudZ1I+DtPgvqH
+AeFouYRf6sWDhC1NvhmDVGji1m0ElPpkc+tTkVS4xCHW1178Q/98rO2Zth+EPYOl
+Zy5lJxgJy66x+qGASdEyLhgHbZ6ehv46a1SoqwP170ZwinbzLbE=
+=aXVP
+-----END PGP SIGNATURE-----
+
+--hezqfp2ga7x4qn5u--
