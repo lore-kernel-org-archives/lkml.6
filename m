@@ -2,248 +2,479 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F96C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF29C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4F72077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:34:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KjJj2J4/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4F72077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 39A4A2077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A4A2077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeICJxT (ORCPT
+        id S1726046AbeICJxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 05:53:19 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:37629 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeICJxT (ORCPT
+        Mon, 3 Sep 2018 05:53:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41906 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725782AbeICJxj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 05:53:19 -0400
-Received: by mail-io0-f194.google.com with SMTP id v14-v6so14976841iob.4
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 22:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:references:in-reply-to:mime-version:thread-index:date
-         :message-id:subject:to:cc;
-        bh=CQnNB009Cy33AqVFmF/6dcXRaqDruSPNy+a/oLfI11M=;
-        b=KjJj2J4/YCaZ4MSMJVgcqHYx4JMQlDYOv36TF1aI549Wp5uPfkTbbBV6EVyyGsyNEH
-         Su2lPQ15yJCEyP4dqSKeLDAE5Ug0Gd03df+8Bmh1yGRYfAAP/2SJLiyE1BNf88mTFZLs
-         aMv2hK8pyeirvcuyCXigcIR+rrkPqlrrWfNfs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:in-reply-to:mime-version
-         :thread-index:date:message-id:subject:to:cc;
-        bh=CQnNB009Cy33AqVFmF/6dcXRaqDruSPNy+a/oLfI11M=;
-        b=brlUR+XpVKJo8KK00vH9JoHHcL/iCoSK0mvAi1V02Q5lkY/oMzxls5PEfbCUC6dzui
-         obbPdRzc0JYcvKuj5AzKmTICuahSJXOOsiNAumfytrbL3wjw5uM8U/TJtqxFaip3+O/Y
-         +4SQJE1FobDRmoq17iZid72q+uWXt2W8+1KseIbU+JQ/gp10fRXi1EgcWhZ6S3BQ9QTB
-         0qekm+4FQCr+4DZaxZubKFTCS/D0lJBUpw/L8tJPUsv/g+i7pfvzCTWjRhHLoWvwpUIK
-         jFPlGpmlEN7y6RTdxFniffhHLtCfMc0yFea59P33+c0CBYGKqIGHHtYq0ZJ1jK7bxQ9+
-         UfJA==
-X-Gm-Message-State: APzg51BhG4sCG8VxIEkQyXFDn2KOZoxbPADU6C8dvOFpu06wHJM7BYmQ
-        5I/TQISm2BAZxyzyuSxPUKkGf+WrmyjqlILdLZcLYQ==
-X-Google-Smtp-Source: ANB0VdZ4PcaH3xAVGQUXr4V+xeE4wrWdpFR+gCEo/oVJxbQNAEibHqG8ygKBx4uJS+JIxxYqSIJBpmjCQ+D7wMC5zC4=
-X-Received: by 2002:a5e:8d18:: with SMTP id m24-v6mr18497782ioj.217.1535952886312;
- Sun, 02 Sep 2018 22:34:46 -0700 (PDT)
-From:   Kashyap Desai <kashyap.desai@broadcom.com>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
- <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
- <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
- <615d78004495aebc53807156d04d988c@mail.gmail.com> <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
- <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
- <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com> <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbgI3aj7TAe+rdbUBJEp+nAJfSXIOAX62R1ABhljzHqIPoXWQ
-Date:   Mon, 3 Sep 2018 11:04:44 +0530
-Message-ID: <66256272c020be186becdd7a3f049302@mail.gmail.com>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Sep 2018 05:53:39 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w835YFld058317
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Sep 2018 01:35:04 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m8xvm04ap-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 01:35:04 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Mon, 3 Sep 2018 06:35:02 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Sep 2018 06:34:58 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w835Ywg645350938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Sep 2018 05:34:58 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 99ABD11C050;
+        Mon,  3 Sep 2018 08:34:51 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 060D011C04C;
+        Mon,  3 Sep 2018 08:34:50 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.79])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Sep 2018 08:34:49 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 03 Sep 2018 08:34:55 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-alpha <linux-alpha@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [RESEND PATCH v2] alpha: switch to NO_BOOTMEM
+Date:   Mon,  3 Sep 2018 08:34:54 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18090305-0020-0000-0000-000002C029A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090305-0021-0000-0000-0000210D45E3
+Message-Id: <1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809030061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Fri, 31 Aug 2018, Kashyap Desai wrote:
-> > > Ok. I misunderstood the whole thing a bit. So your real issue is
-that you
-> > > want to have reply queues which are instantaneous, the per cpu ones,
-and
-> > > then the extra 16 which do batching and are shared over a set of
-CPUs,
-> > > right?
-> >
-> > Yes that is correct.  Extra 16 or whatever should be shared over set
-of
-> > CPUs of *local* numa node of the PCI device.
->
-> Why restricting it to the local NUMA node of the device? That doesn't
-> really make sense if you queue lots of requests from CPUs on a different
-> node.
+Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
+on most other architectures.
 
-Penalty of cross numa node is minimal with higher interrupt coalescing
-used in h/w.  We see penalty of cross numa traffic for lower IOPs type
-work load.
-In this particular case we are taking care cross numa traffic via higher
-interrupt coalescing.
+Alpha gets the description of the physical memory from the firmware as an
+array of memory clusters. Each cluster that is not reserved by the firmware
+is added to memblock.memory.
 
->
-> Why don't you spread these extra interrupts accross all nodes and keep
-the
-> locality for the request/reply?
+Once the memblock.memory is set up, we reserve the kernel and initrd pages
+with memblock reserve.
 
-I assuming you are refereeing spreading msix to all numa node the way
-"pci_alloc_irq_vectors" does.
+Since we don't need the bootmem bitmap anymore, the code that finds an
+appropriate place is removed.
 
-Having extra 16 reply queue spread across nodes will have negative impact.
-Take example of 8 node system (total 128 logical cpus).
-If  16 reply queue are spread across numa node, there will be total 8
-logical cpu mapped to 1 reply queue (eventually one numa node will have
-only 2 reply queue mapped).
+The conversion does not take care of NUMA support which is marked broken
+for more than 10 years now.
 
-Running IO from one numa node will only consume 2 reply queues.
-Performance dropped drastically in such case.  This is typical problem
-with cpu-msix mapping goes to N:1 where msix is less than online cpus.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+v2: describe the conversion as per Michal's request
 
-Mapping extra 16 reply queue to local numa node will always make sure that
-driver will round robin all 16 reply queue irrespective of originated cpu.
-We validated this method sending IOs from remote node and did not observed
-performance penalty.
+Tested with qemu-system-alpha. I've added some tweaks to sys_dp264 to force
+memory split for testing with CONFIG_DISCONTIGMEM=y
 
->
-> That also would allow to make them properly managed interrupts as you
-> could
-> shutdown the per node batching interrupts when all CPUs of that node are
-> offlined and you'd avoid the whole affinity hint irq balancer hackery.
+ arch/alpha/Kconfig                |   2 +
+ arch/alpha/kernel/core_irongate.c |   4 +-
+ arch/alpha/kernel/setup.c         |  98 ++++-----------------------------
+ arch/alpha/mm/numa.c              | 113 +++++---------------------------------
+ 4 files changed, 29 insertions(+), 188 deletions(-)
 
-One more clarification -
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index 5b4f883..620b0a7 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -31,6 +31,8 @@ config ALPHA
+ 	select ODD_RT_SIGACTION
+ 	select OLD_SIGSUSPEND
+ 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
++	select HAVE_MEMBLOCK
++	select NO_BOOTMEM
+ 	help
+ 	  The Alpha is a 64-bit general-purpose processor designed and
+ 	  marketed by the Digital Equipment Corporation of blessed memory,
+diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
+index aec7572..f709866 100644
+--- a/arch/alpha/kernel/core_irongate.c
++++ b/arch/alpha/kernel/core_irongate.c
+@@ -21,6 +21,7 @@
+ #include <linux/init.h>
+ #include <linux/initrd.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ 
+ #include <asm/ptrace.h>
+ #include <asm/cacheflush.h>
+@@ -241,8 +242,7 @@ albacore_init_arch(void)
+ 				       size / 1024);
+ 		}
+ #endif
+-		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
+-				pci_mem, BOOTMEM_DEFAULT);
++		memblock_reserve(pci_mem, memtop - pci_mem);
+ 		printk("irongate_init_arch: temporarily reserving "
+ 			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
+ 	}
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index 5576f76..4f0d944 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -30,6 +30,7 @@
+ #include <linux/ioport.h>
+ #include <linux/platform_device.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ #include <linux/pci.h>
+ #include <linux/seq_file.h>
+ #include <linux/root_dev.h>
+@@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
+ {
+ 	struct memclust_struct * cluster;
+ 	struct memdesc_struct * memdesc;
+-	unsigned long start_kernel_pfn, end_kernel_pfn;
+-	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+-	unsigned long start, end;
++	unsigned long kernel_size;
+ 	unsigned long i;
+ 
+ 	/* Find free clusters, and init and free the bootmem accordingly.  */
+@@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
+ 	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
+ 
+ 	for_each_mem_cluster(memdesc, cluster, i) {
++		unsigned long end;
++
+ 		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
+ 		       i, cluster->usage, cluster->start_pfn,
+ 		       cluster->start_pfn + cluster->numpages);
+@@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
+ 		end = cluster->start_pfn + cluster->numpages;
+ 		if (end > max_low_pfn)
+ 			max_low_pfn = end;
++
++		memblock_add(PFN_PHYS(cluster->start_pfn),
++			     cluster->numpages << PAGE_SHIFT);
+ 	}
+ 
+ 	/*
+@@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
+ 		max_low_pfn = mem_size_limit;
+ 	}
+ 
+-	/* Find the bounds of kernel memory.  */
+-	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+-	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+-	bootmap_start = -1;
+-
+- try_again:
+-	if (max_low_pfn <= end_kernel_pfn)
+-		panic("not enough memory to boot");
+-
+-	/* We need to know how many physically contiguous pages
+-	   we'll need for the bootmap.  */
+-	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
+-
+-	/* Now find a good region where to allocate the bootmap.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = start + cluster->numpages;
+-		if (start >= max_low_pfn)
+-			continue;
+-		if (end > max_low_pfn)
+-			end = max_low_pfn;
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn
+-			    && end - end_kernel_pfn >= bootmap_pages) {
+-				bootmap_start = end_kernel_pfn;
+-				break;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (end - start >= bootmap_pages) {
+-			bootmap_start = start;
+-			break;
+-		}
+-	}
+-
+-	if (bootmap_start == ~0UL) {
+-		max_low_pfn >>= 1;
+-		goto try_again;
+-	}
+-
+-	/* Allocate the bootmap and mark the whole MM as reserved.  */
+-	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
+-
+-	/* Mark the free regions.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = cluster->start_pfn + cluster->numpages;
+-		if (start >= max_low_pfn)
+-			continue;
+-		if (end > max_low_pfn)
+-			end = max_low_pfn;
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn) {
+-				free_bootmem(PFN_PHYS(start),
+-					     (PFN_PHYS(start_kernel_pfn)
+-					      - PFN_PHYS(start)));
+-				printk("freeing pages %ld:%ld\n",
+-				       start, start_kernel_pfn);
+-				start = end_kernel_pfn;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (start >= end)
+-			continue;
+-
+-		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+-		printk("freeing pages %ld:%ld\n", start, end);
+-	}
+-
+-	/* Reserve the bootmap memory.  */
+-	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
+-			BOOTMEM_DEFAULT);
+-	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
++	/* Reserve the kernel memory. */
++	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
++	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	initrd_start = INITRD_START;
+@@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
+ 				       initrd_end,
+ 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+ 		} else {
+-			reserve_bootmem(virt_to_phys((void *)initrd_start),
+-					INITRD_SIZE, BOOTMEM_DEFAULT);
++			memblock_reserve(virt_to_phys((void *)initrd_start),
++					INITRD_SIZE);
+ 		}
+ 	}
+ #endif /* CONFIG_BLK_DEV_INITRD */
+diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
+index a9e8647..26cd925 100644
+--- a/arch/alpha/mm/numa.c
++++ b/arch/alpha/mm/numa.c
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/bootmem.h>
++#include <linux/memblock.h>
+ #include <linux/swap.h>
+ #include <linux/initrd.h>
+ #include <linux/pfn.h>
+@@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_end)
+ 	struct memclust_struct * cluster;
+ 	struct memdesc_struct * memdesc;
+ 	unsigned long start_kernel_pfn, end_kernel_pfn;
+-	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+ 	unsigned long start, end;
+ 	unsigned long node_pfn_start, node_pfn_end;
+ 	unsigned long node_min_pfn, node_max_pfn;
+ 	int i;
+-	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
+ 	int show_init = 0;
+ 
+ 	/* Find the bounds of current node */
+@@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_end)
+ 	/* Cute trick to make sure our local node data is on local memory */
+ 	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
+ #endif
+-	/* Quasi-mark the pg_data_t as in-use */
+-	node_min_pfn += node_datasz;
+-	if (node_min_pfn >= node_max_pfn) {
+-		printk(" not enough mem to reserve NODE_DATA");
+-		return;
+-	}
+-	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+-
+ 	printk(" Detected node memory:   start %8lu, end %8lu\n",
+ 	       node_min_pfn, node_max_pfn);
+ 
+ 	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
+-	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
+ 
+ 	/* Find the bounds of kernel memory.  */
+ 	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+ 	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+-	bootmap_start = -1;
+ 
+ 	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
+ 		panic("kernel loaded out of ram");
+@@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_end)
+ 	   has much larger alignment than 8Mb, so it's safe. */
+ 	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
+ 
+-	/* We need to know how many physically contiguous pages
+-	   we'll need for the bootmap.  */
+-	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
+-
+-	/* Now find a good region where to allocate the bootmap.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = start + cluster->numpages;
+-
+-		if (start >= node_max_pfn || end <= node_min_pfn)
+-			continue;
+-
+-		if (end > node_max_pfn)
+-			end = node_max_pfn;
+-		if (start < node_min_pfn)
+-			start = node_min_pfn;
+-
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn
+-			    && end - end_kernel_pfn >= bootmap_pages) {
+-				bootmap_start = end_kernel_pfn;
+-				break;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (end - start >= bootmap_pages) {
+-			bootmap_start = start;
+-			break;
+-		}
+-	}
+-
+-	if (bootmap_start == -1)
+-		panic("couldn't find a contiguous place for the bootmap");
+-
+-	/* Allocate the bootmap and mark the whole MM as reserved.  */
+-	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
+-					 node_min_pfn, node_max_pfn);
+-	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
+-		 bootmap_start, bootmap_size, bootmap_pages);
++	memblock_add(PFN_PHYS(node_min_pfn),
++		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
+ 
+-	/* Mark the free regions.  */
+-	for_each_mem_cluster(memdesc, cluster, i) {
+-		if (cluster->usage & 3)
+-			continue;
+-
+-		start = cluster->start_pfn;
+-		end = cluster->start_pfn + cluster->numpages;
+-
+-		if (start >= node_max_pfn || end <= node_min_pfn)
+-			continue;
+-
+-		if (end > node_max_pfn)
+-			end = node_max_pfn;
+-		if (start < node_min_pfn)
+-			start = node_min_pfn;
+-
+-		if (start < start_kernel_pfn) {
+-			if (end > end_kernel_pfn) {
+-				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
+-					     (PFN_PHYS(start_kernel_pfn)
+-					      - PFN_PHYS(start)));
+-				printk(" freeing pages %ld:%ld\n",
+-				       start, start_kernel_pfn);
+-				start = end_kernel_pfn;
+-			} else if (end > start_kernel_pfn)
+-				end = start_kernel_pfn;
+-		} else if (start < end_kernel_pfn)
+-			start = end_kernel_pfn;
+-		if (start >= end)
+-			continue;
+-
+-		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+-		printk(" freeing pages %ld:%ld\n", start, end);
+-	}
+-
+-	/* Reserve the bootmap memory.  */
+-	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
+-			bootmap_size, BOOTMEM_DEFAULT);
+-	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
++	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
++	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
+ 
+ 	node_set_online(nid);
+ }
+@@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_end)
+ void __init
+ setup_memory(void *kernel_end)
+ {
++	unsigned long kernel_size;
+ 	int nid;
+ 
+ 	show_mem_layout();
+@@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
+ 	for (nid = 0; nid < MAX_NUMNODES; nid++)
+ 		setup_memory_node(nid, kernel_end);
+ 
++	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
++	memblock_reserve(KERNEL_START_PHYS, kernel_size);
++
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	initrd_start = INITRD_START;
+ 	if (initrd_start) {
+@@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
+ 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+ 		} else {
+ 			nid = kvaddr_to_nid(initrd_start);
+-			reserve_bootmem_node(NODE_DATA(nid),
+-					     virt_to_phys((void *)initrd_start),
+-					     INITRD_SIZE, BOOTMEM_DEFAULT);
++			memblock_reserve(virt_to_phys((void *)initrd_start),
++					 INITRD_SIZE);
+ 		}
+ 	}
+ #endif /* CONFIG_BLK_DEV_INITRD */
+@@ -303,9 +217,8 @@ void __init paging_init(void)
+ 	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+ 
+ 	for_each_online_node(nid) {
+-		bootmem_data_t *bdata = &bootmem_node_data[nid];
+-		unsigned long start_pfn = bdata->node_min_pfn;
+-		unsigned long end_pfn = bdata->node_low_pfn;
++		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
++		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
+ 
+ 		if (dma_local_pfn >= end_pfn - start_pfn)
+ 			zones_size[ZONE_DMA] = end_pfn - start_pfn;
+-- 
+2.7.4
 
-I am using " for-4.19/block " and this particular patch "a0c9259
-irq/matrix: Spread interrupts on allocation" is included.
-I can see that 16 extra reply queues via pre_vectors are still assigned to
-CPU 0 (effective affinity ).
-
-irq 33, cpu list 0-71
-irq 34, cpu list 0-71
-irq 35, cpu list 0-71
-irq 36, cpu list 0-71
-irq 37, cpu list 0-71
-irq 38, cpu list 0-71
-irq 39, cpu list 0-71
-irq 40, cpu list 0-71
-irq 41, cpu list 0-71
-irq 42, cpu list 0-71
-irq 43, cpu list 0-71
-irq 44, cpu list 0-71
-irq 45, cpu list 0-71
-irq 46, cpu list 0-71
-irq 47, cpu list 0-71
-irq 48, cpu list 0-71
-
-
-# cat /sys/kernel/debug/irq/irqs/34
-handler:  handle_edge_irq
-device:   0000:86:00.0
-status:   0x00004000
-istate:   0x00000000
-ddepth:   0
-wdepth:   0
-dstate:   0x01608200
-            IRQD_ACTIVATED
-            IRQD_IRQ_STARTED
-            IRQD_SINGLE_TARGET
-            IRQD_MOVE_PCNTXT
-            IRQD_AFFINITY_MANAGED
-node:     0
-affinity: 0-71
-effectiv: 0
-pending:
-domain:  INTEL-IR-MSI-1-2
- hwirq:   0x4300001
- chip:    IR-PCI-MSI
-  flags:   0x10
-             IRQCHIP_SKIP_SET_WAKE
- parent:
-    domain:  INTEL-IR-1
-     hwirq:   0x40000
-     chip:    INTEL-IR
-      flags:   0x0
-     parent:
-        domain:  VECTOR
-         hwirq:   0x22
-         chip:    APIC
-          flags:   0x0
-         Vector:    46
-         Target:     0
-         move_in_progress: 0
-         is_managed:       1
-         can_reserve:      0
-         has_reserved:     0
-         cleanup_pending:  0
-
-#cat /sys/kernel/debug/irq/irqs/35
-handler:  handle_edge_irq
-device:   0000:86:00.0
-status:   0x00004000
-istate:   0x00000000
-ddepth:   0
-wdepth:   0
-dstate:   0x01608200
-            IRQD_ACTIVATED
-            IRQD_IRQ_STARTED
-            IRQD_SINGLE_TARGET
-            IRQD_MOVE_PCNTXT
-            IRQD_AFFINITY_MANAGED
-node:     0
-affinity: 0-71
-effectiv: 0
-pending:
-domain:  INTEL-IR-MSI-1-2
- hwirq:   0x4300002
- chip:    IR-PCI-MSI
-  flags:   0x10
-             IRQCHIP_SKIP_SET_WAKE
- parent:
-    domain:  INTEL-IR-1
-     hwirq:   0x50000
-     chip:    INTEL-IR
-      flags:   0x0
-     parent:
-        domain:  VECTOR
-         hwirq:   0x23
-         chip:    APIC
-          flags:   0x0
-         Vector:    47
-         Target:     0
-         move_in_progress: 0
-         is_managed:       1
-         can_reserve:      0
-         has_reserved:     0
-         cleanup_pending:  0
-
-Ideally, what we are looking for 16 extra pre_vector reply queue is
-"effective affinity" to be within local numa node as long as that numa
-node has online CPUs. If not, we are ok to have effective cpu from any
-node.
-
->
-> Thanks,
->
-> 	tglx
->
->
