@@ -2,114 +2,85 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FF8C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580C3C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2AC20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:24:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXErbt1T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD2AC20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 01B4420867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:24:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B4420867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeICXpk (ORCPT
+        id S1728707AbeICXqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:45:40 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41077 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbeICXpk (ORCPT
+        Mon, 3 Sep 2018 19:46:09 -0400
+Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:52824 "EHLO
+        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728276AbeICXqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:45:40 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b12-v6so530708plr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zRdrFXi+EP6kAP/VXxUVBFfyCKmghbkfH747IPUEVB8=;
-        b=PXErbt1TTgYkeHxm7MkFkC/rAlZQ+sWfQ4W81r1hU1X45TzvTT3QRprRHXEutO7AcX
-         PBod0g28m667SlcekTu/pa3gWuwdUVmRujsD4kmnAaArIE0DLfq+NLYKJdKXqa1ec+mO
-         FMpMT7tpZIw467sJkVfjnezjJEYAZNSrUaoLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zRdrFXi+EP6kAP/VXxUVBFfyCKmghbkfH747IPUEVB8=;
-        b=FfeAOk6INaM56Vvjai19uW/eMvlNjW2HLWj2pZQde9dYXQGJGafml07SEz5Z9Gz7Xx
-         PIHo0Jz0SN1pc6A5PZpaLdHke1CDZ9O09yU57r7F7phv5BNI+/doQ3qcZRByPLFp3uIp
-         ox+vEUtZ/zEsNiL8scXmRB05kEOSDmBuHC9x20TN8oyImE/+5q7aizkH4pPQrmq3kSnl
-         UxFeq/TWjeQoRkXYPpg2wZ/nea/pXPiUPNGmtYEXIxYvfFMyk9A+69uHrrpnPr58i5w6
-         p6+gjP2EGckadXpuWVhPx6Z8rWutpgO4NBT667uV0GPPcMY5k7gsYVCHgAQlKx6p+YA1
-         2RfA==
-X-Gm-Message-State: APzg51BWO5rZgtV4sB0VKDg3v8wfxEgPUoJEzfQ260iga3myISHksiFZ
-        B18d18S46/L94nionvhXFzaIIQ==
-X-Google-Smtp-Source: ANB0VdbzppPklpmAkym5rbVCmEY4UKWuNii/af6xWMCZXKC2TdMjYa+sbXzyQI1cbO8gINjWausFng==
-X-Received: by 2002:a17:902:bc8b:: with SMTP id bb11-v6mr29379767plb.112.1536002644615;
-        Mon, 03 Sep 2018 12:24:04 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm28900877pfc.20.2018.09.03.12.24.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 12:24:03 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 12:27:58 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: db820c: Add qcom,apq8096 to compatible
- string
-Message-ID: <20180903192758.GG3456@tuxbook-pro>
-References: <20180829125803.11227-1-niklas.cassel@linaro.org>
- <20180829125803.11227-2-niklas.cassel@linaro.org>
+        Mon, 3 Sep 2018 19:46:09 -0400
+Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
+        id C46C313F78A; Mon,  3 Sep 2018 21:24:32 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 21:24:32 +0200
+From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: IRQ number question.
+Message-ID: <20180903192432.GE11854@BitWizard.nl>
+References: <20180903171639.GC16262@BitWizard.nl>
+ <20180903190903.290fff01@alans-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829125803.11227-2-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180903190903.290fff01@alans-desktop>
+Organization: BitWizard B.V.
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29 Aug 05:58 PDT 2018, Niklas Cassel wrote:
+On Mon, Sep 03, 2018 at 07:09:03PM +0100, Alan Cox wrote:
+> On Mon, 3 Sep 2018 19:16:39 +0200
 
-> Add qcom,apq8096 to compatible string.
-> This compatible is defined in Documentation/devicetree/bindings/arm/qcom.txt
-> and is needed for e.g. drivers/cpufreq/qcom-cpufreq-kryo.c to be probed
-> correctly (and for drivers/cpufreq/cpufreq-dt-platdev.c to work properly).
+> > irq 18: nobody cared (try booting with the "irqpoll" option)
+> > 
+> > I've been writing device drivers in the past, but in the past
+> > when the lspci listed "IRQ 14" then I'd have to request_irq (14, ...
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-@Andy, please pick this independently of 1/2
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The IRQ number in the PCI configuration space is just a label really for
+> legacy OS stuff. Nothing actually routes interrupts according to it (*).
+> If it's coming up as 14 that looks more like the BIOS mislabelled it.
+> Legacy PCI interrupts care about lines and pins not irq numbers.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> index 230e9c8484ac..da23bdafbd33 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-> @@ -17,5 +17,5 @@
->  
->  / {
->  	model = "Qualcomm Technologies, Inc. DB820c";
-> -	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
-> +	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
->  };
-> -- 
-> 2.17.1
-> 
+> Are you looking at values after things like pci_enable_device were called
+> or before ? Are you also looking at what is in pcidev->irq after the
+> enable ?
+
+The driver used to be for an ISA card. But as the ISA hardware is
+becoming less and less available, things were in need of an upgrade.
+
+So... So far I was just doing
+  inmod  mydriver.ko pci=1 irq=14 io=0xae00 mem=0xfda00000
+
+keeping most of the ISA driver. (for testing I was able to run the ISA
+card with the upgraded driver that does the PCI card as well...
+
+So io= is the address I got from lspci, mem= and irq= the
+same. Apparently All of them are accurate except for the IRQ?
+
+So the answer is: No I wasn't doing pci_enable_device. I guess I'll 
+have to make a proper PCI driver then. Hmm. OK. I'll look into it. 
+
+	Roger. 
+
+-- 
+** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
+**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
+*-- BitWizard writes Linux device drivers for any device you may have! --*
+The plan was simple, like my brother-in-law Phil. But unlike
+Phil, this plan just might work.
