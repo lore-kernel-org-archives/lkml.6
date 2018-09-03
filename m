@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37323C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB5BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1FC12086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FC12086A
+	by mail.kernel.org (Postfix) with ESMTP id 7E3C72086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3C72086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbeICVoM (ORCPT
+        id S1730498AbeICVoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:44:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45392 "EHLO
+        Mon, 3 Sep 2018 17:44:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45404 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729864AbeICVoM (ORCPT
+        with ESMTP id S1728357AbeICVoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:44:12 -0400
+        Mon, 3 Sep 2018 17:44:18 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 750ABD2F;
-        Mon,  3 Sep 2018 17:23:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6152D0A;
+        Mon,  3 Sep 2018 17:23:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 092/165] Btrfs: fix btrfs_write_inode vs delayed iput deadlock
-Date:   Mon,  3 Sep 2018 18:56:18 +0200
-Message-Id: <20180903165700.129590327@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Subject: [PATCH 4.14 093/165] iommu/arm-smmu: Error out only if not enough context interrupts
+Date:   Mon,  3 Sep 2018 18:56:19 +0200
+Message-Id: <20180903165700.192628841@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -50,112 +53,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-commit 3c4276936f6fbe52884b4ea4e6cc120b890a0f9f upstream.
+commit d1e20222d5372e951bbb2fd3f6489ec4a6ea9b11 upstream.
 
-We recently ran into the following deadlock involving
-btrfs_write_inode():
+Currently we check if the number of context banks is not equal to
+num_context_interrupts. However, there are booloaders such as, one
+on sdm845 that reserves few context banks and thus kernel views
+less than the total available context banks.
+So, although the hardware definition in device tree would mention
+the correct number of context interrupts, this number can be
+greater than the number of context banks visible to smmu in kernel.
+We should therefore error out only when the number of context banks
+is greater than the available number of context interrupts.
 
-[  +0.005066]  __schedule+0x38e/0x8c0
-[  +0.007144]  schedule+0x36/0x80
-[  +0.006447]  bit_wait+0x11/0x60
-[  +0.006446]  __wait_on_bit+0xbe/0x110
-[  +0.007487]  ? bit_wait_io+0x60/0x60
-[  +0.007319]  __inode_wait_for_writeback+0x96/0xc0
-[  +0.009568]  ? autoremove_wake_function+0x40/0x40
-[  +0.009565]  inode_wait_for_writeback+0x21/0x30
-[  +0.009224]  evict+0xb0/0x190
-[  +0.006099]  iput+0x1a8/0x210
-[  +0.006103]  btrfs_run_delayed_iputs+0x73/0xc0
-[  +0.009047]  btrfs_commit_transaction+0x799/0x8c0
-[  +0.009567]  btrfs_write_inode+0x81/0xb0
-[  +0.008008]  __writeback_single_inode+0x267/0x320
-[  +0.009569]  writeback_sb_inodes+0x25b/0x4e0
-[  +0.008702]  wb_writeback+0x102/0x2d0
-[  +0.007487]  wb_workfn+0xa4/0x310
-[  +0.006794]  ? wb_workfn+0xa4/0x310
-[  +0.007143]  process_one_work+0x150/0x410
-[  +0.008179]  worker_thread+0x6d/0x520
-[  +0.007490]  kthread+0x12c/0x160
-[  +0.006620]  ? put_pwq_unlocked+0x80/0x80
-[  +0.008185]  ? kthread_park+0xa0/0xa0
-[  +0.007484]  ? do_syscall_64+0x53/0x150
-[  +0.007837]  ret_from_fork+0x29/0x40
-
-Writeback calls:
-
-btrfs_write_inode
-  btrfs_commit_transaction
-    btrfs_run_delayed_iputs
-
-If iput() is called on that same inode, evict() will wait for writeback
-forever.
-
-btrfs_write_inode() was originally added way back in 4730a4bc5bf3
-("btrfs_dirty_inode") to support O_SYNC writes. However, ->write_inode()
-hasn't been used for O_SYNC since 148f948ba877 ("vfs: Introduce new
-helpers for syncing after writing to O_SYNC file or IS_SYNC inode"), so
-btrfs_write_inode() is actually unnecessary (and leads to a bunch of
-unnecessary commits). Get rid of it, which also gets rid of the
-deadlock.
-
-CC: stable@vger.kernel.org # 3.2+
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-[Omar: new commit message]
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Suggested-by: Tomasz Figa <tfiga@chromium.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+[will: drop useless printk]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Cc: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |   26 --------------------------
- fs/btrfs/super.c |    1 -
- 2 files changed, 27 deletions(-)
+ drivers/iommu/arm-smmu.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6152,32 +6152,6 @@ err:
- 	return ret;
- }
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -2100,12 +2100,16 @@ static int arm_smmu_device_probe(struct
+ 	if (err)
+ 		return err;
  
--int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc)
--{
--	struct btrfs_root *root = BTRFS_I(inode)->root;
--	struct btrfs_trans_handle *trans;
--	int ret = 0;
--	bool nolock = false;
--
--	if (test_bit(BTRFS_INODE_DUMMY, &BTRFS_I(inode)->runtime_flags))
--		return 0;
--
--	if (btrfs_fs_closing(root->fs_info) &&
--			btrfs_is_free_space_inode(BTRFS_I(inode)))
--		nolock = true;
--
--	if (wbc->sync_mode == WB_SYNC_ALL) {
--		if (nolock)
--			trans = btrfs_join_transaction_nolock(root);
--		else
--			trans = btrfs_join_transaction(root);
--		if (IS_ERR(trans))
--			return PTR_ERR(trans);
--		ret = btrfs_commit_transaction(trans);
--	}
--	return ret;
--}
--
- /*
-  * This is somewhat expensive, updating the tree every time the
-  * inode changes.  But, it is most likely to find the inode in cache.
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2271,7 +2271,6 @@ static const struct super_operations btr
- 	.sync_fs	= btrfs_sync_fs,
- 	.show_options	= btrfs_show_options,
- 	.show_devname	= btrfs_show_devname,
--	.write_inode	= btrfs_write_inode,
- 	.alloc_inode	= btrfs_alloc_inode,
- 	.destroy_inode	= btrfs_destroy_inode,
- 	.statfs		= btrfs_statfs,
+-	if (smmu->version == ARM_SMMU_V2 &&
+-	    smmu->num_context_banks != smmu->num_context_irqs) {
+-		dev_err(dev,
+-			"found only %d context interrupt(s) but %d required\n",
+-			smmu->num_context_irqs, smmu->num_context_banks);
+-		return -ENODEV;
++	if (smmu->version == ARM_SMMU_V2) {
++		if (smmu->num_context_banks > smmu->num_context_irqs) {
++			dev_err(dev,
++			      "found only %d context irq(s) but %d required\n",
++			      smmu->num_context_irqs, smmu->num_context_banks);
++			return -ENODEV;
++		}
++
++		/* Ignore superfluous interrupts */
++		smmu->num_context_irqs = smmu->num_context_banks;
+ 	}
+ 
+ 	for (i = 0; i < smmu->num_global_irqs; ++i) {
 
 
