@@ -6,91 +6,125 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993B0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9BFC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50DD62077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50DD62077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CED22077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CED22077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeICOmo (ORCPT
+        id S1727798AbeICOoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:42:44 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51554 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbeICOmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:42:43 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id BF822107FDD95;
-        Mon,  3 Sep 2018 18:23:09 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 3 Sep 2018 18:23:00 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 04/11] net: hns3: Implement shutdown ops in hns3 pci driver
-Date:   Mon, 3 Sep 2018 11:21:49 +0100
-Message-ID: <20180903102156.18676-5-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180903102156.18676-1-salil.mehta@huawei.com>
-References: <20180903102156.18676-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.54]
-X-CFilter-Loop: Reflected
+        Mon, 3 Sep 2018 10:44:19 -0400
+Received: from foss.arm.com ([217.140.101.70]:53476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbeICOoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:44:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 570DC80D;
+        Mon,  3 Sep 2018 03:24:48 -0700 (PDT)
+Received: from queper01-lin.Emea.Arm.com (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BFD33F614;
+        Mon,  3 Sep 2018 03:24:47 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     sudeep.holla@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quentin.perret@arm.com
+Subject: [PATCH v2] firmware: arm_scmi: add a getter for power of performance states
+Date:   Mon,  3 Sep 2018 11:24:39 +0100
+Message-Id: <20180903102439.24012-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+The SCMI protocol can be used to get power estimates from firmware
+corresponding to each performance state of a device. Although these power
+costs are already managed by the SCMI firmware driver, they are not
+exposed to any external subsystem yet.
 
-This patch implements shutdown ops in hns3 pci driver, which
-unloads the hns3 driver and set the power state to D3hot.
+Fix this by adding a new get_power() interface to the exisiting perf_ops
+defined for the SCMI protocol.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+v2: rebased on 4.19-rc2
+---
+ drivers/firmware/arm_scmi/perf.c | 28 ++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h    |  4 ++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 955c4ab..75e8ee9 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1662,11 +1662,24 @@ static int hns3_pci_sriov_configure(struct pci_dev *pdev, int num_vfs)
- 	return 0;
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 721e6c57beae..272abd2cb3f0 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -421,6 +421,33 @@ static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
+ 	return ret;
  }
  
-+static void hns3_shutdown(struct pci_dev *pdev)
++static int scmi_dvfs_power_get(const struct scmi_handle *handle, u32 domain,
++			       unsigned long *freq, unsigned long *power)
 +{
-+	struct hnae3_ae_dev *ae_dev = pci_get_drvdata(pdev);
++	struct scmi_perf_info *pi = handle->perf_priv;
++	struct perf_dom_info *dom;
++	unsigned long opp_freq;
++	int idx, ret = -EINVAL;
++	struct scmi_opp *opp;
 +
-+	hnae3_unregister_ae_dev(ae_dev);
-+	devm_kfree(&pdev->dev, ae_dev);
-+	pci_set_drvdata(pdev, NULL);
++	dom = pi->dom_info + domain;
++	if (!dom)
++		return -EIO;
 +
-+	if (system_state == SYSTEM_POWER_OFF)
-+		pci_set_power_state(pdev, PCI_D3hot);
++	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
++		opp_freq = opp->perf * dom->mult_factor;
++		if (opp_freq < *freq)
++			continue;
++
++		*freq = opp_freq;
++		*power = opp->power;
++		ret = 0;
++		break;
++	}
++
++	return ret;
 +}
 +
- static struct pci_driver hns3_driver = {
- 	.name     = hns3_driver_name,
- 	.id_table = hns3_pci_tbl,
- 	.probe    = hns3_probe,
- 	.remove   = hns3_remove,
-+	.shutdown = hns3_shutdown,
- 	.sriov_configure = hns3_pci_sriov_configure,
+ static struct scmi_perf_ops perf_ops = {
+ 	.limits_set = scmi_perf_limits_set,
+ 	.limits_get = scmi_perf_limits_get,
+@@ -431,6 +458,7 @@ static struct scmi_perf_ops perf_ops = {
+ 	.device_opps_add = scmi_dvfs_device_opps_add,
+ 	.freq_set = scmi_dvfs_freq_set,
+ 	.freq_get = scmi_dvfs_freq_get,
++	.power_get = scmi_dvfs_power_get,
  };
  
+ static int scmi_perf_protocol_init(struct scmi_handle *handle)
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index f4c9fc0fc755..2ecbd2c5a249 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -91,6 +91,8 @@ struct scmi_clk_ops {
+  *	to sustained performance level mapping
+  * @freq_get: gets the frequency for a given device using sustained frequency
+  *	to sustained performance level mapping
++ * @power_get: gets the power dissipated for a given performance domain at a
++ *      given frequency
+  */
+ struct scmi_perf_ops {
+ 	int (*limits_set)(const struct scmi_handle *handle, u32 domain,
+@@ -110,6 +112,8 @@ struct scmi_perf_ops {
+ 			unsigned long rate, bool poll);
+ 	int (*freq_get)(const struct scmi_handle *handle, u32 domain,
+ 			unsigned long *rate, bool poll);
++	int (*power_get)(const struct scmi_handle *handle, u32 domain,
++			 unsigned long *rate, unsigned long *power);
+ };
+ 
+ /**
 -- 
-2.7.4
-
+2.17.1
 
