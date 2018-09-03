@@ -6,39 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EFEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE47CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F045220843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F045220843
+	by mail.kernel.org (Postfix) with ESMTP id AF53620843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF53620843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730006AbeICVaT (ORCPT
+        id S1730018AbeICVaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:30:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40570 "EHLO
+        Mon, 3 Sep 2018 17:30:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729363AbeICVaS (ORCPT
+        with ESMTP id S1729626AbeICVaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:30:18 -0400
+        Mon, 3 Sep 2018 17:30:21 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E006ED07;
-        Mon,  3 Sep 2018 17:09:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86B17D09;
+        Mon,  3 Sep 2018 17:09:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>, kasan-dev@googlegroups.com
-Subject: [PATCH 4.9 091/107] x86/entry/64: Wipe KASAN stack shadow before rewind_stack_do_exit()
-Date:   Mon,  3 Sep 2018 18:56:55 +0200
-Message-Id: <20180903165641.732052771@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 092/107] s390: fix br_r1_trampoline for machines without exrl
+Date:   Mon,  3 Sep 2018 18:56:56 +0200
+Message-Id: <20180903165641.795467726@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -55,60 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit f12d11c5c184626b4befdee3d573ec8237405a33 upstream.
+commit 26f843848bae973817b3587780ce6b7b0200d3e4 upstream.
 
-Reset the KASAN shadow state of the task stack before rewinding RSP.
-Without this, a kernel oops will leave parts of the stack poisoned, and
-code running under do_exit() can trip over such poisoned regions and cause
-nonsensical false-positive KASAN reports about stack-out-of-bounds bugs.
+For machines without the exrl instruction the BFP jit generates
+code that uses an "br %r1" instruction located in the lowcore page.
+Unfortunately there is a cut & paste error that puts an additional
+"larl %r1,.+14" instruction in the code that clobbers the branch
+target address in %r1. Remove the larl instruction.
 
-This does not wipe the exception stacks; if an oops happens on an exception
-stack, it might result in random KASAN false-positives from other tasks
-afterwards. This is probably relatively uninteresting, since if the kernel
-oopses on an exception stack, there are most likely bigger things to worry
-about. It'd be more interesting if vmapped stacks and KASAN were
-compatible, since then handle_stack_overflow() would oops from exception
-stack context.
-
-Fixes: 2deb4be28077 ("x86/dumpstack: When OOPSing, rewind the stack before do_exit()")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kasan-dev@googlegroups.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180828184033.93712-1-jannh@google.com
+Cc: <stable@vger.kernel.org> # v4.17+
+Fixes: de5cb6eb51 ("s390: use expoline thunks in the BPF JIT")
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/dumpstack.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/s390/net/bpf_jit_comp.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -15,6 +15,7 @@
- #include <linux/bug.h>
- #include <linux/nmi.h>
- #include <linux/sysfs.h>
-+#include <linux/kasan.h>
- 
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
-@@ -229,7 +230,10 @@ void oops_end(unsigned long flags, struc
- 	 * We're not going to return, but we might be on an IST stack or
- 	 * have very little stack space left.  Rewind the stack and kill
- 	 * the task.
-+	 * Before we rewind the stack, we have to tell KASAN that we're going to
-+	 * reuse the task stack and that existing poisons are invalid.
- 	 */
-+	kasan_unpoison_task_stack(current);
- 	rewind_stack_do_exit(signr);
- }
- NOKPROBE_SYMBOL(oops_end);
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -517,8 +517,6 @@ static void bpf_jit_epilogue(struct bpf_
+ 			/* br %r1 */
+ 			_EMIT2(0x07f1);
+ 		} else {
+-			/* larl %r1,.+14 */
+-			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
+ 			/* ex 0,S390_lowcore.br_r1_tampoline */
+ 			EMIT4_DISP(0x44000000, REG_0, REG_0,
+ 				   offsetof(struct lowcore, br_r1_trampoline));
 
 
