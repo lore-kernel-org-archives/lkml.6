@@ -2,74 +2,287 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFBEC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FCAC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F58420658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F58420658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E440F20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:10:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BpCWJoLJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E440F20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeICKXw (ORCPT
+        id S1726205AbeICK3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 06:23:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59714 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725888AbeICKXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 06:23:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D92CAF74;
-        Mon,  3 Sep 2018 06:05:13 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 08:05:12 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?ISO-8859-15?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Access to non-RAM pages
-In-Reply-To: <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1809030801550.25787@cbobk.fhfr.pm>
-References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com> <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm> <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com> <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
- <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org> <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org> <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com> <CA+55aFwSfXu1LXjLZe4gddY2VybEGLbPpx-PWinF19LjbevEgQ@mail.gmail.com>
- <a2b20fc447e0b2cd208dc82081cb24e38bf71f68.camel@kernel.crashing.org> <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 3 Sep 2018 06:29:34 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:37006 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeICK3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 06:29:34 -0400
+Received: by mail-io0-f177.google.com with SMTP id v14-v6so15027857iob.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 23:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=r9fhOFtjsphGnLfUQFvi1WK1g292VWx3kv92f+uPqK8=;
+        b=BpCWJoLJt9nJMmBT1voqyu6gRLamyx8pISPcMqIUhMNmz1cjWM/z5wR44mGcNJX+8H
+         NOETqNyPUnrQ+THshNME4NPnZRd+Ueu9Ykq/G387gEJcZtunZuEmZThnJyvgChi3l14P
+         09EbezUOqV3DHDcL/lOt+fy9yZ75RcnyqNvDA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=r9fhOFtjsphGnLfUQFvi1WK1g292VWx3kv92f+uPqK8=;
+        b=YVw7YBqDsRz+/K1/+D/kyCk2xPg/N8xcYZoE0++TWjHRGnXLcB6RQPOE8xwBoR6mi4
+         AC1AW32vGIrfa16Jqz5ZQvMyGUoyo+OFxq6Zh+Gjz8oGqmJRtTHh6XuH3qZzZYLhvDIt
+         9PKCS4YOO0HbPGrUD99o4rb+EovzqTS9/Jgc/7mmRX+bbUEyZUkAufYaUHy1bMmJXZNl
+         gtZPL6nSN9s0XFrglUD3uYcs2uF5Gq1Bc8yDca/j1UzMsk6AqQksnXxpmh90knD+5Nlr
+         sxpkJYcQlGAzwQWae+Zv0pcMM8SqBHYjxlPCBZCx0P3ylJnHeQ6LtNUWKsBWVJ7kEDEX
+         3SgA==
+X-Gm-Message-State: APzg51D3EYbxKb3hmne62g2H1t/fMYy0n5HZgOXEm+yEz4Xr/FpAyjFL
+        0WMSCwFiVIJnkAUrVLEkX3TU26+tTB5/SLX/45OoGO0QZiw=
+X-Google-Smtp-Source: ANB0VdYt/P9p2i8Nx9GKw2iAGSgPFsotKD2YyR5gYPCrkOVsBl/aJZmxB7H6Kd4jULsJSll/nmUeAXw8nSp72LHkuDI=
+X-Received: by 2002:a5e:950d:: with SMTP id r13-v6mr17437142ioj.224.1535955055177;
+ Sun, 02 Sep 2018 23:10:55 -0700 (PDT)
+From:   Kashyap Desai <kashyap.desai@broadcom.com>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+ <615d78004495aebc53807156d04d988c@mail.gmail.com> <20180903021332.GA5481@ming.t460p>
+In-Reply-To: <20180903021332.GA5481@ming.t460p>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbgI3aj7TASMtyl2iSlQd0A==
+Date:   Mon, 3 Sep 2018 11:40:53 +0530
+Message-ID: <6e187fdf263c80e95cf627f6b363cf8d@mail.gmail.com>
+Subject: RE: Affinity managed interrupts vs non-managed interrupts
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2 Sep 2018, Linus Torvalds wrote:
+> > It is not yet finalized, but it can be based on per sdev outstanding,
+> > shost_busy etc.
+> > We want to use special 16 reply queue for IO acceleration (these
+queues are
+> > working interrupt coalescing mode. This is a h/w feature)
+>
+> This part is very key to your approach, so I'd suggest to finalize it
+> first. That said this way doesn't make sense if you can't figure out
+> one doable approach to decide when to use the coalescing mode, and when
+> to
+> use the regular 72 reply queues.
+This is almost finalized, but going through testing and may take some time
+to review all the output.
+At very high level -
+If scsi device is Virtual Disk, it will count each physical disk for data
+arm and required condition to use io acceleration (interrupt coalescing)
+path is - outstanding for sdev should be more than 8 * data_arms. Using
+this method we are not going to impact low latency intensive workload.
 
-> Which basically doesn't happen on x86 in reality. BIOSes just don't put 
-> MMIO right after the last page of RAM. I think this is why it only 
-> triggered on Xen, due to some crazy "Xen reacts badly" case where we do 
-> the speculation into a balloon address.
-> 
-> So _practically_ this is just a Xen bug, nothing more.
+>
+> If it is just for IO acceleration, why not always use the coalescing
+mode?
 
-Yeah, and Xen guys are already working on fixing that AFAIK.
+Ming, we attempted all the possible approaches. Let me summarize.
 
-> But since in _theory_ you could have MMIO abut regular RAM directly, 
-> it's worth maybe making sure it's purely theory.
+If we use *all* interrupt coalescing, single worker and lower queue depth
+profile is impacted and latency drop is seen upto 20%.
 
-Well, we've been hit by similar/related issue in practice, on x86 machines 
-where GART aperture is being mapped over physical RAM. For the curious -- 
-see commit 2a3e83c6f ("x86/gart: Exclude GART aperture from vmcore").
+>
+> >
+> > >
+> > > Frankly speaking, you may reuse the 72 reply queues to do interrupt
+> > > coalescing by configuring one extra register to enable the
+coalescing
+> > > mode,
+> > > and you may just use small part of the 72 reply queues under the
+> > > interrupt coalescing mode.
+> > Our h/w can set interrupt coalescing per 8 reply queues. So smallest
+is 8.
+> > If we choose to take 8 reply queue from existing 72 reply queue
+(without
+> > asking for extra reply queue), we still have  an issue on more numa
+node
+> > systems.  Example - in 8 numa node system each node will have only
+*one*
+> > reply queue for effective interrupt coalescing. (since irq subsystem
+will
+> > spread msix per numa).
+> >
+> > To keep things scalable we cherry picked few reply queues and wanted
+them
+> to
+> > be out of cpu-msix mapping.
+>
+> I mean you can group the reply queues according to the queue's numa node
+> info, given the mapping has been figured out there by genirq affinity
+> code.
 
-Thanks,
+Not able to follow you.  I replied to Thomas on the same topic. Is that
+reply clarifies or I am still missing ?
 
--- 
-Jiri Kosina
-SUSE Labs
+>
+> >
+> > >
+> > > Or you can learn from SPDK to use one or small number of dedicated
+cores
+> > > or kernel threads to poll the interrupts from all reply queues, then
+I
+> > > guess you may benefit much compared with the extra 16 queue
+approach.
+> > Problem with polling -  It requires some steady completion, otherwise
+> > prediction in driver gives different results on different profiles.
+> > We attempted irq-poll and thread ISR based polling, but it has pros
+and
+> > cons. One of the key usage of method what we are trying is not to
+impact
+> > latency for lower QD workloads.
+>
+> Interrupt coalescing should effect latency too[1], or could you share
+your
+> idea how to use interrupt coalescing to address the latency issue?
+>
+> 	"Interrupt coalescing, also known as interrupt moderation,[1] is a
+> 	technique in which events which would normally trigger a hardware
+> interrupt
+> 	are held back, either until a certain amount of work is pending,
+or a
+> 	timeout timer triggers."[1]
+>
+> [1] https://en.wikipedia.org/wiki/Interrupt_coalescing
 
+That is correct. We are not going to use 100% interrupt coalescing to
+avoid latency impact.  We will have two set of queues. You can consider
+this as hybrid interrupt coalescing.
+On 72 logical cpu case, we will allocate 88 (72 + 16) reply queues (msix
+index). Only first 16 reply queue will be configured in interrupt
+coalescing mode (This is special h/w feature.) and remaining 72 reply are
+without any interrupt coalescing.  72 reply queue are 1:1 cpu-msix map and
+16 reply queue are mapped to local numa node.
+
+As explained above, per scsi device outstanding is a key factors to route
+io to queues with interrupt coalescing vs regular queue (without interrupt
+coalescing.)
+Example -
+If there are sync IO request per scsi device (one IO at a time), driver
+will keep posting those IO to the queues without any interrupt coalescing.
+If there are more than 8 outstanding io per scsi device, driver will post
+those io to reply queues with interrupt coalescing. This particular group
+of io will not have latency impact because coalescing depth are key
+factors to flush the ios. There can be some corner cases of workload which
+can theoretically possible to have latency impact, but having more scsi
+devices doing active io submission will close that loop and we are not
+suspecting those issue need any special treatment. In fact, this solution
+is to provide reasonable latency + higher iops for most of the cases and
+if there are some deployment which need tuning..it is still possible to
+disable this feature.  We really want to deal with those scenario on case
+by case bases (through firmware settings).
+
+
+>
+> > I posted RFC at
+> > https://www.spinics.net/lists/linux-scsi/msg122874.html
+> >
+> > We have done extensive study and concluded to use interrupt coalescing
+is
+> > better if h/w can manage two different modes (coalescing on/off).
+>
+> Could you explain a bit why coalescing is better?
+
+Actually we are doing hybrid coalescing. You are correct, we have no
+single answer here, but there are pros and cons.
+For such hybrid coalescing we need h/w support.
+
+>
+> In theory, interrupt coalescing is just to move the implementation into
+> hardware. And the IO submitted from the same coalescing group is usually
+> irrelevant. The same problem you found in polling should have been in
+> coalescing too.
+
+Coalescing either in software or hardware is best attempt mechanism and
+there is no steady snapshot of submission and completion in both the case.
+
+One of the problem with coalescing/polling in OS driver is - Irq-poll
+works in interrupt context and waiting in polling consume more CPU because
+driver should do some predictive loop. At the same time driver should quit
+after some completion to give fairness to other devices.  Threaded
+interrupt can resolve the cpu hogging issue, but we are moving our key
+interrupt processing to threaded context so fairness will be compromised.
+In case of threaded interrupt polling we may be impacted if interrupt of
+other devices request the same cpu where threaded isr is running.  If
+polling logic in driver does not work well on different systems, we are
+going to see extra penalty of doing disable/enable interrupt call.  This
+particular problem is not a concern if h/w does interrupt coalescing.
+
+>
+> >
+> > >
+> > > Introducing extra 16 queues just for interrupt coalescing and making
+it
+> > > coexisting with the regular 72 reply queues seems one very unusual
+use
+> > > case, not sure the current genirq affinity can support it well.
+> >
+> > Yes. This is unusual case. I think it is not used by any other
+drivers.
+> >
+> > >
+> > > > >
+> > > > > >
+> > > > > > All pre_vectors (16) will be mapped to all available online
+CPUs but
+> > > > > > e
+> > > > > > ffective affinity of each vector is to CPU 0. Our requirement
+is to
+> > > > > > have pre _vectors 16 reply queues to be mapped to local NUMA
+node
+> > > with
+> > > > > > effective CPU should be spread within local node cpu mask.
+Without
+> > > > > > changing kernel code, we can
+> > > > >
+> > > > > If all CPUs in one NUMA node is offline, can this use case work
+as
+> > > > expected?
+> > > > > Seems we have to understand what the use case is and how it
+works.
+> > > >
+> > > > Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity
+will be
+> > > > broken and irqbalancer takes care of migrating affected IRQs to
+online
+> > > > CPUs of different NUMA node.
+> > > > When offline CPUs are onlined again, irqbalancer restores
+affinity.
+> > >
+> > >  irqbalance daemon can't cover managed interrupts, or you mean
+> > > you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
+> >
+> > Yes. We did not used " pci_alloc_irq_vectors_affinity".
+> > We used " pci_enable_msix_range" and manually set affinity in driver
+using
+> > irq_set_affinity_hint.
+>
+> Then you have to cover all kind of CPU hotplug issues in your driver
+> because you switch to driver to maintain the queue mapping.
+>
+> Thanks,
+> Ming
