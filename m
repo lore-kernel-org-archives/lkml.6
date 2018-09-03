@@ -6,198 +6,134 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A185C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F36AC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54EFD2086C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EFD2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id C80B22086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80B22086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730359AbeICVni (ORCPT
+        id S1730416AbeICVno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:43:38 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45147 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbeICVni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:43:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 10:19:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
-   d="scan'208";a="67231488"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Sep 2018 10:19:29 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 5BC5E301B65; Mon,  3 Sep 2018 10:19:29 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     stable@vger.kernel.org
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Michael Hocko <mhocko@suse.com>,
-        vbabka@suse.cz
-Subject: [STABLE 4.4] x86/speculation/l1tf: Increase l1tf memory limit for Nehalem+
-Date:   Mon,  3 Sep 2018 10:19:13 -0700
-Message-Id: <20180903171913.36570-1-andi@firstfloor.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Sep 2018 17:43:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45332 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727873AbeICVnn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:43:43 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0419D00;
+        Mon,  3 Sep 2018 17:22:36 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.14 086/165] smb3: enumerating snapshots was leaving part of the data off end
+Date:   Mon,  3 Sep 2018 18:56:12 +0200
+Message-Id: <20180903165659.521790778@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
+References: <20180903165655.003605184@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-From: Andi Kleen <ak@linux.intel.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-[upstream cc51e5428ea54f575d49cfcede1d4cb3a72b4ec4 for 4.4.
-Note there might be still a trivial conflict with the backport
-for b0a182f875689647b014bc01d36b340217792852, but should
-be easy to resolve]
+------------------
 
-On Nehalem and newer core CPUs the CPU cache internally uses 44 bits
-physical address space. The L1TF workaround is limited by this internal
-cache address width, and needs to have one bit free there for the
-mitigation to work.
+From: Steve French <stfrench@microsoft.com>
 
-Older client systems report only 36bit physical address space so the range
-check decides that L1TF is not mitigated for a 36bit phys/32GB system with
-some memory holes.
+commit e02789a53d71334b067ad72eee5d4e88a0158083 upstream.
 
-But since these actually have the larger internal cache width this warning
-is bogus because it would only really be needed if the system had more than
-43bits of memory.
+When enumerating snapshots, the last few bytes of the final
+snapshot could be left off since we were miscalculating the
+length returned (leaving off the sizeof struct SRV_SNAPSHOT_ARRAY)
+See MS-SMB2 section 2.2.32.2. In addition fixup the length used
+to allow smaller buffer to be passed in, in order to allow
+returning the size of the whole snapshot array more easily.
 
-Add a new internal x86_cache_bits field. Normally it is the same as the
-physical bits field reported by CPUID, but for Nehalem and newerforce it to
-be at least 44bits.
+Sample userspace output with a kernel patched with this
+(mounted to a Windows volume with two snapshots).
+Before this patch, the second snapshot would be missing a
+few bytes at the end.
 
-Change the L1TF memory size warning to use the new cache_bits field to
-avoid bogus warnings and remove the bogus comment about memory size.
+~/cifs-2.6# ~/enum-snapshots /mnt/file
+press enter to issue the ioctl to retrieve snapshot information ...
 
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
-Reported-by: Christopher Snowhill <kode54@gmail.com>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Michael Hocko <mhocko@suse.com>
-Cc: vbabka@suse.cz
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180824170351.34874-1-andi@firstfloor.org
+size of snapshot array = 102
+Num snapshots: 2 Num returned: 2 Array Size: 102
+
+Snapshot 0:@GMT-2018.06.30-19.34.17
+Snapshot 1:@GMT-2018.06.30-19.33.37
+
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/include/asm/processor.h |  4 ++-
- arch/x86/kernel/cpu/bugs.c       | 47 ++++++++++++++++++++++++++++----
- arch/x86/kernel/cpu/common.c     |  2 ++
- 3 files changed, 47 insertions(+), 6 deletions(-)
+ fs/cifs/smb2ops.c |   34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a3a53955f01c..cb07d3f618ca 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -104,6 +104,8 @@ struct cpuinfo_x86 {
- 	__u8			x86_phys_bits;
- 	/* CPUID returned core id bits: */
- 	__u8			x86_coreid_bits;
-+
-+	__u8			x86_cache_bits;
- 	/* Max extended CPUID function supported: */
- 	__u32			extended_cpuid_level;
- 	/* Maximum supported CPUID level, -1=no CPUID: */
-@@ -174,7 +176,7 @@ extern void cpu_detect(struct cpuinfo_x86 *c);
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1129,6 +1129,13 @@ smb3_set_integrity(const unsigned int xi
  
- static inline unsigned long l1tf_pfn_limit(void)
- {
--	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+	return BIT_ULL(boot_cpu_data.x86_cache_bits - 1 - PAGE_SHIFT);
  }
  
- extern void early_cpu_init(void);
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 34e4aaaf03d2..2a41a86aa5c2 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -634,6 +634,46 @@ void x86_spec_ctrl_setup_ap(void)
- 
- #undef pr_fmt
- #define pr_fmt(fmt)	"L1TF: " fmt
++/* GMT Token is @GMT-YYYY.MM.DD-HH.MM.SS Unicode which is 48 bytes + null */
++#define GMT_TOKEN_SIZE 50
 +
 +/*
-+ * These CPUs all support 44bits physical address space internally in the
-+ * cache but CPUID can report a smaller number of physical address bits.
-+ *
-+ * The L1TF mitigation uses the top most address bit for the inversion of
-+ * non present PTEs. When the installed memory reaches into the top most
-+ * address bit due to memory holes, which has been observed on machines
-+ * which report 36bits physical address bits and have 32G RAM installed,
-+ * then the mitigation range check in l1tf_select_mitigation() triggers.
-+ * This is a false positive because the mitigation is still possible due to
-+ * the fact that the cache uses 44bit internally. Use the cache bits
-+ * instead of the reported physical bits and adjust them on the affected
-+ * machines to 44bit if the reported bits are less than 44.
++ * Input buffer contains (empty) struct smb_snapshot array with size filled in
++ * For output see struct SRV_SNAPSHOT_ARRAY in MS-SMB2 section 2.2.32.2
 + */
-+static void override_cache_bits(struct cpuinfo_x86 *c)
-+{
-+	if (c->x86 != 6)
-+		return;
-+
-+	switch (c->x86_model) {
-+	case INTEL_FAM6_NEHALEM:
-+	case INTEL_FAM6_WESTMERE:
-+	case INTEL_FAM6_SANDYBRIDGE:
-+	case INTEL_FAM6_IVYBRIDGE:
-+	case INTEL_FAM6_HASWELL_CORE:
-+	case INTEL_FAM6_HASWELL_ULT:
-+	case INTEL_FAM6_HASWELL_GT3E:
-+	case INTEL_FAM6_BROADWELL_CORE:
-+	case INTEL_FAM6_BROADWELL_GT3E:
-+	case INTEL_FAM6_SKYLAKE_MOBILE:
-+	case INTEL_FAM6_SKYLAKE_DESKTOP:
-+	case INTEL_FAM6_KABYLAKE_MOBILE:
-+	case INTEL_FAM6_KABYLAKE_DESKTOP:
-+		if (c->x86_cache_bits < 44)
-+			c->x86_cache_bits = 44;
-+		break;
-+	}
-+}
-+
- static void __init l1tf_select_mitigation(void)
- {
- 	u64 half_pa;
-@@ -641,16 +681,13 @@ static void __init l1tf_select_mitigation(void)
- 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
- 		return;
+ static int
+ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
+ 		   struct cifsFileInfo *cfile, void __user *ioc_buf)
+@@ -1158,14 +1165,27 @@ smb3_enum_snapshots(const unsigned int x
+ 			kfree(retbuf);
+ 			return rc;
+ 		}
+-		if (snapshot_in.snapshot_array_size < sizeof(struct smb_snapshot_array)) {
+-			rc = -ERANGE;
+-			kfree(retbuf);
+-			return rc;
+-		}
  
-+	override_cache_bits(&boot_cpu_data);
+-		if (ret_data_len > snapshot_in.snapshot_array_size)
+-			ret_data_len = snapshot_in.snapshot_array_size;
++		/*
++		 * Check for min size, ie not large enough to fit even one GMT
++		 * token (snapshot).  On the first ioctl some users may pass in
++		 * smaller size (or zero) to simply get the size of the array
++		 * so the user space caller can allocate sufficient memory
++		 * and retry the ioctl again with larger array size sufficient
++		 * to hold all of the snapshot GMT tokens on the second try.
++		 */
++		if (snapshot_in.snapshot_array_size < GMT_TOKEN_SIZE)
++			ret_data_len = sizeof(struct smb_snapshot_array);
 +
- #if CONFIG_PGTABLE_LEVELS == 2
- 	pr_warn("Kernel not compiled for PAE. No mitigation for L1TF\n");
- 	return;
- #endif
++		/*
++		 * We return struct SRV_SNAPSHOT_ARRAY, followed by
++		 * the snapshot array (of 50 byte GMT tokens) each
++		 * representing an available previous version of the data
++		 */
++		if (ret_data_len > (snapshot_in.snapshot_array_size +
++					sizeof(struct smb_snapshot_array)))
++			ret_data_len = snapshot_in.snapshot_array_size +
++					sizeof(struct smb_snapshot_array);
  
--	/*
--	 * This is extremely unlikely to happen because almost all
--	 * systems have far more MAX_PA/2 than RAM can be fit into
--	 * DIMM slots.
--	 */
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
- 	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 4d3fa79c0f09..b12c0287d6cf 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -798,6 +798,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_phys_bits = 36;
- #endif
- 
-+	c->x86_cache_bits = c->x86_phys_bits;
-+
- 	if (c->extended_cpuid_level >= 0x8000000a)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
--- 
-2.17.1
+ 		if (copy_to_user(ioc_buf, retbuf, ret_data_len))
+ 			rc = -EFAULT;
+
 
