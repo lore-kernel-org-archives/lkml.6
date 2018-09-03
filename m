@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F36AC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CADC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80B22086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80B22086A
+	by mail.kernel.org (Postfix) with ESMTP id E9BAA2086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:22:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BAA2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730416AbeICVno (ORCPT
+        id S1730442AbeICVnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:43:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45332 "EHLO
+        Mon, 3 Sep 2018 17:43:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbeICVnn (ORCPT
+        with ESMTP id S1727783AbeICVnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:43:43 -0400
+        Mon, 3 Sep 2018 17:43:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0419D00;
-        Mon,  3 Sep 2018 17:22:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E90F3D2F;
+        Mon,  3 Sep 2018 17:22:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 086/165] smb3: enumerating snapshots was leaving part of the data off end
-Date:   Mon,  3 Sep 2018 18:56:12 +0200
-Message-Id: <20180903165659.521790778@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Stefan Metzmacher <metze@samba.org>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 087/165] smb3: Do not send SMB3 SET_INFO if nothing changed
+Date:   Mon,  3 Sep 2018 18:56:13 +0200
+Message-Id: <20180903165659.619930913@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,88 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steve French <stfrench@microsoft.com>
 
-commit e02789a53d71334b067ad72eee5d4e88a0158083 upstream.
+commit fd09b7d3b352105f08b8e02f7afecf7e816380ef upstream.
 
-When enumerating snapshots, the last few bytes of the final
-snapshot could be left off since we were miscalculating the
-length returned (leaving off the sizeof struct SRV_SNAPSHOT_ARRAY)
-See MS-SMB2 section 2.2.32.2. In addition fixup the length used
-to allow smaller buffer to be passed in, in order to allow
-returning the size of the whole snapshot array more easily.
+An earlier commit had a typo which prevented the
+optimization from working:
 
-Sample userspace output with a kernel patched with this
-(mounted to a Windows volume with two snapshots).
-Before this patch, the second snapshot would be missing a
-few bytes at the end.
+commit 18dd8e1a65dd ("Do not send SMB3 SET_INFO request if nothing is changing")
 
-~/cifs-2.6# ~/enum-snapshots /mnt/file
-press enter to issue the ioctl to retrieve snapshot information ...
+Thank you to Metze for noticing this.  Also clear a
+reserved field in the FILE_BASIC_INFO struct we send
+that should be zero (all the other fields in that
+struct were set or cleared explicitly already in
+cifs_set_file_info).
 
-size of snapshot array = 102
-Num snapshots: 2 Num returned: 2 Array Size: 102
-
-Snapshot 0:@GMT-2018.06.30-19.34.17
-Snapshot 1:@GMT-2018.06.30-19.33.37
-
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
 Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org> # 4.9.x+
+Reported-by: Stefan Metzmacher <metze@samba.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |   34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ fs/cifs/inode.c     |    2 ++
+ fs/cifs/smb2inode.c |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1129,6 +1129,13 @@ smb3_set_integrity(const unsigned int xi
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -1122,6 +1122,8 @@ cifs_set_file_info(struct inode *inode,
+ 	if (!server->ops->set_file_info)
+ 		return -ENOSYS;
  
- }
- 
-+/* GMT Token is @GMT-YYYY.MM.DD-HH.MM.SS Unicode which is 48 bytes + null */
-+#define GMT_TOKEN_SIZE 50
++	info_buf.Pad = 0;
 +
-+/*
-+ * Input buffer contains (empty) struct smb_snapshot array with size filled in
-+ * For output see struct SRV_SNAPSHOT_ARRAY in MS-SMB2 section 2.2.32.2
-+ */
- static int
- smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
- 		   struct cifsFileInfo *cfile, void __user *ioc_buf)
-@@ -1158,14 +1165,27 @@ smb3_enum_snapshots(const unsigned int x
- 			kfree(retbuf);
- 			return rc;
- 		}
--		if (snapshot_in.snapshot_array_size < sizeof(struct smb_snapshot_array)) {
--			rc = -ERANGE;
--			kfree(retbuf);
--			return rc;
--		}
+ 	if (attrs->ia_valid & ATTR_ATIME) {
+ 		set_time = true;
+ 		info_buf.LastAccessTime =
+--- a/fs/cifs/smb2inode.c
++++ b/fs/cifs/smb2inode.c
+@@ -267,7 +267,7 @@ smb2_set_file_info(struct inode *inode,
+ 	int rc;
  
--		if (ret_data_len > snapshot_in.snapshot_array_size)
--			ret_data_len = snapshot_in.snapshot_array_size;
-+		/*
-+		 * Check for min size, ie not large enough to fit even one GMT
-+		 * token (snapshot).  On the first ioctl some users may pass in
-+		 * smaller size (or zero) to simply get the size of the array
-+		 * so the user space caller can allocate sufficient memory
-+		 * and retry the ioctl again with larger array size sufficient
-+		 * to hold all of the snapshot GMT tokens on the second try.
-+		 */
-+		if (snapshot_in.snapshot_array_size < GMT_TOKEN_SIZE)
-+			ret_data_len = sizeof(struct smb_snapshot_array);
-+
-+		/*
-+		 * We return struct SRV_SNAPSHOT_ARRAY, followed by
-+		 * the snapshot array (of 50 byte GMT tokens) each
-+		 * representing an available previous version of the data
-+		 */
-+		if (ret_data_len > (snapshot_in.snapshot_array_size +
-+					sizeof(struct smb_snapshot_array)))
-+			ret_data_len = snapshot_in.snapshot_array_size +
-+					sizeof(struct smb_snapshot_array);
+ 	if ((buf->CreationTime == 0) && (buf->LastAccessTime == 0) &&
+-	    (buf->LastWriteTime == 0) && (buf->ChangeTime) &&
++	    (buf->LastWriteTime == 0) && (buf->ChangeTime == 0) &&
+ 	    (buf->Attributes == 0))
+ 		return 0; /* would be a no op, no sense sending this */
  
- 		if (copy_to_user(ioc_buf, retbuf, ret_data_len))
- 			rc = -EFAULT;
 
 
