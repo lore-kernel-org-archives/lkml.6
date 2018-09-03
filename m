@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9920DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0FDC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF0E20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF0E20658
+	by mail.kernel.org (Postfix) with ESMTP id 4BFE92077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BFE92077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731335AbeICVyr (ORCPT
+        id S1731346AbeICVyu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:54:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47674 "EHLO
+        Mon, 3 Sep 2018 17:54:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728601AbeICVyq (ORCPT
+        with ESMTP id S1728601AbeICVyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:54:46 -0400
+        Mon, 3 Sep 2018 17:54:50 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D937D16;
-        Mon,  3 Sep 2018 17:33:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41BF4D16;
+        Mon,  3 Sep 2018 17:33:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
-        Paulo Alcantara <palcantara@suse.com>,
-        Xiaoli Feng <xifeng@redhat.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.18 007/123] CIFS: fix uninitialized ptr deref in smb2 signing
-Date:   Mon,  3 Sep 2018 18:55:51 +0200
-Message-Id: <20180903165719.800171246@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Paulo Alcantara <palcantara@suse.de>
+Subject: [PATCH 4.18 008/123] cifs: add missing debug entries for kconfig options
+Date:   Mon,  3 Sep 2018 18:55:52 +0200
+Message-Id: <20180903165719.837487584@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,55 +52,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit a5c62f4833c2c8e6e0f35367b99b717b78f5c029 upstream.
+commit 950132afd59385caf6e2b84e5235d069fa10681d upstream.
 
-server->secmech.sdeschmacsha256 is not properly initialized before
-smb2_shash_allocate(), set shash after that call.
+/proc/fs/cifs/DebugData displays the features (Kconfig options)
+used to build cifs.ko but it was missing some, and needed comma
+separator.  These can be useful in debugging certain problems
+so we know which optional features were enabled in the user's build.
+Also clarify them, by making them more closely match the
+corresponding CONFIG_CIFS_* parm.
 
-also fix typo in error message
+Old format:
+Features: dfs fscache posix spnego xattr acl
 
-Fixes: 8de8c4608fe9 ("cifs: Fix validation of signed data in smb2")
+New format:
+Features: DFS,FSCACHE,SMB_DIRECT,STATS,DEBUG2,ALLOW_INSECURE_LEGACY,CIFS_POSIX,UPCALL(SPNEGO),XATTR,ACL
 
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Paulo Alcantara <palcantara@suse.com>
-Reported-by: Xiaoli Feng <xifeng@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Paulo Alcantara <palcantara@suse.de>
 CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2transport.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/cifs/cifs_debug.c |   30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/smb2transport.c
-+++ b/fs/cifs/smb2transport.c
-@@ -173,7 +173,7 @@ smb2_calc_signature(struct smb_rqst *rqs
- 	struct kvec *iov = rqst->rq_iov;
- 	struct smb2_sync_hdr *shdr = (struct smb2_sync_hdr *)iov[0].iov_base;
- 	struct cifs_ses *ses;
--	struct shash_desc *shash = &server->secmech.sdeschmacsha256->shash;
-+	struct shash_desc *shash;
- 	struct smb_rqst drqst;
- 
- 	ses = smb2_find_smb_ses(server, shdr->SessionId);
-@@ -187,7 +187,7 @@ smb2_calc_signature(struct smb_rqst *rqs
- 
- 	rc = smb2_crypto_shash_allocate(server);
- 	if (rc) {
--		cifs_dbg(VFS, "%s: shah256 alloc failed\n", __func__);
-+		cifs_dbg(VFS, "%s: sha256 alloc failed\n", __func__);
- 		return rc;
- 	}
- 
-@@ -198,6 +198,7 @@ smb2_calc_signature(struct smb_rqst *rqs
- 		return rc;
- 	}
- 
-+	shash = &server->secmech.sdeschmacsha256->shash;
- 	rc = crypto_shash_init(shash);
- 	if (rc) {
- 		cifs_dbg(VFS, "%s: Could not init sha256", __func__);
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -160,25 +160,41 @@ static int cifs_debug_data_proc_show(str
+ 	seq_printf(m, "CIFS Version %s\n", CIFS_VERSION);
+ 	seq_printf(m, "Features:");
+ #ifdef CONFIG_CIFS_DFS_UPCALL
+-	seq_printf(m, " dfs");
++	seq_printf(m, " DFS");
+ #endif
+ #ifdef CONFIG_CIFS_FSCACHE
+-	seq_printf(m, " fscache");
++	seq_printf(m, ",FSCACHE");
++#endif
++#ifdef CONFIG_CIFS_SMB_DIRECT
++	seq_printf(m, ",SMB_DIRECT");
++#endif
++#ifdef CONFIG_CIFS_STATS2
++	seq_printf(m, ",STATS2");
++#elif defined(CONFIG_CIFS_STATS)
++	seq_printf(m, ",STATS");
++#endif
++#ifdef CONFIG_CIFS_DEBUG2
++	seq_printf(m, ",DEBUG2");
++#elif defined(CONFIG_CIFS_DEBUG)
++	seq_printf(m, ",DEBUG");
++#endif
++#ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
++	seq_printf(m, ",ALLOW_INSECURE_LEGACY");
+ #endif
+ #ifdef CONFIG_CIFS_WEAK_PW_HASH
+-	seq_printf(m, " lanman");
++	seq_printf(m, ",WEAK_PW_HASH");
+ #endif
+ #ifdef CONFIG_CIFS_POSIX
+-	seq_printf(m, " posix");
++	seq_printf(m, ",CIFS_POSIX");
+ #endif
+ #ifdef CONFIG_CIFS_UPCALL
+-	seq_printf(m, " spnego");
++	seq_printf(m, ",UPCALL(SPNEGO)");
+ #endif
+ #ifdef CONFIG_CIFS_XATTR
+-	seq_printf(m, " xattr");
++	seq_printf(m, ",XATTR");
+ #endif
+ #ifdef CONFIG_CIFS_ACL
+-	seq_printf(m, " acl");
++	seq_printf(m, ",ACL");
+ #endif
+ 	seq_putc(m, '\n');
+ 	seq_printf(m, "Active VFS Requests: %d\n", GlobalTotalActiveXid);
 
 
