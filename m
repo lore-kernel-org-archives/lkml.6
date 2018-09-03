@@ -2,101 +2,124 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AECC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F198CC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9788120867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B2020867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="voTZIglm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9788120867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EnzlnWN6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B2020867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeIDBOL (ORCPT
+        id S1727493AbeIDBQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:14:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42380 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbeIDBOK (ORCPT
+        Mon, 3 Sep 2018 21:16:11 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44653 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727199AbeIDBQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:14:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FIYLH8tLAYprgh1OvA1IHzavTiShG49XDUfJ+iNGTpw=; b=voTZIglmiH3y7VIUkxHw6+F4hY
-        morwQvd+yQWVE3sA1uoKM6Yb8Vem5GQ4+PFMbGKbdWiMj7VqrNWy978ryB4dhAtvLAMcU0pspRO6C
-        56JKQ5GfU19481PoVHGUR4yuhAZt71c5JUywK28Ieaco/9SqBlmmWGLWcIjzDK8EKNdmwy9nsTYuJ
-        WwuPJmhmZffra7C8Uewg5NH3xZvQ/Y5ThlsGgqHD4zaOYw0byah+SR+smetbABXdi3gPZU1Wily5b
-        rspuBvNy/3fXz8Df25IwinXHM7n2t6zFWXWt7MbD9kcqFYdt+e+vc5tmLcwVANlyPglhUtw2thqsY
-        U9MwyjyQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fwvpO-0002KJ-7O; Mon, 03 Sep 2018 20:52:06 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] fs/posix_acl.c: fix kernel-doc warnings, formatting, and typo
-Message-ID: <c7a6541c-53e9-f6bd-7589-11f089b57080@infradead.org>
-Date:   Mon, 3 Sep 2018 13:52:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Sep 2018 21:16:11 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ba4-v6so588663plb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N7U77cmztyami7gnuJsqb415pXO5tpq5xA5PS7jyeAs=;
+        b=EnzlnWN6Htbno+c826xFEEGS48/YIzKkVXR8JMpG+eszCMYzd9MUbp9rjHKtSSY/ij
+         fxXeXsi8Potv7DD/Ipziu6s8duh73mmzVKF95iNsPqRQ1XRgkAhjUQXcZFR60HyVuvab
+         xHikNpATONAQyB1jRKPea33RqXYXX+g1eMbRI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N7U77cmztyami7gnuJsqb415pXO5tpq5xA5PS7jyeAs=;
+        b=D0HKEbKnCgSuB6t6NB91H8GZf+973XSGZGXLF5T5D66tu0XwFXluJ3EeKwQUhBB83x
+         eQJV6C8mUAJDtUQAtr7M0HEwLAUz4I2GDJU1CTQbPG9vtKNODVOD+yMPIb1AVZKi8+I5
+         4XprI9aUgn40+OcGdhPB0U6+Ust0qZmA6RGrxr/kWbd6kLL+Rp9Kiv7bVsjIlepNEWRB
+         eeBIwpsGes/9K7f3nYhsdtOYByXw/uxnTncuFA8GB4UDqo1dn9bWjqaQejn5CahMiDW0
+         bFSRFl4PbFLX444eKzDQIcdg2/IOp35ilBdE2NuR+pnK4K05QH8kvpheFBK/eBItXX6+
+         xUow==
+X-Gm-Message-State: APzg51BgU0TYL1VXfptW5QROfM0nHq6pC4YvHgm9yt2coeBaSOeSxhu4
+        GtWu4lih+s/X4NgfKG8pGUa3pA==
+X-Google-Smtp-Source: ANB0VdYUctif3ZxNyZs/CPOocN5RXmERhMStHICRabEbhAKAFHuiqNOUI01oM2QThkpXYmcPdLJlIQ==
+X-Received: by 2002:a17:902:9a8a:: with SMTP id w10-v6mr29719195plp.14.1536008055199;
+        Mon, 03 Sep 2018 13:54:15 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v20-v6sm42086104pfk.12.2018.09.03.13.54.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 13:54:14 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 13:58:09 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-mpp: Fix drive strength setting
+Message-ID: <20180903205809.GC1437@tuxbook-pro>
+References: <20180831005852.156465-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831005852.156465-1-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu 30 Aug 17:58 PDT 2018, Stephen Boyd wrote:
 
-Fix kernel-doc warnings in fs/posic_acl.c.
-Also fix one typo (setgit -> setgid).
+> It looks like we parse the drive strength setting here, but never
+> actually write it into the hardware to update it. Parse the setting and
+> then write it at the end of the pinconf setting function so that it
+> actually sticks in the hardware.
+> 
+> Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-../fs/posix_acl.c:646: warning: Function parameter or member 'inode' not described in 'posix_acl_update_mode'
-../fs/posix_acl.c:646: warning: Function parameter or member 'mode_p' not described in 'posix_acl_update_mode'
-../fs/posix_acl.c:646: warning: Function parameter or member 'acl' not described in 'posix_acl_update_mode'
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Fixes: 073931017b49d ("posix_acl: Clear SGID bit when setting file permissions")
+Regards,
+Bjorn
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/posix_acl.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- lnx-419-rc2.orig/fs/posix_acl.c
-+++ lnx-419-rc2/fs/posix_acl.c
-@@ -630,12 +630,15 @@ EXPORT_SYMBOL_GPL(posix_acl_create);
- 
- /**
-  * posix_acl_update_mode  -  update mode in set_acl
-+ * @inode: target inode
-+ * @mode_p: mode (pointer) for update
-+ * @acl: acl pointer
-  *
-  * Update the file mode when setting an ACL: compute the new file permission
-  * bits based on the ACL.  In addition, if the ACL is equivalent to the new
-- * file mode, set *acl to NULL to indicate that no ACL should be set.
-+ * file mode, set ``*acl`` to NULL to indicate that no ACL should be set.
-  *
-- * As with chmod, clear the setgit bit if the caller is not in the owning group
-+ * As with chmod, clear the setgid bit if the caller is not in the owning group
-  * or capable of CAP_FSETID (see inode_change_ok).
-  *
-  * Called from set_acl inode operations.
-
+> ---
+>  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> index 6556dbeae65e..1793a4d05e15 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> @@ -455,7 +455,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  			pad->dtest = arg;
+>  			break;
+>  		case PIN_CONFIG_DRIVE_STRENGTH:
+> -			arg = pad->drive_strength;
+> +			pad->drive_strength = arg;
+>  			break;
+>  		case PMIC_MPP_CONF_AMUX_ROUTE:
+>  			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
+> @@ -502,6 +502,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+>  
+>  	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+> -- 
+> Sent by a computer through tubes
+> 
