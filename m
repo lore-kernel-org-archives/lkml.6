@@ -2,191 +2,117 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79766C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDC4C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2733B2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:25:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BEAB20857
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qGbdrW2b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2733B2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBlNQbcw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BEAB20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeICGnY (ORCPT
+        id S1727450AbeICGpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:43:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33118 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICGnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:43:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eRINQaymomz9vcrz9I2QUGQcMnEX+PR4J0URSxBDkxY=; b=qGbdrW2bw21GNsPJRPDXS8P3sN
-        HNEzKxSB5nzizR8ghHXwCcz7MVYqDUVAZJB86IyugGpwbMan7tPndCV16RFx3LjRgoqdhUNzwUxoa
-        Y3YFOhzTCnbVJcYEm9cUgcHpQyTSzzsoGBm0YICouGd0TVTgJF+Fz8E7+elKYqzddbFpntvfhAJmY
-        KgaHAnzifwDMpwAe7+STC2SvfIERnbgSYLNqG9X5j6lNy1GrxkebV2UzwfoiXJb+X/7H/SyD4YQ/p
-        UfIjkZ0vFo8EfGDOBEIETkLv72LPPbXQcUSgjoo6TGa4RNGgR93351hN78sxk9+29l6t5z4A7yULm
-        5NDNOYyA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fweYG-0005SR-7B; Mon, 03 Sep 2018 02:25:16 +0000
-Subject: Re: [PATCH 7/7] vfio/sdmdev: add user sample
-To:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>
-Cc:     linuxarm@huawei.com
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180903005204.26041-8-nek.in.cn@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ff75ff6a-2cd8-b25e-8d19-52e8f57141da@infradead.org>
-Date:   Sun, 2 Sep 2018 19:25:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Sep 2018 02:45:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726199AbeICGpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:45:51 -0400
+Received: from dragon (unknown [45.56.155.166])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45F342077C;
+        Mon,  3 Sep 2018 02:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535941671;
+        bh=A8wBDKv/mbVz64I+eVHE9UITtlZaJ2EabeLrLm3pGdc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XBlNQbcwlaLl9ZExleDIVQWgXGzBSJuSXLe27aoZEBjd2naMQKryLXg5RyBDm5v6O
+         2w0aeTonO0LNSglqEdGjQYHfJxDyl4nSR5WGe3qen9Na4b0UyM+6epFDhkZwzPbMcM
+         QwLRpWJGa7XcsMNi0U+9sjNw0WSfrUDkvKmHEvrc=
+Date:   Mon, 3 Sep 2018 10:26:43 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>,
+        =?iso-8859-1?Q?S=E9bastien?= Szymanski 
+        <sebastien.szymanski@armadeus.com>
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] ARM: dts: imx6ull: update iomux header
+Message-ID: <20180903022642.GE3850@dragon>
+References: <1535606405-8099-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180903005204.26041-8-nek.in.cn@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1535606405-8099-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/2018 05:52 PM, Kenneth Lee wrote:
-> From: Kenneth Lee <liguozhu@hisilicon.com>
-> 
-> This is the sample code to demostrate how WrapDrive user application
-> should be.
-> 
-> It contains:
-> 
-> 1. wd.[ch], the common library to provide WrapDrive interface.
+Add Sébastien for a cross check.
 
-                                            WarpDrive
+Shawn
 
-> 2. drv/*, the user driver to access the hardware upon spimdev
-> 3. test/*, the test application to use WrapDrive interface to access the
-
-                                         WarpDrive
-
->    hardware queue(s) of the accelerator.
+On Thu, Aug 30, 2018 at 01:20:05PM +0800, Anson Huang wrote:
+> Update i.MX6ULL iomux header according to latest reference
+> manual Rev.1, 11/2017.
 > 
-> The Hisilicon HIP08 ZIP accelerator is used in this sample.
-> 
-> Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> Signed-off-by: Hao Fang <fanghao11@huawei.com>
-> Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  samples/warpdrive/AUTHORS              |   2 +
->  samples/warpdrive/ChangeLog            |   1 +
->  samples/warpdrive/Makefile.am          |   9 +
->  samples/warpdrive/NEWS                 |   1 +
->  samples/warpdrive/README               |  32 +++
->  samples/warpdrive/autogen.sh           |   3 +
->  samples/warpdrive/cleanup.sh           |  13 ++
->  samples/warpdrive/configure.ac         |  52 +++++
->  samples/warpdrive/drv/hisi_qm_udrv.c   | 223 ++++++++++++++++++
->  samples/warpdrive/drv/hisi_qm_udrv.h   |  53 +++++
->  samples/warpdrive/test/Makefile.am     |   7 +
->  samples/warpdrive/test/comp_hw.h       |  23 ++
->  samples/warpdrive/test/test_hisi_zip.c | 206 +++++++++++++++++
->  samples/warpdrive/wd.c                 | 309 +++++++++++++++++++++++++
->  samples/warpdrive/wd.h                 | 154 ++++++++++++
->  samples/warpdrive/wd_adapter.c         |  74 ++++++
->  samples/warpdrive/wd_adapter.h         |  43 ++++
->  17 files changed, 1205 insertions(+)
->  create mode 100644 samples/warpdrive/AUTHORS
->  create mode 100644 samples/warpdrive/ChangeLog
->  create mode 100644 samples/warpdrive/Makefile.am
->  create mode 100644 samples/warpdrive/NEWS
->  create mode 100644 samples/warpdrive/README
->  create mode 100755 samples/warpdrive/autogen.sh
->  create mode 100755 samples/warpdrive/cleanup.sh
->  create mode 100644 samples/warpdrive/configure.ac
->  create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.c
->  create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.h
->  create mode 100644 samples/warpdrive/test/Makefile.am
->  create mode 100644 samples/warpdrive/test/comp_hw.h
->  create mode 100644 samples/warpdrive/test/test_hisi_zip.c
->  create mode 100644 samples/warpdrive/wd.c
->  create mode 100644 samples/warpdrive/wd.h
->  create mode 100644 samples/warpdrive/wd_adapter.c
->  create mode 100644 samples/warpdrive/wd_adapter.h
-
-> diff --git a/samples/warpdrive/README b/samples/warpdrive/README
-> new file mode 100644
-> index 000000000000..3adf66b112fc
-> --- /dev/null
-> +++ b/samples/warpdrive/README
-> @@ -0,0 +1,32 @@
-> +WD User Land Demonstration
-> +==========================
-> +
-> +This directory contains some applications and libraries to demonstrate how a
-> +
-> +WrapDrive application can be constructed.
-
-   WarpDrive
-
-> +
-> +
-> +As a demo, we try to make it simple and clear for understanding. It is not
-> +
-> +supposed to be used in business scenario.
-> +
-> +
-> +The directory contains the following elements:
-> +
-> +wd.[ch]
-> +	A demonstration WrapDrive fundamental library which wraps the basic
-
-	                WarpDrive
-
-> +	operations to the WrapDrive-ed device.
-
-                          WarpDrive
-
-> +
-> +wd_adapter.[ch]
-> +	User driver adaptor for wd.[ch]
-> +
-> +wd_utils.[ch]
-> +	Some utitlities function used by WD and its drivers
-> +
-> +drv/*
-> +	User drivers. It helps to fulfill the semantic of wd.[ch] for
-> +	particular hardware
-> +
-> +test/*
-> +	Test applications to use the wrapdrive library
-
-	                             warpdrive
-
--- 
-~Randy
+>  arch/arm/boot/dts/imx6ull-pinfunc.h | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6ull-pinfunc.h b/arch/arm/boot/dts/imx6ull-pinfunc.h
+> index 3c12a6f..a282a31 100644
+> --- a/arch/arm/boot/dts/imx6ull-pinfunc.h
+> +++ b/arch/arm/boot/dts/imx6ull-pinfunc.h
+> @@ -27,10 +27,25 @@
+>  #define MX6UL_PAD_CSI_DATA02__UART5_DCE_RTS                      0x01EC 0x0478 0x0640 0x8 0x7
+>  
+>  /* signals for i.MX6ULL only */
+> +#define MX6ULL_PAD_UART1_TX_DATA__UART5_DCE_TX                    0x0084 0x0310 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_UART1_TX_DATA__UART5_DTE_RX                    0x0084 0x0310 0x0644 0x9 0x4
+>  #define MX6ULL_PAD_UART1_RX_DATA__UART5_DCE_RX                    0x0088 0x0314 0x0644 0x9 0x5
+> -#define MX6ULL_PAD_UART1_CTS_B__UART5_DCE_RTS                     0x008C 0x0318 0x0640 0x9 0x3
+> -#define MX6ULL_PAD_UART1_RTS_B__UART5_DTE_RTS                     0x0090 0x031C 0x0640 0x9 0x4
+> +#define MX6ULL_PAD_UART1_RX_DATA__UART5_DTE_TX                    0x0088 0x0314 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_UART1_CTS_B__UART5_DCE_CTS                     0x008C 0x0318 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_UART1_CTS_B__UART5_DTE_RTS                     0x008C 0x0318 0x0640 0x9 0x3
+> +#define MX6ULL_PAD_UART1_RTS_B__UART5_DCE_RTS                     0x0090 0x031C 0x0640 0x9 0x4
+> +#define MX6ULL_PAD_UART1_RTS_B__UART5_DTE_CTS                     0x0090 0x031C 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_UART4_RX_DATA__EPDC_PWRCTRL01                  0x00B8 0x0344 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_UART5_TX_DATA__EPDC_PWRCTRL02                  0x00BC 0x0348 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_UART5_RX_DATA__EPDC_PWRCTRL03                  0x00C0 0x034C 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_RX_DATA0__EPDC_SDCE04                    0x00C4 0x0350 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_RX_DATA1__EPDC_SDCE05                    0x00C8 0x0354 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_RX_EN__EPDC_SDCE06                       0x00CC 0x0358 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_TX_DATA0__EPDC_SDCE07                    0x00D0 0x035C 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_TX_DATA1__EPDC_SDCE08                    0x00D4 0x0360 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_TX_EN__EPDC_SDCE09                       0x00D8 0x0364 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_TX_CLK__EPDC_SDOED                       0x00DC 0x0368 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_ENET1_RX_ER__EPDC_SDOEZ                        0x00E0 0x036C 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_ENET2_RX_DATA0__EPDC_SDDO08                    0x00E4 0x0370 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_ENET2_RX_DATA1__EPDC_SDDO09                    0x00E8 0x0374 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_ENET2_RX_EN__EPDC_SDDO10                       0x00EC 0x0378 0x0000 0x9 0x0
+> @@ -57,6 +72,8 @@
+>  #define MX6ULL_PAD_LCD_DATA16__EPDC_GDCLK                         0x0158 0x03E4 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_LCD_DATA17__EPDC_GDSP                          0x015C 0x03E8 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_LCD_DATA21__EPDC_SDCE1                         0x016C 0x03F8 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_LCD_DATA22__EPDC_SDCE02                        0x0170 0x03FC 0x0000 0x9 0x0
+> +#define MX6ULL_PAD_LCD_DATA23__EPDC_SDCE03                        0x0174 0x0400 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_CSI_MCLK__ESAI_TX3_RX2                         0x01D4 0x0460 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_CSI_PIXCLK__ESAI_TX2_RX3                       0x01D8 0x0464 0x0000 0x9 0x0
+>  #define MX6ULL_PAD_CSI_VSYNC__ESAI_TX4_RX1                        0x01DC 0x0468 0x0000 0x9 0x0
+> -- 
+> 2.7.4
+> 
