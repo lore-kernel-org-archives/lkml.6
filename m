@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD019C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27E3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A9C2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A9C2077C
+	by mail.kernel.org (Postfix) with ESMTP id 99C8520658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C8520658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731950AbeICWAm (ORCPT
+        id S1731959AbeICWAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:00:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49268 "EHLO
+        Mon, 3 Sep 2018 18:00:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49278 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbeICWAl (ORCPT
+        with ESMTP id S1728885AbeICWAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:00:41 -0400
+        Mon, 3 Sep 2018 18:00:45 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 015D7BAE;
-        Mon,  3 Sep 2018 17:39:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D866BC4;
+        Mon,  3 Sep 2018 17:39:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.18 116/123] clk: npcm7xx: fix memory allocation
-Date:   Mon,  3 Sep 2018 18:57:40 +0200
-Message-Id: <20180903165724.404195950@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 117/123] PM / clk: signedness bug in of_pm_clk_add_clks()
+Date:   Mon,  3 Sep 2018 18:57:41 +0200
+Message-Id: <20180903165724.442947507@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,58 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 450b6b9b169382205f88858541a8b79830262ce7 upstream.
+commit 5e2e2f9f76e157063a656351728703cb02b068f1 upstream.
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+"count" needs to be signed for the error handling to work.  I made "i"
+signed as well so they match.
 
-struct foo {
-	int stuff;
-        void *entry[];
-};
-
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count,
-GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-Notice that, currently, there is a bug during the allocation:
-
-sizeof(npcm7xx_clk_data) should be sizeof(*npcm7xx_clk_data)
-
-Fix this bug by using struct_size() in kzalloc()
-
-This issue was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Avi Fishman <avifishman70@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 02113ba93ea4 (PM / clk: Add support for obtaining clocks from device-tree)
+Cc: 4.6+ <stable@vger.kernel.org> # 4.6+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/clk-npcm7xx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/power/clock_ops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -558,8 +558,8 @@ static void __init npcm7xx_clk_init(stru
- 	if (!clk_base)
- 		goto npcm7xx_init_error;
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -185,7 +185,7 @@ EXPORT_SYMBOL_GPL(of_pm_clk_add_clk);
+ int of_pm_clk_add_clks(struct device *dev)
+ {
+ 	struct clk **clks;
+-	unsigned int i, count;
++	int i, count;
+ 	int ret;
  
--	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
--		NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
-+	npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
-+				   NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
- 	if (!npcm7xx_clk_data)
- 		goto npcm7xx_init_np_err;
- 
+ 	if (!dev || !dev->of_node)
 
 
