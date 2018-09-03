@@ -2,190 +2,243 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CF9C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5562CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C812A20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KKHngPJP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C812A20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A0C020658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0C020658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbeICNVO (ORCPT
+        id S1727483AbeICNVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:21:14 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43432 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeICNVO (ORCPT
+        Mon, 3 Sep 2018 09:21:17 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:46636 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbeICNVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:21:14 -0400
-Received: by mail-ed1-f68.google.com with SMTP id z27-v6so198024edb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BhyGaEiW0TQATt0rsMOO5ZpjXwenfIn0ANTVymX1oOE=;
-        b=KKHngPJPJ7Nle90v+KO2SVa8EAim8R20XZiOiBwlouM+6gJ3BG1P1Gxg6G+zJzC5NQ
-         +ZUlng4CK8G10OMzRkYhlhpnCVyCNAEf+DC6HwlzzkzWT0I8HMXA+5LjYE8QsXc96piZ
-         c4BCpzHlZkWt+d9NeeG0TDybxE3QMVhzH2FNY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BhyGaEiW0TQATt0rsMOO5ZpjXwenfIn0ANTVymX1oOE=;
-        b=IQVTwjDhYGpE4Q9dFswo7q2RMGPPRXOJLpQlHI7CU9PgxAO+3M3k+nkL7hpg1qu6Fg
-         9QKa/7Mp2BgHTKauI7NJ8Hdeq1BO/jHgp8Gph94HE64WkBr/zJIKWWFyGFNkw2qznhj6
-         gvdzw6nhyeBFf8S+IkWrqq19ZWKZPLM5QLSufAYEc1Gm0qOwaBEbcRUek163OlV9iGaS
-         0XqibVR4+Q9o+xBH3Gf44krMKefjmW1ywHvfJMy2bI39gWd95Lb4hYwsZSatDM0RcFyS
-         3akY+yAvjQboBZpGl1lviOB/8iMQJcSawhsxVgxd//SG52Q4JgxLSZW2hjJi3KaDo46i
-         PwEQ==
-X-Gm-Message-State: APzg51BMEw3nCaNftuDo9/QxJOWqvGzT3ZDnnos22npWQKtZsiY7Wl3n
-        CmgseyRh0d5yCdz87LlSObIgFQ==
-X-Google-Smtp-Source: ANB0VdZe2NXaDk27GpN44QEVqZ3H5SDxsnnPqCW1/9K2hCVgFgtGq/ms7TrA/Xlq2my1As/du4qKfA==
-X-Received: by 2002:a50:908d:: with SMTP id c13-v6mr31745763eda.179.1535965321027;
-        Mon, 03 Sep 2018 02:02:01 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id w3-v6sm11015143edb.16.2018.09.03.02.01.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 02:02:00 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 11:01:53 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-Message-ID: <20180903090153.GA4560@andrea>
-References: <20180831091641.GA3634@andrea>
- <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
- <20180831160640.GG30626@arm.com>
- <20180831182845.GA4673@andrea>
+        Mon, 3 Sep 2018 09:21:16 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.51 with ESMTP; 3 Sep 2018 18:02:01 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO ?10.159.80.93?) (10.159.80.93)
+        by 156.147.1.121 with ESMTP; 3 Sep 2018 18:02:00 +0900
+X-Original-SENDERIP: 10.159.80.93
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Subject: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp
+ functions
+To:     aryabinin@virtuozzo.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, glider@google.com, dvyukov@google.com
+Cc:     Jason@zx2c4.com, robh@kernel.org, ard.biesheuvel@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org
+References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+Message-ID: <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
+Date:   Mon, 3 Sep 2018 18:02:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831182845.GA4673@andrea>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 08:28:46PM +0200, Andrea Parri wrote:
-> > > Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
-> > > should be correct on all existing architectures.  And Paul has invited 
-> > > a patch to modify the LKMM accordingly.  If you feel that such a change 
-> > > would be a useful enhancement to the LKMM's applicability, please write 
-> > > it.
-> > 
-> > Yes, please! That would be the "RmW" discussion which Andrea partially
-> > quoted earlier on, so getting that going independently from this patch
-> > sounds like a great idea to me.
-> 
-> That was indeed one of the proposal we discussed.  As you recalled, that
-> proposal only covered RmWs load-acquire (and ordinary store-release); in
-> particular, I realized that comments such as:
-> 
->   "The atomic_cond_read_acquire() call above has provided the
->    necessary acquire semantics required for locking."
-> 
->    [from kernel/locking/qspinlock.c]
-> 
-> (for example)  would still _not have "generic validity" _if we added the
-> above po-unlock-rf-lock-po term... (which, again, makes me somehow uncon-
-> fortable);  Would to have _all_ the acquire be admissible for you?
+Dear all,
 
-In Cat speak,
+Could anyone review this and provide me appropriate approach ?
+I think str[n]cmp are frequently used functions so I believe very useful 
+w/ arm64 KASAN.
 
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index 59b5cbe6b6240..fd9c0831adf0a 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -38,7 +38,7 @@ let strong-fence = mb | gp
- (* Release Acquire *)
- let acq-po = [Acquire] ; po ; [M]
- let po-rel = [M] ; po ; [Release]
--let rfi-rel-acq = [Release] ; rfi ; [Acquire]
-+let po-rel-rf-acq-po = po ; [Release] ; rf ; [Acquire] ; po
- 
- (**********************************)
- (* Fundamental coherence ordering *)
-@@ -60,13 +60,13 @@ let dep = addr | data
- let rwdep = (dep | ctrl) ; [W]
- let overwrite = co | fr
- let to-w = rwdep | (overwrite & int)
--let to-r = addr | (dep ; rfi) | rfi-rel-acq
-+let to-r = addr | (dep ; rfi)
- let fence = strong-fence | wmb | po-rel | rmb | acq-po
--let ppo = to-r | to-w | fence
-+let ppo = to-r | to-w | fence | (po-rel-rf-acq-po & int)
- 
- (* Propagation: Ordering from release operations and strong fences. *)
- let A-cumul(r) = rfe? ; r
--let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
-+let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-rel-rf-acq-po
- let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
- 
- (*
+Best Regards,
+Kyeongdon Kim
 
-I take this opportunity to summarize my viewpoint on these matters:
 
-Someone would have to write the commit message for the above diff ...
-that is, to describe -why- we should go RCtso (and update the documen-
-tation accordingly); by now, the only argument for this appears to be:
-"(most) people expect strong ordering" _and they will be "lazy enough"
-to not check their expectations by using the LKMM tool (paraphrasing
-from [1]); IAC, Linux "might work" better if we add this ordering to
-the LKMM.  Agreeing on such an approach would mean agreeing that this
-argument "wins" over:
+On 2018-08-23 오후 5:56, Kyeongdon Kim wrote:
+> This patch declares strcmp/strncmp as weak symbols.
+> (2 of them are the most used string operations)
+>
+> Original functions declared as weak and
+> strong ones in mm/kasan/kasan.c could replace them.
+>
+> Assembly optimized strcmp/strncmp functions cannot detect KASan bug.
+> But, now we can detect them like the call trace below.
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in platform_match+0x1c/0x5c at addr 
+> ffffffc0ad313500
+> Read of size 1 by task swapper/0/1
+> CPU: 3 PID: 1 Comm: swapper/0 Tainted: G B 4.9.77+ #1
+> Hardware name: Generic (DT) based system
+> Call trace:
+> dump_backtrace+0x0/0x2e0
+> show_stack+0x14/0x1c
+> dump_stack+0x88/0xb0
+> kasan_object_err+0x24/0x7c
+> kasan_report+0x2f0/0x484
+> check_memory_region+0x20/0x14c
+> strcmp+0x1c/0x5c
+> platform_match+0x40/0xe4
+> __driver_attach+0x40/0x130
+> bus_for_each_dev+0xc4/0xe0
+> driver_attach+0x30/0x3c
+> bus_add_driver+0x2dc/0x328
+> driver_register+0x118/0x160
+> __platform_driver_register+0x7c/0x88
+> alarmtimer_init+0x154/0x1e4
+> do_one_initcall+0x184/0x1a4
+> kernel_init_freeable+0x2ec/0x2f0
+> kernel_init+0x18/0x10c
+> ret_from_fork+0x10/0x50
+>
+> In case of xtensa and x86_64 kasan, no need to use this patch now.
+>
+> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+> ---
+> arch/arm64/include/asm/string.h | 5 +++++
+> arch/arm64/kernel/arm64ksyms.c | 2 ++
+> arch/arm64/kernel/image.h | 2 ++
+> arch/arm64/lib/strcmp.S | 3 +++
+> arch/arm64/lib/strncmp.S | 3 +++
+> mm/kasan/kasan.c | 23 +++++++++++++++++++++++
+> 6 files changed, 38 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/string.h 
+> b/arch/arm64/include/asm/string.h
+> index dd95d33..ab60349 100644
+> --- a/arch/arm64/include/asm/string.h
+> +++ b/arch/arm64/include/asm/string.h
+> @@ -24,9 +24,11 @@ extern char *strchr(const char *, int c);
+>
+> #define __HAVE_ARCH_STRCMP
+> extern int strcmp(const char *, const char *);
+> +extern int __strcmp(const char *, const char *);
+>
+> #define __HAVE_ARCH_STRNCMP
+> extern int strncmp(const char *, const char *, __kernel_size_t);
+> +extern int __strncmp(const char *, const char *, __kernel_size_t);
+>
+> #define __HAVE_ARCH_STRLEN
+> extern __kernel_size_t strlen(const char *);
+> @@ -68,6 +70,9 @@ void memcpy_flushcache(void *dst, const void *src, 
+> size_t cnt);
+> #define memmove(dst, src, len) __memmove(dst, src, len)
+> #define memset(s, c, n) __memset(s, c, n)
+>
+> +#define strcmp(cs, ct) __strcmp(cs, ct)
+> +#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
+> +
+> #ifndef __NO_FORTIFY
+> #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+> #endif
+> diff --git a/arch/arm64/kernel/arm64ksyms.c 
+> b/arch/arm64/kernel/arm64ksyms.c
+> index d894a20..10b1164 100644
+> --- a/arch/arm64/kernel/arm64ksyms.c
+> +++ b/arch/arm64/kernel/arm64ksyms.c
+> @@ -50,6 +50,8 @@ EXPORT_SYMBOL(strcmp);
+> EXPORT_SYMBOL(strncmp);
+> EXPORT_SYMBOL(strlen);
+> EXPORT_SYMBOL(strnlen);
+> +EXPORT_SYMBOL(__strcmp);
+> +EXPORT_SYMBOL(__strncmp);
+> EXPORT_SYMBOL(memset);
+> EXPORT_SYMBOL(memcpy);
+> EXPORT_SYMBOL(memmove);
+> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+> index a820ed0..5ef7a57 100644
+> --- a/arch/arm64/kernel/image.h
+> +++ b/arch/arm64/kernel/image.h
+> @@ -110,6 +110,8 @@ __efistub___flush_dcache_area = 
+> KALLSYMS_HIDE(__pi___flush_dcache_area);
+> __efistub___memcpy = KALLSYMS_HIDE(__pi_memcpy);
+> __efistub___memmove = KALLSYMS_HIDE(__pi_memmove);
+> __efistub___memset = KALLSYMS_HIDE(__pi_memset);
+> +__efistub___strcmp = KALLSYMS_HIDE(__pi_strcmp);
+> +__efistub___strncmp = KALLSYMS_HIDE(__pi_strncmp);
+> #endif
+>
+> __efistub__text = KALLSYMS_HIDE(_text);
+> diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
+> index 471fe61..0dffef7 100644
+> --- a/arch/arm64/lib/strcmp.S
+> +++ b/arch/arm64/lib/strcmp.S
+> @@ -60,6 +60,8 @@ tmp3 .req x9
+> zeroones .req x10
+> pos .req x11
+>
+> +.weak strcmp
+> +ENTRY(__strcmp)
+> ENTRY(strcmp)
+> eor tmp1, src1, src2
+> mov zeroones, #REP8_01
+> @@ -232,3 +234,4 @@ CPU_BE( orr syndrome, diff, has_nul )
+> sub result, data1, data2, lsr #56
+> ret
+> ENDPIPROC(strcmp)
+> +ENDPROC(__strcmp)
+> diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
+> index e267044..b2648c7 100644
+> --- a/arch/arm64/lib/strncmp.S
+> +++ b/arch/arm64/lib/strncmp.S
+> @@ -64,6 +64,8 @@ limit_wd .req x13
+> mask .req x14
+> endloop .req x15
+>
+> +.weak strncmp
+> +ENTRY(__strncmp)
+> ENTRY(strncmp)
+> cbz limit, .Lret0
+> eor tmp1, src1, src2
+> @@ -308,3 +310,4 @@ CPU_BE( orr syndrome, diff, has_nul )
+> mov result, #0
+> ret
+> ENDPIPROC(strncmp)
+> +ENDPROC(__strncmp)
+> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+> index c3bd520..61ad7f1 100644
+> --- a/mm/kasan/kasan.c
+> +++ b/mm/kasan/kasan.c
+> @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, size_t 
+> len)
+>
+> return __memcpy(dest, src, len);
+> }
+> +#ifdef CONFIG_ARM64
+> +/*
+> + * Arch arm64 use assembly variant for strcmp/strncmp,
+> + * xtensa use inline asm operations and x86_64 use c one,
+> + * so now this interceptors only for arm64 kasan.
+> + */
+> +#undef strcmp
+> +int strcmp(const char *cs, const char *ct)
+> +{
+> + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
+> + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
+> +
+> + return __strcmp(cs, ct);
+> +}
+> +#undef strncmp
+> +int strncmp(const char *cs, const char *ct, size_t len)
+> +{
+> + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
+> + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
+> +
+> + return __strncmp(cs, ct, len);
+> +}
+> +#endif
+>
+> void kasan_alloc_pages(struct page *page, unsigned int order)
+> {
+> -- 
+> 2.6.2
 
-  "We want new architectures to implement acquire/release efficiently,
-   and it's not unlikely that they will have acquire loads that are
-   similar in semantics to LDAPR." [2]
-
-  "RISC-V probably would have been RCpc [...]  it takes extra fences
-   to go from RCpc to either "RCtso" or RCsc." [3]
-
-(or similar instances) since, of course, there is no such thing as a
-"free strong ordering"; and I'm not only talking about "efficiency",
-I'm also thinking at the fact that someone will have to maintain that
-ordering across all the architectures and in the LKMM.
-
-If, OTOH, we agree that the above "win"/assumption is valid only for
-locks or, in other/better words, if we agree that we should maintain
-_two_ distinct release-acquire orderings (a first one for unlock-lock
-sequences and a second one for ordinary/atomic release-acquire, say,
-as proposed in the patch under RFC), I ask that we audit and modify
-the generic code accordingly/as suggested in other posts _before_ we
-upstream the changes for the LKMM: we should identify those places
-where (the newly introduced) _gap_ between unlock-lock and the other
-release-acquire is not admissible and fix those places (notice that
-this entails, in part., agreeing on what/where the generic code is).
-
-Finally, if we don't agree with the above assumption at all (that is,
-no matter if we are considering unlock-lock or other release-acquire
-sequences), then we should go RCpc [4].
-
-I described three different approaches (which are NOT "independent",
-clearly; let us find an agreement...); even though some of them look
-insane to me, I'm currently open to all of them: thoughts?
-
-  Andrea
-
-[1] http://lkml.kernel.org/r/20180712134821.GT2494@hirez.programming.kicks-ass.net
-    http://lkml.kernel.org/r/CA+55aFwKpkU5C23OYt1HCiD3X5bJHVh1jz5G2dSnF1+kVrOCTA@mail.gmail.com
-[2] http://lkml.kernel.org/r/20180622183007.GD1802@arm.com
-[3] http://lkml.kernel.org/r/11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com
-[4] http://lkml.kernel.org/r/20180711123421.GA9673@andrea
-    http://lkml.kernel.org/r/Pine.LNX.4.44L0.1807132133330.26947-100000@netrider.rowland.org
