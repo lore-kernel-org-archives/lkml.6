@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBA3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00EEC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 494A320856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 494A320856
+	by mail.kernel.org (Postfix) with ESMTP id 8F4022054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4022054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbeICLlZ (ORCPT
+        id S1727648AbeICLnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:25 -0400
+        Mon, 3 Sep 2018 07:43:03 -0400
 Received: from mga12.intel.com ([192.55.52.136]:48305 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeICLlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:24 -0400
+        id S1727141AbeICLlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:41:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
-   d="scan'208";a="70146867"
+   d="scan'208";a="70146884"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
-  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:20 -0700
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:26 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 03/21] swap: Support PMD swap mapping in swap_duplicate()
-Date:   Mon,  3 Sep 2018 15:21:56 +0800
-Message-Id: <20180903072214.24602-4-ying.huang@intel.com>
+Subject: [PATCH -V5 05/21] swap: Support PMD swap mapping in free_swap_and_cache()/swap_free()
+Date:   Mon,  3 Sep 2018 15:21:58 +0800
+Message-Id: <20180903072214.24602-6-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
 References: <20180903072214.24602-1-ying.huang@intel.com>
@@ -57,71 +57,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support to swapin the THP in one piece, we need to create PMD swap
-mapping during swapout, and maintain PMD swap mapping count.  This
-patch implements the support to increase the PMD swap mapping
-count (for swapout, fork, etc.)  and set SWAP_HAS_CACHE flag (for
-swapin, etc.) for a huge swap cluster in swap_duplicate() function
-family.  Although it only implements a part of the design of the swap
-reference count with PMD swap mapping, the whole design is described
-as follow to make it easy to understand the patch and the whole
-picture.
+When a PMD swap mapping is removed from a huge swap cluster, for
+example, unmap a memory range mapped with PMD swap mapping, etc,
+free_swap_and_cache() will be called to decrease the reference count
+to the huge swap cluster.  free_swap_and_cache() may also free or
+split the huge swap cluster, and free the corresponding THP in swap
+cache if necessary.  swap_free() is similar, and shares most
+implementation with free_swap_and_cache().  This patch revises
+free_swap_and_cache() and swap_free() to implement this.
 
-A huge swap cluster is used to hold the contents of a swapouted THP.
-After swapout, a PMD page mapping to the THP will become a PMD
-swap mapping to the huge swap cluster via a swap entry in PMD.  While
-a PTE page mapping to a subpage of the THP will become the PTE swap
-mapping to a swap slot in the huge swap cluster via a swap entry in
-PTE.
+If the swap cluster has been split already, for example, because of
+failing to allocate a THP during swapin, we just decrease one from the
+reference count of all swap slots.
 
-If there is no PMD swap mapping and the corresponding THP is removed
-from the page cache (reclaimed), the huge swap cluster will be split
-and become a normal swap cluster.
-
-The count (cluster_count()) of the huge swap cluster is
-SWAPFILE_CLUSTER (= HPAGE_PMD_NR) + PMD swap mapping count.  Because
-all swap slots in the huge swap cluster are mapped by PTE or PMD, or
-has SWAP_HAS_CACHE bit set, the usage count of the swap cluster is
-HPAGE_PMD_NR.  And the PMD swap mapping count is recorded too to make
-it easy to determine whether there are remaining PMD swap mappings.
-
-The count in swap_map[offset] is the sum of PTE and PMD swap mapping
-count.  This means when we increase the PMD swap mapping count, we
-need to increase swap_map[offset] for all swap slots inside the swap
-cluster.  An alternative choice is to make swap_map[offset] to record
-PTE swap map count only, given we have recorded PMD swap mapping count
-in the count of the huge swap cluster.  But this need to increase
-swap_map[offset] when splitting the PMD swap mapping, that may fail
-because of memory allocation for swap count continuation.  That is
-hard to dealt with.  So we choose current solution.
-
-The PMD swap mapping to a huge swap cluster may be split when unmap a
-part of PMD mapping etc.  That is easy because only the count of the
-huge swap cluster need to be changed.  When the last PMD swap mapping
-is gone and SWAP_HAS_CACHE is unset, we will split the huge swap
-cluster (clear the huge flag).  This makes it easy to reason the
-cluster state.
-
-A huge swap cluster will be split when splitting the THP in swap
-cache, or failing to allocate THP during swapin, etc.  But when
-splitting the huge swap cluster, we will not try to split all PMD swap
-mappings, because we haven't enough information available for that
-sometimes.  Later, when the PMD swap mapping is duplicated or swapin,
-etc, the PMD swap mapping will be split and fallback to the PTE
-operation.
-
-When a THP is added into swap cache, the SWAP_HAS_CACHE flag will be
-set in the swap_map[offset] of all swap slots inside the huge swap
-cluster backing the THP.  This huge swap cluster will not be split
-unless the THP is split even if its PMD swap mapping count dropped to
-0.  Later, when the THP is removed from swap cache, the SWAP_HAS_CACHE
-flag will be cleared in the swap_map[offset] of all swap slots inside
-the huge swap cluster.  And this huge swap cluster will be split if
-its PMD swap mapping count is 0.
-
-The first parameter of swap_duplicate() is changed to return the swap
-entry to call add_swap_count_continuation() for.  Because we may need
-to call it for a swap entry in the middle of a huge swap cluster.
+Otherwise, we will decrease one from the reference count of all swap
+slots and the PMD swap mapping count in cluster_count().  When the
+corresponding THP isn't in swap cache, if PMD swap mapping count
+becomes 0, the huge swap cluster will be split, and if all swap count
+becomes 0, the huge swap cluster will be freed.  When the corresponding
+THP is in swap cache, if every swap_map[offset] == SWAP_HAS_CACHE, we
+will try to delete the THP from swap cache.  Which will cause the THP
+and the huge swap cluster be freed.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -137,259 +93,399 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- include/linux/swap.h |   9 +++--
- mm/memory.c          |   2 +-
- mm/rmap.c            |   2 +-
- mm/swap_state.c      |   2 +-
- mm/swapfile.c        | 107 ++++++++++++++++++++++++++++++++++++++++++---------
- 5 files changed, 97 insertions(+), 25 deletions(-)
+ arch/s390/mm/pgtable.c |   2 +-
+ include/linux/swap.h   |   9 +--
+ kernel/power/swap.c    |   4 +-
+ mm/madvise.c           |   2 +-
+ mm/memory.c            |   4 +-
+ mm/shmem.c             |   6 +-
+ mm/swapfile.c          | 171 ++++++++++++++++++++++++++++++++++++++-----------
+ 7 files changed, 149 insertions(+), 49 deletions(-)
 
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index f2cc7da473e4..ffd4b68adbb3 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -675,7 +675,7 @@ static void ptep_zap_swap_entry(struct mm_struct *mm, swp_entry_t entry)
+ 
+ 		dec_mm_counter(mm, mm_counter(page));
+ 	}
+-	free_swap_and_cache(entry);
++	free_swap_and_cache(entry, 1);
+ }
+ 
+ void ptep_zap_unused(struct mm_struct *mm, unsigned long addr,
 diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 378792e41043..bfcd30769564 100644
+index bfcd30769564..63235b879a59 100644
 --- a/include/linux/swap.h
 +++ b/include/linux/swap.h
-@@ -446,8 +446,8 @@ extern swp_entry_t get_swap_page_of_type(int);
- extern int get_swap_pages(int n, swp_entry_t swp_entries[], int entry_size);
- extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+@@ -448,9 +448,9 @@ extern int add_swap_count_continuation(swp_entry_t, gfp_t);
  extern void swap_shmem_alloc(swp_entry_t);
--extern int swap_duplicate(swp_entry_t);
--extern int swapcache_prepare(swp_entry_t);
-+extern int swap_duplicate(swp_entry_t *entry, int entry_size);
-+extern int swapcache_prepare(swp_entry_t entry, int entry_size);
- extern void swap_free(swp_entry_t);
+ extern int swap_duplicate(swp_entry_t *entry, int entry_size);
+ extern int swapcache_prepare(swp_entry_t entry, int entry_size);
+-extern void swap_free(swp_entry_t);
++extern void swap_free(swp_entry_t entry, int entry_size);
  extern void swapcache_free_entries(swp_entry_t *entries, int n);
- extern int free_swap_and_cache(swp_entry_t);
-@@ -505,7 +505,8 @@ static inline void show_swap_cache_info(void)
+-extern int free_swap_and_cache(swp_entry_t);
++extern int free_swap_and_cache(swp_entry_t entry, int entry_size);
+ extern int swap_type_of(dev_t, sector_t, struct block_device **);
+ extern unsigned int count_swap_pages(int, int);
+ extern sector_t map_swap_page(struct page *, struct block_device **);
+@@ -504,7 +504,8 @@ static inline void show_swap_cache_info(void)
+ {
  }
  
- #define free_swap_and_cache(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
--#define swapcache_prepare(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
-+#define swapcache_prepare(e, s)						\
+-#define free_swap_and_cache(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
++#define free_swap_and_cache(e, s)					\
 +	({(is_migration_entry(e) || is_device_private_entry(e)); })
+ #define swapcache_prepare(e, s)						\
+ 	({(is_migration_entry(e) || is_device_private_entry(e)); })
  
- static inline int add_swap_count_continuation(swp_entry_t swp, gfp_t gfp_mask)
- {
-@@ -516,7 +517,7 @@ static inline void swap_shmem_alloc(swp_entry_t swp)
- {
- }
- 
--static inline int swap_duplicate(swp_entry_t swp)
-+static inline int swap_duplicate(swp_entry_t *swp, int entry_size)
- {
+@@ -522,7 +523,7 @@ static inline int swap_duplicate(swp_entry_t *swp, int entry_size)
  	return 0;
  }
+ 
+-static inline void swap_free(swp_entry_t swp)
++static inline void swap_free(swp_entry_t swp, int entry_size)
+ {
+ }
+ 
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index d7f6c1a288d3..0275df84ed3d 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -182,7 +182,7 @@ sector_t alloc_swapdev_block(int swap)
+ 	offset = swp_offset(get_swap_page_of_type(swap));
+ 	if (offset) {
+ 		if (swsusp_extents_insert(offset))
+-			swap_free(swp_entry(swap, offset));
++			swap_free(swp_entry(swap, offset), 1);
+ 		else
+ 			return swapdev_block(swap, offset);
+ 	}
+@@ -206,7 +206,7 @@ void free_all_swap_pages(int swap)
+ 		ext = rb_entry(node, struct swsusp_extent, node);
+ 		rb_erase(node, &swsusp_extents);
+ 		for (offset = ext->start; offset <= ext->end; offset++)
+-			swap_free(swp_entry(swap, offset));
++			swap_free(swp_entry(swap, offset), 1);
+ 
+ 		kfree(ext);
+ 	}
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 9d802566c494..50282ba862e2 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -349,7 +349,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+ 			if (non_swap_entry(entry))
+ 				continue;
+ 			nr_swap--;
+-			free_swap_and_cache(entry);
++			free_swap_and_cache(entry, 1);
+ 			pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+ 			continue;
+ 		}
 diff --git a/mm/memory.c b/mm/memory.c
-index de01d14870e6..736f928f8f0c 100644
+index 736f928f8f0c..b604f16d031b 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -963,7 +963,7 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		swp_entry_t entry = pte_to_swp_entry(pte);
+@@ -1388,7 +1388,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 			page = migration_entry_to_page(entry);
+ 			rss[mm_counter(page)]--;
+ 		}
+-		if (unlikely(!free_swap_and_cache(entry)))
++		if (unlikely(!free_swap_and_cache(entry, 1)))
+ 			print_bad_pte(vma, addr, ptent, NULL);
+ 		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+@@ -3074,7 +3074,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	}
+ 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
  
- 		if (likely(!non_swap_entry(entry))) {
--			if (swap_duplicate(entry) < 0)
-+			if (swap_duplicate(&entry, 1) < 0)
- 				return entry.val;
+-	swap_free(entry);
++	swap_free(entry, 1);
+ 	if (mem_cgroup_swap_full(page) ||
+ 	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
+ 		try_to_free_swap(page);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4829798869b6..be0e20abcecd 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -662,7 +662,7 @@ static int shmem_free_swap(struct address_space *mapping,
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (old != radswap)
+ 		return -ENOENT;
+-	free_swap_and_cache(radix_to_swp_entry(radswap));
++	free_swap_and_cache(radix_to_swp_entry(radswap), 1);
+ 	return 0;
+ }
  
- 			/* make sure dst_mm is on swapoff's mmlist. */
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 1e79fac3186b..3bb4be720bc0 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1598,7 +1598,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				break;
- 			}
+@@ -1180,7 +1180,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 			spin_lock_irq(&info->lock);
+ 			info->swapped--;
+ 			spin_unlock_irq(&info->lock);
+-			swap_free(swap);
++			swap_free(swap, 1);
+ 		}
+ 	}
+ 	return error;
+@@ -1712,7 +1712,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
  
--			if (swap_duplicate(entry) < 0) {
-+			if (swap_duplicate(&entry, 1) < 0) {
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 				ret = false;
- 				page_vma_mapped_walk_done(&pvmw);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 605d211012a1..5a307d220e33 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -402,7 +402,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		/*
- 		 * Swap entry may have been freed since our caller observed it.
- 		 */
--		err = swapcache_prepare(entry);
-+		err = swapcache_prepare(entry, 1);
- 		if (err == -EEXIST) {
- 			/*
- 			 * We might race against get_swap_page() and stumble
+ 		delete_from_swap_cache(page);
+ 		set_page_dirty(page);
+-		swap_free(swap);
++		swap_free(swap, 1);
+ 
+ 	} else {
+ 		if (vma && userfaultfd_missing(vma)) {
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 532de6f8ff39..746e7c4eb2e6 100644
+index 32f4e661a7e1..8da03551ecbe 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -534,6 +534,40 @@ static void dec_cluster_info_page(struct swap_info_struct *p,
- 		free_cluster(p, idx);
+@@ -49,6 +49,9 @@ static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+ 				 unsigned char);
+ static void free_swap_count_continuations(struct swap_info_struct *);
+ static sector_t map_swap_entry(swp_entry_t, struct block_device**);
++static bool __swap_page_trans_huge_swapped(struct swap_info_struct *si,
++					   struct swap_cluster_info *ci,
++					   unsigned long offset);
+ 
+ DEFINE_SPINLOCK(swap_lock);
+ static unsigned int nr_swapfiles;
+@@ -1267,19 +1270,106 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
+ 	return NULL;
  }
  
-+/*
-+ * When swapout a THP in one piece, PMD page mappings to THP are
-+ * replaced by PMD swap mappings to the corresponding swap cluster.
-+ * cluster_swapcount() returns the PMD swap mapping count.
-+ *
-+ * cluster_count() = PMD swap mapping count + count of allocated swap
-+ * entries in cluster.  If a cluster is mapped by PMD, all swap
-+ * entries inside is used, so here cluster_count() = PMD swap mapping
-+ * count + SWAPFILE_CLUSTER.
-+ */
-+static inline int cluster_swapcount(struct swap_cluster_info *ci)
-+{
-+	VM_BUG_ON(!cluster_is_huge(ci) || cluster_count(ci) < SWAPFILE_CLUSTER);
-+	return cluster_count(ci) - SWAPFILE_CLUSTER;
-+}
+-static unsigned char __swap_entry_free(struct swap_info_struct *p,
+-				       swp_entry_t entry, unsigned char usage)
++#define SF_FREE_CACHE		0x1
 +
-+/*
-+ * Set PMD swap mapping count for the huge cluster
-+ */
-+static inline void cluster_set_swapcount(struct swap_cluster_info *ci,
-+					 unsigned int count)
-+{
-+	VM_BUG_ON(!cluster_is_huge(ci) || cluster_count(ci) < SWAPFILE_CLUSTER);
-+	cluster_set_count(ci, SWAPFILE_CLUSTER + count);
-+}
-+
-+static inline void cluster_add_swapcount(struct swap_cluster_info *ci, int add)
-+{
-+	int count = cluster_swapcount(ci) + add;
-+
-+	VM_BUG_ON(count < 0);
-+	cluster_set_swapcount(ci, count);
-+}
-+
- /*
-  * It's possible scan_swap_map() uses a free cluster in the middle of free
-  * cluster list. Avoiding such abuse to avoid list corruption.
-@@ -3487,35 +3521,66 @@ static int __swap_duplicate_locked(struct swap_info_struct *p,
++static void __swap_free(struct swap_info_struct *p, swp_entry_t entry,
++			      int entry_size, unsigned long flags)
+ {
+ 	struct swap_cluster_info *ci;
+ 	unsigned long offset = swp_offset(entry);
++	int i, free_entries = 0, cache_only = 0;
++	int size = swap_entry_size(entry_size);
++	unsigned char *map, count;
+ 
+ 	ci = lock_cluster_or_swap_info(p, offset);
+-	usage = __swap_entry_free_locked(p, offset, usage);
++	VM_BUG_ON(!IS_ALIGNED(offset, size));
++	/*
++	 * Normal swap entry or huge swap cluster has been split, free
++	 * each swap entry
++	 */
++	if (size == 1 || !cluster_is_huge(ci)) {
++		for (i = 0; i < size; i++, entry.val++) {
++			count = __swap_entry_free_locked(p, offset + i, 1);
++			if (!count ||
++			    (flags & SF_FREE_CACHE &&
++			     count == SWAP_HAS_CACHE &&
++			     !__swap_page_trans_huge_swapped(p, ci,
++							     offset + i))) {
++				unlock_cluster_or_swap_info(p, ci);
++				if (!count)
++					free_swap_slot(entry);
++				else
++					__try_to_reclaim_swap(p, offset + i,
++						TTRS_UNMAPPED | TTRS_FULL);
++				if (i == size - 1)
++					return;
++				lock_cluster_or_swap_info(p, offset);
++			}
++		}
++		unlock_cluster_or_swap_info(p, ci);
++		return;
++	}
++	/*
++	 * Return for normal swap entry above, the following code is
++	 * for huge swap cluster only.
++	 */
++	cluster_add_swapcount(ci, -1);
++	/*
++	 * Decrease mapping count for each swap entry in cluster.
++	 * Because PMD swap mapping is counted in p->swap_map[] too.
++	 */
++	map = p->swap_map + offset;
++	for (i = 0; i < size; i++) {
++		/*
++		 * Mark swap entries to become free as SWAP_MAP_BAD
++		 * temporarily.
++		 */
++		if (map[i] == 1) {
++			map[i] = SWAP_MAP_BAD;
++			free_entries++;
++		} else if (__swap_entry_free_locked(p, offset + i, 1) ==
++			   SWAP_HAS_CACHE)
++			cache_only++;
++	}
++	/*
++	 * If there are PMD swap mapping or the THP is in swap cache,
++	 * it's impossible for some swap entries to become free.
++	 */
++	VM_BUG_ON(free_entries &&
++		  (cluster_swapcount(ci) || (map[0] & SWAP_HAS_CACHE)));
++	if (free_entries == SWAPFILE_CLUSTER)
++		memset(map, SWAP_HAS_CACHE, SWAPFILE_CLUSTER);
++	/*
++	 * If there are no PMD swap mappings remain and the THP isn't
++	 * in swap cache, split the huge swap cluster.
++	 */
++	else if (!cluster_swapcount(ci) && !(map[0] & SWAP_HAS_CACHE))
++		cluster_clear_huge(ci);
+ 	unlock_cluster_or_swap_info(p, ci);
+-	if (!usage)
+-		free_swap_slot(entry);
+-
+-	return usage;
++	if (free_entries == SWAPFILE_CLUSTER) {
++		spin_lock(&p->lock);
++		mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
++		swap_free_cluster(p, offset / SWAPFILE_CLUSTER);
++		spin_unlock(&p->lock);
++	} else if (free_entries) {
++		ci = lock_cluster(p, offset);
++		for (i = 0; i < size; i++, entry.val++) {
++			/*
++			 * To be freed swap entries are marked as SWAP_MAP_BAD
++			 * temporarily as above
++			 */
++			if (map[i] == SWAP_MAP_BAD) {
++				map[i] = SWAP_HAS_CACHE;
++				unlock_cluster(ci);
++				free_swap_slot(entry);
++				if (i == size - 1)
++					return;
++				ci = lock_cluster(p, offset);
++			}
++		}
++		unlock_cluster(ci);
++	} else if (cache_only == SWAPFILE_CLUSTER && flags & SF_FREE_CACHE)
++		__try_to_reclaim_swap(p, offset, TTRS_UNMAPPED | TTRS_FULL);
  }
  
- /*
-- * Verify that a swap entry is valid and increment its swap map count.
-+ * Verify that the swap entries from *entry is valid and increment their
-+ * PMD/PTE swap mapping count.
-  *
-  * Returns error code in following case.
-  * - success -> 0
-  * - swp_entry is invalid -> EINVAL
-- * - swp_entry is migration entry -> EINVAL
-  * - swap-cache reference is requested but there is already one. -> EEXIST
-  * - swap-cache reference is requested but the entry is not used. -> ENOENT
-  * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-+ * - the huge swap cluster has been split. -> ENOTDIR
+ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+@@ -1303,13 +1393,13 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+  * Caller has made sure that the swap device corresponding to entry
+  * is still around or has not been recycled.
   */
--static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-+static int __swap_duplicate(swp_entry_t *entry, int entry_size,
-+			    unsigned char usage)
+-void swap_free(swp_entry_t entry)
++void swap_free(swp_entry_t entry, int entry_size)
  {
  	struct swap_info_struct *p;
- 	struct swap_cluster_info *ci;
- 	unsigned long offset;
- 	int err = -EINVAL;
-+	int i, size = swap_entry_size(entry_size);
  
--	p = get_swap_device(entry);
-+	p = get_swap_device(*entry);
- 	if (!p)
- 		goto out;
- 
--	offset = swp_offset(entry);
-+	offset = swp_offset(*entry);
- 	ci = lock_cluster_or_swap_info(p, offset);
--	err = __swap_duplicate_locked(p, offset, usage);
-+	if (size == SWAPFILE_CLUSTER) {
-+		/*
-+		 * The huge swap cluster has been split, for example, failed to
-+		 * allocate huge page during swapin, the caller should split
-+		 * the PMD swap mapping and operate on normal swap entries.
-+		 */
-+		if (!cluster_is_huge(ci)) {
-+			err = -ENOTDIR;
-+			goto unlock;
-+		}
-+		VM_BUG_ON(!IS_ALIGNED(offset, size));
-+		/* If cluster is huge, all swap entries inside is in-use */
-+		VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
-+	}
-+	/* p->swap_map[] = PMD swap map count + PTE swap map count */
-+	for (i = 0; i < size; i++) {
-+		err = __swap_duplicate_locked(p, offset + i, usage);
-+		if (err && size != 1) {
-+			*entry = swp_entry(p->type, offset + i);
-+			goto undup;
-+		}
-+	}
-+	if (size == SWAPFILE_CLUSTER && usage == 1)
-+		cluster_add_swapcount(ci, usage);
-+unlock:
- 	unlock_cluster_or_swap_info(p, ci);
- 
- 	put_swap_device(p);
- out:
- 	return err;
-+undup:
-+	for (i--; i >= 0; i--)
-+		__swap_entry_free_locked(p, offset + i, usage);
-+	goto unlock;
+ 	p = _swap_info_get(entry);
+ 	if (p)
+-		__swap_entry_free(p, entry, 1);
++		__swap_free(p, entry, entry_size, 0);
  }
  
  /*
-@@ -3524,36 +3589,42 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-  */
- void swap_shmem_alloc(swp_entry_t entry)
- {
--	__swap_duplicate(entry, SWAP_MAP_SHMEM);
-+	__swap_duplicate(&entry, 1, SWAP_MAP_SHMEM);
+@@ -1545,29 +1635,33 @@ int swp_swapcount(swp_entry_t entry)
+ 	return count;
  }
  
- /*
-  * Increase reference count of swap entry by 1.
-- * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
-- * but could not be atomically allocated.  Returns 0, just as if it succeeded,
-- * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
-- * might occur if a page table entry has got corrupted.
-+ *
-+ * Return error code in following case.
-+ * - success -> 0
-+ * - swap_count_continuation is required but could not be atomically allocated.
-+ *   *entry is used to return swap entry to call add_swap_count_continuation().
-+ *								      -> ENOMEM
-+ * - otherwise same as __swap_duplicate()
-  */
--int swap_duplicate(swp_entry_t entry)
-+int swap_duplicate(swp_entry_t *entry, int entry_size)
+-static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+-					 swp_entry_t entry)
++/* si->lock or ci->lock must be held before calling this function */
++static bool __swap_page_trans_huge_swapped(struct swap_info_struct *si,
++					   struct swap_cluster_info *ci,
++					   unsigned long offset)
  {
- 	int err = 0;
+-	struct swap_cluster_info *ci;
+ 	unsigned char *map = si->swap_map;
+-	unsigned long roffset = swp_offset(entry);
+-	unsigned long offset = round_down(roffset, SWAPFILE_CLUSTER);
++	unsigned long hoffset = round_down(offset, SWAPFILE_CLUSTER);
+ 	int i;
+-	bool ret = false;
  
--	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
--		err = add_swap_count_continuation(entry, GFP_ATOMIC);
-+	while (!err &&
-+	       (err = __swap_duplicate(entry, entry_size, 1)) == -ENOMEM)
-+		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
- 	return err;
+-	ci = lock_cluster_or_swap_info(si, offset);
+-	if (!ci || !cluster_is_huge(ci)) {
+-		if (swap_count(map[roffset]))
+-			ret = true;
+-		goto unlock_out;
+-	}
++	if (!ci || !cluster_is_huge(ci))
++		return !!swap_count(map[offset]);
+ 	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+-		if (swap_count(map[offset + i])) {
+-			ret = true;
+-			break;
+-		}
++		if (swap_count(map[hoffset + i]))
++			return true;
+ 	}
+-unlock_out:
++	return false;
++}
++
++static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
++					 swp_entry_t entry)
++{
++	struct swap_cluster_info *ci;
++	unsigned long offset = swp_offset(entry);
++	bool ret;
++
++	ci = lock_cluster_or_swap_info(si, offset);
++	ret = __swap_page_trans_huge_swapped(si, ci, offset);
+ 	unlock_cluster_or_swap_info(si, ci);
+ 	return ret;
+ }
+@@ -1739,22 +1833,17 @@ int try_to_free_swap(struct page *page)
+  * Free the swap entry like above, but also try to
+  * free the page cache entry if it is the last user.
+  */
+-int free_swap_and_cache(swp_entry_t entry)
++int free_swap_and_cache(swp_entry_t entry, int entry_size)
+ {
+ 	struct swap_info_struct *p;
+-	unsigned char count;
+ 
+ 	if (non_swap_entry(entry))
+ 		return 1;
+ 
+ 	p = _swap_info_get(entry);
+-	if (p) {
+-		count = __swap_entry_free(p, entry, 1);
+-		if (count == SWAP_HAS_CACHE &&
+-		    !swap_page_trans_huge_swapped(p, entry))
+-			__try_to_reclaim_swap(p, swp_offset(entry),
+-					      TTRS_UNMAPPED | TTRS_FULL);
+-	}
++	if (p)
++		__swap_free(p, entry, entry_size, SF_FREE_CACHE);
++
+ 	return p != NULL;
  }
  
- /*
-  * @entry: swap entry for which we allocate swap cache.
-+ * @entry_size: size of the swap entry, 1 or SWAPFILE_CLUSTER
-  *
-  * Called when allocating swap cache for existing swap entry,
-  * This can return error codes. Returns 0 at success.
-- * -EBUSY means there is a swap cache.
-- * Note: return code is different from swap_duplicate().
-+ * -EINVAL means the swap device has been swapoff.
-+ * -EEXIST means there is a swap cache.
-+ * Otherwise same as __swap_duplicate()
-  */
--int swapcache_prepare(swp_entry_t entry)
-+int swapcache_prepare(swp_entry_t entry, int entry_size)
- {
--	return __swap_duplicate(entry, SWAP_HAS_CACHE);
-+	return __swap_duplicate(&entry, entry_size, SWAP_HAS_CACHE);
+@@ -1901,7 +1990,7 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
+ 	}
+ 	set_pte_at(vma->vm_mm, addr, pte,
+ 		   pte_mkold(mk_pte(page, vma->vm_page_prot)));
+-	swap_free(entry);
++	swap_free(entry, 1);
+ 	/*
+ 	 * Move the page to the active list so it is not
+ 	 * immediately swapped out again after swapon.
+@@ -2340,6 +2429,16 @@ int try_to_unuse(unsigned int type, bool frontswap,
+ 	}
+ 
+ 	mmput(start_mm);
++
++	/*
++	 * Swap entries may be marked as SWAP_MAP_BAD temporarily in
++	 * __swap_free() before being freed really.
++	 * find_next_to_unuse() will skip these swap entries, that is
++	 * OK.  But we need to wait until they are freed really.
++	 */
++	while (!retval && READ_ONCE(si->inuse_pages))
++		schedule_timeout_uninterruptible(1);
++
+ 	return retval;
  }
  
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
 -- 
 2.16.4
 
