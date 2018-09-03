@@ -6,42 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E973C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4372C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4777420658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4777420658
+	by mail.kernel.org (Postfix) with ESMTP id 7AC5F20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC5F20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbeICVzy (ORCPT
+        id S1731422AbeICVz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:55:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47836 "EHLO
+        Mon, 3 Sep 2018 17:55:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeICVzx (ORCPT
+        with ESMTP id S1728335AbeICVz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:55:53 -0400
+        Mon, 3 Sep 2018 17:55:57 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BFB4D30;
-        Mon,  3 Sep 2018 17:34:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FD56D16;
+        Mon,  3 Sep 2018 17:34:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dominique Leuenberger <dimstar@suse.de>,
-        Adrian Schroeter <adrian@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH 4.18 051/123] x86/speculation/l1tf: Fix overflow in l1tf_pfn_limit() on 32bit
-Date:   Mon,  3 Sep 2018 18:56:35 +0200
-Message-Id: <20180903165721.616170486@linuxfoundation.org>
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.18 034/123] KVM: arm/arm64: Fix lost IRQs from emulated physcial timer when blocked
+Date:   Mon,  3 Sep 2018 18:56:18 +0200
+Message-Id: <20180903165720.922186161@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -58,75 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-commit 9df9516940a61d29aedf4d91b483ca6597e7d480 upstream.
+commit 245715cbe83ca934af5d20e078fd85175c62995e upstream.
 
-On 32bit PAE kernels on 64bit hardware with enough physical bits,
-l1tf_pfn_limit() will overflow unsigned long. This in turn affects
-max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
-observed in a 32bit guest with 42 bits physical address size, where
-max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces
-the following warning to dmesg:
+When the VCPU is blocked (for example from WFI) we don't inject the
+physical timer interrupt if it should fire while the CPU is blocked, but
+instead we just wake up the VCPU and expect kvm_timer_vcpu_load to take
+care of injecting the interrupt.
 
-[    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
+Unfortunately, kvm_timer_vcpu_load() doesn't actually do that, it only
+has support to schedule a soft timer if the emulated phys timer is
+expected to fire in the future.
 
-Fix this by using unsigned long long instead.
+Follow the same pattern as kvm_timer_update_state() and update the irq
+state after potentially scheduling a soft timer.
 
-Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Reported-by: Dominique Leuenberger <dimstar@suse.de>
-Reported-by: Adrian Schroeter <adrian@suse.de>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180820095835.5298-1-vbabka@suse.cz
+Reported-by: Andre Przywara <andre.przywara@arm.com>
+Cc: Stable <stable@vger.kernel.org> # 4.15+
+Fixes: bbdd52cfcba29 ("KVM: arm/arm64: Avoid phys timer emulation in vcpu entry/exit")
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/processor.h |    4 ++--
- arch/x86/mm/init.c               |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ virt/kvm/arm/arch_timer.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -181,9 +181,9 @@ extern const struct seq_operations cpuin
- 
- extern void cpu_detect(struct cpuinfo_x86 *c);
- 
--static inline unsigned long l1tf_pfn_limit(void)
-+static inline unsigned long long l1tf_pfn_limit(void)
+--- a/virt/kvm/arm/arch_timer.c
++++ b/virt/kvm/arm/arch_timer.c
+@@ -487,6 +487,7 @@ void kvm_timer_vcpu_load(struct kvm_vcpu
  {
--	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
+ 	struct arch_timer_cpu *timer = &vcpu->arch.timer_cpu;
+ 	struct arch_timer_context *vtimer = vcpu_vtimer(vcpu);
++	struct arch_timer_context *ptimer = vcpu_ptimer(vcpu);
+ 
+ 	if (unlikely(!timer->enabled))
+ 		return;
+@@ -502,6 +503,10 @@ void kvm_timer_vcpu_load(struct kvm_vcpu
+ 
+ 	/* Set the background timer for the physical timer emulation. */
+ 	phys_timer_emulate(vcpu);
++
++	/* If the timer fired while we weren't running, inject it now */
++	if (kvm_timer_should_fire(ptimer) != ptimer->irq.level)
++		kvm_timer_update_irq(vcpu, !ptimer->irq.level, ptimer);
  }
  
- extern void early_cpu_init(void);
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -923,7 +923,7 @@ unsigned long max_swapfile_size(void)
- 
- 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
--		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
-+		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
- 		/*
- 		 * We encode swap offsets also with 3 bits below those for pfn
- 		 * which makes the usable limit higher.
-@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
- #if CONFIG_PGTABLE_LEVELS > 2
- 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
- #endif
--		pages = min_t(unsigned long, l1tf_limit, pages);
-+		pages = min_t(unsigned long long, l1tf_limit, pages);
- 	}
- 	return pages;
- }
+ bool kvm_timer_should_notify_user(struct kvm_vcpu *vcpu)
 
 
