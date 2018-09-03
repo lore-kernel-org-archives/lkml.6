@@ -3,56 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E841BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFA0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81CD120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 764EE20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="gv+t0Q7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81CD120658
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pjOly+9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764EE20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeICSHa (ORCPT
+        id S1727526AbeICSHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:07:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57628 "EHLO
+        Mon, 3 Sep 2018 14:07:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57778 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeICSHa (ORCPT
+        with ESMTP id S1725982AbeICSHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:07:30 -0400
+        Mon, 3 Sep 2018 14:07:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4h5vXZ8nhUXJlWKGGOg51nmFbnDqq7I5pkzdrchMNh8=; b=gv+t0Q7+02Zo
-        KfyxZ38Bjp2/YBtUDw+Ex8BivmwaNzMb3U9MQo9vqWbRXbj4FGho1neswJ+6RxGFJSDshSTgcTZI1
-        +GYlqaoMiBXdAPbeUxffeWvyiTsvCJrEQ1/F8/dXF6ZNV/PcSB2DQFq3CfqqYpTNDuT0YZDF8dyRr
-        TFft4=;
+        List-Archive; bh=rtAAKhLu6abHSfqMKvIteHXlq5ii/lQqjoB4yH4S9Xc=; b=pjOly+9boC0C
+        rTCoUvl1TXAagwflQGiqaLoseeRfnTznQdl7wzcShqHM5oHEvMbD5NCNV0URQypq49k6VuW1cdijF
+        XfVeHagHuSpps3uMGr5pH5fVd9e1lx7c8JeHJl6i8oomwn+o1ZUvungLlwsEFdFFbh2wJr4AkfmAn
+        vMTLQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fwpC8-0000Ib-MK; Mon, 03 Sep 2018 13:47:08 +0000
+        id 1fwpCH-0000Ik-0l; Mon, 03 Sep 2018 13:47:17 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 724C411227AE; Mon,  3 Sep 2018 14:47:08 +0100 (BST)
+        id BC3FF11227AE; Mon,  3 Sep 2018 14:47:16 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
+        rohitkr@codeaurora.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: fix soc-core.c kernel-doc warning" to the asoc tree
-In-Reply-To:  <a75f4b8b-4e1c-bc73-1033-c49f4b30e4e5@infradead.org>
-Message-Id: <20180903134708.724C411227AE@debutante.sirena.org.uk>
-Date:   Mon,  3 Sep 2018 14:47:08 +0100 (BST)
+Subject: Applied "ASoC: q6routing: initialize data correctly" to the asoc tree
+In-Reply-To:  <20180903110747.10745-1-srinivas.kandagatla@linaro.org>
+Message-Id: <20180903134716.BC3FF11227AE@debutante.sirena.org.uk>
+Date:   Mon,  3 Sep 2018 14:47:16 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +58,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fix soc-core.c kernel-doc warning
+   ASoC: q6routing: initialize data correctly
 
 has been applied to the asoc tree at
 
@@ -85,34 +83,41 @@ to this mail.
 Thanks,
 Mark
 
-From 63a886f38dd96868e33488eccee8ed427144d397 Mon Sep 17 00:00:00 2001
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Sun, 2 Sep 2018 19:38:10 -0700
-Subject: [PATCH] ASoC: fix soc-core.c kernel-doc warning
+From 7aa09ff24301535491cd4de1b93107ee91449a12 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Mon, 3 Sep 2018 12:07:47 +0100
+Subject: [PATCH] ASoC: q6routing: initialize data correctly
 
-Fix kernel-doc warning:
+Some of the router data fields are left as default zeros which are
+valid dai ids, so initialize these to invalid value of -1.
 
-../sound/soc/soc-core.c:2918: warning: Excess function parameter 'legacy_dai_naming' description in 'snd_soc_register_dais'
+Without intializing these correctly get_session_from_id() can return
+incorrect session resulting in not closing the opened copp and messing
+up with the copp ref count.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: e3a33673e845 ("ASoC: qdsp6: q6routing: Add q6routing driver")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-core.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/qcom/qdsp6/q6routing.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 2a73630d0680..e9c2304afaf1 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2944,8 +2944,6 @@ static struct snd_soc_dai *soc_add_dai(struct snd_soc_component *component,
-  * @component: The component the DAIs are registered for
-  * @dai_drv: DAI driver to use for the DAIs
-  * @count: Number of DAIs
-- * @legacy_dai_naming: Use the legacy naming scheme and let the DAI inherit the
-- *                     parent's name.
-  */
- static int snd_soc_register_dais(struct snd_soc_component *component,
- 				 struct snd_soc_dai_driver *dai_drv, size_t count)
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index dc94c5c53788..c6b51571be94 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -960,8 +960,10 @@ static int msm_routing_probe(struct snd_soc_component *c)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < MAX_SESSIONS; i++)
++	for (i = 0; i < MAX_SESSIONS; i++) {
+ 		routing_data->sessions[i].port_id = -1;
++		routing_data->sessions[i].fedai_id = -1;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.19.0.rc1
 
