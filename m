@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C894AC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA98C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 777942054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 777942054F
+	by mail.kernel.org (Postfix) with ESMTP id AC20B2054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC20B2054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeICLlg (ORCPT
+        id S1727453AbeICLlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:36 -0400
-Received: from mga12.intel.com ([192.55.52.136]:48343 "EHLO mga12.intel.com"
+        Mon, 3 Sep 2018 07:41:37 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48338 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727201AbeICLlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:36 -0400
+        id S1727216AbeICLlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:41:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:46 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
-   d="scan'208";a="70146910"
+   d="scan'208";a="70146894"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
-  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:43 -0700
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:34 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 11/21] swap: Add sysfs interface to configure THP swapin
-Date:   Mon,  3 Sep 2018 15:22:04 +0800
-Message-Id: <20180903072214.24602-12-ying.huang@intel.com>
+Subject: [PATCH -V5 08/21] swap: Support to read a huge swap cluster for swapin a THP
+Date:   Mon,  3 Sep 2018 15:22:01 +0800
+Message-Id: <20180903072214.24602-9-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
 References: <20180903072214.24602-1-ying.huang@intel.com>
@@ -57,24 +57,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Swapin a THP as a whole isn't desirable in some situations.  For
-example, for completely random access pattern, swapin a THP in one
-piece will inflate the reading greatly.  So a sysfs interface:
-/sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
-configure it.  Three options as follow are provided,
-
-- always: THP swapin will be enabled always
-
-- madvise: THP swapin will be enabled only for VMA with VM_HUGEPAGE
-  flag set.
-
-- never: THP swapin will be disabled always
-
-The default configuration is: madvise.
-
-During page fault, if a PMD swap mapping is found and THP swapin is
-disabled, the huge swap cluster and the PMD swap mapping will be split
-and fallback to normal page swapin.
+To swapin a THP in one piece, we need to read a huge swap cluster from
+the swap device.  This patch revised the __read_swap_cache_async() and
+its callers and callees to support this.  If __read_swap_cache_async()
+find the swap cluster of the specified swap entry is huge, it will try
+to allocate a THP, add it into the swap cache.  So later the contents
+of the huge swap cluster can be read into the THP.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -90,237 +78,303 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- Documentation/admin-guide/mm/transhuge.rst | 21 +++++++
- include/linux/huge_mm.h                    | 31 ++++++++++
- mm/huge_memory.c                           | 94 ++++++++++++++++++++++++------
- 3 files changed, 127 insertions(+), 19 deletions(-)
+ include/linux/huge_mm.h | 38 +++++++++++++++++++++++++++++++
+ include/linux/swap.h    |  4 ++--
+ mm/huge_memory.c        | 26 ---------------------
+ mm/swap_state.c         | 60 +++++++++++++++++++++++++++++++++++++++----------
+ mm/swapfile.c           |  9 +++++---
+ 5 files changed, 94 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 85e33f785fd7..23aefb17101c 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -160,6 +160,27 @@ Some userspace (such as a test program, or an optimized memory allocation
- 
- 	cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
- 
-+Transparent hugepage may be swapout and swapin in one piece without
-+splitting.  This will improve the utility of transparent hugepage but
-+may inflate the read/write too.  So whether to enable swapin
-+transparent hugepage in one piece can be configured as follow.
-+
-+	echo always >/sys/kernel/mm/transparent_hugepage/swapin_enabled
-+	echo madvise >/sys/kernel/mm/transparent_hugepage/swapin_enabled
-+	echo never >/sys/kernel/mm/transparent_hugepage/swapin_enabled
-+
-+always
-+	Attempt to allocate a transparent huge page and read it from
-+	swap space in one piece every time.
-+
-+never
-+	Always split the swap space and PMD swap mapping and swapin
-+	the fault normal page during swapin.
-+
-+madvise
-+	Only swapin the transparent huge page in one piece for
-+	MADV_HUGEPAGE madvise regions.
-+
- khugepaged will be automatically started when
- transparent_hugepage/enabled is set to "always" or "madvise, and it'll
- be automatically shutdown if it's set to "never".
 diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index c2b8ced6fc2b..9dedff974def 100644
+index 0f3e1739986f..3fdb29bc250c 100644
 --- a/include/linux/huge_mm.h
 +++ b/include/linux/huge_mm.h
-@@ -63,6 +63,8 @@ enum transparent_hugepage_flag {
- #ifdef CONFIG_DEBUG_VM
- 	TRANSPARENT_HUGEPAGE_DEBUG_COW_FLAG,
- #endif
-+	TRANSPARENT_HUGEPAGE_SWAPIN_FLAG,
-+	TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG,
- };
+@@ -250,6 +250,39 @@ static inline bool thp_migration_supported(void)
+ 	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+ }
  
- struct kobject;
-@@ -405,11 +407,40 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
- 
- #ifdef CONFIG_THP_SWAP
- extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
-+
-+static inline bool transparent_hugepage_swapin_enabled(
-+	struct vm_area_struct *vma)
++/*
++ * always: directly stall for all thp allocations
++ * defer: wake kswapd and fail if not immediately available
++ * defer+madvise: wake kswapd and directly stall for MADV_HUGEPAGE, otherwise
++ *		  fail if not immediately available
++ * madvise: directly stall for MADV_HUGEPAGE, otherwise fail if not immediately
++ *	    available
++ * never: never stall for any thp allocation
++ */
++static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
 +{
-+	if (vma->vm_flags & VM_NOHUGEPAGE)
-+		return false;
++	bool vma_madvised;
 +
-+	if (is_vma_temporary_stack(vma))
-+		return false;
-+
-+	if (test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
-+		return false;
-+
-+	if (transparent_hugepage_flags &
-+			(1 << TRANSPARENT_HUGEPAGE_SWAPIN_FLAG))
-+		return true;
-+
-+	if (transparent_hugepage_flags &
-+			(1 << TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG))
-+		return !!(vma->vm_flags & VM_HUGEPAGE);
-+
-+	return false;
++	if (!vma)
++		return GFP_TRANSHUGE_LIGHT;
++	vma_madvised = !!(vma->vm_flags & VM_HUGEPAGE);
++	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG,
++		     &transparent_hugepage_flags))
++		return GFP_TRANSHUGE | (vma_madvised ? 0 : __GFP_NORETRY);
++	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG,
++		     &transparent_hugepage_flags))
++		return GFP_TRANSHUGE_LIGHT | __GFP_KSWAPD_RECLAIM;
++	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG,
++		     &transparent_hugepage_flags))
++		return GFP_TRANSHUGE_LIGHT |
++			(vma_madvised ? __GFP_DIRECT_RECLAIM :
++					__GFP_KSWAPD_RECLAIM);
++	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG,
++		     &transparent_hugepage_flags))
++		return GFP_TRANSHUGE_LIGHT |
++			(vma_madvised ? __GFP_DIRECT_RECLAIM : 0);
++	return GFP_TRANSHUGE_LIGHT;
 +}
- #else /* CONFIG_THP_SWAP */
- static inline int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+ #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
+@@ -363,6 +396,11 @@ static inline bool thp_migration_supported(void)
+ {
+ 	return false;
+ }
++
++static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
++{
++	return 0;
++}
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ #endif /* _LINUX_HUGE_MM_H */
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 1ab197a0e065..0f653b9027d7 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -457,7 +457,7 @@ extern sector_t map_swap_page(struct page *, struct block_device **);
+ extern sector_t swapdev_block(int, pgoff_t);
+ extern int page_swapcount(struct page *);
+ extern int __swap_count(swp_entry_t entry);
+-extern int __swp_swapcount(swp_entry_t entry);
++extern int __swp_swapcount(swp_entry_t entry, int *entry_size);
+ extern int swp_swapcount(swp_entry_t entry);
+ extern struct swap_info_struct *page_swap_info(struct page *);
+ extern struct swap_info_struct *swp_swap_info(swp_entry_t entry);
+@@ -585,7 +585,7 @@ static inline int __swap_count(swp_entry_t entry)
+ 	return 0;
+ }
+ 
+-static inline int __swp_swapcount(swp_entry_t entry)
++static inline int __swp_swapcount(swp_entry_t entry, int *entry_size)
  {
  	return 0;
  }
-+
-+static inline bool transparent_hugepage_swapin_enabled(
-+	struct vm_area_struct *vma)
-+{
-+	return false;
-+}
- #endif /* CONFIG_THP_SWAP */
- 
- #endif /* _LINUX_HUGE_MM_H */
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0c02d54edc4e..7d22e33fdd43 100644
+index 9341c90aa286..b14d4bfb06f4 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -57,7 +57,8 @@ unsigned long transparent_hugepage_flags __read_mostly =
- #endif
- 	(1<<TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG)|
- 	(1<<TRANSPARENT_HUGEPAGE_DEFRAG_KHUGEPAGED_FLAG)|
--	(1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG);
-+	(1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG)|
-+	(1<<TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG);
+@@ -620,32 +620,6 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
  
- static struct shrinker deferred_split_shrinker;
- 
-@@ -316,6 +317,53 @@ static struct kobj_attribute debug_cow_attr =
- 	__ATTR(debug_cow, 0644, debug_cow_show, debug_cow_store);
- #endif /* CONFIG_DEBUG_VM */
- 
-+#ifdef CONFIG_THP_SWAP
-+static ssize_t swapin_enabled_show(struct kobject *kobj,
-+				   struct kobj_attribute *attr, char *buf)
-+{
-+	if (test_bit(TRANSPARENT_HUGEPAGE_SWAPIN_FLAG,
-+		     &transparent_hugepage_flags))
-+		return sprintf(buf, "[always] madvise never\n");
-+	else if (test_bit(TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG,
-+			  &transparent_hugepage_flags))
-+		return sprintf(buf, "always [madvise] never\n");
-+	else
-+		return sprintf(buf, "always madvise [never]\n");
-+}
-+
-+static ssize_t swapin_enabled_store(struct kobject *kobj,
-+				    struct kobj_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	ssize_t ret = count;
-+
-+	if (!memcmp("always", buf,
-+		    min(sizeof("always")-1, count))) {
-+		clear_bit(TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG,
-+			  &transparent_hugepage_flags);
-+		set_bit(TRANSPARENT_HUGEPAGE_SWAPIN_FLAG,
-+			&transparent_hugepage_flags);
-+	} else if (!memcmp("madvise", buf,
-+			   min(sizeof("madvise")-1, count))) {
-+		clear_bit(TRANSPARENT_HUGEPAGE_SWAPIN_FLAG,
-+			  &transparent_hugepage_flags);
-+		set_bit(TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG,
-+			&transparent_hugepage_flags);
-+	} else if (!memcmp("never", buf,
-+			   min(sizeof("never")-1, count))) {
-+		clear_bit(TRANSPARENT_HUGEPAGE_SWAPIN_FLAG,
-+			  &transparent_hugepage_flags);
-+		clear_bit(TRANSPARENT_HUGEPAGE_SWAPIN_REQ_MADV_FLAG,
-+			  &transparent_hugepage_flags);
-+	} else
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+static struct kobj_attribute swapin_enabled_attr =
-+	__ATTR(swapin_enabled, 0644, swapin_enabled_show, swapin_enabled_store);
-+#endif /* CONFIG_THP_SWAP */
-+
- static struct attribute *hugepage_attr[] = {
- 	&enabled_attr.attr,
- 	&defrag_attr.attr,
-@@ -326,6 +374,9 @@ static struct attribute *hugepage_attr[] = {
- #endif
- #ifdef CONFIG_DEBUG_VM
- 	&debug_cow_attr.attr,
-+#endif
-+#ifdef CONFIG_THP_SWAP
-+	&swapin_enabled_attr.attr,
- #endif
- 	NULL,
- };
-@@ -1648,6 +1699,9 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- retry:
- 	page = lookup_swap_cache(entry, NULL, vmf->address);
- 	if (!page) {
-+		if (!transparent_hugepage_swapin_enabled(vma))
-+			goto split;
-+
- 		page = read_swap_cache_async(entry, GFP_HIGHUSER_MOVABLE, vma,
- 					     haddr, false);
- 		if (!page) {
-@@ -1655,24 +1709,8 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 			 * Back out if somebody else faulted in this pmd
- 			 * while we released the pmd lock.
- 			 */
--			if (likely(pmd_same(*vmf->pmd, orig_pmd))) {
--				/*
--				 * Failed to allocate huge page, split huge swap
--				 * cluster, and fallback to swapin normal page
--				 */
--				ret = split_swap_cluster(entry, 0);
--				/* Somebody else swapin the swap entry, retry */
--				if (ret == -EEXIST) {
--					ret = 0;
--					goto retry;
--				/* swapoff occurs under us */
--				} else if (ret == -EINVAL)
--					ret = 0;
--				else {
--					count_vm_event(THP_SWPIN_FALLBACK);
--					goto fallback;
--				}
--			}
-+			if (likely(pmd_same(*vmf->pmd, orig_pmd)))
-+				goto split;
- 			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
- 			goto out;
- 		}
-@@ -1785,6 +1823,24 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	if (page)
- 		put_page(page);
- 	return ret;
-+split:
-+	/*
-+	 * Failed to allocate huge page, split huge swap cluster, and
-+	 * fallback to swapin normal page
-+	 */
-+	ret = split_swap_cluster(entry, 0);
-+	/* Somebody else swapin the swap entry, retry */
-+	if (ret == -EEXIST) {
-+		ret = 0;
-+		goto retry;
-+	}
-+	/* swapoff occurs under us */
-+	if (ret == -EINVAL) {
-+		delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
-+		return 0;
-+	}
-+	count_vm_event(THP_SWPIN_FALLBACK);
-+	goto fallback;
  }
- #endif
  
+-/*
+- * always: directly stall for all thp allocations
+- * defer: wake kswapd and fail if not immediately available
+- * defer+madvise: wake kswapd and directly stall for MADV_HUGEPAGE, otherwise
+- *		  fail if not immediately available
+- * madvise: directly stall for MADV_HUGEPAGE, otherwise fail if not immediately
+- *	    available
+- * never: never stall for any thp allocation
+- */
+-static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
+-{
+-	const bool vma_madvised = !!(vma->vm_flags & VM_HUGEPAGE);
+-
+-	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags))
+-		return GFP_TRANSHUGE | (vma_madvised ? 0 : __GFP_NORETRY);
+-	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags))
+-		return GFP_TRANSHUGE_LIGHT | __GFP_KSWAPD_RECLAIM;
+-	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags))
+-		return GFP_TRANSHUGE_LIGHT | (vma_madvised ? __GFP_DIRECT_RECLAIM :
+-							     __GFP_KSWAPD_RECLAIM);
+-	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags))
+-		return GFP_TRANSHUGE_LIGHT | (vma_madvised ? __GFP_DIRECT_RECLAIM :
+-							     0);
+-	return GFP_TRANSHUGE_LIGHT;
+-}
+-
+ /* Caller must hold page table lock. */
+ static bool set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
+ 		struct vm_area_struct *vma, unsigned long haddr, pmd_t *pmd,
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 5a307d220e33..66311e29cccb 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -361,7 +361,9 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ {
+ 	struct page *found_page = NULL, *new_page = NULL;
+ 	struct swap_info_struct *si;
+-	int err;
++	int err, entry_size = 1;
++	swp_entry_t hentry;
++
+ 	*new_page_allocated = false;
+ 
+ 	do {
+@@ -387,14 +389,40 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		 * as SWAP_HAS_CACHE.  That's done in later part of code or
+ 		 * else swap_off will be aborted if we return NULL.
+ 		 */
+-		if (!__swp_swapcount(entry) && swap_slot_cache_enabled)
++		if (!__swp_swapcount(entry, &entry_size) &&
++		    swap_slot_cache_enabled)
+ 			break;
+ 
+ 		/*
+ 		 * Get a new page to read into from swap.
+ 		 */
+-		if (!new_page) {
+-			new_page = alloc_page_vma(gfp_mask, vma, addr);
++		if (!new_page ||
++		    (IS_ENABLED(CONFIG_THP_SWAP) &&
++		     hpage_nr_pages(new_page) != entry_size)) {
++			if (new_page)
++				put_page(new_page);
++			if (IS_ENABLED(CONFIG_THP_SWAP) &&
++			    entry_size == HPAGE_PMD_NR) {
++				gfp_t gfp = alloc_hugepage_direct_gfpmask(vma);
++
++				/*
++				 * Make sure huge page allocation flags are
++				 * compatible with that of normal page
++				 */
++				VM_WARN_ONCE(gfp_mask & ~(gfp | __GFP_RECLAIM),
++					     "ignoring gfp_mask bits: %x",
++					     gfp_mask & ~(gfp | __GFP_RECLAIM));
++				new_page = alloc_hugepage_vma(gfp, vma,
++						addr, HPAGE_PMD_ORDER);
++				if (new_page)
++					prep_transhuge_page(new_page);
++				hentry = swp_entry(swp_type(entry),
++						   round_down(swp_offset(entry),
++							      HPAGE_PMD_NR));
++			} else {
++				new_page = alloc_page_vma(gfp_mask, vma, addr);
++				hentry = entry;
++			}
+ 			if (!new_page)
+ 				break;		/* Out of memory */
+ 		}
+@@ -402,7 +430,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		/*
+ 		 * Swap entry may have been freed since our caller observed it.
+ 		 */
+-		err = swapcache_prepare(entry, 1);
++		err = swapcache_prepare(hentry, entry_size);
+ 		if (err == -EEXIST) {
+ 			/*
+ 			 * We might race against get_swap_page() and stumble
+@@ -411,17 +439,24 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 			 */
+ 			cond_resched();
+ 			continue;
++		} else if (err == -ENOTDIR) {
++			/* huge swap cluster has been split under us */
++			continue;
+ 		} else if (err)		/* swp entry is obsolete ? */
+ 			break;
+ 
+ 		/* May fail (-ENOMEM) if XArray node allocation failed. */
+ 		__SetPageLocked(new_page);
+ 		__SetPageSwapBacked(new_page);
+-		err = add_to_swap_cache(new_page, entry, gfp_mask & GFP_KERNEL);
++		err = add_to_swap_cache(new_page, hentry,
++					gfp_mask & GFP_KERNEL);
+ 		if (likely(!err)) {
+ 			/* Initiate read into locked page */
+ 			lru_cache_add_anon(new_page);
+ 			*new_page_allocated = true;
++			if (IS_ENABLED(CONFIG_THP_SWAP))
++				new_page += swp_offset(entry) &
++					(entry_size - 1);
+ 			return new_page;
+ 		}
+ 		__ClearPageLocked(new_page);
+@@ -429,7 +464,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
+ 		 * clear SWAP_HAS_CACHE flag.
+ 		 */
+-		put_swap_page(new_page, entry);
++		put_swap_page(new_page, hentry);
+ 	} while (err != -ENOMEM);
+ 
+ 	if (new_page)
+@@ -451,7 +486,7 @@ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 			vma, addr, &page_was_allocated);
+ 
+ 	if (page_was_allocated)
+-		swap_readpage(retpage, do_poll);
++		swap_readpage(compound_head(retpage), do_poll);
+ 
+ 	return retpage;
+ }
+@@ -570,8 +605,9 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 		if (!page)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_readpage(page, false);
+-			if (offset != entry_offset) {
++			swap_readpage(compound_head(page), false);
++			if (offset != entry_offset &&
++			    !PageTransCompound(page)) {
+ 				SetPageReadahead(page);
+ 				count_vm_event(SWAP_RA);
+ 			}
+@@ -732,8 +768,8 @@ static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+ 		if (!page)
+ 			continue;
+ 		if (page_allocated) {
+-			swap_readpage(page, false);
+-			if (i != ra_info.offset) {
++			swap_readpage(compound_head(page), false);
++			if (i != ra_info.offset && !PageTransCompound(page)) {
+ 				SetPageReadahead(page);
+ 				count_vm_event(SWAP_RA);
+ 			}
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index a16cd903d3ef..d98c1f74f87e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1542,7 +1542,8 @@ int __swap_count(swp_entry_t entry)
+ 	return count;
+ }
+ 
+-static int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry)
++static int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry,
++			  int *entry_size)
+ {
+ 	int count = 0;
+ 	pgoff_t offset = swp_offset(entry);
+@@ -1550,6 +1551,8 @@ static int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry)
+ 
+ 	ci = lock_cluster_or_swap_info(si, offset);
+ 	count = swap_count(si->swap_map[offset]);
++	if (entry_size)
++		*entry_size = ci && cluster_is_huge(ci) ? SWAPFILE_CLUSTER : 1;
+ 	unlock_cluster_or_swap_info(si, ci);
+ 	return count;
+ }
+@@ -1559,14 +1562,14 @@ static int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry)
+  * This does not give an exact answer when swap count is continued,
+  * but does include the high COUNT_CONTINUED flag to allow for that.
+  */
+-int __swp_swapcount(swp_entry_t entry)
++int __swp_swapcount(swp_entry_t entry, int *entry_size)
+ {
+ 	int count = 0;
+ 	struct swap_info_struct *si;
+ 
+ 	si = get_swap_device(entry);
+ 	if (si) {
+-		count = swap_swapcount(si, entry);
++		count = swap_swapcount(si, entry, entry_size);
+ 		put_swap_device(si);
+ 	}
+ 	return count;
 -- 
 2.16.4
 
