@@ -2,99 +2,122 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5ACC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4807FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE30420843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE5120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:10:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZVrcL687"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE30420843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="l8F4Qhnt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE5120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeICT3u (ORCPT
+        id S1727472AbeICTai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:29:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54074 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeICT3u (ORCPT
+        Mon, 3 Sep 2018 15:30:38 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:26995 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:29:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rRB2zvy+SrWvjl8bGTlrM/IezEB0Ek6Up3NE+7SHK/I=; b=ZVrcL6873G+MgbpQ2NOZazkbp
-        nXXrPe/G8Wta2CATviyqKWHke+j9cHHV16s/di3ccegNK+BvMY/PwcubhEFK42pD59RYl7PfBwVKN
-        FhxPJsqkVcf0i6q6PpYQ+0SK3iqRFYboL659IjDFhe8ddLEdOI+MHs7EncH9mXQOIy5GU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fwqTX-0000Qd-UH; Mon, 03 Sep 2018 15:09:11 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A5D8811227AE; Mon,  3 Sep 2018 16:09:11 +0100 (BST)
-Date:   Mon, 3 Sep 2018 16:09:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] regulator: Fix useless O^2 complexity in
- suspend/resume
-Message-ID: <20180903150911.GO10302@sirena.org.uk>
-References: <20180903144937.16507-1-m.szyprowski@samsung.com>
- <CGME20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a@eucas1p2.samsung.com>
- <20180903144937.16507-2-m.szyprowski@samsung.com>
+        Mon, 3 Sep 2018 15:30:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1535987401; x=1567523401;
+  h=from:to:cc:subject:references:date:in-reply-to:
+   message-id:mime-version;
+  bh=aKtXfR4eyzdQOMWRmUCk7MtY2M+v43ba66ip7prFFTk=;
+  b=l8F4Qhnt853ubh34gs5SFPe+NxAs4ieAS4ErQWEyLM8LsImTtwSMblza
+   bKN43rZCwbSMTPzBETMBLLQox5J9VSYH5h7LYlz46MZibzgkj8IrHjEsz
+   DRABPUEn6Vwt9kEEKVhpxtFyVgyOFIcU6Xgu/eOhgjo8Iuw8ICJURKnA0
+   c=;
+X-IronPort-AV: E=Sophos;i="5.53,325,1531785600"; 
+   d="scan'208";a="629135227"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 03 Sep 2018 14:52:38 +0000
+Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w83Epjx4013981
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 3 Sep 2018 14:51:48 GMT
+Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w83EpfOs008659;
+        Mon, 3 Sep 2018 16:51:41 +0200
+Received: (from jsteckli@localhost)
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w83EpaSY008652;
+        Mon, 3 Sep 2018 16:51:36 +0200
+X-Authentication-Warning: u54ee758033e858cfa736.ant.amazon.com: jsteckli set sender to jsteckli@amazon.de using -f
+From:   Julian Stecklina <jsteckli@amazon.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
+        Jim Mattson <jmattson@google.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Kees Cook <keescook@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs in mind (for KVM to isolate its guests per CPU)
+References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+        <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
+        <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+Date:   Mon, 03 Sep 2018 16:51:35 +0200
+In-Reply-To: <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+        (Linus Torvalds's message of "Sat, 1 Sep 2018 14:38:43 -0700")
+Message-ID: <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GPOl6LAGMgeiWDic"
-Content-Disposition: inline
-In-Reply-To: <20180903144937.16507-2-m.szyprowski@samsung.com>
-X-Cookie: Inside, I'm already SOBBING!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
---GPOl6LAGMgeiWDic
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, Aug 31, 2018 at 12:45 AM Julian Stecklina <jsteckli@amazon.de> wrote:
+>>
+>> I've been spending some cycles on the XPFO patch set this week. For the
+>> patch set as it was posted for v4.13, the performance overhead of
+>> compiling a Linux kernel is ~40% on x86_64[1]. The overhead comes almost
+>> completely from TLB flushing. If we can live with stale TLB entries
+>> allowing temporary access (which I think is reasonable), we can remove
+>> all TLB flushing (on x86). This reduces the overhead to 2-3% for
+>> kernel compile.
+>
+> I have to say, even 2-3% for a kernel compile sounds absolutely horrendous.
 
-On Mon, Sep 03, 2018 at 04:49:36PM +0200, Marek Szyprowski wrote:
-> regulator_pm_ops with regulator_suspend and regulator_resume functions are
-> assigned to every regulator device registered in the system, so there is no
-> need to iterate over all again in them. Replace class_for_each_device()
-> construction with direct operation on the rdev embedded in the given
-> regulator device. This saves a lots of useless operations in suspend and
-> resume paths.
+Well, it's at least in a range where it doesn't look hopeless.
 
-This would've been better as the second patch since it's an optimization
-and not so urgent for stable.
+> Kernel bullds are 90% user space at least for me, so a 2-3% slowdown
+> from a kernel is not some small unnoticeable thing.
 
---GPOl6LAGMgeiWDic
-Content-Type: application/pgp-signature; name="signature.asc"
+The overhead seems to come from the hooks that XPFO adds to
+alloc/free_pages. These hooks add a couple of atomic operations per
+allocated (4K) page for book keeping. Some of these atomic ops are only
+for debugging and could be removed. There is also some opportunity to
+streamline the per-page space overhead of XPFO.
 
------BEGIN PGP SIGNATURE-----
+I'll do some more in-depth profiling later this week.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluNTpYACgkQJNaLcl1U
-h9BGjwgAhqUvyqpcWaCsmLIX1szG4WYuI0Ua2w6alah6E0DCv9DmKhmQIaM1183d
-0zl5xuVGz+r5NJs6y0BcBNwBCeZ0hCMjyBAlEGntirc0MPhhtatDhVnbO89yESEK
-jrIOTDJPDw1A4pZbBdTQ+6Wlr6HP1nABPEYS0bZXVIPC8W3BLcJPqOtM6t4XVULc
-C6eNPp4h54OKLzLVSiiOVx1+NZoF7BMEipOn1KMMTlwjHQVi/foQPO8+pd0j2YSl
-UcTkbxXQnCrc0K09ifDpi7b4TRBZOs6eieSZExbd53TeMSCRzcEP464TU11fcTyN
-ymaU7JRgZq0GtuQ0E2frYjvkhYOJsw==
-=HzOk
------END PGP SIGNATURE-----
+Julian
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
 
---GPOl6LAGMgeiWDic--
