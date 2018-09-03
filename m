@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F11C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7723FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A26920867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A26920867
+	by mail.kernel.org (Postfix) with ESMTP id 3C1B42077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1B42077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729086AbeICVfd (ORCPT
+        id S1729185AbeICVfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:35:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42224 "EHLO
+        Mon, 3 Sep 2018 17:35:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42236 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbeICVfc (ORCPT
+        with ESMTP id S1727595AbeICVfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:35:32 -0400
+        Mon, 3 Sep 2018 17:35:37 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C56BCD02;
-        Mon,  3 Sep 2018 17:14:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 730C7D02;
+        Mon,  3 Sep 2018 17:14:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCH 4.9 104/107] power: generic-adc-battery: fix out-of-bounds write when copying channel properties
-Date:   Mon,  3 Sep 2018 18:57:08 +0200
-Message-Id: <20180903165643.861674468@linuxfoundation.org>
+Subject: [PATCH 4.9 105/107] power: generic-adc-battery: check for duplicate properties copied from iio channels
+Date:   Mon,  3 Sep 2018 18:57:09 +0200
+Message-Id: <20180903165643.926585982@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,37 +52,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: H. Nikolaus Schaller <hns@goldelico.com>
 
-commit 932d47448c3caa0fa99e84d7f5bc302aa286efd8 upstream.
+commit a427503edaaed9b75ed9746a654cece7e93e60a8 upstream.
 
-We did have sporadic problems in the pinctrl framework during boot
-where a pin group name unexpectedly became NULL leading to a NULL
-dereference in strcmp.
+If an iio channel defines a basic property, there are duplicate entries
+in /sys/class/power/*/uevent.
 
-Detailled analysis of the failing cases did reveal that there were
-two devm allocated objects close to each other. The second one was
-the affected group_desc in pinmux and the first one was the
-psy_desc->properties buffer of the gab driver.
-
-Review of the gab code showed that the address calculation for
-one memcpy() is wrong. It does
-
-	properties + sizeof(type) * index
-
-but C is defined to do the index multiplication already for
-pointer + integer additions. Hence the factor was applied twice
-and the memcpy() does write outside of the properties buffer.
-Sometimes it happened to be the pinctrl and triggered the strcmp(NULL).
-
-Anyways, it is overkill to use a memcpy() here instead of a simple
-assignment, which is easier to read and has less risk for wrong
-address calculations. So we change code to a simple assignment.
-
-If we initialize the index to the first free location, we can even
-remove the local variable 'properties'.
-
-This bug seems to exist right from the beginning in 3.7-rc1 in
-
-commit e60fea794e6e ("power: battery: Generic battery driver using IIO")
+So add a check to avoid duplicates. Since all channels may be duplicates,
+we have to modify the related error check.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 Cc: stable@vger.kernel.org
@@ -91,58 +67,43 @@ Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/generic-adc-battery.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/power/supply/generic-adc-battery.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 --- a/drivers/power/supply/generic-adc-battery.c
 +++ b/drivers/power/supply/generic-adc-battery.c
-@@ -243,10 +243,9 @@ static int gab_probe(struct platform_dev
- 	struct power_supply_desc *psy_desc;
- 	struct power_supply_config psy_cfg = {};
- 	struct gab_platform_data *pdata = pdev->dev.platform_data;
--	enum power_supply_property *properties;
+@@ -246,6 +246,7 @@ static int gab_probe(struct platform_dev
  	int ret = 0;
  	int chan;
--	int index = 0;
-+	int index = ARRAY_SIZE(gab_props);
+ 	int index = ARRAY_SIZE(gab_props);
++	bool any = false;
  
  	adc_bat = devm_kzalloc(&pdev->dev, sizeof(*adc_bat), GFP_KERNEL);
  	if (!adc_bat) {
-@@ -280,8 +279,6 @@ static int gab_probe(struct platform_dev
- 	}
- 
- 	memcpy(psy_desc->properties, gab_props, sizeof(gab_props));
--	properties = (enum power_supply_property *)
--			((char *)psy_desc->properties + sizeof(gab_props));
- 
- 	/*
- 	 * getting channel from iio and copying the battery properties
-@@ -295,15 +292,12 @@ static int gab_probe(struct platform_dev
+@@ -292,12 +293,22 @@ static int gab_probe(struct platform_dev
  			adc_bat->channel[chan] = NULL;
  		} else {
  			/* copying properties for supported channels only */
--			memcpy(properties + sizeof(*(psy_desc->properties)) * index,
--					&gab_dyn_props[chan],
--					sizeof(gab_dyn_props[chan]));
--			index++;
-+			psy_desc->properties[index++] = gab_dyn_props[chan];
+-			psy_desc->properties[index++] = gab_dyn_props[chan];
++			int index2;
++
++			for (index2 = 0; index2 < index; index2++) {
++				if (psy_desc->properties[index2] ==
++				    gab_dyn_props[chan])
++					break;	/* already known */
++			}
++			if (index2 == index)	/* really new */
++				psy_desc->properties[index++] =
++					gab_dyn_props[chan];
++			any = true;
  		}
  	}
  
  	/* none of the channels are supported so let's bail out */
--	if (index == 0) {
-+	if (index == ARRAY_SIZE(gab_props)) {
+-	if (index == ARRAY_SIZE(gab_props)) {
++	if (!any) {
  		ret = -ENODEV;
  		goto second_mem_fail;
  	}
-@@ -314,7 +308,7 @@ static int gab_probe(struct platform_dev
- 	 * as come channels may be not be supported by the device.So
- 	 * we need to take care of that.
- 	 */
--	psy_desc->num_properties = ARRAY_SIZE(gab_props) + index;
-+	psy_desc->num_properties = index;
- 
- 	adc_bat->psy = power_supply_register(&pdev->dev, psy_desc, &psy_cfg);
- 	if (IS_ERR(adc_bat->psy)) {
 
 
