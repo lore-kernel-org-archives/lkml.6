@@ -2,309 +2,131 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94D1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB54C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463F220861
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E3EE20861
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:13:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxuLEU5C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463F220861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjF+sFmW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3EE20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lab.ntt.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeICGaZ (ORCPT
+        id S1727381AbeICGbO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:30:25 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39057 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbeICGaY (ORCPT
+        Mon, 3 Sep 2018 02:31:14 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43364 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeICGbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:30:24 -0400
-Received: by mail-qt0-f196.google.com with SMTP id o15-v6so20330335qtk.6
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 19:12:28 -0700 (PDT)
+        Mon, 3 Sep 2018 02:31:14 -0400
+Received: by mail-pl1-f194.google.com with SMTP id x6-v6so7889587plv.10;
+        Sun, 02 Sep 2018 19:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
+        d=gmail.com; s=20161025;
+        h=sender:date:message-id:to:cc:subject:from:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8fi9x/RisPL+D9C6t54Lc+QeKHTyACdZt1WFUW+fkak=;
-        b=gxuLEU5CJrFvZsBNHuNXfF3mcQCbH8xdlg6+7KBNqGfZA89C/cE5J60hdI0g6ibtZb
-         SSdaY+7TN1ySp7zIZEzuYf3+1x7GsGufT5ABCdWheCPFwihcFE1LYNKgKOrq8bSAE3MP
-         tDdt2m9hoxErzScDDxVEX9hLnNg3ZTkmhqSJQ=
+        bh=NSX+pTaCSyP3Wnp4IRwBcUSmlRinWn3ytHgI9N+Ydms=;
+        b=hjF+sFmWU5pNhvMZYIbQPVHpaFpNua17D7Efl4p4ebp/GRr46sT0hWBKsciHWOsgLz
+         /4sGd1k/LvMsgHr/PHoORay2WuBuB1mrgr1aClrJk69lQpWLlN7bFa9os/aOShk/0hA6
+         Q+rsuQjd8g/eD1nHM/yHJ6doQi7Ez1+DTGyvviQobAJIoayoj133RAnyBFt89E9T07gx
+         HnLKpaSpVybRW30S8J7/1uqSnPS4oKga+Y6JXU+HJz74sqOF7jOpo2UMnZojLobFtdUT
+         C2Ymmf90ZYfjMMeUEfN381DHTFKrkfTjOq4QCKBwZnolMRFiKkXXIXAlE+wXwWz8qR2y
+         GYSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8fi9x/RisPL+D9C6t54Lc+QeKHTyACdZt1WFUW+fkak=;
-        b=eB003Tbx0U5nPCd0K+6GK/NuUvNgdkJXxSOVyhpGvv1AMFZ+tJUIE7xEI32K9W9WNm
-         ZpQapt0+tGIubtl4I+ogOXGXo6/7NTGGHf7NlJsXlE9x3C4aTIJiKa2c6SrfEj7b43z1
-         W2UrXxSZl1HFHZLWwqOuDBxgspMsbVuhkCIErPBcfCOTmAQNyCpCRj91GWYGTpYYTSTX
-         9xdH+/F58yZ0sPz3S74/1IVRnMz35d/cbVq7mZGflyloMRXRYSc7sAec3axNuelC3KIf
-         O7z7ttJKuPvev1zWtybgremDZRhsuz9knoKdHj6llcki7gulOCsN/txPENFNP/Dzaxd+
-         Dykw==
-X-Gm-Message-State: APzg51DK/8ZS4yMbqq+KwIMJmpU/qlU9bsTfLK7wJ86c9L7AMfxDNRXw
-        YAPdxMd+r9JiWUMTsXjTrW5A3g==
-X-Google-Smtp-Source: ANB0VdagTl6SnR4KiNq5Qwwn3gca4nZ5rm07if2T4BB/xBnNsfAfSKdzyYczAGrnCAR+iRqTCs+YSw==
-X-Received: by 2002:ac8:6715:: with SMTP id e21-v6mr25173091qtp.306.1535940747856;
-        Sun, 02 Sep 2018 19:12:27 -0700 (PDT)
-Received: from mobile.celeiro.br ([168.181.50.182])
-        by smtp.gmail.com with ESMTPSA id d138-v6sm9369060qke.18.2018.09.02.19.12.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 19:12:27 -0700 (PDT)
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-To:     shuah@kernel.org
-Cc:     rafael.tinoco@linaro.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] membarrier_test: work in progress
-Date:   Sun,  2 Sep 2018 23:12:23 -0300
-Message-Id: <20180903021223.8216-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.19.0.rc1
-In-Reply-To: <1a86c3c5-66f5-24d8-4fcc-367302ecec35@kernel.org>
-References: <1a86c3c5-66f5-24d8-4fcc-367302ecec35@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:sender:date:message-id:to:cc:subject:from
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=NSX+pTaCSyP3Wnp4IRwBcUSmlRinWn3ytHgI9N+Ydms=;
+        b=IyMrON+9kDlxbVXnfrHkpCFVo74PiKyfH74xpROdu8AaBK0a8aTBAri4iLLMtEV4h2
+         7HvvVKg1AN4XHmlyYfQ74Ts31xXfKA07M/FbRWuJMWu9B9T7TF5yeOThwibgEn7iJikX
+         rJQGmQstXfZHe5lLB2nBPbIoAtYcSTWkELbeIbsbf2lr2vdNXU1sx/PNqGCk4oQEyody
+         Nyi7Gi/rAwLKFClqx7grFFjFR+oYbi6EVZXc57YeihfZZyYOwskQF+AUnL/ALypdF1So
+         4hdsu/giD9Ci+tNhwCq6KJo+BAebUVuyoxfVmlMZ5+egl2VXZ7FcgZS5xv7hHaE7GHgx
+         oQGw==
+X-Gm-Message-State: APzg51D9XhXuP/FEf1c4BZmQY9bJZgjYbx+/3iArr7iLbfql/SfxKOBj
+        4jkM2NdnrFO5nmEnB0RZcfE=
+X-Google-Smtp-Source: ANB0Vdbv1YhBIMZtw8wKCyfg6viDBK4ls7J9jAO7POvdNxvA3ngag6tzTprQy2ES5TB3Gxve8pxykA==
+X-Received: by 2002:a17:902:5a3:: with SMTP id f32-v6mr26494624plf.286.1535940797686;
+        Sun, 02 Sep 2018 19:13:17 -0700 (PDT)
+Received: from localhost (40.68.239.49.rev.vmobile.jp. [49.239.68.40])
+        by smtp.gmail.com with ESMTPSA id q62-v6sm25478275pfi.185.2018.09.02.19.13.12
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 02 Sep 2018 19:13:16 -0700 (PDT)
+Date:   Mon, 03 Sep 2018 11:13:10 +0900 (JST)
+Message-Id: <20180903.111310.853324894545237861.konishi.ryusuke@lab.ntt.co.jp>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
+        tytso@mit.edu, adilger.kernel@dilger.ca, axboe@kernel.dk,
+        darrick.wong@oracle.com, ebiggers@google.com, pombredanne@nexb.com,
+        agruenba@redhat.com, gregkh@linuxfoundation.org,
+        kemi.wang@intel.com, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH v2] fs: Convert return type int to vm_fault_t
+From:   Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+In-Reply-To: <20180830163352.5a96cc721ce069bed95fdbe8@linux-foundation.org>
+References: <20180830172547.GA4408@jordon-HP-15-Notebook-PC>
+        <20180830163352.5a96cc721ce069bed95fdbe8@linux-foundation.org>
+X-Mailer: Mew version 6.6 on Emacs 24.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shuah,
+Hi Souptick,
 
-This is a draft only. I will remove summary from the top, run checkers,
-etc. Im thinking in replacing membarrier_test entirely with this code
-(compatible to existing one). Right now, this code:
+On Thu, 30 Aug 2018 16:33:52 -0700, Andrew Morton wrote:
+> On Thu, 30 Aug 2018 22:55:47 +0530 Souptick Joarder wrote:
+> 
+>> Return type for fault handlers  in ext4 and nilfs are
+>> changed to use vm_fault_t.
+>> 
+>> Return type of block_page_mkwrite() is changed from
+>> int to vm_fault_t. The function signature of
+>> block_page_mkwrite() is changed to add one new parameter
+>> int *err. This will provide a way for caller functions
+>> to get error value along with return value and use it
+>> further.
+>> 
+>> Return type of block_page_mkwrite_return() is also changed
+>> to use new vm_fault_t type.
+>> --- a/fs/nilfs2/file.c
+>> +++ b/fs/nilfs2/file.c
+>> @@ -51,13 +51,14 @@ int nilfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+>>  	return err;
+>>  }
+>>  
+>> -static int nilfs_page_mkwrite(struct vm_fault *vmf)
+>> +static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
+> 
+> nilfs_page_mkwrite() already has return type vm_fault_t in Linus's
+> kernel, due to the now-merged
+> fs-nilfs2-adding-new-return-type-vm_fault_t.patch.  Looks like a simple
+> fix.
 
- - allows each test to succeed, fail or be skipped independently
- - allows each test to be tested even when not supported (force option)
- - considers false negatives and false positives on every case
- - can be extended easily
+In the first patch in this thread, this return type change was
+excluded correctly for nilfs_page_mkwrite() though the changelog was
+inaccurate in that sense.
 
-Right now, just to show as an example, it gives us:
+Please confirm your base point of the revised patch.
 
-TAP version 13
-ok 1 sys_membarrier(): cmd_query succeeded.
-ok 2 sys_membarrier(): bad_cmd failed as expected.
-ok 3 sys_membarrier(): cmd_with_flags_set failed as expected.
-ok 4 sys_membarrier(): cmd_global succeeded.
-Pass 4 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..4
+Regards,
+Ryusuke Konishi
 
-Are you okay with such move ? Only big TODO here is adding all covered
-tests in the test array (easy move), testing all combinations with all
-supported kernel versions (lab already ready) and suggesting it to you,
-replacing membarrier_test.c.
 
-PS: This is pretty close to how a LTP test would be, using their new
-API, but, since it addresses your concerns and seems like a
-simple/clean, code, I decided to suggest it as a replacement here (and
-it also fixes the issue with this test and LTS kernels).
----
- tools/testing/selftests/membarrier/Makefile   |   2 +-
- .../selftests/membarrier/membarrier_test2.c   | 180 ++++++++++++++++++
- 2 files changed, 181 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/membarrier/membarrier_test2.c
-
-diff --git a/tools/testing/selftests/membarrier/Makefile b/tools/testing/selftests/membarrier/Makefile
-index 02845532b059..3d44d4cd3a9d 100644
---- a/tools/testing/selftests/membarrier/Makefile
-+++ b/tools/testing/selftests/membarrier/Makefile
-@@ -1,6 +1,6 @@
- CFLAGS += -g -I../../../../usr/include/
- 
--TEST_GEN_PROGS := membarrier_test
-+TEST_GEN_PROGS := membarrier_test membarrier_test2
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/membarrier/membarrier_test2.c b/tools/testing/selftests/membarrier/membarrier_test2.c
-new file mode 100644
-index 000000000000..8fa1be6156fb
---- /dev/null
-+++ b/tools/testing/selftests/membarrier/membarrier_test2.c
-@@ -0,0 +1,180 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <linux/membarrier.h>
-+#include <syscall.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <string.h>
-+
-+#include "../kselftest.h"
-+/*
-+	MEMBARRIER_CMD_QUERY
-+		returns membarrier_cmd with supported features
-+	MEMBARRIER_CMD_GLOBAL
-+		returns 0
-+		EINVAL = if nohz_full is enabled
-+	MEMBARRIER_CMD_GLOBAL_EXPEDITED
-+		returns 0
-+	MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED
-+		returns 0
-+	MEMBARRIER_CMD_PRIVATE_EXPEDITED
-+		returns 0
-+		EINVAL = if CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE is not enabled
-+		EPERM  = if process did not register for PRIVATE_EXPEDITED
-+	MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED
-+		returns 0
-+		EINVAL = if CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE is not enabled
-+	MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE
-+		returns 0
-+		EINVAL = if CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE is not enabled
-+		EPERM = if process did not register for PRIVATE_EXPEDITED
-+	MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE
-+		returns 0
-+		EINVAL = if CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE is not enabled
-+*/
-+
-+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-+
-+struct memb_tests {
-+	char testname[80];
-+	int command;
-+	int flags;
-+	int exp_ret;
-+	int exp_errno;
-+	int supported;
-+	int force;
-+};
-+
-+struct memb_tests mbt[] = {
-+	{
-+	 .testname = "bad_cmd\0",
-+	 .command = -1,
-+	 .exp_ret = -1,
-+	 .exp_errno = EINVAL,
-+	 .supported = 1,
-+	 },
-+	{
-+	 .testname = "cmd_with_flags_set\0",
-+	 .command = MEMBARRIER_CMD_QUERY,
-+	 .flags = 1,
-+	 .exp_ret = -1,
-+	 .exp_errno = EINVAL,
-+	 .supported = 1,
-+	 },
-+	{
-+	 .testname = "cmd_global\0",
-+	 .command = MEMBARRIER_CMD_GLOBAL,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 },
-+};
-+
-+static void info_passed_ok(struct memb_tests test)
-+{
-+	ksft_test_result_pass("sys_membarrier(): %s succeeded.\n",
-+			test.testname);
-+}
-+
-+static void info_passed_unexpectedly(struct memb_tests test)
-+{
-+	ksft_test_result_fail("sys_membarrier(): %s passed unexpectedly. "
-+			"ret = %d with errno %d were expected.\n",
-+			test.testname, test.exp_ret, test.exp_errno);
-+}
-+
-+static void info_failed_ok(struct memb_tests test)
-+{
-+	ksft_test_result_pass("sys_membarrier(): %s failed as expected.\n",
-+			test.testname);
-+}
-+
-+static void info_failed_not_ok(struct memb_tests test, int gotret, int goterr)
-+{
-+	ksft_test_result_fail("sys_membarrier(): %s failed as expected. "
-+			"ret = %d when expected was %d. "
-+			"errno = %d when expected was %d.\n",
-+			test.testname, gotret, test.exp_ret, goterr,
-+			test.exp_errno);
-+}
-+
-+static void info_failed_unexpectedly(struct memb_tests test, int gotret, int goterr)
-+{
-+	ksft_test_result_fail("sys_membarrier(): %s failed unexpectedly. "
-+			"Got ret = %d with errno %d.\n",
-+			test.testname, gotret, goterr);
-+}
-+
-+static void info_skipped(struct memb_tests test)
-+{
-+	ksft_test_result_skip("sys_membarrier(): %s unsupported, test skipped.\n",
-+			test.testname);
-+}
-+
-+static int sys_membarrier(int cmd, int flags)
-+{
-+	return syscall(__NR_membarrier, cmd, flags);
-+}
-+
-+static void test_membarrier_tests(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(mbt); i++) {
-+
-+		if (mbt[i].supported != 1 && mbt[i].force != 1) {
-+			info_skipped(mbt[i]);
-+			continue;
-+		}
-+
-+		/* membarrier command should be evaluated */
-+		ret = sys_membarrier(mbt[i].command, mbt[i].flags);
-+
-+		if (ret == mbt[i].exp_ret) {
-+
-+			if (ret >= 0)
-+				info_passed_ok(mbt[i]);
-+			else {
-+				if (errno != mbt[i].exp_errno)
-+					info_failed_not_ok(mbt[i], ret, errno);
-+				else
-+					info_failed_ok(mbt[i]);
-+			}
-+
-+		} else {
-+			if (ret >= 0)
-+				info_passed_unexpectedly(mbt[i]);
-+			else
-+				info_failed_unexpectedly(mbt[i], ret, errno);
-+		}
-+	}
-+}
-+
-+static int test_membarrier_prepare(void)
-+{
-+	int i, ret;
-+
-+	ret = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
-+	if (ret < 0) {
-+		if (errno == ENOSYS)
-+			ksft_exit_skip("sys_membarrier(): CONFIG_MEMBARRIER is disabled.\n");
-+
-+		ksft_exit_fail_msg("sys_membarrier(): cmd_query failed.\n");
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(mbt); i++) {
-+		if ((mbt[i].command > 0) && (ret & mbt[i].command))
-+			mbt[i].supported = 1;
-+	}
-+
-+	ksft_test_result_pass("sys_membarrier(): cmd_query succeeded.\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	ksft_print_header();
-+
-+	test_membarrier_prepare();
-+	test_membarrier_tests();
-+
-+	return ksft_exit_pass();
-+}
--- 
-2.19.0.rc1
-
+> 
+> I'm beginning to feel vm_fault_t exhaustion.  Please remind me what
+> benefit we're going to get out of all this churn?
+> 
+>> 
+>> ...
+>>
