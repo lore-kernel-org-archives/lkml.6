@@ -3,97 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D4BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB50CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B2F20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:59:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B2F20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 91B6120843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B6120843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeICTTk (ORCPT
+        id S1727483AbeICTUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:19:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:35464 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbeICTTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:19:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 07:59:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
-   d="scan'208";a="88600012"
-Received: from speedy.fi.intel.com (HELO [10.237.72.71]) ([10.237.72.71])
-  by orsmga002.jf.intel.com with ESMTP; 03 Sep 2018 07:59:04 -0700
-Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        lenb@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
-Cc:     mgorman@techsingularity.net, currojerez@riseup.net,
-        ggherdovich@suse.cz, peterz@infradead.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com>
-From:   Eero Tamminen <eero.t.tamminen@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Message-ID: <1244c5d6-460e-0e0b-b7bf-a46e73327383@intel.com>
-Date:   Mon, 3 Sep 2018 18:10:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Sep 2018 15:20:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34903 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTUC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:20:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83ExMNp3340271
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Sep 2018 07:59:22 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83ExMVr3340268;
+        Mon, 3 Sep 2018 07:59:22 -0700
+Date:   Mon, 3 Sep 2018 07:59:22 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Juergen Gross <tipbot@zytor.com>
+Message-ID: <tip-5def7a4cd5bef80f7c997cf37c09022fa8c9cd76@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, jgross@suse.com, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+          jgross@suse.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180828074026.820-10-jgross@suse.com>
+References: <20180828074026.820-10-jgross@suse.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/paravirt] x86/paravirt: Remove unused paravirt bits
+Git-Commit-ID: 5def7a4cd5bef80f7c997cf37c09022fa8c9cd76
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  5def7a4cd5bef80f7c997cf37c09022fa8c9cd76
+Gitweb:     https://git.kernel.org/tip/5def7a4cd5bef80f7c997cf37c09022fa8c9cd76
+Author:     Juergen Gross <jgross@suse.com>
+AuthorDate: Tue, 28 Aug 2018 09:40:20 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 3 Sep 2018 16:50:35 +0200
 
-On 31.08.2018 20:28, Srinivas Pandruvada wrote:
-...
-> As per testing Eero Tamminen, the results are comparable to the patchset
-> https://patchwork.kernel.org/patch/10312259/
-> But he has to watch results for several days to check trend.
+x86/paravirt: Remove unused paravirt bits
 
-It's close, but there is some gap compared to Francisco's version.
+The macros ENABLE_INTERRUPTS_SYSEXIT, GET_CR0_INTO_EAX and
+PARAVIRT_ADJUST_EXCEPTION_FRAME are used nowhere.
 
-(Because of the large variance on TDP limited devices, and factors 
-causing extra perf differences e.g. between boots, it's hard to give 
-exact number without having trends from several days / weeks.  I would 
-also need new version of Fransisco's patch set that applies to latest 
-kernel like yours does.)
+Remove their definitions.
 
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: xen-devel@lists.xenproject.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: akataria@vmware.com
+Cc: rusty@rustcorp.com.au
+Cc: boris.ostrovsky@oracle.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/20180828074026.820-10-jgross@suse.com
 
-> Since here boost is getting limited to turbo and non turbo, we need some
-> ways to adjust the fractions corresponding to max non turbo as well. It
-> is much easier to use the actual P-state limits for boost instead of
-> fractions. So here P-state io boost limit is applied on top of the
-> P-state limit calculated via current algorithm by removing current
-> io_wait boost calculation using fractions.
-> 
-> Since we prefer to use common algorithm for all processor platforms, this
-> change was tested on other client and sever platforms as well. All results
-> were within the margin of errors. Results:
-> https://bugzilla.kernel.org/attachment.cgi?id=278149
+---
+ arch/x86/include/asm/irqflags.h | 4 ----
+ arch/x86/include/asm/paravirt.h | 9 +--------
+ arch/x86/kernel/asm-offsets.c   | 1 -
+ 3 files changed, 1 insertion(+), 13 deletions(-)
 
-Good.
-
-Francisco, how well the listed PTS tests cover latency bound cases you 
-were concerned about?  [1]
-
-
-	- Eero
-
-[1] Fransisco was concerned that the patch:
-* trade-off might regress latency bound cases (which I haven't tested, I 
-tested only 3D throughput), and
-* that it addressed only other of the sources of energy inefficiencies 
-he had identified (which could explain slightly better 3D results from 
-his more complex patch set).
-
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 15450a675031..088b0e751b3e 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -135,8 +135,6 @@ static inline notrace unsigned long arch_local_irq_save(void)
+  */
+ #define SWAPGS_UNSAFE_STACK	swapgs
+ 
+-#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
+-
+ #define INTERRUPT_RETURN	jmp native_iret
+ #define USERGS_SYSRET64				\
+ 	swapgs;					\
+@@ -150,8 +148,6 @@ static inline notrace unsigned long arch_local_irq_save(void)
+ #endif
+ #else
+ #define INTERRUPT_RETURN		iret
+-#define ENABLE_INTERRUPTS_SYSEXIT	sti; sysexit
+-#define GET_CR0_INTO_EAX		movl %cr0, %eax
+ #endif
+ 
+ 
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index a9189b81c7dd..2ba23e98c5cd 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -887,14 +887,7 @@ extern void default_banner(void);
+ 		  call PARA_INDIRECT(pv_ops+PV_IRQ_irq_enable);		\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+-#ifdef CONFIG_X86_32
+-#define GET_CR0_INTO_EAX				\
+-	push %ecx; push %edx;				\
+-	ANNOTATE_RETPOLINE_SAFE;				\
+-	call PARA_INDIRECT(pv_ops+PV_CPU_read_cr0);	\
+-	pop %edx; pop %ecx
+-#else	/* !CONFIG_X86_32 */
+-
++#ifdef CONFIG_X86_64
+ /*
+  * If swapgs is used while the userspace stack is still current,
+  * there's no way to call a pvop.  The PV replacement *must* be
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index 46d14498e214..37e323f3d8c9 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -69,7 +69,6 @@ void common(void) {
+ 	OFFSET(PV_IRQ_irq_disable, paravirt_patch_template, irq.irq_disable);
+ 	OFFSET(PV_IRQ_irq_enable, paravirt_patch_template, irq.irq_enable);
+ 	OFFSET(PV_CPU_iret, paravirt_patch_template, cpu.iret);
+-	OFFSET(PV_CPU_read_cr0, paravirt_patch_template, cpu.read_cr0);
+ 	OFFSET(PV_MMU_read_cr2, paravirt_patch_template, mmu.read_cr2);
+ #endif
+ 
