@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7965DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4469C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4110A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4110A2086A
+	by mail.kernel.org (Postfix) with ESMTP id 88CF32086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CF32086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbeICVp3 (ORCPT
+        id S1730528AbeICVpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:45:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45510 "EHLO
+        Mon, 3 Sep 2018 17:45:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbeICVp2 (ORCPT
+        with ESMTP id S1729531AbeICVpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:45:28 -0400
+        Mon, 3 Sep 2018 17:45:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 069CAD24;
-        Mon,  3 Sep 2018 17:24:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12162D2F;
+        Mon,  3 Sep 2018 17:24:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
-        matt@codeblueprint.co.uk, bigeasy@linutronix.de
-Subject: [PATCH 4.14 104/165] stop_machine: Atomically queue and wake stopper threads
-Date:   Mon,  3 Sep 2018 18:56:30 +0200
-Message-Id: <20180903165700.729141940@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 105/165] ext4: check for NUL characters in extended attributes name
+Date:   Mon,  3 Sep 2018 18:56:31 +0200
+Message-Id: <20180903165700.788970414@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,97 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prasad Sodagudi <psodagud@codeaurora.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit cfd355145c32bb7ccb65fccbe2d67280dc2119e1 upstream.
+commit 7d95178c77014dbd8dce36ee40bbbc5e6c121ff5 upstream.
 
-When cpu_stop_queue_work() releases the lock for the stopper
-thread that was queued into its wake queue, preemption is
-enabled, which leads to the following deadlock:
+Extended attribute names are defined to be NUL-terminated, so the name
+must not contain a NUL character.  This is important because there are
+places when remove extended attribute, the code uses strlen to
+determine the length of the entry.  That should probably be fixed at
+some point, but code is currently really messy, so the simplest fix
+for now is to simply validate that the extended attributes are sane.
 
-CPU0                              CPU1
-sched_setaffinity(0, ...)
-__set_cpus_allowed_ptr()
-stop_one_cpu(0, ...)              stop_two_cpus(0, 1, ...)
-cpu_stop_queue_work(0, ...)       cpu_stop_queue_two_works(0, ..., 1, ...)
+https://bugzilla.kernel.org/show_bug.cgi?id=200401
 
--grabs lock for migration/0-
-                                  -spins with preemption disabled,
-                                   waiting for migration/0's lock to be
-                                   released-
-
--adds work items for migration/0
-and queues migration/0 to its
-wake_q-
-
--releases lock for migration/0
- and preemption is enabled-
-
--current thread is preempted,
-and __set_cpus_allowed_ptr
-has changed the thread's
-cpu allowed mask to CPU1 only-
-
-                                  -acquires migration/0 and migration/1's
-                                   locks-
-
-                                  -adds work for migration/0 but does not
-                                   add migration/0 to wake_q, since it is
-                                   already in a wake_q-
-
-                                  -adds work for migration/1 and adds
-                                   migration/1 to its wake_q-
-
-                                  -releases migration/0 and migration/1's
-                                   locks, wakes migration/1, and enables
-                                   preemption-
-
-                                  -since migration/1 is requested to run,
-                                   migration/1 begins to run and waits on
-                                   migration/0, but migration/0 will never
-                                   be able to run, since the thread that
-                                   can wake it is affine to CPU1-
-
-Disable preemption in cpu_stop_queue_work() before queueing works for
-stopper threads, and queueing the stopper thread in the wake queue, to
-ensure that the operation of queueing the works and waking the stopper
-threads is atomic.
-
-Fixes: 0b26351b910f ("stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock")
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: peterz@infradead.org
-Cc: matt@codeblueprint.co.uk
-Cc: bigeasy@linutronix.de
-Cc: gregkh@linuxfoundation.org
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1533329766-4856-1-git-send-email-isaacm@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Co-Developed-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-
 ---
- kernel/stop_machine.c |    2 ++
+ fs/ext4/xattr.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -81,6 +81,7 @@ static bool cpu_stop_queue_work(unsigned
- 	unsigned long flags;
- 	bool enabled;
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -189,6 +189,8 @@ ext4_xattr_check_entries(struct ext4_xat
+ 		struct ext4_xattr_entry *next = EXT4_XATTR_NEXT(e);
+ 		if ((void *)next >= end)
+ 			return -EFSCORRUPTED;
++		if (strnlen(e->e_name, e->e_name_len) != e->e_name_len)
++			return -EFSCORRUPTED;
+ 		e = next;
+ 	}
  
-+	preempt_disable();
- 	raw_spin_lock_irqsave(&stopper->lock, flags);
- 	enabled = stopper->enabled;
- 	if (enabled)
-@@ -90,6 +91,7 @@ static bool cpu_stop_queue_work(unsigned
- 	raw_spin_unlock_irqrestore(&stopper->lock, flags);
- 
- 	wake_up_q(&wakeq);
-+	preempt_enable();
- 
- 	return enabled;
- }
 
 
