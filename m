@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27542C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E7CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA3220658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA3220658
+	by mail.kernel.org (Postfix) with ESMTP id F3A192077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A192077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731441AbeICV4F (ORCPT
+        id S1731452AbeICV4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:56:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47886 "EHLO
+        Mon, 3 Sep 2018 17:56:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeICV4D (ORCPT
+        with ESMTP id S1730976AbeICV4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:56:03 -0400
+        Mon, 3 Sep 2018 17:56:07 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCA60D1B;
-        Mon,  3 Sep 2018 17:34:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF55AD24;
+        Mon,  3 Sep 2018 17:34:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4.18 053/123] x86/speculation/l1tf: Suggest what to do on systems with too much RAM
-Date:   Mon,  3 Sep 2018 18:56:37 +0200
-Message-Id: <20180903165721.693973721@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matt Rickard <matt@softrans.com.au>,
+        Borislav Petkov <bp@alien8.de>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 4.18 054/123] x86/vdso: Fix vDSO build if a retpoline is emitted
+Date:   Mon,  3 Sep 2018 18:56:38 +0200
+Message-Id: <20180903165721.731635398@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -54,46 +56,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 6a012288d6906fee1dbc244050ade1dafe4a9c8d upstream.
+commit 2e549b2ee0e358bc758480e716b881f9cabedb6a upstream.
 
-Two users have reported [1] that they have an "extremely unlikely" system
-with more than MAX_PA/2 memory and L1TF mitigation is not effective.
+Currently, if the vDSO ends up containing an indirect branch or
+call, GCC will emit the "external thunk" style of retpoline, and it
+will fail to link.
 
-Make the warning more helpful by suggesting the proper mem=X kernel boot
-parameter to make it effective and a link to the L1TF document to help
-decide if the mitigation is worth the unusable RAM.
+Fix it by building the vDSO with inline retpoline thunks.
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
+I haven't seen any reports of this triggering on an unpatched
+kernel.
 
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Matt Rickard <matt@softrans.com.au>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz
+Link: https://lkml.kernel.org/r/c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ Makefile                     |    4 ++++
+ arch/x86/entry/vdso/Makefile |    6 ++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -686,6 +686,10 @@ static void __init l1tf_select_mitigatio
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
- 	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
-+				half_pa);
-+		pr_info("However, doing so will make a part of your RAM unusable.\n");
-+		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html might help you decide.\n");
- 		return;
- 	}
+--- a/Makefile
++++ b/Makefile
+@@ -493,9 +493,13 @@ KBUILD_AFLAGS += $(call cc-option, -no-i
+ endif
  
+ RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
+ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
+ RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
++RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
+ export RETPOLINE_CFLAGS
++export RETPOLINE_VDSO_CFLAGS
+ 
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+ KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -72,9 +72,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.d
+ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+-       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
++       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
+ 
+-$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
++$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+ 
+ #
+ # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
+@@ -138,11 +138,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmode
+ KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
++KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
+ KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
++KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+ 
+ $(obj)/vdso32.so.dbg: FORCE \
 
 
