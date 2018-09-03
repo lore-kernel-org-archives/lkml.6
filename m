@@ -2,207 +2,118 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2CCC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB18C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3979720869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:51:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3979720869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B487B20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:53:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B487B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeIDCNK (ORCPT
+        id S1727501AbeIDCPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 22:13:10 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:57379 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbeIDCNJ (ORCPT
+        Mon, 3 Sep 2018 22:15:32 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40648 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbeIDCPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 22:13:09 -0400
-Received: by mail-it0-f70.google.com with SMTP id e6-v6so1780998itc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 14:51:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=1/BJ3rmkTYwMGgXKsWFUV/8GeAE2v02unE4bdenhK+0=;
-        b=kIkL63GwJVYG/GJZseKdqoaQCMDXX1Cn3ARLKW++dNQAL1UuudHi+yYRNy0lrQOfXK
-         /Pmrb/h+DBnzkyGt5jKvFuRO8vk9JZ0kEGo9ghOrtSwHcJFuojFE6zExxZXCRDzmDxZ3
-         xW1Sfqmu7y9ECo1QTmeUbd0eV4lME8CSOHmvgPoYbmxSj7Jad3ousqYe+dh/PpVzewOt
-         TQ19JlxC+pkNG6bLznBkDaqW2YTAOKe7rpax7DoppeZgRiKAKmottLlo1b3akbEt5Qac
-         8PNnJLm68qxS5Cogl64IPL0lNl13JDr91zQdcB43dI6N3VbSWqvWhonu6Ied+rlv3lC4
-         vu7w==
-X-Gm-Message-State: APzg51AHxdtlrLaBHRJg5bvvtep67/RJfTK02HK9OVZXf315rlyvXRTQ
-        +KDjLCRpT06r8E1oVYhKIddQTVpZv0BcfUnyBEU4Dx/CQt15
-X-Google-Smtp-Source: ANB0VdbVcfQ0JGDgUAoeX9LPkMVYCisbwMfFJmBee0qt4di8W4SVz4W98yf/pWNk9ZFkghQPDqwLyMlKIzaNQ9AWujSnNIyf1iJZ
+        Mon, 3 Sep 2018 22:15:32 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B0B5280642; Mon,  3 Sep 2018 23:53:23 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 23:53:23 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     bjorn.andersson@linaro.org, Baolin Wang <baolin.wang@linaro.org>,
+        rteysseyre@gmail.com, broonie@kernel.org, linus.walleij@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] leds: core: Introduce LED pattern trigger
+Message-ID: <20180903215323.GA21489@amd>
+References: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
+ <ef266d4a-ba0e-cba6-ae30-ebbf730e28a2@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:3b04:: with SMTP id c4-v6mr12320455jaa.22.1536011462826;
- Mon, 03 Sep 2018 14:51:02 -0700 (PDT)
-Date:   Mon, 03 Sep 2018 14:51:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009ce64e0574fe896e@google.com>
-Subject: KASAN: use-after-free Read in string
-From:   syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
-To:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rydberg@bitmath.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+In-Reply-To: <ef266d4a-ba0e-cba6-ae30-ebbf730e28a2@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    58c3f14f86c9 Merge tag 'riscv-for-linus-4.19-rc2' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15506dc1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-dashboard link: https://syzkaller.appspot.com/bug?extid=f648cfb7e0b52bf7ae32
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1178aa46400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11735e0a400000
+Hi!
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com
+> > +static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
+> > +{
+> > +	struct pattern_trig_data *data =3D led_cdev->trigger_data;
+> > +
+> > +	if (!data->npatterns)
+> > +		return 0;
+> > +
+> > +	if (data->is_hw_pattern) {
+> > +		return led_cdev->pattern_set(led_cdev, data->patterns,
+> > +					     data->npatterns, data->repeat);
+> > +	}
+>=20
+> I have doubts here if it is a good idea to enforce array of tuples
+> as a generic interface for all hw_patterns. It may not fit well for
+> every hw pattern engine. It seems that the only feasible solution will
+> be allowing drivers to come up with their own interfaces, i.e. the
+> approach you proposed at first for your driver. It seems that the
+> ledtrig-pattern with software pattern mechanism will be just
+> a nice side effect of this series :-)
+>=20
+> Unless someone will propose a better solution.
 
-RDX: 0000000000000001 RSI: 0000000000005502 RDI: 0000000000000004
-RBP: 00000000006cf018 R08: 0000000000000001 R09: 0000000000000038
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000006
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-==================================================================
-BUG: KASAN: use-after-free in string+0x2c6/0x2d0 lib/vsprintf.c:604
-Read of size 1 at addr ffff8801d79c5080 by task syz-executor215/4685
+I believe array of tuples will work for everyone. It is just a LED, it
+can change intensity over time.
 
-CPU: 1 PID: 4685 Comm: syz-executor215 Not tainted 4.19.0-rc1+ #215
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  string+0x2c6/0x2d0 lib/vsprintf.c:604
-  vsnprintf+0x48f/0x1b60 lib/vsprintf.c:2293
-  add_uevent_var+0x140/0x2f0 lib/kobject_uevent.c:659
-  input_dev_uevent+0x15d/0x860 drivers/input/input.c:1594
-  dev_uevent+0x340/0x7e0 drivers/base/core.c:1008
-  kobject_uevent_env+0x45b/0x1110 lib/kobject_uevent.c:547
-  kobject_uevent+0x1f/0x30 lib/kobject_uevent.c:636
-  kobject_cleanup lib/kobject.c:649 [inline]
-  kobject_release lib/kobject.c:691 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  kobject_put+0x1fb/0x280 lib/kobject.c:708
-  put_device+0x20/0x30 drivers/base/core.c:2024
-  input_put_device include/linux/input.h:349 [inline]
-  evdev_free+0x4f/0x70 drivers/input/evdev.c:369
-  device_release+0x7e/0x210 drivers/base/core.c:891
-  kobject_cleanup lib/kobject.c:662 [inline]
-  kobject_release lib/kobject.c:691 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  kobject_put+0x194/0x280 lib/kobject.c:708
-  cdev_default_release+0x3e/0x50 fs/char_dev.c:607
-  kobject_cleanup lib/kobject.c:662 [inline]
-  kobject_release lib/kobject.c:691 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  kobject_put+0x194/0x280 lib/kobject.c:708
-  cdev_put.part.0+0x36/0x50 fs/char_dev.c:368
-  cdev_put+0x1f/0x30 fs/char_dev.c:366
-  __fput+0x8ae/0xa40 fs/file_table.c:281
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1ae4/0x26e0 kernel/exit.c:867
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  __do_sys_exit_group kernel/exit.c:981 [inline]
-  __se_sys_exit_group kernel/exit.c:979 [inline]
-  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x443a68
-Code: Bad RIP value.
-RSP: 002b:00007fff70261298 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000443a68
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004c39c8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d5180 R14: 0000000000000000 R15: 0000000000000000
+> We need a broader consensus here. I'd like to hear Pavel's opinion,
+> since he's been always in favor of common pattern interface, and
+> inspired this work.
 
-Allocated by task 4685:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc_track_caller+0x14a/0x720 mm/slab.c:3733
-  kstrndup+0x5f/0xe0 mm/util.c:98
-  uinput_setup_device_legacy drivers/input/misc/uinput.c:549 [inline]
-  uinput_write+0x2fb/0x1120 drivers/input/misc/uinput.c:621
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+I believe Baolin did good work here. I believe it will cover most, if
+not all, hardware engines out there. I think we should merge it, and
+see what happens -- it should be good enough.
 
-Freed by task 4685:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x210 mm/slab.c:3813
-  uinput_destroy_device+0xf8/0x250 drivers/input/misc/uinput.c:310
-  uinput_ioctl_handler.isra.10+0x1439/0x2540 drivers/input/misc/uinput.c:880
-  uinput_ioctl+0x4c/0x60 drivers/input/misc/uinput.c:1047
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+(Yes, there's still more work to do, but that will be stuff like RGB
+LED synchronization.)
 
-The buggy address belongs to the object at ffff8801d79c5080
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
-  32-byte region [ffff8801d79c5080, ffff8801d79c50a0)
-The buggy address belongs to the page:
-page:ffffea00075e7140 count:1 mapcount:0 mapping:ffff8801dac001c0  
-index:0xffff8801d79c5fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00075e0908 ffffea00075e7408 ffff8801dac001c0
-raw: ffff8801d79c5fc1 ffff8801d79c5000 000000010000003f 0000000000000000
-page dumped because: kasan: bad access detected
+(And yes, one of the LED chip has pattern engine that can compute
+prime numbers on its own. I don't expect to support
+_that_. Fortunately, nobody but me is likely to want that pattern, so
+we are still okay :-)=20
 
-Memory state around the buggy address:
-  ffff8801d79c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801d79c5000: 00 00 fc fc fc fc fc fc 00 00 00 fc fc fc fc fc
-> ffff8801d79c5080: fb fb fb fb fc fc fc fc 07 fc fc fc fc fc fc fc
-                    ^
-  ffff8801d79c5100: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d79c5180: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
+https://gitlab.com/tui/tui/blob/master/ofone/tests.notcc/primes.nc
 
+)
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluNrVMACgkQMOfwapXb+vJ5fgCfZH6qXX2O1Uaq4FdANEL8rNhR
+BdcAn0Q95ZTd5C2NKYMwtmkOQWSzc+Lg
+=7xnK
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
