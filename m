@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C15FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79160C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 421DF20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421DF20658
+	by mail.kernel.org (Postfix) with ESMTP id 3F15020658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F15020658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbeICV5i (ORCPT
+        id S1731646AbeICV5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:57:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48126 "EHLO
+        Mon, 3 Sep 2018 17:57:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbeICV5i (ORCPT
+        with ESMTP id S1728786AbeICV5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:57:38 -0400
+        Mon, 3 Sep 2018 17:57:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38926D16;
-        Mon,  3 Sep 2018 17:36:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6867BD16;
+        Mon,  3 Sep 2018 17:36:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 078/123] scsi: qla2xxx: Fix stalled relogin
-Date:   Mon,  3 Sep 2018 18:57:02 +0200
-Message-Id: <20180903165722.852999575@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Neves <sneves@dei.uc.pt>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 4.18 079/123] x86/vdso: Fix lsl operand order
+Date:   Mon,  3 Sep 2018 18:57:03 +0200
+Message-Id: <20180903165722.897093143@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,45 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Samuel Neves <sneves@dei.uc.pt>
 
-commit 15b6c3c9568765f0717b2dd3aa67a5f7eadd9734 upstream.
+commit e78e5a91456fcecaa2efbb3706572fe043766f4d upstream.
 
-This patch sets and clears FCF_ASYNC_{SENT|ACTIVE} flags to prevent
-stalling of relogin attempt. Once flag are correctly set/cleared, relogin
-timer can retry relogin attempt for driver to continue login.
+In the __getcpu function, lsl is using the wrong target and destination
+registers. Luckily, the compiler tends to choose %eax for both variables,
+so it has been working so far.
 
-Fixes: fa83e65885b9 ("scsi: qla2xxx: ensure async flags are reset correctly")
-Cc: stable@vger.kernel.org #4.17
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: a582c540ac1b ("x86/vdso: Use RDPID in preference to LSL when available")
+Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180901201452.27828-1-sneves@dei.uc.pt
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    2 +-
- drivers/scsi/qla2xxx/qla_iocb.c |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/vgtod.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -382,7 +382,7 @@ qla2x00_async_adisc_sp_done(void *ptr, i
- 	    "Async done-%s res %x %8phC\n",
- 	    sp->name, res, sp->fcport->port_name);
- 
--	sp->fcport->flags &= ~FCF_ASYNC_SENT;
-+	sp->fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
- 
- 	memset(&ea, 0, sizeof(ea));
- 	ea.event = FCME_ADISC_DONE;
---- a/drivers/scsi/qla2xxx/qla_iocb.c
-+++ b/drivers/scsi/qla2xxx/qla_iocb.c
-@@ -2656,6 +2656,7 @@ qla24xx_els_dcmd2_iocb(scsi_qla_host_t *
- 	ql_dbg(ql_dbg_io, vha, 0x3073,
- 	    "Enter: PLOGI portid=%06x\n", fcport->d_id.b24);
- 
-+	fcport->flags |= FCF_ASYNC_SENT;
- 	sp->type = SRB_ELS_DCMD;
- 	sp->name = "ELS_DCMD";
- 	sp->fcport = fcport;
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -93,7 +93,7 @@ static inline unsigned int __getcpu(void
+ 	 *
+ 	 * If RDPID is available, use it.
+ 	 */
+-	alternative_io ("lsl %[p],%[seg]",
++	alternative_io ("lsl %[seg],%[p]",
+ 			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
+ 			X86_FEATURE_RDPID,
+ 			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
 
 
