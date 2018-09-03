@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ABCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3BDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47DD820658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DD820658
+	by mail.kernel.org (Postfix) with ESMTP id 3599120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3599120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731121AbeICVxO (ORCPT
+        id S1731151AbeICVxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:53:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47288 "EHLO
+        Mon, 3 Sep 2018 17:53:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47300 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbeICVxO (ORCPT
+        with ESMTP id S1728303AbeICVxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:53:14 -0400
+        Mon, 3 Sep 2018 17:53:19 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91B61D18;
-        Mon,  3 Sep 2018 17:32:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2471DD18;
+        Mon,  3 Sep 2018 17:32:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Wilck <martin.wilck@suse.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 019/123] Btrfs: fix send failure when root has deleted files still open
-Date:   Mon,  3 Sep 2018 18:56:03 +0200
-Message-Id: <20180903165720.310967323@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.18 002/123] scripts/kernel-doc: Escape all literal braces in regexes
+Date:   Mon,  3 Sep 2018 18:55:46 +0200
+Message-Id: <20180903165719.598713258@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,275 +51,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 46b2f4590aab71d31088a265c86026b1e96c9de4 upstream.
+commit 673bb2dfc36488abfdbbfc2ce2631204eaf682f2 upstream.
 
-The more common use case of send involves creating a RO snapshot and then
-use it for a send operation. In this case it's not possible to have inodes
-in the snapshot that have a link count of zero (inode with an orphan item)
-since during snapshot creation we do the orphan cleanup. However, other
-less common use cases for send can end up seeing inodes with a link count
-of zero and in this case the send operation fails with a ENOENT error
-because any attempt to generate a path for the inode, with the purpose
-of creating it or updating it at the receiver, fails since there are no
-inode reference items. One use case it to use a regular subvolume for
-a send operation after turning it to RO mode or turning a RW snapshot
-into RO mode and then using it for a send operation. In both cases, if a
-file gets all its hard links deleted while there is an open file
-descriptor before turning the subvolume/snapshot into RO mode, the send
-operation will encounter an inode with a link count of zero and then
-fail with errno ENOENT.
+Commit 701b3a3c0ac4 ("PATCH scripts/kernel-doc") fixed the two
+instances of literal braces that Perl 5.28 warns about, but there are
+still more than it doesn't warn about.
 
-Example using a full send with a subvolume:
+Escape all left braces that are treated as literal characters.  Also
+escape literal right braces, for consistency and to avoid confusing
+bracket-matching in text editors.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
-
-  $ btrfs subvolume create /mnt/sv1
-  $ touch /mnt/sv1/foo
-  $ touch /mnt/sv1/bar
-
-  # keep an open file descriptor on file bar
-  $ exec 73</mnt/sv1/bar
-  $ unlink /mnt/sv1/bar
-
-  # Turn the subvolume to RO mode and use it for a full send, while
-  # holding the open file descriptor.
-  $ btrfs property set /mnt/sv1 ro true
-
-  $ btrfs send -f /tmp/full.send /mnt/sv1
-  At subvol /mnt/sv1
-  ERROR: send ioctl failed with -2: No such file or directory
-
-Example using an incremental send with snapshots:
-
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
-
-  $ btrfs subvolume create /mnt/sv1
-  $ touch /mnt/sv1/foo
-  $ touch /mnt/sv1/bar
-
-  $ btrfs subvolume snapshot -r /mnt/sv1 /mnt/snap1
-
-  $ echo "hello world" >> /mnt/sv1/bar
-
-  $ btrfs subvolume snapshot -r /mnt/sv1 /mnt/snap2
-
-  # Turn the second snapshot to RW mode and delete file foo while
-  # holding an open file descriptor on it.
-  $ btrfs property set /mnt/snap2 ro false
-  $ exec 73</mnt/snap2/foo
-  $ unlink /mnt/snap2/foo
-
-  # Set the second snapshot back to RO mode and do an incremental send.
-  $ btrfs property set /mnt/snap2 ro true
-
-  $ btrfs send -f /tmp/inc.send -p /mnt/snap1 /mnt/snap2
-  At subvol /mnt/snap2
-  ERROR: send ioctl failed with -2: No such file or directory
-
-So fix this by ignoring inodes with a link count of zero if we are either
-doing a full send or if they do not exist in the parent snapshot (they
-are new in the send snapshot), and unlink all paths found in the parent
-snapshot when doing an incremental send (and ignoring all other inode
-items, such as xattrs and extents).
-
-A test case for fstests follows soon.
-
-CC: stable@vger.kernel.org # 4.4+
-Reported-by: Martin Wilck <martin.wilck@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/send.c |  137 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 129 insertions(+), 8 deletions(-)
+ scripts/kernel-doc |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -100,6 +100,7 @@ struct send_ctx {
- 	u64 cur_inode_rdev;
- 	u64 cur_inode_last_extent;
- 	u64 cur_inode_next_write_offset;
-+	bool ignore_cur_inode;
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1062,7 +1062,7 @@ sub dump_struct($$) {
+     my $x = shift;
+     my $file = shift;
  
- 	u64 send_progress;
- 
-@@ -5799,6 +5800,9 @@ static int finish_inode_if_needed(struct
- 	int pending_move = 0;
- 	int refs_processed = 0;
- 
-+	if (sctx->ignore_cur_inode)
-+		return 0;
-+
- 	ret = process_recorded_refs_if_needed(sctx, at_end, &pending_move,
- 					      &refs_processed);
- 	if (ret < 0)
-@@ -5917,6 +5921,93 @@ out:
- 	return ret;
- }
- 
-+struct parent_paths_ctx {
-+	struct list_head *refs;
-+	struct send_ctx *sctx;
-+};
-+
-+static int record_parent_ref(int num, u64 dir, int index, struct fs_path *name,
-+			     void *ctx)
-+{
-+	struct parent_paths_ctx *ppctx = ctx;
-+
-+	return record_ref(ppctx->sctx->parent_root, dir, name, ppctx->sctx,
-+			  ppctx->refs);
-+}
-+
-+/*
-+ * Issue unlink operations for all paths of the current inode found in the
-+ * parent snapshot.
-+ */
-+static int btrfs_unlink_all_paths(struct send_ctx *sctx)
-+{
-+	LIST_HEAD(deleted_refs);
-+	struct btrfs_path *path;
-+	struct btrfs_key key;
-+	struct parent_paths_ctx ctx;
-+	int ret;
-+
-+	path = alloc_path_for_send();
-+	if (!path)
-+		return -ENOMEM;
-+
-+	key.objectid = sctx->cur_ino;
-+	key.type = BTRFS_INODE_REF_KEY;
-+	key.offset = 0;
-+	ret = btrfs_search_slot(NULL, sctx->parent_root, &key, path, 0, 0);
-+	if (ret < 0)
-+		goto out;
-+
-+	ctx.refs = &deleted_refs;
-+	ctx.sctx = sctx;
-+
-+	while (true) {
-+		struct extent_buffer *eb = path->nodes[0];
-+		int slot = path->slots[0];
-+
-+		if (slot >= btrfs_header_nritems(eb)) {
-+			ret = btrfs_next_leaf(sctx->parent_root, path);
-+			if (ret < 0)
-+				goto out;
-+			else if (ret > 0)
-+				break;
-+			continue;
-+		}
-+
-+		btrfs_item_key_to_cpu(eb, &key, slot);
-+		if (key.objectid != sctx->cur_ino)
-+			break;
-+		if (key.type != BTRFS_INODE_REF_KEY &&
-+		    key.type != BTRFS_INODE_EXTREF_KEY)
-+			break;
-+
-+		ret = iterate_inode_ref(sctx->parent_root, path, &key, 1,
-+					record_parent_ref, &ctx);
-+		if (ret < 0)
-+			goto out;
-+
-+		path->slots[0]++;
-+	}
-+
-+	while (!list_empty(&deleted_refs)) {
-+		struct recorded_ref *ref;
-+
-+		ref = list_first_entry(&deleted_refs, struct recorded_ref, list);
-+		ret = send_unlink(sctx, ref->full_path);
-+		if (ret < 0)
-+			goto out;
-+		fs_path_free(ref->full_path);
-+		list_del(&ref->list);
-+		kfree(ref);
-+	}
-+	ret = 0;
-+out:
-+	btrfs_free_path(path);
-+	if (ret)
-+		__free_recorded_refs(&deleted_refs);
-+	return ret;
-+}
-+
- static int changed_inode(struct send_ctx *sctx,
- 			 enum btrfs_compare_tree_result result)
- {
-@@ -5931,6 +6022,7 @@ static int changed_inode(struct send_ctx
- 	sctx->cur_inode_new_gen = 0;
- 	sctx->cur_inode_last_extent = (u64)-1;
- 	sctx->cur_inode_next_write_offset = 0;
-+	sctx->ignore_cur_inode = false;
- 
- 	/*
- 	 * Set send_progress to current inode. This will tell all get_cur_xxx
-@@ -5971,6 +6063,33 @@ static int changed_inode(struct send_ctx
- 			sctx->cur_inode_new_gen = 1;
+-    if ($x =~ /(struct|union)\s+(\w+)\s*{(.*)}/) {
++    if ($x =~ /(struct|union)\s+(\w+)\s*\{(.*)\}/) {
+ 	my $decl_type = $1;
+ 	$declaration_name = $2;
+ 	my $members = $3;
+@@ -1148,20 +1148,20 @@ sub dump_struct($$) {
+ 				}
+ 			}
+ 		}
+-		$members =~ s/(struct|union)([^\{\};]+)\{([^\{\}]*)}([^\{\}\;]*)\;/$newmember/;
++		$members =~ s/(struct|union)([^\{\};]+)\{([^\{\}]*)\}([^\{\}\;]*)\;/$newmember/;
  	}
  
-+	/*
-+	 * Normally we do not find inodes with a link count of zero (orphans)
-+	 * because the most common case is to create a snapshot and use it
-+	 * for a send operation. However other less common use cases involve
-+	 * using a subvolume and send it after turning it to RO mode just
-+	 * after deleting all hard links of a file while holding an open
-+	 * file descriptor against it or turning a RO snapshot into RW mode,
-+	 * keep an open file descriptor against a file, delete it and then
-+	 * turn the snapshot back to RO mode before using it for a send
-+	 * operation. So if we find such cases, ignore the inode and all its
-+	 * items completely if it's a new inode, or if it's a changed inode
-+	 * make sure all its previous paths (from the parent snapshot) are all
-+	 * unlinked and all other the inode items are ignored.
-+	 */
-+	if (result == BTRFS_COMPARE_TREE_NEW ||
-+	    result == BTRFS_COMPARE_TREE_CHANGED) {
-+		u32 nlinks;
-+
-+		nlinks = btrfs_inode_nlink(sctx->left_path->nodes[0], left_ii);
-+		if (nlinks == 0) {
-+			sctx->ignore_cur_inode = true;
-+			if (result == BTRFS_COMPARE_TREE_CHANGED)
-+				ret = btrfs_unlink_all_paths(sctx);
-+			goto out;
-+		}
-+	}
-+
- 	if (result == BTRFS_COMPARE_TREE_NEW) {
- 		sctx->cur_inode_gen = left_gen;
- 		sctx->cur_inode_new = 1;
-@@ -6309,15 +6428,17 @@ static int changed_cb(struct btrfs_path
- 	    key->objectid == BTRFS_FREE_SPACE_OBJECTID)
- 		goto out;
+ 	# Ignore other nested elements, like enums
+-	$members =~ s/(\{[^\{\}]*})//g;
++	$members =~ s/(\{[^\{\}]*\})//g;
  
--	if (key->type == BTRFS_INODE_ITEM_KEY)
-+	if (key->type == BTRFS_INODE_ITEM_KEY) {
- 		ret = changed_inode(sctx, result);
--	else if (key->type == BTRFS_INODE_REF_KEY ||
--		 key->type == BTRFS_INODE_EXTREF_KEY)
--		ret = changed_ref(sctx, result);
--	else if (key->type == BTRFS_XATTR_ITEM_KEY)
--		ret = changed_xattr(sctx, result);
--	else if (key->type == BTRFS_EXTENT_DATA_KEY)
--		ret = changed_extent(sctx, result);
-+	} else if (!sctx->ignore_cur_inode) {
-+		if (key->type == BTRFS_INODE_REF_KEY ||
-+		    key->type == BTRFS_INODE_EXTREF_KEY)
-+			ret = changed_ref(sctx, result);
-+		else if (key->type == BTRFS_XATTR_ITEM_KEY)
-+			ret = changed_xattr(sctx, result);
-+		else if (key->type == BTRFS_EXTENT_DATA_KEY)
-+			ret = changed_extent(sctx, result);
-+	}
+ 	create_parameterlist($members, ';', $file, $declaration_name);
+ 	check_sections($file, $declaration_name, $decl_type, $sectcheck, $struct_actual);
  
- out:
- 	return ret;
+ 	# Adjust declaration for better display
+-	$declaration =~ s/([{;])/$1\n/g;
+-	$declaration =~ s/}\s+;/};/g;
++	$declaration =~ s/([\{;])/$1\n/g;
++	$declaration =~ s/\}\s+;/};/g;
+ 	# Better handle inlined enums
+-	do {} while ($declaration =~ s/(enum\s+{[^}]+),([^\n])/$1,\n$2/);
++	do {} while ($declaration =~ s/(enum\s+\{[^\}]+),([^\n])/$1,\n$2/);
+ 
+ 	my @def_args = split /\n/, $declaration;
+ 	my $level = 1;
+@@ -1171,12 +1171,12 @@ sub dump_struct($$) {
+ 		$clause =~ s/\s+$//;
+ 		$clause =~ s/\s+/ /;
+ 		next if (!$clause);
+-		$level-- if ($clause =~ m/(})/ && $level > 1);
++		$level-- if ($clause =~ m/(\})/ && $level > 1);
+ 		if (!($clause =~ m/^\s*#/)) {
+ 			$declaration .= "\t" x $level;
+ 		}
+ 		$declaration .= "\t" . $clause . "\n";
+-		$level++ if ($clause =~ m/(\{)/ && !($clause =~m/}/));
++		$level++ if ($clause =~ m/(\{)/ && !($clause =~m/\}/));
+ 	}
+ 	output_declaration($declaration_name,
+ 			   'struct',
+@@ -1244,7 +1244,7 @@ sub dump_enum($$) {
+     # strip #define macros inside enums
+     $x =~ s@#\s*((define|ifdef)\s+|endif)[^;]*;@@gos;
+ 
+-    if ($x =~ /enum\s+(\w+)\s*{(.*)}/) {
++    if ($x =~ /enum\s+(\w+)\s*\{(.*)\}/) {
+ 	$declaration_name = $1;
+ 	my $members = $2;
+ 	my %_members;
+@@ -1785,7 +1785,7 @@ sub process_proto_type($$) {
+     }
+ 
+     while (1) {
+-	if ( $x =~ /([^{};]*)([{};])(.*)/ ) {
++	if ( $x =~ /([^\{\};]*)([\{\};])(.*)/ ) {
+             if( length $prototype ) {
+                 $prototype .= " "
+             }
 
 
