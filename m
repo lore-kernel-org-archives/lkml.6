@@ -2,39 +2,42 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E81C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62543C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B084F20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B084F20867
+	by mail.kernel.org (Postfix) with ESMTP id 27AA020779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27AA020779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbeICVLg (ORCPT
+        id S1727962AbeICVLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36154 "EHLO
+        Mon, 3 Sep 2018 17:11:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeICVLf (ORCPT
+        with ESMTP id S1727523AbeICVLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:11:35 -0400
+        Mon, 3 Sep 2018 17:11:39 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67D98CF5;
-        Mon,  3 Sep 2018 16:50:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C3A8CEE;
+        Mon,  3 Sep 2018 16:50:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 18/56] can: mpc5xxx_can: check of_iomap return before use
-Date:   Mon,  3 Sep 2018 18:49:08 +0200
-Message-Id: <20180903164925.002804055@linuxfoundation.org>
+Subject: [PATCH 3.18 19/56] media: staging: omap4iss: Include asm/cacheflush.h after generic includes
+Date:   Mon,  3 Sep 2018 18:49:09 +0200
+Message-Id: <20180903164925.048470666@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -51,36 +54,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit b5c1a23b17e563b656cc9bb76ce5323b997d90e8 ]
+[ Upstream commit 0894da849f145af51bde88a6b84f95b9c9e0bc66 ]
 
-of_iomap() can return NULL so that return needs to be checked and NULL
-treated as failure. While at it also take care of the missing
-of_node_put() in the error path.
+Including asm/cacheflush.h first results in the following build error
+when trying to build sparc32:allmodconfig, because 'struct page' has not
+been declared, and the function declaration ends up creating a separate
+(private) declaration of struct page (as a result of function arguments
+being in the scope of the function declaration and definition, not in
+global scope).
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+The C scoping rules do not just affect variable visibility, they also
+affect type declaration visibility.
+
+The end result is that when the actual call site is seen in
+<linux/highmem.h>, the 'struct page' type in the caller is not the same
+'struct page' that the function was declared with, resulting in:
+
+  In file included from arch/sparc/include/asm/page.h:10:0,
+                   ...
+                   from drivers/staging/media/omap4iss/iss_video.c:15:
+  include/linux/highmem.h: In function 'clear_user_highpage':
+  include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible
+	pointer type
+
+Include generic includes files first to fix the problem.
+
+Fixes: fc96d58c10162 ("[media] v4l: omap4iss: Add support for OMAP4 camera interface - Video devices")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: David S. Miller <davem@davemloft.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+[ Added explanation of C scope rules - Linus ]
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/mscan/mpc5xxx_can.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/staging/media/omap4iss/iss_video.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/mscan/mpc5xxx_can.c
-+++ b/drivers/net/can/mscan/mpc5xxx_can.c
-@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct
- 		return 0;
- 	}
- 	cdm = of_iomap(np_cdm, 0);
-+	if (!cdm) {
-+		of_node_put(np_cdm);
-+		dev_err(&ofdev->dev, "can't map clock node!\n");
-+		return 0;
-+	}
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -11,7 +11,6 @@
+  * (at your option) any later version.
+  */
  
- 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
- 		freq *= 2;
+-#include <asm/cacheflush.h>
+ #include <linux/clk.h>
+ #include <linux/mm.h>
+ #include <linux/pagemap.h>
+@@ -22,6 +21,8 @@
+ #include <media/v4l2-dev.h>
+ #include <media/v4l2-ioctl.h>
+ 
++#include <asm/cacheflush.h>
++
+ #include "iss_video.h"
+ #include "iss.h"
+ 
 
 
