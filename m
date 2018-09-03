@@ -2,73 +2,600 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B122C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE04AC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D336F20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:38:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D336F20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5148E20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="L2kBKuOD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5148E20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbeICL5a (ORCPT
+        id S1726211AbeICL54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:57:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54474 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbeICL5a (ORCPT
+        Mon, 3 Sep 2018 07:57:56 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42268 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbeICL54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:57:30 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fwjR9-0003UN-IT; Mon, 03 Sep 2018 09:38:15 +0200
-Date:   Mon, 3 Sep 2018 09:38:15 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Kevin Shanahan <kevin@shanahan.id.au>,
-        Siegfried Metz <frame@mailbox.org>,
-        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
-        len.brown@intel.com, rjw@rjwysocki.net, diego.viola@gmail.com,
-        rui.zhang@intel.com, viktor_jaegerskuepper@freenet.de
-Subject: Re: REGRESSION: boot stalls on several old dual core Intel CPUs
-In-Reply-To: <20180903072506.GS24124@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1809030937230.1349@nanos.tec.linutronix.de>
-References: <74c5abc8-7430-5bc9-2f8a-a2205608bee7@mailbox.org> <20180830130439.GM24082@hirez.programming.kicks-ass.net> <20180901022125.GO4941@tuon.disenchant.local> <20180903072506.GS24124@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 3 Sep 2018 07:57:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l5so26285edw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 00:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kdoYG5r7zuXlSSyXSrocVWu3Gj1k+5prOh6eMElBXIE=;
+        b=L2kBKuODt0lZLn2XX11qbXHBUdi74u/MrGWzGAXJFULHO8lpDTDMUZNkdKLUEXiMOt
+         HBFau2EDRV0G+cH6AYmGAoVLYqwv0vSPLLTk3FQxh1Sk555UxpAjUs4+y1/AzVm3IhgZ
+         JpJK+Vj694PQhMsmuym5bP+8/nmseKdP61kow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=kdoYG5r7zuXlSSyXSrocVWu3Gj1k+5prOh6eMElBXIE=;
+        b=sVmYlM6vPnmFt8oaNt4nNZ2KlxqFZe08VvTsq5u8kFqugBzYku2ZV40B8Nd2uwhuHu
+         GbOq0S4n8pBakAai5GkK5GM5fienYmR9/8sSCX5m+LlB4kdGsrvMRmU+Fsjqhql4BwLu
+         skJjdPY2t2d4PEd2m6peo04vzDIyTRMgVpJfoqYTNQKhdpH30hDoWlNH/nP0mJR2Wqzi
+         Z87EAFZDrWxIRsaaR3HQLXll3QW4P6/vhF5fzQC1mZb7P4Qur+RbVGNdy8V7UKqPxOyy
+         EOj6VP5VustOyHxSpLkepmWrrHmrN4CWTH2elIrT/p/N5Y8lO2bB9u1UtpDG5xD8P8ub
+         N+ew==
+X-Gm-Message-State: APzg51BbkEWQ+vSBignoA84sYc0eZjO/uyWS1d4cPIKHGe0coXwja7DX
+        gIcDGtl2gMFFomb7jg4rNRayVEJT7YOq4w==
+X-Google-Smtp-Source: ANB0VdYzbJDw4M2b+BAVSIq2dBbDuG7714ShvThz6DnHqLrxb7BvPFC2XahgIrba+lgYmnp296vmHA==
+X-Received: by 2002:a50:bc03:: with SMTP id j3-v6mr30716696edh.34.1535960339339;
+        Mon, 03 Sep 2018 00:38:59 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-109.fiber7.init7.net. [212.51.149.109])
+        by smtp.gmail.com with ESMTPSA id f13-v6sm12011554edf.50.2018.09.03.00.38.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 00:38:58 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 09:38:56 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 1/4] drm/debugfs: Add support for dynamic debugfs
+ initialization
+Message-ID: <20180903073856.GA21634@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>
+References: <20180828003635.8200-1-lyude@redhat.com>
+ <20180828003635.8200-2-lyude@redhat.com>
+ <20180831085317.GQ21634@phenom.ffwll.local>
+ <01d972a4942f28e38b4e8e3b3d05d0be3ff3449a.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01d972a4942f28e38b4e8e3b3d05d0be3ff3449a.camel@redhat.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018, Peter Zijlstra wrote:
-> On Sat, Sep 01, 2018 at 11:51:26AM +0930, Kevin Shanahan wrote:
-> > commit 01548f4d3e8e94caf323a4f664eb347fd34a34ab
-> > Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > Date:   Tue Aug 18 17:09:42 2009 +0200
+On Fri, Aug 31, 2018 at 07:31:10PM -0400, Lyude Paul wrote:
+> On Fri, 2018-08-31 at 10:53 +0200, Daniel Vetter wrote:
+> > On Mon, Aug 27, 2018 at 08:36:24PM -0400, Lyude Paul wrote:
+> > > Currently all debugfs related initialization for the DRM core happens in
+> > > drm_debugfs_init(), which is called when registering the minor device.
+> > > While this works fine for features such as atomic modesetting and GEM,
+> > > this doesn't work at all for resources like DP MST topology managers
+> > > which can potentially be created both before and after the minor
+> > > device has been registered.
+> > > 
+> > > So, in order to add driver-wide debugfs files for MST we'll need to be
+> > > able to handle debugfs initialization for such resources. We do so by
+> > > introducing drm_debugfs_callback_register() and
+> > > drm_debugfs_callback_unregister(). These functions allow driver-agnostic
+> > > parts of DRM to add additional debugfs initialization callbacks at any
+> > > point during a DRM driver's lifetime.
+> > > 
+> > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > > Cc: Daniel Stone <daniel@fooishbar.org>
 > > 
-> >     clocksource: Avoid clocksource watchdog circular locking dependency
+> > So the debugfs lifetime rules are indeed silly and broken. I'm not sure
+> > this is what we want to do though:
 > > 
-> >     stop_machine from a multithreaded workqueue is not allowed because
-> >     of a circular locking dependency between cpu_down and the workqueue
-> >     execution. Use a kernel thread to do the clocksource downgrade.
+> > - Thanks to Noralf's cleanup you don't need a debugfs cleanup callback
+> >   anymore really, it will auto-clean-up on device unregistration.
+> This is true, but the cleanup there is more-so to handle the theoretical case
+> that a driver uninitializes an MST topology mgr before the rest of debugfs is
+> torn down.
+> > 
+> > - For stuff tied to connectors we have the connector->register/unregister
+> >   callbacks. Imo connector-related debugfs stuff, like for mst, should be
+> >   put there.
 > 
-> I cannot find stop_machine usage there; either it went away or I need to
-> like wake up.
+> Since this would tie the lifetime of the debugfs files we make to the lifetime
+> of the connector, as it should be, we'd be able to pull off a much nicer
+> debugfs hierarchy:
+> 
+> /sys/kernel/debug/dri/0
+>    DP-1
+>       edid_override
+>       dp_mst
+>          status
+>    DP-2
+>       edid_override
+>       dp_mst
+>          status
+>    DP-3
+>       edid_override
+>       dp_mst
+>          status
+> 
+> The only thing I don't like about that approach though is that now we've given
+> up on the idea of these debugfs nodes being added to drivers using MST
+> automatically, since drivers wanting this would have to add calls into
+> late_register/early_unregister.
 
-timekeeping_notify() which is involved in switching clock source uses stomp
-machine.
+Yup, that's part of the fallout of insisting on the core/helper split. Mst
+is helper, ->late_register is core.
 
-Thanks,
+What we could do is combine the ->late_register callback with some of your
+ideas here, so that at least the ->early_unregister callback isn't
+necessary. So still explicit call to set up the mst connector files, but
+the cleanup would happen automatically (using a per-connector list of
+files and the fs structure you laid out above).
 
-	tglx
+> Since I think this would probably be useful for more then just connectors,
+> what if we added some sort of similar dynamic initialization system that could
+> be used per-DRM object? That way drivers would still get the debugfs files for
+> free, and we'd get a nice hierarchy and a sane way for DRM helpers to add
+> additional debugfs files to drivers for free. Assumably, such a system would
+> be added in addition to a device-wide dynamic init system like the one this
+> patch adds.
 
+I wouldn't start out with adding it everywhere, just for connectors.
+Should be easy to refactor later on if there's a need. And to be used from
+a ->late_register callback.
+
+And I really like the per-connector debugfs files.
+
+> > - debugfs_init is a dead idea, as you point out it's fundamentally racy.
+> > 
+> > - Dropping the silly notion that we have to duplicate all debugfs entries
+> >   per-minor would be really sweet (last time I checked there's not a
+> >   single debugfs file that's actually different per minor).
+> 
+> Yeah I'm down for this as well, I've never once seen anything actually use the
+> minor debugfs files. Plus, we're supposed to be able to do whatever we want in
+> debugfs anyway! So I don't see the harm in just gutting the duplicate minor
+> debugfs stuff entirely
+
+There's epic amounts of scripts and libraries (e.g. igt) hard-coding the
+dri/0/ thing. But I think we can at least convert all the others into a
+symlink to the main drm minor number.
+-Daniel
+
+> > 
+> > Cheers, Daniel
+> > 
+> > > ---
+> > >  drivers/gpu/drm/drm_debugfs.c  | 173 +++++++++++++++++++++++++++++++--
+> > >  drivers/gpu/drm/drm_drv.c      |   3 +
+> > >  drivers/gpu/drm/drm_internal.h |   5 +
+> > >  include/drm/drm_debugfs.h      |  27 +++++
+> > >  include/drm/drm_file.h         |   4 +
+> > >  5 files changed, 203 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_debugfs.c b/drivers/gpu/drm/drm_debugfs.c
+> > > index 6f28fe58f169..a53a454b167f 100644
+> > > --- a/drivers/gpu/drm/drm_debugfs.c
+> > > +++ b/drivers/gpu/drm/drm_debugfs.c
+> > > @@ -39,6 +39,13 @@
+> > >  
+> > >  #if defined(CONFIG_DEBUG_FS)
+> > >  
+> > > +struct drm_debugfs_callback {
+> > > +	void (*init)(void *data);
+> > > +	void (*cleanup_cb)(void *data);
+> > > +	void *data;
+> > > +	struct list_head list;
+> > > +};
+> > > +
+> > >  /***************************************************
+> > >   * Initialization, etc.
+> > >   **************************************************/
+> > > @@ -67,6 +74,113 @@ static const struct file_operations drm_debugfs_fops =
+> > > {
+> > >  	.release = single_release,
+> > >  };
+> > >  
+> > > +/**
+> > > + * drm_debugfs_register_callback - Register a callback for initializing
+> > > + *                                 dynamic driver-agnostic debugfs files
+> > > + * @minor: device minor number
+> > > + * @init: The callback to invoke to perform the debugfs initialization
+> > > + * @cleanup_cb: The callback to invoke to cleanup any resources for the
+> > > + * callback
+> > > + * @data: Data to pass to @init and @cleanup_cb
+> > > + * @out: Where to store the pointer to the callback struct
+> > > + *
+> > > + * Register an initialization callback with debugfs. This callback can be
+> > > used
+> > > + * to creating debugfs nodes for DRM resources that might get created
+> > > before
+> > > + * the debugfs node for @minor has been created.
+> > > + *
+> > > + * When a callback is registered with this function before the debugfs
+> > > root
+> > > + * has been created, the callback's execution will be delayed until all
+> > > other
+> > > + * debugfs nodes (including those owned by the DRM device's driver) have
+> > > been
+> > > + * instantiated. If a callback is registered with this function after the
+> > > + * debugfs root has been created, @init and @cleanup_cb will be executed
+> > > + * immediately without creating a &struct drm_debugfs_callback.
+> > > + *
+> > > + * In the event that debugfs creation for the device fails; all
+> > > registered
+> > > + * debugfs callbacks will have their @cleanup_cb callbacks invoked
+> > > without
+> > > + * having their @init callbacks invoked. This is to ensure that no
+> > > resources
+> > > + * are leaked during initialization of debugfs, even if the
+> > > initialization
+> > > + * process fails. Likewise; any callbacks that are registered after DRM
+> > > has
+> > > + * failed to initialize it's debugfs files will have their @cleanup_cb
+> > > + * callbacks invoked immediately and all of their respective resources
+> > > + * destroyed.
+> > > + *
+> > > + * Implementations of @cleanup_cb should clean up all resources for the
+> > > + * callback, with the exception of freeing the memory for @out. Freeing
+> > > @out
+> > > + * will be handled by the DRM core automatically.
+> > > + *
+> > > + * Users of this function should take care to add a symmetric call to
+> > > + * @drm_debugfs_unregister_callback to handle destroying a registered
+> > > callback
+> > > + * in case the resources for the user of this function are destroyed
+> > > before
+> > > + * debugfs root is initialized.
+> > > + *
+> > > + */
+> > > +int
+> > > +drm_debugfs_register_callback(struct drm_minor *minor,
+> > > +			      void (*init)(void *),
+> > > +			      void (*cleanup_cb)(void *),
+> > > +			      void *data, struct drm_debugfs_callback **out)
+> > > +{
+> > > +	int ret = 0;
+> > > +
+> > > +	mutex_lock(&minor->debugfs_callback_lock);
+> > > +	if (minor->debugfs_callbacks_done) {
+> > > +		/* debugfs is already setup, so just handle the callback
+> > > +		 * immediately
+> > > +		 */
+> > > +		if (minor->debugfs_root)
+> > > +			(*init)(data);
+> > > +		(*cleanup_cb)(data);
+> > > +		goto out_unlock;
+> > > +	}
+> > > +
+> > > +	*out = kzalloc(sizeof(**out), GFP_KERNEL);
+> > > +	if (!*out) {
+> > > +		ret = -ENOMEM;
+> > > +		goto out_unlock;
+> > > +	}
+> > > +
+> > > +	(*out)->init = init;
+> > > +	(*out)->cleanup_cb = cleanup_cb;
+> > > +	(*out)->data = data;
+> > > +	list_add(&(*out)->list, &minor->debugfs_callback_list);
+> > > +
+> > > +out_unlock:
+> > > +	mutex_unlock(&minor->debugfs_callback_lock);
+> > > +	return ret;
+> > > +}
+> > > +EXPORT_SYMBOL(drm_debugfs_register_callback);
+> > > +
+> > > +/**
+> > > + * drm_debugfs_unregister_callback - Unregister and release the resources
+> > > + *                                   associated with a debugfs init
+> > > callback
+> > > + * @minor: device minor number
+> > > + * @cb: A pointer to the &struct drm_debugfs_callback struct returned by
+> > > + * drm_debugfs_register_callback(). May be NULL
+> > > + *
+> > > + * Unregisters a &struct drm_debugfs_callback struct with debugfs and
+> > > destroys
+> > > + * all of it's associated resources. This includes a call to the
+> > > callback's
+> > > + * @cleanup_cb implementation.
+> > > + *
+> > > + * Once the debugfs root is initialized or has failed initialization, all
+> > > + * registered callbacks are automatically destroyed. If this function is
+> > > + * called after that point; it will automatically be a no-op.
+> > > + */
+> > > +void
+> > > +drm_debugfs_unregister_callback(struct drm_minor *minor,
+> > > +				struct drm_debugfs_callback *cb)
+> > > +{
+> > > +	mutex_lock(&minor->debugfs_callback_lock);
+> > > +	/* We don't have to do anything if we've already completed any
+> > > +	 * registered callbacks, as they will have already been destroyed
+> > > +	 */
+> > > +	if (!minor->debugfs_callbacks_done) {
+> > > +		cb->cleanup_cb(cb->data);
+> > > +		list_del(&cb->list);
+> > > +		kfree(cb);
+> > > +	}
+> > > +	mutex_unlock(&minor->debugfs_callback_lock);
+> > > +}
+> > > +EXPORT_SYMBOL(drm_debugfs_unregister_callback);
+> > >  
+> > >  /**
+> > >   * drm_debugfs_create_files - Initialize a given set of debugfs files for
+> > > DRM
+> > > @@ -126,12 +240,24 @@ int drm_debugfs_create_files(const struct
+> > > drm_info_list *files, int count,
+> > >  }
+> > >  EXPORT_SYMBOL(drm_debugfs_create_files);
+> > >  
+> > > +int drm_debugfs_alloc(struct drm_minor *minor)
+> > > +{
+> > > +	INIT_LIST_HEAD(&minor->debugfs_callback_list);
+> > > +	mutex_init(&minor->debugfs_callback_lock);
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  int drm_debugfs_init(struct drm_minor *minor, int minor_id,
+> > >  		     struct dentry *root)
+> > >  {
+> > >  	struct drm_device *dev = minor->dev;
+> > > +	struct drm_debugfs_callback *pos, *tmp;
+> > >  	char name[64];
+> > > -	int ret;
+> > > +	int ret = 0;
+> > > +
+> > > +	/* Don't allow any more callbacks to be registered while we setup */
+> > > +	mutex_lock(&minor->debugfs_callback_lock);
+> > > +	minor->debugfs_callbacks_done = true;
+> > >  
+> > >  	INIT_LIST_HEAD(&minor->debugfs_list);
+> > >  	mutex_init(&minor->debugfs_lock);
+> > > @@ -139,7 +265,8 @@ int drm_debugfs_init(struct drm_minor *minor, int
+> > > minor_id,
+> > >  	minor->debugfs_root = debugfs_create_dir(name, root);
+> > >  	if (!minor->debugfs_root) {
+> > >  		DRM_ERROR("Cannot create /sys/kernel/debug/dri/%s\n", name);
+> > > -		return -1;
+> > > +		ret = -1;
+> > > +		goto out_unlock;
+> > >  	}
+> > >  
+> > >  	ret = drm_debugfs_create_files(drm_debugfs_list, DRM_DEBUGFS_ENTRIES,
+> > > @@ -148,14 +275,14 @@ int drm_debugfs_init(struct drm_minor *minor, int
+> > > minor_id,
+> > >  		debugfs_remove(minor->debugfs_root);
+> > >  		minor->debugfs_root = NULL;
+> > >  		DRM_ERROR("Failed to create core drm debugfs files\n");
+> > > -		return ret;
+> > > +		goto out_unlock;
+> > >  	}
+> > >  
+> > >  	if (drm_core_check_feature(dev, DRIVER_ATOMIC)) {
+> > >  		ret = drm_atomic_debugfs_init(minor);
+> > >  		if (ret) {
+> > >  			DRM_ERROR("Failed to create atomic debugfs files\n");
+> > > -			return ret;
+> > > +			goto out_unlock;
+> > >  		}
+> > >  	}
+> > >  
+> > > @@ -163,13 +290,13 @@ int drm_debugfs_init(struct drm_minor *minor, int
+> > > minor_id,
+> > >  		ret = drm_framebuffer_debugfs_init(minor);
+> > >  		if (ret) {
+> > >  			DRM_ERROR("Failed to create framebuffer debugfs
+> > > file\n");
+> > > -			return ret;
+> > > +			goto out_unlock;
+> > >  		}
+> > >  
+> > >  		ret = drm_client_debugfs_init(minor);
+> > >  		if (ret) {
+> > >  			DRM_ERROR("Failed to create client debugfs file\n");
+> > > -			return ret;
+> > > +			goto out_unlock;
+> > >  		}
+> > >  	}
+> > >  
+> > > @@ -178,10 +305,23 @@ int drm_debugfs_init(struct drm_minor *minor, int
+> > > minor_id,
+> > >  		if (ret) {
+> > >  			DRM_ERROR("DRM: Driver failed to initialize "
+> > >  				  "/sys/kernel/debug/dri.\n");
+> > > -			return ret;
+> > > +			goto out_unlock;
+> > >  		}
+> > >  	}
+> > > -	return 0;
+> > > +
+> > > +out_unlock:
+> > > +	/* Execute any delayed callbacks if we succeeded, or just clean them
+> > > +	 * up without running them if we failed
+> > > +	 */
+> > > +	list_for_each_entry_safe(pos, tmp, &minor->debugfs_callback_list,
+> > > +				 list) {
+> > > +		if (!ret)
+> > > +			pos->init(pos->data);
+> > > +		pos->cleanup_cb(pos->data);
+> > > +		kfree(pos);
+> > > +	}
+> > > +	mutex_unlock(&minor->debugfs_callback_lock);
+> > > +	return ret;
+> > >  }
+> > >  
+> > >  
+> > > @@ -223,14 +363,29 @@ static void drm_debugfs_remove_all_files(struct
+> > > drm_minor *minor)
+> > >  
+> > >  int drm_debugfs_cleanup(struct drm_minor *minor)
+> > >  {
+> > > +	struct drm_debugfs_callback *pos, *tmp;
+> > > +
+> > > +	mutex_lock(&minor->debugfs_callback_lock);
+> > > +	if (!minor->debugfs_callbacks_done) {
+> > > +		list_for_each_entry_safe(pos, tmp,
+> > > +					 &minor->debugfs_callback_list,
+> > > +					 list) {
+> > > +			pos->cleanup_cb(pos->data);
+> > > +			kfree(pos);
+> > > +		}
+> > > +	}
+> > > +	minor->debugfs_callbacks_done = true;
+> > > +
+> > >  	if (!minor->debugfs_root)
+> > > -		return 0;
+> > > +		goto out;
+> > >  
+> > >  	drm_debugfs_remove_all_files(minor);
+> > >  
+> > >  	debugfs_remove_recursive(minor->debugfs_root);
+> > >  	minor->debugfs_root = NULL;
+> > >  
+> > > +out:
+> > > +	mutex_unlock(&minor->debugfs_callback_lock);
+> > >  	return 0;
+> > >  }
+> > >  
+> > > diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+> > > index ea4941da9b27..7041b3137229 100644
+> > > --- a/drivers/gpu/drm/drm_drv.c
+> > > +++ b/drivers/gpu/drm/drm_drv.c
+> > > @@ -118,6 +118,9 @@ static int drm_minor_alloc(struct drm_device *dev,
+> > > unsigned int type)
+> > >  
+> > >  	minor->type = type;
+> > >  	minor->dev = dev;
+> > > +	r = drm_debugfs_alloc(minor);
+> > > +	if (r)
+> > > +		goto err_free;
+> > >  
+> > >  	idr_preload(GFP_KERNEL);
+> > >  	spin_lock_irqsave(&drm_minor_lock, flags);
+> > > diff --git a/drivers/gpu/drm/drm_internal.h
+> > > b/drivers/gpu/drm/drm_internal.h
+> > > index 40179c5fc6b8..d6394246967d 100644
+> > > --- a/drivers/gpu/drm/drm_internal.h
+> > > +++ b/drivers/gpu/drm/drm_internal.h
+> > > @@ -118,6 +118,7 @@ void drm_gem_print_info(struct drm_printer *p,
+> > > unsigned int indent,
+> > >  
+> > >  /* drm_debugfs.c drm_debugfs_crc.c */
+> > >  #if defined(CONFIG_DEBUG_FS)
+> > > +int drm_debugfs_alloc(struct drm_minor *minor);
+> > >  int drm_debugfs_init(struct drm_minor *minor, int minor_id,
+> > >  		     struct dentry *root);
+> > >  int drm_debugfs_cleanup(struct drm_minor *minor);
+> > > @@ -127,6 +128,10 @@ int drm_debugfs_crtc_add(struct drm_crtc *crtc);
+> > >  void drm_debugfs_crtc_remove(struct drm_crtc *crtc);
+> > >  int drm_debugfs_crtc_crc_add(struct drm_crtc *crtc);
+> > >  #else
+> > > +static inline int drm_debugfs_alloc(struct drm_minor *minor)
+> > > +{
+> > > +	return 0;
+> > > +}
+> > >  static inline int drm_debugfs_init(struct drm_minor *minor, int minor_id,
+> > >  				   struct dentry *root)
+> > >  {
+> > > diff --git a/include/drm/drm_debugfs.h b/include/drm/drm_debugfs.h
+> > > index ac0f75df1ac9..6ac45d96fcd1 100644
+> > > --- a/include/drm/drm_debugfs.h
+> > > +++ b/include/drm/drm_debugfs.h
+> > > @@ -77,12 +77,23 @@ struct drm_info_node {
+> > >  	struct dentry *dent;
+> > >  };
+> > >  
+> > > +struct drm_debugfs_callback;
+> > > +
+> > >  #if defined(CONFIG_DEBUG_FS)
+> > >  int drm_debugfs_create_files(const struct drm_info_list *files,
+> > >  			     int count, struct dentry *root,
+> > >  			     struct drm_minor *minor);
+> > >  int drm_debugfs_remove_files(const struct drm_info_list *files,
+> > >  			     int count, struct drm_minor *minor);
+> > > +
+> > > +int drm_debugfs_register_callback(struct drm_minor *minor,
+> > > +				  void (*init)(void *),
+> > > +				  void (*cleanup_cb)(void *),
+> > > +				  void *data,
+> > > +				  struct drm_debugfs_callback **out);
+> > > +void drm_debugfs_unregister_callback(struct drm_minor *minor,
+> > > +				     struct drm_debugfs_callback *cb);
+> > > +
+> > >  #else
+> > >  static inline int drm_debugfs_create_files(const struct drm_info_list
+> > > *files,
+> > >  					   int count, struct dentry *root,
+> > > @@ -96,6 +107,22 @@ static inline int drm_debugfs_remove_files(const
+> > > struct drm_info_list *files,
+> > >  {
+> > >  	return 0;
+> > >  }
+> > > +
+> > > +static inline int
+> > > +drm_debugfs_register_callback(struct drm_minor *minor,
+> > > +			      void (*init)(void *),
+> > > +			      void (*cleanup_cb)(void *),
+> > > +			      void *data,
+> > > +			      struct drm_debugfs_callback **out)
+> > > +{
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static inline void
+> > > +drm_debugfs_unregister_callback(struct drm_minor *minor,
+> > > +				struct drm_debugfs_callback *cb)
+> > > +{
+> > > +}
+> > >  #endif
+> > >  
+> > >  #endif /* _DRM_DEBUGFS_H_ */
+> > > diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+> > > index 26485acc51d7..180052b51712 100644
+> > > --- a/include/drm/drm_file.h
+> > > +++ b/include/drm/drm_file.h
+> > > @@ -74,6 +74,10 @@ struct drm_minor {
+> > >  
+> > >  	struct dentry *debugfs_root;
+> > >  
+> > > +	bool debugfs_callbacks_done;
+> > > +	struct list_head debugfs_callback_list;
+> > > +	struct mutex debugfs_callback_lock;
+> > > +
+> > >  	struct list_head debugfs_list;
+> > >  	struct mutex debugfs_lock; /* Protects debugfs_list. */
+> > >  };
+> > > -- 
+> > > 2.17.1
+> > > 
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> > 
+> -- 
+> Cheers,
+> 	Lyude Paul
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
