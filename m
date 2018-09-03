@@ -6,102 +6,80 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B9DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2CDC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4CA2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:43:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4CA2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3340020658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3340020658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbeICV43 (ORCPT
+        id S1728963AbeICWFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:56:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47982 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730662AbeICV42 (ORCPT
+        Mon, 3 Sep 2018 18:05:10 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33574 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729773AbeICVye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:56:28 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D6E8D1B;
-        Mon,  3 Sep 2018 17:35:17 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.18 060/123] fuse: fix double request_end()
-Date:   Mon,  3 Sep 2018 18:56:44 +0200
-Message-Id: <20180903165721.975040144@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
-References: <20180903165719.499675257@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 3 Sep 2018 17:54:34 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id X5ZQ1y00D3XaVaC015ZQqT; Mon, 03 Sep 2018 19:33:24 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fwsj6-0001Al-7M; Mon, 03 Sep 2018 19:33:24 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fwsj6-0001wh-5Z; Mon, 03 Sep 2018 19:33:24 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: spidev_test: Improve decoded text part of hex dump
+Date:   Mon,  3 Sep 2018 19:33:23 +0200
+Message-Id: <20180903173323.7436-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+  - Print spaces as spaces,
+  - Do not print characters > 126, as they will be shown as garbage
+    in the modern UTF-8 era,
+  - Use a normal period instead of its hexadecimal ASCII value,
+  - Delimit the text part with pipe symbols on both sides (was left side
+    only), without any spaces, to make it clear where the decoded text
+    starts and ends,
+  - Drop a useless comment.
 
-------------------
-
-From: Miklos Szeredi <mszeredi@redhat.com>
-
-commit 87114373ea507895a62afb10d2910bd9adac35a8 upstream.
-
-Refcounting of request is broken when fuse_abort_conn() is called and
-request is on the fpq->io list:
-
- - ref is taken too late
- - then it is not dropped
-
-Fixes: 0d8e84b0432b ("fuse: simplify request abort")
-Cc: <stable@vger.kernel.org> # v4.2
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- fs/fuse/dev.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/spi/spidev_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -371,7 +371,7 @@ static void request_end(struct fuse_conn
- 	struct fuse_iqueue *fiq = &fc->iq;
- 
- 	if (test_and_set_bit(FR_FINISHED, &req->flags))
--		return;
-+		goto out_put_req;
- 
- 	spin_lock(&fiq->waitq.lock);
- 	list_del_init(&req->intr_entry);
-@@ -400,6 +400,7 @@ static void request_end(struct fuse_conn
- 	wake_up(&req->waitq);
- 	if (req->end)
- 		req->end(fc, req);
-+out_put_req:
- 	fuse_put_request(fc, req);
- }
- 
-@@ -2108,6 +2109,7 @@ void fuse_abort_conn(struct fuse_conn *f
- 				set_bit(FR_ABORTED, &req->flags);
- 				if (!test_bit(FR_LOCKED, &req->flags)) {
- 					set_bit(FR_PRIVATE, &req->flags);
-+					__fuse_get_request(req);
- 					list_move(&req->list, &to_end1);
- 				}
- 				spin_unlock(&req->waitq.lock);
-@@ -2134,7 +2136,6 @@ void fuse_abort_conn(struct fuse_conn *f
- 
- 		while (!list_empty(&to_end1)) {
- 			req = list_first_entry(&to_end1, struct fuse_req, list);
--			__fuse_get_request(req);
- 			list_del_init(&req->list);
- 			request_end(fc, req);
+diff --git a/tools/spi/spidev_test.c b/tools/spi/spidev_test.c
+index 8c590cd1171a99c2..4c12e6aea5d5d0d1 100644
+--- a/tools/spi/spidev_test.c
++++ b/tools/spi/spidev_test.c
+@@ -73,12 +73,12 @@ static void hex_dump(const void *src, size_t length, size_t line_size,
+ 				while (i++ % line_size)
+ 					printf("__ ");
+ 			}
+-			printf(" | ");  /* right close */
++			printf(" |");
+ 			while (line < address) {
+ 				c = *line++;
+-				printf("%c", (c < 33 || c == 255) ? 0x2E : c);
++				printf("%c", (c < 32 || c > 126) ? '.' : c);
+ 			}
+-			printf("\n");
++			printf("|\n");
+ 			if (length > 0)
+ 				printf("%s | ", prefix);
  		}
-
+-- 
+2.17.1
 
