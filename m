@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12114C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA9EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3BD02077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BD02077C
+	by mail.kernel.org (Postfix) with ESMTP id 2506B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2506B2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbeICViu (ORCPT
+        id S1730232AbeICViy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42892 "EHLO
+        Mon, 3 Sep 2018 17:38:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeICViu (ORCPT
+        with ESMTP id S1727695AbeICVix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:50 -0400
+        Mon, 3 Sep 2018 17:38:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BF7FD13;
-        Mon,  3 Sep 2018 17:17:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 239D1D14;
+        Mon,  3 Sep 2018 17:17:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hailong Liu <liu.hailong6@zte.com.cn>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, zhong.weidong@zte.com.cn,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 049/165] sched/rt: Restore rt_runtime after disabling RT_RUNTIME_SHARE
-Date:   Mon,  3 Sep 2018 18:55:35 +0200
-Message-Id: <20180903165657.584723037@linuxfoundation.org>
+Subject: [PATCH 4.14 050/165] x86/boot: Fix if_changed build flip/flop bug
+Date:   Mon,  3 Sep 2018 18:55:36 +0200
+Message-Id: <20180903165657.635851130@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -55,72 +55,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hailong Liu <liu.hailong6@zte.com.cn>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit f3d133ee0a17d5694c6f21873eec9863e11fa423 ]
+[ Upstream commit 92a4728608a8fd228c572bc8ff50dd98aa0ddf2a ]
 
-NO_RT_RUNTIME_SHARE feature is used to prevent a CPU borrow enough
-runtime with a spin-rt-task.
+Dirk Gouders reported that two consecutive "make" invocations on an
+already compiled tree will show alternating behaviors:
 
-However, if RT_RUNTIME_SHARE feature is enabled and rt_rq has borrowd
-enough rt_runtime at the beginning, rt_runtime can't be restored to
-its initial bandwidth rt_runtime after we disable RT_RUNTIME_SHARE.
+$ make
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CHK     include/generated/compile.h
+  DATAREL arch/x86/boot/compressed/vmlinux
+Kernel: arch/x86/boot/bzImage is ready  (#48)
+  Building modules, stage 2.
+  MODPOST 165 modules
 
-E.g. on my PC with 4 cores, procedure to reproduce:
-1) Make sure  RT_RUNTIME_SHARE is enabled
- cat /sys/kernel/debug/sched_features
-  GENTLE_FAIR_SLEEPERS START_DEBIT NO_NEXT_BUDDY LAST_BUDDY
-  CACHE_HOT_BUDDY WAKEUP_PREEMPTION NO_HRTICK NO_DOUBLE_TICK
-  LB_BIAS NONTASK_CAPACITY TTWU_QUEUE NO_SIS_AVG_CPU SIS_PROP
-  NO_WARN_DOUBLE_CLOCK RT_PUSH_IPI RT_RUNTIME_SHARE NO_LB_MIN
-  ATTACH_AGE_LOAD WA_IDLE WA_WEIGHT WA_BIAS
-2) Start a spin-rt-task
- ./loop_rr &
-3) set affinity to the last cpu
- taskset -p 8 $pid_of_loop_rr
-4) Observe that last cpu have borrowed enough runtime.
- cat /proc/sched_debug | grep rt_runtime
-  .rt_runtime                    : 950.000000
-  .rt_runtime                    : 900.000000
-  .rt_runtime                    : 950.000000
-  .rt_runtime                    : 1000.000000
-5) Disable RT_RUNTIME_SHARE
- echo NO_RT_RUNTIME_SHARE > /sys/kernel/debug/sched_features
-6) Observe that rt_runtime can not been restored
- cat /proc/sched_debug | grep rt_runtime
-  .rt_runtime                    : 950.000000
-  .rt_runtime                    : 900.000000
-  .rt_runtime                    : 950.000000
-  .rt_runtime                    : 1000.000000
+$ make
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CHK     include/generated/compile.h
+  LD      arch/x86/boot/compressed/vmlinux
+  ZOFFSET arch/x86/boot/zoffset.h
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  OBJCOPY arch/x86/boot/vmlinux.bin
+  BUILD   arch/x86/boot/bzImage
+Setup is 15644 bytes (padded to 15872 bytes).
+System is 6663 kB
+CRC 3eb90f40
+Kernel: arch/x86/boot/bzImage is ready  (#48)
+  Building modules, stage 2.
+  MODPOST 165 modules
 
-This patch help to restore rt_runtime after we disable
-RT_RUNTIME_SHARE.
+He bisected it back to:
 
-Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+    commit 98f78525371b ("x86/boot: Refuse to build with data relocations")
+
+The root cause was the use of the "if_changed" kbuild function multiple
+times for the same target. It was designed to only be used once per
+target, otherwise it will effectively always trigger, flipping back and
+forth between the two commands getting recorded by "if_changed". Instead,
+this patch merges the two commands into a single function to get stable
+build artifacts (i.e. .vmlinux.cmd), and a single build behavior.
+
+Bisected-and-Reported-by: Dirk Gouders <dirk@gouders.net>
+Fix-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: zhong.weidong@zte.com.cn
-Link: http://lkml.kernel.org/r/1531874815-39357-1-git-send-email-liu.hailong6@zte.com.cn
+Link: http://lkml.kernel.org/r/20180724230827.GA37823@beast
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/rt.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/boot/compressed/Makefile |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -837,6 +837,8 @@ static int do_sched_rt_period_timer(stru
- 		 * can be time-consuming. Try to avoid it when possible.
- 		 */
- 		raw_spin_lock(&rt_rq->rt_runtime_lock);
-+		if (!sched_feat(RT_RUNTIME_SHARE) && rt_rq->rt_runtime != RUNTIME_INF)
-+			rt_rq->rt_runtime = rt_b->rt_runtime;
- 		skip = !rt_rq->rt_time && !rt_rq->rt_nr_running;
- 		raw_spin_unlock(&rt_rq->rt_runtime_lock);
- 		if (skip)
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -104,9 +104,13 @@ define cmd_check_data_rel
+ 	done
+ endef
+ 
++# We need to run two commands under "if_changed", so merge them into a
++# single invocation.
++quiet_cmd_check-and-link-vmlinux = LD      $@
++      cmd_check-and-link-vmlinux = $(cmd_check_data_rel); $(cmd_ld)
++
+ $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+-	$(call if_changed,check_data_rel)
+-	$(call if_changed,ld)
++	$(call if_changed,check-and-link-vmlinux)
+ 
+ OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
+ $(obj)/vmlinux.bin: vmlinux FORCE
 
 
