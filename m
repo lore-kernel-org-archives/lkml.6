@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B83C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F7DC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792C620867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792C620867
+	by mail.kernel.org (Postfix) with ESMTP id C0DBE2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DBE2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbeICVhU (ORCPT
+        id S1729879AbeICVhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:37:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42528 "EHLO
+        Mon, 3 Sep 2018 17:37:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42538 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeICVhT (ORCPT
+        with ESMTP id S1727942AbeICVhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:37:19 -0400
+        Mon, 3 Sep 2018 17:37:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06DD2D06;
-        Mon,  3 Sep 2018 17:16:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 249DED06;
+        Mon,  3 Sep 2018 17:16:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 008/165] nl80211: Add a missing break in parse_station_flags
-Date:   Mon,  3 Sep 2018 18:54:54 +0200
-Message-Id: <20180903165655.426935726@linuxfoundation.org>
+Subject: [PATCH 4.14 009/165] drm/bridge: adv7511: Reset registers on hotplug
+Date:   Mon,  3 Sep 2018 18:54:55 +0200
+Message-Id: <20180903165655.483772992@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,38 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 5cf3006cc81d9aa09a10aa781fc065546b12919d ]
+[ Upstream commit 5f3417569165a8ee57654217f73e0160312f409c ]
 
-I was looking at usually suppressed gcc warnings,
-[-Wimplicit-fallthrough=] in this case:
+The bridge loses its hw state when the cable is unplugged. If we detect
+this case in the hpd handler, reset its state.
 
-The code definitely looks like a break is missing here.
-However I am not able to test the NL80211_IFTYPE_MESH_POINT,
-nor do I actually know what might be :)
-So please use this patch with caution and only if you are
-able to do some testing.
-
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-[johannes: looks obvious enough to apply as is, interesting
- though that it never seems to have been a problem]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-by: Rob Clark <robdclark@gmail.com>
+Tested-by: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180703165648.120401-1-seanpaul@chromium.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -4186,6 +4186,7 @@ static int parse_station_flags(struct ge
- 		params->sta_flags_mask = BIT(NL80211_STA_FLAG_AUTHENTICATED) |
- 					 BIT(NL80211_STA_FLAG_MFP) |
- 					 BIT(NL80211_STA_FLAG_AUTHORIZED);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -424,6 +424,18 @@ static void adv7511_hpd_work(struct work
+ 	else
+ 		status = connector_status_disconnected;
+ 
++	/*
++	 * The bridge resets its registers on unplug. So when we get a plug
++	 * event and we're already supposed to be powered, cycle the bridge to
++	 * restore its state.
++	 */
++	if (status == connector_status_connected &&
++	    adv7511->connector.status == connector_status_disconnected &&
++	    adv7511->powered) {
++		regcache_mark_dirty(adv7511->regmap);
++		adv7511_power_on(adv7511);
++	}
++
+ 	if (adv7511->connector.status != status) {
+ 		adv7511->connector.status = status;
+ 		drm_kms_helper_hotplug_event(adv7511->connector.dev);
 
 
