@@ -6,45 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1F5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C382C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197D020868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197D020868
+	by mail.kernel.org (Postfix) with ESMTP id C229B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C229B2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730188AbeICVik (ORCPT
+        id S1730199AbeICVio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42822 "EHLO
+        Mon, 3 Sep 2018 17:38:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729157AbeICVij (ORCPT
+        with ESMTP id S1728685AbeICVim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:39 -0400
+        Mon, 3 Sep 2018 17:38:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 476E1D09;
-        Mon,  3 Sep 2018 17:17:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87E75D12;
+        Mon,  3 Sep 2018 17:17:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Sperbeck <jsperbeck@google.com>,
-        Peter Rosin <peda@axentia.se>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Deepa Dinamani <deepadinamani@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Chang <dpf@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 047/165] locking/rtmutex: Allow specifying a subclass for nested locking
-Date:   Mon,  3 Sep 2018 18:55:33 +0200
-Message-Id: <20180903165657.485495108@linuxfoundation.org>
+Subject: [PATCH 4.14 021/165] usb: gadget: u_audio: remove caching of stream buffer parameters
+Date:   Mon,  3 Sep 2018 18:55:07 +0200
+Message-Id: <20180903165656.098169851@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -61,97 +53,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-[ Upstream commit 62cedf3e60af03e47849fe2bd6a03ec179422a8a ]
+[ Upstream commit 96afb54ece0ee903d23a7ac04ddc461413b972c4 ]
 
-Needed for annotating rt_mutex locks.
+There is no necessity to copy PCM stream ring buffer area and size
+properties to UAC private data structure, these values can be got
+from substream itself.
 
-Tested-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Deepa Dinamani <deepadinamani@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Chang <dpf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Link: http://lkml.kernel.org/r/20180720083914.1950-2-peda@axentia.se
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The change gives more control on substream and avoid stale caching.
+
+Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/rtmutex.h  |    7 +++++++
- kernel/locking/rtmutex.c |   29 +++++++++++++++++++++++++----
- 2 files changed, 32 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/function/u_audio.c |   30 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
---- a/include/linux/rtmutex.h
-+++ b/include/linux/rtmutex.h
-@@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(str
- extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
- extern void rt_mutex_destroy(struct rt_mutex *lock);
+--- a/drivers/usb/gadget/function/u_audio.c
++++ b/drivers/usb/gadget/function/u_audio.c
+@@ -41,9 +41,6 @@ struct uac_req {
+ struct uac_rtd_params {
+ 	struct snd_uac_chip *uac; /* parent chip */
+ 	bool ep_enabled; /* if the ep is enabled */
+-	/* Size of the ring buffer */
+-	size_t dma_bytes;
+-	unsigned char *dma_area;
  
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
-+#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
-+#else
- extern void rt_mutex_lock(struct rt_mutex *lock);
-+#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
-+#endif
-+
- extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
- extern int rt_mutex_timed_lock(struct rt_mutex *lock,
- 			       struct hrtimer_sleeper *timeout);
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1466,6 +1466,29 @@ rt_mutex_fastunlock(struct rt_mutex *loc
- 		rt_mutex_postunlock(&wake_q);
+ 	struct snd_pcm_substream *ss;
+ 
+@@ -99,6 +96,7 @@ static void u_audio_iso_complete(struct
+ 	int status = req->status;
+ 	struct uac_req *ur = req->context;
+ 	struct snd_pcm_substream *substream;
++	struct snd_pcm_runtime *runtime;
+ 	struct uac_rtd_params *prm = ur->pp;
+ 	struct snd_uac_chip *uac = prm->uac;
+ 
+@@ -120,6 +118,7 @@ static void u_audio_iso_complete(struct
+ 	if (!substream)
+ 		goto exit;
+ 
++	runtime = substream->runtime;
+ 	spin_lock_irqsave(&prm->lock, flags);
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+@@ -156,29 +155,31 @@ static void u_audio_iso_complete(struct
+ 	spin_unlock_irqrestore(&prm->lock, flags);
+ 
+ 	/* Pack USB load in ALSA ring buffer */
+-	pending = prm->dma_bytes - hw_ptr;
++	pending = runtime->dma_bytes - hw_ptr;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		if (unlikely(pending < req->actual)) {
+-			memcpy(req->buf, prm->dma_area + hw_ptr, pending);
+-			memcpy(req->buf + pending, prm->dma_area,
++			memcpy(req->buf, runtime->dma_area + hw_ptr, pending);
++			memcpy(req->buf + pending, runtime->dma_area,
+ 			       req->actual - pending);
+ 		} else {
+-			memcpy(req->buf, prm->dma_area + hw_ptr, req->actual);
++			memcpy(req->buf, runtime->dma_area + hw_ptr,
++			       req->actual);
+ 		}
+ 	} else {
+ 		if (unlikely(pending < req->actual)) {
+-			memcpy(prm->dma_area + hw_ptr, req->buf, pending);
+-			memcpy(prm->dma_area, req->buf + pending,
++			memcpy(runtime->dma_area + hw_ptr, req->buf, pending);
++			memcpy(runtime->dma_area, req->buf + pending,
+ 			       req->actual - pending);
+ 		} else {
+-			memcpy(prm->dma_area + hw_ptr, req->buf, req->actual);
++			memcpy(runtime->dma_area + hw_ptr, req->buf,
++			       req->actual);
+ 		}
+ 	}
+ 
+ 	spin_lock_irqsave(&prm->lock, flags);
+ 	/* update hw_ptr after data is copied to memory */
+-	prm->hw_ptr = (hw_ptr + req->actual) % prm->dma_bytes;
++	prm->hw_ptr = (hw_ptr + req->actual) % runtime->dma_bytes;
+ 	spin_unlock_irqrestore(&prm->lock, flags);
+ 
+ exit:
+@@ -260,11 +261,8 @@ static int uac_pcm_hw_params(struct snd_
+ 
+ 	err = snd_pcm_lib_malloc_pages(substream,
+ 					params_buffer_bytes(hw_params));
+-	if (err >= 0) {
+-		prm->dma_bytes = substream->runtime->dma_bytes;
+-		prm->dma_area = substream->runtime->dma_area;
++	if (err >= 0)
+ 		prm->period_size = params_period_bytes(hw_params);
+-	}
+ 
+ 	return err;
  }
+@@ -279,8 +277,6 @@ static int uac_pcm_hw_free(struct snd_pc
+ 	else
+ 		prm = &uac->c_prm;
  
-+static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
-+{
-+	might_sleep();
-+
-+	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
-+	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
-+}
-+
-+#ifdef CONFIG_DEBUG_LOCK_ALLOC
-+/**
-+ * rt_mutex_lock_nested - lock a rt_mutex
-+ *
-+ * @lock: the rt_mutex to be locked
-+ * @subclass: the lockdep subclass
-+ */
-+void __sched rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass)
-+{
-+	__rt_mutex_lock(lock, subclass);
-+}
-+EXPORT_SYMBOL_GPL(rt_mutex_lock_nested);
-+#endif
-+
-+#ifndef CONFIG_DEBUG_LOCK_ALLOC
- /**
-  * rt_mutex_lock - lock a rt_mutex
-  *
-@@ -1473,12 +1496,10 @@ rt_mutex_fastunlock(struct rt_mutex *loc
-  */
- void __sched rt_mutex_lock(struct rt_mutex *lock)
- {
--	might_sleep();
--
--	mutex_acquire(&lock->dep_map, 0, 0, _RET_IP_);
--	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
-+	__rt_mutex_lock(lock, 0);
- }
- EXPORT_SYMBOL_GPL(rt_mutex_lock);
-+#endif
+-	prm->dma_area = NULL;
+-	prm->dma_bytes = 0;
+ 	prm->period_size = 0;
  
- /**
-  * rt_mutex_lock_interruptible - lock a rt_mutex interruptible
+ 	return snd_pcm_lib_free_pages(substream);
 
 
