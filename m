@@ -2,88 +2,122 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F32FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9D720843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3773620843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KhNDkYJ/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9D720843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=zendesk.com header.i=@zendesk.com header.b="KD6qcKQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3773620843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=zendesk.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbeIDDxV (ORCPT
+        id S1726711AbeIDDx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 23:53:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:34001 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbeIDDxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 23:53:20 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4245n64C4jz9s47;
-        Tue,  4 Sep 2018 09:30:49 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536017450;
-        bh=q7gqzUq+pQ7z1JVRxEzs/xVOzFAuWv8P1QFK7USMW+U=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KhNDkYJ/W0ETRoywpZKgYdHnn2XD4IAxG6tcwAwrnbmPATUUlno8GCltIHVkiSYiy
-         yS+82rmsO8gseXWvtI3EPMf5b0WBHIFNauqJG6rFRq3Ln0xpIqsaF33jn6tJxgf8b/
-         JP7vlJYTK/kXXduHqg7REVRCKck9CV5/5GndrUQ4zloKUn2Q1iXNore5K/cOFOCWVN
-         oedY8tkcfSlg4DdeCM21jO1Obj7D2Xj2y6SvK354KNEsy3r+2f4sJslw+yOnFyYTJo
-         DSuDelGQ8d9UpleyY0AkMjnsfrXn4/cs2eUrbduAwKuIc6tvclIOFv1Ls5dutqXXRH
-         D7MJrRO2hXK/Q==
-Date:   Tue, 4 Sep 2018 09:30:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: error fetching the jc_docs tree
-Message-ID: <20180904093049.6e458884@canb.auug.org.au>
+        Mon, 3 Sep 2018 23:53:59 -0400
+Received: from us-smtp-delivery-110.mimecast.com ([63.128.21.110]:45609 "EHLO
+        us-smtp-delivery-110.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726167AbeIDDx7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 23:53:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zendesk.com; s=mimecast20150210; t=1536017494; h=from:from:sender:reply-to:subject:subject:date:date: message-id:message-id:to:to:cc:cc:mime-version:mime-version: content-type:content-type: content-transfer-encoding:content-transfer-encoding: in-reply-to:in-reply-to:references:references; bh=6rAQePRkC3mX7k8tBjhkLzgBz8Glxd6cv38mjDl2LsY=; b=KD6qcKQ1zg+HnbWiLDbI9xE3WHUIik1+t0eEDRR0mL88TBZ6pkU8zs0vtRpSwtAXLxSRTnmCYc3+Dqf6irV7cGnYmErmNOIOg3c518NjCJSZkgINyohCvoeCggUWeBwwKxKX8R4F5u3rpPDKixIxJBOwrPSBQCwQldBTsTqZ2D8=
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com
+ [209.85.161.70]) (Using TLS) by us-smtp-1.mimecast.com with ESMTP id
+ us-mta-281-_FORWPgSORmeROyeRrFevA-1; Mon, 03 Sep 2018 19:30:31 -0400
+Received: by mail-yw1-f70.google.com with SMTP id d20-v6so1532022ywa.16
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 16:30:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gx7l7C+J2oZM2a1mutp5oEZ9R5865CH05XVQcq9T56Y=;
+        b=MQyZgBp07ppoHBzj8ENokuLjLi171dSZ+Za+HLDj3xfysGNk2aORLVhEDP/j6xLUZx
+         FTN0fRTbPKdnyIE8WsFP/kogIkPs3opGvcwGDhFZ0qMylWSi+FVVhC5yVTqkIq8Q8JAR
+         uR95LniSxDsGfW+Y4PvSlHkfqwDxOhToGyFPpattlY9gsRjsg2P7EGmt4U5VVIZ/t+T2
+         vwM7q8Im9fWbQWZLyfQG5bmMvtcgYklZyh2wrCMyGEKJBfrpE3vikbB7TFLdQBKcRUjh
+         1Lx8lKnmK9LbNTdzXyED076q0+x+vlTDv7ILFvLxzx4ZgZsO3QO6J7lZaO2zRPrUZheb
+         wCXw==
+X-Gm-Message-State: APzg51BKUxsQVfxnxS9I8AKIeKO9DEUTFR+/CoRGduQ0ea2fMeVQk3sF
+        KE7pGajbUlL3TzUse0HM+S/GzEydWnsxBRNlHmxjqliOm8enku3HWlYgY388MQqgfTz9mcoHbi1
+        1sTP90dFs/C7G9OnGJ8Q+Wq2XlEODw1HZiREiMb0w3hUKpl1kIGJJ0tQ=
+X-Received: by 2002:a81:6554:: with SMTP id z81-v6mr16903613ywb.34.1536017428101;
+        Mon, 03 Sep 2018 16:30:28 -0700 (PDT)
+X-Google-Smtp-Source: ANB0Vdb//+VpaLvYF1AyPy3g95+vqNwgyTxcOiVJZ86KNr1bBrP23cW3tNAxLnUz71BEnMzoClx6n7+ByGZMx2qPddo=
+X-Received: by 2002:a81:6554:: with SMTP id z81-v6mr16903594ywb.34.1536017427727;
+ Mon, 03 Sep 2018 16:30:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hxVLvuFQD.c2c.7+JzSPzHv"; protocol="application/pgp-signature"
+References: <20180903111016.46461-1-ktsanaktsidis@zendesk.com> <20180903162215.3069867de3ed953ae1484e06@linux-foundation.org>
+In-Reply-To: <20180903162215.3069867de3ed953ae1484e06@linux-foundation.org>
+From:   KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
+Date:   Tue, 4 Sep 2018 09:30:12 +1000
+Message-ID: <CAJ7wOOsY=FxNgMviJyZpxQCfDZtJN-SHx0bjkAAhV-MqKXxuHg@mail.gmail.com>
+Subject: Re: [PATCH] fork: report pid exhaustion correctly
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, trivial@kernel.org, mhocko@suse.cz,
+        oleg@redhat.com
+X-MC-Unique: _FORWPgSORmeROyeRrFevA-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hxVLvuFQD.c2c.7+JzSPzHv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Thanks :) yeah, first kernel patch. I got pretty annoyed by how long I
+spent trying to figure
+out why my database was reporting disk space errors on pthread_create,
+and when I
+finally worked out what was going on sending a patch to fix it was
+somewhat therapeutic!
 
-Hi Jon,
+On Tue, Sep 4, 2018 at 9:22 AM Andrew Morton <akpm@linux-foundation.org> wr=
+ote:
+>
+> On Mon,  3 Sep 2018 04:10:16 -0700 ktsanaktsidis@zendesk.com wrote:
+>
+> > From: KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
+> >
+> > Make the clone and fork syscalls return EAGAIN when the limit on the
+> > number of pids /proc/sys/kernel/pid_max is exceeded.
+> >
+> > Currently, when the pid_max limit is exceeded, the kernel will return
+> > ENOSPC from the fork and clone syscalls. This is contrary to the
+> > documented behaviour, which explicitly calls out the pid_max case as on=
+e
+> > where EAGAIN should be returned. It also leads to really confusing erro=
+r
+> > messages in userspace programs which will complain about a lack of disk
+> > space when they fail to create processes/threads for this reason.
+> >
+> > This error is being returned because the alloc_pid function uses the id=
+r
+> > api to find a new pid; when there are none available, idr_alloc_cyclic
+> > is returns -ENOSPC, and this is being propagated back into userspace.
+> >
+> > This behaviour has been broken before, and was explicitly fixed in
+> > commit 35f71bc0a09a ("fork: report pid reservation failure properly"),
+> > so I think -EAGAIN is definitely the right thing to return in this case=
+.
+> > The current behaviour change dates from commit 95846ecf9dac ("pid:
+> > replace pid bitmap implementation with IDR AIP") and was I believe
+> > unintentional.
+> >
+> > This patch has no impact on the case where allocating a pid fails
+> > because the child reaper for the namespace is dead; that case will stil=
+l
+> > return -ENOMEM.
+>
+> Thanks.  First ever kernel patch?  It was a damn good one!
+>
+> > Fixes: 95846ecf9dac ("pid: replace pid bitmap implementation with IDR A=
+IP")
+> > Signed-off-by: KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
+>
+> I'll add cc:stable here so the fix gets backported into earlier kernels
+>
 
-Fetching the jc_docs tree (git://git.lwn.net/linux.git#docs-next) today
-produced this error:
-
-fatal: remote error: access denied or repository not exported: /linux.git
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/hxVLvuFQD.c2c.7+JzSPzHv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluNxCkACgkQAVBC80lX
-0Gyo3gf+NA9VvP9vzMVSCS1Mquse9VrVD7E9cBanm+Kt69XPXvWjHqaJo0wWQ6Oo
-RklSm0Y9Rnr7NAI3RSFQ9Q36sSz+heLOA5Cbqj8ObRdRdinX+XJkQgKtx3KhsXzV
-bryXNhdQ1zdioGTggNoEFQMWd40O4Txxc9pRFsRa1KkJ/f5N2Qsrc4Ts3We/oW4V
-dyTvNCgM/Nax1+t6U7bUmi5KwiWmWIwj2GHx7sj14BUh4SF3SCnrL/UaL58cMv4V
-aFzg3HX9F6tDySASPMoKE60Gh6WyUxjJuEFkqkgzohorDCnYrBQ2ZN33KjvI7dVK
-Xm6BolXCV5K6uYmTGqbfBBzpg8I//w==
-=8oOZ
------END PGP SIGNATURE-----
-
---Sig_/hxVLvuFQD.c2c.7+JzSPzHv--
