@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12919C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 845C8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12D12077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12D12077C
+	by mail.kernel.org (Postfix) with ESMTP id 4988D20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4988D20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbeICViA (ORCPT
+        id S1730080AbeICViE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42670 "EHLO
+        Mon, 3 Sep 2018 17:38:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728207AbeICViA (ORCPT
+        with ESMTP id S1728207AbeICViC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:00 -0400
+        Mon, 3 Sep 2018 17:38:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5B08D02;
-        Mon,  3 Sep 2018 17:16:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F4191D02;
+        Mon,  3 Sep 2018 17:16:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 036/165] qed: Correct Multicast API to reflect existence of 256 approximate buckets.
-Date:   Mon,  3 Sep 2018 18:55:22 +0200
-Message-Id: <20180903165656.913214434@linuxfoundation.org>
+Subject: [PATCH 4.14 037/165] atl1c: reserve min skb headroom
+Date:   Mon,  3 Sep 2018 18:55:23 +0200
+Message-Id: <20180903165656.956018171@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -54,140 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 25c020a90919632b3425c19dc09188d56b9ed59a ]
+[ Upstream commit 6e56830776828d8ca9897fc4429eeab47c3bb432 ]
 
-FW hsi contains 256 approximation buckets which are split in ramrod into
-eight u32 values, but driver is using eight 'unsigned long' variables.
+Got crash report with following backtrace:
+BUG: unable to handle kernel paging request at ffff8801869daffe
+RIP: 0010:[<ffffffff816429c4>]  [<ffffffff816429c4>] ip6_finish_output2+0x394/0x4c0
+RSP: 0018:ffff880186c83a98  EFLAGS: 00010283
+RAX: ffff8801869db00e ...
+  [<ffffffff81644cdc>] ip6_finish_output+0x8c/0xf0
+  [<ffffffff81644d97>] ip6_output+0x57/0x100
+  [<ffffffff81643dc9>] ip6_forward+0x4b9/0x840
+  [<ffffffff81645566>] ip6_rcv_finish+0x66/0xc0
+  [<ffffffff81645db9>] ipv6_rcv+0x319/0x530
+  [<ffffffff815892ac>] netif_receive_skb+0x1c/0x70
+  [<ffffffffc0060bec>] atl1c_clean+0x1ec/0x310 [atl1c]
+  ...
 
-This patch fixes the mcast logic by making the API utilize u32.
+The bad access is in neigh_hh_output(), at skb->data - 16 (HH_DATA_MOD).
+atl1c driver provided skb with no headroom, so 14 bytes (ethernet
+header) got pulled, but then 16 are copied.
 
-Fixes: 83aeb933 ("qed*: Trivial modifications")
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Reserve NET_SKB_PAD bytes headroom, like netdev_alloc_skb().
+
+Compile tested only; I lack hardware.
+
+Fixes: 7b7017642199 ("atl1c: Fix misuse of netdev_alloc_skb in refilling rx ring")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_l2.c    |   15 +++++++--------
- drivers/net/ethernet/qlogic/qed/qed_l2.h    |    2 +-
- drivers/net/ethernet/qlogic/qed/qed_sriov.c |    2 +-
- drivers/net/ethernet/qlogic/qed/qed_vf.c    |    4 ++--
- drivers/net/ethernet/qlogic/qed/qed_vf.h    |    7 ++++++-
- 5 files changed, 17 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/atheros/atl1c/atl1c_main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-@@ -663,7 +663,7 @@ qed_sp_update_mcast_bin(struct qed_hwfn
- 
- 	p_ramrod->common.update_approx_mcast_flg = 1;
- 	for (i = 0; i < ETH_MULTICAST_MAC_BINS_IN_REGS; i++) {
--		u32 *p_bins = (u32 *)p_params->bins;
-+		u32 *p_bins = p_params->bins;
- 
- 		p_ramrod->approx_mcast.bins[i] = cpu_to_le32(p_bins[i]);
- 	}
-@@ -1474,8 +1474,8 @@ qed_sp_eth_filter_mcast(struct qed_hwfn
- 			enum spq_mode comp_mode,
- 			struct qed_spq_comp_cb *p_comp_data)
- {
--	unsigned long bins[ETH_MULTICAST_MAC_BINS_IN_REGS];
- 	struct vport_update_ramrod_data *p_ramrod = NULL;
-+	u32 bins[ETH_MULTICAST_MAC_BINS_IN_REGS];
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
- 	u8 abs_vport_id = 0;
-@@ -1511,26 +1511,25 @@ qed_sp_eth_filter_mcast(struct qed_hwfn
- 	/* explicitly clear out the entire vector */
- 	memset(&p_ramrod->approx_mcast.bins, 0,
- 	       sizeof(p_ramrod->approx_mcast.bins));
--	memset(bins, 0, sizeof(unsigned long) *
--	       ETH_MULTICAST_MAC_BINS_IN_REGS);
-+	memset(bins, 0, sizeof(bins));
- 	/* filter ADD op is explicit set op and it removes
- 	 *  any existing filters for the vport
- 	 */
- 	if (p_filter_cmd->opcode == QED_FILTER_ADD) {
- 		for (i = 0; i < p_filter_cmd->num_mc_addrs; i++) {
--			u32 bit;
-+			u32 bit, nbits;
- 
- 			bit = qed_mcast_bin_from_mac(p_filter_cmd->mac[i]);
--			__set_bit(bit, bins);
-+			nbits = sizeof(u32) * BITS_PER_BYTE;
-+			bins[bit / nbits] |= 1 << (bit % nbits);
- 		}
- 
- 		/* Convert to correct endianity */
- 		for (i = 0; i < ETH_MULTICAST_MAC_BINS_IN_REGS; i++) {
- 			struct vport_update_ramrod_mcast *p_ramrod_bins;
--			u32 *p_bins = (u32 *)bins;
- 
- 			p_ramrod_bins = &p_ramrod->approx_mcast;
--			p_ramrod_bins->bins[i] = cpu_to_le32(p_bins[i]);
-+			p_ramrod_bins->bins[i] = cpu_to_le32(bins[i]);
- 		}
- 	}
- 
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.h
-@@ -214,7 +214,7 @@ struct qed_sp_vport_update_params {
- 	u8				anti_spoofing_en;
- 	u8				update_accept_any_vlan_flg;
- 	u8				accept_any_vlan;
--	unsigned long			bins[8];
-+	u32				bins[8];
- 	struct qed_rss_params		*rss_params;
- 	struct qed_filter_accept_flags	accept_flags;
- 	struct qed_sge_tpa_params	*sge_tpa_params;
---- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-@@ -2826,7 +2826,7 @@ qed_iov_vp_update_mcast_bin_param(struct
- 
- 	p_data->update_approx_mcast_flg = 1;
- 	memcpy(p_data->bins, p_mcast_tlv->bins,
--	       sizeof(unsigned long) * ETH_MULTICAST_MAC_BINS_IN_REGS);
-+	       sizeof(u32) * ETH_MULTICAST_MAC_BINS_IN_REGS);
- 	*tlvs_mask |= 1 << QED_IOV_VP_UPDATE_MCAST;
- }
- 
---- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-@@ -1126,7 +1126,7 @@ int qed_vf_pf_vport_update(struct qed_hw
- 		resp_size += sizeof(struct pfvf_def_resp_tlv);
- 
- 		memcpy(p_mcast_tlv->bins, p_params->bins,
--		       sizeof(unsigned long) * ETH_MULTICAST_MAC_BINS_IN_REGS);
-+		       sizeof(u32) * ETH_MULTICAST_MAC_BINS_IN_REGS);
- 	}
- 
- 	update_rx = p_params->accept_flags.update_rx_mode_config;
-@@ -1272,7 +1272,7 @@ void qed_vf_pf_filter_mcast(struct qed_h
- 			u32 bit;
- 
- 			bit = qed_mcast_bin_from_mac(p_filter_cmd->mac[i]);
--			__set_bit(bit, sp_params.bins);
-+			sp_params.bins[bit / 32] |= 1 << (bit % 32);
- 		}
- 	}
- 
---- a/drivers/net/ethernet/qlogic/qed/qed_vf.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_vf.h
-@@ -392,7 +392,12 @@ struct vfpf_vport_update_mcast_bin_tlv {
- 	struct channel_tlv tl;
- 	u8 padding[4];
- 
--	u64 bins[8];
-+	/* There are only 256 approx bins, and in HSI they're divided into
-+	 * 32-bit values. As old VFs used to set-bit to the values on its side,
-+	 * the upper half of the array is never expected to contain any data.
-+	 */
-+	u64 bins[4];
-+	u64 obsolete_bins[4];
- };
- 
- struct vfpf_vport_update_accept_param_tlv {
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+@@ -1685,6 +1685,7 @@ static struct sk_buff *atl1c_alloc_skb(s
+ 	skb = build_skb(page_address(page) + adapter->rx_page_offset,
+ 			adapter->rx_frag_size);
+ 	if (likely(skb)) {
++		skb_reserve(skb, NET_SKB_PAD);
+ 		adapter->rx_page_offset += adapter->rx_frag_size;
+ 		if (adapter->rx_page_offset >= PAGE_SIZE)
+ 			adapter->rx_page = NULL;
 
 
