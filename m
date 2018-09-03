@@ -2,98 +2,106 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9ECC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516DCC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE6D20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00D5D20870
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d4Q2/kW6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h7plb/6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE6D20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="pS4FZEhw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D5D20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeICRZh (ORCPT
+        id S1727512AbeICRZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:25:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47882 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbeICRZh (ORCPT
+        Mon, 3 Sep 2018 13:25:52 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43662 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727453AbeICRZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:25:37 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 003AA60710; Mon,  3 Sep 2018 13:05:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535979933;
-        bh=tddeEVPf44KlGurlZeqRtbCZkmPk2NsrFCu4g41NVvw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=d4Q2/kW6Sg6VDotBMPQQgYygk1ghDo+jNuSFdaWh5nOvS+6QYU79F6VZYHFWp/Dqm
-         re2fxjXo2JkGFv2P31llsNsA7KkK7sH+kq+LOwRHCw67HWRja9YGV4uW5UqT3wWibj
-         gi0zC7OaJPhz1uXTpq7SJ2aUd2NjwI2Qd0SdGb/c=
-Received: from x230.qca.qualcomm.com (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8A99E605A4;
-        Mon,  3 Sep 2018 13:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535979932;
-        bh=tddeEVPf44KlGurlZeqRtbCZkmPk2NsrFCu4g41NVvw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=h7plb/6gLaqBMeCIv0mJQGJEiGLfwLW/WJTTHHx9bChDGPWNhcfDkyaekzzKpBj+s
-         rZovzkKYdaiB1zcw2uRfZxxhrrM1WvAS1VexSNX7hxdk4eT+KYPJQEYXFkX/kY7fzq
-         KKdWZhKQ8oKMjIlaTWSgDvLu2U4bM8/+B05OWPbc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A99E605A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Kristian Evensen <kristian.evensen@gmail.com>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mt76: Enable NL80211_EXT_FEATURE_CQM_RSSI_LIST
-References: <20180901083834.11201-1-kristian.evensen@gmail.com>
-Date:   Mon, 03 Sep 2018 16:05:29 +0300
-In-Reply-To: <20180901083834.11201-1-kristian.evensen@gmail.com> (Kristian
-        Evensen's message of "Sat, 1 Sep 2018 10:38:34 +0200")
-Message-ID: <87ftyqwx2e.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 3 Sep 2018 13:25:52 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k5-v6so574173wre.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 06:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=wAc4mxprrZJRSDLuxfERTSaZgAw7fCrShliGBe4qeqE=;
+        b=pS4FZEhw7zF6nZgXqlCQ6bCl9RhWC/J6l1HgAJm8bzW7ZOtRRN4T/sb369s2zEu7ff
+         MydpiD5+ZR2GAK6/ykyK8EUpSEfG6S8M5kGia24DRr00FSUuz7qSvhSrq2mTh3PwGtAH
+         rtY9GMQE67ikbg6eBZGcCyNw1+gFwA6LMLYgE6Ths1DxgkA2jPDMb7Mg55XukQw+vzwj
+         f+/Il9p4uOwcV/Vp0pll5Fzn2AuN7/2N5wh3VzYbbnpzh+IkIcuHmFJu+pn1EI4yJR2K
+         z0/hNYnljPdgg66nzSwn2sEr3YSzRdd0ehrGuc35D+I5UWE8gSdK6k3mqXufL2ZuBp1S
+         svGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=wAc4mxprrZJRSDLuxfERTSaZgAw7fCrShliGBe4qeqE=;
+        b=YdmaiBGYT5yrZ0HIGwAfuyYgiB2MBm5WwaobRhXrjLZlY68RDTDa5xwpgp3zV3kHMx
+         s0kWP4bU1NrNxTZ+yg7DPRcBJDb7hBrJVWyei4uStnw7uO9ZMcx8Xu4Dyy5Q5E7/ksHd
+         RH2cUSNbQQ4L1tMf5uBvrZaUwCYD7rVJxOx3YniJuH68wD+Vd6X24ObJb29Dvitut7Lf
+         7tRHBZz1hfVpn961LZnJJPVcRgfzy7trMZDKGkVDuqG/zAU9M9qPc293JtG0MfL7QUgK
+         JSZ32MLjgAGG8e7DNj3ptBxt8b3kSlvP9THm+ghjJOQZzVxb0SR71oFRtoCu/o57dYCC
+         dBiA==
+X-Gm-Message-State: APzg51AaYeBN4xN7tukWGto5m9gGSlW9kDtODoNqLa76gM8cTBz7ubjQ
+        tS05oiAVml7InITg+nnrUG235icw7sJJKQ==
+X-Google-Smtp-Source: ANB0VdZaw8aUDEfh0YkAjceX+8VIuWLS4RjfSrZXa9thDYinWtuyIeNw9EToCmbJVRZ2uVifDHNAWg==
+X-Received: by 2002:adf:f4ce:: with SMTP id h14-v6mr20484921wrp.259.1535979946877;
+        Mon, 03 Sep 2018 06:05:46 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id d22-v6sm20506367wra.80.2018.09.03.06.05.46
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 03 Sep 2018 06:05:46 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] serial: uartps: Enable automatic flow control
+Date:   Mon,  3 Sep 2018 15:05:37 +0200
+Message-Id: <2e3db53f40db4ce52000f39461c9b0e534e8ec2c.1535979935.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kristian Evensen <kristian.evensen@gmail.com> writes:
+Enable automatic flow control which should ensure that there is no
+mainteinance in connection for zcu100 BT case.
 
-> Enable the use of CQM_RSSI_LIST with mt76-devices. The change has been
-> tested with the mt7602, mt7603 and mt7621 PCI wifi-cards. I passed a
-> list of RSSI thresholds to the driver, and when disconnecting/connecting
-> the antenna(s) I got an event each time the RSSI went above/below a
-> threshold.
->
-> While I have not been able to test the change with any of the mt76
-> USB-devices (no access to a device), the RX RSSI management code is
-> shared between the two device types. Thus, CQM should also work with the
-> mt76 USB-devices.
->
-> v1->v2:
-> * Updated commit message. Thanks Kalle Valo, Arend van Spriel,
-> Lorenzo Bianconi and Andrew Zaborowski.
->
-> Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
-> ---
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Acked-by: Nava kishore Manne <navam@xilinx.com>
+---
 
-The changelog should be here, after the '---' line, so that git can
-automatically drop it. But I can fix it before I commit, but in the
-future please add it to the correct place.
+ drivers/tty/serial/xilinx_uartps.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#changelog_missing
-
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index a48f19b1b88f..e5d90611c03f 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1003,13 +1003,12 @@ static void cdns_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ 	val = readl(port->membase + CDNS_UART_MODEMCR);
+ 	mode_reg = readl(port->membase + CDNS_UART_MR);
+ 
+-	val &= ~(CDNS_UART_MODEMCR_RTS | CDNS_UART_MODEMCR_DTR);
++	val &= ~(CDNS_UART_MODEMCR_RTS | CDNS_UART_MODEMCR_DTR |
++		 CDNS_UART_MODEMCR_FCM);
+ 	mode_reg &= ~CDNS_UART_MR_CHMODE_MASK;
+ 
+-	if (mctrl & TIOCM_RTS)
+-		val |= CDNS_UART_MODEMCR_RTS;
+-	if (mctrl & TIOCM_DTR)
+-		val |= CDNS_UART_MODEMCR_DTR;
++	if (mctrl & TIOCM_RTS || mctrl & TIOCM_DTR)
++		val |= CDNS_UART_MODEMCR_FCM;
+ 	if (mctrl & TIOCM_LOOP)
+ 		mode_reg |= CDNS_UART_MR_CHMODE_L_LOOP;
+ 	else
 -- 
-Kalle Valo
+1.9.1
+
