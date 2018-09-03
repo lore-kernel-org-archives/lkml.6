@@ -2,153 +2,243 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25455C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A172C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6FB720868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F05B2075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:19:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="M5YoFu2S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6FB720868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YLu0R+Ji"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F05B2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeICSjg (ORCPT
+        id S1727657AbeICSkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:39:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54864 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbeICSjg (ORCPT
+        Mon, 3 Sep 2018 14:40:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46678 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbeICSkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:39:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QryCjMJAqafj6P5SNs4jQHYP47JVtrkRsYMYmjAo5zY=; b=M5YoFu2Suwtr
-        z0Tj2kpRHxpEWPT+hzbZ8p9fX3/twkTLZ5E/Mo35pa1VcgNeby7SfOa5vI0dL2oW0e2RZAzlGKylW
-        6J4PYEYcdMOxgHMZPydTC1PyGEq/hXjbtzHVdcCHQq6KbcnGkc/ZDxZj8YewGVGCsAZThk//30ERt
-        budyw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fwph1-0000Lc-JE; Mon, 03 Sep 2018 14:19:03 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5AA7811227AE; Mon,  3 Sep 2018 15:19:03 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 3 Sep 2018 14:40:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u24-v6so265356pfn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qmFg6Ukh/n1mVhcCKRuznH1TgD3ekBmFCsvert309lk=;
+        b=YLu0R+JiFji3QgLuptfYUKxfFdXZpWNCH4qNe1PAcw6dna3pRlCFnkWsfBUc4Wg6YN
+         V7QQcRTDd2Ed+yU1wSVtmFMmcAdtzdD0IBv/vhHC8LIbXb5K/SsCW9FjmKSXFoP/e4zn
+         h5fpYnWJEOhXCxUUzHYpfGJL1o72D4YiU4sYnohUFq7DNwQdZIl5LOR1byMWedM0fi5G
+         Ya+BcN3WtHYFbsj/ACANgU9FPWrgaCNES8b7VGGBDSeO+aWc51kIHN6LjNcm5Jz1A+pp
+         93TQff6fX6j0IhRnORw7YyLyUUTR506wgsKCv8QVOh/3GWxPIt5mpTFOK3lA3Gw8nuJD
+         QWxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qmFg6Ukh/n1mVhcCKRuznH1TgD3ekBmFCsvert309lk=;
+        b=EZBDSprBF3W/jDs6Ok9yFuaXUdvQe9IXGx3Pj6+A92V6FhHXolX858RG91Uv6QsgmG
+         9jUxhMHwJIwf0fJv4LOzbELMZX/s4oZOR8SwAH9NT3UwwAkOIRZM430+66d7c/EstJhw
+         bv1B0Fjnef6dntDKMblr7VwYIGoD7GhRgDzmSyCyFWMbXK0Ek3My6TVaVmfLQRRFEY0g
+         L6CC4QjWMKDTk7/8VXKplU62zBYPFxD/DGY91kcOdiPG3tBPYV7I8IFyRahWcWlhPlUA
+         lDRmZVO3peC4O9UNr3yrMxx27Xx6wWmsgURlUvvV692X7aH44Gdxv4tj7CboR20nwfqC
+         1arQ==
+X-Gm-Message-State: APzg51AwIgMIyWyFK7Ln+XegTvlFezvbypmgsHPiEdRMxKaEm1EHTJ/Y
+        9UOpKnwem9hQ4LRY2KwaXkdBG89FMR8XP2FUkmaFyw==
+X-Google-Smtp-Source: ANB0Vdb0IIEWAiFRcwvNxiySKUVVPa9uLfyWs1XYNIJnTfdpMxgMa37wdqVNqTZoNeu5hAE/tONr5s6+7fCQSYKT/Cc=
+X-Received: by 2002:a63:6501:: with SMTP id z1-v6mr11712230pgb.419.1535984383638;
+ Mon, 03 Sep 2018 07:19:43 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 07:19:23
+ -0700 (PDT)
+In-Reply-To: <s5h1saahe2p.wl-tiwai@suse.de>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de> <000000000000a25ae50574f76ff0@google.com>
+ <s5h7ek2hfp6.wl-tiwai@suse.de> <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+ <s5h4lf6hfcq.wl-tiwai@suse.de> <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
+ <s5h1saahe2p.wl-tiwai@suse.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 3 Sep 2018 16:19:23 +0200
+Message-ID: <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-tegra@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: core: Don't schedule DAPM work if already in target state" to the asoc tree
-In-Reply-To:  <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
-Message-Id: <20180903141903.5AA7811227AE@debutante.sirena.org.uk>
-Date:   Mon,  3 Sep 2018 15:19:03 +0100 (BST)
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, Sep 3, 2018 at 4:04 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Mon, 03 Sep 2018 15:41:36 +0200,
+> Dmitry Vyukov wrote:
+>>
+>> On Mon, Sep 3, 2018 at 3:37 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>> > On Mon, 03 Sep 2018 15:33:12 +0200,
+>> > Dmitry Vyukov wrote:
+>> >>
+>> >> On Mon, Sep 3, 2018 at 3:29 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>> >> > On Mon, 03 Sep 2018 15:22:42 +0200,
+>> >> > syzbot wrote:
+>> >> >>
+>> >> >> > On Mon, 03 Sep 2018 03:53:03 +0200,
+>> >> >> > syzbot wrote:
+>> >> >>
+>> >> >> >> syzbot has found a reproducer for the following crash on:
+>> >> >>
+>> >> >> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
+>> >> >> >> do_syscall_64() and  _..
+>> >> >> >> git tree:       https://github.com/google/kmsan.git/master
+>> >> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
+>> >> >> >> kernel config:
+>> >> >> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
+>> >> >> >> dashboard link:
+>> >> >> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
+>> >> >> >> compiler:       clang version 8.0.0 (trunk 339414)
+>> >> >> >> syz repro:
+>> >> >> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
+>> >> >> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
+>> >> >>
+>> >> >> >> IMPORTANT: if you fix the bug, please add the following tag to the
+>> >> >> >> commit:
+>> >> >> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
+>> >> >>
+>> >> >> >> ==================================================================
+>> >> >> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
+>> >> >> >> sound/core/seq/seq_midi_event.c:195
+>> >> >> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
+>> >> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
+>> >> >> >> BIOS  Google 01/01/2011
+>> >> >> >> Workqueue: events_highpri snd_vmidi_output_work
+>> >> >> >> Call Trace:
+>> >> >> >>   __dump_stack lib/dump_stack.c:77 [inline]
+>> >> >> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
+>> >> >> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+>> >> >> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+>> >> >> >>   snd_midi_event_encode_byte+0x569/0xff0
+>> >> >> >> sound/core/seq/seq_midi_event.c:195
+>> >> >> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
+>> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+>> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+>> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+>> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+>> >> >>
+>> >> >> >> Uninit was stored to memory at:
+>> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+>> >> >> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+>> >> >> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
+>> >> >> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
+>> >> >> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
+>> >> >> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
+>> >> >> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
+>> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+>> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+>> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+>> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+>> >> >>
+>> >> >> >> Uninit was created at:
+>> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+>> >> >> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+>> >> >> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+>> >> >> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
+>> >> >> >>   kmalloc_node include/linux/slab.h:555 [inline]
+>> >> >> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
+>> >> >> >>   kvmalloc include/linux/mm.h:577 [inline]
+>> >> >> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
+>> >> >> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
+>> >> >> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
+>> >> >> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
+>> >> >> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
+>> >> >> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
+>> >> >> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
+>> >> >> >>   vfs_open+0xaf/0xe0 fs/open.c:880
+>> >> >> >>   do_last fs/namei.c:3418 [inline]
+>> >> >> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
+>> >> >> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
+>> >> >> >>   do_sys_open+0x630/0x940 fs/open.c:1063
+>> >> >> >>   __do_sys_open fs/open.c:1081 [inline]
+>> >> >> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
+>> >> >> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
+>> >> >> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+>> >> >> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>> >> >> >> ==================================================================
+>> >> >>
+>> >> >> > This looks like some small race at virmidi reading and the buffer
+>> >> >> > handling, which should be almost harmless by itself.
+>> >> >> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
+>> >> >> > kvzalloc(), as below.
+>> >> >>
+>> >> >> > Let's check whether this works.
+>> >> >>
+>> >> >> > #syz test:
+>> >> >> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+>> >> >> > topic/rawmidi-fixes
+>> >> >>
+>> >> >> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
+>> >> >> because KMSAN tool is not upstreamed yet.
+>> >> >> See
+>> >> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+>> >> >> for details.
+>> >> >
+>> >> > So how is the procedure to test a patch for bugs spotted by KMSAN?
+>> >> >
+>> >> > In this case, the fix is trivial, so I can put it to my tree for the
+>> >> > next pull request.  Of course, it'd be better if it can be confirmed
+>> >> > to work beforehand...
+>> >>
+>> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+>> >>
+>> >> Which means you need to attach a patch because it's not in that tree.
+>> >
+>> > OK, it would have been helpful if the description there was more clear
+>> > :)
+>> >
+>> > And no automated way for that?
+>>
+>> What exactly do you mean? Please elaborate.
+>
+> Well, it's not clear which action is required to let syzbot testing
+> some patch.  The description says:
+>
+>  "KMSAN is not upstream yet, though, we want to upstream it later. For
+>   now, it lives in github.com/google/kmsan and is based on a
+>   reasonably fresh upstream tree. As the result, any patch testing
+>   requests for KMSAN bugs need to go to KMSAN tree
+>   (https://github.com/google/kmsan.git repo, master branch)."
+>
+> Here, "need to go to KMSAN tree" part doesn't explain what exactly to
+> do.  Remember that many kernel devs (including the man in the mirror)
+> don't use github, at least, not dealing github PRs for kernel
+> development itself, so it's a pretty unfamiliar process.
 
-   ASoC: core: Don't schedule DAPM work if already in target state
+It's not patches that need to go into that tree (i.e. no PRs). It's
+patch testing requests.
 
-has been applied to the asoc tree at
+Tried to clarify doc:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+https://github.com/google/syzkaller/commit/bfe906cbb9c73c326f24327e1a89bc0cd0c314c7#diff-5b3b5ff5f03b01e1d31ec93aafd2f3d5
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Does this look better?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>> > I mean, I already attached patch in
+>> > the previous reply (together with syz-magic command to point the git
+>> > branch URL).  Do I need anything else?
+>>
+>> Just issue the command against "https://github.com/google/kmsan.git
+>> master" and attach the patch.
+>
+> But it's basically a fix for the upstream tree, not about KMSAN
+> itself.  A PR to that tree doesn't sound right to me...
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From e03546ddd3db5352a74dec247dbdaa29889e93f7 Mon Sep 17 00:00:00 2001
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Fri, 17 Aug 2018 16:35:43 +0100
-Subject: [PATCH] ASoC: core: Don't schedule DAPM work if already in target
- state
-
-When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
-dapm_post_sequence_async() functions are scheduled for all DAPM contexts
-(apart from the card DAPM context) regardless of whether the DAPM
-context is already in the desired state. The overhead of this is not
-insignificant and the more DAPM contexts there are the more overhead
-there is.
-
-For example, on the Tegra124 Jetson TK1, when profiling the time taken
-to execute the dapm_power_widgets() the following times were observed.
-
-  Times for function dapm_power_widgets() are (us):
-     Min 23, Ave 190, Max 434, Count 39
-
-Here 'Count' is the number of times that dapm_power_widgets() has been
-called. Please note that the above time were measured using ktime_get()
-to log the time on entry and exit from dapm_power_widgets(). So it
-should be noted that these times may not be purely the time take to
-execute this function if it is preempted. However, after applying this
-patch and measuring the time taken to execute dapm_power_widgets() again
-a significant improvement is seen as shown below.
-
-  Times for function dapm_power_widgets() are (us):
-     Min 4, Ave 16, Max 82, Count 39
-
-Therefore, optimise the dapm_power_widgets() function by only scheduling
-the dapm_pre/post_sequence_async() work if the DAPM context is not in
-the desired state.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-dapm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index d7be3981f026..9feccd2e7c11 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1952,7 +1952,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 	dapm_pre_sequence_async(&card->dapm, 0);
- 	/* Run other bias changes in parallel */
- 	list_for_each_entry(d, &card->dapm_list, list) {
--		if (d != &card->dapm)
-+		if (d != &card->dapm && d->bias_level != d->target_bias_level)
- 			async_schedule_domain(dapm_pre_sequence_async, d,
- 						&async_domain);
- 	}
-@@ -1976,7 +1976,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 
- 	/* Run all the bias changes in parallel */
- 	list_for_each_entry(d, &card->dapm_list, list) {
--		if (d != &card->dapm)
-+		if (d != &card->dapm && d->bias_level != d->target_bias_level)
- 			async_schedule_domain(dapm_post_sequence_async, d,
- 						&async_domain);
- 	}
--- 
-2.19.0.rc1
-
+You don't need to send a PR. You attach a patch (or inline in email)
+and request to apply and test it in KMSAN tree.
