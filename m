@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB05C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AFEC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6149320862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6149320862
+	by mail.kernel.org (Postfix) with ESMTP id 2898320843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2898320843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbeICS3G (ORCPT
+        id S1727704AbeICS3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:29:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37594 "EHLO mail.bootlin.com"
+        Mon, 3 Sep 2018 14:29:05 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37580 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727666AbeICS3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727659AbeICS3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 14:29:05 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D2875208A4; Mon,  3 Sep 2018 16:08:44 +0200 (CEST)
+        id 2E77D208B5; Mon,  3 Sep 2018 16:08:44 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A14B1203DC;
-        Mon,  3 Sep 2018 16:08:44 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0233120618;
+        Mon,  3 Sep 2018 16:08:43 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Li Yang <leoyang.li@nxp.com>, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 5/5] arm64: dts: add Microsys MPX-LS1046A SoM and SBC-LS1046A SBC
-Date:   Mon,  3 Sep 2018 16:08:40 +0200
-Message-Id: <20180903140840.23648-5-alexandre.belloni@bootlin.com>
+Subject: [PATCH v2 3/5] arm64: dts: fsl: ls1046a: disable uarts by default
+Date:   Mon,  3 Sep 2018 16:08:38 +0200
+Message-Id: <20180903140840.23648-3-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.19.0.rc1
 In-Reply-To: <20180903140840.23648-1-alexandre.belloni@bootlin.com>
 References: <20180903140840.23648-1-alexandre.belloni@bootlin.com>
@@ -45,229 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Microsys designs a SoM based on the LS1046A named miriac MPX-LS1046A
-https://microsys.de/products/system-on-modules/qoriqr-armr-architecture/miriactm-mpx-ls1046a/
+Disable the UARTs by defaultto avoid registering unused UARTs. This
+effectively change the number of registered UARTS for the RDB and QDS from
+4 to 2 but this seems the right thing to do.
 
-It also provides an SBC accepting this SoM, the miriac SBC-LS1046
-https://microsys.de/en/products/single-board-computer/miriactm-sbcs/miriactm-sbc-ls1046a/
-
-This adds a dtsi for the SoM and a dts for the SBC.
+It is especially useful when connecting other 8250 uart on PCIe for example
+as the default maximum number of 8250 UARTs that can be registered is 4.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes in v2:
- - Addressed Shawn's comments
-
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../fsl-ls1046a-miriac-mpxls1046.dtsi         |  62 ++++++++++
- .../freescale/fsl-ls1046a-miriac-sbc1046.dts  | 116 ++++++++++++++++++
- 3 files changed, 179 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-mpxls1046.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-sbc1046.dts
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 86e18adb695a..b0b81ca887e8 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-rdb.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1043a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1043a-rdb.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-miriac-sbc1046.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-rdb.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1088a-qds.dtb
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-mpxls1046.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-mpxls1046.dtsi
-new file mode 100644
-index 000000000000..b4f998fbe460
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-mpxls1046.dtsi
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/ {
-+	compatible = "microsys,mpxls1046a", "fsl,ls1046a";
-+};
-+
-+&duart0 {
-+	status = "okay";
-+};
-+
-+&duart1 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	rtc@32 {
-+		compatible = "epson,rx8803";
-+		reg = <0x32>;
-+	};
-+
-+	temp-sensor@4c {
-+		compatible = "national,lm90";
-+		reg = <0x4c>;
-+	};
-+
-+	eeprom@50 {
-+		compatible = "at24,24c128";
-+		reg = <0x50>;
-+	};
-+};
-+
-+&ifc {
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+
-+	ranges = <0x0 0x0 0x0 0x7e800000 0x00010000>;
-+	status = "okay";
-+
-+	nand@0,0 {
-+		compatible = "fsl,ifc-nand";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0x0 0x0 0x10000>;
-+	};
-+};
-+
-+&qspi {
-+	num-cs = <1>;
-+	bus-num = <0>;
-+	status = "okay";
-+
-+	qflash0: flash@0 {
-+		compatible = "spansion,m25p80";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		spi-max-frequency = <20000000>;
-+		m25p,fast-read;
-+		reg = <0>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-sbc1046.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-sbc1046.dts
-new file mode 100644
-index 000000000000..c0c8ebdd6bb4
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-miriac-sbc1046.dts
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include "fsl-ls1046a.dtsi"
-+#include "fsl-ls1046a-miriac-mpxls1046.dtsi"
-+
-+/ {
-+	model = "Microsys miriac SBC-LS1046A";
-+	compatible = "microsys,sbc1046a", "microsys,mpxls1046a", "fsl,ls1046a";
-+
-+	aliases {
-+		ethernet0 = &enet2;
-+		ethernet1 = &enet4;
-+		ethernet2 = &enet5;
-+		ethernet3 = &enet6;
-+		serial0 = &duart0;
-+		serial1 = &duart1;
-+		serial2 = &duart2;
-+		serial3 = &duart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&duart0 {
-+	status = "okay";
-+};
-+
-+&duart1 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	eeprom@57 {
-+		compatible = "at24,24c128";
-+		reg = <0x57>;
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+};
-+
-+&ifc {
-+	nand@0,0 {
-+		partition@0 {
-+			reg = <0x0 0x00100000>;
-+			label = "NAND U-Boot Image";
-+			read-only;
-+		};
-+
-+		partition@100000 {
-+			reg = <0x00100000 0x00100000>;
-+			label = "NAND U-Boot Env";
-+		};
-+
-+		partition@200000 {
-+			reg = <0x00200000 0x01E00000>;
-+			label = "NAND FIT Image";
-+		};
-+
-+		partition@02000000 {
-+			reg = <0x02000000 0x1e000000>;
-+			label = "NAND (RW) UBIFS Root File System";
-+		};
-+	};
-+};
-+
-+#include "fsl-ls1046-post.dtsi"
-+
-+&fman0 {
-+	compatible = "fsl,fman", "simple-bus";
-+
-+	ethernet@e4000 {
-+		phy-handle = <&rgmii_phy1>;
-+		phy-connection-type = "rgmii";
-+	};
-+
-+	ethernet@e8000 {
-+		phy-handle = <&sgmii_phy1>;
-+		phy-connection-type = "sgmii";
-+	};
-+
-+	ethernet@ea000 {
-+		phy-handle = <&sgmii_phy2>;
-+		phy-connection-type = "sgmii";
-+	};
-+
-+	ethernet@f0000 {
-+		phy-handle = <&sgmii_phy3>;
-+		phy-connection-type = "sgmii";
-+	};
-+
-+	mdio@fc000 {
-+		sgmii_phy3: ethernet-phy@0 {
-+			reg = <0>;
-+		};
-+
-+		sgmii_phy2: ethernet-phy@1 {
-+			reg = <1>;
-+		};
-+
-+		sgmii_phy1: ethernet-phy@2 {
-+			reg = <2>;
-+		};
-+
-+		rgmii_phy1: ethernet-phy@3 {
-+			reg = <3>;
-+		};
-+	};
-+};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 2d8122019cd8..62ae3ee19d6f 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -423,6 +423,7 @@
+ 			reg = <0x00 0x21c0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart1: serial@21c0600 {
+@@ -430,6 +431,7 @@
+ 			reg = <0x00 0x21c0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart2: serial@21d0500 {
+@@ -437,6 +439,7 @@
+ 			reg = <0x0 0x21d0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart3: serial@21d0600 {
+@@ -444,6 +447,7 @@
+ 			reg = <0x0 0x21d0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		gpio0: gpio@2300000 {
 -- 
 2.19.0.rc1
 
