@@ -6,30 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979ECC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B64ACC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D47120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D47120658
+	by mail.kernel.org (Postfix) with ESMTP id 6B80B20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B80B20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730983AbeICVsV (ORCPT
+        id S1730998AbeICVsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:48:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46180 "EHLO
+        Mon, 3 Sep 2018 17:48:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbeICVsT (ORCPT
+        with ESMTP id S1730679AbeICVsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:48:19 -0400
+        Mon, 3 Sep 2018 17:48:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B445CF4;
-        Mon,  3 Sep 2018 17:27:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCCC6D01;
+        Mon,  3 Sep 2018 17:27:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
         Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -40,15 +42,14 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
         "Tobin C . Harding" <me@tobin.cc>,
         Will Deacon <will.deacon@arm.com>, acme@kernel.org,
         akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
         linux-arch@vger.kernel.org, rostedt@goodmis.org,
-        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 147/165] kprobes/arm: Fix %p uses in error messages
-Date:   Mon,  3 Sep 2018 18:57:13 +0200
-Message-Id: <20180903165704.182995394@linuxfoundation.org>
+        schwidefsky@de.ibm.com
+Subject: [PATCH 4.14 148/165] kprobes: Make list and blacklist root user read only
+Date:   Mon,  3 Sep 2018 18:57:14 +0200
+Message-Id: <20180903165704.399453404@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -67,11 +68,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 75b2f5f5911fe7a2fc82969b2b24dde34e8f820d upstream.
+commit f2a3ab36077222437b4826fc76111caa14562b7c upstream.
 
-Fix %p uses in error messages by removing it and
-using general dumper.
+Since the blacklist and list files on debugfs indicates
+a sensitive address information to reader, it should be
+restricted to the root user.
 
+Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
 Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
@@ -83,7 +87,6 @@ Cc: Jon Medhurst <tixy@linaro.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: Tobin C . Harding <me@tobin.cc>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: acme@kernel.org
@@ -93,37 +96,33 @@ Cc: linux-arch@vger.kernel.org
 Cc: rostedt@goodmis.org
 Cc: schwidefsky@de.ibm.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/152491905361.9916.15300852365956231645.stgit@devbox
+Link: https://lkml.kernel.org/lkml/152491890171.9916.5183693615601334087.stgit@devbox
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/probes/kprobes/core.c      |    4 ++--
- arch/arm/probes/kprobes/test-core.c |    1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ kernel/kprobes.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/probes/kprobes/core.c
-+++ b/arch/arm/probes/kprobes/core.c
-@@ -291,8 +291,8 @@ void __kprobes kprobe_handler(struct pt_
- 				break;
- 			case KPROBE_REENTER:
- 				/* A nested probe was hit in FIQ, it is a BUG */
--				pr_warn("Unrecoverable kprobe detected at %p.\n",
--					p->addr);
-+				pr_warn("Unrecoverable kprobe detected.\n");
-+				dump_kprobe(p);
- 				/* fall through */
- 			default:
- 				/* impossible cases */
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -1517,7 +1517,6 @@ fail:
- 	print_registers(&result_regs);
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -2531,7 +2531,7 @@ static int __init debugfs_kprobe_init(vo
+ 	if (!dir)
+ 		return -ENOMEM;
  
- 	if (mem) {
--		pr_err("current_stack=%p\n", current_stack);
- 		pr_err("expected_memory:\n");
- 		print_memory(expected_memory, mem_size);
- 		pr_err("result_memory:\n");
+-	file = debugfs_create_file("list", 0444, dir, NULL,
++	file = debugfs_create_file("list", 0400, dir, NULL,
+ 				&debugfs_kprobes_operations);
+ 	if (!file)
+ 		goto error;
+@@ -2541,7 +2541,7 @@ static int __init debugfs_kprobe_init(vo
+ 	if (!file)
+ 		goto error;
+ 
+-	file = debugfs_create_file("blacklist", 0444, dir, NULL,
++	file = debugfs_create_file("blacklist", 0400, dir, NULL,
+ 				&debugfs_kprobe_blacklist_ops);
+ 	if (!file)
+ 		goto error;
 
 
