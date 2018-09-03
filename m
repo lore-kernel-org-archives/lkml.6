@@ -2,126 +2,117 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C20BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA2F20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:19:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA2F20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C6A9E2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:20:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kq1jcrfe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A9E2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeICXlI (ORCPT
+        id S1728456AbeICXls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:41:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:15605 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbeICXlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:41:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 12:19:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
-   d="scan'208";a="80568278"
-Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
-  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2018 12:19:27 -0700
-Date:   Mon, 3 Sep 2018 22:19:26 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     "Huang, Kai" <kai.huang@intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180903191926.GC13497@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
+        Mon, 3 Sep 2018 19:41:48 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46160 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbeICXls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:41:48 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so518692pfn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c2+4tOF2BIFm9K9iN5UYAZ65HT/STokt3Xl5WK62BhA=;
+        b=Kq1jcrfeqhJzm/ETj/bDIGcS42tkHIri2n1kfpm347HqILTzlwoBOunXUxiTwyQdRz
+         YJGqD+cdoMC8xvB7+Wh8JnC/upblbTvFj2jjdYfmVvaXKjcjLPE97A+NQImw2FkXk9fY
+         3wGXx5tQx1iYR++DN3Q2jivPrXb5Ydi1MvkzM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c2+4tOF2BIFm9K9iN5UYAZ65HT/STokt3Xl5WK62BhA=;
+        b=E/2LJLptiwbQp+r33/RnwjOj3abfntkz6KsIAyzNdDKXjKWEwZnq6rpByLPB16T4Jp
+         pmGKYVk/vcdQfKk5754c1Xj6NMCO1DzUE6PLx1N+wFKzFuACqOI5GoSLJ2JYMNhBBeXT
+         idQ00A2VUIJ29uxVwpopOI64AWSEEskHdeLkVCXMd3ZbYIEz+QKhM+ja7gg+2Bg+vbHA
+         1T1TfjQO/AcCV9uncdO8vIxu+ql5BFNKLZPe1rZa6Voz4avATXXzYDB1FqDlLnrC26b9
+         H56erxyn1rtQnbslgAx4uveVxQs8M4+aZKPZJHHkQqmp97inicCuyekfgQaKuARP092E
+         TqYg==
+X-Gm-Message-State: APzg51CyVAHwHk74jxPXIYUymLjrvwN7CBjViv3wOq8AhUEs+p3N6td7
+        g5zklhNNRn3NV+OyYlIs1RZ0sA==
+X-Google-Smtp-Source: ANB0VdZYkvlSJ6LwxLTt/DnHlx7DIW7k0vNF51hde6WaRHBksxzk9EVvLrFt8ottUqCSvcOp+vUGvA==
+X-Received: by 2002:a63:1021:: with SMTP id f33-v6mr27534448pgl.72.1536002413591;
+        Mon, 03 Sep 2018 12:20:13 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f13-v6sm19514049pgs.92.2018.09.03.12.20.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 12:20:12 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 12:24:07 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 6/9] soc: qcom: Remove depends on OF from QCOM_RPMH
+Message-ID: <20180903192407.GC3456@tuxbook-pro>
+References: <20180829075724.9095-1-niklas.cassel@linaro.org>
+ <20180829075724.9095-7-niklas.cassel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831181509.GB21555@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180829075724.9095-7-niklas.cassel@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
-> On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> > > [snip..]
-> > > 
-> > > > > >
-> > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
-> > > > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > > +sgx_pm_cnt;
-> > > > > > +
-> > > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > > > +MSRs
-> > > > > > for each
-> > > > > > + * CPU. The entries are initialized when they are first used by
-> > > > > > sgx_einit().
-> > > > > > + */
-> > > > > > +struct sgx_lepubkeyhash {
-> > > > > > +	u64 msrs[4];
-> > > > > > +	u64 pm_cnt;
-> > > > >
-> > > > > May I ask why do we need pm_cnt here? In fact why do we need suspend
-> > > > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
-> > > > > in this patch? From the patch commit message I don't see why we need
-> > > > > PM staff here. Please give comment why you need PM staff, or you may
-> > > > > consider to split the PM staff to another patch.
-> > > > 
-> > > > Refining the commit message probably makes more sense because without PM
-> > > > code sgx_einit() would be broken. The MSRs have been reset after waking up.
-> > > > 
-> > > > Some kind of counter is required to keep track of the power cycle. When going
-> > > > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
-> > > > the global count to the value in the cache entry to see whether we are in a new
-> > > > power cycle.
-> > > 
-> > > You mean reset to Intel default? I think we can also just reset the
-> > > cached MSR values on each power cycle, which would be simpler, IMHO?
-> > 
-> > I don't really see that much difference in the complexity.
+On Wed 29 Aug 00:57 PDT 2018, Niklas Cassel wrote:
+
+> QCOM_RPHM already selects ARM64, which always selects OF.
+
+Nit. "already depends on ARM64"
+
 > 
-> Tracking the validity of the cache means we're hosed if we miss any
-> condition that causes the MSRs to be reset.  I think we're better off
-> assuming the cache can be stale at any time, i.e. don't track power
-> cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
-> the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
-> interruptible and its latency is extremely variable in any case, e.g.
-> tens of thousands of cycles, so this rarely-hit "slow path" probably
-> wouldn't affect the worst case latency of EINIT.
+> Additionally, the rpmh driver only uses linux/of.h, which has dummy
+> definitions for all functions, in order for code to to be able to
+> build without CONFIG_OF set.
+> 
+> Remove the superfluous depends on OF.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 
-Sounds a good refiniment. Pretty good solution to heal from host sleep
-on the guest VM and then there is no need for driver changes.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-/Jarkko
+Regards,
+Bjorn
+
+> ---
+>  drivers/soc/qcom/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index ac657164a136..cf4ece232897 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -94,7 +94,7 @@ config QCOM_RMTFS_MEM
+>  
+>  config QCOM_RPMH
+>  	bool "Qualcomm RPM-Hardened (RPMH) Communication"
+> -	depends on ARCH_QCOM && ARM64 && OF || COMPILE_TEST
+> +	depends on ARCH_QCOM && ARM64 || COMPILE_TEST
+>  	help
+>  	  Support for communication with the hardened-RPM blocks in
+>  	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
+> -- 
+> 2.17.1
+> 
