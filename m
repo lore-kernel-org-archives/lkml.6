@@ -2,59 +2,93 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77C5C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349E9C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694D620878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694D620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 9A30120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:10:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A30120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbeICXa7 (ORCPT
+        id S1728292AbeICXcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:30:59 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46502 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbeICXa7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:30:59 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 484B71449BE78;
-        Mon,  3 Sep 2018 12:09:27 -0700 (PDT)
-Date:   Mon, 03 Sep 2018 12:09:10 -0700 (PDT)
-Message-Id: <20180903.120910.2227273252885975717.davem@davemloft.net>
-To:     linux@roeck-us.net
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: Linux 4.19-rc2
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180903182202.GA14258@roeck-us.net>
-References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
-        <20180903182202.GA14258@roeck-us.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Sep 2018 12:09:27 -0700 (PDT)
+        Mon, 3 Sep 2018 19:32:03 -0400
+Received: from mga01.intel.com ([192.55.52.88]:40641 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727493AbeICXcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:32:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 12:10:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
+   d="scan'208";a="254197185"
+Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
+  by orsmga005.jf.intel.com with ESMTP; 03 Sep 2018 12:10:24 -0700
+Date:   Mon, 3 Sep 2018 22:10:23 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 01/13] x86/sgx: Update MAINTAINERS
+Message-ID: <20180903191023.GA13497@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-2-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VfM6w6OrgczpMOY8wMK8Uw_SLm+RHDitYjrnNSX4aTepg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfM6w6OrgczpMOY8wMK8Uw_SLm+RHDitYjrnNSX4aTepg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Mon, 3 Sep 2018 11:22:02 -0700
+On Mon, Sep 03, 2018 at 03:56:05PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 9:56 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Add the maintainer information for the SGX subsystem.
+> >
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  MAINTAINERS | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 24b200d91b30..877fbc6ef7a7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -7562,6 +7562,13 @@ L:       linux-gpio@vger.kernel.org
+> >  S:     Maintained
+> >  F:     drivers/gpio/gpio-intel-mid.c
+> >
+> > +INTEL SGX
+> 
+> It should go in between of
+> 
+> INTEL RDMA RNIC DRIVER
+> ...
+> INTEL SHA MULTIBUFFER DRIVER
 
-> The sparc32:allmodconfig build problem is the same as last week.
-> David - any interest/plan to get this fixed, or should I just drop
-> the build ?
+Thanks, I'll put into the correct place.
 
-I didn't see it, please give me a reference to the details.
-
-Thanks.
+/Jarkko
