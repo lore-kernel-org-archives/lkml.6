@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4F9C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9A9C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 427B720843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427B720843
+	by mail.kernel.org (Postfix) with ESMTP id 10FB920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FB920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbeICV2V (ORCPT
+        id S1729869AbeICV22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:28:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40244 "EHLO
+        Mon, 3 Sep 2018 17:28:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40256 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeICV2U (ORCPT
+        with ESMTP id S1729405AbeICV21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:28:20 -0400
+        Mon, 3 Sep 2018 17:28:27 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0DD4D02;
-        Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2EA6BB3;
+        Mon,  3 Sep 2018 17:07:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 030/107] fscache: Allow cancelled operations to be enqueued
-Date:   Mon,  3 Sep 2018 18:55:54 +0200
-Message-Id: <20180903165638.752152760@linuxfoundation.org>
+        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.9 065/107] KVM: arm/arm64: Skip updating PMD entry if no change
+Date:   Mon,  3 Sep 2018 18:56:29 +0200
+Message-Id: <20180903165640.460733285@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,46 +52,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+From: Punit Agrawal <punit.agrawal@arm.com>
 
-[ Upstream commit d0eb06afe712b7b103b6361f40a9a0c638524669 ]
+commit 86658b819cd0a9aa584cd84453ed268a6f013770 upstream.
 
-Alter the state-check assertion in fscache_enqueue_operation() to allow
-cancelled operations to be given processing time so they can be cleaned up.
+Contention on updating a PMD entry by a large number of vcpus can lead
+to duplicate work when handling stage 2 page faults. As the page table
+update follows the break-before-make requirement of the architecture,
+it can lead to repeated refaults due to clearing the entry and
+flushing the tlbs.
 
-Also fix a debugging statement that was requiring such operations to have
-an object assigned.
+This problem is more likely when -
 
-Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
-Reported-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+* there are large number of vcpus
+* the mapping is large block mapping
+
+such as when using PMD hugepages (512MB) with 64k pages.
+
+Fix this by skipping the page table update if there is no change in
+the entry being updated.
+
+Cc: stable@vger.kernel.org
+Fixes: ad361f093c1e ("KVM: ARM: Support hugetlbfs backed huge pages")
+Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/fscache/operation.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/fscache/operation.c
-+++ b/fs/fscache/operation.c
-@@ -66,7 +66,8 @@ void fscache_enqueue_operation(struct fs
- 	ASSERT(op->processor != NULL);
- 	ASSERT(fscache_object_is_available(op->object));
- 	ASSERTCMP(atomic_read(&op->usage), >, 0);
--	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
-+	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
-+		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
+
+---
+ arch/arm/kvm/mmu.c |   38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
+
+--- a/arch/arm/kvm/mmu.c
++++ b/arch/arm/kvm/mmu.c
+@@ -894,19 +894,35 @@ static int stage2_set_pmd_huge(struct kv
+ 	pmd = stage2_get_pmd(kvm, cache, addr);
+ 	VM_BUG_ON(!pmd);
  
- 	fscache_stat(&fscache_n_op_enqueue);
- 	switch (op->flags & FSCACHE_OP_TYPE) {
-@@ -481,7 +482,8 @@ void fscache_put_operation(struct fscach
- 	struct fscache_cache *cache;
- 
- 	_enter("{OBJ%x OP%x,%d}",
--	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
-+	       op->object ? op->object->debug_id : 0,
-+	       op->debug_id, atomic_read(&op->usage));
- 
- 	ASSERTCMP(atomic_read(&op->usage), >, 0);
- 
+-	/*
+-	 * Mapping in huge pages should only happen through a fault.  If a
+-	 * page is merged into a transparent huge page, the individual
+-	 * subpages of that huge page should be unmapped through MMU
+-	 * notifiers before we get here.
+-	 *
+-	 * Merging of CompoundPages is not supported; they should become
+-	 * splitting first, unmapped, merged, and mapped back in on-demand.
+-	 */
+-	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
+-
+ 	old_pmd = *pmd;
+ 	if (pmd_present(old_pmd)) {
++		/*
++		 * Multiple vcpus faulting on the same PMD entry, can
++		 * lead to them sequentially updating the PMD with the
++		 * same value. Following the break-before-make
++		 * (pmd_clear() followed by tlb_flush()) process can
++		 * hinder forward progress due to refaults generated
++		 * on missing translations.
++		 *
++		 * Skip updating the page table if the entry is
++		 * unchanged.
++		 */
++		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
++			return 0;
++
++		/*
++		 * Mapping in huge pages should only happen through a
++		 * fault.  If a page is merged into a transparent huge
++		 * page, the individual subpages of that huge page
++		 * should be unmapped through MMU notifiers before we
++		 * get here.
++		 *
++		 * Merging of CompoundPages is not supported; they
++		 * should become splitting first, unmapped, merged,
++		 * and mapped back in on-demand.
++		 */
++		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
++
+ 		pmd_clear(pmd);
+ 		kvm_tlb_flush_vmid_ipa(kvm, addr);
+ 	} else {
 
 
