@@ -2,101 +2,141 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742CCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5865FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0690F20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD15120856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 04:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="trc9vU0P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0690F20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="S6A1dknA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD15120856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeICJCi (ORCPT
+        id S1726039AbeICJF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 05:02:38 -0400
-Received: from sonic317-21.consmr.mail.gq1.yahoo.com ([98.137.66.147]:38062
-        "EHLO sonic317-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725892AbeICJCi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 05:02:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535949853; bh=+tdaBhvfA6ACIzYropgbQHNpkuA78VFj1YyZ/OxSz0U=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=trc9vU0P7Blj1oXflibLE4RXNCNuAWUtwh5LW0DMKYZCbnRZ23SzMrE0b7BQMrKye1CmMr9JOW9be8qpkE7DX+o2ZsJfSO7Fr3vJnYW6aYegVg3/zZs97Z6va1AmKmBsG+SO6qEaJRiX4L1WRoVeS+se/jP2bz1DBUPyrH7jY8NhchRhXAgvRFaAyVscj5a1RRv5L5RFcSwYlmpiYoPyK/FFE3wbVTV8aCwv9ZiXC9kLKHmw9d5Kq9uYb1XEys5g66AgzdJXjYlnoa218zBGebkyT6YXhz4riTByjaWXp7s9SCj6nvNk6BukeF+9sqzEQjDHhcd7m3zS3OqqdMzGPA==
-X-YMail-OSG: dx7nWyoVM1mlp69BN4y1cWf.s8KWObTS.giAXbxonlXLWZwZtev0HpHVtp2lrFc
- sLTo7gAVbz6poVATv42EvoAnXtQpWrhRc.IEKXF7iwXSIJykfECEZ3LFh.grAOsVsXVB4IrHasIL
- _WQDfcVH0mrXQ5ypQ95njLtvCbeGcV4AVWZHw3myteEh2hFnS2862VIJVzqheyb6D66FXDth2wk6
- PONYu5FI4SxEobq7uU9A2hrgkfNyHJhmVH909akIYhZOYqXZzDZCvTZEtbvUG8Cwlk7S15CWmYwB
- mDM1sCcRK9ni3Ar0ruAi.nFPTGu3RSI1sVX.F5fbOBhgABs8ooUVJnQjIQnRl7uGazkLj4BB4Yw6
- MyLDWSFVFhX_N1o489zFqR.nSqBnsdDSslQr.pvf3ZaffEXAn7euwxCRi.FyOxIO9lS5VIULUtyO
- Hl1l9iF8n_.WHu8aztj4vLYbdwVU_ZICS5jqv0DDEgt4xIxGrHwDv5ef5khhc_lmPYulSRONyidK
- M5IFUMCUPxhfpuQjtoBBOp3VUoJU0ZR2YV_6NLknGXLKvpB7T6Sxz9R9Om7gxcZJvnWiPtOnGEyK
- htLAVaqkp9MYK95EwQcqpEKDTCMesAv4Y27e._u7mNcy8khm7RzdBdV853VhfpUL7ypoTpnDiv7p
- zgQ2Jqwt.gWvOiEQkmGqiAEm9WtbF2CZAat3ZxvcAFZRahe6l1urq4vAusSB0Kx_YpK.QS6YiDU7
- zOMvhYSdDeKB8.BMIyjljAzaXzH4LO35bKOUTxcMfaC7Rb_zkAsY49g9aIfZzspy2dcSOr.86LiA
- 2ejccs4iY5i_NN8r952VS7miZm7GHmq58hbCxh57vgHwHJrtEoB0hZWC7XhaiwO.6vCBAbBGG8WB
- sfwYnBhHUfDRSLRs_OCt.dSxz1yOry5kVtJDQM6G3d7X8NZYiciqPWHEcma2Oy9.jnGiwSrjSJid
- lmQfszwwrdV0FCpsEhxb8XYU71MIp8bd1LRIB9S3WPBgEoFoJx_mqhjCmARGd7wMsnrd2ih9XndR
- hFgs-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.gq1.yahoo.com with HTTP; Mon, 3 Sep 2018 04:44:13 +0000
-Received: from 112.65.61.168 (EHLO [192.168.43.103]) ([112.65.61.168])
-          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 90111a54ab897a406ba6a648e23b194d;
-          Mon, 03 Sep 2018 04:44:08 +0000 (UTC)
-Subject: Re: [PATCH 5/6] staging: erofs: formatting alignment parenthesis
-To:     Chao Yu <yuchao0@huawei.com>,
-        Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ldv-project@linuxtesting.org, linux-erofs@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
- <1535642042-5336-5-git-send-email-zemlyanoy@ispras.ru>
- <aaa483c4-2bb1-97fa-fcea-2970c9ea5444@huawei.com>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <2d7869f6-bff2-ef40-b2b6-b5e73cb92bb5@aol.com>
-Date:   Mon, 3 Sep 2018 12:43:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <aaa483c4-2bb1-97fa-fcea-2970c9ea5444@huawei.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 3 Sep 2018 05:05:57 -0400
+Received: from mail-eopbgr70044.outbound.protection.outlook.com ([40.107.7.44]:33728
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbeICJF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 05:05:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XKKqQN/9b2jGYvXW6cjjSVDTZK6uyeYTzbflme+mZzw=;
+ b=S6A1dknAa4XVCFxXOqGQfZi1oPRtiAGhp3IcMi+7SEkGbaQi3IFS6woAGPYqhEiY8QteLbN2NE0qmzMXq/XG5a+SccMTZGUCojjdhnQQTn5gg55opYqDuu1wPmERyxE6oZTev2rNgovqd/eEE176J7nF8CL4NXI3KnK5I2SaSHA=
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
+ VI1PR04MB2160.eurprd04.prod.outlook.com (10.166.43.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.17; Mon, 3 Sep 2018 04:47:25 +0000
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::35a6:f753:27fb:b6e5]) by VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::35a6:f753:27fb:b6e5%6]) with mapi id 15.20.1101.016; Mon, 3 Sep 2018
+ 04:47:25 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     =?utf-8?B?TG90aGFyIFdhw59tYW5u?= <LW@KARO-electronics.de>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 1/7] spi: add slave device size in spi_device struct
+Thread-Topic: [PATCH 1/7] spi: add slave device size in spi_device struct
+Thread-Index: AQHUQRXZyJXdNsUzo06bGC/Lf/s7vaTZwZaAgAQ9r/A=
+Date:   Mon, 3 Sep 2018 04:47:25 +0000
+Message-ID: <VI1PR04MB103801BA8203421C517199BB990C0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <1535711404-29528-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <1535711404-29528-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <20180831135807.22255bce@karo-electronics.de>
+In-Reply-To: <20180831135807.22255bce@karo-electronics.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB2160;6:ZmGczIhP8YVZz3auiPmbBXca4TBGIVkkCd1ZE6xZQ+I5/8s/oAzlcJNQRT+hYdGupsrN+UIDtGSLPWIRJ3ohYGwziI5OOWoyJUI1ShwvrcuWnPUrMi4juL5oE2PC5jYJR0Eizm/PNN3Ew1HjLCgSujTasPZoJMphniVqiv4nfHIfDObO2hFUl84Qdsay10TxffeUtW5f9Oy/Un9psLI+0bXEXNBkVcHZRh7NqG0DlLOEyaGLTUWLp6eq17yPnJd9+y7rD+oleh6ex5nHemEFpV0vPLZc76k+HGsOxND0dJTF7UH23WuvWvZ0m0ckkLaMtu93CC4766sIh/eNjBF/T+XwMFOcXqHhkDOKygesUqx5uWsCEJHqcVq54XqBdVEA64Y39PVmkgoZ40JmtAC/M0PQnKNNxAZzL1yggQDK3vIwP/PKXAt5La7Rv9IC/63ZlTqDmNfwd79AlYKcrRpFJA==;5:MXpP54QfIGIk4SpZ4MpfVoyDPoVKhmF4JbTcvMildh6eNNsL/GASWRFScBasGrGJtMFzuVCXW0xjjZ98B1EjToyJfrVtIb72R5k9eNhwACAdcwWAeFNrLD+QdO0/+Ba2Vwj3rp6inYYVUJeTHuUASNdaU7zXd6j1Xq5A6m/x0go=;7:wxCF1LmrX1NNMBXZFmSXUlnozoG0cpwyz+B0rTMnW+1DwmAw0xrGJLRmeA0NCa+dnxOReKRm+TYoZ4Tbuvzd8u+QfNc14nu+JU731OQL1v5JFwAibPbQZAxo+CpDHim75yUjpOM8f2Qtolpeprob/vCe5uJEZgT/NlJ4DBnyf6TJc3BnHFIEaRqOso+NswcZinOsX5nj/SjpztO+UJZ3H6shR7RXTSG4XAg8kW2R7jdT7LSfd83GHBOitmDVQ1I3
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 17f0b108-1077-4f97-5c09-08d61158587d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB2160;
+x-ms-traffictypediagnostic: VI1PR04MB2160:
+x-microsoft-antispam-prvs: <VI1PR04MB216017221150A9881A22AA6D990C0@VI1PR04MB2160.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699016);SRVR:VI1PR04MB2160;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB2160;
+x-forefront-prvs: 0784C803FD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(199004)(189003)(13464003)(305945005)(6916009)(74316002)(76176011)(97736004)(7736002)(53936002)(8676002)(55016002)(6246003)(25786009)(6436002)(4326008)(39060400002)(2906002)(99286004)(5660300001)(256004)(486006)(11346002)(446003)(7416002)(14444005)(2900100001)(8936002)(229853002)(6116002)(3846002)(476003)(33656002)(5250100002)(86362001)(68736007)(54906003)(14454004)(66066001)(7696005)(478600001)(81166006)(55236004)(186003)(6506007)(102836004)(316002)(53546011)(81156014)(9686003)(26005)(105586002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB2160;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: bzgrEUokperrSd+0ze3xLd6AXcewGso++6lPw5eGqtY6z0pzaycTHLFGQKoUUvuQarKPyQlDbFqEtjAc1iO2LyZTuDPvm51Qg7dUIznJULZr6nqoQpQQ2fL15AzisHBNJ0y9HEWXFLE0+e0VCoxmaUSjuYlGCJnumRgz5ZVc/jW27iEvbKh4Vl+q8ZYlqaLvpG5mzQIW4zGgmu0H8wPxZraLPIYddpPehjxkNZ1auy+j972SIsPJWnZo9earY/NMoYk5YYt2foyT4PcBqGxNAiLiLKjr3j+ZOSIY/hxKKBJVA8TpHmbXGenE6bxxux9EtENVxemN4YoFeFwQF7fS2RmBDGlV91GL3Awjx7ScFYI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17f0b108-1077-4f97-5c09-08d61158587d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2018 04:47:25.7357
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB2160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/9/3 9:49, Chao Yu wrote:
-> On 2018/8/30 23:14, Pavel Zemlyanoy wrote:
->> This patch does not change the logic, it only
->> corrects the formatting and checkpatch check by
->> alignment should match open parenthesis.
->>
->> The patch fixes 2 check of type:
->> "Check: Alignment should match open parenthesis".
->>
->> Signed-off-by: Pavel Zemlyanoy <zemlyanoy@ispras.ru>
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-
-Thanks,
-Gao Xiang
-
-> Thanks,
-> 
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-> 
+SGkgTG90aGFyLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IExvdGhh
+ciBXYcOfbWFubiBbbWFpbHRvOkxXQEtBUk8tZWxlY3Ryb25pY3MuZGVdDQo+IFNlbnQ6IEZyaWRh
+eSwgQXVndXN0IDMxLCAyMDE4IDU6MjggUE0NCj4gVG86IFlvZ2VzaCBOYXJheWFuIEdhdXIgPHlv
+Z2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KPiBDYzogbGludXgtbXRkQGxpc3RzLmluZnJhZGVh
+ZC5vcmc7IGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbTsNCj4gbWFyZWsudmFzdXRAZ21haWwu
+Y29tOyBsaW51eC1zcGlAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVs
+Lm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207IHJvYmhAa2VybmVsLm9yZzsgbGludXgtDQo+IGtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGZyaWVkZXIuc2NocmVtcGZAZXhjZWV0LmRlOw0KPiBjb21w
+dXRlcnNmb3JwZWFjZUBnbWFpbC5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7IGxpbnV4LWFybS0N
+Cj4ga2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzdd
+IHNwaTogYWRkIHNsYXZlIGRldmljZSBzaXplIGluIHNwaV9kZXZpY2Ugc3RydWN0DQo+IA0KPiBI
+aSwNCj4gDQo+IE9uIEZyaSwgMzEgQXVnIDIwMTggMTU6NTk6NTggKzA1MzAgWW9nZXNoIEdhdXIg
+d3JvdGU6DQo+ID4gQWRkICdzaXplJyBkYXRhIHZhcmlhYmxlIGluIHNwaV9kZXZpY2Ugc3RydWN0
+Lg0KPiA+IFRoaXMgaXMgdG8gc2F2ZSB0aGUgc2l6ZSBvZiB0aGUgY29ubmVjdGVkIHNsYXZlIGRl
+dmljZS4NCj4gPg0KPiA+IEFmdGVyIHNsYXZlIGRldmljZSBzY2FuLCBzcGlfbm9yX3NjYW4sIHNp
+emUgYmVpbmcgYXNzaWduZWQgdG8gdGhpcw0KPiA+IGZyb20gTVREIGxheWVyLg0KPiA+DQo+ID4g
+U0ZEUCByZWFkIGlzIGJlaW5nIHJlcXVlc3RlZCBiZWZvcmUgY29tcGxldGlvbiBvZiBzcGlfbm9y
+X3NjYW4oKQ0KPiA+IHJvdXRpbmUsIHRodXMgcG9wdWxhdGUgZGV2aWNlIHNpemUgYmVmb3JlIG1h
+a2luZyByZWFkIHJlcXVlc3QgdG8gdGhlDQo+ID4gU1BJIGNvbnRyb2xsZXIuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBZb2dlc2ggR2F1ciA8eW9nZXNobmFyYXlhbi5nYXVyQG54cC5jb20+DQo+
+ID4gLS0tDQo+ID4gIGRyaXZlcnMvbXRkL2RldmljZXMvbTI1cDgwLmMgIHwgNiArKysrKysNCj4g
+PiBkcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDIgKysNCj4gPiAgaW5jbHVkZS9saW51
+eC9zcGkvc3BpLmggICAgICAgfCAyICsrDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0
+aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL2RldmljZXMvbTI1cDgw
+LmMNCj4gPiBiL2RyaXZlcnMvbXRkL2RldmljZXMvbTI1cDgwLmMgaW5kZXggZmUyNjBjYy4uNmM3
+YWQ4NiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL210ZC9kZXZpY2VzL20yNXA4MC5jDQo+ID4g
+KysrIGIvZHJpdmVycy9tdGQvZGV2aWNlcy9tMjVwODAuYw0KPiA+IEBAIC0xMjQsNiArMTI0LDEw
+IEBAIHN0YXRpYyBzc2l6ZV90IG0yNXA4MF9yZWFkKHN0cnVjdCBzcGlfbm9yICpub3IsDQo+IGxv
+ZmZfdCBmcm9tLCBzaXplX3QgbGVuLA0KPiA+ICAJLyogY29udmVydCB0aGUgZHVtbXkgY3ljbGVz
+IHRvIHRoZSBudW1iZXIgb2YgYnl0ZXMgKi8NCj4gPiAgCW9wLmR1bW15Lm5ieXRlcyA9IChub3It
+PnJlYWRfZHVtbXkgKiBvcC5kdW1teS5idXN3aWR0aCkgLyA4Ow0KPiA+DQo+ID4gKwkvKiBmb3Ig
+Y2FzZSBvZiBTRkRQIGhlYWRlciByZWFkIGNvbW1hbmRzLCBwb3B1bGF0ZSBzcGkgZGV2aWNlIHNp
+emUgKi8NCj4gPiArCWlmIChmbGFzaC0+c3BpbWVtLT5zcGktPnNpemUgPT0gMCkNCj4gPiArCQlm
+bGFzaC0+c3BpbWVtLT5zcGktPnNpemUgPSBub3ItPm10ZC5zaXplOw0KPiA+ICsNCj4gSWYgdGhl
+ICdzaXplJyBpcyBhbiBzcGltZW0gc3BlY2lmaWMgdmFyaWFibGUgaXQgc2hvdWxkIGJlIGFkZGVk
+IHRvIHRoZSBzcGlfbWVtDQo+IHN0cnVjdCByYXRoZXIgdGhhbiB0aGUgc3BpX2RldmljZSBzdHJ1
+Y3QuDQoNClN1cmUsIHdvdWxkIG1vdmUgJ3NpemUnIGZyb20gc3RydWN0IHNwaV9kZXZpY2UgdG8g
+dGhlIHN0cnVjdCBzcGlfbWVtLg0KDQotLQ0KUmVnYXJkcw0KWW9nZXNoIEdhdXIuDQoNCj4gDQo+
+IExvdGhhciBXYcOfbWFubg0K
