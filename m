@@ -2,161 +2,329 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BDDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CC5C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C454720856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:41:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpyZ3xAt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C454720856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FBDC20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:46:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBDC20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbeICPAe (ORCPT
+        id S1726157AbeICPGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 11:00:34 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38175 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeICPAe (ORCPT
+        Mon, 3 Sep 2018 11:06:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45053 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbeICPGF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 11:00:34 -0400
-Received: by mail-qt0-f195.google.com with SMTP id x7-v6so105022qtk.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 03:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5hlxYhxAKpVIJe37MJrIhjSi18t9kePPhIytra1F24s=;
-        b=MpyZ3xAtpOq1mrquF99VpZLP/+dfXVBkYk2J6nD9DGe422qjtc3KSyCfMvYUNKvrdz
-         /JvCKSCCQTLlLLMkCRykc0J4+CrKUJ2Dv+MKlBauzEgcSf0Nb3gYcgfOD01j5nk4uy/J
-         xMVzBy/FpXzGt1GIRb3Fk7SE7SOnpn4aENea2S8Xj/0UiWYvHOhiHXaDtJuYFUk66NFz
-         0FwrPaNDfEdFPHl3EcDHdonAUterJFYDC0rFjk4NuIQrU+Ht9YFv0EQdsH3RsQJI4SoK
-         VtSmh2RBLvVLrGQ49GbaaU/rUrXm9hUwL62HZHk8JgH5PnnuJtYh48mb3IGMVRhnh5i4
-         9itA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5hlxYhxAKpVIJe37MJrIhjSi18t9kePPhIytra1F24s=;
-        b=rreSl9VFVXmfApn+s9w8k07Fo/RnGP2IHCfuPWGTb2DVTQgFqHi304MFymZZ/bAkwN
-         y3tH8ikim9V36Z7PxbLfL1P5Mz9uyZpUahXBu+2aO30K7PMHRkh3y17aYoK4ZXwDDFPo
-         lul0E6EMZRNzojf9Lr5R/V7frIEiLFJcp/xGrjjqO2fYef9Gi8AHMLfm8KeaWemfAq7R
-         G2S3Ad5eekZI3qtJ9VNKwwr1bDwCwgHVtKrWB6KRKVIk3NQsymK5Hppfy+MPq7BhhMS1
-         LELUexE5bgIEb+NuGQ0X73NW2nhfxh8+hWnDrq9T9lMuqrhLrwzjLhg71Z1ZZYTsyB4g
-         50Hg==
-X-Gm-Message-State: APzg51B/fYvjYRYt9S3YhORzpYxGfvnVMLPfHs0hw/gmzXrRZ++B+/Ks
-        B+tCxDkyoju7+UIrB8X2B3lwha4gv7eqCcvluNo9JA==
-X-Google-Smtp-Source: ANB0VdamA/jsuqJxRD3/9gcxDnSVtweD4+mLMYHrVYDhq/+X9mCJvGkKNpS2pW9amhQZEWDFCCbHRExm3h2Qmce4XpI=
-X-Received: by 2002:a0c:87b1:: with SMTP id 46-v6mr8729629qvj.202.1535971259426;
- Mon, 03 Sep 2018 03:40:59 -0700 (PDT)
+        Mon, 3 Sep 2018 11:06:05 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83AjoDV3274467
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Sep 2018 03:45:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83AjnLG3274464;
+        Mon, 3 Sep 2018 03:45:49 -0700
+Date:   Mon, 3 Sep 2018 03:45:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Randy Dunlap <tipbot@zytor.com>
+Message-ID: <tip-4331f4d5ada5684fc77fa16e3f6177f077c9e6ec@git.kernel.org>
+Cc:     tglx@linutronix.de, rdunlap@infradead.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        mark.rutland@arm.com
+Reply-To: tglx@linutronix.de, rdunlap@infradead.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          mark.rutland@arm.com
+In-Reply-To: <0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org>
+References: <0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86: Fix kernel-doc atomic.h warnings
+Git-Commit-ID: 4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:ac8:34a7:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 03:40:38 -0700 (PDT)
-In-Reply-To: <CAMuHMdV2iDHTJh2PbBzzWNSYLH-hudMB5CWzEEBormGHPMegcw@mail.gmail.com>
-References: <20180831170514.24665-1-miguel.ojeda.sandonis@gmail.com>
- <20180831170514.24665-2-miguel.ojeda.sandonis@gmail.com> <0a8588f3-929a-608f-1fdc-e24b90e6b59b@rasmusvillemoes.dk>
- <CANiq72mJ+AhD0DO6xcbG5SbGmraPU48+UbWaaU5rW-p4XoO4LQ@mail.gmail.com>
- <CANiq72mDH1hPTAuB=zmX0uiVEx_mWS-3GO26YUSKXPHRREYjjA@mail.gmail.com> <CAMuHMdV2iDHTJh2PbBzzWNSYLH-hudMB5CWzEEBormGHPMegcw@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 3 Sep 2018 12:40:38 +0200
-Message-ID: <CANiq72m=AW_azRv+4HHoY7o-f1gSrmChB1XUfwkqz7hVJjU1cg@mail.gmail.com>
-Subject: Re: [PATCH 2/7] Compiler Attributes: use the no-underscores syntax
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Commit-ID:  4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
+Gitweb:     https://git.kernel.org/tip/4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
+Author:     Randy Dunlap <rdunlap@infradead.org>
+AuthorDate: Sun, 2 Sep 2018 19:30:53 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 3 Sep 2018 12:41:41 +0200
 
-On Mon, Sep 3, 2018 at 8:42 AM, Geert Uytterhoeven <geert@linux-m68k.org> w=
-rote:
-> Hi Miguel,
->
-> On Sat, Sep 1, 2018 at 12:41 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
->> On Sat, Sep 1, 2018 at 12:10 AM, Miguel Ojeda
->> <miguel.ojeda.sandonis@gmail.com> wrote:
->> > arch/parisc/boot/compressed/misc.c:#define malloc       malloc_gzip
->> > include/linux/decompress/mm.h:#define malloc(a) kmalloc(a, GFP_KERNEL)
->> > lib/inflate.c:#define malloc(a) kmalloc(a, GFP_KERNEL)
->> > include/linux/compiler_types.h:#define noinline_for_stack noinline
->> > include/linux/raid/pq.h:#define noinline __attribute__((noinline))
->> > tools/include/linux/compiler.h:#define noinline
->> > arch/mips/sgi-ip27/ip27-reset.c:#define noreturn while(1);
->>
->> A better list, searching for all attributes used anywhere in the kernel:
->>
->> git grep -E '^\s*#define\s+(address_space|alias|aligned|always_inline|as=
-sume_aligned|bitwise|bnd_legacy|cold|common|const|constructor|context|depre=
-cated|designated_init|destructor|error|externally_visible|flatten|force|for=
-mat|format|gnu_inline|hot|hotpatch|indirect_branch|latent_entropy|long_call=
-|malloc|may_alias|mode|model|naked|nocast|noclone|noderef|noinline|no_instr=
-ument_function|nonnull|no_randomize_layout|noreturn|no_sanitize_address|opt=
-imize|packed|pure|randomize_layout|regparm|require_context|safe|section|sys=
-call_linkage|target|tls_model|unused|used|user|vector_size|visibility|warni=
-ng|warn_unused_result|weak)(\(|\s|$)'
->>
->> arch/mips/sgi-ip27/ip27-reset.c:#define noreturn while(1);
->>                  /* Silence gcc.  */
->> arch/parisc/boot/compressed/misc.c:#define malloc       malloc_gzip
->> arch/powerpc/xmon/ansidecl.h:#define    const
->> drivers/gpu/drm/nouveau/nvkm/subdev/bios/init.c:#define error(fmt,
->> args...) bioslog(ERROR, fmt, ##args)
->> include/linux/compiler_attributes.h:#define   noinline
->> __attribute__((noinline))
->> include/linux/decompress/mm.h:#define malloc(a) kmalloc(a, GFP_KERNEL)
->> include/linux/raid/pq.h:#define noinline __attribute__((noinline))
->> lib/inflate.c:#define malloc(a) kmalloc(a, GFP_KERNEL)
->> tools/include/linux/compiler-gcc.h:#define  noinline
->> __attribute__((noinline))
->> tools/include/linux/compiler.h:#define noinline
->> tools/testing/selftests/futex/include/logging.h:#define error(message,
->> err, args...) \
->>
->> None of these should make a problem. And it would may avoid people
->> using such common-name-macros in the future ;-)
->
-> That's very fragile.
-> Who knows all (current and future) attribute names by heart, and that def=
-ining
-> them could have such side effects?
+x86: Fix kernel-doc atomic.h warnings
 
-Please see the email I sent after that one -- I clarified that this
-was more about the current state and that in v3 it will be changed, if
-only to avoid surprises in the future for ourselves. I agree with you
-and, as Rasmus pointed out, we will use the macros anyway.
+Fix kernel-doc warnings in arch/x86/include/asm/atomic.h that are caused by
+having a #define macro between the kernel-doc notation and the function
+name.  Fixed by moving the #define macro to after the function
+implementation.
 
->
-> At least "alias", "force", "format", "mode", "model", "optimize", "target=
-" are
-> names I wouldn't hesitate to use as a macro name in a driver...
+Make the same change for atomic64_{32,64}.h for consistency even though
+there were no kernel-doc warnings found in these header files, but there
+would be if they were used in generation of documentation.
 
-A macro with a lowercase, short & common name is not the best idea in
-my opinion; if only because of clarity for future readers. Unless it
-really improved the code readability for some reason in a particular
-case, I would avoid it. But to each his own! :-)
+Fixes these kernel-doc warnings:
 
-Thanks for reviewing!
+../arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'i' description in 'arch_atomic_sub_and_test'
+../arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'v' description in 'arch_atomic_sub_and_test'
+../arch/x86/include/asm/atomic.h:96: warning: Excess function parameter 'v' description in 'arch_atomic_inc'
+../arch/x86/include/asm/atomic.h:109: warning: Excess function parameter 'v' description in 'arch_atomic_dec'
+../arch/x86/include/asm/atomic.h:124: warning: Excess function parameter 'v' description in 'arch_atomic_dec_and_test'
+../arch/x86/include/asm/atomic.h:138: warning: Excess function parameter 'v' description in 'arch_atomic_inc_and_test'
+../arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'i' description in 'arch_atomic_add_negative'
+../arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'v' description in 'arch_atomic_add_negative'
 
-Cheers,
-Miguel
+Fixes: 18cc1814d4e7 ("atomics/treewide: Make test ops optional")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Link: https://lkml.kernel.org/r/0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org
+
+
+---
+ arch/x86/include/asm/atomic.h      | 12 ++++++------
+ arch/x86/include/asm/atomic64_32.h |  8 ++++----
+ arch/x86/include/asm/atomic64_64.h | 12 ++++++------
+ 3 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
+index b143717b92b3..ce84388e540c 100644
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -80,11 +80,11 @@ static __always_inline void arch_atomic_sub(int i, atomic_t *v)
+  * true if the result is zero, or false for all
+  * other cases.
+  */
+-#define arch_atomic_sub_and_test arch_atomic_sub_and_test
+ static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
+ {
+ 	GEN_BINARY_RMWcc(LOCK_PREFIX "subl", v->counter, "er", i, "%0", e);
+ }
++#define arch_atomic_sub_and_test arch_atomic_sub_and_test
+ 
+ /**
+  * arch_atomic_inc - increment atomic variable
+@@ -92,12 +92,12 @@ static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
+  *
+  * Atomically increments @v by 1.
+  */
+-#define arch_atomic_inc arch_atomic_inc
+ static __always_inline void arch_atomic_inc(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0"
+ 		     : "+m" (v->counter));
+ }
++#define arch_atomic_inc arch_atomic_inc
+ 
+ /**
+  * arch_atomic_dec - decrement atomic variable
+@@ -105,12 +105,12 @@ static __always_inline void arch_atomic_inc(atomic_t *v)
+  *
+  * Atomically decrements @v by 1.
+  */
+-#define arch_atomic_dec arch_atomic_dec
+ static __always_inline void arch_atomic_dec(atomic_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0"
+ 		     : "+m" (v->counter));
+ }
++#define arch_atomic_dec arch_atomic_dec
+ 
+ /**
+  * arch_atomic_dec_and_test - decrement and test
+@@ -120,11 +120,11 @@ static __always_inline void arch_atomic_dec(atomic_t *v)
+  * returns true if the result is 0, or false for all other
+  * cases.
+  */
+-#define arch_atomic_dec_and_test arch_atomic_dec_and_test
+ static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
+ {
+ 	GEN_UNARY_RMWcc(LOCK_PREFIX "decl", v->counter, "%0", e);
+ }
++#define arch_atomic_dec_and_test arch_atomic_dec_and_test
+ 
+ /**
+  * arch_atomic_inc_and_test - increment and test
+@@ -134,11 +134,11 @@ static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
+  * and returns true if the result is zero, or false for all
+  * other cases.
+  */
+-#define arch_atomic_inc_and_test arch_atomic_inc_and_test
+ static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
+ {
+ 	GEN_UNARY_RMWcc(LOCK_PREFIX "incl", v->counter, "%0", e);
+ }
++#define arch_atomic_inc_and_test arch_atomic_inc_and_test
+ 
+ /**
+  * arch_atomic_add_negative - add and test if negative
+@@ -149,11 +149,11 @@ static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
+  * if the result is negative, or false when
+  * result is greater than or equal to zero.
+  */
+-#define arch_atomic_add_negative arch_atomic_add_negative
+ static __always_inline bool arch_atomic_add_negative(int i, atomic_t *v)
+ {
+ 	GEN_BINARY_RMWcc(LOCK_PREFIX "addl", v->counter, "er", i, "%0", s);
+ }
++#define arch_atomic_add_negative arch_atomic_add_negative
+ 
+ /**
+  * arch_atomic_add_return - add integer and return
+diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
+index ef959f02d070..6a5b0ec460da 100644
+--- a/arch/x86/include/asm/atomic64_32.h
++++ b/arch/x86/include/asm/atomic64_32.h
+@@ -205,12 +205,12 @@ static inline long long arch_atomic64_sub(long long i, atomic64_t *v)
+  *
+  * Atomically increments @v by 1.
+  */
+-#define arch_atomic64_inc arch_atomic64_inc
+ static inline void arch_atomic64_inc(atomic64_t *v)
+ {
+ 	__alternative_atomic64(inc, inc_return, /* no output */,
+ 			       "S" (v) : "memory", "eax", "ecx", "edx");
+ }
++#define arch_atomic64_inc arch_atomic64_inc
+ 
+ /**
+  * arch_atomic64_dec - decrement atomic64 variable
+@@ -218,12 +218,12 @@ static inline void arch_atomic64_inc(atomic64_t *v)
+  *
+  * Atomically decrements @v by 1.
+  */
+-#define arch_atomic64_dec arch_atomic64_dec
+ static inline void arch_atomic64_dec(atomic64_t *v)
+ {
+ 	__alternative_atomic64(dec, dec_return, /* no output */,
+ 			       "S" (v) : "memory", "eax", "ecx", "edx");
+ }
++#define arch_atomic64_dec arch_atomic64_dec
+ 
+ /**
+  * arch_atomic64_add_unless - add unless the number is a given value
+@@ -245,7 +245,6 @@ static inline int arch_atomic64_add_unless(atomic64_t *v, long long a,
+ 	return (int)a;
+ }
+ 
+-#define arch_atomic64_inc_not_zero arch_atomic64_inc_not_zero
+ static inline int arch_atomic64_inc_not_zero(atomic64_t *v)
+ {
+ 	int r;
+@@ -253,8 +252,8 @@ static inline int arch_atomic64_inc_not_zero(atomic64_t *v)
+ 			     "S" (v) : "ecx", "edx", "memory");
+ 	return r;
+ }
++#define arch_atomic64_inc_not_zero arch_atomic64_inc_not_zero
+ 
+-#define arch_atomic64_dec_if_positive arch_atomic64_dec_if_positive
+ static inline long long arch_atomic64_dec_if_positive(atomic64_t *v)
+ {
+ 	long long r;
+@@ -262,6 +261,7 @@ static inline long long arch_atomic64_dec_if_positive(atomic64_t *v)
+ 			     "S" (v) : "ecx", "memory");
+ 	return r;
+ }
++#define arch_atomic64_dec_if_positive arch_atomic64_dec_if_positive
+ 
+ #undef alternative_atomic64
+ #undef __alternative_atomic64
+diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
+index 4343d9b4f30e..5f851d92eecd 100644
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -71,11 +71,11 @@ static inline void arch_atomic64_sub(long i, atomic64_t *v)
+  * true if the result is zero, or false for all
+  * other cases.
+  */
+-#define arch_atomic64_sub_and_test arch_atomic64_sub_and_test
+ static inline bool arch_atomic64_sub_and_test(long i, atomic64_t *v)
+ {
+ 	GEN_BINARY_RMWcc(LOCK_PREFIX "subq", v->counter, "er", i, "%0", e);
+ }
++#define arch_atomic64_sub_and_test arch_atomic64_sub_and_test
+ 
+ /**
+  * arch_atomic64_inc - increment atomic64 variable
+@@ -83,13 +83,13 @@ static inline bool arch_atomic64_sub_and_test(long i, atomic64_t *v)
+  *
+  * Atomically increments @v by 1.
+  */
+-#define arch_atomic64_inc arch_atomic64_inc
+ static __always_inline void arch_atomic64_inc(atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "incq %0"
+ 		     : "=m" (v->counter)
+ 		     : "m" (v->counter));
+ }
++#define arch_atomic64_inc arch_atomic64_inc
+ 
+ /**
+  * arch_atomic64_dec - decrement atomic64 variable
+@@ -97,13 +97,13 @@ static __always_inline void arch_atomic64_inc(atomic64_t *v)
+  *
+  * Atomically decrements @v by 1.
+  */
+-#define arch_atomic64_dec arch_atomic64_dec
+ static __always_inline void arch_atomic64_dec(atomic64_t *v)
+ {
+ 	asm volatile(LOCK_PREFIX "decq %0"
+ 		     : "=m" (v->counter)
+ 		     : "m" (v->counter));
+ }
++#define arch_atomic64_dec arch_atomic64_dec
+ 
+ /**
+  * arch_atomic64_dec_and_test - decrement and test
+@@ -113,11 +113,11 @@ static __always_inline void arch_atomic64_dec(atomic64_t *v)
+  * returns true if the result is 0, or false for all other
+  * cases.
+  */
+-#define arch_atomic64_dec_and_test arch_atomic64_dec_and_test
+ static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
+ {
+ 	GEN_UNARY_RMWcc(LOCK_PREFIX "decq", v->counter, "%0", e);
+ }
++#define arch_atomic64_dec_and_test arch_atomic64_dec_and_test
+ 
+ /**
+  * arch_atomic64_inc_and_test - increment and test
+@@ -127,11 +127,11 @@ static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
+  * and returns true if the result is zero, or false for all
+  * other cases.
+  */
+-#define arch_atomic64_inc_and_test arch_atomic64_inc_and_test
+ static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
+ {
+ 	GEN_UNARY_RMWcc(LOCK_PREFIX "incq", v->counter, "%0", e);
+ }
++#define arch_atomic64_inc_and_test arch_atomic64_inc_and_test
+ 
+ /**
+  * arch_atomic64_add_negative - add and test if negative
+@@ -142,11 +142,11 @@ static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
+  * if the result is negative, or false when
+  * result is greater than or equal to zero.
+  */
+-#define arch_atomic64_add_negative arch_atomic64_add_negative
+ static inline bool arch_atomic64_add_negative(long i, atomic64_t *v)
+ {
+ 	GEN_BINARY_RMWcc(LOCK_PREFIX "addq", v->counter, "er", i, "%0", s);
+ }
++#define arch_atomic64_add_negative arch_atomic64_add_negative
+ 
+ /**
+  * arch_atomic64_add_return - add and return
