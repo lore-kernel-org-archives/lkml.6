@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB232C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874CBC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F19620862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F19620862
+	by mail.kernel.org (Postfix) with ESMTP id 4836C20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:10:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4836C20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbeICVbt (ORCPT
+        id S1729668AbeICVbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:31:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40682 "EHLO
+        Mon, 3 Sep 2018 17:31:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728794AbeICVbs (ORCPT
+        with ESMTP id S1729446AbeICVbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:31:48 -0400
+        Mon, 3 Sep 2018 17:31:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 628B4D02;
-        Mon,  3 Sep 2018 17:10:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52D0CD06;
+        Mon,  3 Sep 2018 17:10:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 4.9 069/107] x86/speculation/l1tf: Suggest what to do on systems with too much RAM
-Date:   Mon,  3 Sep 2018 18:56:33 +0200
-Message-Id: <20180903165640.641731399@linuxfoundation.org>
+        stable@vger.kernel.org, Rian Hunter <rian@alum.mit.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bpetkov@suse.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Dmitry Safonov <dima@arista.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 4.9 070/107] x86/process: Re-export start_thread()
+Date:   Mon,  3 Sep 2018 18:56:34 +0200
+Message-Id: <20180903165640.684912800@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -54,46 +57,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Rian Hunter <rian@alum.mit.edu>
 
-commit 6a012288d6906fee1dbc244050ade1dafe4a9c8d upstream.
+commit dc76803e57cc86589c4efcb5362918f9b0c0436f upstream.
 
-Two users have reported [1] that they have an "extremely unlikely" system
-with more than MAX_PA/2 memory and L1TF mitigation is not effective.
+The consolidation of the start_thread() functions removed the export
+unintentionally. This breaks binfmt handlers built as a module.
 
-Make the warning more helpful by suggesting the proper mem=X kernel boot
-parameter to make it effective and a link to the L1TF document to help
-decide if the mitigation is worth the unusable RAM.
+Add it back.
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
-
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
+Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
+Signed-off-by: Rian Hunter <rian@alum.mit.edu>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz
+Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/process_64.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -685,6 +685,10 @@ static void __init l1tf_select_mitigatio
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
- 	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
-+				half_pa);
-+		pr_info("However, doing so will make a part of your RAM unusable.\n");
-+		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html might help you decide.\n");
- 		return;
- 	}
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -360,6 +360,7 @@ start_thread(struct pt_regs *regs, unsig
+ 	start_thread_common(regs, new_ip, new_sp,
+ 			    __USER_CS, __USER_DS, 0);
+ }
++EXPORT_SYMBOL_GPL(start_thread);
  
+ #ifdef CONFIG_COMPAT
+ void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
 
 
