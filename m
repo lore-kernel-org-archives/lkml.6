@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC873C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B35C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F632077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F632077C
+	by mail.kernel.org (Postfix) with ESMTP id 461C22077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461C22077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbeICVjj (ORCPT
+        id S1730373AbeICVjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43072 "EHLO
+        Mon, 3 Sep 2018 17:39:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbeICVjj (ORCPT
+        with ESMTP id S1728967AbeICVjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:39 -0400
+        Mon, 3 Sep 2018 17:39:43 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A0D9D14;
-        Mon,  3 Sep 2018 17:18:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B91AD14;
+        Mon,  3 Sep 2018 17:18:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Wang <liwang@redhat.com>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Huang Ying <huang.ying.caritas@gmail.com>,
-        Yu Zhao <yuzhao@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        Ofer Levi <oferle@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 057/165] zswap: re-check zswap_is_full() after do zswap_shrink()
-Date:   Mon,  3 Sep 2018 18:55:43 +0200
-Message-Id: <20180903165657.985743003@linuxfoundation.org>
+Subject: [PATCH 4.14 066/165] arc: [plat-eznps] fix printk warning in arc/plat-eznps/mtm.c
+Date:   Mon,  3 Sep 2018 18:55:52 +0200
+Message-Id: <20180903165658.428765344@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -56,65 +54,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Li Wang <liwang@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 16e536ef47f567289a5699abee9ff7bb304bc12d ]
+[ Upstream commit 9e2ea405543d9ddfe05b351f1679e53bd9c11f80 ]
 
-/sys/../zswap/stored_pages keeps rising in a zswap test with
-"zswap.max_pool_percent=0" parameter.  But it should not compress or
-store pages any more since there is no space in the compressed pool.
+Fix printk format warning in arch/arc/plat-eznps/mtm.c:
 
-Reproduce steps:
-  1. Boot kernel with "zswap.enabled=1"
-  2. Set the max_pool_percent to 0
-      # echo 0 > /sys/module/zswap/parameters/max_pool_percent
-  3. Do memory stress test to see if some pages have been compressed
-      # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
-  4. Watching the 'stored_pages' number increasing or not
+In file included from ../include/linux/printk.h:7,
+                 from ../include/linux/kernel.h:14,
+                 from ../include/linux/list.h:9,
+                 from ../include/linux/smp.h:12,
+                 from ../arch/arc/plat-eznps/mtm.c:17:
+../arch/arc/plat-eznps/mtm.c: In function 'set_mtm_hs_ctr':
+../include/linux/kern_levels.h:5:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long int' [-Wformat=]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^~~~~~
+../include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
+ #define KERN_ERR KERN_SOH "3" /* error conditions */
+                  ^~~~~~~~
+../include/linux/printk.h:308:9: note: in expansion of macro 'KERN_ERR'
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         ^~~~~~~~
+../arch/arc/plat-eznps/mtm.c:166:3: note: in expansion of macro 'pr_err'
+   pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
+   ^~~~~~
+../arch/arc/plat-eznps/mtm.c:166:40: note: format string is defined here
+   pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
+                                       ~^
+                                       %ld
+The hs_ctr variable can just be int instead of long, so also change
+kstrtol() to kstrtoint() and leave the format string as %d.
 
-The root cause is:
+Also add 2 header files since they are used in mtm.c and we prefer
+not to depend on accidental/indirect #includes.
 
-  When zswap_max_pool_percent is set to 0 via kernel parameter,
-  zswap_is_full() will always return true due to zswap_shrink().  But if
-  the shinking is able to reclain a page successfully the code then
-  proceeds to compressing/storing another page, so the value of
-  stored_pages will keep changing.
-
-To solve the issue, this patch adds a zswap_is_full() check again after
-  zswap_shrink() to make sure it's now under the max_pool_percent, and to
-  not compress/store if we reached the limit.
-
-Link: http://lkml.kernel.org/r/20180530103936.17812-1-liwang@redhat.com
-Signed-off-by: Li Wang <liwang@redhat.com>
-Acked-by: Dan Streetman <ddstreet@ieee.org>
-Cc: Seth Jennings <sjenning@redhat.com>
-Cc: Huang Ying <huang.ying.caritas@gmail.com>
-Cc: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Ofer Levi <oferle@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/zswap.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arc/plat-eznps/mtm.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -989,6 +989,15 @@ static int zswap_frontswap_store(unsigne
- 			ret = -ENOMEM;
- 			goto reject;
- 		}
-+
-+		/* A second zswap_is_full() check after
-+		 * zswap_shrink() to make sure it's now
-+		 * under the max_pool_percent
-+		 */
-+		if (zswap_is_full()) {
-+			ret = -ENOMEM;
-+			goto reject;
-+		}
- 	}
+--- a/arch/arc/plat-eznps/mtm.c
++++ b/arch/arc/plat-eznps/mtm.c
+@@ -15,6 +15,8 @@
+  */
  
- 	/* allocate entry */
+ #include <linux/smp.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/log2.h>
+ #include <asm/arcregs.h>
+@@ -157,10 +159,10 @@ void mtm_enable_core(unsigned int cpu)
+ /* Verify and set the value of the mtm hs counter */
+ static int __init set_mtm_hs_ctr(char *ctr_str)
+ {
+-	long hs_ctr;
++	int hs_ctr;
+ 	int ret;
+ 
+-	ret = kstrtol(ctr_str, 0, &hs_ctr);
++	ret = kstrtoint(ctr_str, 0, &hs_ctr);
+ 
+ 	if (ret || hs_ctr > MT_HS_CNT_MAX || hs_ctr < MT_HS_CNT_MIN) {
+ 		pr_err("** Invalid @nps_mtm_hs_ctr [%d] needs to be [%d:%d] (incl)\n",
 
 
