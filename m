@@ -3,38 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C2FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B676AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF4020843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF4020843
+	by mail.kernel.org (Postfix) with ESMTP id 7BED520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BED520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbeICV1g (ORCPT
+        id S1729734AbeICV1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:27:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39702 "EHLO
+        Mon, 3 Sep 2018 17:27:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39714 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729190AbeICV1g (ORCPT
+        with ESMTP id S1728663AbeICV1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:27:36 -0400
+        Mon, 3 Sep 2018 17:27:39 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8410D06;
-        Mon,  3 Sep 2018 17:06:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3C6FD06;
+        Mon,  3 Sep 2018 17:06:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 059/107] s390/kvm: fix deadlock when killed by oom
-Date:   Mon,  3 Sep 2018 18:56:23 +0200
-Message-Id: <20180903165640.164426729@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 033/107] selftests/ftrace: Add snapshot and tracing_on test case
+Date:   Mon,  3 Sep 2018 18:55:57 +0200
+Message-Id: <20180903165638.885613025@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,40 +55,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 306d6c49ac9ded11114cb53b0925da52f2c2ada1 upstream.
+[ Upstream commit 82f4f3e69c5c29bce940dd87a2c0f16c51d48d17 ]
 
-When the oom killer kills a userspace process in the page fault handler
-while in guest context, the fault handler fails to release the mm_sem
-if the FAULT_FLAG_RETRY_NOWAIT option is set. This leads to a deadlock
-when tearing down the mm when the process terminates. This bug can only
-happen when pfault is enabled, so only KVM clients are affected.
+Add a testcase for checking snapshot and tracing_on
+relationship. This ensures that the snapshotting doesn't
+affect current tracing on/off settings.
 
-The problem arises in the rare cases in which handle_mm_fault does not
-release the mm_sem. This patch fixes the issue by manually releasing
-the mm_sem when needed.
+Link: http://lkml.kernel.org/r/153149932412.11274.15289227592627901488.stgit@devbox
 
-Fixes: 24eb3a824c4f3 ("KVM: s390: Add FAULT_FLAG_RETRY_NOWAIT for guest fault")
-Cc: <stable@vger.kernel.org> # 3.15+
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/s390/mm/fault.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc |   28 ++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
 
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -462,6 +462,8 @@ retry:
- 	/* No reason to continue if interrupted by SIGKILL. */
- 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
- 		fault = VM_FAULT_SIGNAL;
-+		if (flags & FAULT_FLAG_RETRY_NOWAIT)
-+			goto out_up;
- 		goto out;
- 	}
- 	if (unlikely(fault & VM_FAULT_ERROR))
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
+@@ -0,0 +1,28 @@
++#!/bin/sh
++# description: Snapshot and tracing setting
++# flags: instance
++
++[ ! -f snapshot ] && exit_unsupported
++
++echo "Set tracing off"
++echo 0 > tracing_on
++
++echo "Allocate and take a snapshot"
++echo 1 > snapshot
++
++# Since trace buffer is empty, snapshot is also empty, but allocated
++grep -q "Snapshot is allocated" snapshot
++
++echo "Ensure keep tracing off"
++test `cat tracing_on` -eq 0
++
++echo "Set tracing on"
++echo 1 > tracing_on
++
++echo "Take a snapshot again"
++echo 1 > snapshot
++
++echo "Ensure keep tracing on"
++test `cat tracing_on` -eq 1
++
++exit 0
 
 
