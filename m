@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E87C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 726D8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA0E20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA0E20779
+	by mail.kernel.org (Postfix) with ESMTP id 30A7E20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A7E20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbeICVYM (ORCPT
+        id S1729171AbeICVYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39048 "EHLO
+        Mon, 3 Sep 2018 17:24:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbeICVYM (ORCPT
+        with ESMTP id S1727818AbeICVYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:12 -0400
+        Mon, 3 Sep 2018 17:24:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42BA8CF5;
-        Mon,  3 Sep 2018 17:03:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A957CF5;
+        Mon,  3 Sep 2018 17:03:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 58/80] fuse: fix double request_end()
-Date:   Mon,  3 Sep 2018 18:49:36 +0200
-Message-Id: <20180903164936.467556808@linuxfoundation.org>
+        stable@vger.kernel.org, Eyal Birger <eyal.birger@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 001/107] vti6: fix PMTU caching and reporting on xmit
+Date:   Mon,  3 Sep 2018 18:55:25 +0200
+Message-Id: <20180903165637.361669156@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
-References: <20180903164934.171677301@linuxfoundation.org>
+In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
+References: <20180903165637.293735109@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,63 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Eyal Birger <eyal.birger@gmail.com>
 
-commit 87114373ea507895a62afb10d2910bd9adac35a8 upstream.
+[ Upstream commit d6990976af7c5d8f55903bfb4289b6fb030bf754 ]
 
-Refcounting of request is broken when fuse_abort_conn() is called and
-request is on the fpq->io list:
+When setting the skb->dst before doing the MTU check, the route PMTU
+caching and reporting is done on the new dst which is about to be
+released.
 
- - ref is taken too late
- - then it is not dropped
+Instead, PMTU handling should be done using the original dst.
 
-Fixes: 0d8e84b0432b ("fuse: simplify request abort")
-Cc: <stable@vger.kernel.org> # v4.2
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+This is aligned with IPv4 VTI.
+
+Fixes: ccd740cbc6 ("vti6: Add pmtu handling to vti6_xmit.")
+Signed-off-by: Eyal Birger <eyal.birger@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/fuse/dev.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/ipv6/ip6_vti.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -382,7 +382,7 @@ static void request_end(struct fuse_conn
- 	struct fuse_iqueue *fiq = &fc->iq;
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -480,10 +480,6 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 		goto tx_err_dst_release;
+ 	}
  
- 	if (test_and_set_bit(FR_FINISHED, &req->flags))
--		return;
-+		goto out_put_req;
- 
- 	spin_lock(&fiq->waitq.lock);
- 	list_del_init(&req->intr_entry);
-@@ -412,6 +412,7 @@ static void request_end(struct fuse_conn
- 	wake_up(&req->waitq);
- 	if (req->end)
- 		req->end(fc, req);
-+out_put_req:
- 	fuse_put_request(fc, req);
- }
- 
-@@ -2154,6 +2155,7 @@ void fuse_abort_conn(struct fuse_conn *f
- 				set_bit(FR_ABORTED, &req->flags);
- 				if (!test_bit(FR_LOCKED, &req->flags)) {
- 					set_bit(FR_PRIVATE, &req->flags);
-+					__fuse_get_request(req);
- 					list_move(&req->list, &to_end1);
- 				}
- 				spin_unlock(&req->waitq.lock);
-@@ -2180,7 +2182,6 @@ void fuse_abort_conn(struct fuse_conn *f
- 
- 		while (!list_empty(&to_end1)) {
- 			req = list_first_entry(&to_end1, struct fuse_req, list);
--			__fuse_get_request(req);
- 			list_del_init(&req->list);
- 			request_end(fc, req);
+-	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
+-	skb_dst_set(skb, dst);
+-	skb->dev = skb_dst(skb)->dev;
+-
+ 	mtu = dst_mtu(dst);
+ 	if (!skb->ignore_df && skb->len > mtu) {
+ 		skb_dst(skb)->ops->update_pmtu(dst, NULL, skb, mtu);
+@@ -498,9 +494,14 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 				  htonl(mtu));
  		}
+ 
+-		return -EMSGSIZE;
++		err = -EMSGSIZE;
++		goto tx_err_dst_release;
+ 	}
+ 
++	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
++	skb_dst_set(skb, dst);
++	skb->dev = skb_dst(skb)->dev;
++
+ 	err = dst_output(t->net, skb->sk, skb);
+ 	if (net_xmit_eval(err) == 0) {
+ 		struct pcpu_sw_netstats *tstats = this_cpu_ptr(dev->tstats);
 
 
