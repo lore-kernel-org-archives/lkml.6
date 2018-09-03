@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614F5C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BFCC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E1E20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E1E20779
+	by mail.kernel.org (Postfix) with ESMTP id AC5AD20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5AD20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbeICVYp (ORCPT
+        id S1729248AbeICVYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39142 "EHLO
+        Mon, 3 Sep 2018 17:24:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbeICVYo (ORCPT
+        with ESMTP id S1728997AbeICVYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:44 -0400
+        Mon, 3 Sep 2018 17:24:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4ECFED00;
-        Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64CE8D00;
+        Mon,  3 Sep 2018 17:03:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 016/107] tools/power turbostat: fix -S on UP systems
-Date:   Mon,  3 Sep 2018 18:55:40 +0200
-Message-Id: <20180903165638.081586083@linuxfoundation.org>
+Subject: [PATCH 4.9 017/107] net: caif: Add a missing rcu_read_unlock() in caif_flow_cb
+Date:   Mon,  3 Sep 2018 18:55:41 +0200
+Message-Id: <20180903165638.133424672@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,32 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Len Brown <len.brown@intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 9d83601a9cc1884d1b5706ee2acc661d558c6838 ]
+[ Upstream commit 64119e05f7b31e83e2555f6782e6cdc8f81c63f4 ]
 
-The -S (system summary) option failed to print any data on a 1-processor system.
+Add a missing rcu_read_unlock in the error path
 
-Reported-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
+Fixes: c95567c80352 ("caif: added check for potential null return")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/power/x86/turbostat/turbostat.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/caif/caif_dev.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -733,9 +733,7 @@ void format_all_counters(struct thread_d
- 	if (!printed || !summary_only)
- 		print_header();
+--- a/net/caif/caif_dev.c
++++ b/net/caif/caif_dev.c
+@@ -131,8 +131,10 @@ static void caif_flow_cb(struct sk_buff
+ 	caifd = caif_get(skb->dev);
  
--	if (topo.num_cpus > 1)
--		format_counters(&average.threads, &average.cores,
--			&average.packages);
-+	format_counters(&average.threads, &average.cores, &average.packages);
+ 	WARN_ON(caifd == NULL);
+-	if (caifd == NULL)
++	if (!caifd) {
++		rcu_read_unlock();
+ 		return;
++	}
  
- 	printed = 1;
- 
+ 	caifd_hold(caifd);
+ 	rcu_read_unlock();
 
 
