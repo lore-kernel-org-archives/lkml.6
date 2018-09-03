@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 043C6C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6C2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B623F20873
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7680820856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwV98YB6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B623F20873
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8cVEYyy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7680820856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeICWYo (ORCPT
+        id S1728145AbeICWYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:24:44 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37523 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbeICWYo (ORCPT
+        Mon, 3 Sep 2018 18:24:50 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38310 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727271AbeICWYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:24:44 -0400
-Received: by mail-oi0-f65.google.com with SMTP id p84-v6so2270045oic.4;
-        Mon, 03 Sep 2018 11:03:26 -0700 (PDT)
+        Mon, 3 Sep 2018 18:24:49 -0400
+Received: by mail-oi0-f67.google.com with SMTP id x197-v6so2252199oix.5;
+        Mon, 03 Sep 2018 11:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6ffzopQXccTuXo2gTw9Fy1V9dviCucvVy+ObNtSf4IU=;
-        b=ZwV98YB63d9YbkVBKdu3sPV7CxQ0FNWcTForlLN0/gRKhsopWeEyOsJnPY72OJuI8Y
-         zw6h621CJzhqAIycGVu9pFf/TxsQ9OrPUcD10muYksWYdA5RYpFca0zxikpl4Lmcm5jb
-         kNPkt7RyDlpZPKTdd9gBMth31DhJ1pCQ5/oYmMrjOw/k9N54AD+YVd4PV87joPnXUXg2
-         9ML/tommEcrJIh4u3qRVw9u50BHEY7IojqFhhU59RKwq3GQy9nwYVqROHXarkmz887JX
-         Zfr32yFVb62WqPlr4m9ayUxlAVBxVaRAd+rQRAOgaMWdxT+PHrRdjvM3NvZNy51w05Yo
-         zHLg==
+        bh=od+FfEhfZ2c4L0WVWY/ZAmVtThCFnh9arWHU9+Uiz+s=;
+        b=W8cVEYyyRcTk6UAfP6KB4nwVa+GxHzJMwwozVrkD0k5xF5dXd/J6/C899Sm8ZUJvF1
+         LLjPyFcq19xUqQqqGgPPFJt4RzMOaOBDv1pmEceRFHW9bBc5/SF0mYnWt4wrDo6ULRCw
+         O3k2xH1OnGwIOSRzaevRlr9/xhQ/iwuOzGY1xG5j+xHC8MvEPRQOSayiJfX0JZNlKDYw
+         iosmVZfA5LD7g25Xhzi2r1UhGPQ3WvUkp1A174sb801OQbZxdjb0TmXpOaO0KuyEr/Yq
+         VdWZCnY9kieJFZYXUdPrW9toFwZqHMcZVNEQ6kKYroH5wboUnMNScIAwgLNW7CNp5GpQ
+         O/mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6ffzopQXccTuXo2gTw9Fy1V9dviCucvVy+ObNtSf4IU=;
-        b=Vm7rK1BWjzGqDwrs07rJLfzEeMln0bkWHOmV5Crh3EWASpHNtAo0KU+9vCxKfm57Kf
-         uL4Mx0blc1mEXcOJRP/zMlRNp3QxyKeu9IqBofiprcBIt8gnd8pZy8VifrK5DOThwQcT
-         kYY87IFJ5ayj+Z8Sw8CC8LIQXF2YtB1HBi7nLcDedhHoiuy7p3SbqajS+24K7ax5QpQP
-         Y7YAfoV4WUpQcgZdTaqb7BVIQVukc2PMf3YSYhChdDwoH2pIrMJ2ODVzq2+VI8af6A88
-         YP+XDadHrOIZevVn5klLQnSBUdC3H/jC7Shk78iDRwnsC/LppvfnKpYQ2WvYa8YixBAe
-         zqiw==
-X-Gm-Message-State: APzg51DoPDkxpC8q3lufDj4H0ebJnC1PRx0oND8kHKjpHctyIRAemkOf
-        41y99kLArbffURMRYmeeuhwf/31fJCY=
-X-Google-Smtp-Source: ANB0VdZQU6fMtSfGvwkaZeV39sMOYopHUPadaDGBG40SZ9w2C6eupe8W1StYB6Um9SUhT9wA9TVTsA==
-X-Received: by 2002:aca:3254:: with SMTP id y81-v6mr19459024oiy.317.1535997805841;
-        Mon, 03 Sep 2018 11:03:25 -0700 (PDT)
+        bh=od+FfEhfZ2c4L0WVWY/ZAmVtThCFnh9arWHU9+Uiz+s=;
+        b=tWp+phQ1RwiUkETmmzW0W9cQw6hWL8ejszI9zt9A56Rtxj40tvynJA4osiQzptiNRe
+         18zzwBC2jiwPy2r3YjNJyPowCHR10XkdZwo4/2M7FiKlVXDOYRptydlR76zatO3yi22J
+         PybEVWQKoxsqACiH+FY7o8WoEu5asBliKvl3bI9EH1I+DTvcMa6lh/y4TGfixNCWst+1
+         zrJ4Xq/c6m8BYejlfEeUrwGkY6yDP/+e99Fcbf91Ira8w028ek29z1KSS//5dZ9HBaBn
+         0ZFmsond526xk3hOXSXSxeV9onUwXysLbIgbshwf0WH5c8zpvx/cQ3zV71PA+aFbOJGG
+         S/OA==
+X-Gm-Message-State: APzg51DEa3++F5AFSWBwWbE01bG/5+tJXolSXbsjZM18w1C3Otc/BTqC
+        6C9W7gPQKJstSINsaXeWyQTX6Lj/1Mc=
+X-Google-Smtp-Source: ANB0VdbQHYS/neIj1baACG1VOSsbiJVtsTcha+gOVQvhtOxz2rEqLRTQGqTTh3ezCDx+aOurnNuqNg==
+X-Received: by 2002:aca:b985:: with SMTP id j127-v6mr19741517oif.257.1535997811674;
+        Mon, 03 Sep 2018 11:03:31 -0700 (PDT)
 Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id q124-v6sm15785737oif.8.2018.09.03.11.03.24
+        by smtp.gmail.com with ESMTPSA id q124-v6sm15785737oif.8.2018.09.03.11.03.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 11:03:25 -0700 (PDT)
+        Mon, 03 Sep 2018 11:03:31 -0700 (PDT)
 From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To:     linux-pci@vger.kernel.org, bhelgaas@google.com
 Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
@@ -77,9 +77,9 @@ Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
         oss-drivers@netronome.com
-Subject: [PATCH 5/9] fm10k: Do not call pcie_print_link_status()
-Date:   Mon,  3 Sep 2018 13:02:32 -0500
-Message-Id: <20180903180242.14504-6-mr.nuke.me@gmail.com>
+Subject: [PATCH 6/9] ixgbe: Do not call pcie_print_link_status()
+Date:   Mon,  3 Sep 2018 13:02:33 -0500
+Message-Id: <20180903180242.14504-7-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903180242.14504-1-mr.nuke.me@gmail.com>
 References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
@@ -92,23 +92,53 @@ This is now done by the PCI core to warn of sub-optimal bandwidth.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- drivers/net/ethernet/intel/fm10k/fm10k_pci.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 26 -------------------
+ 1 file changed, 26 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_pci.c b/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-index 15071e4adb98..079fd3c884ea 100644
---- a/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-@@ -2224,9 +2224,6 @@ static int fm10k_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* kick off service timer now, even when interface is down */
- 	mod_timer(&interface->service_timer, (HZ * 2) + jiffies);
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 9a23d33a47ed..9663419e0ceb 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -241,28 +241,6 @@ static inline bool ixgbe_pcie_from_parent(struct ixgbe_hw *hw)
+ 	}
+ }
  
--	/* print warning for non-optimal configurations */
--	pcie_print_link_status(interface->pdev);
+-static void ixgbe_check_minimum_link(struct ixgbe_adapter *adapter,
+-				     int expected_gts)
+-{
+-	struct ixgbe_hw *hw = &adapter->hw;
+-	struct pci_dev *pdev;
 -
- 	/* report MAC address for logging */
- 	dev_info(&pdev->dev, "%pM\n", netdev->dev_addr);
+-	/* Some devices are not connected over PCIe and thus do not negotiate
+-	 * speed. These devices do not have valid bus info, and thus any report
+-	 * we generate may not be correct.
+-	 */
+-	if (hw->bus.type == ixgbe_bus_type_internal)
+-		return;
+-
+-	/* determine whether to use the parent device */
+-	if (ixgbe_pcie_from_parent(&adapter->hw))
+-		pdev = adapter->pdev->bus->parent->self;
+-	else
+-		pdev = adapter->pdev;
+-
+-	pcie_print_link_status(pdev);
+-}
+-
+ static void ixgbe_service_event_schedule(struct ixgbe_adapter *adapter)
+ {
+ 	if (!test_bit(__IXGBE_DOWN, &adapter->state) &&
+@@ -10792,10 +10770,6 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		break;
+ 	}
  
+-	/* don't check link if we failed to enumerate functions */
+-	if (expected_gts > 0)
+-		ixgbe_check_minimum_link(adapter, expected_gts);
+-
+ 	err = ixgbe_read_pba_string_generic(hw, part_str, sizeof(part_str));
+ 	if (err)
+ 		strlcpy(part_str, "Unknown", sizeof(part_str));
 -- 
 2.17.1
 
