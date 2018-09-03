@@ -2,42 +2,40 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48655C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1425EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090AD20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090AD20779
+	by mail.kernel.org (Postfix) with ESMTP id CD2C120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD2C120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbeICVZS (ORCPT
+        id S1729378AbeICVZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39276 "EHLO
+        Mon, 3 Sep 2018 17:25:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbeICVZR (ORCPT
+        with ESMTP id S1728752AbeICVZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:17 -0400
+        Mon, 3 Sep 2018 17:25:21 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BF51D00;
-        Mon,  3 Sep 2018 17:04:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28430D01;
+        Mon,  3 Sep 2018 17:04:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 025/107] media: staging: omap4iss: Include asm/cacheflush.h after generic includes
-Date:   Mon,  3 Sep 2018 18:55:49 +0200
-Message-Id: <20180903165638.517388210@linuxfoundation.org>
+Subject: [PATCH 4.9 026/107] bnx2x: Fix invalid memory access in rss hash config path.
+Date:   Mon,  3 Sep 2018 18:55:50 +0200
+Message-Id: <20180903165638.567663034@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -54,65 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 0894da849f145af51bde88a6b84f95b9c9e0bc66 ]
+[ Upstream commit ae2dcb28c24794a87e424a726a1cf1a61980f52d ]
 
-Including asm/cacheflush.h first results in the following build error
-when trying to build sparc32:allmodconfig, because 'struct page' has not
-been declared, and the function declaration ends up creating a separate
-(private) declaration of struct page (as a result of function arguments
-being in the scope of the function declaration and definition, not in
-global scope).
+Rx hash/filter table configuration uses rss_conf_obj to configure filters
+in the hardware. This object is initialized only when the interface is
+brought up.
+This patch adds driver changes to configure rss params only when the device
+is in opened state. In port disabled case, the config will be cached in the
+driver structure which will be applied in the successive load path.
 
-The C scoping rules do not just affect variable visibility, they also
-affect type declaration visibility.
+Please consider applying it to 'net' branch.
 
-The end result is that when the actual call site is seen in
-<linux/highmem.h>, the 'struct page' type in the caller is not the same
-'struct page' that the function was declared with, resulting in:
-
-  In file included from arch/sparc/include/asm/page.h:10:0,
-                   ...
-                   from drivers/staging/media/omap4iss/iss_video.c:15:
-  include/linux/highmem.h: In function 'clear_user_highpage':
-  include/linux/highmem.h:137:31: error:
-	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible
-	pointer type
-
-Include generic includes files first to fix the problem.
-
-Fixes: fc96d58c10162 ("[media] v4l: omap4iss: Add support for OMAP4 camera interface - Video devices")
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: David S. Miller <davem@davemloft.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-[ Added explanation of C scope rules - Linus ]
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/media/omap4iss/iss_video.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/media/omap4iss/iss_video.c
-+++ b/drivers/staging/media/omap4iss/iss_video.c
-@@ -11,7 +11,6 @@
-  * (at your option) any later version.
-  */
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -3367,14 +3367,18 @@ static int bnx2x_set_rss_flags(struct bn
+ 			DP(BNX2X_MSG_ETHTOOL,
+ 			   "rss re-configured, UDP 4-tupple %s\n",
+ 			   udp_rss_requested ? "enabled" : "disabled");
+-			return bnx2x_rss(bp, &bp->rss_conf_obj, false, true);
++			if (bp->state == BNX2X_STATE_OPEN)
++				return bnx2x_rss(bp, &bp->rss_conf_obj, false,
++						 true);
+ 		} else if ((info->flow_type == UDP_V6_FLOW) &&
+ 			   (bp->rss_conf_obj.udp_rss_v6 != udp_rss_requested)) {
+ 			bp->rss_conf_obj.udp_rss_v6 = udp_rss_requested;
+ 			DP(BNX2X_MSG_ETHTOOL,
+ 			   "rss re-configured, UDP 4-tupple %s\n",
+ 			   udp_rss_requested ? "enabled" : "disabled");
+-			return bnx2x_rss(bp, &bp->rss_conf_obj, false, true);
++			if (bp->state == BNX2X_STATE_OPEN)
++				return bnx2x_rss(bp, &bp->rss_conf_obj, false,
++						 true);
+ 		}
+ 		return 0;
  
--#include <asm/cacheflush.h>
- #include <linux/clk.h>
- #include <linux/mm.h>
- #include <linux/pagemap.h>
-@@ -24,6 +23,8 @@
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-mc.h>
+@@ -3488,7 +3492,10 @@ static int bnx2x_set_rxfh(struct net_dev
+ 		bp->rss_conf_obj.ind_table[i] = indir[i] + bp->fp->cl_id;
+ 	}
  
-+#include <asm/cacheflush.h>
+-	return bnx2x_config_rss_eth(bp, false);
++	if (bp->state == BNX2X_STATE_OPEN)
++		return bnx2x_config_rss_eth(bp, false);
 +
- #include "iss_video.h"
- #include "iss.h"
++	return 0;
+ }
  
+ /**
 
 
