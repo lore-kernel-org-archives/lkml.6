@@ -2,131 +2,103 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6477CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFCCC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E3C20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E3C20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 953E120843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:32:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TWJrvu16"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953E120843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbeICXwv (ORCPT
+        id S1728613AbeICXyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:52:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36174 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728108AbeICXwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:52:51 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 12:31:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
-   d="scan'208";a="85697247"
-Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Sep 2018 12:27:55 -0700
-Date:   Mon, 3 Sep 2018 22:27:54 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180903192754.GD13497@linux.intel.com>
-References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
- <20180829210901.GA7176@linux.intel.com>
- <105F7BF4D0229846AF094488D65A098935412392@PGSMSX112.gar.corp.intel.com>
- <20180831174330.GA21555@linux.intel.com>
- <20180831213445.GA4098@wind.enjellic.com>
+        Mon, 3 Sep 2018 19:54:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41816 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728108AbeICXyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:54:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=GPJKwL9o8SnsfEPUsZRC7NJzfe+zKXMFlISAXDvWV9Q=; b=TWJrvu163aowdxHUD/dwP7HIUQ
+        4LtAPeqDxGIsitRp4AZisziNe5Z4mYQpFG4Zn4oLsFAu6deuJGwlnqt1Wnb2hn3G9UIvvEeRl6izt
+        3dPk1aHaic+1KbIHNwha3Y7RMKbT/dFBGsZqMkU/DgyQRBYLOp59Yv54Iz3AGFZr65jel0NxI0mXW
+        EF1JPdo5a+ddwm8a7grkNTkW4gFU2r8oElBf3W+r+KbxM5gL0vMxEacfqf7yjdv3RiJ6lFCsCYpeq
+        PI8fbnlJ+isT9Bx8zw1S5Lf+x3vCJVS5atP5EDHl3MlzdXT5DqhGRasmOzzVuyNxj1e6ASp5Ol4YQ
+        VQtrHd5g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fwuZz-0001tV-QW; Mon, 03 Sep 2018 19:32:09 +0000
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-mtd@lists.infradead.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Adrian Bunk <bunk@kernel.org>, Adrian Bunk <bunk@debian.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] mtd: onenand: fix parameter list build warning
+Message-ID: <03e45afe-c4f8-e69b-9cba-6a8863296ad4@infradead.org>
+Date:   Mon, 3 Sep 2018 12:32:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831213445.GA4098@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 04:34:45PM -0500, Dr. Greg wrote:
-> On Fri, Aug 31, 2018 at 10:43:30AM -0700, Sean Christopherson wrote:
-> 
-> Good afternoon to everyone.
-> 
-> > > Sorry I missed this one. To be honest I don't know. I checked the
-> > > SDM and all I can find is:
-> > >
-> > > "On reset, the default value is the digest of Intel's signing key."
-> 
-> > I confirmed the MSRs are reset any time the EPC is lost.  Not sure
-> > what happens if the MSRs contained a non-Intel value but feature
-> > control is locked with SGX launch control disabled.  I'll post an
-> > update when I have an answer.
-> 
-> It was our interpretation from the SDM that the identity modulus
-> signature MSR's are 'trap-door' registers.  If flexible launch control
-> (FLC) is enabled the platform has one opportunity to write a new
-> signature value, after which the registers are locked from
-> modification until the next platform reset.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-In the driver we support only MSRs that are left writable by the BIOS
-before locking the feature control.
+Fix build warning in <linux/mtd/onenand.h> by adding a "stub" struct
+for mtd_oob_ops:
 
-> From a security architecture perspective it seemed that an FLC based
-> SGX implementation would use a modified version of TBOOT to securely
-> write that register once per platform boot/reset.  The architecture
-> that is being discussed where there is a need to continually check
-> whether or not the correct root signing key is loaded sounds a bit
-> clunky at best.
-> 
-> At worst it has potential security implications since it is the
-> reponsibility of the enclave launch control infrastructure to control
-> which enclaves are allowed to have the PROVISION_KEY attribute bit
-> set.
+include/linux/mtd/onenand.h: warning: 'struct mtd_oob_ops' declared inside parameter list [enabled by default]
+include/linux/mtd/onenand.h: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
 
-Based on the previous feedback supporting read-only MSRs in the driver
-is an unwanted feature i.e. the kernel must be able to decide what gets
-lauched (i.e. no launch enclave).
+Fixes: 607d1cb10426 ("[MTD] [OneNAND] proper onenand_bbt_read_oob() prototype")
 
-> Have a good weekend.
-> 
-> Dr. Greg
-> 
-> As always,
-> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-> 4206 N. 19th Ave.           Specializing in information infra-structure
-> Fargo, ND  58102            development.
-> PH: 701-281-1686
-> FAX: 701-281-3949           EMAIL: greg@enjellic.com
-> ------------------------------------------------------------------------------
-> "Extensive interviews show that not one alcoholic has ever actually seen
->  a pink elephant."
->                                 -- Yale University
->                                    Center of Alcohol Studies
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-mtd@lists.infradead.org
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Adrian Bunk <bunk@kernel.org>
+Cc: Adrian Bunk <bunk@debian.org>
+---
+ include/linux/mtd/onenand.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-/Jarkko
+--- lnx-419-rc2.orig/include/linux/mtd/onenand.h
++++ lnx-419-rc2/include/linux/mtd/onenand.h
+@@ -221,6 +221,7 @@ struct onenand_manufacturers {
+         char *name;
+ };
+ 
++struct mtd_oob_ops;
+ int onenand_bbt_read_oob(struct mtd_info *mtd, loff_t from,
+ 			 struct mtd_oob_ops *ops);
+ unsigned onenand_block(struct onenand_chip *this, loff_t addr);
+
+
