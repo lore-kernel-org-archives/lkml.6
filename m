@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FA0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D7FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F1D2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F1D2077C
+	by mail.kernel.org (Postfix) with ESMTP id 62E2720867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:19:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62E2720867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbeICVj7 (ORCPT
+        id S1730440AbeICVkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43146 "EHLO
+        Mon, 3 Sep 2018 17:40:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbeICVj7 (ORCPT
+        with ESMTP id S1728036AbeICVkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:59 -0400
+        Mon, 3 Sep 2018 17:40:05 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC36BD09;
-        Mon,  3 Sep 2018 17:18:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2D65D09;
+        Mon,  3 Sep 2018 17:18:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 070/165] sparc: use asm-generic version of msi.h
-Date:   Mon,  3 Sep 2018 18:55:56 +0200
-Message-Id: <20180903165658.610843044@linuxfoundation.org>
+Subject: [PATCH 4.14 071/165] enic: do not call enic_change_mtu in enic_probe
+Date:   Mon,  3 Sep 2018 18:55:57 +0200
+Message-Id: <20180903165658.654380672@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,61 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 12be1036c536f849ad6f9bba73cffa708aa965c3 ]
+[ Upstream commit cb5c6568867325f9905e80c96531d963bec8e5ea ]
 
-This is necessary to be able to include <linux/msi.h> when
-CONFIG_GENERIC_MSI_IRQ_DOMAIN is enabled. Without this, a build with
-CONFIG_GENERIC_MSI_IRQ_DOMAIN fails with:
+In commit ab123fe071c9 ("enic: handle mtu change for vf properly")
+ASSERT_RTNL() is added to _enic_change_mtu() to prevent it from being
+called without rtnl held. enic_probe() calls enic_change_mtu()
+without rtnl held. At this point netdev is not registered yet.
+Remove call to enic_change_mtu and assign the mtu to netdev->mtu.
 
-   In file included from drivers//ata/ahci.c:45:0:
->> include/linux/msi.h:226:10: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-             msi_alloc_info_t *arg);
-             ^~~~~~~~~~~~~~~~
-             sg_alloc_fn
-   include/linux/msi.h:230:9: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-            msi_alloc_info_t *arg);
-            ^~~~~~~~~~~~~~~~
-            sg_alloc_fn
-   include/linux/msi.h:239:12: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-               msi_alloc_info_t *arg);
-               ^~~~~~~~~~~~~~~~
-               sg_alloc_fn
-   include/linux/msi.h:240:22: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-     void  (*msi_finish)(msi_alloc_info_t *arg, int retval);
-                         ^~~~~~~~~~~~~~~~
-                         sg_alloc_fn
-   include/linux/msi.h:241:20: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-     void  (*set_desc)(msi_alloc_info_t *arg,
-                       ^~~~~~~~~~~~~~~~
-                       sg_alloc_fn
-   include/linux/msi.h:316:18: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-           int nvec, msi_alloc_info_t *args);
-                     ^~~~~~~~~~~~~~~~
-                     sg_alloc_fn
-   include/linux/msi.h:318:29: error: unknown type name 'msi_alloc_info_t'; did you mean 'sg_alloc_fn'?
-            int virq, int nvec, msi_alloc_info_t *args);
-                                ^~~~~~~~~~~~~~~~
-                                sg_alloc_fn
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Fixes: ab123fe071c9 ("enic: handle mtu change for vf properly")
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/include/asm/Kbuild |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/cisco/enic/enic_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/sparc/include/asm/Kbuild
-+++ b/arch/sparc/include/asm/Kbuild
-@@ -14,6 +14,7 @@ generic-y += local64.h
- generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
- generic-y += module.h
-+generic-y += msi.h
- generic-y += preempt.h
- generic-y += rwsem.h
- generic-y += serial.h
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -2843,7 +2843,6 @@ static int enic_probe(struct pci_dev *pd
+ 	 */
+ 
+ 	enic->port_mtu = enic->config.mtu;
+-	(void)enic_change_mtu(netdev, enic->port_mtu);
+ 
+ 	err = enic_set_mac_addr(netdev, enic->mac_addr);
+ 	if (err) {
+@@ -2930,6 +2929,7 @@ static int enic_probe(struct pci_dev *pd
+ 	/* MTU range: 68 - 9000 */
+ 	netdev->min_mtu = ENIC_MIN_MTU;
+ 	netdev->max_mtu = ENIC_MAX_MTU;
++	netdev->mtu	= enic->port_mtu;
+ 
+ 	err = register_netdev(netdev);
+ 	if (err) {
 
 
