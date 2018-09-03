@@ -3,143 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C0EC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE01C43334
 	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB90120862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB90120862
+	by mail.kernel.org (Postfix) with ESMTP id 041F520867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041F520867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbeICUnq (ORCPT
+        id S1727604AbeICUny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 16:43:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:26519 "EHLO mga01.intel.com"
+        Mon, 3 Sep 2018 16:43:54 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24259 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbeICUnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 16:43:46 -0400
+        id S1727359AbeICUnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 16:43:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 09:22:56 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 09:23:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
-   d="scan'208";a="229852895"
+   d="scan'208";a="87278528"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga004.jf.intel.com with ESMTP; 03 Sep 2018 09:22:55 -0700
+  by orsmga001.jf.intel.com with ESMTP; 03 Sep 2018 09:22:55 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 46EBB3002C4; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
+        id 43013301B65; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, adrian.hunter@intel.com, kim.phillips@arm.com,
-        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4 1/8] perf tools: Report itrace options in help
-Date:   Mon,  3 Sep 2018 09:22:42 -0700
-Message-Id: <20180903162249.36304-2-andi@firstfloor.org>
+        linux-kernel@vger.kernel.org
+Subject: Make perf script easier to use for itrace
+Date:   Mon,  3 Sep 2018 09:22:41 -0700
+Message-Id: <20180903162249.36304-1-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180903162249.36304-1-andi@firstfloor.org>
-References: <20180903162249.36304-1-andi@firstfloor.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+Implement a range of improvements to make it easier to look
+at itrace traces with perf script. Nothing here couldn't be done
+before with some additional scripting, but add simple high 
+level options to make it easier to use.
 
-I often forget all the options that --itrace accepts. Instead of burying
-them in the man page only report them in the normal command line help
-too to make them easier accessible.
+% perf record -e intel_pt//k -a sleep 1
 
-v2: Align
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
----
- tools/perf/builtin-inject.c |  3 ++-
- tools/perf/builtin-report.c |  2 +-
- tools/perf/builtin-script.c |  2 +-
- tools/perf/util/auxtrace.h  | 19 +++++++++++++++++++
- 4 files changed, 23 insertions(+), 3 deletions(-)
+Show function calls:
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index a3b346359ba0..b649a0511ed8 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -803,7 +803,8 @@ int cmd_inject(int argc, const char **argv)
- 			   "kallsyms pathname"),
- 		OPT_BOOLEAN('f', "force", &data.force, "don't complain, do it"),
- 		OPT_CALLBACK_OPTARG(0, "itrace", &inject.itrace_synth_opts,
--				    NULL, "opts", "Instruction Tracing options",
-+				    NULL, "opts", "Instruction Tracing options\n"
-+				    ITRACE_HELP,
- 				    itrace_parse_synth_opts),
- 		OPT_BOOLEAN(0, "strip", &inject.strip,
- 			    "strip non-synthesized events (use with --itrace)"),
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 02f7a3c27761..d48ea050e95e 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1105,7 +1105,7 @@ int cmd_report(int argc, const char **argv)
- 	OPT_CALLBACK(0, "percentage", NULL, "relative|absolute",
- 		     "how to display percentage of filtered entries", parse_filter_percentage),
- 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
--			    "Instruction Tracing options",
-+			    "Instruction Tracing options\n" ITRACE_HELP,
- 			    itrace_parse_synth_opts),
- 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
- 			"Show full source file name path for source lines"),
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 568ddfac3213..910e0f1f2876 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -3193,7 +3193,7 @@ int cmd_script(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "ns", &nanosecs,
- 		    "Use 9 decimal places when displaying time"),
- 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
--			    "Instruction Tracing options",
-+			    "Instruction Tracing options\n" ITRACE_HELP,
- 			    itrace_parse_synth_opts),
- 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
- 			"Show full source file name path for source lines"),
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index e731f55da072..041ee64a63bc 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -576,6 +576,23 @@ static inline void auxtrace__free(struct perf_session *session)
- 	return session->auxtrace->free(session);
- }
- 
-+#define ITRACE_HELP \
-+"				i:	    		synthesize instructions events\n"		\
-+"				b:	    		synthesize branches events\n"		\
-+"				c:	    		synthesize branches events (calls only)\n"	\
-+"				r:	    		synthesize branches events (returns only)\n" \
-+"				x:	    		synthesize transactions events\n"		\
-+"				w:	    		synthesize ptwrite events\n"		\
-+"				p:	    		synthesize power events\n"			\
-+"				e:	    		synthesize error events\n"			\
-+"				d:	    		create a debug log\n"			\
-+"				g[len]:     		synthesize a call chain (use with i or x)\n" \
-+"				l[len]:     		synthesize last branch entries (use with i or x)\n" \
-+"				sNUMBER:    		skip initial number of events\n"		\
-+"				PERIOD[ns|us|ms|i|t]:   specify period to sample stream\n" \
-+"				concatenate multiple options. Default is ibxwpe or cewp\n"
-+
-+
- #else
- 
- static inline struct auxtrace_record *
-@@ -716,6 +733,8 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
- 				   struct perf_evlist *evlist, int idx,
- 				   bool per_cpu);
- 
-+#define ITRACE_HELP ""
-+
- #endif
- 
- #endif
--- 
-2.17.1
+% perf script --call-trace
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])          perf_pmu_enable
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])          __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])          event_filter_match
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])          group_sched_in
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])              event_sched_in.isra.107
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_event_set_state.part.71
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_time
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_disable
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_log_itrace_start
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_userpage
+    
+Show function calls and returns:
+
+% perf script --call-ret-trace
+                perf   900 [000] 194167.205652203:   tr strt     ([unknown])        pt_config
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            pt_config
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            pt_event_add
+                perf   900 [000] 194167.205652203:   call        ([kernel.kallsyms])            perf_pmu_enable
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            perf_pmu_nop_void
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            event_sched_in.isra.107
+                perf   900 [000] 194167.205652203:   call        ([kernel.kallsyms])            __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            perf_pmu_nop_int
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            group_sched_in
+                perf   900 [000] 194167.205652203:   call        ([kernel.kallsyms])            event_filter_match
+                perf   900 [000] 194167.205652203:   return      ([kernel.kallsyms])            event_filter_match
+                perf   900 [000] 194167.205652203:   call        ([kernel.kallsyms])            group_sched_in
+
+
+Show instruction traces (using XED):
+
+  % perf script --insn-trace
+       swapper     0 [000] 117276.429606186:  ffffffff81010486 pt_config ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
+       swapper     0 [000] 117276.429606186:  ffffffff8101048b pt_config ([kernel.kallsyms])          add $0x10, %rsp
+       swapper     0 [000] 117276.429606186:  ffffffff8101048f pt_config ([kernel.kallsyms])          popq  %rbx
+       swapper     0 [000] 117276.429606186:  ffffffff81010490 pt_config ([kernel.kallsyms])          popq  %rbp
+       swapper     0 [000] 117276.429606186:  ffffffff81010491 pt_config ([kernel.kallsyms])          popq  %r12
+       swapper     0 [000] 117276.429606186:  ffffffff81010493 pt_config ([kernel.kallsyms])          popq  %r13
+       swapper     0 [000] 117276.429606186:  ffffffff81010495 pt_config ([kernel.kallsyms])          popq  %r14
+       swapper     0 [000] 117276.429606186:  ffffffff81010497 pt_config ([kernel.kallsyms])          popq  %r15
+       swapper     0 [000] 117276.429606186:  ffffffff81010499 pt_config ([kernel.kallsyms])          retq
+
+
+Filter by a ftrace style graph function:
+
+ % perf script --graph-function group_sched_in --call-trace
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])          group_sched_in
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])              event_sched_in.isra.107
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_event_set_state.part.71
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_time
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_disable
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_log_itrace_start
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_userpage
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          calc_timer_values
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_cpu
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          __x86_indirect_thunk_rax
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          arch_perf_update_userpage
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              __fentry__
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              using_native_sched_clock
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_stable
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_enable
+                perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
+
+
+Also available in
+git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc.git pt/easy-script-4
+
+v1: Initial post
+v2: Address review comments. Minor fixes to descriptions. Now builds everywhere.
+v3: Merge wildcard+remove addr/sym patch for one logical review unit.
+Drop typed remove patch
+Fix build failure on ARM ETM builds.
+Fix git branch number.
+
 
