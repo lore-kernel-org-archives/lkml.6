@@ -2,140 +2,111 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A13C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DDAC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E87920856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:42:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E87920856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 36E412075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:44:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E412075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeICOBU (ORCPT
+        id S1727412AbeICODh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:01:20 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33811 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbeICOBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:01:19 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d15-v6so5262696qkc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:41:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HzPAfJHRH2vuB5kj44tvr1lmM61iDkH+ElWLqma24TE=;
-        b=o8g0Bcu4j1v4B31gkdppoh/+VznZ8gezgmpxkDnq8O4T3PFuVE+81pJNoI2GYxwoWV
-         LzZYGDpO4sVDl5qej2b0Nibe4kPVcH+vIGTDprrUJU/V5FqNOPU/5PDO6R1PLpMndz7s
-         U/GLwIpVr+ij/qDWRcmK1xGkwDXSvj1j3LVSxYqFuw4cQ9byCH4bnL0RPS+L0qu/+hnp
-         JKliEXwLO637rmUnCxWN2TrxP5GlP0LVxXBCknHgNngtOjWRN3K1D2HgRbTsbDm5tkmk
-         xoTgEtodUIL3qTy9nfmBOG+avdsSppIKs2vZKelLNnrlHk2PX+C5GA6to1RNR3c5ZXWg
-         XdNg==
-X-Gm-Message-State: APzg51CcvozSbizbUXMikMNys63JcDynzi/BgUM15sHnMq4saxzD9hMT
-        OGSjxCGDHCa/VtIX1ah3p0HWeZh4Ba3rvJXDnaGP1A==
-X-Google-Smtp-Source: ANB0VdZV/NI+gU0UQleS63akljRqImswkw0y4XIxFcaFX2gn3FweSX3LXCWrdHiKUHdpVeaOMjj2A112UOYrCLbVGz4=
-X-Received: by 2002:ae9:c30b:: with SMTP id n11-v6mr9969107qkg.194.1535967718581;
- Mon, 03 Sep 2018 02:41:58 -0700 (PDT)
+        Mon, 3 Sep 2018 10:03:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55133 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbeICODh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:03:37 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E7FBB20799; Mon,  3 Sep 2018 11:44:15 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BDD85203DC;
+        Mon,  3 Sep 2018 11:44:05 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 11:44:04 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Philipp Rossak <embed3d@gmail.com>
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        wens@csie.org, linux@armlinux.org.uk, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        eugen.hristev@microchip.com, rdunlap@infradead.org,
+        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
+        quentin.schulz@bootlin.com, geert+renesas@glider.be,
+        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
+        broonie@kernel.org, arnaud.pouliquen@st.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 20/30] iio: adc: sun4i-gpadc-iio: rework: device
+ specific suspend & resume
+Message-ID: <20180903094404.ih2fsqsetz6oo7ie@flea>
+References: <20180830154518.29507-1-embed3d@gmail.com>
+ <20180830154518.29507-21-embed3d@gmail.com>
+ <20180831090915.agbldint76ngj5jf@flea>
+ <ddd06c43-026e-2801-dc36-053d469e43f3@gmail.com>
 MIME-Version: 1.0
-References: <20180831095417.8541-1-benjamin.tissoires@redhat.com> <4687e76a-d9a8-4a20-194b-526bb345cf73@redhat.com>
-In-Reply-To: <4687e76a-d9a8-4a20-194b-526bb345cf73@redhat.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 3 Sep 2018 11:41:47 +0200
-Message-ID: <CAO-hwJKABBJExKciVt5R-8bjBtUe+uSc0Z_ikc35jbf1zrNpog@mail.gmail.com>
-Subject: Re: [PATCH] HID: i2c-hid: enforce I2C_HID_QUIRK_RESEND_REPORT_DESCR
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, kai.heng.feng@canonical.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2x2tyzi3ftzmnojb"
+Content-Disposition: inline
+In-Reply-To: <ddd06c43-026e-2801-dc36-053d469e43f3@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 12:04 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 31-08-18 11:54, Benjamin Tissoires wrote:
-> > The spec states that the HID devices should allow
-> > the host to query the HID descriptor at any time.
-> >
-> > Some devices require the HID descriptor to be set
-> > on resume, or they will fail.
-> >
-> > Instead of having a growing list of blacklisted devices
-> > make the call part of the general resume process
-> > so we can remove this list.
-> >
-> > Tested on a Dell XPS 9360 and a Surface 3.
-> >
-> > link: https://bugzilla.redhat.com/show_bug.cgi?id=1622695
-> >
-> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->
-> I agree we should just do this everywhere:
->
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
 
-Jiri, please hold with this patch, Canonical might have found a better
-solution. Simply not resetting the device after S3 might be the trick.
+--2x2tyzi3ftzmnojb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Benjamin
+On Fri, Aug 31, 2018 at 02:05:59PM +0200, Philipp Rossak wrote:
+>=20
+>=20
+> On 31.08.2018 11:09, Maxime Ripard wrote:
+> > > +static int sun4i_ths_suspend(struct sun4i_gpadc_iio *info)
+> > suspend is already a hook in the kernel, which hasn't the same meaning
+> > than runtime_suspend (and the same applies to resume), so we'd rather
+> > pick a better name. And all the functions (and the driver) use gpadc,
+> > please continue to use that prefix.
+>=20
+> I agree.
+> For the newer sensors (from H3) the Sensor is referenced in the datasheets
+> as Thermal Sensor short THS. So I would like to use for the newer sensors
+> that prefix. Is that ok?
 
->
-> Regards,
->
-> Hans
->
-> > ---
-> >   drivers/hid/i2c-hid/i2c-hid.c | 16 ++++------------
-> >   1 file changed, 4 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-> > index 57126f6837bb..17ec57c62a0b 100644
-> > --- a/drivers/hid/i2c-hid/i2c-hid.c
-> > +++ b/drivers/hid/i2c-hid/i2c-hid.c
-> > @@ -47,7 +47,7 @@
-> >   /* quirks to control the device */
-> >   #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV    BIT(0)
-> >   #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET    BIT(1)
-> > -#define I2C_HID_QUIRK_RESEND_REPORT_DESCR    BIT(2)
-> > +/* reserved: I2C_HID_QUIRK_RESEND_REPORT_DESCR       BIT(2) */
-> >
-> >   /* flags */
-> >   #define I2C_HID_STARTED             0
-> > @@ -170,12 +170,6 @@ static const struct i2c_hid_quirks {
-> >               I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
-> >       { I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
-> >               I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
-> > -     { I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
-> > -             I2C_HID_QUIRK_RESEND_REPORT_DESCR },
-> > -     { USB_VENDOR_ID_SIS_TOUCH, USB_DEVICE_ID_SIS10FB_TOUCH,
-> > -             I2C_HID_QUIRK_RESEND_REPORT_DESCR },
-> > -     { I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_4B33,
-> > -             I2C_HID_QUIRK_RESEND_REPORT_DESCR },
-> >       { 0, 0 }
-> >   };
-> >
-> > @@ -1245,11 +1239,9 @@ static int i2c_hid_resume(struct device *dev)
-> >        * after resume, after this it will be back normal.
-> >        * otherwise it issues too many incomplete reports.
-> >        */
-> > -     if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
-> > -             ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
-> > -             if (ret)
-> > -                     return ret;
-> > -     }
-> > +     ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       if (hid->driver && hid->driver->reset_resume) {
-> >               ret = hid->driver->reset_resume(hid);
-> >
+Not really. The consistency within the driver is more important.
+
+Maxiem
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--2x2tyzi3ftzmnojb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluNAmMACgkQ0rTAlCFN
+r3RRLA/9EE4CSeZZeZEXf2yhIuVgyf9RPtvrT5mLAH5AtQPbtf1NnGQrnvxv040X
+yo7t6CxcybjaSH0HI8X0yDt1gLdXw6EKNEiAnc3HLNNJGMh5YDdo83BuxjSItm0q
+wQZfYNJ9BRyeRHzGp8KTgsxtvSOrSj8Jd6UVKSQNlxcctLEcOb/PmUqIgcXLv74p
+yTLbjlCwOn8sv+jDed/pkvFgFcMVTB6qfWUs67euMbP3Bx5HUd+p+UjQxs+U8t+N
+XO+W5CC6GW21bBvpsCbBjxX4QCFMcCqZTEcAhpSPEODwRklJ8Dfhbp3cRxJkRceX
+9uZ5p2HfM3kZVLSDEyThS0amaPpXZJMrYymX8LIu8B6ouWk/oTzL4WmuguOpydFJ
+TR239Q0ESp1xxC2DkuM+FiC9xchnLOcVoclKjQpeuUWpK1yd9SBmIvb/SI0448My
++0h1GtavU3qFWAyKW7dm/LA77HTWBWXP/cwOnZPJAkm4t0YfULAu5b7bOsHl0IlP
+e4K4aLBXoNTVBGnbJvTpDkvuqCvWR4nyuWxOslmUh+FpTAoQ+xS4TdbTIZOnedXd
+P8ibLgPsk+GpQw2I44DL6XwNd9DHNBfW7bJneNy64ruHChClOeNHMMaxphlc1+rm
+Tl3A9xivzwLF9h8sPEfNpyykeYQnY1Ad4QbMFKUiy6wyeTL0ha4=
+=uLub
+-----END PGP SIGNATURE-----
+
+--2x2tyzi3ftzmnojb--
