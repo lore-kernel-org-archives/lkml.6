@@ -2,116 +2,126 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57D7C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C20BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862952086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:18:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D3J2dRx9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862952086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0CA2F20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:19:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA2F20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeICXjn (ORCPT
+        id S1728371AbeICXlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:39:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34313 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728421AbeICXjm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:39:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d19-v6so536995pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e5K6h4GB475QOuICAPU/n95wv08uRMy37J31Hiewkhc=;
-        b=D3J2dRx9/t04yRz1yKvh6Ndl/0yIA9kkxbLLTWGoUvifCHoa5srk2wyJ4FDdZsKTP6
-         wBVFZhe2F1emKOhBx3XTfdwh7osHRVWAEVrIui2N99De0GT8FvNu+Kqgxw5aFucT4ibK
-         d0H6fIsVJh4l1XuYbGlA1pU23PZRkGVtH520g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e5K6h4GB475QOuICAPU/n95wv08uRMy37J31Hiewkhc=;
-        b=uOrpUPVqydB1sivjKV3X6bAnKdTx+SFNy60u6pixEl3axoTChI0Zsjin0DzuklrfQd
-         HxPkxs7fABCDmWMVi27f8HwvzzRcRXPfxuBDNGbezriJvGlkxuZTwd5zqNaJ92RpM2mp
-         fTSDYjRz4pS1jSdVrKHQFSvGQolxWm5otREIeum81QDKOPHZYjWggBUWNvIhHiwGIfXj
-         snKzSihpdQil6I5PHhajHitSHv5bMBiQYFk+Qu/qzWT5VljWRhyOahfGb0gXXZeH+MLE
-         Kq+3wU7cbYydZHCDQe7B6KQ28OcQw8W4uRGXoikGe0uDCJ8B1TIwVIZiUokKPS4Sv3ku
-         babQ==
-X-Gm-Message-State: APzg51Bk/4jtlKM5sWwSiS4oOthwVp2gt/LjIc+72Oe0BqWSUOjAHhFZ
-        Ey1bCY3rLSEpCGliVw2ZgzVPbQ==
-X-Google-Smtp-Source: ANB0Vdault4uhCFN2+WNMg1YB9XJ/zxwu5Ii7rl6b/qCJ3xSsP6ImLhyyNIg0wahJygpO62dEAUdgw==
-X-Received: by 2002:a63:e443:: with SMTP id i3-v6mr28164775pgk.381.1536002288371;
-        Mon, 03 Sep 2018 12:18:08 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm32894269pfi.101.2018.09.03.12.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 12:18:07 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 12:22:02 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 7/9] soc: qcom: wcnss_ctrl: Avoid string overflow
-Message-ID: <20180903192202.GB3456@tuxbook-pro>
-References: <20180829075724.9095-1-niklas.cassel@linaro.org>
- <20180829075724.9095-8-niklas.cassel@linaro.org>
+        Mon, 3 Sep 2018 19:41:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:15605 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbeICXlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:41:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 12:19:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
+   d="scan'208";a="80568278"
+Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
+  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2018 12:19:27 -0700
+Date:   Mon, 3 Sep 2018 22:19:26 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180903191926.GC13497@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829075724.9095-8-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180831181509.GB21555@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29 Aug 00:57 PDT 2018, Niklas Cassel wrote:
+On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
+> On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
+> > > [snip..]
+> > > 
+> > > > > >
+> > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
+> > > > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > > > +sgx_pm_cnt;
+> > > > > > +
+> > > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > > > +MSRs
+> > > > > > for each
+> > > > > > + * CPU. The entries are initialized when they are first used by
+> > > > > > sgx_einit().
+> > > > > > + */
+> > > > > > +struct sgx_lepubkeyhash {
+> > > > > > +	u64 msrs[4];
+> > > > > > +	u64 pm_cnt;
+> > > > >
+> > > > > May I ask why do we need pm_cnt here? In fact why do we need suspend
+> > > > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
+> > > > > in this patch? From the patch commit message I don't see why we need
+> > > > > PM staff here. Please give comment why you need PM staff, or you may
+> > > > > consider to split the PM staff to another patch.
+> > > > 
+> > > > Refining the commit message probably makes more sense because without PM
+> > > > code sgx_einit() would be broken. The MSRs have been reset after waking up.
+> > > > 
+> > > > Some kind of counter is required to keep track of the power cycle. When going
+> > > > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
+> > > > the global count to the value in the cache entry to see whether we are in a new
+> > > > power cycle.
+> > > 
+> > > You mean reset to Intel default? I think we can also just reset the
+> > > cached MSR values on each power cycle, which would be simpler, IMHO?
+> > 
+> > I don't really see that much difference in the complexity.
+> 
+> Tracking the validity of the cache means we're hosed if we miss any
+> condition that causes the MSRs to be reset.  I think we're better off
+> assuming the cache can be stale at any time, i.e. don't track power
+> cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
+> the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
+> interruptible and its latency is extremely variable in any case, e.g.
+> tens of thousands of cycles, so this rarely-hit "slow path" probably
+> wouldn't affect the worst case latency of EINIT.
 
-> 'chinfo.name' is used as a NUL-terminated string, but using strncpy() with
-> the length equal to the buffer size may result in lack of the termination:
-> 
-> drivers//soc/qcom/wcnss_ctrl.c: In function 'qcom_wcnss_open_channel':
-> drivers//soc/qcom/wcnss_ctrl.c:284:2: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   strncpy(chinfo.name, name, sizeof(chinfo.name));
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This changes it to use the safer strscpy() instead.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Sounds a good refiniment. Pretty good solution to heal from host sleep
+on the guest VM and then there is no need for driver changes.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/soc/qcom/wcnss_ctrl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/wcnss_ctrl.c b/drivers/soc/qcom/wcnss_ctrl.c
-> index df3ccb30bc2d..373400dd816d 100644
-> --- a/drivers/soc/qcom/wcnss_ctrl.c
-> +++ b/drivers/soc/qcom/wcnss_ctrl.c
-> @@ -281,7 +281,7 @@ struct rpmsg_endpoint *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
->  	struct rpmsg_channel_info chinfo;
->  	struct wcnss_ctrl *_wcnss = wcnss;
->  
-> -	strncpy(chinfo.name, name, sizeof(chinfo.name));
-> +	strscpy(chinfo.name, name, sizeof(chinfo.name));
->  	chinfo.src = RPMSG_ADDR_ANY;
->  	chinfo.dst = RPMSG_ADDR_ANY;
->  
-> -- 
-> 2.17.1
-> 
+/Jarkko
