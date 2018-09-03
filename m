@@ -6,87 +6,69 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B0FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF5FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDBEA20841
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDBEA20841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D047820841
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D047820841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeICGRl (ORCPT
+        id S1727347AbeICGTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:17:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11217 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725762AbeICGRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:17:41 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 664194E8BCBE1;
-        Mon,  3 Sep 2018 09:59:44 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Mon, 3 Sep 2018
- 09:59:44 +0800
-Subject: Re: [PATCH 2/6] staging: erofs: formatting fix to NULL comparison
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Gao Xiang <hsiangkao@aol.com>,
-        Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
-        <ldv-project@linuxtesting.org>, <devel@driverdev.osuosl.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
- <1535642042-5336-2-git-send-email-zemlyanoy@ispras.ru>
- <747d9c74-02cd-fa39-9870-ae17dbddf366@aol.com>
- <44d6e603-fe1d-6853-c474-760c0a2ed4ec@aol.com>
- <47c7d469-c807-760d-7e28-ae8108a46af5@huawei.com>
- <20180831094106.sxwsd5v2mmn3cux6@mwanda>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <9172e7b7-ff42-85ca-f546-a369b8698d27@huawei.com>
-Date:   Mon, 3 Sep 2018 09:59:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180831094106.sxwsd5v2mmn3cux6@mwanda>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Mon, 3 Sep 2018 02:19:20 -0400
+Received: from gate.crashing.org ([63.228.1.57]:47763 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725762AbeICGTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:19:20 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8320s7w001923;
+        Sun, 2 Sep 2018 21:00:55 -0500
+Message-ID: <a2b20fc447e0b2cd208dc82081cb24e38bf71f68.camel@kernel.crashing.org>
+Subject: Re: Access to non-RAM pages
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>
+Date:   Mon, 03 Sep 2018 12:00:53 +1000
+In-Reply-To: <CA+55aFwSfXu1LXjLZe4gddY2VybEGLbPpx-PWinF19LjbevEgQ@mail.gmail.com>
+References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
+         <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
+         <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
+         <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
+         <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
+         <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
+         <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
+         <CA+55aFwSfXu1LXjLZe4gddY2VybEGLbPpx-PWinF19LjbevEgQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/31 17:41, Dan Carpenter wrote:
-> On Fri, Aug 31, 2018 at 11:29:03AM +0800, Chao Yu wrote:
->>
->> Hi Xiang,
->>
->> I'm not against this change which follows checkpatch's rule, since I think this
->> can help to unify coding style in different modules of Linux. Maybe cleanup in
->> other filesystem is needed as well.
->>
+On Sun, 2018-09-02 at 18:42 -0700, Linus Torvalds wrote:
+> On Sun, Sep 2, 2018 at 6:38 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > It's not used for vmalloc stuff. It's just regular kmalloc().
 > 
-> That code is old, and those filesystems are not in staging so we're not
-> going to change them.
+> Just to clarify .. that's true of the dcache stuff.
+> 
+> The strscpy case actually explicitly limits things to page boundaries
+> and falls back to the byte-by-byte case after that.
 
-Yup, anyway, it can be decided by their maintainer if they want the cleanup.
+Ah ok, that makes sense.
 
-> 
-> Let's just apply the patch and not spend any time thinking about it.
-> Part of the point of style guidelines is so that we don't have to
-> repeat all these discussions over and over...
-> 
-> Btw, I have a rename_rev.pl patch for reviewing these.  I've attached
-> it.  rename_rev.pl -r NULL.  I've seen some people screw up the
-> conversion so having an automated review is nice.
+Still, I can potentially see an issue with DEBUG_PAGEALLOC
 
-Cool, thanks very much for providing this tools, it actually can help to save
-some time during review. :)
-
-> 
-> regards,
-> dan carpenter
-> 
+Cheers,
+Ben.
 
