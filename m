@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5173C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42548C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3262077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3262077C
+	by mail.kernel.org (Postfix) with ESMTP id F38E920658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38E920658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731887AbeICWAD (ORCPT
+        id S1731901AbeICWAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:00:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49028 "EHLO
+        Mon, 3 Sep 2018 18:00:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49038 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbeICWAC (ORCPT
+        with ESMTP id S1727442AbeICWAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:00:02 -0400
+        Mon, 3 Sep 2018 18:00:06 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19709A95;
-        Mon,  3 Sep 2018 17:38:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ED20A95;
+        Mon,  3 Sep 2018 17:38:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 073/123] ASoC: zte: Fix incorrect PCM format bit usages
-Date:   Mon,  3 Sep 2018 18:56:57 +0200
-Message-Id: <20180903165722.633110174@linuxfoundation.org>
+Subject: [PATCH 4.18 074/123] ASoC: sirf: Fix potential NULL pointer dereference
+Date:   Mon,  3 Sep 2018 18:56:58 +0200
+Message-Id: <20180903165722.670110517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,40 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit c889a45d229938a94b50aadb819def8bb11a6a54 upstream.
+commit ae1c696a480c67c45fb23b35162183f72c6be0e1 upstream.
 
-zx-tdm driver sets the DAI driver definitions with the format bits
-wrongly set with SNDRV_PCM_FORMAT_*, instead of SNDRV_PCM_FMTBIT_*.
+There is a potential execution path in which function
+platform_get_resource() returns NULL. If this happens,
+we will end up having a NULL pointer dereference.
 
-This patch corrects the definitions.
+Fix this by replacing devm_ioremap with devm_ioremap_resource,
+which has the NULL check and the memory region request.
 
-Spotted by a sparse warning:
-  sound/soc/zte/zx-tdm.c:363:35: warning: restricted snd_pcm_format_t degrades to integer
+This code was detected with the help of Coccinelle.
 
-Fixes: 870e0ddc4345 ("ASoC: zx-tdm: add zte's tdm controller driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org
+Fixes: 2bd8d1d5cf89 ("ASoC: sirf: Add audio usp interface driver")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/zte/zx-tdm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sirf/sirf-usp.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/sound/soc/zte/zx-tdm.c
-+++ b/sound/soc/zte/zx-tdm.c
-@@ -144,8 +144,8 @@ static void zx_tdm_rx_dma_en(struct zx_t
- #define ZX_TDM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000)
+--- a/sound/soc/sirf/sirf-usp.c
++++ b/sound/soc/sirf/sirf-usp.c
+@@ -370,10 +370,9 @@ static int sirf_usp_pcm_probe(struct pla
+ 	platform_set_drvdata(pdev, usp);
  
- #define ZX_TDM_FMTBIT \
--	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_MU_LAW | \
--	SNDRV_PCM_FORMAT_A_LAW)
-+	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_MU_LAW | \
-+	SNDRV_PCM_FMTBIT_A_LAW)
- 
- static int zx_tdm_dai_probe(struct snd_soc_dai *dai)
- {
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap(&pdev->dev, mem_res->start,
+-		resource_size(mem_res));
+-	if (base == NULL)
+-		return -ENOMEM;
++	base = devm_ioremap_resource(&pdev->dev, mem_res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
+ 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+ 					    &sirf_usp_regmap_config);
+ 	if (IS_ERR(usp->regmap))
 
 
