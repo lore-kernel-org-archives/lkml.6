@@ -2,113 +2,75 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A54B2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABD2C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69FAE20873
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69FAE20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6803E20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:07:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6803E20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbeICW0Y (ORCPT
+        id S1727557AbeICW2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:26:24 -0400
-Received: from mga05.intel.com ([192.55.52.43]:31017 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727687AbeICW0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:26:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 11:05:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
-   d="scan'208";a="88629547"
-Received: from rajneesh-desk.iind.intel.com ([10.223.86.34])
-  by orsmga002.jf.intel.com with ESMTP; 03 Sep 2018 11:05:02 -0700
-From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     dvhart@infradead.org, andy@infradead.org,
-        linux-kernel@vger.kernel.org, rajneesh.bhardwaj@intel.com,
-        souvik.k.chakravarty@intel.com,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Matt Turner <matt.turner@intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
-Subject: [PATCH 4/4] platform/x86: intel_telemetry: report debugfs failure
-Date:   Mon,  3 Sep 2018 23:34:15 +0530
-Message-Id: <20180903180415.31575-4-rajneesh.bhardwaj@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
-References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
+        Mon, 3 Sep 2018 18:28:34 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:54894 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbeICW2e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 18:28:34 -0400
+X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Sep 2018 18:28:33 EDT
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1F44A72CA5E;
+        Mon,  3 Sep 2018 20:59:28 +0300 (MSK)
+Received: from glebfm.cloud.tilaa.com (glebfm.cloud.tilaa.com [84.22.98.219])
+        by imap.altlinux.org (Postfix) with ESMTPSA id A28114A4A2A;
+        Mon,  3 Sep 2018 20:59:27 +0300 (MSK)
+Date:   Mon, 3 Sep 2018 20:59:13 +0300
+From:   Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] vhost: fix VHOST_GET_BACKEND_FEATURES ioctl request
+ definition
+Message-ID: <20180903175906.GA11529@glebfm.cloud.tilaa.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some Goldmont based systems such as ASRock J3455M the BIOS may not
-enable the IPC1 device that provides access to the PMC and PUNIT. In
-such scenarios, the ioss and pss resources from the platform device can
-not be obtained and result in a invalid telemetry_plt_config.
-This is also applicable to the platforms where the BIOS supports IPC1
-device under debug configurations but IPC1 is disabled by user or the
-policy.
+The _IOC_READ flag fits this ioctl request more because this request
+actually only writes to, but doesn't read from userspace.
+See NOTEs in include/uapi/asm-generic/ioctl.h for more information.
 
-This change allows user to know the reason for not seeing entries under
-/sys/kernel/debug/telemetry/* when there is no apparent failure at boot.
-
-Cc: Matt Turner <matt.turner@intel.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198779
-
-Acked-by: Matt Turner <matt.turner@intel.com>
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Fixes: 429711aec282 ("vhost: switch to use new message format")
+Signed-off-by: Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
 ---
- drivers/platform/x86/intel_telemetry_debugfs.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ include/uapi/linux/vhost.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-index ffd0474b0531..77212e9b22d6 100644
---- a/drivers/platform/x86/intel_telemetry_debugfs.c
-+++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-@@ -951,12 +951,16 @@ static int __init telemetry_debugfs_init(void)
- 	debugfs_conf = (struct telemetry_debugfs_conf *)id->driver_data;
+diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+index b1e22c40c4b6..84c3de89696a 100644
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@ -176,7 +176,7 @@ struct vhost_memory {
+ #define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
  
- 	err = telemetry_pltconfig_valid();
--	if (err < 0)
--		return -ENODEV;
-+	if (err < 0) {
-+		pr_debug("Invalid pltconfig, ensure IPC1 device is enabled in BIOS\n");
-+		goto exit;
-+	}
+ #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+-#define VHOST_GET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x26, __u64)
++#define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
  
- 	err = telemetry_debugfs_check_evts();
--	if (err < 0)
--		return -EINVAL;
-+	if (err < 0) {
-+		pr_debug("telemetry_debugfs_check_evts failed\n");
-+		goto exit;
-+	}
+ /* VHOST_NET specific defines */
  
- 	register_pm_notifier(&pm_notifier);
- 
-@@ -1020,6 +1024,8 @@ static int __init telemetry_debugfs_init(void)
- 	debugfs_conf->telemetry_dbg_dir = NULL;
- out_pm:
- 	unregister_pm_notifier(&pm_notifier);
-+exit:
-+	pr_debug(pr_fmt(DRIVER_NAME) " Failed\n");
- 
- 	return err;
- }
+
 -- 
-2.17.1
-
+glebfm
