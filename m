@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80D0C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A509EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBCC20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBCC20862
+	by mail.kernel.org (Postfix) with ESMTP id 6507F20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6507F20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeICVZt (ORCPT
+        id S1729452AbeICVZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39370 "EHLO
+        Mon, 3 Sep 2018 17:25:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39384 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728333AbeICVZs (ORCPT
+        with ESMTP id S1728333AbeICVZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:48 -0400
+        Mon, 3 Sep 2018 17:25:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F1B0D00;
-        Mon,  3 Sep 2018 17:04:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 475CDD00;
+        Mon,  3 Sep 2018 17:04:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 006/107] drm/bridge: adv7511: Reset registers on hotplug
-Date:   Mon,  3 Sep 2018 18:55:30 +0200
-Message-Id: <20180903165637.603785435@linuxfoundation.org>
+Subject: [PATCH 4.9 007/107] scsi: libiscsi: fix possible NULL pointer dereference in case of TMF
+Date:   Mon,  3 Sep 2018 18:55:31 +0200
+Message-Id: <20180903165637.645075437@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,44 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 5f3417569165a8ee57654217f73e0160312f409c ]
+[ Upstream commit a17037e7d59075053b522048742a08ac9500bde8 ]
 
-The bridge loses its hw state when the cable is unplugged. If we detect
-this case in the hpd handler, reset its state.
+In iscsi_check_tmf_restrictions() task->hdr is dereferenced to print the
+opcode, it is possible that task->hdr is NULL.
 
-Reported-by: Rob Clark <robdclark@gmail.com>
-Tested-by: Rob Clark <robdclark@gmail.com>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180703165648.120401-1-seanpaul@chromium.org
+There are two cases based on opcode argument:
+
+1. ISCSI_OP_SCSI_CMD - In this case alloc_pdu() is called
+after iscsi_check_tmf_restrictions()
+
+iscsi_prep_scsi_cmd_pdu() -> iscsi_check_tmf_restrictions() -> alloc_pdu().
+
+Transport drivers allocate memory for iSCSI hdr in alloc_pdu() and assign
+it to task->hdr. In case of TMF task->hdr will be NULL resulting in NULL
+pointer dereference.
+
+2. ISCSI_OP_SCSI_DATA_OUT - In this case transport driver can free the
+memory for iSCSI hdr after transmitting the pdu so task->hdr can be NULL or
+invalid.
+
+This patch fixes this issue by removing task->hdr->opcode from the printk
+statement.
+
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/scsi/libiscsi.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -424,6 +424,18 @@ static void adv7511_hpd_work(struct work
- 	else
- 		status = connector_status_disconnected;
- 
-+	/*
-+	 * The bridge resets its registers on unplug. So when we get a plug
-+	 * event and we're already supposed to be powered, cycle the bridge to
-+	 * restore its state.
-+	 */
-+	if (status == connector_status_connected &&
-+	    adv7511->connector.status == connector_status_disconnected &&
-+	    adv7511->powered) {
-+		regcache_mark_dirty(adv7511->regmap);
-+		adv7511_power_on(adv7511);
-+	}
-+
- 	if (adv7511->connector.status != status) {
- 		adv7511->connector.status = status;
- 		drm_kms_helper_hotplug_event(adv7511->connector.dev);
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -283,11 +283,11 @@ static int iscsi_check_tmf_restrictions(
+ 		 */
+ 		if (opcode != ISCSI_OP_SCSI_DATA_OUT) {
+ 			iscsi_conn_printk(KERN_INFO, conn,
+-					  "task [op %x/%x itt "
++					  "task [op %x itt "
+ 					  "0x%x/0x%x] "
+ 					  "rejected.\n",
+-					  task->hdr->opcode, opcode,
+-					  task->itt, task->hdr_itt);
++					  opcode, task->itt,
++					  task->hdr_itt);
+ 			return -EACCES;
+ 		}
+ 		/*
+@@ -296,10 +296,10 @@ static int iscsi_check_tmf_restrictions(
+ 		 */
+ 		if (conn->session->fast_abort) {
+ 			iscsi_conn_printk(KERN_INFO, conn,
+-					  "task [op %x/%x itt "
++					  "task [op %x itt "
+ 					  "0x%x/0x%x] fast abort.\n",
+-					  task->hdr->opcode, opcode,
+-					  task->itt, task->hdr_itt);
++					  opcode, task->itt,
++					  task->hdr_itt);
+ 			return -EACCES;
+ 		}
+ 		break;
 
 
