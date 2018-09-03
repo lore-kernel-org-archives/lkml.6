@@ -2,915 +2,235 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CD3C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F4FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A221F2077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:23:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A221F2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 9759920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:24:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9759920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbeICNmn (ORCPT
+        id S1727422AbeICNnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:42:43 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:47181 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726029AbeICNmn (ORCPT
+        Mon, 3 Sep 2018 09:43:22 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:34148 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeICNnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:42:43 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id wl4nfjlfsxO9Bwl4qfpmJ2; Mon, 03 Sep 2018 11:23:23 +0200
-Subject: Re: [PATCH 1/2] media: v4l: Add definitions for the HEVC slice format
- and controls
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20180828080240.10982-1-paul.kocialkowski@bootlin.com>
- <20180828080240.10982-2-paul.kocialkowski@bootlin.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ebee4ca1-8fb6-f0c6-b332-c3b22a0a1041@xs4all.nl>
-Date:   Mon, 3 Sep 2018 11:23:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 3 Sep 2018 09:43:21 -0400
+Received: by mail-io0-f197.google.com with SMTP id z20-v6so17344636iol.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:24:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=dz4w8jNErdcSFHV6Q0H7UXBaUX++Q3yR53o/EcpRFCo=;
+        b=B6oNnzeT1KFqmY5ovyXFNdzMjcuLcmNSl9ZX0NEJ0EiX5QNSKmU99m+LxLZFDR5rpe
+         llq2o4mh9K/RqKsXPiBSZVyZWUMeUiSYnyqd2oJspz9ySOHUQXQpXdUO349WYfvXO5l0
+         yxrO7WOn/JJsHaM20kLvKyS5aX+0/KHyJHJvkhsOIZ9NC44NVwfSXrsHIhD4mWZuGB2r
+         JjCJhzzoDiqExew65GInep6C8bZv3Y5RXEIPzGAbCKEAiA1iUMxuclzTErARjP5aYLl7
+         vZJC10nXfhHBdThwC3Ihe0Vwr3s2lNuP9n8e07D77NdMldP+BHnfPO9bt1+7doOotJVK
+         nfUQ==
+X-Gm-Message-State: APzg51A29xcDM7WiOPSvQUyLHTJEC/i9eEWQYgjbbyq9GcWtSaZRGsji
+        ZigrGbbZHcHSBwwOLIZABjvSDyJev9wlxjWEqcLc+xiLN+0U
+X-Google-Smtp-Source: ANB0VdbzrWzN7c4RBIowgAJXAL9sHTjuyIem9BpwcZDjl3/k0MG9HvwDGHlJW1i9FJ1oQjaSYrSkubZk8bQKHyBAUo9uG1ITLq5t
 MIME-Version: 1.0
-In-Reply-To: <20180828080240.10982-2-paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOG9MD9LgLBLo/Im9995SFwMyVL3me+9/sObe/nofz9LUrIsHS5Oq21ePWSW0ordkumKo9PFS1Z6fqNSlcRhBqlAzYoJWCEiCLy1yWOsqGcyrmgdWlxS
- iH9wigWpEt6M7F9UThaWraXTID+wmd44KBD08edbe8Jcb5et/U+H0QXe4gyzDBGLomn8BGOEd+pQwVdOLx6uL16e2W3Hn2sf3zq2x/i+ivegZUg9HvnGcLNb
- GqSwW+KEqnXgdCCt949sUAZnedBfeNDi1XCN0Qdyc2MGI+6Yaqg8mbRQTAbibvey6OguotB/vn9r5BELTv/SCt+AnA9y1ZBeKwXxyNTwfcjBUCYaybHFhviL
- KUEhPf3UXQn4mQtu4UfMQBV3AuVlat19bSALIKBpxu7cwtgWZ9Ey0HGCa4oOyebgt7K+yAvkVc3sh86IsOGqP3UFfi7Klm43Bi48enZHIXelF+Kbae4+jIDG
- aBL9pizWPR+Yp7NMLPH1ppsPTEl7HrJxbgLwAHe2YkOL06RQYfztR2M7yHquYKIv5vmcUI+LlBX2qi+/70He3siCcmFLDB8BZpuKCJiBGZpjIU1xn4chyxm7
- d3OaQ6ODmMVZpDs9q4gzl6zsIuOH1tIWaVWpgPeJnoYU24Glu/Ts52uY0Rz+pIT53yDtjgjNlqq6dps48SXXcelj8s2eHFMyIfkgJSzwwVodCgEva42iJOnv
- 4VIo6DrpP8ibhlcqwlwR7ZYxDx1E6IUyLxgU3GibhywiUiT8L5NJZ8RpBVZmFItsMrrdMBT7hQCXIte8XIji33KY6OTSwEl1RxGhC6DaG61oJs/vpAWwUQ==
+X-Received: by 2002:a24:678d:: with SMTP id u135-v6mr3608486itc.55.1535966643309;
+ Mon, 03 Sep 2018 02:24:03 -0700 (PDT)
+Date:   Mon, 03 Sep 2018 02:24:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029554c0574f41ae4@google.com>
+Subject: KASAN: slab-out-of-bounds Write in __ext4_expand_extra_isize
+From:   syzbot <syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 10:02 AM, Paul Kocialkowski wrote:
-> This introduces the required definitions for HEVC decoding support with
-> stateless VPUs. The controls associated to the HEVC slice format provide
-> the required meta-data for decoding slices extracted from the bitstream.
-> 
-> This interface comes with the following limitations:
-> * No custom quantization matrices (scaling lists);
-> * Support for a single temporal layer only;
-> * No slice entry point offsets support;
-> * No conformance window support;
-> * No VUI parameters support;
-> * No support for SPS extensions: range, multilayer, 3d, scc, 4 bits;
-> * No support for PPS extensions: range, multilayer, 3d, scc, 4 bits.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  .../media/uapi/v4l/extended-controls.rst      | 416 ++++++++++++++++++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  15 +
->  .../media/uapi/v4l/vidioc-queryctrl.rst       |  18 +
->  .../media/videodev2.h.rst.exceptions          |   3 +
->  drivers/media/v4l2-core/v4l2-ctrls.c          |  26 ++
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->  include/media/v4l2-ctrls.h                    |   6 +
->  include/uapi/linux/v4l2-controls.h            | 155 +++++++
->  include/uapi/linux/videodev2.h                |   7 +
->  9 files changed, 647 insertions(+)
-> 
-> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-> index a9252225b63e..f5255bfd8434 100644
-> --- a/Documentation/media/uapi/v4l/extended-controls.rst
-> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
-> @@ -1675,6 +1675,422 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
->  	non-intra-coded frames, in zigzag scanning order. Only relevant for
->  	non-4:2:0 YUV formats.
->  
-> +.. _v4l2-mpeg-hevc:
-> +
-> +``V4L2_CID_MPEG_VIDEO_HEVC_SPS (struct)``
-> +    Specifies the Sequence Parameter Set fields (as extracted from the
-> +    bitstream) for the associated HEVC slice data.
-> +    The bitstream parameters are defined according to the ISO/IEC 23008-2 and
-> +    ITU-T Rec. H.265 specifications.
+Hello,
 
-Use proper references to these specs in biblio.rst (adding them if not there already).
+syzbot found the following crash on:
 
-> +
-> +.. c:type:: v4l2_ctrl_hevc_sps
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_hevc_sps
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u8
-> +      - ``chroma_format_idc``
-> +      - Syntax description inherited from the specification.
+HEAD commit:    a880148cb2af Add linux-next specific files for 20180831
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=135f5e0a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a059d319ef7d83f6
+dashboard link: https://syzkaller.appspot.com/bug?extid=f8d6f8386ceacdbfff57
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-If you have a section number of the spec that you can refer to, then that
-would be nice.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> +    * - __u8
-> +      - ``separate_colour_plane_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u16
-> +      - ``pic_width_in_luma_samples``
-> +      - Syntax description inherited from the specification.
-> +    * - __u16
-> +      - ``pic_height_in_luma_samples``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``bit_depth_luma_minus8``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``bit_depth_chroma_minus8``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_max_pic_order_cnt_lsb_minus4``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sps_max_dec_pic_buffering_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sps_max_num_reorder_pics``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sps_max_latency_increase_plus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_min_luma_coding_block_size_minus3``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_diff_max_min_luma_coding_block_size``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_min_luma_transform_block_size_minus2``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_diff_max_min_luma_transform_block_size``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``max_transform_hierarchy_depth_inter``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``max_transform_hierarchy_depth_intra``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``scaling_list_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``amp_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sample_adaptive_offset_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pcm_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pcm_sample_bit_depth_luma_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pcm_sample_bit_depth_chroma_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_min_pcm_luma_coding_block_size_minus3``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_diff_max_min_pcm_luma_coding_block_size``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pcm_loop_filter_disabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_short_term_ref_pic_sets``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``long_term_ref_pics_present_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_long_term_ref_pics_sps``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sps_temporal_mvp_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``strong_intra_smoothing_enabled_flag``
-> +      - Syntax description inherited from the specification.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com
 
-I'd just drop the 'Syntax description inherited from the specification.' and
-add that after the table. Ditto elsewhere.
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memset include/linux/string.h:330 [inline]
+BUG: KASAN: slab-out-of-bounds in __ext4_expand_extra_isize+0x178/0x240  
+fs/ext4/inode.c:5863
+Write of size 167772160 at addr ffff8801c3a03480 by task syz-executor1/27592
+BUG: unable to handle kernel paging request at ffff8801d7ff9da8
 
-> +
-> +``V4L2_CID_MPEG_VIDEO_HEVC_PPS (struct)``
-> +    Specifies the Picture Parameter Set fields (as extracted from the
-> +    bitstream) for the associated HEVC slice data.
-> +    The bitstream parameters are defined according to the ISO/IEC 23008-2 and
-> +    ITU-T Rec. H.265 specifications.
+PGD a5e9067
+CPU: 0 PID: 27592 Comm: syz-executor1 Not tainted 4.19.0-rc1-next-20180831+  
+#53
+P4D a5e9067 PUD 1d9ea8063
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+PMD 1c6294063
+Call Trace:
+PTE 0
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+Oops: 0000 [#1] SMP KASAN
+CPU: 1 PID: 27610 Comm: syz-executor2 Not tainted 4.19.0-rc1-next-20180831+  
+#53
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:lookup_object lib/debugobjects.c:157 [inline]
+RIP: 0010:debug_object_deactivate+0x19b/0x450 lib/debugobjects.c:543
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+Code: 00 00 48 85 db 74 46 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 18 41 83  
+c7 01 48 89 fe 48 c1 ee 03 80 3c 06 00 0f 85 04 02 00 00 <48> 3b 53 18 0f  
+84 53 01 00 00 48 89 de 48 c1 ee 03 80 3c 06 00 0f
+RSP: 0018:ffff8801db107a90 EFLAGS: 00010046
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+RAX: dffffc0000000000 RBX: ffff8801d7ff9d90 RCX: ffffffff8160b0d1
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+RDX: ffff8801db1265a0 RSI: 1ffff1003afff3b5 RDI: ffff8801d7ff9da8
+  memset+0x23/0x40 mm/kasan/kasan.c:285
+RBP: ffff8801db107b48 R08: fffffbfff13a35da R09: fffffbfff13a35d9
+  memset include/linux/string.h:330 [inline]
+  __ext4_expand_extra_isize+0x178/0x240 fs/ext4/inode.c:5863
+R10: fffffbfff13a35d9 R11: ffffffff89d1aecb R12: 1ffff1003b620f54
+  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5915 [inline]
+  ext4_mark_inode_dirty+0x88f/0xab0 fs/ext4/inode.c:5991
+R13: ffffffff89d1aec8 R14: ffffffff881a1ea0 R15: 000000000000000b
+FS:  0000000001368940(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff8801d7ff9da8 CR3: 00000001cc9bc000 CR4: 00000000001406e0
+Call Trace:
+  <IRQ>
+  debug_hrtimer_deactivate kernel/time/hrtimer.c:421 [inline]
+  debug_deactivate kernel/time/hrtimer.c:471 [inline]
+  __run_hrtimer kernel/time/hrtimer.c:1368 [inline]
+  __hrtimer_run_queues+0x2b6/0xff0 kernel/time/hrtimer.c:1460
+  ext4_dirty_inode+0x97/0xc0 fs/ext4/inode.c:6025
+  __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1029 [inline]
+  smp_apic_timer_interrupt+0x16d/0x6a0 arch/x86/kernel/apic/apic.c:1054
+  mark_inode_dirty_sync include/linux/fs.h:2088 [inline]
+  dquot_free_space include/linux/quotaops.h:373 [inline]
+  dquot_free_block include/linux/quotaops.h:383 [inline]
+  ext4_free_blocks+0x1828/0x2980 fs/ext4/mballoc.c:4919
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:867
+  </IRQ>
+RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65
+Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48  
+ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8  
+c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
+RSP: 0018:ffff88018874f3c0 EFLAGS: 00010282
+  ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffff8801c3a03580 RCX: 0000000007677c40
+RDX: 000000000a000000 RSI: 0000000000000000 RDI: ffff8801c638b940
+  ext4_remove_blocks fs/ext4/extents.c:2561 [inline]
+  ext4_ext_rm_leaf fs/ext4/extents.c:2717 [inline]
+  ext4_ext_remove_space+0x2372/0x49e0 fs/ext4/extents.c:2950
+RBP: ffff88018874f3e0 R08: ffffed0038780008 R09: ffff8801c3a03580
+R10: ffffed0039b406af R11: ffff8801cda0357f R12: 000000000a000000
+R13: 0000000000000000 R14: ffff8801c3a03580 R15: 000000000a000000
+  memset include/linux/string.h:330 [inline]
+  __ext4_expand_extra_isize+0x178/0x240 fs/ext4/inode.c:5863
+  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5915 [inline]
+  ext4_mark_inode_dirty+0x88f/0xab0 fs/ext4/inode.c:5991
+  ext4_ext_tree_init+0x105/0x140 fs/ext4/extents.c:856
+  __ext4_new_inode+0x5433/0x64e0 fs/ext4/ialloc.c:1169
+  ext4_ext_truncate+0x1d1/0x220 fs/ext4/extents.c:4644
+  ext4_truncate+0xe8d/0x1550 fs/ext4/inode.c:4500
+  ext4_setattr+0x1821/0x2850 fs/ext4/inode.c:5606
+  notify_change+0xbde/0x1110 fs/attr.c:334
+  do_truncate+0x1ac/0x2b0 fs/open.c:63
+  handle_truncate fs/namei.c:3008 [inline]
+  do_last fs/namei.c:3424 [inline]
+  path_openat+0x34e3/0x5340 fs/namei.c:3534
+  ext4_symlink+0x4d6/0x1170 fs/ext4/namei.c:3093
+  vfs_symlink+0x37a/0x5d0 fs/namei.c:4127
+  do_symlinkat+0x242/0x2d0 fs/namei.c:4154
+  __do_sys_symlink fs/namei.c:4173 [inline]
+  __se_sys_symlink fs/namei.c:4171 [inline]
+  __x64_sys_symlink+0x59/0x80 fs/namei.c:4171
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x456dc7
+  do_sys_open+0x584/0x720 fs/open.c:1063
+Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 00 00 00 00  
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+RSP: 002b:00007ffea49403a8 EFLAGS: 00000202
+  ORIG_RAX: 0000000000000058
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000456dc7
+  __do_sys_openat fs/open.c:1090 [inline]
+  __se_sys_openat fs/open.c:1084 [inline]
+  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+RDX: 00007ffea49403f7 RSI: 00000000004c280c RDI: 00007ffea49403e0
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000017
+R10: 0000000000000075 R11: 0000000000000202 R12: 000000000000000d
+R13: 0000000000089efb R14: 000000000000014c R15: badc0ffeebadface
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+CR2: ffff8801d7ff9da8
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+---[ end trace 5682ca918272dd25 ]---
+RIP: 0033:0x457099
+RIP: 0010:lookup_object lib/debugobjects.c:157 [inline]
+RIP: 0010:debug_object_deactivate+0x19b/0x450 lib/debugobjects.c:543
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+Code: 00 00 48 85 db 74 46 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 18 41 83  
+c7 01 48 89 fe 48 c1 ee 03 80 3c 06 00 0f 85 04 02 00 00 <48> 3b 53 18 0f  
+84 53 01 00 00 48 89 de 48 c1 ee 03 80 3c 06 00 0f
+RSP: 002b:00007f6a539afc78 EFLAGS: 00000246
+RSP: 0018:ffff8801db107a90 EFLAGS: 00010046
+  ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6a539b06d4 RCX: 0000000000457099
+RAX: dffffc0000000000 RBX: ffff8801d7ff9d90 RCX: ffffffff8160b0d1
+RDX: 0000000000002761 RSI: 0000000020000200 RDI: ffffffffffffffff
+RDX: ffff8801db1265a0 RSI: 1ffff1003afff3b5 RDI: ffff8801d7ff9da8
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+RBP: ffff8801db107b48 R08: fffffbfff13a35da R09: fffffbfff13a35d9
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R10: fffffbfff13a35d9 R11: ffffffff89d1aecb R12: 1ffff1003b620f54
+R13: 00000000004d3318 R14: 00000000004c819c R15: 0000000000000000
+R13: ffffffff89d1aec8 R14: ffffffff881a1ea0 R15: 000000000000000b
 
-Same here. I think these two specs are actually one and the same. By using a
-biblio reference you can just say: "according to the HEVC/H.265 specification"
-where 'HEVC/H.265 specification' is a link to the actual spec(s).
+FS:  0000000001368940(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+The buggy address belongs to the page:
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+page:ffffea00070e80c0 count:2 mapcount:0 mapping:ffff8801cd439658  
+index:0x4ab
+CR2: ffff8801d7ff9da8 CR3: 00000001cc9bc000 CR4: 00000000001406e0
 
-> +
-> +.. c:type:: v4l2_ctrl_hevc_pps
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_hevc_pps
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u8
-> +      - ``dependent_slice_segment_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``output_flag_present_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_extra_slice_header_bits``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``sign_data_hiding_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``cabac_init_present_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``init_qp_minus26``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``constrained_intra_pred_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``transform_skip_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``cu_qp_delta_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``diff_cu_qp_delta_depth``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``pps_cb_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``pps_cr_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pps_slice_chroma_qp_offsets_present_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``weighted_pred_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``weighted_bipred_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``transquant_bypass_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``tiles_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``entropy_coding_sync_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_tile_columns_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_tile_rows_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``column_width_minus1[20]``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``row_height_minus1[22]``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``loop_filter_across_tiles_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pps_loop_filter_across_slices_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``deblocking_filter_override_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pps_disable_deblocking_filter_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``pps_beta_offset_div2``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``pps_tc_offset_div2``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``lists_modification_present_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``log2_parallel_merge_level_minus2``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_segment_header_extension_present_flag``
-> +      - Syntax description inherited from the specification.
-> +
-> +``V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS (struct)``
-> +    Specifies various slice-specific parameters, especially from the NAL unit
-> +    header, general slice segment header and weighted prediction parameter
-> +    parts of the bitstream.
-> +    The bitstream parameters are defined according to the ISO/IEC 23008-2 and
-> +    ITU-T Rec. H.265 specifications.
-> +
-> +.. c:type:: v4l2_ctrl_hevc_slice_params
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_ctrl_hevc_slice_params
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u32
-> +      - ``bit_size``
-> +      - Size (in bits) of the current slice data.
-> +    * - __u32
-> +      - ``data_bit_offset``
-> +      - Offset (in bits) to the video data in the current slice data.
-> +    * - __u8
-> +      - ``nal_unit_type``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``nuh_temporal_id_plus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_type``
-> +      - Syntax description inherited from the specification.
-> +	(V4L2_HEVC_SLICE_TYPE_I, V4L2_HEVC_SLICE_TYPE_P or
-> +	V4L2_HEVC_SLICE_TYPE_B).
-> +    * - __u8
-> +      - ``colour_plane_id``
-> +      - Syntax description inherited from the specification.
-> +    * - __u16
-> +      - ``slice_pic_order_cnt``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_sao_luma_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_sao_chroma_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_temporal_mvp_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_ref_idx_l0_active_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``num_ref_idx_l1_active_minus1``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``mvd_l1_zero_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``cabac_init_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``collocated_from_l0_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``collocated_ref_idx``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``five_minus_max_num_merge_cand``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``use_integer_mv_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_qp_delta``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_cb_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_cr_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_act_y_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_act_cb_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_act_cr_qp_offset``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_deblocking_filter_disabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_beta_offset_div2``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``slice_tc_offset_div2``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``slice_loop_filter_across_slices_enabled_flag``
-> +      - Syntax description inherited from the specification.
-> +    * - __u8
-> +      - ``pic_struct``
-> +      - Syntax description inherited from the specification.
-> +    * - struct :c:type:`v4l2_hevc_dpb_entry`
-> +      - ``dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - The decoded picture buffer, for meta-data about reference frames.
-> +    * - __u8
-> +      - ``num_active_dpb_entries``
-> +      - The number of entries in ``dpb``.
-> +    * - __u8
-> +      - ``ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - The list of L0 reference elements as indices in the DPB.
-> +    * - __u8
-> +      - ``ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - The list of L1 reference elements as indices in the DPB.
-> +    * - __u8
-> +      - ``num_rps_poc_st_curr_before``
-> +      - The number of reference pictures in the short-term set that come before
-> +        the current frame.
-> +    * - __u8
-> +      - ``num_rps_poc_st_curr_after``
-> +      - The number of reference pictures in the short-term set that come after
-> +        the current frame.
-> +    * - __u8
-> +      - ``num_rps_poc_lt_curr``
-> +      - The number of reference pictures in the long-term set.
-> +    * - struct :c:type:`v4l2_hevc_pred_weight_table`
-> +      - ``pred_weight_table``
-> +      - The prediction weight coefficients for inter-picture prediction.
-> +
-> +.. c:type:: v4l2_hevc_dpb_entry
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_hevc_dpb_entry
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u32
-> +      - ``buffer_index``
-> +      - The V4L2 buffer index that matches the associated reference picture.
-> +    * - __u8
-> +      - ``rps``
-> +      - The reference set for the reference frame
-> +        (V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE,
-> +        V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER or
-> +        V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR)
-> +    * - __u8
-> +      - ``field_pic``
-> +      - Whether the reference is a field picture or a frame.
-> +    * - __u16
-> +      - ``pic_order_cnt[2]``
-> +      - Le picture order count of the reference. Only the first element of the
 
-Le -> The
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +        array is used for frame pictures, while the first element identifies the
-> +        top field and the second the bottom field in field-coded pictures.
-> +
-> +.. c:type:: v4l2_hevc_pred_weight_table
-> +
-> +.. cssclass:: longtable
-> +
-> +.. flat-table:: struct v4l2_hevc_pred_weight_table
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +    :widths:       1 1 2
-> +
-> +    * - __u8
-> +      - ``luma_log2_weight_denom``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``delta_chroma_log2_weight_denom``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2]``
-> +      - Syntax description inherited from the specification.
-> +    * - __s8
-> +      - ``chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2]``
-> +      - Syntax description inherited from the specification.
-> +
->  MFC 5.1 MPEG Controls
->  ---------------------
->  
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-compressed.rst b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
-> index a86b59f770dd..a1a19890df4c 100644
-> --- a/Documentation/media/uapi/v4l/pixfmt-compressed.rst
-> +++ b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
-> @@ -109,6 +109,21 @@ Compressed Formats
->        - ``V4L2_PIX_FMT_HEVC``
->        - 'HEVC'
->        - HEVC/H.265 video elementary stream.
-> +    * .. _V4L2-PIX-FMT-HEVC-SLICE:
-> +
-> +      - ``V4L2_PIX_FMT_HEVC_SLICE``
-> +      - 'S265'
-> +      - HEVC parsed slice data, as extracted from the HEVC bitstream.
-> +	This format is adapted for stateless video decoders that implement a
-> +	HEVC pipeline (using the Memory to Memory and Media Request APIs).
-
-Should be references to these two sections of the spec.
-
-> +	Metadata associated with the frame to decode is required to be passed
-> +	through the following controls :
-> +        * ``V4L2_CID_MPEG_VIDEO_HEVC_SPS``
-> +        * ``V4L2_CID_MPEG_VIDEO_HEVC_PPS``
-> +        * ``V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS``
-> +	See the :ref:`associated Codec Control IDs <v4l2-mpeg-hevc>`.
-> +	Buffers associated with this pixel format must contain the appropriate
-> +	number of macroblocks to decode a full corresponding frame.
->      * .. _V4L2-PIX-FMT-FWHT:
->  
->        - ``V4L2_PIX_FMT_FWHT``
-> diff --git a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> index 258f5813f281..1f5aa8ad68fa 100644
-> --- a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> +++ b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> @@ -436,6 +436,24 @@ See also the examples in :ref:`control`.
->        - n/a
->        - A struct :c:type:`v4l2_ctrl_mpeg2_quantization`, containing MPEG-2
->  	quantization matrices for stateless video decoders.
-> +    * - ``V4L2_CTRL_TYPE_HEVC_SPS``
-> +      - n/a
-> +      - n/a
-> +      - n/a
-> +      - A struct :c:type:`v4l2_ctrl_hevc_sps`, containing HEVC Sequence
-> +	Parameter Set for stateless video decoders.
-> +    * - ``V4L2_CTRL_TYPE_HEVC_PPS``
-> +      - n/a
-> +      - n/a
-> +      - n/a
-> +      - A struct :c:type:`v4l2_ctrl_hevc_pps`, containing HEVC Picture
-> +	Parameter Set for stateless video decoders.
-> +    * - ``V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS``
-> +      - n/a
-> +      - n/a
-> +      - n/a
-> +      - A struct :c:type:`v4l2_ctrl_hevc_slice_params`, containing HEVC
-> +	slice parameters for stateless video decoders.
->  
->  .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
->  
-> diff --git a/Documentation/media/videodev2.h.rst.exceptions b/Documentation/media/videodev2.h.rst.exceptions
-> index 30ba0d6f546f..7640ce6dadc9 100644
-> --- a/Documentation/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/media/videodev2.h.rst.exceptions
-> @@ -131,6 +131,9 @@ replace symbol V4L2_CTRL_TYPE_U32 :c:type:`v4l2_ctrl_type`
->  replace symbol V4L2_CTRL_TYPE_U8 :c:type:`v4l2_ctrl_type`
->  replace symbol V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS :c:type:`v4l2_ctrl_type`
->  replace symbol V4L2_CTRL_TYPE_MPEG2_QUANTIZATION :c:type:`v4l2_ctrl_type`
-> +replace symbol V4L2_CTRL_TYPE_HEVC_SPS :c:type:`v4l2_ctrl_type`
-> +replace symbol V4L2_CTRL_TYPE_HEVC_PPS :c:type:`v4l2_ctrl_type`
-> +replace symbol V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS :c:type:`v4l2_ctrl_type`
->  
->  # V4L2 capability defines
->  replace define V4L2_CAP_VIDEO_CAPTURE device-capabilities
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index 2b1022d7c617..c9c40e693a93 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -913,6 +913,9 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_MPEG_VIDEO_HEVC_SIZE_OF_LENGTH_FIELD:	return "HEVC Size of Length Field";
->  	case V4L2_CID_MPEG_VIDEO_REF_NUMBER_FOR_PFRAMES:	return "Reference Frames for a P-Frame";
->  	case V4L2_CID_MPEG_VIDEO_PREPEND_SPSPPS_TO_IDR:		return "Prepend SPS and PPS to IDR";
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_SPS:			return "HEVC Sequence Parameter Set";
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_PPS:			return "HEVC Picture Parameter Set";
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS:		return "HEVC Slice Parameters";
->  
->  	/* CAMERA controls */
->  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-> @@ -1320,6 +1323,15 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAMS:
->  		*type = V4L2_CTRL_TYPE_H264_DECODE_PARAMS;
->  		break;
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_SPS:
-> +		*type = V4L2_CTRL_TYPE_HEVC_SPS;
-> +		break;
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_PPS:
-> +		*type = V4L2_CTRL_TYPE_HEVC_PPS;
-> +		break;
-> +	case V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS:
-> +		*type = V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS;
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1696,6 +1708,11 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->  	case V4L2_CTRL_TYPE_H264_DECODE_PARAMS:
->  		return 0;
->  
-> +	case V4L2_CTRL_TYPE_HEVC_SPS:
-> +	case V4L2_CTRL_TYPE_HEVC_PPS:
-> +	case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
-> +		return 0;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -2291,6 +2308,15 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_H264_DECODE_PARAMS:
->  		elem_size = sizeof(struct v4l2_ctrl_h264_decode_param);
->  		break;
-> +	case V4L2_CTRL_TYPE_HEVC_SPS:
-> +		elem_size = sizeof(struct v4l2_ctrl_hevc_sps);
-> +		break;
-> +	case V4L2_CTRL_TYPE_HEVC_PPS:
-> +		elem_size = sizeof(struct v4l2_ctrl_hevc_pps);
-> +		break;
-> +	case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
-> +		elem_size = sizeof(struct v4l2_ctrl_hevc_slice_params);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 0507a19079fe..a121f96912bf 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1318,6 +1318,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
->  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
->  		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
-> +		case V4L2_PIX_FMT_HEVC_SLICE:	descr = "HEVC Parsed Slice Data"; break;
->  		case V4L2_PIX_FMT_FWHT:		descr = "FWHT"; break; /* used in vicodec */
->  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
->  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index 4814dd4a763e..8d4763ea1e1f 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -48,6 +48,9 @@ struct poll_table_struct;
->   * @p_h264_scal_mtrx:		Pointer to a struct v4l2_ctrl_h264_scaling_matrix.
->   * @p_h264_slice_param:		Pointer to a struct v4l2_ctrl_h264_slice_param.
->   * @p_h264_decode_param:	Pointer to a struct v4l2_ctrl_h264_decode_param.
-> + * @p_hevc_sps:			Pointer to an HEVC sequence parameter set structure.
-> + * @p_hevc_pps:			Pointer to an HEVC picture parameter set structure.
-> + * @p_hevc_slice_params		Pointer to an HEVC slice parameters structure.
->   * @p:				Pointer to a compound value.
->   */
->  union v4l2_ctrl_ptr {
-> @@ -64,6 +67,9 @@ union v4l2_ctrl_ptr {
->  	struct v4l2_ctrl_h264_scaling_matrix *p_h264_scal_mtrx;
->  	struct v4l2_ctrl_h264_slice_param *p_h264_slice_param;
->  	struct v4l2_ctrl_h264_decode_param *p_h264_decode_param;
-> +	struct v4l2_ctrl_hevc_sps *p_hevc_sps;
-> +	struct v4l2_ctrl_hevc_pps *p_hevc_pps;
-> +	struct v4l2_ctrl_hevc_slice_params *p_hevc_slice_params;
->  	void *p;
->  };
->  
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index c41d5beab9b4..a914e6df8f98 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -707,6 +707,9 @@ enum v4l2_cid_mpeg_video_hevc_size_of_length_field {
->  #define V4L2_CID_MPEG_VIDEO_HEVC_HIER_CODING_L6_BR	(V4L2_CID_MPEG_BASE + 642)
->  #define V4L2_CID_MPEG_VIDEO_REF_NUMBER_FOR_PFRAMES	(V4L2_CID_MPEG_BASE + 643)
->  #define V4L2_CID_MPEG_VIDEO_PREPEND_SPSPPS_TO_IDR	(V4L2_CID_MPEG_BASE + 644)
-> +#define V4L2_CID_MPEG_VIDEO_HEVC_SPS			(V4L2_CID_MPEG_BASE + 645)
-> +#define V4L2_CID_MPEG_VIDEO_HEVC_PPS			(V4L2_CID_MPEG_BASE + 646)
-> +#define V4L2_CID_MPEG_VIDEO_HEVC_SLICE_PARAMS		(V4L2_CID_MPEG_BASE + 647)
->  
->  /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
->  #define V4L2_CID_MPEG_CX2341X_BASE				(V4L2_CTRL_CLASS_MPEG | 0x1000)
-> @@ -1323,4 +1326,156 @@ struct v4l2_ctrl_h264_decode_param {
->  	struct v4l2_h264_dpb_entry dpb[16];
->  };
->  
-> +#define V4L2_HEVC_SLICE_TYPE_B	0
-> +#define V4L2_HEVC_SLICE_TYPE_P	1
-> +#define V4L2_HEVC_SLICE_TYPE_I	2
-> +
-> +struct v4l2_ctrl_hevc_sps {
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Sequence parameter set */
-> +	__u8	chroma_format_idc;
-> +	__u8	separate_colour_plane_flag;
-> +	__u16	pic_width_in_luma_samples;
-> +	__u16	pic_height_in_luma_samples;
-> +	__u8	bit_depth_luma_minus8;
-> +	__u8	bit_depth_chroma_minus8;
-> +	__u8	log2_max_pic_order_cnt_lsb_minus4;
-> +	__u8	sps_max_dec_pic_buffering_minus1;
-> +	__u8	sps_max_num_reorder_pics;
-> +	__u8	sps_max_latency_increase_plus1;
-> +	__u8	log2_min_luma_coding_block_size_minus3;
-> +	__u8	log2_diff_max_min_luma_coding_block_size;
-> +	__u8	log2_min_luma_transform_block_size_minus2;
-> +	__u8	log2_diff_max_min_luma_transform_block_size;
-> +	__u8	max_transform_hierarchy_depth_inter;
-> +	__u8	max_transform_hierarchy_depth_intra;
-> +	__u8	scaling_list_enabled_flag;
-> +	__u8	amp_enabled_flag;
-> +	__u8	sample_adaptive_offset_enabled_flag;
-> +	__u8	pcm_enabled_flag;
-> +	__u8	pcm_sample_bit_depth_luma_minus1;
-> +	__u8	pcm_sample_bit_depth_chroma_minus1;
-> +	__u8	log2_min_pcm_luma_coding_block_size_minus3;
-> +	__u8	log2_diff_max_min_pcm_luma_coding_block_size;
-> +	__u8	pcm_loop_filter_disabled_flag;
-> +	__u8	num_short_term_ref_pic_sets;
-> +	__u8	long_term_ref_pics_present_flag;
-> +	__u8	num_long_term_ref_pics_sps;
-> +	__u8	sps_temporal_mvp_enabled_flag;
-> +	__u8	strong_intra_smoothing_enabled_flag;
-> +};
-> +
-> +struct v4l2_ctrl_hevc_pps {
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture parameter set */
-> +	__u8	dependent_slice_segment_flag;
-> +	__u8	output_flag_present_flag;
-> +	__u8	num_extra_slice_header_bits;
-> +	__u8	sign_data_hiding_enabled_flag;
-> +	__u8	cabac_init_present_flag;
-> +	__s8	init_qp_minus26;
-> +	__u8	constrained_intra_pred_flag;
-> +	__u8	transform_skip_enabled_flag;
-> +	__u8	cu_qp_delta_enabled_flag;
-> +	__u8	diff_cu_qp_delta_depth;
-> +	__s8	pps_cb_qp_offset;
-> +	__s8	pps_cr_qp_offset;
-> +	__u8	pps_slice_chroma_qp_offsets_present_flag;
-> +	__u8	weighted_pred_flag;
-> +	__u8	weighted_bipred_flag;
-> +	__u8	transquant_bypass_enabled_flag;
-> +	__u8	tiles_enabled_flag;
-> +	__u8	entropy_coding_sync_enabled_flag;
-> +	__u8	num_tile_columns_minus1;
-> +	__u8	num_tile_rows_minus1;
-> +	__u8	column_width_minus1[20];
-> +	__u8	row_height_minus1[22];
-> +	__u8	loop_filter_across_tiles_enabled_flag;
-> +	__u8	pps_loop_filter_across_slices_enabled_flag;
-> +	__u8	deblocking_filter_override_enabled_flag;
-> +	__u8	pps_disable_deblocking_filter_flag;
-> +	__s8	pps_beta_offset_div2;
-> +	__s8	pps_tc_offset_div2;
-> +	__u8	lists_modification_present_flag;
-> +	__u8	log2_parallel_merge_level_minus2;
-> +	__u8	slice_segment_header_extension_present_flag;
-> +};
-> +
-> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE	0x01
-> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER	0x02
-> +#define V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR		0x03
-> +
-> +#define V4L2_HEVC_DPB_ENTRIES_NUM_MAX		16
-> +
-> +struct v4l2_hevc_dpb_entry {
-> +	__u32	buffer_index;
-> +	__u8	rps;
-> +	__u8	field_pic;
-> +	__u16	pic_order_cnt[2];
-> +};
-> +
-> +struct v4l2_hevc_pred_weight_table {
-> +	__u8	luma_log2_weight_denom;
-> +	__s8	delta_chroma_log2_weight_denom;
-> +
-> +	__s8	delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__s8	luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__s8	delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> +	__s8	chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> +
-> +	__s8	delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__s8	luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__s8	delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> +	__s8	chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> +};
-> +
-> +struct v4l2_ctrl_hevc_slice_params {
-> +	__u32	bit_size;
-> +	__u32	data_bit_offset;
-> +
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: NAL unit header */
-> +	__u8	nal_unit_type;
-> +	__u8	nuh_temporal_id_plus1;
-> +
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
-> +	__u8	slice_type;
-> +	__u8	colour_plane_id;
-> +	__u16	slice_pic_order_cnt;
-> +	__u8	slice_sao_luma_flag;
-> +	__u8	slice_sao_chroma_flag;
-> +	__u8	slice_temporal_mvp_enabled_flag;
-> +	__u8	num_ref_idx_l0_active_minus1;
-> +	__u8	num_ref_idx_l1_active_minus1;
-> +	__u8	mvd_l1_zero_flag;
-> +	__u8	cabac_init_flag;
-> +	__u8	collocated_from_l0_flag;
-> +	__u8	collocated_ref_idx;
-> +	__u8	five_minus_max_num_merge_cand;
-> +	__u8	use_integer_mv_flag;
-> +	__s8	slice_qp_delta;
-> +	__s8	slice_cb_qp_offset;
-> +	__s8	slice_cr_qp_offset;
-> +	__s8	slice_act_y_qp_offset;
-> +	__s8	slice_act_cb_qp_offset;
-> +	__s8	slice_act_cr_qp_offset;
-> +	__u8	slice_deblocking_filter_disabled_flag;
-> +	__s8	slice_beta_offset_div2;
-> +	__s8	slice_tc_offset_div2;
-> +	__u8	slice_loop_filter_across_slices_enabled_flag;
-> +
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture timing SEI message */
-> +	__u8	pic_struct;
-> +
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
-> +	struct v4l2_hevc_dpb_entry dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__u8	num_active_dpb_entries;
-> +	__u8	ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +	__u8	ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> +
-> +	__u8	num_rps_poc_st_curr_before;
-> +	__u8	num_rps_poc_st_curr_after;
-> +	__u8	num_rps_poc_lt_curr;
-> +
-> +	/* ISO/IEC 23008-2, ITU-T Rec. H.265: Weighted prediction parameter */
-> +	struct v4l2_hevc_pred_weight_table pred_weight_table;
-> +};
-> +
->  #endif
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 9a00f5fcd3cd..e582c6bb0ab9 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -644,6 +644,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
->  #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
-> +#define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* H265 parsed slices */
->  #define V4L2_PIX_FMT_FWHT     v4l2_fourcc('F', 'W', 'H', 'T') /* Fast Walsh Hadamard Transform (vicodec) */
->  
->  /*  Vendor-specific formats   */
-> @@ -1611,6 +1612,9 @@ struct v4l2_ext_control {
->  		struct v4l2_ctrl_h264_scaling_matrix __user *p_h264_scal_mtrx;
->  		struct v4l2_ctrl_h264_slice_param __user *p_h264_slice_param;
->  		struct v4l2_ctrl_h264_decode_param __user *p_h264_decode_param;
-> +		struct v4l2_ctrl_hevc_sps __user *p_hevc_sps;
-> +		struct v4l2_ctrl_hevc_pps __user *p_hevc_pps;
-> +		struct v4l2_ctrl_hevc_slice_params __user *p_hevc_slice_params;
->  		void __user *ptr;
->  	};
->  } __attribute__ ((packed));
-> @@ -1663,6 +1667,9 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_H264_SCALING_MATRIX = 0x0107,
->  	V4L2_CTRL_TYPE_H264_SLICE_PARAMS = 0x0108,
->  	V4L2_CTRL_TYPE_H264_DECODE_PARAMS = 0x0109,
-> +	V4L2_CTRL_TYPE_HEVC_SPS = 0x0110,
-> +	V4L2_CTRL_TYPE_HEVC_PPS = 0x0111,
-> +	V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS = 0x0112,
->  };
->  
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> 
-
-Regards,
-
-	Hans
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
