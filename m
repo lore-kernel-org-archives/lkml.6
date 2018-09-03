@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA1EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D564FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B405E20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA5320652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jCmoLHjS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B405E20843
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SqNT//bI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA5320652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbeICTKW (ORCPT
+        id S1727304AbeICTKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:10:22 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45462 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbeICTKV (ORCPT
+        Mon, 3 Sep 2018 15:10:21 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51425 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbeICTKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 15:10:21 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180903144949euoutp02b2a9b02b6cbd2080a2ba8a7d0801a1c4~Q600dvih10365203652euoutp02_;
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180903144949euoutp016723265129b2156081e8a81d78f36f93~Q600dk1JZ1998019980euoutp016;
         Mon,  3 Sep 2018 14:49:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180903144949euoutp02b2a9b02b6cbd2080a2ba8a7d0801a1c4~Q600dvih10365203652euoutp02_
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180903144949euoutp016723265129b2156081e8a81d78f36f93~Q600dk1JZ1998019980euoutp016
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1535986189;
-        bh=97lcJSBwEJUUh7h8LYu/i2eHSpinkv2R8qJwHk9r6Yw=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=jCmoLHjSC4aG+KBtNAZKfWcUobj8Ph5hD0shTiw5FSUumD7affEMDhl8oSnhmXV+L
-         1QfEGd7jHVgJyo1Qgy4aOj1Z4Jj3Z1QFFNIP0Te4TgQEsHe/po89Volh656R0ABFLj
-         SV1CbZv5VBks6IYo8Ay+njpXCJrRIxxu57957R3Y=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        bh=YXnQWrz7EK8gXGeL3Bje412w5XmMqG5Doeg8NF1kVxE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=SqNT//bIsfXirccXfqhl2W7Yp4WpbaS84X4+YCf6uGzlFlHon2ORypbjCD7lL7Hq2
+         2O58RFTTRrdXyHra7dD52k/iyzHN5px7GgQT5ucl+pxypBXqd6hsHhEI1L3SRniioa
+         o3yQZfP5c1ElFoOuv8d1LjAxcp40q5PecHtEDyxM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180903144948eucas1p1e08f033466cf4dc66fe9ae1af8e89615~Q60z8vth51401214012eucas1p1o;
+        20180903144948eucas1p1efbd111a8a05e20b6c6ea2e2b490ed35~Q60zwoTwo2291422914eucas1p1H;
         Mon,  3 Sep 2018 14:49:48 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 74.6F.04806.C0A4D8B5; Mon,  3
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9E.63.04441.C0A4D8B5; Mon,  3
         Sep 2018 15:49:48 +0100 (BST)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a~Q60zEI0Z00770907709eucas1p2s;
+        20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12~Q60yyvI_N0770807708eucas1p2i;
         Mon,  3 Sep 2018 14:49:47 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-23-5b8d4a0c9032
+X-AuditID: cbfec7f2-5c9ff70000001159-c0-5b8d4a0c443b
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 62.B9.04284.B0A4D8B5; Mon,  3
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E1.B9.04284.B0A4D8B5; Mon,  3
         Sep 2018 15:49:47 +0100 (BST)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
@@ -63,130 +62,73 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 1/2] regulator: Fix useless O^2 complexity in suspend/resume
-Date:   Mon, 03 Sep 2018 16:49:36 +0200
-Message-id: <20180903144937.16507-2-m.szyprowski@samsung.com>
+Subject: [PATCH 0/2] regualtors: Fix suspend/resume issues since v4.16
+Date:   Mon, 03 Sep 2018 16:49:35 +0200
+Message-id: <20180903144937.16507-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-In-reply-to: <20180903144937.16507-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7djP87o8Xr3RBgfny1tsnLGe1WLqwyds
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7djPc7o8Xr3RButuCVpsnLGe1WLqwyds
         Ft+udDBZXN41h81ixvl9TBZrj9xlt5i86CCrA7vHzll32T02repk87hzbQ+bR9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGV8+C1aMFW0omP2bqYGxuOCXYycHBICJhL9Ow+ydzFycQgJrGCU
-        6F/9iRHC+cwo0XPiBQtM1atdTxhBbCGBZYwSuw/xQRQ1MEnsvHyWCSTBJmAo0fW2iw3EFhHI
-        lXh/5RcbSBGzwEZGiSmP3gPt4OAQFvCReHXEEaSGRUBV4sOmKWBDeQVsJT5+2s0EsUxeYvWG
-        A8wgNqeAncT7/3vBLpIQaGSTWPesnRmiyEWi880JVghbWOLV8S3sELaMRGfHQSaIhmZGifYZ
-        s9ghnB5Gia1zdrBBVFlLHD5+EaybWYBPYtK26cwg10kI8Ep0tAlBmB4Sh89AfTkR6OMHPewT
-        GCUXMDKsYhRPLS3OTU8tNs5LLdcrTswtLs1L10vOz93ECIy/0/+Of93BuO9P0iFGAQ5GJR7e
-        H7q90UKsiWXFlbmHGCU4mJVEeBvdgUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+bTSooUE0hNL
-        UrNTUwtSi2CyTBycUg2MLSd/7Wu4HdJTeeelTa7LdukzBS8clL5N1FQ7xd4RWFhs/ivPbiX7
-        q4RgI9NldeIrRPyuFXtkbXv7UkVvqZPV671+G80vdJqE+Gf4fDksqBBgs69RP075SvUN7sRo
-        5sDk9IfS9lHpK7Zr7VPy+dm98Hvw7knPVM8Xabz8LLMjSdp5x61nh/uUWIozEg21mIuKEwF9
-        aJ3UuwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjluLIzCtJLcpLzFFi42I5/e/4NV1ur95og92LjS02zljPajH14RM2
-        i29XOpgsLu+aw2Yx4/w+Jou1R+6yW0xedJDVgd1j56y77B6bVnWyedy5tofNo2/LKkaPz5vk
-        AlijuGxSUnMyy1KL9O0SuDI+/BYtmCpa0TF7N1MD43HBLkZODgkBE4lXu54wdjFycQgJLGGU
-        eHlvKzuE08QkMff4FEaQKjYBQ4mut11sILaIQK7E/mudTCBFzAKbGSX+7z4AVMTBISzgI/Hq
-        iCNIDYuAqsSHTRC9vAK2Eh8/7WaC2CYvsXrDAWYQm1PATuL9/71gNUJANZfvrWKdwMizgJFh
-        FaNIamlxbnpusaFecWJucWleul5yfu4mRmDobDv2c/MOxksbgw8xCnAwKvHwBhj0RguxJpYV
-        V+YeYpTgYFYS4W10BwrxpiRWVqUW5ccXleakFh9ilOZgURLnPW9QGSUkkJ5YkpqdmlqQWgST
-        ZeLglGpgrDnNIKfJvmDPysez5pmkxHvfPranxfvO6tv33YszGtxMPx4q3j/56gunI0yuy/UT
-        TAqW9b/KtPR8tHrFZcPgSM6VuXzx74pYJhrMkTGJquZebVobeviywaWkril7rjsUnYiq+n/p
-        qF+M4GmZ5j8XXZL/pRfFK3EfuB/LurZV+quxsERYTf1HJZbijERDLeai4kQAFyinohkCAAA=
-X-CMS-MailID: 20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a
+        BbBGcdmkpOZklqUW6dslcGWs2XGaqeAHR0XLbY4GxjXsXYycHBICJhKPPz9l62Lk4hASWMEo
+        seHSCijnM6PEhNvvmGCqdu+czgqRWMYo8ezvKnYIp4FJYufls2BVbAKGEl1vu9hAbBGBXIn3
+        V36BjWIW2MgoMeXRe6AODg5hATeJE99zQUwWAVWJ7ndSIOW8ArYSnxafYYFYJi+xesMBZpBW
+        CYGXrBLXTzVCJVwkljTtZoWwhSVeHd8C9YOMRGfHQSaIhmZGifYZs9ghnB5Gia1zdrBBVFlL
+        HD5+EaybWYBPYtK26cwgV0gI8Ep0tAlBlHhI7Ly9jxnEFhKIlfgy8STLBEaJBYwMqxjFU0uL
+        c9NTiw3zUsv1ihNzi0vz0vWS83M3MQLj7PS/4592MH69lHSIUYCDUYmHN8CgN1qINbGsuDL3
+        EKMEB7OSCG+jO1CINyWxsiq1KD++qDQntfgQozQHi5I4L59WWrSQQHpiSWp2ampBahFMlomD
+        U6qBsWntp79m1alOeV9YVy8452fz792Wfi7j3Cgv4zSr/1sXm8zgd1tjUBzx6V3UZ7vG28qf
+        E15+/iuguG3arC87eYQ4jbszJnMoXJAsWpC2WFesatfzzzvV5kpX1v+84Muu4lR3eteHnx84
+        ZnnELoo5r3Hf6EHLJF1Xge66SpFF526H31q8QbJGUYmlOCPRUIu5qDgRACc3V6CvAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJMWRmVeSWpSXmKPExsVy+t/xa7rcXr3RBv+/y1psnLGe1WLqwyds
+        Ft+udDBZXN41h81ixvl9TBZrj9xlt5i86CCrA7vHzll32T02repk87hzbQ+bR9+WVYwenzfJ
+        BbBGcdmkpOZklqUW6dslcGWs2XGaqeAHR0XLbY4GxjXsXYycHBICJhK7d05n7WLk4hASWMIo
+        0b3+KBOE08QkMff4FEaQKjYBQ4mut11sILaIQK7E/mudYEXMApsZJf7vPgBUxMEhLOAmceJ7
+        LojJIqAq0f1OCqScV8BW4tPiMywQy+QlVm84wDyBkWsBI8MqRpHU0uLc9NxiQ73ixNzi0rx0
+        veT83E2MwEDYduzn5h2MlzYGH2IU4GBU4uENMOiNFmJNLCuuzD3EKMHBrCTC2+gOFOJNSays
+        Si3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cAokb+dbXPG5ZDKeZaC
+        cotapyr2bYrI+ed+gc0nv+tvk/u9lzM+Bpw8Vm71a8KD1VsN3x0/t4H97NLtVZz1BXumd+Sx
+        Nxme+Bn2sXfZ8r8yInN+sn0/e3dPgbZEzem359iF914NFBd5nlq9W5Irc8YSzS2+l//qTA5f
+        6y2493TC5D72nbN7V6w6rMRSnJFoqMVcVJwIAP32Nw0AAgAA
+X-CMS-MailID: 20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a
-References: <20180903144937.16507-1-m.szyprowski@samsung.com>
-        <CGME20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12
+References: <CGME20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-regulator_pm_ops with regulator_suspend and regulator_resume functions are
-assigned to every regulator device registered in the system, so there is no
-need to iterate over all again in them. Replace class_for_each_device()
-construction with direct operation on the rdev embedded in the given
-regulator device. This saves a lots of useless operations in suspend and
-resume paths.
+Hi All,
 
-Fixes: f7efad10b5c4: regulator: add PM suspend and resume hooks
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/regulator/core.c | 39 +++++++++++----------------------------
- 1 file changed, 11 insertions(+), 28 deletions(-)
+While working on suspend/resume support for Samsung Exynos5433-based TM2
+board (arch/arm64/boot/dts/exynos/exynos5433-tm2.dts), I've noticed that
+v4.16 kernel release introduced some serious problems with regulator
+configuration in system suspend state. Further investigation revealed
+that the following 2 commits are responsible for my issues:
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index bb1324f93143..71ba040c7c5b 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4455,19 +4455,6 @@ void regulator_unregister(struct regulator_dev *rdev)
- EXPORT_SYMBOL_GPL(regulator_unregister);
- 
- #ifdef CONFIG_SUSPEND
--static int _regulator_suspend(struct device *dev, void *data)
--{
--	struct regulator_dev *rdev = dev_to_rdev(dev);
--	suspend_state_t *state = data;
--	int ret;
--
--	regulator_lock(rdev);
--	ret = suspend_set_state(rdev, *state);
--	regulator_unlock(rdev);
--
--	return ret;
--}
--
- /**
-  * regulator_suspend - prepare regulators for system wide suspend
-  * @state: system suspend state
-@@ -4476,20 +4463,25 @@ static int _regulator_suspend(struct device *dev, void *data)
-  */
- static int regulator_suspend(struct device *dev)
- {
-+	struct regulator_dev *rdev = dev_to_rdev(dev);
- 	suspend_state_t state = pm_suspend_target_state;
-+	int ret;
-+
-+	regulator_lock(rdev);
-+	ret = suspend_set_state(rdev, state);
-+	regulator_unlock(rdev);
- 
--	return class_for_each_device(&regulator_class, NULL, &state,
--				     _regulator_suspend);
-+	return ret;
- }
- 
--static int _regulator_resume(struct device *dev, void *data)
-+static int regulator_resume(struct device *dev)
- {
--	int ret = 0;
-+	suspend_state_t state = pm_suspend_target_state;
- 	struct regulator_dev *rdev = dev_to_rdev(dev);
--	suspend_state_t *state = data;
- 	struct regulator_state *rstate;
-+	int ret = 0;
- 
--	rstate = regulator_get_suspend_state(rdev, *state);
-+	rstate = regulator_get_suspend_state(rdev, state);
- 	if (rstate == NULL)
- 		return 0;
- 
-@@ -4504,15 +4496,6 @@ static int _regulator_resume(struct device *dev, void *data)
- 
- 	return ret;
- }
--
--static int regulator_resume(struct device *dev)
--{
--	suspend_state_t state = pm_suspend_target_state;
--
--	return class_for_each_device(&regulator_class, NULL, &state,
--				     _regulator_resume);
--}
--
- #else /* !CONFIG_SUSPEND */
- 
- #define regulator_suspend	NULL
+1. f7efad10b5c4: regulator: add PM suspend and resume hooks
+2. 72069f9957a1: regulator: leave one item to record whether regulator is enabled
+
+I've been really surprised that no-one noticed those issues for almost
+4 kernel releases. Please review my fixes and apply to v4.19-rcX if
+possible.
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (2):
+  regulator: Fix useless O^2 complexity in suspend/resume
+  regulator: Fix 'do-nothing' value for regulators without suspend state
+
+ drivers/regulator/core.c          | 41 +++++++++----------------------
+ drivers/regulator/of_regulator.c  |  2 --
+ include/linux/regulator/machine.h |  6 ++---
+ 3 files changed, 15 insertions(+), 34 deletions(-)
+
 -- 
 2.17.1
 
