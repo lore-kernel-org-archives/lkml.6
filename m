@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C963FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8FBC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795FD20870
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E40920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:53:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hauMHNS7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 795FD20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIpnNq8t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E40920862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeICTN2 (ORCPT
+        id S1727618AbeICTNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:13:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
+        Mon, 3 Sep 2018 15:13:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727557AbeICTN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:13:27 -0400
+        id S1727593AbeICTNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:13:30 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00DD420652;
-        Mon,  3 Sep 2018 14:52:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AD9E20862;
+        Mon,  3 Sep 2018 14:52:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535986377;
-        bh=y9N+u47hPwrdNQgm/lelVVNB1dxRRnAV6oZmu3PW1K0=;
+        s=default; t=1535986379;
+        bh=J/rCD8CISAlK4jZcCk3WX9yPrmDuYC+bEUMTxSdDUkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hauMHNS7mH3DIw6B9nwSGXNkXGIMpKNhSDXN1rtWD0JhA2277ZlS1dlYVYHDm93ww
-         iY4PJqaLEHDC5X81Y5F/LrFE40uHGStbMTsgOWx7dqb01Yb8NOfiuWqTUcOwur/wip
-         u2ropge79N7eDqAnFiVstK7k+CTazFBBF5f5wxc8=
+        b=hIpnNq8t2ChFuqK6fOLgSSE9UYu/+rEkru8Uma2TU3rKruOzzPHrn6sz/r+KAZzJ1
+         HyYve5vWisTJAgEDaSaAKo2I2l6Pgg8DjT3bGFeE68EXQkwcQSg8BjaHxSPWvZ63Di
+         PKP9lC1YJmV8P56P8XI6BjWVOt8uRaRg7U5gNS2Y=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Hisao Tanabe <xtanabe@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 08/13] perf evsel: Fix potential null pointer dereference in perf_evsel__new_idx()
-Date:   Mon,  3 Sep 2018 11:52:19 -0300
-Message-Id: <20180903145224.12318-9-acme@kernel.org>
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 09/13] perf tools: Streamline bpf examples and headers installation
+Date:   Mon,  3 Sep 2018 11:52:20 -0300
+Message-Id: <20180903145224.12318-10-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180903145224.12318-1-acme@kernel.org>
 References: <20180903145224.12318-1-acme@kernel.org>
@@ -53,39 +56,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hisao Tanabe <xtanabe@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-If evsel is NULL, we should return NULL to avoid a NULL pointer
-dereference a bit later in the code.
+We were emitting 4 lines, two of them misleading:
 
-Signed-off-by: Hisao Tanabe <xtanabe@gmail.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  <SNIP>
+    INSTALL  lib
+    INSTALL  include/bpf
+    INSTALL  lib
+    INSTALL  examples/bpf
+  <SNIP>
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+
+Make it more compact by showing just two lines:
+
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+    INSTALL  bpf-headers
+    INSTALL  bpf-examples
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: 03e0a7df3efd ("perf tools: Introduce bpf-output event")
-LPU-Reference: 20180824154556.23428-1-xtanabe@gmail.com
-Link: https://lkml.kernel.org/n/tip-e5plzjhx6595a5yjaf22jss3@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-0nvkyciqdkrgy829lony5925@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/Makefile.perf | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index c980bbff6353..1a61628a1c12 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -251,8 +251,9 @@ struct perf_evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
- {
- 	struct perf_evsel *evsel = zalloc(perf_evsel__object.size);
- 
--	if (evsel != NULL)
--		perf_evsel__init(evsel, attr, idx);
-+	if (!evsel)
-+		return NULL;
-+	perf_evsel__init(evsel, attr, idx);
- 
- 	if (perf_evsel__is_bpf_output(evsel)) {
- 		evsel->attr.sample_type |= (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME |
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index b3d1b12a5081..5224ade3d5af 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -777,14 +777,12 @@ endif
+ 	$(call QUIET_INSTALL, libexec) \
+ 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
+ ifndef NO_LIBBPF
+-	$(call QUIET_INSTALL, lib) \
+-		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
+-	$(call QUIET_INSTALL, include/bpf) \
+-		$(INSTALL) include/bpf/*.h '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
+-	$(call QUIET_INSTALL, lib) \
+-		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
+-	$(call QUIET_INSTALL, examples/bpf) \
+-		$(INSTALL) examples/bpf/*.c '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
++	$(call QUIET_INSTALL, bpf-headers) \
++		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'; \
++		$(INSTALL) include/bpf/*.h -t '$(DESTDIR_SQ)$(perf_include_instdir_SQ)/bpf'
++	$(call QUIET_INSTALL, bpf-examples) \
++		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'; \
++		$(INSTALL) examples/bpf/*.c -t '$(DESTDIR_SQ)$(perf_examples_instdir_SQ)/bpf'
+ endif
+ 	$(call QUIET_INSTALL, perf-archive) \
+ 		$(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
 -- 
 2.14.4
 
