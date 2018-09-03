@@ -6,146 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AD6C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6080AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9893420862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9893420862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FC4E20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC4E20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeICTUg (ORCPT
+        id S1727610AbeICTVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:20:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60387 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbeICTUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:20:36 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83Exu8j3340305
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Sep 2018 07:59:56 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83ExuXG3340302;
-        Mon, 3 Sep 2018 07:59:56 -0700
-Date:   Mon, 3 Sep 2018 07:59:56 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Juergen Gross <tipbot@zytor.com>
-Message-ID: <tip-c00a280a8efa4dc077596cf646bd50cbd13db3c8@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, jgross@suse.com, mingo@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de
-Reply-To: jgross@suse.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <20180828074026.820-11-jgross@suse.com>
-References: <20180828074026.820-11-jgross@suse.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/paravirt] x86/paravirt: Introduce new config option
- PARAVIRT_XXL
-Git-Commit-ID: c00a280a8efa4dc077596cf646bd50cbd13db3c8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Mon, 3 Sep 2018 15:21:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727174AbeICTVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:21:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A2FABAED2;
+        Mon,  3 Sep 2018 15:00:28 +0000 (UTC)
+Date:   Mon, 03 Sep 2018 17:00:28 +0200
+Message-ID: <s5ho9defwxf.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+In-Reply-To: <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de>
+        <000000000000a25ae50574f76ff0@google.com>
+        <s5h7ek2hfp6.wl-tiwai@suse.de>
+        <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+        <s5h4lf6hfcq.wl-tiwai@suse.de>
+        <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
+        <s5h1saahe2p.wl-tiwai@suse.de>
+        <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
+        <s5hwos2fybs.wl-tiwai@suse.de>
+        <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c00a280a8efa4dc077596cf646bd50cbd13db3c8
-Gitweb:     https://git.kernel.org/tip/c00a280a8efa4dc077596cf646bd50cbd13db3c8
-Author:     Juergen Gross <jgross@suse.com>
-AuthorDate: Tue, 28 Aug 2018 09:40:21 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 3 Sep 2018 16:50:35 +0200
+On Mon, 03 Sep 2018 16:54:23 +0200,
+Dmitry Vyukov wrote:
+> 
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> is meant to be a complement to the previous generic descriptions of
+> patch testing process, which is:
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+> 
+> So, you always reply to the syzbot+HASH email address so that syzbot
+> understands which bug we are talking about.
+> Then you do either (omitting # so that syzbot won't consider that as
+> actual test requests):
+> 
+> syz test: git://repo/address.git branch
+> 
+> or:
+> 
+> syz test: git://repo/address.git commit-hash
+> 
+> And then you can either attach a patch that needs to be applied on
+> top, or not attach it (if it's already in the tree, or you just want
+> to get another crash report).
 
-x86/paravirt: Introduce new config option PARAVIRT_XXL
+OK, so far, so good, it's what I knew and have done a few times.
 
-A large amount of paravirt ops is used by Xen PV guests only. Add a new
-config option PARAVIRT_XXL which is selected by XEN_PV. Later we can
-put the Xen PV only paravirt ops under the PARAVIRT_XXL umbrella.
 
-Since irq related paravirt ops are used only by VSMP and Xen PV, let
-VSMP select PARAVIRT_XXL, too, in order to enable moving the irq ops
-under PARAVIRT_XXL.
+> For KMSAN you need to issue test request against
+> "https//github.com/google/kmsan.git master" (that's the only tree that
+> has KMSAN tool in it) and you need to attach/inline the patch (because
+> your patch is obviously not there yet).
+> 
+> Does this make things more clear?
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: xen-devel@lists.xenproject.org
-Cc: virtualization@lists.linux-foundation.org
-Cc: akataria@vmware.com
-Cc: rusty@rustcorp.com.au
-Cc: boris.ostrovsky@oracle.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20180828074026.820-11-jgross@suse.com
+Sorry, the part "issue test request against https..." still isn't
+clear.
 
----
- arch/x86/Kconfig                   | 4 ++++
- arch/x86/boot/compressed/misc.h    | 1 +
- arch/x86/mm/mem_encrypt_identity.c | 1 +
- arch/x86/xen/Kconfig               | 1 +
- 4 files changed, 7 insertions(+)
+Do you mean to open an issue entry on github, and attach the patch
+there?
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..6265b84f6386 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -523,6 +523,7 @@ config X86_VSMP
- 	bool "ScaleMP vSMP"
- 	select HYPERVISOR_GUEST
- 	select PARAVIRT
-+	select PARAVIRT_XXL
- 	depends on X86_64 && PCI
- 	depends on X86_EXTENDED_PLATFORM
- 	depends on SMP
-@@ -754,6 +755,9 @@ config PARAVIRT
- 	  over full virtualization.  However, when run without a hypervisor
- 	  the kernel is theoretically slower and slightly larger.
- 
-+config PARAVIRT_XXL
-+	bool
-+
- config PARAVIRT_DEBUG
- 	bool "paravirt-ops debugging"
- 	depends on PARAVIRT && DEBUG_KERNEL
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index a423bdb42686..a1d5918765f3 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -9,6 +9,7 @@
-  * paravirt and debugging variants are added.)
-  */
- #undef CONFIG_PARAVIRT
-+#undef CONFIG_PARAVIRT_XXL
- #undef CONFIG_PARAVIRT_SPINLOCKS
- #undef CONFIG_KASAN
- 
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 7ae36868aed2..a19ef1a416ff 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -27,6 +27,7 @@
-  * be extended when new paravirt and debugging variants are added.)
-  */
- #undef CONFIG_PARAVIRT
-+#undef CONFIG_PARAVIRT_XXL
- #undef CONFIG_PARAVIRT_SPINLOCKS
- 
- #include <linux/kernel.h>
-diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
-index c1f98f32c45f..dd92d7bd3613 100644
---- a/arch/x86/xen/Kconfig
-+++ b/arch/x86/xen/Kconfig
-@@ -18,6 +18,7 @@ config XEN_PV
- 	bool "Xen PV guest support"
- 	default y
- 	depends on XEN
-+	select PARAVIRT_XXL
- 	select XEN_HAVE_PVMMU
- 	select XEN_HAVE_VPMU
- 	help
+
+Takashi
