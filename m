@@ -2,170 +2,150 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3957C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17C6C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E6B20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:18:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="ZQD4Brer"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E6B20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A74C20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A74C20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeICNhv (ORCPT
+        id S1727217AbeICNkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:37:51 -0400
-Received: from mail-dm3nam03on0067.outbound.protection.outlook.com ([104.47.41.67]:52939
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725866AbeICNhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:37:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UOvIKXKksmNMi71OK55uMNTXCZb8gjQPrOBRK+Aghn0=;
- b=ZQD4Brery+gcTzUW86nzDMdj5fPmiZTsCf9M9D6ZzQ0smPGku50Iz725rmoWIT4AzGy1JkUWKr3M9zNeuUmmauQsxLDyfvH3FA5ivefSLbmbLN9StYNeOHhxJOMJfcSYVb4MFtBhhYGXWQG+Iawhl5su0Fcr7stq3FIV1JcHNag=
-Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
- CO2PR06MB460.namprd06.prod.outlook.com (10.141.196.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.14; Mon, 3 Sep 2018 09:16:54 +0000
-Received: from CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1101.016; Mon, 3 Sep 2018
- 09:16:53 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: Re: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
- erase
-Thread-Topic: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
- erase
-Thread-Index: AQHUQS9kK77UY0ca10mNeY2WW/uzcqTZ4p6AgARotAA=
-Date:   Mon, 3 Sep 2018 09:16:53 +0000
-Message-ID: <7FBEB635-C943-484D-A970-D3BF870BAFFB@cnexlabs.com>
-References: <1535722477-31288-1-git-send-email-javier@cnexlabs.com>
- <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
-In-Reply-To: <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [185.245.84.227]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB460;6:DCyq8LPHmOSwuDOPSAfj5N0mN8wObG522UfY4Vvweu1a5/zgszpVyy7avrfPYt0M1mb0LgPzDIspX/yJgxMxv2JsE6peUC/NPK9qOKUGuTWUt4nMPmRJEcktmPpISg22W2RcQpmncqSL1+AXpYg+3J/qzvXdlFjIHKB+/zCcTlaHoJWhkaTWJJf1tAETOhbZ30C7YZeo7NDHGTrd7RINy+vardHLhL/V20OH+Ki9v/X2BGfhF9S481XFZFG0famSDnaM3jG5eVHwdY4GLXPqlZXmqnfQMOUxNUhFp1vJ66TFepSQYHI+DabZI0YGa8LXmJo1gSWN4F6sK82j0T2HGNKBB1pbuG2URI1zzh5r5GJkQkFvPnVi7ZMtpEWyqPgy2y50pajB5JgYAJ9u3JleqBgHQkbmyp22f1xVjxg34docceE4cDYT2O55b2E1C3j+qYxzUukwM3D8iKi3gcv0IQ==;5:0+xxcMmeK7cFeJgwqYNGtKc1kMyzse5G34yfOKgIqpdH3kZ/B42Is1Zc2yuE8OY14rWocxvSRvKrUUQ7JY706dzmb5q+99UUjoT1Ez7hK7PLDnASVR/srgbKruELT4iz1IdJikcjtM2gD6nR1+hklsuUCtm8vUVavNMJnCUlVpo=;7:6Ek97s9wcvuCCI3wdLzssciVbHmTl2rZEKAJiUH91t3/P4r+ujmhSiuJp8fZxfrdxwxT7sPvGMid5hjpG1grTwP/njW+/z7ETX8uhko+OpgcjdEfapC3YEco4tfPHi0J5FcObxwsEtJNirDL68lYI/sAcnYe4armGJAIuKVk2DJRBYdnpsoyULdN7m1hqxbpKBoaugbDC1Mtym/GWJjnKR0vR5/c1Xl/e915OZxpPaYBYodahX0vP9jcGQd4L+AF
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39830400003)(346002)(136003)(189003)(199004)(14454004)(68736007)(76176011)(8936002)(99286004)(2906002)(2616005)(6436002)(6512007)(229853002)(3846002)(53936002)(6116002)(486006)(476003)(99936001)(4326008)(11346002)(8676002)(33656002)(36756003)(446003)(6486002)(5250100002)(6916009)(66066001)(316002)(7736002)(83716003)(106356001)(6506007)(53546011)(26005)(102836004)(105586002)(54906003)(25786009)(305945005)(186003)(86362001)(81156014)(6246003)(2900100001)(97736004)(14444005)(107886003)(478600001)(82746002)(81166006)(256004)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB460;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 5e065b88-98a8-43ec-7e02-08d6117dfd43
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB460;
-x-ms-traffictypediagnostic: CO2PR06MB460:
-x-microsoft-antispam-prvs: <CO2PR06MB4605D87F3F303E59EA33110BA0C0@CO2PR06MB460.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:CO2PR06MB460;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB460;
-x-forefront-prvs: 0784C803FD
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: XJAGrvZAwO/MOf0SELLsFap/OZRmJJTtSzXhULmIDFOSuCwHbEUgi68oNqxR9fg5e4l26tvgFH/KbYSjYbzGwNvJ0J2+bspFmrmS9UXAUhpwkNZ5qvWow+UvrhCDS6O5AKtyJoAluVZdOSxeH5vpFGMTzRhPxLk2tudoYUGhxrhJ/ToLXEm7lBqiF5aeg827WcxbQ2Q3Qw2SF9Ol1pw1wdKGQoVq8TSgEOvYHypb+w0UoiT+spTkO9j8LZmPcZiSA61BIR0439WJCxcOXnOmzV0OFsfqpsTt1JIuxwSPG7zewY0dGE1Ld4Ys9a+du4pwxlhbD6a73i72IHeBeUipyrtFSgjbhPl7jikHLoS8TWU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+        Mon, 3 Sep 2018 09:40:20 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:44416 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeICNkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:40:20 -0400
+Received: by mail-it0-f70.google.com with SMTP id b124-v6so206161itb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:21:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=1cHKbd2OxnjEoHY+DJxFLNBo0e3RcttHH7P4ro0yJmM=;
+        b=DC/jFIOMA0kIsj0HyuHhZ640szfmaiKthmPemRdrt2iXWJ8bzgwbqsbaNoBK5xYEVT
+         lx8mtUOtNrUXQe3tJ9nUVAktDCRtBYQ6M+/hh0UNezUvMWAM8N/03q19jwOkNvDu039H
+         nGd8XrPwlOzeP4ai2kDq8x5GPGYMu/cdXUmXsvSfhaagSKA5EcZvO/cvWXc4wxnTKHRX
+         4Ueq5UfkO30cKvv9zMdAmWdndtMo7iaaaBXA8mImCDOdTDPOrFw/hSRzFwxkGenlkFc5
+         Yx6H1i1fyhNhTKO4RLx+jFCqMgkJ500ICtiq4U6JrGX3vTUPbqP2ZbUHzXCiTnqCo/dX
+         uhLQ==
+X-Gm-Message-State: APzg51BXHStMSaBpYnpPgITxzamR+bG6pRl4PCxM8yge0zGc0LISR+LW
+        Vt/jmtx0uRlEf7ofXfOQDIqUd8K6Ws950lCPe934Xbe5pXs7
+X-Google-Smtp-Source: ANB0VdYHTST9Zqv2rS0ARhwKSUr+bYkkR1ocyVf9nJA5BfKJhE4P7FIjLUVvbE5pZlcjoU5ztvlfAmKfzA2M8gM3xJCfZ9rNDqus
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e065b88-98a8-43ec-7e02-08d6117dfd43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2018 09:16:53.6006
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB460
+X-Received: by 2002:a6b:590e:: with SMTP id n14-v6mr11923100iob.70.1535966463770;
+ Mon, 03 Sep 2018 02:21:03 -0700 (PDT)
+Date:   Mon, 03 Sep 2018 02:21:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000075c8d70574f40fbc@google.com>
+Subject: KASAN: use-after-free Read in vhci_hub_control
+From:   syzbot <syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, shuah@kernel.org,
+        syzkaller-bugs@googlegroups.com, valentina.manea.m@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+Hello,
 
-> On 31 Aug 2018, at 15.57, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 08/31/2018 03:34 PM, Javier Gonz=C3=A1lez wrote:
->> Matias,
->> This patchset implements support for retrieving chunk metadata when
->> submitting a reset/erase command. Patches 0 and 1 are small fixes =
-that
->> can be directly merged into your patch:
->>      lightnvm: move bad block and chunk state logic to core
->> Also, note that these do not apply on top of your for-4.20/core due =
-them
->> depending on patches that I sent before that you have not picked up =
-yet.
->> You can see them though in for-4.20/pblk. I'll rebase as patches in =
-the
->> list appear in your tree.
->=20
-> Thanks. It is really confusing when you guys maintains an implicit =
-order and posts the patches separately. I will appreciate that patches =
-that are related are posted together, such that I don't have to manually =
-track what comes before another. That makes it less of a pain for me to =
-keep track of and we can keep the reviews together.
->=20
-> This is the patches that I have in the pipeline (from before the =
-e-mails from today):
->=20
->  - This serie - Pending review
->  - Serie: pblk: support variable OOB size - Waiting on review from =
-Igor
->  - lightnvm: pblk: recover open lines on 2.0 devices. Which doesn't =
-apply due to the fixes to the pad distance patch.
->=20
+syzbot found the following crash on:
 
-Yes, I know and I apologize - we should have a better flow. What do you
-say that for windows like this, where we have a number of patches that
-have dependencies that we post them in meaningful patchsets and point to
-a branch where they are ordered, like in a PR? Then we can rebase and
-propagate changes properly?
+HEAD commit:    420f51f4ab6b Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160cf55a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+dashboard link: https://syzkaller.appspot.com/bug?extid=600b03e0cf1b73bb23c4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1116710a400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119be4ea400000
 
-For this window, I'll rebase the rest of the patches in for-4.20/pblk on
-top of your for-4.20/core, then we can propagate changes as they come.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+600b03e0cf1b73bb23c4@syzkaller.appspotmail.com
 
-Javier
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+vhci_hcd: invalid port number 108
+==================================================================
+BUG: KASAN: use-after-free in vhci_hub_control+0x1b88/0x1bf0  
+drivers/usb/usbip/vhci_hcd.c:441
+Read of size 4 at addr ffff8801ce61f7bc by task syz-executor473/4680
 
---Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+CPU: 1 PID: 4680 Comm: syz-executor473 Not tainted 4.19.0-rc1+ #217
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  vhci_hub_control+0x1b88/0x1bf0 drivers/usb/usbip/vhci_hcd.c:441
+  rh_call_control drivers/usb/core/hcd.c:679 [inline]
+  rh_urb_enqueue drivers/usb/core/hcd.c:838 [inline]
+  usb_hcd_submit_urb+0x184a/0x2160 drivers/usb/core/hcd.c:1651
+  usb_submit_urb+0x895/0x14d0 drivers/usb/core/urb.c:570
+  usb_start_wait_urb+0x140/0x360 drivers/usb/core/message.c:57
+  usb_internal_control_msg drivers/usb/core/message.c:101 [inline]
+  usb_control_msg+0x332/0x4e0 drivers/usb/core/message.c:152
+  proc_control+0x99b/0xef0 drivers/usb/core/devio.c:1106
+  usbdev_do_ioctl+0x1eb4/0x3b30 drivers/usb/core/devio.c:2394
+  usbdev_ioctl+0x25/0x30 drivers/usb/core/devio.c:2551
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:501 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+  __do_sys_ioctl fs/ioctl.c:709 [inline]
+  __se_sys_ioctl fs/ioctl.c:707 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445cf9
+Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 db ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff4cea17d8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000445cf9
+RDX: 0000000020000000 RSI: 00000000c0185500 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000fb6880 R09: 0000000000000001
+R10: 000000000000000f R11: 0000000000000213 R12: 0000000000403060
+R13: 00000000004030f0 R14: 0000000000000000 R15: 0000000000000000
 
------BEGIN PGP SIGNATURE-----
+The buggy address belongs to the page:
+page:ffffea00073987c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 ffffffff07390101 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluM/AIACgkQIX4xUKFR
-nnSPlw/+LWvj9fJ0ivtsAUDOw6HK29PlpTwm16Pk6L0RComF25n2l/kTitrm9D2M
-h1JpGMk8I9x2aq4cmrqJ+dL5AUPNYzhUyWQVMiTuBJpoa3SxSO62+pxW67K59g3C
-xj0HRHl6UNfYXbp0is1OkqlDsTgDqfe7kp6tQhUjR48BhC4r/BDNZSJMe8lor4nQ
-YWDT57j++hoiguVNpb/TRIuTFw2eUkTX1hVH2nuCoUluLcGU0koxxZTby+501ewJ
-44AUyUSWqVaCV5w9+L/yonAn41pzOrxGkMZXVVd75zHzVjS22bX6i/q5oh7U6YuT
-saaQKB3JI3J6Czal61t/Aol2eNxmV/S4LH0R09X+bawTToHkZKnth1PUl9mzKroW
-6U9eYPd9PVhCB64aNKwGaNBtfYs42XJYcPY0/G+bu77tNMFPop1EcEp05Magnl0I
-ZTISZMijT6wnk+KGYW6ci9+mRw3/Krt9N1NFtkkzHB6e9JjbSA4h5j1mV0RVfBLN
-jcQyk0QKUyhoL9liwCxLzz4BPE2bNqKhvpupy1o8maMirTWU/O1ECZmrt2jbx6MQ
-0RbYoWpgfKV2fafB93iQ+t7A/FjNKQP91bAqJkQWegUsEzxBF3uz6tPgprizUGcj
-rb80G/FeeYh+6X61cUGTkxoluyPGXuxK2LVHDjBK4Fj4w97E5vw=
-=VjXM
------END PGP SIGNATURE-----
+Memory state around the buggy address:
+  ffff8801ce61f680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801ce61f700: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff8801ce61f780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                         ^
+  ffff8801ce61f800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801ce61f880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
---Apple-Mail=_9BF0F591-CAF6-46DC-B708-61CA4FCDACEB--
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
