@@ -2,248 +2,232 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E3DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ED7C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9487320856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9487320856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2233F20856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2233F20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeICNkU (ORCPT
+        id S1727359AbeICNki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:40:20 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:56266 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbeICNkU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:40:20 -0400
-Received: by mail-io0-f197.google.com with SMTP id m15-v6so17089476ioj.22
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:21:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Q/fOZtyv0y/MjGk0PIeEOpv3lpqXwt+9YIDlAyzl14Y=;
-        b=A5XHlx1DErqsJ5e7QAQEv7RfYLjqi+6l1ISR0rP/ZY06f3V8NVTZs96x0zZESDVaEr
-         Nm2QOfFb/mf78eBh11D4I2Es1mss1bPf9K8/jane4DekXp2K+35l8KpROeYYbvar5md+
-         HaywfiDp0fyOa6OQ4rgWDzp4IhWLhRySSq3AwEzKnz2COrgsTwtqrlC+m3JSexznH7t9
-         wIz/FuK5IfjyBqzvt8i8rqI1m0oXFwZY73mM1Bo/GiwHxQcJUw3bGmHk1xAvF1p2FVL9
-         om/rGgsiXAL0dkRWcIXEo2f7n0DtExJieBsTOb4wCHUDU7wlwMqhUtxz2tLImnWw7WpP
-         PP4Q==
-X-Gm-Message-State: APzg51D+nYSa4Wua9UsM4oufaz41jsDoTKqWOObtZrKellXEOidcJs82
-        KAFq7QJjj408QodgDaG2vAQ04kzn6Tw019fuWMLb/Wn8xEdt
-X-Google-Smtp-Source: ANB0VdaLhw3pSzfFeRhqlur23gmD/HZmtvXscTs7zCVn0UrBPFuzLjEh5CcKRA2qXwCJabhfPwcNmN3O1mFROmX2u6yjwm8+ZjLa
+        Mon, 3 Sep 2018 09:40:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727308AbeICNki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:40:38 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B53A40201BE;
+        Mon,  3 Sep 2018 09:21:21 +0000 (UTC)
+Received: from ming.t460p (ovpn-12-49.pek2.redhat.com [10.72.12.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 53B617C3D;
+        Mon,  3 Sep 2018 09:21:04 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 17:21:00 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Kashyap Desai <kashyap.desai@broadcom.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>
+Subject: Re: Affinity managed interrupts vs non-managed interrupts
+Message-ID: <20180903092048.GA14444@ming.t460p>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p>
+ <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+ <615d78004495aebc53807156d04d988c@mail.gmail.com>
+ <20180903021332.GA5481@ming.t460p>
+ <6e187fdf263c80e95cf627f6b363cf8d@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:6c2:: with SMTP id 185-v6mr11091935jav.62.1535966463568;
- Mon, 03 Sep 2018 02:21:03 -0700 (PDT)
-Date:   Mon, 03 Sep 2018 02:21:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000072d3ab0574f40f80@google.com>
-Subject: WARNING: suspicious RCU usage in trace_call_bpf
-From:   syzbot <syzbot+1c843dc17610ca4c764f@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, netdev@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e187fdf263c80e95cf627f6b363cf8d@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 03 Sep 2018 09:21:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 03 Sep 2018 09:21:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Sep 03, 2018 at 11:40:53AM +0530, Kashyap Desai wrote:
+> > > It is not yet finalized, but it can be based on per sdev outstanding,
+> > > shost_busy etc.
+> > > We want to use special 16 reply queue for IO acceleration (these
+> queues are
+> > > working interrupt coalescing mode. This is a h/w feature)
+> >
+> > This part is very key to your approach, so I'd suggest to finalize it
+> > first. That said this way doesn't make sense if you can't figure out
+> > one doable approach to decide when to use the coalescing mode, and when
+> > to
+> > use the regular 72 reply queues.
+> This is almost finalized, but going through testing and may take some time
+> to review all the output.
+> At very high level -
+> If scsi device is Virtual Disk, it will count each physical disk for data
+> arm and required condition to use io acceleration (interrupt coalescing)
+> path is - outstanding for sdev should be more than 8 * data_arms. Using
+> this method we are not going to impact low latency intensive workload.
+> 
+> >
+> > If it is just for IO acceleration, why not always use the coalescing
+> mode?
+> 
+> Ming, we attempted all the possible approaches. Let me summarize.
+> 
+> If we use *all* interrupt coalescing, single worker and lower queue depth
+> profile is impacted and latency drop is seen upto 20%.
+> 
+> >
+> > >
+> > > >
+> > > > Frankly speaking, you may reuse the 72 reply queues to do interrupt
+> > > > coalescing by configuring one extra register to enable the
+> coalescing
+> > > > mode,
+> > > > and you may just use small part of the 72 reply queues under the
+> > > > interrupt coalescing mode.
+> > > Our h/w can set interrupt coalescing per 8 reply queues. So smallest
+> is 8.
+> > > If we choose to take 8 reply queue from existing 72 reply queue
+> (without
+> > > asking for extra reply queue), we still have  an issue on more numa
+> node
+> > > systems.  Example - in 8 numa node system each node will have only
+> *one*
+> > > reply queue for effective interrupt coalescing. (since irq subsystem
+> will
+> > > spread msix per numa).
+> > >
+> > > To keep things scalable we cherry picked few reply queues and wanted
+> them
+> > to
+> > > be out of cpu-msix mapping.
+> >
+> > I mean you can group the reply queues according to the queue's numa node
+> > info, given the mapping has been figured out there by genirq affinity
+> > code.
+> 
+> Not able to follow you.  I replied to Thomas on the same topic. Is that
+> reply clarifies or I am still missing ?
+> 
+> >
+> > >
+> > > >
+> > > > Or you can learn from SPDK to use one or small number of dedicated
+> cores
+> > > > or kernel threads to poll the interrupts from all reply queues, then
+> I
+> > > > guess you may benefit much compared with the extra 16 queue
+> approach.
+> > > Problem with polling -  It requires some steady completion, otherwise
+> > > prediction in driver gives different results on different profiles.
+> > > We attempted irq-poll and thread ISR based polling, but it has pros
+> and
+> > > cons. One of the key usage of method what we are trying is not to
+> impact
+> > > latency for lower QD workloads.
+> >
+> > Interrupt coalescing should effect latency too[1], or could you share
+> your
+> > idea how to use interrupt coalescing to address the latency issue?
+> >
+> > 	"Interrupt coalescing, also known as interrupt moderation,[1] is a
+> > 	technique in which events which would normally trigger a hardware
+> > interrupt
+> > 	are held back, either until a certain amount of work is pending,
+> or a
+> > 	timeout timer triggers."[1]
+> >
+> > [1] https://en.wikipedia.org/wiki/Interrupt_coalescing
+> 
+> That is correct. We are not going to use 100% interrupt coalescing to
+> avoid latency impact.  We will have two set of queues. You can consider
+> this as hybrid interrupt coalescing.
+> On 72 logical cpu case, we will allocate 88 (72 + 16) reply queues (msix
+> index). Only first 16 reply queue will be configured in interrupt
+> coalescing mode (This is special h/w feature.) and remaining 72 reply are
+> without any interrupt coalescing.  72 reply queue are 1:1 cpu-msix map and
+> 16 reply queue are mapped to local numa node.
+> 
+> As explained above, per scsi device outstanding is a key factors to route
+> io to queues with interrupt coalescing vs regular queue (without interrupt
+> coalescing.)
+> Example -
+> If there are sync IO request per scsi device (one IO at a time), driver
+> will keep posting those IO to the queues without any interrupt coalescing.
+> If there are more than 8 outstanding io per scsi device, driver will post
+> those io to reply queues with interrupt coalescing. This particular group
 
-syzbot found the following crash on:
+If the more than 8 outstanding io are from different CPU or different NUMA node,
+which replay queue will be chosen in the io submission path?
 
-HEAD commit:    dc6417949297 Merge branch 'net_sched-reject-unknown-tcfa_a..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=10bc513e400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c843dc17610ca4c764f
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13071951400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119e710a400000
+Under this situation, any one of 16 reply queues may not work as
+expected, I guess.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1c843dc17610ca4c764f@syzkaller.appspotmail.com
+> of io will not have latency impact because coalescing depth are key
+> factors to flush the ios. There can be some corner cases of workload which
+> can theoretically possible to have latency impact, but having more scsi
+> devices doing active io submission will close that loop and we are not
+> suspecting those issue need any special treatment. In fact, this solution
+> is to provide reasonable latency + higher iops for most of the cases and
+> if there are some deployment which need tuning..it is still possible to
+> disable this feature.  We really want to deal with those scenario on case
+> by case bases (through firmware settings).
+> 
+> 
+> >
+> > > I posted RFC at
+> > > https://www.spinics.net/lists/linux-scsi/msg122874.html
+> > >
+> > > We have done extensive study and concluded to use interrupt coalescing
+> is
+> > > better if h/w can manage two different modes (coalescing on/off).
+> >
+> > Could you explain a bit why coalescing is better?
+> 
+> Actually we are doing hybrid coalescing. You are correct, we have no
+> single answer here, but there are pros and cons.
+> For such hybrid coalescing we need h/w support.
+> 
+> >
+> > In theory, interrupt coalescing is just to move the implementation into
+> > hardware. And the IO submitted from the same coalescing group is usually
+> > irrelevant. The same problem you found in polling should have been in
+> > coalescing too.
+> 
+> Coalescing either in software or hardware is best attempt mechanism and
+> there is no steady snapshot of submission and completion in both the case.
+> 
+> One of the problem with coalescing/polling in OS driver is - Irq-poll
+> works in interrupt context and waiting in polling consume more CPU because
+> driver should do some predictive loop. At the same time driver should quit
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
+One similar way is to use the outstanding IO on this device to predicate
+the poll time.
 
-=============================
-WARNING: suspicious RCU usage
-4.19.0-rc1+ #44 Not tainted
------------------------------
-include/linux/rcupdate.h:631 rcu_read_lock() used illegally while idle!
+> after some completion to give fairness to other devices.  Threaded
+> interrupt can resolve the cpu hogging issue, but we are moving our key
+> interrupt processing to threaded context so fairness will be compromised.
+> In case of threaded interrupt polling we may be impacted if interrupt of
+> other devices request the same cpu where threaded isr is running.  If
+> polling logic in driver does not work well on different systems, we are
+> going to see extra penalty of doing disable/enable interrupt call.  This
+> particular problem is not a concern if h/w does interrupt coalescing.
 
-other info that might help us debug this:
-
-
-RCU used illegally from idle CPU!
-rcu_scheduler_active = 2, debug_locks = 1
-RCU used illegally from extended quiescent state!
-1 lock held by swapper/0/0:
-  #0: 000000004b34587c (rcu_read_lock){....}, at: trace_call_bpf+0xf8/0x640  
-kernel/trace/bpf_trace.c:46
-
-stack backtrace:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc1+ #44
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4537
-  rcu_read_lock include/linux/rcupdate.h:630 [inline]
-  trace_call_bpf+0x533/0x640 kernel/trace/bpf_trace.c:72
-  perf_trace_run_bpf_submit+0x15c/0x3b0 kernel/events/core.c:8264
-  perf_trace_preemptirq_template+0x3dd/0x650  
-include/trace/events/preemptirq.h:14
-  trace_irq_enable_rcuidle include/trace/events/preemptirq.h:40 [inline]
-  trace_hardirqs_on_caller+0x227/0x2b0 kernel/trace/trace_preemptirq.c:51
-
-=============================
-WARNING: suspicious RCU usage
-  trace_hardirqs_on_thunk+0x1a/0x1c
-4.19.0-rc1+ #44 Not tainted
------------------------------
-  retint_kernel+0x10/0x10
-kernel/trace/bpf_trace.c:72 suspicious rcu_dereference_check() usage!
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:56
-
-other info that might help us debug this:
-
-Code: c7 48 89 45 d8 e8 ba 60 e7 fa 48 8b 45 d8 e9 d2 fe ff ff 48 89 df e8  
-a9 60 e7 fa eb 8a 90 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
-00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-
-RCU used illegally from idle CPU!
-rcu_scheduler_active = 2, debug_locks = 1
-RSP: 0018:ffffffff88007bb8 EFLAGS: 00000286
-RCU used illegally from extended quiescent state!
-  ORIG_RAX: ffffffffffffff13
-1 lock held by swapper/1/0:
-RAX: dffffc0000000000 RBX: 1ffffffff1000f7b RCX: 0000000000000000
-  #0:
-RDX: 1ffffffff10237b8 RSI: 0000000000000001 RDI: ffffffff8811bdc0
-000000004b34587c
-RBP: ffffffff88007bb8 R08: ffffffff88075e00 R09: 0000000000000000
-  (
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-rcu_read_lock
-R13: ffffffff88007c78 R14: 0000000000000000 R15: 0000000000000000
-){....}
-  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-  default_idle+0xc2/0x410 arch/x86/kernel/process.c:498
-, at: trace_call_bpf+0xf8/0x640 kernel/trace/bpf_trace.c:46
-
-stack backtrace:
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x3aa/0x580 kernel/sched/idle.c:262
-  cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
-  rest_init+0xe1/0xe4 init/main.c:442
-  start_kernel+0x913/0x94e init/main.c:739
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc1+ #44
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-=============================
-WARNING: suspicious RCU usage
-Call Trace:
-4.19.0-rc1+ #44 Not tainted
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
------------------------------
-include/linux/rcupdate.h:680 rcu_read_unlock() used illegally while idle!
-
-other info that might help us debug this:
-
-
-RCU used illegally from idle CPU!
-rcu_scheduler_active = 2, debug_locks = 1
-  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4537
-RCU used illegally from extended quiescent state!
-  trace_call_bpf+0x4cb/0x640 kernel/trace/bpf_trace.c:72
-1 lock held by swapper/0/0:
-  #0:
-000000004b34587c
-  (
-  perf_trace_run_bpf_submit+0x15c/0x3b0 kernel/events/core.c:8264
-rcu_read_lock
-){....}
-, at: trace_call_bpf+0xf8/0x640 kernel/trace/bpf_trace.c:46
-
-stack backtrace:
-  perf_trace_preemptirq_template+0x3dd/0x650  
-include/trace/events/preemptirq.h:14
-  trace_irq_enable_rcuidle include/trace/events/preemptirq.h:40 [inline]
-  trace_hardirqs_on+0x22e/0x2c0 kernel/trace/trace_preemptirq.c:25
-  default_idle+0x8d/0x410 arch/x86/kernel/process.c:498
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x3aa/0x580 kernel/sched/idle.c:262
-  cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
-  start_secondary+0x433/0x5d0 arch/x86/kernel/smpboot.c:271
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc1+ #44
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  lockdep_rcu_suspicious+0x14a/0x153 kernel/locking/lockdep.c:4537
-  rcu_read_unlock include/linux/rcupdate.h:679 [inline]
-  trace_call_bpf+0x579/0x640 kernel/trace/bpf_trace.c:72
-  perf_trace_run_bpf_submit+0x15c/0x3b0 kernel/events/core.c:8264
-  perf_trace_preemptirq_template+0x3dd/0x650  
-include/trace/events/preemptirq.h:14
-  trace_irq_enable_rcuidle include/trace/events/preemptirq.h:40 [inline]
-  trace_hardirqs_on_caller+0x227/0x2b0 kernel/trace/trace_preemptirq.c:51
-  trace_hardirqs_on_thunk+0x1a/0x1c
-  retint_kernel+0x10/0x10
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:56
-Code: c7 48 89 45 d8 e8 ba 60 e7 fa 48 8b 45 d8 e9 d2 fe ff ff 48 89 df e8  
-a9 60 e7 fa eb 8a 90 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
-00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-RSP: 0018:ffffffff88007bb8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffffffff1000f7b RCX: 0000000000000000
-RDX: 1ffffffff10237b8 RSI: 0000000000000001 RDI: ffffffff8811bdc0
-RBP: ffffffff88007bb8 R08: ffffffff88075e00 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff88007c78 R14: 0000000000000000 R15: 0000000000000000
-  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-  default_idle+0xc2/0x410 arch/x86/kernel/process.c:498
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x3aa/0x580 kernel/sched/idle.c:262
-  cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
-  rest_init+0xe1/0xe4 init/main.c:442
-  start_kernel+0x913/0x94e init/main.c:739
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
-  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks,
+Ming
