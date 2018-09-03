@@ -2,102 +2,87 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1F4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE93BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3275E20779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3275E20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 642D120779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642D120779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbeICV0g (ORCPT
+        id S1729571AbeICV0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:26:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39524 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbeICV0f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:26:35 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7767DD07;
-        Mon,  3 Sep 2018 17:05:34 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        ard <ard@kwaak.net>, Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 046/107] scsi: fcoe: clear FC_RP_STARTED flags when receiving a LOGO
-Date:   Mon,  3 Sep 2018 18:56:10 +0200
-Message-Id: <20180903165639.512393460@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
-References: <20180903165637.293735109@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 3 Sep 2018 17:26:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:59256 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728032AbeICV0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:26:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4E5118A;
+        Mon,  3 Sep 2018 10:05:36 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6F033F5BC;
+        Mon,  3 Sep 2018 10:05:36 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 69EC21AE3046; Mon,  3 Sep 2018 18:05:50 +0100 (BST)
+Date:   Mon, 3 Sep 2018 18:05:50 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180903170550.GM6954@arm.com>
+References: <20180831091641.GA3634@andrea>
+ <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
+ <20180831160640.GG30626@arm.com>
+ <20180831182845.GA4673@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831182845.GA4673@andrea>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Aug 31, 2018 at 08:28:46PM +0200, Andrea Parri wrote:
+> > > Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
+> > > should be correct on all existing architectures.  And Paul has invited 
+> > > a patch to modify the LKMM accordingly.  If you feel that such a change 
+> > > would be a useful enhancement to the LKMM's applicability, please write 
+> > > it.
+> > 
+> > Yes, please! That would be the "RmW" discussion which Andrea partially
+> > quoted earlier on, so getting that going independently from this patch
+> > sounds like a great idea to me.
+> 
+> That was indeed one of the proposal we discussed.  As you recalled, that
+> proposal only covered RmWs load-acquire (and ordinary store-release); in
+> particular, I realized that comments such as:
+> 
+>   "The atomic_cond_read_acquire() call above has provided the
+>    necessary acquire semantics required for locking."
+> 
+>    [from kernel/locking/qspinlock.c]
+> 
+> (for example)  would still _not have "generic validity" _if we added the
+> above po-unlock-rf-lock-po term... (which, again, makes me somehow uncon-
+> fortable);  Would to have _all_ the acquire be admissible for you?
 
-------------------
+I think you've missed some words here, but if you're asking if I'd be
+ok strengthening all acquire operations, then the answer is no. See the
+huge amount of previous discussion.
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
-
-[ Upstream commit 1550ec458e0cf1a40a170ab1f4c46e3f52860f65 ]
-
-When receiving a LOGO request we forget to clear the FC_RP_STARTED flag
-before starting the rport delete routine.
-
-As the started flag was not cleared, we're not deleting the rport but
-waiting for a restart and thus are keeping the reference count of the rdata
-object at 1.
-
-This leads to the following kmemleak report:
-unreferenced object 0xffff88006542aa00 (size 512):
-  comm "kworker/0:2", pid 24, jiffies 4294899222 (age 226.880s)
-  hex dump (first 32 bytes):
-    68 96 fe 65 00 88 ff ff 00 00 00 00 00 00 00 00  h..e............
-    01 00 00 00 08 00 00 00 02 c5 45 24 ac b8 00 10  ..........E$....
-  backtrace:
-    [<(____ptrval____)>] fcoe_ctlr_vn_add.isra.5+0x7f/0x770 [libfcoe]
-    [<(____ptrval____)>] fcoe_ctlr_vn_recv+0x12af/0x27f0 [libfcoe]
-    [<(____ptrval____)>] fcoe_ctlr_recv_work+0xd01/0x32f0 [libfcoe]
-    [<(____ptrval____)>] process_one_work+0x7ff/0x1420
-    [<(____ptrval____)>] worker_thread+0x87/0xef0
-    [<(____ptrval____)>] kthread+0x2db/0x390
-    [<(____ptrval____)>] ret_from_fork+0x35/0x40
-    [<(____ptrval____)>] 0xffffffffffffffff
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reported-by: ard <ard@kwaak.net>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/libfc/fc_rport.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/scsi/libfc/fc_rport.c
-+++ b/drivers/scsi/libfc/fc_rport.c
-@@ -1935,6 +1935,7 @@ static void fc_rport_recv_logo_req(struc
- 		FC_RPORT_DBG(rdata, "Received LOGO request while in state %s\n",
- 			     fc_rport_state(rdata));
- 
-+		rdata->flags &= ~FC_RP_STARTED;
- 		fc_rport_enter_delete(rdata, RPORT_EV_STOP);
- 		mutex_unlock(&rdata->rp_mutex);
- 		kref_put(&rdata->kref, rdata->local_port->tt.rport_destroy);
-
-
+Will
