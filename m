@@ -6,192 +6,102 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD79C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEA6C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871532075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871532075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 03C852054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:36:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C852054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeICOxi (ORCPT
+        id S1726507AbeICOzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:53:38 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53675 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeICOxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:53:38 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 053DE60002;
-        Mon,  3 Sep 2018 10:33:59 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 12:33:58 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
-Message-ID: <20180903103358.GC20333@w540>
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+        Mon, 3 Sep 2018 10:55:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53612 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbeICOzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:55:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 289E118A;
+        Mon,  3 Sep 2018 03:35:58 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E5FE23F614;
+        Mon,  3 Sep 2018 03:35:57 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 951CC1AE3030; Mon,  3 Sep 2018 11:36:11 +0100 (BST)
+Date:   Mon, 3 Sep 2018 11:36:11 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: Access to non-RAM pages
+Message-ID: <20180903103610.GA11055@arm.com>
+References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
+ <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
+ <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
+ <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
+ <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
+ <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
+ <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
+ <CA+55aFwSfXu1LXjLZe4gddY2VybEGLbPpx-PWinF19LjbevEgQ@mail.gmail.com>
+ <a2b20fc447e0b2cd208dc82081cb24e38bf71f68.camel@kernel.crashing.org>
+ <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WK3l2KTTmXPVedZ6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CA+55aFyhq23ce94Vq_XdCJSOKvo8oYnb2UOdjf-KVaaOFngr+g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Sep 02, 2018 at 07:10:46PM -0700, Linus Torvalds wrote:
+> On Sun, Sep 2, 2018 at 7:01 PM Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> >
+> > Still, I can potentially see an issue with DEBUG_PAGEALLOC
+> 
+> An unmapped page isn't a problem. That's what the whole
+> load_unaligned_zeropad() is about: it's ok to take a fault on the part
+> that crosses a page, and we'll just fill the value with zeroes (that's
+> the "zeropad" part).
+> 
+> So as long as it's rare (and it is), it's all fine.
+> 
+> That said, I think we turn off for DEBUG_PAGEALLOC simply because it's
+> not rare _enough_.
+> 
+> And vmalloc() should actually be safe too, simply because I think we
+> strive for a guard page between vmalloc areas.
+> 
+> So only a *mapped* page after the page that matters, and only if it's
+> something you can't read without side effects.
+> 
+> Which basically doesn't happen on x86 in reality. BIOSes just don't
+> put MMIO right after the last page of RAM. I think this is why it only
+> triggered on Xen, due to some crazy "Xen reacts badly" case where we
+> do the speculation into a balloon address.
+> 
+> So _practically_ this is just a Xen bug, nothing more.
+> 
+> But since in _theory_ you could have MMIO abut regular RAM directly,
+> it's worth maybe making sure it's purely theory.
 
---WK3l2KTTmXPVedZ6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On arm64, ioremap() gives you a guard page because it allocates out of
+the vmalloc area. The only way I think we could get MMIO in the middle
+of the linear map would be if firmware has reserved something there. In
+this case, the region should be treated as NOMAP, meaning we won't map
+the area at all in the kernel and our pfn_valid() implementation will
+return false for the corresponding memmap entries.
 
-Hi Phil,
+For userspace, we did consider putting out a guard page for non-fixed
+mmap() calls, but it's not something we've really looked into.
 
-On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
-> This implements the pinctrl driver for the RZ/N1 family of devices, including
-> the R9A06G032 (RZ/N1D) device.
->
-> One area that is likely to be contentious is the use of 'virtual pins' for the
-> MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exist on the
-> device to configure the MDIO source within the RZ/N1 devices. On these devices,
-> there are two Ethernet MACs, a 5-Port Switch, numerous industrial Ethernet
-> peripherals, any of which can be the MDIO source. Configuring the MDIO source
-> could be done without the virtual pins, e.g. by extending the functions to
-> cover all MDIO variants (a total of 32 additional functions), but this would
-> allow users to misconfigure individual MDIO pins, rather than assign all MDIO
-> pins to a MDIO source. The choice of how to implement this will affect the
-> DT bindings.
->
-> This series was originally written by Michel Pollet whilst at Renesas, and I
-> have taken over this work.
->
-> One point from Michel's v1 series:
-> "Note, I used renesas,rzn1-pinmux node to specify the pinmux constants,
-> and I also don't use some of the properties documented in
-> pinctrl-bindings.txt on purpose, as they are too limited for my use
-> (I need to be able to set, clear, ignore or reset level, pull up/down
-> and function as the pinmux might be set by another OS/core running
-> concurently)."
->
-
-I start by saying that I don't know this HW pin controller well, so
-I might be missing something, but as commented on the original series from
-Micheal, I still don't see why you need a custom property here...
-
-My understanding, looking at this comment and the header provided by
-patch [1/3] (include/dt-bindings/pinctrl/rzn1-pinctrl.h) is that
-basically need to control pull-up/down and the output driver strength.
-
-Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt reports
-a set of generic pin configuration properties to be applied to a pin
-configuration (and multiplexing) pin controller child node that fully
-express all (most?) of your needs.
-
-Eg. a pin configuration with pull up applied, using examples from your
-cover letter should be expressed as
-
-Your example:
-         &pinctrl {
-                 pinsuart0: pinsuart0 {
-                         renesas,rzn1-pinmux-ids = <
-                                 RZN1_MUX(103, UART0_I)  /* UART0_TXD */
-                                 RZN1_MUX_PUP(104, UART0_I)      /* UART0_RXD */
-                         >;
-                 };
-         };
-
-Using standard pinctroller bindings pin configuration properties:
-
-         &pinctrl {
-                 pinsuart0: uart0  {
-                        pinsuart_tx0 {
-                                pinmux = <103, UART0_I>;  /* UART0_TXD */
-                        };
-
-                        pinsuart_rx0 {
-                                 pinmux = <104, UART0_I>; /* UART0_RXD */
-                                 bias-pull-up;
-                        };
-                 };
-         };
-
-Is there anything I am missing? Maybe from the interaction with
-"another OS/core running concurrently" you mentioned? In this case if
-you only have to perform pin configuration (because muxing is handled
-already) things are even simpler, just use the pin configuration
-bindings, without involving muxing at all:
-
-        &pinctrl {
-                pinsuart_conf: uart0 {
-                        pins = <103, 104>;
-                        bias-pull-up;
-                 };
-         };
-
-Thanks
-  j
-
-> Patch 0003 should really be applied after patch:
->  "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
->  https://www.spinics.net/lists/arm-kernel/msg673525.html
->
-> Main changes:
-> v2:
->  - Change to generic rzn1 family driver, instead of device specific.
->  - Review comments fixed.
->  - Fix error handling during probe
->
-> Phil Edworthy (3):
->   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
->   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
->   ARM: dts: r9a06g032: Add pinctrl node
->
->  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
->  arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
->  drivers/pinctrl/Kconfig                            |  10 +
->  drivers/pinctrl/Makefile                           |   1 +
->  drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++++++++++++
->  include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
->  6 files changed, 1151 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
->  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
->  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
->
-> --
-> 2.7.4
->
-
---WK3l2KTTmXPVedZ6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbjQ4WAAoJEHI0Bo8WoVY809sQAI2sohCacWR23p07ZrJpZVLa
-Mj+sQnALW+urUxXGXITgFyABscYBZzpbvXUhDYjwkd0MAn+GLCdG6kEJnRgZA1c9
-0E5FN8j9Bn3vdsD6xvktZ/pdcUIH9+bvunHhZCzrW4s6UHx7mtReqB1Ih8oQoi2D
-y7K1bR/1pxtHQ3VboZSs2aIhUIV8eDzk5L/ZAjgitibH7gcrafNAXJMgi+nO2ioA
-RdmzqCNaJ7smkeWrNrlbWjJ2XIJXueSuyY/7XY2sFolljFls48TVWYZG5okYHSyo
-bYDfuV2fTfGVfYy9cfvyYZpZXrbXIj9tOoPm6K6qzEnfaK76TMs0EIeFGvyw9Flu
-Ym4hQ5af7ELr03sEt/2I18T+3tZ55lPxYbeg/Uisxv39w2q6LvEScR0emuzm+IfW
-c+ucfZplP9UadQ+0UVxHFlZqPNAeXuuUly4Y4WW4EN6exXEO0ekjCSRqSm59Vdby
-l5B4PTAhpTY602WkabLxvQop9Uk1BNRlwC4sNFN1SXOqqq09bvWmhPDZx5oPKG42
-dZccD9inF70DVAmY9lk+HDN0cjfMZz8zmzlFCDwvOLYY/M7C8mIPOGAoXFOy3ivg
-OaTO79F00LPpwVN2PiuXW43X2QP0BsMIpAFVvsmOlf8Y1IOe3Ms5H4iXE2xTJZle
-HbB1RzvkUR6CH434QdzA
-=7OGs
------END PGP SIGNATURE-----
-
---WK3l2KTTmXPVedZ6--
+Will
