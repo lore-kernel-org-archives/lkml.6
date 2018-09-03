@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA9EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77481C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2506B2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2506B2077C
+	by mail.kernel.org (Postfix) with ESMTP id 3C9902077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9902077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbeICViy (ORCPT
+        id S1730243AbeICVi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42912 "EHLO
+        Mon, 3 Sep 2018 17:38:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727695AbeICVix (ORCPT
+        with ESMTP id S1727695AbeICVi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:53 -0400
+        Mon, 3 Sep 2018 17:38:56 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 239D1D14;
-        Mon,  3 Sep 2018 17:17:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACA96D09;
+        Mon,  3 Sep 2018 17:17:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 050/165] x86/boot: Fix if_changed build flip/flop bug
-Date:   Mon,  3 Sep 2018 18:55:36 +0200
-Message-Id: <20180903165657.635851130@linuxfoundation.org>
+Subject: [PATCH 4.14 051/165] fscache: Allow cancelled operations to be enqueued
+Date:   Mon,  3 Sep 2018 18:55:37 +0200
+Message-Id: <20180903165657.683495494@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -55,83 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-[ Upstream commit 92a4728608a8fd228c572bc8ff50dd98aa0ddf2a ]
+[ Upstream commit d0eb06afe712b7b103b6361f40a9a0c638524669 ]
 
-Dirk Gouders reported that two consecutive "make" invocations on an
-already compiled tree will show alternating behaviors:
+Alter the state-check assertion in fscache_enqueue_operation() to allow
+cancelled operations to be given processing time so they can be cleaned up.
 
-$ make
-  CALL    scripts/checksyscalls.sh
-  DESCEND  objtool
-  CHK     include/generated/compile.h
-  DATAREL arch/x86/boot/compressed/vmlinux
-Kernel: arch/x86/boot/bzImage is ready  (#48)
-  Building modules, stage 2.
-  MODPOST 165 modules
+Also fix a debugging statement that was requiring such operations to have
+an object assigned.
 
-$ make
-  CALL    scripts/checksyscalls.sh
-  DESCEND  objtool
-  CHK     include/generated/compile.h
-  LD      arch/x86/boot/compressed/vmlinux
-  ZOFFSET arch/x86/boot/zoffset.h
-  AS      arch/x86/boot/header.o
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  BUILD   arch/x86/boot/bzImage
-Setup is 15644 bytes (padded to 15872 bytes).
-System is 6663 kB
-CRC 3eb90f40
-Kernel: arch/x86/boot/bzImage is ready  (#48)
-  Building modules, stage 2.
-  MODPOST 165 modules
-
-He bisected it back to:
-
-    commit 98f78525371b ("x86/boot: Refuse to build with data relocations")
-
-The root cause was the use of the "if_changed" kbuild function multiple
-times for the same target. It was designed to only be used once per
-target, otherwise it will effectively always trigger, flipping back and
-forth between the two commands getting recorded by "if_changed". Instead,
-this patch merges the two commands into a single function to get stable
-build artifacts (i.e. .vmlinux.cmd), and a single build behavior.
-
-Bisected-and-Reported-by: Dirk Gouders <dirk@gouders.net>
-Fix-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180724230827.GA37823@beast
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+Reported-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/boot/compressed/Makefile |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/fscache/operation.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -104,9 +104,13 @@ define cmd_check_data_rel
- 	done
- endef
+--- a/fs/fscache/operation.c
++++ b/fs/fscache/operation.c
+@@ -66,7 +66,8 @@ void fscache_enqueue_operation(struct fs
+ 	ASSERT(op->processor != NULL);
+ 	ASSERT(fscache_object_is_available(op->object));
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+-	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
++	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
++		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
  
-+# We need to run two commands under "if_changed", so merge them into a
-+# single invocation.
-+quiet_cmd_check-and-link-vmlinux = LD      $@
-+      cmd_check-and-link-vmlinux = $(cmd_check_data_rel); $(cmd_ld)
-+
- $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
--	$(call if_changed,check_data_rel)
--	$(call if_changed,ld)
-+	$(call if_changed,check-and-link-vmlinux)
+ 	fscache_stat(&fscache_n_op_enqueue);
+ 	switch (op->flags & FSCACHE_OP_TYPE) {
+@@ -481,7 +482,8 @@ void fscache_put_operation(struct fscach
+ 	struct fscache_cache *cache;
  
- OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
- $(obj)/vmlinux.bin: vmlinux FORCE
+ 	_enter("{OBJ%x OP%x,%d}",
+-	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
++	       op->object ? op->object->debug_id : 0,
++	       op->debug_id, atomic_read(&op->usage));
+ 
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+ 
 
 
