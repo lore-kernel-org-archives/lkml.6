@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A62C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6C8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4188420779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4188420779
+	by mail.kernel.org (Postfix) with ESMTP id 433DA20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433DA20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbeICVYv (ORCPT
+        id S1729280AbeICVYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39162 "EHLO
+        Mon, 3 Sep 2018 17:24:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39174 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728866AbeICVYu (ORCPT
+        with ESMTP id S1729262AbeICVYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:50 -0400
+        Mon, 3 Sep 2018 17:24:54 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81C12D01;
-        Mon,  3 Sep 2018 17:03:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95210D00;
+        Mon,  3 Sep 2018 17:03:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Kalderon <Michal.Kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 018/107] qed: Fix possible race for the link state value.
-Date:   Mon,  3 Sep 2018 18:55:42 +0200
-Message-Id: <20180903165638.175056704@linuxfoundation.org>
+Subject: [PATCH 4.9 019/107] qed: Correct Multicast API to reflect existence of 256 approximate buckets.
+Date:   Mon,  3 Sep 2018 18:55:43 +0200
+Message-Id: <20180903165638.222473320@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -56,14 +56,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 58874c7b246109d8efb2b0099d1aa296d6bfc3fa ]
+[ Upstream commit 25c020a90919632b3425c19dc09188d56b9ed59a ]
 
-There's a possible race where driver can read link status in mid-transition
-and see that virtual-link is up yet speed is 0. Since in this
-mid-transition we're guaranteed to see a mailbox from MFW soon, we can
-afford to treat this as link down.
+FW hsi contains 256 approximation buckets which are split in ramrod into
+eight u32 values, but driver is using eight 'unsigned long' variables.
 
-Fixes: cc875c2e ("qed: Add link support")
+This patch fixes the mcast logic by making the API utilize u32.
+
+Fixes: 83aeb933 ("qed*: Trivial modifications")
 Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
 Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
@@ -71,18 +71,123 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_mcp.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/qlogic/qed/qed_l2.c    |   15 +++++++--------
+ drivers/net/ethernet/qlogic/qed/qed_l2.h    |    2 +-
+ drivers/net/ethernet/qlogic/qed/qed_sriov.c |    2 +-
+ drivers/net/ethernet/qlogic/qed/qed_vf.c    |    4 ++--
+ drivers/net/ethernet/qlogic/qed/qed_vf.h    |    7 ++++++-
+ 5 files changed, 17 insertions(+), 13 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -613,6 +613,7 @@ static void qed_mcp_handle_link_change(s
- 		break;
- 	default:
- 		p_link->speed = 0;
-+		p_link->link_up = 0;
+--- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+@@ -313,7 +313,7 @@ qed_sp_update_mcast_bin(struct qed_hwfn
+ 
+ 	p_ramrod->common.update_approx_mcast_flg = 1;
+ 	for (i = 0; i < ETH_MULTICAST_MAC_BINS_IN_REGS; i++) {
+-		u32 *p_bins = (u32 *)p_params->bins;
++		u32 *p_bins = p_params->bins;
+ 
+ 		p_ramrod->approx_mcast.bins[i] = cpu_to_le32(p_bins[i]);
+ 	}
+@@ -1182,8 +1182,8 @@ qed_sp_eth_filter_mcast(struct qed_hwfn
+ 			enum spq_mode comp_mode,
+ 			struct qed_spq_comp_cb *p_comp_data)
+ {
+-	unsigned long bins[ETH_MULTICAST_MAC_BINS_IN_REGS];
+ 	struct vport_update_ramrod_data *p_ramrod = NULL;
++	u32 bins[ETH_MULTICAST_MAC_BINS_IN_REGS];
+ 	struct qed_spq_entry *p_ent = NULL;
+ 	struct qed_sp_init_data init_data;
+ 	u8 abs_vport_id = 0;
+@@ -1219,26 +1219,25 @@ qed_sp_eth_filter_mcast(struct qed_hwfn
+ 	/* explicitly clear out the entire vector */
+ 	memset(&p_ramrod->approx_mcast.bins, 0,
+ 	       sizeof(p_ramrod->approx_mcast.bins));
+-	memset(bins, 0, sizeof(unsigned long) *
+-	       ETH_MULTICAST_MAC_BINS_IN_REGS);
++	memset(bins, 0, sizeof(bins));
+ 	/* filter ADD op is explicit set op and it removes
+ 	 *  any existing filters for the vport
+ 	 */
+ 	if (p_filter_cmd->opcode == QED_FILTER_ADD) {
+ 		for (i = 0; i < p_filter_cmd->num_mc_addrs; i++) {
+-			u32 bit;
++			u32 bit, nbits;
+ 
+ 			bit = qed_mcast_bin_from_mac(p_filter_cmd->mac[i]);
+-			__set_bit(bit, bins);
++			nbits = sizeof(u32) * BITS_PER_BYTE;
++			bins[bit / nbits] |= 1 << (bit % nbits);
+ 		}
+ 
+ 		/* Convert to correct endianity */
+ 		for (i = 0; i < ETH_MULTICAST_MAC_BINS_IN_REGS; i++) {
+ 			struct vport_update_ramrod_mcast *p_ramrod_bins;
+-			u32 *p_bins = (u32 *)bins;
+ 
+ 			p_ramrod_bins = &p_ramrod->approx_mcast;
+-			p_ramrod_bins->bins[i] = cpu_to_le32(p_bins[i]);
++			p_ramrod_bins->bins[i] = cpu_to_le32(bins[i]);
+ 		}
  	}
  
- 	if (p_link->link_up && p_link->speed)
+--- a/drivers/net/ethernet/qlogic/qed/qed_l2.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_l2.h
+@@ -156,7 +156,7 @@ struct qed_sp_vport_update_params {
+ 	u8				anti_spoofing_en;
+ 	u8				update_accept_any_vlan_flg;
+ 	u8				accept_any_vlan;
+-	unsigned long			bins[8];
++	u32				bins[8];
+ 	struct qed_rss_params		*rss_params;
+ 	struct qed_filter_accept_flags	accept_flags;
+ 	struct qed_sge_tpa_params	*sge_tpa_params;
+--- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
+@@ -2157,7 +2157,7 @@ qed_iov_vp_update_mcast_bin_param(struct
+ 
+ 	p_data->update_approx_mcast_flg = 1;
+ 	memcpy(p_data->bins, p_mcast_tlv->bins,
+-	       sizeof(unsigned long) * ETH_MULTICAST_MAC_BINS_IN_REGS);
++	       sizeof(u32) * ETH_MULTICAST_MAC_BINS_IN_REGS);
+ 	*tlvs_mask |= 1 << QED_IOV_VP_UPDATE_MCAST;
+ }
+ 
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -786,7 +786,7 @@ int qed_vf_pf_vport_update(struct qed_hw
+ 		resp_size += sizeof(struct pfvf_def_resp_tlv);
+ 
+ 		memcpy(p_mcast_tlv->bins, p_params->bins,
+-		       sizeof(unsigned long) * ETH_MULTICAST_MAC_BINS_IN_REGS);
++		       sizeof(u32) * ETH_MULTICAST_MAC_BINS_IN_REGS);
+ 	}
+ 
+ 	update_rx = p_params->accept_flags.update_rx_mode_config;
+@@ -972,7 +972,7 @@ void qed_vf_pf_filter_mcast(struct qed_h
+ 			u32 bit;
+ 
+ 			bit = qed_mcast_bin_from_mac(p_filter_cmd->mac[i]);
+-			__set_bit(bit, sp_params.bins);
++			sp_params.bins[bit / 32] |= 1 << (bit % 32);
+ 		}
+ 	}
+ 
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.h
+@@ -336,7 +336,12 @@ struct vfpf_vport_update_mcast_bin_tlv {
+ 	struct channel_tlv tl;
+ 	u8 padding[4];
+ 
+-	u64 bins[8];
++	/* There are only 256 approx bins, and in HSI they're divided into
++	 * 32-bit values. As old VFs used to set-bit to the values on its side,
++	 * the upper half of the array is never expected to contain any data.
++	 */
++	u64 bins[4];
++	u64 obsolete_bins[4];
+ };
+ 
+ struct vfpf_vport_update_accept_param_tlv {
 
 
