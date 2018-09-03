@@ -6,49 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E535C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 008BCC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E742C2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E742C2077C
+	by mail.kernel.org (Postfix) with ESMTP id B840F20661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B840F20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730711AbeICVqw (ORCPT
+        id S1730723AbeICVqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45798 "EHLO
+        Mon, 3 Sep 2018 17:46:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45818 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbeICVqw (ORCPT
+        with ESMTP id S1728380AbeICVqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:52 -0400
+        Mon, 3 Sep 2018 17:46:54 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36DA5D24;
-        Mon,  3 Sep 2018 17:25:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85456D36;
+        Mon,  3 Sep 2018 17:25:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jon Medhurst <tixy@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>, acme@kernel.org,
-        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
-        linux-arch@vger.kernel.org, rostedt@goodmis.org,
-        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 097/165] kprobes/arm64: Fix %p uses in error messages
-Date:   Mon,  3 Sep 2018 18:56:23 +0200
-Message-Id: <20180903165700.385384739@linuxfoundation.org>
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 124/165] fuse: Add missed unlock_page() to fuse_readpages_fill()
+Date:   Mon,  3 Sep 2018 18:56:50 +0200
+Message-Id: <20180903165701.786624790@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -65,52 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit 0722867dcbc28cc9b269b57acd847c7c1aa638d6 upstream.
+commit 109728ccc5933151c68d1106e4065478a487a323 upstream.
 
-Fix %p uses in error messages by removing it because
-those are redundant or meaningless.
+The above error path returns with page unlocked, so this place seems also
+to behave the same.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jon Medhurst <tixy@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Tobin C . Harding <me@tobin.cc>
-Cc: acme@kernel.org
-Cc: akpm@linux-foundation.org
-Cc: brueckner@linux.vnet.ibm.com
-Cc: linux-arch@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: schwidefsky@de.ibm.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/152491908405.9916.12425053035317241111.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: f8dbdf81821b ("fuse: rework fuse_readpages()")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/probes/kprobes.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -275,7 +275,7 @@ static int __kprobes reenter_kprobe(stru
- 		break;
- 	case KPROBE_HIT_SS:
- 	case KPROBE_REENTER:
--		pr_warn("Unrecoverable kprobe detected at %p.\n", p->addr);
-+		pr_warn("Unrecoverable kprobe detected.\n");
- 		dump_kprobe(p);
- 		BUG();
- 		break;
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -866,6 +866,7 @@ static int fuse_readpages_fill(void *_da
+ 	}
+ 
+ 	if (WARN_ON(req->num_pages >= req->max_pages)) {
++		unlock_page(page);
+ 		fuse_put_request(fc, req);
+ 		return -EIO;
+ 	}
 
 
