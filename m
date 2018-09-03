@@ -6,70 +6,70 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F96BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6A9E2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC67E20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:21:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kq1jcrfe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A9E2077C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="heqYNVY0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC67E20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeICXls (ORCPT
+        id S1728476AbeICXmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:41:48 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46160 "EHLO
+        Mon, 3 Sep 2018 19:42:35 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46199 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbeICXls (ORCPT
+        with ESMTP id S1728108AbeICXme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:41:48 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u24-v6so518692pfn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:20:14 -0700 (PDT)
+        Mon, 3 Sep 2018 19:42:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so519207pfn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:21:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=c2+4tOF2BIFm9K9iN5UYAZ65HT/STokt3Xl5WK62BhA=;
-        b=Kq1jcrfeqhJzm/ETj/bDIGcS42tkHIri2n1kfpm347HqILTzlwoBOunXUxiTwyQdRz
-         YJGqD+cdoMC8xvB7+Wh8JnC/upblbTvFj2jjdYfmVvaXKjcjLPE97A+NQImw2FkXk9fY
-         3wGXx5tQx1iYR++DN3Q2jivPrXb5Ydi1MvkzM=
+        bh=PL1FJmN3oihC7AnOx4Qy7gkw9MHVnnMB1Ztw8mhAH/g=;
+        b=heqYNVY0p8VBWrYOLvaulzDCw6nA1LI+sH6wglKGrQn0joOG8U9WRrbJ2yBbai0jRT
+         X9Lrs+g8zfi9E00KDBFcsQ3uPTYQKUo7CCtgrx5Ko1oFZQOgf5GafAeBIHpB90BtY+Uw
+         g/8u+PVV5a6/2V5AwtCGZYv3yQG0zl07f7noM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c2+4tOF2BIFm9K9iN5UYAZ65HT/STokt3Xl5WK62BhA=;
-        b=E/2LJLptiwbQp+r33/RnwjOj3abfntkz6KsIAyzNdDKXjKWEwZnq6rpByLPB16T4Jp
-         pmGKYVk/vcdQfKk5754c1Xj6NMCO1DzUE6PLx1N+wFKzFuACqOI5GoSLJ2JYMNhBBeXT
-         idQ00A2VUIJ29uxVwpopOI64AWSEEskHdeLkVCXMd3ZbYIEz+QKhM+ja7gg+2Bg+vbHA
-         1T1TfjQO/AcCV9uncdO8vIxu+ql5BFNKLZPe1rZa6Voz4avATXXzYDB1FqDlLnrC26b9
-         H56erxyn1rtQnbslgAx4uveVxQs8M4+aZKPZJHHkQqmp97inicCuyekfgQaKuARP092E
-         TqYg==
-X-Gm-Message-State: APzg51CyVAHwHk74jxPXIYUymLjrvwN7CBjViv3wOq8AhUEs+p3N6td7
-        g5zklhNNRn3NV+OyYlIs1RZ0sA==
-X-Google-Smtp-Source: ANB0VdZYkvlSJ6LwxLTt/DnHlx7DIW7k0vNF51hde6WaRHBksxzk9EVvLrFt8ottUqCSvcOp+vUGvA==
-X-Received: by 2002:a63:1021:: with SMTP id f33-v6mr27534448pgl.72.1536002413591;
-        Mon, 03 Sep 2018 12:20:13 -0700 (PDT)
+        bh=PL1FJmN3oihC7AnOx4Qy7gkw9MHVnnMB1Ztw8mhAH/g=;
+        b=O5BQlvp/q/YALJAgzs3qeekp5uXZrswDlOQViK7lOKxXHaWErGSHOXWpJN5mV7PFZY
+         JyYkyCrS48s67M9ruUzMgxhcUjc2jwvplW6RLUqKqdvHyazpVCyMHJYuvh6heK+EAOZp
+         VdRba8j9jw4HXcIyBb0gMZNAgqbNwz6Hu4iYTzbIjdnlZmBTMGrysaqiUtlulF7s7RyK
+         1ThTMULcm4wk3YS3NOFV5teyqJPkHJgSj5b/TK6e3s+GpZxZ2wLmi7KaKJRrpbT+2k3A
+         T+ew4wuULmI3e6KhFzn92Lxz/ct1nKfUo8I0J6PSAvaGsBYvGGREim+i1oo8gs2HghbQ
+         YKbA==
+X-Gm-Message-State: APzg51CKrjtKCN3HJvgKmk0m50s0WUACp3IuOoGD/2Dn6ue2Cvy9rI6c
+        aPuITv/gFqDS+4o0WGE7wMj7SQ==
+X-Google-Smtp-Source: ANB0VdY0W2+a6t5b85VB3t/7T8kKjVo0JKxdwkhvKRnf/ZODUWx38w8/aGcN3KWyEfIHUvtBdvVqvA==
+X-Received: by 2002:a62:591a:: with SMTP id n26-v6mr31104511pfb.94.1536002459589;
+        Mon, 03 Sep 2018 12:20:59 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f13-v6sm19514049pgs.92.2018.09.03.12.20.12
+        by smtp.gmail.com with ESMTPSA id y4-v6sm24849166pfm.137.2018.09.03.12.20.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 12:20:12 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 12:24:07 -0700
+        Mon, 03 Sep 2018 12:20:59 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 12:24:53 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Niklas Cassel <niklas.cassel@linaro.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 6/9] soc: qcom: Remove depends on OF from QCOM_RPMH
-Message-ID: <20180903192407.GC3456@tuxbook-pro>
+Subject: Re: [PATCH v6 8/9] soc: qcom: apr: Avoid string overflow
+Message-ID: <20180903192453.GD3456@tuxbook-pro>
 References: <20180829075724.9095-1-niklas.cassel@linaro.org>
- <20180829075724.9095-7-niklas.cassel@linaro.org>
+ <20180829075724.9095-9-niklas.cassel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829075724.9095-7-niklas.cassel@linaro.org>
+In-Reply-To: <20180829075724.9095-9-niklas.cassel@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,16 +78,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed 29 Aug 00:57 PDT 2018, Niklas Cassel wrote:
 
-> QCOM_RPHM already selects ARM64, which always selects OF.
-
-Nit. "already depends on ARM64"
-
+> 'adev->name' is used as a NUL-terminated string, but using strncpy() with the
+> length equal to the buffer size may result in lack of the termination:
 > 
-> Additionally, the rpmh driver only uses linux/of.h, which has dummy
-> definitions for all functions, in order for code to to be able to
-> build without CONFIG_OF set.
+> In function 'apr_add_device',
+>     inlined from 'of_register_apr_devices' at drivers//soc/qcom/apr.c:264:7,
+>     inlined from 'apr_probe' at drivers//soc/qcom/apr.c:290:2:
+> drivers//soc/qcom/apr.c:222:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+>    strncpy(adev->name, np->name, APR_NAME_SIZE);
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> Remove the superfluous depends on OF.
+> This changes it to use the safer strscpy() instead.
 > 
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 
@@ -97,22 +98,25 @@ Regards,
 Bjorn
 
 > ---
->  drivers/soc/qcom/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/soc/qcom/apr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index ac657164a136..cf4ece232897 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -94,7 +94,7 @@ config QCOM_RMTFS_MEM
+> diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+> index 57af8a537332..ee9197f5aae9 100644
+> --- a/drivers/soc/qcom/apr.c
+> +++ b/drivers/soc/qcom/apr.c
+> @@ -219,9 +219,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+>  	adev->domain_id = id->domain_id;
+>  	adev->version = id->svc_version;
+>  	if (np)
+> -		strncpy(adev->name, np->name, APR_NAME_SIZE);
+> +		strscpy(adev->name, np->name, APR_NAME_SIZE);
+>  	else
+> -		strncpy(adev->name, id->name, APR_NAME_SIZE);
+> +		strscpy(adev->name, id->name, APR_NAME_SIZE);
 >  
->  config QCOM_RPMH
->  	bool "Qualcomm RPM-Hardened (RPMH) Communication"
-> -	depends on ARCH_QCOM && ARM64 && OF || COMPILE_TEST
-> +	depends on ARCH_QCOM && ARM64 || COMPILE_TEST
->  	help
->  	  Support for communication with the hardened-RPM blocks in
->  	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
+>  	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
+>  		     id->domain_id, id->svc_id);
 > -- 
 > 2.17.1
 > 
