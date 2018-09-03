@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2566C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E666C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B379920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B379920862
+	by mail.kernel.org (Postfix) with ESMTP id D76A120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76A120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbeICVT7 (ORCPT
+        id S1728630AbeICVUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:19:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38476 "EHLO
+        Mon, 3 Sep 2018 17:20:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbeICVT6 (ORCPT
+        with ESMTP id S1728091AbeICVUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:19:58 -0400
+        Mon, 3 Sep 2018 17:20:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5B5CCF5;
-        Mon,  3 Sep 2018 16:58:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C48BCF5;
+        Mon,  3 Sep 2018 16:59:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, chen jie <chenjie6@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Li Zefan <lizefan@huawei.com>, Yang Shi <shy828301@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 40/80] mm/memory.c: check return value of ioremap_prot
-Date:   Mon,  3 Sep 2018 18:49:18 +0200
-Message-Id: <20180903164935.750871255@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Paulo Alcantara <palcantara@suse.de>
+Subject: [PATCH 4.4 41/80] cifs: add missing debug entries for kconfig options
+Date:   Mon,  3 Sep 2018 18:49:19 +0200
+Message-Id: <20180903164935.794312057@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -54,38 +52,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "jie@chenjie6@huwei.com" <jie@chenjie6@huwei.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit 24eee1e4c47977bdfb71d6f15f6011e7b6188d04 ]
+commit 950132afd59385caf6e2b84e5235d069fa10681d upstream.
 
-ioremap_prot() can return NULL which could lead to an oops.
+/proc/fs/cifs/DebugData displays the features (Kconfig options)
+used to build cifs.ko but it was missing some, and needed comma
+separator.  These can be useful in debugging certain problems
+so we know which optional features were enabled in the user's build.
+Also clarify them, by making them more closely match the
+corresponding CONFIG_CIFS_* parm.
 
-Link: http://lkml.kernel.org/r/1533195441-58594-1-git-send-email-chenjie6@huawei.com
-Signed-off-by: chen jie <chenjie6@huawei.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Li Zefan <lizefan@huawei.com>
-Cc: chenjie <chenjie6@huawei.com>
-Cc: Yang Shi <shy828301@gmail.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Old format:
+Features: dfs fscache posix spnego xattr acl
+
+New format:
+Features: DFS,FSCACHE,SMB_DIRECT,STATS,DEBUG2,ALLOW_INSECURE_LEGACY,CIFS_POSIX,UPCALL(SPNEGO),XATTR,ACL
+
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Paulo Alcantara <palcantara@suse.de>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/memory.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3701,6 +3701,9 @@ int generic_access_phys(struct vm_area_s
- 		return -EINVAL;
- 
- 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
-+	if (!maddr)
-+		return -ENOMEM;
-+
- 	if (write)
- 		memcpy_toio(maddr + offset, buf, len);
- 	else
+---
+ fs/cifs/cifs_debug.c |   30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -123,25 +123,41 @@ static int cifs_debug_data_proc_show(str
+ 	seq_printf(m, "CIFS Version %s\n", CIFS_VERSION);
+ 	seq_printf(m, "Features:");
+ #ifdef CONFIG_CIFS_DFS_UPCALL
+-	seq_printf(m, " dfs");
++	seq_printf(m, " DFS");
+ #endif
+ #ifdef CONFIG_CIFS_FSCACHE
+-	seq_printf(m, " fscache");
++	seq_printf(m, ",FSCACHE");
++#endif
++#ifdef CONFIG_CIFS_SMB_DIRECT
++	seq_printf(m, ",SMB_DIRECT");
++#endif
++#ifdef CONFIG_CIFS_STATS2
++	seq_printf(m, ",STATS2");
++#elif defined(CONFIG_CIFS_STATS)
++	seq_printf(m, ",STATS");
++#endif
++#ifdef CONFIG_CIFS_DEBUG2
++	seq_printf(m, ",DEBUG2");
++#elif defined(CONFIG_CIFS_DEBUG)
++	seq_printf(m, ",DEBUG");
++#endif
++#ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
++	seq_printf(m, ",ALLOW_INSECURE_LEGACY");
+ #endif
+ #ifdef CONFIG_CIFS_WEAK_PW_HASH
+-	seq_printf(m, " lanman");
++	seq_printf(m, ",WEAK_PW_HASH");
+ #endif
+ #ifdef CONFIG_CIFS_POSIX
+-	seq_printf(m, " posix");
++	seq_printf(m, ",CIFS_POSIX");
+ #endif
+ #ifdef CONFIG_CIFS_UPCALL
+-	seq_printf(m, " spnego");
++	seq_printf(m, ",UPCALL(SPNEGO)");
+ #endif
+ #ifdef CONFIG_CIFS_XATTR
+-	seq_printf(m, " xattr");
++	seq_printf(m, ",XATTR");
+ #endif
+ #ifdef CONFIG_CIFS_ACL
+-	seq_printf(m, " acl");
++	seq_printf(m, ",ACL");
+ #endif
+ 	seq_putc(m, '\n');
+ 	seq_printf(m, "Active VFS Requests: %d\n", GlobalTotalActiveXid);
 
 
