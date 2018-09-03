@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F247C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E48C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 428CA2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428CA2077C
+	by mail.kernel.org (Postfix) with ESMTP id 3A37020862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A37020862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeICSsr (ORCPT
+        id S1727635AbeICSsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 14:48:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34208 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeICSsq (ORCPT
+        Mon, 3 Sep 2018 14:48:51 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37013 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeICSss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 14:48:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g33-v6so908500wrd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:28:21 -0700 (PDT)
+        Mon, 3 Sep 2018 14:48:48 -0400
+Received: by mail-wr1-f67.google.com with SMTP id u12-v6so883217wrr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:28:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TY06Ai6bYTbbS+qrbG4Xrza1Hq/jISH8yLquACFz/LM=;
-        b=EebGpJVOTq++sUooJa2NyQudZ3F1E2YC4pRS2ozIz7WvwvDbji5Fp9QEQ4Dchoskyz
-         i+dxkRvmQEFSI23EteFKMqocC+p+/ls0YXm5wQgyzPCKax0aDoyx3rYANTzn1luastcT
-         9ucpqMAKVpDZk6mKUu/ohfQmoHp1T35eKD7ootaDN4LcE/XyF+Zhj0aht/f3rVLvHt29
-         ekJSOnhuC00v8HVfFOMtcgcmdDaDZUbuMRGJFQUm6igT6hbvQMuYU9yY4NnxwRFmqrTR
-         9+JMwXlBaoiFUuw7PBxGNCP/gMsgrVr+hfxa0AEV6SpCgX606fvwmFsTBt6J7v72ZQ7p
-         wdww==
-X-Gm-Message-State: APzg51BIPwajLSmsfUUS7noez2Tjh3xHDpuIqipj7tqv2trHW6dW4SIB
-        4Y+7cUkf6JImFExoEZJbFJ8f5g==
-X-Google-Smtp-Source: ANB0VdaQMoYnC7pJT9P3htmI4BU5VgU/ov7jEbGgCWscW0n92ukobuLgeTT3KpJoNaUyp3lE+UUjcg==
-X-Received: by 2002:adf:bc44:: with SMTP id a4-v6mr20466755wrh.255.1535984900403;
-        Mon, 03 Sep 2018 07:28:20 -0700 (PDT)
+        bh=ixlA8GSsgMTTrpJTxCCYl0cq2Ht5+u6xLI53pQCU/GY=;
+        b=co1JYEoAiG/wg/aXp/plaM5rg8dNaUqM+0O8tR3iPBDnOLYLctTrF376rt4LT7bKcg
+         MWt7RaiSS8iCjPRLSdvUGtoVYPM8b98ymyKvMckYJrVDHEUw4ZuC4FOmiL7v2IL5KFgG
+         E22fM8iH00QtUJzIdD7b5iNnsI+/tH3R36RzMGYvhp+VwhsOs8SSNGElWmsC/Hh9SJhV
+         0RhSoyTupDcgt4oc9clNkD2BMnZ3zGw/t6oN8mym9T3AQ59G6lCColDuueMQWlhcGVx5
+         q7FtohYZAOd+1gWoDLyX3xm+wakzN0XrWl+TZobHT7pSKU8ad86FTEG+Ui7I9x75k4JP
+         kESQ==
+X-Gm-Message-State: APzg51CaIUfjFfoAkNooNhav9Pd1qXw1yxIYn02+oiGY9c9CkQLH21HV
+        /LIi9C1kKCsJCOICSiH8MzKHyg==
+X-Google-Smtp-Source: ANB0VdZnVSnyznWXJTF2MEO2jl4gZijAnNyo23xu+U5YU6v+dWN8aJ+lAcWVIfHjo7Ba6RmJwRMvfg==
+X-Received: by 2002:adf:8b98:: with SMTP id o24-v6mr18996859wra.110.1535984901630;
+        Mon, 03 Sep 2018 07:28:21 -0700 (PDT)
 Received: from localhost.localdomain.com ([151.15.227.30])
-        by smtp.gmail.com with ESMTPSA id b74-v6sm14175880wma.8.2018.09.03.07.28.19
+        by smtp.gmail.com with ESMTPSA id b74-v6sm14175880wma.8.2018.09.03.07.28.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 07:28:19 -0700 (PDT)
+        Mon, 03 Sep 2018 07:28:21 -0700 (PDT)
 From:   Juri Lelli <juri.lelli@redhat.com>
 To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
 Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
         claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
         bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
         cgroups@vger.kernel.org
-Subject: [PATCH v5 1/5] sched/topology: Adding function partition_sched_domains_locked()
-Date:   Mon,  3 Sep 2018 16:27:57 +0200
-Message-Id: <20180903142801.20046-2-juri.lelli@redhat.com>
+Subject: [PATCH v5 2/5] sched/core: Streamlining calls to task_rq_unlock()
+Date:   Mon,  3 Sep 2018 16:27:58 +0200
+Message-Id: <20180903142801.20046-3-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903142801.20046-1-juri.lelli@redhat.com>
 References: <20180903142801.20046-1-juri.lelli@redhat.com>
@@ -64,87 +64,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Introducing function partition_sched_domains_locked() by taking
-the mutex locking code out of the original function.  That way
-the work done by partition_sched_domains_locked() can be reused
-without dropping the mutex lock.
+Calls to task_rq_unlock() are done several times in function
+__sched_setscheduler().  This is fine when only the rq lock needs to be
+handled but not so much when other locks come into play.
+
+This patch streamlines the release of the rq lock so that only one
+location need to be modified when dealing with more than one lock.
 
 No change of functionality is introduced by this patch.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/sched/topology.h | 10 ++++++++++
- kernel/sched/topology.c        | 17 +++++++++++++----
- 2 files changed, 23 insertions(+), 4 deletions(-)
+ kernel/sched/core.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 26347741ba50..57997caf61b6 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -162,6 +162,10 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
- 	return to_cpumask(sd->span);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index deafa9fe602b..22f5622cba69 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4232,8 +4232,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	 * Changing the policy of the stop threads its a very bad idea:
+ 	 */
+ 	if (p == rq->stop) {
+-		task_rq_unlock(rq, p, &rf);
+-		return -EINVAL;
++		retval = -EINVAL;
++		goto unlock;
+ 	}
+ 
+ 	/*
+@@ -4249,8 +4249,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 			goto change;
+ 
+ 		p->sched_reset_on_fork = reset_on_fork;
+-		task_rq_unlock(rq, p, &rf);
+-		return 0;
++		retval = 0;
++		goto unlock;
+ 	}
+ change:
+ 
+@@ -4263,8 +4263,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 		if (rt_bandwidth_enabled() && rt_policy(policy) &&
+ 				task_group(p)->rt_bandwidth.rt_runtime == 0 &&
+ 				!task_group_is_autogroup(task_group(p))) {
+-			task_rq_unlock(rq, p, &rf);
+-			return -EPERM;
++			retval = -EPERM;
++			goto unlock;
+ 		}
+ #endif
+ #ifdef CONFIG_SMP
+@@ -4279,8 +4279,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 			 */
+ 			if (!cpumask_subset(span, &p->cpus_allowed) ||
+ 			    rq->rd->dl_bw.bw == 0) {
+-				task_rq_unlock(rq, p, &rf);
+-				return -EPERM;
++				retval = -EPERM;
++				goto unlock;
+ 			}
+ 		}
+ #endif
+@@ -4299,8 +4299,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	 * is available.
+ 	 */
+ 	if ((dl_policy(policy) || dl_task(p)) && sched_dl_overflow(p, policy, attr)) {
+-		task_rq_unlock(rq, p, &rf);
+-		return -EBUSY;
++		retval = -EBUSY;
++		goto unlock;
+ 	}
+ 
+ 	p->sched_reset_on_fork = reset_on_fork;
+@@ -4356,6 +4356,10 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	preempt_enable();
+ 
+ 	return 0;
++
++unlock:
++	task_rq_unlock(rq, p, &rf);
++	return retval;
  }
  
-+extern void partition_sched_domains_locked(int ndoms_new,
-+					   cpumask_var_t doms_new[],
-+					   struct sched_domain_attr *dattr_new);
-+
- extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 				    struct sched_domain_attr *dattr_new);
- 
-@@ -206,6 +210,12 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
- 
- struct sched_domain_attr;
- 
-+static inline void
-+partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-+			       struct sched_domain_attr *dattr_new)
-+{
-+}
-+
- static inline void
- partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 			struct sched_domain_attr *dattr_new)
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 56a0fed30c0a..fb7ae691cb82 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1850,15 +1850,15 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
-  * ndoms_new == 0 is a special case for destroying existing domains,
-  * and it will not create the default domain.
-  *
-- * Call with hotplug lock held
-+ * Call with hotplug lock and sched_domains_mutex held
-  */
--void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
--			     struct sched_domain_attr *dattr_new)
-+void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-+				    struct sched_domain_attr *dattr_new)
- {
- 	int i, j, n;
- 	int new_topology;
- 
--	mutex_lock(&sched_domains_mutex);
-+	lockdep_assert_held(&sched_domains_mutex);
- 
- 	/* Always unregister in case we don't destroy any domains: */
- 	unregister_sched_domain_sysctl();
-@@ -1923,6 +1923,15 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 	ndoms_cur = ndoms_new;
- 
- 	register_sched_domain_sysctl();
-+}
- 
-+/*
-+ * Call with hotplug lock held
-+ */
-+void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-+			     struct sched_domain_attr *dattr_new)
-+{
-+	mutex_lock(&sched_domains_mutex);
-+	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
- 	mutex_unlock(&sched_domains_mutex);
- }
+ static int _sched_setscheduler(struct task_struct *p, int policy,
 -- 
 2.17.1
 
