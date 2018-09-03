@@ -2,124 +2,100 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B911DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FCC620869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:03:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tude80Qy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCC620869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6182220862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:03:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6182220862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbeICXYs (ORCPT
+        id S1728302AbeICXZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:24:48 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41003 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeICXYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:24:47 -0400
-Received: by mail-pg1-f195.google.com with SMTP id s15-v6so510372pgv.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 12:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dZijJODLFOr0c2Bh8fumDsgMKzIk8va86Izs8GwffGo=;
-        b=Tude80Qym/sTrWeRkW/TejufGzx/wW9UUB/VvuVVtw1400DWtKcspDSHrKOFa0xP0u
-         oGkOKk42MrreWIQY8nk3JUM/eoswnh5oTtkDAIDktl9v/BRaTMik+KqGCKCD62vBITud
-         4QV16ObbLOHTKsPEWjFoe7otMEvq8BS4zdwCU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dZijJODLFOr0c2Bh8fumDsgMKzIk8va86Izs8GwffGo=;
-        b=HHIJ6X/BKDHUXAAHTrHgEwfpKl/rGQn+MROykZGZpIANQeU4ojkPep3QC5e8MMY3Fz
-         NFGksXPbugJgt48dxRUs/s4dDQeHMt4jp70kvaeXFal7Z4VmEYVZ+iGEnfMxVRPdWX99
-         t3l71Pbhoq56gM+CGLtMTMnM3sJzJZsB/MvIbbyfi6YddBZ1h+xdPaXODA4PrhwNH34K
-         LiHrjoLEj6JDYf6VDG5rT6nt4ZAKOlG84/4bA28OfJsf75yf+MN26/T1ebdWbmQS8T3M
-         NfFHJKT8r28RKeAPMzmDDHyAg/DDXdXnVIlGIdueZgCbbsXzuK0SG5nEczSOmWSYqRxY
-         kWCA==
-X-Gm-Message-State: APzg51C0uqdgI0CbDLn7vBiFYmNQ2U8GhaYsxPPtaAFs7eGrJYvS5CbM
-        W3fvof2DnKcahB4urwbb9fzyZA==
-X-Google-Smtp-Source: ANB0VdYMgThWSin/GaF5K/Ig6nxT29lAeIgLk15qcGCQwxWJtmcVkzEHzp1xoldFi7sj34FKQndlMA==
-X-Received: by 2002:a63:4663:: with SMTP id v35-v6mr27903970pgk.178.1536001396919;
-        Mon, 03 Sep 2018 12:03:16 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm24820878pgc.55.2018.09.03.12.03.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 12:03:16 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 12:07:05 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
-Message-ID: <20180903190705.GA3456@tuxbook-pro>
-References: <20180824011753.GA25826@embeddedor.com>
+        Mon, 3 Sep 2018 19:25:21 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40090 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727597AbeICXZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:25:21 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Xhfh28O4FYGw; Mon,  3 Sep 2018 21:03:31 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCF4100329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:4100:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AE78E1EC00E5;
+        Mon,  3 Sep 2018 21:03:31 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 21:04:38 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 03/16] x86/mtrr: get MTRR number and support TOP_MEM2
+Message-ID: <20180903190438.GF10249@zn.tnic>
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <36ea05160d886ebf8d4a645c0fe8efdc9d6760c3.1535459013.git.puwen@hygon.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180824011753.GA25826@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <36ea05160d886ebf8d4a645c0fe8efdc9d6760c3.1535459013.git.puwen@hygon.cn>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23 Aug 18:17 PDT 2018, Gustavo A. R. Silva wrote:
+On Wed, Aug 29, 2018 at 08:43:23PM +0800, Pu Wen wrote:
+> Hygon CPU have a special magic MSR way to force WB for memory >4GB,
 
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
-> 	int stuff;
->         void *entry[];
-> };
-> 
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_ATOMIC);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_ATOMIC);
-> 
-> This issue was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+It was "Hygon Dhyana" before now "Hygon" only. Can we agree on the
+naming nomenclature and stick with it.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Also, it is "The ... CPU has a special..."
 
-Regards,
-Bjorn
-
+> and also support TOP_MEM2. Therefore, it is necessary to add Hygon
+> support in amd_special_default_mtrr().
+> 
+> The MtrrFixDramModEn bit on Hygon platform should also be set to 1
+> during BIOS initialization of the fixed MTRRs, then cleared to 0 for
+> operation.
+> 
+> The number of variable MTRRs for Hygon is 2 as AMD's.
+> 
+> Signed-off-by: Pu Wen <puwen@hygon.cn>
 > ---
->  drivers/soc/qcom/rpmh.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-> index c7beb68..12c057a 100644
-> --- a/drivers/soc/qcom/rpmh.c
-> +++ b/drivers/soc/qcom/rpmh.c
-> @@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
->  	if (!count)
->  		return -EINVAL;
+>  arch/x86/kernel/cpu/mtrr/cleanup.c | 3 ++-
+>  arch/x86/kernel/cpu/mtrr/generic.c | 5 +++--
+>  arch/x86/kernel/cpu/mtrr/mtrr.c    | 2 +-
+>  3 files changed, 6 insertions(+), 4 deletions(-)
+
+...
+
+> diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
+> index e12ee86..77c3eaa 100644
+> --- a/arch/x86/kernel/cpu/mtrr/generic.c
+> +++ b/arch/x86/kernel/cpu/mtrr/generic.c
+> @@ -49,8 +49,9 @@ static inline void k8_check_syscfg_dram_mod_en(void)
+>  {
+>  	u32 lo, hi;
 >  
-> -	req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
-> -		      GFP_ATOMIC);
-> +	req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
->  	if (!req)
->  		return -ENOMEM;
->  	req->count = count;
-> -- 
-> 2.7.4
-> 
+> -	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) &&
+> -	      (boot_cpu_data.x86 >= 0x0f)))
+> +	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
+> +	       boot_cpu_data.x86 >= 0x0f) ||
+> +	       boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
+
+Why are you even touching this statement? The function returns early on
+!X86_VENDOR_AMD.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
