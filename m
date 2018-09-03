@@ -2,106 +2,95 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6781C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A97C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 683F02086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683F02086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 95F932086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:55:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LN8F4VJl";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JYrsfogC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F932086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeICVPv (ORCPT
+        id S1729008AbeICVPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:15:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38424 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeICVPu (ORCPT
+        Mon, 3 Sep 2018 17:15:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52968 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbeICVPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:15:50 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17B1CCF5;
-        Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 38/80] scsi: fcoe: drop frames in ELS LOGO error path
-Date:   Mon,  3 Sep 2018 18:49:16 +0200
-Message-Id: <20180903164935.665672575@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
-References: <20180903164934.171677301@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 3 Sep 2018 17:15:13 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 316F3606CF; Mon,  3 Sep 2018 16:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535993656;
+        bh=f9K6eP3XFg/4L77Ezbw1PzUNUhNYD14wPYdOF1M7KKs=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=LN8F4VJlFBIAyTJ6PoDEYWd09Y+vrihZPk36ksA5jdapaWuFS2YCmi8y0gmBahF2l
+         E4TA4TchqLHr/wjKykFGw+u1P0eUNk0S7CUsmUcnsmejaUdp6MGPfbsWEI9ek0Kp1x
+         3SFkbygegpcPiTxrGHNrKfemOqDresCpihDvl8tI=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CD54260452;
+        Mon,  3 Sep 2018 16:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535993655;
+        bh=f9K6eP3XFg/4L77Ezbw1PzUNUhNYD14wPYdOF1M7KKs=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=JYrsfogCBMOOHjhSjY3W9temQ6MWBkmxYqdADgzRO2MTKn1veOn+JDSNvitMDmRnH
+         /3nzpA/sm1IKTQF8CBalrGGthrjDvCe8SXN7FveCqE0FgQmOBhzOBoFEVbDixTN7zS
+         gJBgemi9498ivZVHad7R2WRvbKx8sN8rOEYSRyEk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD54260452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k: retrieve MAC address from firmware if provided
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180810233948.144792-1-briannorris@chromium.org>
+References: <20180810233948.144792-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180903165416.316F3606CF@smtp.codeaurora.org>
+Date:   Mon,  3 Sep 2018 16:54:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Brian Norris <briannorris@chromium.org> wrote:
 
-------------------
+> Devices may provide their own MAC address via system firmware (e.g.,
+> device tree), especially in the case where the device doesn't have a
+> useful EEPROM on which to store its MAC address (e.g., for integrated
+> Wifi).
+> 
+> Use the generic device helper to retrieve the MAC address, and (if
+> present) honor it above the MAC address advertised by the card.
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+Patch applied to ath-next branch of ath.git, thanks.
 
-[ Upstream commit 63d0e3dffda311e77b9a8c500d59084e960a824a ]
+9d5804662ce1 ath10k: retrieve MAC address from system firmware if provided
 
-Drop the frames in the ELS LOGO error path instead of just returning an
-error.
+-- 
+https://patchwork.kernel.org/patch/10563221/
 
-This fixes the following kmemleak report:
-unreferenced object 0xffff880064cb1000 (size 424):
-  comm "kworker/0:2", pid 24, jiffies 4294904293 (age 68.504s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<(____ptrval____)>] _fc_frame_alloc+0x2c/0x180 [libfc]
-    [<(____ptrval____)>] fc_lport_enter_logo+0x106/0x360 [libfc]
-    [<(____ptrval____)>] fc_fabric_logoff+0x8c/0xc0 [libfc]
-    [<(____ptrval____)>] fcoe_if_destroy+0x79/0x3b0 [fcoe]
-    [<(____ptrval____)>] fcoe_destroy_work+0xd2/0x170 [fcoe]
-    [<(____ptrval____)>] process_one_work+0x7ff/0x1420
-    [<(____ptrval____)>] worker_thread+0x87/0xef0
-    [<(____ptrval____)>] kthread+0x2db/0x390
-    [<(____ptrval____)>] ret_from_fork+0x35/0x40
-    [<(____ptrval____)>] 0xffffffffffffffff
-
-which can be triggered by issuing
-echo eth0 > /sys/bus/fcoe/ctlr_destroy
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/fcoe/fcoe_ctlr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/scsi/fcoe/fcoe_ctlr.c
-+++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-@@ -752,9 +752,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr
- 	case ELS_LOGO:
- 		if (fip->mode == FIP_MODE_VN2VN) {
- 			if (fip->state != FIP_ST_VNMP_UP)
--				return -EINVAL;
-+				goto drop;
- 			if (ntoh24(fh->fh_d_id) == FC_FID_FLOGI)
--				return -EINVAL;
-+				goto drop;
- 		} else {
- 			if (fip->state != FIP_ST_ENABLED)
- 				return 0;
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
