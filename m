@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ED7C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6781C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD632086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD632086B
+	by mail.kernel.org (Postfix) with ESMTP id 683F02086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683F02086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbeICVPr (ORCPT
+        id S1729121AbeICVPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:15:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38414 "EHLO
+        Mon, 3 Sep 2018 17:15:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728569AbeICVPq (ORCPT
+        with ESMTP id S1728034AbeICVPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:15:46 -0400
+        Mon, 3 Sep 2018 17:15:50 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1106DCF5;
-        Mon,  3 Sep 2018 16:54:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17B1CCF5;
+        Mon,  3 Sep 2018 16:54:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 37/80] drivers: net: lmc: fix case value for target abort error
-Date:   Mon,  3 Sep 2018 18:49:15 +0200
-Message-Id: <20180903164935.628668708@linuxfoundation.org>
+Subject: [PATCH 4.4 38/80] scsi: fcoe: drop frames in ELS LOGO error path
+Date:   Mon,  3 Sep 2018 18:49:16 +0200
+Message-Id: <20180903164935.665672575@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,35 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit afb41bb039656f0cecb54eeb8b2e2088201295f5 ]
+[ Upstream commit 63d0e3dffda311e77b9a8c500d59084e960a824a ]
 
-Current value for a target abort error is 0x010, however, this value
-should in fact be 0x002.  As it stands, the range of error is 0..7 so
-it is currently never being detected.  This bug has been in the driver
-since the early 2.6.12 days (or before).
+Drop the frames in the ELS LOGO error path instead of just returning an
+error.
 
-Detected by CoverityScan, CID#744290 ("Logically dead code")
+This fixes the following kmemleak report:
+unreferenced object 0xffff880064cb1000 (size 424):
+  comm "kworker/0:2", pid 24, jiffies 4294904293 (age 68.504s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<(____ptrval____)>] _fc_frame_alloc+0x2c/0x180 [libfc]
+    [<(____ptrval____)>] fc_lport_enter_logo+0x106/0x360 [libfc]
+    [<(____ptrval____)>] fc_fabric_logoff+0x8c/0xc0 [libfc]
+    [<(____ptrval____)>] fcoe_if_destroy+0x79/0x3b0 [fcoe]
+    [<(____ptrval____)>] fcoe_destroy_work+0xd2/0x170 [fcoe]
+    [<(____ptrval____)>] process_one_work+0x7ff/0x1420
+    [<(____ptrval____)>] worker_thread+0x87/0xef0
+    [<(____ptrval____)>] kthread+0x2db/0x390
+    [<(____ptrval____)>] ret_from_fork+0x35/0x40
+    [<(____ptrval____)>] 0xffffffffffffffff
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+which can be triggered by issuing
+echo eth0 > /sys/bus/fcoe/ctlr_destroy
+
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/lmc/lmc_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/fcoe/fcoe_ctlr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wan/lmc/lmc_main.c
-+++ b/drivers/net/wan/lmc/lmc_main.c
-@@ -1385,7 +1385,7 @@ static irqreturn_t lmc_interrupt (int ir
-             case 0x001:
-                 printk(KERN_WARNING "%s: Master Abort (naughty)\n", dev->name);
-                 break;
--            case 0x010:
-+            case 0x002:
-                 printk(KERN_WARNING "%s: Target Abort (not so naughty)\n", dev->name);
-                 break;
-             default:
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -752,9 +752,9 @@ int fcoe_ctlr_els_send(struct fcoe_ctlr
+ 	case ELS_LOGO:
+ 		if (fip->mode == FIP_MODE_VN2VN) {
+ 			if (fip->state != FIP_ST_VNMP_UP)
+-				return -EINVAL;
++				goto drop;
+ 			if (ntoh24(fh->fh_d_id) == FC_FID_FLOGI)
+-				return -EINVAL;
++				goto drop;
+ 		} else {
+ 			if (fip->state != FIP_ST_ENABLED)
+ 				return 0;
 
 
