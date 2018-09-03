@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B676AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2C2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BED520862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BED520862
+	by mail.kernel.org (Postfix) with ESMTP id 6F46720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F46720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbeICV1k (ORCPT
+        id S1729744AbeICV1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:27:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39714 "EHLO
+        Mon, 3 Sep 2018 17:27:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39726 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728663AbeICV1j (ORCPT
+        with ESMTP id S1729105AbeICV1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:27:39 -0400
+        Mon, 3 Sep 2018 17:27:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3C6FD06;
-        Mon,  3 Sep 2018 17:06:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14886D02;
+        Mon,  3 Sep 2018 17:06:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 033/107] selftests/ftrace: Add snapshot and tracing_on test case
-Date:   Mon,  3 Sep 2018 18:55:57 +0200
-Message-Id: <20180903165638.885613025@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 060/107] ext4: check for NUL characters in extended attributes name
+Date:   Mon,  3 Sep 2018 18:56:24 +0200
+Message-Id: <20180903165640.216961859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -55,60 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 82f4f3e69c5c29bce940dd87a2c0f16c51d48d17 ]
+commit 7d95178c77014dbd8dce36ee40bbbc5e6c121ff5 upstream.
 
-Add a testcase for checking snapshot and tracing_on
-relationship. This ensures that the snapshotting doesn't
-affect current tracing on/off settings.
+Extended attribute names are defined to be NUL-terminated, so the name
+must not contain a NUL character.  This is important because there are
+places when remove extended attribute, the code uses strlen to
+determine the length of the entry.  That should probably be fixed at
+some point, but code is currently really messy, so the simplest fix
+for now is to simply validate that the extended attributes are sane.
 
-Link: http://lkml.kernel.org/r/153149932412.11274.15289227592627901488.stgit@devbox
+https://bugzilla.kernel.org/show_bug.cgi?id=200401
 
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc |   28 ++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
-@@ -0,0 +1,28 @@
-+#!/bin/sh
-+# description: Snapshot and tracing setting
-+# flags: instance
-+
-+[ ! -f snapshot ] && exit_unsupported
-+
-+echo "Set tracing off"
-+echo 0 > tracing_on
-+
-+echo "Allocate and take a snapshot"
-+echo 1 > snapshot
-+
-+# Since trace buffer is empty, snapshot is also empty, but allocated
-+grep -q "Snapshot is allocated" snapshot
-+
-+echo "Ensure keep tracing off"
-+test `cat tracing_on` -eq 0
-+
-+echo "Set tracing on"
-+echo 1 > tracing_on
-+
-+echo "Take a snapshot again"
-+echo 1 > snapshot
-+
-+echo "Ensure keep tracing on"
-+test `cat tracing_on` -eq 1
-+
-+exit 0
+---
+ fs/ext4/xattr.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -184,6 +184,8 @@ ext4_xattr_check_names(struct ext4_xattr
+ 		struct ext4_xattr_entry *next = EXT4_XATTR_NEXT(e);
+ 		if ((void *)next >= end)
+ 			return -EFSCORRUPTED;
++		if (strnlen(e->e_name, e->e_name_len) != e->e_name_len)
++			return -EFSCORRUPTED;
+ 		e = next;
+ 	}
+ 
 
 
