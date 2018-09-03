@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE68BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C95C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A303220867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A303220867
+	by mail.kernel.org (Postfix) with ESMTP id 195F820867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195F820867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbeICVXE (ORCPT
+        id S1728869AbeICVXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:23:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38814 "EHLO
+        Mon, 3 Sep 2018 17:23:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38818 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbeICVXE (ORCPT
+        with ESMTP id S1727820AbeICVXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:23:04 -0400
+        Mon, 3 Sep 2018 17:23:07 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74D3ECFB;
-        Mon,  3 Sep 2018 17:02:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7EBABCFC;
+        Mon,  3 Sep 2018 17:02:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: [PATCH 4.4 70/80] x86/spectre: Add missing family 6 check to microcode check
-Date:   Mon,  3 Sep 2018 18:49:48 +0200
-Message-Id: <20180903164936.944821781@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 71/80] s390: fix br_r1_trampoline for machines without exrl
+Date:   Mon,  3 Sep 2018 18:49:49 +0200
+Message-Id: <20180903164936.982385679@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -50,39 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit 1ab534e85c93945f7862378d8c8adcf408205b19 upstream.
+commit 26f843848bae973817b3587780ce6b7b0200d3e4 upstream.
 
-The check for Spectre microcodes does not check for family 6, only the
-model numbers.
+For machines without the exrl instruction the BFP jit generates
+code that uses an "br %r1" instruction located in the lowcore page.
+Unfortunately there is a cut & paste error that puts an additional
+"larl %r1,.+14" instruction in the code that clobbers the branch
+target address in %r1. Remove the larl instruction.
 
-Add a family 6 check to avoid ambiguity with other families.
-
-Fixes: a5b296636453 ("x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes")
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180824170351.34874-2-andi@firstfloor.org
+Cc: <stable@vger.kernel.org> # v4.17+
+Fixes: de5cb6eb51 ("s390: use expoline thunks in the BPF JIT")
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/net/bpf_jit_comp.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -74,6 +74,9 @@ static bool bad_spectre_microcode(struct
- 	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
- 		return false;
- 
-+	if (c->x86 != 6)
-+		return false;
-+
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_mask == spectre_bad_microcodes[i].stepping)
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -522,8 +522,6 @@ static void bpf_jit_epilogue(struct bpf_
+ 			/* br %r1 */
+ 			_EMIT2(0x07f1);
+ 		} else {
+-			/* larl %r1,.+14 */
+-			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
+ 			/* ex 0,S390_lowcore.br_r1_tampoline */
+ 			EMIT4_DISP(0x44000000, REG_0, REG_0,
+ 				   offsetof(struct _lowcore, br_r1_trampoline));
 
 
