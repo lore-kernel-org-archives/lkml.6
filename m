@@ -2,189 +2,115 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DCFC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89897C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF672077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:11:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF672077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 227772077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 227772077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbeICVZA (ORCPT
+        id S1729492AbeICVeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59224 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728915AbeICVZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1507618A;
-        Mon,  3 Sep 2018 10:04:00 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D989B3F5BC;
-        Mon,  3 Sep 2018 10:03:59 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 99D4C1AE3046; Mon,  3 Sep 2018 18:04:13 +0100 (BST)
-Date:   Mon, 3 Sep 2018 18:04:13 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-Message-ID: <20180903170412.GL6954@arm.com>
-References: <20180831091641.GA3634@andrea>
- <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
- <20180831160640.GG30626@arm.com>
- <20180831182845.GA4673@andrea>
- <20180903090153.GA4560@andrea>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903090153.GA4560@andrea>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 3 Sep 2018 17:34:07 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37897 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728548AbeICVeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:34:06 -0400
+Received: from localhost.localdomain ([37.4.249.97]) by
+ mrelayeu.kundenserver.de (mreue105 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 0MAeJn-1g3hly2Drn-00BsBV; Mon, 03 Sep 2018 19:12:57 +0200
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Woojung Huh <woojung.huh@microchip.com>
+Cc:     Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 4/4 next] net: lan78xx: Make declaration style consistent
+Date:   Mon,  3 Sep 2018 19:12:39 +0200
+Message-Id: <1535994759-8938-5-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535994759-8938-1-git-send-email-stefan.wahren@i2se.com>
+References: <1535994759-8938-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:pSquybRud8rBJ81+pXBAwOSU+4FRWjdY30Kx4NhF4jHUTSEAjef
+ JlReTztAtOMTG3JLFzPc/o9OTA3jQoWk7EaFbDZafPB56HSNiYXV9wBfG3+hHyPps2Lq2Ix
+ 6z3Rb6A1wdbEbVKZkvV1Dk6KTGZ65/0dRR4vYFHwrg0aeBAqoWFl0KqlCoF1AvKxOt/F0sw
+ r35eEsecIS34muzf0nETQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PpMvpzFP5v8=:WGXL5zKZdNriZGUFU49GYn
+ M4WY7BolOO53SV4OCez+jmY2XlIcj4wM6ee7UV/HKZ7q6QTIwJ79DBuIx4l5Gilu5xhiLWgm/
+ niwcZfeaDunobP/EKI91AAKZ7rPAU3SPVZI6mTgMlBtFT1E8RmCWh4gpNFr2oqZ9R7tEdx6fU
+ XiagKuYoFJ5j0P9zrqcTF0aUgpL7qvl1BHw0r0Xh19Rqxhoujlmpk5Dj5t8zAUqYL4jaLkXv+
+ f8P5EMZkun+YJWwXy9mVJ/iAsmhIMUTf5O89Go/HeudL3jYbv1xeNmkLKinbQjSNr7F137uC7
+ dK6oDkcmU5N9K98TCsWZ2bOkZs8ggHuYce38zzRBRN1bfFzPmbsPn+nhHNaMVo+hgM34q4WUR
+ UZsIOrmR2qvPuTq6Ytnwbb0gIBATTBu9VneMPX4NWeFFXOtbnW/yBhTPpESlBNkDBvMBVj8Xk
+ lKOy64YcmjTg5W8VFWPJbcT3LsPmWC30Ivucuuix+No3aE+rAelD7Q1Ip5TiP8rl+hZKT1d5Y
+ bVl6kvf0v78uEMCrCjipnxfxbOZz72IyO/qGda51jZGzl5CCmyzV5oC8aTVcGvuVTS6/4GiP5
+ szxANS2642nVnBHCI+zGw6bjfAprJhh9DYr+lkh/gcT0KaStouDU7osJ2trPqwM6JkwubA3xs
+ SzY7YR4mMUEwS6ulMX6B3zF/3tfhBi6smczg/UOWP878CZdybNz7e4zLph/7HR3TaCM8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrea,
+This patch makes some declaration more consistent.
 
-On Mon, Sep 03, 2018 at 11:01:53AM +0200, Andrea Parri wrote:
-> On Fri, Aug 31, 2018 at 08:28:46PM +0200, Andrea Parri wrote:
-> > > > Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
-> > > > should be correct on all existing architectures.  And Paul has invited 
-> > > > a patch to modify the LKMM accordingly.  If you feel that such a change 
-> > > > would be a useful enhancement to the LKMM's applicability, please write 
-> > > > it.
-> > > 
-> > > Yes, please! That would be the "RmW" discussion which Andrea partially
-> > > quoted earlier on, so getting that going independently from this patch
-> > > sounds like a great idea to me.
-> > 
-> > That was indeed one of the proposal we discussed.  As you recalled, that
-> > proposal only covered RmWs load-acquire (and ordinary store-release); in
-> > particular, I realized that comments such as:
-> > 
-> >   "The atomic_cond_read_acquire() call above has provided the
-> >    necessary acquire semantics required for locking."
-> > 
-> >    [from kernel/locking/qspinlock.c]
-> > 
-> > (for example)  would still _not have "generic validity" _if we added the
-> > above po-unlock-rf-lock-po term... (which, again, makes me somehow uncon-
-> > fortable);  Would to have _all_ the acquire be admissible for you?
-> 
-> In Cat speak,
-> 
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index 59b5cbe6b6240..fd9c0831adf0a 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -38,7 +38,7 @@ let strong-fence = mb | gp
->  (* Release Acquire *)
->  let acq-po = [Acquire] ; po ; [M]
->  let po-rel = [M] ; po ; [Release]
-> -let rfi-rel-acq = [Release] ; rfi ; [Acquire]
-> +let po-rel-rf-acq-po = po ; [Release] ; rf ; [Acquire] ; po
->  
->  (**********************************)
->  (* Fundamental coherence ordering *)
-> @@ -60,13 +60,13 @@ let dep = addr | data
->  let rwdep = (dep | ctrl) ; [W]
->  let overwrite = co | fr
->  let to-w = rwdep | (overwrite & int)
-> -let to-r = addr | (dep ; rfi) | rfi-rel-acq
-> +let to-r = addr | (dep ; rfi)
->  let fence = strong-fence | wmb | po-rel | rmb | acq-po
-> -let ppo = to-r | to-w | fence
-> +let ppo = to-r | to-w | fence | (po-rel-rf-acq-po & int)
->  
->  (* Propagation: Ordering from release operations and strong fences. *)
->  let A-cumul(r) = rfe? ; r
-> -let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
-> +let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-rel-rf-acq-po
->  let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
->  
->  (*
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/net/usb/lan78xx.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Isn't the job of the memory model to formalise the guarantees provided by
-the implementation? Your diff appears to do exactly the opposite.
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index a6e88a4..143091a 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1013,7 +1013,7 @@ static int lan78xx_dataport_write(struct lan78xx_net *dev, u32 ram_select,
+ static void lan78xx_set_addr_filter(struct lan78xx_priv *pdata,
+ 				    int index, u8 addr[ETH_ALEN])
+ {
+-	u32	temp;
++	u32 temp;
+ 
+ 	if ((pdata) && (index > 0) && (index < NUM_OF_MAF)) {
+ 		temp = addr[3];
+@@ -2688,7 +2688,7 @@ static void lan78xx_terminate_urbs(struct lan78xx_net *dev)
+ 
+ static int lan78xx_stop(struct net_device *net)
+ {
+-	struct lan78xx_net		*dev = netdev_priv(net);
++	struct lan78xx_net *dev = netdev_priv(net);
+ 
+ 	if (timer_pending(&dev->stat_monitor))
+ 		del_timer_sync(&dev->stat_monitor);
+@@ -3071,7 +3071,7 @@ static void lan78xx_rx_vlan_offload(struct lan78xx_net *dev,
+ 
+ static void lan78xx_skb_return(struct lan78xx_net *dev, struct sk_buff *skb)
+ {
+-	int		status;
++	int status;
+ 
+ 	if (test_bit(EVENT_RX_PAUSED, &dev->flags)) {
+ 		skb_queue_tail(&dev->rxq_pause, skb);
+@@ -3631,10 +3631,10 @@ static void intr_complete(struct urb *urb)
+ 
+ static void lan78xx_disconnect(struct usb_interface *intf)
+ {
+-	struct lan78xx_net		*dev;
+-	struct usb_device		*udev;
+-	struct net_device		*net;
+-	struct phy_device		*phydev;
++	struct lan78xx_net *dev;
++	struct usb_device *udev;
++	struct net_device *net;
++	struct phy_device *phydev;
+ 
+ 	dev = usb_get_intfdata(intf);
+ 	usb_set_intfdata(intf, NULL);
+-- 
+2.7.4
 
-> I take this opportunity to summarize my viewpoint on these matters:
-> 
-> Someone would have to write the commit message for the above diff ...
-> that is, to describe -why- we should go RCtso (and update the documen-
-> tation accordingly); by now, the only argument for this appears to be:
-> "(most) people expect strong ordering" _and they will be "lazy enough"
-> to not check their expectations by using the LKMM tool (paraphrasing
-> from [1]); IAC, Linux "might work" better if we add this ordering to
-> the LKMM.  Agreeing on such an approach would mean agreeing that this
-> argument "wins" over:
-> 
->   "We want new architectures to implement acquire/release efficiently,
->    and it's not unlikely that they will have acquire loads that are
->    similar in semantics to LDAPR." [2]
-> 
->   "RISC-V probably would have been RCpc [...]  it takes extra fences
->    to go from RCpc to either "RCtso" or RCsc." [3]
-> 
-> (or similar instances) since, of course, there is no such thing as a
-> "free strong ordering"; and I'm not only talking about "efficiency",
-> I'm also thinking at the fact that someone will have to maintain that
-> ordering across all the architectures and in the LKMM.
-> 
-> If, OTOH, we agree that the above "win"/assumption is valid only for
-> locks or, in other/better words, if we agree that we should maintain
-> _two_ distinct release-acquire orderings (a first one for unlock-lock
-> sequences and a second one for ordinary/atomic release-acquire, say,
-> as proposed in the patch under RFC), I ask that we audit and modify
-> the generic code accordingly/as suggested in other posts _before_ we
-> upstream the changes for the LKMM: we should identify those places
-> where (the newly introduced) _gap_ between unlock-lock and the other
-> release-acquire is not admissible and fix those places (notice that
-> this entails, in part., agreeing on what/where the generic code is).
-
-This is completely unrealistic. Have we already audited the kernel for the
-current definition of the memory model? Should we revert it until we have?
-
-Of course not.
-
-Right now, LKMM offers stronger guarantees that can portably be relied upon
-in the codebase. Alan's patch fixes that, and holding back a fix for a known
-issue runs counter to kernel development best practices.
-
-> Finally, if we don't agree with the above assumption at all (that is,
-> no matter if we are considering unlock-lock or other release-acquire
-> sequences), then we should go RCpc [4].
-> 
-> I described three different approaches (which are NOT "independent",
-> clearly; let us find an agreement...); even though some of them look
-> insane to me, I'm currently open to all of them: thoughts?
-
-I'm very confused by your statements hypothesising about where our opinions
-may lie. We've discussed this to death, and it's clear that everybody who's
-commented apart from you is happy to weaken acquire/release but leave
-locking alone. Alan's written a patch to that effect which, again, only you
-seem to have a problem with.
-
-The problem isn't about "if we agree foo" or "if we don't agree bar", the
-problem is that you're the only person raising an objection, so please can
-you provide a constructive argument against Alan's patch, rather than a
-confusing monologue of "what-if"s and unreasonable demands of anonymous
-contributors? We don't have to solve all of our problems before we can
-make any progress.
-
-Thanks,
-
-Will
