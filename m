@@ -2,192 +2,117 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6705CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CD9C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042AF20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042AF20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 94E8920868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:42:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5aoeOv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E8920868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeICTBW (ORCPT
+        id S1727352AbeICTCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:01:22 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:52981 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeICTBW (ORCPT
+        Mon, 3 Sep 2018 15:02:34 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:44299 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbeICTCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:01:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id E4A3E182E3;
-        Mon,  3 Sep 2018 16:40:51 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id lrx-OVbL88V7; Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 7F4111831E;
-        Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 62D421A05E;
-        Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5767B1A05C;
-        Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder02.se.axis.com (Postfix) with ESMTP;
-        Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id 4B49725C2;
-        Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 47AE38096C; Mon,  3 Sep 2018 16:40:48 +0200 (CEST)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     catalin.marinas@arm.com, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH v3] kmemleak: add module param to print warnings to dmesg
-Date:   Mon,  3 Sep 2018 16:40:46 +0200
-Message-Id: <20180903144046.21023-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Mon, 3 Sep 2018 15:02:33 -0400
+Received: by mail-qt0-f181.google.com with SMTP id k38-v6so780625qtk.11;
+        Mon, 03 Sep 2018 07:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vIJpQ2/7/Bxl3yv8ey/sS46SNy0nhZkBUnQ7/EnnyAA=;
+        b=l5aoeOv7hVZ428cimtP4wyzFSPKN5WmYQ25s8FIkfd4xX+HA9T6DcDMOM96zoxbvHp
+         Xbs6Vuy9UAe2SUCzac1VeoCFg67sxbvQ1PEmYGeCQdrXaha3wyXrCrbhcP2MgCLyLc0P
+         9JwmaIe2PR0BpfNoBL5AQ25Qij7qQlicBIcPlRC1cMf0DJkZGCJne5C8SgggISDr4uH6
+         DdOmZSOqjGOesqb/QrqnIJqhHTgD19rw8VsSJdYzhtjBazwwwSbcC9H16x9wxEzcMT5J
+         ludlHePjCRHVJa1kpsxx2PfLzjecX2lxe8C6gt364F8lhWBV4NX3NYGvoRBvTrWuAi6O
+         OSAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vIJpQ2/7/Bxl3yv8ey/sS46SNy0nhZkBUnQ7/EnnyAA=;
+        b=JZgoilOO/pa27ciIEKRpk0+2Nr3qhs0ak6BeyYdNNy1FrrZ4pxlh87B1YLnkq5DLz+
+         DlJUzTWccWzhm6pYptt+Q9HOT0FZQ0IeR+euC77UKyukjecRo7hbT75k4FnbYxV6+MYV
+         21RGUxnguuhqa2jKxWnXKQd9gjEgf5JuDpLqanpAt5zvDIA1aW7+/gTYVElBCiKXfs/1
+         xcpe5Kj8zj2MotWPX9ukZtJVV7R4D4LzaM4lcPpEx+7BwLAzV0iQc1tqltLySupMQRSF
+         VUnPrSfHzINBS++7lyWglIqQXHVzYr5KrmxH7EvaXjzOp8CuhWeDi4YAif+AplwseQ87
+         uT8Q==
+X-Gm-Message-State: APzg51AWA9zXeU7tMlmVjZWb5xE1bPSJPgdR2xcjzrwsgo2AGbYEj962
+        YyvAP+riBbsN6vTtS1i9iq03klaMt2DCPathC64=
+X-Google-Smtp-Source: ANB0VdYWEj44kv/QEZozJCQ8pK5swwVTNCfjgsbD93SV2F8jinziA60FG/xxl81yOKVjliCtAMybnw8WdVH4UgMN05g=
+X-Received: by 2002:a0c:e985:: with SMTP id z5-v6mr25946319qvn.136.1535985724616;
+ Mon, 03 Sep 2018 07:42:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 3 Sep 2018 17:41:53 +0300
+Message-ID: <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
+Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
+ EPC pages
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        serge.ayoun@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, kmemleak only prints the number of suspected leaks to dmesg
-but requires the user to read a debugfs file to get the actual stack
-traces of the objects' allocation points.  Add a module option to print
-the full object information to dmesg too.  It can be enabled with
-kmemleak.verbose=1 on the kernel command line, or "echo 1 >
-/sys/module/kmemleak/parameters/verbose":
+On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
+> divided into multiple banks (1-N) of which addresses and sizes can be
+> enumerated with CPUID by the OS.
+>
+> On NUMA systems a node can have at most bank. A bank can be at most part of
+> two nodes. SGX supports both nodes with a single memory controller and also
+> sub-cluster nodes with severals memory controllers on a single die.
 
-This allows easier integration of kmemleak into test systems:  We have
-automated test infrastructure to test our Linux systems.  With this
-option, running our tests with kmemleak is as simple as enabling
-kmemleak and passing this command line option; the test infrastructure
-knows how to save kernel logs, which will now include kmemleak reports.
-Without this option, the test infrastructure needs to be specifically
-taught to read out the kmemleak debugfs file.  Removing this need for
-special handling makes kmemleak more similar to other kernel debug
-options (slab debugging, debug objects, etc).
+> -#include <asm/sgx.h>
+> -#include <asm/sgx_pr.h>
+>  #include <linux/freezer.h>
+>  #include <linux/highmem.h>
+>  #include <linux/kthread.h>
+> +#include <linux/pagemap.h>
+>  #include <linux/ratelimit.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/shmem_fs.h>
+>  #include <linux/slab.h>
+> +#include <asm/sgx.h>
+> +#include <asm/sgx_pr.h>
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
-v3: Expand use case description.  Replace config option with module parameter.
+Squash issues?
 
- mm/kmemleak.c | 42 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 35 insertions(+), 7 deletions(-)
+> +       va = ioremap_cache(addr, size);
+> +       if (!va)
+> +               return -ENOMEM;
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 9a085d525bbc..c91d43738596 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -86,6 +86,7 @@
- #include <linux/seq_file.h>
- #include <linux/cpumask.h>
- #include <linux/spinlock.h>
-+#include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/rcupdate.h>
- #include <linux/stacktrace.h>
-@@ -181,6 +182,7 @@ struct kmemleak_object {
- /* flag set to not scan the object */
- #define OBJECT_NO_SCAN		(1 << 2)
- 
-+#define HEX_PREFIX		"    "
- /* number of bytes to print per line; must be 16 or 32 */
- #define HEX_ROW_SIZE		16
- /* number of bytes to print at a time (1, 2, 4, 8) */
-@@ -235,6 +237,9 @@ static int kmemleak_skip_disable;
- /* If there are leaks that can be reported */
- static bool kmemleak_found_leaks;
- 
-+static bool kmemleak_verbose;
-+module_param_named(verbose, kmemleak_verbose, bool, 0600);
-+
- /*
-  * Early object allocation/freeing logging. Kmemleak is initialized after the
-  * kernel allocator. However, both the kernel allocator and kmemleak may
-@@ -299,6 +304,25 @@ static void kmemleak_disable(void);
- 	kmemleak_disable();		\
- } while (0)
- 
-+#define warn_or_seq_printf(seq, fmt, ...)	do {	\
-+	if (seq)					\
-+		seq_printf(seq, fmt, ##__VA_ARGS__);	\
-+	else						\
-+		pr_warn(fmt, ##__VA_ARGS__);		\
-+} while (0)
-+
-+static void warn_or_seq_hex_dump(struct seq_file *seq, int prefix_type,
-+				 int rowsize, int groupsize, const void *buf,
-+				 size_t len, bool ascii)
-+{
-+	if (seq)
-+		seq_hex_dump(seq, HEX_PREFIX, prefix_type, rowsize, groupsize,
-+			     buf, len, ascii);
-+	else
-+		print_hex_dump(KERN_WARNING, pr_fmt(HEX_PREFIX), prefix_type,
-+			       rowsize, groupsize, buf, len, ascii);
-+}
-+
- /*
-  * Printing of the objects hex dump to the seq file. The number of lines to be
-  * printed is limited to HEX_MAX_LINES to prevent seq file spamming. The
-@@ -314,10 +338,10 @@ static void hex_dump_object(struct seq_file *seq,
- 	/* limit the number of lines to HEX_MAX_LINES */
- 	len = min_t(size_t, object->size, HEX_MAX_LINES * HEX_ROW_SIZE);
- 
--	seq_printf(seq, "  hex dump (first %zu bytes):\n", len);
-+	warn_or_seq_printf(seq, "  hex dump (first %zu bytes):\n", len);
- 	kasan_disable_current();
--	seq_hex_dump(seq, "    ", DUMP_PREFIX_NONE, HEX_ROW_SIZE,
--		     HEX_GROUP_SIZE, ptr, len, HEX_ASCII);
-+	warn_or_seq_hex_dump(seq, DUMP_PREFIX_NONE, HEX_ROW_SIZE,
-+			     HEX_GROUP_SIZE, ptr, len, HEX_ASCII);
- 	kasan_enable_current();
- }
- 
-@@ -365,17 +389,17 @@ static void print_unreferenced(struct seq_file *seq,
- 	int i;
- 	unsigned int msecs_age = jiffies_to_msecs(jiffies - object->jiffies);
- 
--	seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
-+	warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
- 		   object->pointer, object->size);
--	seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu (age %d.%03ds)\n",
-+	warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu (age %d.%03ds)\n",
- 		   object->comm, object->pid, object->jiffies,
- 		   msecs_age / 1000, msecs_age % 1000);
- 	hex_dump_object(seq, object);
--	seq_printf(seq, "  backtrace:\n");
-+	warn_or_seq_printf(seq, "  backtrace:\n");
- 
- 	for (i = 0; i < object->trace_len; i++) {
- 		void *ptr = (void *)object->trace[i];
--		seq_printf(seq, "    [<%p>] %pS\n", ptr, ptr);
-+		warn_or_seq_printf(seq, "    [<%p>] %pS\n", ptr, ptr);
- 	}
- }
- 
-@@ -1598,6 +1622,10 @@ static void kmemleak_scan(void)
- 		if (unreferenced_object(object) &&
- 		    !(object->flags & OBJECT_REPORTED)) {
- 			object->flags |= OBJECT_REPORTED;
-+
-+			if (kmemleak_verbose)
-+				print_unreferenced(NULL, object);
-+
- 			new_leaks++;
- 		}
- 		spin_unlock_irqrestore(&object->lock, flags);
+I'm not sure this is a right API. Do we operate with memory? Does it
+have I/O side effects?
+If no, memremap() would be better to use.
+
 -- 
-2.11.0
-
+With Best Regards,
+Andy Shevchenko
