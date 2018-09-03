@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7BCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F2AC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705132077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705132077C
+	by mail.kernel.org (Postfix) with ESMTP id E99282077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99282077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730668AbeICVqi (ORCPT
+        id S1730682AbeICVqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45754 "EHLO
+        Mon, 3 Sep 2018 17:46:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45764 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbeICVqi (ORCPT
+        with ESMTP id S1728380AbeICVql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:38 -0400
+        Mon, 3 Sep 2018 17:46:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 957C1D24;
-        Mon,  3 Sep 2018 17:25:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A66C7D36;
+        Mon,  3 Sep 2018 17:25:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 120/165] fuse: fix double request_end()
-Date:   Mon,  3 Sep 2018 18:56:46 +0200
-Message-Id: <20180903165701.555598735@linuxfoundation.org>
+Subject: [PATCH 4.14 121/165] fuse: fix unlocked access to processing queue
+Date:   Mon,  3 Sep 2018 18:56:47 +0200
+Message-Id: <20180903165701.614959153@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,57 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 87114373ea507895a62afb10d2910bd9adac35a8 upstream.
+commit 45ff350bbd9d0f0977ff270a0d427c71520c0c37 upstream.
 
-Refcounting of request is broken when fuse_abort_conn() is called and
-request is on the fpq->io list:
+fuse_dev_release() assumes that it's the only one referencing the
+fpq->processing list, but that's not true, since fuse_abort_conn() can be
+doing the same without any serialization between the two.
 
- - ref is taken too late
- - then it is not dropped
-
-Fixes: 0d8e84b0432b ("fuse: simplify request abort")
+Fixes: c3696046beb3 ("fuse: separate pqueue for clones")
 Cc: <stable@vger.kernel.org> # v4.2
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/fuse/dev.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -364,7 +364,7 @@ static void request_end(struct fuse_conn
- 	struct fuse_iqueue *fiq = &fc->iq;
+@@ -2148,9 +2148,15 @@ int fuse_dev_release(struct inode *inode
+ 	if (fud) {
+ 		struct fuse_conn *fc = fud->fc;
+ 		struct fuse_pqueue *fpq = &fud->pq;
++		LIST_HEAD(to_end);
  
- 	if (test_and_set_bit(FR_FINISHED, &req->flags))
--		return;
-+		goto out_put_req;
- 
- 	spin_lock(&fiq->waitq.lock);
- 	list_del_init(&req->intr_entry);
-@@ -393,6 +393,7 @@ static void request_end(struct fuse_conn
- 	wake_up(&req->waitq);
- 	if (req->end)
- 		req->end(fc, req);
-+out_put_req:
- 	fuse_put_request(fc, req);
- }
- 
-@@ -2103,6 +2104,7 @@ void fuse_abort_conn(struct fuse_conn *f
- 				set_bit(FR_ABORTED, &req->flags);
- 				if (!test_bit(FR_LOCKED, &req->flags)) {
- 					set_bit(FR_PRIVATE, &req->flags);
-+					__fuse_get_request(req);
- 					list_move(&req->list, &to_end1);
- 				}
- 				spin_unlock(&req->waitq.lock);
-@@ -2129,7 +2131,6 @@ void fuse_abort_conn(struct fuse_conn *f
- 
- 		while (!list_empty(&to_end1)) {
- 			req = list_first_entry(&to_end1, struct fuse_req, list);
--			__fuse_get_request(req);
- 			list_del_init(&req->list);
- 			request_end(fc, req);
- 		}
++		spin_lock(&fpq->lock);
+ 		WARN_ON(!list_empty(&fpq->io));
+-		end_requests(fc, &fpq->processing);
++		list_splice_init(&fpq->processing, &to_end);
++		spin_unlock(&fpq->lock);
++
++		end_requests(fc, &to_end);
++
+ 		/* Are we the last open device? */
+ 		if (atomic_dec_and_test(&fc->dev_count)) {
+ 			WARN_ON(fc->iq.fasync != NULL);
 
 
