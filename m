@@ -6,45 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E894C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B30B8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C13420779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C13420779
+	by mail.kernel.org (Postfix) with ESMTP id 7512D20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7512D20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeICVLI (ORCPT
+        id S1727745AbeICVLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:11:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36054 "EHLO
+        Mon, 3 Sep 2018 17:11:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbeICVLI (ORCPT
+        with ESMTP id S1727611AbeICVLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:11:08 -0400
+        Mon, 3 Sep 2018 17:11:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2487CCBF;
-        Mon,  3 Sep 2018 16:50:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60C27CF1;
+        Mon,  3 Sep 2018 16:50:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Puthukattukaran <james.puthukattukaran@oracle.com>,
-        Ethan Zhao <ethan.zhao@oracle.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de,
-        ethan.kernel@gmail.com, keescook@chromium.org, mcgrof@kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Steve Muckle <smuckle@google.com>
-Subject: [PATCH 3.18 01/56] sched/sysctl: Check user input value of sysctl_sched_time_avg
-Date:   Mon,  3 Sep 2018 18:48:51 +0200
-Message-Id: <20180903164924.147484297@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 10/56] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
+Date:   Mon,  3 Sep 2018 18:49:00 +0200
+Message-Id: <20180903164924.602670202@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,85 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Zhao <ethan.zhao@oracle.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit 5ccba44ba118a5000cccc50076b0344632459779 upstream.
+[ Upstream commit 0602088b10a7c0b4e044a810678ef93d7cc5bf48 ]
 
-System will hang if user set sysctl_sched_time_avg to 0:
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-  [root@XXX ~]# sysctl kernel.sched_time_avg_ms=0
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 839:
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96:
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93:
+		spin_lock in r8a66597_usb_disconnect
 
-  Stack traceback for pid 0
-  0xffff883f6406c600 0 0 1 3 R 0xffff883f6406cf50 *swapper/3
-  ffff883f7ccc3ae8 0000000000000018 ffffffff810c4dd0 0000000000000000
-  0000000000017800 ffff883f7ccc3d78 0000000000000003 ffff883f7ccc3bf8
-  ffffffff810c4fc9 ffff883f7ccc3c08 00000000810c5043 ffff883f7ccc3c08
-  Call Trace:
-  <IRQ> [<ffffffff810c4dd0>] ? update_group_capacity+0x110/0x200
-  [<ffffffff810c4fc9>] ? update_sd_lb_stats+0x109/0x600
-  [<ffffffff810c5507>] ? find_busiest_group+0x47/0x530
-  [<ffffffff810c5b84>] ? load_balance+0x194/0x900
-  [<ffffffff810ad5ca>] ? update_rq_clock.part.83+0x1a/0xe0
-  [<ffffffff810c6d42>] ? rebalance_domains+0x152/0x290
-  [<ffffffff810c6f5c>] ? run_rebalance_domains+0xdc/0x1d0
-  [<ffffffff8108a75b>] ? __do_softirq+0xfb/0x320
-  [<ffffffff8108ac85>] ? irq_exit+0x125/0x130
-  [<ffffffff810b3a17>] ? scheduler_ipi+0x97/0x160
-  [<ffffffff81052709>] ? smp_reschedule_interrupt+0x29/0x30
-  [<ffffffff8173a1be>] ? reschedule_interrupt+0x6e/0x80
-   <EOI> [<ffffffff815bc83c>] ? cpuidle_enter_state+0xcc/0x230
-  [<ffffffff815bc80c>] ? cpuidle_enter_state+0x9c/0x230
-  [<ffffffff815bc9d7>] ? cpuidle_enter+0x17/0x20
-  [<ffffffff810cd6dc>] ? cpu_startup_entry+0x38c/0x420
-  [<ffffffff81053373>] ? start_secondary+0x173/0x1e0
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 835:
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96:
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93:
+		spin_lock in r8a66597_usb_disconnect
 
-Because divide-by-zero error happens in function:
+To fix these bugs, msleep() is replaced with mdelay().
 
-update_group_capacity()
-  update_cpu_capacity()
-    scale_rt_capacity()
-     {
-          ...
-          total = sched_avg_period() + delta;
-          used = div_u64(avg, total);
-          ...
-     }
+This bug is found by my static analysis tool (DSAC-2) and checked by
+my code review.
 
-To fix this issue, check user input value of sysctl_sched_time_avg, keep
-it unchanged when hitting invalid input, and set the minimum limit of
-sysctl_sched_time_avg to 1 ms.
-
-Reported-by: James Puthukattukaran <james.puthukattukaran@oracle.com>
-Signed-off-by: Ethan Zhao <ethan.zhao@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: efault@gmx.de
-Cc: ethan.kernel@gmail.com
-Cc: keescook@chromium.org
-Cc: mcgrof@kernel.org
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/1504504774-18253-1-git-send-email-ethan.zhao@oracle.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Steve Muckle <smuckle@google.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sysctl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/udc/r8a66597-udc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -341,7 +341,8 @@ static struct ctl_table kern_table[] = {
- 		.data		= &sysctl_sched_time_avg,
- 		.maxlen		= sizeof(unsigned int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &one,
- 	},
- 	{
- 		.procname	= "sched_shares_window_ns",
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -835,11 +835,11 @@ static void init_controller(struct r8a66
+ 
+ 		r8a66597_bset(r8a66597, XCKE, SYSCFG0);
+ 
+-		msleep(3);
++		mdelay(3);
+ 
+ 		r8a66597_bset(r8a66597, PLLC, SYSCFG0);
+ 
+-		msleep(1);
++		mdelay(1);
+ 
+ 		r8a66597_bset(r8a66597, SCKE, SYSCFG0);
+ 
 
 
