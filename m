@@ -2,243 +2,100 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5562CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C753BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0C020658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0C020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E4FF20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:03:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4FF20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeICNVR (ORCPT
+        id S1727492AbeICNWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:21:17 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:46636 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeICNVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:21:16 -0400
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.51 with ESMTP; 3 Sep 2018 18:02:01 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-Received: from unknown (HELO ?10.159.80.93?) (10.159.80.93)
-        by 156.147.1.121 with ESMTP; 3 Sep 2018 18:02:00 +0900
-X-Original-SENDERIP: 10.159.80.93
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-Subject: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp
- functions
-To:     aryabinin@virtuozzo.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, glider@google.com, dvyukov@google.com
-Cc:     Jason@zx2c4.com, robh@kernel.org, ard.biesheuvel@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org
-References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
-From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
-Message-ID: <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
-Date:   Mon, 3 Sep 2018 18:02:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Mon, 3 Sep 2018 09:22:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726212AbeICNWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:22:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 18FC1AF02;
+        Mon,  3 Sep 2018 09:03:33 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 39DD11E3609; Mon,  3 Sep 2018 11:03:32 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 11:03:32 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@gmx.com>
+Cc:     jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org,
+        hubcap@omnibond.com, martin@omnibond.com, devel@lists.orangefs.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        jfs-discussion@lists.sourceforge.net
+Subject: Re: [PATCH v2 1/5] ext2: cache NULL when both default_acl and acl
+ are NULL
+Message-ID: <20180903090332.GE10027@quack2.suse.cz>
+References: <20180831143352.22970-1-cgxu519@gmx.com>
 MIME-Version: 1.0
-In-Reply-To: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831143352.22970-1-cgxu519@gmx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all,
+On Fri 31-08-18 22:33:48, Chengguang Xu wrote:
+> default_acl and acl of newly created inode will be initiated
+> as ACL_NOT_CACHED in vfs function inode_init_always() and later
+> will be updated by calling xxx_init_acl() in specific filesystems.
+> Howerver, when default_acl and acl are NULL then they keep the value
+> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+> in this case.
+> 
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 
-Could anyone review this and provide me appropriate approach ?
-I think str[n]cmp are frequently used functions so I believe very useful 
-w/ arm64 KASAN.
+Thanks! I'll take this patch (with slight changelog update) to my tree.
 
-Best Regards,
-Kyeongdon Kim
+								Honza
 
-
-On 2018-08-23 오후 5:56, Kyeongdon Kim wrote:
-> This patch declares strcmp/strncmp as weak symbols.
-> (2 of them are the most used string operations)
->
-> Original functions declared as weak and
-> strong ones in mm/kasan/kasan.c could replace them.
->
-> Assembly optimized strcmp/strncmp functions cannot detect KASan bug.
-> But, now we can detect them like the call trace below.
->
-> ==================================================================
-> BUG: KASAN: use-after-free in platform_match+0x1c/0x5c at addr 
-> ffffffc0ad313500
-> Read of size 1 by task swapper/0/1
-> CPU: 3 PID: 1 Comm: swapper/0 Tainted: G B 4.9.77+ #1
-> Hardware name: Generic (DT) based system
-> Call trace:
-> dump_backtrace+0x0/0x2e0
-> show_stack+0x14/0x1c
-> dump_stack+0x88/0xb0
-> kasan_object_err+0x24/0x7c
-> kasan_report+0x2f0/0x484
-> check_memory_region+0x20/0x14c
-> strcmp+0x1c/0x5c
-> platform_match+0x40/0xe4
-> __driver_attach+0x40/0x130
-> bus_for_each_dev+0xc4/0xe0
-> driver_attach+0x30/0x3c
-> bus_add_driver+0x2dc/0x328
-> driver_register+0x118/0x160
-> __platform_driver_register+0x7c/0x88
-> alarmtimer_init+0x154/0x1e4
-> do_one_initcall+0x184/0x1a4
-> kernel_init_freeable+0x2ec/0x2f0
-> kernel_init+0x18/0x10c
-> ret_from_fork+0x10/0x50
->
-> In case of xtensa and x86_64 kasan, no need to use this patch now.
->
-> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
 > ---
-> arch/arm64/include/asm/string.h | 5 +++++
-> arch/arm64/kernel/arm64ksyms.c | 2 ++
-> arch/arm64/kernel/image.h | 2 ++
-> arch/arm64/lib/strcmp.S | 3 +++
-> arch/arm64/lib/strncmp.S | 3 +++
-> mm/kasan/kasan.c | 23 +++++++++++++++++++++++
-> 6 files changed, 38 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/string.h 
-> b/arch/arm64/include/asm/string.h
-> index dd95d33..ab60349 100644
-> --- a/arch/arm64/include/asm/string.h
-> +++ b/arch/arm64/include/asm/string.h
-> @@ -24,9 +24,11 @@ extern char *strchr(const char *, int c);
->
-> #define __HAVE_ARCH_STRCMP
-> extern int strcmp(const char *, const char *);
-> +extern int __strcmp(const char *, const char *);
->
-> #define __HAVE_ARCH_STRNCMP
-> extern int strncmp(const char *, const char *, __kernel_size_t);
-> +extern int __strncmp(const char *, const char *, __kernel_size_t);
->
-> #define __HAVE_ARCH_STRLEN
-> extern __kernel_size_t strlen(const char *);
-> @@ -68,6 +70,9 @@ void memcpy_flushcache(void *dst, const void *src, 
-> size_t cnt);
-> #define memmove(dst, src, len) __memmove(dst, src, len)
-> #define memset(s, c, n) __memset(s, c, n)
->
-> +#define strcmp(cs, ct) __strcmp(cs, ct)
-> +#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
-> +
-> #ifndef __NO_FORTIFY
-> #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
-> #endif
-> diff --git a/arch/arm64/kernel/arm64ksyms.c 
-> b/arch/arm64/kernel/arm64ksyms.c
-> index d894a20..10b1164 100644
-> --- a/arch/arm64/kernel/arm64ksyms.c
-> +++ b/arch/arm64/kernel/arm64ksyms.c
-> @@ -50,6 +50,8 @@ EXPORT_SYMBOL(strcmp);
-> EXPORT_SYMBOL(strncmp);
-> EXPORT_SYMBOL(strlen);
-> EXPORT_SYMBOL(strnlen);
-> +EXPORT_SYMBOL(__strcmp);
-> +EXPORT_SYMBOL(__strncmp);
-> EXPORT_SYMBOL(memset);
-> EXPORT_SYMBOL(memcpy);
-> EXPORT_SYMBOL(memmove);
-> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
-> index a820ed0..5ef7a57 100644
-> --- a/arch/arm64/kernel/image.h
-> +++ b/arch/arm64/kernel/image.h
-> @@ -110,6 +110,8 @@ __efistub___flush_dcache_area = 
-> KALLSYMS_HIDE(__pi___flush_dcache_area);
-> __efistub___memcpy = KALLSYMS_HIDE(__pi_memcpy);
-> __efistub___memmove = KALLSYMS_HIDE(__pi_memmove);
-> __efistub___memset = KALLSYMS_HIDE(__pi_memset);
-> +__efistub___strcmp = KALLSYMS_HIDE(__pi_strcmp);
-> +__efistub___strncmp = KALLSYMS_HIDE(__pi_strncmp);
-> #endif
->
-> __efistub__text = KALLSYMS_HIDE(_text);
-> diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
-> index 471fe61..0dffef7 100644
-> --- a/arch/arm64/lib/strcmp.S
-> +++ b/arch/arm64/lib/strcmp.S
-> @@ -60,6 +60,8 @@ tmp3 .req x9
-> zeroones .req x10
-> pos .req x11
->
-> +.weak strcmp
-> +ENTRY(__strcmp)
-> ENTRY(strcmp)
-> eor tmp1, src1, src2
-> mov zeroones, #REP8_01
-> @@ -232,3 +234,4 @@ CPU_BE( orr syndrome, diff, has_nul )
-> sub result, data1, data2, lsr #56
-> ret
-> ENDPIPROC(strcmp)
-> +ENDPROC(__strcmp)
-> diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
-> index e267044..b2648c7 100644
-> --- a/arch/arm64/lib/strncmp.S
-> +++ b/arch/arm64/lib/strncmp.S
-> @@ -64,6 +64,8 @@ limit_wd .req x13
-> mask .req x14
-> endloop .req x15
->
-> +.weak strncmp
-> +ENTRY(__strncmp)
-> ENTRY(strncmp)
-> cbz limit, .Lret0
-> eor tmp1, src1, src2
-> @@ -308,3 +310,4 @@ CPU_BE( orr syndrome, diff, has_nul )
-> mov result, #0
-> ret
-> ENDPIPROC(strncmp)
-> +ENDPROC(__strncmp)
-> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-> index c3bd520..61ad7f1 100644
-> --- a/mm/kasan/kasan.c
-> +++ b/mm/kasan/kasan.c
-> @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, size_t 
-> len)
->
-> return __memcpy(dest, src, len);
-> }
-> +#ifdef CONFIG_ARM64
-> +/*
-> + * Arch arm64 use assembly variant for strcmp/strncmp,
-> + * xtensa use inline asm operations and x86_64 use c one,
-> + * so now this interceptors only for arm64 kasan.
-> + */
-> +#undef strcmp
-> +int strcmp(const char *cs, const char *ct)
-> +{
-> + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
-> + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
-> +
-> + return __strcmp(cs, ct);
-> +}
-> +#undef strncmp
-> +int strncmp(const char *cs, const char *ct, size_t len)
-> +{
-> + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
-> + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
-> +
-> + return __strncmp(cs, ct, len);
-> +}
-> +#endif
->
-> void kasan_alloc_pages(struct page *page, unsigned int order)
-> {
+> v1->v2:
+> - Coding style change.
+> 
+>  fs/ext2/acl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
+> index 224c04abb2e5..cf4c77f8dd08 100644
+> --- a/fs/ext2/acl.c
+> +++ b/fs/ext2/acl.c
+> @@ -256,11 +256,15 @@ ext2_init_acl(struct inode *inode, struct inode *dir)
+>  	if (default_acl) {
+>  		error = __ext2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
+>  		posix_acl_release(default_acl);
+> +	} else {
+> +		inode->i_default_acl = NULL;
+>  	}
+>  	if (acl) {
+>  		if (!error)
+>  			error = __ext2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+>  		posix_acl_release(acl);
+> +	} else {
+> +		inode->i_acl = NULL;
+>  	}
+>  	return error;
+>  }
 > -- 
-> 2.6.2
-
+> 2.17.1
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
