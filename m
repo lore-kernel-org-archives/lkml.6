@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA44C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D94C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB8620873
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB8620873
+	by mail.kernel.org (Postfix) with ESMTP id 0D0EA20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:05:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0EA20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbeICV0x (ORCPT
+        id S1729630AbeICV04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:26:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39584 "EHLO
+        Mon, 3 Sep 2018 17:26:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39594 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729104AbeICV0w (ORCPT
+        with ESMTP id S1729104AbeICV0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:26:52 -0400
+        Mon, 3 Sep 2018 17:26:55 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E4ADD06;
-        Mon,  3 Sep 2018 17:05:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6BBAD06;
+        Mon,  3 Sep 2018 17:05:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 032/107] cachefiles: Wait rather than BUGing on "Unexpected object collision"
-Date:   Mon,  3 Sep 2018 18:55:56 +0200
-Message-Id: <20180903165638.842849027@linuxfoundation.org>
+        stable@vger.kernel.org, "yujuan.qi" <yujuan.qi@mediatek.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 050/107] Cipso: cipso_v4_optptr enter infinite loop
+Date:   Mon,  3 Sep 2018 18:56:14 +0200
+Message-Id: <20180903165639.705073332@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,37 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+From: yujuan.qi <yujuan.qi@mediatek.com>
 
-[ Upstream commit c2412ac45a8f8f1cd582723c1a139608694d410d ]
+commit 40413955ee265a5e42f710940ec78f5450d49149 upstream.
 
-If we meet a conflicting object that is marked FSCACHE_OBJECT_IS_LIVE in
-the active object tree, we have been emitting a BUG after logging
-information about it and the new object.
+in for(),if((optlen > 0) && (optptr[1] == 0)), enter infinite loop.
 
-Instead, we should wait for the CACHEFILES_OBJECT_ACTIVE flag to be cleared
-on the old object (or return an error).  The ACTIVE flag should be cleared
-after it has been removed from the active object tree.  A timeout of 60s is
-used in the wait, so we shouldn't be able to get stuck there.
+Test: receive a packet which the ip length > 20 and the first byte of ip option is 0, produce this issue
 
-Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: yujuan.qi <yujuan.qi@mediatek.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/cachefiles/namei.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -195,7 +195,6 @@ wait_for_old_object:
- 		pr_err("\n");
- 		pr_err("Error: Unexpected object collision\n");
- 		cachefiles_printk_object(object, xobject);
--		BUG();
+---
+ net/ipv4/cipso_ipv4.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1523,9 +1523,17 @@ unsigned char *cipso_v4_optptr(const str
+ 	int taglen;
+ 
+ 	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
+-		if (optptr[0] == IPOPT_CIPSO)
++		switch (optptr[0]) {
++		case IPOPT_CIPSO:
+ 			return optptr;
+-		taglen = optptr[1];
++		case IPOPT_END:
++			return NULL;
++		case IPOPT_NOOP:
++			taglen = 1;
++			break;
++		default:
++			taglen = optptr[1];
++		}
+ 		optlen -= taglen;
+ 		optptr += taglen;
  	}
- 	atomic_inc(&xobject->usage);
- 	write_unlock(&cache->active_lock);
 
 
