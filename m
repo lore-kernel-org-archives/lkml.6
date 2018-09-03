@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07828C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 728E5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC0820867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC0820867
+	by mail.kernel.org (Postfix) with ESMTP id 35F5120867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F5120867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeICVLO (ORCPT
+        id S1727794AbeICVLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:11:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36070 "EHLO
+        Mon, 3 Sep 2018 17:11:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36086 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727611AbeICVLN (ORCPT
+        with ESMTP id S1727611AbeICVLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:11:13 -0400
+        Mon, 3 Sep 2018 17:11:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 864B3CF1;
-        Mon,  3 Sep 2018 16:50:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A48E8CF1;
+        Mon,  3 Sep 2018 16:50:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 11/56] usb: gadget: r8a66597: Fix a possible sleep-in-atomic-context bugs in r8a66597_queue()
-Date:   Mon,  3 Sep 2018 18:49:01 +0200
-Message-Id: <20180903164924.652151178@linuxfoundation.org>
+Subject: [PATCH 3.18 12/56] usb/phy: fix PPC64 build errors in phy-fsl-usb.c
+Date:   Mon,  3 Sep 2018 18:49:02 +0200
+Message-Id: <20180903164924.699886562@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -51,46 +54,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit f36b507c14c4b6e634463a610294e9cb0065c8ea ]
+[ Upstream commit a39ba90a1cc7010edb0a7132e1b67f3d80b994e9 ]
 
-The driver may sleep in an interrupt handler.
-The function call path (from bottom to top) in Linux-4.16.7 is:
+Fix build errors when built for PPC64:
+These variables are only used on PPC32 so they don't need to be
+initialized for PPC64.
 
-[FUNC] r8a66597_queue(GFP_KERNEL)
-drivers/usb/gadget/udc/r8a66597-udc.c, 1193:
-		r8a66597_queue in get_status
-drivers/usb/gadget/udc/r8a66597-udc.c, 1301:
-		get_status in setup_packet
-drivers/usb/gadget/udc/r8a66597-udc.c, 1381:
-		setup_packet in irq_control_stage
-drivers/usb/gadget/udc/r8a66597-udc.c, 1508:
-		irq_control_stage in r8a66597_irq (interrupt handler)
+../drivers/usb/phy/phy-fsl-usb.c: In function 'usb_otg_start':
+../drivers/usb/phy/phy-fsl-usb.c:865:3: error: '_fsl_readl' undeclared (first use in this function); did you mean 'fsl_readl'?
+   _fsl_readl = _fsl_readl_be;
+../drivers/usb/phy/phy-fsl-usb.c:865:16: error: '_fsl_readl_be' undeclared (first use in this function); did you mean 'fsl_readl'?
+   _fsl_readl = _fsl_readl_be;
+../drivers/usb/phy/phy-fsl-usb.c:866:3: error: '_fsl_writel' undeclared (first use in this function); did you mean 'fsl_writel'?
+   _fsl_writel = _fsl_writel_be;
+../drivers/usb/phy/phy-fsl-usb.c:866:17: error: '_fsl_writel_be' undeclared (first use in this function); did you mean 'fsl_writel'?
+   _fsl_writel = _fsl_writel_be;
+../drivers/usb/phy/phy-fsl-usb.c:868:16: error: '_fsl_readl_le' undeclared (first use in this function); did you mean 'fsl_readl'?
+   _fsl_readl = _fsl_readl_le;
+../drivers/usb/phy/phy-fsl-usb.c:869:17: error: '_fsl_writel_le' undeclared (first use in this function); did you mean 'fsl_writel'?
+   _fsl_writel = _fsl_writel_le;
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+and the sysfs "show" function return type should be ssize_t, not int:
 
-This bug is found by my static analysis tool (DSAC-2) and checked by
-my code review.
+../drivers/usb/phy/phy-fsl-usb.c:1042:49: error: initialization of 'ssize_t (*)(struct device *, struct device_attribute *, char *)' {aka 'long int (*)(struct device *, struct device_attribute *, char *)'} from incompatible pointer type 'int (*)(struct device *, struct device_attribute *, char *)' [-Werror=incompatible-pointer-types]
+ static DEVICE_ATTR(fsl_usb2_otg_state, S_IRUGO, show_fsl_usb2_otg_state, NULL);
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: linux-usb@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/udc/r8a66597-udc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/phy/phy-fsl-usb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/udc/r8a66597-udc.c
-+++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-@@ -1193,7 +1193,7 @@ __acquires(r8a66597->lock)
- 	r8a66597->ep0_req->length = 2;
- 	/* AV: what happens if we get called again before that gets through? */
- 	spin_unlock(&r8a66597->lock);
--	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_KERNEL);
-+	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_ATOMIC);
- 	spin_lock(&r8a66597->lock);
- }
+--- a/drivers/usb/phy/phy-fsl-usb.c
++++ b/drivers/usb/phy/phy-fsl-usb.c
+@@ -913,6 +913,7 @@ int usb_otg_start(struct platform_device
+ 	if (pdata->init && pdata->init(pdev) != 0)
+ 		return -EINVAL;
  
++#ifdef CONFIG_PPC32
+ 	if (pdata->big_endian_mmio) {
+ 		_fsl_readl = _fsl_readl_be;
+ 		_fsl_writel = _fsl_writel_be;
+@@ -920,6 +921,7 @@ int usb_otg_start(struct platform_device
+ 		_fsl_readl = _fsl_readl_le;
+ 		_fsl_writel = _fsl_writel_le;
+ 	}
++#endif
+ 
+ 	/* request irq */
+ 	p_otg->irq = platform_get_irq(pdev, 0);
+@@ -1010,7 +1012,7 @@ int usb_otg_start(struct platform_device
+ /*
+  * state file in sysfs
+  */
+-static int show_fsl_usb2_otg_state(struct device *dev,
++static ssize_t show_fsl_usb2_otg_state(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+ 	struct otg_fsm *fsm = &fsl_otg_dev->fsm;
 
 
