@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6117DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9498FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296532086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296532086A
+	by mail.kernel.org (Postfix) with ESMTP id 597482086C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597482086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730548AbeICVpj (ORCPT
+        id S1730553AbeICVpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:45:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45536 "EHLO
+        Mon, 3 Sep 2018 17:45:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbeICVpi (ORCPT
+        with ESMTP id S1729113AbeICVpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:45:38 -0400
+        Mon, 3 Sep 2018 17:45:45 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E4B1D0A;
-        Mon,  3 Sep 2018 17:24:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F0CCD0A;
+        Mon,  3 Sep 2018 17:24:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@yandex.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.14 107/165] ext4: reset error code in ext4_find_entry in fallback
-Date:   Mon,  3 Sep 2018 18:56:33 +0200
-Message-Id: <20180903165700.890913716@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Wnukowski <wnukowski@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.14 108/165] nvme-pci: add a memory barrier to nvme_dbbuf_update_and_check_event
+Date:   Mon,  3 Sep 2018 18:56:34 +0200
+Message-Id: <20180903165700.932093761@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,37 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: Michal Wnukowski <wnukowski@google.com>
 
-commit f39b3f45dbcb0343822cce31ea7636ad66e60bc2 upstream.
+commit f1ed3df20d2d223e0852cc4ac1f19bba869a7e3c upstream.
 
-When ext4_find_entry() falls back to "searching the old fashioned
-way" due to a corrupt dx dir, it needs to reset the error code
-to NULL so that the nonstandard ERR_BAD_DX_DIR code isn't returned
-to userspace.
+In many architectures loads may be reordered with older stores to
+different locations.  In the nvme driver the following two operations
+could be reordered:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199947
+ - Write shadow doorbell (dbbuf_db) into memory.
+ - Read EventIdx (dbbuf_ei) from memory.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@yandex.com>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+This can result in a potential race condition between driver and VM host
+processing requests (if given virtual NVMe controller has a support for
+shadow doorbell).  If that occurs, then the NVMe controller may decide to
+wait for MMIO doorbell from guest operating system, and guest driver may
+decide not to issue MMIO doorbell on any of subsequent commands.
+
+This issue is purely timing-dependent one, so there is no easy way to
+reproduce it. Currently the easiest known approach is to run "Oracle IO
+Numbers" (orion) that is shipped with Oracle DB:
+
+orion -run advanced -num_large 0 -size_small 8 -type rand -simulate \
+	concat -write 40 -duration 120 -matrix row -testname nvme_test
+
+Where nvme_test is a .lun file that contains a list of NVMe block
+devices to run test against. Limiting number of vCPUs assigned to given
+VM instance seems to increase chances for this bug to occur. On test
+environment with VM that got 4 NVMe drives and 1 vCPU assigned the
+virtual NVMe controller hang could be observed within 10-20 minutes.
+That correspond to about 400-500k IO operations processed (or about
+100GB of IO read/writes).
+
+Orion tool was used as a validation and set to run in a loop for 36
+hours (equivalent of pushing 550M IO operations). No issues were
+observed. That suggest that the patch fixes the issue.
+
+Fixes: f9f38e33389c ("nvme: improve performance for virtual NVMe devices")
+Signed-off-by: Michal Wnukowski <wnukowski@google.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+[hch: updated changelog and comment a bit]
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvme/host/pci.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1397,6 +1397,7 @@ static struct buffer_head * ext4_find_en
- 			goto cleanup_and_exit;
- 		dxtrace(printk(KERN_DEBUG "ext4_find_entry: dx failed, "
- 			       "falling back\n"));
-+		ret = NULL;
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -306,6 +306,14 @@ static bool nvme_dbbuf_update_and_check_
+ 		old_value = *dbbuf_db;
+ 		*dbbuf_db = value;
+ 
++		/*
++		 * Ensure that the doorbell is updated before reading the event
++		 * index from memory.  The controller needs to provide similar
++		 * ordering to ensure the envent index is updated before reading
++		 * the doorbell.
++		 */
++		mb();
++
+ 		if (!nvme_dbbuf_need_event(*dbbuf_ei, value, old_value))
+ 			return false;
  	}
- 	nblocks = dir->i_size >> EXT4_BLOCK_SIZE_BITS(sb);
- 	if (!nblocks) {
 
 
