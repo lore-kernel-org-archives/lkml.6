@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240C2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01928C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A5420869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FFE120869
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:33:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnJAePBw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A5420869
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KevZ8PIL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFE120869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbeIDAzg (ORCPT
+        id S1728859AbeIDAzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 20:55:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44491 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbeIDAzg (ORCPT
+        Mon, 3 Sep 2018 20:55:41 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50759 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeIDAzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 20:55:36 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v16-v6so1721239wro.11;
-        Mon, 03 Sep 2018 13:33:43 -0700 (PDT)
+        Mon, 3 Sep 2018 20:55:41 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s12-v6so2269535wmc.0;
+        Mon, 03 Sep 2018 13:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JxZfHZLAlw2fNcQyZZeLSKrRnZnfVnqnwBDPvad1T3w=;
-        b=QnJAePBw4gvwd1i0hVKesOpnX43gTVeT8rqmODVelq0DM/Ef5VQTPOq0gY1AHqdUgk
-         wtiSegaugCj509hqs4NSRLXLxZCfzWP84Zj3dGIsRa/AcXOq3mS75C1V6BqyoMXmdOhd
-         PYdD2p9KI21Q63xNP2IVPkTPmkacgLNcdQWA7SX9HNpKgs9JMX88zje3i8SLh/jqcqi3
-         KxKm4VApIBEZuyjZNtDIeqT8B84IVdbFvgU0iOoQkPzgO5MTWKDbzn8ykjzVby0g/aXX
-         HVCX77WdTojzxVeEm54JjqpUICUtheoHOyKYziPjGIyFph1TAJlMW+hfmzpW2MzdJksa
-         njpA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZhryjHGsWzeSzxD0NW3OWSaZ8RANYxnQY/DMq4IP8+M=;
+        b=KevZ8PILOJ52LFCPLGi6B7+4pQstK7gmLMNbSBzIkDwJzNW0MelnEvLkzfJsKtNTse
+         2Wgo1/Plo0uWL9xQ7KjW0HhsOnPR0d5H8jRl/5cPxJrv72bYm2eC8wGhqclf0CKSugc5
+         1SkrfX0rIt72u3eIKpArRrOR9OvT8Dhpc96U/U50ycGtvTS/xTOZK1CivenSl5MW5mUX
+         lSAev42Wt1gVVCNWquD4FPhhzf8tH3MA4WLCx8EqPGlp2oQ4ArdmfbdLNMBy6O8jUKSC
+         DMyPNQtgL4Txw6gif4G7XSITir8fBeqCnPFxEWTvI3ud7mr0VZAO6Hk4AnbDcCgOZyOi
+         fuVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JxZfHZLAlw2fNcQyZZeLSKrRnZnfVnqnwBDPvad1T3w=;
-        b=XhnVOwojZGBCrAZsVEB4yEnw1E3MkRQp9yO0TLUQvr8z/d464fir4rjlO2iBnfcGc7
-         VvnZOStj9l3XvWSHXK1PESvG7uiM6L5qn9s/Q+x/r9SjiCFYalrPU1hCd0ItYNjpRx9T
-         +7KXS/Hyys96X2A8mJ3iKfccH1zoq5bNgiksJpMcYCOSiz3Pc/9YWzlJ7bo6pO2WOhQh
-         pFV8GyaUGMZMjBRQXMKz8KPj4BEZFbMLsWUW024JhG0mlV93ItvFFQ2eP/epzQ7UKnhq
-         tonp/h7xkEToZ2w7ZDdOvpBA25yquEf7o5km8sFt2AoS9NOSVouk2aMDxgOU0z9Ey00H
-         YKgw==
-X-Gm-Message-State: APzg51D0MDd5r5SksUf5el78oothr8swF0OY/ss8JeXxwXy/iX1lW8pF
-        HesdO68CTz4Iqs6GxEisax0=
-X-Google-Smtp-Source: ANB0VdY+DI8g5DA4k5/ggSKH02NfDNfno3R589b4Rt48bHnT70VgQpFid1NfFR1Eni/+iJLVlRTktw==
-X-Received: by 2002:adf:ed88:: with SMTP id c8-v6mr20169657wro.264.1536006823158;
-        Mon, 03 Sep 2018 13:33:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZhryjHGsWzeSzxD0NW3OWSaZ8RANYxnQY/DMq4IP8+M=;
+        b=Oz1egg4gko+g67NIEyp0hV06b1h+sXqvXF3MDnT9ci4XRayXhtofVor7dMOWfGNZxh
+         7nezSpeIzSye8A6fjO39LH20bjSL63F/E13QspXqSDyNF9YngF092wrDEDQRspYVoRJM
+         6nn//dP4nVGVNCUsW7duXsYbnlZj0V8jtX65/WEgwD4L6/F+zziz8we8AX1SkzLXIMHS
+         4Ee8vTCD4BX3sI9KQzLktGGow7AvUg6651WGOZvnJu4eL1r7621aALtq8JqWC7DTgKZ9
+         /GkNG8EOwZqnokSmZQRcdsM09n9z+uoZcrn6/qPUp/ZdCtKjKjz5NyB0jKQ4eXiUiLjl
+         06pQ==
+X-Gm-Message-State: APzg51CID8tbFfarh2NNFdKX3RupGTWGpeVLad8rEKHMbO50ndPayf2O
+        +f1xXssayuEhs75nBytj96E=
+X-Google-Smtp-Source: ANB0VdYbX5Oa31laIZImtJpmZTii5ksCZCkd6tq0A71C7EaK6DpActd73FsXCpmzoGW/IY1HgP78vg==
+X-Received: by 2002:a1c:d946:: with SMTP id q67-v6mr5934162wmg.156.1536006828434;
+        Mon, 03 Sep 2018 13:33:48 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id 132-v6sm12354870wmd.13.2018.09.03.13.33.41
+        by smtp.gmail.com with ESMTPSA id 132-v6sm12354870wmd.13.2018.09.03.13.33.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 13:33:42 -0700 (PDT)
+        Mon, 03 Sep 2018 13:33:47 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Eli Friedman <efriedma@codeaurora.org>,
@@ -74,48 +74,20 @@ Cc:     linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-sparse@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [PATCH v3 00/12] Compiler Attributes
-Date:   Mon,  3 Sep 2018 22:33:04 +0200
-Message-Id: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
+        linux-sparse@vger.kernel.org
+Subject: [PATCH 01/12] Compiler Attributes: remove unused attributes
+Date:   Mon,  3 Sep 2018 22:33:05 +0200
+Message-Id: <20180903203316.16183-2-miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
+References: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Compiler Attributes series is an effort to disentangle
-the include/linux/compiler*.h headers and bring them up to date.
+__optimize and __deprecate_for_modules are unused in
+the whole kernel tree. Simply drop them.
 
-The main idea behind the series is to use feature checking macros
-(i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
-which are compiler-agnostic (so they can be shared, reducing the size
-of compiler-specific headers) and version-agnostic.
-
-Other related improvements have been performed in the headers as well,
-which on top of the use of __has_attribute it has amounted to a significant
-simplification of these headers (e.g. GCC_VERSION is now only guarding 4
-non-attribute macros).
-
-This series should also help the efforts to support compiling the kernel
-with clang and icc. A fair amount of documentation and comments have also
-been added, clarified or removed; and the headers are now more readable,
-which should help kernel developers in general.
-
-The series was triggered due to the move to gcc >= 4.6. In turn, this series
-has also triggered Sparse to gain the ability to recognize __has_attribute
-on its own.
-
-You can also fetch it from:
-
-  https://github.com/ojeda/linux/tree/compiler-attributes-v3
-
-Enjoy!
-
-Cheers,
-Miguel
-
-Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Cc: Eli Friedman <efriedma@codeaurora.org>
@@ -128,71 +100,56 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Joe Perches <joe@perches.com>
 Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-sparse@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ include/linux/compiler-gcc.h   | 2 --
+ include/linux/compiler.h       | 4 ----
+ include/linux/compiler_types.h | 1 -
+ 3 files changed, 7 deletions(-)
 
-v2 -> v3:
-
-  New:
-
-  * Remove duplicated "used" attribute in KENTRY
-  * Silence sparse warnings on __has_attribute & simplify the macro block
-  * Add Documentation/process/programming-language.rst
-  * Improve _attribute.h description
-  * Improve some commit descriptions
-  * Add Reviewed-by's/Acked-by's/Suggested-by's
-    (hopefully I didn't miss anybody!)
-  * Rebase on top of v4.19-rc2
-  * Cc Rasmus, Luc
-
-  From reviews:
-
-  * Fix __attribute_const__ rename typo (Nick)
-  * Add SPDX identifier to _attributes.h (Nick)
-  * Add SPDX identifier to _types.h (Greg)
-  * Remove __attribute__ uses from compiler.h (Nick)
-  * Tweak clang doc comments (Nick)
-  * Move __naked out of -gcc.h to be shared (Arnd)
-  * Use __name__ syntax instead (Rasmus)
-  * Update sparse description (Luc)
-  * Remove __CHECKER__ test from __must_be_array (Luc)
-  * Add note on __has_attribute regarding sparse (Luc)
-  * Cc linux-sparse (Luc)
-
-It is quite a lot of stuff changed this time around, I hope I haven't missed
-anything said in the emails. Please take a look!
-
-Compile-tested for a while on (x86_64, gcc-7.3, allmodconfig).
-
-Miguel Ojeda (12):
-  Compiler Attributes: remove unused attributes
-  Compiler Attributes: always use the extra-underscores syntax
-  Compiler Attributes: remove unneeded tests
-  Compiler Attributes: homogenize __must_be_array
-  Compiler Attributes: naked was fixed in gcc 4.6
-  Compiler Attributes: naked can be shared
-  Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
-  Compiler Attributes: add missing SPDX ID in compiler_types.h
-  Compiler Attributes: use feature checks instead of version checks
-  Compiler Attributes: KENTRY used twice the "used" attribute
-  Compiler Attributes: remove uses of __attribute__ from compiler.h
-  Compiler Attributes: add Doc/process/programming-language.rst
-
- Documentation/process/index.rst               |   1 +
- .../process/programming-language.rst          |  44 ++++
- include/linux/compiler-clang.h                |   5 -
- include/linux/compiler-gcc.h                  |  84 +-----
- include/linux/compiler-intel.h                |   9 -
- include/linux/compiler.h                      |  19 +-
- include/linux/compiler_attributes.h           | 239 ++++++++++++++++++
- include/linux/compiler_types.h                | 101 ++------
- 8 files changed, 314 insertions(+), 188 deletions(-)
- create mode 100644 Documentation/process/programming-language.rst
- create mode 100644 include/linux/compiler_attributes.h
-
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index 763bbad1e258..0a2d06677d83 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -95,8 +95,6 @@
+ 
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+ 
+-#define __optimize(level)	__attribute__((__optimize__(level)))
+-
+ #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+ 
+ #ifndef __CHECKER__
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 681d866efb1e..7c0157d50964 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -301,10 +301,6 @@ static inline void *offset_to_ptr(const int *off)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+-#ifndef __optimize
+-# define __optimize(level)
+-#endif
+-
+ /* Compile time object size, -1 for unknown */
+ #ifndef __compiletime_object_size
+ # define __compiletime_object_size(obj) -1
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 3525c179698c..b6534292ea33 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -108,7 +108,6 @@ struct ftrace_likely_data {
+ 
+ /* Don't. Just don't. */
+ #define __deprecated
+-#define __deprecated_for_modules
+ 
+ #endif /* __KERNEL__ */
+ 
 -- 
 2.17.1
 
