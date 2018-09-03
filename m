@@ -2,89 +2,105 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450CFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3295C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C32F20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E1520856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:40:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QfdRpSqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C32F20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="shhAl9lh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E1520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeICF4L (ORCPT
+        id S1726157AbeICF6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 01:56:11 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:38025 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725762AbeICF4L (ORCPT
+        Mon, 3 Sep 2018 01:58:02 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38813 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725762AbeICF6C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 01:56:11 -0400
-Received: by mail-it0-f49.google.com with SMTP id p129-v6so13628488ite.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 18:38:22 -0700 (PDT)
+        Mon, 3 Sep 2018 01:58:02 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f4-v6so2555290pgq.5;
+        Sun, 02 Sep 2018 18:40:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=USPU6gEGfH9PNisBCiuQsmUdk5dTgpnWlTQYvFRTYXs=;
-        b=QfdRpSqmTcq2ShfvWrudo3euGxDErTAKHGc/tDAJwQcIynnd7x/XewvCflsasWCRaI
-         oADO+0N/u9Ooe6jfG9ZTXYb4p5Fk7GN0LhB81tr1wXemoJCYf1wu2tnsXEBs1MLhOF9s
-         IbPtDEE3AkCgSf76+o1TvCANUzpabRK1jdS1U=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=GZffnLf/qdii9GdgBqkK5zn+qXvrNQ9JivnW1GAX48A=;
+        b=shhAl9lhGYY23/MqqEI+7fdavIfiZD/AIt7YJH4LSY4QCRcvzTJ88lbSZdYUzKiIaO
+         bovQzrFgUXpJMsQnCLbVsIElP3KjK5eqwNeiTQ97/sleFBfN/Hz9B5xfbSM+gbjSp4g3
+         BTnD5E0Cg20EjfGkslKYyfw3c/ygacJLPVuy+XO+etLBG54KVmFDENLs1N2I2gggYnmO
+         nQLUIP5tsK2/fy8y4HJDk3kqafFcVmQDOzEnR64p61dMo340/cUI1WsZFdbqcQcFZLUy
+         glBwktgr6dS2q+L8Re46hhqCzPAfdMzbUTW0OQOtUcBGiwP8rnEKF7aV86dfSeH/SX/s
+         v8SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=USPU6gEGfH9PNisBCiuQsmUdk5dTgpnWlTQYvFRTYXs=;
-        b=ZPWJjpW5d6Mn0Pw3NDWs2PG35afpqaewJcVZU1laTEdVgClMaQBRjaSGzIesl0WezJ
-         JiPC//kUkej0328eikZ9mXxhLuxfXHdmyz71gm6HWk4Usk9PE89CcIdm4s7XIeiWjsmD
-         zsrPwzlVl9vlfKp8PqIn76irABH0ubdcG09kcVHBzV7UaoqtDRiZmkJObujnujZqkuZo
-         Am6etdSyPBsHjAJ3aGsIF1JyyRUgq6qdPPbOhIrn98i0cFLZWolvhDL1TUG6wrfTFokI
-         aMdyFRzex0BasvDpxiZ83rUYmr1IWJLGg9gL4E/IGWZVe8qQG8DTCz1ylZ4kn28zpoS7
-         ee6A==
-X-Gm-Message-State: APzg51A1xmXYoMYbDQGWmDdBStss2Kn4/c8NfSfzN/WR3w08wZq4xRay
-        aew4poui5qQaoREy7ukhgcJms+BVBrjtRiZ/5Q0=
-X-Google-Smtp-Source: ANB0VdY6+BD+/f5YNDn6AgJDIMj72TP/YdcOy2ZF4Ovn29T2x3GHRqg0ABJuoAXQ3OXV6Ee+IejxVu+v+WPGM7sYvyo=
-X-Received: by 2002:a24:3046:: with SMTP id q67-v6mr4015127itq.9.1535938701797;
- Sun, 02 Sep 2018 18:38:21 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=GZffnLf/qdii9GdgBqkK5zn+qXvrNQ9JivnW1GAX48A=;
+        b=AFPIIhg+0SbLc7kQYlVbAZcoo9c+5im8c3cvMHRJ9PargANCnTactqEymosGHIBA9J
+         SvZBX3kPHp2WEpUGH2GSBD1IBNtSO1SIz90KtVaZJyr5U1Yd98+vKGfh1trQoG34Ur23
+         QBvIQEAS2Pp2IBmigiEncroGT2AJt90BXSyzNP5TmkqWUP7T76UJZa+BK+nccMeU0HQk
+         ZHipO/OnoiYNrJH3/zOilXntOKJi7yLJlCOaubH51kl47KXAHq6oeCjiGn/vVuvHemDa
+         GZfypmqxizrXtzz0dv+0Ru9dbUJtX+928oSftvc+TfuZ4PiJK/Fwi2aBALatamCjkrja
+         i5JA==
+X-Gm-Message-State: APzg51ANlLNU08VK6zbisRE9bAExcJoPyHBdeo49T8JzD1VBZ7Y22X0U
+        OHJIMuJm5xva3pReJ8wxzbyEkZyE
+X-Google-Smtp-Source: ANB0VdYpY2dfDyfkhhuebHSD2VFygUOWR/K5nT9FszWr2AOKdWzoNsZvxqQyuRcHkT2fT+c/EFm26g==
+X-Received: by 2002:a63:1a1a:: with SMTP id a26-v6mr24133819pga.449.1535938813059;
+        Sun, 02 Sep 2018 18:40:13 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.58? ([2402:f000:1:1501:200:5efe:a66f:473a])
+        by smtp.gmail.com with ESMTPSA id 82-v6sm26219523pfw.159.2018.09.02.18.40.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Sep 2018 18:40:12 -0700 (PDT)
+Subject: Re: [PATCH] isdn: mISDN: tei: Fix a sleep-in-atomic-context bug in
+ create_teimgr()
+To:     isdn@linux-pingi.de
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180901120019.31664-1-baijiaju1990@gmail.com>
+ <3ecd32b2-81e5-038e-edc9-fd06d6e21851@linux-pingi.de>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <c7562383-8255-31f4-8f91-057011172b65@gmail.com>
+Date:   Mon, 3 Sep 2018 09:40:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
- <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm> <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
- <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
- <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org> <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
-In-Reply-To: <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 2 Sep 2018 18:38:10 -0700
-Message-ID: <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
-Subject: Re: Access to non-RAM pages
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3ecd32b2-81e5-038e-edc9-fd06d6e21851@linux-pingi.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 6:32 PM Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
+
+
+On 2018/9/3 0:31, isdn@linux-pingi.de wrote:
+> Hi,
 >
-> Also, if we cross page boundaries with those guys then we have a bigger
-> problem no ? we could fall off a vmalloc page into the nether or into
-> an ioremap mapping no ?
+> I do not understand the analysis and do not see that the spinlock is a
+> problem here.
+> I think your DSAC analyzer assumes that the FUNC_PTR mgr_ctrl call calls
+> the  mgr_ctrl in tei.c, but in real it calls l2->ch.ctrl() which is the
+> function in layer2.c, not tei.c. And the function in layer2.c should not
+> do any GFP_KERNEL allocation.
+>
+> Same for your 2. reported issue.
 
-It's not used for vmalloc stuff. It's just regular kmalloc().
+Okay, thanks for your reply.
+My analysis handles the function pointer using the function type and 
+structure field, but it cannot distinguish the different variables of 
+the same type and field now.
+I will try to improve my tool, thanks for your explanation.
 
-So it can cross pages, and it can fall off the end of memory, but it
-can't do random stuff.
 
-               Linus
+Best wishes,
+Jia-Ju Bai
