@@ -6,49 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0810AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32459C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB8320843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB8320843
+	by mail.kernel.org (Postfix) with ESMTP id EAE0720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE0720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbeICV11 (ORCPT
+        id S1729712AbeICV1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:27:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39676 "EHLO
+        Mon, 3 Sep 2018 17:27:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39696 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729206AbeICV10 (ORCPT
+        with ESMTP id S1729190AbeICV1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:27:26 -0400
+        Mon, 3 Sep 2018 17:27:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72C0ED02;
-        Mon,  3 Sep 2018 17:06:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7AADD06;
+        Mon,  3 Sep 2018 17:06:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jon Medhurst <tixy@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>, acme@kernel.org,
-        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
-        linux-arch@vger.kernel.org, rostedt@goodmis.org,
-        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 057/107] kprobes/arm64: Fix %p uses in error messages
-Date:   Mon,  3 Sep 2018 18:56:21 +0200
-Message-Id: <20180903165640.077711082@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 058/107] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+Date:   Mon,  3 Sep 2018 18:56:22 +0200
+Message-Id: <20180903165640.119078394@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -65,52 +50,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Greg Hackmann <ghackmann@android.com>
 
-commit 0722867dcbc28cc9b269b57acd847c7c1aa638d6 upstream.
+commit 5ad356eabc47d26a92140a0c4b20eba471c10de3 upstream.
 
-Fix %p uses in error messages by removing it because
-those are redundant or meaningless.
+ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
+before seeing if the PFN is valid.  This leads to false positives when
+some of the upper bits are set, but the lower bits match a valid PFN.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jon Medhurst <tixy@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Tobin C . Harding <me@tobin.cc>
-Cc: acme@kernel.org
-Cc: akpm@linux-foundation.org
-Cc: brueckner@linux.vnet.ibm.com
-Cc: linux-arch@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: schwidefsky@de.ibm.com
+For example, the following userspace code looks up a bogus entry in
+/proc/kpageflags:
+
+    int pagemap = open("/proc/self/pagemap", O_RDONLY);
+    int pageflags = open("/proc/kpageflags", O_RDONLY);
+    uint64_t pfn, val;
+
+    lseek64(pagemap, [...], SEEK_SET);
+    read(pagemap, &pfn, sizeof(pfn));
+    if (pfn & (1UL << 63)) {        /* valid PFN */
+        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
+        pfn |= (1UL << 55);
+        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
+        read(pageflags, &val, sizeof(val));
+    }
+
+On ARM64 this causes the userspace process to crash with SIGSEGV rather
+than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
+valid, and stable_page_flags() will try to access an address between the
+user and kernel address ranges.
+
+Fixes: c1cc1552616d ("arm64: MMU initialisation")
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/152491908405.9916.12425053035317241111.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/probes/kprobes.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/mm/init.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -274,7 +274,7 @@ static int __kprobes reenter_kprobe(stru
- 		break;
- 	case KPROBE_HIT_SS:
- 	case KPROBE_REENTER:
--		pr_warn("Unrecoverable kprobe detected at %p.\n", p->addr);
-+		pr_warn("Unrecoverable kprobe detected.\n");
- 		dump_kprobe(p);
- 		BUG();
- 		break;
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -147,7 +147,11 @@ static void __init zone_sizes_init(unsig
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
+-	return memblock_is_map_memory(pfn << PAGE_SHIFT);
++	phys_addr_t addr = pfn << PAGE_SHIFT;
++
++	if ((addr >> PAGE_SHIFT) != pfn)
++		return 0;
++	return memblock_is_map_memory(addr);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+ #endif
 
 
