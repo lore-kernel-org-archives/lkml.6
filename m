@@ -2,120 +2,247 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37663C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF5FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8AA720645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:19:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=zendesk.com header.i=@zendesk.com header.b="Z7hfMjDt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8AA720645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=zendesk.com
+	by mail.kernel.org (Postfix) with ESMTP id 92775204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:25:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92775204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeICPip (ORCPT
+        id S1727402AbeICPpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 11:38:45 -0400
-Received: from us-smtp-delivery-110.mimecast.com ([63.128.21.110]:27782 "EHLO
-        us-smtp-delivery-110.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726961AbeICPip (ORCPT
+        Mon, 3 Sep 2018 11:45:21 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49659 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeICPpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 11:38:45 -0400
-X-Greylist: delayed 445 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Sep 2018 11:38:44 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zendesk.com; s=mimecast20150210; t=1535973541; h=from:from:sender:reply-to:subject:subject:date:date: message-id:message-id:to:to:cc:cc:mime-version:  content-type:content-type: content-transfer-encoding:content-transfer-encoding:in-reply-to: references; bh=1MzCF8XXs0vwa2rdmaj8XMDxlnAGxLSPWe4E2Kz/Dek=; b=Z7hfMjDtP68ZHfq5wb/yX1tDnhhNqOnqnRozo0SjFf4Nptmic08bSbv6i1yhCj2ytdwmNC9yQmHxWJZ22+A1Q7zFMrvTRfNTcZW41r9rLBGCzXore5F15ef/KIsSMMp16OKzh9jMwunfJUucH8tbtCU3KcVJajqeDI1OAWZBKYk=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) (Using TLS) by us-smtp-1.mimecast.com with ESMTP id
- us-mta-8-xZe3DBzrO1q7hgST3Gt4nA-1; Mon, 03 Sep 2018 07:11:37 -0400
-Received: by mail-pl1-f200.google.com with SMTP id 3-v6so103091plq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 04:11:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cEzLh08orMDdNDTWgxYEB8Qf4lSpF1SBQuIXRFlCaCM=;
-        b=LiaqvqdfkmPY1MMlM2wpnQlYWxA7S+I/mTFiPxhriS69cHQbsQ2R6mD18zJIdUsNt4
-         vQxENVY8DF7k6oBqHJzWLbCdYUQPHQ4gzm8wwGQUdV97cpXOzrCJJDdbrnnWuGkGwCK0
-         lBDz5adyxK1/dPLT7x9Q8utcEkqKR9UA/j4yYIdq1vEf7TYVwYV1IJOHkJMAAgECC5yY
-         GrT0RB5zx0/xpiNOjV+epRgKg3aU6+wL7sr7xyS133hgVAALx8A24hoEehmJqICTKPHF
-         y9XigmDiscIvw2E4ZIOB/ZmMXszdePMNB0dYLDCcO3wJWjIF6Dd2u+3u6edrCQyilJ2D
-         2wcw==
-X-Gm-Message-State: APzg51BQiya0nN/gMgjf1i1kCHeAuiUgkVTORECKQivfW4OGAJk1px14
-        NxmNQvVBtrh1QsWbBT1Ee8faOQgqW4ev3y8AZ/pWB2mrYdX+eaNHyPjp1kdSojEvlevzi6qXFu7
-        n5SBQpHKDcR2K10l2q1idhx0rLzYFPNlbYCyOg2M=
-X-Received: by 2002:a63:1d3:: with SMTP id 202-v6mr25803477pgb.136.1535973095877;
-        Mon, 03 Sep 2018 04:11:35 -0700 (PDT)
-X-Google-Smtp-Source: ANB0VdausTD5izPb7B+uI5v1nTcxP9ZQvqypNa0CablnEu9vRiIwmMDgJor/HvZ9tWJJSdJwDFnsDg==
-X-Received: by 2002:a63:1d3:: with SMTP id 202-v6mr25803454pgb.136.1535973095557;
-        Mon, 03 Sep 2018 04:11:35 -0700 (PDT)
-Received: from ubuntu.localdomain ([144.132.98.235])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm37181667pfi.24.2018.09.03.04.11.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 04:11:34 -0700 (PDT)
-From:   ktsanaktsidis@zendesk.com
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org, KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
-Subject: [PATCH] fork: report pid exhaustion correctly
-Date:   Mon,  3 Sep 2018 04:10:16 -0700
-Message-Id: <20180903111016.46461-1-ktsanaktsidis@zendesk.com>
-X-Mailer: git-send-email 2.17.1
-X-MC-Unique: xZe3DBzrO1q7hgST3Gt4nA-1
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 3 Sep 2018 11:45:21 -0400
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 20B884002A;
+        Mon,  3 Sep 2018 11:25:32 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 13:25:17 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Message-ID: <20180903112517.GE20333@w540>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+ <20180903103358.GC20333@w540>
+ <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Zrag5V6pnZGjLKiw"
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
 
-Make the clone and fork syscalls return EAGAIN when the limit on the
-number of pids /proc/sys/kernel/pid_max is exceeded.
+--Zrag5V6pnZGjLKiw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Currently, when the pid_max limit is exceeded, the kernel will return
-ENOSPC from the fork and clone syscalls. This is contrary to the
-documented behaviour, which explicitly calls out the pid_max case as one
-where EAGAIN should be returned. It also leads to really confusing error
-messages in userspace programs which will complain about a lack of disk
-space when they fail to create processes/threads for this reason.
+Hi Phil,
 
-This error is being returned because the alloc_pid function uses the idr
-api to find a new pid; when there are none available, idr_alloc_cyclic
-is returns -ENOSPC, and this is being propagated back into userspace.
+On Mon, Sep 03, 2018 at 11:03:18AM +0000, Phil Edworthy wrote:
+> Hi Jacopo,
+>
+> On 03 September 2018 11:34, jacopo mondi wrote:
+> > On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
+> > > This implements the pinctrl driver for the RZ/N1 family of devices, i=
+ncluding
+> > > the R9A06G032 (RZ/N1D) device.
+> > >
+> > > One area that is likely to be contentious is the use of 'virtual pins=
+' for the
+> > > MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exi=
+st on
+> > the
+> > > device to configure the MDIO source within the RZ/N1 devices. On these
+> > devices,
+> > > there are two Ethernet MACs, a 5-Port Switch, numerous industrial
+> > Ethernet
+> > > peripherals, any of which can be the MDIO source. Configuring the MDIO
+> > source
+> > > could be done without the virtual pins, e.g. by extending the functio=
+ns to
+> > > cover all MDIO variants (a total of 32 additional functions), but thi=
+s would
+> > > allow users to misconfigure individual MDIO pins, rather than assign =
+all
+> > MDIO
+> > > pins to a MDIO source. The choice of how to implement this will affec=
+t the
+> > > DT bindings.
+> > >
+> > > This series was originally written by Michel Pollet whilst at Renesas=
+, and I
+> > > have taken over this work.
+> > >
+> > > One point from Michel's v1 series:
+> > > "Note, I used renesas,rzn1-pinmux node to specify the pinmux constant=
+s,
+> > > and I also don't use some of the properties documented in
+> > > pinctrl-bindings.txt on purpose, as they are too limited for my use
+> > > (I need to be able to set, clear, ignore or reset level, pull up/down
+> > > and function as the pinmux might be set by another OS/core running
+> > > concurently)."
+> > >
+> >
+> > I start by saying that I don't know this HW pin controller well, so
+> > I might be missing something, but as commented on the original series f=
+rom
+> > Micheal, I still don't see why you need a custom property here...
+> >
+> > My understanding, looking at this comment and the header provided by
+> > patch [1/3] (include/dt-bindings/pinctrl/rzn1-pinctrl.h) is that
+> > basically need to control pull-up/down and the output driver strength.
+> >
+> > Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt reports
+> > a set of generic pin configuration properties to be applied to a pin
+> > configuration (and multiplexing) pin controller child node that fully
+> > express all (most?) of your needs.
+> >
+> > Eg. a pin configuration with pull up applied, using examples from your
+> > cover letter should be expressed as
+> >
+> > Your example:
+> >          &pinctrl {
+> >                  pinsuart0: pinsuart0 {
+> >                          renesas,rzn1-pinmux-ids =3D <
+> >                                  RZN1_MUX(103, UART0_I)  /* UART0_TXD */
+> >                                  RZN1_MUX_PUP(104, UART0_I)      /* UAR=
+T0_RXD */
+> >                          >;
+> >                  };
+> >          };
+> >
+> > Using standard pinctroller bindings pin configuration properties:
+> >
+> >          &pinctrl {
+> >                  pinsuart0: uart0  {
+> >                         pinsuart_tx0 {
+> >                                 pinmux =3D <103, UART0_I>;  /* UART0_TX=
+D */
+> >                         };
+> >
+> >                         pinsuart_rx0 {
+> >                                  pinmux =3D <104, UART0_I>; /* UART0_RX=
+D */
+> >                                  bias-pull-up;
+> >                         };
+> >                  };
+> >          };
+> >
+> > Is there anything I am missing? Maybe from the interaction with
+> > "another OS/core running concurrently" you mentioned? In this case if
+> > you only have to perform pin configuration (because muxing is handled
+> > already) things are even simpler, just use the pin configuration
+> > bindings, without involving muxing at all:
+> >
+> >         &pinctrl {
+> >                 pinsuart_conf: uart0 {
+> >                         pins =3D <103, 104>;
+> >                         bias-pull-up;
+> >                  };
+> >          };
+>
+> Sorry I didn=E2=80=99t address your point.
+> The only reason we want to use new properties is so the driver can process
+> dts files that have been generated from an existing PinMux App. That outp=
+ut
+> is used by VxWorks as well as our out-of-tree Linux port. If that is not a
+> good enough reason to add new properties, then I can't see any technical
+> reason not to use the existing bindings.
 
-This behaviour has been broken before, and was explicitly fixed in
-commit 35f71bc0a09a ("fork: report pid reservation failure properly"),
-so I think -EAGAIN is definitely the right thing to return in this case.
-The current behaviour change dates from commit 95846ecf9dac ("pid:
-replace pid bitmap implementation with IDR AIP") and was I believe
-unintentional.
+I see. I step back then and let this to be handled by the pinctrl
+subsystem people and maintainer :)
 
-This patch has no impact on the case where allocating a pid fails
-because the child reaper for the namespace is dead; that case will still
-return -ENOMEM.
+Thanks
+   j
 
-Fixes: 95846ecf9dac ("pid: replace pid bitmap implementation with IDR AIP")
-Signed-off-by: KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>
----
- kernel/pid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The use with another OS running on a different core should not be a barri=
+er
+> as it must not use the same pins as Linux.
+>
+> Thanks
+> Phil
+>
+> > Thanks
+> >   j
+> >
+> > > Patch 0003 should really be applied after patch:
+> > >  "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
+> > >  https://www.spinics.net/lists/arm-kernel/msg673525.html
+> > >
+> > > Main changes:
+> > > v2:
+> > >  - Change to generic rzn1 family driver, instead of device specific.
+> > >  - Review comments fixed.
+> > >  - Fix error handling during probe
+> > >
+> > > Phil Edworthy (3):
+> > >   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+> > >   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+> > >   ARM: dts: r9a06g032: Add pinctrl node
+> > >
+> > >  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
+> > >  arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
+> > >  drivers/pinctrl/Kconfig                            |  10 +
+> > >  drivers/pinctrl/Makefile                           |   1 +
+> > >  drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++=
+++++++++++
+> > >  include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
+> > >  6 files changed, 1151 insertions(+)
+> > >  create mode 100644
+> > Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+> > >  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+> > >  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+> > >
+> > > --
+> > > 2.7.4
+> > >
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index de1cfc4f75a2..cdf63e53a014 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -195,7 +195,7 @@ struct pid *alloc_pid(struct pid_namespace *ns)
- =09=09idr_preload_end();
-=20
- =09=09if (nr < 0) {
--=09=09=09retval =3D nr;
-+=09=09=09retval =3D (nr =3D=3D -ENOSPC) ? -EAGAIN : nr;
- =09=09=09goto out_free;
- =09=09}
-=20
---=20
-2.17.1
+--Zrag5V6pnZGjLKiw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbjRodAAoJEHI0Bo8WoVY8Ql4P/R+Ts1bZCraK4kn9Rs9H4lHT
+dVtkCclhwdU8Cj2cy0hQZUogBCF3GQqlg3Doxol9x7fxp/Rg0rC5PDsngex1wUrr
+v3vo/KDyk9yFAbwAtIduJDqxE/XN0q0q3hRYOWUPmxMicsR+YilBHW6k9tMZjIY4
+JBau5cTZ9rundJOGwpUajeEMRH4LNE4EH0zATC2UYQfIenuza+fpJgSUr+eG9c4l
+esH5P+VuefcgCNuvjjGXGsIqd4FhZ/w2jHud/5BuyR/BgiXVYROPczbBJTpXknu4
+mCgL13becNQVxoX7C0KZ0K5eOmioMX2kz1iHhUN6kpyzfixLoLAUKuSHRDhM30l3
+zbE3gIhwELl5RPkkp1YUNvRTfCbc9mpP/Ij0k+mTlzA9Ldf09Y2CUrXPCTWHkEtK
+QX7aNfaUuOpf6dnfa1tSuBO4O7DApft/jWqn+5F7vaX71AvV2ZkUbHKlGZukkx1N
+T237cD51dqkcs/IyX+qI/gefsZE17I/X+47EDN54CohVlER0PjlQBhbKHqU2wiLQ
+xmSXYxPaldIFmzXdpw4mnmiJZPrRFuAcK3cQWVXu/mBThPIhVx4MAWhM0nOSTANL
+4z+fiT16NwiJrqfi6rOPyYJHML6HQDDrBqPCWPpGlj357gXpj3kl7H1qM9Sd8qxE
+6rLfMpCdcJuQqmUYZEe7
+=Taz7
+-----END PGP SIGNATURE-----
+
+--Zrag5V6pnZGjLKiw--
