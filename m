@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB856C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2016C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD532086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD532086A
+	by mail.kernel.org (Postfix) with ESMTP id 981FC2086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981FC2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730289AbeICVpP (ORCPT
+        id S1730370AbeICVpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:45:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45476 "EHLO
+        Mon, 3 Sep 2018 17:45:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45480 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728545AbeICVpO (ORCPT
+        with ESMTP id S1729531AbeICVpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:45:14 -0400
+        Mon, 3 Sep 2018 17:45:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6356D2F;
-        Mon,  3 Sep 2018 17:24:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA97DD0A;
+        Mon,  3 Sep 2018 17:24:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        Ofer Levi <oferle@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 065/165] arc: [plat-eznps] fix data type errors in platform headers
-Date:   Mon,  3 Sep 2018 18:55:51 +0200
-Message-Id: <20180903165658.378689867@linuxfoundation.org>
+Subject: [PATCH 4.14 056/165] ipc/sem.c: prevent queue.status tearing in semop
+Date:   Mon,  3 Sep 2018 18:55:42 +0200
+Message-Id: <20180903165657.941791272@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -54,53 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit b1f32ce1c3d2c11959b7e6a2c58dc5197c581966 ]
+[ Upstream commit f075faa300acc4f6301e348acde0a4580ed5f77c ]
 
-Add <linux/types.h> to fix build errors.
-Both ctop.h and <soc/nps/common.h> use u32 types and cause many
-errors.
+In order for load/store tearing prevention to work, _all_ accesses to
+the variable in question need to be done around READ and WRITE_ONCE()
+macros.  Ensure everyone does so for q->status variable for
+semtimedop().
 
-Examples:
-../include/soc/nps/common.h:71:4: error: unknown type name 'u32'
-    u32 __reserved:20, cluster:4, core:4, thread:4;
-../include/soc/nps/common.h:76:3: error: unknown type name 'u32'
-   u32 value;
-../include/soc/nps/common.h:124:4: error: unknown type name 'u32'
-    u32 base:8, cl_x:4, cl_y:4,
-../include/soc/nps/common.h:127:3: error: unknown type name 'u32'
-   u32 value;
-
-../arch/arc/plat-eznps/include/plat/ctop.h:83:4: error: unknown type name 'u32'
-    u32 gen:1, gdis:1, clk_gate_dis:1, asb:1,
-../arch/arc/plat-eznps/include/plat/ctop.h:86:3: error: unknown type name 'u32'
-   u32 value;
-../arch/arc/plat-eznps/include/plat/ctop.h:93:4: error: unknown type name 'u32'
-    u32 csa:22, dmsid:6, __reserved:3, cs:1;
-../arch/arc/plat-eznps/include/plat/ctop.h:95:3: error: unknown type name 'u32'
-   u32 value;
-
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Ofer Levi <oferle@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Link: http://lkml.kernel.org/r/20180717052654.676-1-dave@stgolabs.net
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Cc: Manfred Spraul <manfred@colorfullife.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/plat-eznps/include/plat/ctop.h |    1 +
- 1 file changed, 1 insertion(+)
+ ipc/sem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/plat-eznps/include/plat/ctop.h
-+++ b/arch/arc/plat-eznps/include/plat/ctop.h
-@@ -21,6 +21,7 @@
- #error "Incorrect ctop.h include"
- #endif
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -2041,7 +2041,7 @@ static long do_semtimedop(int semid, str
+ 	}
  
-+#include <linux/types.h>
- #include <soc/nps/common.h>
+ 	do {
+-		queue.status = -EINTR;
++		WRITE_ONCE(queue.status, -EINTR);
+ 		queue.sleeper = current;
  
- /* core auxiliary registers */
+ 		__set_current_state(TASK_INTERRUPTIBLE);
 
 
