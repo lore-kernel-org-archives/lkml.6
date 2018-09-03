@@ -2,124 +2,187 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21097C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55271C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05DC20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1X5KvpQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05DC20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 17BA420856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BA420856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeICOVr (ORCPT
+        id S1727944AbeICOV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41249 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeICOVp (ORCPT
+        Mon, 3 Sep 2018 10:21:59 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:48108 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbeICOV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:45 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z96-v6so6618wrb.8;
-        Mon, 03 Sep 2018 03:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Yco3GuOwe1ADSho8sukxLRIOHQlCReJ4bgpdQLYejFc=;
-        b=J1X5KvpQE8zgQgmc2/vQAmiKvPlYH1gGdMjr9Zuw9Y4Dos/aMtoSMHUNUhFqFXqeGd
-         T3F8YIahgkY940DbwdulOsuINGsKtknyxXi1kvQpljEe4rM7fat35dAT+SWAt8J9vV3s
-         7KVWYEmTaWvqHrjvfPUcKYav5YtxbOqh7/w+qM3qI4U6VrnLNjJsgzr95uDgM2KQJ6k0
-         cnlooSaxrl5xHSkxW1DnZ73wVmzOjRbFWDo00o53FjBpoNaTQjix3YcAuGYbzqZZKtgn
-         O7JBlpXiDHNSvGp+kmub0iow0Oi3DckfbwIeZxwSqJVqHMXDPObNVbpbl3azYMdcCA0h
-         4bpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Yco3GuOwe1ADSho8sukxLRIOHQlCReJ4bgpdQLYejFc=;
-        b=lLDnnboDMgh1ilM5L8NV7vmfpHxsxpbG5jAk3NJdUs69/AN9IjwNlKxfqJrSf7oICr
-         7PQbkIvJyHAQDX0GVv/61vEVEAuqLaxAuVMLARKGwlrlOeXE6y+7khQTjdO/hxpcgP0m
-         szdt/SPalMYExt2gK4CElCa9lfRI2vBSeE12ZImdzbCa7tsmnMU+TmnnQC0MGC0JBNU6
-         c/8BFxqswHXZ3YwxDl/vU/vRWMhgCaFCg3UXpF8aFkay1HOZ0bpvcp773JhZvQu1ecW4
-         RnRNM4gbqkOOvhZjWAo+kyUkhd05Jr/vwSiYKnU6h92AgPhvhnI9VL3VSRrV1UmDmQ4I
-         df4g==
-X-Gm-Message-State: APzg51DEmcW0MEO7REU+Kw1sLClslTEQOy7UpTonoc6DuV88pHGBrMsF
-        LEeHVz5KTgnPMAIRor2YkGE=
-X-Google-Smtp-Source: ANB0VdYcw7DcZk2D5RcjweU2/i4DeLxR20feymZy2BW1uejbAnCva4EEXUo8FY/IQzBQh93UZ3UD+w==
-X-Received: by 2002:adf:e084:: with SMTP id c4-v6mr17993852wri.199.1535968938709;
-        Mon, 03 Sep 2018 03:02:18 -0700 (PDT)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 03:02:17 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     axboe@kernel.dk, hdegoede@redhat.com, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, robh+dt@kernel.org, wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v5 9/9] ARM: dts: sun8i: sun8i-r40-bananapi-m2-ultra: enable AHCI
-Date:   Mon,  3 Sep 2018 12:02:01 +0200
-Message-Id: <20180903100201.23131-10-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
-References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
+        Mon, 3 Sep 2018 10:21:58 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.232])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 80A2631A;
+        Mon,  3 Sep 2018 18:02:27 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id B8B1539A;
+        Mon,  3 Sep 2018 18:02:15 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <4e00674d2ec9691faceb240c1e781797>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 201250KK8ZH;
+        Mon, 03 Sep 2018 18:02:23 +0800 (CST)
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v4 5/5] clk: RK808: add RK809 and RK817 support.
+Date:   Mon,  3 Sep 2018 18:04:00 +0800
+Message-Id: <1535969040-19528-1-git-send-email-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enable the AHCI controller.
-Since this controller need two regulator, this patch add them.
+RK809 and RK817 are power management IC chips for multimedia products.
+most of their functions and registers are same, including the clkout
+funciton.
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 ---
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/clk/Kconfig     |  9 ++++---
+ drivers/clk/clk-rk808.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index a891a387e8f1..438b7b44dab3 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -105,6 +105,12 @@
- 	};
- };
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 721572a..92cf5ad 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -46,13 +46,12 @@ config COMMON_CLK_MAX77686
+ 	  clock.
  
-+&ahci {
-+	ahci-supply = <&reg_dldo4>;
-+	phy-supply = <&reg_eldo3>;
-+	status = "okay";
-+};
-+
- &de {
- 	status = "okay";
- };
-@@ -250,6 +256,18 @@
- 	regulator-name = "vcc-wifi";
- };
+ config COMMON_CLK_RK808
+-	tristate "Clock driver for RK805/RK808/RK818"
++	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
+ 	depends on MFD_RK808
+ 	---help---
+-	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
+-	  multi-function devices have two fixed-rate oscillators,
+-	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+-	  by control register.
++	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
++	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
++	  Clkout1 is always on, Clkout2 can off by control register.
  
-+&reg_dldo4 {
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	regulator-name = "vdd2v5-sata";
+ config COMMON_CLK_HI655X
+ 	tristate "Clock driver for Hi655x" if EXPERT
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 6461f28..7f9a56b 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -96,6 +96,68 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
+ 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
+ }
+ 
++static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++
++	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
++				  RK817_CLK32KOUT2_EN,
++				  enable ? RK817_CLK32KOUT2_EN : 0);
++}
++
++static int rk817_clkout2_prepare(struct clk_hw *hw)
++{
++	return rk817_clkout2_enable(hw, true);
++}
++
++static void rk817_clkout2_unprepare(struct clk_hw *hw)
++{
++	rk817_clkout2_enable(hw, false);
++}
++
++static int rk817_clkout2_is_prepared(struct clk_hw *hw)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++	unsigned int val;
++
++	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
++
++	if (ret < 0)
++		return 0;
++
++	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
++}
++
++static const struct clk_ops rk817_clkout2_ops = {
++	.prepare = rk817_clkout2_prepare,
++	.unprepare = rk817_clkout2_unprepare,
++	.is_prepared = rk817_clkout2_is_prepared,
++	.recalc_rate = rk808_clkout_recalc_rate,
 +};
 +
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vdd1v2-sata";
-+};
++static const struct clk_ops *rkpmic_get_ops(long variant)
++{
++	switch (variant) {
++	case RK809_ID:
++	case RK817_ID:
++		return &rk817_clkout2_ops;
++	/*
++	 * For the default case, it match the following PMIC type.
++	 * RK805_ID
++	 * RK808_ID
++	 * RK818_ID
++	 */
++	default:
++		return &rk808_clkout2_ops;
++	}
++}
 +
- &tcon_tv0 {
- 	status = "okay";
- };
+ static int rk808_clkout_probe(struct platform_device *pdev)
+ {
+ 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+@@ -127,7 +189,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	init.name = "rk808-clkout2";
+-	init.ops = &rk808_clkout2_ops;
++	init.ops = rkpmic_get_ops(rk808->variant);
+ 	rk808_clkout->clkout2_hw.init = &init;
+ 
+ 	/* optional override of the clockname */
 -- 
-2.16.4
+1.9.1
+
 
