@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96EDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B809C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6A72077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:44:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6A72077C
+	by mail.kernel.org (Postfix) with ESMTP id BCE302077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE302077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeICGCh (ORCPT
+        id S1726203AbeICGEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:02:37 -0400
-Received: from gate.crashing.org ([63.228.1.57]:56962 "EHLO gate.crashing.org"
+        Mon, 3 Sep 2018 02:04:30 -0400
+Received: from gate.crashing.org ([63.228.1.57]:57014 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725762AbeICGCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:02:37 -0400
+        id S1725782AbeICGEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:04:30 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w831iKwJ000903;
-        Sun, 2 Sep 2018 20:44:21 -0500
-Message-ID: <d2f74ff960be5b1933ca3af35031b5a8156ff956.camel@kernel.crashing.org>
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w831kEgQ000958;
+        Sun, 2 Sep 2018 20:46:15 -0500
+Message-ID: <a0aaa8162a0152e4afdf81ed28da230708f199b5.camel@kernel.crashing.org>
 Subject: Re: Access to non-RAM pages
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
@@ -36,7 +36,7 @@ Cc:     Jiri Kosina <jikos@kernel.org>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Will Deacon <will.deacon@arm.com>
-Date:   Mon, 03 Sep 2018 11:44:20 +1000
+Date:   Mon, 03 Sep 2018 11:46:14 +1000
 In-Reply-To: <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
 References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
          <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
@@ -67,14 +67,9 @@ On Sun, 2018-09-02 at 18:38 -0700, Linus Torvalds wrote:
 > So it can cross pages, and it can fall off the end of memory, but it
 > can't do random stuff.
 
-Ok, it might be worth adding a DEBUG_VM based (or similar) warning in
-case somebody ever thinks of passing a vmalloc pointer to it...
+Actually what about DEBUG_PAGEALLOC ? Can't we fall off a page and
+fault that way too ?
 
-As for falling out of the end of memory, yes it could be a real problem
-though I don't see why IO is any different than just hitting a non-
-mapped area in that regard. So we should probably keep an unused
-(readonly if possible) zero page at the end.
- 
 Cheers,
 Ben.
 
