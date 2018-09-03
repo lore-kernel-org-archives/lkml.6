@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D66C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D425C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFECF20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CE620862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2/ZIJCi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFECF20856
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Da0LDtvU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CE620862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbeICOVn (ORCPT
+        id S1727854AbeICOVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:43 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52354 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeICOVm (ORCPT
+        Mon, 3 Sep 2018 10:21:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46633 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbeICOVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:42 -0400
-Received: by mail-wm0-f67.google.com with SMTP id y139-v6so536542wmc.2;
-        Mon, 03 Sep 2018 03:02:16 -0700 (PDT)
+        Mon, 3 Sep 2018 10:21:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a108-v6so17172782wrc.13;
+        Mon, 03 Sep 2018 03:02:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sz99Ed4cFqHyXgEVj3BM7faY7Awz0qAK84Sc1hbiz1k=;
-        b=S2/ZIJCiEXJjhxXnVeHi+pLSw3LwTTWpDMaaNjklWtYTVm10+efVbe3sykAGxVbuQP
-         gAaQ48ck4Rrqr1UW7OKRa967JWbD49cFo68ykrQqdtfsmRzV7tZJocaoENvFH9Ab+wGJ
-         chuI3cCXIDznKsrmTZL0jKArWuOFHM8/euRo7yXtDF6lVM/J2YEjprSNIwSuporMrpnV
-         765qGuaQX6PKlRgRD8Ns07+z1z3UamALBztNeJbmY7Cn9IWlr3mK/9iq3TOobGpwqamj
-         C6IQwa1Gt2h0nFKW6rGW/k7aw7qJarrJgTZqOrd6QMxWW9thgY7lPRgQDlQjfmQCYR61
-         s2Vw==
+        bh=UNiJvsSjjdgkQ1ZQoChwHdQ+/Jgt1wIrgsMDUlZYcDA=;
+        b=Da0LDtvUx2ZakB3RYUo5s50VYBxKrxaxV+rN/HJEZP6SHYGGVcSrxGBYkVVFuMkMGK
+         +dZ4PFxRXHuinvFrz2NSHlL6k/o/UB/YrXcn4QG1DJkvyuwRfX2bN1vablMwBV49QSyj
+         XwjLVLlKhF6uFG0A5JCkMvIy1O4/XiJ0o7eFc3J5GCqn578gGR+Fr+LINYLX3IRHVoNX
+         KN20NGujdnZC8PY21heiL2hKIOMpmjFNSml33FC71sQNXceZPqA6zjckHFG47mEriDqC
+         dMiRnnrUizmsNroMIjSt4wFl4jBng3f7bYzftyzYnSe9tO6zYFr1hD0qzSGUkx7rBcJv
+         yoIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sz99Ed4cFqHyXgEVj3BM7faY7Awz0qAK84Sc1hbiz1k=;
-        b=hY5859sVTZ8tdNk60m25D0gi4Mx9eMtef0viaNENNQHUU38ndH0/Habpz5C0AH0gaZ
-         yFBSKbPruThJruZMgQxiIPrxPinXNW9vrRrBiCHEE7uxdjrVPtyBRpzba/8Td0nmY4ld
-         aJh8YFgPVzJegABNjpaDT/HqITX6BfGJWt6M/zu9nPQQWZF8oyfglyb+I3758J6NDxmo
-         koo/vlJrJlxUaG2RCUiKADArgoDjlKTb/YFZbDTOVckqHQpd/cDCQRxyUseAFn0kbJMZ
-         8JQeVctZQz3yOvbmjOGpW8plPuvZdqjSL4v1z8LMLnllehtoCKsBcX6VFhv4gl8WGVLr
-         xIgQ==
-X-Gm-Message-State: APzg51Dl9yK9PAufZk9TebUCxMjVRzB2fRGRxcQhsfI6iJ3pXWN2diXT
-        xnkRxPA60QcyzkXBb24J09k=
-X-Google-Smtp-Source: ANB0VdbnQ4DGqks37mn1q9DRTmofyTEpSofTDMg1HggzCg2Xp6sbNUIYPT285kUa1RnATH0fOvj9aw==
-X-Received: by 2002:a1c:1805:: with SMTP id 5-v6mr4397863wmy.25.1535968935782;
-        Mon, 03 Sep 2018 03:02:15 -0700 (PDT)
+        bh=UNiJvsSjjdgkQ1ZQoChwHdQ+/Jgt1wIrgsMDUlZYcDA=;
+        b=F9zcGqSFz8A4ddvzXRSFMLwWe3NF0EHSsyFCj3oV5WIWnEvvopZWoR1YC1uU3Y7q5j
+         bwn2Llg1AobJxeBhzQ/WjBAEpRDHgVFDeWjFlcHrrqwsdKrsO9Kz9rEn9SfqLdJDHOqZ
+         IzazOeZanuf2InsEkDOKwYnP7mtiOUBQOqO+I7CAnQBFUoTk/NAs2Nesre1FJN9BaCdx
+         hV1q5QbdlpFhvDPu67NSwDdlp+79pPY0TGysX4wOM/Pjqz08je7aQQt1SFFHxT6RFXRi
+         7HoLRrO/fB7cLdOXvupCmWgHDTuq0YJqGr/t5mKC1WFtB8N1oqWVKUKha1ShyNbMfdhk
+         aXjg==
+X-Gm-Message-State: APzg51BR1HM++MZJqQT/xFgEPkXQ3dFX9XBptoIZcDEInppDzt23ihbr
+        3t7QI2J5NEtYpS1q19GPv0E=
+X-Google-Smtp-Source: ANB0VdaNyNMsh0OqKfQXULzzxhfM4EIKfWqEDJ0m/NjlNsFiVZriZMTIOdT+FGXBpQeEF34mD+zj4Q==
+X-Received: by 2002:adf:e792:: with SMTP id n18-v6mr7407609wrm.136.1535968937245;
+        Mon, 03 Sep 2018 03:02:17 -0700 (PDT)
 Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.14
+        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 03:02:15 -0700 (PDT)
+        Mon, 03 Sep 2018 03:02:16 -0700 (PDT)
 From:   Corentin Labbe <clabbe.montjoie@gmail.com>
 To:     axboe@kernel.dk, hdegoede@redhat.com, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, robh+dt@kernel.org, wens@csie.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH v5 7/9] dt-bindings: ata: update ahci_sunxi bindings
-Date:   Mon,  3 Sep 2018 12:01:59 +0200
-Message-Id: <20180903100201.23131-8-clabbe.montjoie@gmail.com>
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v5 8/9] ARM: dts: sun8i: r40: add sata node
+Date:   Mon,  3 Sep 2018 12:02:00 +0200
+Message-Id: <20180903100201.23131-9-clabbe.montjoie@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
 References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
@@ -76,33 +77,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch update binding with the new R40 compatible.
+R40 have a sata controller which is the same as A20.
+This patch adds a DT node for it.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 ---
- Documentation/devicetree/bindings/ata/ahci-platform.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/sun8i-r40.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-index 45b451961612..e30fd106df4f 100644
---- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
-+++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-@@ -10,6 +10,7 @@ PHYs.
- Required properties:
- - compatible        : compatible string, one of:
-   - "allwinner,sun4i-a10-ahci"
-+  - "allwinner,sun8i-r40-ahci"
-   - "brcm,iproc-ahci"
-   - "hisilicon,hisi-ahci"
-   - "cavium,octeon-7130-ahci"
-@@ -44,6 +45,7 @@ Required properties when using sub-nodes:
- - #address-cells    : number of cells to encode an address
- - #size-cells       : number of cells representing the size of an address
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index 852c2ccc3268..d27c522e1918 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -550,6 +550,19 @@
+ 			#size-cells = <0>;
+ 		};
  
-+For allwinner,sun8i-r40-ahci, the reset propertie must be present.
- 
- Sub-nodes required properties:
- - reg		    : the port number
++		ahci: sata@1c18000 {
++			compatible = "allwinner,sun8i-r40-ahci";
++			reg = <0x01c18000 0x1000>;
++			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_SATA>, <&ccu CLK_SATA>;
++			resets = <&ccu RST_BUS_SATA>;
++			resets-name = "ahci";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++
++		};
++
+ 		gmac: ethernet@1c50000 {
+ 			compatible = "allwinner,sun8i-r40-gmac";
+ 			syscon = <&ccu>;
 -- 
 2.16.4
 
