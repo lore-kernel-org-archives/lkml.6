@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79160C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C5EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F15020658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F15020658
+	by mail.kernel.org (Postfix) with ESMTP id C388720658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C388720658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731646AbeICV5p (ORCPT
+        id S1730926AbeICV6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:57:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48138 "EHLO
+        Mon, 3 Sep 2018 17:58:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48154 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbeICV5l (ORCPT
+        with ESMTP id S1728779AbeICV6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:57:41 -0400
+        Mon, 3 Sep 2018 17:58:01 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6867BD16;
-        Mon,  3 Sep 2018 17:36:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BBDABD16;
+        Mon,  3 Sep 2018 17:36:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samuel Neves <sneves@dei.uc.pt>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 4.18 079/123] x86/vdso: Fix lsl operand order
-Date:   Mon,  3 Sep 2018 18:57:03 +0200
-Message-Id: <20180903165722.897093143@linuxfoundation.org>
+        Rik van Riel <riel@surriel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.18 080/123] x86/nmi: Fix NMI uaccess race against CR3 switching
+Date:   Mon,  3 Sep 2018 18:57:04 +0200
+Message-Id: <20180903165722.940919678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,36 +54,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Samuel Neves <sneves@dei.uc.pt>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit e78e5a91456fcecaa2efbb3706572fe043766f4d upstream.
+commit 4012e77a903d114f915fc607d6d2ed54a3d6c9b1 upstream.
 
-In the __getcpu function, lsl is using the wrong target and destination
-registers. Luckily, the compiler tends to choose %eax for both variables,
-so it has been working so far.
+A NMI can hit in the middle of context switching or in the middle of
+switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
+which could cause copy_from_user_nmi() and friends to read the wrong
+memory.
 
-Fixes: a582c540ac1b ("x86/vdso: Use RDPID in preference to LSL when available")
-Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
+Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180901201452.27828-1-sneves@dei.uc.pt
+Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/vgtod.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/core.c          |    2 +-
+ arch/x86/include/asm/tlbflush.h |   40 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/lib/usercopy.c         |    5 +++++
+ arch/x86/mm/tlb.c               |    7 +++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/vgtod.h
-+++ b/arch/x86/include/asm/vgtod.h
-@@ -93,7 +93,7 @@ static inline unsigned int __getcpu(void
- 	 *
- 	 * If RDPID is available, use it.
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchai
+ 
+ 	perf_callchain_store(entry, regs->ip);
+ 
+-	if (!current->mm)
++	if (!nmi_uaccess_okay())
+ 		return;
+ 
+ 	if (perf_callchain_user32(regs, entry))
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -175,8 +175,16 @@ struct tlb_state {
+ 	 * are on.  This means that it may not match current->active_mm,
+ 	 * which will contain the previous user mm when we're in lazy TLB
+ 	 * mode even if we've already switched back to swapper_pg_dir.
++	 *
++	 * During switch_mm_irqs_off(), loaded_mm will be set to
++	 * LOADED_MM_SWITCHING during the brief interrupts-off window
++	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
++	 * is for nmi_uaccess_okay()'s benefit.
  	 */
--	alternative_io ("lsl %[p],%[seg]",
-+	alternative_io ("lsl %[seg],%[p]",
- 			".byte 0xf3,0x0f,0xc7,0xf8", /* RDPID %eax/rax */
- 			X86_FEATURE_RDPID,
- 			[p] "=a" (p), [seg] "r" (__PER_CPU_SEG));
+ 	struct mm_struct *loaded_mm;
++
++#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
++
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+ 	/* last user mm's ctx id */
+@@ -246,6 +254,38 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or
++ * switching the loaded mm.  It can also be dangerous if we
++ * interrupted some kernel code that was temporarily using a
++ * different mm.
++ */
++static inline bool nmi_uaccess_okay(void)
++{
++	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	struct mm_struct *current_mm = current->mm;
++
++	VM_WARN_ON_ONCE(!loaded_mm);
++
++	/*
++	 * The condition we want to check is
++	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
++	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
++	 * is supposed to be reasonably fast.
++	 *
++	 * Instead, we check the almost equivalent but somewhat conservative
++	 * condition below, and we rely on the fact that switch_mm_irqs_off()
++	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
++	 */
++	if (loaded_mm != current_mm)
++		return false;
++
++	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
++
++	return true;
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+--- a/arch/x86/lib/usercopy.c
++++ b/arch/x86/lib/usercopy.c
+@@ -7,6 +7,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ 
++#include <asm/tlbflush.h>
++
+ /*
+  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+  * nested NMI paths are careful to preserve CR2.
+@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void
+ 	if (__range_not_ok(from, n, TASK_SIZE))
+ 		return n;
+ 
++	if (!nmi_uaccess_okay())
++		return n;
++
+ 	/*
+ 	 * Even though this function is typically called from NMI/IRQ context
+ 	 * disable pagefaults so that its behaviour is consistent even when
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -298,6 +298,10 @@ void switch_mm_irqs_off(struct mm_struct
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+ 
++		/* Let nmi_uaccess_okay() know that we're changing CR3. */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		if (need_flush) {
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+@@ -328,6 +332,9 @@ void switch_mm_irqs_off(struct mm_struct
+ 		if (next != &init_mm)
+ 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+ 
++		/* Make sure we write CR3 before loaded_mm. */
++		barrier();
++
+ 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+ 	}
 
 
