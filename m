@@ -3,44 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB40DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F82C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD8C020862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD8C020862
+	by mail.kernel.org (Postfix) with ESMTP id BA1F520779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1F520779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbeICVWO (ORCPT
+        id S1728672AbeICVWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:22:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38664 "EHLO
+        Mon, 3 Sep 2018 17:22:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728047AbeICVWN (ORCPT
+        with ESMTP id S1728169AbeICVWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:22:13 -0400
+        Mon, 3 Sep 2018 17:22:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF4F8CFF;
-        Mon,  3 Sep 2018 17:01:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A4B4CFE;
+        Mon,  3 Sep 2018 17:01:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rian Hunter <rian@alum.mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dmitry Safonov <dima@arista.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH 4.4 56/80] x86/process: Re-export start_thread()
-Date:   Mon,  3 Sep 2018 18:49:34 +0200
-Message-Id: <20180903164936.390344046@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.4 57/80] fuse: Dont access pipe->buffers without pipe_lock()
+Date:   Mon,  3 Sep 2018 18:49:35 +0200
+Message-Id: <20180903164936.429793723@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -57,42 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rian Hunter <rian@alum.mit.edu>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit dc76803e57cc86589c4efcb5362918f9b0c0436f upstream.
+commit a2477b0e67c52f4364a47c3ad70902bc2a61bd4c upstream.
 
-The consolidation of the start_thread() functions removed the export
-unintentionally. This breaks binfmt handlers built as a module.
+fuse_dev_splice_write() reads pipe->buffers to determine the size of
+'bufs' array before taking the pipe_lock(). This is not safe as
+another thread might change the 'pipe->buffers' between the allocation
+and taking the pipe_lock(). So we end up with too small 'bufs' array.
 
-Add it back.
+Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
 
-Fixes: e634d8fc792c ("x86-64: merge the standard and compat start_thread() functions")
-Signed-off-by: Rian Hunter <rian@alum.mit.edu>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180819230854.7275-1-rian@alum.mit.edu
+Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: <stable@vger.kernel.org> # v2.6.35
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/process_64.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/fuse/dev.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -250,6 +250,7 @@ start_thread(struct pt_regs *regs, unsig
- 	start_thread_common(regs, new_ip, new_sp,
- 			    __USER_CS, __USER_DS, 0);
- }
-+EXPORT_SYMBOL_GPL(start_thread);
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1991,11 +1991,14 @@ static ssize_t fuse_dev_splice_write(str
+ 	if (!fud)
+ 		return -EPERM;
  
- #ifdef CONFIG_COMPAT
- void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
++	pipe_lock(pipe);
++
+ 	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
+-	if (!bufs)
++	if (!bufs) {
++		pipe_unlock(pipe);
+ 		return -ENOMEM;
++	}
+ 
+-	pipe_lock(pipe);
+ 	nbuf = 0;
+ 	rem = 0;
+ 	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
 
 
