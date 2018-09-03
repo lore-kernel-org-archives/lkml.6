@@ -5,55 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2638C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84D8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6541920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6541920862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DE2320862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:27:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE2320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbeIDCpe (ORCPT
+        id S1726212AbeIDCtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 22:45:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725955AbeIDCpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 22:45:34 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C7CC040241C5;
-        Mon,  3 Sep 2018 22:23:21 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CD3E2026D6B;
-        Mon,  3 Sep 2018 22:23:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w83MNIsH010112;
-        Mon, 3 Sep 2018 18:23:18 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w83MNHJq010108;
-        Mon, 3 Sep 2018 18:23:17 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 3 Sep 2018 18:23:17 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     jing xia <jing.xia.mail@gmail.com>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: dm bufio: Reduce dm_bufio_lock contention
-In-Reply-To: <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.1809031816120.27063@file01.intranet.prod.int.rdu2.redhat.com>
-References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com> <20180612212007.GA22717@redhat.com> <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com> <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
- <20180614073153.GB9371@dhcp22.suse.cz> <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 3 Sep 2018 22:49:10 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:38918 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbeIDCtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 22:49:10 -0400
+Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.18])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fwxIo-0006QC-HP; Mon, 03 Sep 2018 16:26:35 -0600
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+ <20180830185352.3369-8-logang@deltatee.com>
+ <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
+ <20180901082812.GB670@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <5f79c012-c6e1-56bb-62fd-0689181fb2c9@deltatee.com>
+Date:   Mon, 3 Sep 2018 16:26:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 03 Sep 2018 22:23:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 03 Sep 2018 22:23:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+In-Reply-To: <20180901082812.GB670@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.191.165
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, axboe@kernel.dk, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,63 +69,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Wed, 1 Aug 2018, jing xia wrote:
-
-> We reproduced this issue again and found out the root cause.
-> dm_bufio_prefetch() with dm_bufio_lock enters the direct reclaim and
-> takes a long time to do the soft_limit_reclaim, because of the huge
-> number of memory excess of the memcg.
-> Then, all the task who do shrink_slab() wait for  dm_bufio_lock.
+On 01/09/18 02:28 AM, Christoph Hellwig wrote:
+> On Thu, Aug 30, 2018 at 01:11:18PM -0600, Jens Axboe wrote:
+>> I think this belongs in the caller - both the validity check, and
+>> passing in NOMERGE for this type of request. I don't want to impose
+>> this overhead on everything, for a pretty niche case.
 > 
-> Any suggestions for this?Thanks.
+> It is just a single branch, which will be predicted as not taken
+> for non-P2P users.  The benefit is that we get proper error checking
+> by doing it in the block code.
 
-There's hardly any solution because Michal Hocko refuses to change 
-__GFP_NORETRY behavior.
+I personally agree with Christoph. But if there's consensus in the other
+direction or this is a real blocker moving this forward, I can remove it
+for the next version.
 
-The patches 41c73a49df31151f4ff868f28fe4f129f113fa2c and 
-d12067f428c037b4575aaeb2be00847fc214c24a could reduce the lock contention 
-on the dm-bufio lock - the patches don't fix the high CPU consumption 
-inside the memory allocation, but the kernel code should wait less on the 
-bufio lock.
+Logan
 
-Mikulas
-
-
-> On Thu, Jun 14, 2018 at 3:31 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Thu 14-06-18 15:18:58, jing xia wrote:
-> > [...]
-> >> PID: 22920  TASK: ffffffc0120f1a00  CPU: 1   COMMAND: "kworker/u8:2"
-> >>  #0 [ffffffc0282af3d0] __switch_to at ffffff8008085e48
-> >>  #1 [ffffffc0282af3f0] __schedule at ffffff8008850cc8
-> >>  #2 [ffffffc0282af450] schedule at ffffff8008850f4c
-> >>  #3 [ffffffc0282af470] schedule_timeout at ffffff8008853a0c
-> >>  #4 [ffffffc0282af520] schedule_timeout_uninterruptible at ffffff8008853aa8
-> >>  #5 [ffffffc0282af530] wait_iff_congested at ffffff8008181b40
-> >
-> > This trace doesn't provide the full picture unfortunately. Waiting in
-> > the direct reclaim means that the underlying bdi is congested. The real
-> > question is why it doesn't flush IO in time.
-> >
-> >>  #6 [ffffffc0282af5b0] shrink_inactive_list at ffffff8008177c80
-> >>  #7 [ffffffc0282af680] shrink_lruvec at ffffff8008178510
-> >>  #8 [ffffffc0282af790] mem_cgroup_shrink_node_zone at ffffff80081793bc
-> >>  #9 [ffffffc0282af840] mem_cgroup_soft_limit_reclaim at ffffff80081b6040
-> >> #10 [ffffffc0282af8f0] do_try_to_free_pages at ffffff8008178b6c
-> >> #11 [ffffffc0282af990] try_to_free_pages at ffffff8008178f3c
-> >> #12 [ffffffc0282afa30] __perform_reclaim at ffffff8008169130
-> >> #13 [ffffffc0282afab0] __alloc_pages_nodemask at ffffff800816c9b8
-> >> #14 [ffffffc0282afbd0] __get_free_pages at ffffff800816cd6c
-> >> #15 [ffffffc0282afbe0] alloc_buffer at ffffff8008591a94
-> >> #16 [ffffffc0282afc20] __bufio_new at ffffff8008592e94
-> >> #17 [ffffffc0282afc70] dm_bufio_prefetch at ffffff8008593198
-> >> #18 [ffffffc0282afd20] verity_prefetch_io at ffffff8008598384
-> >> #19 [ffffffc0282afd70] process_one_work at ffffff80080b5b3c
-> >> #20 [ffffffc0282afdc0] worker_thread at ffffff80080b64fc
-> >> #21 [ffffffc0282afe20] kthread at ffffff80080bae34
-> >>
-> >> > Mikulas
-> >
-> > --
-> > Michal Hocko
-> > SUSE Labs
-> 
