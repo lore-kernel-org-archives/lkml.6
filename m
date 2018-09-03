@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C99C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD38C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5553520862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5553520862
+	by mail.kernel.org (Postfix) with ESMTP id D741620779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D741620779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbeICVXk (ORCPT
+        id S1729084AbeICVXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:23:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38980 "EHLO
+        Mon, 3 Sep 2018 17:23:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbeICVXj (ORCPT
+        with ESMTP id S1727976AbeICVXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:23:39 -0400
+        Mon, 3 Sep 2018 17:23:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36279CFD;
-        Mon,  3 Sep 2018 17:02:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69200CFF;
+        Mon,  3 Sep 2018 17:02:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Bauer <scott.bauer@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 80/80] cdrom: Fix info leak/OOB read in cdrom_ioctl_drive_status
-Date:   Mon,  3 Sep 2018 18:49:58 +0200
-Message-Id: <20180903164937.343321526@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.4 61/80] fuse: Fix oops at process_init_reply()
+Date:   Mon,  3 Sep 2018 18:49:39 +0200
+Message-Id: <20180903164936.592520745@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,36 +51,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Bauer <scott.bauer@intel.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 8f3fafc9c2f0ece10832c25f7ffcb07c97a32ad4 upstream.
+commit e8f3bd773d22f488724dffb886a1618da85c2966 upstream.
 
-Like d88b6d04: "cdrom: information leak in cdrom_ioctl_media_changed()"
+syzbot is hitting NULL pointer dereference at process_init_reply().
+This is because deactivate_locked_super() is called before response for
+initial request is processed.
 
-There is another cast from unsigned long to int which causes
-a bounds check to fail with specially crafted input. The value is
-then used as an index in the slot array in cdrom_slot_status().
+Fix this by aborting and waiting for all requests (including FUSE_INIT)
+before resetting fc->sb.
 
-Signed-off-by: Scott Bauer <scott.bauer@intel.com>
-Signed-off-by: Scott Bauer <sbauer@plzdonthack.me>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Original patch by Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>.
+
+Reported-by: syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>
+Fixes: e27c9d3877a0 ("fuse: fuse: add time_gran to INIT_OUT")
+Cc: <stable@vger.kernel.org> # v3.19
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/inode.c |   25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2526,7 +2526,7 @@ static int cdrom_ioctl_drive_status(stru
- 	if (!CDROM_CAN(CDC_SELECT_DISC) ||
- 	    (arg == CDSL_CURRENT || arg == CDSL_NONE))
- 		return cdi->ops->drive_status(cdi, CDSL_CURRENT);
--	if (((int)arg >= cdi->capacity))
-+	if (arg >= cdi->capacity)
- 		return -EINVAL;
- 	return cdrom_slot_status(cdi, arg);
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -379,11 +379,6 @@ static void fuse_put_super(struct super_
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ 
+-	fuse_send_destroy(fc);
+-
+-	fuse_abort_conn(fc);
+-	fuse_wait_aborted(fc);
+-
+ 	mutex_lock(&fuse_mutex);
+ 	list_del(&fc->entry);
+ 	fuse_ctl_remove_conn(fc);
+@@ -1174,16 +1169,25 @@ static struct dentry *fuse_mount(struct
+ 	return mount_nodev(fs_type, flags, raw_data, fuse_fill_super);
  }
+ 
+-static void fuse_kill_sb_anon(struct super_block *sb)
++static void fuse_sb_destroy(struct super_block *sb)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ 
+ 	if (fc) {
++		fuse_send_destroy(fc);
++
++		fuse_abort_conn(fc);
++		fuse_wait_aborted(fc);
++
+ 		down_write(&fc->killsb);
+ 		fc->sb = NULL;
+ 		up_write(&fc->killsb);
+ 	}
++}
+ 
++static void fuse_kill_sb_anon(struct super_block *sb)
++{
++	fuse_sb_destroy(sb);
+ 	kill_anon_super(sb);
+ }
+ 
+@@ -1206,14 +1210,7 @@ static struct dentry *fuse_mount_blk(str
+ 
+ static void fuse_kill_sb_blk(struct super_block *sb)
+ {
+-	struct fuse_conn *fc = get_fuse_conn_super(sb);
+-
+-	if (fc) {
+-		down_write(&fc->killsb);
+-		fc->sb = NULL;
+-		up_write(&fc->killsb);
+-	}
+-
++	fuse_sb_destroy(sb);
+ 	kill_block_super(sb);
+ }
+ 
 
 
