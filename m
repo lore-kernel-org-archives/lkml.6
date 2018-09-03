@@ -3,38 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A11C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0810AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB3520843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB3520843
+	by mail.kernel.org (Postfix) with ESMTP id BFB8320843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB8320843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbeICV1Y (ORCPT
+        id S1729704AbeICV11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:27:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39650 "EHLO
+        Mon, 3 Sep 2018 17:27:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729364AbeICV1X (ORCPT
+        with ESMTP id S1729206AbeICV10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:27:23 -0400
+        Mon, 3 Sep 2018 17:27:26 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84D58D02;
-        Mon,  3 Sep 2018 17:06:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72C0ED02;
+        Mon,  3 Sep 2018 17:06:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.9 056/107] smb3: dont request leases in symlink creation and query
-Date:   Mon,  3 Sep 2018 18:56:20 +0200
-Message-Id: <20180903165640.021505684@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>, acme@kernel.org,
+        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
+        linux-arch@vger.kernel.org, rostedt@goodmis.org,
+        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 057/107] kprobes/arm64: Fix %p uses in error messages
+Date:   Mon,  3 Sep 2018 18:56:21 +0200
+Message-Id: <20180903165640.077711082@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,42 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 22783155f4bf956c346a81624ec9258930a6fe06 upstream.
+commit 0722867dcbc28cc9b269b57acd847c7c1aa638d6 upstream.
 
-Fixes problem pointed out by Pavel in discussions about commit
-729c0c9dd55204f0c9a823ac8a7bfa83d36c7e78
+Fix %p uses in error messages by removing it because
+those are redundant or meaningless.
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org> # 3.18.x+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jon Medhurst <tixy@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Tobin C . Harding <me@tobin.cc>
+Cc: acme@kernel.org
+Cc: akpm@linux-foundation.org
+Cc: brueckner@linux.vnet.ibm.com
+Cc: linux-arch@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/lkml/152491908405.9916.12425053035317241111.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/link.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/probes/kprobes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/link.c
-+++ b/fs/cifs/link.c
-@@ -419,7 +419,7 @@ smb3_query_mf_symlink(unsigned int xid,
- 	struct cifs_io_parms io_parms;
- 	int buf_type = CIFS_NO_BUFFER;
- 	__le16 *utf16_path;
--	__u8 oplock = SMB2_OPLOCK_LEVEL_II;
-+	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
- 	struct smb2_file_all_info *pfile_info = NULL;
- 
- 	oparms.tcon = tcon;
-@@ -481,7 +481,7 @@ smb3_create_mf_symlink(unsigned int xid,
- 	struct cifs_io_parms io_parms;
- 	int create_options = CREATE_NOT_DIR;
- 	__le16 *utf16_path;
--	__u8 oplock = SMB2_OPLOCK_LEVEL_EXCLUSIVE;
-+	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
- 	struct kvec iov[2];
- 
- 	if (backup_cred(cifs_sb))
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -274,7 +274,7 @@ static int __kprobes reenter_kprobe(stru
+ 		break;
+ 	case KPROBE_HIT_SS:
+ 	case KPROBE_REENTER:
+-		pr_warn("Unrecoverable kprobe detected at %p.\n", p->addr);
++		pr_warn("Unrecoverable kprobe detected.\n");
+ 		dump_kprobe(p);
+ 		BUG();
+ 		break;
 
 
