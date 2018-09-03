@@ -2,273 +2,184 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D4FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9A3C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588982075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:35:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588982075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 97E1420779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 05:40:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fbOmR4uU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E1420779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbeICJx7 (ORCPT
+        id S1725982AbeICJ7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 05:53:59 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37850 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbeICJx7 (ORCPT
+        Mon, 3 Sep 2018 05:59:02 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36922 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeICJ7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 05:53:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a20-v6so10431118edd.4;
-        Sun, 02 Sep 2018 22:35:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+hvKE3M5SyH1heE1Yw+hOKNFWL+yKNN0VwxygNZtMuA=;
-        b=LFbsTQRqB1inXBHOPUpFrelOQFelMNnVvUl0rU3t3VZLlpeBMHuKuJW9OvWAZUjEC1
-         QB9QkDmaaVaAlkULSm7zIm+nfZashZOp7CBFFLb8V5wSDg63gZJYuFbDNOs2ckkDhR2g
-         sL/d+vU8Auajdn56x6QApWWGW1mpevmNxwO+PzUm41dxnXKzb4Endb+33gdCx5mPCFmP
-         /gfaWXTcVjPSiic9B6NJ7TOoojVuIOXTGh5r0hkzjYpbV6HpnPLjrgtdlUow059pSxT1
-         MkxjTw5B6lrRHBSvFfcFd+acfaf9wCeCFOJdLoW6/dzUuhjcwFU/GRDG1ECQPvQTmF4N
-         irEw==
-X-Gm-Message-State: APzg51AHT/Y5XhKnMF19TTV4LKm6x56VFcq1HK3mDczsMzsqSEiOpnxh
-        zKWrS1MEkrz2/JlymDQYMRIdoYSM2Fs=
-X-Google-Smtp-Source: ANB0VdapXpChtg+ZhyCl73bGBPox14JZdCAw/jq3h/mBYzI1OE7oslhwGPdWgnwT9d1+9RNIFoepHA==
-X-Received: by 2002:a50:ad5a:: with SMTP id z26-v6mr29163323edc.142.1535952924812;
-        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
-        by smtp.gmail.com with ESMTPSA id k28-v6sm8021729ede.11.2018.09.02.22.35.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
-Received: by mail-wr1-f52.google.com with SMTP id 20-v6so16431988wrb.12;
-        Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
-X-Received: by 2002:adf:d84a:: with SMTP id k10-v6mr16596734wrl.26.1535952924109;
- Sun, 02 Sep 2018 22:35:24 -0700 (PDT)
+        Mon, 3 Sep 2018 05:59:02 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w835eRNC015057;
+        Mon, 3 Sep 2018 00:40:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535953227;
+        bh=g4xGaqKMpXcbeL5xP/9xBCamdKbR+W8OmCTcFKxmJ6I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fbOmR4uUDlPO+QhPNPkE48npS1KtwZ3hEVcsCgiDBgweYMyS0cwYFTwtF2gf+jw/k
+         bJXbE15wNE5sQbGLorlzgCGp5iR5K+yT01TAzySh/cYvn13+4bhrO4Dc5F1CuPb0DG
+         IT+yVlmy/UeRi9gPFhZ90iP3wVY0+KkUFhykUHN8=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w835eREH011016;
+        Mon, 3 Sep 2018 00:40:27 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 3 Sep
+ 2018 00:40:26 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 3 Sep 2018 00:40:26 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w835eOQZ008441;
+        Mon, 3 Sep 2018 00:40:25 -0500
+Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
+ base selection
+To:     "Andrew F. Davis" <afd@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180831191326.25106-1-afd@ti.com>
+ <20180831191326.25106-2-afd@ti.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com>
+Date:   Mon, 3 Sep 2018 11:10:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-References: <20180728182615.20845-1-jagan@amarulasolutions.com>
- <20180730090048.gl7fkduztjkxacqq@flea> <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
- <CAMty3ZBNM7mdtkBSq5BGuGoa5jKdSuuSVxkOoqPhDJZ-NM2THQ@mail.gmail.com> <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
-In-Reply-To: <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 3 Sep 2018 13:35:12 +0800
-X-Gmail-Original-Message-ID: <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
-Message-ID: <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: allwinner: h6: Add OrangePi One Plus initial support
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180831191326.25106-2-afd@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 9:42 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Tue, Jul 31, 2018 at 9:41 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > On Mon, Jul 30, 2018 at 2:47 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> >> On Mon, Jul 30, 2018 at 5:00 PM, Maxime Ripard
-> >> <maxime.ripard@bootlin.com> wrote:
-> >>> Hi,
-> >>>
-> >>> On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
-> >>>> OrangePi One Plus is Allwinner H6 based open-source SBC,
-> >>>> which support:
-> >>>> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
-> >>>> - GPU Mali-T720
-> >>>> - 1GB LPDDR3 RAM
-> >>>> - AXP805 PMIC
-> >>>> - 1Gbps GMAC via RTL8211
-> >>>> - USB 2.0 Host, OTG
-> >>>> - HDMI port
-> >>>> - 5V/2A DC power supply
-> >>>>
-> >>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >>>> ---
-> >>>>  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
-> >>>>  .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
-> >>>>  2 files changed, 151 insertions(+)
-> >>>>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
-> >>>>
-> >>>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-> >>>> index 9ffa7a038791..c38f326e7fec 100644
-> >>>> --- a/arch/arm64/boot/dts/allwinner/Makefile
-> >>>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> >>>> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
-> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
-> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
-> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
-> >>>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
-> >>>>  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-> >>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
-> >>>> new file mode 100644
-> >>>> index 000000000000..0612c19cd994
-> >>>> --- /dev/null
-> >>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
-> >>>> @@ -0,0 +1,150 @@
-> >>>> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> >>>> +/*
-> >>>> + * Copyright (C) 2018 Amarula Solutions
-> >>>> + * Author: Jagan Teki <jagan@amarulasolutions.com>
-> >>>> + */
-> >>>> +
-> >>>> +/dts-v1/;
-> >>>> +
-> >>>> +#include "sun50i-h6.dtsi"
-> >>>> +
-> >>>> +#include <dt-bindings/gpio/gpio.h>
-> >>>> +
-> >>>> +/ {
-> >>>> +     model = "OrangePi One Plus";
-> >>>> +     compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
-> >>>> +
-> >>>> +     aliases {
-> >>>> +             serial0 = &uart0;
-> >>>> +     };
-> >>>> +
-> >>>> +     chosen {
-> >>>> +             stdout-path = "serial0:115200n8";
-> >>>> +     };
-> >>>> +};
-> >>>> +
-> >>>> +&mmc0 {
-> >>>> +     pinctrl-names = "default";
-> >>>> +     pinctrl-0 = <&mmc0_pins>;
-> >>>> +     vmmc-supply = <&reg_cldo1>;
-> >>>> +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
-> >>>> +     bus-width = <4>;
-> >>>> +     status = "okay";
-> >>>> +};
-> >>>> +
-> >>>> +&r_i2c {
-> >>>> +     status = "okay";
-> >>>> +
-> >>>> +     axp805: pmic@36 {
-> >>>> +             compatible = "x-powers,axp805", "x-powers,axp806";
-> >>>> +             reg = <0x36>;
-> >>>> +             interrupt-parent = <&r_intc>;
-> >>>> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-> >>>> +             interrupt-controller;
-> >>>> +             #interrupt-cells = <1>;
-> >>>> +             x-powers,self-working-mode;
-> >>>> +
-> >>>> +             regulators {
-> >>>> +                     reg_aldo1: aldo1 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc-pl";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_aldo2: aldo2 {
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc-ac200";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_aldo3: aldo3 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc25-dram";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_bldo1: bldo1 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <1800000>;
-> >>>> +                             regulator-max-microvolt = <1800000>;
-> >>>> +                             regulator-name = "vcc-bias-pll";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_bldo2: bldo2 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <1800000>;
-> >>>> +                             regulator-max-microvolt = <1800000>;
-> >>>> +                             regulator-name = "vcc-efuse-pcie-hdmi-io";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_bldo3: bldo3 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <1800000>;
-> >>>> +                             regulator-max-microvolt = <1800000>;
-> >>>> +                             regulator-name = "vcc-dcxoio";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     bldo4 {
-> >>>> +                             /* unused */
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_cldo1: cldo1 {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc-3v3";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_cldo2: cldo2 {
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc-wifi-1";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_cldo3: cldo3 {
-> >>>> +                             regulator-min-microvolt = <3300000>;
-> >>>> +                             regulator-max-microvolt = <3300000>;
-> >>>> +                             regulator-name = "vcc-wifi-2";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_dcdca: dcdca {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <810000>;
-> >>>> +                             regulator-max-microvolt = <1080000>;
-> >>>> +                             regulator-name = "vdd-cpu";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_dcdcc: dcdcc {
-> >>>> +                             regulator-min-microvolt = <810000>;
-> >>>> +                             regulator-max-microvolt = <1080000>;
-> >>>> +                             regulator-name = "vdd-gpu";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_dcdcd: dcdcd {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <960000>;
-> >>>> +                             regulator-max-microvolt = <960000>;
-> >>>> +                             regulator-name = "vdd-sys";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     reg_dcdce: dcdce {
-> >>>> +                             regulator-always-on;
-> >>>> +                             regulator-min-microvolt = <1200000>;
-> >>>> +                             regulator-max-microvolt = <1200000>;
-> >>>> +                             regulator-name = "vcc-dram";
-> >>>> +                     };
-> >>>> +
-> >>>> +                     sw {
-> >>>> +                             /* unused */
-> >>>> +                     };
-> >>>
-> >>> Can't we have a DTSI for this PMIC too?
-> >>
-> >> Back when we started adding the regulators, Mark wasn't too happy with
-> >> all the placeholders we put in the dtsi. I think we got away with it
-> >> because we had other things in there as well. That's not true for this
-> >> particular PMIC.
-> >
-> > So we need separate dtsi for this PMIC as well?
->
-> I don't think we do. We don't gain much.
 
-Merged with Maxime's ack, and the subject prefix fixed.
-Also squashed in the Ethernet patch for this board.
 
-ChenYu
+On Saturday 01 September 2018 12:43 AM, Andrew F. Davis wrote:
+> Use dev_name to get a unique label and use -1 for a base to get our
+> selection automatically. We pull in all GPIOs per chip now so this
+> does not have the effect of out of order labels like before.
+> 
+> We do these both together so we can drop all the static data in one
+> patch. This also lets us normalize the return paths as we don't need
+> any cleanup after this change.
+
+echo 28 > /sys/class/gpio/export
+/ # echo 28 > /sys/class/gpi[   12.839205] export_store: invalid GPIO 28
+o/export
+echo 2 > /sys/class/gp[   22.165728] export_store: invalid GPIO 2
+io/export
+/ # echo 1 > /sys/class/gp[   25.961392] export_store: invalid GPIO 1
+io/export
+/ # echo 3 > /sys/class/gp[   29.981918] export_store: invalid GPIO 3
+io/export
+
+Export fails with this patch. I am testing this on keystone-k2g-evm.
+
+
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+>  drivers/gpio/gpio-davinci.c | 22 ++++------------------
+>  1 file changed, 4 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index a5ece8ea79bc..14d1729927d3 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -41,7 +41,6 @@ struct davinci_gpio_regs {
+>  typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
+>  
+>  #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
+> -#define MAX_LABEL_SIZE 20
+>  
+>  static void __iomem *gpio_base;
+>  static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
+> @@ -166,14 +165,12 @@ davinci_gpio_get_pdata(struct platform_device *pdev)
+>  
+>  static int davinci_gpio_probe(struct platform_device *pdev)
+>  {
+> -	static int ctrl_num, bank_base;
+>  	int gpio, bank, i, ret = 0;
+>  	unsigned int ngpio, nbank, nirq;
+>  	struct davinci_gpio_controller *chips;
+>  	struct davinci_gpio_platform_data *pdata;
+>  	struct device *dev = &pdev->dev;
+>  	struct resource *res;
+> -	char label[MAX_LABEL_SIZE];
+>  
+>  	pdata = davinci_gpio_get_pdata(pdev);
+>  	if (!pdata) {
+> @@ -228,10 +225,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
+> -	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
+> -		if (!chips->chip.label)
+> -			return -ENOMEM;
+> +	chips->chip.label = dev_name(dev);
+>  
+>  	chips->chip.direction_input = davinci_direction_in;
+>  	chips->chip.get = davinci_gpio_get;
+> @@ -239,7 +233,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>  	chips->chip.set = davinci_gpio_set;
+>  
+>  	chips->chip.ngpio = ngpio;
+> -	chips->chip.base = bank_base;
+> +	chips->chip.base = -1;
+>  
+>  #ifdef CONFIG_OF_GPIO
+>  	chips->chip.of_gpio_n_cells = 2;
+> @@ -252,28 +246,20 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>  	}
+>  #endif
+>  	spin_lock_init(&chips->lock);
+> -	bank_base += ngpio;
+>  
+>  	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
+>  		chips->regs[bank] = gpio_base + offset_array[bank];
+>  
+>  	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
+>  	if (ret)
+> -		goto err;
+> +		return ret;
+>  
+>  	platform_set_drvdata(pdev, chips);
+>  	ret = davinci_gpio_irq_setup(pdev);
+>  	if (ret)
+> -		goto err;
+> +		return ret;
+>  
+>  	return 0;
+> -
+> -err:
+> -	/* Revert the static variable increments */
+> -	ctrl_num--;
+> -	bank_base -= ngpio;
+> -
+> -	return ret;
+>  }
+>  
+>  /*--------------------------------------------------------------------------*/
+> 
