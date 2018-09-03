@@ -2,149 +2,123 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525ACC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 03:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDF7C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 03:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9A4020857
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 03:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE2B2075E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 03:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYo3rYXs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9A4020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qfXXCB49"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE2B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeICHU3 (ORCPT
+        id S1727381AbeICHeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 03:20:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49828 "EHLO mail.kernel.org"
+        Mon, 3 Sep 2018 03:34:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:55151 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbeICHU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 03:20:29 -0400
-Received: from dragon (unknown [45.56.155.166])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1725780AbeICHeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 03:34:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7DB820652;
-        Mon,  3 Sep 2018 03:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535943742;
-        bh=Dd4HMtGGDd4b/1mkYiBZvrYSM8HF8G7uSydvqmozXQ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eYo3rYXsm5LadMa3obBYh2RY6HF1FFsTwc0B9+gwT1fyHhr7IkaYDqrogOWzjknqz
-         p7tc1mzLgVnqymkO4N6vtsT7JLt1QLc0dMp1N8SDlIzEd7EQ+Fp7rrsglnpZvCrTQY
-         G8t+BaOboRgCf1fgcY+HC5wsYhClofMhnVE8q3Wc=
-Date:   Mon, 3 Sep 2018 11:01:12 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com, robh@kernel.org,
-        linux-kernel@vger.kernel.org, frieder.schrempf@exceet.de,
-        computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/7] arm64: dts: lx2160a: add fspi node property
-Message-ID: <20180903030110.GI3850@dragon>
-References: <1535711404-29528-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1535711404-29528-6-git-send-email-yogeshnarayan.gaur@nxp.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 423ZqM2pLfz9ryn;
+        Mon,  3 Sep 2018 13:15:59 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535944559;
+        bh=9kW81LkgZFxpI4ok7PWkE8hHULnnv09l1SkoeQ/ZzRs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qfXXCB49WNlRlKoWiRbcwTuJCzbXuYA2YmNl7A1ffdSvN6Zc/pu+lZ/Gwmtd9mfTO
+         Rp3isplgP+ozp5U9uGyTKk/SuHGaoP46I/JjTJcyB8UtfpV+MoxTEcKZSEcopP2SFb
+         Vh7+39noQSUo9R+9XgwZ0NZAcuzf5eq6JVEPQlsZ+8nhwoYEq2nytFoOjRGiQA7pvv
+         tWnPNKcGh7jBXCPKHP1ZWp6nIBvSSrpM/Lvc5aDfiNHRHKzcRmVwgYtlSL0oFI7BW+
+         lr/Pmy/2pIEwK6nC+I36xYtyOK6JGBGRzbkCleKtE75ePXet2SMMig3Q0W9j3B0lZV
+         s3PxRVdZH5I2g==
+Date:   Mon, 3 Sep 2018 13:15:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steve French <sfrench@samba.org>
+Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] fs/cifs: suppress a string overflow warning
+Message-ID: <20180903131558.21cdeb35@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535711404-29528-6-git-send-email-yogeshnarayan.gaur@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bxKFgXwdVx5Emd=Or=/qrWf"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 04:00:02PM +0530, Yogesh Gaur wrote:
-> Add fspi node property for LX2160A SoC for FlexSPI driver.
-> Property added for the FlexSPI controller and for the connected
-> slave device for the LX2160ARDB target.
-> This is having two SPI-NOR flash device, mt35xu512aba, connected
-> at CS0 and CS1.
-> 
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 21 +++++++++++++++++++++
->  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 12 ++++++++++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> index 70fad20..3646315 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> @@ -32,6 +32,27 @@
->  	status = "okay";
->  };
->  
-> +&fspi {
-> +	status = "okay";
+--Sig_/bxKFgXwdVx5Emd=Or=/qrWf
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Have a newline between property and child node.
+A powerpc build of cifs with gcc v8.2.0 produces this warning:
 
-> +	flash0: mt35xu512aba@0 {
+fs/cifs/cifssmb.c: In function =E2=80=98CIFSSMBNegotiate=E2=80=99:
+fs/cifs/cifssmb.c:605:3: warning: =E2=80=98strncpy=E2=80=99 writing 16 byte=
+s into a region of size 1 overflows the destination [-Wstringop-overflow=3D]
+   strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generic name for node, and specific name for label.
+Since we are already doing a strlen() on the source, change the strncpy
+to a memcpy().
 
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "m25p80";
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/cifs/cifssmb.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Please take a look at bindings doc jedec,spi-nor.txt on how compatible
-should be written.
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index dc2f4cf08fe9..dcf939cb9d2f 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -601,10 +601,14 @@ CIFSSMBNegotiate(const unsigned int xid, struct cifs_=
+ses *ses)
+ 	}
+=20
+ 	count =3D 0;
++	/*
++	 * We know that all the name entries in the protocols array
++	 * are short (< 16 bytes anyway) and are NUL terminated.
++	 */
+ 	for (i =3D 0; i < CIFS_NUM_PROT; i++) {
+-		strncpy(pSMB->DialectsArray+count, protocols[i].name, 16);
+-		count +=3D strlen(protocols[i].name) + 1;
+-		/* null at end of source and target buffers anyway */
++		size_t len =3D strlen(protocols[i].name) + 1;
++		memcpy(pSMB->DialectsArray+count, protocols[i].name, len);
++		count +=3D len;
+ 	}
+ 	inc_rfc1001_len(pSMB, count);
+ 	pSMB->ByteCount =3D cpu_to_le16(count);
+--=20
+2.19.0.rc1
 
-> +		m25p,fast-read;
-> +		spi-max-frequency = <20000000>;
-> +		reg = <0>;
-> +	};
-> +
-> +	flash1: mt35xu512aba@1 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "m25p80";
-> +		m25p,fast-read;
-> +		spi-max-frequency = <20000000>;
-> +		reg = <1>;
-> +	};
-> +};
-> +
->  &i2c0 {
->  	status = "okay";
->  	pca9547@77 {
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> index e35e494..031eb26 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> @@ -568,5 +568,17 @@
->  			timeout-sec = <30>;
->  		};
->  
-> +		fspi: flexspi@20c0000 {
-> +			status = "disabled";
+--=20
+Cheers,
+Stephen Rothwell
 
-We conventionally put 'status' line at the end of property list.
+--Sig_/bxKFgXwdVx5Emd=Or=/qrWf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Shawn
+-----BEGIN PGP SIGNATURE-----
 
-> +			compatible = "nxp,lx2160a-fspi";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x0 0x20c0000 0x0 0x10000>,
-> +				<0x0 0x20000000 0x0 0x10000000>;
-> +			reg-names = "fspi_base", "fspi_mmap";
-> +			interrupts = <0 25 0x4>; /* Level high type */
-> +			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
-> +			clock-names = "fspi_en", "fspi";
-> +		};
->  	};
->  };
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMp24ACgkQAVBC80lX
+0GzYjgf+IJhS302zpGn7gwv3y5UBrsWcFA58Ke1DJPbZArJOIC+51Ueuuep5MKWL
+d/fQhR/gPmzQYOlN/MYMvZcCePB0mwQzKvavLdC8RzBvRWpuG7MJHHxXxYN26oYc
+Lys7BFxAhM4TzDMM8oPkiSkCtP8pLZ46WHNBUlZ1vvCDevKBFKzc9bgc/fwQ3MQX
+xkcokPifqUg5Rq/iGCvZdqa6Sxbg4mpMubg7BZjyI2CWWSFNt8ieUwMR0TjjHnWQ
+W+7WDPnYHi0qa7QBvga9KhHwvoLcJO6V8thsHDyoIXht6wBAyulcufPwann63XQI
+eKPr6o/ypEbYsSyS2oevowhdbYM7cA==
+=y+fl
+-----END PGP SIGNATURE-----
+
+--Sig_/bxKFgXwdVx5Emd=Or=/qrWf--
