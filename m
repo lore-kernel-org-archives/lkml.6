@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93140C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2000DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7102077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7102077C
+	by mail.kernel.org (Postfix) with ESMTP id D97B620658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97B620658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbeICVrr (ORCPT
+        id S1730866AbeICVrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45924 "EHLO
+        Mon, 3 Sep 2018 17:47:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728628AbeICVrq (ORCPT
+        with ESMTP id S1728587AbeICVrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:46 -0400
+        Mon, 3 Sep 2018 17:47:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4503ED30;
-        Mon,  3 Sep 2018 17:26:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9902CD36;
+        Mon,  3 Sep 2018 17:26:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.14 094/165] printk: Split the code for storing a message into the log buffer
-Date:   Mon,  3 Sep 2018 18:56:20 +0200
-Message-Id: <20180903165700.240935200@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 132/165] ASoC: zte: Fix incorrect PCM format bit usages
+Date:   Mon,  3 Sep 2018 18:56:58 +0200
+Message-Id: <20180903165702.178484877@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,93 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Mladek <pmladek@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ba552399954dde1b388f7749fecad5c349216981 upstream.
+commit c889a45d229938a94b50aadb819def8bb11a6a54 upstream.
 
-It is just a preparation step. The patch does not change
-the existing behavior.
+zx-tdm driver sets the DAI driver definitions with the format bits
+wrongly set with SNDRV_PCM_FORMAT_*, instead of SNDRV_PCM_FMTBIT_*.
 
-Link: http://lkml.kernel.org/r/20180627140817.27764-2-pmladek@suse.com
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+This patch corrects the definitions.
+
+Spotted by a sparse warning:
+  sound/soc/zte/zx-tdm.c:363:35: warning: restricted snd_pcm_format_t degrades to integer
+
+Fixes: 870e0ddc4345 ("ASoC: zx-tdm: add zte's tdm controller driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/printk/printk.c |   43 ++++++++++++++++++++++++++-----------------
- 1 file changed, 26 insertions(+), 17 deletions(-)
+ sound/soc/zte/zx-tdm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1680,28 +1680,16 @@ static size_t log_output(int facility, i
- 	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
- }
+--- a/sound/soc/zte/zx-tdm.c
++++ b/sound/soc/zte/zx-tdm.c
+@@ -144,8 +144,8 @@ static void zx_tdm_rx_dma_en(struct zx_t
+ #define ZX_TDM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000)
  
--asmlinkage int vprintk_emit(int facility, int level,
--			    const char *dict, size_t dictlen,
--			    const char *fmt, va_list args)
-+/* Must be called under logbuf_lock. */
-+int vprintk_store(int facility, int level,
-+		  const char *dict, size_t dictlen,
-+		  const char *fmt, va_list args)
+ #define ZX_TDM_FMTBIT \
+-	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_MU_LAW | \
+-	SNDRV_PCM_FORMAT_A_LAW)
++	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_MU_LAW | \
++	SNDRV_PCM_FMTBIT_A_LAW)
+ 
+ static int zx_tdm_dai_probe(struct snd_soc_dai *dai)
  {
- 	static char textbuf[LOG_LINE_MAX];
- 	char *text = textbuf;
- 	size_t text_len;
- 	enum log_flags lflags = 0;
--	unsigned long flags;
--	int printed_len;
--	bool in_sched = false;
--
--	if (level == LOGLEVEL_SCHED) {
--		level = LOGLEVEL_DEFAULT;
--		in_sched = true;
--	}
--
--	boot_delay_msec(level);
--	printk_delay();
- 
--	/* This stops the holder of console_sem just where we want him */
--	logbuf_lock_irqsave(flags);
- 	/*
- 	 * The printf needs to come first; we need the syslog
- 	 * prefix which might be passed-in as a parameter.
-@@ -1742,8 +1730,29 @@ asmlinkage int vprintk_emit(int facility
- 	if (dict)
- 		lflags |= LOG_PREFIX|LOG_NEWLINE;
- 
--	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
-+	return log_output(facility, level, lflags,
-+			  dict, dictlen, text, text_len);
-+}
- 
-+asmlinkage int vprintk_emit(int facility, int level,
-+			    const char *dict, size_t dictlen,
-+			    const char *fmt, va_list args)
-+{
-+	int printed_len;
-+	bool in_sched = false;
-+	unsigned long flags;
-+
-+	if (level == LOGLEVEL_SCHED) {
-+		level = LOGLEVEL_DEFAULT;
-+		in_sched = true;
-+	}
-+
-+	boot_delay_msec(level);
-+	printk_delay();
-+
-+	/* This stops the holder of console_sem just where we want him */
-+	logbuf_lock_irqsave(flags);
-+	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
- 	logbuf_unlock_irqrestore(flags);
- 
- 	/* If called from the scheduler, we can not call up(). */
 
 
