@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B31C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B203C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F33CE2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33CE2077C
+	by mail.kernel.org (Postfix) with ESMTP id C69A420658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69A420658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbeICVzR (ORCPT
+        id S1731113AbeICVz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:55:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47744 "EHLO
+        Mon, 3 Sep 2018 17:55:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47754 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbeICVzQ (ORCPT
+        with ESMTP id S1728335AbeICVz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:55:16 -0400
+        Mon, 3 Sep 2018 17:55:28 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D0E6D16;
-        Mon,  3 Sep 2018 17:34:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 284ADD16;
+        Mon,  3 Sep 2018 17:34:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@yandex.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Eric Sandeen <sandeen@redhat.com>, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.18 044/123] ext4: reset error code in ext4_find_entry in fallback
-Date:   Mon,  3 Sep 2018 18:56:28 +0200
-Message-Id: <20180903165721.331956417@linuxfoundation.org>
+        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.18 045/123] ext4: fix race when setting the bitmap corrupted flag
+Date:   Mon,  3 Sep 2018 18:56:29 +0200
+Message-Id: <20180903165721.373576375@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,37 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Sandeen <sandeen@redhat.com>
+From: Wang Shilong <wshilong@ddn.com>
 
-commit f39b3f45dbcb0343822cce31ea7636ad66e60bc2 upstream.
+commit 9af0b3d1257756394ebbd06b14937b557e3a756b upstream.
 
-When ext4_find_entry() falls back to "searching the old fashioned
-way" due to a corrupt dx dir, it needs to reset the error code
-to NULL so that the nonstandard ERR_BAD_DX_DIR code isn't returned
-to userspace.
+Whenever we hit block or inode bitmap corruptions we set
+bit and then reduce this block group free inode/clusters
+counter to expose right available space.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199947
+However some of ext4_mark_group_bitmap_corrupted() is called
+inside group spinlock, some are not, this could make it happen
+that we double reduce one block group free counters from system.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@yandex.com>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Always hold group spinlock for it could fix it, but it looks
+a little heavy, we could use test_and_set_bit() to fix race
+problems here.
+
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/super.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1398,6 +1398,7 @@ static struct buffer_head * ext4_find_en
- 			goto cleanup_and_exit;
- 		dxtrace(printk(KERN_DEBUG "ext4_find_entry: dx failed, "
- 			       "falling back\n"));
-+		ret = NULL;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -776,26 +776,26 @@ void ext4_mark_group_bitmap_corrupted(st
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct ext4_group_info *grp = ext4_get_group_info(sb, group);
+ 	struct ext4_group_desc *gdp = ext4_get_group_desc(sb, group, NULL);
++	int ret;
+ 
+-	if ((flags & EXT4_GROUP_INFO_BBITMAP_CORRUPT) &&
+-	    !EXT4_MB_GRP_BBITMAP_CORRUPT(grp)) {
+-		percpu_counter_sub(&sbi->s_freeclusters_counter,
+-					grp->bb_free);
+-		set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT,
+-			&grp->bb_state);
++	if (flags & EXT4_GROUP_INFO_BBITMAP_CORRUPT) {
++		ret = ext4_test_and_set_bit(EXT4_GROUP_INFO_BBITMAP_CORRUPT_BIT,
++					    &grp->bb_state);
++		if (!ret)
++			percpu_counter_sub(&sbi->s_freeclusters_counter,
++					   grp->bb_free);
  	}
- 	nblocks = dir->i_size >> EXT4_BLOCK_SIZE_BITS(sb);
- 	if (!nblocks) {
+ 
+-	if ((flags & EXT4_GROUP_INFO_IBITMAP_CORRUPT) &&
+-	    !EXT4_MB_GRP_IBITMAP_CORRUPT(grp)) {
+-		if (gdp) {
++	if (flags & EXT4_GROUP_INFO_IBITMAP_CORRUPT) {
++		ret = ext4_test_and_set_bit(EXT4_GROUP_INFO_IBITMAP_CORRUPT_BIT,
++					    &grp->bb_state);
++		if (!ret && gdp) {
+ 			int count;
+ 
+ 			count = ext4_free_inodes_count(sb, gdp);
+ 			percpu_counter_sub(&sbi->s_freeinodes_counter,
+ 					   count);
+ 		}
+-		set_bit(EXT4_GROUP_INFO_IBITMAP_CORRUPT_BIT,
+-			&grp->bb_state);
+ 	}
+ }
+ 
 
 
