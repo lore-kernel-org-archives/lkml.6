@@ -2,379 +2,280 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD61C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE927C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E581E20856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8091320843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:14:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="pOENqlg8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E581E20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNUWCB1y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8091320843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeICNcK (ORCPT
+        id S1727174AbeICNde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:32:10 -0400
-Received: from mail-dm3nam03on0056.outbound.protection.outlook.com ([104.47.41.56]:5860
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725898AbeICNcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:32:09 -0400
+        Mon, 3 Sep 2018 09:33:34 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35967 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeICNdd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:33:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d1-v6so8333345pgo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=REjzg4An5Z0BTCksy+luYPkbt2/OJoVcL1MPzN/d9Xs=;
- b=pOENqlg8Smw4r4J28fh2aeDIJnVsH79tTfGYXP2UlkSVcMeqyQ1Z1bi3BBRfK+UFwfd8IL+AWzSixbukfctQMBYxX4ARTbQuf5r9aBpFNI1rDYFe0mXy7IE6HYFlHm+3MFAa8xiEtSPyD9sOJBaV3MDjNl56FPu/vqHDBtlN1Z4=
-Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
- CO2PR06MB460.namprd06.prod.outlook.com (10.141.196.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.14; Mon, 3 Sep 2018 09:12:49 +0000
-Received: from CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1101.016; Mon, 3 Sep 2018
- 09:12:48 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        Heiner Litz <hlitz@ucsc.edu>,
-        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] lightnvm: pblk: remove debug from pblk_[down/up]_page
-Thread-Topic: [PATCH] lightnvm: pblk: remove debug from pblk_[down/up]_page
-Thread-Index: AQHUP6HN+5S4mphJPEehcGEbp/in3aTZyFEAgAAkpACABGBTAA==
-Date:   Mon, 3 Sep 2018 09:12:48 +0000
-Message-ID: <D61CDC07-86BC-434A-AE01-135E7B09042C@cnexlabs.com>
-References: <20180829140832.29341-1-mb@lightnvm.io>
- <AAA74C68-4C22-48C8-B138-1C8EE72A875C@cnexlabs.com>
- <e0076c19-7e7e-b51a-1f25-25250ed88b5c@lightnvm.io>
-In-Reply-To: <e0076c19-7e7e-b51a-1f25-25250ed88b5c@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [185.245.84.227]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB460;6:QVobMp9NVcEY4GO5Uxdr05XXkGGL0O7c1IDIeNzQZDf9yeCt/HHCprsnmSNjlfDgPwZJ73Oyp3PJCBfaLpfIqt5UIzERBVWMbFYHv0VQdYhgJPrkfVbQG4YlLGkyfMNUG/V19JdeIxFU9T289y36hoN2PE3/0lx9RoVzP/e5wx3LRcoi1MyEs5TEzEukVnfqt4Nf5Eve+ShQ/olCeKHUV9fdxFv6+yeHZ1rM23wPuXVaKH3b5R4igRDcy4MJcjG5IAQc8uU5R1QDFtuU1287VDzHeWKftwDqCGSmml4x1+lMTrlvu0G/rGZjmtB6SjbEFohJEJQ+aRer9RVnOZa1MDo7dEOh/AvtFQlgFA77o0N2IVmrPuINMq/3SBMQM8GETBiAm91Nma7BKddZ7RmySajBy4etU5gYNxo0uwc6yJxaI0LBF4StUBwPtYeBWFTL+oPmv+CY4Ra4iioAT/2LxA==;5:e0Pa7KMUDwZ62UKZXEy/xrWpYuAkUX4bEySeso4T9P3uPL+ztcmevG6pXGUaw/m3T8dID1LUu+w9TkqNKUqae8sazhdESIzsCH0CMCuDx42J/doRY+TD5okm7Yj3YeBm7/vn1vyAPs/d294cPmPcARLlKGIUJaLOgZ/+DDlYgJc=;7:NiuSoZMRR4FcIrde+QteeyaXLyyAAzHKdEY7bnF6Nqe+Kt1RMUrUaUAI2d4pMHyAWyBdgwb7WpHbDhziVDro5AQCcv7r9JOChofBDvH0QwfveCFSoo0rC1ZC1JiOBrq4dHBtOUp3AU7zj5kJjV6UdgScoqIrPwx+X22v1GV910YA4LqfqizEqgj58+hxUmIQHIqy/SN4qNhP6AagqkTJNlQlhOyj/XjnJP1tnfXq+G4KcK6eN31uv21A4X5y4O4v
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39830400003)(346002)(136003)(189003)(199004)(14454004)(68736007)(76176011)(8936002)(99286004)(2906002)(2616005)(6436002)(6512007)(229853002)(3846002)(53936002)(6116002)(486006)(476003)(99936001)(4326008)(11346002)(8676002)(33656002)(36756003)(446003)(6486002)(5250100002)(6916009)(66066001)(316002)(7736002)(83716003)(106356001)(6506007)(53546011)(26005)(102836004)(105586002)(54906003)(25786009)(305945005)(186003)(575784001)(86362001)(81156014)(6246003)(2900100001)(97736004)(14444005)(478600001)(82746002)(81166006)(256004)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB460;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: dbf0359e-5754-483b-5ff8-08d6117d6b1d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB460;
-x-ms-traffictypediagnostic: CO2PR06MB460:
-x-microsoft-antispam-prvs: <CO2PR06MB4602132FAF988FC6D1B6758BA0C0@CO2PR06MB460.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:CO2PR06MB460;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB460;
-x-forefront-prvs: 0784C803FD
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: L+DxNBmlUSF7EFfPol45xC58Ffq2okij2ZCkSjDL5jloqMOyPcQLMqHolt8ASW0MTKakAWBH472NDngx5rSOCcuZhJwxR7s3ZTYf25xXPVzMH2J92MIlWGLDREULS/oJ5SicuaW4FPQq/t1FGEzWW6szbQV2WBxH5pPxTDIfzev0tUyERGgkwhB9Dyna37UEea0uer7nM8SovCsPPAsZ/rbqJycjkJWF1Piej1yiAZcE3dSoKXnpq45UHdnJeDOMF1KH3yRIa9wpGkGMKgJbpMcroAXC+GdmIj5JtB5bmNh8SpjnsPgr5M2NXJzBTb/KfdMEQr8uAea1Le+H0KUqLUyheqa9lXmFCdERo0E/9/Y=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_2A8167DA-39A9-403D-8AC3-AB44953D2B97";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=t++vTVhu9ygKCY2NSZpL+hZ41FR2WUk/Lah+sgjU5so=;
+        b=uNUWCB1ydX2/sZ6Jlyd/oYX62bdfU7Au5zcBEYQy5GjFc6PYiEVHdZr1B7JAOegWoE
+         2epaD0zKzOJQbGhSRoAzUIHkL6SZdAZV4vpCUCeQTxvYe0xdEzojMXoHzgfW/Dkm3cXV
+         ucJw2Dx4/fpReg+4T5Jhq3nhnMoBZnAG4+HU7MAJkj9cx3G22FzmPxvosMdwc799nfyL
+         pqJf6MsepMFe82Krtlxd2V1kNwJbdbL5ly3R5jr2O1uFfjwG08LWPeEcOwbzuTPzzOx3
+         AsZz3p9wNP6y+MKBsch9Z/+CYtZ3CY9JqY7lM847uH1NU2klBk+y1kKWDdmyHQi8rVvH
+         M9eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=t++vTVhu9ygKCY2NSZpL+hZ41FR2WUk/Lah+sgjU5so=;
+        b=iAi5qnXLnAy82Plo3nm+Ga6nFq8leOdjbyAZd9lw+YNlHmA+LS8YycKuDkwwWVojpX
+         7SvepaW5dMyuEhBYUsOQUhZj9DYwx2UxDq/8HZ7Kco1mc1tn1PlJ1P7dkdDEedBdlO/X
+         QJTIBq/MZP6jq7p+2yZjPvwocWO9bRRPYwyz/IHC8CMLEf/1gUBawGh+byiNoZFo33N5
+         3N4sXhpPvtVx9TqUxLLolD/FjRW3yGEWsoLqpvhsFTd+2UoWc7lYjui50cu1cWiDRw8c
+         x5R+Oxtil4+felqEZIwXF2XW5GycxdzC7fC25K8MpxFRmeKa5xoO4TLBtk3Je9by82Iw
+         uzpg==
+X-Gm-Message-State: APzg51BE4iIsAvloEBhqITBU+fXlcuMuuf0kw6+2+hSdqcY/j9lz75X6
+        kr571pg//giQUBzfpSEXYBXyseCEDHgQnXrCznA6aQ==
+X-Google-Smtp-Source: ANB0Vdbt45TH02EJ3lR8PsCrm6TfoeSgivj1JW1ba8xlqpKqT1+2ybrynjB5nlFly0hPnr0Hbj/+hXvkR0CM/GC6qbk=
+X-Received: by 2002:a63:6183:: with SMTP id v125-v6mr25876201pgb.242.1535966058571;
+ Mon, 03 Sep 2018 02:14:18 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbf0359e-5754-483b-5ff8-08d6117d6b1d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2018 09:12:48.4084
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB460
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 02:13:58
+ -0700 (PDT)
+In-Reply-To: <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
+References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com> <7387f67e-1ac5-12e1-c9be-060e9c403bf7@lge.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 3 Sep 2018 11:13:58 +0200
+Message-ID: <CACT4Y+YGa5riLQavMw4vQ55CeYzakQHSLgEE29RRKi47=J21Ow@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp functions
+To:     Kyeongdon Kim <kyeongdon.kim@lge.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Potapenko <glider@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rob Herring <robh@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_2A8167DA-39A9-403D-8AC3-AB44953D2B97
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+On Mon, Sep 3, 2018 at 11:02 AM, Kyeongdon Kim <kyeongdon.kim@lge.com> wrot=
+e:
+> Dear all,
+>
+> Could anyone review this and provide me appropriate approach ?
+> I think str[n]cmp are frequently used functions so I believe very useful =
+w/
+> arm64 KASAN.
 
-> On 31 Aug 2018, at 16.22, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 08/31/2018 02:11 PM, Javier Gonzalez wrote:
->>> On 29 Aug 2018, at 16.08, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
->>>=20
->>> Remove the debug only iteration within __pblk_down_page, which
->>> then allows us to reduce the number of arguments down to pblk and
->>> the parallel unit from the functions that calls it. Simplifying the
->>> callers logic considerably.
->>>=20
->>> Also, rename the functions pblk_[down/up]_page to pblk_[down/up]_pu,
->>> to communicate that it takes a lock on the parallel unit.
->>>=20
->>> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
->>> ---
->>> drivers/lightnvm/pblk-core.c     | 34 =
-+++++++++-------------------------
->>> drivers/lightnvm/pblk-map.c      |  2 +-
->>> drivers/lightnvm/pblk-recovery.c |  6 +++---
->>> drivers/lightnvm/pblk-write.c    |  6 +++---
->>> drivers/lightnvm/pblk.h          |  6 +++---
->>> 5 files changed, 19 insertions(+), 35 deletions(-)
->>>=20
->>> diff --git a/drivers/lightnvm/pblk-core.c =
-b/drivers/lightnvm/pblk-core.c
->>> index bb1a7cc24cbb..08df6bcd2f81 100644
->>> --- a/drivers/lightnvm/pblk-core.c
->>> +++ b/drivers/lightnvm/pblk-core.c
->>> @@ -1861,8 +1861,7 @@ void pblk_gen_run_ws(struct pblk *pblk, struct =
-pblk_line *line, void *priv,
->>> 	queue_work(wq, &line_ws->ws);
->>> }
->>>=20
->>> -static void __pblk_down_page(struct pblk *pblk, struct ppa_addr =
-*ppa_list,
->>> -			     int nr_ppas, int pos)
->>> +static void __pblk_down_pu(struct pblk *pblk, int pos)
->>> {
->>> 	struct pblk_lun *rlun =3D &pblk->luns[pos];
->>> 	int ret;
->>> @@ -1871,13 +1870,6 @@ static void __pblk_down_page(struct pblk =
-*pblk, struct ppa_addr *ppa_list,
->>> 	 * Only send one inflight I/O per LUN. Since we map at a page
->>> 	 * granurality, all ppas in the I/O will map to the same LUN
->>> 	 */
->>> -#ifdef CONFIG_NVM_PBLK_DEBUG
->>> -	int i;
->>> -
->>> -	for (i =3D 1; i < nr_ppas; i++)
->>> -		WARN_ON(ppa_list[0].a.lun !=3D ppa_list[i].a.lun ||
->>> -				ppa_list[0].a.ch !=3D ppa_list[i].a.ch);
->>> -#endif
->>>=20
->>> 	ret =3D down_timeout(&rlun->wr_sem, msecs_to_jiffies(30000));
->>> 	if (ret =3D=3D -ETIME || ret =3D=3D -EINTR)
->>> @@ -1885,21 +1877,21 @@ static void __pblk_down_page(struct pblk =
-*pblk, struct ppa_addr *ppa_list,
->>> 				-ret);
->>> }
->>>=20
->>> -void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, =
-int nr_ppas)
->>> +void pblk_down_pu(struct pblk *pblk, struct ppa_addr ppa)
->>> {
->>> 	struct nvm_tgt_dev *dev =3D pblk->dev;
->>> 	struct nvm_geo *geo =3D &dev->geo;
->>> -	int pos =3D pblk_ppa_to_pos(geo, ppa_list[0]);
->>> +	int pos =3D pblk_ppa_to_pos(geo, ppa);
->>>=20
->>> -	__pblk_down_page(pblk, ppa_list, nr_ppas, pos);
->>> +	__pblk_down_pu(pblk, pos);
->>> }
->>>=20
->>> -void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int =
-nr_ppas,
->>> +void pblk_down_rq(struct pblk *pblk, struct ppa_addr ppa,
->>> 		  unsigned long *lun_bitmap)
->>> {
->>> 	struct nvm_tgt_dev *dev =3D pblk->dev;
->>> 	struct nvm_geo *geo =3D &dev->geo;
->>> -	int pos =3D pblk_ppa_to_pos(geo, ppa_list[0]);
->>> +	int pos =3D pblk_ppa_to_pos(geo, ppa);
->>>=20
->>> 	/* If the LUN has been locked for this same request, do no =
-attempt to
->>> 	 * lock it again
->>> @@ -1907,23 +1899,15 @@ void pblk_down_rq(struct pblk *pblk, struct =
-ppa_addr *ppa_list, int nr_ppas,
->>> 	if (test_and_set_bit(pos, lun_bitmap))
->>> 		return;
->>>=20
->>> -	__pblk_down_page(pblk, ppa_list, nr_ppas, pos);
->>> +	__pblk_down_pu(pblk, pos);
->>> }
->>>=20
->>> -void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int =
-nr_ppas)
->>> +void pblk_up_pu(struct pblk *pblk, struct ppa_addr ppa)
->>> {
->>> 	struct nvm_tgt_dev *dev =3D pblk->dev;
->>> 	struct nvm_geo *geo =3D &dev->geo;
->>> 	struct pblk_lun *rlun;
->>> -	int pos =3D pblk_ppa_to_pos(geo, ppa_list[0]);
->>> -
->>> -#ifdef CONFIG_NVM_PBLK_DEBUG
->>> -	int i;
->>> -
->>> -	for (i =3D 1; i < nr_ppas; i++)
->>> -		WARN_ON(ppa_list[0].a.lun !=3D ppa_list[i].a.lun ||
->>> -				ppa_list[0].a.ch !=3D ppa_list[i].a.ch);
->>> -#endif
->>> +	int pos =3D pblk_ppa_to_pos(geo, ppa);
->>>=20
->>> 	rlun =3D &pblk->luns[pos];
->>> 	up(&rlun->wr_sem);
->>> diff --git a/drivers/lightnvm/pblk-map.c =
-b/drivers/lightnvm/pblk-map.c
->>> index dc0efb852475..ff677ca6e4e1 100644
->>> --- a/drivers/lightnvm/pblk-map.c
->>> +++ b/drivers/lightnvm/pblk-map.c
->>> @@ -79,7 +79,7 @@ static int pblk_map_page_data(struct pblk *pblk, =
-unsigned int sentry,
->>> 		}
->>> 	}
->>>=20
->>> -	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
->>> +	pblk_down_rq(pblk, ppa_list[0], lun_bitmap);
->>> 	return 0;
->>> }
->>>=20
->>> diff --git a/drivers/lightnvm/pblk-recovery.c =
-b/drivers/lightnvm/pblk-recovery.c
->>> index eea901d7cebc..df624d504d24 100644
->>> --- a/drivers/lightnvm/pblk-recovery.c
->>> +++ b/drivers/lightnvm/pblk-recovery.c
->>> @@ -227,7 +227,7 @@ static void pblk_end_io_recov(struct nvm_rq =
-*rqd)
->>> 	struct pblk_pad_rq *pad_rq =3D rqd->private;
->>> 	struct pblk *pblk =3D pad_rq->pblk;
->>>=20
->>> -	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
->>> +	pblk_up_pu(pblk, ppa_list[0]);
->>>=20
->>> 	pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
->>>=20
->>> @@ -339,12 +339,12 @@ static int pblk_recov_pad_oob(struct pblk =
-*pblk, struct pblk_line *line,
->>> 	}
->>>=20
->>> 	kref_get(&pad_rq->ref);
->>> -	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
->>> +	pblk_down_pu(pblk, rqd->ppa_list[0]);
->>>=20
->>> 	ret =3D pblk_submit_io(pblk, rqd);
->>> 	if (ret) {
->>> 		pblk_err(pblk, "I/O submission failed: %d\n", ret);
->>> -		pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
->>> +		pblk_up_pu(pblk, rqd->ppa_list[0]);
->>> 		goto fail_free_bio;
->>> 	}
->>>=20
->>> diff --git a/drivers/lightnvm/pblk-write.c =
-b/drivers/lightnvm/pblk-write.c
->>> index cd579b440b56..55d198edd70a 100644
->>> --- a/drivers/lightnvm/pblk-write.c
->>> +++ b/drivers/lightnvm/pblk-write.c
->>> @@ -270,7 +270,7 @@ static void pblk_end_io_write_meta(struct nvm_rq =
-*rqd)
->>> 	struct ppa_addr *ppa_list =3D nvm_rq_to_ppa_list(rqd);
->>> 	int sync;
->>>=20
->>> -	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
->>> +	pblk_up_pu(pblk, ppa_list[0]);
->>>=20
->>> 	if (rqd->error) {
->>> 		pblk_log_write_err(pblk, rqd);
->>> @@ -420,7 +420,7 @@ int pblk_submit_meta_io(struct pblk *pblk, =
-struct pblk_line *meta_line)
->>> 		list_del(&meta_line->list);
->>> 	spin_unlock(&l_mg->close_lock);
->>>=20
->>> -	pblk_down_page(pblk, ppa_list, rqd->nr_ppas);
->>> +	pblk_down_pu(pblk, ppa_list[0]);
->>>=20
->>> 	ret =3D pblk_submit_io(pblk, rqd);
->>> 	if (ret) {
->>> @@ -431,7 +431,7 @@ int pblk_submit_meta_io(struct pblk *pblk, =
-struct pblk_line *meta_line)
->>> 	return NVM_IO_OK;
->>>=20
->>> fail_rollback:
->>> -	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
->>> +	pblk_up_pu(pblk, ppa_list[0]);
->>> 	spin_lock(&l_mg->close_lock);
->>> 	pblk_dealloc_page(pblk, meta_line, rq_ppas);
->>> 	list_add(&meta_line->list, &meta_line->list);
->>> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->>> index 2f61f4428fcb..390855375b1e 100644
->>> --- a/drivers/lightnvm/pblk.h
->>> +++ b/drivers/lightnvm/pblk.h
->>> @@ -823,10 +823,10 @@ u64 pblk_alloc_page(struct pblk *pblk, struct =
-pblk_line *line, int nr_secs);
->>> u64 __pblk_alloc_page(struct pblk *pblk, struct pblk_line *line, int =
-nr_secs);
->>> int pblk_calc_secs(struct pblk *pblk, unsigned long secs_avail,
->>> 		   unsigned long secs_to_flush);
->>> -void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int =
-nr_ppas);
->>> -void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int =
-nr_ppas,
->>> +void pblk_up_pu(struct pblk *pblk, struct ppa_addr ppa);
->>> +void pblk_down_rq(struct pblk *pblk, struct ppa_addr ppa,
->>> 		  unsigned long *lun_bitmap);
->>> -void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, =
-int nr_ppas);
->>> +void pblk_down_pu(struct pblk *pblk, struct ppa_addr ppa);
->>> void pblk_up_rq(struct pblk *pblk, unsigned long *lun_bitmap);
->>> int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t =
-flags,
->>> 		       int nr_pages);
->>> --
->>> 2.11.0
->> The patch looks good to me. The renaming to PU though is confusing. =
-The
->> underlying reason to take the semaphore is to avoid write pointer
->> violations. At the moment, we only have an open line in pblk, which
->> makes that the semaphore effectively protects a PU, but when we have
->> several open lines this is no longer true.
->=20
-> I don't understand this, how will it change when multiple lines are =
-active?
->=20
-> My guess is that one has to keep track of the number of outstanding
-> I/Os for each PU.
+Hi Kyeongdon,
 
-The confusion comes from the current semaphore having 2 purposes: (i)
-guaranteeing the write pointer at a chunk level, and (ii) being the
-mechanism used by the scheduler to minimize internal write collisions.
-When we have several open lines this semaphore will still be used for
-(i), however, we will need a separate mechanism for (ii).
+Please add tests for this to lib/test_kasan.c.
 
-> Regarding naming, pblk_[down/up]_line doesn't quite cut it, and _page
-> doesn't mean anything to me. Can we find a better name?
-
-Give the above, what do you say pblk_[down/up]_chunk?
-
-Javier
-
-
---Apple-Mail=_2A8167DA-39A9-403D-8AC3-AB44953D2B97
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluM+wwACgkQIX4xUKFR
-nnTb7xAApQfZnUoRKCccbptqxfIcU04aXq4XPG4D/8nVuLBfhrsygngpoL+Ywb20
-P5IqeIgLdBoj3tuWmCvAqZwCPM0oN5Eo1xsok0UHyDPVWdvegVMN3C/qSNE02Bud
-2dFavgbQ+iP0XBl/Mo8ITAUaZYHSWWtGdqfBKH/NRmo/kyCIeIZjf3Yr2FeWQcAx
-7K3W6qnzaymuE5pC14Kc9XqpWP8ING23w43nNFkGEJMZ8qUmjKOkZCVHqe/4mwU+
-Nf5SYCu4jPDudVUwwcmx6+bJoXiVagWHGQzfkGv8i3goB3jxnlPDXl0c3wYaUvZH
-vUaGofT9jiYLIpKqhqLn5yWMbK1zHbu7fP42Lu+IETKpcicdtA5ebwA6Ck7QEFFr
-FYyhfsvQB5cXQfP/AdOWf+kLdUq/E+ZBHuMWWeb1llpvkJIsGtCMPBDNSMdkOsha
-eqJDN66OwwAuMa5b4DbpDTZX6c8y/54T2Y4CyrOUVPqepbc1BxIm1QDP/vBU93G4
-OfDhmG1batMe549CeNXdwg/OP2nTWf9dwsmcSqCTsjIVLOc5mBwm38bdmEPHUDQb
-rDNM5XqGBFD/xr6J6/Wo59I003cYYobrPW3AmbqRI45MalbjkwAAMQgjWg054vP7
-1D9lE35oSFlubM9iiF4uKw77j3678aLjV7qpU1HOhL0UHbcShk8=
-=gWI5
------END PGP SIGNATURE-----
-
---Apple-Mail=_2A8167DA-39A9-403D-8AC3-AB44953D2B97--
+> On 2018-08-23 =EC=98=A4=ED=9B=84 5:56, Kyeongdon Kim wrote:
+>>
+>> This patch declares strcmp/strncmp as weak symbols.
+>> (2 of them are the most used string operations)
+>>
+>> Original functions declared as weak and
+>> strong ones in mm/kasan/kasan.c could replace them.
+>>
+>> Assembly optimized strcmp/strncmp functions cannot detect KASan bug.
+>> But, now we can detect them like the call trace below.
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> BUG: KASAN: use-after-free in platform_match+0x1c/0x5c at addr
+>> ffffffc0ad313500
+>> Read of size 1 by task swapper/0/1
+>> CPU: 3 PID: 1 Comm: swapper/0 Tainted: G B 4.9.77+ #1
+>> Hardware name: Generic (DT) based system
+>> Call trace:
+>> dump_backtrace+0x0/0x2e0
+>> show_stack+0x14/0x1c
+>> dump_stack+0x88/0xb0
+>> kasan_object_err+0x24/0x7c
+>> kasan_report+0x2f0/0x484
+>> check_memory_region+0x20/0x14c
+>> strcmp+0x1c/0x5c
+>> platform_match+0x40/0xe4
+>> __driver_attach+0x40/0x130
+>> bus_for_each_dev+0xc4/0xe0
+>> driver_attach+0x30/0x3c
+>> bus_add_driver+0x2dc/0x328
+>> driver_register+0x118/0x160
+>> __platform_driver_register+0x7c/0x88
+>> alarmtimer_init+0x154/0x1e4
+>> do_one_initcall+0x184/0x1a4
+>> kernel_init_freeable+0x2ec/0x2f0
+>> kernel_init+0x18/0x10c
+>> ret_from_fork+0x10/0x50
+>>
+>> In case of xtensa and x86_64 kasan, no need to use this patch now.
+>>
+>> Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+>> ---
+>> arch/arm64/include/asm/string.h | 5 +++++
+>> arch/arm64/kernel/arm64ksyms.c | 2 ++
+>> arch/arm64/kernel/image.h | 2 ++
+>> arch/arm64/lib/strcmp.S | 3 +++
+>> arch/arm64/lib/strncmp.S | 3 +++
+>> mm/kasan/kasan.c | 23 +++++++++++++++++++++++
+>> 6 files changed, 38 insertions(+)
+>>
+>> diff --git a/arch/arm64/include/asm/string.h
+>> b/arch/arm64/include/asm/string.h
+>> index dd95d33..ab60349 100644
+>> --- a/arch/arm64/include/asm/string.h
+>> +++ b/arch/arm64/include/asm/string.h
+>> @@ -24,9 +24,11 @@ extern char *strchr(const char *, int c);
+>>
+>> #define __HAVE_ARCH_STRCMP
+>> extern int strcmp(const char *, const char *);
+>> +extern int __strcmp(const char *, const char *);
+>>
+>> #define __HAVE_ARCH_STRNCMP
+>> extern int strncmp(const char *, const char *, __kernel_size_t);
+>> +extern int __strncmp(const char *, const char *, __kernel_size_t);
+>>
+>> #define __HAVE_ARCH_STRLEN
+>> extern __kernel_size_t strlen(const char *);
+>> @@ -68,6 +70,9 @@ void memcpy_flushcache(void *dst, const void *src,
+>> size_t cnt);
+>> #define memmove(dst, src, len) __memmove(dst, src, len)
+>> #define memset(s, c, n) __memset(s, c, n)
+>>
+>> +#define strcmp(cs, ct) __strcmp(cs, ct)
+>> +#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
+>> +
+>> #ifndef __NO_FORTIFY
+>> #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+>> #endif
+>> diff --git a/arch/arm64/kernel/arm64ksyms.c
+>> b/arch/arm64/kernel/arm64ksyms.c
+>> index d894a20..10b1164 100644
+>> --- a/arch/arm64/kernel/arm64ksyms.c
+>> +++ b/arch/arm64/kernel/arm64ksyms.c
+>> @@ -50,6 +50,8 @@ EXPORT_SYMBOL(strcmp);
+>> EXPORT_SYMBOL(strncmp);
+>> EXPORT_SYMBOL(strlen);
+>> EXPORT_SYMBOL(strnlen);
+>> +EXPORT_SYMBOL(__strcmp);
+>> +EXPORT_SYMBOL(__strncmp);
+>> EXPORT_SYMBOL(memset);
+>> EXPORT_SYMBOL(memcpy);
+>> EXPORT_SYMBOL(memmove);
+>> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+>> index a820ed0..5ef7a57 100644
+>> --- a/arch/arm64/kernel/image.h
+>> +++ b/arch/arm64/kernel/image.h
+>> @@ -110,6 +110,8 @@ __efistub___flush_dcache_area =3D
+>> KALLSYMS_HIDE(__pi___flush_dcache_area);
+>> __efistub___memcpy =3D KALLSYMS_HIDE(__pi_memcpy);
+>> __efistub___memmove =3D KALLSYMS_HIDE(__pi_memmove);
+>> __efistub___memset =3D KALLSYMS_HIDE(__pi_memset);
+>> +__efistub___strcmp =3D KALLSYMS_HIDE(__pi_strcmp);
+>> +__efistub___strncmp =3D KALLSYMS_HIDE(__pi_strncmp);
+>> #endif
+>>
+>> __efistub__text =3D KALLSYMS_HIDE(_text);
+>> diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
+>> index 471fe61..0dffef7 100644
+>> --- a/arch/arm64/lib/strcmp.S
+>> +++ b/arch/arm64/lib/strcmp.S
+>> @@ -60,6 +60,8 @@ tmp3 .req x9
+>> zeroones .req x10
+>> pos .req x11
+>>
+>> +.weak strcmp
+>> +ENTRY(__strcmp)
+>> ENTRY(strcmp)
+>> eor tmp1, src1, src2
+>> mov zeroones, #REP8_01
+>> @@ -232,3 +234,4 @@ CPU_BE( orr syndrome, diff, has_nul )
+>> sub result, data1, data2, lsr #56
+>> ret
+>> ENDPIPROC(strcmp)
+>> +ENDPROC(__strcmp)
+>> diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
+>> index e267044..b2648c7 100644
+>> --- a/arch/arm64/lib/strncmp.S
+>> +++ b/arch/arm64/lib/strncmp.S
+>> @@ -64,6 +64,8 @@ limit_wd .req x13
+>> mask .req x14
+>> endloop .req x15
+>>
+>> +.weak strncmp
+>> +ENTRY(__strncmp)
+>> ENTRY(strncmp)
+>> cbz limit, .Lret0
+>> eor tmp1, src1, src2
+>> @@ -308,3 +310,4 @@ CPU_BE( orr syndrome, diff, has_nul )
+>> mov result, #0
+>> ret
+>> ENDPIPROC(strncmp)
+>> +ENDPROC(__strncmp)
+>> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+>> index c3bd520..61ad7f1 100644
+>> --- a/mm/kasan/kasan.c
+>> +++ b/mm/kasan/kasan.c
+>> @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, size_t le=
+n)
+>>
+>> return __memcpy(dest, src, len);
+>> }
+>> +#ifdef CONFIG_ARM64
+>> +/*
+>> + * Arch arm64 use assembly variant for strcmp/strncmp,
+>> + * xtensa use inline asm operations and x86_64 use c one,
+>> + * so now this interceptors only for arm64 kasan.
+>> + */
+>> +#undef strcmp
+>> +int strcmp(const char *cs, const char *ct)
+>> +{
+>> + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
+>> + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
+>> +
+>> + return __strcmp(cs, ct);
+>> +}
+>> +#undef strncmp
+>> +int strncmp(const char *cs, const char *ct, size_t len)
+>> +{
+>> + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
+>> + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
+>> +
+>> + return __strncmp(cs, ct, len);
+>> +}
+>> +#endif
+>>
+>> void kasan_alloc_pages(struct page *page, unsigned int order)
+>> {
+>> --
+>> 2.6.2
+>
+>
