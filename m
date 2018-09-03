@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EB5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C59AC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8E12077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8E12077C
+	by mail.kernel.org (Postfix) with ESMTP id 636072077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636072077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbeICVuQ (ORCPT
+        id S1731264AbeICVuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:50:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46530 "EHLO
+        Mon, 3 Sep 2018 17:50:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46540 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730623AbeICVuQ (ORCPT
+        with ESMTP id S1728733AbeICVuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:50:16 -0400
+        Mon, 3 Sep 2018 17:50:19 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF8E3D16;
-        Mon,  3 Sep 2018 17:29:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F595D01;
+        Mon,  3 Sep 2018 17:29:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 131/165] ASoC: dpcm: dont merge format from invalid codec dai
-Date:   Mon,  3 Sep 2018 18:56:57 +0200
-Message-Id: <20180903165702.132630311@linuxfoundation.org>
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.18 001/123] PATCH scripts/kernel-doc
+Date:   Mon,  3 Sep 2018 18:55:45 +0200
+Message-Id: <20180903165719.557078764@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
-References: <20180903165655.003605184@linuxfoundation.org>
+In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
+References: <20180903165719.499675257@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,49 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-commit 4febced15ac8ddb9cf3e603edb111842e4863d9a upstream.
+commit 701b3a3c0ac42630f74a5efba8545d61ac0e3293 upstream.
 
-When merging codec formats, dpcm_runtime_base_format() should skip
-the codecs which are not supporting the current stream direction.
+Fix a warning whinge from Perl introduced by "scripts: kernel-doc: parse next structs/unions"
 
-At the moment, if a BE link has more than one codec, and only one
-of these codecs has no capture DAI, it becomes impossible to start
-a capture stream because the merged format would be 0.
+Unescaped left brace in regex is deprecated here (and will be fatal in Perl 5.32), passed through in regex; marked by <-- HERE in m/({ <-- HERE [^\{\}]*})/ at ./scripts/kernel-doc line 1155.
+Unescaped left brace in regex is deprecated here (and will be fatal in Perl 5.32), passed through in regex; marked by <-- HERE in m/({ <-- HERE )/ at ./scripts/kernel-doc line 1179.
 
-Skipping invalid codec DAI solves the problem.
-
-Fixes: b073ed4e2126 ("ASoC: soc-pcm: DPCM cares BE format")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-pcm.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ scripts/kernel-doc |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1607,6 +1607,14 @@ static u64 dpcm_runtime_base_format(stru
- 		int i;
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1152,7 +1152,7 @@ sub dump_struct($$) {
+ 	}
  
- 		for (i = 0; i < be->num_codecs; i++) {
-+			/*
-+			 * Skip CODECs which don't support the current stream
-+			 * type. See soc_pcm_init_runtime_hw() for more details
-+			 */
-+			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
-+						      stream))
-+				continue;
-+
- 			codec_dai_drv = be->codec_dais[i]->driver;
- 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
- 				codec_stream = &codec_dai_drv->playback;
+ 	# Ignore other nested elements, like enums
+-	$members =~ s/({[^\{\}]*})//g;
++	$members =~ s/(\{[^\{\}]*})//g;
+ 
+ 	create_parameterlist($members, ';', $file, $declaration_name);
+ 	check_sections($file, $declaration_name, $decl_type, $sectcheck, $struct_actual);
+@@ -1176,7 +1176,7 @@ sub dump_struct($$) {
+ 			$declaration .= "\t" x $level;
+ 		}
+ 		$declaration .= "\t" . $clause . "\n";
+-		$level++ if ($clause =~ m/({)/ && !($clause =~m/}/));
++		$level++ if ($clause =~ m/(\{)/ && !($clause =~m/}/));
+ 	}
+ 	output_declaration($declaration_name,
+ 			   'struct',
 
 
