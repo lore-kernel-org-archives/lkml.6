@@ -2,121 +2,181 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D215C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0476EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3582086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Agze0mcJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3582086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id BE9392086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9392086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeICVPT (ORCPT
+        id S1728531AbeICVPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:15:19 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:40491 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729029AbeICVPT (ORCPT
+        Mon, 3 Sep 2018 17:15:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38376 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727848AbeICVPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:15:19 -0400
-Received: by mail-yw1-f73.google.com with SMTP id t10-v6so733963ywc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 09:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=rKnFvMPLRLhE5B5/9VShTn+eOMor9sot1Cueho2TCcU=;
-        b=Agze0mcJPbqpM6gmxBFC0mqR9GOrsH8ZXgjX4HVsJrqhQ8f4I4CB4wyye8/Q4654+8
-         eDkUQ2dAwr2agGQfJgaXvz4Lyg4km0uqf3yyXEwv4YlTnlGbbMGCq/6KqxiiV1uhbprl
-         cJeGdZuEhw+9Ji+hltt32duCbvxVqdZeYOC+MK9x6d2RNiKeOKzjaUGFkGFWo1dDflYA
-         TwaK16xwaYoUbaFtldbHylg4GyFryIg+BDg/2xhK1CRujgSGKy05GZ4YpYEMKPleQ7yX
-         jvUuy9D1WFVYW84p689J8ZG9W6fBVSM5dsFhmAIWEVSDbHlqNQX8mDO19/vuhM+ALsvY
-         GfAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=rKnFvMPLRLhE5B5/9VShTn+eOMor9sot1Cueho2TCcU=;
-        b=UPVu2ZtPpFx0DHUqEQmFjKrrq0ku53PNF8m9l3YJv04Clj080xt88/27s4doyIuHDk
-         OD5FlpjUahRelhz2R6rqNZ/tsiO+nQhbRuLV9V+/vrNRMSnKyoA6Q4FY/2Woz17fUWvP
-         k1JwPMVT+rOezb4AzlMBHkWhLSPcKjN0IRZD/ELAvYIjIuCo2n/R7zWYmRRoGlFNV6gj
-         z+CVMXCiNoxAf5vnOZdG6RfXujZzPpwGQ5I/myY8nu/CcPYoLCC+VkZiAbGHtx4ZgNc7
-         j8BmhsONdJc3wPGR6U1HiIqhaxOmgUZhUyNuL255dgU76AfIQWrUThg1HhY9Etx0x4kv
-         IxOQ==
-X-Gm-Message-State: APzg51A/u8RNp6vFbNS96WtHI40sncvSkjgY5Lq9I1o8Iqkcq2c/dpBT
-        BNjthra/EdU6Ljp0LglsBWUQ8uRHVw==
-X-Google-Smtp-Source: ANB0Vdb61QBXMDQJyTa7VqNltrJGT6eC7zhAOJCZqM+Br80Z2ApCVAvUTp/KQQdpyMQpc1BEKq6Qvjv/Lw==
-X-Received: by 2002:a81:5713:: with SMTP id l19-v6mr8279136ywb.26.1535993661631;
- Mon, 03 Sep 2018 09:54:21 -0700 (PDT)
-Date:   Mon,  3 Sep 2018 18:54:14 +0200
-Message-Id: <20180903165414.248309-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.rc1.350.ge57e33dbd1-goog
-Subject: [PATCH] RDMA/ucma: check fd type in ucma_migrate_id()
-From:   Jann Horn <jannh@google.com>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, jannh@google.com
-Cc:     linux-rdma@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Sep 2018 17:15:32 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B292BCFC;
+        Mon,  3 Sep 2018 16:54:34 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 34/80] enic: handle mtu change for vf properly
+Date:   Mon,  3 Sep 2018 18:49:12 +0200
+Message-Id: <20180903164935.510879136@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
+References: <20180903164934.171677301@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code grabs the private_data of whatever file descriptor
-userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-potentially causing a type confusion.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This is probably fine in practice because the pointer is only used for
-comparisons, it is never actually dereferenced; and even in the
-comparisons, it is unlikely that a file from another filesystem would have
-a ->private_data pointer that happens to also be valid in this context.
-But ->private_data is not always guaranteed to be a valid pointer to an
-object owned by the file's filesystem; for example, some filesystems just
-cram numbers in there.
+------------------
 
-Check the type of the supplied file descriptor to be safe, analogous to how
-other places in the kernel do it.
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-Signed-off-by: Jann Horn <jannh@google.com>
+[ Upstream commit ab123fe071c9aa9680ecd62eb080eb26cff4892c ]
+
+When driver gets notification for mtu change, driver does not handle it for
+all RQs. It handles only RQ[0].
+
+Fix is to use enic_change_mtu() interface to change mtu for vf.
+
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Only compile-tested, because I don't have an environment in which I
-could test this.
+ drivers/net/ethernet/cisco/enic/enic_main.c |   78 +++++++++-------------------
+ 1 file changed, 27 insertions(+), 51 deletions(-)
 
- drivers/infiniband/core/ucma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
-index ec8fb289621f..5f437d1570fb 100644
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -124,6 +124,8 @@ static DEFINE_MUTEX(mut);
- static DEFINE_IDR(ctx_idr);
- static DEFINE_IDR(multicast_idr);
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1842,10 +1842,32 @@ static int enic_stop(struct net_device *
+ 	return 0;
+ }
  
-+static const struct file_operations ucma_fops;
++static int _enic_change_mtu(struct net_device *netdev, int new_mtu)
++{
++	bool running = netif_running(netdev);
++	int err = 0;
 +
- static inline struct ucma_context *_ucma_find_context(int id,
- 						      struct ucma_file *file)
- {
-@@ -1581,6 +1583,10 @@ static ssize_t ucma_migrate_id(struct ucma_file *new_file,
- 	f = fdget(cmd.fd);
- 	if (!f.file)
- 		return -ENOENT;
-+	if (f.file->f_op != &ucma_fops) {
-+		ret = -EINVAL;
-+		goto file_put;
++	ASSERT_RTNL();
++	if (running) {
++		err = enic_stop(netdev);
++		if (err)
++			return err;
 +	}
++
++	netdev->mtu = new_mtu;
++
++	if (running) {
++		err = enic_open(netdev);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ static int enic_change_mtu(struct net_device *netdev, int new_mtu)
+ {
+ 	struct enic *enic = netdev_priv(netdev);
+-	int running = netif_running(netdev);
  
- 	/* Validate current fd and prevent destruction of id. */
- 	ctx = ucma_get_ctx(f.file->private_data, cmd.id);
--- 
-2.19.0.rc1.350.ge57e33dbd1-goog
+ 	if (new_mtu < ENIC_MIN_MTU || new_mtu > ENIC_MAX_MTU)
+ 		return -EINVAL;
+@@ -1853,20 +1875,12 @@ static int enic_change_mtu(struct net_de
+ 	if (enic_is_dynamic(enic) || enic_is_sriov_vf(enic))
+ 		return -EOPNOTSUPP;
+ 
+-	if (running)
+-		enic_stop(netdev);
+-
+-	netdev->mtu = new_mtu;
+-
+ 	if (netdev->mtu > enic->port_mtu)
+ 		netdev_warn(netdev,
+-			"interface MTU (%d) set higher than port MTU (%d)\n",
+-			netdev->mtu, enic->port_mtu);
+-
+-	if (running)
+-		enic_open(netdev);
++			    "interface MTU (%d) set higher than port MTU (%d)\n",
++			    netdev->mtu, enic->port_mtu);
+ 
+-	return 0;
++	return _enic_change_mtu(netdev, new_mtu);
+ }
+ 
+ static void enic_change_mtu_work(struct work_struct *work)
+@@ -1874,47 +1888,9 @@ static void enic_change_mtu_work(struct
+ 	struct enic *enic = container_of(work, struct enic, change_mtu_work);
+ 	struct net_device *netdev = enic->netdev;
+ 	int new_mtu = vnic_dev_mtu(enic->vdev);
+-	int err;
+-	unsigned int i;
+-
+-	new_mtu = max_t(int, ENIC_MIN_MTU, min_t(int, ENIC_MAX_MTU, new_mtu));
+ 
+ 	rtnl_lock();
+-
+-	/* Stop RQ */
+-	del_timer_sync(&enic->notify_timer);
+-
+-	for (i = 0; i < enic->rq_count; i++)
+-		napi_disable(&enic->napi[i]);
+-
+-	vnic_intr_mask(&enic->intr[0]);
+-	enic_synchronize_irqs(enic);
+-	err = vnic_rq_disable(&enic->rq[0]);
+-	if (err) {
+-		rtnl_unlock();
+-		netdev_err(netdev, "Unable to disable RQ.\n");
+-		return;
+-	}
+-	vnic_rq_clean(&enic->rq[0], enic_free_rq_buf);
+-	vnic_cq_clean(&enic->cq[0]);
+-	vnic_intr_clean(&enic->intr[0]);
+-
+-	/* Fill RQ with new_mtu-sized buffers */
+-	netdev->mtu = new_mtu;
+-	vnic_rq_fill(&enic->rq[0], enic_rq_alloc_buf);
+-	/* Need at least one buffer on ring to get going */
+-	if (vnic_rq_desc_used(&enic->rq[0]) == 0) {
+-		rtnl_unlock();
+-		netdev_err(netdev, "Unable to alloc receive buffers.\n");
+-		return;
+-	}
+-
+-	/* Start RQ */
+-	vnic_rq_enable(&enic->rq[0]);
+-	napi_enable(&enic->napi[0]);
+-	vnic_intr_unmask(&enic->intr[0]);
+-	enic_notify_timer_start(enic);
+-
++	(void)_enic_change_mtu(netdev, new_mtu);
+ 	rtnl_unlock();
+ 
+ 	netdev_info(netdev, "interface MTU set as %d\n", netdev->mtu);
+
 
