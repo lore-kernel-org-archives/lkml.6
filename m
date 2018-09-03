@@ -2,101 +2,133 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525D5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59D4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E92B420869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:05:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1F020843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NbeV32q7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G0lsyLF9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92B420869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u8Gnhn14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1F020843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeICT0H (ORCPT
+        id S1727327AbeICT1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:26:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43246 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICT0G (ORCPT
+        Mon, 3 Sep 2018 15:27:02 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44484 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICT1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:26:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2CF8D6044E; Mon,  3 Sep 2018 15:05:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535987132;
-        bh=0U/REbaAWzKz/yP8n2qy6cwo+1RhXgErXo8Rx4Hsl1Y=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=NbeV32q7+N//RcOAyqMKqUtjuyRo2A3uuxQsTngV7+TGsp36+QkouLDkl0LcTXd7l
-         IR4CMC6vZvyZBQ6L1TY5vA6lhNiauYhANxAGnjlPkcZfNhi+OP7fQGbYnTjCKpEyau
-         boZR0MlSHa+2iZghnRO9DmVdCeekrAjgQSY9n/o8=
-Received: from WUFANW10 (c-71-205-14-210.hsd1.co.comcast.net [71.205.14.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE8B06038E;
-        Mon,  3 Sep 2018 15:05:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535987131;
-        bh=0U/REbaAWzKz/yP8n2qy6cwo+1RhXgErXo8Rx4Hsl1Y=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=G0lsyLF94dxOp6xrpxJ9rkHY1ymtgZHAbtpa4qiEtBf9AELa0bbQTPLwpHofMdkLp
-         br5lQcxyw+MXMdWYoFu2OTYbckoLwFIR/j7X0XwEPdPuSlkebzO7I/pfoLoBv/cK/s
-         fnzvSJmfTX15qcL9NC/V6F2I/3hWujT07syCaL34=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE8B06038E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   "wufan" <wufan@codeaurora.org>
-To:     "'tanxiaofei'" <tanxiaofei@huawei.com>,
-        "'John Garry'" <john.garry@huawei.com>,
-        "'James Morse'" <james.morse@arm.com>
-Cc:     "'Zhengqiang'" <zhengqiang10@huawei.com>, <mchehab@kernel.org>,
-        <bp@alien8.de>, <baicar.tyler@gmail.com>,
-        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Linuxarm'" <linuxarm@huawei.com>,
-        "'wanghuiqiang'" <wanghuiqiang@huawei.com>,
-        "'Shiju Jose'" <shiju.jose@huawei.com>
-References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org> <5eab89c6-c063-cbc2-4d02-459faf87698a@arm.com> <6cc3c5e2-3827-a89c-e37b-09728a34f21f@huawei.com> <5B891308.40407@huawei.com>
-In-Reply-To: <5B891308.40407@huawei.com>
-Subject: RE: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Mon, 3 Sep 2018 09:05:29 -0600
-Message-ID: <003201d44397$8eb02c20$ac108460$@codeaurora.org>
+        Mon, 3 Sep 2018 15:27:01 -0400
+Received: by mail-pl1-f195.google.com with SMTP id ba4-v6so317298plb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 08:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LQ07RiXRVqTS0c2AmIq6Kumte9/kPIrdie9lGUKx7rI=;
+        b=u8Gnhn14G/BsTuKzomlibCW/1sNg8Q2wkKH1MD0vxSPb3P2HBfbykr6rEsGsK+cqRK
+         1Kt0quWE0LOyyacvTilhHy1be3GU70bcgpbpMN7OQXs+1ajB2ffbzv6Bnw/3iDhibcFS
+         DHTxAYC7+01dps9P77h0vIhhvPznVfWldg8xYNzd7Ir5TyU+cNBxwFQANtScROjGzk2R
+         0dZWE5RY+THOWMnqd19umS4i/QzlwROq+Ayx1Qd8wHsCVtDBlry8DNf6h/GeE8X4WX2N
+         1HJgkqeQnXe5ENWkHWkweOI9Lc4Lb3+jO1yN2ANIQKwXuRynKvzL73PrnRTlSshdjhHO
+         5/Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LQ07RiXRVqTS0c2AmIq6Kumte9/kPIrdie9lGUKx7rI=;
+        b=KoSxn5jG3eP5uH+2MCdjF5km6/8T6GAeoT4LNBJLsOsn2GBrRgsgTPSn0GM4F05R11
+         uPlj/11wfGf6BesQjoGzTg3IG/qWsw2LeFW+fG/HaZ/0AR3CDbQ2cAHbt7m+JT/jkZkD
+         U6U6l2blUq9yYg0BjOyUgApUO8jqWO7gGKC67+0UvC0TcgcHg8HGv9etgmvzCbhUtKe5
+         f3hbdhaXKiadT3niMYl5Pyx0Cgd5cUZUB/bDArwsN3CmFlyWhFBsG1ZHbST22cVcYX2m
+         oY3dhgNWOek2EoMr1n3msIUC8CWa1xnJO+Zvr2l+Ib+o84M/uhbwHLRFKGZR/BDdFXdK
+         /Rrw==
+X-Gm-Message-State: APzg51Aj0CqA0CfhUZDEJ1VBi8wZzSxnivHiWTJp/Xjhi2plFa5Mqojk
+        AdA7jN7vJiToA9AcGUtc456NENsZgcBxecZpZ2WtvA==
+X-Google-Smtp-Source: ANB0VdZIH1rxx4TlwwmbWSDvSws+aTlNa/gm6wvwrqmkXTs4jEp0skdSBES1EQ9LSXHiZWDzYj41SPO/45R85E0x4uA=
+X-Received: by 2002:a17:902:bf46:: with SMTP id u6-v6mr28920450pls.85.1535987186392;
+ Mon, 03 Sep 2018 08:06:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHcLsFbwflxxBzVeG17JegIRw3gmAHUN31rALBI7BwCDdR5JKSqPigw
-Content-Language: en-us
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 08:06:05
+ -0700 (PDT)
+In-Reply-To: <s5ho9defwxf.wl-tiwai@suse.de>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de> <000000000000a25ae50574f76ff0@google.com>
+ <s5h7ek2hfp6.wl-tiwai@suse.de> <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+ <s5h4lf6hfcq.wl-tiwai@suse.de> <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
+ <s5h1saahe2p.wl-tiwai@suse.de> <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
+ <s5hwos2fybs.wl-tiwai@suse.de> <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
+ <s5ho9defwxf.wl-tiwai@suse.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 3 Sep 2018 17:06:05 +0200
+Message-ID: <CACT4Y+YMetgDkFtqOuPJzfniKBfnq4-RAYE_AJkvMVTLAUx5-Q@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks tanxiaofei!
+On Mon, Sep 3, 2018 at 5:00 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Mon, 03 Sep 2018 16:54:23 +0200,
+> Dmitry Vyukov wrote:
+>>
+>> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+>> is meant to be a complement to the previous generic descriptions of
+>> patch testing process, which is:
+>> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+>>
+>> So, you always reply to the syzbot+HASH email address so that syzbot
+>> understands which bug we are talking about.
+>> Then you do either (omitting # so that syzbot won't consider that as
+>> actual test requests):
+>>
+>> syz test: git://repo/address.git branch
+>>
+>> or:
+>>
+>> syz test: git://repo/address.git commit-hash
+>>
+>> And then you can either attach a patch that needs to be applied on
+>> top, or not attach it (if it's already in the tree, or you just want
+>> to get another crash report).
+>
+> OK, so far, so good, it's what I knew and have done a few times.
+>
+>
+>> For KMSAN you need to issue test request against
+>> "https//github.com/google/kmsan.git master" (that's the only tree that
+>> has KMSAN tool in it) and you need to attach/inline the patch (because
+>> your patch is obviously not there yet).
+>>
+>> Does this make things more clear?
+>
+> Sorry, the part "issue test request against https..." still isn't
+> clear.
+>
+> Do you mean to open an issue entry on github, and attach the patch
+> there?
 
-Boris/James, are you OK to sign off, or you want to see more tests on 
-this patch? 
+By "issue test request" I mean sending email with "syz test" command.
+So overall you send "syz test https//github.com/google/kmsan.git
+master" and attach the patch.
+The workflow is all the same, and no github involved. It's just that
+you can't ask to test it against
+git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git because
+it does not have KMSAN tool and so no KMSAN bugs will be detected
+there.
 
-Thanks,
-Fan
-
-> -----Original Message-----
-> From: tanxiaofei <tanxiaofei@huawei.com>
-> Sent: Friday, August 31, 2018 4:06 AM
-> 
-> Hi James,
-> 
-> Our platform do not set CPER_MEM_VALID_MODULE_HANDLE in GHES
-> Memory errors.
-> 
-> Thanks,
-> tanxiaofei
-
-
+Since I did all of this, it's hard for me to write clear docs for others. Sorry.
+If you can suggest some improved wording, it would be great.
