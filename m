@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32459C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C2FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE0720843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE0720843
+	by mail.kernel.org (Postfix) with ESMTP id 6AF4020843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF4020843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbeICV1b (ORCPT
+        id S1729725AbeICV1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:27:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39696 "EHLO
+        Mon, 3 Sep 2018 17:27:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729190AbeICV1a (ORCPT
+        with ESMTP id S1729190AbeICV1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:27:30 -0400
+        Mon, 3 Sep 2018 17:27:36 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7AADD06;
-        Mon,  3 Sep 2018 17:06:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8410D06;
+        Mon,  3 Sep 2018 17:06:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 058/107] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
-Date:   Mon,  3 Sep 2018 18:56:22 +0200
-Message-Id: <20180903165640.119078394@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 059/107] s390/kvm: fix deadlock when killed by oom
+Date:   Mon,  3 Sep 2018 18:56:23 +0200
+Message-Id: <20180903165640.164426729@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -50,59 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Hackmann <ghackmann@android.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit 5ad356eabc47d26a92140a0c4b20eba471c10de3 upstream.
+commit 306d6c49ac9ded11114cb53b0925da52f2c2ada1 upstream.
 
-ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
-before seeing if the PFN is valid.  This leads to false positives when
-some of the upper bits are set, but the lower bits match a valid PFN.
+When the oom killer kills a userspace process in the page fault handler
+while in guest context, the fault handler fails to release the mm_sem
+if the FAULT_FLAG_RETRY_NOWAIT option is set. This leads to a deadlock
+when tearing down the mm when the process terminates. This bug can only
+happen when pfault is enabled, so only KVM clients are affected.
 
-For example, the following userspace code looks up a bogus entry in
-/proc/kpageflags:
+The problem arises in the rare cases in which handle_mm_fault does not
+release the mm_sem. This patch fixes the issue by manually releasing
+the mm_sem when needed.
 
-    int pagemap = open("/proc/self/pagemap", O_RDONLY);
-    int pageflags = open("/proc/kpageflags", O_RDONLY);
-    uint64_t pfn, val;
-
-    lseek64(pagemap, [...], SEEK_SET);
-    read(pagemap, &pfn, sizeof(pfn));
-    if (pfn & (1UL << 63)) {        /* valid PFN */
-        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
-        pfn |= (1UL << 55);
-        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
-        read(pageflags, &val, sizeof(val));
-    }
-
-On ARM64 this causes the userspace process to crash with SIGSEGV rather
-than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
-valid, and stable_page_flags() will try to access an address between the
-user and kernel address ranges.
-
-Fixes: c1cc1552616d ("arm64: MMU initialisation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 24eb3a824c4f3 ("KVM: s390: Add FAULT_FLAG_RETRY_NOWAIT for guest fault")
+Cc: <stable@vger.kernel.org> # 3.15+
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/init.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/s390/mm/fault.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -147,7 +147,11 @@ static void __init zone_sizes_init(unsig
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
- int pfn_valid(unsigned long pfn)
- {
--	return memblock_is_map_memory(pfn << PAGE_SHIFT);
-+	phys_addr_t addr = pfn << PAGE_SHIFT;
-+
-+	if ((addr >> PAGE_SHIFT) != pfn)
-+		return 0;
-+	return memblock_is_map_memory(addr);
- }
- EXPORT_SYMBOL(pfn_valid);
- #endif
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -462,6 +462,8 @@ retry:
+ 	/* No reason to continue if interrupted by SIGKILL. */
+ 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+ 		fault = VM_FAULT_SIGNAL;
++		if (flags & FAULT_FLAG_RETRY_NOWAIT)
++			goto out_up;
+ 		goto out;
+ 	}
+ 	if (unlikely(fault & VM_FAULT_ERROR))
 
 
