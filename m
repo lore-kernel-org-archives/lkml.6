@@ -2,90 +2,310 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66DCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2AEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8121720867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:05:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VaFSBj35"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8121720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E40820862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E40820862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbeICR0A (ORCPT
+        id S1727555AbeICR1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:26:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44638 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727515AbeICR0A (ORCPT
+        Mon, 3 Sep 2018 13:27:16 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:54257 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726711AbeICR1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:26:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=E95ozkAkOehKkA79q1VOkuzvYjmojSNmEaSWjBS5Ois=; b=VaFSBj35bwA4SluzI9l7/DKxZ
-        7NucMEGgtV6gy4ppvlExahcd/8dV5uERaXGc1DIkMW/+KQY7WRh76Gb2onmPkbRUWVVWHENeB2Lx7
-        pt+QeMc92CnipxC+xxBBNIj2P2CgefW9JmreObwvr5Sm7K5+btxkM4oy0KTE0vDIqEeFE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fwoYE-0000F0-3E; Mon, 03 Sep 2018 13:05:54 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C801F11227AE; Mon,  3 Sep 2018 14:05:53 +0100 (BST)
-Date:   Mon, 3 Sep 2018 14:05:53 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] ASoC: tlv320aic31xx: Add headphone/headset detection
-Message-ID: <20180903130553.GI10302@sirena.org.uk>
-References: <20180831182434.14499-1-afd@ti.com>
- <20180831182434.14499-3-afd@ti.com>
+        Mon, 3 Sep 2018 13:27:16 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id woZLfmIP3xO9BwoZOfquwM; Mon, 03 Sep 2018 15:07:08 +0200
+Subject: Re: [PATCH v6 00/17] Rockchip ISP1 Driver
+To:     Jacob Chen <jacob-chen@iotwrt.com>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        tfiga@chromium.org, zhengsq@rock-chips.com,
+        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
+        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
+        devicetree@vger.kernel.org, heiko@sntech.de,
+        Jacob Chen <jacob2.chen@rock-chips.com>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6761c936-82c7-e36a-de21-c0e827b68a3e@xs4all.nl>
+Date:   Mon, 3 Sep 2018 15:07:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BghK6+krpKHjj+jk"
-Content-Disposition: inline
-In-Reply-To: <20180831182434.14499-3-afd@ti.com>
-X-Cookie: Inside, I'm already SOBBING!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAcnZ4E6aDRFf5vnZQXqwg3pp2QP+ztOdllvNFxhyROuxDu/MkFGrXc2EzlrY64edxbxAeLgUoe1KpHPd1Bvr0c0A6sI0nQ9RN1C1MgmcayShE/Pvziu
+ KFkoz0hJqp/igi0sabHfzzq2Qv4o6h7gGOO+RF6QuZUQq2ImYSDJDkR9w5K9cd0Fhcfk0O3fr+cZEbqFzx9ovYzpZzl28LZs2RvV8a+pnUaFmTkzIGSIAI+D
+ L0iOBhxKWt5RpIuGo2NsoZfAwaFFfQ2LnUoLO18n02f8yAwZNFNLqXgo5NG6AJNanup8iye2x6Wd3t7CpyHY8DKuIyaGuNCXvZ+1xNR03ZUVKuoMHbP+o3UB
+ v44fpT6HJ6Ba2KcxUPl8ukadPak/vDa7jP6RGDUQNRDrji8ISI/OoExM0Qz06fPkhNnRDXtO32s3t63x6ToHYj0t7xN78OLTfNsAd0Hf4Vuyc3cbD/L4JQp2
+ /5llbbCfRai1eh+Q9WH05zYfcl+H13SS4OfUlo/ae3WTxkFENFcEigGxNy6JQVT0OxLOY6EsLToOrpcG8YHf9VznI6vCNfC3uHn5XbIxEZaSFqaifZxkpkqP
+ TPzNDM4RsdaCdXnQBn9f1hH2fJHKcI3XFLjlYTwRA533sP0NUFeA7w4hCNbd9UTYX1R0mUdlLm1E3aqvbzEZbqI4xp/7jgI7ZjkN+JZM9si9nmbo6BhhgN9U
+ O0LvJTfwmxlzm+QD75BZdQaFO1Fv1xZ7KglXK3MFEfq3I8rubOW8mDWPw5Bu8ZezEt8FJML945rG/IV7bIrLZ9CDuHnjiTvU
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacob,
 
---BghK6+krpKHjj+jk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What is the status of this patch series? I haven't seen any updates for quite
+some time now, and I thought that it was getting close.
 
-On Fri, Aug 31, 2018 at 01:24:33PM -0500, Andrew F. Davis wrote:
-> This device can detect the insertion/removal of headphones and headsets.
-> Enable reporting this status by enabling this interrupt and forwarding
-> this to upper-layers if a jack has been defined.
+It would be nice to see this go in.
 
-This and patch 4 look good but depend on patch 2.
+Regards,
 
---BghK6+krpKHjj+jk
-Content-Type: application/pgp-signature; name="signature.asc"
+	Hans
 
------BEGIN PGP SIGNATURE-----
+On 03/08/2018 10:47 AM, Jacob Chen wrote:
+> From: Jacob Chen <jacob2.chen@rock-chips.com>
+> 
+> changes in V6:
+>   - add mipi txrx phy support
+>   - remove bool and enum from uapi header
+>   - add buf_prepare op
+>   - correct some spelling problems
+>   - return all queued buffers when starting stream failed
+> 
+> changes in V5: Sync with local changes,
+>   - fix the SP height limit
+>   - speed up the second stream capture
+>   - the second stream can't force sync for rsz when start/stop streaming
+>   - add frame id to param vb2 buf
+>   - enable luminance maximum threshold
+> 
+> changes in V4:
+>   - fix some bugs during development
+>   - move quantization settings to rkisp1 subdev
+>   - correct some spelling problems
+>   - describe ports in dt-binding documents
+> 
+> changes in V3:
+>   - add some comments
+>   - fix wrong use of v4l2_async_subdev_notifier_register
+>   - optimize two paths capture at a time
+>   - remove compose
+>   - re-struct headers
+>   - add a tmp wiki page: http://opensource.rock-chips.com/wiki_Rockchip-isp1
+> 
+> changes in V2:
+>   mipi-phy:
+>     - use async probing
+>     - make it be a child device of the GRF
+>   isp:
+>     - add dummy buffer
+>     - change the way to get bus configuration, which make it possible to
+>             add parallel sensor support in the future(without mipi-phy driver).
+> 
+> This patch series add a ISP(Camera) v4l2 driver for rockchip rk3288/rk3399 SoC.
+> 
+> Wiki Pages:
+> http://opensource.rock-chips.com/wiki_Rockchip-isp1
+> 
+> The deprecated g_mbus_config op is not dropped in  V6 because i am waiting tomasz's patches.
+> 
+> v4l2-compliance for V6(isp params/stats nodes are passed):
+> 
+>     v4l2-compliance SHA   : 93dc5f20727fede5097d67f8b9adabe4b8046d5b
+> 
+>     Compliance test for device /dev/video0:
+> 
+>     Driver Info:
+>             Driver name      : rkisp1
+>             Card type        : rkisp1
+>             Bus info         : platform:ff910000.isp
+>             Driver version   : 4.16.0
+>             Capabilities     : 0x84201000
+>                     Video Capture Multiplanar
+>                     Streaming
+>                     Extended Pix Format
+>                     Device Capabilities
+>             Device Caps      : 0x04201000
+>                     Video Capture Multiplanar
+>                     Streaming
+>                     Extended Pix Format
+>     Media Driver Info:
+>             Driver name      : rkisp1
+>             Model            : rkisp1
+>             Serial           : 
+>             Bus info         : 
+>             Media version    : 4.16.0
+>             Hardware revision: 0x00000000 (0)
+>             Driver version   : 4.16.0
+>     Interface Info:
+>             ID               : 0x03000007
+>             Type             : V4L Video
+>     Entity Info:
+>             ID               : 0x00000006 (6)
+>             Name             : rkisp1_selfpath
+>             Function         : V4L2 I/O
+>             Pad 0x01000009   : Sink
+>               Link 0x02000021: from remote pad 0x1000004 of entity 'rkisp1-isp-subdev': Data, Enabled
+> 
+>     Required ioctls:
+>             test MC information (see 'Media Driver Info' above): OK
+>             test VIDIOC_QUERYCAP: OK
+> 
+>     Allow for multiple opens:
+>             test second /dev/video0 open: OK
+>             test VIDIOC_QUERYCAP: OK
+>             test VIDIOC_G/S_PRIORITY: OK
+>             test for unlimited opens: OK
+> 
+>     Debug ioctls:
+>             test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>             test VIDIOC_LOG_STATUS: OK (Not Supported)
+> 
+>     Input ioctls:
+>             test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>             test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>             test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>             test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>             test VIDIOC_G/S/ENUMINPUT: OK
+>             test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>             Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+>     Output ioctls:
+>             test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>             test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>             test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>             test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>             test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>             Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+>     Input/Output configuration ioctls:
+>             test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>             test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>             test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>             test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+>     Control ioctls (Input 0):
+>             test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>             test VIDIOC_QUERYCTRL: OK
+>             test VIDIOC_G/S_CTRL: OK
+>             test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>             test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>             test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>             Standard Controls: 9 Private Controls: 0
+> 
+>     Format ioctls (Input 0):
+>             test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>             test VIDIOC_G/S_PARM: OK (Not Supported)
+>             test VIDIOC_G_FBUF: OK (Not Supported)
+>                     fail: v4l2-test-formats.cpp(330): !colorspace
+>                     fail: v4l2-test-formats.cpp(454): testColorspace(pix_mp.pixelformat, pix_mp.colorspace, pix_mp.ycbcr_enc, pix_m
+>     p.quantization)
+>             test VIDIOC_G_FMT: FAIL
+>             test VIDIOC_TRY_FMT: OK (Not Supported)
+>             test VIDIOC_S_FMT: OK (Not Supported)
+>             test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>                     fail: v4l2-test-formats.cpp(1288): doioctl(node, VIDIOC_G_SELECTION, &sel) != EINVAL
+>             test Cropping: FAIL
+>             test Composing: OK (Not Supported)
+>             test Scaling: OK
+> 
+>     Codec ioctls (Input 0):
+>             test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>             test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>             test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+>     Buffer ioctls (Input 0):
+>             test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>                     fail: v4l2-test-buffers.cpp(525): VIDIOC_EXPBUF is supported, but the V4L2_MEMORY_MMAP support is missing, prob
+>     ably due to earlier failing format tests.
+>             test VIDIOC_EXPBUF: OK (Not Supported)
+> 
+>     Total: 44, Succeeded: 42, Failed: 2, Warnings: 0
+> 
+> Jacob Chen (12):
+>   media: doc: add document for rkisp1 meta buffer format
+>   media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
+>   media: rkisp1: add Rockchip ISP1 subdev driver
+>   media: rkisp1: add ISP1 statistics driver
+>   media: rkisp1: add ISP1 params driver
+>   media: rkisp1: add capture device driver
+>   media: rkisp1: add rockchip isp1 core driver
+>   dt-bindings: Document the Rockchip ISP1 bindings
+>   dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
+>   ARM: dts: rockchip: add isp node for rk3288
+>   ARM: dts: rockchip: add rx0 mipi-phy for rk3288
+>   MAINTAINERS: add entry for Rockchip ISP1 driver
+> 
+> Jeffy Chen (1):
+>   media: rkisp1: Add user space ABI definitions
+> 
+> Shunqian Zheng (3):
+>   media: videodev2.h, v4l2-ioctl: add rkisp1 meta buffer format
+>   arm64: dts: rockchip: add isp0 node for rk3399
+>   arm64: dts: rockchip: add rx0 mipi-phy for rk3399
+> 
+> Wen Nuan (1):
+>   ARM: dts: rockchip: Add dts mipi-dphy TXRX1 node for rk3288
+> 
+>  .../devicetree/bindings/media/rockchip-isp1.txt    |   69 +
+>  .../bindings/media/rockchip-mipi-dphy.txt          |   90 +
+>  Documentation/media/uapi/v4l/meta-formats.rst      |    2 +
+>  .../media/uapi/v4l/pixfmt-meta-rkisp1-params.rst   |   20 +
+>  .../media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst     |   18 +
+>  MAINTAINERS                                        |   10 +
+>  arch/arm/boot/dts/rk3288.dtsi                      |   33 +
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi           |   25 +
+>  drivers/media/platform/Kconfig                     |   10 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/rockchip/isp1/Makefile      |    8 +
+>  drivers/media/platform/rockchip/isp1/capture.c     | 1751 ++++++++++++++++++++
+>  drivers/media/platform/rockchip/isp1/capture.h     |  167 ++
+>  drivers/media/platform/rockchip/isp1/common.h      |  110 ++
+>  drivers/media/platform/rockchip/isp1/dev.c         |  626 +++++++
+>  drivers/media/platform/rockchip/isp1/dev.h         |   93 ++
+>  drivers/media/platform/rockchip/isp1/isp_params.c  | 1539 +++++++++++++++++
+>  drivers/media/platform/rockchip/isp1/isp_params.h  |   49 +
+>  drivers/media/platform/rockchip/isp1/isp_stats.c   |  508 ++++++
+>  drivers/media/platform/rockchip/isp1/isp_stats.h   |   58 +
+>  .../media/platform/rockchip/isp1/mipi_dphy_sy.c    |  868 ++++++++++
+>  .../media/platform/rockchip/isp1/mipi_dphy_sy.h    |   15 +
+>  drivers/media/platform/rockchip/isp1/regs.c        |  239 +++
+>  drivers/media/platform/rockchip/isp1/regs.h        | 1550 +++++++++++++++++
+>  drivers/media/platform/rockchip/isp1/rkisp1.c      | 1177 +++++++++++++
+>  drivers/media/platform/rockchip/isp1/rkisp1.h      |  105 ++
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+>  include/uapi/linux/rkisp1-config.h                 |  798 +++++++++
+>  include/uapi/linux/videodev2.h                     |    4 +
+>  29 files changed, 9945 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/rockchip-isp1.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+>  create mode 100644 drivers/media/platform/rockchip/isp1/Makefile
+>  create mode 100644 drivers/media/platform/rockchip/isp1/capture.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/capture.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/common.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/regs.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/regs.h
+>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
+>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
+>  create mode 100644 include/uapi/linux/rkisp1-config.h
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluNMbEACgkQJNaLcl1U
-h9Bn4Af9GCP34IPojd6vGbAnJwmLh+ZQPaV2FLWfktnKpgRjnaOt9htE4EPORNTT
-C4DZgExwbnPkK7lF5J432p9mEgzRavyCVxMYjH/9adblUT52rJ53Nze7MzX3Qbyy
-aCOriYQQ00Jf9LBHHtlo88GHR0BfIoZleadWAeD266UbSkE1nqvauk8Qc3uthM0G
-h0tba70v0E/5Bpbo69GrGO+F90b0mWniYdjPUGn5otseO44GIHRwSDqVsHnPcuM3
-jlcScmT8jFHVLwyi4UjmygZtnl3Jwow0TzkSaW/UWfTISSf5+Lur8pH3PlaoQ0Cg
-O4/YwYAV3oXqscczA6cd8BTDbPHsog==
-=+x1n
------END PGP SIGNATURE-----
-
---BghK6+krpKHjj+jk--
