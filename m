@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0D1C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552A9C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988D120843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108C920843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:03:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IqwcvWw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988D120843
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUVH1QzP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108C920843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeICWYT (ORCPT
+        id S1727610AbeICWY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:24:19 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40269 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbeICWYT (ORCPT
+        Mon, 3 Sep 2018 18:24:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46399 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727271AbeICWYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:24:19 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l202-v6so2249320oig.7;
-        Mon, 03 Sep 2018 11:03:01 -0700 (PDT)
+        Mon, 3 Sep 2018 18:24:25 -0400
+Received: by mail-oi0-f68.google.com with SMTP id y207-v6so2185598oie.13;
+        Mon, 03 Sep 2018 11:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=P8070j0pHB8FWga0Ow2mDVroSkOVwLt7/K7gOaS7NoM=;
-        b=IqwcvWw5xjRsU9a6k/euqg2vuXmsZW+BrOI6gKcrP5U/+5LttCMgeJq/cBoEyiF4iN
-         fdt6l5vBB/ZAeVGY0xFf044Zx1JynUidYKUmJGYAn/EyQViicVy7/7W18r1GjZY8Bwsp
-         5NeQbegFUjD4z35dnRtu/qnJEyISCkvn4DyS8qRoitTHHiBjlOvMXnYhEC8jkNLCjQ8d
-         e47rcLsT/TrJFgSUWRjoAhMGtSgV7rTUaquNzVDK8EywQepOVpC3XRjtgsMBhqQEbFUI
-         tL0UE5YtSHGSfuafNvis7wAbXJ+lJRqKDar2kWcKdte6Y4c7daC+C3jinTRpIeGZzGb7
-         VHFw==
+        bh=Fg2A3DvOXX8NgTgO2joawBOfX3jENRiRELhCGPGFnmQ=;
+        b=FUVH1QzPclM7FuFFutpHbB8g6/ZDBvlTSRivruOhDh/cl50fkuxEvCZaAR6CdL6n4i
+         z55fEilhKZUAT82/nPe8xBi889/2AhyqQpmE3eUlWJjAsh2XdzSZ/P9z/nPwloeheU9o
+         VubQYGgFZfmg19l9ZSFJhkVvTBMMh1iZenAmLpCs3hNWKuOuWXGE/K8+/DLgThgWAsZU
+         r4fxUcy6ZT/HwZ/+WTNm6YlLhtaDA+Zpp3/wmPwtfcQLZ144UNKfID8UjQcDJUGOCmuv
+         hScBgdT/ZMFnYl/MJL/6Y5XE6LUPh+JYOmcvYst+AxoOuBDENNDJE1Zxh4F6oNdZ9cUN
+         Ozgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=P8070j0pHB8FWga0Ow2mDVroSkOVwLt7/K7gOaS7NoM=;
-        b=SII0H03n2uqMqFaXnxGEQPXlfPmjBVP/STnOWUqwREHZzBEpvdI41sXhmp12r5WboL
-         uypy2HnZGnrW0rwzFSVQCnRHDryvZDJESUKJZDfvz5k18hHafQ5wIHI8R7//cani5sNu
-         hyiUm6Q7UfPDIfoZUoQsBdnDjl6g7o4vOl2TPt9dp6g7RoQd6kzvzW2AIOu7edK1qXJE
-         fQ7P4ch5RWBCD6oYO15mm7a448H2OgqEsstPcB8TxfDScFJ5NNFDDHZu/Xy2pTOixFCQ
-         J0N9uMWOiIMc9owfCywQAp1ol8nF6u2OWKNvuC3i1iXny531pLm1GmYBgBew0SyK1/SK
-         jXZg==
-X-Gm-Message-State: APzg51BafY1VmPda4ZvMvhzmVz1Q6D3WwX4M1lwGoA1ZvGL9dsxKN50x
-        UjSjGemnylXZOdbn/8XY+A4YJwJA6oM=
-X-Google-Smtp-Source: ANB0VdZpO2FfJq10Tc9XyyBRe0tbkdGETay7ed6FYojvwe8I8b/SN8T+5gmPDQRvUl1qKgrHWsjxAg==
-X-Received: by 2002:aca:bdc4:: with SMTP id n187-v6mr19765754oif.3.1535997781153;
-        Mon, 03 Sep 2018 11:03:01 -0700 (PDT)
+        bh=Fg2A3DvOXX8NgTgO2joawBOfX3jENRiRELhCGPGFnmQ=;
+        b=f9V5RGWBK6RB2IAVV2Cf7pORdLQDnKMOGkSriP2a6L3w3ja5Dufyv0PYF8yWrZzx/Z
+         DdxG0hNaNFmHulJTYeVUC63u2DQKbsYHDnvXpCirn7H+8qHZEN848jjcOHBV+8JnW6jI
+         ZbVjFHwzaOo0cEpNZRszCWXvFiRVbLwoLNifRRlRHhanIbwebzsnDuYct94nYdhtTc2M
+         1s/xDOBBHQMVInyZxMA2rr4p7KygqslwPi4rxSpepJYEuZV4wIfL3RfSO05L8/cyMppl
+         FroENW7LsahmJp0h6BtCzLJ32wi524RbOdO4DPyxPyWu2CG4y1n3qlzTWxOAQkSlIV54
+         zx3A==
+X-Gm-Message-State: APzg51DWLInMR0PrMTJo+EEfvkS11izkuGsDdXVvMYyarH0hOA4XYK2d
+        ar2BvX31GuRyEdWw05vuE0nS+XO9HNE=
+X-Google-Smtp-Source: ANB0VdYtc/2GklzEV/Fv5McahDTZEEyTiC2FkM0CbLsEMnKOgM3MmJnvGFINCb8jnz1cj9r0kcTsQw==
+X-Received: by 2002:aca:4dca:: with SMTP id a193-v6mr19653879oib.343.1535997787495;
+        Mon, 03 Sep 2018 11:03:07 -0700 (PDT)
 Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id q124-v6sm15785737oif.8.2018.09.03.11.03.00
+        by smtp.gmail.com with ESMTPSA id q124-v6sm15785737oif.8.2018.09.03.11.03.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 11:03:00 -0700 (PDT)
+        Mon, 03 Sep 2018 11:03:07 -0700 (PDT)
 From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To:     linux-pci@vger.kernel.org, bhelgaas@google.com
 Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
@@ -77,9 +77,9 @@ Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
         oss-drivers@netronome.com
-Subject: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
-Date:   Mon,  3 Sep 2018 13:02:28 -0500
-Message-Id: <20180903180242.14504-2-mr.nuke.me@gmail.com>
+Subject: [PATCH 2/9] bnx2x: Do not call pcie_print_link_status()
+Date:   Mon,  3 Sep 2018 13:02:29 -0500
+Message-Id: <20180903180242.14504-3-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903180242.14504-1-mr.nuke.me@gmail.com>
 References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
@@ -88,49 +88,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For certain bandwidth-critical devices (e.g. multi-port network cards)
-it is useful to know the available bandwidth to the root complex. This
-information is only available via the system log, which doesn't
-account for link degradation after probing.
-
-With a sysfs attribute, we can computes the bandwidth on-demand, and
-will detect degraded links.
+This is now done by the PCI core to warn of sub-optimal bandwidth.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- drivers/pci/pci-sysfs.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 9ecfe13157c0..6658e927b1f5 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -218,6 +218,18 @@ static ssize_t current_link_width_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(current_link_width);
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 71362b7f6040..9bd0852d9a66 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -14100,7 +14100,6 @@ static int bnx2x_init_one(struct pci_dev *pdev,
+ 	       board_info[ent->driver_data].name,
+ 	       (CHIP_REV(bp) >> 12) + 'A', (CHIP_METAL(bp) >> 4),
+ 	       dev->base_addr, bp->pdev->irq, dev->dev_addr);
+-	pcie_print_link_status(bp->pdev);
  
-+static ssize_t available_bandwidth_show(struct device *dev,
-+				       struct device_attribute *attr, char *buf)
-+{
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
-+	u32 bw_avail;
-+
-+	bw_avail = pcie_bandwidth_available(pci_dev, NULL, NULL, NULL);
-+
-+	return sprintf(buf, "%u.%03u Gb/s\n", bw_avail / 1000, bw_avail % 1000);
-+}
-+static DEVICE_ATTR_RO(available_bandwidth);
-+
- static ssize_t secondary_bus_number_show(struct device *dev,
- 					 struct device_attribute *attr,
- 					 char *buf)
-@@ -786,6 +798,7 @@ static struct attribute *pcie_dev_attrs[] = {
- 	&dev_attr_current_link_width.attr,
- 	&dev_attr_max_link_width.attr,
- 	&dev_attr_max_link_speed.attr,
-+	&dev_attr_available_bandwidth.attr,
- 	NULL,
- };
+ 	bnx2x_register_phc(bp);
  
 -- 
 2.17.1
