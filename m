@@ -2,145 +2,141 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E47C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1704FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB2AF20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2AF20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 9CE322077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 11:59:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDBsSsPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE322077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeICQRm (ORCPT
+        id S1727746AbeICQSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 12:17:42 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55615 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727186AbeICQRl (ORCPT
+        Mon, 3 Sep 2018 12:18:50 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41426 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbeICQSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 12:17:41 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id wnUIflUQVxO9BwnULfqYMK; Mon, 03 Sep 2018 13:57:50 +0200
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-To:     Eddie James <eajames@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
-        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
-Date:   Mon, 3 Sep 2018 13:57:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 3 Sep 2018 12:18:50 -0400
+Received: by mail-lf1-f65.google.com with SMTP id l26-v6so249531lfc.8;
+        Mon, 03 Sep 2018 04:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zWfFtKEXLIgf34eCbvIIXYJRnv6Mn0W+bU4lB0gtq4c=;
+        b=RDBsSsPjcj6d10ax10aWoMLYqx+2XHJM4jfnxxQVLzq2ZAv50atQ3CMUJ1zp9x+WIO
+         UDGz9yjYDJrPVhUPx6wXbVMh/nlF+b0XwATOlGblPmIoerHfM2TTeT5bEMaFiyAoUryz
+         +J1D1LZp6a13X4JNDHmgkrD4wuZRoffDDn/Utm0LADHBYwTmvQsYeRcSpgPXOjmnGcQL
+         MFNt4FNMj3MowmJEXuToFN46/LFyHDy+MbL+LGScIQPVSwkvnzd2/ei8bVyyE5/cc1as
+         9ARKj0bYx1o7peSWHMZ7tllUiyJ3AzIeUoqBmKkVkkps+8uvHvhXZPZBVLhrocPuYkdL
+         ZFqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zWfFtKEXLIgf34eCbvIIXYJRnv6Mn0W+bU4lB0gtq4c=;
+        b=SLmJyJ9s9MMJJ4W9dxJpw1F8VevL5M+SSWIck7RLX1/91fi+Nw8oModeXRq1SpwSXS
+         WaFmS7fVF6EXa/D0cQOCTnh0xJaPnS8a32JyGNY9iV/DBOtSJHQmFwYAZgm4FqJ8Kv6g
+         KF4dEadKMzuLo+vbaSRY7dFPQxe0AIqRRmDDm6FMA6sTTsX4s9UDWnrvdqU1wOuGGeFp
+         VK6c0W+lIQTKPaZGlKZukqZ6zTo+S49jjOX6GktJMbhYDofHJ3EX3uKJ71rmRsA7ZVZ4
+         QxjD9NBtwbrMUVGSWrSsPmc2/Zmpoo8C9VsBYgsDJpoPN4VA7pVLQxhbK+qHoM1Ful08
+         Bj5g==
+X-Gm-Message-State: APzg51BNM4WuDahsd8ghKOVc7y3pyGy/c23jE3ZeAUG83RzQfYyynvey
+        MRlrVsrdjmPv9iVfLUWfwFQjzVIoSO2P0XUkp4Y=
+X-Google-Smtp-Source: ANB0VdbI/hH5Yr4fC0d2Bj26/iSW/+dFuCQdG24tZvflZGavJ+wTl5t33mA0XKv36O4B3AKDfJe6Z+KQurPRS4qSK3o=
+X-Received: by 2002:a19:1a52:: with SMTP id a79-v6mr6169529lfa.139.1535975938759;
+ Mon, 03 Sep 2018 04:58:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCdQHA7n+nK8xU0LtFlxm6Ac7gJJ1zP74WLQXPNPvWiYo5+mEJOSHTItsodx8AhWEqhAiTV0EPytrULAINPWtPMe5iU38F0L7Vn2I3HC2rLJqZsD/djR
- kvyUsxFMV0bfvi9BwruPp/+D3VZx3rHtWndgASvVL+RuxFj8RG4R7kS3EO+X9jyMqCg/MD6Y4YcDVTTW9E6bSpj4HOySNo8NwFNU04CDMi7aCIW7JHoSxCUo
- nwY56ASXzGD+TG+Z1g5VJVLWJSMr623YLrXczB2cV3uL6md8gn5avvvmqtM/4smoCw/lKAxnWNsVtirQbzbAsiPrwM/1+4m3n4DU3T8i/E4i0ptCoIGsESMD
- 9uP0VZp9z1RyFJCrX884Wza3wFQN/hsgOaMlNgWyOsTaUa1jnoV7/6KF6Kz6/f7FUJPG3TyGoArCxt1dZpVJ9JllP6yuPX5JBpGWXdhEqu1ZZh/ACezyqogv
- 351mMfnEkPakUK4NVqLqdO7W9KvjsjLnZ2LY9sU9my1KTAleEr9DQSQ5ASurTEusz7wr1eutCgJfi7U3fak/A1Q2QOQP5LEm6Xvv5xohxe7xuZGMEP+9bhug
- xQyoRasxLWwfaaA/L7VqeMOkNP9X3tqL2vrgx+7rc0RzRp+ukpEJl5n55oOa8v/PgWg6ii9eOhY9ncodKrPwAwM0
+References: <20180830172547.GA4408@jordon-HP-15-Notebook-PC>
+ <20180830163352.5a96cc721ce069bed95fdbe8@linux-foundation.org> <20180903.111310.853324894545237861.konishi.ryusuke@lab.ntt.co.jp>
+In-Reply-To: <20180903.111310.853324894545237861.konishi.ryusuke@lab.ntt.co.jp>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 3 Sep 2018 17:28:46 +0530
+Message-ID: <CAFqt6zY41OnT6F8F7vyUEJcc_RPoF3mALAOS7CUMUvQv8GdG0w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: Convert return type int to vm_fault_t
+To:     Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>, kemi.wang@intel.com,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nilfs <linux-nilfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eddie,
+On Mon, Sep 3, 2018 at 7:43 AM Ryusuke Konishi
+<konishi.ryusuke@lab.ntt.co.jp> wrote:
+>
+> Hi Souptick,
+>
+> On Thu, 30 Aug 2018 16:33:52 -0700, Andrew Morton wrote:
+> > On Thu, 30 Aug 2018 22:55:47 +0530 Souptick Joarder wrote:
+> >
+> >> Return type for fault handlers  in ext4 and nilfs are
+> >> changed to use vm_fault_t.
+> >>
+> >> Return type of block_page_mkwrite() is changed from
+> >> int to vm_fault_t. The function signature of
+> >> block_page_mkwrite() is changed to add one new parameter
+> >> int *err. This will provide a way for caller functions
+> >> to get error value along with return value and use it
+> >> further.
+> >>
+> >> Return type of block_page_mkwrite_return() is also changed
+> >> to use new vm_fault_t type.
+> >> --- a/fs/nilfs2/file.c
+> >> +++ b/fs/nilfs2/file.c
+> >> @@ -51,13 +51,14 @@ int nilfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+> >>      return err;
+> >>  }
+> >>
+> >> -static int nilfs_page_mkwrite(struct vm_fault *vmf)
+> >> +static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
+> >
+> > nilfs_page_mkwrite() already has return type vm_fault_t in Linus's
+> > kernel, due to the now-merged
+> > fs-nilfs2-adding-new-return-type-vm_fault_t.patch.  Looks like a simple
+> > fix.
+>
+> In the first patch in this thread, this return type change was
+> excluded correctly for nilfs_page_mkwrite() though the changelog was
+> inaccurate in that sense.
+>
+> Please confirm your base point of the revised patch.
+>
 
-Thank you for your work on this. Interesting to see support for this SoC :-)
+Ryusuku,
+Base point of revised patch is to address your comment by
+removing err = 0. Nothing else was suppose to there in v2.
 
-On 08/29/2018 11:09 PM, Eddie James wrote:
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting as a service processor, the Video Engine can
-> capture the host processor graphics output.
-> 
-> This series adds a V4L2 driver for the VE, providing a read() interface
-> only. The driver triggers the hardware to capture the host graphics output
-> and compress it to JPEG format.
-> 
-> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
-> was significantly slower than the simple read() interface, so I have not
-> included the streaming part.
+But unfortunately I mixed up my local branches and created v2 against
+old branch which leads to confusion of v1 -> v2 delta changes.
+Sorry for creating more confusions.
 
-Do you know why? It should be equal or faster, not slower.
-
-I reviewed about half of the driver, but then I stopped since there were too
-many things missing.
-
-First of all, you need to test your driver with v4l2-compliance (available here:
-https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
-the versions from distros tend to be too old.
-
-Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
-'v4l2-compliance -s -d /dev/videoX' to test streaming.
-
-This utility checks if the driver follows the V4L2 API correctly, implements
-all ioctls that it should and fills in all the fields that it should.
-
-Please add the output of 'v4l2-compliance -s' to future versions of this patch
-series: I don't accept V4L2 drivers without a clean report of this utility.
-
-If you have any questions, then mail me or (usually quicker) ask on the #v4l
-freenode irc channel (I'm in the CET timezone).
-
-One thing that needs more explanation: from what I could tell from the driver
-the VIDIOC_G_FMT ioctl returns the detected format instead of the current
-format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
-ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
-
-The normal sequence is that userspace queries the current timings with
-VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
-timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
-change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
-event.
-
-When the application receives this event it can take action, such as
-increasing the size of the buffer for the jpeg data that it reads into.
-
-The reason for this sequence of events is that you can't just change the
-format/resolution mid-stream without giving userspace the chance to
-reconfigure.
-
-Regards,
-
-	Hans
-
-> 
-> It's also possible to use an automatic mode for the VE such that
-> re-triggering the HW every frame isn't necessary. However this wasn't
-> reliable on the AST2400, and probably used more CPU anyway due to excessive
-> interrupts. It was approximately 15% faster.
-> 
-> The series also adds the necessary parent clock definitions to the Aspeed
-> clock driver, with both a mux and clock divider.
-> 
-> Eddie James (4):
->   clock: aspeed: Add VIDEO reset index definition
->   clock: aspeed: Setup video engine clocking
->   dt-bindings: media: Add Aspeed Video Engine binding documentation
->   media: platform: Add Aspeed Video Engine driver
-> 
->  .../devicetree/bindings/media/aspeed-video.txt     |   23 +
->  drivers/clk/clk-aspeed.c                           |   41 +-
->  drivers/media/platform/Kconfig                     |    8 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
->  include/dt-bindings/clock/aspeed-clock.h           |    1 +
->  6 files changed, 1379 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->  create mode 100644 drivers/media/platform/aspeed-video.c
-> 
-
+>
+> >
+> > I'm beginning to feel vm_fault_t exhaustion.  Please remind me what
+> > benefit we're going to get out of all this churn?
+> >
+> >>
+> >> ...
+> >>
