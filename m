@@ -2,171 +2,158 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF757C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6597C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FDD420870
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDD420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8BF862086E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:56:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="g9nzNJfh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF862086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbeICVOF (ORCPT
+        id S1728669AbeICVOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:14:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38046 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbeICVOE (ORCPT
+        Mon, 3 Sep 2018 17:14:01 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37881 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728640AbeICVOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:14:04 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4504ECEE;
-        Mon,  3 Sep 2018 16:53:06 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Mon, 3 Sep 2018 17:14:00 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a20-v6so1239985edd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 09:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7/xDAv4nmvZM6/MSUvhwMtYq6DkyvBAstjsxswpf2i0=;
+        b=g9nzNJfh9mHewg/e6MdLX7nSvvdht7dtf6cFFA6JT9J6yMrw5iDNqdbYiTp0/fZeHB
+         tvke5/ey3IGv0CgL/4uRQ33rOozi47VdN2bR3EusgQA/Bp0QRG6J78t750VM2O6nfQkc
+         K06qNAww4Nr8HmgUbYOys8NQAjt0lFRKsZjNMn9nyYe9Gln8stL/p8TkP8HtStWd5bxY
+         Rmf7HwW49qRfV/Re9+xgqjZ8Hvyil/GDA4N2ZxLSpgr/JRqhYuMAiJ/FP8hhKn3MzU9L
+         uJKEwJtzqkqQVeW7HX0qIbP9hc5HbTxKNuH7qsW15fxIZyG8bWSodUJrjl4AAEBURrne
+         aOww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7/xDAv4nmvZM6/MSUvhwMtYq6DkyvBAstjsxswpf2i0=;
+        b=HwUNpHaPzoFJuUV612vm3HWzDEmsUfsKycH+Zid7/+vHSUNF3+4qk1UB8999Sr23q1
+         OEOzMujU98wFhyvrjBikMFFUgKn3/3srhk/e0vXC0VfAJzf205ZhsIfj06NmYvh70Kjw
+         Nch+pLbzF06zf5r8qLzPPZsVHjHMr+AWzKUWLOwiyuXLVDOXhQ4oxwVH+G0pY84YL3P+
+         IApvKHf0nacaGsJzS4r3rxUCp81I6kaY9064fSy+9F364Fp4l33BY/qyw058gbcxp2a6
+         ohZR1s38CwfJxjHl3QuY8qub9iPoU1hYfQgatXu2MHx5ZT6y78wJTYfOeBMqkBqD3pbc
+         lLkw==
+X-Gm-Message-State: APzg51BFmpiGYi4Z0mI58YOjFne0W2RGOaT6HMRLNVN0bak6U0V4I61Y
+        rLNsfdFvPoZezL4zjqQ4KBFz2WNTt44=
+X-Google-Smtp-Source: ANB0VdZAsJjUjiijKxoHtSsXyhoW1q6/VNwQYuGdJB+OQ+Z86BHGi269oWw8o7NDNjQUdwJ+Xy+m6g==
+X-Received: by 2002:a50:f297:: with SMTP id f23-v6mr33437770edm.40.1535993582809;
+        Mon, 03 Sep 2018 09:53:02 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id m35-v6sm8085745ede.14.2018.09.03.09.53.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 09:53:02 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lei Xue <carmark.dlut@gmail.com>,
-        Vegard Nossum <vegard.nossum@gmail.com>,
-        Anthony DeRobertis <aderobertis@metrics.net>,
-        NeilBrown <neilb@suse.com>, Daniel Axtens <dja@axtens.net>,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 23/56] cachefiles: Fix refcounting bug in backing-file read monitoring
-Date:   Mon,  3 Sep 2018 18:49:13 +0200
-Message-Id: <20180903164925.256038861@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
-References: <20180903164924.078355019@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Nathan March <nathan@gt.net>,
+        =?UTF-8?q?Pasi=20K=C3=A4rkk=C3=A4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
+Subject: [PATCHv2 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
+Date:   Mon,  3 Sep 2018 17:52:55 +0100
+Message-Id: <20180903165257.29227-3-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180903165257.29227-1-dima@arista.com>
+References: <20180903165257.29227-1-dima@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
+nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
+But it races with anyone who expects line discipline to be the same
+after hoding read semaphore in tty_ldisc_ref().
 
-------------------
+We've seen the following crash on v4.9.108 stable:
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+BUG: unable to handle kernel paging request at 0000000000002260
+IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+ [..] n_tty_receive_buf2
+ [..] tty_ldisc_receive_buf
+ [..] flush_to_ldisc
+ [..] process_one_work
+ [..] worker_thread
+ [..] kthread
+ [..] ret_from_fork
 
-[ Upstream commit 934140ab028713a61de8bca58c05332416d037d1 ]
+tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
+which will protect any reader against line discipline changes.
 
-cachefiles_read_waiter() has the right to access a 'monitor' object by
-virtue of being called under the waitqueue lock for one of the pages in its
-purview.  However, it has no ref on that monitor object or on the
-associated operation.
-
-What it is allowed to do is to move the monitor object to the operation's
-to_do list, but once it drops the work_lock, it's actually no longer
-permitted to access that object.  However, it is trying to enqueue the
-retrieval operation for processing - but it can only do this via a pointer
-in the monitor object, something it shouldn't be doing.
-
-If it doesn't enqueue the operation, the operation may not get processed.
-If the order is flipped so that the enqueue is first, then it's possible
-for the work processor to look at the to_do list before the monitor is
-enqueued upon it.
-
-Fix this by getting a ref on the operation so that we can trust that it
-will still be there once we've added the monitor to the to_do list and
-dropped the work_lock.  The op can then be enqueued after the lock is
-dropped.
-
-The bug can manifest in one of a couple of ways.  The first manifestation
-looks like:
-
- FS-Cache:
- FS-Cache: Assertion failed
- FS-Cache: 6 == 5 is false
- ------------[ cut here ]------------
- kernel BUG at fs/fscache/operation.c:494!
- RIP: 0010:fscache_put_operation+0x1e3/0x1f0
- ...
- fscache_op_work_func+0x26/0x50
- process_one_work+0x131/0x290
- worker_thread+0x45/0x360
- kthread+0xf8/0x130
- ? create_worker+0x190/0x190
- ? kthread_cancel_work_sync+0x10/0x10
- ret_from_fork+0x1f/0x30
-
-This is due to the operation being in the DEAD state (6) rather than
-INITIALISED, COMPLETE or CANCELLED (5) because it's already passed through
-fscache_put_operation().
-
-The bug can also manifest like the following:
-
- kernel BUG at fs/fscache/operation.c:69!
- ...
-    [exception RIP: fscache_enqueue_operation+246]
- ...
- #7 [ffff883fff083c10] fscache_enqueue_operation at ffffffffa0b793c6
- #8 [ffff883fff083c28] cachefiles_read_waiter at ffffffffa0b15a48
- #9 [ffff883fff083c48] __wake_up_common at ffffffff810af028
-
-I'm not entirely certain as to which is line 69 in Lei's kernel, so I'm not
-entirely clear which assertion failed.
-
-Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
-Reported-by: Lei Xue <carmark.dlut@gmail.com>
-Reported-by: Vegard Nossum <vegard.nossum@gmail.com>
-Reported-by: Anthony DeRobertis <aderobertis@metrics.net>
-Reported-by: NeilBrown <neilb@suse.com>
-Reported-by: Daniel Axtens <dja@axtens.net>
-Reported-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: stable@vger.kernel.org # depends on commit b027e2298bd5 ("tty: fix
+data race between tty_init_dev and flush of buf")
+Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- fs/cachefiles/rdwr.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/tty/tty_io.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -27,6 +27,7 @@ static int cachefiles_read_waiter(wait_q
- 	struct cachefiles_one_read *monitor =
- 		container_of(wait, struct cachefiles_one_read, monitor);
- 	struct cachefiles_object *object;
-+	struct fscache_retrieval *op = monitor->op;
- 	struct wait_bit_key *key = _key;
- 	struct page *page = wait->private;
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 5e5da9acaf0a..a947719b4626 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1255,7 +1255,7 @@ static void tty_driver_remove_tty(struct tty_driver *driver, struct tty_struct *
+ static int tty_reopen(struct tty_struct *tty)
+ {
+ 	struct tty_driver *driver = tty->driver;
+-	int retval;
++	int retval = 0;
  
-@@ -51,16 +52,22 @@ static int cachefiles_read_waiter(wait_q
- 	list_del(&wait->task_list);
+ 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
+ 	    driver->subtype == PTY_TYPE_MASTER)
+@@ -1267,15 +1267,18 @@ static int tty_reopen(struct tty_struct *tty)
+ 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+ 		return -EBUSY;
  
- 	/* move onto the action list and queue for FS-Cache thread pool */
--	ASSERT(monitor->op);
-+	ASSERT(op);
+-	tty->count++;
++	tty_ldisc_lock(tty, MAX_SCHEDULE_TIMEOUT);
  
--	object = container_of(monitor->op->op.object,
--			      struct cachefiles_object, fscache);
-+	/* We need to temporarily bump the usage count as we don't own a ref
-+	 * here otherwise cachefiles_read_copier() may free the op between the
-+	 * monitor being enqueued on the op->to_do list and the op getting
-+	 * enqueued on the work queue.
-+	 */
-+	fscache_get_retrieval(op);
++	tty->count++;
+ 	if (tty->ldisc)
+-		return 0;
++		goto out_unlock;
  
-+	object = container_of(op->op.object, struct cachefiles_object, fscache);
- 	spin_lock(&object->work_lock);
--	list_add_tail(&monitor->op_link, &monitor->op->to_do);
-+	list_add_tail(&monitor->op_link, &op->to_do);
- 	spin_unlock(&object->work_lock);
+ 	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+ 	if (retval)
+ 		tty->count--;
  
--	fscache_enqueue_retrieval(monitor->op);
-+	fscache_enqueue_retrieval(op);
-+	fscache_put_retrieval(op);
- 	return 0;
++out_unlock:
++	tty_ldisc_unlock(tty);
+ 	return retval;
  }
  
-
+-- 
+2.13.6
 
