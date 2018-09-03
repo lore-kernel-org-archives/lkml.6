@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E2DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A77DC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1831920661
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1831920661
+	by mail.kernel.org (Postfix) with ESMTP id 2EE7220661
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE7220661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbeICVqq (ORCPT
+        id S1730700AbeICVqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45768 "EHLO
+        Mon, 3 Sep 2018 17:46:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45776 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbeICVqp (ORCPT
+        with ESMTP id S1728380AbeICVqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:45 -0400
+        Mon, 3 Sep 2018 17:46:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8122D24;
-        Mon,  3 Sep 2018 17:25:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41233D24;
+        Mon,  3 Sep 2018 17:25:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 122/165] fuse: umount should wait for all requests
-Date:   Mon,  3 Sep 2018 18:56:48 +0200
-Message-Id: <20180903165701.670340768@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 123/165] fuse: Fix oops at process_init_reply()
+Date:   Mon,  3 Sep 2018 18:56:49 +0200
+Message-Id: <20180903165701.721757383@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,114 +53,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit b8f95e5d13f5f0191dcb4b9113113d241636e7cb upstream.
+commit e8f3bd773d22f488724dffb886a1618da85c2966 upstream.
 
-fuse_abort_conn() does not guarantee that all async requests have actually
-finished aborting (i.e. their ->end() function is called).  This could
-actually result in still used inodes after umount.
+syzbot is hitting NULL pointer dereference at process_init_reply().
+This is because deactivate_locked_super() is called before response for
+initial request is processed.
 
-Add a helper to wait until all requests are fully done.  This is done by
-looking at the "num_waiting" counter.  When this counter drops to zero, we
-can be sure that no more requests are outstanding.
+Fix this by aborting and waiting for all requests (including FUSE_INIT)
+before resetting fc->sb.
 
-Fixes: 0d8e84b0432b ("fuse: simplify request abort")
-Cc: <stable@vger.kernel.org> # v4.2
+Original patch by Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>.
+
+Reported-by: syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>
+Fixes: e27c9d3877a0 ("fuse: fuse: add time_gran to INIT_OUT")
+Cc: <stable@vger.kernel.org> # v3.19
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c    |   23 +++++++++++++++++++----
- fs/fuse/fuse_i.h |    1 +
- fs/fuse/inode.c  |    2 ++
- 3 files changed, 22 insertions(+), 4 deletions(-)
+ fs/fuse/inode.c |   25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -131,6 +131,16 @@ static bool fuse_block_alloc(struct fuse
- 	return !fc->initialized || (for_background && fc->blocked);
- }
- 
-+static void fuse_drop_waiting(struct fuse_conn *fc)
-+{
-+	if (fc->connected) {
-+		atomic_dec(&fc->num_waiting);
-+	} else if (atomic_dec_and_test(&fc->num_waiting)) {
-+		/* wake up aborters */
-+		wake_up_all(&fc->blocked_waitq);
-+	}
-+}
-+
- static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
- 				       bool for_background)
- {
-@@ -171,7 +181,7 @@ static struct fuse_req *__fuse_get_req(s
- 	return req;
- 
-  out:
--	atomic_dec(&fc->num_waiting);
-+	fuse_drop_waiting(fc);
- 	return ERR_PTR(err);
- }
- 
-@@ -278,7 +288,7 @@ void fuse_put_request(struct fuse_conn *
- 
- 		if (test_bit(FR_WAITING, &req->flags)) {
- 			__clear_bit(FR_WAITING, &req->flags);
--			atomic_dec(&fc->num_waiting);
-+			fuse_drop_waiting(fc);
- 		}
- 
- 		if (req->stolen_file)
-@@ -364,7 +374,7 @@ static void request_end(struct fuse_conn
- 	struct fuse_iqueue *fiq = &fc->iq;
- 
- 	if (test_and_set_bit(FR_FINISHED, &req->flags))
--		goto out_put_req;
-+		goto put_request;
- 
- 	spin_lock(&fiq->waitq.lock);
- 	list_del_init(&req->intr_entry);
-@@ -393,7 +403,7 @@ static void request_end(struct fuse_conn
- 	wake_up(&req->waitq);
- 	if (req->end)
- 		req->end(fc, req);
--out_put_req:
-+put_request:
- 	fuse_put_request(fc, req);
- }
- 
-@@ -2141,6 +2151,11 @@ void fuse_abort_conn(struct fuse_conn *f
- }
- EXPORT_SYMBOL_GPL(fuse_abort_conn);
- 
-+void fuse_wait_aborted(struct fuse_conn *fc)
-+{
-+	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
-+}
-+
- int fuse_dev_release(struct inode *inode, struct file *file)
- {
- 	struct fuse_dev *fud = fuse_get_dev(file);
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -852,6 +852,7 @@ void fuse_request_send_background_locked
- 
- /* Abort all requests */
- void fuse_abort_conn(struct fuse_conn *fc);
-+void fuse_wait_aborted(struct fuse_conn *fc);
- 
- /**
-  * Invalidate inode attributes
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -400,6 +400,8 @@ static void fuse_put_super(struct super_
- 	fuse_send_destroy(fc);
+@@ -397,11 +397,6 @@ static void fuse_put_super(struct super_
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
  
- 	fuse_abort_conn(fc);
-+	fuse_wait_aborted(fc);
-+
+-	fuse_send_destroy(fc);
+-
+-	fuse_abort_conn(fc);
+-	fuse_wait_aborted(fc);
+-
  	mutex_lock(&fuse_mutex);
  	list_del(&fc->entry);
  	fuse_ctl_remove_conn(fc);
+@@ -1198,16 +1193,25 @@ static struct dentry *fuse_mount(struct
+ 	return mount_nodev(fs_type, flags, raw_data, fuse_fill_super);
+ }
+ 
+-static void fuse_kill_sb_anon(struct super_block *sb)
++static void fuse_sb_destroy(struct super_block *sb)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ 
+ 	if (fc) {
++		fuse_send_destroy(fc);
++
++		fuse_abort_conn(fc);
++		fuse_wait_aborted(fc);
++
+ 		down_write(&fc->killsb);
+ 		fc->sb = NULL;
+ 		up_write(&fc->killsb);
+ 	}
++}
+ 
++static void fuse_kill_sb_anon(struct super_block *sb)
++{
++	fuse_sb_destroy(sb);
+ 	kill_anon_super(sb);
+ }
+ 
+@@ -1230,14 +1234,7 @@ static struct dentry *fuse_mount_blk(str
+ 
+ static void fuse_kill_sb_blk(struct super_block *sb)
+ {
+-	struct fuse_conn *fc = get_fuse_conn_super(sb);
+-
+-	if (fc) {
+-		down_write(&fc->killsb);
+-		fc->sb = NULL;
+-		up_write(&fc->killsb);
+-	}
+-
++	fuse_sb_destroy(sb);
+ 	kill_block_super(sb);
+ }
+ 
 
 
