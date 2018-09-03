@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F39BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABA2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E2E2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E2E2077C
+	by mail.kernel.org (Postfix) with ESMTP id 332742077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332742077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbeICVj1 (ORCPT
+        id S1730340AbeICVjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43044 "EHLO
+        Mon, 3 Sep 2018 17:39:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbeICVj0 (ORCPT
+        with ESMTP id S1728154AbeICVjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:26 -0400
+        Mon, 3 Sep 2018 17:39:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB1DFD13;
-        Mon,  3 Sep 2018 17:18:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 390B4D13;
+        Mon,  3 Sep 2018 17:18:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 026/165] usb: gadget: f_uac2: fix endianness of struct cntrl_*_lay3
-Date:   Mon,  3 Sep 2018 18:55:12 +0200
-Message-Id: <20180903165656.361795402@linuxfoundation.org>
+Subject: [PATCH 4.14 027/165] netfilter: nft_set_hash: add rcu_barrier() in the nft_rhash_destroy()
+Date:   Mon,  3 Sep 2018 18:55:13 +0200
+Message-Id: <20180903165656.409210655@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,96 +51,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit eec24f2a0d4dc3b1d95a3ccd2feb523ede3ba775 ]
+[ Upstream commit 9970a8e40d4c39e23d62d32540366d1d7d2cce9b ]
 
-The list [1] of commits doing endianness fixes in USB subsystem is long
-due to below quote from USB spec Revision 2.0 from April 27, 2000:
+GC of set uses call_rcu() to destroy elements.
+So that elements would be destroyed after destroying sets and chains.
+But, elements should be destroyed before destroying sets and chains.
+In order to wait calling call_rcu(), a rcu_barrier() is added.
 
-------------
-8.1 Byte/Bit Ordering
+In order to test correctly, below patch should be applied.
+https://patchwork.ozlabs.org/patch/940883/
 
-Multiple byte fields in standard descriptors, requests, and responses
-are interpreted as and moved over the bus in little-endian order, i.e.
-LSB to MSB.
-------------
+test scripts:
+   %cat test.nft
+   table ip aa {
+	   map map1 {
+		   type ipv4_addr : verdict; flags timeout;
+		   elements = {
+			   0 : jump a0,
+			   1 : jump a0,
+			   2 : jump a0,
+			   3 : jump a0,
+			   4 : jump a0,
+			   5 : jump a0,
+			   6 : jump a0,
+			   7 : jump a0,
+			   8 : jump a0,
+			   9 : jump a0,
+		   }
+		   timeout 1s;
+	   }
+	   chain a0 {
+	   }
+   }
+   flush ruleset
 
-This commit belongs to the same family.
+   [ ... ]
 
-[1] Example of endianness fixes in USB subsystem:
-commit 14e1d56cbea6 ("usb: gadget: f_uac2: endianness fixes.")
-commit 42370b821168 ("usb: gadget: f_uac1: endianness fixes.")
-commit 63afd5cc7877 ("USB: chaoskey: fix Alea quirk on big-endian hosts")
-commit 74098c4ac782 ("usb: gadget: acm: fix endianness in notifications")
-commit cdd7928df0d2 ("ACM gadget: fix endianness in notifications")
-commit 323ece54e076 ("cdc-wdm: fix endianness bug in debug statements")
-commit e102609f1072 ("usb: gadget: uvc: Fix endianness mismatches")
-       list goes on
+   table ip aa {
+	   map map1 {
+		   type ipv4_addr : verdict; flags timeout;
+		   elements = {
+			   0 : jump a0,
+			   1 : jump a0,
+			   2 : jump a0,
+			   3 : jump a0,
+			   4 : jump a0,
+			   5 : jump a0,
+			   6 : jump a0,
+			   7 : jump a0,
+			   8 : jump a0,
+			   9 : jump a0,
+		   }
+		   timeout 1s;
+	   }
+	   chain a0 {
+	   }
+   }
+   flush ruleset
 
-Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Splat looks like:
+[  200.795603] kernel BUG at net/netfilter/nf_tables_api.c:1363!
+[  200.806944] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+[  200.812253] CPU: 1 PID: 1582 Comm: nft Not tainted 4.17.0+ #24
+[  200.820297] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
+[  200.830309] RIP: 0010:nf_tables_chain_destroy.isra.34+0x62/0x240 [nf_tables]
+[  200.838317] Code: 43 50 85 c0 74 26 48 8b 45 00 48 8b 4d 08 ba 54 05 00 00 48 c7 c6 60 6d 29 c0 48 c7 c7 c0 65 29 c0
+4c 8b 40 08 e8 58 e5 fd f8 <0f> 0b 48 89 da 48 b8 00 00 00 00 00 fc ff
+[  200.860366] RSP: 0000:ffff880118dbf4d0 EFLAGS: 00010282
+[  200.866354] RAX: 0000000000000061 RBX: ffff88010cdeaf08 RCX: 0000000000000000
+[  200.874355] RDX: 0000000000000061 RSI: 0000000000000008 RDI: ffffed00231b7e90
+[  200.882361] RBP: ffff880118dbf4e8 R08: ffffed002373bcfb R09: ffffed002373bcfa
+[  200.890354] R10: 0000000000000000 R11: ffffed002373bcfb R12: dead000000000200
+[  200.898356] R13: dead000000000100 R14: ffffffffbb62af38 R15: dffffc0000000000
+[  200.906354] FS:  00007fefc31fd700(0000) GS:ffff88011b800000(0000) knlGS:0000000000000000
+[  200.915533] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  200.922355] CR2: 0000557f1c8e9128 CR3: 0000000106880000 CR4: 00000000001006e0
+[  200.930353] Call Trace:
+[  200.932351]  ? nf_tables_commit+0x26f6/0x2c60 [nf_tables]
+[  200.939525]  ? nf_tables_setelem_notify.constprop.49+0x1a0/0x1a0 [nf_tables]
+[  200.947525]  ? nf_tables_delchain+0x6e0/0x6e0 [nf_tables]
+[  200.952383]  ? nft_add_set_elem+0x1700/0x1700 [nf_tables]
+[  200.959532]  ? nla_parse+0xab/0x230
+[  200.963529]  ? nfnetlink_rcv_batch+0xd06/0x10d0 [nfnetlink]
+[  200.968384]  ? nfnetlink_net_init+0x130/0x130 [nfnetlink]
+[  200.975525]  ? debug_show_all_locks+0x290/0x290
+[  200.980363]  ? debug_show_all_locks+0x290/0x290
+[  200.986356]  ? sched_clock_cpu+0x132/0x170
+[  200.990352]  ? find_held_lock+0x39/0x1b0
+[  200.994355]  ? sched_clock_local+0x10d/0x130
+[  200.999531]  ? memset+0x1f/0x40
 
+Fixes: 9d0982927e79 ("netfilter: nft_hash: add support for timeouts")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/f_uac2.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ net/netfilter/nft_set_hash.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -442,14 +442,14 @@ static struct usb_descriptor_header *hs_
- };
+--- a/net/netfilter/nft_set_hash.c
++++ b/net/netfilter/nft_set_hash.c
+@@ -359,6 +359,7 @@ static void nft_rhash_destroy(const stru
+ 	struct nft_rhash *priv = nft_set_priv(set);
  
- struct cntrl_cur_lay3 {
--	__u32	dCUR;
-+	__le32	dCUR;
- };
- 
- struct cntrl_range_lay3 {
--	__u16	wNumSubRanges;
--	__u32	dMIN;
--	__u32	dMAX;
--	__u32	dRES;
-+	__le16	wNumSubRanges;
-+	__le32	dMIN;
-+	__le32	dMAX;
-+	__le32	dRES;
- } __packed;
- 
- static void set_ep_max_packet_size(const struct f_uac2_opts *uac2_opts,
-@@ -707,9 +707,9 @@ in_rq_cur(struct usb_function *fn, const
- 		memset(&c, 0, sizeof(struct cntrl_cur_lay3));
- 
- 		if (entity_id == USB_IN_CLK_ID)
--			c.dCUR = p_srate;
-+			c.dCUR = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			c.dCUR = c_srate;
-+			c.dCUR = cpu_to_le32(c_srate);
- 
- 		value = min_t(unsigned, w_length, sizeof c);
- 		memcpy(req->buf, &c, value);
-@@ -746,15 +746,15 @@ in_rq_range(struct usb_function *fn, con
- 
- 	if (control_selector == UAC2_CS_CONTROL_SAM_FREQ) {
- 		if (entity_id == USB_IN_CLK_ID)
--			r.dMIN = p_srate;
-+			r.dMIN = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			r.dMIN = c_srate;
-+			r.dMIN = cpu_to_le32(c_srate);
- 		else
- 			return -EOPNOTSUPP;
- 
- 		r.dMAX = r.dMIN;
- 		r.dRES = 0;
--		r.wNumSubRanges = 1;
-+		r.wNumSubRanges = cpu_to_le16(1);
- 
- 		value = min_t(unsigned, w_length, sizeof r);
- 		memcpy(req->buf, &r, value);
+ 	cancel_delayed_work_sync(&priv->gc_work);
++	rcu_barrier();
+ 	rhashtable_free_and_destroy(&priv->ht, nft_rhash_elem_destroy,
+ 				    (void *)set);
+ }
 
 
