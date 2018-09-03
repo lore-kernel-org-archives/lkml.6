@@ -2,289 +2,250 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102EDC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC624C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8524B20652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:54:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnfCywYf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8524B20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A54FE204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54FE204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeICTPQ (ORCPT
+        id S1727493AbeICTPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:15:16 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42818 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICTPQ (ORCPT
+        Mon, 3 Sep 2018 15:15:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39379 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICTPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:15:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so309196pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 07:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=4RVLBIOYDKzs3dZldQRe4DrWQIzbCWRga5PXMNGSIDE=;
-        b=DnfCywYfkaS2Qe5X1u6dD9LRuAVUd+44FA/JvDye0ymZJtOaxMcJOvTl5S6YfNDPoG
-         J/9QxVTqoYRitsC8b3jKGWB9ZTdzxhpwgm7SOVXAWlzCw54LpCwO9clSr/sSvRYoPGlE
-         pXdMgGTrh4hD5JghZykdrvN60BFHTvELbRuzNckbbbwevUCLPd42pP6Mjf/yBsRWoukl
-         xnPAo+xQUzR6L2FOEf6/0da3K5O5S7Tmv+WQcNVJbRA2RupnMA3OUJbIm5rANs+I2/nD
-         UZ3eVoVAsfXXkAnCZkDoLofbNrDT70EBr8jutE23HVshY4ttNUhdEcn/HnxaUi5JAKNk
-         IZVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=4RVLBIOYDKzs3dZldQRe4DrWQIzbCWRga5PXMNGSIDE=;
-        b=DUiDTFvEQcijPj8+n3ldost7zAHhXg9cYDtMZXZ3O2WgtVMwUe46Q78+DGcho/gYvz
-         0MM6C0ONR0FyDXQ7QV0VKti9vC9Fh9cr0TGL/zMEWR8E6PAkd8+OOB42srLZOmSr3q1C
-         uOxBR4Wg63I8e0pAIxBUXZ/uTRtTpT/lsigNueozC8TwZl494L30bngwx5xShXvv4noe
-         k9USUFkwpTTkpT02tcRjKXd0FmBqxYPdyGzk0LCuyxxoLKNUmF6zc5cG83F/qBk0ca1o
-         muC+ISku94/NvID5/Bir/RHoZC/7MvbF5/yiCZM9RUyY/pk62Zn6fp5p8LAa9u8Ctmev
-         eYDg==
-X-Gm-Message-State: APzg51C+Ub9cR5Jm4aQBUgF4qj6XDUQqxoA5vqZacVKfvaY0Xlme24XN
-        IrvdSm3XrRbR/uArC7ZZ1SLD7a4Z4w8GXcNQ9/HNMQ==
-X-Google-Smtp-Source: ANB0VdYjzJE1nVv8+oJktE1xHbN++u271BfNZsHO6Wh50rq81N10jXG1+WuSrwQ5WPXKLZ/FS43l9Na7KZjCcQJIqtU=
-X-Received: by 2002:a62:a05:: with SMTP id s5-v6mr30268059pfi.147.1535986483616;
- Mon, 03 Sep 2018 07:54:43 -0700 (PDT)
+        Mon, 3 Sep 2018 15:15:50 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83EsxDe3339751
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Sep 2018 07:54:59 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83EsxO53339746;
+        Mon, 3 Sep 2018 07:54:59 -0700
+Date:   Mon, 3 Sep 2018 07:54:59 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Juergen Gross <tipbot@zytor.com>
+Message-ID: <tip-28c11b0f798c6727355bd44603b16bb04e3a044d@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org,
+          jgross@suse.com, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org
+In-Reply-To: <20180828074026.820-2-jgross@suse.com>
+References: <20180828074026.820-2-jgross@suse.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/paravirt] x86/xen: Move pv irq related functions under
+ CONFIG_XEN_PV umbrella
+Git-Commit-ID: 28c11b0f798c6727355bd44603b16bb04e3a044d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 3 Sep 2018 07:54:23
- -0700 (PDT)
-In-Reply-To: <s5hwos2fybs.wl-tiwai@suse.de>
-References: <s5ha7oyhg0v.wl-tiwai@suse.de> <000000000000a25ae50574f76ff0@google.com>
- <s5h7ek2hfp6.wl-tiwai@suse.de> <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
- <s5h4lf6hfcq.wl-tiwai@suse.de> <CACT4Y+ZjXmdTb552cEOYdhz4PVOHdS39q7ynW_3uz=STvVmr5w@mail.gmail.com>
- <s5h1saahe2p.wl-tiwai@suse.de> <CACT4Y+Z9Aji1vENUc_8YbMx5dh=uXfm09DewDZZvwXbKn5O_vA@mail.gmail.com>
- <s5hwos2fybs.wl-tiwai@suse.de>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 3 Sep 2018 16:54:23 +0200
-Message-ID: <CACT4Y+a1erpZnCVAU44wF+Sve5He4gjK4+7nGHi6RWbogfs3Ag@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
-        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 4:30 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Mon, 03 Sep 2018 16:19:23 +0200,
-> Dmitry Vyukov wrote:
->>
->> On Mon, Sep 3, 2018 at 4:04 PM, Takashi Iwai <tiwai@suse.de> wrote:
->> > On Mon, 03 Sep 2018 15:41:36 +0200,
->> > Dmitry Vyukov wrote:
->> >>
->> >> On Mon, Sep 3, 2018 at 3:37 PM, Takashi Iwai <tiwai@suse.de> wrote:
->> >> > On Mon, 03 Sep 2018 15:33:12 +0200,
->> >> > Dmitry Vyukov wrote:
->> >> >>
->> >> >> On Mon, Sep 3, 2018 at 3:29 PM, Takashi Iwai <tiwai@suse.de> wrote:
->> >> >> > On Mon, 03 Sep 2018 15:22:42 +0200,
->> >> >> > syzbot wrote:
->> >> >> >>
->> >> >> >> > On Mon, 03 Sep 2018 03:53:03 +0200,
->> >> >> >> > syzbot wrote:
->> >> >> >>
->> >> >> >> >> syzbot has found a reproducer for the following crash on:
->> >> >> >>
->> >> >> >> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
->> >> >> >> >> do_syscall_64() and  _..
->> >> >> >> >> git tree:       https://github.com/google/kmsan.git/master
->> >> >> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
->> >> >> >> >> kernel config:
->> >> >> >> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
->> >> >> >> >> dashboard link:
->> >> >> >> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
->> >> >> >> >> compiler:       clang version 8.0.0 (trunk 339414)
->> >> >> >> >> syz repro:
->> >> >> >> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
->> >> >> >> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
->> >> >> >>
->> >> >> >> >> IMPORTANT: if you fix the bug, please add the following tag to the
->> >> >> >> >> commit:
->> >> >> >> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
->> >> >> >>
->> >> >> >> >> ==================================================================
->> >> >> >> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
->> >> >> >> >> sound/core/seq/seq_midi_event.c:195
->> >> >> >> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
->> >> >> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
->> >> >> >> >> BIOS  Google 01/01/2011
->> >> >> >> >> Workqueue: events_highpri snd_vmidi_output_work
->> >> >> >> >> Call Trace:
->> >> >> >> >>   __dump_stack lib/dump_stack.c:77 [inline]
->> >> >> >> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
->> >> >> >> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
->> >> >> >> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
->> >> >> >> >>   snd_midi_event_encode_byte+0x569/0xff0
->> >> >> >> >> sound/core/seq/seq_midi_event.c:195
->> >> >> >> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
->> >> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
->> >> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
->> >> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
->> >> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
->> >> >> >>
->> >> >> >> >> Uninit was stored to memory at:
->> >> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
->> >> >> >> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
->> >> >> >> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
->> >> >> >> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
->> >> >> >> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
->> >> >> >> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
->> >> >> >> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
->> >> >> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
->> >> >> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
->> >> >> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
->> >> >> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
->> >> >> >>
->> >> >> >> >> Uninit was created at:
->> >> >> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
->> >> >> >> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
->> >> >> >> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
->> >> >> >> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
->> >> >> >> >>   kmalloc_node include/linux/slab.h:555 [inline]
->> >> >> >> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
->> >> >> >> >>   kvmalloc include/linux/mm.h:577 [inline]
->> >> >> >> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
->> >> >> >> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
->> >> >> >> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
->> >> >> >> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
->> >> >> >> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
->> >> >> >> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
->> >> >> >> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
->> >> >> >> >>   vfs_open+0xaf/0xe0 fs/open.c:880
->> >> >> >> >>   do_last fs/namei.c:3418 [inline]
->> >> >> >> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
->> >> >> >> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
->> >> >> >> >>   do_sys_open+0x630/0x940 fs/open.c:1063
->> >> >> >> >>   __do_sys_open fs/open.c:1081 [inline]
->> >> >> >> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
->> >> >> >> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
->> >> >> >> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
->> >> >> >> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
->> >> >> >> >> ==================================================================
->> >> >> >>
->> >> >> >> > This looks like some small race at virmidi reading and the buffer
->> >> >> >> > handling, which should be almost harmless by itself.
->> >> >> >> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
->> >> >> >> > kvzalloc(), as below.
->> >> >> >>
->> >> >> >> > Let's check whether this works.
->> >> >> >>
->> >> >> >> > #syz test:
->> >> >> >> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
->> >> >> >> > topic/rawmidi-fixes
->> >> >> >>
->> >> >> >> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
->> >> >> >> because KMSAN tool is not upstreamed yet.
->> >> >> >> See
->> >> >> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
->> >> >> >> for details.
->> >> >> >
->> >> >> > So how is the procedure to test a patch for bugs spotted by KMSAN?
->> >> >> >
->> >> >> > In this case, the fix is trivial, so I can put it to my tree for the
->> >> >> > next pull request.  Of course, it'd be better if it can be confirmed
->> >> >> > to work beforehand...
->> >> >>
->> >> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
->> >> >>
->> >> >> Which means you need to attach a patch because it's not in that tree.
->> >> >
->> >> > OK, it would have been helpful if the description there was more clear
->> >> > :)
->> >> >
->> >> > And no automated way for that?
->> >>
->> >> What exactly do you mean? Please elaborate.
->> >
->> > Well, it's not clear which action is required to let syzbot testing
->> > some patch.  The description says:
->> >
->> >  "KMSAN is not upstream yet, though, we want to upstream it later. For
->> >   now, it lives in github.com/google/kmsan and is based on a
->> >   reasonably fresh upstream tree. As the result, any patch testing
->> >   requests for KMSAN bugs need to go to KMSAN tree
->> >   (https://github.com/google/kmsan.git repo, master branch)."
->> >
->> > Here, "need to go to KMSAN tree" part doesn't explain what exactly to
->> > do.  Remember that many kernel devs (including the man in the mirror)
->> > don't use github, at least, not dealing github PRs for kernel
->> > development itself, so it's a pretty unfamiliar process.
->>
->> It's not patches that need to go into that tree (i.e. no PRs). It's
->> patch testing requests.
->>
->> Tried to clarify doc:
->>
->> https://github.com/google/syzkaller/commit/bfe906cbb9c73c326f24327e1a89bc0cd0c314c7#diff-5b3b5ff5f03b01e1d31ec93aafd2f3d5
->>
->> Does this look better?
->
-> Erm, sorry, still unclear to me.  I'd need to explicitl attch/inline
-> the patch for testing *to where*?  Attach the test patch to the e-mail
-> replying to the bug?
->
-> Also, now you've put an example referring to
-> https://github.com/google/kmsan.git master.  What does it mean?
-> I should have put that line in my reply?
->
->> >> > I mean, I already attached patch in
->> >> > the previous reply (together with syz-magic command to point the git
->> >> > branch URL).  Do I need anything else?
->> >>
->> >> Just issue the command against "https://github.com/google/kmsan.git
->> >> master" and attach the patch.
->> >
->> > But it's basically a fix for the upstream tree, not about KMSAN
->> > itself.  A PR to that tree doesn't sound right to me...
->>
->> You don't need to send a PR. You attach a patch (or inline in email)
->> and request to apply and test it in KMSAN tree.
->
-> Then I must have understood "just issue the command against..."
-> Does it mean the "syz test: https//github.com/google/kmsan.git
-> master"?
->
-> I need to learn the basic for understanding the black magic...
+Commit-ID:  28c11b0f798c6727355bd44603b16bb04e3a044d
+Gitweb:     https://git.kernel.org/tip/28c11b0f798c6727355bd44603b16bb04e3a044d
+Author:     Juergen Gross <jgross@suse.com>
+AuthorDate: Tue, 28 Aug 2018 09:40:12 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 3 Sep 2018 16:50:32 +0200
 
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
-is meant to be a complement to the previous generic descriptions of
-patch testing process, which is:
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+x86/xen: Move pv irq related functions under CONFIG_XEN_PV umbrella
 
-So, you always reply to the syzbot+HASH email address so that syzbot
-understands which bug we are talking about.
-Then you do either (omitting # so that syzbot won't consider that as
-actual test requests):
+All functions in arch/x86/xen/irq.c and arch/x86/xen/xen-asm*.S are
+specific to PV guests. Include them in the kernel with CONFIG_XEN_PV only.
 
-syz test: git://repo/address.git branch
+Make the PV specific code in arch/x86/entry/entry_*.S dependent on
+CONFIG_XEN_PV instead of CONFIG_XEN.
 
-or:
+The HVM specific code should depend on CONFIG_XEN_PVHVM.
 
-syz test: git://repo/address.git commit-hash
+While at it reformat the Makefile to make it more readable.
 
-And then you can either attach a patch that needs to be applied on
-top, or not attach it (if it's already in the tree, or you just want
-to get another crash report).
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: xen-devel@lists.xenproject.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: akataria@vmware.com
+Cc: rusty@rustcorp.com.au
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/20180828074026.820-2-jgross@suse.com
 
-For KMSAN you need to issue test request against
-"https//github.com/google/kmsan.git master" (that's the only tree that
-has KMSAN tool in it) and you need to attach/inline the patch (because
-your patch is obviously not there yet).
+---
+ arch/x86/entry/entry_32.S |  8 +++++---
+ arch/x86/entry/entry_64.S |  8 +++++---
+ arch/x86/xen/Makefile     | 41 +++++++++++++++++++++++++++++++----------
+ include/xen/events.h      |  2 ++
+ 4 files changed, 43 insertions(+), 16 deletions(-)
 
-Does this make things more clear?
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2767c625a52c..9cc4c3064ce0 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -782,7 +782,7 @@ GLOBAL(__begin_SYSENTER_singlestep_region)
+  * will ignore all of the single-step traps generated in this range.
+  */
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ /*
+  * Xen doesn't set %esp to be precisely what the normal SYSENTER
+  * entry point expects, so fix it up before using the normal path.
+@@ -1240,7 +1240,7 @@ ENTRY(spurious_interrupt_bug)
+ 	jmp	common_exception
+ END(spurious_interrupt_bug)
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ ENTRY(xen_hypervisor_callback)
+ 	pushl	$-1				/* orig_ax = -1 => not a system call */
+ 	SAVE_ALL
+@@ -1321,11 +1321,13 @@ ENTRY(xen_failsafe_callback)
+ 	_ASM_EXTABLE(3b, 8b)
+ 	_ASM_EXTABLE(4b, 9b)
+ ENDPROC(xen_failsafe_callback)
++#endif /* CONFIG_XEN_PV */
+ 
++#ifdef CONFIG_XEN_PVHVM
+ BUILD_INTERRUPT3(xen_hvm_callback_vector, HYPERVISOR_CALLBACK_VECTOR,
+ 		 xen_evtchn_do_upcall)
++#endif
+ 
+-#endif /* CONFIG_XEN */
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 957dfb693ecc..a9ec5d3c6e67 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1050,7 +1050,7 @@ ENTRY(do_softirq_own_stack)
+ 	ret
+ ENDPROC(do_softirq_own_stack)
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ idtentry hypervisor_callback xen_do_hypervisor_callback has_error_code=0
+ 
+ /*
+@@ -1130,11 +1130,13 @@ ENTRY(xen_failsafe_callback)
+ 	ENCODE_FRAME_POINTER
+ 	jmp	error_exit
+ END(xen_failsafe_callback)
++#endif /* CONFIG_XEN_PV */
+ 
++#ifdef CONFIG_XEN_PVHVM
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+ 	xen_hvm_callback_vector xen_evtchn_do_upcall
++#endif
+ 
+-#endif /* CONFIG_XEN */
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
+ apicinterrupt3 HYPERVISOR_CALLBACK_VECTOR \
+@@ -1151,7 +1153,7 @@ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+ idtentry int3			do_int3			has_error_code=0
+ idtentry stack_segment		do_stack_segment	has_error_code=1
+ 
+-#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
+ idtentry xennmi			do_nmi			has_error_code=0
+ idtentry xendebug		do_debug		has_error_code=0
+ idtentry xenint3		do_int3			has_error_code=0
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index d83cb5478f54..f723b5aa8f74 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -12,25 +12,46 @@ endif
+ # Make sure early boot has no stackprotector
+ nostackp := $(call cc-option, -fno-stack-protector)
+ CFLAGS_enlighten_pv.o		:= $(nostackp)
+-CFLAGS_mmu_pv.o		:= $(nostackp)
++CFLAGS_mmu_pv.o			:= $(nostackp)
+ 
+-obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
+-			time.o xen-asm.o xen-asm_$(BITS).o \
+-			grant-table.o suspend.o platform-pci-unplug.o
++obj-y				+= enlighten.o
++obj-y				+= multicalls.o
++obj-y				+= mmu.o
++obj-y				+= time.o
++obj-y				+= grant-table.o
++obj-y				+= suspend.o
++obj-y				+= platform-pci-unplug.o
+ 
+-obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
+-obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
+-						p2m.o enlighten_pv.o mmu_pv.o
+-obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
++obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o
++obj-$(CONFIG_XEN_PVHVM)		+= mmu_hvm.o
++obj-$(CONFIG_XEN_PVHVM)		+= suspend_hvm.o
+ 
+-obj-$(CONFIG_EVENT_TRACING) += trace.o
++obj-$(CONFIG_XEN_PV)		+= setup.o
++obj-$(CONFIG_XEN_PV)		+= apic.o
++obj-$(CONFIG_XEN_PV)		+= pmu.o
++obj-$(CONFIG_XEN_PV)		+= suspend_pv.o
++obj-$(CONFIG_XEN_PV)		+= p2m.o
++obj-$(CONFIG_XEN_PV)		+= enlighten_pv.o
++obj-$(CONFIG_XEN_PV)		+= mmu_pv.o
++obj-$(CONFIG_XEN_PV)		+= irq.o
++obj-$(CONFIG_XEN_PV)		+= xen-asm.o
++obj-$(CONFIG_XEN_PV)		+= xen-asm_$(BITS).o
++
++obj-$(CONFIG_XEN_PVH)		+= enlighten_pvh.o
++obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
++
++obj-$(CONFIG_EVENT_TRACING)	+= trace.o
+ 
+ obj-$(CONFIG_SMP)		+= smp.o
+ obj-$(CONFIG_XEN_PV_SMP)  	+= smp_pv.o
+ obj-$(CONFIG_XEN_PVHVM_SMP)  	+= smp_hvm.o
++
+ obj-$(CONFIG_PARAVIRT_SPINLOCKS)+= spinlock.o
++
+ obj-$(CONFIG_XEN_DEBUG_FS)	+= debugfs.o
++
+ obj-$(CONFIG_XEN_DOM0)		+= vga.o
++
+ obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
++
+ obj-$(CONFIG_XEN_EFI)		+= efi.o
+-obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
+diff --git a/include/xen/events.h b/include/xen/events.h
+index c3e6bc643a7b..a48897199975 100644
+--- a/include/xen/events.h
++++ b/include/xen/events.h
+@@ -89,11 +89,13 @@ unsigned irq_from_evtchn(unsigned int evtchn);
+ int irq_from_virq(unsigned int cpu, unsigned int virq);
+ unsigned int evtchn_from_irq(unsigned irq);
+ 
++#ifdef CONFIG_XEN_PVHVM
+ /* Xen HVM evtchn vector callback */
+ void xen_hvm_callback_vector(void);
+ #ifdef CONFIG_TRACING
+ #define trace_xen_hvm_callback_vector xen_hvm_callback_vector
+ #endif
++#endif
+ int xen_set_callback_via(uint64_t via);
+ void xen_evtchn_do_upcall(struct pt_regs *regs);
+ void xen_hvm_evtchn_do_upcall(void);
