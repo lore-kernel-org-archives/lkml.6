@@ -2,194 +2,239 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8D2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C660C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A5F20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A5F20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 20BD020658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uP/P+kRP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BD020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732052AbeICWB4 (ORCPT
+        id S1732063AbeICWCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:01:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49422 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeICWBz (ORCPT
+        Mon, 3 Sep 2018 18:02:00 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51167 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbeICWB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:55 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82B1FBAE;
-        Mon,  3 Sep 2018 17:40:43 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.18 114/123] mtd: rawnand: qcom: wait for desc completion in all BAM channels
-Date:   Mon,  3 Sep 2018 18:57:38 +0200
-Message-Id: <20180903165724.327444397@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
-References: <20180903165719.499675257@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 3 Sep 2018 18:01:58 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1930993wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 10:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cYHF3DuU1Mgm5+iUOEtA+Jn8lKOkDL2loPcAl5A+4tQ=;
+        b=uP/P+kRPdtfp8PcKkjvQDGy/QZcPVmd8/Rg098QWKhjZLKlzZu6qBiX2l8g//Mynzq
+         Twe/jF10Oy66lgQcrlUOWJVu9muFXnBUQLwndcmVfTforz5B+5K6v3C1VzaJsluEimcD
+         doGsFwFxFcGoQJ5ewR9nr1IbUl7MjhSYMWDCpzM9ua+sRecSS/ASFaZ3sIZQ1+IyvVxl
+         X0KGmIiphf3aMtIiFIiaT2DEK/EmgGlMLc3xVXpZ77J9oJoMkVnPteELfcAPxfnIMdwH
+         NViE1cyHyfvdILgCcWq6syk1d66FGGV1WGfDq2Fv3BIyobOu7trnhOfHxdrOMSTUCKWc
+         6X8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cYHF3DuU1Mgm5+iUOEtA+Jn8lKOkDL2loPcAl5A+4tQ=;
+        b=N2qVNYDJna0cdHmBpfOhfo9gMmZhlbkFtzOaNOVQInqS4LqDN1ASzT5EPBE1rNQMre
+         THYry87pbCUQnqVuyEPHVejpaOYE4iyHaR9k7JAONjMdbON6aapbWrEZshTfbOZhoK4l
+         R4m2SgH3VD86Dmndf9oQuxiE6HncBv61Jsbonpef5hrIXN+m9rV+jc41Jq/INCnfj2BP
+         TcpO9BzXb4k+PO8G8bLrvXU39SjBV3crJL9//3WFuV60sbAgQ1HEBTbQtWspFQ1Lt1XE
+         TC60gJKE2ZJ2wCbtW0PTp4O77ZqE6IORT62e869V9hwqMMDu3382IHInboL9pQGx+Gu4
+         VG0Q==
+X-Gm-Message-State: APzg51AVcSDUL3CIGxmzux/MUv66VBCz65DhidHDulzt0XqJ5Qj5ToeF
+        yKJUQVS+JBdX2jdcinWHIQ8=
+X-Google-Smtp-Source: ANB0VdbjkGsfwsm5EjcVBQEvRw4IrEAXxVhqWgYM0fEMiSVkVxxI61PDMQ28HoDpb5iJw0VR64P+KQ==
+X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr293545wma.41.1535996446328;
+        Mon, 03 Sep 2018 10:40:46 -0700 (PDT)
+Received: from [192.168.43.97] (cst-prg-22-193.cust.vodafone.cz. [46.135.22.193])
+        by smtp.gmail.com with ESMTPSA id j75-v6sm12944181wmj.8.2018.09.03.10.40.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 10:40:45 -0700 (PDT)
+Subject: Re: [RESEND PATCH v2 1/3] mtd: spi-nor: add support to non-uniform
+ SFDP SPI NOR flash memories
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        cyrille.pitchen@microchip.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at
+Cc:     linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, Cristian.Birsan@microchip.com
+References: <20180827102644.7323-1-tudor.ambarus@microchip.com>
+ <20180827102644.7323-2-tudor.ambarus@microchip.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8f25975d-e0d8-dd11-76ce-857e99df9c2c@gmail.com>
+Date:   Mon, 3 Sep 2018 19:37:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180827102644.7323-2-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+On 08/27/2018 12:26 PM, Tudor Ambarus wrote:
+[...]
 
-------------------
+> +/* JEDEC JESD216B Standard imposes erase sizes to be power of 2. */
+> +static inline u64
+> +spi_nor_div_by_erase_size(const struct spi_nor_erase_type *erase,
+> +			  u64 dividend, u32 *remainder)
+> +{
+> +	*remainder = (u32)dividend & erase->size_mask;
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+Is the cast really needed ? btw I think there might be a macro doing
+just this, div_by_ or something in include/ .
 
-commit 6f20070d51a20e489ef117603210264c6bcde8a5 upstream.
+> +	return dividend >> erase->size_shift;
+> +}
+> +
+> +static const struct spi_nor_erase_type *
+> +spi_nor_find_best_erase_type(const struct spi_nor_erase_map *map,
+> +			     const struct spi_nor_erase_region *region,
+> +			     u64 addr, u32 len)
+> +{
+> +	const struct spi_nor_erase_type *erase;
+> +	u32 rem;
+> +	int i;
+> +	u8 erase_mask = region->offset & SNOR_ERASE_TYPE_MASK;
+> +
+> +	/*
+> +	 * Erase types are ordered by size, with the biggest erase type at
+> +	 * index 0.
+> +	 */
+> +	for (i = SNOR_ERASE_TYPE_MAX - 1; i >= 0; i--) {
+> +		/* Does the erase region support the tested erase type? */
+> +		if (!(erase_mask & BIT(i)))
+> +			continue;
+> +
+> +		erase = &map->erase_type[i];
+> +
+> +		/* Don't erase more than what the user has asked for. */
+> +		if (erase->size > len)
+> +			continue;
+> +
+> +		/* Alignment is not mandatory for overlaid regions */
+> +		if (region->offset & SNOR_OVERLAID_REGION)
+> +			return erase;
+> +
+> +		spi_nor_div_by_erase_size(erase, addr, &rem);
+> +		if (rem)
+> +			continue;
+> +		else
+> +			return erase;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static struct spi_nor_erase_region *
+> +spi_nor_region_next(struct spi_nor_erase_region *region)
+> +{
+> +	if (spi_nor_region_is_last(region))
+> +		return NULL;
+> +	return ++region;
 
-The BAM has 3 channels - tx, rx and command. command channel
-is used for register read/writes, tx channel for data writes
-and rx channel for data reads. Currently, the driver assumes the
-transfer completion once it gets all the command descriptors
-completed. Sometimes, there is race condition between data channel
-(tx/rx) and command channel completion. In these cases,
-the data present in buffer is not valid during small window
-between command descriptor completion and data descriptor
-completion.
+region++ ...
 
-This patch generates NAND transfer completion when both
-(Data and Command) DMA channels have completed all its DMA
-descriptors. It assigns completion callback in last
-DMA descriptors of that channel and wait for completion.
+[...]
 
-Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +static int spi_nor_cmp_erase_type(const void *a, const void *b)
+> +{
+> +	const struct spi_nor_erase_type *erase1 = a;
+> +	const struct spi_nor_erase_type *erase2 = b;
+> +
+> +	return erase1->size - erase2->size;
 
----
- drivers/mtd/nand/raw/qcom_nandc.c |   53 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+What does this function do again ?
 
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -213,6 +213,8 @@ nandc_set_reg(nandc, NAND_READ_LOCATION_
- #define QPIC_PER_CW_CMD_SGL		32
- #define QPIC_PER_CW_DATA_SGL		8
- 
-+#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
-+
- /*
-  * Flags used in DMA descriptor preparation helper functions
-  * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
-@@ -245,6 +247,11 @@ nandc_set_reg(nandc, NAND_READ_LOCATION_
-  * @tx_sgl_start - start index in data sgl for tx.
-  * @rx_sgl_pos - current index in data sgl for rx.
-  * @rx_sgl_start - start index in data sgl for rx.
-+ * @wait_second_completion - wait for second DMA desc completion before making
-+ *			     the NAND transfer completion.
-+ * @txn_done - completion for NAND transfer.
-+ * @last_data_desc - last DMA desc in data channel (tx/rx).
-+ * @last_cmd_desc - last DMA desc in command channel.
-  */
- struct bam_transaction {
- 	struct bam_cmd_element *bam_ce;
-@@ -258,6 +265,10 @@ struct bam_transaction {
- 	u32 tx_sgl_start;
- 	u32 rx_sgl_pos;
- 	u32 rx_sgl_start;
-+	bool wait_second_completion;
-+	struct completion txn_done;
-+	struct dma_async_tx_descriptor *last_data_desc;
-+	struct dma_async_tx_descriptor *last_cmd_desc;
- };
- 
- /*
-@@ -504,6 +515,8 @@ alloc_bam_transaction(struct qcom_nand_c
- 
- 	bam_txn->data_sgl = bam_txn_buf;
- 
-+	init_completion(&bam_txn->txn_done);
-+
- 	return bam_txn;
- }
- 
-@@ -523,11 +536,33 @@ static void clear_bam_transaction(struct
- 	bam_txn->tx_sgl_start = 0;
- 	bam_txn->rx_sgl_pos = 0;
- 	bam_txn->rx_sgl_start = 0;
-+	bam_txn->last_data_desc = NULL;
-+	bam_txn->wait_second_completion = false;
- 
- 	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
- 		      QPIC_PER_CW_CMD_SGL);
- 	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
- 		      QPIC_PER_CW_DATA_SGL);
-+
-+	reinit_completion(&bam_txn->txn_done);
-+}
-+
-+/* Callback for DMA descriptor completion */
-+static void qpic_bam_dma_done(void *data)
-+{
-+	struct bam_transaction *bam_txn = data;
-+
-+	/*
-+	 * In case of data transfer with NAND, 2 callbacks will be generated.
-+	 * One for command channel and another one for data channel.
-+	 * If current transaction has data descriptors
-+	 * (i.e. wait_second_completion is true), then set this to false
-+	 * and wait for second DMA descriptor completion.
-+	 */
-+	if (bam_txn->wait_second_completion)
-+		bam_txn->wait_second_completion = false;
-+	else
-+		complete(&bam_txn->txn_done);
- }
- 
- static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
-@@ -756,6 +791,12 @@ static int prepare_bam_async_desc(struct
- 
- 	desc->dma_desc = dma_desc;
- 
-+	/* update last data/command descriptor */
-+	if (chan == nandc->cmd_chan)
-+		bam_txn->last_cmd_desc = dma_desc;
-+	else
-+		bam_txn->last_data_desc = dma_desc;
-+
- 	list_add_tail(&desc->node, &nandc->desc_list);
- 
- 	return 0;
-@@ -1273,10 +1314,20 @@ static int submit_descs(struct qcom_nand
- 		cookie = dmaengine_submit(desc->dma_desc);
- 
- 	if (nandc->props->is_bam) {
-+		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
-+		bam_txn->last_cmd_desc->callback_param = bam_txn;
-+		if (bam_txn->last_data_desc) {
-+			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
-+			bam_txn->last_data_desc->callback_param = bam_txn;
-+			bam_txn->wait_second_completion = true;
-+		}
-+
- 		dma_async_issue_pending(nandc->tx_chan);
- 		dma_async_issue_pending(nandc->rx_chan);
-+		dma_async_issue_pending(nandc->cmd_chan);
- 
--		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
-+		if (!wait_for_completion_timeout(&bam_txn->txn_done,
-+						 QPIC_NAND_COMPLETION_TIMEOUT))
- 			return -ETIMEDOUT;
- 	} else {
- 		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
+> +}
+> +
+> +static void spi_nor_regions_sort_erase_types(struct spi_nor_erase_map *map)
+> +{
+> +	struct spi_nor_erase_region *region = map->regions;
+> +	struct spi_nor_erase_type *erase_type = map->erase_type;
+> +	int i;
+> +	u8 region_erase_mask, ordered_erase_mask;
+> +
+> +	/*
+> +	 * Sort each region's Erase Types in ascending order with the smallest
+> +	 * Erase Type size starting at BIT(0).
+> +	 */
+> +	while (region) {
+> +		region_erase_mask = region->offset & SNOR_ERASE_TYPE_MASK;
+> +
+> +		/*
+> +		 * The region's erase mask indicates which erase types are
+> +		 * supported from the erase types defined in the map.
+> +		 */
+> +		ordered_erase_mask = 0;
+> +		for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++)
+> +			if (erase_type[i].size &&
+> +			    region_erase_mask & BIT(erase_type[i].idx))
+> +				ordered_erase_mask |= BIT(i);
+> +
+> +		/* Overwrite erase mask. */
+> +		region->offset = (region->offset & ~SNOR_ERASE_TYPE_MASK) |
+> +				 ordered_erase_mask;
+> +
+> +		region = spi_nor_region_next(region);
+> +	}
+> +}
+> +
+> +static inline void
 
+Drop the inline
 
+> +spi_nor_init_uniform_erase_map(struct spi_nor_erase_map *map,
+> +			       u8 erase_mask, u64 flash_size)
+> +{
+> +	map->uniform_region.offset = SNOR_ERASE_FLAGS_OFFSET(erase_mask, 1, 0,
+> +							     0);
+> +	map->uniform_region.size = flash_size;
+> +	map->regions = &map->uniform_region;
+> +	map->uniform_erase_type = erase_mask;
+> +}
+> +
+
+[...]
+
+> +#define spi_nor_region_is_last(region)  (region->offset & SNOR_LAST_REGION)
+> +
+> +static inline u64 spi_nor_region_end(const struct spi_nor_erase_region *region)
+
+Get rid of the inlines, really.
+
+> +{
+> +	return (region->offset & ~SNOR_ERASE_FLAGS_MASK) + region->size;
+> +}
+> +
+> +static inline bool spi_nor_has_uniform_erase(const struct spi_nor *nor)
+> +{
+> +	return !!nor->erase_map.uniform_erase_type;
+> +}
+> +
+>  static inline void spi_nor_set_flash_node(struct spi_nor *nor,
+>  					  struct device_node *np)
+>  {
+> 
+
+General question, what happens if the multi-block erase fails mid-way ,
+is that handled or reported somehow to the user ?
+
+-- 
+Best regards,
+Marek Vasut
