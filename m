@@ -2,92 +2,167 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E058C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF521C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F762086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:17:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F762086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 9FF0C20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 19:18:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF0C20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbeICXjB (ORCPT
+        id S1728417AbeICXjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:39:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40414 "EHLO mail.skyhub.de"
+        Mon, 3 Sep 2018 19:39:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:3636 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728225AbeICXjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:39:00 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id JcnvgARzG_hX; Mon,  3 Sep 2018 21:17:08 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCF4100329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:4100:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5FCA01EC00E5;
-        Mon,  3 Sep 2018 21:17:08 +0200 (CEST)
-Date:   Mon, 3 Sep 2018 21:18:15 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     wufan <wufan@codeaurora.org>
-Cc:     'tanxiaofei' <tanxiaofei@huawei.com>,
-        'John Garry' <john.garry@huawei.com>,
-        'James Morse' <james.morse@arm.com>,
-        'Zhengqiang' <zhengqiang10@huawei.com>, mchehab@kernel.org,
-        baicar.tyler@gmail.com, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        'Linuxarm' <linuxarm@huawei.com>,
-        'wanghuiqiang' <wanghuiqiang@huawei.com>,
-        'Shiju Jose' <shiju.jose@huawei.com>
-Subject: Re: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
-Message-ID: <20180903191814.GG10249@zn.tnic>
-References: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
- <5eab89c6-c063-cbc2-4d02-459faf87698a@arm.com>
- <6cc3c5e2-3827-a89c-e37b-09728a34f21f@huawei.com>
- <5B891308.40407@huawei.com>
- <003201d44397$8eb02c20$ac108460$@codeaurora.org>
+        id S1727955AbeICXjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:39:36 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 12:18:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
+   d="scan'208";a="80568132"
+Received: from fonsecan-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.49])
+  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2018 12:17:57 -0700
+Date:   Mon, 3 Sep 2018 22:17:56 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+Message-ID: <20180903191756.GB13497@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <003201d44397$8eb02c20$ac108460$@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 09:05:29AM -0600, wufan wrote:
-> Thanks tanxiaofei!
+On Mon, Sep 03, 2018 at 04:16:42PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 9:57 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Add arch/x86/include/asm/sgx_arch.h, which contains definitions for the
+> > architectural data structures used by the CPU to implement the SGX.
 > 
-> Boris/James, are you OK to sign off, or you want to see more tests on 
-> this patch? 
+> > +/**
+> > + * enum sgx_encls_leaves - ENCLS leaf functions
+> > + * %ECREATE:   Create an enclave.
+> > + * %EADD:      Add a page to an enclave.
+> > + * %EINIT:     Launch an enclave.
+> > + * %EREMOVE:   Remove a page from an enclave.
+> > + * %EDBGRD:    Read a word from an enclve (peek).
+> > + * %EDBGWR:    Write a word to an enclave (poke).
+> > + * %EEXTEND:   Measure 256 bytes of an added enclave page.
+> > + * %ELDB:      Load a swapped page in blocked state.
+> > + * %ELDU:      Load a swapped page in unblocked state.
+> > + * %EBLOCK:    Change page state to blocked i.e. entering hardware threads
+> > + *             cannot access it and create new TLB entries.
+> > + * %EPA:       Create a Version Array (VA) page used to store isvsvn number
+> > + *             for a swapped EPC page.
+> > + * %EWB:       Swap an enclave page to the regular memory. Checks that all
+> > + *             threads have exited that were in the previous shoot-down
+> > + *             sequence.
+> > + * %ETRACK:    Start a new shoot down sequence. Used to together with EBLOCK
+> > + *             to make sure that a page is safe to swap.
+> > + */
+> > +enum sgx_encls_leaves {
+> > +       ECREATE = 0x0,
+> > +       EADD    = 0x1,
+> > +       EINIT   = 0x2,
+> > +       EREMOVE = 0x3,
+> > +       EDGBRD  = 0x4,
+> > +       EDGBWR  = 0x5,
+> > +       EEXTEND = 0x6,
+> > +       ELDB    = 0x7,
+> > +       ELDU    = 0x8,
+> > +       EBLOCK  = 0x9,
+> > +       EPA     = 0xA,
+> > +       EWB     = 0xB,
+> > +       ETRACK  = 0xC,
+> > +       EAUG    = 0xD,
+> > +       EMODPR  = 0xE,
+> > +       EMODT   = 0xF,
+> > +};
+> 
+> Hmm... This E prefix confuses me with (system wide) error codes. Has
+> it been discussed before? If so, can you point on the conclusion why
+> the current format is good?
 
-Please do not top-post.
+That is how they are prefixed in the SDM.
 
-Now, I don't have any problems with it - I'm still sceptical as the
-firmware is a stinking pile but if we cannot find a broken case, I guess
-we can take this one for a spin and revert it if there's trouble down
-the road.
+> > +enum sgx_miscselect {
+> > +       SGX_MISC_EXINFO         = 0x01,
+> > +};
+> > +
+> > +#define SGX_MISC_RESERVED_MASK 0xFFFFFFFFFFFFFFFEULL
+> 
+> Any idea why we are not using BIT_ULL() / BIT() and GENMASK_ULL() /
+> GENMASK() in the code?
 
-Unless James has objections.
+No good reason. I'll change it.
 
-Then, you sent a v2 here:
+> > +enum sgx_attribute {
+> > +       SGX_ATTR_DEBUG          = 0x02,
+> > +       SGX_ATTR_MODE64BIT      = 0x04,
+> > +       SGX_ATTR_PROVISIONKEY   = 0x10,
+> > +       SGX_ATTR_EINITTOKENKEY  = 0x20,
+> > +};
+> > +
+> > +#define SGX_ATTR_RESERVED_MASK 0xFFFFFFFFFFFFFFC9ULL
+> 
+> Some times listing explicitly not-reserved bits might be better and
+> figuring out reserved mask is a simple ~ operation.
 
-https://lkml.kernel.org/r/1535654266-40053-1-git-send-email-wufan@codeaurora.org
+Yea, agreed.
 
-and you've received a bunch of Reviewed-by's and Tested-by's and a
-couple of new comments.
+> > +enum sgx_tcs_flags {
+> > +       SGX_TCS_DBGOPTIN        = 0x01,
+> > +};
+> > +
+> > +#define SGX_TCS_RESERVED_MASK 0xFFFFFFFFFFFFFFFEULL
+> 
+> > +#define SGX_SECINFO_PERMISSION_MASK    0x0000000000000007ULL
+> > +#define SGX_SECINFO_PAGE_TYPE_MASK     0x000000000000FF00ULL
+> > +#define SGX_SECINFO_RESERVED_MASK      0xFFFFFFFFFFFF00F8ULL
+> 
+> So, something like
+> 
+> MASK1 GENMASK_ULL
+> MASK2 GENMASK_ULL
+> MASK3 ~(MASK1  | MASK2)
+> 
+> ?
 
-Incorporate *all* of those and send me a v3.
+Definitely. I think it is just a matter of legacy why they are like they
+are :-) These constants have gone over long time and they are not
+usually places where you have to look for regressions. Thanks for
+spotting these.
 
-Thx.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
