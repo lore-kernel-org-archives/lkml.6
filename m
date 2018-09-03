@@ -2,38 +2,42 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F82C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316A4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1F520779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1F520779
+	by mail.kernel.org (Postfix) with ESMTP id DFA6520779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:01:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA6520779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeICVWR (ORCPT
+        id S1728697AbeICVWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:22:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38678 "EHLO
+        Mon, 3 Sep 2018 17:22:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38688 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728169AbeICVWR (ORCPT
+        with ESMTP id S1728047AbeICVWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:22:17 -0400
+        Mon, 3 Sep 2018 17:22:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A4B4CFE;
-        Mon,  3 Sep 2018 17:01:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43266D00;
+        Mon,  3 Sep 2018 17:01:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 57/80] fuse: Dont access pipe->buffers without pipe_lock()
-Date:   Mon,  3 Sep 2018 18:49:35 +0200
-Message-Id: <20180903164936.429793723@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 24/80] media: staging: omap4iss: Include asm/cacheflush.h after generic includes
+Date:   Mon,  3 Sep 2018 18:49:02 +0200
+Message-Id: <20180903164935.122711893@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -50,45 +54,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit a2477b0e67c52f4364a47c3ad70902bc2a61bd4c upstream.
+[ Upstream commit 0894da849f145af51bde88a6b84f95b9c9e0bc66 ]
 
-fuse_dev_splice_write() reads pipe->buffers to determine the size of
-'bufs' array before taking the pipe_lock(). This is not safe as
-another thread might change the 'pipe->buffers' between the allocation
-and taking the pipe_lock(). So we end up with too small 'bufs' array.
+Including asm/cacheflush.h first results in the following build error
+when trying to build sparc32:allmodconfig, because 'struct page' has not
+been declared, and the function declaration ends up creating a separate
+(private) declaration of struct page (as a result of function arguments
+being in the scope of the function declaration and definition, not in
+global scope).
 
-Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
+The C scoping rules do not just affect variable visibility, they also
+affect type declaration visibility.
 
-Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: <stable@vger.kernel.org> # v2.6.35
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+The end result is that when the actual call site is seen in
+<linux/highmem.h>, the 'struct page' type in the caller is not the same
+'struct page' that the function was declared with, resulting in:
+
+  In file included from arch/sparc/include/asm/page.h:10:0,
+                   ...
+                   from drivers/staging/media/omap4iss/iss_video.c:15:
+  include/linux/highmem.h: In function 'clear_user_highpage':
+  include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible
+	pointer type
+
+Include generic includes files first to fix the problem.
+
+Fixes: fc96d58c10162 ("[media] v4l: omap4iss: Add support for OMAP4 camera interface - Video devices")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: David S. Miller <davem@davemloft.net>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+[ Added explanation of C scope rules - Linus ]
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/fuse/dev.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/staging/media/omap4iss/iss_video.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1991,11 +1991,14 @@ static ssize_t fuse_dev_splice_write(str
- 	if (!fud)
- 		return -EPERM;
+--- a/drivers/staging/media/omap4iss/iss_video.c
++++ b/drivers/staging/media/omap4iss/iss_video.c
+@@ -11,7 +11,6 @@
+  * (at your option) any later version.
+  */
  
-+	pipe_lock(pipe);
+-#include <asm/cacheflush.h>
+ #include <linux/clk.h>
+ #include <linux/mm.h>
+ #include <linux/pagemap.h>
+@@ -22,6 +21,8 @@
+ #include <media/v4l2-dev.h>
+ #include <media/v4l2-ioctl.h>
+ 
++#include <asm/cacheflush.h>
 +
- 	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
--	if (!bufs)
-+	if (!bufs) {
-+		pipe_unlock(pipe);
- 		return -ENOMEM;
-+	}
+ #include "iss_video.h"
+ #include "iss.h"
  
--	pipe_lock(pipe);
- 	nbuf = 0;
- 	rem = 0;
- 	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
 
 
