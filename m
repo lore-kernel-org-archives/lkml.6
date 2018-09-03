@@ -2,132 +2,190 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5299C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CF9C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724CB20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724CB20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C812A20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:02:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KKHngPJP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C812A20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeICNT1 (ORCPT
+        id S1727327AbeICNVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:19:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51416 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727093AbeICNT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:19:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E09B5AEF7;
-        Mon,  3 Sep 2018 09:00:13 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 11:00:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "jslaby@suse.cz" <jslaby@suse.cz>
-Subject: Re: [PATCH] mm: Disable deferred struct page for 32-bit arches
-Message-ID: <20180903090011.GB14951@dhcp22.suse.cz>
-References: <20180831150506.31246-1-pavel.tatashin@microsoft.com>
+        Mon, 3 Sep 2018 09:21:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43432 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeICNVO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:21:14 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z27-v6so198024edb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BhyGaEiW0TQATt0rsMOO5ZpjXwenfIn0ANTVymX1oOE=;
+        b=KKHngPJPJ7Nle90v+KO2SVa8EAim8R20XZiOiBwlouM+6gJ3BG1P1Gxg6G+zJzC5NQ
+         +ZUlng4CK8G10OMzRkYhlhpnCVyCNAEf+DC6HwlzzkzWT0I8HMXA+5LjYE8QsXc96piZ
+         c4BCpzHlZkWt+d9NeeG0TDybxE3QMVhzH2FNY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BhyGaEiW0TQATt0rsMOO5ZpjXwenfIn0ANTVymX1oOE=;
+        b=IQVTwjDhYGpE4Q9dFswo7q2RMGPPRXOJLpQlHI7CU9PgxAO+3M3k+nkL7hpg1qu6Fg
+         9QKa/7Mp2BgHTKauI7NJ8Hdeq1BO/jHgp8Gph94HE64WkBr/zJIKWWFyGFNkw2qznhj6
+         gvdzw6nhyeBFf8S+IkWrqq19ZWKZPLM5QLSufAYEc1Gm0qOwaBEbcRUek163OlV9iGaS
+         0XqibVR4+Q9o+xBH3Gf44krMKefjmW1ywHvfJMy2bI39gWd95Lb4hYwsZSatDM0RcFyS
+         3akY+yAvjQboBZpGl1lviOB/8iMQJcSawhsxVgxd//SG52Q4JgxLSZW2hjJi3KaDo46i
+         PwEQ==
+X-Gm-Message-State: APzg51BMEw3nCaNftuDo9/QxJOWqvGzT3ZDnnos22npWQKtZsiY7Wl3n
+        CmgseyRh0d5yCdz87LlSObIgFQ==
+X-Google-Smtp-Source: ANB0VdZe2NXaDk27GpN44QEVqZ3H5SDxsnnPqCW1/9K2hCVgFgtGq/ms7TrA/Xlq2my1As/du4qKfA==
+X-Received: by 2002:a50:908d:: with SMTP id c13-v6mr31745763eda.179.1535965321027;
+        Mon, 03 Sep 2018 02:02:01 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm11015143edb.16.2018.09.03.02.01.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 02:02:00 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 11:01:53 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180903090153.GA4560@andrea>
+References: <20180831091641.GA3634@andrea>
+ <Pine.LNX.4.44L0.1808311042340.4901-100000@netrider.rowland.org>
+ <20180831160640.GG30626@arm.com>
+ <20180831182845.GA4673@andrea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180831150506.31246-1-pavel.tatashin@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180831182845.GA4673@andrea>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 31-08-18 15:05:09, Pavel Tatashin wrote:
-> Deferred struct page init is needed only on systems with large amount of
-> physical memory to improve boot performance. 32-bit systems do not benefit
-> from this feature.
+On Fri, Aug 31, 2018 at 08:28:46PM +0200, Andrea Parri wrote:
+> > > Yes, it's true that implementing locks with atomic_cmpxchg_acquire 
+> > > should be correct on all existing architectures.  And Paul has invited 
+> > > a patch to modify the LKMM accordingly.  If you feel that such a change 
+> > > would be a useful enhancement to the LKMM's applicability, please write 
+> > > it.
+> > 
+> > Yes, please! That would be the "RmW" discussion which Andrea partially
+> > quoted earlier on, so getting that going independently from this patch
+> > sounds like a great idea to me.
 > 
-> Jiri reported a problem where deferred struct pages do not work well with
-> x86-32:
+> That was indeed one of the proposal we discussed.  As you recalled, that
+> proposal only covered RmWs load-acquire (and ordinary store-release); in
+> particular, I realized that comments such as:
 > 
-> [    0.035162] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
-> [    0.035725] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-> [    0.036269] Initializing CPU#0
-> [    0.036513] Initializing HighMem for node 0 (00036ffe:0007ffe0)
-> [    0.038459] page:f6780000 is uninitialized and poisoned
-> [    0.038460] raw: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
-> [    0.039509] page dumped because: VM_BUG_ON_PAGE(1 && PageCompound(page))
-> [    0.040038] ------------[ cut here ]------------
-> [    0.040399] kernel BUG at include/linux/page-flags.h:293!
-> [    0.040823] invalid opcode: 0000 [#1] SMP PTI
-> [    0.041166] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc1_pt_jiri #9
-> [    0.041694] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-> [    0.042496] EIP: free_highmem_page+0x64/0x80
-> [    0.042839] Code: 13 46 d8 c1 e8 18 5d 83 e0 03 8d 04 c0 c1 e0 06 ff 80 ec 5f 44 d8 c3 8d b4 26 00 00 00 00 ba 08 65 28 d8 89 d8 e8 fc 71 02 00 <0f> 0b 8d 76 00 8d bc 27 00 00 00 00 ba d0 b1 26 d8 89 d8 e8 e4 71
-> [    0.044338] EAX: 0000003c EBX: f6780000 ECX: 00000000 EDX: d856cbe8
-> [    0.044868] ESI: 0007ffe0 EDI: d838df20 EBP: d838df00 ESP: d838defc
-> [    0.045372] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210086
-> [    0.045913] CR0: 80050033 CR2: 00000000 CR3: 18556000 CR4: 00040690
-> [    0.046413] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-> [    0.046913] DR6: fffe0ff0 DR7: 00000400
-> [    0.047220] Call Trace:
-> [    0.047419]  add_highpages_with_active_regions+0xbd/0x10d
-> [    0.047854]  set_highmem_pages_init+0x5b/0x71
-> [    0.048202]  mem_init+0x2b/0x1e8
-> [    0.048460]  start_kernel+0x1d2/0x425
-> [    0.048757]  i386_start_kernel+0x93/0x97
-> [    0.049073]  startup_32_smp+0x164/0x168
-> [    0.049379] Modules linked in:
-> [    0.049626] ---[ end trace 337949378db0abbb ]---
+>   "The atomic_cond_read_acquire() call above has provided the
+>    necessary acquire semantics required for locking."
 > 
-> We free highmem pages before their struct pages are initialized:
+>    [from kernel/locking/qspinlock.c]
 > 
-> mem_init()
->  set_highmem_pages_init()
->   add_highpages_with_active_regions()
->    free_highmem_page()
->     .. Access uninitialized struct page here..
-> 
-> Because there is no reason to have this feature on 32-bit systems, just
-> disable it.
-> 
-> Fixes: 2e3ca40f03bb ("mm: relax deferred struct page requirements")
-> Cc: stable@vger.kernel.org
-> 
-> Reported-by: Jiri Slaby <jslaby@suse.cz>
-> Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> (for example)  would still _not have "generic validity" _if we added the
+> above po-unlock-rf-lock-po term... (which, again, makes me somehow uncon-
+> fortable);  Would to have _all_ the acquire be admissible for you?
 
-I would swear something like this has been already proposed.
-Anyway, looks good to me. I guess we could fix 32b but there is no good
-reason to complicate 32b code just to allow for an optimization which is
-not worth it.
+In Cat speak,
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index a550635ea5c3..de64ea658716 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -637,6 +637,7 @@ config DEFERRED_STRUCT_PAGE_INIT
->  	depends on NO_BOOTMEM
->  	depends on SPARSEMEM
->  	depends on !NEED_PER_CPU_KM
-> +	depends on 64BIT
->  	help
->  	  Ordinarily all struct pages are initialised during early boot in a
->  	  single thread. On very large machines this can take a considerable
-> -- 
-> 2.18.0
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 59b5cbe6b6240..fd9c0831adf0a 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -38,7 +38,7 @@ let strong-fence = mb | gp
+ (* Release Acquire *)
+ let acq-po = [Acquire] ; po ; [M]
+ let po-rel = [M] ; po ; [Release]
+-let rfi-rel-acq = [Release] ; rfi ; [Acquire]
++let po-rel-rf-acq-po = po ; [Release] ; rf ; [Acquire] ; po
+ 
+ (**********************************)
+ (* Fundamental coherence ordering *)
+@@ -60,13 +60,13 @@ let dep = addr | data
+ let rwdep = (dep | ctrl) ; [W]
+ let overwrite = co | fr
+ let to-w = rwdep | (overwrite & int)
+-let to-r = addr | (dep ; rfi) | rfi-rel-acq
++let to-r = addr | (dep ; rfi)
+ let fence = strong-fence | wmb | po-rel | rmb | acq-po
+-let ppo = to-r | to-w | fence
++let ppo = to-r | to-w | fence | (po-rel-rf-acq-po & int)
+ 
+ (* Propagation: Ordering from release operations and strong fences. *)
+ let A-cumul(r) = rfe? ; r
+-let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
++let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-rel-rf-acq-po
+ let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+ 
+ (*
 
--- 
-Michal Hocko
-SUSE Labs
+I take this opportunity to summarize my viewpoint on these matters:
+
+Someone would have to write the commit message for the above diff ...
+that is, to describe -why- we should go RCtso (and update the documen-
+tation accordingly); by now, the only argument for this appears to be:
+"(most) people expect strong ordering" _and they will be "lazy enough"
+to not check their expectations by using the LKMM tool (paraphrasing
+from [1]); IAC, Linux "might work" better if we add this ordering to
+the LKMM.  Agreeing on such an approach would mean agreeing that this
+argument "wins" over:
+
+  "We want new architectures to implement acquire/release efficiently,
+   and it's not unlikely that they will have acquire loads that are
+   similar in semantics to LDAPR." [2]
+
+  "RISC-V probably would have been RCpc [...]  it takes extra fences
+   to go from RCpc to either "RCtso" or RCsc." [3]
+
+(or similar instances) since, of course, there is no such thing as a
+"free strong ordering"; and I'm not only talking about "efficiency",
+I'm also thinking at the fact that someone will have to maintain that
+ordering across all the architectures and in the LKMM.
+
+If, OTOH, we agree that the above "win"/assumption is valid only for
+locks or, in other/better words, if we agree that we should maintain
+_two_ distinct release-acquire orderings (a first one for unlock-lock
+sequences and a second one for ordinary/atomic release-acquire, say,
+as proposed in the patch under RFC), I ask that we audit and modify
+the generic code accordingly/as suggested in other posts _before_ we
+upstream the changes for the LKMM: we should identify those places
+where (the newly introduced) _gap_ between unlock-lock and the other
+release-acquire is not admissible and fix those places (notice that
+this entails, in part., agreeing on what/where the generic code is).
+
+Finally, if we don't agree with the above assumption at all (that is,
+no matter if we are considering unlock-lock or other release-acquire
+sequences), then we should go RCpc [4].
+
+I described three different approaches (which are NOT "independent",
+clearly; let us find an agreement...); even though some of them look
+insane to me, I'm currently open to all of them: thoughts?
+
+  Andrea
+
+[1] http://lkml.kernel.org/r/20180712134821.GT2494@hirez.programming.kicks-ass.net
+    http://lkml.kernel.org/r/CA+55aFwKpkU5C23OYt1HCiD3X5bJHVh1jz5G2dSnF1+kVrOCTA@mail.gmail.com
+[2] http://lkml.kernel.org/r/20180622183007.GD1802@arm.com
+[3] http://lkml.kernel.org/r/11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com
+[4] http://lkml.kernel.org/r/20180711123421.GA9673@andrea
+    http://lkml.kernel.org/r/Pine.LNX.4.44L0.1807132133330.26947-100000@netrider.rowland.org
