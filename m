@@ -2,93 +2,96 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3585C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65B9D20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G4stAVt1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a2iqR34I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65B9D20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D1742086E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1742086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbeICVTW (ORCPT
+        id S1728542AbeICVTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:19:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58390 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeICVTV (ORCPT
+        Mon, 3 Sep 2018 17:19:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38452 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727669AbeICVTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:19:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F22B3607B9; Mon,  3 Sep 2018 16:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535993903;
-        bh=m8dXdWbEb42Vpv+KxQW5auCMbE7JSPRj+ep2LXEUhMY=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=G4stAVt1P+0yWDLS/rImSjVtunSapzRZLD6tEip+GFm/NZX9U68cHTlf+zHD0BkiZ
-         rG7xRjdAd05CTZGER/7X8uaoDrusjMW/+U/JOudBi8GdJN18cfB2dTTaDwzP14Vl+G
-         pvTnq8vRTjwSrIkHKfv3KiBc7+6lZtOzX8ADkFIU=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71508606FC;
-        Mon,  3 Sep 2018 16:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535993902;
-        bh=m8dXdWbEb42Vpv+KxQW5auCMbE7JSPRj+ep2LXEUhMY=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=a2iqR34ImtN02s/gyvCCKaL8x664y2iHXzz6T2itAl3wmDMvbN3heLB1pjb69M1z4
-         2PKhKtFr7Nmoqvc3xGVjdzbM6Z+1EfBD1F93E4bQRNhUTC6HoIzHpMuZxnQntY2uMo
-         ESx943W/5bbZo8p8A5K2qjrWKdtW5VMReh6WNFV0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71508606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 3 Sep 2018 17:19:46 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 592F8CF5;
+        Mon,  3 Sep 2018 16:58:47 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jim Gill <jgill@vmware.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 39/80] scsi: vmw_pvscsi: Return DID_RESET for status SAM_STAT_COMMAND_TERMINATED
+Date:   Mon,  3 Sep 2018 18:49:17 +0200
+Message-Id: <20180903164935.705326858@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
+References: <20180903164934.171677301@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] net: wireless: ath: Convert to using %pOFn instead of
- device_node.name
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180828015252.28511-36-robh@kernel.org>
-References: <20180828015252.28511-36-robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180903165822.F22B3607B9@smtp.codeaurora.org>
-Date:   Mon,  3 Sep 2018 16:58:22 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> wrote:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-> 
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: linux-wireless@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+------------------
 
-Patch applied to ath-next branch of ath.git, thanks.
+From: Jim Gill <jgill@vmware.com>
 
-e12e643c1dfb ath6kl: convert to using %pOFn instead of device_node.name
+[ Upstream commit e95153b64d03c2b6e8d62e51bdcc33fcad6e0856 ]
 
--- 
-https://patchwork.kernel.org/patch/10577811/
+Commands that are reset are returned with status
+SAM_STAT_COMMAND_TERMINATED. PVSCSI currently returns DID_OK |
+SAM_STAT_COMMAND_TERMINATED which fails the command. Instead, set hostbyte
+to DID_RESET to allow upper layers to retry.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Tested by copying a large file between two pvscsi disks on same adapter
+while performing a bus reset at 1-second intervals. Before fix, commands
+sometimes fail with DID_OK. After fix, commands observed to fail with
+DID_RESET.
+
+Signed-off-by: Jim Gill <jgill@vmware.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/vmw_pvscsi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -545,9 +545,14 @@ static void pvscsi_complete_request(stru
+ 	    (btstat == BTSTAT_SUCCESS ||
+ 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED ||
+ 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED_WITH_FLAG)) {
+-		cmd->result = (DID_OK << 16) | sdstat;
+-		if (sdstat == SAM_STAT_CHECK_CONDITION && cmd->sense_buffer)
+-			cmd->result |= (DRIVER_SENSE << 24);
++		if (sdstat == SAM_STAT_COMMAND_TERMINATED) {
++			cmd->result = (DID_RESET << 16);
++		} else {
++			cmd->result = (DID_OK << 16) | sdstat;
++			if (sdstat == SAM_STAT_CHECK_CONDITION &&
++			    cmd->sense_buffer)
++				cmd->result |= (DRIVER_SENSE << 24);
++		}
+ 	} else
+ 		switch (btstat) {
+ 		case BTSTAT_SUCCESS:
+
 
