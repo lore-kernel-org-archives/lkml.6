@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BA4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09CFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E832075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E832075E
+	by mail.kernel.org (Postfix) with ESMTP id 6C97420645
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C97420645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbeICVgT (ORCPT
+        id S1729564AbeICVgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42356 "EHLO
+        Mon, 3 Sep 2018 17:36:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42364 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728022AbeICVgS (ORCPT
+        with ESMTP id S1727876AbeICVgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:18 -0400
+        Mon, 3 Sep 2018 17:36:21 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE603D02;
-        Mon,  3 Sep 2018 17:15:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02F0BD02;
+        Mon,  3 Sep 2018 17:15:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alberto Panizzo <alberto@amarulasolutions.com>,
-        Anthony Brandon <anthony@amarulasolutions.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.9 102/107] clk: rockchip: fix clk_i2sout parent selection bits on rk3399
-Date:   Mon,  3 Sep 2018 18:57:06 +0200
-Message-Id: <20180903165643.505837102@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 103/107] PM / clk: signedness bug in of_pm_clk_add_clks()
+Date:   Mon,  3 Sep 2018 18:57:07 +0200
+Message-Id: <20180903165643.750630839@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,33 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alberto Panizzo <alberto@amarulasolutions.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit a64ad008980c65d38e6cf6858429c78e6b740c41 upstream.
+commit 5e2e2f9f76e157063a656351728703cb02b068f1 upstream.
 
-Register, shift and mask were wrong according to datasheet.
+"count" needs to be signed for the error handling to work.  I made "i"
+signed as well so they match.
 
-Fixes: 115510053e5e ("clk: rockchip: add clock controller for the RK3399")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alberto Panizzo <alberto@amarulasolutions.com>
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 02113ba93ea4 (PM / clk: Add support for obtaining clocks from device-tree)
+Cc: 4.6+ <stable@vger.kernel.org> # 4.6+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-rk3399.c |    2 +-
+ drivers/base/power/clock_ops.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -629,7 +629,7 @@ static struct rockchip_clk_branch rk3399
- 	MUX(0, "clk_i2sout_src", mux_i2sch_p, CLK_SET_RATE_PARENT,
- 			RK3399_CLKSEL_CON(31), 0, 2, MFLAGS),
- 	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "clk_i2sout", mux_i2sout_p, CLK_SET_RATE_PARENT,
--			RK3399_CLKSEL_CON(30), 8, 2, MFLAGS,
-+			RK3399_CLKSEL_CON(31), 2, 1, MFLAGS,
- 			RK3399_CLKGATE_CON(8), 12, GFLAGS),
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -185,7 +185,7 @@ EXPORT_SYMBOL_GPL(of_pm_clk_add_clk);
+ int of_pm_clk_add_clks(struct device *dev)
+ {
+ 	struct clk **clks;
+-	unsigned int i, count;
++	int i, count;
+ 	int ret;
  
- 	/* uart */
+ 	if (!dev || !dev->of_node)
 
 
