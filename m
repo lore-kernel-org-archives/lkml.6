@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3016BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D3AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DBB2054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DBB2054F
+	by mail.kernel.org (Postfix) with ESMTP id 6AEDD2054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEDD2054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeICLlz (ORCPT
+        id S1727568AbeICLl6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:55 -0400
+        Mon, 3 Sep 2018 07:41:58 -0400
 Received: from mga12.intel.com ([192.55.52.136]:48351 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbeICLly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:54 -0400
+        id S1725887AbeICLl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:41:57 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:23:04 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:23:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
-   d="scan'208";a="70146978"
+   d="scan'208";a="70146989"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
-  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:23:01 -0700
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:23:04 -0700
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V5 17/21] swap: Support PMD swap mapping for MADV_WILLNEED
-Date:   Mon,  3 Sep 2018 15:22:10 +0800
-Message-Id: <20180903072214.24602-18-ying.huang@intel.com>
+Subject: [PATCH -V5 18/21] swap: Support PMD swap mapping in mincore()
+Date:   Mon,  3 Sep 2018 15:22:11 +0800
+Message-Id: <20180903072214.24602-19-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
 References: <20180903072214.24602-1-ying.huang@intel.com>
@@ -57,10 +57,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During MADV_WILLNEED, for a PMD swap mapping, if THP swapin is enabled
-for the VMA, the whole swap cluster will be swapin.  Otherwise, the
-huge swap cluster and the PMD swap mapping will be split and fallback
-to PTE swap mapping.
+During mincore(), for PMD swap mapping, swap cache will be looked up.
+If the resulting page isn't compound page, the PMD swap mapping will
+be split and fallback to PTE swap mapping processing.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -76,52 +75,99 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/madvise.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ mm/mincore.c | 37 +++++++++++++++++++++++++++++++------
+ 1 file changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 20101ff125d0..0413659ff6ba 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -196,14 +196,36 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
- 	pte_t *orig_pte;
- 	struct vm_area_struct *vma = walk->private;
- 	unsigned long index;
+diff --git a/mm/mincore.c b/mm/mincore.c
+index aa0e542569f9..1d861fac82ee 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -48,7 +48,8 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
+  * and is up to date; i.e. that no page-in operation would be required
+  * at this time if an application were to map and access this page.
+  */
+-static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
++static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff,
++				  bool *compound)
+ {
+ 	unsigned char present = 0;
+ 	struct page *page;
+@@ -86,6 +87,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
+ #endif
+ 	if (page) {
+ 		present = PageUptodate(page);
++		if (compound)
++			*compound = PageCompound(page);
+ 		put_page(page);
+ 	}
+ 
+@@ -103,7 +106,8 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
+ 
+ 		pgoff = linear_page_index(vma, addr);
+ 		for (i = 0; i < nr; i++, pgoff++)
+-			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
++			vec[i] = mincore_page(vma->vm_file->f_mapping,
++					      pgoff, NULL);
+ 	} else {
+ 		for (i = 0; i < nr; i++)
+ 			vec[i] = 0;
+@@ -127,14 +131,36 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 	pte_t *ptep;
+ 	unsigned char *vec = walk->private;
+ 	int nr = (end - addr) >> PAGE_SHIFT;
 +	swp_entry_t entry;
-+	struct page *page;
-+	pmd_t pmdval;
+ 
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+-		memset(vec, 1, nr);
++		unsigned char val = 1;
++		bool compound;
 +
-+	pmdval = *pmd;
-+	if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(pmdval) &&
-+	    !is_pmd_migration_entry(pmdval)) {
-+		entry = pmd_to_swp_entry(pmdval);
-+		if (!transparent_hugepage_swapin_enabled(vma)) {
-+			if (!split_swap_cluster(entry, 0))
-+				split_huge_swap_pmd(vma, pmd, start, pmdval);
-+		} else {
-+			page = read_swap_cache_async(entry,
-+						     GFP_HIGHUSER_MOVABLE,
-+						     vma, start, false);
-+			if (page) {
-+				/* The swap cluster has been split under us */
-+				if (!PageTransHuge(page))
-+					split_huge_swap_pmd(vma, pmd, start,
-+							    pmdval);
-+				put_page(page);
++		if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(*pmd)) {
++			entry = pmd_to_swp_entry(*pmd);
++			if (!non_swap_entry(entry)) {
++				val = mincore_page(swap_address_space(entry),
++						   swp_offset(entry),
++						   &compound);
++				/*
++				 * The huge swap cluster has been
++				 * split under us
++				 */
++				if (!compound) {
++					__split_huge_swap_pmd(vma, addr, pmd);
++					spin_unlock(ptl);
++					goto fallback;
++				}
 +			}
 +		}
-+	}
++		memset(vec, val, nr);
+ 		spin_unlock(ptl);
+ 		goto out;
+ 	}
  
- 	if (pmd_none_or_trans_huge_or_clear_bad(pmd))
- 		return 0;
- 
- 	for (index = start; index != end; index += PAGE_SIZE) {
- 		pte_t pte;
--		swp_entry_t entry;
--		struct page *page;
- 		spinlock_t *ptl;
- 
- 		orig_pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
++fallback:
+ 	if (pmd_trans_unstable(pmd)) {
+ 		__mincore_unmapped_range(addr, end, vma, vec);
+ 		goto out;
+@@ -150,8 +176,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 		else if (pte_present(pte))
+ 			*vec = 1;
+ 		else { /* pte is a swap entry */
+-			swp_entry_t entry = pte_to_swp_entry(pte);
+-
++			entry = pte_to_swp_entry(pte);
+ 			if (non_swap_entry(entry)) {
+ 				/*
+ 				 * migration or hwpoison entries are always
+@@ -161,7 +186,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+ 			} else {
+ #ifdef CONFIG_SWAP
+ 				*vec = mincore_page(swap_address_space(entry),
+-						    swp_offset(entry));
++						    swp_offset(entry), NULL);
+ #else
+ 				WARN_ON(1);
+ 				*vec = 1;
 -- 
 2.16.4
 
