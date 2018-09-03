@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C580DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF3CC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6E92077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6E92077C
+	by mail.kernel.org (Postfix) with ESMTP id E34FB20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34FB20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbeICVhH (ORCPT
+        id S1729817AbeICVhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:37:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42488 "EHLO
+        Mon, 3 Sep 2018 17:37:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42494 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbeICVhG (ORCPT
+        with ESMTP id S1729135AbeICVhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:37:06 -0400
+        Mon, 3 Sep 2018 17:37:09 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C0EAD06;
-        Mon,  3 Sep 2018 17:16:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98B37D06;
+        Mon,  3 Sep 2018 17:16:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
         Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 004/165] xfrm: free skb if nlsk pointer is NULL
-Date:   Mon,  3 Sep 2018 18:54:50 +0200
-Message-Id: <20180903165655.220856605@linuxfoundation.org>
+Subject: [PATCH 4.14 005/165] esp6: fix memleak on error path in esp6_input
+Date:   Mon,  3 Sep 2018 18:54:51 +0200
+Message-Id: <20180903165655.272330518@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,40 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-[ Upstream commit 86126b77dcd551ce223e7293bb55854e3df05646 ]
+[ Upstream commit 7284fdf39a912322ce97de2d30def3c6068a418c ]
 
-nlmsg_multicast() always frees the skb, so in case we cannot call
-it we must do that ourselves.
+This ought to be an omission in e6194923237 ("esp: Fix memleaks on error
+paths."). The memleak on error path in esp6_input is similar to esp_input
+of esp4.
 
-Fixes: 21ee543edc0dea ("xfrm: fix race between netns cleanup and state expire notification")
-Signed-off-by: Florian Westphal <fw@strlen.de>
+Fixes: e6194923237 ("esp: Fix memleaks on error paths.")
+Fixes: 3f29770723f ("ipsec: check return value of skb_to_sgvec always")
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_user.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/ipv6/esp6.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1021,10 +1021,12 @@ static inline int xfrm_nlmsg_multicast(s
- {
- 	struct sock *nlsk = rcu_dereference(net->xfrm.nlsk);
+--- a/net/ipv6/esp6.c
++++ b/net/ipv6/esp6.c
+@@ -651,8 +651,10 @@ skip_cow:
  
--	if (nlsk)
--		return nlmsg_multicast(nlsk, skb, pid, group, GFP_ATOMIC);
--	else
--		return -1;
-+	if (!nlsk) {
-+		kfree_skb(skb);
-+		return -EPIPE;
+ 	sg_init_table(sg, nfrags);
+ 	ret = skb_to_sgvec(skb, sg, 0, skb->len);
+-	if (unlikely(ret < 0))
++	if (unlikely(ret < 0)) {
++		kfree(tmp);
+ 		goto out;
 +	}
-+
-+	return nlmsg_multicast(nlsk, skb, pid, group, GFP_ATOMIC);
- }
  
- static inline size_t xfrm_spdinfo_msgsize(void)
+ 	skb->ip_summed = CHECKSUM_NONE;
+ 
 
 
