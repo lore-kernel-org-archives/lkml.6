@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F31C3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3872C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7CDA20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7CDA20843
+	by mail.kernel.org (Postfix) with ESMTP id 985B420843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985B420843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbeICV3w (ORCPT
+        id S1729959AbeICV34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:29:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40358 "EHLO
+        Mon, 3 Sep 2018 17:29:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbeICV3v (ORCPT
+        with ESMTP id S1728766AbeICV3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:29:51 -0400
+        Mon, 3 Sep 2018 17:29:55 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D193D06;
-        Mon,  3 Sep 2018 17:08:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B205ED06;
+        Mon,  3 Sep 2018 17:08:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 084/107] b43/leds: Ensure NUL-termination of LED name string
-Date:   Mon,  3 Sep 2018 18:56:48 +0200
-Message-Id: <20180903165641.375219559@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 085/107] ASoC: dpcm: dont merge format from invalid codec dai
+Date:   Mon,  3 Sep 2018 18:56:49 +0200
+Message-Id: <20180903165641.421796194@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -50,32 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Buesch <m@bues.ch>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 2aa650d1950fce94f696ebd7db30b8830c2c946f upstream.
+commit 4febced15ac8ddb9cf3e603edb111842e4863d9a upstream.
 
-strncpy might not NUL-terminate the string, if the name equals the buffer size.
-Use strlcpy instead.
+When merging codec formats, dpcm_runtime_base_format() should skip
+the codecs which are not supporting the current stream direction.
 
-Signed-off-by: Michael Buesch <m@bues.ch>
+At the moment, if a BE link has more than one codec, and only one
+of these codecs has no capture DAI, it becomes impossible to start
+a capture stream because the merged format would be 0.
+
+Skipping invalid codec DAI solves the problem.
+
+Fixes: b073ed4e2126 ("ASoC: soc-pcm: DPCM cares BE format")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/b43/leds.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/soc-pcm.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/wireless/broadcom/b43/leds.c
-+++ b/drivers/net/wireless/broadcom/b43/leds.c
-@@ -131,7 +131,7 @@ static int b43_register_led(struct b43_w
- 	led->wl = dev->wl;
- 	led->index = led_index;
- 	led->activelow = activelow;
--	strncpy(led->name, name, sizeof(led->name));
-+	strlcpy(led->name, name, sizeof(led->name));
- 	atomic_set(&led->state, 0);
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1621,6 +1621,14 @@ static u64 dpcm_runtime_base_format(stru
+ 		int i;
  
- 	led->led_dev.name = led->name;
+ 		for (i = 0; i < be->num_codecs; i++) {
++			/*
++			 * Skip CODECs which don't support the current stream
++			 * type. See soc_pcm_init_runtime_hw() for more details
++			 */
++			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
++						      stream))
++				continue;
++
+ 			codec_dai_drv = be->codec_dais[i]->driver;
+ 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				codec_stream = &codec_dai_drv->playback;
 
 
