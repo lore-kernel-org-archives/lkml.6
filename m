@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056A8C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60F3C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59FC2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59FC2077C
+	by mail.kernel.org (Postfix) with ESMTP id 822F72077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822F72077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbeICVt7 (ORCPT
+        id S1731214AbeICVuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:49:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46466 "EHLO
+        Mon, 3 Sep 2018 17:50:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728696AbeICVt6 (ORCPT
+        with ESMTP id S1729098AbeICVuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:49:58 -0400
+        Mon, 3 Sep 2018 17:50:01 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B99A1CF4;
-        Mon,  3 Sep 2018 17:28:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 260E0D01;
+        Mon,  3 Sep 2018 17:28:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.14 136/165] x86/nmi: Fix NMI uaccess race against CR3 switching
-Date:   Mon,  3 Sep 2018 18:57:02 +0200
-Message-Id: <20180903165702.368309717@linuxfoundation.org>
+        Juergen Gross <jgross@suse.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.14 137/165] x86/irqflags: Mark native_restore_fl extern inline
+Date:   Mon,  3 Sep 2018 18:57:03 +0200
+Message-Id: <20180903165702.416395018@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -54,148 +55,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit 4012e77a903d114f915fc607d6d2ed54a3d6c9b1 upstream.
+commit 1f59a4581b5ecfe9b4f049a7a2cf904d8352842d upstream.
 
-A NMI can hit in the middle of context switching or in the middle of
-switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
-which could cause copy_from_user_nmi() and friends to read the wrong
-memory.
+This should have been marked extern inline in order to pick up the out
+of line definition in arch/x86/kernel/irqflags.S.
 
-Fix it by adding a new nmi_uaccess_okay() helper and checking it in
-copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Fixes: 208cbb325589 ("x86/irqflags: Provide a declaration for native_save_fl")
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
+Link: https://lkml.kernel.org/r/20180827214011.55428-1-ndesaulniers@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/core.c          |    2 +-
- arch/x86/include/asm/tlbflush.h |   40 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/lib/usercopy.c         |    5 +++++
- arch/x86/mm/tlb.c               |    7 +++++++
- 4 files changed, 53 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/irqflags.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2462,7 +2462,7 @@ perf_callchain_user(struct perf_callchai
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -33,7 +33,8 @@ extern inline unsigned long native_save_
+ 	return flags;
+ }
  
- 	perf_callchain_store(entry, regs->ip);
- 
--	if (!current->mm)
-+	if (!nmi_uaccess_okay())
- 		return;
- 
- 	if (perf_callchain_user32(regs, entry))
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -175,8 +175,16 @@ struct tlb_state {
- 	 * are on.  This means that it may not match current->active_mm,
- 	 * which will contain the previous user mm when we're in lazy TLB
- 	 * mode even if we've already switched back to swapper_pg_dir.
-+	 *
-+	 * During switch_mm_irqs_off(), loaded_mm will be set to
-+	 * LOADED_MM_SWITCHING during the brief interrupts-off window
-+	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
-+	 * is for nmi_uaccess_okay()'s benefit.
- 	 */
- 	struct mm_struct *loaded_mm;
-+
-+#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
-+
- 	u16 loaded_mm_asid;
- 	u16 next_asid;
- 	/* last user mm's ctx id */
-@@ -246,6 +254,38 @@ struct tlb_state {
- };
- DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
- 
-+/*
-+ * Blindly accessing user memory from NMI context can be dangerous
-+ * if we're in the middle of switching the current user task or
-+ * switching the loaded mm.  It can also be dangerous if we
-+ * interrupted some kernel code that was temporarily using a
-+ * different mm.
-+ */
-+static inline bool nmi_uaccess_okay(void)
-+{
-+	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	struct mm_struct *current_mm = current->mm;
-+
-+	VM_WARN_ON_ONCE(!loaded_mm);
-+
-+	/*
-+	 * The condition we want to check is
-+	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
-+	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
-+	 * is supposed to be reasonably fast.
-+	 *
-+	 * Instead, we check the almost equivalent but somewhat conservative
-+	 * condition below, and we rely on the fact that switch_mm_irqs_off()
-+	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
-+	 */
-+	if (loaded_mm != current_mm)
-+		return false;
-+
-+	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
-+
-+	return true;
-+}
-+
- /* Initialize cr4 shadow for this CPU. */
- static inline void cr4_init_shadow(void)
+-static inline void native_restore_fl(unsigned long flags)
++extern inline void native_restore_fl(unsigned long flags);
++extern inline void native_restore_fl(unsigned long flags)
  {
---- a/arch/x86/lib/usercopy.c
-+++ b/arch/x86/lib/usercopy.c
-@@ -7,6 +7,8 @@
- #include <linux/uaccess.h>
- #include <linux/export.h>
- 
-+#include <asm/tlbflush.h>
-+
- /*
-  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
-  * nested NMI paths are careful to preserve CR2.
-@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void
- 	if (__range_not_ok(from, n, TASK_SIZE))
- 		return n;
- 
-+	if (!nmi_uaccess_okay())
-+		return n;
-+
- 	/*
- 	 * Even though this function is typically called from NMI/IRQ context
- 	 * disable pagefaults so that its behaviour is consistent even when
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -292,6 +292,10 @@ void switch_mm_irqs_off(struct mm_struct
- 
- 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
- 
-+		/* Let nmi_uaccess_okay() know that we're changing CR3. */
-+		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
-+		barrier();
-+
- 		if (need_flush) {
- 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
- 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
-@@ -322,6 +326,9 @@ void switch_mm_irqs_off(struct mm_struct
- 		if (next != &init_mm)
- 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
- 
-+		/* Make sure we write CR3 before loaded_mm. */
-+		barrier();
-+
- 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
- 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
- 	}
+ 	asm volatile("push %0 ; popf"
+ 		     : /* no output */
 
 
