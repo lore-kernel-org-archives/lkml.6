@@ -2,128 +2,132 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C33C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC74FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3438920856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:40:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4A0lSt+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3438920856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DCA6A20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:46:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA6A20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=med.uni-goettingen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeICL7D (ORCPT
+        id S1726047AbeICME6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:59:03 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53426 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeICL7D (ORCPT
+        Mon, 3 Sep 2018 08:04:58 -0400
+Received: from mail1.med.uni-goettingen.de ([134.76.103.230]:39410 "EHLO
+        mail1.med.uni-goettingen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725899AbeICME6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:59:03 -0400
-Received: by mail-wm0-f66.google.com with SMTP id b19-v6so72969wme.3;
-        Mon, 03 Sep 2018 00:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+vdIIVFpRR/vxmZEgsmR75UU7/6Xtd6jr+Vl+5Op+To=;
-        b=K4A0lSt+lIgM+c1fAAhtCANLtEhVWfkJd39xXHxei9KXHgi6XaUuGVKtADJ1jfFhJi
-         e9SbzuJ+o7yQY1gQW5yBIO3KuFwlOYp4oklDBmD9zsyZlcB/ruCG9yqlCVwpqfTnpjfL
-         ETVGTya3rkM6bU8w/pDma2QRfGjr/TKp5EASXiI7jgPaohths0V7xAAud9xaFjjha/Hb
-         K2i8RwiZV7z0+VBM5h/sD/W+RWniVSSn1WCCUoLD7KMPlqcePmOTTzpWxA72az/kx13y
-         5H7yLw/RfDiTuTI0Xvy+djV6x3gTVvxwm9MLejbE7OgFJeH/QH1LwsvkTPEaL+7/IcJF
-         Xkjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+vdIIVFpRR/vxmZEgsmR75UU7/6Xtd6jr+Vl+5Op+To=;
-        b=qJh2RqnPNEW0gGa7BdxMUb634fCoYiWyIGA2giX55yTXNZFjof9I4uAZuj7VuokZRP
-         I5wNh3GnC1HdR4zt5I++RxVtVSZT68JH/Hz010GYqhG5lPDN1TVKDwsqrOiHKDNULDgv
-         ubQaEhodQqdsYOK3QtknvGAbwqe3ms3JSF3GrvgHXPNbtr6RhAWWq0OlViTeq0s8z2v1
-         o8W9NxoL3tEuQGJxPGnBlTWUPRHNXrosioj6vhfYsJSxgzcSdshs1xzWoEsBGmbBMD3T
-         IAyNOPZxgHPZGW/0NGg/7YJG6G8fVbxfr1zO0xVF+AKI1YRfSUidvg96WWXdenFK0T22
-         2Mkw==
-X-Gm-Message-State: APzg51DO8yqntYbQ/VaWxAvESC2+YAEP/tf/U7FrWIemX1yOBa3AJVzY
-        B0ILclajzb5e7d2PzUmo4L3g1V1c4Pk=
-X-Google-Smtp-Source: ANB0VdZVYPchQAw8nFioUagkgcziR0eJBMDUy6Zv8Sm72RCy/zejRe61i+QcXr60oOCPQsEt8NO0Uw==
-X-Received: by 2002:a1c:1188:: with SMTP id 130-v6mr4280236wmr.138.1535960407148;
-        Mon, 03 Sep 2018 00:40:07 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id w4-v6sm18926550wro.24.2018.09.03.00.40.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 00:40:06 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 09:40:05 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fat: Relax checks for sector size and media type
-Message-ID: <20180903074005.7e3guj24ksq2l44c@pali>
-References: <20180902131932.11558-1-pali.rohar@gmail.com>
- <87bm9ft5h5.fsf@mail.parknet.co.jp>
+        Mon, 3 Sep 2018 08:04:58 -0400
+X-Greylist: delayed 323 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Sep 2018 08:04:56 EDT
+Received: from umg-exc-2.ads.local.med.uni-goettingen.de ([10.76.100.69]:16362)
+        by mail1.med.uni-goettingen.de with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Uecker@med.uni-goettingen.de>)
+        id 1fwjSP-0007dH-0Z; Mon, 03 Sep 2018 09:39:33 +0200
+Received: from UMG-EXC-1.ads.local.med.uni-goettingen.de
+ ([fe80::c97f:60fd:6a2d:e4b9]) by umg-exc-2.ads.local.med.uni-goettingen.de
+ ([fe80::40b1:448:7be6:e2cf%13]) with mapi id 14.03.0361.001; Mon, 3 Sep 2018
+ 09:39:32 +0200
+From:   "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
+To:     "keescook@chromium.org" <keescook@chromium.org>
+CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: VLAs and security
+Thread-Topic: VLAs and security
+Thread-Index: AQHUQpQcK6e7hvTWREaSPdTt5naSaqTdIVGAgADqgQA=
+Date:   Mon, 3 Sep 2018 07:39:31 +0000
+Message-ID: <1535960372.32005.1.camel@med.uni-goettingen.de>
+References: <1535875700.17858.3.camel@med.uni-goettingen.de>
+         <CAGXu5jJ7kGm-DGUB8uwwhd-Hv7i4WEcSKumTf2MBsj_-yzWcqg@mail.gmail.com>
+In-Reply-To: <CAGXu5jJ7kGm-DGUB8uwwhd-Hv7i4WEcSKumTf2MBsj_-yzWcqg@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [134.76.125.21]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8764BF844B235A41BBB47E9CED6584B5@ads.local.med.uni-goettingen.de>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bm9ft5h5.fsf@mail.parknet.co.jp>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 03 September 2018 16:17:26 OGAWA Hirofumi wrote:
-> Pali Rohár <pali.rohar@gmail.com> writes:
-> 
-> > Windows fastfat.sys driver accepts also media types 0x00 and 0x01 and
-> > sector sizes 128 and 256 bytes. Linux mkfs.fat can format disk also to
-> > larger FAT sector sizes then 4096 bytes, therefore relax also upper limit
-> > restriction.
-> 
-> > -	if (!is_power_of_2(bpb->fat_sector_size)
-> > -	    || (bpb->fat_sector_size < 512)
-> > -	    || (bpb->fat_sector_size > 4096)) {
-> > +	if (!is_power_of_2(bpb->fat_sector_size)) {
-> 
-> Just relaxing validation doesn't work. The block layer doesn't support
-> smaller than 512, and lager than PAGE_SIZE.  (And in specification, fat
-> doesn't support lager than 4096.)
-
-Hi! I just sent this patch for discussion, with links to (now open
-source) Windows implementation. I guess that Windows driver
-implementation is more "authoritative" then Microsoft's own
-specification. It is known that Windows implementation does not match
-Microsoft specification.
-
-I know at least 3 FAT specifications (MS EFI FAT, MS/SD card FAT,
-ECMA-107) and you are right that Microsoft's one does not allow sector
-sizes larger then 4096.
-
-If there is limitation by block layer, then:
-
-1) Why we do not check for PAGE_SIZE?
-
-2) Is check in fat driver really needed (if block layer checks it)?
-
-> >  static inline int fat_valid_media(u8 media)
-> >  {
-> > -	return 0xf8 <= media || media == 0xf0;
-> > +	return 0xf8 <= media || media == 0xf0 || media == 0x00 || media == 0x01;
-> >  }
-> >  #endif /* !_LINUX_MSDOS_FS_H */
-> 
-> This is ok though, this would be for ancient floppy media.
-
-Ok.
-
--- 
-Pali Rohár
-pali.rohar@gmail.com
+QW0gU29ubnRhZywgZGVuIDAyLjA5LjIwMTgsIDEwOjQwIC0wNzAwIHNjaHJpZWIgS2VlcyBDb29r
+Og0KPiBPbiBTdW4sIFNlcCAyLCAyMDE4IGF0IDE6MDggQU0sIFVlY2tlciwgTWFydGluDQo+IDxN
+YXJ0aW4uVWVja2VyQG1lZC51bmktZ29ldHRpbmdlbi5kZT4gd3JvdGU6DQo+ID4gSSBkbyBub3Qg
+YWdyZWUgdGhhdCBWTEFzIGFyZSBnZW5lcmFsbHkgYmFkIGZvciBzZWN1cml0eS4NCj4gPiBJIHRo
+aW5rIHRoZSBvcHBvc2l0ZSBpcyB0cnVlLiBBIFZMQSB3aXRoIHRoZSByaWdodCBzaXplDQo+ID4g
+YWxsb3dzIHRoZSBjb21waWxlciB0byBhdXRvbWF0aWNhbGx5IHBlcmZvcm0gb3IgaW5zZXJ0DQo+
+ID4gbWVhbmluZ2Z1bCBib3VuZHMgY2hlY2tzLCB3aGlsZSBhIGZpeGVkIHVwcGVyIGJvdW5kIGRv
+ZXMgbm90Lg0KPiANCj4gV2hpbGUgSSBzZWUgd2hhdCB5b3UgbWVhbiwgdGhlIHRyb3VibGUgaXMg
+dGhhdCB0aGUgY29tcGlsZXIgaGFzIG5vDQo+IGlkZWEgd2hhdCB0aGUgdXBwZXIgYm91bmRzIG9m
+IHRoZSBfYXZhaWxhYmxlXyBzdGFjayBpcy4gVGhpcyBtZWFucw0KPiB0aGF0IGEgbGFyZ2UgVkxB
+IG1pZ2h0IGFsbG93IGNvZGUgdG8gcmVhZC93cml0ZSBiZXlvbmQgdGhlIHN0YWNrDQo+IGFsbG9j
+YXRpb24sIHdoaWNoIGFsc28gYnlwYXNzZXMgdGhlICJzdGFuZGFyZCIgc3RhY2sgYnVmZmVyIG92
+ZXJmbG93DQo+IGNoZWNrcy4gQWRkaXRpb25hbGx5LCBWTEFzIGJ5cGFzcyB0aGUgZXhpc3Rpbmcg
+c3RhY2stc2l6ZSBjaGVja3Mgd2UndmUNCj4gYWRkZWQgdG8gdGhlIGtlcm5lbC4NCg0KTGltaXRp
+bmcgdGhlIHNpemUgb2YgdGhlIFZMQSBzaG91bGQgYmUgc3VmZmljaWVudCB0byBhdm9pZCB0aGlz
+Lg0KDQpJIGRvbid0IGtub3cgYWJvdXQgeW91ciBzcGVjaWZpYyBzdGFjay1zaXplIGNoZWNrcw0K
+aW4gdGhlIGtlcm5lbCwgYnV0IGZvciBnZW5lcmFsIHByb2dyYW1taW5nLCB0aGUgZnVsbCBzb2x1
+dGlvbg0KaXMgZm9yIHRoZSBjb21waWxlciB0byBwcm9iZSB0aGUgc3RhY2sgd2hlbiBncm93aW5n
+Lg0KDQpCdXQgSSB3YXMgbm90IHRhbGtpbmcgYWJvdXQgdGhlIGJvdW5kcyBvZiB0aGUgc3RhY2ss
+IGJ1dCBvZiB0aGUNCmFycmF5IGl0c2VsZi4NCg0KPiA+IEZvciBleGFtcGxlOg0KPiA+IA0KPiA+
+IGNoYXIgYnVmW05dOw0KPiA+IGJ1ZltuXSA9IDE7DQo+ID4gDQo+ID4gSGVyZSwgYSBjb21waWxl
+ciAvIGFuYWx5c2lzIHRvb2wgY2FuIGZvcsKgwqBuIDwgTsKgwqB1c2luZw0KPiA+IHN0YXRpYyBh
+bmFseXNpcyBvciBpbnNlcnQgYSBydW4tdGltZSBjaGVjay4NCj4gPiANCj4gPiBSZXBsYWNpbmcg
+dGhpcyB3aXRoDQo+ID4gDQo+ID4gY2hhciBidWZbTUFYX1NJWkVdDQo+ID4gDQo+ID4gaGlkZXMg
+dGhlIGluZm9ybWF0aW9uIGFib3V0IHRoZSB0cnVlIHVwcGVyIGJvdW5kDQo+ID4gZnJvbSBhdXRv
+bWF0aWMgdG9vbHMuDQo+IA0KPiBXaGlsZSB0aGlzIG1heSBiZSB0cnVlIGZvciBzb21lIHRvb2xz
+LCBJIGRvbid0IGFncmVlIFZMQXMgYXJlIGJldHRlcg0KPiBpbiBnZW5lcmFsLiBGb3IgZXhhbXBs
+ZSwgdGhlIGNvbXBpbGVyIGFjdHVhbGx5IGtub3dzIHRoZSB1cHBlciBib3VuZA0KPiBhdCBidWls
+ZCB0aW1lIG5vdywgYW5kIHRoaW5ncyBsaWtlIHRoZSBwcmludGYgZm9ybWF0IHNpemUgY2hlY2tz
+IGFuZA0KPiBDT05GSUdfRk9SVElGWV9TT1VSQ0UgYXJlIG5vdyBhYmxlIHRvIHByb2R1Y2UgY29t
+cGlsZS10aW1lIHdhcm5pbmdzDQo+IChzaW5jZSAic2l6ZW9mKGJ1ZikiIGlzbid0IGEgcnVudGlt
+ZSB2YWx1ZSkuIFdpdGggYSBWTEEsIHRoaXMgaXMNCj4gaGlkZGVuIGZyb20gdGhvc2UgdG9vbHMs
+IGFuZCBkZXRlY3Rpb24gZGVwZW5kcyBvbiBydW50aW1lIGFuYWx5c2lzLg0KDQpJZiB0aGUgY29y
+cmVjdCBib3VuZCBpcyBhY3R1YWxseSBhIGNvbnN0YW50IGFuZCB0aGUgYXJyYXkNCm9ubHkgZW5k
+cyB1cCBiZWluZyBhIFZMQSBmb3Igc29tZSByYW5kb20gcmVhc29uLCBJIGZ1bGx5IGFncmVlLg0K
+DQpCdXQgaWYgdGhlIHRydWUgYm91bmQgaXMgc21hbGxlciwgdGhlbiBJTUhPIGl0IGlzIHJlYWxs
+eSBiYWQgYWR2aXNlDQp0byB0ZWxsIHByb2dyYW1tZXJzIHRvIHVzZQ0KDQpjaGFyIGJ1ZltNQVhf
+U0laRV0NCg0KaW5zdGVhZCBvZiBzb21ldGhpbmcgbGlrZQ0KDQphc3NlcnQoTiA8PSBNQVhfU0la
+RSk7wqANCmNoYXIgYnVmW05dDQoNCmJlY2F1c2UgdGhlbiBlcnJvcnMgb2YgdGhlIGZvcm3CoA0K
+DQpidWZbbl0gPSAxDQoNCndpdGggTiA8IG4gPCBNQVhfU0laRSBjYW4gbm90IGJlIGRldGVjdGVk
+IGFueW1vcmUuIEFsc28gdGhlDQpjb2RlIHVzdWFsbHkgZW5kcyB1cCBiZWluZyBsZXNzIHJlYWRh
+YmxlLCB3aGljaCBpcyBhbHNvIGEgY2xlYXINCmRpc2FkdmFudGFnZSBpbiBteSBvcGluaW9uLg0K
+DQoNCj4gSXQgc2hvdWxkIGJlIG5vdGVkIHRoYXQgVkxBcyBhcmUgYWxzbyBzbG93WzFdLCBzbyBy
+ZW1vdmluZyB0aGVtIG5vdA0KPiBvbmx5IGltcHJvdmVzIHJvYnVzdG5lc3MgYnV0IGFsc28gaW1w
+cm92ZXMgcGVyZm9ybWFuY2UuDQoNCkkgaGF2ZSB0byBhZG1pdCB0aGF0IEkgYW0gYWx3YXlzIGEg
+Yml0IHNrZXB0aWNhbCBpZiBzb21lYm9keSBtYWtlcw0KZ2VuZXJpYyBjbGFpbXMgc3VjaCBhcyAi
+VkxBcyBhcmUgc2xvdyIgYW5kIHRoZW4gY2l0ZXMgb25seSBhDQpzaW5nbGUgZXhhbXBsZS4gQnV0
+IEkgYW0gbm90IHRvbyBzdXJwcmlzZWQgaWYgY29tcGlsZXJzIHByb2R1Y2UNCmNyYXBweSBjb2Rl
+IGZvciBWTEFzIGFuZCB0aGF0IHRoaXMgY2FuIGh1cnQgcGVyZm9ybWFuY2UgaW4gc29tZQ0KZXhh
+bXBsZXMuIEJ1dCBjb21wYXJlZCB0byBkeW5hbWljIGFsbG9jYXRpb24gVkxBcyBzaG91bGQgYmUg
+bXVjaA0KZmFzdGVyLiBUaGV5IGFsc28gcmVkdWNlIHN0YWNrIHVzYWdlIGNvbXBhcmVkIHRvIGFs
+d2F5cyBhbGxvY2F0aW5nDQphcnJheSB3aXRoIGEgZml4ZWQgbWF4aW11bSBzaXplIG9uIHRoZSBz
+dGFjay4NCg0KPiA+IE9mIGNvdXJzZSwgaGF2aW5nIHByZWRpY3RhYmxlIHN0YWNrIHVzYWdlIG1p
+Z2h0IGJlIG1vcmUNCj4gPiBpbXBvcnRhbnQgaW4gdGhlIGtlcm5lbCBhbmQgbWlnaHQgYmUgYSBn
+b29kIGFyZ3VtZW50DQo+ID4gdG8gc3RpbGwgcHJlZmVyIHRoZSBjb25zdGFudCBib3VuZC4NCj4g
+DQo+IEJldHdlZW4gaW1wcm92ZWQgY29tcGlsZS10aW1lIGNoZWNraW5nLCBmYXN0ZXIgcnVudGlt
+ZSBwZXJmb3JtYW5jZSwNCj4gYW5kIGltcHJvdmVkIHJvYnVzdG5lc3MgYWdhaW5zdCBzdGFjayBl
+eGhhdXN0aW9uLCBJIHN0cm9uZ2x5IGJlbGlldmUNCj4gdGhlIGtlcm5lbCB0byBiZSBiZXR0ZXIg
+b2ZmIHdpdGggVkxBcyBlbnRpcmVseSByZW1vdmVkLiBBbmQgd2UgYXJlDQo+IGNsb3NlOiBvbmx5
+IDYgcmVtYWluIChvdXQgb2YgdGhlIDExNSBJIGNvdW50ZWQgaW4gdjQuMTUpLg0KDQpMb29raW5n
+IGF0IHNvbWUgb2YgdGhlIHBhdGNoZXMsIEkgd291bGQgc2F5IGl0IGlzIG5vdCANCmNsZWFyIHRv
+IG1lIHRoYXQgdGhpcyBpcyBhbHdheSBhbiBpbXByb3ZlbWVudC4NCg0KPiA+IEJ1dCBsb29zaW5n
+IHRoZSB0aWdodGVyIGJvdW5kcyBpcyBjbGVhcmx5IGEgZGlzYWR2YW50YWdlDQo+ID4gd2l0aCBy
+ZXNwZWN0IHRvIHNlY3VyaXR5IHRoYXQgb25lIHNob3VsZCBrZWVwIGl0IG1pbmQuDQo+IA0KPiBZ
+ZXM6IHdpdGhvdXQgVkxBcywgc3RhY2sgYXJyYXkgdXNhZ2UgaXMgcmVkdWNlZCB0byAic3RhbmRh
+cmQiIHN0YWNrDQo+IGJ1ZmZlciBvdmVyZmxvdyBjb25jZXJucy4gUmVtb3ZpbmcgdGhlIFZMQSBk
+b2Vzbid0IGludHJvZHVjZSBhIG5ldw0KPiByaXNrOiB3ZSBhbHJlYWR5IGhhZCB0byB3b3JyeSBh
+Ym91dCBmaXhlZC1zaXplIGFycmF5cy4gUmVtb3ZpbmcgVkxBc2Fsd2F5cw0KPiBtZWFucyB3ZSBk
+b24ndCBoYXZlIHRvIHdvcnJ5IGFib3V0IHRoZSBWTEEtc3BlY2lmaWMgcmlza3MgYW55bW9yZS4N
+Cg0KSXQgaW50cm9kdWNlcyB0aGUgbmV3IHJpc2sgdGhhdCBjZXJ0YWluIGxvZ2ljIGVycm9yIGNh
+bg0Kbm90IGJlIGRldGVjdGVkIGFueW1vcmUgYnkgc3RhdGljIGFuYWx5c2lzIG9yIHJ1bi10aW1l
+IGJvdW5kcw0KY2hlY2tpbmcuDQoNCkJlc3QsDQpNYXJ0aW4NCg==
