@@ -2,115 +2,94 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B767DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBE5C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 649A220841
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:06:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649A220841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D77B20841
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:06:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eCOtOWe0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D77B20841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeICGYQ (ORCPT
+        id S1727250AbeICGYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:24:16 -0400
-Received: from gate.crashing.org ([63.228.1.57]:34807 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725813AbeICGYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 02:24:15 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w830m6pG028765;
-        Sun, 2 Sep 2018 19:48:07 -0500
-Message-ID: <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
-Subject: Re: Access to non-RAM pages
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+Received: from ozlabs.org ([203.11.71.1]:46737 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725762AbeICGYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:24:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 423YGy4SW4z9ryn;
+        Mon,  3 Sep 2018 12:06:18 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535940378;
+        bh=TyK+irfRrcc77+LqjGRQARPqIdsa5ShKObOY3Z4NkJ0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=eCOtOWe0+x/0nVbW6DGe9V7cI9T97WUEWZtkE8kDTPXApCwDkJqja/CB660wq+yB3
+         W7K/3f6LljWeEqXC1fbNYPQEKysJK/v+K1gE7LJSOB9qlP+TAUR2GdnW/MQkyhFdT5
+         mS3xdmFvo8NqaKJq9k0S/yyB0B0+pWZNGP/yt32KTb9j0vop0vgvAO73lDlcyLghHb
+         GnlrMxJz5ufUJFHaMTd0XOgW2cZ6LNBgLW2TpnHCoFCG/phEiLhm1EssUVJ9UAhaMt
+         shcaZJydyRNlfiBX/MJFb9fpO7H6n7cOr7HY/+4addGMstwQ8kgUK4t8BiusQqkV6/
+         0oFy4aFuXA1Nw==
+Date:   Mon, 3 Sep 2018 12:06:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>
-Date:   Mon, 03 Sep 2018 10:48:05 +1000
-In-Reply-To: <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
-References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
-         <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
-         <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
-         <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: linux-next: build warning after merge of the staging tree
+Message-ID: <20180903120617.34f4f8cd@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8ziYdG5Rf3hx_8tfgX_Io8l"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-09-01 at 11:06 -0700, Linus Torvalds wrote:
-> [ Adding a few new people the the cc.
-> 
->   The issue is the worry about software-speculative accesses (ie
-> things like CONFIG_DCACHE_WORD_ACCESS - not talking about the hw
-> speculation now) accessing past RAM into possibly contiguous IO ]
-> 
-> On Sat, Sep 1, 2018 at 10:27 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > 
-> > If you have a machine with RAM that touches IO, you need to disable
-> > the last page, exactly the same way we disable and marked reserved the
-> > first page at zero.
+--Sig_/8ziYdG5Rf3hx_8tfgX_Io8l
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So I missed the departure of that train ... stupid question, with
-CONFIG_DCACHE_WORD_ACCESS, if that can be unaligned (I assume it can),
-what prevents it from crossing into a non-mapped page (not even IO) and
-causing an oops ? Looking at a random user in fs/dcache.c its not a
-uaccess-style read with recovery.... Or am I missing somethign obvious
-here ?
+Hi Greg,
 
-IE, should we "reserve" the last page of any memory region (maybe mark
-it read-only) to avoid this along with avoiding leakage into IO space ?
+After merging the staging tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-> > I thought we already did that.
-> 
-> We don't seem to do that.
-> 
-> And it's not just the last page, it's _any_ last page in a region that
-> bumps up to IO. That's actually much more common in the low 4G area on
-> PC's, I suspect, although the reserved BIOS ranges always tend to be
-> there.
+WARNING: drivers/staging/rtl8192u/r8192u_usb: 'dot11d_init' exported twice.=
+ Previous export was in drivers/staging/rtl8192e/rtllib.ko
 
-What makes IO more "wrong" than oopsing due to the page not being
-mapped ?
+Introduced by commit
 
-> I suspect it should be trivial to do - maybe in
-> e820__memblock_setup()? That's where we already trim partial pages
-> etc.
->
-> In fact, I think this might be done as an extension of commit
-> 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-> memblock.reserved"), except making sure that non-RAM regions mark one
-> page _previous_ as reserved too.
-> 
-> I assume memory hotplug might have the same issue, and checking
-> whether ARM64 and powerpc perhaps might have already done something
-> like this (or might need to add it).
-> 
-> We discussed long ago the case of user space mapping IO in user space,
-> and decided we didn't care. But the kernel should probably explicitly
-> make sure we don't either, even if I can't recall having ever seen a
-> machine that actually maps IO contiguously to RAM. The layout always
-> tends to end up having holes anyway.
+  c01f06b7506f ("staging:rtl8192u: Rename Dot11d_Init - Style")
 
-Can't we put the safety in generic memblock ? IE, don't hand out an
-allocation that contain the last page of a "block" and handle that last
-page in the memblock->buddy transition rather than in arch specific
-code ?
-
+--=20
 Cheers,
-Ben.
+Stephen Rothwell
 
+--Sig_/8ziYdG5Rf3hx_8tfgX_Io8l
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluMlxkACgkQAVBC80lX
+0GwHdggAgsUPIPUGs/FsX2BKvsOElKbJGO/bHj6j+388kRt64nC4efKcknbQp5Lu
+AY6TpfUp2XGg6Ce7C4dMtlBlL2H6Uxgow5ErxHONStD9SzIxLtGu/+EWvoDyfEyb
+M4EpTX3f91XSbQoix/EGy1l41d64enPBYbUP1HM0pXowBCXNRF8910XnLbelH8yV
+EPOP8J7zvIFgM7pCNapqhqgRF1b8OSxBT7Nejnty55+slycbI8Z2K+nevuB1iNRk
+3AmBf0v8nLwgqBeEvL5ZyQytJNcN2bz1ONrHCjHF9LcvHhYL3AN1OLa01/KdYW8a
+bzwRSlzt6HMlT4uynBWBeJ0esk0izg==
+=wTN3
+-----END PGP SIGNATURE-----
+
+--Sig_/8ziYdG5Rf3hx_8tfgX_Io8l--
