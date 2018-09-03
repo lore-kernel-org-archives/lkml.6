@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CB8C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34809C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C6920658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C6920658
+	by mail.kernel.org (Postfix) with ESMTP id E389E2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E389E2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbeICVyD (ORCPT
+        id S1731139AbeICVyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:54:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47554 "EHLO
+        Mon, 3 Sep 2018 17:54:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728253AbeICVyC (ORCPT
+        with ESMTP id S1728253AbeICVyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:54:02 -0400
+        Mon, 3 Sep 2018 17:54:06 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47737D18;
-        Mon,  3 Sep 2018 17:32:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B68BD1B;
+        Mon,  3 Sep 2018 17:32:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,9 +34,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.18 026/123] printk: Create helper function to queue deferred console handling
-Date:   Mon,  3 Sep 2018 18:56:10 +0200
-Message-Id: <20180903165720.597979615@linuxfoundation.org>
+Subject: [PATCH 4.18 027/123] printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
+Date:   Mon,  3 Sep 2018 18:56:11 +0200
+Message-Id: <20180903165720.635330863@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -55,12 +55,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Petr Mladek <pmladek@suse.com>
 
-commit a338f84dc196f44b63ba0863d2f34fd9b1613572 upstream.
+commit 03fc7f9c99c1e7ae2925d459e8487f1a6f199f79 upstream.
 
-It is just a preparation step. The patch does not change
-the existing behavior.
+The commit 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI
+when logbuf_lock is available") brought back the possible deadlocks
+in printk() and NMI.
 
-Link: http://lkml.kernel.org/r/20180627140817.27764-3-pmladek@suse.com
+The check of logbuf_lock is done only in printk_nmi_enter() to prevent
+mixed output. But another CPU might take the lock later, enter NMI, and:
+
+      + Both NMIs might be serialized by yet another lock, for example,
+	the one in nmi_cpu_backtrace().
+
+      + The other CPU might get stopped in NMI, see smp_send_stop()
+	in panic().
+
+The only safe solution is to use trylock when storing the message
+into the main log-buffer. It might cause reordering when some lines
+go to the main lock buffer directly and others are delayed via
+the per-CPU buffer. It means that it is not useful in general.
+
+This patch replaces the problematic NMI deferred context with NMI
+direct context. It can be used to mark a code that might produce
+many messages in NMI and the risk of losing them is more critical
+than problems with eventual reordering.
+
+The context is then used when dumping trace buffers on oops. It was
+the primary motivation for the original fix. Also the reordering is
+even smaller issue there because some traces have their own time stamps.
+
+Finally, nmi_cpu_backtrace() need not longer be serialized because
+it will always us the per-CPU buffers again.
+
+Fixes: 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI when logbuf_lock is available")
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180627142028.11259-1-pmladek@suse.com
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
@@ -72,36 +101,184 @@ Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/printk/printk.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ include/linux/printk.h      |    4 +++
+ kernel/printk/internal.h    |    9 ++++++
+ kernel/printk/printk_safe.c |   58 ++++++++++++++++++++++++++++----------------
+ kernel/trace/trace.c        |    4 ++-
+ lib/nmi_backtrace.c         |    3 --
+ 5 files changed, 52 insertions(+), 26 deletions(-)
 
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2887,16 +2887,20 @@ void wake_up_klogd(void)
- 	preempt_enable();
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -148,9 +148,13 @@ void early_printk(const char *s, ...) {
+ #ifdef CONFIG_PRINTK_NMI
+ extern void printk_nmi_enter(void);
+ extern void printk_nmi_exit(void);
++extern void printk_nmi_direct_enter(void);
++extern void printk_nmi_direct_exit(void);
+ #else
+ static inline void printk_nmi_enter(void) { }
+ static inline void printk_nmi_exit(void) { }
++static inline void printk_nmi_direct_enter(void) { }
++static inline void printk_nmi_direct_exit(void) { }
+ #endif /* PRINTK_NMI */
+ 
+ #ifdef CONFIG_PRINTK
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -19,11 +19,16 @@
+ #ifdef CONFIG_PRINTK
+ 
+ #define PRINTK_SAFE_CONTEXT_MASK	 0x3fffffff
+-#define PRINTK_NMI_DEFERRED_CONTEXT_MASK 0x40000000
++#define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
+ #define PRINTK_NMI_CONTEXT_MASK		 0x80000000
+ 
+ extern raw_spinlock_t logbuf_lock;
+ 
++__printf(5, 0)
++int vprintk_store(int facility, int level,
++		  const char *dict, size_t dictlen,
++		  const char *fmt, va_list args);
++
+ __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
+ __printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+ __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
+@@ -54,6 +59,8 @@ void __printk_safe_exit(void);
+ 		local_irq_enable();		\
+ 	} while (0)
+ 
++void defer_console_output(void);
++
+ #else
+ 
+ __printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -308,24 +308,33 @@ static __printf(1, 0) int vprintk_nmi(co
+ 
+ void printk_nmi_enter(void)
+ {
+-	/*
+-	 * The size of the extra per-CPU buffer is limited. Use it only when
+-	 * the main one is locked. If this CPU is not in the safe context,
+-	 * the lock must be taken on another CPU and we could wait for it.
+-	 */
+-	if ((this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK) &&
+-	    raw_spin_is_locked(&logbuf_lock)) {
+-		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
+-	} else {
+-		this_cpu_or(printk_context, PRINTK_NMI_DEFERRED_CONTEXT_MASK);
+-	}
++	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
  }
  
--int vprintk_deferred(const char *fmt, va_list args)
-+void defer_console_output(void)
+ void printk_nmi_exit(void)
  {
--	int r;
--
--	r = vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
--
- 	preempt_disable();
- 	__this_cpu_or(printk_pending, PRINTK_PENDING_OUTPUT);
- 	irq_work_queue(this_cpu_ptr(&wake_up_klogd_work));
- 	preempt_enable();
+-	this_cpu_and(printk_context,
+-		     ~(PRINTK_NMI_CONTEXT_MASK |
+-		       PRINTK_NMI_DEFERRED_CONTEXT_MASK));
++	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
 +}
 +
-+int vprintk_deferred(const char *fmt, va_list args)
++/*
++ * Marks a code that might produce many messages in NMI context
++ * and the risk of losing them is more critical than eventual
++ * reordering.
++ *
++ * It has effect only when called in NMI context. Then printk()
++ * will try to store the messages into the main logbuf directly
++ * and use the per-CPU buffers only as a fallback when the lock
++ * is not available.
++ */
++void printk_nmi_direct_enter(void)
 +{
-+	int r;
++	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
++		this_cpu_or(printk_context, PRINTK_NMI_DIRECT_CONTEXT_MASK);
++}
 +
-+	r = vprintk_emit(0, LOGLEVEL_SCHED, NULL, 0, fmt, args);
-+	defer_console_output();
- 
- 	return r;
++void printk_nmi_direct_exit(void)
++{
++	this_cpu_and(printk_context, ~PRINTK_NMI_DIRECT_CONTEXT_MASK);
  }
+ 
+ #else
+@@ -363,6 +372,20 @@ void __printk_safe_exit(void)
+ 
+ __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
+ {
++	/*
++	 * Try to use the main logbuf even in NMI. But avoid calling console
++	 * drivers that might have their own locks.
++	 */
++	if ((this_cpu_read(printk_context) & PRINTK_NMI_DIRECT_CONTEXT_MASK) &&
++	    raw_spin_trylock(&logbuf_lock)) {
++		int len;
++
++		len = vprintk_store(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
++		raw_spin_unlock(&logbuf_lock);
++		defer_console_output();
++		return len;
++	}
++
+ 	/* Use extra buffer in NMI when logbuf_lock is taken or in safe mode. */
+ 	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
+ 		return vprintk_nmi(fmt, args);
+@@ -371,13 +394,6 @@ __printf(1, 0) int vprintk_func(const ch
+ 	if (this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK)
+ 		return vprintk_safe(fmt, args);
+ 
+-	/*
+-	 * Use the main logbuf when logbuf_lock is available in NMI.
+-	 * But avoid calling console drivers that might have their own locks.
+-	 */
+-	if (this_cpu_read(printk_context) & PRINTK_NMI_DEFERRED_CONTEXT_MASK)
+-		return vprintk_deferred(fmt, args);
+-
+ 	/* No obstacles. */
+ 	return vprintk_default(fmt, args);
+ }
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8288,6 +8288,7 @@ void ftrace_dump(enum ftrace_dump_mode o
+ 	tracing_off();
+ 
+ 	local_irq_save(flags);
++	printk_nmi_direct_enter();
+ 
+ 	/* Simulate the iterator */
+ 	trace_init_global_iter(&iter);
+@@ -8367,7 +8368,8 @@ void ftrace_dump(enum ftrace_dump_mode o
+ 	for_each_tracing_cpu(cpu) {
+ 		atomic_dec(&per_cpu_ptr(iter.trace_buffer->data, cpu)->disabled);
+ 	}
+- 	atomic_dec(&dump_running);
++	atomic_dec(&dump_running);
++	printk_nmi_direct_exit();
+ 	local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(ftrace_dump);
+--- a/lib/nmi_backtrace.c
++++ b/lib/nmi_backtrace.c
+@@ -87,11 +87,9 @@ void nmi_trigger_cpumask_backtrace(const
+ 
+ bool nmi_cpu_backtrace(struct pt_regs *regs)
+ {
+-	static arch_spinlock_t lock = __ARCH_SPIN_LOCK_UNLOCKED;
+ 	int cpu = smp_processor_id();
+ 
+ 	if (cpumask_test_cpu(cpu, to_cpumask(backtrace_mask))) {
+-		arch_spin_lock(&lock);
+ 		if (regs && cpu_in_idle(instruction_pointer(regs))) {
+ 			pr_warn("NMI backtrace for cpu %d skipped: idling at %pS\n",
+ 				cpu, (void *)instruction_pointer(regs));
+@@ -102,7 +100,6 @@ bool nmi_cpu_backtrace(struct pt_regs *r
+ 			else
+ 				dump_stack();
+ 		}
+-		arch_spin_unlock(&lock);
+ 		cpumask_clear_cpu(cpu, to_cpumask(backtrace_mask));
+ 		return true;
+ 	}
 
 
