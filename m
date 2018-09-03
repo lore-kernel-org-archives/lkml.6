@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C240C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51003C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED8420862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED8420862
+	by mail.kernel.org (Postfix) with ESMTP id 1587420779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1587420779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeICVX7 (ORCPT
+        id S1729146AbeICVYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:23:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39020 "EHLO
+        Mon, 3 Sep 2018 17:24:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeICVX6 (ORCPT
+        with ESMTP id S1727837AbeICVYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:23:58 -0400
+        Mon, 3 Sep 2018 17:24:05 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D588DCEE;
-        Mon,  3 Sep 2018 17:02:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07C92CEE;
+        Mon,  3 Sep 2018 17:03:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.4 65/80] udl-kms: fix crash due to uninitialized memory
-Date:   Mon,  3 Sep 2018 18:49:43 +0200
-Message-Id: <20180903164936.751157281@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 66/80] ASoC: dpcm: dont merge format from invalid codec dai
+Date:   Mon,  3 Sep 2018 18:49:44 +0200
+Message-Id: <20180903164936.786396864@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -50,32 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 09a00abe3a9941c2715ca83eb88172cd2f54d8fd upstream.
+commit 4febced15ac8ddb9cf3e603edb111842e4863d9a upstream.
 
-We must use kzalloc when allocating the fb_deferred_io structure.
-Otherwise, the field first_io is undefined and it causes a crash.
+When merging codec formats, dpcm_runtime_base_format() should skip
+the codecs which are not supporting the current stream direction.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+At the moment, if a BE link has more than one codec, and only one
+of these codecs has no capture DAI, it becomes impossible to start
+a capture stream because the merged format would be 0.
+
+Skipping invalid codec DAI solves the problem.
+
+Fixes: b073ed4e2126 ("ASoC: soc-pcm: DPCM cares BE format")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/udl/udl_fb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/soc-pcm.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -341,7 +341,7 @@ static int udl_fb_open(struct fb_info *i
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1570,6 +1570,14 @@ static u64 dpcm_runtime_base_format(stru
+ 		int i;
  
- 		struct fb_deferred_io *fbdefio;
- 
--		fbdefio = kmalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
-+		fbdefio = kzalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
- 
- 		if (fbdefio) {
- 			fbdefio->delay = DL_DEFIO_WRITE_DELAY;
+ 		for (i = 0; i < be->num_codecs; i++) {
++			/*
++			 * Skip CODECs which don't support the current stream
++			 * type. See soc_pcm_init_runtime_hw() for more details
++			 */
++			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
++						      stream))
++				continue;
++
+ 			codec_dai_drv = be->codec_dais[i]->driver;
+ 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				codec_stream = &codec_dai_drv->playback;
 
 
