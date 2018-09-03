@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABA2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1450C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332742077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332742077C
+	by mail.kernel.org (Postfix) with ESMTP id 9B40A2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B40A2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbeICVjb (ORCPT
+        id S1730354AbeICVjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43054 "EHLO
+        Mon, 3 Sep 2018 17:39:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbeICVjb (ORCPT
+        with ESMTP id S1728154AbeICVjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:31 -0400
+        Mon, 3 Sep 2018 17:39:35 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 390B4D13;
-        Mon,  3 Sep 2018 17:18:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FA6ED13;
+        Mon,  3 Sep 2018 17:18:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 027/165] netfilter: nft_set_hash: add rcu_barrier() in the nft_rhash_destroy()
-Date:   Mon,  3 Sep 2018 18:55:13 +0200
-Message-Id: <20180903165656.409210655@linuxfoundation.org>
+Subject: [PATCH 4.14 018/165] usb: gadget: f_uac2: fix error handling in afunc_bind (again)
+Date:   Mon,  3 Sep 2018 18:55:04 +0200
+Message-Id: <20180903165655.945976079@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,116 +51,225 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-[ Upstream commit 9970a8e40d4c39e23d62d32540366d1d7d2cce9b ]
+[ Upstream commit e87581fe0509020f77ebf0b7c4c1c338c6a4bcf6 ]
 
-GC of set uses call_rcu() to destroy elements.
-So that elements would be destroyed after destroying sets and chains.
-But, elements should be destroyed before destroying sets and chains.
-In order to wait calling call_rcu(), a rcu_barrier() is added.
+If usb_ep_autoconfig() fails (i.e. returns a null endpoint descriptor),
+we expect afunc_bind() to fail (i.e. return a negative error code).
 
-In order to test correctly, below patch should be applied.
-https://patchwork.ozlabs.org/patch/940883/
+However, due to v4.10-rc1 commit f1d3861d63a5 ("usb: gadget: f_uac2: fix
+error handling at afunc_bind"), afunc_bind() returns zero, telling the
+caller that it succeeded. This then generates NULL pointer dereference
+in below scenario on Rcar H3-ES20-Salvator-X target:
 
-test scripts:
-   %cat test.nft
-   table ip aa {
-	   map map1 {
-		   type ipv4_addr : verdict; flags timeout;
-		   elements = {
-			   0 : jump a0,
-			   1 : jump a0,
-			   2 : jump a0,
-			   3 : jump a0,
-			   4 : jump a0,
-			   5 : jump a0,
-			   6 : jump a0,
-			   7 : jump a0,
-			   8 : jump a0,
-			   9 : jump a0,
-		   }
-		   timeout 1s;
-	   }
-	   chain a0 {
-	   }
-   }
-   flush ruleset
+rcar-gen3:/home/root# modprobe g_audio
+[  626.521155] g_audio gadget: afunc_bind:565 Error!
+[  626.526319] g_audio gadget: Linux USB Audio Gadget, version: Feb 2, 2012
+[  626.533405] g_audio gadget: g_audio ready
+rcar-gen3:/home/root#
+rcar-gen3:/home/root# modprobe -r g_audio
+[  728.256707] ==================================================================
+[  728.264293] BUG: KASAN: null-ptr-deref in u_audio_stop_capture+0x70/0x268 [u_audio]
+[  728.272244] Read of size 8 at addr 00000000000000a0 by task modprobe/2545
+[  728.279309]
+[  728.280849] CPU: 0 PID: 2545 Comm: modprobe Tainted: G        WC      4.14.47+ #152
+[  728.288778] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (DT)
+[  728.296454] Call trace:
+[  728.299151] [<ffff2000080925ac>] dump_backtrace+0x0/0x364
+[  728.304808] [<ffff200008092924>] show_stack+0x14/0x1c
+[  728.310081] [<ffff200008f8d5cc>] dump_stack+0x108/0x174
+[  728.315522] [<ffff2000083c77c8>] kasan_report+0x1fc/0x354
+[  728.321134] [<ffff2000083c611c>] __asan_load8+0x24/0x94
+[  728.326600] [<ffff2000021e1618>] u_audio_stop_capture+0x70/0x268 [u_audio]
+[  728.333735] [<ffff2000021f8b7c>] afunc_disable+0x44/0x60 [usb_f_uac2]
+[  728.340503] [<ffff20000218177c>] usb_remove_function+0x9c/0x210 [libcomposite]
+[  728.348060] [<ffff200002183320>] remove_config.isra.2+0x1d8/0x218 [libcomposite]
+[  728.355788] [<ffff200002186c54>] __composite_unbind+0x104/0x1f8 [libcomposite]
+[  728.363339] [<ffff200002186d58>] composite_unbind+0x10/0x18 [libcomposite]
+[  728.370536] [<ffff20000152f158>] usb_gadget_remove_driver+0xc0/0x170 [udc_core]
+[  728.378172] [<ffff20000153154c>] usb_gadget_unregister_driver+0x1cc/0x258 [udc_core]
+[  728.386274] [<ffff200002180de8>] usb_composite_unregister+0x10/0x18 [libcomposite]
+[  728.394116] [<ffff2000021d035c>] audio_driver_exit+0x14/0x28 [g_audio]
+[  728.400878] [<ffff200008213ed4>] SyS_delete_module+0x288/0x32c
+[  728.406935] Exception stack(0xffff8006cf6c7ec0 to 0xffff8006cf6c8000)
+[  728.413624] 7ec0: 0000000006136428 0000000000000800 0000000000000000 0000ffffd706efe8
+[  728.421718] 7ee0: 0000ffffd706efe9 000000000000000a 1999999999999999 0000000000000000
+[  728.429792] 7f00: 000000000000006a 000000000042c078 0000000000000000 0000000000000005
+[  728.437870] 7f20: 0000000000000000 0000000000000000 0000000000000004 0000000000000000
+[  728.445952] 7f40: 000000000042bfc8 0000ffffbc7c8f40 0000000000000000 00000000061363c0
+[  728.454035] 7f60: 0000000006136428 0000000000000000 0000000000000000 0000000006136428
+[  728.462114] 7f80: 000000000042c000 0000ffffd7071448 000000000042c000 0000000000000000
+[  728.470190] 7fa0: 00000000061350c0 0000ffffd7070010 000000000041129c 0000ffffd7070010
+[  728.478281] 7fc0: 0000ffffbc7c8f48 0000000060000000 0000000006136428 000000000000006a
+[  728.486351] 7fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+[  728.494434] [<ffff200008084780>] el0_svc_naked+0x34/0x38
+[  728.499957] ==================================================================
+[  728.507801] Unable to handle kernel NULL pointer dereference at virtual address 000000a0
+[  728.517742] Mem abort info:
+[  728.520993]   Exception class = DABT (current EL), IL = 32 bits
+[  728.527375]   SET = 0, FnV = 0
+[  728.530731]   EA = 0, S1PTW = 0
+[  728.534361] Data abort info:
+[  728.537650]   ISV = 0, ISS = 0x00000006
+[  728.541863]   CM = 0, WnR = 0
+[  728.545167] user pgtable: 4k pages, 48-bit VAs, pgd = ffff8006c6100000
+[  728.552156] [00000000000000a0] *pgd=0000000716a8d003
+[  728.557519] , *pud=00000007116fc003
+[  728.561259] , *pmd=0000000000000000
+[  728.564985] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[  728.570815] Modules linked in:
+[  728.574023]  usb_f_uac2
+[  728.576560]  u_audio
+[  728.578827]  g_audio(-)
+[  728.581361]  libcomposite
+[  728.584071]  configfs
+[  728.586428]  aes_ce_blk
+[  728.588960]  sata_rcar
+[  728.591421]  crypto_simd
+[  728.594039]  cryptd
+[  728.596217]  libata
+[  728.598396]  aes_ce_cipher
+[  728.601188]  crc32_ce
+[  728.603542]  ghash_ce
+[  728.605896]  gf128mul
+[  728.608250]  aes_arm64
+[  728.610692]  scsi_mod
+[  728.613046]  sha2_ce
+[  728.615313]  xhci_plat_hcd
+[  728.618106]  sha256_arm64
+[  728.620811]  sha1_ce
+[  728.623077]  renesas_usbhs
+[  728.625869]  xhci_hcd
+[  728.628243]  renesas_usb3
+[  728.630948]  sha1_generic
+[  728.633670]  ravb_streaming(C)
+[  728.636814]  udc_core
+[  728.639168]  cpufreq_dt
+[  728.641697]  rcar_gen3_thermal
+[  728.644840]  usb_dmac
+[  728.647194]  pwm_rcar
+[  728.649548]  thermal_sys
+[  728.652165]  virt_dma
+[  728.654519]  mch_core(C)
+[  728.657137]  pwm_bl
+[  728.659315]  snd_soc_rcar
+[  728.662020]  snd_aloop
+[  728.664462]  snd_soc_generic_card
+[  728.667869]  snd_soc_ak4613
+[  728.670749]  ipv6
+[  728.672768]  autofs4
+[  728.675052] CPU: 0 PID: 2545 Comm: modprobe Tainted: G    B   WC      4.14.47+ #152
+[  728.682973] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (DT)
+[  728.690637] task: ffff8006ced38000 task.stack: ffff8006cf6c0000
+[  728.696814] PC is at u_audio_stop_capture+0x70/0x268 [u_audio]
+[  728.702896] LR is at u_audio_stop_capture+0x70/0x268 [u_audio]
+[  728.708964] pc : [<ffff2000021e1618>] lr : [<ffff2000021e1618>] pstate: 60000145
+[  728.716620] sp : ffff8006cf6c7a50
+[  728.720154] x29: ffff8006cf6c7a50
+[  728.723760] x28: ffff8006ced38000
+[  728.727272] x27: ffff200008fd7000
+[  728.730857] x26: ffff2000021d2340
+[  728.734361] x25: 0000000000000000
+[  728.737948] x24: ffff200009e94b08
+[  728.741452] x23: 00000000000000a0
+[  728.745052] x22: 00000000000000a8
+[  728.748558] x21: 1ffff000d9ed8f7c
+[  728.752142] x20: ffff8006d671a800
+[  728.755646] x19: 0000000000000000
+[  728.759231] x18: 0000000000000000
+[  728.762736] x17: 0000ffffbc7c8f40
+[  728.766320] x16: ffff200008213c4c
+[  728.769823] x15: 0000000000000000
+[  728.773408] x14: 0720072007200720
+[  728.776912] x13: 0720072007200720
+[  728.780497] x12: ffffffffffffffff
+[  728.784001] x11: 0000000000000040
+[  728.787598] x10: 0000000000001600
+[  728.791103] x9 : ffff8006cf6c77a0
+[  728.794689] x8 : ffff8006ced39660
+[  728.798193] x7 : ffff20000811c738
+[  728.801794] x6 : 0000000000000000
+[  728.805299] x5 : dfff200000000000
+[  728.808885] x4 : ffff8006ced38000
+[  728.812390] x3 : ffff200008fb46e8
+[  728.815976] x2 : 0000000000000007
+[  728.819480] x1 : 3ba68643e7431500
+[  728.823066] x0 : 0000000000000000
+[  728.826574] Process modprobe (pid: 2545, stack limit = 0xffff8006cf6c0000)
+[  728.833704] Call trace:
+[  728.836292] Exception stack(0xffff8006cf6c7910 to 0xffff8006cf6c7a50)
+[  728.842987] 7900:                                   0000000000000000 3ba68643e7431500
+[  728.851084] 7920: 0000000000000007 ffff200008fb46e8 ffff8006ced38000 dfff200000000000
+[  728.859173] 7940: 0000000000000000 ffff20000811c738 ffff8006ced39660 ffff8006cf6c77a0
+[  728.867248] 7960: 0000000000001600 0000000000000040 ffffffffffffffff 0720072007200720
+[  728.875323] 7980: 0720072007200720 0000000000000000 ffff200008213c4c 0000ffffbc7c8f40
+[  728.883412] 79a0: 0000000000000000 0000000000000000 ffff8006d671a800 1ffff000d9ed8f7c
+[  728.891485] 79c0: 00000000000000a8 00000000000000a0 ffff200009e94b08 0000000000000000
+[  728.899561] 79e0: ffff2000021d2340 ffff200008fd7000 ffff8006ced38000 ffff8006cf6c7a50
+[  728.907636] 7a00: ffff2000021e1618 ffff8006cf6c7a50 ffff2000021e1618 0000000060000145
+[  728.915710] 7a20: 0000000000000008 0000000000000000 0000ffffffffffff 3ba68643e7431500
+[  728.923780] 7a40: ffff8006cf6c7a50 ffff2000021e1618
+[  728.928880] [<ffff2000021e1618>] u_audio_stop_capture+0x70/0x268 [u_audio]
+[  728.936032] [<ffff2000021f8b7c>] afunc_disable+0x44/0x60 [usb_f_uac2]
+[  728.942822] [<ffff20000218177c>] usb_remove_function+0x9c/0x210 [libcomposite]
+[  728.950385] [<ffff200002183320>] remove_config.isra.2+0x1d8/0x218 [libcomposite]
+[  728.958134] [<ffff200002186c54>] __composite_unbind+0x104/0x1f8 [libcomposite]
+[  728.965689] [<ffff200002186d58>] composite_unbind+0x10/0x18 [libcomposite]
+[  728.972882] [<ffff20000152f158>] usb_gadget_remove_driver+0xc0/0x170 [udc_core]
+[  728.980522] [<ffff20000153154c>] usb_gadget_unregister_driver+0x1cc/0x258 [udc_core]
+[  728.988638] [<ffff200002180de8>] usb_composite_unregister+0x10/0x18 [libcomposite]
+[  728.996472] [<ffff2000021d035c>] audio_driver_exit+0x14/0x28 [g_audio]
+[  729.003231] [<ffff200008213ed4>] SyS_delete_module+0x288/0x32c
+[  729.009278] Exception stack(0xffff8006cf6c7ec0 to 0xffff8006cf6c8000)
+[  729.015946] 7ec0: 0000000006136428 0000000000000800 0000000000000000 0000ffffd706efe8
+[  729.024022] 7ee0: 0000ffffd706efe9 000000000000000a 1999999999999999 0000000000000000
+[  729.032099] 7f00: 000000000000006a 000000000042c078 0000000000000000 0000000000000005
+[  729.040172] 7f20: 0000000000000000 0000000000000000 0000000000000004 0000000000000000
+[  729.048263] 7f40: 000000000042bfc8 0000ffffbc7c8f40 0000000000000000 00000000061363c0
+[  729.056337] 7f60: 0000000006136428 0000000000000000 0000000000000000 0000000006136428
+[  729.064411] 7f80: 000000000042c000 0000ffffd7071448 000000000042c000 0000000000000000
+[  729.072484] 7fa0: 00000000061350c0 0000ffffd7070010 000000000041129c 0000ffffd7070010
+[  729.080563] 7fc0: 0000ffffbc7c8f48 0000000060000000 0000000006136428 000000000000006a
+[  729.088636] 7fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+[  729.096733] [<ffff200008084780>] el0_svc_naked+0x34/0x38
+[  729.102259] Code: 9597d1b3 aa1703e0 9102a276 958792b9 (f9405275)
+[  729.108617] ---[ end trace 7560c5fa3d100243 ]---
 
-   [ ... ]
+After this patch is applied, the issue is fixed:
+rcar-gen3:/home/root# modprobe g_audio
+[   59.217127] g_audio gadget: afunc_bind:565 Error!
+[   59.222329] g_audio ee020000.usb: failed to start g_audio: -19
+modprobe: ERROR: could not insert 'g_audio': No such device
+rcar-gen3:/home/root# modprobe -r g_audio
+rcar-gen3:/home/root#
 
-   table ip aa {
-	   map map1 {
-		   type ipv4_addr : verdict; flags timeout;
-		   elements = {
-			   0 : jump a0,
-			   1 : jump a0,
-			   2 : jump a0,
-			   3 : jump a0,
-			   4 : jump a0,
-			   5 : jump a0,
-			   6 : jump a0,
-			   7 : jump a0,
-			   8 : jump a0,
-			   9 : jump a0,
-		   }
-		   timeout 1s;
-	   }
-	   chain a0 {
-	   }
-   }
-   flush ruleset
-
-Splat looks like:
-[  200.795603] kernel BUG at net/netfilter/nf_tables_api.c:1363!
-[  200.806944] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  200.812253] CPU: 1 PID: 1582 Comm: nft Not tainted 4.17.0+ #24
-[  200.820297] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  200.830309] RIP: 0010:nf_tables_chain_destroy.isra.34+0x62/0x240 [nf_tables]
-[  200.838317] Code: 43 50 85 c0 74 26 48 8b 45 00 48 8b 4d 08 ba 54 05 00 00 48 c7 c6 60 6d 29 c0 48 c7 c7 c0 65 29 c0
-4c 8b 40 08 e8 58 e5 fd f8 <0f> 0b 48 89 da 48 b8 00 00 00 00 00 fc ff
-[  200.860366] RSP: 0000:ffff880118dbf4d0 EFLAGS: 00010282
-[  200.866354] RAX: 0000000000000061 RBX: ffff88010cdeaf08 RCX: 0000000000000000
-[  200.874355] RDX: 0000000000000061 RSI: 0000000000000008 RDI: ffffed00231b7e90
-[  200.882361] RBP: ffff880118dbf4e8 R08: ffffed002373bcfb R09: ffffed002373bcfa
-[  200.890354] R10: 0000000000000000 R11: ffffed002373bcfb R12: dead000000000200
-[  200.898356] R13: dead000000000100 R14: ffffffffbb62af38 R15: dffffc0000000000
-[  200.906354] FS:  00007fefc31fd700(0000) GS:ffff88011b800000(0000) knlGS:0000000000000000
-[  200.915533] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  200.922355] CR2: 0000557f1c8e9128 CR3: 0000000106880000 CR4: 00000000001006e0
-[  200.930353] Call Trace:
-[  200.932351]  ? nf_tables_commit+0x26f6/0x2c60 [nf_tables]
-[  200.939525]  ? nf_tables_setelem_notify.constprop.49+0x1a0/0x1a0 [nf_tables]
-[  200.947525]  ? nf_tables_delchain+0x6e0/0x6e0 [nf_tables]
-[  200.952383]  ? nft_add_set_elem+0x1700/0x1700 [nf_tables]
-[  200.959532]  ? nla_parse+0xab/0x230
-[  200.963529]  ? nfnetlink_rcv_batch+0xd06/0x10d0 [nfnetlink]
-[  200.968384]  ? nfnetlink_net_init+0x130/0x130 [nfnetlink]
-[  200.975525]  ? debug_show_all_locks+0x290/0x290
-[  200.980363]  ? debug_show_all_locks+0x290/0x290
-[  200.986356]  ? sched_clock_cpu+0x132/0x170
-[  200.990352]  ? find_held_lock+0x39/0x1b0
-[  200.994355]  ? sched_clock_local+0x10d/0x130
-[  200.999531]  ? memset+0x1f/0x40
-
-Fixes: 9d0982927e79 ("netfilter: nft_hash: add support for timeouts")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: f1d3861d63a5 ("usb: gadget: f_uac2: fix error handling at afunc_bind")
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nft_set_hash.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/function/f_uac2.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nft_set_hash.c
-+++ b/net/netfilter/nft_set_hash.c
-@@ -359,6 +359,7 @@ static void nft_rhash_destroy(const stru
- 	struct nft_rhash *priv = nft_set_priv(set);
+--- a/drivers/usb/gadget/function/f_uac2.c
++++ b/drivers/usb/gadget/function/f_uac2.c
+@@ -563,13 +563,13 @@ afunc_bind(struct usb_configuration *cfg
+ 	agdev->out_ep = usb_ep_autoconfig(gadget, &fs_epout_desc);
+ 	if (!agdev->out_ep) {
+ 		dev_err(dev, "%s:%d Error!\n", __func__, __LINE__);
+-		return ret;
++		return -ENODEV;
+ 	}
  
- 	cancel_delayed_work_sync(&priv->gc_work);
-+	rcu_barrier();
- 	rhashtable_free_and_destroy(&priv->ht, nft_rhash_elem_destroy,
- 				    (void *)set);
- }
+ 	agdev->in_ep = usb_ep_autoconfig(gadget, &fs_epin_desc);
+ 	if (!agdev->in_ep) {
+ 		dev_err(dev, "%s:%d Error!\n", __func__, __LINE__);
+-		return ret;
++		return -ENODEV;
+ 	}
+ 
+ 	agdev->in_ep_maxpsize = max_t(u16,
 
 
