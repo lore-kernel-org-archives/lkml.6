@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0920BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D454BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B5520862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B5520862
+	by mail.kernel.org (Postfix) with ESMTP id 96ED72086E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ED72086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbeICVUN (ORCPT
+        id S1728732AbeICVUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:20:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38508 "EHLO
+        Mon, 3 Sep 2018 17:20:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbeICVUN (ORCPT
+        with ESMTP id S1728443AbeICVUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:20:13 -0400
+        Mon, 3 Sep 2018 17:20:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26E16CF5;
-        Mon,  3 Sep 2018 16:59:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C231CCF5;
+        Mon,  3 Sep 2018 16:59:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.4 44/80] smb3: dont request leases in symlink creation and query
-Date:   Mon,  3 Sep 2018 18:49:22 +0200
-Message-Id: <20180903164935.910816211@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 45/80] btrfs: dont leak ret from do_chunk_alloc
+Date:   Mon,  3 Sep 2018 18:49:23 +0200
+Message-Id: <20180903164935.952705202@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,42 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 22783155f4bf956c346a81624ec9258930a6fe06 upstream.
+commit 4559b0a71749c442d34f7cfb9e72c9e58db83948 upstream.
 
-Fixes problem pointed out by Pavel in discussions about commit
-729c0c9dd55204f0c9a823ac8a7bfa83d36c7e78
+If we're trying to make a data reservation and we have to allocate a
+data chunk we could leak ret == 1, as do_chunk_alloc() will return 1 if
+it allocated a chunk.  Since the end of the function is the success path
+just return 0.
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org> # 3.18.x+
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/link.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/link.c
-+++ b/fs/cifs/link.c
-@@ -419,7 +419,7 @@ smb3_query_mf_symlink(unsigned int xid,
- 	struct cifs_io_parms io_parms;
- 	int buf_type = CIFS_NO_BUFFER;
- 	__le16 *utf16_path;
--	__u8 oplock = SMB2_OPLOCK_LEVEL_II;
-+	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
- 	struct smb2_file_all_info *pfile_info = NULL;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -4128,7 +4128,7 @@ commit_trans:
+ 				      data_sinfo->flags, bytes, 1);
+ 	spin_unlock(&data_sinfo->lock);
  
- 	oparms.tcon = tcon;
-@@ -481,7 +481,7 @@ smb3_create_mf_symlink(unsigned int xid,
- 	struct cifs_io_parms io_parms;
- 	int create_options = CREATE_NOT_DIR;
- 	__le16 *utf16_path;
--	__u8 oplock = SMB2_OPLOCK_LEVEL_EXCLUSIVE;
-+	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
- 	struct kvec iov[2];
+-	return ret;
++	return 0;
+ }
  
- 	if (backup_cred(cifs_sb))
+ /*
 
 
