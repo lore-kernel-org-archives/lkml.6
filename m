@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA40C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BA120779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BA120779
+	by mail.kernel.org (Postfix) with ESMTP id B0BB620779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB620779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbeICVYg (ORCPT
+        id S1729226AbeICVYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39120 "EHLO
+        Mon, 3 Sep 2018 17:24:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728084AbeICVYg (ORCPT
+        with ESMTP id S1728084AbeICVYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:36 -0400
+        Mon, 3 Sep 2018 17:24:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63534CFE;
-        Mon,  3 Sep 2018 17:03:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30D9ECFF;
+        Mon,  3 Sep 2018 17:03:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 014/107] usb: gadget: f_uac2: fix endianness of struct cntrl_*_lay3
-Date:   Mon,  3 Sep 2018 18:55:38 +0200
-Message-Id: <20180903165637.986190569@linuxfoundation.org>
+Subject: [PATCH 4.9 015/107] bpf, ppc64: fix unexpected r0=0 exit path inside bpf_xadd
+Date:   Mon,  3 Sep 2018 18:55:39 +0200
+Message-Id: <20180903165638.034076439@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,96 +54,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniu Rosca <roscaeugeniu@gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit eec24f2a0d4dc3b1d95a3ccd2feb523ede3ba775 ]
+[ Upstream commit b9c1e60e7bf4e64ac1b4f4d6d593f0bb57886973 ]
 
-The list [1] of commits doing endianness fixes in USB subsystem is long
-due to below quote from USB spec Revision 2.0 from April 27, 2000:
+None of the JITs is allowed to implement exit paths from the BPF
+insn mappings other than BPF_JMP | BPF_EXIT. In the BPF core code
+we have a couple of rewrites in eBPF (e.g. LD_ABS / LD_IND) and
+in eBPF to cBPF translation to retain old existing behavior where
+exceptions may occur; they are also tightly controlled by the
+verifier where it disallows some of the features such as BPF to
+BPF calls when legacy LD_ABS / LD_IND ops are present in the BPF
+program. During recent review of all BPF_XADD JIT implementations
+I noticed that the ppc64 one is buggy in that it contains two
+jumps to exit paths. This is problematic as this can bypass verifier
+expectations e.g. pointed out in commit f6b1b3bf0d5f ("bpf: fix
+subprog verifier bypass by div/mod by 0 exception"). The first
+exit path is obsoleted by the fix in ca36960211eb ("bpf: allow xadd
+only on aligned memory") anyway, and for the second one we need to
+do a fetch, add and store loop if the reservation from lwarx/ldarx
+was lost in the meantime.
 
-------------
-8.1 Byte/Bit Ordering
-
-Multiple byte fields in standard descriptors, requests, and responses
-are interpreted as and moved over the bus in little-endian order, i.e.
-LSB to MSB.
-------------
-
-This commit belongs to the same family.
-
-[1] Example of endianness fixes in USB subsystem:
-commit 14e1d56cbea6 ("usb: gadget: f_uac2: endianness fixes.")
-commit 42370b821168 ("usb: gadget: f_uac1: endianness fixes.")
-commit 63afd5cc7877 ("USB: chaoskey: fix Alea quirk on big-endian hosts")
-commit 74098c4ac782 ("usb: gadget: acm: fix endianness in notifications")
-commit cdd7928df0d2 ("ACM gadget: fix endianness in notifications")
-commit 323ece54e076 ("cdc-wdm: fix endianness bug in debug statements")
-commit e102609f1072 ("usb: gadget: uvc: Fix endianness mismatches")
-       list goes on
-
-Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-
+Fixes: 156d0e290e96 ("powerpc/ebpf/jit: Implement JIT compiler for extended BPF")
+Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Reviewed-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Tested-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/f_uac2.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/powerpc/net/bpf_jit_comp64.c |   29 +++++------------------------
+ 1 file changed, 5 insertions(+), 24 deletions(-)
 
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -929,14 +929,14 @@ static struct usb_descriptor_header *hs_
- };
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -326,6 +326,7 @@ static int bpf_jit_build_body(struct bpf
+ 		u64 imm64;
+ 		u8 *func;
+ 		u32 true_cond;
++		u32 tmp_idx;
  
- struct cntrl_cur_lay3 {
--	__u32	dCUR;
-+	__le32	dCUR;
- };
+ 		/*
+ 		 * addrs[] maps a BPF bytecode address into a real offset from
+@@ -685,11 +686,7 @@ emit_clear:
+ 		case BPF_STX | BPF_XADD | BPF_W:
+ 			/* Get EA into TMP_REG_1 */
+ 			PPC_ADDI(b2p[TMP_REG_1], dst_reg, off);
+-			/* error if EA is not word-aligned */
+-			PPC_ANDI(b2p[TMP_REG_2], b2p[TMP_REG_1], 0x03);
+-			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + 12);
+-			PPC_LI(b2p[BPF_REG_0], 0);
+-			PPC_JMP(exit_addr);
++			tmp_idx = ctx->idx * 4;
+ 			/* load value from memory into TMP_REG_2 */
+ 			PPC_BPF_LWARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
+ 			/* add value from src_reg into this */
+@@ -697,32 +694,16 @@ emit_clear:
+ 			/* store result back */
+ 			PPC_BPF_STWCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
+ 			/* we're done if this succeeded */
+-			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (7*4));
+-			/* otherwise, let's try once more */
+-			PPC_BPF_LWARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
+-			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
+-			PPC_BPF_STWCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
+-			/* exit if the store was not successful */
+-			PPC_LI(b2p[BPF_REG_0], 0);
+-			PPC_BCC(COND_NE, exit_addr);
++			PPC_BCC_SHORT(COND_NE, tmp_idx);
+ 			break;
+ 		/* *(u64 *)(dst + off) += src */
+ 		case BPF_STX | BPF_XADD | BPF_DW:
+ 			PPC_ADDI(b2p[TMP_REG_1], dst_reg, off);
+-			/* error if EA is not doubleword-aligned */
+-			PPC_ANDI(b2p[TMP_REG_2], b2p[TMP_REG_1], 0x07);
+-			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (3*4));
+-			PPC_LI(b2p[BPF_REG_0], 0);
+-			PPC_JMP(exit_addr);
+-			PPC_BPF_LDARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
+-			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
+-			PPC_BPF_STDCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
+-			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (7*4));
++			tmp_idx = ctx->idx * 4;
+ 			PPC_BPF_LDARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
+ 			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
+ 			PPC_BPF_STDCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
+-			PPC_LI(b2p[BPF_REG_0], 0);
+-			PPC_BCC(COND_NE, exit_addr);
++			PPC_BCC_SHORT(COND_NE, tmp_idx);
+ 			break;
  
- struct cntrl_range_lay3 {
--	__u16	wNumSubRanges;
--	__u32	dMIN;
--	__u32	dMAX;
--	__u32	dRES;
-+	__le16	wNumSubRanges;
-+	__le32	dMIN;
-+	__le32	dMAX;
-+	__le32	dRES;
- } __packed;
- 
- static inline void
-@@ -1285,9 +1285,9 @@ in_rq_cur(struct usb_function *fn, const
- 		memset(&c, 0, sizeof(struct cntrl_cur_lay3));
- 
- 		if (entity_id == USB_IN_CLK_ID)
--			c.dCUR = p_srate;
-+			c.dCUR = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			c.dCUR = c_srate;
-+			c.dCUR = cpu_to_le32(c_srate);
- 
- 		value = min_t(unsigned, w_length, sizeof c);
- 		memcpy(req->buf, &c, value);
-@@ -1325,15 +1325,15 @@ in_rq_range(struct usb_function *fn, con
- 
- 	if (control_selector == UAC2_CS_CONTROL_SAM_FREQ) {
- 		if (entity_id == USB_IN_CLK_ID)
--			r.dMIN = p_srate;
-+			r.dMIN = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			r.dMIN = c_srate;
-+			r.dMIN = cpu_to_le32(c_srate);
- 		else
- 			return -EOPNOTSUPP;
- 
- 		r.dMAX = r.dMIN;
- 		r.dRES = 0;
--		r.wNumSubRanges = 1;
-+		r.wNumSubRanges = cpu_to_le16(1);
- 
- 		value = min_t(unsigned, w_length, sizeof r);
- 		memcpy(req->buf, &r, value);
+ 		/*
 
 
