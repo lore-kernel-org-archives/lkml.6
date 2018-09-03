@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904EDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993D5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D04820869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D04820869
+	by mail.kernel.org (Postfix) with ESMTP id 5994020868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5994020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeICVNU (ORCPT
+        id S1727939AbeICVNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:13:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37832 "EHLO
+        Mon, 3 Sep 2018 17:13:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37838 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbeICVNT (ORCPT
+        with ESMTP id S1727868AbeICVNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:13:19 -0400
+        Mon, 3 Sep 2018 17:13:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18857CF5;
-        Mon,  3 Sep 2018 16:52:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ADB9CEE;
+        Mon,  3 Sep 2018 16:52:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 3.18 50/56] s390/qdio: reset old sbal_state flags
-Date:   Mon,  3 Sep 2018 18:49:40 +0200
-Message-Id: <20180903164926.564147789@linuxfoundation.org>
+        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH 3.18 51/56] s390/pci: fix out of bounds access during irq setup
+Date:   Mon,  3 Sep 2018 18:49:41 +0200
+Message-Id: <20180903164926.631274020@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -50,66 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Sebastian Ott <sebott@linux.ibm.com>
 
-commit 64e03ff72623b8c2ea89ca3cb660094e019ed4ae upstream.
+commit 866f3576a72b2233a76dffb80290f8086dc49e17 upstream.
 
-When allocating a new AOB fails, handle_outbound() is still capable of
-transmitting the selected buffer (just without async completion).
+During interrupt setup we allocate interrupt vectors, walk the list of msi
+descriptors, and fill in the message data. Requesting more interrupts than
+supported on s390 can lead to an out of bounds access.
 
-But if a previous transfer on this queue slot used async completion, its
-sbal_state flags field is still set to QDIO_OUTBUF_STATE_FLAG_PENDING.
-So when the upper layer driver sees this stale flag, it expects an async
-completion that never happens.
+When we restrict the number of interrupts we should also stop walking the
+msi list after all supported interrupts are handled.
 
-Fix this by unconditionally clearing the flags field.
-
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/qdio.h |    1 -
- drivers/s390/cio/qdio_main.c |    5 ++---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/s390/pci/pci.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/s390/include/asm/qdio.h
-+++ b/arch/s390/include/asm/qdio.h
-@@ -271,7 +271,6 @@ struct qdio_outbuf_state {
- 	void *user;
- };
- 
--#define QDIO_OUTBUF_STATE_FLAG_NONE	0x00
- #define QDIO_OUTBUF_STATE_FLAG_PENDING	0x01
- 
- #define CHSC_AC1_INITIATE_INPUTQ	0x80
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -640,21 +640,20 @@ static inline unsigned long qdio_aob_for
- 	unsigned long phys_aob = 0;
- 
- 	if (!q->use_cq)
--		goto out;
-+		return 0;
- 
- 	if (!q->aobs[bufnr]) {
- 		struct qaob *aob = qdio_allocate_aob();
- 		q->aobs[bufnr] = aob;
- 	}
- 	if (q->aobs[bufnr]) {
--		q->sbal_state[bufnr].flags = QDIO_OUTBUF_STATE_FLAG_NONE;
- 		q->sbal_state[bufnr].aob = q->aobs[bufnr];
- 		q->aobs[bufnr]->user1 = (u64) q->sbal_state[bufnr].user;
- 		phys_aob = virt_to_phys(q->aobs[bufnr]);
- 		WARN_ON_ONCE(phys_aob & 0xFF);
- 	}
- 
--out:
-+	q->sbal_state[bufnr].flags = 0;
- 	return phys_aob;
- }
- 
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -397,6 +397,8 @@ int arch_setup_msi_irqs(struct pci_dev *
+ 	hwirq = 0;
+ 	list_for_each_entry(msi, &pdev->msi_list, list) {
+ 		rc = -EIO;
++		if (hwirq >= msi_vecs)
++			break;
+ 		irq = irq_alloc_desc(0);	/* Alloc irq on node 0 */
+ 		if (irq < 0)
+ 			goto out_msi;
 
 
