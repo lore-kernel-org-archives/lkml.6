@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC7FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FCDC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3A420868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3A420868
+	by mail.kernel.org (Postfix) with ESMTP id 8D51820868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D51820868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbeICVMy (ORCPT
+        id S1728389AbeICVM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:12:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36422 "EHLO
+        Mon, 3 Sep 2018 17:12:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36434 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeICVMx (ORCPT
+        with ESMTP id S1727577AbeICVM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:12:53 -0400
+        Mon, 3 Sep 2018 17:12:56 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 825C4CF3;
-        Mon,  3 Sep 2018 16:51:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2EB1CF3;
+        Mon,  3 Sep 2018 16:51:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 25/56] selftests/ftrace: Add snapshot and tracing_on test case
-Date:   Mon,  3 Sep 2018 18:49:15 +0200
-Message-Id: <20180903164925.346533975@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 3.18 43/56] fuse: Dont access pipe->buffers without pipe_lock()
+Date:   Mon,  3 Sep 2018 18:49:33 +0200
+Message-Id: <20180903164926.203528598@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -55,60 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-[ Upstream commit 82f4f3e69c5c29bce940dd87a2c0f16c51d48d17 ]
+commit a2477b0e67c52f4364a47c3ad70902bc2a61bd4c upstream.
 
-Add a testcase for checking snapshot and tracing_on
-relationship. This ensures that the snapshotting doesn't
-affect current tracing on/off settings.
+fuse_dev_splice_write() reads pipe->buffers to determine the size of
+'bufs' array before taking the pipe_lock(). This is not safe as
+another thread might change the 'pipe->buffers' between the allocation
+and taking the pipe_lock(). So we end up with too small 'bufs' array.
 
-Link: http://lkml.kernel.org/r/153149932412.11274.15289227592627901488.stgit@devbox
+Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
 
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: <stable@vger.kernel.org> # v2.6.35
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc |   28 ++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
-@@ -0,0 +1,28 @@
-+#!/bin/sh
-+# description: Snapshot and tracing setting
-+# flags: instance
+---
+ fs/fuse/dev.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1913,11 +1913,14 @@ static ssize_t fuse_dev_splice_write(str
+ 	if (!fc)
+ 		return -EPERM;
+ 
++	pipe_lock(pipe);
 +
-+[ ! -f snapshot ] && exit_unsupported
-+
-+echo "Set tracing off"
-+echo 0 > tracing_on
-+
-+echo "Allocate and take a snapshot"
-+echo 1 > snapshot
-+
-+# Since trace buffer is empty, snapshot is also empty, but allocated
-+grep -q "Snapshot is allocated" snapshot
-+
-+echo "Ensure keep tracing off"
-+test `cat tracing_on` -eq 0
-+
-+echo "Set tracing on"
-+echo 1 > tracing_on
-+
-+echo "Take a snapshot again"
-+echo 1 > snapshot
-+
-+echo "Ensure keep tracing on"
-+test `cat tracing_on` -eq 1
-+
-+exit 0
+ 	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
+-	if (!bufs)
++	if (!bufs) {
++		pipe_unlock(pipe);
+ 		return -ENOMEM;
++	}
+ 
+-	pipe_lock(pipe);
+ 	nbuf = 0;
+ 	rem = 0;
+ 	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
 
 
