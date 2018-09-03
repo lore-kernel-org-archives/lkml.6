@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F061BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D452C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F0E2086C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F0E2086C
+	by mail.kernel.org (Postfix) with ESMTP id 41EF52086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EF52086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbeICVoy (ORCPT
+        id S1729806AbeICVo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:44:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45416 "EHLO
+        Mon, 3 Sep 2018 17:44:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728282AbeICVox (ORCPT
+        with ESMTP id S1728036AbeICVo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:44:53 -0400
+        Mon, 3 Sep 2018 17:44:57 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F910D0A;
-        Mon,  3 Sep 2018 17:23:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E838D0A;
+        Mon,  3 Sep 2018 17:23:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 060/165] ARC: dma [non-IOC] setup SMP_CACHE_BYTES and cache_line_size
-Date:   Mon,  3 Sep 2018 18:55:46 +0200
-Message-Id: <20180903165658.137971239@linuxfoundation.org>
+Subject: [PATCH 4.14 061/165] bpf: use GFP_ATOMIC instead of GFP_KERNEL in bpf_parse_prog()
+Date:   Mon,  3 Sep 2018 18:55:47 +0200
+Message-Id: <20180903165658.188870574@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,81 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit eb2777397fd83a4a7eaa26984d09d3babb845d2a ]
+[ Upstream commit 71eb5255f55bdb484d35ff7c9a1803f453dfbf82 ]
 
-As for today we don't setup SMP_CACHE_BYTES and cache_line_size for
-ARC, so they are set to L1_CACHE_BYTES by default. L1 line length
-(L1_CACHE_BYTES) might be easily smaller than L2 line (which is
-usually the case BTW). This breaks code.
+bpf_parse_prog() is protected by rcu_read_lock().
+so that GFP_KERNEL is not allowed in the bpf_parse_prog().
 
-For example this breaks ethernet infrastructure on HSDK/AXS103 boards
-with IOC disabled, involving manual cache flushes
-Functions which alloc and manage sk_buff packet data area rely on
-SMP_CACHE_BYTES define. In the result we can share last L2 cache
-line in sk_buff linear packet data area between DMA buffer and
-some useful data in other structure. So we can lose this data when
-we invalidate DMA buffer.
+[51015.579396] =============================
+[51015.579418] WARNING: suspicious RCU usage
+[51015.579444] 4.18.0-rc6+ #208 Not tainted
+[51015.579464] -----------------------------
+[51015.579488] ./include/linux/rcupdate.h:303 Illegal context switch in RCU read-side critical section!
+[51015.579510] other info that might help us debug this:
+[51015.579532] rcu_scheduler_active = 2, debug_locks = 1
+[51015.579556] 2 locks held by ip/1861:
+[51015.579577]  #0: 00000000a8c12fd1 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x2e0/0x910
+[51015.579711]  #1: 00000000bf815f8e (rcu_read_lock){....}, at: lwtunnel_build_state+0x96/0x390
+[51015.579842] stack backtrace:
+[51015.579869] CPU: 0 PID: 1861 Comm: ip Not tainted 4.18.0-rc6+ #208
+[51015.579891] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
+[51015.579911] Call Trace:
+[51015.579950]  dump_stack+0x74/0xbb
+[51015.580000]  ___might_sleep+0x16b/0x3a0
+[51015.580047]  __kmalloc_track_caller+0x220/0x380
+[51015.580077]  kmemdup+0x1c/0x40
+[51015.580077]  bpf_parse_prog+0x10e/0x230
+[51015.580164]  ? kasan_kmalloc+0xa0/0xd0
+[51015.580164]  ? bpf_destroy_state+0x30/0x30
+[51015.580164]  ? bpf_build_state+0xe2/0x3e0
+[51015.580164]  bpf_build_state+0x1bb/0x3e0
+[51015.580164]  ? bpf_parse_prog+0x230/0x230
+[51015.580164]  ? lock_is_held_type+0x123/0x1a0
+[51015.580164]  lwtunnel_build_state+0x1aa/0x390
+[51015.580164]  fib_create_info+0x1579/0x33d0
+[51015.580164]  ? sched_clock_local+0xe2/0x150
+[51015.580164]  ? fib_info_update_nh_saddr+0x1f0/0x1f0
+[51015.580164]  ? sched_clock_local+0xe2/0x150
+[51015.580164]  fib_table_insert+0x201/0x1990
+[51015.580164]  ? lock_downgrade+0x610/0x610
+[51015.580164]  ? fib_table_lookup+0x1920/0x1920
+[51015.580164]  ? lwtunnel_valid_encap_type.part.6+0xcb/0x3a0
+[51015.580164]  ? rtm_to_fib_config+0x637/0xbd0
+[51015.580164]  inet_rtm_newroute+0xed/0x1b0
+[51015.580164]  ? rtm_to_fib_config+0xbd0/0xbd0
+[51015.580164]  rtnetlink_rcv_msg+0x331/0x910
+[ ... ]
 
-   sk_buff linear packet data area
-                |
-                |
-                |         skb->end        skb->tail
-                V            |                |
-                             V                V
-----------------------------------------------.
-      packet data            | <tail padding> |  <useful data in other struct>
-----------------------------------------------.
-
----------------------.--------------------------------------------------.
-     SLC line        |             SLC (L2 cache) line (128B)           |
----------------------.--------------------------------------------------.
-        ^                                     ^
-        |                                     |
-     These cache lines will be invalidated when we invalidate skb
-     linear packet data area before DMA transaction starting.
-
-This leads to issues painful to debug as it reproduces only if
-(sk_buff->end - sk_buff->tail) < SLC_LINE_SIZE and
-if we have some useful data right after sk_buff->end.
-
-Fix that by hardcode SMP_CACHE_BYTES to max line length we may have.
-
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-
+Fixes: 3a0af8fd61f9 ("bpf: BPF for lightweight tunnel infrastructure")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/Kconfig             |    3 +++
- arch/arc/include/asm/cache.h |    4 +++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ net/core/lwt_bpf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -45,6 +45,9 @@ config ARC
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_LZMA
+--- a/net/core/lwt_bpf.c
++++ b/net/core/lwt_bpf.c
+@@ -217,7 +217,7 @@ static int bpf_parse_prog(struct nlattr
+ 	if (!tb[LWT_BPF_PROG_FD] || !tb[LWT_BPF_PROG_NAME])
+ 		return -EINVAL;
  
-+config ARCH_HAS_CACHE_LINE_SIZE
-+	def_bool y
-+
- config MIGHT_HAVE_PCI
- 	bool
+-	prog->name = nla_memdup(tb[LWT_BPF_PROG_NAME], GFP_KERNEL);
++	prog->name = nla_memdup(tb[LWT_BPF_PROG_NAME], GFP_ATOMIC);
+ 	if (!prog->name)
+ 		return -ENOMEM;
  
---- a/arch/arc/include/asm/cache.h
-+++ b/arch/arc/include/asm/cache.h
-@@ -48,7 +48,9 @@
- })
- 
- /* Largest line length for either L1 or L2 is 128 bytes */
--#define ARCH_DMA_MINALIGN      128
-+#define SMP_CACHE_BYTES		128
-+#define cache_line_size()	SMP_CACHE_BYTES
-+#define ARCH_DMA_MINALIGN	SMP_CACHE_BYTES
- 
- extern void arc_cache_init(void);
- extern char *arc_cache_mumbojumbo(int cpu_id, char *buf, int len);
 
 
