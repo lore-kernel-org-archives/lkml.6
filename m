@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A05C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8EDC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC81A20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC81A20843
+	by mail.kernel.org (Postfix) with ESMTP id 8641520843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8641520843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbeICV3I (ORCPT
+        id S1729917AbeICV3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:29:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40292 "EHLO
+        Mon, 3 Sep 2018 17:29:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729430AbeICV3I (ORCPT
+        with ESMTP id S1729406AbeICV3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:29:08 -0400
+        Mon, 3 Sep 2018 17:29:14 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6994BB3;
-        Mon,  3 Sep 2018 17:08:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C0FDBB3;
+        Mon,  3 Sep 2018 17:08:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 078/107] fuse: Fix oops at process_init_reply()
-Date:   Mon,  3 Sep 2018 18:56:42 +0200
-Message-Id: <20180903165641.092238546@linuxfoundation.org>
+Subject: [PATCH 4.9 079/107] fuse: Add missed unlock_page() to fuse_readpages_fill()
+Date:   Mon,  3 Sep 2018 18:56:43 +0200
+Message-Id: <20180903165641.137850180@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,85 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit e8f3bd773d22f488724dffb886a1618da85c2966 upstream.
+commit 109728ccc5933151c68d1106e4065478a487a323 upstream.
 
-syzbot is hitting NULL pointer dereference at process_init_reply().
-This is because deactivate_locked_super() is called before response for
-initial request is processed.
+The above error path returns with page unlocked, so this place seems also
+to behave the same.
 
-Fix this by aborting and waiting for all requests (including FUSE_INIT)
-before resetting fc->sb.
-
-Original patch by Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>.
-
-Reported-by: syzbot <syzbot+b62f08f4d5857755e3bc@syzkaller.appspotmail.com>
-Fixes: e27c9d3877a0 ("fuse: fuse: add time_gran to INIT_OUT")
-Cc: <stable@vger.kernel.org> # v3.19
+Fixes: f8dbdf81821b ("fuse: rework fuse_readpages()")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/inode.c |   25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ fs/fuse/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -402,11 +402,6 @@ static void fuse_put_super(struct super_
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
- 
--	fuse_send_destroy(fc);
--
--	fuse_abort_conn(fc);
--	fuse_wait_aborted(fc);
--
- 	mutex_lock(&fuse_mutex);
- 	list_del(&fc->entry);
- 	fuse_ctl_remove_conn(fc);
-@@ -1206,16 +1201,25 @@ static struct dentry *fuse_mount(struct
- 	return mount_nodev(fs_type, flags, raw_data, fuse_fill_super);
- }
- 
--static void fuse_kill_sb_anon(struct super_block *sb)
-+static void fuse_sb_destroy(struct super_block *sb)
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
- 
- 	if (fc) {
-+		fuse_send_destroy(fc);
-+
-+		fuse_abort_conn(fc);
-+		fuse_wait_aborted(fc);
-+
- 		down_write(&fc->killsb);
- 		fc->sb = NULL;
- 		up_write(&fc->killsb);
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -868,6 +868,7 @@ static int fuse_readpages_fill(void *_da
  	}
-+}
  
-+static void fuse_kill_sb_anon(struct super_block *sb)
-+{
-+	fuse_sb_destroy(sb);
- 	kill_anon_super(sb);
- }
- 
-@@ -1238,14 +1242,7 @@ static struct dentry *fuse_mount_blk(str
- 
- static void fuse_kill_sb_blk(struct super_block *sb)
- {
--	struct fuse_conn *fc = get_fuse_conn_super(sb);
--
--	if (fc) {
--		down_write(&fc->killsb);
--		fc->sb = NULL;
--		up_write(&fc->killsb);
--	}
--
-+	fuse_sb_destroy(sb);
- 	kill_block_super(sb);
- }
- 
+ 	if (WARN_ON(req->num_pages >= req->max_pages)) {
++		unlock_page(page);
+ 		fuse_put_request(fc, req);
+ 		return -EIO;
+ 	}
 
 
