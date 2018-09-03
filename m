@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8104DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0545BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453E42077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453E42077C
+	by mail.kernel.org (Postfix) with ESMTP id BDA722077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA722077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbeICVq0 (ORCPT
+        id S1730642AbeICVqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45730 "EHLO
+        Mon, 3 Sep 2018 17:46:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45738 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbeICVqZ (ORCPT
+        with ESMTP id S1728380AbeICVqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:25 -0400
+        Mon, 3 Sep 2018 17:46:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F442D3A;
-        Mon,  3 Sep 2018 17:25:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BB2AD36;
+        Mon,  3 Sep 2018 17:25:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 117/165] x86/kvm/vmx: Remove duplicate l1d flush definitions
-Date:   Mon,  3 Sep 2018 18:56:43 +0200
-Message-Id: <20180903165701.407590746@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 118/165] fuse: Dont access pipe->buffers without pipe_lock()
+Date:   Mon,  3 Sep 2018 18:56:44 +0200
+Message-Id: <20180903165701.452352986@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,35 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit 94d7a86c21a3d6046bf4616272313cb7d525075a upstream.
+commit a2477b0e67c52f4364a47c3ad70902bc2a61bd4c upstream.
 
-These are already defined higher up in the file.
+fuse_dev_splice_write() reads pipe->buffers to determine the size of
+'bufs' array before taking the pipe_lock(). This is not safe as
+another thread might change the 'pipe->buffers' between the allocation
+and taking the pipe_lock(). So we end up with too small 'bufs' array.
 
-Fixes: 7db92e165ac8 ("x86/kvm: Move l1tf setup function")
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/d7ca03ae210d07173452aeed85ffe344301219a5.1534253536.git.jpoimboe@redhat.com
+Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
+
+Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: <stable@vger.kernel.org> # v2.6.35
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    3 ---
- 1 file changed, 3 deletions(-)
+ fs/fuse/dev.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9170,9 +9170,6 @@ static int vmx_handle_exit(struct kvm_vc
-  * information but as all relevant affected CPUs have 32KiB L1D cache size
-  * there is no point in doing so.
-  */
--#define L1D_CACHE_ORDER 4
--static void *vmx_l1d_flush_pages;
--
- static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- {
- 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1941,11 +1941,14 @@ static ssize_t fuse_dev_splice_write(str
+ 	if (!fud)
+ 		return -EPERM;
+ 
++	pipe_lock(pipe);
++
+ 	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
+-	if (!bufs)
++	if (!bufs) {
++		pipe_unlock(pipe);
+ 		return -ENOMEM;
++	}
+ 
+-	pipe_lock(pipe);
+ 	nbuf = 0;
+ 	rem = 0;
+ 	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
 
 
