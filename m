@@ -6,104 +6,126 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBA3C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB59C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF14E20861
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54D3B2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bz+JQocw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF14E20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="MkQnhPDL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D3B2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mobiveil.co.in
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeICGiM (ORCPT
+        id S1727315AbeICGme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:38:12 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33759 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbeICGiM (ORCPT
+        Mon, 3 Sep 2018 02:42:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45655 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbeICGme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:38:12 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 8-v6so31110462oip.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 19:20:15 -0700 (PDT)
+        Mon, 3 Sep 2018 02:42:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so16187552wrb.12
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Sep 2018 19:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Msai0vwNB23TKj/LTrFuWuZrdwYlPNiFTOe3J2angEw=;
-        b=Bz+JQocwmi2c2oeUTOBEZ6phzlw9AyoUcjdt1zjszVFJ1a2+ikC8SAIgbc1XGl5s1h
-         lt/9kYBPFWBhGlmhJOQjdlryj8/ntNcg+Jr9k35S8W+lmHD4JgYh61fkk+GV3uesbsKi
-         h9gDTkGQYaCYg7HRPJ1+13SLUqpj3GbY4/C/0=
+        bh=5Q8uJs07XYgjHltub3lryIofOhA0pHaonZ9vzlsI0yU=;
+        b=MkQnhPDLNWpy/OVulnYR+CcjytKh/OnM51vNGgZLISYyZi+lZRUMZMj8uuHHgjF9K2
+         gcUJItEGEy2Z7M5I0MyH5XsGT3rWZh5e5EgzZx4LcOeARm0/GyKk/vnxCjFYiLjK0Mjq
+         fgovKF2+sPLZ0TSldYEkffsYUZyiHL+EOfhsE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Msai0vwNB23TKj/LTrFuWuZrdwYlPNiFTOe3J2angEw=;
-        b=AEP5xOOQh8hW7UYA4Ut/OJiL3WUXKGxQH5yl6mg2RpDb//UyQBk4V+fNshpgrkO/r0
-         9/k1C8qbkreJf8ScVihXsTwbjZ0NOZR9toFr1MS9qNMLGLnRtOZTncYZIix9uYuKKbLp
-         1hoS+Dyz2tAJY+nDRgRbAvjOvasWgPYg0xPm55kP0tqPpu8NINT9Ly1Sv0D9X5S0fAaJ
-         PnHrjcmbeu02kwltC1ZBg0+X0daTxVfLyIPvDF/wvc3/goPR7BXlGOHSVK3u/SYSd8oY
-         OQ3AoLPVTdg3w80Hf9/j1P+Jv0rFtm3oUUBCMwwDCn7Ovwj+csKUCaDUeFZ7JbOu4Wm2
-         uhCg==
-X-Gm-Message-State: APzg51DvrlQdZSn70OcM95x4STMnncZbYiINaEwNHkBWH5TbxSZrQfRF
-        P79N4dxdzh3Akn7O66Yi+/b8wikN76QNj4MhTg9IEw==
-X-Google-Smtp-Source: ANB0VdZWG/iKZvRZab04HOVvygWGDJghmXD1ddGghiiV8THTcdV9uIMcpQzcX54H3/mfaCRtvgHutb8mOT9Cb5g/C2Q=
-X-Received: by 2002:aca:e005:: with SMTP id x5-v6mr17146322oig.328.1535941214762;
- Sun, 02 Sep 2018 19:20:14 -0700 (PDT)
+        bh=5Q8uJs07XYgjHltub3lryIofOhA0pHaonZ9vzlsI0yU=;
+        b=Y4L2GTfmWXiwd0W3G6WmCsg91z1EnUDWATiDSBw8v5q342tjGD4l5eL1CvU2XvkEqh
+         Jss9G/iRI5hRpezI5a6wY040H31QcavOxSDO3aRZcPGONqOIi0kYCe67Ugzf5SE0IBbt
+         6Ia9x1m6ZnBvhIfrmkorn7+h2Zi8ODDL/2CYuWb/rlKawH0DIjTAdDmP7gm4xmfpLjUR
+         o1qPFpLcFOZMZB2MVCGmWO/0zgaPpydO0QNZ9BpIolva+hUqdaj4OnyRGMFDEX0+yuSL
+         L9+hMEhIDMFi2UBaG9IJEtdpu+b/0SY0eedyWnfJ2qsH2vGSTU9DN/vNXQyXzk8T0pEF
+         IdGg==
+X-Gm-Message-State: APzg51AOaw96eHiLoq37XaPAeulJVxht5OW0CQerUeRUzaL9EjSb/qtb
+        nUQoshYV2wUooJJIp8kSmcMG03AuTeIU/lrxWN4zog==
+X-Google-Smtp-Source: ANB0VdZrk8roQHBGMM+IC5PToCmKMbIkB8bp7QmYbw58cuhrkINl+ULcy7/v9HJNZ9ZjKkzBKGPfURyM0cK43TfcG70=
+X-Received: by 2002:adf:edd2:: with SMTP id v18-v6mr18474724wro.39.1535941474347;
+ Sun, 02 Sep 2018 19:24:34 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:1d28:0:0:0:0:0 with HTTP; Sun, 2 Sep 2018 19:20:14 -0700 (PDT)
-In-Reply-To: <20180902095140.70b6fd5e@archlinux>
-References: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
- <20180902095140.70b6fd5e@archlinux>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 3 Sep 2018 10:20:14 +0800
-Message-ID: <CAMz4kuJYWkuQk9et-odco49r2AMeMpyqAPcYDsq72L4Ko41VuQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] iio: adc: sc27xx: Add raw data support
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        freeman.liu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20180902064601.183036-1-alexander.levin@microsoft.com> <20180902064601.183036-69-alexander.levin@microsoft.com>
+In-Reply-To: <20180902064601.183036-69-alexander.levin@microsoft.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Mon, 3 Sep 2018 07:54:23 +0530
+Message-ID: <CAFZiPx0kNtJriot9ACK8ZWfjJA7+sL5++Up6a57KNohqr9tGVg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.18 069/131] PCI: mobiveil: Fix struct
+ mobiveil_pcie.pcie_reg_base address type
+To:     Alexander.Levin@microsoft.com
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
-
-On 2 September 2018 at 16:51, Jonathan Cameron <jic23@kernel.org> wrote:
-> On Wed, 29 Aug 2018 14:04:04 +0800
-> Baolin Wang <baolin.wang@linaro.org> wrote:
->
->> The headset device will use channel 20 of ADC controller to detect events,
->> but it needs the raw ADC data to do conversion according to its own formula.
->>
->> Thus we should configure the channel mask separately and configure channel
->> 20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> I'm still a little unclear on whether there is fundamentally something different
-> about this channel or whether this is just a policy decision for particular
-> (possibly all) board.  For now we'll go with this change, but if anyone screams
-> we will have to then go the nasty route of supporting both processed and raw
-> for channel 20.
-
-Until now, channel 20 is always used for the headset on the SC27xx
-series PMICs. Yes, this is a policy decision, but for all the SC27xx
-series PMICs.
-
->
-> Applied to the togreg branch of iio.git and pushed out as testing for the
-> autobuilders to play with it.
+Acked-by: Subrahmanya Lingappa
 
 Thanks.
 
--- 
-Baolin Wang
-Best Regards
+On Sun, Sep 2, 2018 at 6:34 PM Sasha Levin
+<Alexander.Levin@microsoft.com> wrote:
+>
+> From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>
+> [ Upstream commit af3f606e0bbb6d811c50b7b90fe324b07fb7cab8 ]
+>
+> The field pcie_reg_base in struct mobiveil_pcie represents a physical
+> address so it should be of phys_addr_t type rather than void __iomem*;
+> this results in the following compilation  warnings:
+>
+> drivers/pci/controller/pcie-mobiveil.c: In function
+> 'mobiveil_pcie_parse_dt':
+> drivers/pci/controller/pcie-mobiveil.c:326:22: warning: assignment makes
+> pointer from integer without a cast [-Wint-conversion]
+>   pcie->pcie_reg_base = res->start;
+>                       ^
+> drivers/pci/controller/pcie-mobiveil.c: In function
+> 'mobiveil_pcie_enable_msi':
+> drivers/pci/controller/pcie-mobiveil.c:485:25: warning: initialization
+> makes integer from pointer without a cast [-Wint-conversion]
+>   phys_addr_t msg_addr = pcie->pcie_reg_base;
+>                          ^~~~
+> drivers/pci/controller/pcie-mobiveil.c: In function
+> 'mobiveil_compose_msi_msg':
+> drivers/pci/controller/pcie-mobiveil.c:640:21: warning: initialization
+> makes integer from pointer without a cast [-Wint-conversion]
+>   phys_addr_t addr = pcie->pcie_reg_base + (data->hwirq * sizeof(int));
+>
+> Fix the type and with it the compilation warnings.
+>
+> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP
+> driver")
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> ---
+>  drivers/pci/controller/pcie-mobiveil.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index 2c81be37b010..a939e8d31735 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -132,7 +132,7 @@ struct mobiveil_pcie {
+>         void __iomem *config_axi_slave_base;    /* endpoint config base */
+>         void __iomem *csr_axi_slave_base;       /* root port config base */
+>         void __iomem *apb_csr_base;     /* MSI register base */
+> -       void __iomem *pcie_reg_base;    /* Physical PCIe Controller Base */
+> +       phys_addr_t pcie_reg_base;      /* Physical PCIe Controller Base */
+>         struct irq_domain *intx_domain;
+>         raw_spinlock_t intx_mask_lock;
+>         int irq;
+> --
+> 2.17.1
