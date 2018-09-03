@@ -2,169 +2,84 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B07CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3027C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECFAF2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFAF2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A34CD2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34CD2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeICUvm (ORCPT
+        id S1727639AbeICUv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 16:51:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58496 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727447AbeICUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 16:51:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2360480D;
-        Mon,  3 Sep 2018 09:30:50 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E97893F5BC;
-        Mon,  3 Sep 2018 09:30:49 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A8E171AE3046; Mon,  3 Sep 2018 17:31:03 +0100 (BST)
-Date:   Mon, 3 Sep 2018 17:31:03 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Haibo.Xu" <haibo.xu@arm.com>
-Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, nd@arm.com, jdike@addtoit.com,
-        richard@nod.at
-Subject: Re: [PATCH] arm64/ptrace: add PTRACE_SYSEMU and
- PTRACE_SYSEMU_SINGLESTEP support
-Message-ID: <20180903163103.GC6954@arm.com>
-References: <20180903062310.GA4524@haibo-VirtualBox>
+        Mon, 3 Sep 2018 16:51:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33804 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727447AbeICUv7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 16:51:59 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1DC4CE9;
+        Mon,  3 Sep 2018 16:31:06 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 18:31:04 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] staging: android: ion: check for kref overflow
+Message-ID: <20180903163104.GF6712@kroah.com>
+References: <20180830230946.228701-1-drosen@google.com>
+ <20180831004144.GC20664@kroah.com>
+ <589c036d-450a-3f3b-8f5a-4148713d4bfb@google.com>
+ <20180831155657.GA25066@kroah.com>
+ <4b4e64a4-bf6f-b3d0-4221-2a0d3206a6a9@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180903062310.GA4524@haibo-VirtualBox>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <4b4e64a4-bf6f-b3d0-4221-2a0d3206a6a9@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 02:23:17PM +0800, Haibo.Xu wrote:
-> Add PTRACE_SYSEMU and PTRACE_SYSEMU_SINGLESTEP support on ARM64.
-> This copies the x86 semantics for invoking ptrace hooks, and have
-> been verified on ARM64 machine.
+On Fri, Aug 31, 2018 at 02:31:38PM -0700, Daniel Rosenberg wrote:
 > 
-> Signed-off-by: Haibo.Xu <haibo.xu@arm.com>
-> Signed-off-by: Bin.Lu <bin.lu@arm.com>
-> ---
->  arch/arm64/include/asm/thread_info.h |  5 ++++-
->  arch/arm64/include/uapi/asm/ptrace.h |  2 ++
->  arch/arm64/kernel/ptrace.c           | 17 +++++++++++++++++
->  3 files changed, 23 insertions(+), 1 deletion(-)
-
-What is PTRACE_SYSEMU and what is its semantics? Why isn't it done in the
-core ptrace code?
-
-> diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-> index 46c3b93..5060d2d 100644
-> --- a/arch/arm64/include/asm/thread_info.h
-> +++ b/arch/arm64/include/asm/thread_info.h
-> @@ -75,6 +75,7 @@ struct thread_info {
->   *  TIF_SYSCALL_TRACE	- syscall trace active
->   *  TIF_SYSCALL_TRACEPOINT - syscall tracepoint for ftrace
->   *  TIF_SYSCALL_AUDIT	- syscall auditing
-> + *  TIF_SYSCALL_EMU	- syscall emulation active
->   *  TIF_SECOMP		- syscall secure computing
->   *  TIF_SIGPENDING	- signal pending
->   *  TIF_NEED_RESCHED	- rescheduling necessary
-> @@ -91,6 +92,7 @@ struct thread_info {
->  #define TIF_SYSCALL_AUDIT	9
->  #define TIF_SYSCALL_TRACEPOINT	10
->  #define TIF_SECCOMP		11
-> +#define TIF_SYSCALL_EMU		12
->  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
->  #define TIF_FREEZE		19
->  #define TIF_RESTORE_SIGMASK	20
-> @@ -106,6 +108,7 @@ struct thread_info {
->  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
->  #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
->  #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-> +#define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
->  #define _TIF_UPROBE		(1 << TIF_UPROBE)
->  #define _TIF_32BIT		(1 << TIF_32BIT)
->  
-> @@ -115,7 +118,7 @@ struct thread_info {
->  
->  #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
->  				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
-> -				 _TIF_NOHZ)
-> +				 _TIF_NOHZ | _TIF_SYSCALL_EMU)
->  
->  #endif /* __KERNEL__ */
->  #endif /* __ASM_THREAD_INFO_H */
-> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-> index b5c3933..04ab06f 100644
-> --- a/arch/arm64/include/uapi/asm/ptrace.h
-> +++ b/arch/arm64/include/uapi/asm/ptrace.h
-> @@ -23,6 +23,8 @@
->  
->  #include <asm/hwcap.h>
->  
-> +#define PTRACE_SYSEMU			31
-> +#define PTRACE_SYSEMU_SINGLESTEP	32
->  
->  /*
->   * PSR bits
-> diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-> index fc35e06..ff3e322 100644
-> --- a/arch/arm64/kernel/ptrace.c
-> +++ b/arch/arm64/kernel/ptrace.c
-> @@ -165,6 +165,9 @@ void ptrace_disable(struct task_struct *child)
->  	 * is likely to cause regressions on obscure architectures.
->  	 */
->  	user_disable_single_step(child);
-> +#ifdef TIF_SYSCALL_EMU
-> +	clear_tsk_thread_flag(child, TIF_SYSCALL_EMU);
-> +#endif
->  }
->  
->  #ifdef CONFIG_HAVE_HW_BREAKPOINT
-> @@ -1351,6 +1354,11 @@ asmlinkage int syscall_trace_enter(struct pt_regs *regs)
->  	if (test_thread_flag(TIF_SYSCALL_TRACE))
->  		tracehook_report_syscall(regs, PTRACE_SYSCALL_ENTER);
->  
-> +	if (test_thread_flag(TIF_SYSCALL_EMU)) {
-> +		tracehook_report_syscall(regs, PTRACE_SYSCALL_ENTER);
-> +		return -1;
-> +	}
-
-This looks weird -- are TIF_SYSCALL_EMU and TIF_SYSCALL_TRACE mutually
-exclusive, or is it harmless to report this twice? Why do we return early
-and skip the seccomp checks?
-
-Will
-
-> +
->  	/* Do the secure computing after ptrace; failures should be fast. */
->  	if (secure_computing(NULL) == -1)
->  		return -1;
-> @@ -1373,6 +1381,15 @@ asmlinkage void syscall_trace_exit(struct pt_regs *regs)
->  
->  	if (test_thread_flag(TIF_SYSCALL_TRACE))
->  		tracehook_report_syscall(regs, PTRACE_SYSCALL_EXIT);
-> +
-> +	/*
-> +	 * We only get here because of TIF_SINGLESTEP,
-> +	 * for PTRACE_SYSEMU_SINGLESTEP, we already reported
-> +	 * the syscall instruction in syscall_trace_enter().
-> +	 */
-> +	if (test_thread_flag(TIF_SINGLESTEP) &&
-> +			!test_thread_flag(TIF_SYSCALL_EMU))
-> +		tracehook_report_syscall_exit(regs, 1);
->  }
->  
->  /*
-> -- 
-> 2.7.4
 > 
+> On 08/31/2018 08:56 AM, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 30, 2018 at 06:36:18PM -0700, Daniel Rosenberg wrote:
+> > > The sign off was on the 4.4.y version that I cherry-picked this from.
+> > Ah that wasn't obvious at all.  What is that git commit id?  You need to
+> > give us a hint as to what is going on when you do that :)
+> b84ec04bae905901("staging: android: ion: check for kref overflow") in 4.4.y
+> > > There was a trivial conflict moving it to 4.9, but it did not modify
+> > > any changed lines, so I hadn't thought that was worth noting on the
+> > > patch. I apologise if leaving the signed-off-by was incorrect here.
+> > Why did I only apply this to 4.4 and not 4.9 when the original patch was
+> > submitted?  That seems odd.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> I don't know. I had included it in the range of kernel versions it should be
+> applied to in the original patch, and noted the minor conflict for later
+> kernel versions. You added it in 3.18 and 4.4, and I assumed not 4.9 because
+> of the conflict in applying the patch, so I sent this version.
+> 
+> b1fa6d8acb50c8e9 ("staging: android: ion: Pull out ion ioctls to a separate
+> file") is the patch that causes the minor conflict in applying the original
+> patch.
+> 4c23cbff073f3b9b ("staging: android: ion: Remove import interface") is the
+> patch that removes the affected code altogether in later kernels versions.
+
+Ok, that makes more sense, thanks for letting me know, this was an odd
+one-off and I didn't remember it at all.
+
+Now queued up.
+
+greg k-h
