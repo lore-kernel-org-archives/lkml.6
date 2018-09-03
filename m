@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02BAC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83030C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89E620658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89E620658
+	by mail.kernel.org (Postfix) with ESMTP id 4AF1220658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:36:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF1220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbeICV5Q (ORCPT
+        id S1731611AbeICV5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:57:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48082 "EHLO
+        Mon, 3 Sep 2018 17:57:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbeICV5Q (ORCPT
+        with ESMTP id S1726196AbeICV5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:57:16 -0400
+        Mon, 3 Sep 2018 17:57:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BBDDD16;
-        Mon,  3 Sep 2018 17:36:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 825ECD1B;
+        Mon,  3 Sep 2018 17:36:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        isaacm@codeaurora.org, matt@codeblueprint.co.uk,
-        psodagud@codeaurora.org, pkondeti@codeaurora.org
-Subject: [PATCH 4.18 039/123] stop_machine: Reflow cpu_stop_queue_two_works()
-Date:   Mon,  3 Sep 2018 18:56:23 +0200
-Message-Id: <20180903165721.129191585@linuxfoundation.org>
+        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        matt@codeblueprint.co.uk, bigeasy@linutronix.de
+Subject: [PATCH 4.18 040/123] stop_machine: Atomically queue and wake stopper threads
+Date:   Mon,  3 Sep 2018 18:56:24 +0200
+Message-Id: <20180903165721.172550206@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,110 +52,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Prasad Sodagudi <psodagud@codeaurora.org>
 
-commit b80a2bfce85e1051056d98d04ecb2d0b55cbbc1c upstream.
+commit cfd355145c32bb7ccb65fccbe2d67280dc2119e1 upstream.
 
-The code flow in cpu_stop_queue_two_works() is a little arcane; fix this by
-lifting the preempt_disable() to the top to create more natural nesting wrt
-the spinlocks and make the wake_up_q() and preempt_enable() unconditional
-at the end.
+When cpu_stop_queue_work() releases the lock for the stopper
+thread that was queued into its wake queue, preemption is
+enabled, which leads to the following deadlock:
 
-Furthermore, enable preemption in the -EDEADLK case, such that we spin-wait
-with preemption enabled.
+CPU0                              CPU1
+sched_setaffinity(0, ...)
+__set_cpus_allowed_ptr()
+stop_one_cpu(0, ...)              stop_two_cpus(0, 1, ...)
+cpu_stop_queue_work(0, ...)       cpu_stop_queue_two_works(0, ..., 1, ...)
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+-grabs lock for migration/0-
+                                  -spins with preemption disabled,
+                                   waiting for migration/0's lock to be
+                                   released-
+
+-adds work items for migration/0
+and queues migration/0 to its
+wake_q-
+
+-releases lock for migration/0
+ and preemption is enabled-
+
+-current thread is preempted,
+and __set_cpus_allowed_ptr
+has changed the thread's
+cpu allowed mask to CPU1 only-
+
+                                  -acquires migration/0 and migration/1's
+                                   locks-
+
+                                  -adds work for migration/0 but does not
+                                   add migration/0 to wake_q, since it is
+                                   already in a wake_q-
+
+                                  -adds work for migration/1 and adds
+                                   migration/1 to its wake_q-
+
+                                  -releases migration/0 and migration/1's
+                                   locks, wakes migration/1, and enables
+                                   preemption-
+
+                                  -since migration/1 is requested to run,
+                                   migration/1 begins to run and waits on
+                                   migration/0, but migration/0 will never
+                                   be able to run, since the thread that
+                                   can wake it is affine to CPU1-
+
+Disable preemption in cpu_stop_queue_work() before queueing works for
+stopper threads, and queueing the stopper thread in the wake queue, to
+ensure that the operation of queueing the works and waking the stopper
+threads is atomic.
+
+Fixes: 0b26351b910f ("stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock")
+Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: isaacm@codeaurora.org
+Cc: peterz@infradead.org
 Cc: matt@codeblueprint.co.uk
-Cc: psodagud@codeaurora.org
+Cc: bigeasy@linutronix.de
 Cc: gregkh@linuxfoundation.org
-Cc: pkondeti@codeaurora.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180730112140.GH2494@hirez.programming.kicks-ass.net
+Link: https://lkml.kernel.org/r/1533329766-4856-1-git-send-email-isaacm@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+Co-Developed-by: Isaac J. Manjarres <isaacm@codeaurora.org>
+
 ---
- kernel/stop_machine.c |   41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ kernel/stop_machine.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/kernel/stop_machine.c
 +++ b/kernel/stop_machine.c
-@@ -236,13 +236,24 @@ static int cpu_stop_queue_two_works(int
- 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
- 	DEFINE_WAKE_Q(wakeq);
- 	int err;
-+
- retry:
-+	/*
-+	 * The waking up of stopper threads has to happen in the same
-+	 * scheduling context as the queueing.  Otherwise, there is a
-+	 * possibility of one of the above stoppers being woken up by another
-+	 * CPU, and preempting us. This will cause us to not wake up the other
-+	 * stopper forever.
-+	 */
+@@ -81,6 +81,7 @@ static bool cpu_stop_queue_work(unsigned
+ 	unsigned long flags;
+ 	bool enabled;
+ 
 +	preempt_disable();
- 	raw_spin_lock_irq(&stopper1->lock);
- 	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
+ 	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled = stopper->enabled;
+ 	if (enabled)
+@@ -90,6 +91,7 @@ static bool cpu_stop_queue_work(unsigned
+ 	raw_spin_unlock_irqrestore(&stopper->lock, flags);
  
--	err = -ENOENT;
--	if (!stopper1->enabled || !stopper2->enabled)
-+	if (!stopper1->enabled || !stopper2->enabled) {
-+		err = -ENOENT;
- 		goto unlock;
-+	}
-+
- 	/*
- 	 * Ensure that if we race with __stop_cpus() the stoppers won't get
- 	 * queued up in reverse order leading to system deadlock.
-@@ -253,36 +264,30 @@ retry:
- 	 * It can be falsely true but it is safe to spin until it is cleared,
- 	 * queue_stop_cpus_work() does everything under preempt_disable().
- 	 */
--	err = -EDEADLK;
--	if (unlikely(stop_cpus_in_progress))
--			goto unlock;
-+	if (unlikely(stop_cpus_in_progress)) {
-+		err = -EDEADLK;
-+		goto unlock;
-+	}
- 
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
--	/*
--	 * The waking up of stopper threads has to happen
--	 * in the same scheduling context as the queueing.
--	 * Otherwise, there is a possibility of one of the
--	 * above stoppers being woken up by another CPU,
--	 * and preempting us. This will cause us to n ot
--	 * wake up the other stopper forever.
--	 */
--	preempt_disable();
-+
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
- 
- 	if (unlikely(err == -EDEADLK)) {
-+		preempt_enable();
-+
- 		while (stop_cpus_in_progress)
- 			cpu_relax();
-+
- 		goto retry;
- 	}
- 
--	if (!err) {
--		wake_up_q(&wakeq);
--		preempt_enable();
--	}
-+	wake_up_q(&wakeq);
+ 	wake_up_q(&wakeq);
 +	preempt_enable();
  
- 	return err;
+ 	return enabled;
  }
 
 
