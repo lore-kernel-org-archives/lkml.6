@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A1CC4321E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9E7C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34D8D20870
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B132087A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:59:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9dmMDb4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D8D20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzmgAWxT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B132087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeIDDWF (ORCPT
+        id S1727272AbeIDDWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 23:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32856 "EHLO mail.kernel.org"
+        Mon, 3 Sep 2018 23:22:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeIDDWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 23:22:05 -0400
+        id S1726133AbeIDDWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 23:22:06 -0400
 Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A1EB20867;
-        Mon,  3 Sep 2018 22:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C4DF20869;
+        Mon,  3 Sep 2018 22:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536015586;
-        bh=wId+dpuEA3UHHzFBpmohcKY24iTKAieK23VJlYBewFU=;
+        s=default; t=1536015587;
+        bh=gKbduW8IciTOo3wcGLuD4BtphCNwjHBJHV02WFN1haY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=m9dmMDb4Kpc4JAPJDSw8ATzFpNDl/grR1xnbZujERDLnT8ppn3lSWzNVFTSNJtysU
-         qWwWOdRfWnEi+3FrHZFn8U/TFk4iAjej/4tqqBxEsSrA2jvK/FlgEqNnbKek5ka3qe
-         QUpiKkFM59R3ZE4IRGxF6vsD44a+qFwDBkhY4ya0=
+        b=QzmgAWxTqkb8ohdJG8PDKes12J0IEB2WReSNzxtaQ6eD4xR1gdFpOOVsZK7tQW1om
+         IIX6wAgcQTzEuvowEmiSgA6qw3fm8mpL/Pt+6sRfYCT8Gh5htQCRwSS0i0iYspbZwl
+         LUKNBv3YyAeiQq0LyjibNQP2+2QBWR1X75g6Tci0=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     Borislav Petkov <bp@alien8.de>,
@@ -51,9 +51,9 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Andi Kleen <ak@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 2/3] x86/entry/64: Use the TSS sp2 slot for SYSCALL/SYSRET scratch space
-Date:   Mon,  3 Sep 2018 15:59:43 -0700
-Message-Id: <08e769a0023dbad4bac6f34f3631dbaf8ad59f4f.1536015544.git.luto@kernel.org>
+Subject: [PATCH v2 3/3] x86/pti/64: Remove the SYSCALL64 entry trampoline
+Date:   Mon,  3 Sep 2018 15:59:44 -0700
+Message-Id: <8c7c6e483612c3e4e10ca89495dc160b1aa66878.1536015544.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1536015544.git.luto@kernel.org>
 References: <cover.1536015544.git.luto@kernel.org>
@@ -64,122 +64,367 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the non-trampoline SYSCALL64 path, we use a percpu variable to
-temporarily store the user RSP value.  Instead of a separate
-variable, use the otherwise unused sp2 slot in the TSS.  This will
-improve cache locality, as the sp1 slot is already used in the same
-code to find the kernel stack.  It will also simplify a future
-change to make the non-trampoline path work in PTI mode.
+The SYSCALL64 trampoline has a couple of nice properties:
+
+ - The usual sequence of SWAPGS followed by two GS-relative accesses to
+   set up RSP is somewhat slow because the GS-relative accesses need
+   to wait for SWAPGS to finish.  The trampoline approach allows
+   RIP-relative accesses to set up RSP, which avoids the stall.
+
+ - The trampoline avoids any percpu access before CR3 is set up,
+   which means that no percpu memory needs to be mapped in the user
+   page tables.  This prevents using Meltdown to read any percpu memory
+   outside the cpu_entry_area and prevents using timing leaks
+   to directly locate the percpu areas.
+
+The downsides of using a trampoline may outweigh the upsides, however.
+It adds an extra non-contiguous I$ cache line to system calls, and it
+forces an indirect jump to transfer control back to the normal kernel
+text after CR3 is set up.  The latter is because x86 lacks a 64-bit
+direct jump instruction that could jump from the trampoline to the entry
+text.  With retpolines enabled, the indirect jump is extremely slow.
+
+This patch changes the code to map the percpu TSS into the user page
+tables to allow the non-trampoline SYSCALL64 path to work under PTI.
+This does not add a new direct information leak, since the TSS is
+readable by Meltdown from the cpu_entry_area alias regardless.  It
+does allow a timing attack to locate the percpu area, but KASLR is
+more or less a lost cause against local attack on CPUs vulnerable to
+Meltdown regardless.  As far as I'm concerned, on current hardware,
+KASLR is only useful to mitigate remote attacks that try to attack
+the kernel without first gaining RCE against a vulnerable user
+process.
+
+On Skylake, with CONFIG_RETPOLINE=y and KPTI on, this reduces
+syscall overhead from ~237ns to ~228ns.
+
+There is a possible alternative approach: we could instead move the
+trampoline within 2G of the entry text and make a separate copy for
+each CPU.  Then we could use a direct jump to rejoin the normal
+entry path.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/entry/entry_64.S        | 16 +++++++++-------
- arch/x86/include/asm/processor.h |  6 ++++++
- arch/x86/kernel/asm-offsets.c    |  3 ++-
- arch/x86/kernel/process_64.c     |  2 --
- arch/x86/xen/xen-asm_64.S        |  8 +++++---
- 5 files changed, 22 insertions(+), 13 deletions(-)
+ arch/x86/entry/entry_64.S             | 69 +--------------------------
+ arch/x86/include/asm/cpu_entry_area.h |  2 -
+ arch/x86/include/asm/sections.h       |  1 -
+ arch/x86/kernel/asm-offsets.c         |  2 -
+ arch/x86/kernel/cpu/common.c          | 11 +----
+ arch/x86/kernel/kprobes/core.c        | 10 +---
+ arch/x86/kernel/vmlinux.lds.S         | 10 ----
+ arch/x86/mm/cpu_entry_area.c          | 36 --------------
+ arch/x86/mm/pti.c                     | 33 ++++++++++++-
+ 9 files changed, 36 insertions(+), 138 deletions(-)
 
 diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 1796c42e08af..17ae40602539 100644
+index 17ae40602539..d2f87ca119a5 100644
 --- a/arch/x86/entry/entry_64.S
 +++ b/arch/x86/entry/entry_64.S
-@@ -215,18 +215,20 @@ ENTRY(entry_SYSCALL_64)
- 	/*
- 	 * This path is only taken when PAGE_TABLE_ISOLATION is disabled so it
- 	 * is not required to switch CR3.
-+	 *
-+	 * tss.sp2 is scratch space.
- 	 */
--	movq	%rsp, PER_CPU_VAR(rsp_scratch)
-+	movq	%rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
- 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+@@ -142,67 +142,6 @@ END(native_usergs_sysret64)
+  * with them due to bugs in both AMD and Intel CPUs.
+  */
  
- 	/* Construct struct pt_regs on stack */
+-	.pushsection .entry_trampoline, "ax"
+-
+-/*
+- * The code in here gets remapped into cpu_entry_area's trampoline.  This means
+- * that the assembler and linker have the wrong idea as to where this code
+- * lives (and, in fact, it's mapped more than once, so it's not even at a
+- * fixed address).  So we can't reference any symbols outside the entry
+- * trampoline and expect it to work.
+- *
+- * Instead, we carefully abuse %rip-relative addressing.
+- * _entry_trampoline(%rip) refers to the start of the remapped) entry
+- * trampoline.  We can thus find cpu_entry_area with this macro:
+- */
+-
+-#define CPU_ENTRY_AREA \
+-	_entry_trampoline - CPU_ENTRY_AREA_entry_trampoline(%rip)
+-
+-/* The top word of the SYSENTER stack is hot and is usable as scratch space. */
+-#define RSP_SCRATCH	CPU_ENTRY_AREA_entry_stack + \
+-			SIZEOF_entry_stack - 8 + CPU_ENTRY_AREA
+-
+-ENTRY(entry_SYSCALL_64_trampoline)
+-	UNWIND_HINT_EMPTY
+-	swapgs
+-
+-	/* Stash the user RSP. */
+-	movq	%rsp, RSP_SCRATCH
+-
+-	/* Note: using %rsp as a scratch reg. */
+-	SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
+-
+-	/* Load the top of the task stack into RSP */
+-	movq	CPU_ENTRY_AREA_tss + TSS_sp1 + CPU_ENTRY_AREA, %rsp
+-
+-	/* Start building the simulated IRET frame. */
 -	pushq	$__USER_DS			/* pt_regs->ss */
--	pushq	PER_CPU_VAR(rsp_scratch)	/* pt_regs->sp */
+-	pushq	RSP_SCRATCH			/* pt_regs->sp */
 -	pushq	%r11				/* pt_regs->flags */
 -	pushq	$__USER_CS			/* pt_regs->cs */
 -	pushq	%rcx				/* pt_regs->ip */
-+	pushq	$__USER_DS				/* pt_regs->ss */
-+	pushq	PER_CPU_VAR(cpu_tss_rw + TSS_sp2)	/* pt_regs->sp */
-+	pushq	%r11					/* pt_regs->flags */
-+	pushq	$__USER_CS				/* pt_regs->cs */
-+	pushq	%rcx					/* pt_regs->ip */
- GLOBAL(entry_SYSCALL_64_after_hwframe)
--	pushq	%rax				/* pt_regs->orig_ax */
-+	pushq	%rax					/* pt_regs->orig_ax */
- 
- 	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
- 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index c24297268ebc..8433d76bc37b 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -313,7 +313,13 @@ struct x86_hw_tss {
+-
+-	/*
+-	 * x86 lacks a near absolute jump, and we can't jump to the real
+-	 * entry text with a relative jump.  We could push the target
+-	 * address and then use retq, but this destroys the pipeline on
+-	 * many CPUs (wasting over 20 cycles on Sandy Bridge).  Instead,
+-	 * spill RDI and restore it in a second-stage trampoline.
+-	 */
+-	pushq	%rdi
+-	movq	$entry_SYSCALL_64_stage2, %rdi
+-	JMP_NOSPEC %rdi
+-END(entry_SYSCALL_64_trampoline)
+-
+-	.popsection
+-
+-ENTRY(entry_SYSCALL_64_stage2)
+-	UNWIND_HINT_EMPTY
+-	popq	%rdi
+-	jmp	entry_SYSCALL_64_after_hwframe
+-END(entry_SYSCALL_64_stage2)
+-
+ ENTRY(entry_SYSCALL_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+@@ -212,13 +151,9 @@ ENTRY(entry_SYSCALL_64)
  	 */
- 	u64			sp1;
  
-+	/*
-+	 * Since Linux does not use ring 2, the 'sp2' slot is unused by
-+	 * hardware.  entry_SYSCALL_64 uses it as scratch space to stash
-+	 * the user RSP value.
-+	 */
- 	u64			sp2;
-+
- 	u64			reserved2;
- 	u64			ist[7];
- 	u32			reserved3;
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 01de31db300d..fc2e90d3429a 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -105,7 +105,8 @@ void common(void) {
- 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
- 	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
+ 	swapgs
+-	/*
+-	 * This path is only taken when PAGE_TABLE_ISOLATION is disabled so it
+-	 * is not required to switch CR3.
+-	 *
+-	 * tss.sp2 is scratch space.
+-	 */
++	/* tss.sp2 is scratch space. */
+ 	movq	%rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%rsp
+ 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
  
--	/* Offset for sp0 and sp1 into the tss_struct */
-+	/* Offset for fields in tss_struct */
- 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
- 	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
-+	OFFSET(TSS_sp2, tss_struct, x86_tss.sp2);
- }
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index a451bc374b9b..0fa7aa19f09e 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -59,8 +59,6 @@
- #include <asm/unistd_32_ia32.h>
+ 	/* Construct struct pt_regs on stack */
+diff --git a/arch/x86/include/asm/cpu_entry_area.h b/arch/x86/include/asm/cpu_entry_area.h
+index 4a7884b8dca5..29c706415443 100644
+--- a/arch/x86/include/asm/cpu_entry_area.h
++++ b/arch/x86/include/asm/cpu_entry_area.h
+@@ -30,8 +30,6 @@ struct cpu_entry_area {
+ 	 */
+ 	struct tss_struct tss;
+ 
+-	char entry_trampoline[PAGE_SIZE];
+-
+ #ifdef CONFIG_X86_64
+ 	/*
+ 	 * Exception stacks used for IST entries.
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index 4a911a382ade..8ea1cfdbeabc 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -11,7 +11,6 @@ extern char __end_rodata_aligned[];
+ 
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
+-extern char __entry_trampoline_start[], __entry_trampoline_end[];
  #endif
  
--__visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
--
- /* Prints also some state that isn't saved in the pt_regs */
- void __show_regs(struct pt_regs *regs, int all)
- {
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index 417b339e5c8e..bb1c2da0381d 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -91,13 +91,15 @@ ENTRY(xen_iret)
- ENTRY(xen_sysret64)
- 	/*
- 	 * We're already on the usermode stack at this point, but
--	 * still with the kernel gs, so we can easily switch back
-+	 * still with the kernel gs, so we can easily switch back.
-+	 *
-+	 * tss.sp2 is scratch space.
- 	 */
--	movq %rsp, PER_CPU_VAR(rsp_scratch)
-+	movq %rsp, PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
- 	movq PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index fc2e90d3429a..083c01309027 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -99,8 +99,6 @@ void common(void) {
+ 	OFFSET(TLB_STATE_user_pcid_flush_mask, tlb_state, user_pcid_flush_mask);
  
- 	pushq $__USER_DS
--	pushq PER_CPU_VAR(rsp_scratch)
-+	pushq PER_CPU_VAR(cpu_tss_rw + TSS_sp2)
- 	pushq %r11
- 	pushq $__USER_CS
- 	pushq %rcx
+ 	/* Layout info for cpu_entry_area */
+-	OFFSET(CPU_ENTRY_AREA_tss, cpu_entry_area, tss);
+-	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
+ 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
+ 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
+ 	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 84dee5ab745a..83068258c856 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1530,19 +1530,10 @@ EXPORT_PER_CPU_SYMBOL(__preempt_count);
+ /* May not be marked __init: used by software suspend */
+ void syscall_init(void)
+ {
+-	extern char _entry_trampoline[];
+-	extern char entry_SYSCALL_64_trampoline[];
+-
+ 	int cpu = smp_processor_id();
+-	unsigned long SYSCALL64_entry_trampoline =
+-		(unsigned long)get_cpu_entry_area(cpu)->entry_trampoline +
+-		(entry_SYSCALL_64_trampoline - _entry_trampoline);
+ 
+ 	wrmsr(MSR_STAR, 0, (__USER32_CS << 16) | __KERNEL_CS);
+-	if (static_cpu_has(X86_FEATURE_PTI))
+-		wrmsrl(MSR_LSTAR, SYSCALL64_entry_trampoline);
+-	else
+-		wrmsrl(MSR_LSTAR, (unsigned long)entry_SYSCALL_64);
++	wrmsrl(MSR_LSTAR, (unsigned long)entry_SYSCALL_64);
+ 
+ #ifdef CONFIG_IA32_EMULATION
+ 	wrmsrl(MSR_CSTAR, (unsigned long)entry_SYSCALL_compat);
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index b0d1e81c96bb..f802cf5b4478 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1066,18 +1066,10 @@ NOKPROBE_SYMBOL(kprobe_exceptions_notify);
+ 
+ bool arch_within_kprobe_blacklist(unsigned long addr)
+ {
+-	bool is_in_entry_trampoline_section = false;
+-
+-#ifdef CONFIG_X86_64
+-	is_in_entry_trampoline_section =
+-		(addr >= (unsigned long)__entry_trampoline_start &&
+-		 addr < (unsigned long)__entry_trampoline_end);
+-#endif
+ 	return  (addr >= (unsigned long)__kprobes_text_start &&
+ 		 addr < (unsigned long)__kprobes_text_end) ||
+ 		(addr >= (unsigned long)__entry_text_start &&
+-		 addr < (unsigned long)__entry_text_end) ||
+-		is_in_entry_trampoline_section;
++		 addr < (unsigned long)__entry_text_end);
+ }
+ 
+ int __init arch_init_kprobes(void)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 8bde0a419f86..9c77d2df9c27 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -118,16 +118,6 @@ SECTIONS
+ 		*(.fixup)
+ 		*(.gnu.warning)
+ 
+-#ifdef CONFIG_X86_64
+-		. = ALIGN(PAGE_SIZE);
+-		__entry_trampoline_start = .;
+-		_entry_trampoline = .;
+-		*(.entry_trampoline)
+-		. = ALIGN(PAGE_SIZE);
+-		__entry_trampoline_end = .;
+-		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+-#endif
+-
+ #ifdef CONFIG_RETPOLINE
+ 		__indirect_thunk_start = .;
+ 		*(.text.__x86.indirect_thunk)
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index 076ebdce9bd4..12d7e7fb4efd 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -15,7 +15,6 @@ static DEFINE_PER_CPU_PAGE_ALIGNED(struct entry_stack_page, entry_stack_storage)
+ #ifdef CONFIG_X86_64
+ static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
+ 	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
+-static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
+ #endif
+ 
+ struct cpu_entry_area *get_cpu_entry_area(int cpu)
+@@ -83,8 +82,6 @@ static void percpu_setup_debug_store(int cpu)
+ static void __init setup_cpu_entry_area(int cpu)
+ {
+ #ifdef CONFIG_X86_64
+-	extern char _entry_trampoline[];
+-
+ 	/* On 64-bit systems, we use a read-only fixmap GDT and TSS. */
+ 	pgprot_t gdt_prot = PAGE_KERNEL_RO;
+ 	pgprot_t tss_prot = PAGE_KERNEL_RO;
+@@ -146,43 +143,10 @@ static void __init setup_cpu_entry_area(int cpu)
+ 	cea_map_percpu_pages(&get_cpu_entry_area(cpu)->exception_stacks,
+ 			     &per_cpu(exception_stacks, cpu),
+ 			     sizeof(exception_stacks) / PAGE_SIZE, PAGE_KERNEL);
+-
+-	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
+-		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
+-	/*
+-	 * The cpu_entry_area alias addresses are not in the kernel binary
+-	 * so they do not show up in /proc/kcore normally.  This adds entries
+-	 * for them manually.
+-	 */
+-	kclist_add_remap(&per_cpu(kcore_entry_trampoline, cpu),
+-			 _entry_trampoline,
+-			 &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE);
+ #endif
+ 	percpu_setup_debug_store(cpu);
+ }
+ 
+-#ifdef CONFIG_X86_64
+-int arch_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+-		     char *name)
+-{
+-	unsigned int cpu, ncpu = 0;
+-
+-	if (symnum >= num_possible_cpus())
+-		return -EINVAL;
+-
+-	for_each_possible_cpu(cpu) {
+-		if (ncpu++ >= symnum)
+-			break;
+-	}
+-
+-	*value = (unsigned long)&get_cpu_entry_area(cpu)->entry_trampoline;
+-	*type = 't';
+-	strlcpy(name, "__entry_SYSCALL_64_trampoline", KSYM_NAME_LEN);
+-
+-	return 0;
+-}
+-#endif
+-
+ static __init void setup_cpu_entry_area_ptes(void)
+ {
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 31341ae7309f..7e79154846c8 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -434,11 +434,42 @@ static void __init pti_clone_p4d(unsigned long addr)
+ }
+ 
+ /*
+- * Clone the CPU_ENTRY_AREA into the user space visible page table.
++ * Clone the CPU_ENTRY_AREA and associated data into the user space visible
++ * page table.
+  */
+ static void __init pti_clone_user_shared(void)
+ {
++	unsigned cpu;
++
+ 	pti_clone_p4d(CPU_ENTRY_AREA_BASE);
++
++	for_each_possible_cpu(cpu) {
++		/*
++		 * The SYSCALL64 entry code needs to be able to find the
++		 * thread stack and needs one word of scratch space in which
++		 * to spill a register.  All of this lives in the TSS, in
++		 * the sp1 and sp2 slots.
++		 *
++		 * This is done for all possible CPUs during boot to ensure
++		 * that it's propagated to all mms.  If we were to add one of
++		 * these mappings during CPU hotplug, we would need to take
++		 * some measure to make sure that every mm that subsequently
++		 * ran on that CPU would have the relevant PGD entry in its
++		 * pagetables.  The usual vmalloc_fault() mechanism would not
++		 * work for page faults taken in entry_SYSCALL_64 before RSP
++		 * is set up.
++		 */
++
++		unsigned long va = (unsigned long)&per_cpu(cpu_tss_rw, cpu);
++		phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
++		pte_t *target_pte;
++
++		target_pte = pti_user_pagetable_walk_pte(va);
++		if (WARN_ON(!target_pte))
++			return;
++
++		*target_pte = pfn_pte(pa >> PAGE_SHIFT, PAGE_KERNEL);
++	}
+ }
+ 
+ #else /* CONFIG_X86_64 */
 -- 
 2.17.1
 
