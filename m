@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27768C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85256C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D055220869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D055220869
+	by mail.kernel.org (Postfix) with ESMTP id 4572C2086E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:54:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4572C2086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbeICVPM (ORCPT
+        id S1729023AbeICVPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:15:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38298 "EHLO
+        Mon, 3 Sep 2018 17:15:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38314 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728398AbeICVPL (ORCPT
+        with ESMTP id S1728398AbeICVPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:15:11 -0400
+        Mon, 3 Sep 2018 17:15:14 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0C1ECF8;
-        Mon,  3 Sep 2018 16:54:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9F76CFB;
+        Mon,  3 Sep 2018 16:54:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 21/80] net: prevent ISA drivers from building on PPC32
-Date:   Mon,  3 Sep 2018 18:48:59 +0200
-Message-Id: <20180903164935.003991093@linuxfoundation.org>
+Subject: [PATCH 4.4 30/80] selftests/ftrace: Add snapshot and tracing_on test case
+Date:   Mon,  3 Sep 2018 18:49:08 +0200
+Message-Id: <20180903164935.354711574@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -52,77 +55,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit c9ce1fa1c24b08e13c2a3b5b1f94a19c9eaa982c ]
+[ Upstream commit 82f4f3e69c5c29bce940dd87a2c0f16c51d48d17 ]
 
-Prevent drivers from building on PPC32 if they use isa_bus_to_virt(),
-isa_virt_to_bus(), or isa_page_to_bus(), which are not available and
-thus cause build errors.
+Add a testcase for checking snapshot and tracing_on
+relationship. This ensures that the snapshotting doesn't
+affect current tracing on/off settings.
 
-../drivers/net/ethernet/3com/3c515.c: In function 'corkscrew_open':
-../drivers/net/ethernet/3com/3c515.c:824:9: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
+Link: http://lkml.kernel.org/r/153149932412.11274.15289227592627901488.stgit@devbox
 
-../drivers/net/ethernet/amd/lance.c: In function 'lance_rx':
-../drivers/net/ethernet/amd/lance.c:1203:23: error: implicit declaration of function 'isa_bus_to_virt'; did you mean 'bus_to_virt'? [-Werror=implicit-function-declaration]
-
-../drivers/net/ethernet/amd/ni65.c: In function 'ni65_init_lance':
-../drivers/net/ethernet/amd/ni65.c:585:20: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
-
-../drivers/net/ethernet/cirrus/cs89x0.c: In function 'net_open':
-../drivers/net/ethernet/cirrus/cs89x0.c:897:20: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/3com/Kconfig   |    2 +-
- drivers/net/ethernet/amd/Kconfig    |    4 ++--
- drivers/net/ethernet/cirrus/Kconfig |    1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc |   28 ++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
 
---- a/drivers/net/ethernet/3com/Kconfig
-+++ b/drivers/net/ethernet/3com/Kconfig
-@@ -32,7 +32,7 @@ config EL3
- 
- config 3C515
- 	tristate "3c515 ISA \"Fast EtherLink\""
--	depends on ISA && ISA_DMA_API
-+	depends on ISA && ISA_DMA_API && !PPC32
- 	---help---
- 	  If you have a 3Com ISA EtherLink XL "Corkscrew" 3c515 Fast Ethernet
- 	  network card, say Y here.
---- a/drivers/net/ethernet/amd/Kconfig
-+++ b/drivers/net/ethernet/amd/Kconfig
-@@ -44,7 +44,7 @@ config AMD8111_ETH
- 
- config LANCE
- 	tristate "AMD LANCE and PCnet (AT1500 and NE2100) support"
--	depends on ISA && ISA_DMA_API && !ARM
-+	depends on ISA && ISA_DMA_API && !ARM && !PPC32
- 	---help---
- 	  If you have a network (Ethernet) card of this type, say Y here.
- 	  Some LinkSys cards are of this type.
-@@ -138,7 +138,7 @@ config PCMCIA_NMCLAN
- 
- config NI65
- 	tristate "NI6510 support"
--	depends on ISA && ISA_DMA_API && !ARM
-+	depends on ISA && ISA_DMA_API && !ARM && !PPC32
- 	---help---
- 	  If you have a network (Ethernet) card of this type, say Y here.
- 
---- a/drivers/net/ethernet/cirrus/Kconfig
-+++ b/drivers/net/ethernet/cirrus/Kconfig
-@@ -19,6 +19,7 @@ if NET_VENDOR_CIRRUS
- config CS89x0
- 	tristate "CS89x0 support"
- 	depends on ISA || EISA || ARM
-+	depends on !PPC32
- 	---help---
- 	  Support for CS89x0 chipset based Ethernet cards. If you have a
- 	  network (Ethernet) card of this type, say Y and read the file
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/00basic/snapshot.tc
+@@ -0,0 +1,28 @@
++#!/bin/sh
++# description: Snapshot and tracing setting
++# flags: instance
++
++[ ! -f snapshot ] && exit_unsupported
++
++echo "Set tracing off"
++echo 0 > tracing_on
++
++echo "Allocate and take a snapshot"
++echo 1 > snapshot
++
++# Since trace buffer is empty, snapshot is also empty, but allocated
++grep -q "Snapshot is allocated" snapshot
++
++echo "Ensure keep tracing off"
++test `cat tracing_on` -eq 0
++
++echo "Set tracing on"
++echo 1 > tracing_on
++
++echo "Take a snapshot again"
++echo 1 > snapshot
++
++echo "Ensure keep tracing on"
++test `cat tracing_on` -eq 1
++
++exit 0
 
 
