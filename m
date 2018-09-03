@@ -6,50 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F18C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F103EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9E2320869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9E2320869
+	by mail.kernel.org (Postfix) with ESMTP id B1DE020868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DE020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728505AbeICVN0 (ORCPT
+        id S1728524AbeICVN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:13:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37856 "EHLO
+        Mon, 3 Sep 2018 17:13:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37886 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbeICVNZ (ORCPT
+        with ESMTP id S1728510AbeICVN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:13:25 -0400
+        Mon, 3 Sep 2018 17:13:28 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C045CA8;
-        Mon,  3 Sep 2018 16:52:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 283A6CEE;
+        Mon,  3 Sep 2018 16:52:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jon Medhurst <tixy@linaro.org>,
+        stable@vger.kernel.org, Li Wang <liwang@redhat.com>,
+        Dan Streetman <ddstreet@ieee.org>,
+        Seth Jennings <sjenning@redhat.com>,
+        Huang Ying <huang.ying.caritas@gmail.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
-        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
-        linux-arch@vger.kernel.org, rostedt@goodmis.org,
-        schwidefsky@de.ibm.com
-Subject: [PATCH 3.18 52/56] kprobes: Make list and blacklist root user read only
-Date:   Mon,  3 Sep 2018 18:49:42 +0200
-Message-Id: <20180903164926.693752256@linuxfoundation.org>
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 26/56] zswap: re-check zswap_is_full() after do zswap_shrink()
+Date:   Mon,  3 Sep 2018 18:49:16 +0200
+Message-Id: <20180903164925.390418877@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -66,63 +56,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Li Wang <liwang@redhat.com>
 
-commit f2a3ab36077222437b4826fc76111caa14562b7c upstream.
+[ Upstream commit 16e536ef47f567289a5699abee9ff7bb304bc12d ]
 
-Since the blacklist and list files on debugfs indicates
-a sensitive address information to reader, it should be
-restricted to the root user.
+/sys/../zswap/stored_pages keeps rising in a zswap test with
+"zswap.max_pool_percent=0" parameter.  But it should not compress or
+store pages any more since there is no space in the compressed pool.
 
-Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Jon Medhurst <tixy@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tobin C . Harding <me@tobin.cc>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: acme@kernel.org
-Cc: akpm@linux-foundation.org
-Cc: brueckner@linux.vnet.ibm.com
-Cc: linux-arch@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: schwidefsky@de.ibm.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/152491890171.9916.5183693615601334087.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reproduce steps:
+  1. Boot kernel with "zswap.enabled=1"
+  2. Set the max_pool_percent to 0
+      # echo 0 > /sys/module/zswap/parameters/max_pool_percent
+  3. Do memory stress test to see if some pages have been compressed
+      # stress --vm 1 --vm-bytes $mem_available"M" --timeout 60s
+  4. Watching the 'stored_pages' number increasing or not
+
+The root cause is:
+
+  When zswap_max_pool_percent is set to 0 via kernel parameter,
+  zswap_is_full() will always return true due to zswap_shrink().  But if
+  the shinking is able to reclain a page successfully the code then
+  proceeds to compressing/storing another page, so the value of
+  stored_pages will keep changing.
+
+To solve the issue, this patch adds a zswap_is_full() check again after
+  zswap_shrink() to make sure it's now under the max_pool_percent, and to
+  not compress/store if we reached the limit.
+
+Link: http://lkml.kernel.org/r/20180530103936.17812-1-liwang@redhat.com
+Signed-off-by: Li Wang <liwang@redhat.com>
+Acked-by: Dan Streetman <ddstreet@ieee.org>
+Cc: Seth Jennings <sjenning@redhat.com>
+Cc: Huang Ying <huang.ying.caritas@gmail.com>
+Cc: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/kprobes.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/zswap.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2425,7 +2425,7 @@ static int __init debugfs_kprobe_init(vo
- 	if (!dir)
- 		return -ENOMEM;
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -662,6 +662,15 @@ static int zswap_frontswap_store(unsigne
+ 			ret = -ENOMEM;
+ 			goto reject;
+ 		}
++
++		/* A second zswap_is_full() check after
++		 * zswap_shrink() to make sure it's now
++		 * under the max_pool_percent
++		 */
++		if (zswap_is_full()) {
++			ret = -ENOMEM;
++			goto reject;
++		}
+ 	}
  
--	file = debugfs_create_file("list", 0444, dir, NULL,
-+	file = debugfs_create_file("list", 0400, dir, NULL,
- 				&debugfs_kprobes_operations);
- 	if (!file)
- 		goto error;
-@@ -2435,7 +2435,7 @@ static int __init debugfs_kprobe_init(vo
- 	if (!file)
- 		goto error;
- 
--	file = debugfs_create_file("blacklist", 0444, dir, NULL,
-+	file = debugfs_create_file("blacklist", 0400, dir, NULL,
- 				&debugfs_kprobe_blacklist_ops);
- 	if (!file)
- 		goto error;
+ 	/* allocate entry */
 
 
