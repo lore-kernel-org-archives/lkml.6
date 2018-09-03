@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10319C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E114C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC0A220658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC0A220658
+	by mail.kernel.org (Postfix) with ESMTP id 59B6920658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:35:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B6920658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeICV4f (ORCPT
+        id S1731511AbeICV4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:56:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47998 "EHLO
+        Mon, 3 Sep 2018 17:56:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbeICV4e (ORCPT
+        with ESMTP id S1727972AbeICV4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:56:34 -0400
+        Mon, 3 Sep 2018 17:56:38 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93717D1B;
-        Mon,  3 Sep 2018 17:35:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7706CD1B;
+        Mon,  3 Sep 2018 17:35:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.18 035/123] KVM: arm/arm64: Skip updating PMD entry if no change
-Date:   Mon,  3 Sep 2018 18:56:19 +0200
-Message-Id: <20180903165720.971781432@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.18 062/123] fuse: umount should wait for all requests
+Date:   Mon,  3 Sep 2018 18:56:46 +0200
+Message-Id: <20180903165722.059920912@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,86 +49,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 86658b819cd0a9aa584cd84453ed268a6f013770 upstream.
+commit b8f95e5d13f5f0191dcb4b9113113d241636e7cb upstream.
 
-Contention on updating a PMD entry by a large number of vcpus can lead
-to duplicate work when handling stage 2 page faults. As the page table
-update follows the break-before-make requirement of the architecture,
-it can lead to repeated refaults due to clearing the entry and
-flushing the tlbs.
+fuse_abort_conn() does not guarantee that all async requests have actually
+finished aborting (i.e. their ->end() function is called).  This could
+actually result in still used inodes after umount.
 
-This problem is more likely when -
+Add a helper to wait until all requests are fully done.  This is done by
+looking at the "num_waiting" counter.  When this counter drops to zero, we
+can be sure that no more requests are outstanding.
 
-* there are large number of vcpus
-* the mapping is large block mapping
-
-such as when using PMD hugepages (512MB) with 64k pages.
-
-Fix this by skipping the page table update if there is no change in
-the entry being updated.
-
-Cc: stable@vger.kernel.org
-Fixes: ad361f093c1e ("KVM: ARM: Support hugetlbfs backed huge pages")
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 0d8e84b0432b ("fuse: simplify request abort")
+Cc: <stable@vger.kernel.org> # v4.2
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/mmu.c |   38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ fs/fuse/dev.c    |   23 +++++++++++++++++++----
+ fs/fuse/fuse_i.h |    1 +
+ fs/fuse/inode.c  |    2 ++
+ 3 files changed, 22 insertions(+), 4 deletions(-)
 
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1015,19 +1015,35 @@ static int stage2_set_pmd_huge(struct kv
- 	pmd = stage2_get_pmd(kvm, cache, addr);
- 	VM_BUG_ON(!pmd);
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -127,6 +127,16 @@ static bool fuse_block_alloc(struct fuse
+ 	return !fc->initialized || (for_background && fc->blocked);
+ }
  
--	/*
--	 * Mapping in huge pages should only happen through a fault.  If a
--	 * page is merged into a transparent huge page, the individual
--	 * subpages of that huge page should be unmapped through MMU
--	 * notifiers before we get here.
--	 *
--	 * Merging of CompoundPages is not supported; they should become
--	 * splitting first, unmapped, merged, and mapped back in on-demand.
--	 */
--	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
--
- 	old_pmd = *pmd;
- 	if (pmd_present(old_pmd)) {
-+		/*
-+		 * Multiple vcpus faulting on the same PMD entry, can
-+		 * lead to them sequentially updating the PMD with the
-+		 * same value. Following the break-before-make
-+		 * (pmd_clear() followed by tlb_flush()) process can
-+		 * hinder forward progress due to refaults generated
-+		 * on missing translations.
-+		 *
-+		 * Skip updating the page table if the entry is
-+		 * unchanged.
-+		 */
-+		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
-+			return 0;
++static void fuse_drop_waiting(struct fuse_conn *fc)
++{
++	if (fc->connected) {
++		atomic_dec(&fc->num_waiting);
++	} else if (atomic_dec_and_test(&fc->num_waiting)) {
++		/* wake up aborters */
++		wake_up_all(&fc->blocked_waitq);
++	}
++}
 +
-+		/*
-+		 * Mapping in huge pages should only happen through a
-+		 * fault.  If a page is merged into a transparent huge
-+		 * page, the individual subpages of that huge page
-+		 * should be unmapped through MMU notifiers before we
-+		 * get here.
-+		 *
-+		 * Merging of CompoundPages is not supported; they
-+		 * should become splitting first, unmapped, merged,
-+		 * and mapped back in on-demand.
-+		 */
-+		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
+ static struct fuse_req *__fuse_get_req(struct fuse_conn *fc, unsigned npages,
+ 				       bool for_background)
+ {
+@@ -175,7 +185,7 @@ static struct fuse_req *__fuse_get_req(s
+ 	return req;
+ 
+  out:
+-	atomic_dec(&fc->num_waiting);
++	fuse_drop_waiting(fc);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -285,7 +295,7 @@ void fuse_put_request(struct fuse_conn *
+ 
+ 		if (test_bit(FR_WAITING, &req->flags)) {
+ 			__clear_bit(FR_WAITING, &req->flags);
+-			atomic_dec(&fc->num_waiting);
++			fuse_drop_waiting(fc);
+ 		}
+ 
+ 		if (req->stolen_file)
+@@ -371,7 +381,7 @@ static void request_end(struct fuse_conn
+ 	struct fuse_iqueue *fiq = &fc->iq;
+ 
+ 	if (test_and_set_bit(FR_FINISHED, &req->flags))
+-		goto out_put_req;
++		goto put_request;
+ 
+ 	spin_lock(&fiq->waitq.lock);
+ 	list_del_init(&req->intr_entry);
+@@ -400,7 +410,7 @@ static void request_end(struct fuse_conn
+ 	wake_up(&req->waitq);
+ 	if (req->end)
+ 		req->end(fc, req);
+-out_put_req:
++put_request:
+ 	fuse_put_request(fc, req);
+ }
+ 
+@@ -2146,6 +2156,11 @@ void fuse_abort_conn(struct fuse_conn *f
+ }
+ EXPORT_SYMBOL_GPL(fuse_abort_conn);
+ 
++void fuse_wait_aborted(struct fuse_conn *fc)
++{
++	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
++}
 +
- 		pmd_clear(pmd);
- 		kvm_tlb_flush_vmid_ipa(kvm, addr);
- 	} else {
+ int fuse_dev_release(struct inode *inode, struct file *file)
+ {
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -862,6 +862,7 @@ void fuse_request_send_background_locked
+ 
+ /* Abort all requests */
+ void fuse_abort_conn(struct fuse_conn *fc, bool is_abort);
++void fuse_wait_aborted(struct fuse_conn *fc);
+ 
+ /**
+  * Invalidate inode attributes
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -400,6 +400,8 @@ static void fuse_put_super(struct super_
+ 	fuse_send_destroy(fc);
+ 
+ 	fuse_abort_conn(fc, false);
++	fuse_wait_aborted(fc);
++
+ 	mutex_lock(&fuse_mutex);
+ 	list_del(&fc->entry);
+ 	fuse_ctl_remove_conn(fc);
 
 
