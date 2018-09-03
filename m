@@ -2,154 +2,200 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393B0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056A8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2D320869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="msSfucKI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2D320869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B59FC2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59FC2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbeICVt4 (ORCPT
+        id S1731204AbeICVt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:49:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730906AbeICVt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:49:56 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ECA120658;
-        Mon,  3 Sep 2018 17:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535995727;
-        bh=x7vW0j13mCBy48jU5x/ve/S+Cxqk1Jyx865v257BL8c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=msSfucKI94lY4AoFgEkYEwjVAv5zjc/9Im9k/mFpcIPdLdq6f4Qc5vk/yosA0+2El
-         VoQY4VlYmg/o85MK8/imTa3KCofyE9vZlbmy4x7ute3HFGr4WNSXZSQ2cuOAvlAVde
-         Px/EC9r7xsRdS4PlxmSu2uFyXAGKOZN4VTy9G0Gg=
-Date:   Mon, 3 Sep 2018 18:28:40 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, geert+renesas@glider.be,
-        lukas@wunner.de, icenowy@aosc.io, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 05/30] iio: adc: move SUN4I_GPADC_CHANNEL define to
- header file
-Message-ID: <20180903182840.77231c8b@archlinux>
-In-Reply-To: <882cb5f9-867b-d120-5ef5-80a8bee2d628@gmail.com>
-References: <20180830154518.29507-1-embed3d@gmail.com>
-        <20180830154518.29507-6-embed3d@gmail.com>
-        <20180902210109.7bd4a567@archlinux>
-        <882cb5f9-867b-d120-5ef5-80a8bee2d628@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 3 Sep 2018 17:49:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46466 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728696AbeICVt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 17:49:58 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B99A1CF4;
+        Mon,  3 Sep 2018 17:28:49 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Jann Horn <jannh@google.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.14 136/165] x86/nmi: Fix NMI uaccess race against CR3 switching
+Date:   Mon,  3 Sep 2018 18:57:02 +0200
+Message-Id: <20180903165702.368309717@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
+References: <20180903165655.003605184@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018 16:24:32 +0200
-Philipp Rossak <embed3d@gmail.com> wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On 02.09.2018 22:01, Jonathan Cameron wrote:
-> > On Thu, 30 Aug 2018 17:44:53 +0200
-> > Philipp Rossak <embed3d@gmail.com> wrote:
-> >   
-> >> We are moving the SUN4I_GPADC_CHANNEL define to the header file.  
-> > Maxime has raised this point in other patches...
-> > 
-> > Why?  Obvious what but I have no idea why you are doing this.
-> > 
-> > Thanks,
-> > 
-> > Jonathan  
-> There are two reasons:
-> 1. Personal taste: I like to have the #define stuff in the header file.
-> 2. When I started the rework I had to get some better overview, so I 
-> moved it...
-> 
-> Since those two reasons are no good reasons to submit a patch I will 
-> drop it and keep it in the *.c file.
-Don't move it.
+------------------
 
-For a 'utility' type define like this that is just about cutting
-down on code repetition it is nice to be able to see what it does near
-to where it is used.
+From: Andy Lutomirski <luto@kernel.org>
 
-Also, as a general rule kernel style is to not put things in a header
-unless they are needed in multiple files.  There are exceptions, but
-it is generally felt keeping things local to where they are used
-leads to easier to review code.
+commit 4012e77a903d114f915fc607d6d2ed54a3d6c9b1 upstream.
 
-Jonathan
-> 
-> Philipp
-> 
-> >>
-> >> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> >> ---
-> >>   drivers/iio/adc/sun4i-gpadc-iio.c | 9 ---------
-> >>   include/linux/mfd/sun4i-gpadc.h   | 9 +++++++++
-> >>   2 files changed, 9 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/adc/sun4i-gpadc-iio.c b/drivers/iio/adc/sun4i-gpadc-iio.c
-> >> index d95dd0fde2a6..666329940e1e 100644
-> >> --- a/drivers/iio/adc/sun4i-gpadc-iio.c
-> >> +++ b/drivers/iio/adc/sun4i-gpadc-iio.c
-> >> @@ -109,15 +109,6 @@ struct sun4i_gpadc_iio {
-> >>   	struct device			*sensor_device;
-> >>   };
-> >>   
-> >> -#define SUN4I_GPADC_ADC_CHANNEL(_channel, _name) {		\
-> >> -	.type = IIO_VOLTAGE,					\
-> >> -	.indexed = 1,						\
-> >> -	.channel = _channel,					\
-> >> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> >> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> >> -	.datasheet_name = _name,				\
-> >> -}
-> >> -
-> >>   static struct iio_map sun4i_gpadc_hwmon_maps[] = {
-> >>   	{
-> >>   		.adc_channel_label = "temp_adc",
-> >> diff --git a/include/linux/mfd/sun4i-gpadc.h b/include/linux/mfd/sun4i-gpadc.h
-> >> index 139872c2e0fe..54c7c9375c1b 100644
-> >> --- a/include/linux/mfd/sun4i-gpadc.h
-> >> +++ b/include/linux/mfd/sun4i-gpadc.h
-> >> @@ -90,6 +90,15 @@
-> >>   /* 10s delay before suspending the IP */
-> >>   #define SUN4I_GPADC_AUTOSUSPEND_DELAY			10000
-> >>   
-> >> +#define SUN4I_GPADC_ADC_CHANNEL(_channel, _name) {		\
-> >> +	.type = IIO_VOLTAGE,					\
-> >> +	.indexed = 1,						\
-> >> +	.channel = _channel,					\
-> >> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> >> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> >> +	.datasheet_name = _name,				\
-> >> +}
-> >> +
-> >>   struct sun4i_gpadc_dev {
-> >>   	struct device			*dev;
-> >>   	struct regmap			*regmap;  
-> >   
+A NMI can hit in the middle of context switching or in the middle of
+switch_mm_irqs_off().  In either case, CR3 might not match current->mm,
+which could cause copy_from_user_nmi() and friends to read the wrong
+memory.
+
+Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/dd956eba16646fd0b15c3c0741269dfd84452dac.1535557289.git.luto@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/events/core.c          |    2 +-
+ arch/x86/include/asm/tlbflush.h |   40 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/lib/usercopy.c         |    5 +++++
+ arch/x86/mm/tlb.c               |    7 +++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2462,7 +2462,7 @@ perf_callchain_user(struct perf_callchai
+ 
+ 	perf_callchain_store(entry, regs->ip);
+ 
+-	if (!current->mm)
++	if (!nmi_uaccess_okay())
+ 		return;
+ 
+ 	if (perf_callchain_user32(regs, entry))
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -175,8 +175,16 @@ struct tlb_state {
+ 	 * are on.  This means that it may not match current->active_mm,
+ 	 * which will contain the previous user mm when we're in lazy TLB
+ 	 * mode even if we've already switched back to swapper_pg_dir.
++	 *
++	 * During switch_mm_irqs_off(), loaded_mm will be set to
++	 * LOADED_MM_SWITCHING during the brief interrupts-off window
++	 * when CR3 and loaded_mm would otherwise be inconsistent.  This
++	 * is for nmi_uaccess_okay()'s benefit.
+ 	 */
+ 	struct mm_struct *loaded_mm;
++
++#define LOADED_MM_SWITCHING ((struct mm_struct *)1)
++
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+ 	/* last user mm's ctx id */
+@@ -246,6 +254,38 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or
++ * switching the loaded mm.  It can also be dangerous if we
++ * interrupted some kernel code that was temporarily using a
++ * different mm.
++ */
++static inline bool nmi_uaccess_okay(void)
++{
++	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	struct mm_struct *current_mm = current->mm;
++
++	VM_WARN_ON_ONCE(!loaded_mm);
++
++	/*
++	 * The condition we want to check is
++	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
++	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
++	 * is supposed to be reasonably fast.
++	 *
++	 * Instead, we check the almost equivalent but somewhat conservative
++	 * condition below, and we rely on the fact that switch_mm_irqs_off()
++	 * sets loaded_mm to LOADED_MM_SWITCHING before writing to CR3.
++	 */
++	if (loaded_mm != current_mm)
++		return false;
++
++	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
++
++	return true;
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+--- a/arch/x86/lib/usercopy.c
++++ b/arch/x86/lib/usercopy.c
+@@ -7,6 +7,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ 
++#include <asm/tlbflush.h>
++
+ /*
+  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+  * nested NMI paths are careful to preserve CR2.
+@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void
+ 	if (__range_not_ok(from, n, TASK_SIZE))
+ 		return n;
+ 
++	if (!nmi_uaccess_okay())
++		return n;
++
+ 	/*
+ 	 * Even though this function is typically called from NMI/IRQ context
+ 	 * disable pagefaults so that its behaviour is consistent even when
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -292,6 +292,10 @@ void switch_mm_irqs_off(struct mm_struct
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+ 
++		/* Let nmi_uaccess_okay() know that we're changing CR3. */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		if (need_flush) {
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+@@ -322,6 +326,9 @@ void switch_mm_irqs_off(struct mm_struct
+ 		if (next != &init_mm)
+ 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+ 
++		/* Make sure we write CR3 before loaded_mm. */
++		barrier();
++
+ 		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+ 	}
+
 
