@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB60EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCC6C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8876C20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F572077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="o2/QbgRn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8876C20867
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ESqpBdf1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F572077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeICUsc (ORCPT
+        id S1727580AbeICUse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 16:48:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44582 "EHLO
+        Mon, 3 Sep 2018 16:48:34 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44612 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbeICUsc (ORCPT
+        with ESMTP id S1727385AbeICUsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 16:48:32 -0400
+        Mon, 3 Sep 2018 16:48:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qxswO6P7SlpEoam5zw5HNTMzFANv0kLdseJFUHJWdVw=; b=o2/QbgRn0Xgf
-        RVntJwtnibhu9f0rgBAmuHuzFMDpMzIpAv16RqQp+1FWh4MG+fVl3Wro4D7XD0DXMVcM2LgovIpyy
-        uc5LQSx4e7TkhWBt+bnIJcMs1LvIewuSmxEpwhDOBzffpVy37psIcdXbACXEW0scr5IOmiHe+fPhK
-        9g3CQ=;
+        List-Archive; bh=Su9PGjLLF+1b0Pjtq2B9fgEremfcJ1OHBLBSfhqBU6o=; b=ESqpBdf1omCP
+        kr1HP8h5AmFdj1lDPl30av3xcaaK3sK5RkriOnOyGCFXh4glapd2SlcImkTxph1H9p9/q1THppUoV
+        eTi1W+fv3ANFuGX/6erxhINlLm7rnaIyKqCJwivJGosnWOzmEMhEGys/Hemv/CdTg1gUsPhZvMFL8
+        4pG5k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fwrhQ-0000Sn-2Q; Mon, 03 Sep 2018 16:27:36 +0000
+        id 1fwrhR-0000Ss-TZ; Mon, 03 Sep 2018 16:27:37 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C782111227AE; Mon,  3 Sep 2018 17:27:35 +0100 (BST)
+        id A219011227AE; Mon,  3 Sep 2018 17:27:37 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Fix useless O^2 complexity in suspend/resume" to the regulator tree
+Cc:     Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: Fix 'do-nothing' value for regulators without suspend state" to the regulator tree
 In-Reply-To: 
-Message-Id: <20180903162735.C782111227AE@debutante.sirena.org.uk>
-Date:   Mon,  3 Sep 2018 17:27:35 +0100 (BST)
+Message-Id: <20180903162737.A219011227AE@debutante.sirena.org.uk>
+Date:   Mon,  3 Sep 2018 17:27:37 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: Fix useless O^2 complexity in suspend/resume
+   regulator: Fix 'do-nothing' value for regulators without suspend state
 
 has been applied to the regulator tree at
 
@@ -80,97 +81,77 @@ to this mail.
 Thanks,
 Mark
 
-From cd7e36ab7222af85597517bafd66013cbc8f9877 Mon Sep 17 00:00:00 2001
+From 3edd79cf5a44b12dbb13bc320f5788aed6562b36 Mon Sep 17 00:00:00 2001
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Mon, 3 Sep 2018 16:49:36 +0200
-Subject: [PATCH] regulator: Fix useless O^2 complexity in suspend/resume
+Date: Mon, 3 Sep 2018 16:49:37 +0200
+Subject: [PATCH] regulator: Fix 'do-nothing' value for regulators without
+ suspend state
 
-regulator_pm_ops with regulator_suspend and regulator_resume functions are
-assigned to every regulator device registered in the system, so there is no
-need to iterate over all again in them. Replace class_for_each_device()
-construction with direct operation on the rdev embedded in the given
-regulator device. This saves a lots of useless operations in suspend and
-resume paths.
+Some regulators don't have all states defined and in such cases regulator
+core should not assume anything. However in current implementation
+of of_get_regulation_constraints() DO_NOTHING_IN_SUSPEND enable value was
+set only for regulators which had suspend node defined, otherwise the
+default 0 value was used, what means DISABLE_IN_SUSPEND. This lead to
+broken system suspend/resume on boards, which had simple regulator
+constraints definition (without suspend state nodes).
 
-Fixes: f7efad10b5c4: regulator: add PM suspend and resume hooks
+To avoid further mismatches between the default and uninitialized values
+of the suspend enabled/disabled states, change the values of the them,
+so default '0' means DO_NOTHING_IN_SUSPEND.
+
+Fixes: 72069f9957a1: regulator: leave one item to record whether regulator is enabled
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 ---
- drivers/regulator/core.c | 39 +++++++++++----------------------------
- 1 file changed, 11 insertions(+), 28 deletions(-)
+ drivers/regulator/core.c          | 2 +-
+ drivers/regulator/of_regulator.c  | 2 --
+ include/linux/regulator/machine.h | 6 +++---
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f686f2311317..a147871af09b 100644
+index bb1324f93143..90215f57270f 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -4464,19 +4464,6 @@ void regulator_unregister(struct regulator_dev *rdev)
- EXPORT_SYMBOL_GPL(regulator_unregister);
+@@ -3161,7 +3161,7 @@ static inline int regulator_suspend_toggle(struct regulator_dev *rdev,
+ 	if (!rstate->changeable)
+ 		return -EPERM;
  
- #ifdef CONFIG_SUSPEND
--static int _regulator_suspend(struct device *dev, void *data)
--{
--	struct regulator_dev *rdev = dev_to_rdev(dev);
--	suspend_state_t *state = data;
--	int ret;
--
--	regulator_lock(rdev);
--	ret = suspend_set_state(rdev, *state);
--	regulator_unlock(rdev);
--
--	return ret;
--}
--
- /**
-  * regulator_suspend - prepare regulators for system wide suspend
-  * @state: system suspend state
-@@ -4485,20 +4472,25 @@ static int _regulator_suspend(struct device *dev, void *data)
+-	rstate->enabled = en;
++	rstate->enabled = (en) ? ENABLE_IN_SUSPEND : DISABLE_IN_SUSPEND;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 638f17d4c848..210fc20f7de7 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -213,8 +213,6 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		else if (of_property_read_bool(suspend_np,
+ 					"regulator-off-in-suspend"))
+ 			suspend_state->enabled = DISABLE_IN_SUSPEND;
+-		else
+-			suspend_state->enabled = DO_NOTHING_IN_SUSPEND;
+ 
+ 		if (!of_property_read_u32(np, "regulator-suspend-min-microvolt",
+ 					  &pval))
+diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
+index 3468703d663a..a459a5e973a7 100644
+--- a/include/linux/regulator/machine.h
++++ b/include/linux/regulator/machine.h
+@@ -48,9 +48,9 @@ struct regulator;
+  * DISABLE_IN_SUSPEND	- turn off regulator in suspend states
+  * ENABLE_IN_SUSPEND	- keep regulator on in suspend states
   */
- static int regulator_suspend(struct device *dev)
- {
-+	struct regulator_dev *rdev = dev_to_rdev(dev);
- 	suspend_state_t state = pm_suspend_target_state;
-+	int ret;
-+
-+	regulator_lock(rdev);
-+	ret = suspend_set_state(rdev, state);
-+	regulator_unlock(rdev);
+-#define DO_NOTHING_IN_SUSPEND	(-1)
+-#define DISABLE_IN_SUSPEND	0
+-#define ENABLE_IN_SUSPEND	1
++#define DO_NOTHING_IN_SUSPEND	0
++#define DISABLE_IN_SUSPEND	1
++#define ENABLE_IN_SUSPEND	2
  
--	return class_for_each_device(&regulator_class, NULL, &state,
--				     _regulator_suspend);
-+	return ret;
- }
- 
--static int _regulator_resume(struct device *dev, void *data)
-+static int regulator_resume(struct device *dev)
- {
--	int ret = 0;
-+	suspend_state_t state = pm_suspend_target_state;
- 	struct regulator_dev *rdev = dev_to_rdev(dev);
--	suspend_state_t *state = data;
- 	struct regulator_state *rstate;
-+	int ret = 0;
- 
--	rstate = regulator_get_suspend_state(rdev, *state);
-+	rstate = regulator_get_suspend_state(rdev, state);
- 	if (rstate == NULL)
- 		return 0;
- 
-@@ -4513,15 +4505,6 @@ static int _regulator_resume(struct device *dev, void *data)
- 
- 	return ret;
- }
--
--static int regulator_resume(struct device *dev)
--{
--	suspend_state_t state = pm_suspend_target_state;
--
--	return class_for_each_device(&regulator_class, NULL, &state,
--				     _regulator_resume);
--}
--
- #else /* !CONFIG_SUSPEND */
- 
- #define regulator_suspend	NULL
+ /* Regulator active discharge flags */
+ enum regulator_active_discharge {
 -- 
 2.19.0.rc1
 
