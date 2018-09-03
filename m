@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92F2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC804C4321E
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CEC220862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEC220862
+	by mail.kernel.org (Postfix) with ESMTP id 7D8DE20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8DE20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeICUoQ (ORCPT
+        id S1727691AbeICUoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 16:44:16 -0400
+        Mon, 3 Sep 2018 16:44:18 -0400
 Received: from mga05.intel.com ([192.55.52.43]:60079 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbeICUoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726999AbeICUoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Sep 2018 16:44:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,18 +28,18 @@ Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 09:22:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
-   d="scan'208";a="70244071"
+   d="scan'208";a="70244073"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
   by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 09:22:55 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 557B8301B65; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
+        id 5C847301B65; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, adrian.hunter@intel.com, kim.phillips@arm.com,
         linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4 3/8] tools, perf, script: Add --insn-trace for instruction decoding
-Date:   Mon,  3 Sep 2018 09:22:44 -0700
-Message-Id: <20180903162249.36304-4-andi@firstfloor.org>
+Subject: [PATCH v4 4/8] perf, tools, script: Allow sym and dso without ip, addr
+Date:   Mon,  3 Sep 2018 09:22:45 -0700
+Message-Id: <20180903162249.36304-5-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903162249.36304-1-andi@firstfloor.org>
 References: <20180903162249.36304-1-andi@firstfloor.org>
@@ -50,99 +50,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Add a --insn-trace short hand option for decoding and disassembling
-instruction streams for intel_pt. This automatically pipes the
-output into the xed disassembler to generate disassembled instructions.
-This just makes this use model much nicer to use
+Currently sym and dso require printing ip and addr because
+the print function is tied to those outputs. With callindent
+it makes sense to print the symbol or dso without numerical
+IP or ADDR. So change the dependency check to only check the
+underlying attribute.
+
+Also the branch target output relies on the user_set flag to determine
+if the branch target should be implicitely printed. When
+modifying the fields with + or - also set user_set,
+so that ADDR can be removed. We also need to set wildcard_set
+to make the initial sanity check pass.
+
+This allows to remove a lot of noise in callindent output by
+dropping the numerical addresses, which are not all that useful.
 
 Before
 
-% perf record -e intel_pt// ...
-% perf script --itrace=i0ns --ns -F +insn,-event,-period | xed -F insn: -A -64
-   swapper     0 [000] 117276.429606186:  ffffffff81010486 pt_config ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
-   swapper     0 [000] 117276.429606186:  ffffffff8101048b pt_config ([kernel.kallsyms])          add $0x10, %rsp
-   swapper     0 [000] 117276.429606186:  ffffffff8101048f pt_config ([kernel.kallsyms])          popq  %rbx
-   swapper     0 [000] 117276.429606186:  ffffffff81010490 pt_config ([kernel.kallsyms])          popq  %rbp
-   swapper     0 [000] 117276.429606186:  ffffffff81010491 pt_config ([kernel.kallsyms])          popq  %r12
-   swapper     0 [000] 117276.429606186:  ffffffff81010493 pt_config ([kernel.kallsyms])          popq  %r13
-   swapper     0 [000] 117276.429606186:  ffffffff81010495 pt_config ([kernel.kallsyms])          popq  %r14
-   swapper     0 [000] 117276.429606186:  ffffffff81010497 pt_config ([kernel.kallsyms])          popq  %r15
-   swapper     0 [000] 117276.429606186:  ffffffff81010499 pt_config ([kernel.kallsyms])          retq
-   swapper     0 [000] 117276.429606186:  ffffffff8101063e pt_event_add ([kernel.kallsyms])               cmpl  $0x1, 0x1b0(%rbx)
-   swapper     0 [000] 117276.429606186:  ffffffff81010645 pt_event_add ([kernel.kallsyms])               mov $0xffffffea, %eax
-   swapper     0 [000] 117276.429606186:  ffffffff8101064a pt_event_add ([kernel.kallsyms])               mov $0x0, %edx
-   swapper     0 [000] 117276.429606186:  ffffffff8101064f pt_event_add ([kernel.kallsyms])               popq  %rbx
-   swapper     0 [000] 117276.429606186:  ffffffff81010650 pt_event_add ([kernel.kallsyms])               cmovnz %edx, %eax
-   swapper     0 [000] 117276.429606186:  ffffffff81010653 pt_event_add ([kernel.kallsyms])               jmp 0xffffffff81010635
-   swapper     0 [000] 117276.429606186:  ffffffff81010635 pt_event_add ([kernel.kallsyms])               retq
-   swapper     0 [000] 117276.429606186:  ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])            test %eax, %eax
+% perf script --itrace=cr -F +callindent
+         swapper     0 [000] 156546.354971:          1   branches: pt_config                                       0 [unknown] ([unknown]) => ffffffff81010486 pt_config ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     pt_config                    ffffffff81010499 pt_config ([kernel.kallsyms]) => ffffffff8101063e pt_event_add ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     pt_event_add                 ffffffff81010635 pt_event_add ([kernel.kallsyms]) => ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_enable              ffffffff8115e726 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff811579b0 perf_pmu_enable ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_nop_void            ffffffff81151730 perf_pmu_nop_void ([kernel.kallsyms]) => ffffffff8115e72b event_sched_in.isra.107 ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     event_sched_in.isra.107      ffffffff8115e737 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff8115e7a5 group_sched_in ([kernel.kallsyms])
+         swapper     0 [000] 156546.354971:          1   branches:     __x86_indirect_thunk_rax     ffffffff8115e7f6 group_sched_in ([kernel.kallsyms]) => ffffffff81a03000 __x86_indirect_thunk_rax ([kernel.kallsyms])
 
-Now
+After
 
-% perf record -e intel_pt// ...
-% perf script --insn-trace
-... same output ...
+% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff
+       swapper     0 [000] 156546.354971:          1   branches:  pt_config
+         swapper     0 [000] 156546.354971:          1   branches:      pt_config
+         swapper     0 [000] 156546.354971:          1   branches:      pt_event_add
+         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_enable
+         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_void
+         swapper     0 [000] 156546.354971:          1   branches:       event_sched_in.isra.107
+         swapper     0 [000] 156546.354971:          1   branches:       __x86_indirect_thunk_rax
+         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_int
+         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
+         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
+         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
+         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/Documentation/perf-script.txt |  4 ++++
- tools/perf/builtin-script.c              | 14 ++++++++++++++
- 2 files changed, 18 insertions(+)
+ tools/perf/builtin-script.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index afdafe2110a1..04a57e0fb3a6 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -383,6 +383,10 @@ include::itrace.txt[]
- 	will be printed. Each entry has function name and file/line. Enabled by
- 	default, disable with --no-inline.
- 
-+--insn-trace::
-+	Show instruction stream for intel_pt traces. Requires installing the
-+	xed disassembler.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-script-perl[1],
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 910e0f1f2876..66daa7df68c5 100644
+index 66daa7df68c5..d7d454d10074 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -44,6 +44,7 @@
- #include <sys/stat.h>
- #include <fcntl.h>
- #include <unistd.h>
-+#include <subcmd/pager.h>
+@@ -407,9 +407,10 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
+ 					PERF_OUTPUT_WEIGHT))
+ 		return -EINVAL;
  
- #include "sane_ctype.h"
+-	if (PRINT_FIELD(SYM) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR)) {
++	if (PRINT_FIELD(SYM) &&
++		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
+ 		pr_err("Display of symbols requested but neither sample IP nor "
+-			   "sample address\nis selected. Hence, no addresses to convert "
++			   "sample address\navailable. Hence, no addresses to convert "
+ 		       "to symbols.\n");
+ 		return -EINVAL;
+ 	}
+@@ -418,10 +419,9 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
+ 		       "selected.\n");
+ 		return -EINVAL;
+ 	}
+-	if (PRINT_FIELD(DSO) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR) &&
+-	    !PRINT_FIELD(BRSTACK) && !PRINT_FIELD(BRSTACKSYM) && !PRINT_FIELD(BRSTACKOFF)) {
+-		pr_err("Display of DSO requested but no address to convert.  Select\n"
+-		       "sample IP, sample address, brstack, brstacksym, or brstackoff.\n");
++	if (PRINT_FIELD(DSO) &&
++		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
++		pr_err("Display of DSO requested but no address to convert.\n");
+ 		return -EINVAL;
+ 	}
+ 	if (PRINT_FIELD(SRCLINE) && !PRINT_FIELD(IP)) {
+@@ -2490,6 +2490,8 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+ 						output[j].fields &= ~all_output_options[i].field;
+ 					else
+ 						output[j].fields |= all_output_options[i].field;
++					output[j].user_set = true;
++					output[j].wildcard_set = true;
+ 				}
+ 			}
+ 		} else {
+@@ -2500,7 +2502,8 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+ 				rc = -EINVAL;
+ 				goto out;
+ 			}
+-			output[type].fields |= all_output_options[i].field;
++			output[type].user_set = true;
++			output[type].wildcard_set = true;
+ 		}
+ 	}
  
-@@ -3072,6 +3073,17 @@ static int perf_script__process_auxtrace_info(struct perf_tool *tool,
- #define perf_script__process_auxtrace_info 0
- #endif
- 
-+static int parse_insn_trace(const struct option *opt __maybe_unused,
-+			    const char *str __maybe_unused,
-+			    int unset __maybe_unused)
-+{
-+	parse_output_fields(NULL, "+insn,-event,-period", 0);
-+	itrace_parse_synth_opts(opt, "i0ns", 0);
-+	nanosecs = true;
-+	force_pager("xed -F insn: -A -64 | less");
-+	return 0;
-+}
-+
- int cmd_script(int argc, const char **argv)
- {
- 	bool show_full_info = false;
-@@ -3156,6 +3168,8 @@ int cmd_script(int argc, const char **argv)
- 		    "system-wide collection from all CPUs"),
- 	OPT_STRING('S', "symbols", &symbol_conf.sym_list_str, "symbol[,symbol...]",
- 		   "only consider these symbols"),
-+	OPT_CALLBACK_OPTARG(0, "insn-trace", &itrace_synth_opts, NULL, NULL,
-+			"Decode instructions from itrace", parse_insn_trace),
- 	OPT_STRING(0, "stop-bt", &symbol_conf.bt_stop_list_str, "symbol[,symbol...]",
- 		   "Stop display of callgraph at these symbols"),
- 	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
 -- 
 2.17.1
 
