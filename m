@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5076C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA67C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870BD20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870BD20843
+	by mail.kernel.org (Postfix) with ESMTP id 92BFF20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BFF20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbeICV2O (ORCPT
+        id S1729846AbeICV2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:28:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40216 "EHLO
+        Mon, 3 Sep 2018 17:28:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeICV2O (ORCPT
+        with ESMTP id S1728233AbeICV2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:28:14 -0400
+        Mon, 3 Sep 2018 17:28:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 689BDBB3;
-        Mon,  3 Sep 2018 17:07:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77EF9D01;
+        Mon,  3 Sep 2018 17:07:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        Ofer Levi <oferle@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
         Vineet Gupta <vgupta@synopsys.com>,
+        linux-snps-arc@lists.infradead.org,
+        Elad Kanfi <eladkan@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Ofer Levi <oferle@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 038/107] arc: [plat-eznps] fix data type errors in platform headers
-Date:   Mon,  3 Sep 2018 18:56:02 +0200
-Message-Id: <20180903165639.131773563@linuxfoundation.org>
+Subject: [PATCH 4.9 039/107] arc: fix build errors in arc/include/asm/delay.h
+Date:   Mon,  3 Sep 2018 18:56:03 +0200
+Message-Id: <20180903165639.173371982@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -56,51 +57,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit b1f32ce1c3d2c11959b7e6a2c58dc5197c581966 ]
+[ Upstream commit 2423665ec53f2a29191b35382075e9834288a975 ]
 
-Add <linux/types.h> to fix build errors.
-Both ctop.h and <soc/nps/common.h> use u32 types and cause many
-errors.
+Fix build errors in arch/arc/'s delay.h:
+- add "extern unsigned long loops_per_jiffy;"
+- add <asm-generic/types.h> for "u64"
 
-Examples:
-../include/soc/nps/common.h:71:4: error: unknown type name 'u32'
-    u32 __reserved:20, cluster:4, core:4, thread:4;
-../include/soc/nps/common.h:76:3: error: unknown type name 'u32'
-   u32 value;
-../include/soc/nps/common.h:124:4: error: unknown type name 'u32'
-    u32 base:8, cl_x:4, cl_y:4,
-../include/soc/nps/common.h:127:3: error: unknown type name 'u32'
-   u32 value;
+In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
+../arch/arc/include/asm/delay.h: In function '__udelay':
+../arch/arc/include/asm/delay.h:61:12: error: 'u64' undeclared (first use in this function)
+  loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
+            ^~~
 
-../arch/arc/plat-eznps/include/plat/ctop.h:83:4: error: unknown type name 'u32'
-    u32 gen:1, gdis:1, clk_gate_dis:1, asb:1,
-../arch/arc/plat-eznps/include/plat/ctop.h:86:3: error: unknown type name 'u32'
-   u32 value;
-../arch/arc/plat-eznps/include/plat/ctop.h:93:4: error: unknown type name 'u32'
-    u32 csa:22, dmsid:6, __reserved:3, cs:1;
-../arch/arc/plat-eznps/include/plat/ctop.h:95:3: error: unknown type name 'u32'
-   u32 value;
+In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
+../arch/arc/include/asm/delay.h: In function '__udelay':
+../arch/arc/include/asm/delay.h:63:37: error: 'loops_per_jiffy' undeclared (first use in this function)
+  loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
+                                     ^~~~~~~~~~~~~~~
 
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Ofer Levi <oferle@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Elad Kanfi <eladkan@mellanox.com>
+Cc: Leon Romanovsky <leonro@mellanox.com>
+Cc: Ofer Levi <oferle@mellanox.com>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/plat-eznps/include/plat/ctop.h |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arc/include/asm/delay.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arc/plat-eznps/include/plat/ctop.h
-+++ b/arch/arc/plat-eznps/include/plat/ctop.h
-@@ -21,6 +21,7 @@
- #error "Incorrect ctop.h include"
- #endif
+--- a/arch/arc/include/asm/delay.h
++++ b/arch/arc/include/asm/delay.h
+@@ -17,8 +17,11 @@
+ #ifndef __ASM_ARC_UDELAY_H
+ #define __ASM_ARC_UDELAY_H
  
-+#include <linux/types.h>
- #include <soc/nps/common.h>
++#include <asm-generic/types.h>
+ #include <asm/param.h>		/* HZ */
  
- /* core auxiliary registers */
++extern unsigned long loops_per_jiffy;
++
+ static inline void __delay(unsigned long loops)
+ {
+ 	__asm__ __volatile__(
 
 
