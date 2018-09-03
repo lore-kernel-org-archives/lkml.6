@@ -2,107 +2,120 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097B6C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D28C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42CA20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:35:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH3u2IO5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42CA20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76DCB20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:35:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DCB20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbeICLyV (ORCPT
+        id S1726774AbeICLyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:54:21 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34305 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeICLyU (ORCPT
+        Mon, 3 Sep 2018 07:54:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41004 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeICLyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:54:20 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f6-v6so8262837plo.1;
-        Mon, 03 Sep 2018 00:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=MX9rkrEhdmxLFk0aEZI7Sr5zdnPjJJ7FGLQ/0RUHnQg=;
-        b=HH3u2IO5bO/rdnD1XEAv+oZciQKjUUvqdf630TcxXXY8TDlNd23hLX7wtLPB4IWtp0
-         Vb+skVoX9q0V1+CRdwHRB0yEsWoTiUXQbXFA+PC6m65RNozxm/kuTCDJMQZhXTP0swVZ
-         cqARaMl97iiCvUI8iDG7HEySjYRgErBOgbLL4hH8eJgxDjYErRHDc9UXtqQLjYAkY+an
-         VzEY59W+kj9hW4a/qSI4WrgjNpg25oGQ0NVxgxLDfdPfBzVwOtEPDpUL4o3StPGIRawE
-         hanHqlfCjOEbYGQL8l0Tmin+bPICFAPf+/TWiGVK+6yAwtQnMRWRKVeMHv2dSchMc9H/
-         A9eQ==
+        Mon, 3 Sep 2018 07:54:46 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z96-v6so16737467wrb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 00:35:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=MX9rkrEhdmxLFk0aEZI7Sr5zdnPjJJ7FGLQ/0RUHnQg=;
-        b=patlQDk+SHCz84kJJJ/vqiOvB/ANIu4ZoSFqdu26b7w8OfEmDF2YwW7zzsk4AYv2uP
-         TrKJguhpiLPfTCjKj3ZkfEh0w6vDKvbvo155bEzHqgSl5CRc3cI31Xcj8dlAT+hta9VE
-         DPw42oTeJ9V32GbrXGmOdU76rrtXCpDQO0atf/c4wx28eIPEDSRgkJcNC8SDVEgUt9ET
-         EpoxlJzgtlK5WhgF8ggkof0Y369HYcOEO3vYQPMEAhvxjlnsHedYxMFNSGH7sIsmkyZQ
-         F6upkt4yKusEtPvgDQSsAVWAqejl1Vmyzb7uErEsqsov0eMQdSqgfJuWoFkYMT1NeDwQ
-         2fdQ==
-X-Gm-Message-State: APzg51DAHF+t28IfNpFiY7ednd0elxn9cl1dPuBlYQFDxp2cJKkjZqmi
-        kejWF0AtG6Bl5b6jZr4ALsqz23QA
-X-Google-Smtp-Source: ANB0VdaRw6s7p8t6R8cVQ89zYbAaoMcng5zbf4sFONtfnZllvKg6LBnUhs24V2Hf9gA0jClgF2fOVQ==
-X-Received: by 2002:a17:902:7587:: with SMTP id j7-v6mr27398607pll.256.1535960126970;
-        Mon, 03 Sep 2018 00:35:26 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.58? ([2402:f000:1:1501:200:5efe:a66f:473a])
-        by smtp.gmail.com with ESMTPSA id g5-v6sm26684019pfc.77.2018.09.03.00.35.24
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q65ZzniJR2ZS/Kj6HfA9Lm831mfDv01wcExJP+yKtw4=;
+        b=nU67OV9sWxoxrLtYyVu98aAo+fGOo+feMGArWJKjQDvpwMTWFCH1meIBhvOkimRAKp
+         ha8NP3Rfc3387UCRqY3LdS+Mdt/V98ZtCKHvlb4+xzCS7lcxZmWM2k8YkAQDPUibQeH3
+         cG4lJL6VU8JFF0zPgVrVT1/ulHZXyGXgm5cIePkYmIAoQmvlBZ0YqMIlrN3Xy1fVHUMz
+         dgDh/SIHCRGEtQlNRS8T/BW/5fG33WgZ44/d9SGePeOn0enIz2fqYnVc9mdNs7IUXtGp
+         ZstmAHGSBW6XuyAmlWxLA47ksmuornNxxyVe5rJMhgn8bEyDkE9MwwQFMrc2VkifyOGk
+         8inA==
+X-Gm-Message-State: APzg51Ayb5HU3vfJbMbRFSOeRV0ymENyIdff5JxDIgqliCJIXuSJWyWl
+        2KSyoftqtVXt8/bQ6+kerSIQZA==
+X-Google-Smtp-Source: ANB0Vdbb8JfzzadBQMojeX+vcW2Tr2mpRYgtFmvIHg15yzBmEHZeErpN1prgeZNG/sDKnq15QjQMjw==
+X-Received: by 2002:adf:8919:: with SMTP id s25-v6mr18007208wrs.89.1535960151619;
+        Mon, 03 Sep 2018 00:35:51 -0700 (PDT)
+Received: from [10.201.33.51] ([195.166.127.210])
+        by smtp.gmail.com with ESMTPSA id s10-v6sm14821364wmd.22.2018.09.03.00.35.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 00:35:26 -0700 (PDT)
-Subject: Re: [EXT] [BUG] net: wireless: mwifiex: A possible
- sleep-in-atomic-context bug in mwifiex_wait_queue_complete()
-To:     Ganapathi Bhat <gbhat@marvell.com>,
-        "amitkarwar@gmail.com" <amitkarwar@gmail.com>,
-        "nishants@marvell.com" <nishants@marvell.com>,
-        "huxinming820@gmail.com" <huxinming820@gmail.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>
-Cc:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <35980039-f268-2db3-5c7d-19ab0c917d44@gmail.com>
- <5fbe17917c344f318c25a688f2e94823@SC-EXCH02.marvell.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <3ecba946-7656-3f86-df81-c0b5aff2e3d3@gmail.com>
-Date:   Mon, 3 Sep 2018 15:35:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 03 Sep 2018 00:35:51 -0700 (PDT)
+Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async
+ notifier complete
+To:     Bing Bu Cao <bingbu.cao@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org
+References: <20180831152045.9957-1-javierm@redhat.com>
+ <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
+Date:   Mon, 3 Sep 2018 09:35:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <5fbe17917c344f318c25a688f2e94823@SC-EXCH02.marvell.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Thanks a lot your feedback.
 
-On 2018/9/3 14:41, Ganapathi Bhat wrote:
-> Hi Jia-Ju,
->
->> [FUNC] schedule_timeout
->> drivers/net/wireless/marvell/mwifiex/sta_ioctl.c, 63:
->>       schedule_timeout in mwifiex_wait_queue_complete
->> drivers/net/wireless/marvell/mwifiex/cmdevt.c, 673:
->>       mwifiex_wait_queue_complete in mwifiex_send_cmd
-> Here, mwifiex_send_cmd does not call mwifiex_wait_queue_complete, because the sync parameter is false.
-> Note that the function mwifiex_multi_chan_resync did call mwifiex_send_cmd with sync = false.
+On 09/03/2018 09:25 AM, Bing Bu Cao wrote:
+> 
+> 
+> On 08/31/2018 11:20 PM, Javier Martinez Canillas wrote:
+>> Commit 9832e155f1ed ("[media] media-device: split media initialization and
+>> registration") split the media_device_register() function in two, to avoid
+>> a race condition that can happen when the media device node is accessed by
+>> userpace before the pending subdevices have been asynchronously registered.
+>>
+>> But the ipu3-cio2 driver calls the media_device_register() function right
+>> after calling media_device_init() which defeats the purpose of having two
+>> separate functions.
+>>
+>> In that case, userspace could have a partial view of the media device if
+>> it opened the media device node before all the pending devices have been
+>> bound. So instead, only register the media device once all pending v4l2
+>> subdevices have been registered.
+> Javier, Thanks for your patch.
+> IMHO, there are no big differences for registering the cio2 before and after all the subdevices are ready.
+> User may see a partial view of media graph but it presents what it really is then.
+> It indicate that device is not available currently not it is not there.
 
-Thanks for the reply.
-I check the code again, and find my report it false, sorry for that.
+I disagree that there are no differences. The media graph shouldn't be exposed
+until its complete. That's the reason why we have a v4l2 async notifier .bound
+and .complete callbacks (otherwise the .bound would be enough).
 
+It's also the reason why media register was split in _init and _register, as I
+mentioned in the commit message.
 
-Best wishes,
-Jia-Ju Bai
+> Could you help tell more details about your problem? The full context is helpful for me to reproduce your problem.
+
+If an application opens the media device node, how it would know that has an
+incomplete media graph? how it would know once the subdevice has been .bound
+and that has to query the media graph again?
+
+AFAIK there's no way to notify that information to user-space currenctly but
+I may be wrong.
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
