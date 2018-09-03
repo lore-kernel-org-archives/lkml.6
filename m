@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B42C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06793C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F7620843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F7620843
+	by mail.kernel.org (Postfix) with ESMTP id BDF9520843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF9520843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbeICV36 (ORCPT
+        id S1729981AbeICVaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:29:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40386 "EHLO
+        Mon, 3 Sep 2018 17:30:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40456 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729812AbeICV35 (ORCPT
+        with ESMTP id S1728233AbeICVaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:29:57 -0400
+        Mon, 3 Sep 2018 17:30:05 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5300D06;
-        Mon,  3 Sep 2018 17:08:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5BB6D02;
+        Mon,  3 Sep 2018 17:09:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 086/107] ASoC: sirf: Fix potential NULL pointer dereference
-Date:   Mon,  3 Sep 2018 18:56:50 +0200
-Message-Id: <20180903165641.468213622@linuxfoundation.org>
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.9 088/107] x86/irqflags: Mark native_restore_fl extern inline
+Date:   Mon,  3 Sep 2018 18:56:52 +0200
+Message-Id: <20180903165641.562882106@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,44 +55,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit ae1c696a480c67c45fb23b35162183f72c6be0e1 upstream.
+commit 1f59a4581b5ecfe9b4f049a7a2cf904d8352842d upstream.
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+This should have been marked extern inline in order to pick up the out
+of line definition in arch/x86/kernel/irqflags.S.
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
-
-This code was detected with the help of Coccinelle.
-
+Fixes: 208cbb325589 ("x86/irqflags: Provide a declaration for native_save_fl")
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org
-Fixes: 2bd8d1d5cf89 ("ASoC: sirf: Add audio usp interface driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://lkml.kernel.org/r/20180827214011.55428-1-ndesaulniers@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/sirf/sirf-usp.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/irqflags.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/soc/sirf/sirf-usp.c
-+++ b/sound/soc/sirf/sirf-usp.c
-@@ -367,10 +367,9 @@ static int sirf_usp_pcm_probe(struct pla
- 	platform_set_drvdata(pdev, usp);
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -32,7 +32,8 @@ extern inline unsigned long native_save_
+ 	return flags;
+ }
  
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap(&pdev->dev, mem_res->start,
--		resource_size(mem_res));
--	if (base == NULL)
--		return -ENOMEM;
-+	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 					    &sirf_usp_regmap_config);
- 	if (IS_ERR(usp->regmap))
+-static inline void native_restore_fl(unsigned long flags)
++extern inline void native_restore_fl(unsigned long flags);
++extern inline void native_restore_fl(unsigned long flags)
+ {
+ 	asm volatile("push %0 ; popf"
+ 		     : /* no output */
 
 
