@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89761C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56F1C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F09320779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F09320779
+	by mail.kernel.org (Postfix) with ESMTP id 6B0FE20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B0FE20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbeICVZB (ORCPT
+        id S1729329AbeICVZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39198 "EHLO
+        Mon, 3 Sep 2018 17:25:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39214 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbeICVZA (ORCPT
+        with ESMTP id S1728229AbeICVZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:00 -0400
+        Mon, 3 Sep 2018 17:25:04 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEBD0D00;
-        Mon,  3 Sep 2018 17:03:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F686CFF;
+        Mon,  3 Sep 2018 17:04:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 020/107] atl1c: reserve min skb headroom
-Date:   Mon,  3 Sep 2018 18:55:44 +0200
-Message-Id: <20180903165638.269887648@linuxfoundation.org>
+Subject: [PATCH 4.9 021/107] net: prevent ISA drivers from building on PPC32
+Date:   Mon,  3 Sep 2018 18:55:45 +0200
+Message-Id: <20180903165638.325344720@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,51 +52,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 6e56830776828d8ca9897fc4429eeab47c3bb432 ]
+[ Upstream commit c9ce1fa1c24b08e13c2a3b5b1f94a19c9eaa982c ]
 
-Got crash report with following backtrace:
-BUG: unable to handle kernel paging request at ffff8801869daffe
-RIP: 0010:[<ffffffff816429c4>]  [<ffffffff816429c4>] ip6_finish_output2+0x394/0x4c0
-RSP: 0018:ffff880186c83a98  EFLAGS: 00010283
-RAX: ffff8801869db00e ...
-  [<ffffffff81644cdc>] ip6_finish_output+0x8c/0xf0
-  [<ffffffff81644d97>] ip6_output+0x57/0x100
-  [<ffffffff81643dc9>] ip6_forward+0x4b9/0x840
-  [<ffffffff81645566>] ip6_rcv_finish+0x66/0xc0
-  [<ffffffff81645db9>] ipv6_rcv+0x319/0x530
-  [<ffffffff815892ac>] netif_receive_skb+0x1c/0x70
-  [<ffffffffc0060bec>] atl1c_clean+0x1ec/0x310 [atl1c]
-  ...
+Prevent drivers from building on PPC32 if they use isa_bus_to_virt(),
+isa_virt_to_bus(), or isa_page_to_bus(), which are not available and
+thus cause build errors.
 
-The bad access is in neigh_hh_output(), at skb->data - 16 (HH_DATA_MOD).
-atl1c driver provided skb with no headroom, so 14 bytes (ethernet
-header) got pulled, but then 16 are copied.
+../drivers/net/ethernet/3com/3c515.c: In function 'corkscrew_open':
+../drivers/net/ethernet/3com/3c515.c:824:9: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
 
-Reserve NET_SKB_PAD bytes headroom, like netdev_alloc_skb().
+../drivers/net/ethernet/amd/lance.c: In function 'lance_rx':
+../drivers/net/ethernet/amd/lance.c:1203:23: error: implicit declaration of function 'isa_bus_to_virt'; did you mean 'bus_to_virt'? [-Werror=implicit-function-declaration]
 
-Compile tested only; I lack hardware.
+../drivers/net/ethernet/amd/ni65.c: In function 'ni65_init_lance':
+../drivers/net/ethernet/amd/ni65.c:585:20: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
 
-Fixes: 7b7017642199 ("atl1c: Fix misuse of netdev_alloc_skb in refilling rx ring")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+../drivers/net/ethernet/cirrus/cs89x0.c: In function 'net_open':
+../drivers/net/ethernet/cirrus/cs89x0.c:897:20: error: implicit declaration of function 'isa_virt_to_bus'; did you mean 'virt_to_bus'? [-Werror=implicit-function-declaration]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/atheros/atl1c/atl1c_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/3com/Kconfig   |    2 +-
+ drivers/net/ethernet/amd/Kconfig    |    4 ++--
+ drivers/net/ethernet/cirrus/Kconfig |    1 +
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-@@ -1678,6 +1678,7 @@ static struct sk_buff *atl1c_alloc_skb(s
- 	skb = build_skb(page_address(page) + adapter->rx_page_offset,
- 			adapter->rx_frag_size);
- 	if (likely(skb)) {
-+		skb_reserve(skb, NET_SKB_PAD);
- 		adapter->rx_page_offset += adapter->rx_frag_size;
- 		if (adapter->rx_page_offset >= PAGE_SIZE)
- 			adapter->rx_page = NULL;
+--- a/drivers/net/ethernet/3com/Kconfig
++++ b/drivers/net/ethernet/3com/Kconfig
+@@ -32,7 +32,7 @@ config EL3
+ 
+ config 3C515
+ 	tristate "3c515 ISA \"Fast EtherLink\""
+-	depends on ISA && ISA_DMA_API
++	depends on ISA && ISA_DMA_API && !PPC32
+ 	---help---
+ 	  If you have a 3Com ISA EtherLink XL "Corkscrew" 3c515 Fast Ethernet
+ 	  network card, say Y here.
+--- a/drivers/net/ethernet/amd/Kconfig
++++ b/drivers/net/ethernet/amd/Kconfig
+@@ -44,7 +44,7 @@ config AMD8111_ETH
+ 
+ config LANCE
+ 	tristate "AMD LANCE and PCnet (AT1500 and NE2100) support"
+-	depends on ISA && ISA_DMA_API && !ARM
++	depends on ISA && ISA_DMA_API && !ARM && !PPC32
+ 	---help---
+ 	  If you have a network (Ethernet) card of this type, say Y here.
+ 	  Some LinkSys cards are of this type.
+@@ -138,7 +138,7 @@ config PCMCIA_NMCLAN
+ 
+ config NI65
+ 	tristate "NI6510 support"
+-	depends on ISA && ISA_DMA_API && !ARM
++	depends on ISA && ISA_DMA_API && !ARM && !PPC32
+ 	---help---
+ 	  If you have a network (Ethernet) card of this type, say Y here.
+ 
+--- a/drivers/net/ethernet/cirrus/Kconfig
++++ b/drivers/net/ethernet/cirrus/Kconfig
+@@ -19,6 +19,7 @@ if NET_VENDOR_CIRRUS
+ config CS89x0
+ 	tristate "CS89x0 support"
+ 	depends on ISA || EISA || ARM
++	depends on !PPC32
+ 	---help---
+ 	  Support for CS89x0 chipset based Ethernet cards. If you have a
+ 	  network (Ethernet) card of this type, say Y and read the file
 
 
