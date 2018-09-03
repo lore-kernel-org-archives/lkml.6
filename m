@@ -3,160 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4318C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6054EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859BB2086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:38:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859BB2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id 084CD20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:41:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084CD20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbeIDBAO (ORCPT
+        id S1728611AbeIDBDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:00:14 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:60768 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeIDBAO (ORCPT
+        Mon, 3 Sep 2018 21:03:18 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:50205 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeIDBDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:00:14 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1fwvXU-0004dS-Mm; Mon, 03 Sep 2018 15:33:39 -0500
-Message-ID: <3a4274af2200923875ff05f945888a34d6dccee3.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Andy Tang <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-Cc:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Udit Kumar <udit.kumar@nxp.com>, Varun Sethi <V.Sethi@nxp.com>
-Date:   Mon, 03 Sep 2018 15:33:33 -0500
-In-Reply-To: <DB5PR0401MB221332A5ED14C8E14C8D18A1F30C0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-         <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-         <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
-         <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
-         <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
-         <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
-         <DB5PR0401MB22130C025AA4CCAD0221781DF30F0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-         <f6707cb54c3e6da1b50f45f915c996dfccfeacda.camel@buserror.net>
-         <DB5PR0401MB221332A5ED14C8E14C8D18A1F30C0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, vabhav.sharma@nxp.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de, kstewart@linuxfoundation.org, yamada.masahiro@socionext.com, yogeshnarayan.gaur@nxp.com, linux@armlinux.org.uk, udit.kumar@nxp.com, V.Sethi@nxp.com
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Mon, 3 Sep 2018 21:03:17 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fwvf1-0005tY-OH; Mon, 03 Sep 2018 14:41:23 -0600
+Received: from [105.225.206.69] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fwvf0-0001RU-L3; Mon, 03 Sep 2018 14:41:23 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-kernel@vger.kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-api@vger.kernel.org>
+Date:   Mon, 03 Sep 2018 22:41:13 +0200
+Message-ID: <87musyl3fa.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fwvf0-0001RU-L3;;;mid=<87musyl3fa.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/y+aTW+dpaHWANlobCtAjOHkbj+D0euZc=
+X-SA-Exim-Connect-IP: 105.225.206.69
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH 00/10] Removing SEND_SIG_FORCED
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-09-03 at 01:17 +0000, Andy Tang wrote:
-> Hi Scott,
-> 
-> Please see my replay in line.
-> 
-> > -----Original Message-----
-> > From: Linuxppc-dev
-> > <linuxppc-dev-bounces+b29983=freescale.com@lists.ozlabs.org> On
-> > Behalf Of Scott Wood
-> > Sent: 2018年9月1日 4:29
-> > To: Andy Tang <andy.tang@nxp.com>; Vabhav Sharma
-> > <vabhav.sharma@nxp.com>; linux-kernel@vger.kernel.org;
-> > devicetree@vger.kernel.org; robh+dt@kernel.org;
-> > mark.rutland@arm.com; linuxppc-dev@lists.ozlabs.org;
-> > linux-arm-kernel@lists.infradead.org; mturquette@baylibre.com;
-> > sboyd@kernel.org; rjw@rjwysocki.net; viresh.kumar@linaro.org;
-> > linux-clk@vger.kernel.org; linux-pm@vger.kernel.org;
-> > linux-kernel-owner@vger.kernel.org; catalin.marinas@arm.com;
-> > will.deacon@arm.com; gregkh@linuxfoundation.org; arnd@arndb.de;
-> > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
-> > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>;
-> > linux@armlinux.org.uk; Udit Kumar <udit.kumar@nxp.com>; Varun Sethi
-> > <V.Sethi@nxp.com>
-> > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
-> > lx2160a
-> > 
-> > On Fri, 2018-08-31 at 06:12 +0000, Andy Tang wrote:
-> > > We don't want to increase NUM_CMUX each time new soc with more
-> > 
-> > cmuxes added.
-> > 
-> > You don't want to have to make a trivial change each time you exceed a
-> > limit that has yet to be exceeded once since NUM_CMUX was added?
-> > This isn't ABI or in any other way hard to change.  It's right in the same
-> > file
-> > as the chip description you'd be adding.
-> > 
-> > And even if a chip did come along with 16 cmuxes, you'd then need to
-> > increase the array to 17 to hold the -1 if you don't want to leave a
-> > situation
-> > like the
-> > p4080 is in now, where a chip's cmux array could be broken by increasing
-> > NUM_CMUX further.
-> > 
-> 
-> [Andy] Adding buffer to a limitation number is always a good habit when
-> coding. We often forget to increase this value when
-> a new chip with more cmuxes added. 
 
-"often"?  There has never been a new chip added with more cmuxes than p4080's
-8, and if one does come along and you forget, the compiler should complain
-about exceeding the array length with a static initializer.  This isn't like
-an array that is filled with a runtime-determined length.
+SEND_SIG_FORCED has two functions.  It forces a pid namespace init to
+receive a signal it would ordinarily ignore, and it causes a siginfo to
+not be allocated for a signal.
 
-> Like this patch, we didn't increase this value at first. We spent a lot of
-> time finding out that NUM_CMUX needs to be increased too.
+This patchset makes __send_signal a little bit smarter so that it can
+detect when to apply these optimizations and the senders of signals
+don't have to worry about them.
 
-Are you talking about some other chip that you haven't sent a patch for yet? 
-Or is the cmux array for this chip wrong?  What specifically did you see
-happen "at first"?
+The coupling of forcing a signal to the pid namespace init and not
+allocating siginfo resulted in serveral minor bugs where a signal
+sent by the kernel was marked SI_USER suggesting another userspace
+process sent that signal.  I have cc'd linux-api in case anyone cares
+about these minor userspace visible differences.
 
-> It is a personal preference how to set this value. I think it is better to
-> increase it to 16, not NUM_CMUX+1 as long as we fix the P4080 issue
-> even though it is a trivial change. And I agree the description needs to be
-> updated.
+Unless someone notices a bug I intend to merge these changes through my
+tree during the next merge window.   While there are numerous fixes here
+none of them appear to be the kind that fixes real world problems so I
+don't see any urgency here.
 
-I'm not the clock maintainer, so it's not up to me, but I don't see the point
-in setting it to an arbitrary number, and I do not agree that increasing
-NUM_CMUX is a suitable replacement for NUM_CMUX+1 in cmux_to_group[], as that
-array should be one larger than cmux[] in order to allow every chip to have a
--1 terminator.  In any case, any change to NUM_CMUX should be a separate patch
-because it's not required for lx2160a support (assuming lx2160a was correctly
-described by this patch).
+Please look read and send my your review.  I will be out for about a
+week so I will address any comments when I get back.
 
--Scott
+Eric W. Biederman (10):
+      signal: Always ignore SIGKILL and SIGSTOP sent to the global init
+      signal: Properly deliver SIGILL from uprobes
+      signal: Properly deliver SIGSEGV from x86 uprobes
+      signal: Always deliver the kernel's SIGKILL and SIGSTOP to a pid namespace init
+      signal: send_sig_all no longer needs SEND_SIG_FORCED
+      signal: Remove the siginfo paramater from kernel_dqueue_signal
+      signal: Don't send siginfo to kthreads.
+      signal: Never allocate siginfo for SIGKILL or SIGSTOP
+      signal: Use SEND_SIG_PRIV not SEND_SIG_FORCED with SIGKILL and SIGSTOP
+      signal: Remove SEND_SIG_FORCED
 
+ arch/x86/kernel/uprobes.c                    |  2 +-
+ drivers/tty/sysrq.c                          |  2 +-
+ drivers/usb/gadget/function/f_mass_storage.c |  4 ++--
+ fs/jffs2/background.c                        |  2 +-
+ include/linux/sched/signal.h                 |  5 ++---
+ include/trace/events/signal.h                |  3 +--
+ kernel/events/uprobes.c                      |  4 ++--
+ kernel/pid_namespace.c                       |  2 +-
+ kernel/ptrace.c                              |  4 ++--
+ kernel/signal.c                              | 14 +++++++++-----
+ mm/oom_kill.c                                |  4 ++--
+ 11 files changed, 24 insertions(+), 22 deletions(-)
 
+Eric
