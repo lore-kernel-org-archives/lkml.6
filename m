@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31321C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5173C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE4220658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE4220658
+	by mail.kernel.org (Postfix) with ESMTP id AD3262077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3262077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731878AbeICV77 (ORCPT
+        id S1731887AbeICWAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49020 "EHLO
+        Mon, 3 Sep 2018 18:00:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbeICV77 (ORCPT
+        with ESMTP id S1727442AbeICWAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:59:59 -0400
+        Mon, 3 Sep 2018 18:00:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFB2CA95;
-        Mon,  3 Sep 2018 17:38:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19709A95;
+        Mon,  3 Sep 2018 17:38:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 072/123] ASoC: dpcm: dont merge format from invalid codec dai
-Date:   Mon,  3 Sep 2018 18:56:56 +0200
-Message-Id: <20180903165722.595772653@linuxfoundation.org>
+Subject: [PATCH 4.18 073/123] ASoC: zte: Fix incorrect PCM format bit usages
+Date:   Mon,  3 Sep 2018 18:56:57 +0200
+Message-Id: <20180903165722.633110174@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,45 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 4febced15ac8ddb9cf3e603edb111842e4863d9a upstream.
+commit c889a45d229938a94b50aadb819def8bb11a6a54 upstream.
 
-When merging codec formats, dpcm_runtime_base_format() should skip
-the codecs which are not supporting the current stream direction.
+zx-tdm driver sets the DAI driver definitions with the format bits
+wrongly set with SNDRV_PCM_FORMAT_*, instead of SNDRV_PCM_FMTBIT_*.
 
-At the moment, if a BE link has more than one codec, and only one
-of these codecs has no capture DAI, it becomes impossible to start
-a capture stream because the merged format would be 0.
+This patch corrects the definitions.
 
-Skipping invalid codec DAI solves the problem.
+Spotted by a sparse warning:
+  sound/soc/zte/zx-tdm.c:363:35: warning: restricted snd_pcm_format_t degrades to integer
 
-Fixes: b073ed4e2126 ("ASoC: soc-pcm: DPCM cares BE format")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 870e0ddc4345 ("ASoC: zx-tdm: add zte's tdm controller driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-pcm.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ sound/soc/zte/zx-tdm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1694,6 +1694,14 @@ static u64 dpcm_runtime_base_format(stru
- 		int i;
+--- a/sound/soc/zte/zx-tdm.c
++++ b/sound/soc/zte/zx-tdm.c
+@@ -144,8 +144,8 @@ static void zx_tdm_rx_dma_en(struct zx_t
+ #define ZX_TDM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000)
  
- 		for (i = 0; i < be->num_codecs; i++) {
-+			/*
-+			 * Skip CODECs which don't support the current stream
-+			 * type. See soc_pcm_init_runtime_hw() for more details
-+			 */
-+			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
-+						      stream))
-+				continue;
-+
- 			codec_dai_drv = be->codec_dais[i]->driver;
- 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
- 				codec_stream = &codec_dai_drv->playback;
+ #define ZX_TDM_FMTBIT \
+-	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_MU_LAW | \
+-	SNDRV_PCM_FORMAT_A_LAW)
++	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_MU_LAW | \
++	SNDRV_PCM_FMTBIT_A_LAW)
+ 
+ static int zx_tdm_dai_probe(struct snd_soc_dai *dai)
+ {
 
 
