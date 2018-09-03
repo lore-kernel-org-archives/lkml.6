@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB42C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C686DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5AB920658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5AB920658
+	by mail.kernel.org (Postfix) with ESMTP id 8C52920658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C52920658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731971AbeICWAy (ORCPT
+        id S1731980AbeICWA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:00:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49298 "EHLO
+        Mon, 3 Sep 2018 18:00:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49308 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729170AbeICWAx (ORCPT
+        with ESMTP id S1729170AbeICWA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:00:53 -0400
+        Mon, 3 Sep 2018 18:00:58 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78584A95;
-        Mon,  3 Sep 2018 17:39:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2345A95;
+        Mon,  3 Sep 2018 17:39:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCH 4.18 119/123] power: generic-adc-battery: check for duplicate properties copied from iio channels
-Date:   Mon,  3 Sep 2018 18:57:43 +0200
-Message-Id: <20180903165724.529399534@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
+        tj@kernel.org
+Subject: [PATCH 4.18 120/123] watchdog: Mark watchdog touch functions as notrace
+Date:   Mon,  3 Sep 2018 18:57:44 +0200
+Message-Id: <20180903165724.569740429@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,60 +53,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Nikolaus Schaller <hns@goldelico.com>
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-commit a427503edaaed9b75ed9746a654cece7e93e60a8 upstream.
+commit cb9d7fd51d9fbb329d182423bd7b92d0f8cb0e01 upstream.
 
-If an iio channel defines a basic property, there are duplicate entries
-in /sys/class/power/*/uevent.
+Some architectures need to use stop_machine() to patch functions for
+ftrace, and the assumption is that the stopped CPUs do not make function
+calls to traceable functions when they are in the stopped state.
 
-So add a check to avoid duplicates. Since all channels may be duplicates,
-we have to modify the related error check.
+Commit ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after
+MULTI_STOP_PREPARE") added calls to the watchdog touch functions from
+the stopped CPUs and those functions lack notrace annotations.  This
+leads to crashes when enabling/disabling ftrace on ARM kernels built
+with the Thumb-2 instruction set.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Fix it by adding the necessary notrace annotations.
+
+Fixes: ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after MULTI_STOP_PREPARE")
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: oleg@redhat.com
+Cc: tj@kernel.org
 Cc: stable@vger.kernel.org
-Fixes: e60fea794e6e ("power: battery: Generic battery driver using IIO")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Link: https://lkml.kernel.org/r/20180821152507.18313-1-vincent.whitchurch@axis.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/generic-adc-battery.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ kernel/watchdog.c     |    4 ++--
+ kernel/watchdog_hld.c |    2 +-
+ kernel/workqueue.c    |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/power/supply/generic-adc-battery.c
-+++ b/drivers/power/supply/generic-adc-battery.c
-@@ -244,6 +244,7 @@ static int gab_probe(struct platform_dev
- 	int ret = 0;
- 	int chan;
- 	int index = ARRAY_SIZE(gab_props);
-+	bool any = false;
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -266,7 +266,7 @@ static void __touch_watchdog(void)
+  * entering idle state.  This should only be used for scheduler events.
+  * Use touch_softlockup_watchdog() for everything else.
+  */
+-void touch_softlockup_watchdog_sched(void)
++notrace void touch_softlockup_watchdog_sched(void)
+ {
+ 	/*
+ 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
+@@ -275,7 +275,7 @@ void touch_softlockup_watchdog_sched(voi
+ 	raw_cpu_write(watchdog_touch_ts, 0);
+ }
  
- 	adc_bat = devm_kzalloc(&pdev->dev, sizeof(*adc_bat), GFP_KERNEL);
- 	if (!adc_bat) {
-@@ -290,12 +291,22 @@ static int gab_probe(struct platform_dev
- 			adc_bat->channel[chan] = NULL;
- 		} else {
- 			/* copying properties for supported channels only */
--			psy_desc->properties[index++] = gab_dyn_props[chan];
-+			int index2;
-+
-+			for (index2 = 0; index2 < index; index2++) {
-+				if (psy_desc->properties[index2] ==
-+				    gab_dyn_props[chan])
-+					break;	/* already known */
-+			}
-+			if (index2 == index)	/* really new */
-+				psy_desc->properties[index++] =
-+					gab_dyn_props[chan];
-+			any = true;
- 		}
- 	}
+-void touch_softlockup_watchdog(void)
++notrace void touch_softlockup_watchdog(void)
+ {
+ 	touch_softlockup_watchdog_sched();
+ 	wq_watchdog_touch(raw_smp_processor_id());
+--- a/kernel/watchdog_hld.c
++++ b/kernel/watchdog_hld.c
+@@ -29,7 +29,7 @@ static struct cpumask dead_events_mask;
+ static unsigned long hardlockup_allcpu_dumped;
+ static atomic_t watchdog_cpus = ATOMIC_INIT(0);
  
- 	/* none of the channels are supported so let's bail out */
--	if (index == ARRAY_SIZE(gab_props)) {
-+	if (!any) {
- 		ret = -ENODEV;
- 		goto second_mem_fail;
- 	}
+-void arch_touch_nmi_watchdog(void)
++notrace void arch_touch_nmi_watchdog(void)
+ {
+ 	/*
+ 	 * Using __raw here because some code paths have
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5559,7 +5559,7 @@ static void wq_watchdog_timer_fn(struct
+ 	mod_timer(&wq_watchdog_timer, jiffies + thresh);
+ }
+ 
+-void wq_watchdog_touch(int cpu)
++notrace void wq_watchdog_touch(int cpu)
+ {
+ 	if (cpu >= 0)
+ 		per_cpu(wq_watchdog_touched_cpu, cpu) = jiffies;
 
 
