@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E5EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0920BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020E720862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020E720862
+	by mail.kernel.org (Postfix) with ESMTP id B7B5520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B5520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbeICVUK (ORCPT
+        id S1728711AbeICVUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:20:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38500 "EHLO
+        Mon, 3 Sep 2018 17:20:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbeICVUI (ORCPT
+        with ESMTP id S1728133AbeICVUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:20:08 -0400
+        Mon, 3 Sep 2018 17:20:13 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C779CFB;
-        Mon,  3 Sep 2018 16:59:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26E16CF5;
+        Mon,  3 Sep 2018 16:59:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Stefan Metzmacher <metze@samba.org>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 43/80] smb3: Do not send SMB3 SET_INFO if nothing changed
-Date:   Mon,  3 Sep 2018 18:49:21 +0200
-Message-Id: <20180903164935.870280645@linuxfoundation.org>
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.4 44/80] smb3: dont request leases in symlink creation and query
+Date:   Mon,  3 Sep 2018 18:49:22 +0200
+Message-Id: <20180903164935.910816211@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -53,51 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steve French <stfrench@microsoft.com>
 
-commit fd09b7d3b352105f08b8e02f7afecf7e816380ef upstream.
+commit 22783155f4bf956c346a81624ec9258930a6fe06 upstream.
 
-An earlier commit had a typo which prevented the
-optimization from working:
+Fixes problem pointed out by Pavel in discussions about commit
+729c0c9dd55204f0c9a823ac8a7bfa83d36c7e78
 
-commit 18dd8e1a65dd ("Do not send SMB3 SET_INFO request if nothing is changing")
-
-Thank you to Metze for noticing this.  Also clear a
-reserved field in the FILE_BASIC_INFO struct we send
-that should be zero (all the other fields in that
-struct were set or cleared explicitly already in
-cifs_set_file_info).
-
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org> # 4.9.x+
-Reported-by: Stefan Metzmacher <metze@samba.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+CC: Stable <stable@vger.kernel.org> # 3.18.x+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c     |    2 ++
- fs/cifs/smb2inode.c |    2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/link.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -1063,6 +1063,8 @@ cifs_set_file_info(struct inode *inode,
- 	if (!server->ops->set_file_info)
- 		return -ENOSYS;
+--- a/fs/cifs/link.c
++++ b/fs/cifs/link.c
+@@ -419,7 +419,7 @@ smb3_query_mf_symlink(unsigned int xid,
+ 	struct cifs_io_parms io_parms;
+ 	int buf_type = CIFS_NO_BUFFER;
+ 	__le16 *utf16_path;
+-	__u8 oplock = SMB2_OPLOCK_LEVEL_II;
++	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
+ 	struct smb2_file_all_info *pfile_info = NULL;
  
-+	info_buf.Pad = 0;
-+
- 	if (attrs->ia_valid & ATTR_ATIME) {
- 		set_time = true;
- 		info_buf.LastAccessTime =
---- a/fs/cifs/smb2inode.c
-+++ b/fs/cifs/smb2inode.c
-@@ -267,7 +267,7 @@ smb2_set_file_info(struct inode *inode,
- 	int rc;
+ 	oparms.tcon = tcon;
+@@ -481,7 +481,7 @@ smb3_create_mf_symlink(unsigned int xid,
+ 	struct cifs_io_parms io_parms;
+ 	int create_options = CREATE_NOT_DIR;
+ 	__le16 *utf16_path;
+-	__u8 oplock = SMB2_OPLOCK_LEVEL_EXCLUSIVE;
++	__u8 oplock = SMB2_OPLOCK_LEVEL_NONE;
+ 	struct kvec iov[2];
  
- 	if ((buf->CreationTime == 0) && (buf->LastAccessTime == 0) &&
--	    (buf->LastWriteTime == 0) && (buf->ChangeTime) &&
-+	    (buf->LastWriteTime == 0) && (buf->ChangeTime == 0) &&
- 	    (buf->Attributes == 0))
- 		return 0; /* would be a no op, no sense sending this */
- 
+ 	if (backup_cred(cifs_sb))
 
 
