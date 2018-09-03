@@ -2,236 +2,95 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CC2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E2C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8662B20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8662B20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5138520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:15:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/4PrqEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5138520862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeICGb7 (ORCPT
+        id S1727390AbeICGdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:31:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39854 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726048AbeICGb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:31:59 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8619887A50;
-        Mon,  3 Sep 2018 02:14:01 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-49.pek2.redhat.com [10.72.12.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2E48101042F;
-        Mon,  3 Sep 2018 02:13:48 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 10:13:44 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Kashyap Desai <kashyap.desai@broadcom.com>
-Cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Mon, 3 Sep 2018 02:33:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33026 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICGdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:33:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=i+5mXuYXD9hWkgy76c1KQuJ0ZsOWx6MeFQoK8XmOzJk=; b=O/4PrqEO8/c84SZ+Ws8VKDxNKE
+        tPXjhTFodYAmNqW6KjoElPWGdWpwydNWy6E9BUvdXxZG28CdP/0mkW7TOv5Ip3yPxomdiHmO49TlV
+        Io0ULzVqtSOllD5TU+jMDqzeGufno4Y78HbBubx/tJavodNhunfoi4d91BnWlIh15dJv66AtucSol
+        ttRodSVbPTGW88TFIE9c9YoULVajIa36tt3rNhFpbEd835b0LvCSiAbTJJF3j6e/3SK6MZmrdYhWg
+        CGzW2lqN4RPPmM6pJ4oTjW+luIJaYMo4bEM1H9h2r41AHL179i+28kGNKoJIyXZraA8rY0rnkuElj
+        nXiHbb6A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fweOV-0005Qc-OS; Mon, 03 Sep 2018 02:15:11 +0000
+Subject: Re: [PATCH 4/7] crypto: add hisilicon Queue Manager driver
+To:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: Re: Affinity managed interrupts vs non-managed interrupts
-Message-ID: <20180903021332.GA5481@ming.t460p>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
- <20180829084618.GA24765@ming.t460p>
- <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
- <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
- <615d78004495aebc53807156d04d988c@mail.gmail.com>
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Cc:     linuxarm@huawei.com
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180903005204.26041-5-nek.in.cn@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4e46a451-d1cd-ac68-84b4-20792fdbc733@infradead.org>
+Date:   Sun, 2 Sep 2018 19:15:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <615d78004495aebc53807156d04d988c@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Sep 2018 02:14:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Sep 2018 02:14:01 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+In-Reply-To: <20180903005204.26041-5-nek.in.cn@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 01:50:31AM -0600, Kashyap Desai wrote:
-> > -----Original Message-----
-> > From: Ming Lei [mailto:tom.leiming@gmail.com]
-> > Sent: Friday, August 31, 2018 12:54 AM
-> > To: sumit.saxena@broadcom.com
-> > Cc: Ming Lei; Thomas Gleixner; Christoph Hellwig; Linux Kernel Mailing
-> > List;
-> > Kashyap Desai; shivasharan.srikanteshwara@broadcom.com; linux-block
-> > Subject: Re: Affinity managed interrupts vs non-managed interrupts
-> >
-> > On Wed, Aug 29, 2018 at 6:47 PM Sumit Saxena
-> > <sumit.saxena@broadcom.com> wrote:
-> > >
-> > > > -----Original Message-----
-> > > > From: Ming Lei [mailto:ming.lei@redhat.com]
-> > > > Sent: Wednesday, August 29, 2018 2:16 PM
-> > > > To: Sumit Saxena <sumit.saxena@broadcom.com>
-> > > > Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
-> > > > Subject: Re: Affinity managed interrupts vs non-managed interrupts
-> > > >
-> > > > Hello Sumit,
-> > > Hi Ming,
-> > > Thanks for response.
-> > > >
-> > > > On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
-> > > > >  Affinity managed interrupts vs non-managed interrupts
-> > > > >
-> > > > > Hi Thomas,
-> > > > >
-> > > > > We are working on next generation MegaRAID product where
-> > requirement
-> > > > > is- to allocate additional 16 MSI-x vectors in addition to number of
-> > > > > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID
-> > > > > adapter
-> > > > > supports 128 MSI-x vectors.
-> > > > >
-> > > > > To explain the requirement and solution, consider that we have 2
-> > > > > socket system (each socket having 36 logical CPUs). Current driver
-> > > > > will allocate total 72 MSI-x vectors by calling API-
-> > > > > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
-> > > > > vectors will have affinity across NUMA node s and interrupts are
-> > > affinity
-> > > > managed.
-> > > > >
-> > > > > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
-> > > > > 16 and, driver can allocate 16 + 72 MSI-x vectors.
-> > > >
-> > > > Could you explain a bit what the specific use case the extra 16
-> > > > vectors
-> > > is?
-> > > We are trying to avoid the penalty due to one interrupt per IO
-> > > completion
-> > > and decided to coalesce interrupts on these extra 16 reply queues.
-> > > For regular 72 reply queues, we will not coalesce interrupts as for low
-> > > IO
-> > > workload, interrupt coalescing may take more time due to less IO
-> > > completions.
-> > > In IO submission path, driver will decide which set of reply queues
-> > > (either extra 16 reply queues or regular 72 reply queues) to be picked
-> > > based on IO workload.
-> >
-> > I am just wondering how you can make the decision about using extra
-> > 16 or regular 72 queues in submission path, could you share us a bit
-> > your idea? How are you going to recognize the IO workload inside your
-> > driver? Even the current block layer doesn't recognize IO workload, such
-> > as random IO or sequential IO.
-> 
-> It is not yet finalized, but it can be based on per sdev outstanding,
-> shost_busy etc.
-> We want to use special 16 reply queue for IO acceleration (these queues are
-> working interrupt coalescing mode. This is a h/w feature)
+On 09/02/2018 05:52 PM, Kenneth Lee wrote:
+> diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
+> index 8ca9c503bcb0..02a6eef84101 100644
+> --- a/drivers/crypto/hisilicon/Kconfig
+> +++ b/drivers/crypto/hisilicon/Kconfig
+> @@ -1,4 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +config CRYPTO_DEV_HISILICON
+> +	tristate "Support for HISILICON CRYPTO ACCELERATOR"
+> +	help
+> +	  Enable this to use Hisilicon Hardware Accelerators
 
-This part is very key to your approach, so I'd suggest to finalize it
-first. That said this way doesn't make sense if you can't figure out
-one doable approach to decide when to use the coalescing mode, and when to
-use the regular 72 reply queues.
+	                                        Accelerators.
 
-If it is just for IO acceleration, why not always use the coalescing mode?
 
-> 
-> >
-> > Frankly speaking, you may reuse the 72 reply queues to do interrupt
-> > coalescing by configuring one extra register to enable the coalescing
-> > mode,
-> > and you may just use small part of the 72 reply queues under the
-> > interrupt coalescing mode.
-> Our h/w can set interrupt coalescing per 8 reply queues. So smallest is 8.
-> If we choose to take 8 reply queue from existing 72 reply queue (without
-> asking for extra reply queue), we still have  an issue on more numa node
-> systems.  Example - in 8 numa node system each node will have only *one*
-> reply queue for effective interrupt coalescing. (since irq subsystem will
-> spread msix per numa).
-> 
-> To keep things scalable we cherry picked few reply queues and wanted them to
-> be out of cpu-msix mapping.
-
-I mean you can group the reply queues according to the queue's numa node
-info, given the mapping has been figured out there by genirq affinity
-code.
-
-> 
-> >
-> > Or you can learn from SPDK to use one or small number of dedicated cores
-> > or kernel threads to poll the interrupts from all reply queues, then I
-> > guess you may benefit much compared with the extra 16 queue approach.
-> Problem with polling -  It requires some steady completion, otherwise
-> prediction in driver gives different results on different profiles.
-> We attempted irq-poll and thread ISR based polling, but it has pros and
-> cons. One of the key usage of method what we are trying is not to impact
-> latency for lower QD workloads.
-
-Interrupt coalescing should effect latency too[1], or could you share your
-idea how to use interrupt coalescing to address the latency issue?
-
-	"Interrupt coalescing, also known as interrupt moderation,[1] is a
-	technique in which events which would normally trigger a hardware interrupt
-	are held back, either until a certain amount of work is pending, or a
-	timeout timer triggers."[1] 
-
-[1] https://en.wikipedia.org/wiki/Interrupt_coalescing
-
-> I posted RFC at
-> https://www.spinics.net/lists/linux-scsi/msg122874.html
-> 
-> We have done extensive study and concluded to use interrupt coalescing is
-> better if h/w can manage two different modes (coalescing on/off).
-
-Could you explain a bit why coalescing is better?
-
-In theory, interrupt coalescing is just to move the implementation into
-hardware. And the IO submitted from the same coalescing group is usually
-irrelevant. The same problem you found in polling should have been in
-coalescing too.
-
-> 
-> >
-> > Introducing extra 16 queues just for interrupt coalescing and making it
-> > coexisting with the regular 72 reply queues seems one very unusual use
-> > case, not sure the current genirq affinity can support it well.
-> 
-> Yes. This is unusual case. I think it is not used by any other drivers.
-> 
-> >
-> > > >
-> > > > >
-> > > > > All pre_vectors (16) will be mapped to all available online CPUs but
-> > > > > e
-> > > > > ffective affinity of each vector is to CPU 0. Our requirement is to
-> > > > > have pre _vectors 16 reply queues to be mapped to local NUMA node
-> > with
-> > > > > effective CPU should be spread within local node cpu mask. Without
-> > > > > changing kernel code, we can
-> > > >
-> > > > If all CPUs in one NUMA node is offline, can this use case work as
-> > > expected?
-> > > > Seems we have to understand what the use case is and how it works.
-> > >
-> > > Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
-> > > broken and irqbalancer takes care of migrating affected IRQs to online
-> > > CPUs of different NUMA node.
-> > > When offline CPUs are onlined again, irqbalancer restores affinity.
-> >
-> >  irqbalance daemon can't cover managed interrupts, or you mean
-> > you don't use pci_alloc_irq_vectors_affinity(PCI_IRQ_AFFINITY)?
-> 
-> Yes. We did not used " pci_alloc_irq_vectors_affinity".
-> We used " pci_enable_msix_range" and manually set affinity in driver using
-> irq_set_affinity_hint.
-
-Then you have to cover all kind of CPU hotplug issues in your driver
-because you switch to driver to maintain the queue mapping.
-
-Thanks,
-Ming
+-- 
+~Randy
