@@ -6,202 +6,180 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8A3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388E0C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2661920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2661920862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E54472086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:08:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54472086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeICT1w (ORCPT
+        id S1727486AbeICT2e convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:27:52 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40653 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeICT1v (ORCPT
+        Mon, 3 Sep 2018 15:28:34 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:46546 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeICT2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:27:51 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l202-v6so1465289oig.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 08:07:16 -0700 (PDT)
+        Mon, 3 Sep 2018 15:28:33 -0400
+Received: by mail-vk0-f67.google.com with SMTP id b14-v6so286939vke.13;
+        Mon, 03 Sep 2018 08:07:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XLIqvVqLwDM6Dqkbgodj9J9V+Tclp4D6ftR1elNU8oU=;
-        b=JQ3Bk+aGG9Nhy0QG+rDBP5Ieb5PNUEMnmLSUO9gV+WwpmjB/E+ikFFdU/5J6s4hrwW
-         ZHhBbnK8Ykp3b9MImOocIaaAHY0Z5aYRVobCU+0cI2n+giOsTI8NEqDedMLqqFs9vMxd
-         dqoL4sSRYgNeWbYdmY+uiYbEdUUghiOMaraSPJhJ+SesbeujlftJUKsAO2Nj/6dqo0dR
-         xZZbxx5TrX3MbE/T2hl50ZlZ2YvxIymLcNbjcpVVH0jmsiwKxqk3bgiiZZzybXlSAGND
-         +CI6UosaahEKT9FQITFHu/PDxm7cDAJyAYnq0rBLgl2df4+WelU5lntG32Ed1CmYogfc
-         4ZkA==
-X-Gm-Message-State: APzg51AAh4EKk8uIVw8vIJy5sOneCJxSeRIus/yHMjx/lr5chGsdlpnw
-        ZCpSuOEBfdF5av4D1W1cgqG8zArzU/4RyQSvU54CvQ==
-X-Google-Smtp-Source: ANB0VdaVB2W+LnZlrGMMrNMaLizd4J9YYSiKmV5U5rzrs3eXbWfc9d5zPl8sHzDHWyjNrCBRe9Ci0vAyuiz6pCerYDM=
-X-Received: by 2002:aca:598a:: with SMTP id n132-v6mr20227208oib.158.1535987235947;
- Mon, 03 Sep 2018 08:07:15 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HPSp+Jn8jv1Vh1YsfpKRDgDd3bmQ8AAw73WdrmW3V5Y=;
+        b=Qw633aw4HPgFKjGwOfuMZ59qefIUkj8fUb5wpiDPEpMSRM6IqqwtbY6KPrs0DZloKK
+         GZwsA0CbxS/cpANq07YgSI4hFNNNbE7J63VNUtSBcV8GI50vOlzk6dcozzPAh09IsjNC
+         nVKhs5AvfxZdbQFWnJiDPon/qa1/SFsi4p8MySryOtbEhs9KP3QqWJ2tImJqxKYoyDPd
+         MgKNGK7pCoCkGrwq/hkjMlg6+RmXOuYWzC0gjdRCZHfhxf9YMAMk7+K8I140RtNMLlK/
+         UMU/n2pO8+uw3wNskYN5E+XBqDvTEX9veXattmK+LA9woWHXNEbdULCIs7Mb8XLq4PKP
+         8GFw==
+X-Gm-Message-State: APzg51CR08Yx4i4jcUSYCUjxTxCuk8J7Mu63IRro/UpEzBNbrxniCv1s
+        xpf2cs/xXg0R5nD/iwpluRQNFY3JUtcHp5tUCkQ=
+X-Google-Smtp-Source: ANB0VdZwrSGUbocz+e7hD7Hi/+8Gop2gS+ScDfXzu9LH8WFlEKRoZCp+/SVu/E4taR+o9fvA7dzr606ru+QiMIPz2zQ=
+X-Received: by 2002:a1f:6307:: with SMTP id x7-v6mr6412045vkb.111.1535987277086;
+ Mon, 03 Sep 2018 08:07:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4a:2011:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 08:07:15 -0700 (PDT)
-In-Reply-To: <CAE4VaGA_L1AEj+Un0oQEEqZp_jgaFLk+Z=vNoad08oXnU2T1nw@mail.gmail.com>
-References: <CAE4VaGAPOfy0RtQehKoe+443C1GRrJXCveBFgcAZ1nChVavp1g@mail.gmail.com>
- <CAE4VaGBMeL82SJK53gtcWkor-9eXeLX6VP9juw=FW=BOyp+hMA@mail.gmail.com>
- <20180621092331.p2pmaiu6563kp5u2@techsingularity.net> <CAE4VaGCQV+cS-vhdLyMwzftbB-xBHPt4Y4chg_0ykLHTE9cRfw@mail.gmail.com>
- <CAE4VaGDHcZbnDpJ+FiQLfA1DRftY0j_GJSnh3FDRi34OztVH6Q@mail.gmail.com>
- <20180627084954.73ucqvac62v5gje4@techsingularity.net> <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
- <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
- <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
- <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
- <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net> <CAE4VaGA_L1AEj+Un0oQEEqZp_jgaFLk+Z=vNoad08oXnU2T1nw@mail.gmail.com>
-From:   Jirka Hladky <jhladky@redhat.com>
-Date:   Mon, 3 Sep 2018 17:07:15 +0200
-Message-ID: <CAE4VaGDTNgu=JX=N7=uZu0Bz_vUdHszZQ9_SQuwrbjRvFjCwZw@mail.gmail.com>
-Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
- Stream, Linpack and NAS parallel benchmarks
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
-        Jakub Racek <jracek@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+References: <20180831225616.29221-1-jmkrzyszt@gmail.com> <20180902120144.6855-1-jmkrzyszt@gmail.com>
+ <20180902120144.6855-2-jmkrzyszt@gmail.com>
+In-Reply-To: <20180902120144.6855-2-jmkrzyszt@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 3 Sep 2018 17:07:44 +0200
+Message-ID: <CAMuHMdXScsLg+LsQDn0dU8qSV30uWaeGQsNDPssm0H5y6UPAWw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] gpiolib: Pass bitmaps, not integer arrays, to
+ get/set array
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        peter.korsgaard@barco.com, Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
+        driverdevel <devel@driverdev.osuosl.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        sebastien.bourdelin@savoirfairelinux.com,
+        Lukas Wunner <lukas@wunner.de>,
+        Rojhalat Ibrahim <imr@rtschenk.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resending in the plain text mode.
+Hi Janusz,
 
-> My own testing completed and the results are within expectations and I
-> saw no red flags. Unfortunately, I consider it unlikely they'll be merged
-> for 4.18. Srikar Dronamraju's series is likely to need another update
-> and I would need to rebase my patches on top of that. Given the scope
-> and complexity, I find it unlikely they would be accepted for an -rc,
-> particularly this late of an rc. Whether we hit the 4.19 merge window or
-> not will depend on when Srikar's series gets updated.
+On Sun, Sep 2, 2018 at 2:01 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> Most users of get/set array functions iterate consecutive bits of data,
+> usually a single integer, while processing array of results obtained
+> from, or building an array of values to be passed to those functions.
+> Save time wasted on those iterations by changing the functions' API to
+> accept bitmaps.
+>
+> All current users are updated as well.
+>
+> More benefits from the change are expected as soon as planned support
+> for accepting/passing those bitmaps directly from/to respective GPIO
+> chip callbacks if applicable is implemented.
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Peter Korsgaard <peter.korsgaard@barco.com>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Rojhalat Ibrahim <imr@rtschenk.de>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Russell King <rmk+kernel@armlinux.org.uk>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: Yegor Yefremov <yegorslists@googlemail.com>
+> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+> --- a/drivers/auxdisplay/hd44780.c
+> +++ b/drivers/auxdisplay/hd44780.c
+> @@ -62,17 +62,12 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
+>  /* write to an LCD panel register in 8 bit GPIO mode */
+>  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
+>  {
+> -       int values[10]; /* for DATA[0-7], RS, RW */
+> -       unsigned int i, n;
+> -
+> -       for (i = 0; i < 8; i++)
+> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
+> -       values[PIN_CTRL_RS] = rs;
+> -       n = 9;
+> -       if (hd->pins[PIN_CTRL_RW]) {
+> -               values[PIN_CTRL_RW] = 0;
+> -               n++;
+> -       }
+> +       DECLARE_BITMAP(values, 10); /* for DATA[0-7], RS, RW */
+> +       unsigned int n;
+> +
+> +       *values = val;
 
-Hi Mel,
+Given DECLARE_BITMAP() creates an array, the above line looks a bit funny now.
 
-we have collaborated back in July on the scheduler patch, improving
-the performance by allowing faster memory migration. You came up with
-the "sched-numa-fast-crossnode-v1r12" series here:
+IMHO, either you use
 
-https://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
+    unsigned long values;
+    values = val;
+    __assign_bit(8, &values, rs);
 
-which has shown good performance results both in your and our testing.
+or
 
-Do you have some update on the latest status? Is there any plan to
-merge this series into 4.19 kernel? We have just tested 4.19.0-0.rc1.1
-and based on the results it seems that the patch is not included (and
-I don't see it listed in  git shortlog v4.18..v4.19-rc1
-./kernel/sched)
+    DECLARE_BITMAP(values, 10);
+    values[0] = val;
+    __assign_bit(8, values, rs);
 
-With 4.19rc1 we see performance drop
-  * up to 40% (NAS bench) relatively to  4.18 + sched-numa-fast-crossnode-v1r12
-  * up to 20% (NAS, Stream, SPECjbb2005, SPECjvm2008) relatively to 4.18 vanilla
-The performance is dropping. It's quite unclear what are the next
-steps - should we wait for "sched-numa-fast-crossnode-v1r12" to be
-merged or should we start looking at what has caused the drop in
-performance going from 4.19rc1 to 4.18?
+Nevertheless, for hd44780.c:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-We would appreciate any guidance on how to proceed.
+Gr{oetje,eeting}s,
 
-Thanks a lot!
-Jirka
+                        Geert
 
-On Mon, Sep 3, 2018 at 5:04 PM, Jirka Hladky <jhladky@redhat.com> wrote:
->> My own testing completed and the results are within expectations and I
->> saw no red flags. Unfortunately, I consider it unlikely they'll be merged
->> for 4.18. Srikar Dronamraju's series is likely to need another update
->> and I would need to rebase my patches on top of that. Given the scope
->> and complexity, I find it unlikely they would be accepted for an -rc,
->> particularly this late of an rc. Whether we hit the 4.19 merge window or
->> not will depend on when Srikar's series gets updated.
->
->
-> Hi Mel,
->
-> we have collaborated back in July on the scheduler patch, improving the
-> performance by allowing faster memory migration. You came up with the
-> "sched-numa-fast-crossnode-v1r12" series here:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
->
-> which has shown good performance results both in your and our testing.
->
-> Do you have some update on the latest status? Is there any plan to merge
-> this series into 4.19 kernel? We have just tested 4.19.0-0.rc1.1 and based
-> on the results it seems that the patch is not included (and I don't see it
-> listed in  git shortlog v4.18..v4.19-rc1 ./kernel/sched)
->
-> With 4.19rc1 we see performance drop
->
-> up to 40% (NAS bench) relatively to  4.18 + sched-numa-fast-crossnode-v1r12
-> up to 20% (NAS, Stream, SPECjbb2005, SPECjvm2008) relatively to 4.18 vanilla
->
-> The performance is dropping. It's quite unclear what are the next steps -
-> should we wait for "sched-numa-fast-crossnode-v1r12" to be merged or should
-> we start looking at what has caused the drop in performance going from
-> 4.19rc1 to 4.18?
->
-> We would appreciate any guidance on how to proceed.
->
-> Thanks a lot!
-> Jirka
->
->
->
->
-> On Tue, Jul 17, 2018 at 12:03 PM, Mel Gorman <mgorman@techsingularity.net>
-> wrote:
->>
->> On Tue, Jul 17, 2018 at 10:45:51AM +0200, Jirka Hladky wrote:
->> > Hi Mel,
->> >
->> > we have compared 4.18 + git://
->> > git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
->> > sched-numa-fast-crossnode-v1r12 against 4.16 kernel and performance
->> > results
->> > look very good!
->> >
->>
->> Excellent, thanks to both Kamil and yourself for collecting the data.
->> It's helpful to have independent verification.
->>
->> > We see performance gains about 10-20% for SPECjbb2005. NAS results are a
->> > little bit noisy but show overall performance gains as well (total
->> > runtime
->> > for reduced from 6 hours 34 minutes to 6 hours 26 minutes to give you a
->> > specific example).
->>
->> Great.
->>
->> > The only benchmark showing a slight regression is stream
->> > - but the regression is just a few percents ( upto 10%) and I think it's
->> > not a real concern given that it's an artificial benchmark.
->> >
->>
->> Agreed.
->>
->> > How is your testing going? Do you think
->> > that sched-numa-fast-crossnode-v1r12 series can make it into the 4.18?
->> >
->>
->> My own testing completed and the results are within expectations and I
->> saw no red flags. Unfortunately, I consider it unlikely they'll be merged
->> for 4.18. Srikar Dronamraju's series is likely to need another update
->> and I would need to rebase my patches on top of that. Given the scope
->> and complexity, I find it unlikely they would be accepted for an -rc,
->> particularly this late of an rc. Whether we hit the 4.19 merge window or
->> not will depend on when Srikar's series gets updated.
->>
->> > Thanks a lot for your efforts to improve the performance!
->>
->> My pleasure.
->>
->> --
->> Mel Gorman
->> SUSE Labs
->
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
