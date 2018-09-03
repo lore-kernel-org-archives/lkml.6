@@ -2,87 +2,125 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A21C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B454C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487C120867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:49:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487C120867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AA1EA20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:51:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1EA20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeICRJF (ORCPT
+        id S1727100AbeICRLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:09:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43796 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725866AbeICRJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:09:05 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E5F908010FDF;
-        Mon,  3 Sep 2018 12:49:03 +0000 (UTC)
-Received: from [10.36.116.60] (ovpn-116-60.ams2.redhat.com [10.36.116.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 78CC22166BA1;
-        Mon,  3 Sep 2018 12:48:59 +0000 (UTC)
-Subject: Re: [RFC 09/13] iommu/smmuv3: Get prepared for nested stage support
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        "yi.l.liu\""@linux.intel.com, will.deacon@arm.com,
-        robin.murphy@arm.com
-Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
-        christoffer.dall@arm.com
-References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
- <1535026656-8450-10-git-send-email-eric.auger@redhat.com>
- <538a2b88-dec5-a6fa-d918-486284eb56a9@arm.com>
- <012d4950-7a06-2d59-85a0-44d511ad893b@redhat.com>
- <e6de91f7-2410-b0dd-b118-674c32bae5e8@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <a1c79d41-ad83-1883-dd80-c1153ccfd777@redhat.com>
-Date:   Mon, 3 Sep 2018 14:48:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Sep 2018 13:11:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:55122 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725866AbeICRLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:11:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E32EE18A;
+        Mon,  3 Sep 2018 05:51:52 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B3F3A3F5BC;
+        Mon,  3 Sep 2018 05:51:52 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 647BD1AE3030; Mon,  3 Sep 2018 13:52:06 +0100 (BST)
+Date:   Mon, 3 Sep 2018 13:52:06 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 00/12] Avoid synchronous TLB invalidation for
+ intermediate page-table entries on arm64
+Message-ID: <20180903125205.GA12642@arm.com>
+References: <1535645747-9823-1-git-send-email-will.deacon@arm.com>
+ <CA+55aFzMMU5RBhn52Lbzf-FXvx3inh5VPVZL613srY+dVU+Lxw@mail.gmail.com>
+ <20180831110054.475a3534@roar.ozlabs.ibm.com>
+ <CA+55aFyweLwdAeeLnPv1ceje2y9Qc2AkM+LdMzK_z29fFb96ug@mail.gmail.com>
+ <20180831095417.GF13166@arm.com>
+ <20180831101014.GG24124@hirez.programming.kicks-ass.net>
+ <20180831203234.7b8f4d13@roar.ozlabs.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <e6de91f7-2410-b0dd-b118-674c32bae5e8@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 03 Sep 2018 12:49:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 03 Sep 2018 12:49:04 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831203234.7b8f4d13@roar.ozlabs.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean-Philippe,
-
-On 09/03/2018 02:29 PM, Jean-Philippe Brucker wrote:
-> On 31/08/2018 15:11, Auger Eric wrote:
->> Yep this works with my setup but I was waiting for such kind of comments
->> to turn this prototype into something more "production level" ;-) Did
->> you send anything upstream, related to this branch?
+On Fri, Aug 31, 2018 at 08:32:34PM +1000, Nicholas Piggin wrote:
+> On Fri, 31 Aug 2018 12:10:14 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> No I didn't have time to clean it up yet, and don't know when I'll be
-> able to send it out. With host SVA and virtio-iommu, I have enough
-> patches in flight to keep me busy for a while :) But you can obviously
-> pick patches from that branch if they help.
-
-I understand ;-) I will update the uapi according to our last
-discussions and I will look at your patches, especially smmu-v3 changes,
-adding your Sob when relevant.
-
-Thanks
-
-Eric
+> > On Fri, Aug 31, 2018 at 10:54:18AM +0100, Will Deacon wrote:
+> > 
+> > > Proposal below (omitted Linus because that seems to be the pattern elsewhere
+> > > in the file and he's not going to shout at himself when things break :)
+> > > Anybody I've missed?
+> > > 
+> > > Will
+> > >   
+> > > --->8  
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index a5b256b25905..7224b5618883 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -9681,6 +9681,15 @@ S:	Maintained
+> > >  F:	arch/arm/boot/dts/mmp*
+> > >  F:	arch/arm/mach-mmp/
+> > >  
+> > > +MMU GATHER AND TLB INVALIDATION
+> > > +M:	Will Deacon <will.deacon@arm.com>
+> > > +M:	Nick Piggin <npiggin@gmail.com>
 > 
-> Thanks,
-> Jean
+> Oh gee, I suppose. powerpc hash is kind of interesting because it's
+> crazy, Aneesh knows that code a lot better than I do. radix modulo
+> some minor details of exact instructions is fairly like x86 (he 
+> wrote a lot of that code too AFAIK).
+
+Sure, as long as we have Power represented here. Would you rather add Aneesh
+instead of yourself, or shall we just add you both?
+
 > 
+> > > +M:	Peter Zijlstra <peterz@infradead.org>
+> > > +L:	linux-arch@vger.kernel.org
+> 
+> Maybe put linux-mm as well? Or should there just be one list?
+
+If we do the landgrab on mmu_gather (which I think makes sense), then adding
+both lists makes sense to me. I'll spin this as a proper patch, along with
+Peter's code move.
+
+> > > +S:	Maintained
+> > > +F:	include/asm-generic/tlb.h
+> > > +F:	arch/*/include/asm/tlb.h
+> > > +
+> > >  MN88472 MEDIA DRIVER
+> > >  M:	Antti Palosaari <crope@iki.fi>
+> > >  L:	linux-media@vger.kernel.org  
+> > 
+> > If we're going to do that (and I'm not opposed); it might make sense to
+> > do something like the below and add:
+> > 
+> >  F:  mm/mmu_gather.c
+> 
+> I think that is a good idea regardless. How do feel about calling it
+> tlb.c? Easier to type and autocompletes sooner.
+
+No strong opinion on name, but I slightly prefer mmu_gather.c so that it
+avoids any remote possibility of confusion with tlb.c vs hugetlb.c
+
+Will
