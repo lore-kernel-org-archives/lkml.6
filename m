@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AD3C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FEFB2086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BE72086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMQZX/gI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FEFB2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gWfWnmfQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BE72086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbeIDAon (ORCPT
+        id S1728148AbeIDAqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 20:44:43 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43878 "EHLO
+        Mon, 3 Sep 2018 20:46:18 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38737 "EHLO
         mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbeIDAon (ORCPT
+        with ESMTP id S1727552AbeIDAqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 20:44:43 -0400
-Received: by mail-pl1-f193.google.com with SMTP id x6-v6so569236plv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:22:54 -0700 (PDT)
+        Mon, 3 Sep 2018 20:46:17 -0400
+Received: by mail-pl1-f193.google.com with SMTP id u11-v6so581465plq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=8fygkBaQGLWT1scFAqCghA9qQKwqujYef/mOquj/oQ8=;
-        b=UMQZX/gI+LqyQa/RHtDTtY2Rc6iutDpIWOUe1meChHak0Ifu4E7INTM+hxIyiDDnb6
-         nD3+vFFtXSE3TBhmaZwRelqFrVqEqZY1GFt+FV3/Ly2hcp9Z5KqpHoIdGxSZR7TIP4mm
-         0fZS2uMm+Oc+QQ//X7hIzHKTkWs6lcIHWXESw=
+        bh=Gqa8DjAsLbslhqvdckp+9F2A4OfDGcqfjUcMGYSdaqk=;
+        b=gWfWnmfQUB0zU90hzRMOcnCJ3JouO5RgHGzR+mbjS+OhyZ7bdCGxKjKTOY8eaCH497
+         z0wSc8Es+PRpoSdYPcVJqR3Pw/IYBo96Qr9+8kVeeKvNsCAPN3cVgfvflQytX6B2aely
+         2bFA/3r/0Al9VxW+MMGVbLwPjFIU/YYcKM6/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8fygkBaQGLWT1scFAqCghA9qQKwqujYef/mOquj/oQ8=;
-        b=U/0cbsZp7V0quz/7L6WxNOKJSAS+7cE3+azjBjdxWXzBFnXEeLfYLfqyvW1NjjkcOF
-         BuKKQVPv7w1RYdhanB0hjh6vXj9BI0QEr+z2epGyNmnnWFyq5ksIZyQdcg6YM/POXczt
-         4scVR+WfRQEN4zGtjG7fpkq1EDAd6mra1vxk5whW1n2bNvi+FdVLdol/511DD+djynbZ
-         6efDAP5yS8DHdzXuxI2KSln/SkD3u8M+7gA0GGQcDpbfj0CRk80vX4056szFEDj8zoJB
-         wgc0PiKYCHo7U1radzLu0FfrNwN0kvoFCWvR/dM7R3yC8a4GvA86pG/AEFTOLksaMF+m
-         fklQ==
-X-Gm-Message-State: APzg51AwLQzj1Z3rLwiGKLs7EEhTxxqDRF3POCN6cHgC71NAQSL6JOTh
-        xTImSdk34jaqjStbd4IrxBK7jQ==
-X-Google-Smtp-Source: ANB0VdbH3mPs1x6cab8ojevljTvj5VEgwyx4xQG6iWl6AEJQZmMIMT4G+ksyPBKMr+bESVBpl5o3AQ==
-X-Received: by 2002:a17:902:145:: with SMTP id 63-v6mr22522326plb.329.1536006174438;
-        Mon, 03 Sep 2018 13:22:54 -0700 (PDT)
+        bh=Gqa8DjAsLbslhqvdckp+9F2A4OfDGcqfjUcMGYSdaqk=;
+        b=sXbwV2QWZ+p7mWbA8M/Sb1N4bRU7yrpw6nsERnMS6C5pm9NWsh1ExYf7CKYnW3/lCl
+         JRoBT6DrPCMm14/0s7sp/H9qED6Sry5FJAg1Tv4kEEAaL+pBdsmwaPoYyowCyowH0LRT
+         loT6GVOrK0MBBx2G7gHQm+Tm4YQFVpz9uHXl4JnBiHoGluYc5RCXm5MYefNZHr+r5Nj7
+         OdlEmn/BNCNY3lQFMngLF7KMzSQaNHKQo2L/NPk4yjMA76fJW4KsMLEXL+8PVPgcHl1y
+         BgTdDmkBRyB0iCenEINkN46luA8Lu1LEpq4pbmz6lxyvLqduc+/qUhD5I5cSP/YizM4/
+         UhDw==
+X-Gm-Message-State: APzg51BizlhApjhB63+pwP7xTolWl7Q9iRQDMonvwy8bFvv+uiejDqmc
+        asa2gvDcZJdtrJlj0assP0LoNQ==
+X-Google-Smtp-Source: ANB0VdYVSoQbcCoJR8z4u+OY5P4G7ju9DaOinFY7TLcmMoOdbDQm+StL/BYAAvQed1ZC3HpPGZYWlQ==
+X-Received: by 2002:a17:902:9a83:: with SMTP id w3-v6mr30967023plp.75.1536006268684;
+        Mon, 03 Sep 2018 13:24:28 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i25-v6sm22567829pgi.31.2018.09.03.13.22.53
+        by smtp.gmail.com with ESMTPSA id d19-v6sm30525568pfe.42.2018.09.03.13.24.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 13:22:53 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 13:26:47 -0700
+        Mon, 03 Sep 2018 13:24:28 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 13:28:22 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Amit Kucheria <amit.kucheria@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
@@ -65,14 +65,14 @@ Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
         Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] thermal: tsens: Get rid of 'id' field
-Message-ID: <20180903202647.GR3456@tuxbook-pro>
+Subject: Re: [PATCH v2 07/11] thermal: tsens: Add the SROT address map
+Message-ID: <20180903202822.GS3456@tuxbook-pro>
 References: <cover.1535462942.git.amit.kucheria@linaro.org>
- <6c23d113e19a9ddf9dc9def18943eaf7f5ad4d79.1535462942.git.amit.kucheria@linaro.org>
+ <d1d2e58288f4d78db924863ac1775c5e2e5c884a.1535462942.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6c23d113e19a9ddf9dc9def18943eaf7f5ad4d79.1535462942.git.amit.kucheria@linaro.org>
+In-Reply-To: <d1d2e58288f4d78db924863ac1775c5e2e5c884a.1535462942.git.amit.kucheria@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,15 +81,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue 28 Aug 06:38 PDT 2018, Amit Kucheria wrote:
 
-> The hw_id field in 'struct tsens_sensor' can do the job of tracking
-> unique ids for each sensor connected to each tsens device instance. It
-> also allows hw_ids to be overridden (e.g. 8916) in cases where some
-> sensors in a sequence are disabled on a particular platform.
-> 
-> Use the hw_id field instead of the id field consistently across the
-> tsens code.
-> 
-> While we're at it, document the fields of struct tsens_sensor.
+> On platforms whose device trees specify two address spaces for TSENS, the
+> second one points to the SROT registers. Initialise the SROT map on those
+> platforms.
 > 
 > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
@@ -100,65 +94,55 @@ Regards,
 Bjorn
 
 > ---
->  drivers/thermal/qcom/tsens.c |  5 ++---
->  drivers/thermal/qcom/tsens.h | 10 +++++++++-
->  2 files changed, 11 insertions(+), 4 deletions(-)
+>  drivers/thermal/qcom/tsens-common.c | 14 ++++++++++++--
+>  drivers/thermal/qcom/tsens.h        |  1 +
+>  2 files changed, 13 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-> index 9a8e8f7b4ae1..fb728ec5d77f 100644
-> --- a/drivers/thermal/qcom/tsens.c
-> +++ b/drivers/thermal/qcom/tsens.c
-> @@ -17,7 +17,7 @@ static int tsens_get_temp(void *data, int *temp)
->  	const struct tsens_sensor *s = data;
->  	struct tsens_device *tmdev = s->tmdev;
+> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> index 0585084630b3..0b8a793f15f4 100644
+> --- a/drivers/thermal/qcom/tsens-common.c
+> +++ b/drivers/thermal/qcom/tsens-common.c
+> @@ -117,16 +117,26 @@ static const struct regmap_config tsens_config = {
 >  
-> -	return tmdev->ops->get_temp(tmdev, s->id, temp);
-> +	return tmdev->ops->get_temp(tmdev, s->hw_id, temp);
->  }
+>  int __init init_common(struct tsens_device *tmdev)
+>  {
+> -	void __iomem *tm_base;
+> +	void __iomem *tm_base, *srot_base;
+>  	struct resource *res;
+>  	struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
 >  
->  static int tsens_get_trend(void *p, int trip, enum thermal_trend *trend)
-> @@ -26,7 +26,7 @@ static int tsens_get_trend(void *p, int trip, enum thermal_trend *trend)
->  	struct tsens_device *tmdev = s->tmdev;
+>  	if (!op)
+>  		return -EINVAL;
 >  
->  	if (tmdev->ops->get_trend)
-> -		return  tmdev->ops->get_trend(tmdev, s->id, trend);
-> +		return  tmdev->ops->get_trend(tmdev, s->hw_id, trend);
->  
->  	return -ENOTSUPP;
->  }
-> @@ -83,7 +83,6 @@ static int tsens_register(struct tsens_device *tmdev)
->  
->  	for (i = 0;  i < tmdev->num_sensors; i++) {
->  		tmdev->sensor[i].tmdev = tmdev;
-> -		tmdev->sensor[i].id = i;
->  		tzd = devm_thermal_zone_of_sensor_register(tmdev->dev, i,
->  							   &tmdev->sensor[i],
->  							   &tsens_of_ops);
+> -	/* The driver only uses the TM register address space for now */
+>  	if (op->num_resources > 1) {
+> +		/* DT with separate SROT and TM address space */
+>  		tmdev->tm_offset = 0;
+> +		res = platform_get_resource(op, IORESOURCE_MEM, 1);
+> +		srot_base = devm_ioremap_resource(&op->dev, res);
+> +		if (IS_ERR(srot_base))
+> +			return PTR_ERR(srot_base);
+> +
+> +		tmdev->srot_map = devm_regmap_init_mmio(tmdev->dev,
+> +							srot_base, &tsens_config);
+> +		if (IS_ERR(tmdev->srot_map))
+> +			return PTR_ERR(tmdev->srot_map);
+> +
+>  	} else {
+>  		/* old DTs where SROT and TM were in a contiguous 2K block */
+>  		tmdev->tm_offset = 0x1000;
 > diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-> index b9c4bcf255fa..2a3174dfc1a9 100644
+> index 58e98c4d3a8b..b9c4bcf255fa 100644
 > --- a/drivers/thermal/qcom/tsens.h
 > +++ b/drivers/thermal/qcom/tsens.h
-> @@ -14,11 +14,19 @@
->  
->  struct tsens_device;
->  
-> +/**
-> + * struct tsens_sensor - sensor-specific data
-> + * @tmdev: tsens device instance this sensor is connected to
-> + * @tzd: thermal zone corresponding to this sensor
-> + * @offset: offset from calibration data to convert ADC data to degrees
-> + * @hw_id: unique sensor ID for each sensor connected to tsens device instance
-> + * @slope: slope from calibration data to convert ADC data to degrees
-> + * @status: 8960-specific status register addresses
-> + */
->  struct tsens_sensor {
->  	struct tsens_device		*tmdev;
->  	struct thermal_zone_device	*tzd;
->  	int				offset;
-> -	int				id;
->  	int				hw_id;
->  	int				slope;
->  	u32				status;
+> @@ -70,6 +70,7 @@ struct tsens_device {
+>  	struct device			*dev;
+>  	u32				num_sensors;
+>  	struct regmap			*tm_map;
+> +	struct regmap			*srot_map;
+>  	u32				tm_offset;
+>  	struct tsens_context		ctx;
+>  	const struct tsens_ops		*ops;
 > -- 
 > 2.17.1
 > 
