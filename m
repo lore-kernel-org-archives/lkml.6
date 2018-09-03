@@ -6,90 +6,93 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10656C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4238C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834B020862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:58:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834B020862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7891120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7891120862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeICRS5 (ORCPT
+        id S1727295AbeICRTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:18:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44304 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbeICRS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:18:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s10-v6so704036edb.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 05:58:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gkMw77JGqjvMY2EmL0avAdwpMnxdvHf8T0MHM4nzKGI=;
-        b=iJhjiHjc/2mAmGLd+pZ3dl7MXnw9Uoj4Y4GcAaFZdCrvfwnTA/buu6SkTwJPFlVcmJ
-         zPq2EoPYuMzImvGVYb7mwTEZ9mAkmz8pC8dTkBLdDIX2ADH4cyBefTCMFKC9IzKoIfs1
-         QsIe7DAF/VtvdnlTxCPGpHmt8vxqvtrXoSQB83AsEQRx4/rkIs7HqIFPNAkCAXPDcO68
-         FwGx4+0YoE24Ri2zwxv/74A8uFrE3vlZJpCHp004FTHTvkZtZSfqMkzVfE+9C2xqGosT
-         p1YbeL2JCqdznyvVw9i4k9fL4yangos7FsK25oXiLvRuAUnVLLFiNs+dXmFAd/+cX+5k
-         utYg==
-X-Gm-Message-State: APzg51CLtxaHmdNMra8a/MqUUeqSbLxwvfuzwNrNloTfaZZannrAVAwe
-        5CcwdkajiEKon9EObd/2cJI5VQ==
-X-Google-Smtp-Source: ANB0Vdbp/gfj+4jGmZH0D8aY/8A2xd9euCbBmJIaIjc1Zt1COWlm4zDw5jkq9rAuW67p/OeJp91EHg==
-X-Received: by 2002:a50:eb96:: with SMTP id y22-v6mr32116152edr.38.1535979533405;
-        Mon, 03 Sep 2018 05:58:53 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id p28-v6sm13376528eda.85.2018.09.03.05.58.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 05:58:52 -0700 (PDT)
-Subject: Re: [PATCH v5 0/9] ata: ahci_platform: support allwinner R40 AHCI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     axboe@kernel.dk, mark.rutland@arm.com, robh+dt@kernel.org,
-        wens@csie.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
- <20180903124229.rchurusvt4rv5ln7@flea>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <34c6fda4-c266-8aff-e685-e6a6ee2c7890@redhat.com>
-Date:   Mon, 3 Sep 2018 14:58:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 3 Sep 2018 13:19:32 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:40563 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbeICRTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:19:32 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-10 (Coremail) with SMTP id tACowAAXHWEaMI1brbAMBw--.9749S2;
+        Mon, 03 Sep 2018 20:59:07 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 02/16] x86/cache: get cache size/leaves and setup cache
+ cpumap for Dhyana
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <ff6d0392ccdd50ca747e762ae91d9c1c210b1d82.1535459013.git.puwen@hygon.cn>
+ <20180903095711.GC10249@zn.tnic>
+Message-ID: <3dd6e6f6-91d0-696f-2e09-472c39f4af71@hygon.cn>
+Date:   Mon, 3 Sep 2018 20:59:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180903124229.rchurusvt4rv5ln7@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20180903095711.GC10249@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowAAXHWEaMI1brbAMBw--.9749S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7k0a2IF6w4xM7kC6x804xWl14x267AK
+        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr
+        0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv
+        0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+        80aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI
+        62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv
+        67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+        uYvjxU7j2NDUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018/9/3 17:57, Borislav Petkov wrote:
+> Patch subject needs to be of the format:
+>
+> <file path(s)>: Sentence starting with a capital letter and describing
+> concisely the patch
+>
+> Fix all your subjects pls.
 
-On 03-09-18 14:42, Maxime Ripard wrote:
-> On Mon, Sep 03, 2018 at 12:01:52PM +0200, Corentin Labbe wrote:
->> This patchset add support for allwinner R40 AHCI controller.
->>
->> The whole patchset is tested on sun8i-r40-bananapi-m2-ultra and
->> on sun7i-a20-cubieboard2 which doesnt have any of the ressources added
->> by this serie, so no regression should come with it.
->>
->> Patchs 1-7 should go via the ata tree
->> Patchs 8,9 should go via the sunxi tree
->>
-> 
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+OK, will fix them in next version of patches.
 
-The entire series looks good to me too:
+>> With this bit kernel can get the cache info. So add support
+>
+> "With this bit, the kernel..."
+>
+>> Dhyana also find num_cache_leaves via CPUID leaf 0x8000001d, so
+>
+> "... also discovers num_cache_leaves ..."
+>
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Thanks for the correction.
 
 Regards,
+Pu Wen
 
-Hans
+>
+> With that:
+>
+> Reviewed-by: Borislav Petkov <bp@suse.de>
+>
+
