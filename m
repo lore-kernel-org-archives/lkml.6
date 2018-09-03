@@ -2,61 +2,179 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D83C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BBC1C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EAAB2075E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:36:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Xl3/D9nR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EAAB2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id B981C20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:37:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B981C20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbeICR40 (ORCPT
+        id S1727397AbeICR5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:56:26 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50754 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbeICR40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:56:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=GXHYXyk49vjysLik2B9XGXXaXuKR7d/YxulElcPyCdk=;
-        b=Xl3/D9nRMXPWTUHjE2IS+1i9Xx6qKPNocP695cVxQB/pSxZEoBzr3udvYUn+6czm2lWkatW685b5Ob1DcqD3NzGXBv689ccWe33R1rGmk8j6ibipNyZpSqtL4q0AX5kZl5iz9lqvpYIcCyuGPRmpTTflJjW8PZkv3ef1+gvmCkU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fwp1V-0001dr-0Y; Mon, 03 Sep 2018 15:36:09 +0200
-Date:   Mon, 3 Sep 2018 15:36:08 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v2 6/7] dt-bindings: net: phy: mscc: vsc8531:
- remove compatible from required properties
-Message-ID: <20180903133608.GG4445@lunn.ch>
-References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
- <20180903084853.18092-6-quentin.schulz@bootlin.com>
- <20180903133020.GE4445@lunn.ch>
- <20180903133358.b2zsdytyjpentnuj@qschulz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903133358.b2zsdytyjpentnuj@qschulz>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Mon, 3 Sep 2018 13:57:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbeICR5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:57:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E807AAD86;
+        Mon,  3 Sep 2018 13:37:09 +0000 (UTC)
+Date:   Mon, 03 Sep 2018 15:37:09 +0200
+Message-ID: <s5h4lf6hfcq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com>,
+        alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: KMSAN: uninit-value in snd_midi_event_encode_byte
+In-Reply-To: <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+References: <s5ha7oyhg0v.wl-tiwai@suse.de>
+        <000000000000a25ae50574f76ff0@google.com>
+        <s5h7ek2hfp6.wl-tiwai@suse.de>
+        <CACT4Y+bJM4dfx_2_qwPLOYdU_snGv7Zhhu3g_sHuzUM3sjnZQQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> What do we do? Do I put it in optional properties and refer to the
-> aforementioned doc or do I just remove it as it's done in this patch?
+On Mon, 03 Sep 2018 15:33:12 +0200,
+Dmitry Vyukov wrote:
+> 
+> On Mon, Sep 3, 2018 at 3:29 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> > On Mon, 03 Sep 2018 15:22:42 +0200,
+> > syzbot wrote:
+> >>
+> >> > On Mon, 03 Sep 2018 03:53:03 +0200,
+> >> > syzbot wrote:
+> >>
+> >> >> syzbot has found a reproducer for the following crash on:
+> >>
+> >> >> HEAD commit:    28f0ca98eadf kmsan: don't instrument
+> >> >> do_syscall_64() and  _..
+> >> >> git tree:       https://github.com/google/kmsan.git/master
+> >> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10556c92400000
+> >> >> kernel config:
+> >> >> https://syzkaller.appspot.com/x/.config?x=3431f03869413153
+> >> >> dashboard link:
+> >> >> https://syzkaller.appspot.com/bug?extid=194dffdb8b22fc5d207a
+> >> >> compiler:       clang version 8.0.0 (trunk 339414)
+> >> >> syz repro:
+> >> >> https://syzkaller.appspot.com/x/repro.syz?x=123a520a400000
+> >> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16068dc1400000
+> >>
+> >> >> IMPORTANT: if you fix the bug, please add the following tag to the
+> >> >> commit:
+> >> >> Reported-by: syzbot+194dffdb8b22fc5d207a@syzkaller.appspotmail.com
+> >>
+> >> >> ==================================================================
+> >> >> BUG: KMSAN: uninit-value in snd_midi_event_encode_byte+0x569/0xff0
+> >> >> sound/core/seq/seq_midi_event.c:195
+> >> >> CPU: 1 PID: 1659 Comm: kworker/1:1H Not tainted 4.19.0-rc1+ #40
+> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> >> >> BIOS  Google 01/01/2011
+> >> >> Workqueue: events_highpri snd_vmidi_output_work
+> >> >> Call Trace:
+> >> >>   __dump_stack lib/dump_stack.c:77 [inline]
+> >> >>   dump_stack+0x14b/0x190 lib/dump_stack.c:113
+> >> >>   kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+> >> >>   __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+> >> >>   snd_midi_event_encode_byte+0x569/0xff0
+> >> >> sound/core/seq/seq_midi_event.c:195
+> >> >>   snd_vmidi_output_work+0x34e/0x5b0 sound/core/seq/seq_virmidi.c:161
+> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> >>
+> >> >> Uninit was stored to memory at:
+> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+> >> >>   kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+> >> >>   kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
+> >> >>   __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
+> >> >>   __snd_rawmidi_transmit_peek sound/core/rawmidi.c:1103 [inline]
+> >> >>   snd_rawmidi_transmit+0xa75/0xbf0 sound/core/rawmidi.c:1228
+> >> >>   snd_vmidi_output_work+0x2ac/0x5b0 sound/core/seq/seq_virmidi.c:159
+> >> >>   process_one_work+0x1605/0x1f40 kernel/workqueue.c:2153
+> >> >>   worker_thread+0x11a2/0x2590 kernel/workqueue.c:2296
+> >> >>   kthread+0x465/0x4a0 kernel/kthread.c:247
+> >> >>   ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> >>
+> >> >> Uninit was created at:
+> >> >>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+> >> >>   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+> >> >>   kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+> >> >>   __kmalloc_node+0x7bf/0x11c0 mm/slub.c:3828
+> >> >>   kmalloc_node include/linux/slab.h:555 [inline]
+> >> >>   kvmalloc_node+0x19d/0x3e0 mm/util.c:423
+> >> >>   kvmalloc include/linux/mm.h:577 [inline]
+> >> >>   snd_rawmidi_runtime_create sound/core/rawmidi.c:132 [inline]
+> >> >>   open_substream+0x3c8/0xaa0 sound/core/rawmidi.c:276
+> >> >>   rawmidi_open_priv+0x347/0x1000 sound/core/rawmidi.c:327
+> >> >>   snd_rawmidi_open+0x7d4/0x1120 sound/core/rawmidi.c:424
+> >> >>   soundcore_open+0x9be/0xa60 sound/sound_core.c:597
+> >> >>   chrdev_open+0xc26/0xdb0 fs/char_dev.c:417
+> >> >>   do_dentry_open+0xce6/0x1740 fs/open.c:771
+> >> >>   vfs_open+0xaf/0xe0 fs/open.c:880
+> >> >>   do_last fs/namei.c:3418 [inline]
+> >> >>   path_openat+0x1799/0x6870 fs/namei.c:3534
+> >> >>   do_filp_open+0x259/0x610 fs/namei.c:3564
+> >> >>   do_sys_open+0x630/0x940 fs/open.c:1063
+> >> >>   __do_sys_open fs/open.c:1081 [inline]
+> >> >>   __se_sys_open+0xad/0xc0 fs/open.c:1076
+> >> >>   __x64_sys_open+0x4a/0x70 fs/open.c:1076
+> >> >>   do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+> >> >>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> >> >> ==================================================================
+> >>
+> >> > This looks like some small race at virmidi reading and the buffer
+> >> > handling, which should be almost harmless by itself.
+> >> > Nevertheless, the fix should be easy, just replacing kvmalloc() with
+> >> > kvzalloc(), as below.
+> >>
+> >> > Let's check whether this works.
+> >>
+> >> > #syz test:
+> >> > git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
+> >> > topic/rawmidi-fixes
+> >>
+> >> KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
+> >> because KMSAN tool is not upstreamed yet.
+> >> See
+> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> >> for details.
+> >
+> > So how is the procedure to test a patch for bugs spotted by KMSAN?
+> >
+> > In this case, the fix is trivial, so I can put it to my tree for the
+> > next pull request.  Of course, it'd be better if it can be confirmed
+> > to work beforehand...
+> 
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> 
+> Which means you need to attach a patch because it's not in that tree.
 
-Just remove it.
+OK, it would have been helpful if the description there was more clear
+:)
 
-     Andrew
+And no automated way for that?  I mean, I already attached patch in
+the previous reply (together with syz-magic command to point the git
+branch URL).  Do I need anything else?
+
+
+thanks,
+
+Takashi
