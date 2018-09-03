@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8DCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81408C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA23720658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA23720658
+	by mail.kernel.org (Postfix) with ESMTP id 4A38620658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A38620658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731716AbeICV6q (ORCPT
+        id S1731726AbeICV6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:58:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48734 "EHLO
+        Mon, 3 Sep 2018 17:58:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48744 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV6q (ORCPT
+        with ESMTP id S1726384AbeICV6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:58:46 -0400
+        Mon, 3 Sep 2018 17:58:52 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73A5FA95;
-        Mon,  3 Sep 2018 17:37:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8B69A95;
+        Mon,  3 Sep 2018 17:37:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.18 089/123] s390: fix br_r1_trampoline for machines without exrl
-Date:   Mon,  3 Sep 2018 18:57:13 +0200
-Message-Id: <20180903165723.290171224@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.18 090/123] s390/qdio: reset old sbal_state flags
+Date:   Mon,  3 Sep 2018 18:57:14 +0200
+Message-Id: <20180903165723.331004243@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -49,35 +50,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 26f843848bae973817b3587780ce6b7b0200d3e4 upstream.
+commit 64e03ff72623b8c2ea89ca3cb660094e019ed4ae upstream.
 
-For machines without the exrl instruction the BFP jit generates
-code that uses an "br %r1" instruction located in the lowcore page.
-Unfortunately there is a cut & paste error that puts an additional
-"larl %r1,.+14" instruction in the code that clobbers the branch
-target address in %r1. Remove the larl instruction.
+When allocating a new AOB fails, handle_outbound() is still capable of
+transmitting the selected buffer (just without async completion).
 
-Cc: <stable@vger.kernel.org> # v4.17+
-Fixes: de5cb6eb51 ("s390: use expoline thunks in the BPF JIT")
+But if a previous transfer on this queue slot used async completion, its
+sbal_state flags field is still set to QDIO_OUTBUF_STATE_FLAG_PENDING.
+So when the upper layer driver sees this stale flag, it expects an async
+completion that never happens.
+
+Fix this by unconditionally clearing the flags field.
+
+Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
+Cc: <stable@vger.kernel.org> #v3.2+
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/net/bpf_jit_comp.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/s390/include/asm/qdio.h |    1 -
+ drivers/s390/cio/qdio_main.c |    5 ++---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -485,8 +485,6 @@ static void bpf_jit_epilogue(struct bpf_
- 			/* br %r1 */
- 			_EMIT2(0x07f1);
- 		} else {
--			/* larl %r1,.+14 */
--			EMIT6_PCREL_RILB(0xc0000000, REG_1, jit->prg + 14);
- 			/* ex 0,S390_lowcore.br_r1_tampoline */
- 			EMIT4_DISP(0x44000000, REG_0, REG_0,
- 				   offsetof(struct lowcore, br_r1_trampoline));
+--- a/arch/s390/include/asm/qdio.h
++++ b/arch/s390/include/asm/qdio.h
+@@ -262,7 +262,6 @@ struct qdio_outbuf_state {
+ 	void *user;
+ };
+ 
+-#define QDIO_OUTBUF_STATE_FLAG_NONE	0x00
+ #define QDIO_OUTBUF_STATE_FLAG_PENDING	0x01
+ 
+ #define CHSC_AC1_INITIATE_INPUTQ	0x80
+--- a/drivers/s390/cio/qdio_main.c
++++ b/drivers/s390/cio/qdio_main.c
+@@ -631,21 +631,20 @@ static inline unsigned long qdio_aob_for
+ 	unsigned long phys_aob = 0;
+ 
+ 	if (!q->use_cq)
+-		goto out;
++		return 0;
+ 
+ 	if (!q->aobs[bufnr]) {
+ 		struct qaob *aob = qdio_allocate_aob();
+ 		q->aobs[bufnr] = aob;
+ 	}
+ 	if (q->aobs[bufnr]) {
+-		q->sbal_state[bufnr].flags = QDIO_OUTBUF_STATE_FLAG_NONE;
+ 		q->sbal_state[bufnr].aob = q->aobs[bufnr];
+ 		q->aobs[bufnr]->user1 = (u64) q->sbal_state[bufnr].user;
+ 		phys_aob = virt_to_phys(q->aobs[bufnr]);
+ 		WARN_ON_ONCE(phys_aob & 0xFF);
+ 	}
+ 
+-out:
++	q->sbal_state[bufnr].flags = 0;
+ 	return phys_aob;
+ }
+ 
 
 
