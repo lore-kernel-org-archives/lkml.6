@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9A9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E34C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10FB920862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FB920862
+	by mail.kernel.org (Postfix) with ESMTP id 7D8C920843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D8C920843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbeICV22 (ORCPT
+        id S1729876AbeICV2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:28:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40256 "EHLO
+        Mon, 3 Sep 2018 17:28:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40264 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729405AbeICV21 (ORCPT
+        with ESMTP id S1728233AbeICV2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:28:27 -0400
+        Mon, 3 Sep 2018 17:28:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2EA6BB3;
-        Mon,  3 Sep 2018 17:07:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19E09BB3;
+        Mon,  3 Sep 2018 17:07:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 065/107] KVM: arm/arm64: Skip updating PMD entry if no change
-Date:   Mon,  3 Sep 2018 18:56:29 +0200
-Message-Id: <20180903165640.460733285@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 074/107] fuse: fix initial parallel dirops
+Date:   Mon,  3 Sep 2018 18:56:38 +0200
+Message-Id: <20180903165640.880126479@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,87 +51,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 86658b819cd0a9aa584cd84453ed268a6f013770 upstream.
+commit 63576c13bd17848376c8ba4a98f5d5151140c4ac upstream.
 
-Contention on updating a PMD entry by a large number of vcpus can lead
-to duplicate work when handling stage 2 page faults. As the page table
-update follows the break-before-make requirement of the architecture,
-it can lead to repeated refaults due to clearing the entry and
-flushing the tlbs.
+If parallel dirops are enabled in FUSE_INIT reply, then first operation may
+leave fi->mutex held.
 
-This problem is more likely when -
-
-* there are large number of vcpus
-* the mapping is large block mapping
-
-such as when using PMD hugepages (512MB) with 64k pages.
-
-Fix this by skipping the page table update if there is no change in
-the entry being updated.
-
-Cc: stable@vger.kernel.org
-Fixes: ad361f093c1e ("KVM: ARM: Support hugetlbfs backed huge pages")
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Reported-by: syzbot <syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com>
+Fixes: 5c672ab3f0ee ("fuse: serialize dirops by default")
+Cc: <stable@vger.kernel.org> # v4.7
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm/kvm/mmu.c |   38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ fs/fuse/dir.c    |   10 ++++++----
+ fs/fuse/fuse_i.h |    4 ++--
+ fs/fuse/inode.c  |   14 ++++++++++----
+ 3 files changed, 18 insertions(+), 10 deletions(-)
 
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -894,19 +894,35 @@ static int stage2_set_pmd_huge(struct kv
- 	pmd = stage2_get_pmd(kvm, cache, addr);
- 	VM_BUG_ON(!pmd);
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -355,11 +355,12 @@ static struct dentry *fuse_lookup(struct
+ 	struct inode *inode;
+ 	struct dentry *newent;
+ 	bool outarg_valid = true;
++	bool locked;
  
--	/*
--	 * Mapping in huge pages should only happen through a fault.  If a
--	 * page is merged into a transparent huge page, the individual
--	 * subpages of that huge page should be unmapped through MMU
--	 * notifiers before we get here.
--	 *
--	 * Merging of CompoundPages is not supported; they should become
--	 * splitting first, unmapped, merged, and mapped back in on-demand.
--	 */
--	VM_BUG_ON(pmd_present(*pmd) && pmd_pfn(*pmd) != pmd_pfn(*new_pmd));
--
- 	old_pmd = *pmd;
- 	if (pmd_present(old_pmd)) {
-+		/*
-+		 * Multiple vcpus faulting on the same PMD entry, can
-+		 * lead to them sequentially updating the PMD with the
-+		 * same value. Following the break-before-make
-+		 * (pmd_clear() followed by tlb_flush()) process can
-+		 * hinder forward progress due to refaults generated
-+		 * on missing translations.
-+		 *
-+		 * Skip updating the page table if the entry is
-+		 * unchanged.
-+		 */
-+		if (pmd_val(old_pmd) == pmd_val(*new_pmd))
-+			return 0;
+-	fuse_lock_inode(dir);
++	locked = fuse_lock_inode(dir);
+ 	err = fuse_lookup_name(dir->i_sb, get_node_id(dir), &entry->d_name,
+ 			       &outarg, &inode);
+-	fuse_unlock_inode(dir);
++	fuse_unlock_inode(dir, locked);
+ 	if (err == -ENOENT) {
+ 		outarg_valid = false;
+ 		err = 0;
+@@ -1336,6 +1337,7 @@ static int fuse_readdir(struct file *fil
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_req *req;
+ 	u64 attr_version = 0;
++	bool locked;
+ 
+ 	if (is_bad_inode(inode))
+ 		return -EIO;
+@@ -1363,9 +1365,9 @@ static int fuse_readdir(struct file *fil
+ 		fuse_read_fill(req, file, ctx->pos, PAGE_SIZE,
+ 			       FUSE_READDIR);
+ 	}
+-	fuse_lock_inode(inode);
++	locked = fuse_lock_inode(inode);
+ 	fuse_request_send(fc, req);
+-	fuse_unlock_inode(inode);
++	fuse_unlock_inode(inode, locked);
+ 	nbytes = req->out.args[0].size;
+ 	err = req->out.h.error;
+ 	fuse_put_request(fc, req);
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -967,8 +967,8 @@ int fuse_do_setattr(struct dentry *dentr
+ 
+ void fuse_set_initialized(struct fuse_conn *fc);
+ 
+-void fuse_unlock_inode(struct inode *inode);
+-void fuse_lock_inode(struct inode *inode);
++void fuse_unlock_inode(struct inode *inode, bool locked);
++bool fuse_lock_inode(struct inode *inode);
+ 
+ int fuse_setxattr(struct inode *inode, const char *name, const void *value,
+ 		  size_t size, int flags);
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -356,15 +356,21 @@ int fuse_reverse_inval_inode(struct supe
+ 	return 0;
+ }
+ 
+-void fuse_lock_inode(struct inode *inode)
++bool fuse_lock_inode(struct inode *inode)
+ {
+-	if (!get_fuse_conn(inode)->parallel_dirops)
++	bool locked = false;
 +
-+		/*
-+		 * Mapping in huge pages should only happen through a
-+		 * fault.  If a page is merged into a transparent huge
-+		 * page, the individual subpages of that huge page
-+		 * should be unmapped through MMU notifiers before we
-+		 * get here.
-+		 *
-+		 * Merging of CompoundPages is not supported; they
-+		 * should become splitting first, unmapped, merged,
-+		 * and mapped back in on-demand.
-+		 */
-+		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
++	if (!get_fuse_conn(inode)->parallel_dirops) {
+ 		mutex_lock(&get_fuse_inode(inode)->mutex);
++		locked = true;
++	}
 +
- 		pmd_clear(pmd);
- 		kvm_tlb_flush_vmid_ipa(kvm, addr);
- 	} else {
++	return locked;
+ }
+ 
+-void fuse_unlock_inode(struct inode *inode)
++void fuse_unlock_inode(struct inode *inode, bool locked)
+ {
+-	if (!get_fuse_conn(inode)->parallel_dirops)
++	if (locked)
+ 		mutex_unlock(&get_fuse_inode(inode)->mutex);
+ }
+ 
 
 
