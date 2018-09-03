@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D328C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14694C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6EA20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6EA20867
+	by mail.kernel.org (Postfix) with ESMTP id CB7822077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7822077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbeICVg7 (ORCPT
+        id S1728734AbeICVhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42466 "EHLO
+        Mon, 3 Sep 2018 17:37:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbeICVg6 (ORCPT
+        with ESMTP id S1727944AbeICVhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:58 -0400
+        Mon, 3 Sep 2018 17:37:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C96EBD06;
-        Mon,  3 Sep 2018 17:15:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D00A0D09;
+        Mon,  3 Sep 2018 17:15:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eyal Birger <eyal.birger@gmail.com>,
+        stable@vger.kernel.org, Tommi Rantala <tommi.t.rantala@nokia.com>,
         Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 002/165] vti6: fix PMTU caching and reporting on xmit
-Date:   Mon,  3 Sep 2018 18:54:48 +0200
-Message-Id: <20180903165655.128471631@linuxfoundation.org>
+Subject: [PATCH 4.14 003/165] xfrm: fix missing dst_release() after policy blocking lbcast and multicast
+Date:   Mon,  3 Sep 2018 18:54:49 +0200
+Message-Id: <20180903165655.167770375@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,55 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eyal Birger <eyal.birger@gmail.com>
+From: Tommi Rantala <tommi.t.rantala@nokia.com>
 
-[ Upstream commit d6990976af7c5d8f55903bfb4289b6fb030bf754 ]
+[ Upstream commit 8cc88773855f988d6a3bbf102bbd9dd9c828eb81 ]
 
-When setting the skb->dst before doing the MTU check, the route PMTU
-caching and reporting is done on the new dst which is about to be
-released.
+Fix missing dst_release() when local broadcast or multicast traffic is
+xfrm policy blocked.
 
-Instead, PMTU handling should be done using the original dst.
+For IPv4 this results to dst leak: ip_route_output_flow() allocates
+dst_entry via __ip_route_output_key() and passes it to
+xfrm_lookup_route(). xfrm_lookup returns ERR_PTR(-EPERM) that is
+propagated. The dst that was allocated is never released.
 
-This is aligned with IPv4 VTI.
+IPv4 local broadcast testcase:
+ ping -b 192.168.1.255 &
+ sleep 1
+ ip xfrm policy add src 0.0.0.0/0 dst 192.168.1.255/32 dir out action block
 
-Fixes: ccd740cbc6 ("vti6: Add pmtu handling to vti6_xmit.")
-Signed-off-by: Eyal Birger <eyal.birger@gmail.com>
+IPv4 multicast testcase:
+ ping 224.0.0.1 &
+ sleep 1
+ ip xfrm policy add src 0.0.0.0/0 dst 224.0.0.1/32 dir out action block
+
+For IPv6 the missing dst_release() causes trouble e.g. when used in netns:
+ ip netns add TEST
+ ip netns exec TEST ip link set lo up
+ ip link add dummy0 type dummy
+ ip link set dev dummy0 netns TEST
+ ip netns exec TEST ip addr add fd00::1111 dev dummy0
+ ip netns exec TEST ip link set dummy0 up
+ ip netns exec TEST ping -6 -c 5 ff02::1%dummy0 &
+ sleep 1
+ ip netns exec TEST ip xfrm policy add src ::/0 dst ff02::1 dir out action block
+ wait
+ ip netns del TEST
+
+After netns deletion we see:
+[  258.239097] unregister_netdevice: waiting for lo to become free. Usage count = 2
+[  268.279061] unregister_netdevice: waiting for lo to become free. Usage count = 2
+[  278.367018] unregister_netdevice: waiting for lo to become free. Usage count = 2
+[  288.375259] unregister_netdevice: waiting for lo to become free. Usage count = 2
+
+Fixes: ac37e2515c1a ("xfrm: release dst_orig in case of error in xfrm_lookup()")
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_vti.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/xfrm/xfrm_policy.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -480,10 +480,6 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 		goto tx_err_dst_release;
- 	}
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -2285,6 +2285,9 @@ struct dst_entry *xfrm_lookup_route(stru
+ 	if (IS_ERR(dst) && PTR_ERR(dst) == -EREMOTE)
+ 		return make_blackhole(net, dst_orig->ops->family, dst_orig);
  
--	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
--	skb_dst_set(skb, dst);
--	skb->dev = skb_dst(skb)->dev;
--
- 	mtu = dst_mtu(dst);
- 	if (!skb->ignore_df && skb->len > mtu) {
- 		skb_dst_update_pmtu(skb, mtu);
-@@ -498,9 +494,14 @@ vti6_xmit(struct sk_buff *skb, struct ne
- 				  htonl(mtu));
- 		}
- 
--		return -EMSGSIZE;
-+		err = -EMSGSIZE;
-+		goto tx_err_dst_release;
- 	}
- 
-+	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
-+	skb_dst_set(skb, dst);
-+	skb->dev = skb_dst(skb)->dev;
++	if (IS_ERR(dst))
++		dst_release(dst_orig);
 +
- 	err = dst_output(t->net, skb->sk, skb);
- 	if (net_xmit_eval(err) == 0) {
- 		struct pcpu_sw_netstats *tstats = this_cpu_ptr(dev->tstats);
+ 	return dst;
+ }
+ EXPORT_SYMBOL(xfrm_lookup_route);
 
 
