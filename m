@@ -6,70 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B809C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D26C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCE302077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:46:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE302077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 04A112077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A112077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeICGEa (ORCPT
+        id S1727126AbeICGFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:04:30 -0400
-Received: from gate.crashing.org ([63.228.1.57]:57014 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbeICGEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:04:30 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w831kEgQ000958;
-        Sun, 2 Sep 2018 20:46:15 -0500
-Message-ID: <a0aaa8162a0152e4afdf81ed28da230708f199b5.camel@kernel.crashing.org>
-Subject: Re: Access to non-RAM pages
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>
-Date:   Mon, 03 Sep 2018 11:46:14 +1000
-In-Reply-To: <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
-References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
-         <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
-         <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
-         <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
-         <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
-         <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
-         <CA+55aFz_Kbu2PDjqvmgqCFcFSsoRPD=a8vAtPY=--t61X454Jg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Mon, 3 Sep 2018 02:05:53 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11216 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725762AbeICGFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:05:53 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0414638F2CC29;
+        Mon,  3 Sep 2018 09:47:59 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Mon, 3 Sep 2018
+ 09:47:50 +0800
+Subject: Re: [PATCH 1/6] staging: erofs: formatting fix in unzip_vle_lz4.c
+To:     Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
+        Gao Xiang <gaoxiang25@huawei.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, <ldv-project@linuxtesting.org>
+References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2ab6d363-1be6-d616-dd66-e81eea6bd31d@huawei.com>
+Date:   Mon, 3 Sep 2018 09:47:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-09-02 at 18:38 -0700, Linus Torvalds wrote:
-> On Sun, Sep 2, 2018 at 6:32 PM Benjamin Herrenschmidt
-> <benh@kernel.crashing.org> wrote:
-> > 
-> > Also, if we cross page boundaries with those guys then we have a bigger
-> > problem no ? we could fall off a vmalloc page into the nether or into
-> > an ioremap mapping no ?
+On 2018/8/30 23:13, Pavel Zemlyanoy wrote:
 > 
-> It's not used for vmalloc stuff. It's just regular kmalloc().
+> This patch does not change the logic, it only
+> corrects the formatting and checkpatch warnings by
+> adding "int" to the unsigned type.
 > 
-> So it can cross pages, and it can fall off the end of memory, but it
-> can't do random stuff.
+> The patch fixes 11 warnings of the type:
+> "WARNING: Prefer 'unsigned int' to bare use of 'unsigned'"
+> 
+> Signed-off-by: Pavel Zemlyanoy <zemlyanoy@ispras.ru>
 
-Actually what about DEBUG_PAGEALLOC ? Can't we fall off a page and
-fault that way too ?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Cheers,
-Ben.
+Thanks,
 
