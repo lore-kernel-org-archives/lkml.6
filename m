@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEBEC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B93C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92F220658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F220658
+	by mail.kernel.org (Postfix) with ESMTP id 07BA12077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:37:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BA12077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731689AbeICV6Y (ORCPT
+        id S1731693AbeICV6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:58:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48702 "EHLO
+        Mon, 3 Sep 2018 17:58:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48714 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbeICV6Y (ORCPT
+        with ESMTP id S1728430AbeICV6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:58:24 -0400
+        Mon, 3 Sep 2018 17:58:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CEAEBAE;
-        Mon,  3 Sep 2018 17:37:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4A71A95;
+        Mon,  3 Sep 2018 17:37:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helmut Grohne <helmutg@debian.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.18 086/123] x86: Allow generating user-space headers without a compiler
-Date:   Mon,  3 Sep 2018 18:57:10 +0200
-Message-Id: <20180903165723.167642010@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.18 087/123] s390/mm: fix addressing exception after suspend/resume
+Date:   Mon,  3 Sep 2018 18:57:11 +0200
+Message-Id: <20180903165723.209069269@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,53 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-commit 829fe4aa9ac16417a904ad1de1307de906854bcf upstream.
+commit 37a366face294facb9c9d9fdd9f5b64a27456cbd upstream.
 
-When bootstrapping an architecture, it's usual to generate the kernel's
-user-space headers (make headers_install) before building a compiler.  Move
-the compiler check (for asm goto support) to the archprepare target so that
-it is only done when building code for the target.
+Commit c9b5ad546e7d "s390/mm: tag normal pages vs pages used in page tables"
+accidentally changed the logic in arch_set_page_states(), which is used by
+the suspend/resume code. set_page_stable(page, order) was changed to
+set_page_stable_dat(page, 0). After this, only the first page of higher order
+pages will be set to stable, and a write to one of the unstable pages will
+result in an addressing exception.
 
-Fixes: e501ce957a78 ("x86: Force asm-goto")
-Reported-by: Helmut Grohne <helmutg@debian.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180829194317.GA4765@decadent.org.uk
+Fix this by using "order" again, instead of "0".
+
+Fixes: c9b5ad546e7d ("s390/mm: tag normal pages vs pages used in page tables")
+Cc: stable@vger.kernel.org # 4.14+
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Makefile |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/s390/mm/page-states.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -180,10 +180,6 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
-   endif
- endif
- 
--ifndef CC_HAVE_ASM_GOTO
--  $(error Compiler lacks asm-goto support.)
--endif
--
- #
- # Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent a
- # GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46226).  There's no way
-@@ -317,6 +313,13 @@ PHONY += vdso_install
- vdso_install:
- 	$(Q)$(MAKE) $(build)=arch/x86/entry/vdso $@
- 
-+archprepare: checkbin
-+checkbin:
-+ifndef CC_HAVE_ASM_GOTO
-+	@echo Compiler lacks asm-goto support.
-+	@exit 1
-+endif
-+
- archclean:
- 	$(Q)rm -rf $(objtree)/arch/i386
- 	$(Q)rm -rf $(objtree)/arch/x86_64
+--- a/arch/s390/mm/page-states.c
++++ b/arch/s390/mm/page-states.c
+@@ -271,7 +271,7 @@ void arch_set_page_states(int make_stabl
+ 			list_for_each(l, &zone->free_area[order].free_list[t]) {
+ 				page = list_entry(l, struct page, lru);
+ 				if (make_stable)
+-					set_page_stable_dat(page, 0);
++					set_page_stable_dat(page, order);
+ 				else
+ 					set_page_unused(page, order);
+ 			}
 
 
