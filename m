@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D452C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC33C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EF52086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EF52086A
+	by mail.kernel.org (Postfix) with ESMTP id 4ED682086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED682086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbeICVo5 (ORCPT
+        id S1730169AbeICVpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:44:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45428 "EHLO
+        Mon, 3 Sep 2018 17:45:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbeICVo5 (ORCPT
+        with ESMTP id S1727516AbeICVpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:44:57 -0400
+        Mon, 3 Sep 2018 17:45:00 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E838D0A;
-        Mon,  3 Sep 2018 17:23:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B2CFD24;
+        Mon,  3 Sep 2018 17:23:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, John Hurley <john.hurley@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 061/165] bpf: use GFP_ATOMIC instead of GFP_KERNEL in bpf_parse_prog()
-Date:   Mon,  3 Sep 2018 18:55:47 +0200
-Message-Id: <20180903165658.188870574@linuxfoundation.org>
+Subject: [PATCH 4.14 062/165] nfp: flower: fix port metadata conversion bug
+Date:   Mon,  3 Sep 2018 18:55:48 +0200
+Message-Id: <20180903165658.230155897@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,72 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: John Hurley <john.hurley@netronome.com>
 
-[ Upstream commit 71eb5255f55bdb484d35ff7c9a1803f453dfbf82 ]
+[ Upstream commit ee614c871014045b45fae149b7245fc22a0bbdd8 ]
 
-bpf_parse_prog() is protected by rcu_read_lock().
-so that GFP_KERNEL is not allowed in the bpf_parse_prog().
+Function nfp_flower_repr_get_type_and_port expects an enum nfp_repr_type
+return value but, if the repr type is unknown, returns a value of type
+enum nfp_flower_cmsg_port_type.  This means that if FW encodes the port
+ID in a way the driver does not understand instead of dropping the frame
+driver may attribute it to a physical port (uplink) provided the port
+number is less than physical port count.
 
-[51015.579396] =============================
-[51015.579418] WARNING: suspicious RCU usage
-[51015.579444] 4.18.0-rc6+ #208 Not tainted
-[51015.579464] -----------------------------
-[51015.579488] ./include/linux/rcupdate.h:303 Illegal context switch in RCU read-side critical section!
-[51015.579510] other info that might help us debug this:
-[51015.579532] rcu_scheduler_active = 2, debug_locks = 1
-[51015.579556] 2 locks held by ip/1861:
-[51015.579577]  #0: 00000000a8c12fd1 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x2e0/0x910
-[51015.579711]  #1: 00000000bf815f8e (rcu_read_lock){....}, at: lwtunnel_build_state+0x96/0x390
-[51015.579842] stack backtrace:
-[51015.579869] CPU: 0 PID: 1861 Comm: ip Not tainted 4.18.0-rc6+ #208
-[51015.579891] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[51015.579911] Call Trace:
-[51015.579950]  dump_stack+0x74/0xbb
-[51015.580000]  ___might_sleep+0x16b/0x3a0
-[51015.580047]  __kmalloc_track_caller+0x220/0x380
-[51015.580077]  kmemdup+0x1c/0x40
-[51015.580077]  bpf_parse_prog+0x10e/0x230
-[51015.580164]  ? kasan_kmalloc+0xa0/0xd0
-[51015.580164]  ? bpf_destroy_state+0x30/0x30
-[51015.580164]  ? bpf_build_state+0xe2/0x3e0
-[51015.580164]  bpf_build_state+0x1bb/0x3e0
-[51015.580164]  ? bpf_parse_prog+0x230/0x230
-[51015.580164]  ? lock_is_held_type+0x123/0x1a0
-[51015.580164]  lwtunnel_build_state+0x1aa/0x390
-[51015.580164]  fib_create_info+0x1579/0x33d0
-[51015.580164]  ? sched_clock_local+0xe2/0x150
-[51015.580164]  ? fib_info_update_nh_saddr+0x1f0/0x1f0
-[51015.580164]  ? sched_clock_local+0xe2/0x150
-[51015.580164]  fib_table_insert+0x201/0x1990
-[51015.580164]  ? lock_downgrade+0x610/0x610
-[51015.580164]  ? fib_table_lookup+0x1920/0x1920
-[51015.580164]  ? lwtunnel_valid_encap_type.part.6+0xcb/0x3a0
-[51015.580164]  ? rtm_to_fib_config+0x637/0xbd0
-[51015.580164]  inet_rtm_newroute+0xed/0x1b0
-[51015.580164]  ? rtm_to_fib_config+0xbd0/0xbd0
-[51015.580164]  rtnetlink_rcv_msg+0x331/0x910
-[ ... ]
+Fix this and ensure a net_device of NULL is returned if the repr can not
+be determined.
 
-Fixes: 3a0af8fd61f9 ("bpf: BPF for lightweight tunnel infrastructure")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 1025351a88a4 ("nfp: add flower app")
+Signed-off-by: John Hurley <john.hurley@netronome.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/lwt_bpf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/netronome/nfp/flower/main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/core/lwt_bpf.c
-+++ b/net/core/lwt_bpf.c
-@@ -217,7 +217,7 @@ static int bpf_parse_prog(struct nlattr
- 	if (!tb[LWT_BPF_PROG_FD] || !tb[LWT_BPF_PROG_NAME])
- 		return -EINVAL;
+--- a/drivers/net/ethernet/netronome/nfp/flower/main.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/main.c
+@@ -79,7 +79,7 @@ nfp_flower_repr_get_type_and_port(struct
+ 			return NFP_REPR_TYPE_VF;
+ 	}
  
--	prog->name = nla_memdup(tb[LWT_BPF_PROG_NAME], GFP_KERNEL);
-+	prog->name = nla_memdup(tb[LWT_BPF_PROG_NAME], GFP_ATOMIC);
- 	if (!prog->name)
- 		return -ENOMEM;
+-	return NFP_FLOWER_CMSG_PORT_TYPE_UNSPEC;
++	return __NFP_REPR_TYPE_MAX;
+ }
  
+ static struct net_device *
+@@ -90,6 +90,8 @@ nfp_flower_repr_get(struct nfp_app *app,
+ 	u8 port = 0;
+ 
+ 	repr_type = nfp_flower_repr_get_type_and_port(app, port_id, &port);
++	if (repr_type > NFP_REPR_TYPE_MAX)
++		return NULL;
+ 
+ 	reprs = rcu_dereference(app->reprs[repr_type]);
+ 	if (!reprs)
 
 
