@@ -6,64 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD45AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ADFC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A325720857
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A325720857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 58B922077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 01:48:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B922077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeICGGa (ORCPT
+        id S1727323AbeICGGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:06:30 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52394 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725762AbeICGGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:06:30 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id ADF221118229B;
-        Mon,  3 Sep 2018 09:48:33 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 3 Sep 2018
- 09:48:27 +0800
-Subject: Re: [PATCH 3/6] staging: erofs: formatting spaces around '-'
-To:     Pavel Zemlyanoy <zemlyanoy@ispras.ru>,
-        Gao Xiang <gaoxiang25@huawei.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <ldv-project@linuxtesting.org>
-References: <1535642042-5336-1-git-send-email-zemlyanoy@ispras.ru>
- <1535642042-5336-3-git-send-email-zemlyanoy@ispras.ru>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <c5c52715-fd7b-b669-bd0c-757b6ce967a5@huawei.com>
-Date:   Mon, 3 Sep 2018 09:48:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1535642042-5336-3-git-send-email-zemlyanoy@ispras.ru>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Mon, 3 Sep 2018 02:06:41 -0400
+Received: from gate.crashing.org ([63.228.1.57]:46872 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725762AbeICGGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:06:40 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w830thW3029336;
+        Sun, 2 Sep 2018 19:55:44 -0500
+Message-ID: <fd389fc96692e38c318f14f0da840cdecda8fbe5.camel@kernel.crashing.org>
+Subject: Re: Access to non-RAM pages
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jikos@kernel.org>
+Cc:     =?ISO-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>
+Date:   Mon, 03 Sep 2018 10:55:42 +1000
+In-Reply-To: <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
+References: <3009b28a-971c-920a-9184-900f1f3b2203@suse.com>
+         <alpine.LRH.2.00.1808312312480.14475@gjva.wvxbf.pm>
+         <CA+55aFyqpg_e8dXZWhdyVLa0xSYcK6iuRTKDXxnFLaFEcqZHkQ@mail.gmail.com>
+         <CA+55aFyOSLEbiNvPoHkHe8WXae_aJiS+jsnubG8Xk0CYw8U4uw@mail.gmail.com>
+         <a1980256cf3d2ea8e91707fcda7cf141b27a212d.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/30 23:13, Pavel Zemlyanoy wrote:
-> This patch does not change the logic, it only
-> corrects the formatting and checkpatch checks by
-> adding spaces around '-'.
+On Mon, 2018-09-03 at 10:48 +1000, Benjamin Herrenschmidt wrote:
+> On Sat, 2018-09-01 at 11:06 -0700, Linus Torvalds wrote:
+> > [ Adding a few new people the the cc.
+> > 
+> >   The issue is the worry about software-speculative accesses (ie
+> > things like CONFIG_DCACHE_WORD_ACCESS - not talking about the hw
+> > speculation now) accessing past RAM into possibly contiguous IO ]
+> > 
+> > On Sat, Sep 1, 2018 at 10:27 AM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > 
+> > > If you have a machine with RAM that touches IO, you need to disable
+> > > the last page, exactly the same way we disable and marked reserved the
+> > > first page at zero.
 > 
-> The patch fixes 4 checks of type:
-> "Check: spaces preferred around that '-'".
-> 
-> Signed-off-by: Pavel Zemlyanoy <zemlyanoy@ispras.ru>
+> So I missed the departure of that train ... stupid question, with
+> CONFIG_DCACHE_WORD_ACCESS, if that can be unaligned (I assume it can),
+> what prevents it from crossing into a non-mapped page (not even IO) and
+> causing an oops ? Looking at a random user in fs/dcache.c its not a
+> uaccess-style read with recovery.... Or am I missing somethign obvious
+> here ?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Also, if we cross page boundaries with those guys then we have a bigger
+problem no ? we could fall off a vmalloc page into the nether or into
+an ioremap mapping no ?
 
-Thanks,
+Cheers,
+Ben. 
 
