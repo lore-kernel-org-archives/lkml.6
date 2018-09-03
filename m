@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F102C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7CAC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14A7520862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A7520862
+	by mail.kernel.org (Postfix) with ESMTP id A0E2D20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0E2D20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbeICVZI (ORCPT
+        id S1729347AbeICVZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:25:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39222 "EHLO
+        Mon, 3 Sep 2018 17:25:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39236 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728229AbeICVZH (ORCPT
+        with ESMTP id S1728229AbeICVZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:25:07 -0400
+        Mon, 3 Sep 2018 17:25:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09B47CFE;
-        Mon,  3 Sep 2018 17:04:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3046D00;
+        Mon,  3 Sep 2018 17:04:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 022/107] can: mpc5xxx_can: check of_iomap return before use
-Date:   Mon,  3 Sep 2018 18:55:46 +0200
-Message-Id: <20180903165638.375426099@linuxfoundation.org>
+Subject: [PATCH 4.9 023/107] i2c: davinci: Avoid zero value of CLKH
+Date:   Mon,  3 Sep 2018 18:55:47 +0200
+Message-Id: <20180903165638.423569042@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,36 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-[ Upstream commit b5c1a23b17e563b656cc9bb76ce5323b997d90e8 ]
+[ Upstream commit cc8de9a68599b261244ea453b38678229f06ada7 ]
 
-of_iomap() can return NULL so that return needs to be checked and NULL
-treated as failure. While at it also take care of the missing
-of_node_put() in the error path.
+If CLKH is set to 0 I2C clock is not generated at all, so avoid this value
+and stretch the clock in this case.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/mscan/mpc5xxx_can.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/i2c/busses/i2c-davinci.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/can/mscan/mpc5xxx_can.c
-+++ b/drivers/net/can/mscan/mpc5xxx_can.c
-@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct
- 		return 0;
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -234,12 +234,16 @@ static void i2c_davinci_calc_clk_divider
+ 	/*
+ 	 * It's not always possible to have 1 to 2 ratio when d=7, so fall back
+ 	 * to minimal possible clkh in this case.
++	 *
++	 * Note:
++	 * CLKH is not allowed to be 0, in this case I2C clock is not generated
++	 * at all
+ 	 */
+-	if (clk >= clkl + d) {
++	if (clk > clkl + d) {
+ 		clkh = clk - clkl - d;
+ 		clkl -= d;
+ 	} else {
+-		clkh = 0;
++		clkh = 1;
+ 		clkl = clk - (d << 1);
  	}
- 	cdm = of_iomap(np_cdm, 0);
-+	if (!cdm) {
-+		of_node_put(np_cdm);
-+		dev_err(&ofdev->dev, "can't map clock node!\n");
-+		return 0;
-+	}
  
- 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
- 		freq *= 2;
 
 
