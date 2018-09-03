@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3ABDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C0EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5731420862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:22:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5731420862
+	by mail.kernel.org (Postfix) with ESMTP id CB90120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:23:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB90120862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeICUnq (ORCPT
+        id S1727550AbeICUnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 3 Sep 2018 16:43:46 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20635 "EHLO mga07.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:26519 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbeICUnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 16:43:45 -0400
+        id S1727359AbeICUnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 16:43:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 09:22:55 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 09:22:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
-   d="scan'208";a="68060196"
+   d="scan'208";a="229852895"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Sep 2018 09:22:55 -0700
+  by orsmga004.jf.intel.com with ESMTP; 03 Sep 2018 09:22:55 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 4E628301BE3; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
+        id 46EBB3002C4; Mon,  3 Sep 2018 09:22:55 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, adrian.hunter@intel.com, kim.phillips@arm.com,
         linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4 2/8] tools, pager: Support overwriting the pager
-Date:   Mon,  3 Sep 2018 09:22:43 -0700
-Message-Id: <20180903162249.36304-3-andi@firstfloor.org>
+Subject: [PATCH v4 1/8] perf tools: Report itrace options in help
+Date:   Mon,  3 Sep 2018 09:22:42 -0700
+Message-Id: <20180903162249.36304-2-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903162249.36304-1-andi@firstfloor.org>
 References: <20180903162249.36304-1-andi@firstfloor.org>
@@ -50,55 +50,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Add an interface to the auto pager code that allows callers
-to overwrite the pager.
+I often forget all the options that --itrace accepts. Instead of burying
+them in the man page only report them in the normal command line help
+too to make them easier accessible.
 
+v2: Align
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/lib/subcmd/pager.c | 11 ++++++++++-
- tools/lib/subcmd/pager.h |  1 +
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ tools/perf/builtin-inject.c |  3 ++-
+ tools/perf/builtin-report.c |  2 +-
+ tools/perf/builtin-script.c |  2 +-
+ tools/perf/util/auxtrace.h  | 19 +++++++++++++++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
-index 9997a8805a82..e3d47b59b14d 100644
---- a/tools/lib/subcmd/pager.c
-+++ b/tools/lib/subcmd/pager.c
-@@ -23,6 +23,13 @@ void pager_init(const char *pager_env)
- 	subcmd_config.pager_env = pager_env;
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index a3b346359ba0..b649a0511ed8 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -803,7 +803,8 @@ int cmd_inject(int argc, const char **argv)
+ 			   "kallsyms pathname"),
+ 		OPT_BOOLEAN('f', "force", &data.force, "don't complain, do it"),
+ 		OPT_CALLBACK_OPTARG(0, "itrace", &inject.itrace_synth_opts,
+-				    NULL, "opts", "Instruction Tracing options",
++				    NULL, "opts", "Instruction Tracing options\n"
++				    ITRACE_HELP,
+ 				    itrace_parse_synth_opts),
+ 		OPT_BOOLEAN(0, "strip", &inject.strip,
+ 			    "strip non-synthesized events (use with --itrace)"),
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 02f7a3c27761..d48ea050e95e 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1105,7 +1105,7 @@ int cmd_report(int argc, const char **argv)
+ 	OPT_CALLBACK(0, "percentage", NULL, "relative|absolute",
+ 		     "how to display percentage of filtered entries", parse_filter_percentage),
+ 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
+-			    "Instruction Tracing options",
++			    "Instruction Tracing options\n" ITRACE_HELP,
+ 			    itrace_parse_synth_opts),
+ 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
+ 			"Show full source file name path for source lines"),
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 568ddfac3213..910e0f1f2876 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3193,7 +3193,7 @@ int cmd_script(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "ns", &nanosecs,
+ 		    "Use 9 decimal places when displaying time"),
+ 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
+-			    "Instruction Tracing options",
++			    "Instruction Tracing options\n" ITRACE_HELP,
+ 			    itrace_parse_synth_opts),
+ 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
+ 			"Show full source file name path for source lines"),
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index e731f55da072..041ee64a63bc 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -576,6 +576,23 @@ static inline void auxtrace__free(struct perf_session *session)
+ 	return session->auxtrace->free(session);
  }
  
-+static const char *forced_pager;
++#define ITRACE_HELP \
++"				i:	    		synthesize instructions events\n"		\
++"				b:	    		synthesize branches events\n"		\
++"				c:	    		synthesize branches events (calls only)\n"	\
++"				r:	    		synthesize branches events (returns only)\n" \
++"				x:	    		synthesize transactions events\n"		\
++"				w:	    		synthesize ptwrite events\n"		\
++"				p:	    		synthesize power events\n"			\
++"				e:	    		synthesize error events\n"			\
++"				d:	    		create a debug log\n"			\
++"				g[len]:     		synthesize a call chain (use with i or x)\n" \
++"				l[len]:     		synthesize last branch entries (use with i or x)\n" \
++"				sNUMBER:    		skip initial number of events\n"		\
++"				PERIOD[ns|us|ms|i|t]:   specify period to sample stream\n" \
++"				concatenate multiple options. Default is ibxwpe or cewp\n"
 +
-+void force_pager(const char *pager)
-+{
-+	forced_pager = pager;
-+}
 +
- static void pager_preexec(void)
- {
- 	/*
-@@ -66,7 +73,9 @@ void setup_pager(void)
- 	const char *pager = getenv(subcmd_config.pager_env);
- 	struct winsize sz;
+ #else
  
--	if (!isatty(1))
-+	if (forced_pager)
-+		pager = forced_pager;
-+	if (!isatty(1) && !forced_pager)
- 		return;
- 	if (ioctl(1, TIOCGWINSZ, &sz) == 0)
- 		pager_columns = sz.ws_col;
-diff --git a/tools/lib/subcmd/pager.h b/tools/lib/subcmd/pager.h
-index f1a53cf29880..a818964693ab 100644
---- a/tools/lib/subcmd/pager.h
-+++ b/tools/lib/subcmd/pager.h
-@@ -7,5 +7,6 @@ extern void pager_init(const char *pager_env);
- extern void setup_pager(void);
- extern int pager_in_use(void);
- extern int pager_get_columns(void);
-+extern void force_pager(const char *);
+ static inline struct auxtrace_record *
+@@ -716,6 +733,8 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
+ 				   struct perf_evlist *evlist, int idx,
+ 				   bool per_cpu);
  
- #endif /* __SUBCMD_PAGER_H */
++#define ITRACE_HELP ""
++
+ #endif
+ 
+ #endif
 -- 
 2.17.1
 
