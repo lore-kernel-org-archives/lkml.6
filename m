@@ -6,45 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53A5C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5F0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C11120868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C11120868
+	by mail.kernel.org (Postfix) with ESMTP id AFE632086C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE632086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbeICVOJ (ORCPT
+        id S1728756AbeICVON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:14:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38062 "EHLO
+        Mon, 3 Sep 2018 17:14:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbeICVOH (ORCPT
+        with ESMTP id S1728150AbeICVOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:14:07 -0400
+        Mon, 3 Sep 2018 17:14:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D607CA8;
-        Mon,  3 Sep 2018 16:53:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3168CF5;
+        Mon,  3 Sep 2018 16:53:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Puthukattukaran <james.puthukattukaran@oracle.com>,
-        Ethan Zhao <ethan.zhao@oracle.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de,
-        ethan.kernel@gmail.com, keescook@chromium.org, mcgrof@kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Steve Muckle <smuckle@google.com>
-Subject: [PATCH 4.4 01/80] sched/sysctl: Check user input value of sysctl_sched_time_avg
-Date:   Mon,  3 Sep 2018 18:48:39 +0200
-Message-Id: <20180903164934.231381666@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 10/80] drm/imx: imx-ldb: disable LDB on driver bind
+Date:   Mon,  3 Sep 2018 18:48:48 +0200
+Message-Id: <20180903164934.571691560@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,85 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Zhao <ethan.zhao@oracle.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 5ccba44ba118a5000cccc50076b0344632459779 upstream.
+[ Upstream commit b58262396fabd43dc869b576e3defdd23b32fe94 ]
 
-System will hang if user set sysctl_sched_time_avg to 0:
+The LVDS signal integrity is only guaranteed when the correct enable
+sequence (first IPU DI, then LDB) is used. If the LDB display output was
+active before the imx-drm driver is loaded (like when a bootsplash was
+active) the DI will be disabled by the full IPU reset we do when loading
+the driver. The LDB control registers are not part of the IPU range and
+thus will remain unchanged.
 
-  [root@XXX ~]# sysctl kernel.sched_time_avg_ms=0
+This leads to the LDB still being active when the DI is getting enabled,
+effectively reversing the required enable sequence. Fix this by also
+disabling the LDB on driver bind.
 
-  Stack traceback for pid 0
-  0xffff883f6406c600 0 0 1 3 R 0xffff883f6406cf50 *swapper/3
-  ffff883f7ccc3ae8 0000000000000018 ffffffff810c4dd0 0000000000000000
-  0000000000017800 ffff883f7ccc3d78 0000000000000003 ffff883f7ccc3bf8
-  ffffffff810c4fc9 ffff883f7ccc3c08 00000000810c5043 ffff883f7ccc3c08
-  Call Trace:
-  <IRQ> [<ffffffff810c4dd0>] ? update_group_capacity+0x110/0x200
-  [<ffffffff810c4fc9>] ? update_sd_lb_stats+0x109/0x600
-  [<ffffffff810c5507>] ? find_busiest_group+0x47/0x530
-  [<ffffffff810c5b84>] ? load_balance+0x194/0x900
-  [<ffffffff810ad5ca>] ? update_rq_clock.part.83+0x1a/0xe0
-  [<ffffffff810c6d42>] ? rebalance_domains+0x152/0x290
-  [<ffffffff810c6f5c>] ? run_rebalance_domains+0xdc/0x1d0
-  [<ffffffff8108a75b>] ? __do_softirq+0xfb/0x320
-  [<ffffffff8108ac85>] ? irq_exit+0x125/0x130
-  [<ffffffff810b3a17>] ? scheduler_ipi+0x97/0x160
-  [<ffffffff81052709>] ? smp_reschedule_interrupt+0x29/0x30
-  [<ffffffff8173a1be>] ? reschedule_interrupt+0x6e/0x80
-   <EOI> [<ffffffff815bc83c>] ? cpuidle_enter_state+0xcc/0x230
-  [<ffffffff815bc80c>] ? cpuidle_enter_state+0x9c/0x230
-  [<ffffffff815bc9d7>] ? cpuidle_enter+0x17/0x20
-  [<ffffffff810cd6dc>] ? cpu_startup_entry+0x38c/0x420
-  [<ffffffff81053373>] ? start_secondary+0x173/0x1e0
-
-Because divide-by-zero error happens in function:
-
-update_group_capacity()
-  update_cpu_capacity()
-    scale_rt_capacity()
-     {
-          ...
-          total = sched_avg_period() + delta;
-          used = div_u64(avg, total);
-          ...
-     }
-
-To fix this issue, check user input value of sysctl_sched_time_avg, keep
-it unchanged when hitting invalid input, and set the minimum limit of
-sysctl_sched_time_avg to 1 ms.
-
-Reported-by: James Puthukattukaran <james.puthukattukaran@oracle.com>
-Signed-off-by: Ethan Zhao <ethan.zhao@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: efault@gmx.de
-Cc: ethan.kernel@gmail.com
-Cc: keescook@chromium.org
-Cc: mcgrof@kernel.org
-Cc: <stable@vger.kernel.org>
-Link: http://lkml.kernel.org/r/1504504774-18253-1-git-send-email-ethan.zhao@oracle.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Steve Muckle <smuckle@google.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/sysctl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/imx/imx-ldb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -342,7 +342,8 @@ static struct ctl_table kern_table[] = {
- 		.data		= &sysctl_sched_time_avg,
- 		.maxlen		= sizeof(unsigned int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &one,
- 	},
- 	{
- 		.procname	= "sched_shares_window_ns",
+--- a/drivers/gpu/drm/imx/imx-ldb.c
++++ b/drivers/gpu/drm/imx/imx-ldb.c
+@@ -526,6 +526,9 @@ static int imx_ldb_bind(struct device *d
+ 		return PTR_ERR(imx_ldb->regmap);
+ 	}
+ 
++	/* disable LDB by resetting the control register to POR default */
++	regmap_write(imx_ldb->regmap, IOMUXC_GPR2, 0);
++
+ 	imx_ldb->dev = dev;
+ 
+ 	if (of_id)
 
 
