@@ -2,163 +2,208 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86675C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F80CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C9620862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:45:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C9620862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B5CC320862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 23:50:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6/WP15W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CC320862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbeIDEHv convert rfc822-to-8bit (ORCPT
+        id S1725845AbeIDENW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 00:07:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:48514 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725750AbeIDEHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 00:07:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 16:45:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,327,1531810800"; 
-   d="scan'208";a="77704707"
-Received: from kmsmsx156.gar.corp.intel.com ([172.21.138.133])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Sep 2018 16:45:15 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- KMSMSX156.gar.corp.intel.com ([169.254.1.252]) with mapi id 14.03.0319.002;
- Tue, 4 Sep 2018 07:45:15 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QIAC8vSAgABkDoCABMj0AIAAzxpQ
-Date:   Mon, 3 Sep 2018 23:45:14 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
-In-Reply-To: <20180903191926.GC13497@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiY2ViNWI3YzYtOGFkNS00MDI4LWIxMzAtOWYzYzc2MDlkODViIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRG94K2VmM0xDMVg0UlFsT0JqR21iZ1ZcL3BvRHFNaWhlWFdLVmRHUnR6eHFZZk4xbll1SjByckxmK3lTNGtZMEkifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Sep 2018 00:13:22 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40776 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbeIDENW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 00:13:22 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c126-v6so1282589qkd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 16:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XSUA4Lm64sa73r7X4V9ladYa+Xc4WdOkaN6ottBtR/Q=;
+        b=j6/WP15WRKlgnFp9tM+aJRPKQMqzzY9LajBjhmruMWcN6Slx+EDOOQwioqlr4zmeM0
+         UGvZNOXZm41fDk5LbJJTnVR/vTGZs0IwFs1/AwrEBz1Yo+VTU//ubUKD7dPYVf5Ktbok
+         EaLOP0C2Dw3dt9izHGDSnATeKDynAHIBqkwN/6DR0KTtlAmMuGg477WlT6ThOd9l0ABB
+         T3FYcs3HdSbgvezcorIO4GqEyE3YzD+G/KnZ5D2o1bAoKQadLRcE/PsAFnu36ZaAEh4j
+         pfVRnYtNRjCosnujb9y5oXmA2VjQQ/+5MmclTsm0rdk9C29b2o9qubS4Z1dUJNFQ7pbY
+         ZUmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XSUA4Lm64sa73r7X4V9ladYa+Xc4WdOkaN6ottBtR/Q=;
+        b=oKf7BVJGXJd43WiQ7FZETHwgbvfP4PMgA+VWsFruDGDO/lXTt/y+xPjlanpyp1vGUW
+         4ukVOy+tO0c9rfIDrMBBIShO/L4KynoY7KEpQ2sAQuRv+DZv9R/FONHInx5ggcnDghhr
+         nDqWE6gDR/54hQslHNOYmwNIDGjLQ2zvXepyNLGjQ9a8kFA8ZZFYXZrS4Ske2ltSeA+V
+         YpBditaKcHRyFH2OMhzFp8ezMBAgkqO7LyVchkj7r3W7M93o0U6Nrzvg7WNELpRxqjgy
+         nuUldJqBZxv5Fmh6aEj997x4zTpXyXpQ7SPwV9SN+y3tx9ocfuO59bGygnoEVvpNxDHB
+         6RXw==
+X-Gm-Message-State: APzg51C74jA6KJSjY4CQs/Bjb39lKW4sqZsDDqGHuuFxRUXgFOypmpML
+        Zc02Y07VmrwChlHGAK6tyyDISGyeFVG+mrC6tjM=
+X-Google-Smtp-Source: ANB0VdamD+akWNepsSW3I/o1x0lA8GRTj+B5BK177KhPZHhtjNgg9CPoBvv5FZVcS8Q3FkMAuTaqz4Wt96lUUmD/4wU=
+X-Received: by 2002:a37:5744:: with SMTP id l65-v6mr27099051qkb.216.1536018653657;
+ Mon, 03 Sep 2018 16:50:53 -0700 (PDT)
 MIME-Version: 1.0
+References: <20180829122026.27012-1-kraxel@redhat.com> <20180829122026.27012-3-kraxel@redhat.com>
+In-Reply-To: <20180829122026.27012-3-kraxel@redhat.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Tue, 4 Sep 2018 09:50:42 +1000
+Message-ID: <CAPM=9tyXc41DAkgjCRojrqH28qkirxgrpgNmrwu4WAeLpg7tAw@mail.gmail.com>
+Subject: Re: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        virtio-dev@lists.oasis-open.org, Dave Airlie <airlied@linux.ie>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
-> owner@vger.kernel.org] On Behalf Of Jarkko Sakkinen
-> Sent: Tuesday, September 4, 2018 7:19 AM
-> To: Christopherson, Sean J <sean.j.christopherson@intel.com>
-> Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
-> x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
-> tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
-> <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> <dave.hansen@intel.com>
-> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-> 
-> On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
-> > On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
-> > > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> > > > [snip..]
-> > > >
-> > > > > > >
-> > > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
-> > > > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > > > +sgx_pm_cnt;
-> > > > > > > +
-> > > > > > > +/* The cache for the last known values of
-> > > > > > > +IA32_SGXLEPUBKEYHASHx MSRs
-> > > > > > > for each
-> > > > > > > + * CPU. The entries are initialized when they are first
-> > > > > > > + used by
-> > > > > > > sgx_einit().
-> > > > > > > + */
-> > > > > > > +struct sgx_lepubkeyhash {
-> > > > > > > +	u64 msrs[4];
-> > > > > > > +	u64 pm_cnt;
-> > > > > >
-> > > > > > May I ask why do we need pm_cnt here? In fact why do we need
-> > > > > > suspend staff (namely, sgx_pm_cnt above, and related code in
-> > > > > > this patch) here in this patch? From the patch commit message
-> > > > > > I don't see why we need PM staff here. Please give comment why
-> > > > > > you need PM staff, or you may consider to split the PM staff to another
-> patch.
-> > > > >
-> > > > > Refining the commit message probably makes more sense because
-> > > > > without PM code sgx_einit() would be broken. The MSRs have been reset
-> after waking up.
-> > > > >
-> > > > > Some kind of counter is required to keep track of the power
-> > > > > cycle. When going to sleep the sgx_pm_cnt is increased.
-> > > > > sgx_einit() compares the current value of the global count to
-> > > > > the value in the cache entry to see whether we are in a new power cycle.
-> > > >
-> > > > You mean reset to Intel default? I think we can also just reset
-> > > > the cached MSR values on each power cycle, which would be simpler,
-> IMHO?
-> > >
-> > > I don't really see that much difference in the complexity.
-> >
-> > Tracking the validity of the cache means we're hosed if we miss any
-> > condition that causes the MSRs to be reset.  I think we're better off
-> > assuming the cache can be stale at any time, i.e. don't track power
-> > cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
-> > the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
-> > interruptible and its latency is extremely variable in any case, e.g.
-> > tens of thousands of cycles, so this rarely-hit "slow path" probably
-> > wouldn't affect the worst case latency of EINIT.
-> 
-> Sounds a good refiniment. Pretty good solution to heal from host sleep on the
-> guest VM and then there is no need for driver changes.
+For the series,
 
-To me either way should be OK, keeping MSR cache or retrying EINIT, since EINIT should not be in performance critical path I think.
-
-But INVALID_TOKEN is not only returned when MSRs are mismatched, so do you plan to check to rule out other cases that cause INVALID_TOKEN before retrying EINIT, or unconditionally  retry EINIT? And we should only retry once?
-
-Thanks,
--Kai
-> 
-> /Jarkko
+Reviewed-by: Dave Airlie <airlied@redhat.com>
+On Wed, 29 Aug 2018 at 22:20, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> Use the dma mapping api and properly add iommu mappings for
+> objects, unless virtio is in iommu quirk mode.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.h |  1 +
+>  drivers/gpu/drm/virtio/virtgpu_vq.c  | 46 +++++++++++++++++++++++++++++-------
+>  2 files changed, 38 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index cbbff01077..ec9a38f995 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -57,6 +57,7 @@ struct virtio_gpu_object {
+>         uint32_t hw_res_handle;
+>
+>         struct sg_table *pages;
+> +       uint32_t mapped;
+>         void *vmap;
+>         bool dumb;
+>         struct ttm_place                placement_code;
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index af24e91267..bf631d32d4 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -424,7 +424,8 @@ void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
+>  }
+>
+>  static void virtio_gpu_cmd_resource_inval_backing(struct virtio_gpu_device *vgdev,
+> -                                                 uint32_t resource_id)
+> +                                                 uint32_t resource_id,
+> +                                                 struct virtio_gpu_fence **fence)
+>  {
+>         struct virtio_gpu_resource_detach_backing *cmd_p;
+>         struct virtio_gpu_vbuffer *vbuf;
+> @@ -435,7 +436,7 @@ static void virtio_gpu_cmd_resource_inval_backing(struct virtio_gpu_device *vgde
+>         cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_RESOURCE_DETACH_BACKING);
+>         cmd_p->resource_id = cpu_to_le32(resource_id);
+>
+> -       virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
+> +       virtio_gpu_queue_fenced_ctrl_buffer(vgdev, vbuf, &cmd_p->hdr, fence);
+>  }
+>
+>  void virtio_gpu_cmd_set_scanout(struct virtio_gpu_device *vgdev,
+> @@ -848,9 +849,10 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+>                              uint32_t resource_id,
+>                              struct virtio_gpu_fence **fence)
+>  {
+> +       bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
+>         struct virtio_gpu_mem_entry *ents;
+>         struct scatterlist *sg;
+> -       int si;
+> +       int si, nents;
+>
+>         if (!obj->pages) {
+>                 int ret;
+> @@ -860,23 +862,33 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+>                         return ret;
+>         }
+>
+> +       if (use_dma_api) {
+> +               obj->mapped = dma_map_sg(vgdev->vdev->dev.parent,
+> +                                        obj->pages->sgl, obj->pages->nents,
+> +                                        DMA_TO_DEVICE);
+> +               nents = obj->mapped;
+> +       } else {
+> +               nents = obj->pages->nents;
+> +       }
+> +
+>         /* gets freed when the ring has consumed it */
+> -       ents = kmalloc_array(obj->pages->nents,
+> -                            sizeof(struct virtio_gpu_mem_entry),
+> +       ents = kmalloc_array(nents, sizeof(struct virtio_gpu_mem_entry),
+>                              GFP_KERNEL);
+>         if (!ents) {
+>                 DRM_ERROR("failed to allocate ent list\n");
+>                 return -ENOMEM;
+>         }
+>
+> -       for_each_sg(obj->pages->sgl, sg, obj->pages->nents, si) {
+> -               ents[si].addr = cpu_to_le64(sg_phys(sg));
+> +       for_each_sg(obj->pages->sgl, sg, nents, si) {
+> +               ents[si].addr = cpu_to_le64(use_dma_api
+> +                                           ? sg_dma_address(sg)
+> +                                           : sg_phys(sg));
+>                 ents[si].length = cpu_to_le32(sg->length);
+>                 ents[si].padding = 0;
+>         }
+>
+>         virtio_gpu_cmd_resource_attach_backing(vgdev, resource_id,
+> -                                              ents, obj->pages->nents,
+> +                                              ents, nents,
+>                                                fence);
+>         obj->hw_res_handle = resource_id;
+>         return 0;
+> @@ -885,7 +897,23 @@ int virtio_gpu_object_attach(struct virtio_gpu_device *vgdev,
+>  void virtio_gpu_object_detach(struct virtio_gpu_device *vgdev,
+>                               struct virtio_gpu_object *obj)
+>  {
+> -       virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle);
+> +       bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
+> +       struct virtio_gpu_fence *fence;
+> +
+> +       if (use_dma_api && obj->mapped) {
+> +               /* detach backing and wait for the host process it ... */
+> +               virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle, &fence);
+> +               dma_fence_wait(&fence->f, true);
+> +               dma_fence_put(&fence->f);
+> +
+> +               /* ... then tear down iommu mappings */
+> +               dma_unmap_sg(vgdev->vdev->dev.parent,
+> +                            obj->pages->sgl, obj->mapped,
+> +                            DMA_TO_DEVICE);
+> +               obj->mapped = 0;
+> +       } else {
+> +               virtio_gpu_cmd_resource_inval_backing(vgdev, obj->hw_res_handle, NULL);
+> +       }
+>  }
+>
+>  void virtio_gpu_cursor_ping(struct virtio_gpu_device *vgdev,
+> --
+> 2.9.3
+>
+>
+> ---------------------------------------------------------------------
+> To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+> For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+>
