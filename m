@@ -2,129 +2,170 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23128C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CED22077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CED22077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AC4012077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:26:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="IyB7O7bT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC4012077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeICOoT (ORCPT
+        id S1727508AbeICOqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:44:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:53476 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeICOoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:44:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 570DC80D;
-        Mon,  3 Sep 2018 03:24:48 -0700 (PDT)
-Received: from queper01-lin.Emea.Arm.com (queper01-lin.Emea.Arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6BFD33F614;
-        Mon,  3 Sep 2018 03:24:47 -0700 (PDT)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     sudeep.holla@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        quentin.perret@arm.com
-Subject: [PATCH v2] firmware: arm_scmi: add a getter for power of performance states
-Date:   Mon,  3 Sep 2018 11:24:39 +0100
-Message-Id: <20180903102439.24012-1-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 3 Sep 2018 10:46:20 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40050 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbeICOqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:46:20 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l63-v6so32796pga.7
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 03:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qSZqueompcOQmme62pm3nN7LsB9nZ0fRRDlYkCiKIfo=;
+        b=IyB7O7bTc8vKS+Xke1FHCKmiaC8XhwL5QyN95NnNWv/w7qxnELMNTwQ/5v+tWrAoi0
+         yVWCyK962WPK0I2FEkFIoEInj/Wz2JQBeYWkLt9+CgK3DoeQzePQVZoz2fjmDiX8p02Q
+         S5SwgsetubYmZ6RVv96CKHd73cLPwrIZwnVhAXSJUgp1rDj9f2EegCgu5fNrbPCyc2EZ
+         bhs0m8748/ajIjHpFJNQDsAVY/vE/xCJ7zS/EaKEFd4cp57Fo/fbH+s925Ygsmvgo2oU
+         alHQ49SshYrnqcJOmimobIYMqLgxM5DN9qRTe2QvnQTZHR9TYL8otVlhpSJ7i7FweSWB
+         tCmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qSZqueompcOQmme62pm3nN7LsB9nZ0fRRDlYkCiKIfo=;
+        b=S22PfeFKYGvNLs/YipQo+0aNFEB/xn6tz19nPyc5+vbfRkFmNbp4VJ6CFgryPo2iXp
+         f9phh7G+Fyc9pzwsUtd4OFYbTZmF8wM97RDt7ug9/kmHDG5oDHTn62A0dbHNbn16NBTJ
+         /GyElIJUC3+0JU5TB+rkvHNkrmdqQzddmFE4nvThqs6z0SzO41af/cYG3sdRsF6sY5Jg
+         JFtlR8ANqcLS7MhsvsUPTAeazSfrnzuWNCNVrrY5LuAJBfMYV1ipSeLaN7atVowUbOvN
+         VOvVqPM75jyFaPGG+mF2rUFruj/nZ6VfMYrUXDSR0UQDqtY9QngeXGE5lMs70szf814y
+         QGRg==
+X-Gm-Message-State: APzg51DoqFjdqoVKTxdiolOscK6SNljGdKfEpMEvnhgIzpcczmlR5KYx
+        nJS9ddLz7fcygvOTgweclnjUzBKDZubeEA==
+X-Google-Smtp-Source: ANB0VdZkrUGms1gp56U7nb/gNvpmQcPv9dG7reE5hItonWUmaMlgQwKWTAvE52uPKRORcklncvLLRw==
+X-Received: by 2002:a63:1b4e:: with SMTP id b14-v6mr25520197pgm.303.1535970408327;
+        Mon, 03 Sep 2018 03:26:48 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id g6-v6sm34252256pfb.11.2018.09.03.03.26.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 03:26:47 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 5C0F9300D89; Mon,  3 Sep 2018 13:26:42 +0300 (+03)
+Date:   Mon, 3 Sep 2018 13:26:42 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
+ <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+ <20180830152512.GE14702@192.168.1.2>
+ <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
+ <20180903074718.GD1740@192.168.1.3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903074718.GD1740@192.168.1.3>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SCMI protocol can be used to get power estimates from firmware
-corresponding to each performance state of a device. Although these power
-costs are already managed by the SCMI firmware driver, they are not
-exposed to any external subsystem yet.
+On Mon, Sep 03, 2018 at 03:47:18PM +0800, Baoquan He wrote:
+> On 09/02/18 at 11:52pm, Kirill A. Shutemov wrote:
+> > On Thu, Aug 30, 2018 at 11:25:12PM +0800, Baoquan He wrote:
+> > > Hi Kirill,
+> > > 
+> > > I made a new version according to your suggestion, just a little
+> > > different, I didn't make 1TB as default, just calculate with the actual
+> > > size, then align up to 1TB boundary.  Just found kcore is printing more
+> > > entries than before, I thought it's caused by my code, later got it was
+> > > touchde by other people.
+> > > 
+> > > Any comment about this? I can change accordingly.
+> > 
+> > Looks good to me.
+> > 
+> > But there's corner case when struct page is unreasonably large and
+> > vmemmap_size will be way to large. We probably have to report an error if
+> > we cannot fit vmemmap properly into virtual memory layout.
+> 
+> Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
+> system bootup can't go over vmemmap initlization. Except of this, we may
+> need think about the virtual memory layout which vmemmap can be allowed
+> to occupy.
+> 
+> If KASAN enabled, KASLR disabled,
+> 4-level 1TB + 1TB hole (2TB)
+> 5-level 512TB + 2034TB hole (2.5PB)
+> 
+> If KASAN disabled, KASLR enabled,
+> 4-level 1TB + 1TB hole + 16TB  (18TB)
+> 5-level 512TB + 2034TB hole + 8PB (10.5PB)
+> 
+> So, as you can see, if add check in memory KASLR code, we should only
+> consider KASLR enabled case. We possibly don't need to worry about
+> 5-level case since the size 10.5PB is even bigger than the maximum
+> physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
+> will be 32 times of the current 1TB, then we usually assume 64 as the
+> default value of sizeof(struct page), then 64*32 == 1024. So we can add
+> check like this, what do you think? Or any other idea?
 
-Fix this by adding a new get_power() interface to the exisiting perf_ops
-defined for the SCMI protocol.
+Looks reasonable to me.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
-v2: rebased on 4.19-rc2
----
- drivers/firmware/arm_scmi/perf.c | 28 ++++++++++++++++++++++++++++
- include/linux/scmi_protocol.h    |  4 ++++
- 2 files changed, 32 insertions(+)
+But I would have the BUILD_BUG_ON() in generic code. If you struct page is
+more than 1/4 of PAGE_SIZE something is horribly broken.
 
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 721e6c57beae..272abd2cb3f0 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -421,6 +421,33 @@ static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
- 	return ret;
- }
- 
-+static int scmi_dvfs_power_get(const struct scmi_handle *handle, u32 domain,
-+			       unsigned long *freq, unsigned long *power)
-+{
-+	struct scmi_perf_info *pi = handle->perf_priv;
-+	struct perf_dom_info *dom;
-+	unsigned long opp_freq;
-+	int idx, ret = -EINVAL;
-+	struct scmi_opp *opp;
-+
-+	dom = pi->dom_info + domain;
-+	if (!dom)
-+		return -EIO;
-+
-+	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
-+		opp_freq = opp->perf * dom->mult_factor;
-+		if (opp_freq < *freq)
-+			continue;
-+
-+		*freq = opp_freq;
-+		*power = opp->power;
-+		ret = 0;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
- static struct scmi_perf_ops perf_ops = {
- 	.limits_set = scmi_perf_limits_set,
- 	.limits_get = scmi_perf_limits_get,
-@@ -431,6 +458,7 @@ static struct scmi_perf_ops perf_ops = {
- 	.device_opps_add = scmi_dvfs_device_opps_add,
- 	.freq_set = scmi_dvfs_freq_set,
- 	.freq_get = scmi_dvfs_freq_get,
-+	.power_get = scmi_dvfs_power_get,
- };
- 
- static int scmi_perf_protocol_init(struct scmi_handle *handle)
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index f4c9fc0fc755..2ecbd2c5a249 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -91,6 +91,8 @@ struct scmi_clk_ops {
-  *	to sustained performance level mapping
-  * @freq_get: gets the frequency for a given device using sustained frequency
-  *	to sustained performance level mapping
-+ * @power_get: gets the power dissipated for a given performance domain at a
-+ *      given frequency
-  */
- struct scmi_perf_ops {
- 	int (*limits_set)(const struct scmi_handle *handle, u32 domain,
-@@ -110,6 +112,8 @@ struct scmi_perf_ops {
- 			unsigned long rate, bool poll);
- 	int (*freq_get)(const struct scmi_handle *handle, u32 domain,
- 			unsigned long *rate, bool poll);
-+	int (*power_get)(const struct scmi_handle *handle, u32 domain,
-+			 unsigned long *rate, unsigned long *power);
- };
- 
- /**
+> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> index 1db8e166455e..776ec759a87c 100644
+> --- a/arch/x86/mm/kaslr.c
+> +++ b/arch/x86/mm/kaslr.c
+> @@ -90,6 +90,7 @@ void __init kernel_randomize_memory(void)
+>         BUILD_BUG_ON(vaddr_start >= vaddr_end);
+>         BUILD_BUG_ON(vaddr_end != CPU_ENTRY_AREA_BASE);
+>         BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
+> +       BUILD_BUG_ON(sizeof(struct page ) > PAGE_SIZE/4);
+
+Nitpick: redundant space before ')'.
+
+>  
+>         if (!kaslr_memory_enabled())
+>                 return;
+> 
+> 
+> For 5-level paging mode, we
+> may not need to worry about that. Since KASAN 
+> 
+> ***4-level***
+> ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
+> ... unused hole ...
+> ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
+> ... unused hole ...
+> 
+> 
+> 
+> ***5-level***
+> ffd4000000000000 - ffd5ffffffffffff (=49 bits) virtual memory map (512TB)
+> ... unused hole ...
+> ffdf000000000000 - fffffc0000000000 (=53 bits) kasan shadow memory (8PB) 
+> 
+> > 
+> > -- 
+> >  Kirill A. Shutemov
+
 -- 
-2.17.1
-
+ Kirill A. Shutemov
