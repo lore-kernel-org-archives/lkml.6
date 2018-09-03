@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2000DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB83C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97B620658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97B620658
+	by mail.kernel.org (Postfix) with ESMTP id 662352077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 662352077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730866AbeICVrx (ORCPT
+        id S1730876AbeICVr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45936 "EHLO
+        Mon, 3 Sep 2018 17:47:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbeICVrx (ORCPT
+        with ESMTP id S1728587AbeICVr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:53 -0400
+        Mon, 3 Sep 2018 17:47:56 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9902CD36;
-        Mon,  3 Sep 2018 17:26:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84F85D37;
+        Mon,  3 Sep 2018 17:26:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 132/165] ASoC: zte: Fix incorrect PCM format bit usages
-Date:   Mon,  3 Sep 2018 18:56:58 +0200
-Message-Id: <20180903165702.178484877@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Kees Cook <keescook@chromium.org>, kasan-dev@googlegroups.com
+Subject: [PATCH 4.14 141/165] x86/entry/64: Wipe KASAN stack shadow before rewind_stack_do_exit()
+Date:   Mon,  3 Sep 2018 18:57:07 +0200
+Message-Id: <20180903165702.609367627@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -50,40 +55,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jann Horn <jannh@google.com>
 
-commit c889a45d229938a94b50aadb819def8bb11a6a54 upstream.
+commit f12d11c5c184626b4befdee3d573ec8237405a33 upstream.
 
-zx-tdm driver sets the DAI driver definitions with the format bits
-wrongly set with SNDRV_PCM_FORMAT_*, instead of SNDRV_PCM_FMTBIT_*.
+Reset the KASAN shadow state of the task stack before rewinding RSP.
+Without this, a kernel oops will leave parts of the stack poisoned, and
+code running under do_exit() can trip over such poisoned regions and cause
+nonsensical false-positive KASAN reports about stack-out-of-bounds bugs.
 
-This patch corrects the definitions.
+This does not wipe the exception stacks; if an oops happens on an exception
+stack, it might result in random KASAN false-positives from other tasks
+afterwards. This is probably relatively uninteresting, since if the kernel
+oopses on an exception stack, there are most likely bigger things to worry
+about. It'd be more interesting if vmapped stacks and KASAN were
+compatible, since then handle_stack_overflow() would oops from exception
+stack context.
 
-Spotted by a sparse warning:
-  sound/soc/zte/zx-tdm.c:363:35: warning: restricted snd_pcm_format_t degrades to integer
-
-Fixes: 870e0ddc4345 ("ASoC: zx-tdm: add zte's tdm controller driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 2deb4be28077 ("x86/dumpstack: When OOPSing, rewind the stack before do_exit()")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: kasan-dev@googlegroups.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180828184033.93712-1-jannh@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/zte/zx-tdm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/dumpstack.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/soc/zte/zx-tdm.c
-+++ b/sound/soc/zte/zx-tdm.c
-@@ -144,8 +144,8 @@ static void zx_tdm_rx_dma_en(struct zx_t
- #define ZX_TDM_RATES	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000)
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -17,6 +17,7 @@
+ #include <linux/bug.h>
+ #include <linux/nmi.h>
+ #include <linux/sysfs.h>
++#include <linux/kasan.h>
  
- #define ZX_TDM_FMTBIT \
--	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FORMAT_MU_LAW | \
--	SNDRV_PCM_FORMAT_A_LAW)
-+	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_MU_LAW | \
-+	SNDRV_PCM_FMTBIT_A_LAW)
- 
- static int zx_tdm_dai_probe(struct snd_soc_dai *dai)
- {
+ #include <asm/cpu_entry_area.h>
+ #include <asm/stacktrace.h>
+@@ -298,7 +299,10 @@ void oops_end(unsigned long flags, struc
+ 	 * We're not going to return, but we might be on an IST stack or
+ 	 * have very little stack space left.  Rewind the stack and kill
+ 	 * the task.
++	 * Before we rewind the stack, we have to tell KASAN that we're going to
++	 * reuse the task stack and that existing poisons are invalid.
+ 	 */
++	kasan_unpoison_task_stack(current);
+ 	rewind_stack_do_exit(signr);
+ }
+ NOKPROBE_SYMBOL(oops_end);
 
 
