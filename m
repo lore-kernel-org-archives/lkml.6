@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA3AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFD3C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5047820658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5047820658
+	by mail.kernel.org (Postfix) with ESMTP id CE20120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE20120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbeICWBt (ORCPT
+        id S1732042AbeICWBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:01:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49406 "EHLO
+        Mon, 3 Sep 2018 18:01:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeICWBs (ORCPT
+        with ESMTP id S1727466AbeICWBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:48 -0400
+        Mon, 3 Sep 2018 18:01:52 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAE6CBC4;
-        Mon,  3 Sep 2018 17:40:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 481BFBC4;
+        Mon,  3 Sep 2018 17:40:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.18 112/123] mtd: rawnand: fsmc: Stop using chip->read_buf()
-Date:   Mon,  3 Sep 2018 18:57:36 +0200
-Message-Id: <20180903165724.240269682@linuxfoundation.org>
+Subject: [PATCH 4.18 113/123] mtd: rawnand: marvell: add suspend and resume hooks
+Date:   Mon,  3 Sep 2018 18:57:37 +0200
+Message-Id: <20180903165724.283945860@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,35 +50,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Daniel Mack <daniel@zonque.org>
 
-commit 79e1ca37cc0c056f224cc1dd4a301b9dc2f94167 upstream.
+commit bd9c3f9b3c00da322b5e784e820533f1598f690a upstream.
 
-chip->read_buf is left unassigned since commit 4da712e70294 ("mtd: nand:
-fsmc: use ->exec_op()"), leading to a NULL pointer dereference when it's
-called from fsmc_read_page_hwecc(). Fix that by using the appropriate
-helper to read data out of the NAND.
+This patch restores the suspend and resume hooks that the old driver used
+to have. Apart from stopping and starting the clocks, the resume callback
+also nullifies the selected_chip pointer, so the next command that is issued
+will re-select the chip and thereby restore the timing registers.
 
-Fixes: 4da712e70294 ("mtd: nand: fsmc: use ->exec_op()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Factor out some code from marvell_nfc_init() into a new function
+marvell_nfc_reset() and also call it at resume time to reset some registers
+that don't retain their contents during low-power mode.
+
+Without this patch, a PXA3xx based system would cough up an error similar to
+the one below after resume.
+
+[   44.660162] marvell-nfc 43100000.nand-controller: Timeout waiting for  RB signal
+[   44.671492] ubi0 error: ubi_io_write: error -110 while writing 2048 bytes to PEB 102:38912, written 0 bytes
+[   44.682887] CPU: 0 PID: 1417 Comm: remote-control Not tainted 4.18.0-rc2+ #344
+[   44.691197] Hardware name: Marvell PXA3xx (Device Tree Support)
+[   44.697111] Backtrace:
+[   44.699593] [<c0106458>] (dump_backtrace) from [<c0106718>] (show_stack+0x18/0x1c)
+[   44.708931]  r7:00000800 r6:00009800 r5:00000066 r4:c6139000
+[   44.715833] [<c0106700>] (show_stack) from [<c0678a60>] (dump_stack+0x20/0x28)
+[   44.724206] [<c0678a40>] (dump_stack) from [<c0456cbc>] (ubi_io_write+0x3d4/0x630)
+[   44.732925] [<c04568e8>] (ubi_io_write) from [<c0454428>] (ubi_eba_write_leb+0x690/0x6fc)
+...
+
+Fixes: 02f26ecf8c77 ("mtd: nand: add reworked Marvell NAND controller driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Mack <daniel@zonque.org>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/fsmc_nand.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/nand/raw/marvell_nand.c |   73 ++++++++++++++++++++++++++++++------
+ 1 file changed, 62 insertions(+), 11 deletions(-)
 
---- a/drivers/mtd/nand/raw/fsmc_nand.c
-+++ b/drivers/mtd/nand/raw/fsmc_nand.c
-@@ -740,7 +740,7 @@ static int fsmc_read_page_hwecc(struct m
- 	for (i = 0, s = 0; s < eccsteps; s++, i += eccbytes, p += eccsize) {
- 		nand_read_page_op(chip, page, s * eccsize, NULL, 0);
- 		chip->ecc.hwctl(mtd, NAND_ECC_READ);
--		chip->read_buf(mtd, p, eccsize);
-+		nand_read_data_op(chip, p, eccsize, false);
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -2677,6 +2677,21 @@ static int marvell_nfc_init_dma(struct m
+ 	return 0;
+ }
  
- 		for (j = 0; j < eccbytes;) {
- 			struct mtd_oob_region oobregion;
++static void marvell_nfc_reset(struct marvell_nfc *nfc)
++{
++	/*
++	 * ECC operations and interruptions are only enabled when specifically
++	 * needed. ECC shall not be activated in the early stages (fails probe).
++	 * Arbiter flag, even if marked as "reserved", must be set (empirical).
++	 * SPARE_EN bit must always be set or ECC bytes will not be at the same
++	 * offset in the read page and this will fail the protection.
++	 */
++	writel_relaxed(NDCR_ALL_INT | NDCR_ND_ARB_EN | NDCR_SPARE_EN |
++		       NDCR_RD_ID_CNT(NFCV1_READID_LEN), nfc->regs + NDCR);
++	writel_relaxed(0xFFFFFFFF, nfc->regs + NDSR);
++	writel_relaxed(0, nfc->regs + NDECCCTRL);
++}
++
+ static int marvell_nfc_init(struct marvell_nfc *nfc)
+ {
+ 	struct device_node *np = nfc->dev->of_node;
+@@ -2715,17 +2730,7 @@ static int marvell_nfc_init(struct marve
+ 	if (!nfc->caps->is_nfcv2)
+ 		marvell_nfc_init_dma(nfc);
+ 
+-	/*
+-	 * ECC operations and interruptions are only enabled when specifically
+-	 * needed. ECC shall not be activated in the early stages (fails probe).
+-	 * Arbiter flag, even if marked as "reserved", must be set (empirical).
+-	 * SPARE_EN bit must always be set or ECC bytes will not be at the same
+-	 * offset in the read page and this will fail the protection.
+-	 */
+-	writel_relaxed(NDCR_ALL_INT | NDCR_ND_ARB_EN | NDCR_SPARE_EN |
+-		       NDCR_RD_ID_CNT(NFCV1_READID_LEN), nfc->regs + NDCR);
+-	writel_relaxed(0xFFFFFFFF, nfc->regs + NDSR);
+-	writel_relaxed(0, nfc->regs + NDECCCTRL);
++	marvell_nfc_reset(nfc);
+ 
+ 	return 0;
+ }
+@@ -2840,6 +2845,51 @@ static int marvell_nfc_remove(struct pla
+ 	return 0;
+ }
+ 
++static int __maybe_unused marvell_nfc_suspend(struct device *dev)
++{
++	struct marvell_nfc *nfc = dev_get_drvdata(dev);
++	struct marvell_nand_chip *chip;
++
++	list_for_each_entry(chip, &nfc->chips, node)
++		marvell_nfc_wait_ndrun(&chip->chip);
++
++	clk_disable_unprepare(nfc->reg_clk);
++	clk_disable_unprepare(nfc->core_clk);
++
++	return 0;
++}
++
++static int __maybe_unused marvell_nfc_resume(struct device *dev)
++{
++	struct marvell_nfc *nfc = dev_get_drvdata(dev);
++	int ret;
++
++	ret = clk_prepare_enable(nfc->core_clk);
++	if (ret < 0)
++		return ret;
++
++	if (!IS_ERR(nfc->reg_clk)) {
++		ret = clk_prepare_enable(nfc->reg_clk);
++		if (ret < 0)
++			return ret;
++	}
++
++	/*
++	 * Reset nfc->selected_chip so the next command will cause the timing
++	 * registers to be restored in marvell_nfc_select_chip().
++	 */
++	nfc->selected_chip = NULL;
++
++	/* Reset registers that have lost their contents */
++	marvell_nfc_reset(nfc);
++
++	return 0;
++}
++
++static const struct dev_pm_ops marvell_nfc_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(marvell_nfc_suspend, marvell_nfc_resume)
++};
++
+ static const struct marvell_nfc_caps marvell_armada_8k_nfc_caps = {
+ 	.max_cs_nb = 4,
+ 	.max_rb_nb = 2,
+@@ -2924,6 +2974,7 @@ static struct platform_driver marvell_nf
+ 	.driver	= {
+ 		.name		= "marvell-nfc",
+ 		.of_match_table = marvell_nfc_of_ids,
++		.pm		= &marvell_nfc_pm_ops,
+ 	},
+ 	.id_table = marvell_nfc_platform_ids,
+ 	.probe = marvell_nfc_probe,
 
 
