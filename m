@@ -2,118 +2,116 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC7BC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66818C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8047520843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:01:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8047520843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E25E20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:02:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtRlRJgq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E25E20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeICOVH (ORCPT
+        id S1727598AbeICOVd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:21:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52816 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727459AbeICOVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:21:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4658FED1;
-        Mon,  3 Sep 2018 03:01:41 -0700 (PDT)
-Received: from en101.Emea.Arm.com (en101.emea.arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C25C83F575;
-        Mon,  3 Sep 2018 03:01:39 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     stable@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org
-Subject: [PATCH stable 2/2] arm64: Handle mismatched cache type
-Date:   Mon,  3 Sep 2018 11:01:33 +0100
-Message-Id: <1535968893-5455-2-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535968893-5455-1-git-send-email-suzuki.poulose@arm.com>
-References: <1535968893-5455-1-git-send-email-suzuki.poulose@arm.com>
+        Mon, 3 Sep 2018 10:21:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51207 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbeICOVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:21:33 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y2-v6so557149wma.1;
+        Mon, 03 Sep 2018 03:02:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qipwbSNbIVGXyNEah+LaRkOfqYRnkS7mgM/kvMpA4og=;
+        b=YtRlRJgqsfxwivkA9BvyG8G3eHeIHiWIxCjvboHiEXRCLjsQwPhb7QcSSWQlufKBA1
+         RbN94+8af6bSc5slyXSRlSSDY4Ddeq4jIpz1Di5g9oArbLbBBlJejBzzgd3a1Mdog2Bt
+         BbubrIao6dn7av7jrImIxZ8pGjp9Yz8kTvyjTRDaBWfbC1T/siLbMVb9BUKpN4pUNjI5
+         2K7AJUjROyI5T69hKIyb6534YoeJi66ExH3P53/bWJI5v+iAtUQXLfnO/Vm+p0vp1cse
+         E95+0Do09Vlorhnq3/TClYdm1LPMelQWygi4PXH51YuFnkPl5tryqc6t+hF9t2i6Oj0b
+         51oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qipwbSNbIVGXyNEah+LaRkOfqYRnkS7mgM/kvMpA4og=;
+        b=PWyfrGqBVDthdcVyHQVhJx7i2N6F647KBM6+1jzvw08zu7YhqxSYsIQZ5Aspv1gd6T
+         ZoyVHjVsoPG6KnZdeIqJkiC4prTQLoQzbkVeibwAnuYqVDJMAArIZEqXccb0AFX7E+/p
+         bg0VOPWGQLSv7IrP1mSYp0DPJBspC5f0x0E7vj0ORV0wa1DIfkx0oxx9jSPN5fM6UQb1
+         31gzoKxQcbQf8yqbtOUyHji1VR1Drq+3D85DIauthyN+5/0RlRvebO4DrH8RIYv3t12y
+         2tDu4nfkYNYlTmoIhc+dk9i6s5PU14unxEcxQGeyND6lCspORKNnhaqFAjXO8qOFRLWO
+         5VVQ==
+X-Gm-Message-State: APzg51CzVIPdBF/+RmTrAAb8IWbdnvsMuM6Uvg2U0SgSG0GfweBNq0p5
+        59gNaCNhEBx9IUuzWgJlr0g=
+X-Google-Smtp-Source: ANB0VdbBtKTckMzHzcyD8aoftTeKqOST7+gggPLpp4NmiYtWE+Wg0ux7jCRWxQPDV/NxyfFdeos+9g==
+X-Received: by 2002:a1c:8dc6:: with SMTP id p189-v6mr5117950wmd.3.1535968926207;
+        Mon, 03 Sep 2018 03:02:06 -0700 (PDT)
+Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id k34-v6sm31773936wre.18.2018.09.03.03.02.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 03:02:05 -0700 (PDT)
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     axboe@kernel.dk, hdegoede@redhat.com, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, robh+dt@kernel.org, wens@csie.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH v5 0/9] ata: ahci_platform: support allwinner R40 AHCI
+Date:   Mon,  3 Sep 2018 12:01:52 +0200
+Message-Id: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 314d53d297980676011e6fd83dac60db4a01dc70 upstream
+This patchset add support for allwinner R40 AHCI controller.
 
-Track mismatches in the cache type register (CTR_EL0), other
-than the D/I min line sizes and trap user accesses if there are any.
+The whole patchset is tested on sun8i-r40-bananapi-m2-ultra and
+on sun7i-a20-cubieboard2 which doesnt have any of the ressources added
+by this serie, so no regression should come with it.
 
-Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
-Cc: <stable@vger.kernel.org> # v4.14
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/include/asm/cpucaps.h |  3 ++-
- arch/arm64/kernel/cpu_errata.c   | 17 ++++++++++++++---
- 2 files changed, 16 insertions(+), 4 deletions(-)
+Patchs 1-7 should go via the ata tree
+Patchs 8,9 should go via the sunxi tree
 
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index 76c0d23..7d6425d 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -44,7 +44,8 @@
- #define ARM64_HARDEN_BRANCH_PREDICTOR		24
- #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
- #define ARM64_SSBD				26
-+#define ARM64_MISMATCHED_CACHE_TYPE		27
- 
--#define ARM64_NCAPS				27
-+#define ARM64_NCAPS				28
- 
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 3d1569c..762b1ad 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -45,11 +45,15 @@ is_kryo_midr(const struct arm64_cpu_capabilities *entry, int scope)
- }
- 
- static bool
--has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
--				int scope)
-+has_mismatched_cache_type(const struct arm64_cpu_capabilities *entry,
-+			  int scope)
- {
- 	u64 mask = CTR_CACHE_MINLINE_MASK;
- 
-+	/* Skip matching the min line sizes for cache type check */
-+	if (entry->capability == ARM64_MISMATCHED_CACHE_TYPE)
-+		mask ^= arm64_ftr_reg_ctrel0.strict_mask;
-+
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
- 	return (read_cpuid_cachetype() & mask) !=
- 	       (arm64_ftr_reg_ctrel0.sys_val & mask);
-@@ -513,7 +517,14 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	{
- 		.desc = "Mismatched cache line size",
- 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
--		.matches = has_mismatched_cache_line_size,
-+		.matches = has_mismatched_cache_type,
-+		.def_scope = SCOPE_LOCAL_CPU,
-+		.enable = cpu_enable_trap_ctr_access,
-+	},
-+	{
-+		.desc = "Mismatched cache type",
-+		.capability = ARM64_MISMATCHED_CACHE_TYPE,
-+		.matches = has_mismatched_cache_type,
- 		.def_scope = SCOPE_LOCAL_CPU,
- 		.enable = cpu_enable_trap_ctr_access,
- 	},
+Changes since v4:
+- dropped PHY dedicated driver
+- added the optionnal phy-supply
+
+Changes since v3:
+- Moved PHY code to a new sun4i-a10-phy-sata driver
+- Removed reset code since ahci_platform support now reset controller.
+
+Changes since V2
+- Moved all ressources management to ahci_platform
+
+Corentin Labbe (9):
+  dt-bindings: ata: ahci-platform: fix indentation of target-supply
+  ata: ahci_platform: add support for AHCI controller regulator
+  dt-bindings: ata: ahci-platform: document ahci-supply
+  ata: ahci_platform: add support for PHY controller regulator
+  dt-bindings: ata: ahci-platform: document phy-supply
+  ata: ahci_sunxi: add support for r40
+  dt-bindings: ata: update ahci_sunxi bindings
+  ARM: dts: sun8i: r40: add sata node
+  ARM: dts: sun8i: sun8i-r40-bananapi-m2-ultra: enable AHCI
+
+ .../devicetree/bindings/ata/ahci-platform.txt      |  6 ++-
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 18 +++++++++
+ arch/arm/boot/dts/sun8i-r40.dtsi                   | 13 ++++++
+ drivers/ata/ahci.h                                 |  2 +
+ drivers/ata/ahci_sunxi.c                           |  3 +-
+ drivers/ata/libahci_platform.c                     | 46 +++++++++++++++++++++-
+ 6 files changed, 84 insertions(+), 4 deletions(-)
+
 -- 
-2.7.4
+2.16.4
 
