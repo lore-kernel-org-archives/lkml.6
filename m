@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673FAC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D849AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E18520658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E18520658
+	by mail.kernel.org (Postfix) with ESMTP id 9F77620658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F77620658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeICWBl (ORCPT
+        id S1732023AbeICWBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:01:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49390 "EHLO
+        Mon, 3 Sep 2018 18:01:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727582AbeICWBl (ORCPT
+        with ESMTP id S1727466AbeICWBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:41 -0400
+        Mon, 3 Sep 2018 18:01:45 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74DB0BAE;
-        Mon,  3 Sep 2018 17:40:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADFC8BC4;
+        Mon,  3 Sep 2018 17:40:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 4.18 110/123] iscsi target: fix session creation failure handling
-Date:   Mon,  3 Sep 2018 18:57:34 +0200
-Message-Id: <20180903165724.159826282@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.18 111/123] mtd: rawnand: hynix: Use ->exec_op() in hynix_nand_reg_write_op()
+Date:   Mon,  3 Sep 2018 18:57:35 +0200
+Message-Id: <20180903165724.201914077@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,98 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Christie <mchristi@redhat.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 26abc916a898d34c5ad159315a2f683def3c5555 upstream.
+commit 20366e19e28f9954b25580c020d7a4e0db6055c4 upstream.
 
-The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
-iscsi_login_set_conn_values. If the function fails later like when we
-alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
-iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
-iscsi_target_login_sess_out and access the freed memory.
+Modern NAND controller drivers implement ->exec_op() instead of
+->cmdfunc(), make sure we don't end up with a NULL pointer dereference
+when hynix_nand_reg_write_op() is called.
 
-This patch has iscsi_login_zero_tsih_s1 either completely setup the
-session or completely tear it down, so later in
-iscsi_target_login_sess_out we can just check for it being set to the
-connection.
-
-Cc: stable@vger.kernel.org
-Fixes: 0957627a9960 ("iscsi-target: Fix sess allocation leak in...")
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_login.c |   35 ++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ drivers/mtd/nand/raw/nand_hynix.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/target/iscsi/iscsi_target_login.c
-+++ b/drivers/target/iscsi/iscsi_target_login.c
-@@ -348,8 +348,7 @@ static int iscsi_login_zero_tsih_s1(
- 		pr_err("idr_alloc() for sess_idr failed\n");
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_sess;
- 	}
+--- a/drivers/mtd/nand/raw/nand_hynix.c
++++ b/drivers/mtd/nand/raw/nand_hynix.c
+@@ -100,6 +100,16 @@ static int hynix_nand_reg_write_op(struc
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	u16 column = ((u16)addr << 8) | addr;
  
- 	sess->creation_time = get_jiffies_64();
-@@ -365,20 +364,28 @@ static int iscsi_login_zero_tsih_s1(
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
- 		pr_err("Unable to allocate memory for"
- 				" struct iscsi_sess_ops.\n");
--		kfree(sess);
--		return -ENOMEM;
-+		goto remove_idr;
- 	}
++	if (chip->exec_op) {
++		struct nand_op_instr instrs[] = {
++			NAND_OP_ADDR(1, &addr, 0),
++			NAND_OP_8BIT_DATA_OUT(1, &val, 0),
++		};
++		struct nand_operation op = NAND_OPERATION(instrs);
++
++		return nand_exec_op(chip, &op);
++	}
++
+ 	chip->cmdfunc(mtd, NAND_CMD_NONE, column, -1);
+ 	chip->write_byte(mtd, val);
  
- 	sess->se_sess = transport_init_session(TARGET_PROT_NORMAL);
- 	if (IS_ERR(sess->se_sess)) {
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess->sess_ops);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_ops;
- 	}
- 
- 	return 0;
-+
-+free_ops:
-+	kfree(sess->sess_ops);
-+remove_idr:
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+free_sess:
-+	kfree(sess);
-+	conn->sess = NULL;
-+	return -ENOMEM;
- }
- 
- static int iscsi_login_zero_tsih_s2(
-@@ -1161,13 +1168,13 @@ void iscsi_target_login_sess_out(struct
- 				   ISCSI_LOGIN_STATUS_INIT_ERR);
- 	if (!zero_tsih || !conn->sess)
- 		goto old_sess_out;
--	if (conn->sess->se_sess)
--		transport_free_session(conn->sess->se_sess);
--	if (conn->sess->session_index != 0) {
--		spin_lock_bh(&sess_idr_lock);
--		idr_remove(&sess_idr, conn->sess->session_index);
--		spin_unlock_bh(&sess_idr_lock);
--	}
-+
-+	transport_free_session(conn->sess->se_sess);
-+
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, conn->sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+
- 	kfree(conn->sess->sess_ops);
- 	kfree(conn->sess);
- 	conn->sess = NULL;
 
 
