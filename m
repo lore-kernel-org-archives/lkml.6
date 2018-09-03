@@ -2,63 +2,85 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C7AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2373C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCB820652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:30:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Vbj/SKSl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCB820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 7C7FA20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:33:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C7FA20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeICRuh (ORCPT
+        id S1726384AbeICRxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:50:37 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50728 "EHLO vps0.lunn.ch"
+        Mon, 3 Sep 2018 13:53:18 -0400
+Received: from mga11.intel.com ([192.55.52.93]:11417 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeICRuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:50:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=GpokNiW6b+S5n4ipdL2jr7hhvZY1DPbYljnfPld9NHA=;
-        b=Vbj/SKSleqkikrh1s9F5o7e/Re16dGPhiTLD7F8rXXiPSKWIOGtwZnY1NwAHaWQh1+FSt2yo0ycnbE7Q1Upeb122W8eFm4mwiiPNO+DdArkeN/PQ8bRY6suB7sq2Bhl9yMyyR8B+AKAm0SMcZyVDlJzeHSCVRpLSmyI5IqJRclM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fwovs-0001Wg-7q; Mon, 03 Sep 2018 15:30:20 +0200
-Date:   Mon, 3 Sep 2018 15:30:20 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v2 6/7] dt-bindings: net: phy: mscc: vsc8531:
- remove compatible from required properties
-Message-ID: <20180903133020.GE4445@lunn.ch>
-References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
- <20180903084853.18092-6-quentin.schulz@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903084853.18092-6-quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1725794AbeICRxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:53:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 06:33:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
+   d="scan'208";a="229822752"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 03 Sep 2018 06:33:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id A4033BB; Mon,  3 Sep 2018 16:33:04 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH 0/3] thunderbolt: Miscellaneous cleanups
+Date:   Mon,  3 Sep 2018 16:33:01 +0300
+Message-Id: <20180903133304.70362-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 10:48:52AM +0200, Quentin Schulz wrote:
-> Compatible isn't a required property for PHYs so let's remove it from
-> the binding DT of the VSC8531 PHYs.
+Hi,
 
-Hi Quentin
+Here are a couple of changes which have been in my TODO list some time
+already but have not had time to make a proper patch out of them until now.
 
-It is actually a optional property. So you could move it into that
-section of the binding documentation. But removing it is also O.K.
+Mika Westerberg (3):
+  thunderbolt: Make the driver less verbose
+  thunderbolt: Convert rest of the driver files to use SPDX identifier
+  thunderbolt: Add Intel as copyright holder
 
-	Andrew
+ drivers/thunderbolt/cap.c      |  3 +-
+ drivers/thunderbolt/ctl.c      |  9 ++---
+ drivers/thunderbolt/ctl.h      |  3 +-
+ drivers/thunderbolt/dma_port.c |  5 +--
+ drivers/thunderbolt/dma_port.h |  5 +--
+ drivers/thunderbolt/domain.c   |  7 ++--
+ drivers/thunderbolt/eeprom.c   |  5 +--
+ drivers/thunderbolt/icm.c      |  5 +--
+ drivers/thunderbolt/nhi.c      | 33 ++++++++++---------
+ drivers/thunderbolt/nhi.h      |  3 +-
+ drivers/thunderbolt/nhi_regs.h |  1 +
+ drivers/thunderbolt/path.c     | 26 +++++++--------
+ drivers/thunderbolt/property.c |  5 +--
+ drivers/thunderbolt/switch.c   | 60 ++++++++++++++++------------------
+ drivers/thunderbolt/tb.c       | 10 +++---
+ drivers/thunderbolt/tb.h       |  9 +++--
+ drivers/thunderbolt/tb_msgs.h  |  5 +--
+ drivers/thunderbolt/tb_regs.h  |  3 +-
+ drivers/thunderbolt/xdomain.c  |  5 +--
+ include/linux/thunderbolt.h    |  5 +--
+ 20 files changed, 96 insertions(+), 111 deletions(-)
+
+-- 
+2.18.0
+
