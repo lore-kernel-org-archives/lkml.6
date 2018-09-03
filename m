@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95A1C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C72AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E25B20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E25B20843
+	by mail.kernel.org (Postfix) with ESMTP id 09B4B20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:58:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B4B20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeICTSY (ORCPT
+        id S1727531AbeICTS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:18:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35817 "EHLO
+        Mon, 3 Sep 2018 15:18:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43319 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICTSY (ORCPT
+        with ESMTP id S1726951AbeICTS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:18:24 -0400
+        Mon, 3 Sep 2018 15:18:56 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83EvifL3340125
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83EwGR23340153
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Sep 2018 07:57:44 -0700
+        Mon, 3 Sep 2018 07:58:16 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83EviQf3340122;
-        Mon, 3 Sep 2018 07:57:44 -0700
-Date:   Mon, 3 Sep 2018 07:57:44 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83EwGBi3340150;
+        Mon, 3 Sep 2018 07:58:16 -0700
+Date:   Mon, 3 Sep 2018 07:58:16 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Juergen Gross <tipbot@zytor.com>
-Message-ID: <tip-abc745f85c1193d2a052addf0031d59b4436c246@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        jgross@suse.com, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, jgross@suse.com, hpa@zytor.com
-In-Reply-To: <20180828074026.820-7-jgross@suse.com>
-References: <20180828074026.820-7-jgross@suse.com>
+Message-ID: <tip-27876f3882fdd4acb3d3614a0133ecdc777fc292@git.kernel.org>
+Cc:     mingo@kernel.org, jgross@suse.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, jgross@suse.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <20180828074026.820-8-jgross@suse.com>
+References: <20180828074026.820-8-jgross@suse.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/paravirt] x86/paravirt: Remove clobbers parameter from
- paravirt patch functions
-Git-Commit-ID: abc745f85c1193d2a052addf0031d59b4436c246
+Subject: [tip:x86/paravirt] x86/paravirt: Remove clobbers from struct
+ paravirt_patch_site
+Git-Commit-ID: 27876f3882fdd4acb3d3614a0133ecdc777fc292
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,17 +57,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  abc745f85c1193d2a052addf0031d59b4436c246
-Gitweb:     https://git.kernel.org/tip/abc745f85c1193d2a052addf0031d59b4436c246
+Commit-ID:  27876f3882fdd4acb3d3614a0133ecdc777fc292
+Gitweb:     https://git.kernel.org/tip/27876f3882fdd4acb3d3614a0133ecdc777fc292
 Author:     Juergen Gross <jgross@suse.com>
-AuthorDate: Tue, 28 Aug 2018 09:40:17 +0200
+AuthorDate: Tue, 28 Aug 2018 09:40:18 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Mon, 3 Sep 2018 16:50:34 +0200
 
-x86/paravirt: Remove clobbers parameter from paravirt patch functions
+x86/paravirt: Remove clobbers from struct paravirt_patch_site
 
-The clobbers parameter from paravirt_patch_default() et al isn't used
-any longer. Remove it.
+There is no need any longer to store the clobbers in struct
+paravirt_patch_site. Remove clobbers from the struct and from the
+related macros.
+
+While at it fix some lines longer than 80 characters.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -78,167 +81,126 @@ Cc: akataria@vmware.com
 Cc: rusty@rustcorp.com.au
 Cc: boris.ostrovsky@oracle.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20180828074026.820-7-jgross@suse.com
+Link: https://lkml.kernel.org/r/20180828074026.820-8-jgross@suse.com
 
 ---
- arch/x86/include/asm/paravirt_types.h |  7 +++----
- arch/x86/kernel/alternative.c         |  2 +-
- arch/x86/kernel/paravirt.c            | 14 +++++---------
- arch/x86/kernel/paravirt_patch_32.c   |  5 ++---
- arch/x86/kernel/paravirt_patch_64.c   |  5 ++---
- arch/x86/kernel/vsmp_64.c             |  6 +++---
- 6 files changed, 16 insertions(+), 23 deletions(-)
+ arch/x86/include/asm/paravirt.h       | 33 +++++++++++++++------------------
+ arch/x86/include/asm/paravirt_types.h |  1 -
+ 2 files changed, 15 insertions(+), 19 deletions(-)
 
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index e375d4266b53..e1364cb40ce5 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -827,7 +827,7 @@ extern void default_banner(void);
+ 
+ #else  /* __ASSEMBLY__ */
+ 
+-#define _PVSITE(ptype, clobbers, ops, word, algn)	\
++#define _PVSITE(ptype, ops, word, algn)		\
+ 771:;						\
+ 	ops;					\
+ 772:;						\
+@@ -836,7 +836,6 @@ extern void default_banner(void);
+ 	 word 771b;				\
+ 	 .byte ptype;				\
+ 	 .byte 772b-771b;			\
+-	 .short clobbers;			\
+ 	.popsection
+ 
+ 
+@@ -869,7 +868,7 @@ extern void default_banner(void);
+ 	COND_POP(set, CLBR_RAX, rax)
+ 
+ #define PARA_PATCH(struct, off)        ((PARAVIRT_PATCH_##struct + (off)) / 8)
+-#define PARA_SITE(ptype, clobbers, ops) _PVSITE(ptype, clobbers, ops, .quad, 8)
++#define PARA_SITE(ptype, ops)	_PVSITE(ptype, ops, .quad, 8)
+ #define PARA_INDIRECT(addr)	*addr(%rip)
+ #else
+ #define PV_SAVE_REGS(set)			\
+@@ -884,26 +883,26 @@ extern void default_banner(void);
+ 	COND_POP(set, CLBR_EAX, eax)
+ 
+ #define PARA_PATCH(struct, off)        ((PARAVIRT_PATCH_##struct + (off)) / 4)
+-#define PARA_SITE(ptype, clobbers, ops) _PVSITE(ptype, clobbers, ops, .long, 4)
++#define PARA_SITE(ptype, ops)	_PVSITE(ptype, ops, .long, 4)
+ #define PARA_INDIRECT(addr)	*%cs:addr
+ #endif
+ 
+ #define INTERRUPT_RETURN						\
+-	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret), CLBR_NONE,	\
+-		  ANNOTATE_RETPOLINE_SAFE;					\
++	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_iret),			\
++		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_iret);)
+ 
+ #define DISABLE_INTERRUPTS(clobbers)					\
+-	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable), clobbers, \
++	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_disable),		\
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
+-		  ANNOTATE_RETPOLINE_SAFE;					\
++		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_disable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #define ENABLE_INTERRUPTS(clobbers)					\
+-	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable), clobbers,	\
++	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_irq_enable),		\
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);		\
+-		  ANNOTATE_RETPOLINE_SAFE;					\
++		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_irq_enable);	\
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+@@ -921,8 +920,7 @@ extern void default_banner(void);
+  * inlined, or the swapgs instruction must be trapped and emulated.
+  */
+ #define SWAPGS_UNSAFE_STACK						\
+-	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
+-		  swapgs)
++	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), swapgs)
+ 
+ /*
+  * Note: swapgs is very special, and in practise is either going to be
+@@ -931,8 +929,8 @@ extern void default_banner(void);
+  * it.
+  */
+ #define SWAPGS								\
+-	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs), CLBR_NONE,	\
+-		  ANNOTATE_RETPOLINE_SAFE;					\
++	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_swapgs),		\
++		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  call PARA_INDIRECT(pv_cpu_ops+PV_CPU_swapgs);		\
+ 		 )
+ 
+@@ -942,15 +940,14 @@ extern void default_banner(void);
+ 
+ #define USERGS_SYSRET64							\
+ 	PARA_SITE(PARA_PATCH(pv_cpu_ops, PV_CPU_usergs_sysret64),	\
+-		  CLBR_NONE,						\
+-		  ANNOTATE_RETPOLINE_SAFE;					\
++		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  jmp PARA_INDIRECT(pv_cpu_ops+PV_CPU_usergs_sysret64);)
+ 
+ #ifdef CONFIG_DEBUG_ENTRY
+ #define SAVE_FLAGS(clobbers)                                        \
+-	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl), clobbers, \
++	PARA_SITE(PARA_PATCH(pv_irq_ops, PV_IRQ_save_fl),	    \
+ 		  PV_SAVE_REGS(clobbers | CLBR_CALLEE_SAVE);        \
+-		  ANNOTATE_RETPOLINE_SAFE;				    \
++		  ANNOTATE_RETPOLINE_SAFE;			    \
+ 		  call PARA_INDIRECT(pv_irq_ops+PV_IRQ_save_fl);    \
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ #endif
 diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 7d13197d760b..225d871373ed 100644
+index 225d871373ed..b2220536a7d4 100644
 --- a/arch/x86/include/asm/paravirt_types.h
 +++ b/arch/x86/include/asm/paravirt_types.h
-@@ -85,7 +85,7 @@ struct pv_init_ops {
- 	 * the number of bytes of code generated, as we nop pad the
- 	 * rest in generic code.
- 	 */
--	unsigned (*patch)(u8 type, u16 clobber, void *insnbuf,
-+	unsigned (*patch)(u8 type, void *insnbuf,
- 			  unsigned long addr, unsigned len);
- } __no_randomize_layout;
+@@ -681,7 +681,6 @@ struct paravirt_patch_site {
+ 	u8 *instr; 		/* original instructions */
+ 	u8 instrtype;		/* type of this instruction */
+ 	u8 len;			/* length of original instruction */
+-	u16 clobbers;		/* what registers you may clobber */
+ };
  
-@@ -373,14 +373,13 @@ extern struct pv_lock_ops pv_lock_ops;
- 
- unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len);
- unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len);
--unsigned paravirt_patch_default(u8 type, u16 clobbers, void *insnbuf,
-+unsigned paravirt_patch_default(u8 type, void *insnbuf,
- 				unsigned long addr, unsigned len);
- 
- unsigned paravirt_patch_insns(void *insnbuf, unsigned len,
- 			      const char *start, const char *end);
- 
--unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
--		      unsigned long addr, unsigned len);
-+unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len);
- 
- int paravirt_disable_iospace(void);
- 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index b9d5e7c9ef43..9e755e1cfe92 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -594,7 +594,7 @@ void __init_or_module apply_paravirt(struct paravirt_patch_site *start,
- 		BUG_ON(p->len > MAX_PATCH_LEN);
- 		/* prep the buffer with the original instructions */
- 		memcpy(insnbuf, p->instr, p->len);
--		used = pv_init_ops.patch(p->instrtype, p->clobbers, insnbuf,
-+		used = pv_init_ops.patch(p->instrtype, insnbuf,
- 					 (unsigned long)p->instr, p->len);
- 
- 		BUG_ON(used > p->len);
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 1abdbde35049..287d34513f6a 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -81,10 +81,8 @@ struct branch {
- 	u32 delta;
- } __attribute__((packed));
- 
--static unsigned paravirt_patch_call(void *insnbuf,
--				    const void *target, u16 tgt_clobbers,
--				    unsigned long addr, u16 site_clobbers,
--				    unsigned len)
-+static unsigned paravirt_patch_call(void *insnbuf, const void *target,
-+				    unsigned long addr, unsigned len)
- {
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
-@@ -149,7 +147,7 @@ static void *get_call_destination(u8 type)
- 	return *((void **)&tmpl + type);
- }
- 
--unsigned paravirt_patch_default(u8 type, u16 clobbers, void *insnbuf,
-+unsigned paravirt_patch_default(u8 type, void *insnbuf,
- 				unsigned long addr, unsigned len)
- {
- 	void *opfunc = get_call_destination(type);
-@@ -172,10 +170,8 @@ unsigned paravirt_patch_default(u8 type, u16 clobbers, void *insnbuf,
- 		/* If operation requires a jmp, then jmp */
- 		ret = paravirt_patch_jmp(insnbuf, opfunc, addr, len);
- 	else
--		/* Otherwise call the function; assume target could
--		   clobber any caller-save reg */
--		ret = paravirt_patch_call(insnbuf, opfunc, CLBR_ANY,
--					  addr, clobbers, len);
-+		/* Otherwise call the function. */
-+		ret = paravirt_patch_call(insnbuf, opfunc, addr, len);
- 
- 	return ret;
- }
-diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
-index 758e69d72ebf..e5c3a438149e 100644
---- a/arch/x86/kernel/paravirt_patch_32.c
-+++ b/arch/x86/kernel/paravirt_patch_32.c
-@@ -30,8 +30,7 @@ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
- extern bool pv_is_native_spin_unlock(void);
- extern bool pv_is_native_vcpu_is_preempted(void);
- 
--unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
--		      unsigned long addr, unsigned len)
-+unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- {
- 	const unsigned char *start, *end;
- 	unsigned ret;
-@@ -70,7 +69,7 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
- 
- 	default:
- patch_default: __maybe_unused
--		ret = paravirt_patch_default(type, clobbers, ibuf, addr, len);
-+		ret = paravirt_patch_default(type, ibuf, addr, len);
- 		break;
- 
- patch_site:
-diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
-index 9cb98f7b07c9..835f1985a115 100644
---- a/arch/x86/kernel/paravirt_patch_64.c
-+++ b/arch/x86/kernel/paravirt_patch_64.c
-@@ -38,8 +38,7 @@ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
- extern bool pv_is_native_spin_unlock(void);
- extern bool pv_is_native_vcpu_is_preempted(void);
- 
--unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
--		      unsigned long addr, unsigned len)
-+unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
- {
- 	const unsigned char *start, *end;
- 	unsigned ret;
-@@ -80,7 +79,7 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
- 
- 	default:
- patch_default: __maybe_unused
--		ret = paravirt_patch_default(type, clobbers, ibuf, addr, len);
-+		ret = paravirt_patch_default(type, ibuf, addr, len);
- 		break;
- 
- patch_site:
-diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
-index 44685fb2a192..f194e5e1e95c 100644
---- a/arch/x86/kernel/vsmp_64.c
-+++ b/arch/x86/kernel/vsmp_64.c
-@@ -69,7 +69,7 @@ asmlinkage __visible void vsmp_irq_enable(void)
- }
- PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
- 
--static unsigned __init vsmp_patch(u8 type, u16 clobbers, void *ibuf,
-+static unsigned __init vsmp_patch(u8 type, void *ibuf,
- 				  unsigned long addr, unsigned len)
- {
- 	switch (type) {
-@@ -77,9 +77,9 @@ static unsigned __init vsmp_patch(u8 type, u16 clobbers, void *ibuf,
- 	case PARAVIRT_PATCH(pv_irq_ops.irq_disable):
- 	case PARAVIRT_PATCH(pv_irq_ops.save_fl):
- 	case PARAVIRT_PATCH(pv_irq_ops.restore_fl):
--		return paravirt_patch_default(type, clobbers, ibuf, addr, len);
-+		return paravirt_patch_default(type, ibuf, addr, len);
- 	default:
--		return native_patch(type, clobbers, ibuf, addr, len);
-+		return native_patch(type, ibuf, addr, len);
- 	}
- 
- }
+ extern struct paravirt_patch_site __parainstructions[],
