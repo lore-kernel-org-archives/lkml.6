@@ -5,131 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A893FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2638C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48BB820652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:10:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BB820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6541920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 22:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6541920862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbeIDCcq (ORCPT
+        id S1726146AbeIDCpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 22:32:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55858 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeIDCcq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 22:32:46 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fwx3I-0001of-OV; Tue, 04 Sep 2018 00:10:32 +0200
-Date:   Tue, 4 Sep 2018 00:10:32 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Bin Yang <bin.yang@intel.com>
-cc:     mingo@kernel.org, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        dave.hansen@intel.com, mark.gross@intel.com
-Subject: Re: [PATCH v3 3/5] x86/mm: add help function to check specific
- protection flags in range
-In-Reply-To: <1534814186-37067-4-git-send-email-bin.yang@intel.com>
-Message-ID: <alpine.DEB.2.21.1809032357430.1462@nanos.tec.linutronix.de>
-References: <1534814186-37067-1-git-send-email-bin.yang@intel.com> <1534814186-37067-4-git-send-email-bin.yang@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 3 Sep 2018 22:45:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49922 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725955AbeIDCpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 22:45:34 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C7CC040241C5;
+        Mon,  3 Sep 2018 22:23:21 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CD3E2026D6B;
+        Mon,  3 Sep 2018 22:23:18 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w83MNIsH010112;
+        Mon, 3 Sep 2018 18:23:18 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w83MNHJq010108;
+        Mon, 3 Sep 2018 18:23:17 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 3 Sep 2018 18:23:17 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     jing xia <jing.xia.mail@gmail.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+In-Reply-To: <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.1809031816120.27063@file01.intranet.prod.int.rdu2.redhat.com>
+References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com> <20180612212007.GA22717@redhat.com> <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com> <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
+ <20180614073153.GB9371@dhcp22.suse.cz> <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 03 Sep 2018 22:23:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 03 Sep 2018 22:23:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018, Bin Yang wrote:
->  /*
-> + * static_protections() "forces" page protections for some address
-> + * ranges.  Return true if any part of the address/len range is forced
-> + * to change from 'prot'.
-> + */
-> +static inline bool
-> +needs_static_protections(pgprot_t prot, unsigned long address,
-> +		unsigned long len, unsigned long pfn)
-> +{
-> +	int i;
-> +
-> +	address &= PAGE_MASK;
-> +	len = PFN_ALIGN(len);
-> +	for (i = 0; i < (len >> PAGE_SHIFT); i++, address += PAGE_SIZE, pfn++) {
-> +		pgprot_t chk_prot = static_protections(prot, address, pfn);
-> +
-> +		if (pgprot_val(chk_prot) != pgprot_val(prot))
-> +			return true;
-> +	}
-> +
-> +	/* Does static_protections() demand a change ? */
-> +	return false;
-> +}
 
-...
 
->  	if (cpa->force_split)
-> @@ -660,14 +684,8 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
->  	 * static_protection() requires a different pgprot for one of
->  	 * the pages in the range we try to preserve:
->  	 */
-> -	pfn = old_pfn;
-> -	for (i = 0; i < (psize >> PAGE_SHIFT); i++, addr += PAGE_SIZE, pfn++) {
-> -		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
-> -
-> -		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
-> -			goto out_unlock;
-> -	}
-> -
-> +	if (needs_static_protections(new_prot, addr, psize, old_pfn))
-> +		goto out_unlock;
+On Wed, 1 Aug 2018, jing xia wrote:
 
-This is not the same. The existing code does:
+> We reproduced this issue again and found out the root cause.
+> dm_bufio_prefetch() with dm_bufio_lock enters the direct reclaim and
+> takes a long time to do the soft_limit_reclaim, because of the huge
+> number of memory excess of the memcg.
+> Then, all the task who do shrink_slab() wait for  dm_bufio_lock.
+> 
+> Any suggestions for this?Thanks.
 
-     new_prot = static_protections(req_prot, address, pfn);
+There's hardly any solution because Michal Hocko refuses to change 
+__GFP_NORETRY behavior.
 
-which is the protection updated pgprot for the base of the address range
-which should be modified. The loop does:
+The patches 41c73a49df31151f4ff868f28fe4f129f113fa2c and 
+d12067f428c037b4575aaeb2be00847fc214c24a could reduce the lock contention 
+on the dm-bufio lock - the patches don't fix the high CPU consumption 
+inside the memory allocation, but the kernel code should wait less on the 
+bufio lock.
 
-    chk_prot = static_protections(req_prot, addr, pfn);
+Mikulas
 
-    if (chk_prot != new_prot)
-    	   goto split;
 
-Now mapping your new function back and then the loop becomes:
-
-    chk_prot = static_protections(new_prot, addr, pfn);
-
-    if (chk_prot != new_prot)
-    	   goto split;
-
-which is broken in case that after the initial static protections
-invocation
-
-	new_prot = static_protections(req_prot, address, pfn);
-
-the result is:
-
-   new_prot != req_prot
-
-and in the loop
-
-   new_prot is valid for _ALL_ pages in the large page because the static
-   protection which got applied for the first address can be applied to the
-   complete range, i.e. new_prot it is not further modified by
-   static_protections() for any page.
-
-That again can cause wrong large page preservations.
-
-Thanks,
-
-	tglx
-
+> On Thu, Jun 14, 2018 at 3:31 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Thu 14-06-18 15:18:58, jing xia wrote:
+> > [...]
+> >> PID: 22920  TASK: ffffffc0120f1a00  CPU: 1   COMMAND: "kworker/u8:2"
+> >>  #0 [ffffffc0282af3d0] __switch_to at ffffff8008085e48
+> >>  #1 [ffffffc0282af3f0] __schedule at ffffff8008850cc8
+> >>  #2 [ffffffc0282af450] schedule at ffffff8008850f4c
+> >>  #3 [ffffffc0282af470] schedule_timeout at ffffff8008853a0c
+> >>  #4 [ffffffc0282af520] schedule_timeout_uninterruptible at ffffff8008853aa8
+> >>  #5 [ffffffc0282af530] wait_iff_congested at ffffff8008181b40
+> >
+> > This trace doesn't provide the full picture unfortunately. Waiting in
+> > the direct reclaim means that the underlying bdi is congested. The real
+> > question is why it doesn't flush IO in time.
+> >
+> >>  #6 [ffffffc0282af5b0] shrink_inactive_list at ffffff8008177c80
+> >>  #7 [ffffffc0282af680] shrink_lruvec at ffffff8008178510
+> >>  #8 [ffffffc0282af790] mem_cgroup_shrink_node_zone at ffffff80081793bc
+> >>  #9 [ffffffc0282af840] mem_cgroup_soft_limit_reclaim at ffffff80081b6040
+> >> #10 [ffffffc0282af8f0] do_try_to_free_pages at ffffff8008178b6c
+> >> #11 [ffffffc0282af990] try_to_free_pages at ffffff8008178f3c
+> >> #12 [ffffffc0282afa30] __perform_reclaim at ffffff8008169130
+> >> #13 [ffffffc0282afab0] __alloc_pages_nodemask at ffffff800816c9b8
+> >> #14 [ffffffc0282afbd0] __get_free_pages at ffffff800816cd6c
+> >> #15 [ffffffc0282afbe0] alloc_buffer at ffffff8008591a94
+> >> #16 [ffffffc0282afc20] __bufio_new at ffffff8008592e94
+> >> #17 [ffffffc0282afc70] dm_bufio_prefetch at ffffff8008593198
+> >> #18 [ffffffc0282afd20] verity_prefetch_io at ffffff8008598384
+> >> #19 [ffffffc0282afd70] process_one_work at ffffff80080b5b3c
+> >> #20 [ffffffc0282afdc0] worker_thread at ffffff80080b64fc
+> >> #21 [ffffffc0282afe20] kthread at ffffff80080bae34
+> >>
+> >> > Mikulas
+> >
+> > --
+> > Michal Hocko
+> > SUSE Labs
+> 
