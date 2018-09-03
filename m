@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70152C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1596C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BD020868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BD020868
+	by mail.kernel.org (Postfix) with ESMTP id B534220658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:28:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B534220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731137AbeICVt1 (ORCPT
+        id S1731148AbeICVtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:49:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46408 "EHLO
+        Mon, 3 Sep 2018 17:49:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46418 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeICVt0 (ORCPT
+        with ESMTP id S1728175AbeICVta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:49:26 -0400
+        Mon, 3 Sep 2018 17:49:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC3B6CF4;
-        Mon,  3 Sep 2018 17:28:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16505D01;
+        Mon,  3 Sep 2018 17:28:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
-        tj@kernel.org
-Subject: [PATCH 4.14 162/165] watchdog: Mark watchdog touch functions as notrace
-Date:   Mon,  3 Sep 2018 18:57:28 +0200
-Message-Id: <20180903165705.221472971@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Bauer <scott.bauer@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 163/165] cdrom: Fix info leak/OOB read in cdrom_ioctl_drive_status
+Date:   Mon,  3 Sep 2018 18:57:29 +0200
+Message-Id: <20180903165705.275429213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,79 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Scott Bauer <scott.bauer@intel.com>
 
-commit cb9d7fd51d9fbb329d182423bd7b92d0f8cb0e01 upstream.
+commit 8f3fafc9c2f0ece10832c25f7ffcb07c97a32ad4 upstream.
 
-Some architectures need to use stop_machine() to patch functions for
-ftrace, and the assumption is that the stopped CPUs do not make function
-calls to traceable functions when they are in the stopped state.
+Like d88b6d04: "cdrom: information leak in cdrom_ioctl_media_changed()"
 
-Commit ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after
-MULTI_STOP_PREPARE") added calls to the watchdog touch functions from
-the stopped CPUs and those functions lack notrace annotations.  This
-leads to crashes when enabling/disabling ftrace on ARM kernels built
-with the Thumb-2 instruction set.
+There is another cast from unsigned long to int which causes
+a bounds check to fail with specially crafted input. The value is
+then used as an index in the slot array in cdrom_slot_status().
 
-Fix it by adding the necessary notrace annotations.
-
-Fixes: ce4f06dcbb5d ("stop_machine: Touch_nmi_watchdog() after MULTI_STOP_PREPARE")
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: oleg@redhat.com
-Cc: tj@kernel.org
+Signed-off-by: Scott Bauer <scott.bauer@intel.com>
+Signed-off-by: Scott Bauer <sbauer@plzdonthack.me>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180821152507.18313-1-vincent.whitchurch@axis.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/watchdog.c     |    4 ++--
- kernel/watchdog_hld.c |    2 +-
- kernel/workqueue.c    |    2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/cdrom/cdrom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -265,7 +265,7 @@ static void __touch_watchdog(void)
-  * entering idle state.  This should only be used for scheduler events.
-  * Use touch_softlockup_watchdog() for everything else.
-  */
--void touch_softlockup_watchdog_sched(void)
-+notrace void touch_softlockup_watchdog_sched(void)
- {
- 	/*
- 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
-@@ -274,7 +274,7 @@ void touch_softlockup_watchdog_sched(voi
- 	raw_cpu_write(watchdog_touch_ts, 0);
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -2542,7 +2542,7 @@ static int cdrom_ioctl_drive_status(stru
+ 	if (!CDROM_CAN(CDC_SELECT_DISC) ||
+ 	    (arg == CDSL_CURRENT || arg == CDSL_NONE))
+ 		return cdi->ops->drive_status(cdi, CDSL_CURRENT);
+-	if (((int)arg >= cdi->capacity))
++	if (arg >= cdi->capacity)
+ 		return -EINVAL;
+ 	return cdrom_slot_status(cdi, arg);
  }
- 
--void touch_softlockup_watchdog(void)
-+notrace void touch_softlockup_watchdog(void)
- {
- 	touch_softlockup_watchdog_sched();
- 	wq_watchdog_touch(raw_smp_processor_id());
---- a/kernel/watchdog_hld.c
-+++ b/kernel/watchdog_hld.c
-@@ -29,7 +29,7 @@ static struct cpumask dead_events_mask;
- static unsigned long hardlockup_allcpu_dumped;
- static atomic_t watchdog_cpus = ATOMIC_INIT(0);
- 
--void arch_touch_nmi_watchdog(void)
-+notrace void arch_touch_nmi_watchdog(void)
- {
- 	/*
- 	 * Using __raw here because some code paths have
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5484,7 +5484,7 @@ static void wq_watchdog_timer_fn(unsigne
- 	mod_timer(&wq_watchdog_timer, jiffies + thresh);
- }
- 
--void wq_watchdog_touch(int cpu)
-+notrace void wq_watchdog_touch(int cpu)
- {
- 	if (cpu >= 0)
- 		per_cpu(wq_watchdog_touched_cpu, cpu) = jiffies;
 
 
