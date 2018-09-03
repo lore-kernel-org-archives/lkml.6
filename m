@@ -6,83 +6,77 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F714C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A35C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D6320843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 06:56:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D6320843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+	by mail.kernel.org (Postfix) with ESMTP id 559DC20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:11:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559DC20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeICLPi (ORCPT
+        id S1726057AbeICLaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:15:38 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:56870 "EHLO a.mx.secunet.com"
+        Mon, 3 Sep 2018 07:30:08 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:37072 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbeICLPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:15:38 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id D4FB5201D1;
-        Mon,  3 Sep 2018 10:56:33 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iIZfhvaKbaaW; Mon,  3 Sep 2018 10:56:33 +0200 (CEST)
-Received: from mail-essen-02.secunet.de (mail-essen-02.secunet.de [10.53.40.205])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        id S1725794AbeICLaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:30:08 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id HpNjWtvDASEP; Mon,  3 Sep 2018 09:11:02 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCF4100329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:4100:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 86B272008A;
-        Mon,  3 Sep 2018 10:56:33 +0200 (CEST)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-02.secunet.de
- (10.53.40.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 3 Sep 2018
- 08:56:50 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 8852D31817E3;
- Mon,  3 Sep 2018 08:56:50 +0200 (CEST)
-Date:   Mon, 3 Sep 2018 08:56:50 +0200
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Yannick Brosseau <scientist@fb.com>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>
-Subject: Re: [PATCH v2] Optimize lookup of /0 xfrm policies
-Message-ID: <20180903065650.GL23674@gauss3.secunet.de>
-References: <20180831221838.25597-1-scientist@fb.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C3C541EC01AF;
+        Mon,  3 Sep 2018 09:11:01 +0200 (CEST)
+Date:   Mon, 3 Sep 2018 09:12:07 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        Lee Chun-Yi <jlee@suse.com>, Al Stone <astone@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH V2 2/6] x86/efi: Remove __init attribute from memory
+ mapping functions
+Message-ID: <20180903071207.GA10249@zn.tnic>
+References: <1535881594-25469-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1535881594-25469-3-git-send-email-sai.praneeth.prakhya@intel.com>
+ <20180902105602.GA19431@zn.tnic>
+ <FFF73D592F13FD46B8700F0A279B802F485B9142@ORSMSX114.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180831221838.25597-1-scientist@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: cbe3d3f7-b9e3-4256-b890-f24c4306a01c
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 38DEC598-276C-407F-AD67-B0C3F01165CF
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F485B9142@ORSMSX114.amr.corp.intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 06:18:38PM -0400, Yannick Brosseau wrote:
-> Currently, all the xfrm policies that are not /32 end up in
-> the inexact policies linked list which take a long time to lookup.
+On Mon, Sep 03, 2018 at 05:03:56AM +0000, Prakhya, Sai Praneeth wrote:
+> Hmm.. thought that __efi_init might be confusing with the normal __init attribute
 
-It is possible to configure which policies are going to the
-hashtable and the inexact list.
+How would that be confusing? It has "__efi" prepended?!
 
-You can do:
+All I'm saying is, if you're going to define your own function
+attributes, do them generic and short. "_fixup" is too specific IMO. It
+also enlarges function definitions unnecessarily.
 
-ip x p set hthresh4 0 0
+With "__efi_init" you already denote that it is a special attribute
+which has relevance in the EFI code only. What you do about it - the
+*fixup* - is the thing you do with the attribute. But you don't have to
+have the "what you do" in the attribute name too.
 
-This sets the hash threshold to local /0 and remote /0 netmasks.
-With this configuration, all policies should go to the hashtable.
+-- 
+Regards/Gruss,
+    Boris.
 
-To view the configuration:
-
-ip -s -s x p count
-
-Can you please do your tests with this too?
-I'd really like to avoid to add new code to the policy lookup
-if we can get similar results with this configuration option.
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
