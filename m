@@ -2,396 +2,150 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948C6C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6BAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 422F42086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422F42086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id A264820868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:45:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A264820868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeICRF0 (ORCPT
+        id S1727490AbeICRF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:05:26 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:37263 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeICRF0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:05:26 -0400
-Received: from stefan-Vostro-260.fritz.box ([109.104.33.25]) by
- mrelayeu.kundenserver.de (mreue105 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 0Lm4C9-1fNTTi49th-00ZcMg; Mon, 03 Sep 2018 14:45:20 +0200
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH V2] net: qca_spi: Fix race condition in spi transfers
-Date:   Mon,  3 Sep 2018 14:44:17 +0200
-Message-Id: <1535978657-2880-1-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:PZOHuosOpeXDsTBFP/ebpcoP+tin6w1C317UFDvFJxGdpe7+K3W
- yAQlj19QXO5HScjXhbuhVH2UedbtfUtziWsuWxKGAGfUgcuBfX7oyAzZ4YPJYidCZN2fOXH
- 9ttiJXTD8jqDaNKx7ZMkeI1NmfWSMNH++wgRWB0H2P+2au6bXjCnYPhON09PVcTXG+x4BXJ
- 28z/PHS4fahzYyZCY271g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RNg0TbPilXU=:FD3QC0Xlefmxwdr4MJaLRT
- 7i16wWDVQngP+YNuSb7lQrnY00Vg9hr2iax0EWpdvlMZ+cvTxqvVV8JZi0tP+6Ju/3IhnG9jY
- wmVc7bnuWJUfKGiPO03/PYmrtF8UkLUIA9j6x1737+cnzM2owAVnSKNEnqaGBRugWScbSNDc0
- z76TBBEjovKkBwVnUkfMF8YyoV5n/wcgApwOzrSNEjOVvjgaTgAKQaY1wi7xLtNJv+oTmMJic
- D/URwG1ujgBue8sLk7y83O0OqnAkKA9ITd0FheHNeSzOuHQzECs2nmmzulnYsEUHrrzo7Ljbb
- LB+6nNT6Fn7lCE6Xfr94trhz/U4oKbQ9O1RVz40bXSI8z/F97rVDYKxRME3JykKtt9RqXaVPP
- GrjzrQBd5BACMv0DSrvIA4yRLjh3IoOMscegKEha/6u1t4oStp8bqPic57p06CPypSj8k4NHu
- fuQZK2cRYUxUPtjRcPEn+YPLLPhi1dleOkaUxZmbznasU7TAv2VzlncxjvGAW9E0piM0fIsqR
- TbaGfGbTibkJsCNjMZQQVjdn/5PydVW7ZanF/F4Gi6ssgQ3bPWuo18iYcCNS09iK7+UOcqIiZ
- Rj3nsowMttDAYoKl8+1flGR7X/dmXjakfsXFsFtPshtQXR8FCd19/51MQD9TYmtQdbjg4MSju
- bdIQTE3O3ISOLdIoS94ID0ungj3ClNYacd+rxzqsvt8ZGy8uki1nKLIl4tK6RPGTiPsA=
+        Mon, 3 Sep 2018 13:05:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60978 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727330AbeICRF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 13:05:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6ED89B008;
+        Mon,  3 Sep 2018 12:45:26 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 14:45:25 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>
+cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: [PATCH v2 2/3] x86/speculation: Apply IBPB more strictly to avoid
+ cross-process spectre v2 leak
+Message-ID: <nycvar.YFH.7.76.1809031443540.25787@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With performance optimization the spi transfer and messages from basic
-register operations like qcaspi_read_register moved into the private
-driver structure. But they weren't protected against mutual access
-(e.g. between driver kthread and ethtool). So dumping the QCA7000
-register via ethtool during network traffic could make spi_sync
-hang forever, because the completion in spi_message is overwritten.
+From: Jiri Kosina <jkosina@suse.cz>
 
-So revert the optimization completely.
+Currently, we are issuing IBPB only in cases when switching into a non-dumpable
+process, the rationale being to protect such 'important and security sensitive'
+processess (such as GPG) from data leak into a different userspace process via
+spectre v2.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+This is however completely insufficient to provide proper userspace-to-userpace
+spectrev2 protection, as any process can poison branch buffers before being
+scheduled out, and the newly scheduled process immediately becomes spectrev2
+victim.
+
+In order to minimize the performance impact (for usecases that do require
+spectrev2 protection), issue the barrier only in cases when switching between
+processess where the victim can't be ptraced by the potential attacker (as in
+such cases, the attacker doesn't have to bother with branch buffers at all).
+
+Fixes: 18bf3c3ea8 ("x86/speculation: Use Indirect Branch Prediction Barrier in context switch")
+Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 ---
- drivers/net/ethernet/qualcomm/qca_7k.c  |  84 ++++++++++++------------
- drivers/net/ethernet/qualcomm/qca_spi.c | 110 +++++++++++++++++---------------
- drivers/net/ethernet/qualcomm/qca_spi.h |   5 --
- 3 files changed, 97 insertions(+), 102 deletions(-)
+ arch/x86/mm/tlb.c      | 15 ++++++---------
+ include/linux/ptrace.h |  3 +++
+ kernel/ptrace.c        |  4 +++-
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
-Changes in V2:
-- explain race in commit log more in detail
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e96b99eb800c..4a9503ca173a 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/ptrace.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -262,18 +263,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * one process from doing Spectre-v2 attacks on another.
+ 		 *
+ 		 * As an optimization, flush indirect branches only when
+-		 * switching into processes that disable dumping. This
+-		 * protects high value processes like gpg, without having
+-		 * too high performance overhead. IBPB is *expensive*!
+-		 *
+-		 * This will not flush branches when switching into kernel
+-		 * threads. It will also not flush if we switch to idle
+-		 * thread and back to the same process. It will flush if we
+-		 * switch to a different non-dumpable process.
++		 * switching into a processes that can't be ptrace by the
++		 * current one (as in such case, attacker has much more
++		 * convenient way how to tamper with the next process than
++		 * branch buffer poisoning).
+ 		 */
+ 		if (tsk && tsk->mm &&
+ 		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
++		    ___ptrace_may_access(tsk, current, PTRACE_MODE_IBPB))
+ 			indirect_branch_prediction_barrier();
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index 09744d4113fb..adab379b5456 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -64,12 +64,15 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+ #define PTRACE_MODE_NOAUDIT	0x04
+ #define PTRACE_MODE_FSCREDS 0x08
+ #define PTRACE_MODE_REALCREDS 0x10
++#define PTRACE_MODE_NOACCESS_CHK 0x20
+ 
+ /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
+ #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
+ #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
++#define PTRACE_MODE_IBPB (PTRACE_MODE_ATTACH | PTRACE_MODE_NOAUDIT \
++			  | PTRACE_MODE_NOACCESS_CHK | PTRACE_MODE_REALCREDS)
+ 
+ /**
+  * ptrace_may_access - check whether the caller is permitted to access
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 07ff6685ebed..b41c37f44c32 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -330,7 +330,9 @@ int ___ptrace_may_access(struct task_struct *curr, struct task_struct *task,
+ 	     !ptrace_has_cap(mm->user_ns, mode)))
+ 	    return -EPERM;
+ 
+-	return security_ptrace_access_check(task, mode);
++	if (!(mode & PTRACE_MODE_NOACCESS_CHK))
++		return security_ptrace_access_check(task, mode);
++	return 0;
+ }
+ 
+ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
 
-diff --git a/drivers/net/ethernet/qualcomm/qca_7k.c b/drivers/net/ethernet/qualcomm/qca_7k.c
-index ffe7a16..e9914b6 100644
---- a/drivers/net/ethernet/qualcomm/qca_7k.c
-+++ b/drivers/net/ethernet/qualcomm/qca_7k.c
-@@ -43,41 +43,40 @@ qcaspi_spi_error(struct qcaspi *qca)
- int
- qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result)
- {
--	__be16 rx_data;
- 	__be16 tx_data;
--	struct spi_transfer *transfer;
--	struct spi_message *msg;
-+	struct spi_transfer transfer[2];
-+	struct spi_message msg;
- 	int ret;
- 
-+	memset(transfer, 0, sizeof(transfer));
-+
-+	spi_message_init(&msg);
-+
- 	tx_data = cpu_to_be16(QCA7K_SPI_READ | QCA7K_SPI_INTERNAL | reg);
-+	*result = 0;
-+
-+	transfer[0].tx_buf = &tx_data;
-+	transfer[0].len = QCASPI_CMD_LEN;
-+	transfer[1].rx_buf = result;
-+	transfer[1].len = QCASPI_CMD_LEN;
-+
-+	spi_message_add_tail(&transfer[0], &msg);
- 
- 	if (qca->legacy_mode) {
--		msg = &qca->spi_msg1;
--		transfer = &qca->spi_xfer1;
--		transfer->tx_buf = &tx_data;
--		transfer->rx_buf = NULL;
--		transfer->len = QCASPI_CMD_LEN;
--		spi_sync(qca->spi_dev, msg);
--	} else {
--		msg = &qca->spi_msg2;
--		transfer = &qca->spi_xfer2[0];
--		transfer->tx_buf = &tx_data;
--		transfer->rx_buf = NULL;
--		transfer->len = QCASPI_CMD_LEN;
--		transfer = &qca->spi_xfer2[1];
-+		spi_sync(qca->spi_dev, &msg);
-+		spi_message_init(&msg);
- 	}
--	transfer->tx_buf = NULL;
--	transfer->rx_buf = &rx_data;
--	transfer->len = QCASPI_CMD_LEN;
--	ret = spi_sync(qca->spi_dev, msg);
-+	spi_message_add_tail(&transfer[1], &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
- 	if (!ret)
--		ret = msg->status;
-+		ret = msg.status;
- 
--	if (ret)
-+	if (ret) {
- 		qcaspi_spi_error(qca);
--	else
--		*result = be16_to_cpu(rx_data);
-+	} else {
-+		*result = be16_to_cpu(*result);
-+	}
- 
- 	return ret;
- }
-@@ -86,35 +85,32 @@ int
- qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
- {
- 	__be16 tx_data[2];
--	struct spi_transfer *transfer;
--	struct spi_message *msg;
-+	struct spi_transfer transfer[2];
-+	struct spi_message msg;
- 	int ret;
- 
-+	memset(&transfer, 0, sizeof(transfer));
-+
-+	spi_message_init(&msg);
-+
- 	tx_data[0] = cpu_to_be16(QCA7K_SPI_WRITE | QCA7K_SPI_INTERNAL | reg);
- 	tx_data[1] = cpu_to_be16(value);
- 
-+	transfer[0].tx_buf = &tx_data[0];
-+	transfer[0].len = QCASPI_CMD_LEN;
-+	transfer[1].tx_buf = &tx_data[1];
-+	transfer[1].len = QCASPI_CMD_LEN;
-+
-+	spi_message_add_tail(&transfer[0], &msg);
- 	if (qca->legacy_mode) {
--		msg = &qca->spi_msg1;
--		transfer = &qca->spi_xfer1;
--		transfer->tx_buf = &tx_data[0];
--		transfer->rx_buf = NULL;
--		transfer->len = QCASPI_CMD_LEN;
--		spi_sync(qca->spi_dev, msg);
--	} else {
--		msg = &qca->spi_msg2;
--		transfer = &qca->spi_xfer2[0];
--		transfer->tx_buf = &tx_data[0];
--		transfer->rx_buf = NULL;
--		transfer->len = QCASPI_CMD_LEN;
--		transfer = &qca->spi_xfer2[1];
-+		spi_sync(qca->spi_dev, &msg);
-+		spi_message_init(&msg);
- 	}
--	transfer->tx_buf = &tx_data[1];
--	transfer->rx_buf = NULL;
--	transfer->len = QCASPI_CMD_LEN;
--	ret = spi_sync(qca->spi_dev, msg);
-+	spi_message_add_tail(&transfer[1], &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
- 	if (!ret)
--		ret = msg->status;
-+		ret = msg.status;
- 
- 	if (ret)
- 		qcaspi_spi_error(qca);
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
-index 206f026..66b775d 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -99,22 +99,24 @@ static u32
- qcaspi_write_burst(struct qcaspi *qca, u8 *src, u32 len)
- {
- 	__be16 cmd;
--	struct spi_message *msg = &qca->spi_msg2;
--	struct spi_transfer *transfer = &qca->spi_xfer2[0];
-+	struct spi_message msg;
-+	struct spi_transfer transfer[2];
- 	int ret;
- 
-+	memset(&transfer, 0, sizeof(transfer));
-+	spi_message_init(&msg);
-+
- 	cmd = cpu_to_be16(QCA7K_SPI_WRITE | QCA7K_SPI_EXTERNAL);
--	transfer->tx_buf = &cmd;
--	transfer->rx_buf = NULL;
--	transfer->len = QCASPI_CMD_LEN;
--	transfer = &qca->spi_xfer2[1];
--	transfer->tx_buf = src;
--	transfer->rx_buf = NULL;
--	transfer->len = len;
-+	transfer[0].tx_buf = &cmd;
-+	transfer[0].len = QCASPI_CMD_LEN;
-+	transfer[1].tx_buf = src;
-+	transfer[1].len = len;
- 
--	ret = spi_sync(qca->spi_dev, msg);
-+	spi_message_add_tail(&transfer[0], &msg);
-+	spi_message_add_tail(&transfer[1], &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
--	if (ret || (msg->actual_length != QCASPI_CMD_LEN + len)) {
-+	if (ret || (msg.actual_length != QCASPI_CMD_LEN + len)) {
- 		qcaspi_spi_error(qca);
- 		return 0;
- 	}
-@@ -125,17 +127,20 @@ qcaspi_write_burst(struct qcaspi *qca, u8 *src, u32 len)
- static u32
- qcaspi_write_legacy(struct qcaspi *qca, u8 *src, u32 len)
- {
--	struct spi_message *msg = &qca->spi_msg1;
--	struct spi_transfer *transfer = &qca->spi_xfer1;
-+	struct spi_message msg;
-+	struct spi_transfer transfer;
- 	int ret;
- 
--	transfer->tx_buf = src;
--	transfer->rx_buf = NULL;
--	transfer->len = len;
-+	memset(&transfer, 0, sizeof(transfer));
-+	spi_message_init(&msg);
-+
-+	transfer.tx_buf = src;
-+	transfer.len = len;
- 
--	ret = spi_sync(qca->spi_dev, msg);
-+	spi_message_add_tail(&transfer, &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
--	if (ret || (msg->actual_length != len)) {
-+	if (ret || (msg.actual_length != len)) {
- 		qcaspi_spi_error(qca);
- 		return 0;
- 	}
-@@ -146,23 +151,25 @@ qcaspi_write_legacy(struct qcaspi *qca, u8 *src, u32 len)
- static u32
- qcaspi_read_burst(struct qcaspi *qca, u8 *dst, u32 len)
- {
--	struct spi_message *msg = &qca->spi_msg2;
-+	struct spi_message msg;
- 	__be16 cmd;
--	struct spi_transfer *transfer = &qca->spi_xfer2[0];
-+	struct spi_transfer transfer[2];
- 	int ret;
- 
-+	memset(&transfer, 0, sizeof(transfer));
-+	spi_message_init(&msg);
-+
- 	cmd = cpu_to_be16(QCA7K_SPI_READ | QCA7K_SPI_EXTERNAL);
--	transfer->tx_buf = &cmd;
--	transfer->rx_buf = NULL;
--	transfer->len = QCASPI_CMD_LEN;
--	transfer = &qca->spi_xfer2[1];
--	transfer->tx_buf = NULL;
--	transfer->rx_buf = dst;
--	transfer->len = len;
-+	transfer[0].tx_buf = &cmd;
-+	transfer[0].len = QCASPI_CMD_LEN;
-+	transfer[1].rx_buf = dst;
-+	transfer[1].len = len;
- 
--	ret = spi_sync(qca->spi_dev, msg);
-+	spi_message_add_tail(&transfer[0], &msg);
-+	spi_message_add_tail(&transfer[1], &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
--	if (ret || (msg->actual_length != QCASPI_CMD_LEN + len)) {
-+	if (ret || (msg.actual_length != QCASPI_CMD_LEN + len)) {
- 		qcaspi_spi_error(qca);
- 		return 0;
- 	}
-@@ -173,17 +180,20 @@ qcaspi_read_burst(struct qcaspi *qca, u8 *dst, u32 len)
- static u32
- qcaspi_read_legacy(struct qcaspi *qca, u8 *dst, u32 len)
- {
--	struct spi_message *msg = &qca->spi_msg1;
--	struct spi_transfer *transfer = &qca->spi_xfer1;
-+	struct spi_message msg;
-+	struct spi_transfer transfer;
- 	int ret;
- 
--	transfer->tx_buf = NULL;
--	transfer->rx_buf = dst;
--	transfer->len = len;
-+	memset(&transfer, 0, sizeof(transfer));
-+	spi_message_init(&msg);
- 
--	ret = spi_sync(qca->spi_dev, msg);
-+	transfer.rx_buf = dst;
-+	transfer.len = len;
- 
--	if (ret || (msg->actual_length != len)) {
-+	spi_message_add_tail(&transfer, &msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
-+
-+	if (ret || (msg.actual_length != len)) {
- 		qcaspi_spi_error(qca);
- 		return 0;
- 	}
-@@ -195,19 +205,23 @@ static int
- qcaspi_tx_cmd(struct qcaspi *qca, u16 cmd)
- {
- 	__be16 tx_data;
--	struct spi_message *msg = &qca->spi_msg1;
--	struct spi_transfer *transfer = &qca->spi_xfer1;
-+	struct spi_message msg;
-+	struct spi_transfer transfer;
- 	int ret;
- 
-+	memset(&transfer, 0, sizeof(transfer));
-+
-+	spi_message_init(&msg);
-+
- 	tx_data = cpu_to_be16(cmd);
--	transfer->len = sizeof(tx_data);
--	transfer->tx_buf = &tx_data;
--	transfer->rx_buf = NULL;
-+	transfer.len = sizeof(cmd);
-+	transfer.tx_buf = &tx_data;
-+	spi_message_add_tail(&transfer, &msg);
- 
--	ret = spi_sync(qca->spi_dev, msg);
-+	ret = spi_sync(qca->spi_dev, &msg);
- 
- 	if (!ret)
--		ret = msg->status;
-+		ret = msg.status;
- 
- 	if (ret)
- 		qcaspi_spi_error(qca);
-@@ -835,16 +849,6 @@ qcaspi_netdev_setup(struct net_device *dev)
- 	qca = netdev_priv(dev);
- 	memset(qca, 0, sizeof(struct qcaspi));
- 
--	memset(&qca->spi_xfer1, 0, sizeof(struct spi_transfer));
--	memset(&qca->spi_xfer2, 0, sizeof(struct spi_transfer) * 2);
--
--	spi_message_init(&qca->spi_msg1);
--	spi_message_add_tail(&qca->spi_xfer1, &qca->spi_msg1);
--
--	spi_message_init(&qca->spi_msg2);
--	spi_message_add_tail(&qca->spi_xfer2[0], &qca->spi_msg2);
--	spi_message_add_tail(&qca->spi_xfer2[1], &qca->spi_msg2);
--
- 	memset(&qca->txr, 0, sizeof(qca->txr));
- 	qca->txr.count = TX_RING_MAX_LEN;
- }
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
-index fc4beb1..fc0e987 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.h
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.h
-@@ -83,11 +83,6 @@ struct qcaspi {
- 	struct tx_ring txr;
- 	struct qcaspi_stats stats;
- 
--	struct spi_message spi_msg1;
--	struct spi_message spi_msg2;
--	struct spi_transfer spi_xfer1;
--	struct spi_transfer spi_xfer2[2];
--
- 	u8 *rx_buffer;
- 	u32 buffer_size;
- 	u8 sync;
 -- 
-2.7.4
+Jiri Kosina
+SUSE Labs
 
