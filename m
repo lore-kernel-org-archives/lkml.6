@@ -2,151 +2,178 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E4AC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B39EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30F720843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Z95q5cXa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30F720843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id C282E20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C282E20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeICOQx (ORCPT
+        id S1727531AbeICOSK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:16:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40885 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbeICOQx (ORCPT
+        Mon, 3 Sep 2018 10:18:10 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63626 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727401AbeICOSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:16:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n2-v6so17191493wrw.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 02:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VsZn7GLVgQ5TWDzsRzLxw4hzpMMeb7iKpanmGVrSbhw=;
-        b=Z95q5cXa4yi3Tpa8nO5I9jm5BtzT16e/Hn04YxYFEY2JNi7NJC401yeSM1hCez/zEb
-         9XkrpmnRDD8ijbbb/0t23xW5CyWWthyeHyyv7nFTcoILuFcdDbnZjZuA2ympTEi+uLeJ
-         hqtViRr2vOYkB7unNYX181EVK7TxgpkfNt8xJGtQLCZ1jsfTaLXrhbHmkkLYIqa7q8i/
-         85esHzz8Bx9l1faQTUnbI7DtWo6zrf4RRMX3z/thOTw200TvaO9KZSA9w8U+rNUQzJxw
-         KBcuwiY4RHm8LY/kp2vLZYvawVhXjWrpy7FYrAAdJoAhbdbMsZ+NnV+U5ZhqfnJMlbDP
-         WFug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VsZn7GLVgQ5TWDzsRzLxw4hzpMMeb7iKpanmGVrSbhw=;
-        b=CIfP8xfnSk42k3Z5MOdgNz5xNmSzsJ3qJSflwr+K+Gq68EZkx+8m+cXSselqu71bxr
-         4nYOCC1rAfajWK8i9mrMNCBaDY4h3w+Mk9L4nO55CkChcpNdWK8rRrbsXxpgxlodCLVw
-         +76nzqAyviUL75IDV3ucQGUB2CaH8sdFkdWb9Z4XN1TkNtRnmYl6eGdBTlAQL1QU6A6+
-         h3j3N5z+i7eMl6UQrpu7gkfk71+6Idcx3samoC37qlsKhX4ZycoX7InYDgwlG8BOxklh
-         zjESCPe6/qM+bLBB6CUIc+Z45OrXAVWeaQMFHBo9isLPz3FuKzTkFdzYXKRsCUo80svw
-         S6bA==
-X-Gm-Message-State: APzg51AWlZszlJyXXfBYgXHXxjUhyzTO9Jp1CUyqObGcAmor6DDlAu3R
-        90UFcWrriB4cGsKQrSuu6ylKog==
-X-Google-Smtp-Source: ANB0Vdb4Q9jJ+z7quktIxKzIYdk1Qj2FQtA4692jqN6AjvmDcmBOBLb8rQgKVWJgatmi8vqpzUq2wA==
-X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr8797692wrd.67.1535968647975;
-        Mon, 03 Sep 2018 02:57:27 -0700 (PDT)
-Received: from boomer (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id c8-v6sm23368264wrp.33.2018.09.03.02.57.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 02:57:27 -0700 (PDT)
-Message-ID: <b0efc5cf9cf4f7e05097fcd0ea6fd61ba8ff3476.camel@baylibre.com>
-Subject: Re: [PATCH 2/3] arm64: dts: meson-axg: s400: add dmic codec
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        devicetree <devicetree@vger.kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Mon, 3 Sep 2018 10:18:10 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w839rqIf003258;
+        Mon, 3 Sep 2018 11:57:17 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2m7ghthq4e-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 03 Sep 2018 11:57:17 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2D33A31;
+        Mon,  3 Sep 2018 09:57:12 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B590729A2;
+        Mon,  3 Sep 2018 09:57:11 +0000 (GMT)
+Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 3 Sep
+ 2018 11:57:11 +0200
+Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
+ SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
+ 15.00.1347.000; Mon, 3 Sep 2018 11:57:11 +0200
+From:   Patrice CHOTARD <patrice.chotard@st.com>
+To:     Rob Herring <robh@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
         Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Mon, 03 Sep 2018 11:57:25 +0200
-In-Reply-To: <CAOMZO5BOMOB6LaRs1fnmm-Ghu7pMkXW=sH_NOEWK3pqHAbUMCg@mail.gmail.com>
-References: <20180831150218.8307-1-jbrunet@baylibre.com>
-         <20180831150218.8307-3-jbrunet@baylibre.com>
-         <CAOMZO5BOMOB6LaRs1fnmm-Ghu7pMkXW=sH_NOEWK3pqHAbUMCg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        "Kevin Hilman" <khilman@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "Andrew Lunn" <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "Tony Lindgren" <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of
+ device_node.name
+Thread-Topic: [PATCH] pinctrl: Convert to using %pOFn instead of
+ device_node.name
+Thread-Index: AQHUPnInJGmx5I1sBEaSBU1jk4rP0KTeOoeA
+Date:   Mon, 3 Sep 2018 09:57:11 +0000
+Message-ID: <3335422d-0b46-fde6-d172-005ba9b60d76@st.com>
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-40-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <220F3FA47CE90748951B84F0602886F6@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-03_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-09-01 at 18:24 -0300, Fabio Estevam wrote:
-> Hi Jerome,
-> 
-> On Fri, Aug 31, 2018 at 12:02 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > There are 7 digital mics on the MIC daughter board attached
-> > to the s400 board, so add the digital microphone codec to
-> > its DTS
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> > index ff64c429d432..f3e16cbbc61e 100644
-> > --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> > +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-> > @@ -86,6 +86,15 @@
-> >                 sound-name-prefix = "DIT";
-> >         };
-> > 
-> > +       dmics: audio-codec@3 {
-> 
-> You pass @3 without a corresponding reg = <3>, which causes dtc
-> warnings with W=1.
-
-Hi Fabio,
-
-Thanks for pointing this out.
-Martin also raised concerns about this but, unfortunately, we did not get to the
-bottom of it:
-
-https://lkml.kernel.org/r/
-90780f5a6b974ee9a4f9f9f2580fc83ef6bdd805.camel@baylibre.com
-
-In a nutshell, I numbered nodes (w/o a reg prop) to keep generic names as
-suggested in the DT spec.
-
-The idea came after working on sound cards, if you check
-Documentation/devicetree/bindings/sound/simple-card.txt, you'll see this kind of
-numbering is even in documentation examples.
-
-This is used by arch/arm/boot/dts/armada-370-db.dts. This is just an example I
-picked randomly, I'm not trying to single out the marvell folks here (or ASoC
-simple card). I'm actually doing exactly the same kind of multi link stuff on
-the amlogic cards.
-
-This looks to be a wide spread practice. Running `make dtbs W=1` on ARM and
-ARM64 arch, I've seen dozen of 'node has a unit name, but no reg property'
-examples, on things like clocks, buttons, leds, pinctrl, etc ...
-
-that being said, section 2.2.1 of the DT specs says:
-
-" If the node has no reg property, the @unit-address must be omitted and the
-node-name alone differentiates the node from other nodes at the same level in
-the tree "
-
-So apparently, this is used but not ok ?
-Maybe we should simply replace the '@' with a '-' everywhere this occurs ?
-
-If possible, I'd like to get the opinion of the DT gurus about this issue.
-Cheers
-
-Jerome
-
-
+SGkgUm9iDQoNCk9uIDA4LzI4LzIwMTggMDM6NTIgQU0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBJ
+biBwcmVwYXJhdGlvbiB0byByZW1vdmUgdGhlIG5vZGUgbmFtZSBwb2ludGVyIGZyb20gc3RydWN0
+IGRldmljZV9ub2RlLA0KPiBjb252ZXJ0IHByaW50ZiB1c2VycyB0byB1c2UgdGhlICVwT0ZuIGZv
+cm1hdCBzcGVjaWZpZXIuDQo+IA0KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBs
+aW5hcm8ub3JnPg0KPiBDYzogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4g
+Q2M6IEZhYmlvIEVzdGV2YW0gPGZlc3RldmFtQGdtYWlsLmNvbT4NCj4gQ2M6IFNoYXduIEd1byA8
+c2hhd25ndW9Aa2VybmVsLm9yZz4NCj4gQ2M6IFN0ZWZhbiBBZ25lciA8c3RlZmFuQGFnbmVyLmNo
+Pg0KPiBDYzogUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0gPGtlcm5lbEBwZW5ndXRyb25peC5kZT4N
+Cj4gQ2M6IFNlYW4gV2FuZyA8c2Vhbi53YW5nQG1lZGlhdGVrLmNvbT4NCj4gQ2M6IE1hdHRoaWFz
+IEJydWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+DQo+IENjOiBDYXJsbyBDYWlvbmUgPGNh
+cmxvQGNhaW9uZS5vcmc+DQo+IENjOiBLZXZpbiBIaWxtYW4gPGtoaWxtYW5AYmF5bGlicmUuY29t
+Pg0KPiBDYzogSmFzb24gQ29vcGVyIDxqYXNvbkBsYWtlZGFlbW9uLm5ldD4NCj4gQ2M6IEFuZHJl
+dyBMdW5uIDxhbmRyZXdAbHVubi5jaD4NCj4gQ2M6IEdyZWdvcnkgQ2xlbWVudCA8Z3JlZ29yeS5j
+bGVtZW50QGJvb3RsaW4uY29tPg0KPiBDYzogU2ViYXN0aWFuIEhlc3NlbGJhcnRoIDxzZWJhc3Rp
+YW4uaGVzc2VsYmFydGhAZ21haWwuY29tPg0KPiBDYzogSmVhbi1DaHJpc3RvcGhlIFBsYWduaW9s
+LVZpbGxhcmQgPHBsYWduaW9qQGpjcm9zb2Z0LmNvbT4NCj4gQ2M6IE5pY29sYXMgRmVycmUgPG5p
+Y29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4NCj4gQ2M6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4
+YW5kcmUuYmVsbG9uaUBib290bGluLmNvbT4NCj4gQ2M6IEhlaWtvIFN0dWVibmVyIDxoZWlrb0Bz
+bnRlY2guZGU+DQo+IENjOiBUb255IExpbmRncmVuIDx0b255QGF0b21pZGUuY29tPg0KPiBDYzog
+SGFvamlhbiBaaHVhbmcgPGhhb2ppYW4uemh1YW5nQGxpbmFyby5vcmc+DQo+IENjOiBQYXRyaWNl
+IENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IENjOiBCYXJyeSBTb25nIDxiYW9o
+dWFAa2VybmVsLm9yZz4NCj4gQ2M6IE1heGltZSBDb3F1ZWxpbiA8bWNvcXVlbGluLnN0bTMyQGdt
+YWlsLmNvbT4NCj4gQ2M6IEFsZXhhbmRyZSBUb3JndWUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29t
+Pg0KPiBDYzogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBib290bGluLmNvbT4NCj4gQ2M6
+IENoZW4tWXUgVHNhaSA8d2Vuc0Bjc2llLm9yZz4NCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJu
+ZWwub3JnDQo+IENjOiBsaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+IENjOiBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGxpbnV4LWFtbG9naWNA
+bGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBDYzogbGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFk
+Lm9yZw0KPiBDYzogbGludXgtb21hcEB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVkLW9mZi1ieTog
+Um9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gLS0tDQo+ICAgZHJpdmVycy9waW5jdHJs
+L2Jlcmxpbi9iZXJsaW4uYyAgICAgICAgICAgICAgIHwgIDYgKystLQ0KPiAgIGRyaXZlcnMvcGlu
+Y3RybC9mcmVlc2NhbGUvcGluY3RybC1pbXguYyAgICAgICB8ICA3ICsrLS0NCj4gICBkcml2ZXJz
+L3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14MS1jb3JlLmMgfCAxMiArKystLS0tDQo+ICAg
+ZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi5jIHwgIDQgKy0tDQo+
+ICAgZHJpdmVycy9waW5jdHJsL21lc29uL3BpbmN0cmwtbWVzb24uYyAgICAgICAgIHwgIDIgKy0N
+Cj4gICBkcml2ZXJzL3BpbmN0cmwvbXZlYnUvcGluY3RybC1tdmVidS5jICAgICAgICAgfCAgNCAr
+LS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvbm9tYWRpay9waW5jdHJsLW5vbWFkaWsuYyAgICAgfCAg
+NiArKy0tDQo+ICAgZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jICAgICAgICAgICAgICAg
+IHwgIDggKystLS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1sYW50aXEuYyAgICAgICAg
+ICAgICAgfCAgOCArKy0tLQ0KPiAgIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXJvY2tjaGlwLmMg
+ICAgICAgICAgICB8ICA4ICsrLS0tDQo+ICAgZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtcnphMS5j
+ICAgICAgICAgICAgICAgIHwgIDggKystLS0NCj4gICBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1z
+aW5nbGUuYyAgICAgICAgICAgICAgfCAzMiArKysrKysrKystLS0tLS0tLS0tDQo+ICAgZHJpdmVy
+cy9waW5jdHJsL3BpbmN0cmwtc3QuYyAgICAgICAgICAgICAgICAgIHwgIDYgKystLQ0KPiAgIGRy
+aXZlcnMvcGluY3RybC9zaXJmL3BpbmN0cmwtYXRsYXM3LmMgICAgICAgICB8ICA0ICstLQ0KPiAg
+IGRyaXZlcnMvcGluY3RybC9zdG0zMi9waW5jdHJsLXN0bTMyLmMgICAgICAgICB8ICA0ICstLQ0K
+PiAgIGRyaXZlcnMvcGluY3RybC9zdW54aS9waW5jdHJsLXN1bnhpLmMgICAgICAgICB8ICA4ICsr
+LS0tDQo+ICAgZHJpdmVycy9waW5jdHJsL3RpL3BpbmN0cmwtdGktaW9kZWxheS5jICAgICAgIHwg
+IDggKystLS0NCj4gICAxNyBmaWxlcyBjaGFuZ2VkLCA2NiBpbnNlcnRpb25zKCspLCA2OSBkZWxl
+dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdC5j
+IGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3QuYw0KPiBpbmRleCAwOTY2YmIwYmY3MWYuLmU2
+NmFmOTNmMmNiZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3QuYw0K
+PiArKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdC5jDQo+IEBAIC04MTcsOCArODE3LDgg
+QEAgc3RhdGljIGludCBzdF9wY3RsX2R0X25vZGVfdG9fbWFwKHN0cnVjdCBwaW5jdHJsX2RldiAq
+cGN0bGRldiwNCj4gICANCj4gICAJZ3JwID0gc3RfcGN0bF9maW5kX2dyb3VwX2J5X25hbWUoaW5m
+bywgbnAtPm5hbWUpOw0KPiAgIAlpZiAoIWdycCkgew0KPiAtCQlkZXZfZXJyKGluZm8tPmRldiwg
+InVuYWJsZSB0byBmaW5kIGdyb3VwIGZvciBub2RlICVzXG4iLA0KPiAtCQkJbnAtPm5hbWUpOw0K
+PiArCQlkZXZfZXJyKGluZm8tPmRldiwgInVuYWJsZSB0byBmaW5kIGdyb3VwIGZvciBub2RlICVw
+T0ZuXG4iLA0KPiArCQkJbnApOw0KPiAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCX0NCj4gICAN
+Cj4gQEAgLTExODQsNyArMTE4NCw3IEBAIHN0YXRpYyBpbnQgc3RfcGN0bF9kdF9wYXJzZV9ncm91
+cHMoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gICAJCWlmIChwcC0+bGVuZ3RoIC8gc2l6ZW9m
+KF9fYmUzMikgPj0gT0ZfR1BJT19BUkdTX01JTikgew0KPiAgIAkJCW5waW5zKys7DQo+ICAgCQl9
+IGVsc2Ugew0KPiAtCQkJcHJfd2FybigiSW52YWxpZCBzdCxwaW5zIGluICVzIG5vZGVcbiIsIG5w
+LT5uYW1lKTsNCj4gKwkJCXByX3dhcm4oIkludmFsaWQgc3QscGlucyBpbiAlcE9GbiBub2RlXG4i
+LCBucCk7DQo+ICAgCQkJcmV0dXJuIC1FSU5WQUw7DQo+ICAgCQl9DQo+ICAgCX0NCg0KRm9yIHBp
+bmN0cmwtc3Q6DQoNCkFja2VkLWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBz
+dC5jb20+DQoNClRoYW5rcw0KUGF0cmljZQ0K
