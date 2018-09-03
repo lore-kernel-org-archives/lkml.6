@@ -2,137 +2,152 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8187C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5D1C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C3D920856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05D8120862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:24:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ri4uR0C7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3D920856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1uQO5Ov"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D8120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeICWn1 (ORCPT
+        id S1727550AbeICWqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:43:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44946 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbeICWn1 (ORCPT
+        Mon, 3 Sep 2018 18:46:20 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54782 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeICWqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:43:27 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1-v6so470609pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 11:22:04 -0700 (PDT)
+        Mon, 3 Sep 2018 18:46:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id c14-v6so1994917wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 11:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RxKV2hCqxXyuXRvqtbBUdObCDD+oLD1M9subWdqBoOc=;
-        b=Ri4uR0C7JWEIYSsUm8nqreKHK8fxyTLuS/6sSx3GoeDrxm6Lc/Odf4bKK8N7gP//MY
-         1eE+azqK/lCTYH+npHEi7tEdUBxrvdnQC+u8/Rzxt1XgjjPgiXgDtFxFN/qDaNAOq8u8
-         iCSpQ84FvaBonmCbr5xDiCWpaKcXdgVSl/R49ZFNlRiH2daURBSdjmk28E/cRTLGgaF1
-         dH5BC096qVIt6FCGXMffpPH4LVE/FT/sstHTAd8IpEgttsgH93Y6Al6oGjjNqswZ2jxC
-         YNSdq1auYtpJ51/TbFm+LTRKYE7aQreKfLiAeBONRJIGfgI7qbUVwUVnOCqRFdKQObVR
-         Xolw==
+        h=from:to:cc:subject:date:message-id;
+        bh=MB06zeQ68BjbkZh186seByYWf+LaSderwY8FRwdwOlo=;
+        b=b1uQO5OvKBwgjXf6eBHCNCTXVrtv4J8iSdDQD6SKXiVSMDPcfEzaSo3ijN2KscZZHD
+         pIqujA8gYdzz+TctC0mMz3XIHOZnOYl3DEAH6btNEblFcsPZNxpEPX+dxYS4QT4FAgA+
+         BA2nIUOyBHb4wQ7gKn9gEZvOezNquD5Wcln5xEfUxry8cyX7DxDwalFhBxDRdHvOyXYn
+         5RnQwCosG5Cj50iiDIJkIwgNer2da/+KEZxgoj7526JiW49DAx7Ob6LrGhX4oHq+N2ek
+         A73IzpeNG4anUZd3LGxu9TwxIR8BTUhU4rtDJRyz0+2B6z9TWzYivn7fp8at+UJfbLDp
+         At0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RxKV2hCqxXyuXRvqtbBUdObCDD+oLD1M9subWdqBoOc=;
-        b=Y5drq+B4V7+6dRK/8+Bi1CdbwnAcA8oe8uIhwdcrG7O7hiHVMRRi9eLCBkgO2C9vEr
-         SAOLtN1DrxB30RJaroGTiqMiCsyBnBCFmLlremndATInPxD8U1hb4GrrR24G5pcgHKS8
-         OAicPINYDLrQn4nioxFjDpFc15M3FA3/y/FiTy+ISkpU2Zc8C8KKdsqONzC7seW7PlEn
-         EEEsTuiMzZKndsgxfrVkC2JRf7m1temxfxf8eWnQ8cNYYsc5jVAv0tHLGsa0yxcBNJ29
-         lsYKMWTtbWUxCbYLBl/9SwMWPlKfUK7LUCD6QOP/y9i1z8g9kjVAgZ3TBiymFm96urma
-         9zLw==
-X-Gm-Message-State: APzg51C6mhWzuBmmVfCYnrCvw6CKkyBqlTKpXcC0tf+aMhmMp5i7OHpe
-        TT22DKgCSjLvbCz9Q3zfjYhnDXWD
-X-Google-Smtp-Source: ANB0VdYHb4PDANVoaaM0pLajH+4U8I+fn75oBfRGuEmvI9wahOd6Ya4OakENNOqEVQCWOMEEwsJ0oQ==
-X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr19885673pgl.302.1535998924589;
-        Mon, 03 Sep 2018 11:22:04 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id u25-v6sm27200264pfk.177.2018.09.03.11.22.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MB06zeQ68BjbkZh186seByYWf+LaSderwY8FRwdwOlo=;
+        b=XhmIOr6cpf/tWrcWZrbNjumxwMOPh0nHPHeJ77fTAEGDERwL5WdgilrM2uxGg/lCyg
+         pfyVb0rhdhTFpjTm719BJHSE3cd30ZxI3BlyvtYdfT8R/68mU5sHaR4cxfdR0AxhGtik
+         Wmbx6ZTke4i5Q97xnwB1UZvTDZBIF4ZJiJPyEpoMUucvEwiog8eByqu/zALVivzeMKhV
+         xOa9dF7aKJA16u7aGln7XlE0cgKEe9M/F/sKZRuKvmfZYA6hwTETPhT11OwETtJKGW9y
+         xnfpckGSX03IJnU0CuhUq+WmNHM1PVn8xWC3lox3NpUK7BEUsqg+tTHPCPJIkKQ3BfWa
+         fW3Q==
+X-Gm-Message-State: APzg51BZ2FYbzg2kpb9QJ/KMTqh71p4q0yptYzON8ZLftYAw/FFEABU/
+        LgEPUd8mRXOWkriRHHrBPy1jqaYi
+X-Google-Smtp-Source: ANB0VdYVYguBCZnkB2Vd2MyPtVNyWr4MYoa97FKe7yF+s4A4RVWxxfWovRUpAwHEotG6zxz2GcUSUQ==
+X-Received: by 2002:a1c:3:: with SMTP id 3-v6mr5317351wma.99.1535999095809;
+        Mon, 03 Sep 2018 11:24:55 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
+        by smtp.gmail.com with ESMTPSA id v46-v6sm24201349wrc.63.2018.09.03.11.24.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 11:22:03 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 11:22:02 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: Linux 4.19-rc2
-Message-ID: <20180903182202.GA14258@roeck-us.net>
-References: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyG0GbDfoghEhAmKBPcZCiPu6CCpPRz9GwjCzLuP_Vv5Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 03 Sep 2018 11:24:55 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/4] staging: rtl8188eu: Remove code valid only for 5 GHz
+Date:   Mon,  3 Sep 2018 20:24:42 +0200
+Message-Id: <20180903182445.1969-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 02, 2018 at 02:45:22PM -0700, Linus Torvalds wrote:
-> As usual, the rc2 release is pretty small. People are taking a
-> breather after the merge window, and it takes a bit of time for bug
-> reports to start coming in and get identified.  Plus people were
-> probably still on vacation (particularly Europe), and some people were
-> at Open Source Summit NA last week too. Having a calm week was good.
-> 
-> Regardless of the reason, it's pretty quiet/ The bulk of it is drivers
-> (network and gpu stand out), with the rest being a random collection
-> all over (arch/x86 and generic networking stands out, but there's misc
-> stuff all over).
-> 
-> Go out and test.
-> 
+Remove code that is only valid for channels > 14.
+This addresses the below TODO item.
 
-Build results:
-	total: 134 pass: 133 fail: 1
-Failed builds: 
-	sparc32:allmodconfig 
-Qemu test results:
-	total: 302 pass: 301 fail: 1
-Failed tests: 
-	riscv:virt:defconfig:initrd
+- find and remove remaining code valid only for 5 GHz. Most of the obvious
+  ones have been removed, but things like channel > 14 still exist.
 
-The sparc32:allmodconfig build problem is the same as last week.
-David - any interest/plan to get this fixed, or should I just drop
-the build ?
-
-The riscv:virt:defconfig:initrd boot test is known to fail. The patch
-fixing it is in -next.
-
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
-Runtime warnings:
+ .../staging/rtl8188eu/core/rtw_wlan_util.c    | 47 +++++++------------
+ 1 file changed, 17 insertions(+), 30 deletions(-)
 
-arm:
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index b9406583e501..8f87db11f87e 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -110,22 +110,16 @@ u8 judge_network_type(struct adapter *padapter, unsigned char *rate, int ratelen
+ 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
+ 	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
+ 
+-	if (pmlmeext->cur_channel > 14) {
+-		if (pmlmeinfo->HT_enable)
+-			network_type = WIRELESS_11_5N;
++	if (pmlmeinfo->HT_enable)
++		network_type = WIRELESS_11_24N;
++
++	if ((cckratesonly_included(rate, ratelen)) == true)
++		network_type |= WIRELESS_11B;
++	else if ((cckrates_included(rate, ratelen)) == true)
++		network_type |= WIRELESS_11BG;
++	else
++		network_type |= WIRELESS_11G;
+ 
+-		network_type |= WIRELESS_11A;
+-	} else {
+-		if (pmlmeinfo->HT_enable)
+-			network_type = WIRELESS_11_24N;
+-
+-		if ((cckratesonly_included(rate, ratelen)) == true)
+-			network_type |= WIRELESS_11B;
+-		else if ((cckrates_included(rate, ratelen)) == true)
+-			network_type |= WIRELESS_11BG;
+-		else
+-			network_type |= WIRELESS_11G;
+-	}
+ 	return	network_type;
+ }
+ 
+@@ -1429,22 +1423,15 @@ void update_wireless_mode(struct adapter *padapter)
+ 	if ((pmlmeinfo->HT_info_enable) && (pmlmeinfo->HT_caps_enable))
+ 		pmlmeinfo->HT_enable = 1;
+ 
+-	if (pmlmeext->cur_channel > 14) {
+-		if (pmlmeinfo->HT_enable)
+-			network_type = WIRELESS_11_5N;
++	if (pmlmeinfo->HT_enable)
++		network_type = WIRELESS_11_24N;
+ 
+-		network_type |= WIRELESS_11A;
+-	} else {
+-		if (pmlmeinfo->HT_enable)
+-			network_type = WIRELESS_11_24N;
+-
+-		if ((cckratesonly_included(rate, ratelen)) == true)
+-			network_type |= WIRELESS_11B;
+-		else if ((cckrates_included(rate, ratelen)) == true)
+-			network_type |= WIRELESS_11BG;
+-		else
+-			network_type |= WIRELESS_11G;
+-	}
++	if ((cckratesonly_included(rate, ratelen)) == true)
++		network_type |= WIRELESS_11B;
++	else if ((cckrates_included(rate, ratelen)) == true)
++		network_type |= WIRELESS_11BG;
++	else
++		network_type |= WIRELESS_11G;
+ 
+ 	pmlmeext->cur_wireless_mode = network_type & padapter->registrypriv.wireless_mode;
+ 
+-- 
+2.18.0
 
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 drm_gem_cma_create+0x13c/0x158
-
-This is seen now due to a newly enabled configuration option.
-Fix is in -next.
-
----
-sh4:
-
-WARNING: CPU: 0 PID: 932 at mm/slab.c:2666 cache_alloc_refill+0x8a/0x594
-
-Same as before. I'll try to dig up the patch and ask for the status.
-
----
-sparc32:
-
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 esp_sbus_probe+0x408/0x6e8
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 sparc_lance_probe_one+0x428/0x4f4
-
-Fix is in -next.
-
-Detailed logs are available at https://kerneltests.org/builders/.
-
-Guenter
