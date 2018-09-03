@@ -2,86 +2,100 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75030C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C925C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207C020857
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:38:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rGdpuSdo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207C020857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 22BED20857
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 02:38:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BED20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeICG4T (ORCPT
+        id S1727552AbeICG44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 02:56:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33226 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbeICG4T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 02:56:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8aXpBAgKvQuDVDLczrrpxprXJBDtjpCSkfQF58F0/wo=; b=rGdpuSdouDAhILtkDkz/nDckYo
-        BLQEZZsBT3OsldbeRNdLi2DOqZHt/2/xY+8duf84a+ZaBHK1qn1NoV9i8eV/JwGAXSF6l3YfsXNFE
-        LJRdqtb01LXa5Tg4adpVTNOVC5d3QQ38b/xyvkAOA5fIuBpkJ9zs/gl6ZJHCKIThs4wuSoFPIouBL
-        f3RvHxNxiOCiqGoZMd0RRWoYRAqYr3a//9i2BKuo80nQJqysrU2iVtRFMVHnIZbxXZ9e/yWV7R478
-        j/dKupjP8H9LM1wnDRQFWmV3Jj1KZq9EB/NEotkQvOMv2uO5abuw36i2n38OjtpFIT3+ETDSV0Wpz
-        HRKcJ2wA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fwekl-0005VH-Dm; Mon, 03 Sep 2018 02:38:11 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] sound: soc: fix soc-core.c kernel-doc warning
-Message-ID: <a75f4b8b-4e1c-bc73-1033-c49f4b30e4e5@infradead.org>
-Date:   Sun, 2 Sep 2018 19:38:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 3 Sep 2018 02:56:56 -0400
+Received: from mga02.intel.com ([134.134.136.20]:16358 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726199AbeICG44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 02:56:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2018 19:38:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,323,1531810800"; 
+   d="scan'208";a="260189569"
+Received: from zyu2-mobl3.ccr.corp.intel.com ([10.255.28.30])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Sep 2018 19:38:52 -0700
+Message-ID: <1535942331.2072.5.camel@intel.com>
+Subject: Re: [PATCH] ACPI / LPSS: Ensure LPIOEP is always set on resume
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     William Lieurance <william.lieurance@namikoda.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 03 Sep 2018 10:38:51 +0800
+In-Reply-To: <20180901175916.28567-1-william.lieurance@namikoda.com>
+References: <20180901175916.28567-1-william.lieurance@namikoda.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi, William,
 
-Fix kernel-doc warning:
+On 六, 2018-09-01 at 12:59 -0500, William Lieurance wrote:
+> For some number of systems with lpss_quirks enabled, on boot the
+> system
+> goes through an acpi_lpss_resume() without a corresponding
+> acpi_lpss_suspend() having been called.
 
-../sound/soc/soc-core.c:2918: warning: Excess function parameter 'legacy_dai_naming' description in 'snd_soc_register_dais'
+I read the code but didn't find out why this could happen, but if it is
+true, please check if the below patch helps
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
+From 27fda1ab0d800966b0ec1c444fe356812bd2f04e Mon Sep 17 00:00:00 2001
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Mon, 3 Sep 2018 10:00:07 +0800
+Subject: [PATCH] ACPI / LPSS: Force lpss quirks on boot
+
+Commit 12864ff8545f ("ACPI / LPSS: Avoid PM quirks on suspend and resume
+from hibernation") bypasses lpss quirks for S3 and S4, by setting a flag
+for S3/S4 in acpi_lpss_suspend(), and check that flag in
+acpi_lpss_resume().
+
+But this overlooks the boot case where acpi_lpss_resume() may get called
+without a corresponding acpi_lpss_suspend() having been called.
+
+Thus force setting the flag during boot.
+
+Fixes: 12864ff8545f (ACPI / LPSS: Avoid PM quirks on suspend and resume from hibernation)
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200989
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 ---
- sound/soc/soc-core.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/acpi/acpi_lpss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- lnx-419-rc2.orig/sound/soc/soc-core.c
-+++ lnx-419-rc2/sound/soc/soc-core.c
-@@ -2910,8 +2910,6 @@ static struct snd_soc_dai *soc_add_dai(s
-  * @component: The component the DAIs are registered for
-  * @dai_drv: DAI driver to use for the DAIs
-  * @count: Number of DAIs
-- * @legacy_dai_naming: Use the legacy naming scheme and let the DAI inherit the
-- *                     parent's name.
-  */
- static int snd_soc_register_dais(struct snd_soc_component *component,
- 				 struct snd_soc_dai_driver *dai_drv, size_t count)
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 9706613..bf64cfa 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -879,7 +879,7 @@ static void acpi_lpss_dismiss(struct device *dev)
+ #define LPSS_GPIODEF0_DMA_LLP		BIT(13)
+ 
+ static DEFINE_MUTEX(lpss_iosf_mutex);
+-static bool lpss_iosf_d3_entered;
++static bool lpss_iosf_d3_entered = true;
+ 
+ static void lpss_iosf_enter_d3_state(void)
+ {
+-- 
+2.7.4
 
 
