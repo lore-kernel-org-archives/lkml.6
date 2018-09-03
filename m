@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1C4C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2566C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F167720862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F167720862
+	by mail.kernel.org (Postfix) with ESMTP id B379920862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:59:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B379920862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeICVTx (ORCPT
+        id S1728600AbeICVT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:19:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38460 "EHLO
+        Mon, 3 Sep 2018 17:19:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728008AbeICVTw (ORCPT
+        with ESMTP id S1728091AbeICVT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:19:52 -0400
+        Mon, 3 Sep 2018 17:19:58 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 900B0CF5;
-        Mon,  3 Sep 2018 16:58:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5B5CCF5;
+        Mon,  3 Sep 2018 16:58:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, chen jie <chenjie6@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Li Zefan <lizefan@huawei.com>, Yang Shi <shy828301@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 22/80] can: mpc5xxx_can: check of_iomap return before use
-Date:   Mon,  3 Sep 2018 18:49:00 +0200
-Message-Id: <20180903164935.045063546@linuxfoundation.org>
+Subject: [PATCH 4.4 40/80] mm/memory.c: check return value of ioremap_prot
+Date:   Mon,  3 Sep 2018 18:49:18 +0200
+Message-Id: <20180903164935.750871255@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,36 +54,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: "jie@chenjie6@huwei.com" <jie@chenjie6@huwei.com>
 
-[ Upstream commit b5c1a23b17e563b656cc9bb76ce5323b997d90e8 ]
+[ Upstream commit 24eee1e4c47977bdfb71d6f15f6011e7b6188d04 ]
 
-of_iomap() can return NULL so that return needs to be checked and NULL
-treated as failure. While at it also take care of the missing
-of_node_put() in the error path.
+ioremap_prot() can return NULL which could lead to an oops.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Link: http://lkml.kernel.org/r/1533195441-58594-1-git-send-email-chenjie6@huawei.com
+Signed-off-by: chen jie <chenjie6@huawei.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Li Zefan <lizefan@huawei.com>
+Cc: chenjie <chenjie6@huawei.com>
+Cc: Yang Shi <shy828301@gmail.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/mscan/mpc5xxx_can.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ mm/memory.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/mscan/mpc5xxx_can.c
-+++ b/drivers/net/can/mscan/mpc5xxx_can.c
-@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct
- 		return 0;
- 	}
- 	cdm = of_iomap(np_cdm, 0);
-+	if (!cdm) {
-+		of_node_put(np_cdm);
-+		dev_err(&ofdev->dev, "can't map clock node!\n");
-+		return 0;
-+	}
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3701,6 +3701,9 @@ int generic_access_phys(struct vm_area_s
+ 		return -EINVAL;
  
- 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
- 		freq *= 2;
+ 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
++	if (!maddr)
++		return -ENOMEM;
++
+ 	if (write)
+ 		memcpy_toio(maddr + offset, buf, len);
+ 	else
 
 
