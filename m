@@ -6,36 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A5EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC202077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC202077C
+	by mail.kernel.org (Postfix) with ESMTP id 197D020868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:17:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197D020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbeICVig (ORCPT
+        id S1730188AbeICVik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:38:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42808 "EHLO
+        Mon, 3 Sep 2018 17:38:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbeICVig (ORCPT
+        with ESMTP id S1729157AbeICVij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:38:36 -0400
+        Mon, 3 Sep 2018 17:38:39 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5275DD16;
-        Mon,  3 Sep 2018 17:17:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 476E1D09;
+        Mon,  3 Sep 2018 17:17:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, John Sperbeck <jsperbeck@google.com>,
+        Peter Rosin <peda@axentia.se>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Deepa Dinamani <deepadinamani@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Chang <dpf@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 046/165] net: axienet: Fix double deregister of mdio
-Date:   Mon,  3 Sep 2018 18:55:32 +0200
-Message-Id: <20180903165657.440930700@linuxfoundation.org>
+Subject: [PATCH 4.14 047/165] locking/rtmutex: Allow specifying a subclass for nested locking
+Date:   Mon,  3 Sep 2018 18:55:33 +0200
+Message-Id: <20180903165657.485495108@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,61 +61,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit 03bc7cab7d7218088412a75e141696a89059ab00 ]
+[ Upstream commit 62cedf3e60af03e47849fe2bd6a03ec179422a8a ]
 
-If the registration fails then mdio_unregister is called.
-However at unbind the unregister ia attempted again resulting
-in the below crash
+Needed for annotating rt_mutex locks.
 
-[   73.544038] kernel BUG at drivers/net/phy/mdio_bus.c:415!
-[   73.549362] Internal error: Oops - BUG: 0 [#1] SMP
-[   73.554127] Modules linked in:
-[   73.557168] CPU: 0 PID: 2249 Comm: sh Not tainted 4.14.0 #183
-[   73.562895] Hardware name: xlnx,zynqmp (DT)
-[   73.567062] task: ffffffc879e41180 task.stack: ffffff800cbe0000
-[   73.572973] PC is at mdiobus_unregister+0x84/0x88
-[   73.577656] LR is at axienet_mdio_teardown+0x18/0x30
-[   73.582601] pc : [<ffffff80085fa4cc>] lr : [<ffffff8008616858>]
-pstate: 20000145
-[   73.589981] sp : ffffff800cbe3c30
-[   73.593277] x29: ffffff800cbe3c30 x28: ffffffc879e41180
-[   73.598573] x27: ffffff8008a21000 x26: 0000000000000040
-[   73.603868] x25: 0000000000000124 x24: ffffffc879efe920
-[   73.609164] x23: 0000000000000060 x22: ffffffc879e02000
-[   73.614459] x21: ffffffc879e02800 x20: ffffffc87b0b8870
-[   73.619754] x19: ffffffc879e02800 x18: 000000000000025d
-[   73.625050] x17: 0000007f9a719ad0 x16: ffffff8008195bd8
-[   73.630345] x15: 0000007f9a6b3d00 x14: 0000000000000010
-[   73.635640] x13: 74656e7265687465 x12: 0000000000000030
-[   73.640935] x11: 0000000000000030 x10: 0101010101010101
-[   73.646231] x9 : 241f394f42533300 x8 : ffffffc8799f6e98
-[   73.651526] x7 : ffffffc8799f6f18 x6 : ffffffc87b0ba318
-[   73.656822] x5 : ffffffc87b0ba498 x4 : 0000000000000000
-[   73.662117] x3 : 0000000000000000 x2 : 0000000000000008
-[   73.667412] x1 : 0000000000000004 x0 : ffffffc8799f4000
-[   73.672708] Process sh (pid: 2249, stack limit = 0xffffff800cbe0000)
-
-Fix the same by making the bus NULL on unregister.
-
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Deepa Dinamani <deepadinamani@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Chang <dpf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Link: http://lkml.kernel.org/r/20180720083914.1950-2-peda@axentia.se
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/rtmutex.h  |    7 +++++++
+ kernel/locking/rtmutex.c |   29 +++++++++++++++++++++++++----
+ 2 files changed, 32 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-@@ -218,6 +218,7 @@ issue:
- 	ret = of_mdiobus_register(bus, np1);
- 	if (ret) {
- 		mdiobus_free(bus);
-+		lp->mii_bus = NULL;
- 		return ret;
- 	}
- 	return 0;
+--- a/include/linux/rtmutex.h
++++ b/include/linux/rtmutex.h
+@@ -106,7 +106,14 @@ static inline int rt_mutex_is_locked(str
+ extern void __rt_mutex_init(struct rt_mutex *lock, const char *name, struct lock_class_key *key);
+ extern void rt_mutex_destroy(struct rt_mutex *lock);
+ 
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++extern void rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass);
++#define rt_mutex_lock(lock) rt_mutex_lock_nested(lock, 0)
++#else
+ extern void rt_mutex_lock(struct rt_mutex *lock);
++#define rt_mutex_lock_nested(lock, subclass) rt_mutex_lock(lock)
++#endif
++
+ extern int rt_mutex_lock_interruptible(struct rt_mutex *lock);
+ extern int rt_mutex_timed_lock(struct rt_mutex *lock,
+ 			       struct hrtimer_sleeper *timeout);
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1466,6 +1466,29 @@ rt_mutex_fastunlock(struct rt_mutex *loc
+ 		rt_mutex_postunlock(&wake_q);
+ }
+ 
++static inline void __rt_mutex_lock(struct rt_mutex *lock, unsigned int subclass)
++{
++	might_sleep();
++
++	mutex_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
++	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++}
++
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++/**
++ * rt_mutex_lock_nested - lock a rt_mutex
++ *
++ * @lock: the rt_mutex to be locked
++ * @subclass: the lockdep subclass
++ */
++void __sched rt_mutex_lock_nested(struct rt_mutex *lock, unsigned int subclass)
++{
++	__rt_mutex_lock(lock, subclass);
++}
++EXPORT_SYMBOL_GPL(rt_mutex_lock_nested);
++#endif
++
++#ifndef CONFIG_DEBUG_LOCK_ALLOC
+ /**
+  * rt_mutex_lock - lock a rt_mutex
+  *
+@@ -1473,12 +1496,10 @@ rt_mutex_fastunlock(struct rt_mutex *loc
+  */
+ void __sched rt_mutex_lock(struct rt_mutex *lock)
+ {
+-	might_sleep();
+-
+-	mutex_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+-	rt_mutex_fastlock(lock, TASK_UNINTERRUPTIBLE, rt_mutex_slowlock);
++	__rt_mutex_lock(lock, 0);
+ }
+ EXPORT_SYMBOL_GPL(rt_mutex_lock);
++#endif
+ 
+ /**
+  * rt_mutex_lock_interruptible - lock a rt_mutex interruptible
 
 
