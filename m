@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC443C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F6EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D5B92086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5B92086A
+	by mail.kernel.org (Postfix) with ESMTP id DDF122086D
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF122086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbeICVqM (ORCPT
+        id S1730598AbeICVqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:46:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45660 "EHLO
+        Mon, 3 Sep 2018 17:46:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728609AbeICVqL (ORCPT
+        with ESMTP id S1728609AbeICVqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:46:11 -0400
+        Mon, 3 Sep 2018 17:46:14 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1ECED36;
-        Mon,  3 Sep 2018 17:25:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD96BD37;
+        Mon,  3 Sep 2018 17:25:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.14 096/165] printk/nmi: Prevent deadlock when accessing the main log buffer in NMI
-Date:   Mon,  3 Sep 2018 18:56:22 +0200
-Message-Id: <20180903165700.337080057@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matt Rickard <matt@softrans.com.au>,
+        Borislav Petkov <bp@alien8.de>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 4.14 114/165] x86/vdso: Fix vDSO build if a retpoline is emitted
+Date:   Mon,  3 Sep 2018 18:56:40 +0200
+Message-Id: <20180903165701.245301231@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,232 +56,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Mladek <pmladek@suse.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 03fc7f9c99c1e7ae2925d459e8487f1a6f199f79 upstream.
+commit 2e549b2ee0e358bc758480e716b881f9cabedb6a upstream.
 
-The commit 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI
-when logbuf_lock is available") brought back the possible deadlocks
-in printk() and NMI.
+Currently, if the vDSO ends up containing an indirect branch or
+call, GCC will emit the "external thunk" style of retpoline, and it
+will fail to link.
 
-The check of logbuf_lock is done only in printk_nmi_enter() to prevent
-mixed output. But another CPU might take the lock later, enter NMI, and:
+Fix it by building the vDSO with inline retpoline thunks.
 
-      + Both NMIs might be serialized by yet another lock, for example,
-	the one in nmi_cpu_backtrace().
+I haven't seen any reports of this triggering on an unpatched
+kernel.
 
-      + The other CPU might get stopped in NMI, see smp_send_stop()
-	in panic().
-
-The only safe solution is to use trylock when storing the message
-into the main log-buffer. It might cause reordering when some lines
-go to the main lock buffer directly and others are delayed via
-the per-CPU buffer. It means that it is not useful in general.
-
-This patch replaces the problematic NMI deferred context with NMI
-direct context. It can be used to mark a code that might produce
-many messages in NMI and the risk of losing them is more critical
-than problems with eventual reordering.
-
-The context is then used when dumping trace buffers on oops. It was
-the primary motivation for the original fix. Also the reordering is
-even smaller issue there because some traces have their own time stamps.
-
-Finally, nmi_cpu_backtrace() need not longer be serialized because
-it will always us the per-CPU buffers again.
-
-Fixes: 719f6a7040f1bdaf96 ("printk: Use the main logbuf in NMI when logbuf_lock is available")
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180627142028.11259-1-pmladek@suse.com
-To: Steven Rostedt <rostedt@goodmis.org>
+Fixes: commit 76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Matt Rickard <matt@softrans.com.au>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jason Vas Dias <jason.vas.dias@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: linux-kernel@vger.kernel.org
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: stable@vger.kernel.org
-Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Link: https://lkml.kernel.org/r/c76538cd3afbe19c6246c2d1715bc6a60bd63985.1534448381.git.luto@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/printk.h      |    4 +++
- kernel/printk/internal.h    |    9 ++++++
- kernel/printk/printk_safe.c |   58 ++++++++++++++++++++++++++++----------------
- kernel/trace/trace.c        |    4 ++-
- lib/nmi_backtrace.c         |    3 --
- 5 files changed, 52 insertions(+), 26 deletions(-)
+ Makefile                     |    4 ++++
+ arch/x86/entry/vdso/Makefile |    6 ++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -150,9 +150,13 @@ void early_printk(const char *s, ...) {
- #ifdef CONFIG_PRINTK_NMI
- extern void printk_nmi_enter(void);
- extern void printk_nmi_exit(void);
-+extern void printk_nmi_direct_enter(void);
-+extern void printk_nmi_direct_exit(void);
- #else
- static inline void printk_nmi_enter(void) { }
- static inline void printk_nmi_exit(void) { }
-+static inline void printk_nmi_direct_enter(void) { }
-+static inline void printk_nmi_direct_exit(void) { }
- #endif /* PRINTK_NMI */
+--- a/Makefile
++++ b/Makefile
+@@ -490,9 +490,13 @@ KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG
+ endif
  
- #ifdef CONFIG_PRINTK
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -19,11 +19,16 @@
- #ifdef CONFIG_PRINTK
+ RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
+ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
+ RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
++RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
+ export RETPOLINE_CFLAGS
++export RETPOLINE_VDSO_CFLAGS
  
- #define PRINTK_SAFE_CONTEXT_MASK	 0x3fffffff
--#define PRINTK_NMI_DEFERRED_CONTEXT_MASK 0x40000000
-+#define PRINTK_NMI_DIRECT_CONTEXT_MASK	 0x40000000
- #define PRINTK_NMI_CONTEXT_MASK		 0x80000000
+ ifeq ($(config-targets),1)
+ # ===========================================================================
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -74,9 +74,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.d
+ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+-       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
++       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
  
- extern raw_spinlock_t logbuf_lock;
+-$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
++$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
  
-+__printf(5, 0)
-+int vprintk_store(int facility, int level,
-+		  const char *dict, size_t dictlen,
-+		  const char *fmt, va_list args);
-+
- __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
-@@ -54,6 +59,8 @@ void __printk_safe_exit(void);
- 		local_irq_enable();		\
- 	} while (0)
+ #
+ # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
+@@ -147,11 +147,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmode
+ KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
++KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
+ KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
++KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
  
-+void defer_console_output(void);
-+
- #else
- 
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -311,24 +311,33 @@ static __printf(1, 0) int vprintk_nmi(co
- 
- void printk_nmi_enter(void)
- {
--	/*
--	 * The size of the extra per-CPU buffer is limited. Use it only when
--	 * the main one is locked. If this CPU is not in the safe context,
--	 * the lock must be taken on another CPU and we could wait for it.
--	 */
--	if ((this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK) &&
--	    raw_spin_is_locked(&logbuf_lock)) {
--		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
--	} else {
--		this_cpu_or(printk_context, PRINTK_NMI_DEFERRED_CONTEXT_MASK);
--	}
-+	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
- }
- 
- void printk_nmi_exit(void)
- {
--	this_cpu_and(printk_context,
--		     ~(PRINTK_NMI_CONTEXT_MASK |
--		       PRINTK_NMI_DEFERRED_CONTEXT_MASK));
-+	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
-+}
-+
-+/*
-+ * Marks a code that might produce many messages in NMI context
-+ * and the risk of losing them is more critical than eventual
-+ * reordering.
-+ *
-+ * It has effect only when called in NMI context. Then printk()
-+ * will try to store the messages into the main logbuf directly
-+ * and use the per-CPU buffers only as a fallback when the lock
-+ * is not available.
-+ */
-+void printk_nmi_direct_enter(void)
-+{
-+	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
-+		this_cpu_or(printk_context, PRINTK_NMI_DIRECT_CONTEXT_MASK);
-+}
-+
-+void printk_nmi_direct_exit(void)
-+{
-+	this_cpu_and(printk_context, ~PRINTK_NMI_DIRECT_CONTEXT_MASK);
- }
- 
- #else
-@@ -366,6 +375,20 @@ void __printk_safe_exit(void)
- 
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args)
- {
-+	/*
-+	 * Try to use the main logbuf even in NMI. But avoid calling console
-+	 * drivers that might have their own locks.
-+	 */
-+	if ((this_cpu_read(printk_context) & PRINTK_NMI_DIRECT_CONTEXT_MASK) &&
-+	    raw_spin_trylock(&logbuf_lock)) {
-+		int len;
-+
-+		len = vprintk_store(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
-+		raw_spin_unlock(&logbuf_lock);
-+		defer_console_output();
-+		return len;
-+	}
-+
- 	/* Use extra buffer in NMI when logbuf_lock is taken or in safe mode. */
- 	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
- 		return vprintk_nmi(fmt, args);
-@@ -374,13 +397,6 @@ __printf(1, 0) int vprintk_func(const ch
- 	if (this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK)
- 		return vprintk_safe(fmt, args);
- 
--	/*
--	 * Use the main logbuf when logbuf_lock is available in NMI.
--	 * But avoid calling console drivers that might have their own locks.
--	 */
--	if (this_cpu_read(printk_context) & PRINTK_NMI_DEFERRED_CONTEXT_MASK)
--		return vprintk_deferred(fmt, args);
--
- 	/* No obstacles. */
- 	return vprintk_default(fmt, args);
- }
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8187,6 +8187,7 @@ void ftrace_dump(enum ftrace_dump_mode o
- 	tracing_off();
- 
- 	local_irq_save(flags);
-+	printk_nmi_direct_enter();
- 
- 	/* Simulate the iterator */
- 	trace_init_global_iter(&iter);
-@@ -8266,7 +8267,8 @@ void ftrace_dump(enum ftrace_dump_mode o
- 	for_each_tracing_cpu(cpu) {
- 		atomic_dec(&per_cpu_ptr(iter.trace_buffer->data, cpu)->disabled);
- 	}
-- 	atomic_dec(&dump_running);
-+	atomic_dec(&dump_running);
-+	printk_nmi_direct_exit();
- 	local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(ftrace_dump);
---- a/lib/nmi_backtrace.c
-+++ b/lib/nmi_backtrace.c
-@@ -87,11 +87,9 @@ void nmi_trigger_cpumask_backtrace(const
- 
- bool nmi_cpu_backtrace(struct pt_regs *regs)
- {
--	static arch_spinlock_t lock = __ARCH_SPIN_LOCK_UNLOCKED;
- 	int cpu = smp_processor_id();
- 
- 	if (cpumask_test_cpu(cpu, to_cpumask(backtrace_mask))) {
--		arch_spin_lock(&lock);
- 		if (regs && cpu_in_idle(instruction_pointer(regs))) {
- 			pr_warn("NMI backtrace for cpu %d skipped: idling at pc %#lx\n",
- 				cpu, instruction_pointer(regs));
-@@ -102,7 +100,6 @@ bool nmi_cpu_backtrace(struct pt_regs *r
- 			else
- 				dump_stack();
- 		}
--		arch_spin_unlock(&lock);
- 		cpumask_clear_cpu(cpu, to_cpumask(backtrace_mask));
- 		return true;
- 	}
+ $(obj)/vdso32.so.dbg: FORCE \
 
 
