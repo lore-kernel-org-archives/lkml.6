@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528D2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3622FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4C120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4C120658
+	by mail.kernel.org (Postfix) with ESMTP id E53D220658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53D220658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731831AbeICV7m (ORCPT
+        id S1731842AbeICV7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48954 "EHLO
+        Mon, 3 Sep 2018 17:59:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48966 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV7l (ORCPT
+        with ESMTP id S1726384AbeICV7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:59:41 -0400
+        Mon, 3 Sep 2018 17:59:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDA20BC4;
-        Mon,  3 Sep 2018 17:38:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D89B4C9B;
+        Mon,  3 Sep 2018 17:38:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.18 100/123] MIPS: memset.S: Fix byte_fixup for MIPSr6
-Date:   Mon,  3 Sep 2018 18:57:24 +0200
-Message-Id: <20180903165723.741516165@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.18 101/123] MIPS: Always use -march=<arch>, not -<arch> shortcuts
+Date:   Mon,  3 Sep 2018 18:57:25 +0200
+Message-Id: <20180903165723.792335949@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,125 +51,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit b1c03f1ef48d36ff28afb06e8f0c1233ef072f1d upstream.
+commit 344ebf09949c31bcb8818d8458b65add29f1d67b upstream.
 
-The __clear_user function is defined to return the number of bytes that
-could not be cleared. From the underlying memset / bzero implementation
-this means setting register a2 to that number on return. Currently if a
-page fault is triggered within the MIPSr6 version of setting of initial
-unaligned bytes, the value loaded into a2 on return is meaningless.
+The VDSO Makefile filters CFLAGS to select a subset which it uses whilst
+building the VDSO ELF. One of the flags it allows through is the -march=
+flag that selects the architecture/ISA to target.
 
-During the MIPSr6 version of the initial unaligned bytes block, register
-a2 contains the number of bytes to be set beyond the initial unaligned
-bytes. The t0 register is initally set to the number of unaligned bytes
-- STORSIZE, effectively a negative version of the number of unaligned
-bytes. This is then incremented before each byte is saved.
+Unfortunately in cases where CONFIG_CPU_MIPS32_R{1,2}=y and the
+toolchain defaults to building for MIPS64, the main MIPS Makefile ends
+up using the short-form -<arch> flags in cflags-y. This is because the
+calls to cc-option always fail to use the long-form -march=<arch> flag
+due to the lack of an -mabi=<abi> flag in KBUILD_CFLAGS at the point
+where the cc-option function is executed. The resulting GCC invocation
+is something like:
 
-The label .Lbyte_fixup\@ is jumped to on page fault. Currently the value
-in a2 is incorrectly replaced by 0 - t0 + 1, effectively the number of
-unaligned bytes remaining. This leads to the failures being reported by
-the following test code:
+  $ mips64-linux-gcc -Werror -march=mips32r2 -c -x c /dev/null -o tmp
+  cc1: error: '-march=mips32r2' is not compatible with the selected ABI
 
-static int __init test_clear_user(void)
-{
-	int j, k;
+These short-form -<arch> flags are dropped by the VDSO Makefile's
+filtering, and so we attempt to build the VDSO without specifying any
+architecture. This results in an attempt to build the VDSO using
+whatever the compiler's default architecture is, regardless of whether
+that is suitable for the kernel configuration.
 
-	pr_info("\n\n\nTesting clear_user\n");
-	for (j = 0; j < 512; j++) {
-		if ((k = clear_user(NULL+3, j)) != j) {
-			pr_err("clear_user (NULL %d) returned %d\n", j, k);
-		}
-	}
-	return 0;
-}
-late_initcall(test_clear_user);
+One encountered build failure resulting from this mismatch is a
+rejection of the sync instruction if the kernel is configured for a
+MIPS32 or MIPS64 r1 or r2 target but the toolchain defaults to an older
+architecture revision such as MIPS1 which did not include the sync
+instruction:
 
-Which reports:
-[    3.965439] Testing clear_user
-[    3.973169] clear_user (NULL 8) returned 6
-[    3.976782] clear_user (NULL 9) returned 6
-[    3.980390] clear_user (NULL 10) returned 6
-[    3.984052] clear_user (NULL 11) returned 6
-[    3.987524] clear_user (NULL 12) returned 6
+    CC      arch/mips/vdso/gettimeofday.o
+  /tmp/ccGQKoOj.s: Assembler messages:
+  /tmp/ccGQKoOj.s:273: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:329: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:520: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:714: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1009: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1066: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1114: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1279: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1334: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1374: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1459: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1514: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:1814: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:2002: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  /tmp/ccGQKoOj.s:2066: Error: opcode not supported on this processor: mips1 (mips1) `sync'
+  make[2]: *** [scripts/Makefile.build:318: arch/mips/vdso/gettimeofday.o] Error 1
+  make[1]: *** [scripts/Makefile.build:558: arch/mips/vdso] Error 2
+  make[1]: *** Waiting for unfinished jobs....
 
-Fix this by subtracting t0 from a2 (rather than $0), effectivey giving:
-unset_bytes = (#bytes - (#unaligned bytes)) - (-#unaligned bytes remaining + 1) + 1
-     a2     =             a2                -              t0                   + 1
+This can be reproduced for example by attempting to build
+pistachio_defconfig using Arnd's GCC 8.1.0 mips64 toolchain from
+kernel.org:
 
-This fixes the value returned from __clear user when the number of bytes
-to set is > LONGSIZE and the address is invalid and unaligned.
+  https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/x86_64-gcc-8.1.0-nolibc-mips64-linux.tar.xz
 
-Unfortunately, this breaks the fixup handling for unaligned bytes after
-the final long, where register a2 still contains the number of bytes
-remaining to be set and the t0 register is to 0 - the number of
-unaligned bytes remaining.
+Resolve this problem by using the long-form -march=<arch> in all cases,
+which makes it through the arch/mips/vdso/Makefile's filtering & is thus
+consistently used to build both the kernel proper & the VDSO.
 
-Because t0 is now is now subtracted from a2 rather than 0, the number of
-bytes unset is reported incorrectly:
+The use of cc-option to prefer the long-form & fall back to the
+short-form flags makes no sense since the short-form is just an
+abbreviation for the also-supported long-form in all GCC versions that
+we support building with. This means there is no case in which we have
+to use the short-form -<arch> flags, so we can simply remove them.
 
-static int __init test_clear_user(void)
-{
-	char *test;
-	int j, k;
+The manual redefinition of _MIPS_ISA is removed naturally along with the
+use of the short-form flags that it accompanied, and whilst here we
+remove the separate assembler ISA selection. I suspect that both of
+these were only required due to the mips32 vs mips2 mismatch that was
+introduced by commit 59b3e8e9aac6 ("[MIPS] Makefile crapectomy.") and
+fixed but not cleaned up by commit 9200c0b2a07c ("[MIPS] Fix Makefile
+bugs for MIPS32/MIPS64 R1 and R2.").
 
-	pr_info("\n\n\nTesting clear_user\n");
-	test = vmalloc(PAGE_SIZE);
+I've marked this for backport as far as v4.4 where the MIPS VDSO was
+introduced. In earlier kernels there should be no ill effect to using
+the short-form flags.
 
-	for (j = 256; j < 512; j++) {
-		if ((k = clear_user(test + PAGE_SIZE - 254, j)) != j - 254) {
-			pr_err("clear_user (%px %d) returned %d\n",
-				test + PAGE_SIZE - 254, j, k);
-		}
-	}
-	return 0;
-}
-late_initcall(test_clear_user);
-
-[    3.976775] clear_user (c00000000000df02 256) returned 4
-[    3.981957] clear_user (c00000000000df02 257) returned 6
-[    3.986425] clear_user (c00000000000df02 258) returned 8
-[    3.990850] clear_user (c00000000000df02 259) returned 10
-[    3.995332] clear_user (c00000000000df02 260) returned 12
-[    3.999815] clear_user (c00000000000df02 261) returned 14
-
-Fix this by ensuring that a2 is set to 0 during the set of final
-unaligned bytes.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 8c56208aff77 ("MIPS: lib: memset: Add MIPS R6 support")
-Patchwork: https://patchwork.linux-mips.org/patch/19338/
-Cc: James Hogan <jhogan@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # v4.0+
+Cc: stable@vger.kernel.org # v4.4+
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Patchwork: https://patchwork.linux-mips.org/patch/19579/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/Makefile |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -195,6 +195,7 @@
- #endif
- #else
- 	 PTR_SUBU	t0, $0, a2
-+	move		a2, zero		/* No remaining longs */
- 	PTR_ADDIU	t0, 1
- 	STORE_BYTE(0)
- 	STORE_BYTE(1)
-@@ -231,7 +232,7 @@
- 
- #ifdef CONFIG_CPU_MIPSR6
- .Lbyte_fixup\@:
--	PTR_SUBU	a2, $0, t0
-+	PTR_SUBU	a2, t0
- 	jr		ra
- 	 PTR_ADDIU	a2, 1
- #endif /* CONFIG_CPU_MIPSR6 */
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -155,15 +155,11 @@ cflags-$(CONFIG_CPU_R4300)	+= -march=r43
+ cflags-$(CONFIG_CPU_VR41XX)	+= -march=r4100 -Wa,--trap
+ cflags-$(CONFIG_CPU_R4X00)	+= -march=r4600 -Wa,--trap
+ cflags-$(CONFIG_CPU_TX49XX)	+= -march=r4600 -Wa,--trap
+-cflags-$(CONFIG_CPU_MIPS32_R1)	+= $(call cc-option,-march=mips32,-mips32 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
+-			-Wa,-mips32 -Wa,--trap
+-cflags-$(CONFIG_CPU_MIPS32_R2)	+= $(call cc-option,-march=mips32r2,-mips32r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
+-			-Wa,-mips32r2 -Wa,--trap
++cflags-$(CONFIG_CPU_MIPS32_R1)	+= -march=mips32 -Wa,--trap
++cflags-$(CONFIG_CPU_MIPS32_R2)	+= -march=mips32r2 -Wa,--trap
+ cflags-$(CONFIG_CPU_MIPS32_R6)	+= -march=mips32r6 -Wa,--trap -modd-spreg
+-cflags-$(CONFIG_CPU_MIPS64_R1)	+= $(call cc-option,-march=mips64,-mips64 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64) \
+-			-Wa,-mips64 -Wa,--trap
+-cflags-$(CONFIG_CPU_MIPS64_R2)	+= $(call cc-option,-march=mips64r2,-mips64r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64) \
+-			-Wa,-mips64r2 -Wa,--trap
++cflags-$(CONFIG_CPU_MIPS64_R1)	+= -march=mips64 -Wa,--trap
++cflags-$(CONFIG_CPU_MIPS64_R2)	+= -march=mips64r2 -Wa,--trap
+ cflags-$(CONFIG_CPU_MIPS64_R6)	+= -march=mips64r6 -Wa,--trap
+ cflags-$(CONFIG_CPU_R5000)	+= -march=r5000 -Wa,--trap
+ cflags-$(CONFIG_CPU_R5432)	+= $(call cc-option,-march=r5400,-march=r5000) \
 
 
