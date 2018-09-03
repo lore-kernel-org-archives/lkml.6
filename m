@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A401FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CE1C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A98C20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A98C20843
+	by mail.kernel.org (Postfix) with ESMTP id 9BC4020843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC4020843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729993AbeICVaJ (ORCPT
+        id S1730003AbeICVaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:30:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40502 "EHLO
+        Mon, 3 Sep 2018 17:30:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40524 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeICVaI (ORCPT
+        with ESMTP id S1729363AbeICVaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:30:08 -0400
+        Mon, 3 Sep 2018 17:30:12 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE07FBB3;
-        Mon,  3 Sep 2018 17:09:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 061F3D06;
+        Mon,  3 Sep 2018 17:09:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: [PATCH 4.9 089/107] x86/spectre: Add missing family 6 check to microcode check
-Date:   Mon,  3 Sep 2018 18:56:53 +0200
-Message-Id: <20180903165641.619117992@linuxfoundation.org>
+        stable@vger.kernel.org, xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>,
+        Christopher Snowhill <kode54@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Michael Hocko <mhocko@suse.com>, vbabka@suse.cz
+Subject: [PATCH 4.9 090/107] x86/speculation/l1tf: Increase l1tf memory limit for Nehalem+
+Date:   Mon,  3 Sep 2018 18:56:54 +0200
+Message-Id: <20180903165641.662135059@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -52,37 +55,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-commit 1ab534e85c93945f7862378d8c8adcf408205b19 upstream.
+commit cc51e5428ea54f575d49cfcede1d4cb3a72b4ec4 upstream.
 
-The check for Spectre microcodes does not check for family 6, only the
-model numbers.
+On Nehalem and newer core CPUs the CPU cache internally uses 44 bits
+physical address space. The L1TF workaround is limited by this internal
+cache address width, and needs to have one bit free there for the
+mitigation to work.
 
-Add a family 6 check to avoid ambiguity with other families.
+Older client systems report only 36bit physical address space so the range
+check decides that L1TF is not mitigated for a 36bit phys/32GB system with
+some memory holes.
 
-Fixes: a5b296636453 ("x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes")
+But since these actually have the larger internal cache width this warning
+is bogus because it would only really be needed if the system had more than
+43bits of memory.
+
+Add a new internal x86_cache_bits field. Normally it is the same as the
+physical bits field reported by CPUID, but for Nehalem and newerforce it to
+be at least 44bits.
+
+Change the L1TF memory size warning to use the new cache_bits field to
+avoid bogus warnings and remove the bogus comment about memory size.
+
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
+Reported-by: Christopher Snowhill <kode54@gmail.com>
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
+Cc: Michael Hocko <mhocko@suse.com>
+Cc: vbabka@suse.cz
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180824170351.34874-2-andi@firstfloor.org
+Link: https://lkml.kernel.org/r/20180824170351.34874-1-andi@firstfloor.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/intel.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/processor.h |    4 ++-
+ arch/x86/kernel/cpu/bugs.c       |   46 ++++++++++++++++++++++++++++++++++-----
+ arch/x86/kernel/cpu/common.c     |    1 
+ 3 files changed, 45 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -109,6 +109,9 @@ static bool bad_spectre_microcode(struct
- 	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
- 		return false;
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -136,6 +136,8 @@ struct cpuinfo_x86 {
+ 	/* Index into per_cpu list: */
+ 	u16			cpu_index;
+ 	u32			microcode;
++	/* Address space bits used by the cache internally */
++	u8			x86_cache_bits;
+ };
  
+ #define X86_VENDOR_INTEL	0
+@@ -175,7 +177,7 @@ extern void cpu_detect(struct cpuinfo_x8
+ 
+ static inline unsigned long long l1tf_pfn_limit(void)
+ {
+-	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
++	return BIT_ULL(boot_cpu_data.x86_cache_bits - 1 - PAGE_SHIFT);
+ }
+ 
+ extern void early_cpu_init(void);
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -651,6 +651,45 @@ EXPORT_SYMBOL_GPL(l1tf_mitigation);
+ enum vmx_l1d_flush_state l1tf_vmx_mitigation = VMENTER_L1D_FLUSH_AUTO;
+ EXPORT_SYMBOL_GPL(l1tf_vmx_mitigation);
+ 
++/*
++ * These CPUs all support 44bits physical address space internally in the
++ * cache but CPUID can report a smaller number of physical address bits.
++ *
++ * The L1TF mitigation uses the top most address bit for the inversion of
++ * non present PTEs. When the installed memory reaches into the top most
++ * address bit due to memory holes, which has been observed on machines
++ * which report 36bits physical address bits and have 32G RAM installed,
++ * then the mitigation range check in l1tf_select_mitigation() triggers.
++ * This is a false positive because the mitigation is still possible due to
++ * the fact that the cache uses 44bit internally. Use the cache bits
++ * instead of the reported physical bits and adjust them on the affected
++ * machines to 44bit if the reported bits are less than 44.
++ */
++static void override_cache_bits(struct cpuinfo_x86 *c)
++{
 +	if (c->x86 != 6)
-+		return false;
++		return;
 +
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
++	switch (c->x86_model) {
++	case INTEL_FAM6_NEHALEM:
++	case INTEL_FAM6_WESTMERE:
++	case INTEL_FAM6_SANDYBRIDGE:
++	case INTEL_FAM6_IVYBRIDGE:
++	case INTEL_FAM6_HASWELL_CORE:
++	case INTEL_FAM6_HASWELL_ULT:
++	case INTEL_FAM6_HASWELL_GT3E:
++	case INTEL_FAM6_BROADWELL_CORE:
++	case INTEL_FAM6_BROADWELL_GT3E:
++	case INTEL_FAM6_SKYLAKE_MOBILE:
++	case INTEL_FAM6_SKYLAKE_DESKTOP:
++	case INTEL_FAM6_KABYLAKE_MOBILE:
++	case INTEL_FAM6_KABYLAKE_DESKTOP:
++		if (c->x86_cache_bits < 44)
++			c->x86_cache_bits = 44;
++		break;
++	}
++}
++
+ static void __init l1tf_select_mitigation(void)
+ {
+ 	u64 half_pa;
+@@ -658,6 +697,8 @@ static void __init l1tf_select_mitigatio
+ 	if (!boot_cpu_has_bug(X86_BUG_L1TF))
+ 		return;
+ 
++	override_cache_bits(&boot_cpu_data);
++
+ 	switch (l1tf_mitigation) {
+ 	case L1TF_MITIGATION_OFF:
+ 	case L1TF_MITIGATION_FLUSH_NOWARN:
+@@ -677,11 +718,6 @@ static void __init l1tf_select_mitigatio
+ 	return;
+ #endif
+ 
+-	/*
+-	 * This is extremely unlikely to happen because almost all
+-	 * systems have far more MAX_PA/2 than RAM can be fit into
+-	 * DIMM slots.
+-	 */
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+ 	if (e820_any_mapped(half_pa, ULLONG_MAX - half_pa, E820_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -882,6 +882,7 @@ static void identify_cpu_without_cpuid(s
+ 			}
+ 		}
+ #endif
++	c->x86_cache_bits = c->x86_phys_bits;
+ }
+ 
+ static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
 
 
