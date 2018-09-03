@@ -2,157 +2,90 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A25C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1107AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 779CC20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MedzwDFD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779CC20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C15D220867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:45:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C15D220867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbeIDBGz (ORCPT
+        id S1728899AbeIDBHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:06:55 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39021 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728386AbeIDBGz (ORCPT
+        Mon, 3 Sep 2018 21:07:03 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:60148 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728386AbeIDBHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:06:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i190-v6so588886pgc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ve5R3th1vu+5LlT7qqH11xMqXyfo++mt/ogphfUxGJU=;
-        b=MedzwDFDGZ7n8gzpqxVX3aYK1QE+XmhR/PHTVkFiERCTi7aEkDiHCOR9Kbhv2EX4iD
-         DVVI3uQqQUgTZmz7nEKIdimORfVXkoIosfX0zQHggAoRWBiEIs8kk6oYHacshyEjBvtt
-         jBEDvwd9D/zS1WAK1n7+GiWpt1vnkPjPhG/XI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ve5R3th1vu+5LlT7qqH11xMqXyfo++mt/ogphfUxGJU=;
-        b=Lll1B/X7MRXFZ6XVyHdgO3bde+n7LwEi8xUEJ3FioG4/tZ5FFn+Tyi4T0c46ED0OHe
-         5CUDJ10CroMTSDThHw/DDy0T+fOJDn1UNKHxqhQ5JUmVeet7yWOOnqbYned2EOT9LbfJ
-         Hu0Y2174aYMu5XUMpPS7gVq3rQ9F/q8AWrtdDInqFdL/pzYLH1d5iET3Y33ZjNpNV7J5
-         TuifMwNvD6aFG0QSFqfUVx1FE9ywHSLJgGv0tmBDlZEIlBsv6v22dJfUauwUI1v8+iuF
-         HZdqZabsNxbQxCU1wueCR+uRY99uCIqEnMOaZIXz+cyKB03bb4HoMnThBoi8Fce+4qO0
-         PMYw==
-X-Gm-Message-State: APzg51DB63xuAPwgxdEIy628R994b3Ttw54hxhCyuGN8JNNhm5CBxHUH
-        vooxVLbxxPJMCrR+1+pkAizn34y21o0=
-X-Google-Smtp-Source: ANB0VdbtOyt8U+7XLboKU2BLpB5kLelR3uy1QDgzEm3qld49+BqIq5+AIAYQIU0pnCWUulBijzsu3A==
-X-Received: by 2002:a62:4898:: with SMTP id q24-v6mr31717402pfi.22.1536007500772;
-        Mon, 03 Sep 2018 13:45:00 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y85-v6sm29793501pfa.170.2018.09.03.13.44.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 13:45:00 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 13:48:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        smohanad@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 08/11] thermal: tsens: Check if the IP is correctly
- enabled by firmware
-Message-ID: <20180903204855.GB1437@tuxbook-pro>
-References: <cover.1535462942.git.amit.kucheria@linaro.org>
- <35c332750fe1eddfa2eb53750b810256310866bd.1535462942.git.amit.kucheria@linaro.org>
- <CAHLCerPF0U22XZ8kEBkXZYJHkL73K8_RFkArs9gXvc0Qmufr-g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHLCerPF0U22XZ8kEBkXZYJHkL73K8_RFkArs9gXvc0Qmufr-g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 3 Sep 2018 21:07:03 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fwvif-0008Hd-Ed; Mon, 03 Sep 2018 14:45:09 -0600
+Received: from [105.225.206.69] (helo=x220.Home)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fwvie-0008G7-Dz; Mon, 03 Sep 2018 14:45:09 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon,  3 Sep 2018 22:44:21 +0200
+Message-Id: <20180903204430.25473-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <87musyl3fa.fsf@xmission.com>
+References: <87musyl3fa.fsf@xmission.com>
+X-XM-SPF: eid=1fwvie-0008G7-Dz;;;mid=<20180903204430.25473-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX192aeix0IP5/UiOUvf6g+Uopl/gMC2hQvI=
+X-SA-Exim-Connect-IP: 105.225.206.69
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [PATCH 01/10] signal: Always ignore SIGKILL and SIGSTOP sent to the global init
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 30 Aug 12:23 PDT 2018, Amit Kucheria wrote:
+If the first process started (aka /sbin/init) receives a SIGKILL it
+will panic the system if it is delivered.  Making the system unusable
+and undebugable.  It isn't much better if the first process started
+receives SIGSTOP.
 
-> On Tue, Aug 28, 2018 at 7:08 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> > The SROT registers are initialised by the secure firmware at boot. We
-> > don't have write access to the registers. Check if the block is enabled
-> > before continuing.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> >
-> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> > index 0b8a793f15f4..d250b757d1f0 100644
-> > --- a/drivers/thermal/qcom/tsens-common.c
-> > +++ b/drivers/thermal/qcom/tsens-common.c
-> > @@ -12,6 +12,11 @@
-> >  #include <linux/regmap.h>
-> >  #include "tsens.h"
-> >
-> > +/* SROT */
-> > +#define CTRL_OFFSET            0x4
-> 
-> This OFFSET is not constant across the TSENS family and breaks atleast
-> one platform in the test below. I have a patch to fix this for all
-> platforms, will post it after a bit more testing.
-> 
+So always ignore SIGSTOP and SIGKILL sent to init.
 
-Afaict the other 10 patches can be merged independently of this patch.
+This is done in a separate clause in sig_task_ignored as force_sig_info
+can clear SIG_UNKILLABLE and this protection should work even then.
 
-So please make the minor updates and resend them as a separate series,
-with the acks/reviews, to make it easier for Eduardo to just pick them.
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ kernel/signal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Regards,
-Bjorn
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5843c541fda9..b33264bb2064 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -78,6 +78,10 @@ static bool sig_task_ignored(struct task_struct *t, int sig, bool force)
+ 
+ 	handler = sig_handler(t, sig);
+ 
++	/* SIGKILL and SIGSTOP may not be sent to the global init */
++	if (unlikely(is_global_init(t) && sig_kernel_only(sig)))
++		return true;
++
+ 	if (unlikely(t->signal->flags & SIGNAL_UNKILLABLE) &&
+ 	    handler == SIG_DFL && !(force && sig_kernel_only(sig)))
+ 		return true;
+-- 
+2.17.1
 
-> 
-> > +#define TSENS_EN               BIT(0)
-> > +
-> > +/* TM */
-> >  #define STATUS_OFFSET          0x30
-> >  #define SN_ADDR_OFFSET         0x4
-> >  #define SN_ST_TEMP_MASK                0x3ff
-> > @@ -119,6 +124,8 @@ int __init init_common(struct tsens_device *tmdev)
-> >  {
-> >         void __iomem *tm_base, *srot_base;
-> >         struct resource *res;
-> > +       u32 code;
-> > +       int ret;
-> >         struct platform_device *op = of_find_device_by_node(tmdev->dev->of_node);
-> >
-> >         if (!op)
-> > @@ -151,5 +158,15 @@ int __init init_common(struct tsens_device *tmdev)
-> >         if (IS_ERR(tmdev->tm_map))
-> >                 return PTR_ERR(tmdev->tm_map);
-> >
-> > +       if (tmdev->srot_map) {
-> > +               ret = regmap_read(tmdev->srot_map, CTRL_OFFSET, &code);
-> > +               if (ret)
-> > +                       return ret;
-> > +               if (!(code & TSENS_EN)) {
-> > +                       dev_err(tmdev->dev, "tsens device is not enabled\n");
-> > +                       return -ENODEV;
-> > +               }
-> > +       }
-> > +
-> >         return 0;
-> >  }
-> > --
-> > 2.17.1
-> >
