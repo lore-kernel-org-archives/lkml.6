@@ -2,104 +2,121 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6054EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B16EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 084CD20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084CD20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 21F5620843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:42:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E2P+M1hP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F5620843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbeIDBDS (ORCPT
+        id S1728680AbeIDBEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:03:18 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:50205 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeIDBDR (ORCPT
+        Mon, 3 Sep 2018 21:04:43 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45209 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727702AbeIDBEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:03:17 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fwvf1-0005tY-OH; Mon, 03 Sep 2018 14:41:23 -0600
-Received: from [105.225.206.69] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fwvf0-0001RU-L3; Mon, 03 Sep 2018 14:41:23 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-api@vger.kernel.org>
-Date:   Mon, 03 Sep 2018 22:41:13 +0200
-Message-ID: <87musyl3fa.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 3 Sep 2018 21:04:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so583243pfo.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=La0qQxN+mBriQp4mgS1BDRS5LilqHsPaBfV01hSicLY=;
+        b=E2P+M1hPGJKzFQv1rsw43HCs/lfG2KIVULGC36hZCoW6V1WBfayylb7zJy2o9KRPCm
+         D0zEDIg8qQqN3gwFG0xUF17PDcedlO29JQB8+8lAKLSEjm9CIvt1QBCCwJZpr29JxBVM
+         l4DSCjLad6hxNFnbJKrv6eQuZZNcQYjpODEAw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=La0qQxN+mBriQp4mgS1BDRS5LilqHsPaBfV01hSicLY=;
+        b=MgIpu9RHVupZKC0z11c1Ej471EWqqM7XDYjNPdws3W+61xgLnEr8pgEFKAHEn0JpeX
+         kcJKFVr8UfNHjLrf6y6KPhb++JOBKApwsnDzUJNDypL6Vme//JJRs4luH7ijKkX/8Fst
+         TA1L8vKmHJzKNyPCb7xBBTfERfyrf7uyuC91aeE2mc3sTNOzqMDQVvLpM7SchPOBi9Qn
+         pnJl+g59HytAX96PSH6TWj10V9bBk7auARzEZnZDI61jyNr9KzY8KbTYj2Q7D+yX5OQB
+         /5vz3NIoGPWyt+W8AlcLcTHaifUJrC3H0HkmYUs7HcbP48mRFn4jwqE6x5JUry98Pq6Z
+         vSEA==
+X-Gm-Message-State: APzg51DXy4CHNjewld9drCFraMQnuylt+GPGGUBYqaDRv8bjXEm9syRi
+        cr3qZNgy7tbqFpDeTpLu0In6eQ==
+X-Google-Smtp-Source: ANB0VdbQBbECg2s+76RXvjBss16Knojra6IOUgXmaEXx1QACCQKVcDnFVhi31Q8lapnD/nfwWCsG3Q==
+X-Received: by 2002:a62:2e02:: with SMTP id u2-v6mr31489771pfu.134.1536007369922;
+        Mon, 03 Sep 2018 13:42:49 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id o62-v6sm24654834pfb.0.2018.09.03.13.42.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 13:42:49 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 13:46:44 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
+        smohanad@codeaurora.org, andy.gross@linaro.org,
+        dianders@chromium.org, mka@chromium.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 11/11] MAINTAINERS: Add entry for Qualcomm TSENS
+ thermal drivers
+Message-ID: <20180903204644.GA1437@tuxbook-pro>
+References: <cover.1535462942.git.amit.kucheria@linaro.org>
+ <72c63bc617acdaddd0a420ceac1914acdf4c720f.1535462942.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fwvf0-0001RU-L3;;;mid=<87musyl3fa.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/y+aTW+dpaHWANlobCtAjOHkbj+D0euZc=
-X-SA-Exim-Connect-IP: 105.225.206.69
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 00/10] Removing SEND_SIG_FORCED
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72c63bc617acdaddd0a420ceac1914acdf4c720f.1535462942.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue 28 Aug 06:38 PDT 2018, Amit Kucheria wrote:
 
-SEND_SIG_FORCED has two functions.  It forces a pid namespace init to
-receive a signal it would ordinarily ignore, and it causes a siginfo to
-not be allocated for a signal.
+> Create an entry for the TSENS drivers and mark them as maintained
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
 
-This patchset makes __send_signal a little bit smarter so that it can
-detect when to apply these optimizations and the senders of signals
-don't have to worry about them.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-The coupling of forcing a signal to the pid namespace init and not
-allocating siginfo resulted in serveral minor bugs where a signal
-sent by the kernel was marked SI_USER suggesting another userspace
-process sent that signal.  I have cc'd linux-api in case anyone cares
-about these minor userspace visible differences.
+Regards,
+Bjorn
 
-Unless someone notices a bug I intend to merge these changes through my
-tree during the next merge window.   While there are numerous fixes here
-none of them appear to be the kind that fixes real world problems so I
-don't see any urgency here.
-
-Please look read and send my your review.  I will be out for about a
-week so I will address any comments when I get back.
-
-Eric W. Biederman (10):
-      signal: Always ignore SIGKILL and SIGSTOP sent to the global init
-      signal: Properly deliver SIGILL from uprobes
-      signal: Properly deliver SIGSEGV from x86 uprobes
-      signal: Always deliver the kernel's SIGKILL and SIGSTOP to a pid namespace init
-      signal: send_sig_all no longer needs SEND_SIG_FORCED
-      signal: Remove the siginfo paramater from kernel_dqueue_signal
-      signal: Don't send siginfo to kthreads.
-      signal: Never allocate siginfo for SIGKILL or SIGSTOP
-      signal: Use SEND_SIG_PRIV not SEND_SIG_FORCED with SIGKILL and SIGSTOP
-      signal: Remove SEND_SIG_FORCED
-
- arch/x86/kernel/uprobes.c                    |  2 +-
- drivers/tty/sysrq.c                          |  2 +-
- drivers/usb/gadget/function/f_mass_storage.c |  4 ++--
- fs/jffs2/background.c                        |  2 +-
- include/linux/sched/signal.h                 |  5 ++---
- include/trace/events/signal.h                |  3 +--
- kernel/events/uprobes.c                      |  4 ++--
- kernel/pid_namespace.c                       |  2 +-
- kernel/ptrace.c                              |  4 ++--
- kernel/signal.c                              | 14 +++++++++-----
- mm/oom_kill.c                                |  4 ++--
- 11 files changed, 24 insertions(+), 22 deletions(-)
-
-Eric
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a5b256b25905..b8c96e0699c9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12076,6 +12076,13 @@ L:	linux-arm-msm@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/iommu/qcom_iommu.c
+>  
+> +QUALCOMM TSENS THERMAL DRIVER
+> +M:	Amit Kucheria <amit.kucheria@linaro.org>
+> +L:	linux-pm@vger.kernel.org
+> +L:	linux-arm-msm@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/thermal/qcom/
+> +
+>  QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
+>  M:	Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>  L:	linux-media@vger.kernel.org
+> -- 
+> 2.17.1
+> 
