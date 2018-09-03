@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5B8C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CD3C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 729C720658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:31:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 729C720658
+	by mail.kernel.org (Postfix) with ESMTP id 1CB162077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB162077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbeICVxF (ORCPT
+        id S1731098AbeICVxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:53:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47274 "EHLO
+        Mon, 3 Sep 2018 17:53:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbeICVxE (ORCPT
+        with ESMTP id S1728303AbeICVxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:53:04 -0400
+        Mon, 3 Sep 2018 17:53:07 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0E0AD18;
-        Mon,  3 Sep 2018 17:31:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ACE5D18;
+        Mon,  3 Sep 2018 17:31:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 017/123] Btrfs: fix mount failure after fsync due to hard link recreation
-Date:   Mon,  3 Sep 2018 18:56:01 +0200
-Message-Id: <20180903165720.219244018@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.18 018/123] Btrfs: fix btrfs_write_inode vs delayed iput deadlock
+Date:   Mon,  3 Sep 2018 18:56:02 +0200
+Message-Id: <20180903165720.264847844@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,141 +50,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 0d836392cadd5535f4184d46d901a82eb276ed62 upstream.
+commit 3c4276936f6fbe52884b4ea4e6cc120b890a0f9f upstream.
 
-If we end up with logging an inode reference item which has the same name
-but different index from the one we have persisted, we end up failing when
-replaying the log with an errno value of -EEXIST. The error comes from
-btrfs_add_link(), which is called from add_inode_ref(), when we are
-replaying an inode reference item.
+We recently ran into the following deadlock involving
+btrfs_write_inode():
 
-Example scenario where this happens:
+[  +0.005066]  __schedule+0x38e/0x8c0
+[  +0.007144]  schedule+0x36/0x80
+[  +0.006447]  bit_wait+0x11/0x60
+[  +0.006446]  __wait_on_bit+0xbe/0x110
+[  +0.007487]  ? bit_wait_io+0x60/0x60
+[  +0.007319]  __inode_wait_for_writeback+0x96/0xc0
+[  +0.009568]  ? autoremove_wake_function+0x40/0x40
+[  +0.009565]  inode_wait_for_writeback+0x21/0x30
+[  +0.009224]  evict+0xb0/0x190
+[  +0.006099]  iput+0x1a8/0x210
+[  +0.006103]  btrfs_run_delayed_iputs+0x73/0xc0
+[  +0.009047]  btrfs_commit_transaction+0x799/0x8c0
+[  +0.009567]  btrfs_write_inode+0x81/0xb0
+[  +0.008008]  __writeback_single_inode+0x267/0x320
+[  +0.009569]  writeback_sb_inodes+0x25b/0x4e0
+[  +0.008702]  wb_writeback+0x102/0x2d0
+[  +0.007487]  wb_workfn+0xa4/0x310
+[  +0.006794]  ? wb_workfn+0xa4/0x310
+[  +0.007143]  process_one_work+0x150/0x410
+[  +0.008179]  worker_thread+0x6d/0x520
+[  +0.007490]  kthread+0x12c/0x160
+[  +0.006620]  ? put_pwq_unlocked+0x80/0x80
+[  +0.008185]  ? kthread_park+0xa0/0xa0
+[  +0.007484]  ? do_syscall_64+0x53/0x150
+[  +0.007837]  ret_from_fork+0x29/0x40
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
+Writeback calls:
 
-  $ touch /mnt/foo
-  $ ln /mnt/foo /mnt/bar
+btrfs_write_inode
+  btrfs_commit_transaction
+    btrfs_run_delayed_iputs
 
-  $ sync
+If iput() is called on that same inode, evict() will wait for writeback
+forever.
 
-  # Rename the first hard link (foo) to a new name and rename the second
-  # hard link (bar) to the old name of the first hard link (foo).
-  $ mv /mnt/foo /mnt/qwerty
-  $ mv /mnt/bar /mnt/foo
+btrfs_write_inode() was originally added way back in 4730a4bc5bf3
+("btrfs_dirty_inode") to support O_SYNC writes. However, ->write_inode()
+hasn't been used for O_SYNC since 148f948ba877 ("vfs: Introduce new
+helpers for syncing after writing to O_SYNC file or IS_SYNC inode"), so
+btrfs_write_inode() is actually unnecessary (and leads to a bunch of
+unnecessary commits). Get rid of it, which also gets rid of the
+deadlock.
 
-  # Create a new file, in the same parent directory, with the old name of
-  # the second hard link (bar) and fsync this new file.
-  # We do this instead of calling fsync on foo/qwerty because if we did
-  # that the fsync resulted in a full transaction commit, not triggering
-  # the problem.
-  $ touch /mnt/bar
-  $ xfs_io -c "fsync" /mnt/bar
-
-  <power fail>
-
-  $ mount /dev/sdb /mnt
-  mount: mount /dev/sdb on /mnt failed: File exists
-
-So fix this by checking if a conflicting inode reference exists (same
-name, same parent but different index), removing it (and the associated
-dir index entries from the parent inode) if it exists, before attempting
-to add the new reference.
-
-A test case for fstests follows soon.
-
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+CC: stable@vger.kernel.org # 3.2+
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+[Omar: new commit message]
+Signed-off-by: Omar Sandoval <osandov@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   66 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ fs/btrfs/inode.c |   26 --------------------------
+ fs/btrfs/super.c |    1 -
+ 2 files changed, 27 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -1291,6 +1291,46 @@ again:
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6027,32 +6027,6 @@ err:
  	return ret;
  }
  
-+static int btrfs_inode_ref_exists(struct inode *inode, struct inode *dir,
-+				  const u8 ref_type, const char *name,
-+				  const int namelen)
-+{
-+	struct btrfs_key key;
-+	struct btrfs_path *path;
-+	const u64 parent_id = btrfs_ino(BTRFS_I(dir));
-+	int ret;
-+
-+	path = btrfs_alloc_path();
-+	if (!path)
-+		return -ENOMEM;
-+
-+	key.objectid = btrfs_ino(BTRFS_I(inode));
-+	key.type = ref_type;
-+	if (key.type == BTRFS_INODE_REF_KEY)
-+		key.offset = parent_id;
-+	else
-+		key.offset = btrfs_extref_hash(parent_id, name, namelen);
-+
-+	ret = btrfs_search_slot(NULL, BTRFS_I(inode)->root, &key, path, 0, 0);
-+	if (ret < 0)
-+		goto out;
-+	if (ret > 0) {
-+		ret = 0;
-+		goto out;
-+	}
-+	if (key.type == BTRFS_INODE_EXTREF_KEY)
-+		ret = btrfs_find_name_in_ext_backref(path->nodes[0],
-+						     path->slots[0], parent_id,
-+						     name, namelen, NULL);
-+	else
-+		ret = btrfs_find_name_in_backref(path->nodes[0], path->slots[0],
-+						 name, namelen, NULL);
-+
-+out:
-+	btrfs_free_path(path);
-+	return ret;
-+}
-+
+-int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+-{
+-	struct btrfs_root *root = BTRFS_I(inode)->root;
+-	struct btrfs_trans_handle *trans;
+-	int ret = 0;
+-	bool nolock = false;
+-
+-	if (test_bit(BTRFS_INODE_DUMMY, &BTRFS_I(inode)->runtime_flags))
+-		return 0;
+-
+-	if (btrfs_fs_closing(root->fs_info) &&
+-			btrfs_is_free_space_inode(BTRFS_I(inode)))
+-		nolock = true;
+-
+-	if (wbc->sync_mode == WB_SYNC_ALL) {
+-		if (nolock)
+-			trans = btrfs_join_transaction_nolock(root);
+-		else
+-			trans = btrfs_join_transaction(root);
+-		if (IS_ERR(trans))
+-			return PTR_ERR(trans);
+-		ret = btrfs_commit_transaction(trans);
+-	}
+-	return ret;
+-}
+-
  /*
-  * replay one inode back reference item found in the log tree.
-  * eb, slot and key refer to the buffer and key found in the log tree.
-@@ -1400,6 +1440,32 @@ static noinline int add_inode_ref(struct
- 				}
- 			}
- 
-+			/*
-+			 * If a reference item already exists for this inode
-+			 * with the same parent and name, but different index,
-+			 * drop it and the corresponding directory index entries
-+			 * from the parent before adding the new reference item
-+			 * and dir index entries, otherwise we would fail with
-+			 * -EEXIST returned from btrfs_add_link() below.
-+			 */
-+			ret = btrfs_inode_ref_exists(inode, dir, key->type,
-+						     name, namelen);
-+			if (ret > 0) {
-+				ret = btrfs_unlink_inode(trans, root,
-+							 BTRFS_I(dir),
-+							 BTRFS_I(inode),
-+							 name, namelen);
-+				/*
-+				 * If we dropped the link count to 0, bump it so
-+				 * that later the iput() on the inode will not
-+				 * free it. We will fixup the link count later.
-+				 */
-+				if (!ret && inode->i_nlink == 0)
-+					inc_nlink(inode);
-+			}
-+			if (ret < 0)
-+				goto out;
-+
- 			/* insert our name */
- 			ret = btrfs_add_link(trans, BTRFS_I(dir),
- 					BTRFS_I(inode),
+  * This is somewhat expensive, updating the tree every time the
+  * inode changes.  But, it is most likely to find the inode in cache.
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2331,7 +2331,6 @@ static const struct super_operations btr
+ 	.sync_fs	= btrfs_sync_fs,
+ 	.show_options	= btrfs_show_options,
+ 	.show_devname	= btrfs_show_devname,
+-	.write_inode	= btrfs_write_inode,
+ 	.alloc_inode	= btrfs_alloc_inode,
+ 	.destroy_inode	= btrfs_destroy_inode,
+ 	.statfs		= btrfs_statfs,
 
 
