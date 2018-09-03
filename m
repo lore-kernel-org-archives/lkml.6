@@ -1,121 +1,95 @@
 Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C032C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10656C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7EA20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:56:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahCYZtRq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7EA20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 834B020862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 12:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834B020862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbeICRQT (ORCPT
+        id S1727111AbeICRS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:16:19 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44522 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeICRQT (ORCPT
+        Mon, 3 Sep 2018 13:18:57 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44304 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeICRS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:16:19 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d131-v6so258966qke.11;
-        Mon, 03 Sep 2018 05:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I2JHvI41TJ/c7Z73rqsV3JJCM5rXM5RyLn4XFLljeM4=;
-        b=ahCYZtRqQArkRwr2d9Qmr/2CN99w9UaahMxMWLscP8VGwApzbGDxUCXubAQpeRSWmG
-         895CU+xF3ztdCGSl8RnMrJsVePUdFyxHb7zmmnmcFXhduyYD23QFEI5MKiMRWkeYebhj
-         Kbecs+BtzFcsUfOFH6W3hk5GGVdsGV1Y1F1MOu7LfSoAWCyifFFmtsY+H5bFM2C9Xy1b
-         EgbCG+HZu9h8Eytt7kdrVvA/MB9zbc9t47UCrAidFk/tR38iJCuXsqDwj9x+LAMmihNo
-         lHPsL6y39ZWy9YMYjmxNszuJ1pwfMhWgyeVKHRJdlu9mJGf0JCHkamFGKU2RYG+KsQfN
-         oBrQ==
+        Mon, 3 Sep 2018 13:18:57 -0400
+Received: by mail-ed1-f67.google.com with SMTP id s10-v6so704036edb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 05:58:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I2JHvI41TJ/c7Z73rqsV3JJCM5rXM5RyLn4XFLljeM4=;
-        b=YytzMTnBAppvNud/m8EbSV/O298VxsgQPz2N9O8YOAqxztEXoopDdE4vMP/1DJcsHq
-         W6a7tWgKiP047EF9y1ccEAeDJOEsLxqkuqWo/wXAwsPeapzlegl2vEImQ4si/YU6ruw5
-         JXNnxXe0BtZ65IM+TxJFoJbUqD46N30WPOt7JYGymsj8FXUb9v6XcOaXKtNgHmSExwtZ
-         4smIdcdCx0T0BXgg6hva4exaOwCYqnXvWm+cYma59cBjhePVham59UowIF1YYbDRFHSb
-         1EtB55A8N/SAl2R/HjLLgh7nClNsalJyYxwdl9omw8iaSHeT4abwZUVdClsNNmHcj1GX
-         dMIg==
-X-Gm-Message-State: APzg51Cous+EfUMSEIXjFQ0/XxYWdk243M4uk5aAxLY68k32q3wha/JA
-        WWUUwaieGB3npy2UYDMZv5afhPfLZbbdfHac+ag=
-X-Google-Smtp-Source: ANB0Vdb7UEAVuQA0OMYNuxnehI5mmMqR7MJPm4yca/zIclao90F/r0afjkC0wIhwrdmlrv1dgoqID0YM45dFPQfoldc=
-X-Received: by 2002:a37:179e:: with SMTP id 30-v6mr24139123qkx.33.1535979376985;
- Mon, 03 Sep 2018 05:56:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gkMw77JGqjvMY2EmL0avAdwpMnxdvHf8T0MHM4nzKGI=;
+        b=iJhjiHjc/2mAmGLd+pZ3dl7MXnw9Uoj4Y4GcAaFZdCrvfwnTA/buu6SkTwJPFlVcmJ
+         zPq2EoPYuMzImvGVYb7mwTEZ9mAkmz8pC8dTkBLdDIX2ADH4cyBefTCMFKC9IzKoIfs1
+         QsIe7DAF/VtvdnlTxCPGpHmt8vxqvtrXoSQB83AsEQRx4/rkIs7HqIFPNAkCAXPDcO68
+         FwGx4+0YoE24Ri2zwxv/74A8uFrE3vlZJpCHp004FTHTvkZtZSfqMkzVfE+9C2xqGosT
+         p1YbeL2JCqdznyvVw9i4k9fL4yangos7FsK25oXiLvRuAUnVLLFiNs+dXmFAd/+cX+5k
+         utYg==
+X-Gm-Message-State: APzg51CLtxaHmdNMra8a/MqUUeqSbLxwvfuzwNrNloTfaZZannrAVAwe
+        5CcwdkajiEKon9EObd/2cJI5VQ==
+X-Google-Smtp-Source: ANB0Vdbp/gfj+4jGmZH0D8aY/8A2xd9euCbBmJIaIjc1Zt1COWlm4zDw5jkq9rAuW67p/OeJp91EHg==
+X-Received: by 2002:a50:eb96:: with SMTP id y22-v6mr32116152edr.38.1535979533405;
+        Mon, 03 Sep 2018 05:58:53 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id p28-v6sm13376528eda.85.2018.09.03.05.58.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 05:58:52 -0700 (PDT)
+Subject: Re: [PATCH v5 0/9] ata: ahci_platform: support allwinner R40 AHCI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     axboe@kernel.dk, mark.rutland@arm.com, robh+dt@kernel.org,
+        wens@csie.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180903100201.23131-1-clabbe.montjoie@gmail.com>
+ <20180903124229.rchurusvt4rv5ln7@flea>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <34c6fda4-c266-8aff-e685-e6a6ee2c7890@redhat.com>
+Date:   Mon, 3 Sep 2018 14:58:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-2-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-2-jarkko.sakkinen@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 3 Sep 2018 15:56:05 +0300
-Message-ID: <CAHp75VfM6w6OrgczpMOY8wMK8Uw_SLm+RHDitYjrnNSX4aTepg@mail.gmail.com>
-Subject: Re: [PATCH v13 01/13] x86/sgx: Update MAINTAINERS
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180903124229.rchurusvt4rv5ln7@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:56 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> Add the maintainer information for the SGX subsystem.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 24b200d91b30..877fbc6ef7a7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7562,6 +7562,13 @@ L:       linux-gpio@vger.kernel.org
->  S:     Maintained
->  F:     drivers/gpio/gpio-intel-mid.c
->
-> +INTEL SGX
+Hi,
 
-It should go in between of
+On 03-09-18 14:42, Maxime Ripard wrote:
+> On Mon, Sep 03, 2018 at 12:01:52PM +0200, Corentin Labbe wrote:
+>> This patchset add support for allwinner R40 AHCI controller.
+>>
+>> The whole patchset is tested on sun8i-r40-bananapi-m2-ultra and
+>> on sun7i-a20-cubieboard2 which doesnt have any of the ressources added
+>> by this serie, so no regression should come with it.
+>>
+>> Patchs 1-7 should go via the ata tree
+>> Patchs 8,9 should go via the sunxi tree
+>>
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-INTEL RDMA RNIC DRIVER
-...
-INTEL SHA MULTIBUFFER DRIVER
+The entire series looks good to me too:
 
-> +M:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> +L:     linux-sgx@vger.kernel.org
-> +Q:     https://patchwork.kernel.org/project/intel-sgx/list/
-> +F:     drivers/platform/x86/intel_sgx/
-> +K:     \bSGX_
-> +
->  INVENSENSE MPU-3050 GYROSCOPE DRIVER
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
+Regards,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Hans
