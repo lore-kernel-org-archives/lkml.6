@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDD2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C1FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC9F20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1B9D20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:03:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="tHcTILgs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC9F20843
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="pUeWcc+T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B9D20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbeICOXB (ORCPT
+        id S1728006AbeICOXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:23:01 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36957 "EHLO
+        Mon, 3 Sep 2018 10:23:04 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:37052 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbeICOXB (ORCPT
+        with ESMTP id S1727374AbeICOXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:23:01 -0400
+        Mon, 3 Sep 2018 10:23:03 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w83A2AsY026175;
-        Mon, 3 Sep 2018 19:02:11 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w83A2AsY026175
+        by conuserg-08.nifty.com with ESMTP id w83A2AsX026175;
+        Mon, 3 Sep 2018 19:02:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w83A2AsX026175
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535968932;
-        bh=AXfpxzad3p9nMHosRdYtTF6ipqbKVsh5ibLJLNOL+Cs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHcTILgsszEG3AWAaNCwF72GVDuN8ZSanaqjiVVyZ9N1XNhQ85eR81X1XaW+I8slx
-         K7Fr8LMks4eyoK+PnuOwXVzrZTDCfZhLmE2k2RFnLpINdNwShn+w83sfrghVXbMMI+
-         1yAFlJjytYdzISMcD47evojdsqKg2B1ZZViU7JZbmRCykb32u2H+iWnKuZDI/PSZxh
-         yWYGz9u5Zk1RM2xoIqEtcGoKsWE4oy1Wh+WQyxDOidXh9dBDVUzjutJaxu3hv8uoKz
-         XD3Jq6PXOaZuKg0J7YbZkwlk4pzzSmDkER/8RwhhezvBLOEAmxMxxcBWbxXUNSjokW
-         G/L0SliYvWnWA==
+        s=dec2015msa; t=1535968931;
+        bh=PXjL+SIa1nuOWGclDXrdVYTvPL+0A8B86deu6ZFzxRI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pUeWcc+Tr+d33r33xPLsfK6PVgfA6wPa3tXESiOHL+05IMKsKstbERiKjR3WsTXKT
+         6myDsH3tKZMzD8j2GVdewSGOrNiKC493HLjitSqWdYNsXSDQ4I/u6LDKyq/k09Uwu+
+         wyJMaMTHxgA31rLCed8Sdz2Dr5mqOUmXrf2qILVnqwpLqw6yBP4gzLdzNLoSHLd9YL
+         TIlABAr99WqoxgLI8lCqNfBSlUgZGDQk7A2jRBTDF8cIPZY3djKWqcsQfpVjPQQYyy
+         mkmWSXizW5FA+0SG7+8Pcmvx0nVvAMPNQJ32G1FCyedgeEmPCIlXnCdL/MTkB47WkT
+         B5W/0In2fRcQg==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -53,77 +53,34 @@ Cc:     Sam Ravnborg <sam@ravnborg.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         Michal Marek <michal.lkml@markovi.net>
-Subject: [RFC PATCH 1/3] kconfig: support an environment variable for non-interactive syncconfig
-Date:   Mon,  3 Sep 2018 19:01:54 +0900
-Message-Id: <1535968916-9159-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RFC PATCH 0/3] kbuild: support syncing .config non-interactively and record ARCH in spec file
+Date:   Mon,  3 Sep 2018 19:01:53 +0900
+Message-Id: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Kconfig files are updated, or build environments etc. are changed,
-'make syncconfig' is invoked, which will show prompts if new config
-options are available.  Users must explicitly input values for all
-new symbols.  This is the conventional behavior for the kernel build.
 
-However, it would be useful to process this non-interactively in such
-cases as package building.
+This work was prompted by the criticism about the recent Kconfig change:
+https://lkml.org/lkml/2018/6/27/254
 
-Package maintainers create source packages with the .config configured
-on their machines.  Package builders may work on different machine
-environments, where different compilers are installed.
+I may not fully understand his concern, though.
 
-With the recent changes in Kconfig, the .config contents depend on
-the compiler.  During package building, it is not sensible to show
-prompts for new symbols; it would be just annoys script automation.
 
-Add a new switch, KCONFIG_NONINTERACTIVE_UPDATE.  If this environment
-variable is set, Kconfig will sync the configuration non-interactively.
-All new symbols are silently set to their default values.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Masahiro Yamada (3):
+  kconfig: support an environment variable for non-interactive
+    syncconfig
+  kbuild: rpm-pkg: hard-code ARCH in RPM SPEC file
+  kbuild: rpm-pkg: set KCONFIG_NONINTERACTIVE_UPDATE
 
- Documentation/kbuild/kconfig.txt | 6 ++++++
- scripts/kconfig/conf.c           | 5 +++++
- 2 files changed, 11 insertions(+)
+ Documentation/kbuild/kconfig.txt |  6 ++++++
+ scripts/kconfig/conf.c           |  5 +++++
+ scripts/package/mkspec           | 23 +++++++++++++----------
+ 3 files changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/kbuild/kconfig.txt b/Documentation/kbuild/kconfig.txt
-index 68c8291..5c29c3f 100644
---- a/Documentation/kbuild/kconfig.txt
-+++ b/Documentation/kbuild/kconfig.txt
-@@ -129,6 +129,12 @@ KCONFIG_NOSILENTUPDATE
- If this variable has a non-blank value, it prevents silent kernel
- config updates (requires explicit updates).
- 
-+KCONFIG_NONINTERACTIVE_UPDATE
-+--------------------------------------------------
-+If this variable has a non-blank value, it prevents user input prompts
-+from showing up even when new symbols are available.  All new symbols
-+are silently set to their default values.
-+
- KCONFIG_AUTOCONFIG
- --------------------------------------------------
- This environment variable can be set to specify the path & name of the
-diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
-index 7b2b372..b64bbc0 100644
---- a/scripts/kconfig/conf.c
-+++ b/scripts/kconfig/conf.c
-@@ -680,6 +680,11 @@ int main(int ac, char **av)
- 	case oldconfig:
- 	case listnewconfig:
- 	case syncconfig:
-+		if (input_mode == syncconfig) {
-+			name = getenv("KCONFIG_NONINTERACTIVE_UPDATE");
-+			if (name && *name)
-+				break;
-+		}
- 		/* Update until a loop caused no more changes */
- 		do {
- 			conf_cnt = 0;
 -- 
 2.7.4
 
