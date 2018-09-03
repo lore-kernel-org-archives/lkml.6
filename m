@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA346C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D3EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5F020843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5F020843
+	by mail.kernel.org (Postfix) with ESMTP id BA8AA20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:08:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8AA20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbeICV33 (ORCPT
+        id S1729953AbeICV3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:29:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40322 "EHLO
+        Mon, 3 Sep 2018 17:29:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbeICV32 (ORCPT
+        with ESMTP id S1728766AbeICV3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:29:28 -0400
+        Mon, 3 Sep 2018 17:29:33 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEEB3BB3;
-        Mon,  3 Sep 2018 17:08:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFA42BB3;
+        Mon,  3 Sep 2018 17:08:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.9 082/107] udl-kms: fix crash due to uninitialized memory
-Date:   Mon,  3 Sep 2018 18:56:46 +0200
-Message-Id: <20180903165641.284899357@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 083/107] b43legacy/leds: Ensure NUL-termination of LED name string
+Date:   Mon,  3 Sep 2018 18:56:47 +0200
+Message-Id: <20180903165641.330499135@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -50,32 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Michael Buesch <m@bues.ch>
 
-commit 09a00abe3a9941c2715ca83eb88172cd2f54d8fd upstream.
+commit 4d77a89e3924b12f4a5628b21237e57ab4703866 upstream.
 
-We must use kzalloc when allocating the fb_deferred_io structure.
-Otherwise, the field first_io is undefined and it causes a crash.
+strncpy might not NUL-terminate the string, if the name equals the buffer size.
+Use strlcpy instead.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Michael Buesch <m@bues.ch>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/udl/udl_fb.c |    2 +-
+ drivers/net/wireless/broadcom/b43legacy/leds.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -217,7 +217,7 @@ static int udl_fb_open(struct fb_info *i
+--- a/drivers/net/wireless/broadcom/b43legacy/leds.c
++++ b/drivers/net/wireless/broadcom/b43legacy/leds.c
+@@ -101,7 +101,7 @@ static int b43legacy_register_led(struct
+ 	led->dev = dev;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
  
- 		struct fb_deferred_io *fbdefio;
- 
--		fbdefio = kmalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
-+		fbdefio = kzalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
- 
- 		if (fbdefio) {
- 			fbdefio->delay = DL_DEFIO_WRITE_DELAY;
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
 
 
