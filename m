@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06793C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A401FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF9520843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF9520843
+	by mail.kernel.org (Postfix) with ESMTP id 6A98C20843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A98C20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbeICVaG (ORCPT
+        id S1729993AbeICVaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:30:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40456 "EHLO
+        Mon, 3 Sep 2018 17:30:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeICVaF (ORCPT
+        with ESMTP id S1728233AbeICVaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:30:05 -0400
+        Mon, 3 Sep 2018 17:30:08 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5BB6D02;
-        Mon,  3 Sep 2018 17:09:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE07FBB3;
+        Mon,  3 Sep 2018 17:09:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.9 088/107] x86/irqflags: Mark native_restore_fl extern inline
-Date:   Mon,  3 Sep 2018 18:56:52 +0200
-Message-Id: <20180903165641.562882106@linuxfoundation.org>
+        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: [PATCH 4.9 089/107] x86/spectre: Add missing family 6 check to microcode check
+Date:   Mon,  3 Sep 2018 18:56:53 +0200
+Message-Id: <20180903165641.619117992@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -55,40 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 1f59a4581b5ecfe9b4f049a7a2cf904d8352842d upstream.
+commit 1ab534e85c93945f7862378d8c8adcf408205b19 upstream.
 
-This should have been marked extern inline in order to pick up the out
-of line definition in arch/x86/kernel/irqflags.S.
+The check for Spectre microcodes does not check for family 6, only the
+model numbers.
 
-Fixes: 208cbb325589 ("x86/irqflags: Provide a declaration for native_save_fl")
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Add a family 6 check to avoid ambiguity with other families.
+
+Fixes: a5b296636453 ("x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early Spectre v2 microcodes")
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180827214011.55428-1-ndesaulniers@google.com
+Link: https://lkml.kernel.org/r/20180824170351.34874-2-andi@firstfloor.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/irqflags.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -32,7 +32,8 @@ extern inline unsigned long native_save_
- 	return flags;
- }
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -109,6 +109,9 @@ static bool bad_spectre_microcode(struct
+ 	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
+ 		return false;
  
--static inline void native_restore_fl(unsigned long flags)
-+extern inline void native_restore_fl(unsigned long flags);
-+extern inline void native_restore_fl(unsigned long flags)
- {
- 	asm volatile("push %0 ; popf"
- 		     : /* no output */
++	if (c->x86 != 6)
++		return false;
++
+ 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
+ 		if (c->x86_model == spectre_bad_microcodes[i].model &&
+ 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
 
 
