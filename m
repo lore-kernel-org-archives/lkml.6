@@ -3,74 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABD2C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60E8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6803E20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6803E20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 6BD9B20856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD9B20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeICW2e (ORCPT
+        id S1727568AbeICWaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:28:34 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:54894 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbeICW2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:28:34 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Sep 2018 18:28:33 EDT
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1F44A72CA5E;
-        Mon,  3 Sep 2018 20:59:28 +0300 (MSK)
-Received: from glebfm.cloud.tilaa.com (glebfm.cloud.tilaa.com [84.22.98.219])
-        by imap.altlinux.org (Postfix) with ESMTPSA id A28114A4A2A;
-        Mon,  3 Sep 2018 20:59:27 +0300 (MSK)
-Date:   Mon, 3 Sep 2018 20:59:13 +0300
-From:   Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] vhost: fix VHOST_GET_BACKEND_FEATURES ioctl request
- definition
-Message-ID: <20180903175906.GA11529@glebfm.cloud.tilaa.com>
+        Mon, 3 Sep 2018 18:30:25 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:39478 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727338AbeICWaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 18:30:25 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w83I94kP029283;
+        Mon, 3 Sep 2018 19:09:04 +0100
+Date:   Mon, 3 Sep 2018 19:09:03 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     Rogier Wolff <R.E.Wolff@BitWizard.nl>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: IRQ number question.
+Message-ID: <20180903190903.290fff01@alans-desktop>
+In-Reply-To: <20180903171639.GC16262@BitWizard.nl>
+References: <20180903171639.GC16262@BitWizard.nl>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The _IOC_READ flag fits this ioctl request more because this request
-actually only writes to, but doesn't read from userspace.
-See NOTEs in include/uapi/asm-generic/ioctl.h for more information.
+On Mon, 3 Sep 2018 19:16:39 +0200
+Rogier Wolff <R.E.Wolff@BitWizard.nl> wrote:
 
-Fixes: 429711aec282 ("vhost: switch to use new message format")
-Signed-off-by: Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
----
- include/uapi/linux/vhost.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi, 
+> 
+> I'm writing a kernel driver. It is not going to be widely used, so I'm
+> not motivated to make things nice enough for inclusion in the standard
+> kernel.
+> 
+> But lspci shows my device: 
+> 
+> 03:01.0 Serial bus controller [0c80]: Phoenix Contact GmbH & Co. Device 0002 (rev b7)
+>         Flags: bus master, stepping, medium devsel, latency 32, IRQ 14
+>         I/O ports at e070 [size=16]
+>         Memory at f7d00000 (32-bit, non-prefetchable) [size=256K]
+> 
+> Now when I start my module and prod the device a bit, it will generate
+> an interrupt. (in this case the monitor program needs to start sending
+> messages to the card.)
+> 
+> Then the kernel reports: 
+> 
+> irq 18: nobody cared (try booting with the "irqpoll" option)
+> 
+> I've been writing device drivers in the past, but in the past
+> when the lspci listed "IRQ 14" then I'd have to request_irq (14, ...
 
-diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-index b1e22c40c4b6..84c3de89696a 100644
---- a/include/uapi/linux/vhost.h
-+++ b/include/uapi/linux/vhost.h
-@@ -176,7 +176,7 @@ struct vhost_memory {
- #define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
- 
- #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
--#define VHOST_GET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x26, __u64)
-+#define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
- 
- /* VHOST_NET specific defines */
- 
+The IRQ number in the PCI configuration space is just a label really for
+legacy OS stuff. Nothing actually routes interrupts according to it (*).
+If it's coming up as 14 that looks more like the BIOS mislabelled it.
+Legacy PCI interrupts care about lines and pins not irq numbers.
 
--- 
-glebfm
+Are you looking at values after things like pci_enable_device were called
+or before ? Are you also looking at what is in pcidev->irq after the
+enable ?
+ 
+> Has this changed? Or is this hardware "odd"/"bad"/"broken" in that it
+> initializes the PCI devices wrong? (*)
+> 
+> My driver now works with the interrupts coming in nicely on IRQ18...
+> 
+> I have this card where I'm writing my own driver, and another PCI card
+> that uses an "included-in-the-kernel" driver, and it too behaves as if
+> it doesn't get any interrupts.
+> 
+> 	Roger. 
+> 
+> (*) Obviously according to everybody "windows works", so could it be
+> that modern windows simply activates an irq and polls to see what
+> driver handles it? Or something like that? Ah! That would be somewhat
+> similar to what "irqpoll" does on Linux!
+
+Does the hardware also support modern INTX interrupts or just the old
+legacy ones. Could be Windows is using INTX if so
+
+Alan
+(*) PCI doesn't. Certain slightly stoned PCI 'emulations' in some
+hardware do.
+
