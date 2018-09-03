@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA40C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614F5C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BB620779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB620779
+	by mail.kernel.org (Postfix) with ESMTP id 24E1E20779
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E1E20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbeICVYm (ORCPT
+        id S1729238AbeICVYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:24:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39130 "EHLO
+        Mon, 3 Sep 2018 17:24:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728084AbeICVYm (ORCPT
+        with ESMTP id S1728030AbeICVYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:24:42 -0400
+        Mon, 3 Sep 2018 17:24:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30D9ECFF;
-        Mon,  3 Sep 2018 17:03:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4ECFED00;
+        Mon,  3 Sep 2018 17:03:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 015/107] bpf, ppc64: fix unexpected r0=0 exit path inside bpf_xadd
-Date:   Mon,  3 Sep 2018 18:55:39 +0200
-Message-Id: <20180903165638.034076439@linuxfoundation.org>
+Subject: [PATCH 4.9 016/107] tools/power turbostat: fix -S on UP systems
+Date:   Mon,  3 Sep 2018 18:55:40 +0200
+Message-Id: <20180903165638.081586083@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -54,97 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Len Brown <len.brown@intel.com>
 
-[ Upstream commit b9c1e60e7bf4e64ac1b4f4d6d593f0bb57886973 ]
+[ Upstream commit 9d83601a9cc1884d1b5706ee2acc661d558c6838 ]
 
-None of the JITs is allowed to implement exit paths from the BPF
-insn mappings other than BPF_JMP | BPF_EXIT. In the BPF core code
-we have a couple of rewrites in eBPF (e.g. LD_ABS / LD_IND) and
-in eBPF to cBPF translation to retain old existing behavior where
-exceptions may occur; they are also tightly controlled by the
-verifier where it disallows some of the features such as BPF to
-BPF calls when legacy LD_ABS / LD_IND ops are present in the BPF
-program. During recent review of all BPF_XADD JIT implementations
-I noticed that the ppc64 one is buggy in that it contains two
-jumps to exit paths. This is problematic as this can bypass verifier
-expectations e.g. pointed out in commit f6b1b3bf0d5f ("bpf: fix
-subprog verifier bypass by div/mod by 0 exception"). The first
-exit path is obsoleted by the fix in ca36960211eb ("bpf: allow xadd
-only on aligned memory") anyway, and for the second one we need to
-do a fetch, add and store loop if the reservation from lwarx/ldarx
-was lost in the meantime.
+The -S (system summary) option failed to print any data on a 1-processor system.
 
-Fixes: 156d0e290e96 ("powerpc/ebpf/jit: Implement JIT compiler for extended BPF")
-Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Reviewed-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Tested-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Reported-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/net/bpf_jit_comp64.c |   29 +++++------------------------
- 1 file changed, 5 insertions(+), 24 deletions(-)
+ tools/power/x86/turbostat/turbostat.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -326,6 +326,7 @@ static int bpf_jit_build_body(struct bpf
- 		u64 imm64;
- 		u8 *func;
- 		u32 true_cond;
-+		u32 tmp_idx;
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -733,9 +733,7 @@ void format_all_counters(struct thread_d
+ 	if (!printed || !summary_only)
+ 		print_header();
  
- 		/*
- 		 * addrs[] maps a BPF bytecode address into a real offset from
-@@ -685,11 +686,7 @@ emit_clear:
- 		case BPF_STX | BPF_XADD | BPF_W:
- 			/* Get EA into TMP_REG_1 */
- 			PPC_ADDI(b2p[TMP_REG_1], dst_reg, off);
--			/* error if EA is not word-aligned */
--			PPC_ANDI(b2p[TMP_REG_2], b2p[TMP_REG_1], 0x03);
--			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + 12);
--			PPC_LI(b2p[BPF_REG_0], 0);
--			PPC_JMP(exit_addr);
-+			tmp_idx = ctx->idx * 4;
- 			/* load value from memory into TMP_REG_2 */
- 			PPC_BPF_LWARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
- 			/* add value from src_reg into this */
-@@ -697,32 +694,16 @@ emit_clear:
- 			/* store result back */
- 			PPC_BPF_STWCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
- 			/* we're done if this succeeded */
--			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (7*4));
--			/* otherwise, let's try once more */
--			PPC_BPF_LWARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
--			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
--			PPC_BPF_STWCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
--			/* exit if the store was not successful */
--			PPC_LI(b2p[BPF_REG_0], 0);
--			PPC_BCC(COND_NE, exit_addr);
-+			PPC_BCC_SHORT(COND_NE, tmp_idx);
- 			break;
- 		/* *(u64 *)(dst + off) += src */
- 		case BPF_STX | BPF_XADD | BPF_DW:
- 			PPC_ADDI(b2p[TMP_REG_1], dst_reg, off);
--			/* error if EA is not doubleword-aligned */
--			PPC_ANDI(b2p[TMP_REG_2], b2p[TMP_REG_1], 0x07);
--			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (3*4));
--			PPC_LI(b2p[BPF_REG_0], 0);
--			PPC_JMP(exit_addr);
--			PPC_BPF_LDARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
--			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
--			PPC_BPF_STDCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
--			PPC_BCC_SHORT(COND_EQ, (ctx->idx * 4) + (7*4));
-+			tmp_idx = ctx->idx * 4;
- 			PPC_BPF_LDARX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1], 0);
- 			PPC_ADD(b2p[TMP_REG_2], b2p[TMP_REG_2], src_reg);
- 			PPC_BPF_STDCX(b2p[TMP_REG_2], 0, b2p[TMP_REG_1]);
--			PPC_LI(b2p[BPF_REG_0], 0);
--			PPC_BCC(COND_NE, exit_addr);
-+			PPC_BCC_SHORT(COND_NE, tmp_idx);
- 			break;
+-	if (topo.num_cpus > 1)
+-		format_counters(&average.threads, &average.cores,
+-			&average.packages);
++	format_counters(&average.threads, &average.cores, &average.packages);
  
- 		/*
+ 	printed = 1;
+ 
 
 
