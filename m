@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3638C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 189BCC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909F620779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909F620779
+	by mail.kernel.org (Postfix) with ESMTP id BEDE520862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEDE520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbeICVVn (ORCPT
+        id S1728437AbeICVVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:21:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38564 "EHLO
+        Mon, 3 Sep 2018 17:21:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38576 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728087AbeICVVm (ORCPT
+        with ESMTP id S1728410AbeICVVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:21:42 -0400
+        Mon, 3 Sep 2018 17:21:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4327CCFB;
-        Mon,  3 Sep 2018 17:00:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5261ECFB;
+        Mon,  3 Sep 2018 17:00:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 23/80] i2c: davinci: Avoid zero value of CLKH
-Date:   Mon,  3 Sep 2018 18:49:01 +0200
-Message-Id: <20180903164935.081319312@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.4 50/80] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+Date:   Mon,  3 Sep 2018 18:49:28 +0200
+Message-Id: <20180903164936.153438049@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -52,42 +50,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+From: Greg Hackmann <ghackmann@android.com>
 
-[ Upstream commit cc8de9a68599b261244ea453b38678229f06ada7 ]
+commit 5ad356eabc47d26a92140a0c4b20eba471c10de3 upstream.
 
-If CLKH is set to 0 I2C clock is not generated at all, so avoid this value
-and stretch the clock in this case.
+ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
+before seeing if the PFN is valid.  This leads to false positives when
+some of the upper bits are set, but the lower bits match a valid PFN.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Acked-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+For example, the following userspace code looks up a bogus entry in
+/proc/kpageflags:
+
+    int pagemap = open("/proc/self/pagemap", O_RDONLY);
+    int pageflags = open("/proc/kpageflags", O_RDONLY);
+    uint64_t pfn, val;
+
+    lseek64(pagemap, [...], SEEK_SET);
+    read(pagemap, &pfn, sizeof(pfn));
+    if (pfn & (1UL << 63)) {        /* valid PFN */
+        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
+        pfn |= (1UL << 55);
+        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
+        read(pageflags, &val, sizeof(val));
+    }
+
+On ARM64 this causes the userspace process to crash with SIGSEGV rather
+than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
+valid, and stable_page_flags() will try to access an address between the
+user and kernel address ranges.
+
+Fixes: c1cc1552616d ("arm64: MMU initialisation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/i2c/busses/i2c-davinci.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/i2c/busses/i2c-davinci.c
-+++ b/drivers/i2c/busses/i2c-davinci.c
-@@ -234,12 +234,16 @@ static void i2c_davinci_calc_clk_divider
- 	/*
- 	 * It's not always possible to have 1 to 2 ratio when d=7, so fall back
- 	 * to minimal possible clkh in this case.
-+	 *
-+	 * Note:
-+	 * CLKH is not allowed to be 0, in this case I2C clock is not generated
-+	 * at all
- 	 */
--	if (clk >= clkl + d) {
-+	if (clk > clkl + d) {
- 		clkh = clk - clkl - d;
- 		clkl -= d;
- 	} else {
--		clkh = 0;
-+		clkh = 1;
- 		clkl = clk - (d << 1);
- 	}
- 
+---
+ arch/arm64/mm/init.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -120,7 +120,11 @@ static void __init zone_sizes_init(unsig
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
+-	return memblock_is_memory(pfn << PAGE_SHIFT);
++	phys_addr_t addr = pfn << PAGE_SHIFT;
++
++	if ((addr >> PAGE_SHIFT) != pfn)
++		return 0;
++	return memblock_is_memory(addr);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+ #endif
 
 
