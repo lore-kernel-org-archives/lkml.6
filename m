@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B34C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4FAC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE20D20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE20D20658
+	by mail.kernel.org (Postfix) with ESMTP id 70D0120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D0120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbeICVyU (ORCPT
+        id S1731297AbeICVyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:54:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47624 "EHLO
+        Mon, 3 Sep 2018 17:54:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728253AbeICVyU (ORCPT
+        with ESMTP id S1728253AbeICVyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:54:20 -0400
+        Mon, 3 Sep 2018 17:54:24 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 289DAD18;
-        Mon,  3 Sep 2018 17:33:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5221DD16;
+        Mon,  3 Sep 2018 17:33:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Yan <yanaijie@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Taras Kondratiuk <takondra@cisco.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 003/123] scsi: libsas: dynamically allocate and free ata host
-Date:   Mon,  3 Sep 2018 18:55:47 +0200
-Message-Id: <20180903165719.635976039@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 4.18 030/123] arm64: Handle mismatched cache type
+Date:   Mon,  3 Sep 2018 18:56:14 +0200
+Message-Id: <20180903165720.764050546@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -53,184 +52,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 2fa4a32613c9182b00e46872755b0662374424a7 upstream.
+commit 314d53d297980676011e6fd83dac60db4a01dc70 upstream.
 
-Commit 2623c7a5f2 ("libata: add refcounting to ata_host") v4.17+ introduced
-refcounting to ata_host and will increase or decrease the refcount when
-adding or deleting transport ATA port.
+Track mismatches in the cache type register (CTR_EL0), other
+than the D/I min line sizes and trap user accesses if there are any.
 
-Now the ata host for libsas is embedded in domain_device, and the ->kref
-member is not initialized. Afer we add ata transport class, ata_host_get()
-will be called when adding transport ATA port and a warning will be
-triggered as below:
-
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 2 PID: 103 at
-lib/refcount.c:153 refcount_inc+0x40/0x48 ......  Call trace:
- refcount_inc+0x40/0x48
- ata_host_get+0x10/0x18
- ata_tport_add+0x40/0x120
- ata_sas_tport_add+0xc/0x14
- sas_ata_init+0x7c/0xc8
- sas_discover_domain+0x380/0x53c
- process_one_work+0x12c/0x288
- worker_thread+0x58/0x3f0
- kthread+0xfc/0x128
- ret_from_fork+0x10/0x18
-
-And also when removing transport ATA port ata_host_put() will be called and
-another similar warning will be triggered. If the refcount decreased to
-zero, the ata host will be freed. But this ata host is only part of
-domain_device, it cannot be freed directly.
-
-So we have to change this embedded static ata host to a dynamically
-allocated ata host and initialize the ->kref member. To use ata_host_get()
-and ata_host_put() in libsas, we need to move the declaration of these
-functions to the public libata.h and export them.
-
-Fixes: b6240a4df018 ("scsi: libsas: add transport class for ATA devices")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Taras Kondratiuk <takondra@cisco.com>
-CC: Tejun Heo <tj@kernel.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
+Cc: <stable@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c          |    3 ++
- drivers/ata/libata.h               |    2 -
- drivers/scsi/libsas/sas_ata.c      |   40 ++++++++++++++++++++++++-------------
- drivers/scsi/libsas/sas_discover.c |    2 +
- include/linux/libata.h             |    2 +
- include/scsi/libsas.h              |    2 -
- 6 files changed, 34 insertions(+), 17 deletions(-)
+ arch/arm64/include/asm/cpucaps.h |    3 ++-
+ arch/arm64/kernel/cpu_errata.c   |   17 ++++++++++++++---
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -6424,6 +6424,7 @@ void ata_host_init(struct ata_host *host
- 	host->n_tags = ATA_MAX_QUEUE;
- 	host->dev = dev;
- 	host->ops = ops;
-+	kref_init(&host->kref);
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -49,7 +49,8 @@
+ #define ARM64_HAS_CACHE_DIC			28
+ #define ARM64_HW_DBM				29
+ #define ARM64_SSBD				30
++#define ARM64_MISMATCHED_CACHE_TYPE		31
+ 
+-#define ARM64_NCAPS				31
++#define ARM64_NCAPS				32
+ 
+ #endif /* __ASM_CPUCAPS_H */
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -65,11 +65,15 @@ is_kryo_midr(const struct arm64_cpu_capa
  }
  
- void __ata_port_probe(struct ata_port *ap)
-@@ -7391,3 +7392,5 @@ EXPORT_SYMBOL_GPL(ata_cable_80wire);
- EXPORT_SYMBOL_GPL(ata_cable_unknown);
- EXPORT_SYMBOL_GPL(ata_cable_ignore);
- EXPORT_SYMBOL_GPL(ata_cable_sata);
-+EXPORT_SYMBOL_GPL(ata_host_get);
-+EXPORT_SYMBOL_GPL(ata_host_put);
-\ No newline at end of file
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -100,8 +100,6 @@ extern int ata_port_probe(struct ata_por
- extern void __ata_port_probe(struct ata_port *ap);
- extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
- 				      u8 page, void *buf, unsigned int sectors);
--extern void ata_host_get(struct ata_host *host);
--extern void ata_host_put(struct ata_host *host);
- 
- #define to_ata_port(d) container_of(d, struct ata_port, tdev)
- 
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -557,34 +557,46 @@ int sas_ata_init(struct domain_device *f
+ static bool
+-has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+-				int scope)
++has_mismatched_cache_type(const struct arm64_cpu_capabilities *entry,
++			  int scope)
  {
- 	struct sas_ha_struct *ha = found_dev->port->ha;
- 	struct Scsi_Host *shost = ha->core.shost;
-+	struct ata_host *ata_host;
- 	struct ata_port *ap;
- 	int rc;
+ 	u64 mask = CTR_CACHE_MINLINE_MASK;
  
--	ata_host_init(&found_dev->sata_dev.ata_host, ha->dev, &sas_sata_ops);
--	ap = ata_sas_port_alloc(&found_dev->sata_dev.ata_host,
--				&sata_port_info,
--				shost);
-+	ata_host = kzalloc(sizeof(*ata_host), GFP_KERNEL);
-+	if (!ata_host)	{
-+		SAS_DPRINTK("ata host alloc failed.\n");
-+		return -ENOMEM;
-+	}
++	/* Skip matching the min line sizes for cache type check */
++	if (entry->capability == ARM64_MISMATCHED_CACHE_TYPE)
++		mask ^= arm64_ftr_reg_ctrel0.strict_mask;
 +
-+	ata_host_init(ata_host, ha->dev, &sas_sata_ops);
-+
-+	ap = ata_sas_port_alloc(ata_host, &sata_port_info, shost);
- 	if (!ap) {
- 		SAS_DPRINTK("ata_sas_port_alloc failed.\n");
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto free_host;
- 	}
- 
- 	ap->private_data = found_dev;
- 	ap->cbl = ATA_CBL_SATA;
- 	ap->scsi_host = shost;
- 	rc = ata_sas_port_init(ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
--	rc = ata_sas_tport_add(found_dev->sata_dev.ata_host.dev, ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
-+	if (rc)
-+		goto destroy_port;
-+
-+	rc = ata_sas_tport_add(ata_host->dev, ap);
-+	if (rc)
-+		goto destroy_port;
-+
-+	found_dev->sata_dev.ata_host = ata_host;
- 	found_dev->sata_dev.ap = ap;
- 
- 	return 0;
-+
-+destroy_port:
-+	ata_sas_port_destroy(ap);
-+free_host:
-+	ata_host_put(ata_host);
-+	return rc;
- }
- 
- void sas_ata_task_abort(struct sas_task *task)
---- a/drivers/scsi/libsas/sas_discover.c
-+++ b/drivers/scsi/libsas/sas_discover.c
-@@ -316,6 +316,8 @@ void sas_free_device(struct kref *kref)
- 	if (dev_is_sata(dev) && dev->sata_dev.ap) {
- 		ata_sas_tport_delete(dev->sata_dev.ap);
- 		ata_sas_port_destroy(dev->sata_dev.ap);
-+		ata_host_put(dev->sata_dev.ata_host);
-+		dev->sata_dev.ata_host = NULL;
- 		dev->sata_dev.ap = NULL;
- 	}
- 
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1111,6 +1111,8 @@ extern struct ata_host *ata_host_alloc(s
- extern struct ata_host *ata_host_alloc_pinfo(struct device *dev,
- 			const struct ata_port_info * const * ppi, int n_ports);
- extern int ata_slave_link_init(struct ata_port *ap);
-+extern void ata_host_get(struct ata_host *host);
-+extern void ata_host_put(struct ata_host *host);
- extern int ata_host_start(struct ata_host *host);
- extern int ata_host_register(struct ata_host *host,
- 			     struct scsi_host_template *sht);
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -161,7 +161,7 @@ struct sata_device {
- 	u8     port_no;        /* port number, if this is a PM (Port) */
- 
- 	struct ata_port *ap;
--	struct ata_host ata_host;
-+	struct ata_host *ata_host;
- 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
- 	u8     fis[ATA_RESP_FIS_SIZE];
- };
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+ 	return (read_cpuid_cachetype() & mask) !=
+ 	       (arm64_ftr_reg_ctrel0.sys_val & mask);
+@@ -615,7 +619,14 @@ const struct arm64_cpu_capabilities arm6
+ 	{
+ 		.desc = "Mismatched cache line size",
+ 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
+-		.matches = has_mismatched_cache_line_size,
++		.matches = has_mismatched_cache_type,
++		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
++		.cpu_enable = cpu_enable_trap_ctr_access,
++	},
++	{
++		.desc = "Mismatched cache type",
++		.capability = ARM64_MISMATCHED_CACHE_TYPE,
++		.matches = has_mismatched_cache_type,
+ 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+ 		.cpu_enable = cpu_enable_trap_ctr_access,
+ 	},
 
 
