@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B59EC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2318AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9CFF2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CFF2077C
+	by mail.kernel.org (Postfix) with ESMTP id D63792077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63792077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbeICVjv (ORCPT
+        id S1730420AbeICVjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43118 "EHLO
+        Mon, 3 Sep 2018 17:39:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbeICVju (ORCPT
+        with ESMTP id S1728981AbeICVjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:50 -0400
+        Mon, 3 Sep 2018 17:39:54 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89DA0D16;
-        Mon,  3 Sep 2018 17:18:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8247D10;
+        Mon,  3 Sep 2018 17:18:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Elad Kanfi <eladkan@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Ofer Levi <oferle@mellanox.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/165] arc: fix type warnings in arc/mm/cache.c
-Date:   Mon,  3 Sep 2018 18:55:54 +0200
-Message-Id: <20180903165658.522610801@linuxfoundation.org>
+Subject: [PATCH 4.14 069/165] sparc/time: Add missing __init to init_tick_ops()
+Date:   Mon,  3 Sep 2018 18:55:55 +0200
+Message-Id: <20180903165658.568477969@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -55,55 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit ec837d620c750c0d4996a907c8c4f7febe1bbeee ]
+[ Upstream commit 6f57ed681ed817a4ec444e83f3aa2ad695d5ef34 ]
 
-Fix type warnings in arch/arc/mm/cache.c.
+Code that was added to force gcc not to inline any function that isn't
+explicitly declared as inline uncovered that init_tick_ops() isn't
+marked as "__init". It is only called by __init functions and more
+importantly it too calls an __init function which would require it to be
+__init as well.
 
-../arch/arc/mm/cache.c: In function 'flush_anon_page':
-../arch/arc/mm/cache.c:1062:55: warning: passing argument 2 of '__flush_dcache_page' makes integer from pointer without a cast [-Wint-conversion]
-  __flush_dcache_page((phys_addr_t)page_address(page), page_address(page));
-                                                       ^~~~~~~~~~~~~~~~~~
-../arch/arc/mm/cache.c:1013:59: note: expected 'long unsigned int' but argument is of type 'void *'
- void __flush_dcache_page(phys_addr_t paddr, unsigned long vaddr)
-                                             ~~~~~~~~~~~~~~^~~~~
+Link: http://lkml.kernel.org/r/201806060444.hdHcKOBy%fengguang.wu@intel.com
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Elad Kanfi <eladkan@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Ofer Levi <oferle@mellanox.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/mm/cache.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/sparc/kernel/time_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/mm/cache.c
-+++ b/arch/arc/mm/cache.c
-@@ -1035,7 +1035,7 @@ void flush_cache_mm(struct mm_struct *mm
- void flush_cache_page(struct vm_area_struct *vma, unsigned long u_vaddr,
- 		      unsigned long pfn)
- {
--	unsigned int paddr = pfn << PAGE_SHIFT;
-+	phys_addr_t paddr = pfn << PAGE_SHIFT;
- 
- 	u_vaddr &= PAGE_MASK;
- 
-@@ -1055,8 +1055,9 @@ void flush_anon_page(struct vm_area_stru
- 		     unsigned long u_vaddr)
- {
- 	/* TBD: do we really need to clear the kernel mapping */
--	__flush_dcache_page(page_address(page), u_vaddr);
--	__flush_dcache_page(page_address(page), page_address(page));
-+	__flush_dcache_page((phys_addr_t)page_address(page), u_vaddr);
-+	__flush_dcache_page((phys_addr_t)page_address(page),
-+			    (phys_addr_t)page_address(page));
- 
+--- a/arch/sparc/kernel/time_64.c
++++ b/arch/sparc/kernel/time_64.c
+@@ -813,7 +813,7 @@ static void __init get_tick_patch(void)
+ 	}
  }
+ 
+-static void init_tick_ops(struct sparc64_tick_ops *ops)
++static void __init init_tick_ops(struct sparc64_tick_ops *ops)
+ {
+ 	unsigned long freq, quotient, tick;
  
 
 
