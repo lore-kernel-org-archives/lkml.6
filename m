@@ -6,34 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE66C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5BBC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530ED20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530ED20843
+	by mail.kernel.org (Postfix) with ESMTP id 8C50720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C50720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbeICVad (ORCPT
+        id S1730030AbeICVag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:30:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40620 "EHLO
+        Mon, 3 Sep 2018 17:30:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40634 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729205AbeICVac (ORCPT
+        with ESMTP id S1729389AbeICVag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:30:32 -0400
+        Mon, 3 Sep 2018 17:30:36 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E010BD02;
-        Mon,  3 Sep 2018 17:09:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 156F9D07;
+        Mon,  3 Sep 2018 17:09:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 093/107] s390/qdio: reset old sbal_state flags
-Date:   Mon,  3 Sep 2018 18:56:57 +0200
-Message-Id: <20180903165641.875201295@linuxfoundation.org>
+        stable@vger.kernel.org, Dominique Leuenberger <dimstar@suse.de>,
+        Adrian Schroeter <adrian@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 4.9 067/107] x86/speculation/l1tf: Fix overflow in l1tf_pfn_limit() on 32bit
+Date:   Mon,  3 Sep 2018 18:56:31 +0200
+Message-Id: <20180903165640.547389042@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -50,66 +58,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 64e03ff72623b8c2ea89ca3cb660094e019ed4ae upstream.
+commit 9df9516940a61d29aedf4d91b483ca6597e7d480 upstream.
 
-When allocating a new AOB fails, handle_outbound() is still capable of
-transmitting the selected buffer (just without async completion).
+On 32bit PAE kernels on 64bit hardware with enough physical bits,
+l1tf_pfn_limit() will overflow unsigned long. This in turn affects
+max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
+observed in a 32bit guest with 42 bits physical address size, where
+max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces
+the following warning to dmesg:
 
-But if a previous transfer on this queue slot used async completion, its
-sbal_state flags field is still set to QDIO_OUTBUF_STATE_FLAG_PENDING.
-So when the upper layer driver sees this stale flag, it expects an async
-completion that never happens.
+[    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
 
-Fix this by unconditionally clearing the flags field.
+Fix this by using unsigned long long instead.
 
-Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Reported-by: Dominique Leuenberger <dimstar@suse.de>
+Reported-by: Adrian Schroeter <adrian@suse.de>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180820095835.5298-1-vbabka@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/qdio.h |    1 -
- drivers/s390/cio/qdio_main.c |    5 ++---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/processor.h |    4 ++--
+ arch/x86/mm/init.c               |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/s390/include/asm/qdio.h
-+++ b/arch/s390/include/asm/qdio.h
-@@ -261,7 +261,6 @@ struct qdio_outbuf_state {
- 	void *user;
- };
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -173,9 +173,9 @@ extern const struct seq_operations cpuin
  
--#define QDIO_OUTBUF_STATE_FLAG_NONE	0x00
- #define QDIO_OUTBUF_STATE_FLAG_PENDING	0x01
+ extern void cpu_detect(struct cpuinfo_x86 *c);
  
- #define CHSC_AC1_INITIATE_INPUTQ	0x80
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -640,21 +640,20 @@ static inline unsigned long qdio_aob_for
- 	unsigned long phys_aob = 0;
- 
- 	if (!q->use_cq)
--		goto out;
-+		return 0;
- 
- 	if (!q->aobs[bufnr]) {
- 		struct qaob *aob = qdio_allocate_aob();
- 		q->aobs[bufnr] = aob;
- 	}
- 	if (q->aobs[bufnr]) {
--		q->sbal_state[bufnr].flags = QDIO_OUTBUF_STATE_FLAG_NONE;
- 		q->sbal_state[bufnr].aob = q->aobs[bufnr];
- 		q->aobs[bufnr]->user1 = (u64) q->sbal_state[bufnr].user;
- 		phys_aob = virt_to_phys(q->aobs[bufnr]);
- 		WARN_ON_ONCE(phys_aob & 0xFF);
- 	}
- 
--out:
-+	q->sbal_state[bufnr].flags = 0;
- 	return phys_aob;
+-static inline unsigned long l1tf_pfn_limit(void)
++static inline unsigned long long l1tf_pfn_limit(void)
+ {
+-	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
  }
  
+ extern void early_cpu_init(void);
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -792,7 +792,7 @@ unsigned long max_swapfile_size(void)
+ 
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
+ 		/*
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+@@ -800,7 +800,7 @@ unsigned long max_swapfile_size(void)
+ #if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+-		pages = min_t(unsigned long, l1tf_limit, pages);
++		pages = min_t(unsigned long long, l1tf_limit, pages);
+ 	}
+ 	return pages;
+ }
 
 
