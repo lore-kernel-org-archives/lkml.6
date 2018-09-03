@@ -4,57 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D564FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33151C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA5320652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D587120652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SqNT//bI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA5320652
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qm15cJVd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D587120652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeICTKV (ORCPT
+        id S1727219AbeICTKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 3 Sep 2018 15:10:21 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51425 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbeICTKV (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45469 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbeICTKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:10:21 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180903144949euoutp016723265129b2156081e8a81d78f36f93~Q600dk1JZ1998019980euoutp016;
+        Mon, 3 Sep 2018 15:10:20 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180903144949euoutp02b2b360a68b0a026b4d6162e0862ff231~Q600yoHB90409804098euoutp02b;
         Mon,  3 Sep 2018 14:49:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180903144949euoutp016723265129b2156081e8a81d78f36f93~Q600dk1JZ1998019980euoutp016
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180903144949euoutp02b2b360a68b0a026b4d6162e0862ff231~Q600yoHB90409804098euoutp02b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1535986189;
-        bh=YXnQWrz7EK8gXGeL3Bje412w5XmMqG5Doeg8NF1kVxE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=SqNT//bIsfXirccXfqhl2W7Yp4WpbaS84X4+YCf6uGzlFlHon2ORypbjCD7lL7Hq2
-         2O58RFTTRrdXyHra7dD52k/iyzHN5px7GgQT5ucl+pxypBXqd6hsHhEI1L3SRniioa
-         o3yQZfP5c1ElFoOuv8d1LjAxcp40q5PecHtEDyxM=
+        bh=BUUIxh6GLuxhAm9EJQctazbXmvE15UgCdUY+B/18qnM=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=qm15cJVdh0bsaYDzBRbEOfN5YSDTy1+XO+bs0JHTi4baIm+s21cJVwOYPflEOu/pY
+         1doB5fiE4iKu1pfuzKAcsGOa/rCQWj1Qi7qucGxkgaIUyhUjaftfrliQERTd2k/mp7
+         A4DSGLc71KO0fSYmrgtoMiWbaALjmReohvX4PeH8=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180903144948eucas1p1efbd111a8a05e20b6c6ea2e2b490ed35~Q60zwoTwo2291422914eucas1p1H;
-        Mon,  3 Sep 2018 14:49:48 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180903144949eucas1p229f119d3452b081709f5cceedcadc158~Q600JeoGb3206732067eucas1p28;
+        Mon,  3 Sep 2018 14:49:49 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9E.63.04441.C0A4D8B5; Mon,  3
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 4F.63.04441.C0A4D8B5; Mon,  3
         Sep 2018 15:49:48 +0100 (BST)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12~Q60yyvI_N0770807708eucas1p2i;
-        Mon,  3 Sep 2018 14:49:47 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-c0-5b8d4a0c443b
+        20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64~Q60zX3bb03206732067eucas1p25;
+        Mon,  3 Sep 2018 14:49:48 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-c2-5b8d4a0c6cef
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id E1.B9.04284.B0A4D8B5; Mon,  3
-        Sep 2018 15:49:47 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F2.B9.04284.C0A4D8B5; Mon,  3
+        Sep 2018 15:49:48 +0100 (BST)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PEH00LLMIIVL500@eusync4.samsung.com>;
-        Mon, 03 Sep 2018 15:49:47 +0100 (BST)
+        Mon, 03 Sep 2018 15:49:48 +0100 (BST)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Chunyan Zhang <zhang.chunyan@linaro.org>
@@ -62,73 +63,110 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 0/2] regualtors: Fix suspend/resume issues since v4.16
-Date:   Mon, 03 Sep 2018 16:49:35 +0200
-Message-id: <20180903144937.16507-1-m.szyprowski@samsung.com>
+Subject: [PATCH 2/2] regulator: Fix 'do-nothing' value for regulators
+ without suspend state
+Date:   Mon, 03 Sep 2018 16:49:37 +0200
+Message-id: <20180903144937.16507-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7djPc7o8Xr3RButuCVpsnLGe1WLqwyds
+In-reply-to: <20180903144937.16507-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7djPc7o8Xr3RBmenaVlsnLGe1WLqwyds
         Ft+udDBZXN41h81ixvl9TBZrj9xlt5i86CCrA7vHzll32T02repk87hzbQ+bR9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGWs2XGaqeAHR0XLbY4GxjXsXYycHBICJhKPPz9l62Lk4hASWMEo
-        seHSCijnM6PEhNvvmGCqdu+czgqRWMYo8ezvKnYIp4FJYufls2BVbAKGEl1vu9hAbBGBXIn3
-        V36BjWIW2MgoMeXRe6AODg5hATeJE99zQUwWAVWJ7ndSIOW8ArYSnxafYYFYJi+xesMBZpBW
-        CYGXrBLXTzVCJVwkljTtZoWwhSVeHd8C9YOMRGfHQSaIhmZGifYZs9ghnB5Gia1zdrBBVFlL
-        HD5+EaybWYBPYtK26cwgV0gI8Ep0tAlBlHhI7Ly9jxnEFhKIlfgy8STLBEaJBYwMqxjFU0uL
-        c9NTiw3zUsv1ihNzi0vz0vWS83M3MQLj7PS/4592MH69lHSIUYCDUYmHN8CgN1qINbGsuDL3
-        EKMEB7OSCG+jO1CINyWxsiq1KD++qDQntfgQozQHi5I4L59WWrSQQHpiSWp2ampBahFMlomD
-        U6qBsWntp79m1alOeV9YVy8452fz792Wfi7j3Cgv4zSr/1sXm8zgd1tjUBzx6V3UZ7vG28qf
-        E15+/iuguG3arC87eYQ4jbszJnMoXJAsWpC2WFesatfzzzvV5kpX1v+84Muu4lR3eteHnx84
-        ZnnELoo5r3Hf6EHLJF1Xge66SpFF526H31q8QbJGUYmlOCPRUIu5qDgRACc3V6CvAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJMWRmVeSWpSXmKPExsVy+t/xa7rcXr3RBv+/y1psnLGe1WLqwyds
-        Ft+udDBZXN41h81ixvl9TBZrj9xlt5i86CCrA7vHzll32T02repk87hzbQ+bR9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGWs2XGaqeAHR0XLbY4GxjXsXYycHBICJhK7d05n7WLk4hASWMIo
-        0b3+KBOE08QkMff4FEaQKjYBQ4mut11sILaIQK7E/mudYEXMApsZJf7vPgBUxMEhLOAmceJ7
-        LojJIqAq0f1OCqScV8BW4tPiMywQy+QlVm84wDyBkWsBI8MqRpHU0uLc9NxiQ73ixNzi0rx0
-        veT83E2MwEDYduzn5h2MlzYGH2IU4GBU4uENMOiNFmJNLCuuzD3EKMHBrCTC2+gOFOJNSays
-        Si3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cAokb+dbXPG5ZDKeZaC
-        cotapyr2bYrI+ed+gc0nv+tvk/u9lzM+Bpw8Vm71a8KD1VsN3x0/t4H97NLtVZz1BXumd+Sx
-        Nxme+Bn2sXfZ8r8yInN+sn0/e3dPgbZEzem359iF914NFBd5nlq9W5Irc8YSzS2+l//qTA5f
-        6y2493TC5D72nbN7V6w6rMRSnJFoqMVcVJwIAP32Nw0AAgAA
-X-CMS-MailID: 20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12
+        BbBGcdmkpOZklqUW6dslcGV861jMVPBDpOLRq7fMDYxPBLsYOTkkBEwk5s3oZu9i5OIQEljB
+        KHFo6XlWCOczo8SC763sMFW/zvRCJZYxSsxZ+p4Jwmlgkvi27x4bSBWbgKFE19suMFtEIFfi
+        /ZVfbCBFzAIbGSWmPHoPNkpYIFbiTdsCFhCbRUBV4uWzhUwgNq+ArcSExo1sEOvkJVZvOMAM
+        YnMK2Em8/7+XEWSQhEAHm0TDsxdMEEUuElO3/2CBsIUlXh3fAnWrjERnx0EmiIZmRon2GbPY
+        IZweRomtc3ZArbCWOHz8IiuIzSzAJzFp23SgdRxAcV6JjjYhiBIPiZ4fC5kh/pwIDJojW5km
+        MEouYGRYxSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJERiHp/8d/7SD8eulpEOMAhyMSjy8
+        AQa90UKsiWXFlbmHGCU4mJVEeBvdgUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+bTSooUE0hNL
+        UrNTUwtSi2CyTBycUg2MqxM2/79Wls2WVShzN/e4nqLv1OYoRh69G8G7d4jv3zpb6Z79u/WK
+        DerWjC55KyvU2m+nm2abeMa/WXT0oXXZW1POuzx77+V9nqESL7zivK391MAKp02Lhb9tqP4V
+        eb6E+1+I95mF9858NeP8Jv+3i9+s3LXdaJd8yf1Dc1RO3FmXuNyuXsRRiaU4I9FQi7moOBEA
+        9IBytL8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42I5/e/4NV0er95og5aT3BYbZ6xntZj68Amb
+        xbcrHUwWl3fNYbOYcX4fk8XaI3fZLSYvOsjqwO6xc9Zddo9NqzrZPO5c28Pm0bdlFaPH501y
+        AaxRXDYpqTmZZalF+nYJXBnfOhYzFfwQqXj06i1zA+MTwS5GTg4JAROJX2d6WbsYuTiEBJYw
+        Spw/1gDlNDFJbL6xhgWkik3AUKLrbRcbiC0ikCux/1onE0gRs8BmRon/uw8wgiSEBWIlpu2e
+        wg5iswioSrx8tpAJxOYVsJWY0LiRDWKdvMTqDQeYQWxOATuJ9//3gvUKAdVcvreKdQIjzwJG
+        hlWMIqmlxbnpucWGesWJucWleel6yfm5mxiB4bPt2M/NOxgvbQw+xCjAwajEwxtg0BstxJpY
+        VlyZe4hRgoNZSYS30R0oxJuSWFmVWpQfX1Sak1p8iFGag0VJnPe8QWWUkEB6YklqdmpqQWoR
+        TJaJg1OqgTG57c+29cr3n9jf3ppb6PFl+bwz3u3clVueN09MZdpklXlD+9zKf/KH2UPMcncW
+        SL21OXi31U2jgcHy289vh+NmZXB6bA298bXm6qU56uaCPl1zX+t9OZ9bFX1K8cUHu0wXLeYt
+        a74tEpeNP6S4j7l7R2+xeXyd8+8mriPRMafu3nH9EVqo56PEUpyRaKjFXFScCAAFJXYvGwIA
+        AA==
+X-CMS-MailID: 20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12
-References: <CGME20180903144947eucas1p2039e13961d8bfd21edcf1f1d152a5a12@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64
+References: <20180903144937.16507-1-m.szyprowski@samsung.com>
+        <CGME20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Some regulators don't have all states defined and in such cases regulator
+core should not assume anything. However in current implementation
+of of_get_regulation_constraints() DO_NOTHING_IN_SUSPEND enable value was
+set only for regulators which had suspend node defined, otherwise the
+default 0 value was used, what means DISABLE_IN_SUSPEND. This lead to
+broken system suspend/resume on boards, which had simple regulator
+constraints definition (without suspend state nodes).
 
-While working on suspend/resume support for Samsung Exynos5433-based TM2
-board (arch/arm64/boot/dts/exynos/exynos5433-tm2.dts), I've noticed that
-v4.16 kernel release introduced some serious problems with regulator
-configuration in system suspend state. Further investigation revealed
-that the following 2 commits are responsible for my issues:
+To avoid further mismatches between the default and uninitialized values
+of the suspend enabled/disabled states, change the values of the them,
+so default '0' means DO_NOTHING_IN_SUSPEND.
 
-1. f7efad10b5c4: regulator: add PM suspend and resume hooks
-2. 72069f9957a1: regulator: leave one item to record whether regulator is enabled
+Fixes: 72069f9957a1: regulator: leave one item to record whether regulator is enabled
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/regulator/core.c          | 2 +-
+ drivers/regulator/of_regulator.c  | 2 --
+ include/linux/regulator/machine.h | 6 +++---
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
-I've been really surprised that no-one noticed those issues for almost
-4 kernel releases. Please review my fixes and apply to v4.19-rcX if
-possible.
-
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (2):
-  regulator: Fix useless O^2 complexity in suspend/resume
-  regulator: Fix 'do-nothing' value for regulators without suspend state
-
- drivers/regulator/core.c          | 41 +++++++++----------------------
- drivers/regulator/of_regulator.c  |  2 --
- include/linux/regulator/machine.h |  6 ++---
- 3 files changed, 15 insertions(+), 34 deletions(-)
-
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 71ba040c7c5b..d1485ed98509 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3161,7 +3161,7 @@ static inline int regulator_suspend_toggle(struct regulator_dev *rdev,
+ 	if (!rstate->changeable)
+ 		return -EPERM;
+ 
+-	rstate->enabled = en;
++	rstate->enabled = (en) ? ENABLE_IN_SUSPEND : DISABLE_IN_SUSPEND;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 638f17d4c848..210fc20f7de7 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -213,8 +213,6 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		else if (of_property_read_bool(suspend_np,
+ 					"regulator-off-in-suspend"))
+ 			suspend_state->enabled = DISABLE_IN_SUSPEND;
+-		else
+-			suspend_state->enabled = DO_NOTHING_IN_SUSPEND;
+ 
+ 		if (!of_property_read_u32(np, "regulator-suspend-min-microvolt",
+ 					  &pval))
+diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
+index 3468703d663a..a459a5e973a7 100644
+--- a/include/linux/regulator/machine.h
++++ b/include/linux/regulator/machine.h
+@@ -48,9 +48,9 @@ struct regulator;
+  * DISABLE_IN_SUSPEND	- turn off regulator in suspend states
+  * ENABLE_IN_SUSPEND	- keep regulator on in suspend states
+  */
+-#define DO_NOTHING_IN_SUSPEND	(-1)
+-#define DISABLE_IN_SUSPEND	0
+-#define ENABLE_IN_SUSPEND	1
++#define DO_NOTHING_IN_SUSPEND	0
++#define DISABLE_IN_SUSPEND	1
++#define ENABLE_IN_SUSPEND	2
+ 
+ /* Regulator active discharge flags */
+ enum regulator_active_discharge {
 -- 
 2.17.1
 
