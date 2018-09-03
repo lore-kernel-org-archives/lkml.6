@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338D9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B713DC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75EF2077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75EF2077B
+	by mail.kernel.org (Postfix) with ESMTP id 55B4120843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 09:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B4120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeICNxx (ORCPT
+        id S1727789AbeICNyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:53:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54584 "EHLO mail.bootlin.com"
+        Mon, 3 Sep 2018 09:54:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54545 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbeICNxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:53:13 -0400
+        id S1727515AbeICNxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:53:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 350E922A40; Mon,  3 Sep 2018 11:33:54 +0200 (CEST)
+        id 6649422A53; Mon,  3 Sep 2018 11:33:44 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 03B0C22A44;
-        Mon,  3 Sep 2018 11:33:25 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id E8BAB22A3E;
+        Mon,  3 Sep 2018 11:33:24 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
         paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
@@ -36,9 +36,9 @@ Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH v2 07/11] dt-bindings: phy: add DT binding for Microsemi Ocelot SerDes muxing
-Date:   Mon,  3 Sep 2018 11:33:04 +0200
-Message-Id: <20180903093308.24366-8-quentin.schulz@bootlin.com>
+Subject: [PATCH net-next v2 04/11] net: mscc: ocelot: move the HSIO header to include/soc
+Date:   Mon,  3 Sep 2018 11:33:01 +0200
+Message-Id: <20180903093308.24366-5-quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903093308.24366-1-quentin.schulz@bootlin.com>
 References: <20180903093308.24366-1-quentin.schulz@bootlin.com>
@@ -47,58 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since HSIO address space can be used by different drivers (PLL, SerDes
+muxing, temperature sensor), let's move it somewhere it can be included
+by all drivers.
+
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- .../bindings/phy/phy-ocelot-serdes.txt        | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
+ drivers/net/ethernet/mscc/ocelot.h                       | 1 -
+ drivers/net/ethernet/mscc/ocelot_regs.c                  | 1 +
+ {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+ rename {drivers/net/ethernet => include/soc}/mscc/ocelot_hsio.h (100%)
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
-new file mode 100644
-index 000000000000..2a88cc346162
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-ocelot-serdes.txt
-@@ -0,0 +1,40 @@
-+Microsemi Ocelot SerDes muxing driver
-+-------------------------------------
-+
-+On Microsemi Ocelot, there is a handful of registers in HSIO address
-+space for setting up the SerDes to switch port muxing.
-+
-+A SerDes X can be "muxed" to work with switch port Y or Z for example.
-+One specific SerDes can also be used as a PCIe interface.
-+
-+Hence, a SerDes represents an interface, be it an Ethernet or a PCIe one.
-+
-+There are two kinds of SerDes: SERDES1G supports 10/100Mbps in
-+half/full-duplex and 1000Mbps in full-duplex mode while SERDES6G supports
-+10/100Mbps in half/full-duplex and 1000/2500Mbps in full-duplex mode.
-+
-+Also, SERDES6G number (aka "macro") 0 is the only interface supporting
-+QSGMII.
-+
-+Required properties:
-+
-+- compatible: should be "mscc,vsc7514-serdes"
-+- #phy-cells : from the generic phy bindings, must be 2.
-+	       The first number defines the input port to use for a given
-+	       SerDes macro. The second defines the macro to use. They are
-+	       defined in dt-bindings/phy/phy-ocelot-serdes.h
-+
-+Example:
-+
-+	serdes: serdes {
-+		compatible = "mscc,vsc7514-serdes";
-+		#phy-cells = <2>;
-+	};
-+
-+	ethernet {
-+		port1 {
-+			phy-handle = <&phy_foo>;
-+			/* Link SERDES1G_5 to port1 */
-+			phys = <&serdes 1 SERDES1G_5>;
-+		};
-+	};
+diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
+index 616bec30dfa3..2da20a352120 100644
+--- a/drivers/net/ethernet/mscc/ocelot.h
++++ b/drivers/net/ethernet/mscc/ocelot.h
+@@ -16,7 +16,6 @@
+ 
+ #include "ocelot_ana.h"
+ #include "ocelot_dev.h"
+-#include "ocelot_hsio.h"
+ #include "ocelot_qsys.h"
+ #include "ocelot_rew.h"
+ #include "ocelot_sys.h"
+diff --git a/drivers/net/ethernet/mscc/ocelot_regs.c b/drivers/net/ethernet/mscc/ocelot_regs.c
+index e334b406c40c..bf0c609caea5 100644
+--- a/drivers/net/ethernet/mscc/ocelot_regs.c
++++ b/drivers/net/ethernet/mscc/ocelot_regs.c
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2017 Microsemi Corporation
+  */
+ #include "ocelot.h"
++#include <soc/mscc/ocelot_hsio.h>
+ 
+ static const u32 ocelot_ana_regmap[] = {
+ 	REG(ANA_ADVLEARN,                  0x009000),
+diff --git a/drivers/net/ethernet/mscc/ocelot_hsio.h b/include/soc/mscc/ocelot_hsio.h
+similarity index 100%
+rename from drivers/net/ethernet/mscc/ocelot_hsio.h
+rename to include/soc/mscc/ocelot_hsio.h
 -- 
 2.17.1
 
