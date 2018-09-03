@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24542C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB307C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDFB220868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFB220868
+	by mail.kernel.org (Postfix) with ESMTP id 8EC6420868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC6420868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbeICVOg (ORCPT
+        id S1728863AbeICVOj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:14:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38170 "EHLO
+        Mon, 3 Sep 2018 17:14:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38184 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728281AbeICVOf (ORCPT
+        with ESMTP id S1728281AbeICVOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:14:35 -0400
+        Mon, 3 Sep 2018 17:14:38 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD0C0CF8;
-        Mon,  3 Sep 2018 16:53:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D379CF9;
+        Mon,  3 Sep 2018 16:53:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 18/80] net: caif: Add a missing rcu_read_unlock() in caif_flow_cb
-Date:   Mon,  3 Sep 2018 18:48:56 +0200
-Message-Id: <20180903164934.887840331@linuxfoundation.org>
+Subject: [PATCH 4.4 19/80] qed: Fix possible race for the link state value.
+Date:   Mon,  3 Sep 2018 18:48:57 +0200
+Message-Id: <20180903164934.929014698@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,34 +54,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 64119e05f7b31e83e2555f6782e6cdc8f81c63f4 ]
+[ Upstream commit 58874c7b246109d8efb2b0099d1aa296d6bfc3fa ]
 
-Add a missing rcu_read_unlock in the error path
+There's a possible race where driver can read link status in mid-transition
+and see that virtual-link is up yet speed is 0. Since in this
+mid-transition we're guaranteed to see a mailbox from MFW soon, we can
+afford to treat this as link down.
 
-Fixes: c95567c80352 ("caif: added check for potential null return")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: cc875c2e ("qed: Add link support")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/caif/caif_dev.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/caif/caif_dev.c
-+++ b/net/caif/caif_dev.c
-@@ -131,8 +131,10 @@ static void caif_flow_cb(struct sk_buff
- 	caifd = caif_get(skb->dev);
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -420,6 +420,7 @@ static void qed_mcp_handle_link_change(s
+ 		break;
+ 	default:
+ 		p_link->speed = 0;
++		p_link->link_up = 0;
+ 	}
  
- 	WARN_ON(caifd == NULL);
--	if (caifd == NULL)
-+	if (!caifd) {
-+		rcu_read_unlock();
- 		return;
-+	}
- 
- 	caifd_hold(caifd);
- 	rcu_read_unlock();
+ 	/* Correct speed according to bandwidth allocation */
 
 
