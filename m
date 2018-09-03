@@ -2,86 +2,77 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B0CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CC2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA18820779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:20:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kx1NdGFs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA18820779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 30FE02077B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:23:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30FE02077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbeICOkJ (ORCPT
+        id S1727691AbeICOm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 10:40:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727333AbeICOkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 10:40:09 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09F2D20779;
-        Mon,  3 Sep 2018 10:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535970039;
-        bh=Dn9+l6KbxhE0M90zf1+i4klHiji5RlZl1XnhYQuzBsw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Kx1NdGFseh5AqgBD6XQwiv6Yq54fZPdHIxdJGGk/nqNRK8zroH5Q2KVHiMx8tMtd1
-         NdUtvTGR7tXJN+AS8sB4LUYb+9Ohj7NqzTY+HoYrDt1NT6STd0aQOyI5S6bbePLJLk
-         xkg0c5UVlWYmeOGFGCj84PrgCQ5D+NAxFrSXQkDg=
-Received: by mail-wr1-f43.google.com with SMTP id m27-v6so100699wrf.3;
-        Mon, 03 Sep 2018 03:20:38 -0700 (PDT)
-X-Gm-Message-State: APzg51CDN4IkTNFqNSO9IPJnCxIq0oL6WCEpvoUiec7AG+sY32unMY94
-        DY6CjtiK8d8Bjz2OSCpp7XhWH2cXq6FXCfan/sg=
-X-Google-Smtp-Source: ANB0VdZHeQCPOTTVItSXV8DOy+BqecNlNn5sV3jm79BqU7BHfnQNBRna/CgrEcNDbCMyhQVAiiJzgXFo2RnxPW8x63U=
-X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr1387534wrx.226.1535970037577;
- Mon, 03 Sep 2018 03:20:37 -0700 (PDT)
+        Mon, 3 Sep 2018 10:42:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11625 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727355AbeICOm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 10:42:27 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9AA7AB2E654E9;
+        Mon,  3 Sep 2018 18:22:54 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 3 Sep 2018 18:22:48 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 00/11] Misc. bug fixes & small enhancements for HNS3 Driver
+Date:   Mon, 3 Sep 2018 11:21:45 +0100
+Message-ID: <20180903102156.18676-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-References: <a582871f84c4dd588ae1651d1d9192cc80e2b272.1535964281.git.baolin.wang@linaro.org>
- <22074e17cb853123f926e909eac4418d88af0b98.1535964281.git.baolin.wang@linaro.org>
-In-Reply-To: <22074e17cb853123f926e909eac4418d88af0b98.1535964281.git.baolin.wang@linaro.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 3 Sep 2018 12:20:26 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf+Y+QLVJ+jUBcUFeBsxXQxK62UNQ9P+gFbP3RLCBz+wQ@mail.gmail.com>
-Message-ID: <CAJKOXPf+Y+QLVJ+jUBcUFeBsxXQxK62UNQ9P+gFbP3RLCBz+wQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] power: supply: Add Spreadtrum SC2731 charger support
-To:     baolin.wang@linaro.org
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
-        broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018 at 10:56, Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> This patch adds the SC2731 PMIC switch charger support.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes from v1:
->  - Remove some redundant head files.
->  - Add one mutex to make sure getting the charger status is correct.
->  - Fix some coding style issues.
->  - Use standard DT properties.
-> ---
->  drivers/power/supply/Kconfig          |    7 +
->  drivers/power/supply/Makefile         |    1 +
->  drivers/power/supply/sc2731_charger.c |  503 +++++++++++++++++++++++++++++++++
->  3 files changed, 511 insertions(+)
->  create mode 100644 drivers/power/supply/sc2731_charger.c
+This patch-set presents some fixes and minor enhancements to HNS3 Driver
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Huazhong Tan (1):
+  net: hns3: Fix for multicast failure
 
-Best regards,
-Krzysztof
+Jian Shen (3):
+  net: hns3: Fix error of checking used vlan id
+  net: hns3: Remove redundant codes of query advertised flow control
+    abilitiy
+  net: hns3: Refine hns3_get_link_ksettings()
+
+Yunsheng Lin (7):
+  net: hns3: Fix for vf vlan delete failed problem
+  net: hns3: Implement shutdown ops in hns3 pci driver
+  net: hns3: Fix for loopback selftest failed problem
+  net: hns3: Fix ping exited problem when doing lp selftest
+  net: hns3: Preserve vlan 0 in hardware table
+  net: hns3: Only update mac configuation when necessary
+  net: hns3: Change the dst mac addr of loopback packet
+
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  13 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 102 +++++++---------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 131 ++++++++++++---------
+ 3 files changed, 132 insertions(+), 114 deletions(-)
+
+-- 
+2.7.4
+
+
