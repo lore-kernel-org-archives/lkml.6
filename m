@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696B4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CCEC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B8620658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B8620658
+	by mail.kernel.org (Postfix) with ESMTP id E243920658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E243920658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731094AbeICVsz (ORCPT
+        id S1731096AbeICVtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:48:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46338 "EHLO
+        Mon, 3 Sep 2018 17:49:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeICVsy (ORCPT
+        with ESMTP id S1728175AbeICVtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:48:54 -0400
+        Mon, 3 Sep 2018 17:49:01 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8ABD5CF4;
-        Mon,  3 Sep 2018 17:27:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BECE9CF4;
+        Mon,  3 Sep 2018 17:27:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Tejun Heo <tj@kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 156/165] scsi: core: Avoid that SCSI device removal through sysfs triggers a deadlock
-Date:   Mon,  3 Sep 2018 18:57:22 +0200
-Message-Id: <20180903165704.921790236@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 4.14 157/165] iscsi target: fix session creation failure handling
+Date:   Mon,  3 Sep 2018 18:57:23 +0200
+Message-Id: <20180903165704.962049614@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,164 +51,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Mike Christie <mchristi@redhat.com>
 
-commit 0ee223b2e1f67cb2de9c0e3247c510d846e74d63 upstream.
+commit 26abc916a898d34c5ad159315a2f683def3c5555 upstream.
 
-A long time ago the unfortunate decision was taken to add a self-deletion
-attribute to the sysfs SCSI device directory. That decision was unfortunate
-because self-deletion is really tricky. We can't drop that attribute
-because widely used user space software depends on it, namely the
-rescan-scsi-bus.sh script. Hence this patch that avoids that writing into
-that attribute triggers a deadlock. See also commit 7973cbd9fbd9 ("[PATCH]
-add sysfs attributes to scan and delete scsi_devices").
+The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
+iscsi_login_set_conn_values. If the function fails later like when we
+alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
+iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
+iscsi_target_login_sess_out and access the freed memory.
 
-This patch avoids that self-removal triggers the following deadlock:
+This patch has iscsi_login_zero_tsih_s1 either completely setup the
+session or completely tear it down, so later in
+iscsi_target_login_sess_out we can just check for it being set to the
+connection.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-rc2-dbg+ #5 Not tainted
-------------------------------------------------------
-modprobe/6539 is trying to acquire lock:
-000000008323c4cd (kn->count#202){++++}, at: kernfs_remove_by_name_ns+0x45/0x90
-
-but task is already holding lock:
-00000000a6ec2c69 (&shost->scan_mutex){+.+.}, at: scsi_remove_host+0x21/0x150 [scsi_mod]
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&shost->scan_mutex){+.+.}:
-       __mutex_lock+0xfe/0xc70
-       mutex_lock_nested+0x1b/0x20
-       scsi_remove_device+0x26/0x40 [scsi_mod]
-       sdev_store_delete+0x27/0x30 [scsi_mod]
-       dev_attr_store+0x3e/0x50
-       sysfs_kf_write+0x87/0xa0
-       kernfs_fop_write+0x190/0x230
-       __vfs_write+0xd2/0x3b0
-       vfs_write+0x101/0x270
-       ksys_write+0xab/0x120
-       __x64_sys_write+0x43/0x50
-       do_syscall_64+0x77/0x230
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (kn->count#202){++++}:
-       lock_acquire+0xd2/0x260
-       __kernfs_remove+0x424/0x4a0
-       kernfs_remove_by_name_ns+0x45/0x90
-       remove_files.isra.1+0x3a/0x90
-       sysfs_remove_group+0x5c/0xc0
-       sysfs_remove_groups+0x39/0x60
-       device_remove_attrs+0x82/0xb0
-       device_del+0x251/0x580
-       __scsi_remove_device+0x19f/0x1d0 [scsi_mod]
-       scsi_forget_host+0x37/0xb0 [scsi_mod]
-       scsi_remove_host+0x9b/0x150 [scsi_mod]
-       sdebug_driver_remove+0x4b/0x150 [scsi_debug]
-       device_release_driver_internal+0x241/0x360
-       device_release_driver+0x12/0x20
-       bus_remove_device+0x1bc/0x290
-       device_del+0x259/0x580
-       device_unregister+0x1a/0x70
-       sdebug_remove_adapter+0x8b/0xf0 [scsi_debug]
-       scsi_debug_exit+0x76/0xe8 [scsi_debug]
-       __x64_sys_delete_module+0x1c1/0x280
-       do_syscall_64+0x77/0x230
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&shost->scan_mutex);
-                               lock(kn->count#202);
-                               lock(&shost->scan_mutex);
-  lock(kn->count#202);
-
- *** DEADLOCK ***
-
-2 locks held by modprobe/6539:
- #0: 00000000efaf9298 (&dev->mutex){....}, at: device_release_driver_internal+0x68/0x360
- #1: 00000000a6ec2c69 (&shost->scan_mutex){+.+.}, at: scsi_remove_host+0x21/0x150 [scsi_mod]
-
-stack backtrace:
-CPU: 10 PID: 6539 Comm: modprobe Not tainted 4.18.0-rc2-dbg+ #5
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
- dump_stack+0xa4/0xf5
- print_circular_bug.isra.34+0x213/0x221
- __lock_acquire+0x1a7e/0x1b50
- lock_acquire+0xd2/0x260
- __kernfs_remove+0x424/0x4a0
- kernfs_remove_by_name_ns+0x45/0x90
- remove_files.isra.1+0x3a/0x90
- sysfs_remove_group+0x5c/0xc0
- sysfs_remove_groups+0x39/0x60
- device_remove_attrs+0x82/0xb0
- device_del+0x251/0x580
- __scsi_remove_device+0x19f/0x1d0 [scsi_mod]
- scsi_forget_host+0x37/0xb0 [scsi_mod]
- scsi_remove_host+0x9b/0x150 [scsi_mod]
- sdebug_driver_remove+0x4b/0x150 [scsi_debug]
- device_release_driver_internal+0x241/0x360
- device_release_driver+0x12/0x20
- bus_remove_device+0x1bc/0x290
- device_del+0x259/0x580
- device_unregister+0x1a/0x70
- sdebug_remove_adapter+0x8b/0xf0 [scsi_debug]
- scsi_debug_exit+0x76/0xe8 [scsi_debug]
- __x64_sys_delete_module+0x1c1/0x280
- do_syscall_64+0x77/0x230
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-See also https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg54525.html.
-
-Fixes: ac0ece9174ac ("scsi: use device_remove_file_self() instead of device_schedule_callback()")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: <stable@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 0957627a9960 ("iscsi-target: Fix sess allocation leak in...")
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-
 ---
- drivers/scsi/scsi_sysfs.c |   20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ drivers/target/iscsi/iscsi_target_login.c |   35 ++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
---- a/drivers/scsi/scsi_sysfs.c
-+++ b/drivers/scsi/scsi_sysfs.c
-@@ -721,8 +721,24 @@ static ssize_t
- sdev_store_delete(struct device *dev, struct device_attribute *attr,
- 		  const char *buf, size_t count)
- {
--	if (device_remove_file_self(dev, attr))
--		scsi_remove_device(to_scsi_device(dev));
-+	struct kernfs_node *kn;
+--- a/drivers/target/iscsi/iscsi_target_login.c
++++ b/drivers/target/iscsi/iscsi_target_login.c
+@@ -345,8 +345,7 @@ static int iscsi_login_zero_tsih_s1(
+ 		pr_err("idr_alloc() for sess_idr failed\n");
+ 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
+ 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
+-		kfree(sess);
+-		return -ENOMEM;
++		goto free_sess;
+ 	}
+ 
+ 	sess->creation_time = get_jiffies_64();
+@@ -362,20 +361,28 @@ static int iscsi_login_zero_tsih_s1(
+ 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
+ 		pr_err("Unable to allocate memory for"
+ 				" struct iscsi_sess_ops.\n");
+-		kfree(sess);
+-		return -ENOMEM;
++		goto remove_idr;
+ 	}
+ 
+ 	sess->se_sess = transport_init_session(TARGET_PROT_NORMAL);
+ 	if (IS_ERR(sess->se_sess)) {
+ 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
+ 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
+-		kfree(sess->sess_ops);
+-		kfree(sess);
+-		return -ENOMEM;
++		goto free_ops;
+ 	}
+ 
+ 	return 0;
 +
-+	kn = sysfs_break_active_protection(&dev->kobj, &attr->attr);
-+	WARN_ON_ONCE(!kn);
-+	/*
-+	 * Concurrent writes into the "delete" sysfs attribute may trigger
-+	 * concurrent calls to device_remove_file() and scsi_remove_device().
-+	 * device_remove_file() handles concurrent removal calls by
-+	 * serializing these and by ignoring the second and later removal
-+	 * attempts.  Concurrent calls of scsi_remove_device() are
-+	 * serialized. The second and later calls of scsi_remove_device() are
-+	 * ignored because the first call of that function changes the device
-+	 * state into SDEV_DEL.
-+	 */
-+	device_remove_file(dev, attr);
-+	scsi_remove_device(to_scsi_device(dev));
-+	if (kn)
-+		sysfs_unbreak_active_protection(kn);
- 	return count;
- };
- static DEVICE_ATTR(delete, S_IWUSR, NULL, sdev_store_delete);
++free_ops:
++	kfree(sess->sess_ops);
++remove_idr:
++	spin_lock_bh(&sess_idr_lock);
++	idr_remove(&sess_idr, sess->session_index);
++	spin_unlock_bh(&sess_idr_lock);
++free_sess:
++	kfree(sess);
++	conn->sess = NULL;
++	return -ENOMEM;
+ }
+ 
+ static int iscsi_login_zero_tsih_s2(
+@@ -1162,13 +1169,13 @@ void iscsi_target_login_sess_out(struct
+ 				   ISCSI_LOGIN_STATUS_INIT_ERR);
+ 	if (!zero_tsih || !conn->sess)
+ 		goto old_sess_out;
+-	if (conn->sess->se_sess)
+-		transport_free_session(conn->sess->se_sess);
+-	if (conn->sess->session_index != 0) {
+-		spin_lock_bh(&sess_idr_lock);
+-		idr_remove(&sess_idr, conn->sess->session_index);
+-		spin_unlock_bh(&sess_idr_lock);
+-	}
++
++	transport_free_session(conn->sess->se_sess);
++
++	spin_lock_bh(&sess_idr_lock);
++	idr_remove(&sess_idr, conn->sess->session_index);
++	spin_unlock_bh(&sess_idr_lock);
++
+ 	kfree(conn->sess->sess_ops);
+ 	kfree(conn->sess);
+ 	conn->sess = NULL;
 
 
