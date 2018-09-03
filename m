@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3622FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8041FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E53D220658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53D220658
+	by mail.kernel.org (Postfix) with ESMTP id 4603B20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4603B20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731842AbeICV7p (ORCPT
+        id S1731852AbeICV7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48966 "EHLO
+        Mon, 3 Sep 2018 17:59:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48982 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV7o (ORCPT
+        with ESMTP id S1726384AbeICV7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:59:44 -0400
+        Mon, 3 Sep 2018 17:59:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D89B4C9B;
-        Mon,  3 Sep 2018 17:38:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5505A95;
+        Mon,  3 Sep 2018 17:38:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.18 101/123] MIPS: Always use -march=<arch>, not -<arch> shortcuts
-Date:   Mon,  3 Sep 2018 18:57:25 +0200
-Message-Id: <20180903165723.792335949@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>
+Subject: [PATCH 4.18 102/123] MIPS: Change definition of cpu_relax() for Loongson-3
+Date:   Mon,  3 Sep 2018 18:57:26 +0200
+Message-Id: <20180903165723.838149229@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,119 +55,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 344ebf09949c31bcb8818d8458b65add29f1d67b upstream.
+commit a30718868915fbb991a9ae9e45594b059f28e9ae upstream.
 
-The VDSO Makefile filters CFLAGS to select a subset which it uses whilst
-building the VDSO ELF. One of the flags it allows through is the -march=
-flag that selects the architecture/ISA to target.
+Linux expects that if a CPU modifies a memory location, then that
+modification will eventually become visible to other CPUs in the system.
 
-Unfortunately in cases where CONFIG_CPU_MIPS32_R{1,2}=y and the
-toolchain defaults to building for MIPS64, the main MIPS Makefile ends
-up using the short-form -<arch> flags in cflags-y. This is because the
-calls to cc-option always fail to use the long-form -march=<arch> flag
-due to the lack of an -mabi=<abi> flag in KBUILD_CFLAGS at the point
-where the cc-option function is executed. The resulting GCC invocation
-is something like:
+Loongson 3 CPUs include a Store Fill Buffer (SFB) which sits between a
+core & its L1 data cache, queueing memory accesses & allowing for faster
+forwarding of data from pending stores to younger loads from the core.
+Unfortunately the SFB prioritizes loads such that a continuous stream of
+loads may cause a pending write to be buffered indefinitely. This is
+problematic if we end up with 2 CPUs which each perform a store that the
+other polls for - one or both CPUs may end up with their stores buffered
+in the SFB, never reaching cache due to the continuous reads from the
+poll loop. Such a deadlock condition has been observed whilst running
+qspinlock code.
 
-  $ mips64-linux-gcc -Werror -march=mips32r2 -c -x c /dev/null -o tmp
-  cc1: error: '-march=mips32r2' is not compatible with the selected ABI
+This patch changes the definition of cpu_relax() to smp_mb() for
+Loongson-3, forcing a flush of the SFB on SMP systems which will cause
+any pending writes to make it as far as the L1 caches where they will
+become visible to other CPUs. If the kernel is not compiled for SMP
+support, this will expand to a barrier() as before.
 
-These short-form -<arch> flags are dropped by the VDSO Makefile's
-filtering, and so we attempt to build the VDSO without specifying any
-architecture. This results in an attempt to build the VDSO using
-whatever the compiler's default architecture is, regardless of whether
-that is suitable for the kernel configuration.
+This workaround matches that currently implemented for ARM when
+CONFIG_ARM_ERRATA_754327=y, which was introduced by commit 534be1d5a2da
+("ARM: 6194/1: change definition of cpu_relax() for ARM11MPCore").
 
-One encountered build failure resulting from this mismatch is a
-rejection of the sync instruction if the kernel is configured for a
-MIPS32 or MIPS64 r1 or r2 target but the toolchain defaults to an older
-architecture revision such as MIPS1 which did not include the sync
-instruction:
+Although the workaround is only required when the Loongson 3 SFB
+functionality is enabled, and we only began explicitly enabling that
+functionality in v4.7 with commit 1e820da3c9af ("MIPS: Loongson-3:
+Introduce CONFIG_LOONGSON3_ENHANCEMENT"), existing or future firmware
+may enable the SFB which means we may need the workaround backported to
+earlier kernels too.
 
-    CC      arch/mips/vdso/gettimeofday.o
-  /tmp/ccGQKoOj.s: Assembler messages:
-  /tmp/ccGQKoOj.s:273: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:329: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:520: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:714: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1009: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1066: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1114: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1279: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1334: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1374: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1459: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1514: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:1814: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:2002: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  /tmp/ccGQKoOj.s:2066: Error: opcode not supported on this processor: mips1 (mips1) `sync'
-  make[2]: *** [scripts/Makefile.build:318: arch/mips/vdso/gettimeofday.o] Error 1
-  make[1]: *** [scripts/Makefile.build:558: arch/mips/vdso] Error 2
-  make[1]: *** Waiting for unfinished jobs....
+[paul.burton@mips.com:
+  - Reword commit message & comment.
+  - Limit stable backport to v3.15+ where we support Loongson 3 CPUs.]
 
-This can be reproduced for example by attempting to build
-pistachio_defconfig using Arnd's GCC 8.1.0 mips64 toolchain from
-kernel.org:
-
-  https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/x86_64-gcc-8.1.0-nolibc-mips64-linux.tar.xz
-
-Resolve this problem by using the long-form -march=<arch> in all cases,
-which makes it through the arch/mips/vdso/Makefile's filtering & is thus
-consistently used to build both the kernel proper & the VDSO.
-
-The use of cc-option to prefer the long-form & fall back to the
-short-form flags makes no sense since the short-form is just an
-abbreviation for the also-supported long-form in all GCC versions that
-we support building with. This means there is no case in which we have
-to use the short-form -<arch> flags, so we can simply remove them.
-
-The manual redefinition of _MIPS_ISA is removed naturally along with the
-use of the short-form flags that it accompanied, and whilst here we
-remove the separate assembler ISA selection. I suspect that both of
-these were only required due to the mips32 vs mips2 mismatch that was
-introduced by commit 59b3e8e9aac6 ("[MIPS] Makefile crapectomy.") and
-fixed but not cleaned up by commit 9200c0b2a07c ("[MIPS] Fix Makefile
-bugs for MIPS32/MIPS64 R1 and R2.").
-
-I've marked this for backport as far as v4.4 where the MIPS VDSO was
-introduced. In earlier kernels there should be no ill effect to using
-the short-form flags.
-
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
+References: 534be1d5a2da ("ARM: 6194/1: change definition of cpu_relax() for ARM11MPCore")
+References: 1e820da3c9af ("MIPS: Loongson-3: Introduce CONFIG_LOONGSON3_ENHANCEMENT")
+Patchwork: https://patchwork.linux-mips.org/patch/19830/
 Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
 Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.4+
-Reviewed-by: James Hogan <jhogan@kernel.org>
-Patchwork: https://patchwork.linux-mips.org/patch/19579/
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
+Cc: stable@vger.kernel.org # v3.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/Makefile |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/mips/include/asm/processor.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -155,15 +155,11 @@ cflags-$(CONFIG_CPU_R4300)	+= -march=r43
- cflags-$(CONFIG_CPU_VR41XX)	+= -march=r4100 -Wa,--trap
- cflags-$(CONFIG_CPU_R4X00)	+= -march=r4600 -Wa,--trap
- cflags-$(CONFIG_CPU_TX49XX)	+= -march=r4600 -Wa,--trap
--cflags-$(CONFIG_CPU_MIPS32_R1)	+= $(call cc-option,-march=mips32,-mips32 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
--			-Wa,-mips32 -Wa,--trap
--cflags-$(CONFIG_CPU_MIPS32_R2)	+= $(call cc-option,-march=mips32r2,-mips32r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
--			-Wa,-mips32r2 -Wa,--trap
-+cflags-$(CONFIG_CPU_MIPS32_R1)	+= -march=mips32 -Wa,--trap
-+cflags-$(CONFIG_CPU_MIPS32_R2)	+= -march=mips32r2 -Wa,--trap
- cflags-$(CONFIG_CPU_MIPS32_R6)	+= -march=mips32r6 -Wa,--trap -modd-spreg
--cflags-$(CONFIG_CPU_MIPS64_R1)	+= $(call cc-option,-march=mips64,-mips64 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64) \
--			-Wa,-mips64 -Wa,--trap
--cflags-$(CONFIG_CPU_MIPS64_R2)	+= $(call cc-option,-march=mips64r2,-mips64r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64) \
--			-Wa,-mips64r2 -Wa,--trap
-+cflags-$(CONFIG_CPU_MIPS64_R1)	+= -march=mips64 -Wa,--trap
-+cflags-$(CONFIG_CPU_MIPS64_R2)	+= -march=mips64r2 -Wa,--trap
- cflags-$(CONFIG_CPU_MIPS64_R6)	+= -march=mips64r6 -Wa,--trap
- cflags-$(CONFIG_CPU_R5000)	+= -march=r5000 -Wa,--trap
- cflags-$(CONFIG_CPU_R5432)	+= $(call cc-option,-march=r5400,-march=r5000) \
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -386,7 +386,20 @@ unsigned long get_wchan(struct task_stru
+ #define KSTK_ESP(tsk) (task_pt_regs(tsk)->regs[29])
+ #define KSTK_STATUS(tsk) (task_pt_regs(tsk)->cp0_status)
+ 
++#ifdef CONFIG_CPU_LOONGSON3
++/*
++ * Loongson-3's SFB (Store-Fill-Buffer) may buffer writes indefinitely when a
++ * tight read loop is executed, because reads take priority over writes & the
++ * hardware (incorrectly) doesn't ensure that writes will eventually occur.
++ *
++ * Since spin loops of any kind should have a cpu_relax() in them, force an SFB
++ * flush from cpu_relax() such that any pending writes will become visible as
++ * expected.
++ */
++#define cpu_relax()	smp_mb()
++#else
+ #define cpu_relax()	barrier()
++#endif
+ 
+ /*
+  * Return_address is a replacement for __builtin_return_address(count)
 
 
