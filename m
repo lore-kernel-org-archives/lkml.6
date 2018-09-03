@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0472C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3EFC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5848B20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:19:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5848B20867
+	by mail.kernel.org (Postfix) with ESMTP id D7A0B20652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 13:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A0B20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeICRjU (ORCPT
+        id S1727250AbeICRj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 13:39:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56343 "EHLO
+        Mon, 3 Sep 2018 13:39:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34099 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbeICRjT (ORCPT
+        with ESMTP id S1725968AbeICRj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 13:39:19 -0400
+        Mon, 3 Sep 2018 13:39:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83DIdc63313870
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83DJCRK3313900
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Sep 2018 06:18:39 -0700
+        Mon, 3 Sep 2018 06:19:12 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83DIdx43313867;
-        Mon, 3 Sep 2018 06:18:39 -0700
-Date:   Mon, 3 Sep 2018 06:18:39 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83DJCeW3313897;
+        Mon, 3 Sep 2018 06:19:12 -0700
+Date:   Mon, 3 Sep 2018 06:19:12 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jann Horn <tipbot@zytor.com>
-Message-ID: <tip-9da3f2b74054406f87dff7101a569217ffceb29b@git.kernel.org>
-Cc:     naveen.n.rao@linux.vnet.ibm.com, keescook@chromium.org,
-        viro@zeniv.linux.org.uk, luto@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, davem@davemloft.net, jannh@google.com,
-        mhiramat@kernel.org, anil.s.keshavamurthy@intel.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, mingo@kernel.org
-Reply-To: keescook@chromium.org, viro@zeniv.linux.org.uk,
-          naveen.n.rao@linux.vnet.ibm.com, hpa@zytor.com,
-          tglx@linutronix.de, luto@kernel.org,
-          anil.s.keshavamurthy@intel.com, davem@davemloft.net,
-          mhiramat@kernel.org, jannh@google.com, bp@alien8.de,
-          mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180828201421.157735-7-jannh@google.com>
-References: <20180828201421.157735-7-jannh@google.com>
+Message-ID: <tip-bef459026b161fbc39d20dcba698ed0cfffbac38@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, keescook@chromium.org,
+        mhiramat@kernel.org, tglx@linutronix.de,
+        naveen.n.rao@linux.vnet.ibm.com, mingo@kernel.org, luto@kernel.org,
+        hpa@zytor.com, jannh@google.com, davem@davemloft.net, bp@alien8.de,
+        anil.s.keshavamurthy@intel.com, viro@zeniv.linux.org.uk
+Reply-To: luto@kernel.org, mingo@kernel.org, hpa@zytor.com,
+          naveen.n.rao@linux.vnet.ibm.com, mhiramat@kernel.org,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          keescook@chromium.org, bp@alien8.de, viro@zeniv.linux.org.uk,
+          anil.s.keshavamurthy@intel.com, jannh@google.com,
+          davem@davemloft.net
+In-Reply-To: <20180828201421.157735-8-jannh@google.com>
+References: <20180828201421.157735-8-jannh@google.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/core] x86/fault: BUG() when uaccess helpers fault on
- kernel addresses
-Git-Commit-ID: 9da3f2b74054406f87dff7101a569217ffceb29b
+Subject: [tip:x86/core] lkdtm: Test copy_to_user() on bad kernel pointer
+ under KERNEL_DS
+Git-Commit-ID: bef459026b161fbc39d20dcba698ed0cfffbac38
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,36 +64,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9da3f2b74054406f87dff7101a569217ffceb29b
-Gitweb:     https://git.kernel.org/tip/9da3f2b74054406f87dff7101a569217ffceb29b
+Commit-ID:  bef459026b161fbc39d20dcba698ed0cfffbac38
+Gitweb:     https://git.kernel.org/tip/bef459026b161fbc39d20dcba698ed0cfffbac38
 Author:     Jann Horn <jannh@google.com>
-AuthorDate: Tue, 28 Aug 2018 22:14:20 +0200
+AuthorDate: Tue, 28 Aug 2018 22:14:21 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 3 Sep 2018 15:12:09 +0200
+CommitDate: Mon, 3 Sep 2018 15:12:10 +0200
 
-x86/fault: BUG() when uaccess helpers fault on kernel addresses
+lkdtm: Test copy_to_user() on bad kernel pointer under KERNEL_DS
 
-There have been multiple kernel vulnerabilities that permitted userspace to
-pass completely unchecked pointers through to userspace accessors:
-
- - the waitid() bug - commit 96ca579a1ecc ("waitid(): Add missing
-   access_ok() checks")
- - the sg/bsg read/write APIs
- - the infiniband read/write APIs
-
-These don't happen all that often, but when they do happen, it is hard to
-test for them properly; and it is probably also hard to discover them with
-fuzzing. Even when an unmapped kernel address is supplied to such buggy
-code, it just returns -EFAULT instead of doing a proper BUG() or at least
-WARN().
-
-Try to make such misbehaving code a bit more visible by refusing to do a
-fixup in the pagefault handler code when a userspace accessor causes a #PF
-on a kernel address and the current context isn't whitelisted.
+Test whether the kernel WARN()s when, under KERNEL_DS, a bad kernel pointer
+is used as "userspace" pointer. Should normally be used in "DIRECT" mode.
 
 Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Kees Cook <keescook@chromium.org>
+Acked-by: Kees Cook <keescook@chromium.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: kernel-hardening@lists.openwall.com
 Cc: dvyukov@google.com
@@ -104,169 +90,58 @@ Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20180828201421.157735-7-jannh@google.com
+Link: https://lkml.kernel.org/r/20180828201421.157735-8-jannh@google.com
 
 ---
- arch/x86/mm/extable.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/namespace.c        |  2 ++
- include/linux/sched.h |  6 ++++++
- mm/maccess.c          |  6 ++++++
- 4 files changed, 72 insertions(+)
+ drivers/misc/lkdtm/core.c     |  1 +
+ drivers/misc/lkdtm/lkdtm.h    |  1 +
+ drivers/misc/lkdtm/usercopy.c | 13 +++++++++++++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/arch/x86/mm/extable.c b/arch/x86/mm/extable.c
-index 856fa409c536..6521134057e8 100644
---- a/arch/x86/mm/extable.c
-+++ b/arch/x86/mm/extable.c
-@@ -117,11 +117,67 @@ __visible bool ex_handler_fprestore(const struct exception_table_entry *fixup,
- }
- EXPORT_SYMBOL_GPL(ex_handler_fprestore);
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index 2154d1bfd18b..5a755590d3dc 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -183,6 +183,7 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
+ 	CRASHTYPE(USERCOPY_STACK_BEYOND),
+ 	CRASHTYPE(USERCOPY_KERNEL),
++	CRASHTYPE(USERCOPY_KERNEL_DS),
+ };
  
-+/* Helper to check whether a uaccess fault indicates a kernel bug. */
-+static bool bogus_uaccess(struct pt_regs *regs, int trapnr,
-+			  unsigned long fault_addr)
+ 
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 9e513dcfd809..07db641d71d0 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -82,5 +82,6 @@ void lkdtm_USERCOPY_STACK_FRAME_TO(void);
+ void lkdtm_USERCOPY_STACK_FRAME_FROM(void);
+ void lkdtm_USERCOPY_STACK_BEYOND(void);
+ void lkdtm_USERCOPY_KERNEL(void);
++void lkdtm_USERCOPY_KERNEL_DS(void);
+ 
+ #endif
+diff --git a/drivers/misc/lkdtm/usercopy.c b/drivers/misc/lkdtm/usercopy.c
+index 9725aed305bb..389475b25bb7 100644
+--- a/drivers/misc/lkdtm/usercopy.c
++++ b/drivers/misc/lkdtm/usercopy.c
+@@ -322,6 +322,19 @@ free_user:
+ 	vm_munmap(user_addr, PAGE_SIZE);
+ }
+ 
++void lkdtm_USERCOPY_KERNEL_DS(void)
 +{
-+	/* This is the normal case: #PF with a fault address in userspace. */
-+	if (trapnr == X86_TRAP_PF && fault_addr < TASK_SIZE_MAX)
-+		return false;
++	char __user *user_ptr = (char __user *)ERR_PTR(-EINVAL);
++	mm_segment_t old_fs = get_fs();
++	char buf[10] = {0};
 +
-+	/*
-+	 * This code can be reached for machine checks, but only if the #MC
-+	 * handler has already decided that it looks like a candidate for fixup.
-+	 * This e.g. happens when attempting to access userspace memory which
-+	 * the CPU can't access because of uncorrectable bad memory.
-+	 */
-+	if (trapnr == X86_TRAP_MC)
-+		return false;
-+
-+	/*
-+	 * There are two remaining exception types we might encounter here:
-+	 *  - #PF for faulting accesses to kernel addresses
-+	 *  - #GP for faulting accesses to noncanonical addresses
-+	 * Complain about anything else.
-+	 */
-+	if (trapnr != X86_TRAP_PF && trapnr != X86_TRAP_GP) {
-+		WARN(1, "unexpected trap %d in uaccess\n", trapnr);
-+		return false;
-+	}
-+
-+	/*
-+	 * This is a faulting memory access in kernel space, on a kernel
-+	 * address, in a usercopy function. This can e.g. be caused by improper
-+	 * use of helpers like __put_user and by improper attempts to access
-+	 * userspace addresses in KERNEL_DS regions.
-+	 * The one (semi-)legitimate exception are probe_kernel_{read,write}(),
-+	 * which can be invoked from places like kgdb, /dev/mem (for reading)
-+	 * and privileged BPF code (for reading).
-+	 * The probe_kernel_*() functions set the kernel_uaccess_faults_ok flag
-+	 * to tell us that faulting on kernel addresses, and even noncanonical
-+	 * addresses, in a userspace accessor does not necessarily imply a
-+	 * kernel bug, root might just be doing weird stuff.
-+	 */
-+	if (current->kernel_uaccess_faults_ok)
-+		return false;
-+
-+	/* This is bad. Refuse the fixup so that we go into die(). */
-+	if (trapnr == X86_TRAP_PF) {
-+		pr_emerg("BUG: pagefault on kernel address 0x%lx in non-whitelisted uaccess\n",
-+			 fault_addr);
-+	} else {
-+		pr_emerg("BUG: GPF in non-whitelisted uaccess (non-canonical address?)\n");
-+	}
-+	return true;
++	pr_info("attempting copy_to_user on unmapped kernel address\n");
++	set_fs(KERNEL_DS);
++	if (copy_to_user(user_ptr, buf, sizeof(buf)))
++		pr_info("copy_to_user un unmapped kernel address failed\n");
++	set_fs(old_fs);
 +}
 +
- __visible bool ex_handler_uaccess(const struct exception_table_entry *fixup,
- 				  struct pt_regs *regs, int trapnr,
- 				  unsigned long error_code,
- 				  unsigned long fault_addr)
+ void __init lkdtm_usercopy_init(void)
  {
-+	if (bogus_uaccess(regs, trapnr, fault_addr))
-+		return false;
- 	regs->ip = ex_fixup_addr(fixup);
- 	return true;
- }
-@@ -132,6 +188,8 @@ __visible bool ex_handler_ext(const struct exception_table_entry *fixup,
- 			      unsigned long error_code,
- 			      unsigned long fault_addr)
- {
-+	if (bogus_uaccess(regs, trapnr, fault_addr))
-+		return false;
- 	/* Special hack for uaccess_err */
- 	current->thread.uaccess_err = 1;
- 	regs->ip = ex_fixup_addr(fixup);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 99186556f8d3..d86830c86ce8 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2642,6 +2642,7 @@ static long exact_copy_from_user(void *to, const void __user * from,
- 	if (!access_ok(VERIFY_READ, from, n))
- 		return n;
- 
-+	current->kernel_uaccess_faults_ok++;
- 	while (n) {
- 		if (__get_user(c, f)) {
- 			memset(t, 0, n);
-@@ -2651,6 +2652,7 @@ static long exact_copy_from_user(void *to, const void __user * from,
- 		f++;
- 		n--;
- 	}
-+	current->kernel_uaccess_faults_ok--;
- 	return n;
- }
- 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 977cb57d7bc9..56dd65f1be4f 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -739,6 +739,12 @@ struct task_struct {
- 	unsigned			use_memdelay:1;
- #endif
- 
-+	/*
-+	 * May usercopy functions fault on kernel addresses?
-+	 * This is not just a single bit because this can potentially nest.
-+	 */
-+	unsigned int			kernel_uaccess_faults_ok;
-+
- 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
- 
- 	struct restart_block		restart_block;
-diff --git a/mm/maccess.c b/mm/maccess.c
-index ec00be51a24f..f3416632e5a4 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -30,8 +30,10 @@ long __probe_kernel_read(void *dst, const void *src, size_t size)
- 
- 	set_fs(KERNEL_DS);
- 	pagefault_disable();
-+	current->kernel_uaccess_faults_ok++;
- 	ret = __copy_from_user_inatomic(dst,
- 			(__force const void __user *)src, size);
-+	current->kernel_uaccess_faults_ok--;
- 	pagefault_enable();
- 	set_fs(old_fs);
- 
-@@ -58,7 +60,9 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
- 
- 	set_fs(KERNEL_DS);
- 	pagefault_disable();
-+	current->kernel_uaccess_faults_ok++;
- 	ret = __copy_to_user_inatomic((__force void __user *)dst, src, size);
-+	current->kernel_uaccess_faults_ok--;
- 	pagefault_enable();
- 	set_fs(old_fs);
- 
-@@ -94,11 +98,13 @@ long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count)
- 
- 	set_fs(KERNEL_DS);
- 	pagefault_disable();
-+	current->kernel_uaccess_faults_ok++;
- 
- 	do {
- 		ret = __get_user(*dst++, (const char __user __force *)src++);
- 	} while (dst[-1] && ret == 0 && src - unsafe_addr < count);
- 
-+	current->kernel_uaccess_faults_ok--;
- 	dst[-1] = '\0';
- 	pagefault_enable();
- 	set_fs(old_fs);
+ 	/* Prepare cache that lacks SLAB_USERCOPY flag. */
