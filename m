@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E561AC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0925BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A881920779
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A881920779
+	by mail.kernel.org (Postfix) with ESMTP id BCB0120868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:51:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB0120868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeICVMc (ORCPT
+        id S1728287AbeICVMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:12:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36352 "EHLO
+        Mon, 3 Sep 2018 17:12:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeICVMb (ORCPT
+        with ESMTP id S1727669AbeICVMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:12:31 -0400
+        Mon, 3 Sep 2018 17:12:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC001CEE;
-        Mon,  3 Sep 2018 16:51:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE19CCEE;
+        Mon,  3 Sep 2018 16:51:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 3.18 36/56] btrfs: dont leak ret from do_chunk_alloc
-Date:   Mon,  3 Sep 2018 18:49:26 +0200
-Message-Id: <20180903164925.862167737@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 3.18 37/56] s390/kvm: fix deadlock when killed by oom
+Date:   Mon,  3 Sep 2018 18:49:27 +0200
+Message-Id: <20180903164925.912285812@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -51,35 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit 4559b0a71749c442d34f7cfb9e72c9e58db83948 upstream.
+commit 306d6c49ac9ded11114cb53b0925da52f2c2ada1 upstream.
 
-If we're trying to make a data reservation and we have to allocate a
-data chunk we could leak ret == 1, as do_chunk_alloc() will return 1 if
-it allocated a chunk.  Since the end of the function is the success path
-just return 0.
+When the oom killer kills a userspace process in the page fault handler
+while in guest context, the fault handler fails to release the mm_sem
+if the FAULT_FLAG_RETRY_NOWAIT option is set. This leads to a deadlock
+when tearing down the mm when the process terminates. This bug can only
+happen when pfault is enabled, so only KVM clients are affected.
 
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+The problem arises in the rare cases in which handle_mm_fault does not
+release the mm_sem. This patch fixes the issue by manually releasing
+the mm_sem when needed.
+
+Fixes: 24eb3a824c4f3 ("KVM: s390: Add FAULT_FLAG_RETRY_NOWAIT for guest fault")
+Cc: <stable@vger.kernel.org> # 3.15+
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/mm/fault.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4281,7 +4281,7 @@ static int flush_space(struct btrfs_root
- 		break;
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -494,6 +494,8 @@ retry:
+ 	/* No reason to continue if interrupted by SIGKILL. */
+ 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+ 		fault = VM_FAULT_SIGNAL;
++		if (flags & FAULT_FLAG_RETRY_NOWAIT)
++			goto out_up;
+ 		goto out;
  	}
- 
--	return ret;
-+	return 0;
- }
- 
- static inline u64
+ 	if (unlikely(fault & VM_FAULT_ERROR))
 
 
