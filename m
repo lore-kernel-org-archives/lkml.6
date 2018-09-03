@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C305C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587E4C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4215F20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4215F20658
+	by mail.kernel.org (Postfix) with ESMTP id 1485C2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1485C2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbeICVst (ORCPT
+        id S1731082AbeICVsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:48:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46316 "EHLO
+        Mon, 3 Sep 2018 17:48:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeICVss (ORCPT
+        with ESMTP id S1728175AbeICVsv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:48:48 -0400
+        Mon, 3 Sep 2018 17:48:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61962D01;
-        Mon,  3 Sep 2018 17:27:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72880CF4;
+        Mon,  3 Sep 2018 17:27:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
+        Tejun Heo <tj@kernel.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 154/165] scsi: mpt3sas: Fix _transport_smp_handler() error path
-Date:   Mon,  3 Sep 2018 18:57:20 +0200
-Message-Id: <20180903165704.813212166@linuxfoundation.org>
+Subject: [PATCH 4.14 155/165] scsi: sysfs: Introduce sysfs_{un,}break_active_protection()
+Date:   Mon,  3 Sep 2018 18:57:21 +0200
+Message-Id: <20180903165704.866590207@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -57,50 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 91b7bdb2c0089cbbb817df6888ab1458c645184e upstream.
+commit 2afc9166f79b8f6da5f347f48515215ceee4ae37 upstream.
 
-This patch avoids that smatch complains about a double unlock on
-ioc->transport_cmds.mutex.
+Introduce these two functions and export them such that the next patch
+can add calls to these functions from the SCSI core.
 
-Fixes: 651a01364994 ("scsi: scsi_transport_sas: switch to bsg-lib for SMP passthrough")
 Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>
-Cc: Chaitra P B <chaitra.basappa@broadcom.com>
-Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Tejun Heo <tj@kernel.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/mpt3sas/mpt3sas_transport.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/sysfs/file.c       |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sysfs.h |   14 ++++++++++++++
+ 2 files changed, 58 insertions(+)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-@@ -1936,12 +1936,12 @@ _transport_smp_handler(struct bsg_job *j
- 		pr_info(MPT3SAS_FMT "%s: host reset in progress!\n",
- 		    __func__, ioc->name);
- 		rc = -EFAULT;
--		goto out;
-+		goto job_done;
- 	}
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -408,6 +408,50 @@ int sysfs_chmod_file(struct kobject *kob
+ EXPORT_SYMBOL_GPL(sysfs_chmod_file);
  
- 	rc = mutex_lock_interruptible(&ioc->transport_cmds.mutex);
- 	if (rc)
--		goto out;
-+		goto job_done;
- 
- 	if (ioc->transport_cmds.status != MPT3_CMD_NOT_USED) {
- 		pr_err(MPT3SAS_FMT "%s: transport_cmds in use\n", ioc->name,
-@@ -2066,6 +2066,7 @@ _transport_smp_handler(struct bsg_job *j
-  out:
- 	ioc->transport_cmds.status = MPT3_CMD_NOT_USED;
- 	mutex_unlock(&ioc->transport_cmds.mutex);
-+job_done:
- 	bsg_job_done(job, rc, reslen);
+ /**
++ * sysfs_break_active_protection - break "active" protection
++ * @kobj: The kernel object @attr is associated with.
++ * @attr: The attribute to break the "active" protection for.
++ *
++ * With sysfs, just like kernfs, deletion of an attribute is postponed until
++ * all active .show() and .store() callbacks have finished unless this function
++ * is called. Hence this function is useful in methods that implement self
++ * deletion.
++ */
++struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
++						  const struct attribute *attr)
++{
++	struct kernfs_node *kn;
++
++	kobject_get(kobj);
++	kn = kernfs_find_and_get(kobj->sd, attr->name);
++	if (kn)
++		kernfs_break_active_protection(kn);
++	return kn;
++}
++EXPORT_SYMBOL_GPL(sysfs_break_active_protection);
++
++/**
++ * sysfs_unbreak_active_protection - restore "active" protection
++ * @kn: Pointer returned by sysfs_break_active_protection().
++ *
++ * Undo the effects of sysfs_break_active_protection(). Since this function
++ * calls kernfs_put() on the kernfs node that corresponds to the 'attr'
++ * argument passed to sysfs_break_active_protection() that attribute may have
++ * been removed between the sysfs_break_active_protection() and
++ * sysfs_unbreak_active_protection() calls, it is not safe to access @kn after
++ * this function has returned.
++ */
++void sysfs_unbreak_active_protection(struct kernfs_node *kn)
++{
++	struct kobject *kobj = kn->parent->priv;
++
++	kernfs_unbreak_active_protection(kn);
++	kernfs_put(kn);
++	kobject_put(kobj);
++}
++EXPORT_SYMBOL_GPL(sysfs_unbreak_active_protection);
++
++/**
+  * sysfs_remove_file_ns - remove an object attribute with a custom ns tag
+  * @kobj: object we're acting for
+  * @attr: attribute descriptor
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -239,6 +239,9 @@ int __must_check sysfs_create_files(stru
+ 				   const struct attribute **attr);
+ int __must_check sysfs_chmod_file(struct kobject *kobj,
+ 				  const struct attribute *attr, umode_t mode);
++struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
++						  const struct attribute *attr);
++void sysfs_unbreak_active_protection(struct kernfs_node *kn);
+ void sysfs_remove_file_ns(struct kobject *kobj, const struct attribute *attr,
+ 			  const void *ns);
+ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr);
+@@ -352,6 +355,17 @@ static inline int sysfs_chmod_file(struc
+ 	return 0;
  }
  
++static inline struct kernfs_node *
++sysfs_break_active_protection(struct kobject *kobj,
++			      const struct attribute *attr)
++{
++	return NULL;
++}
++
++static inline void sysfs_unbreak_active_protection(struct kernfs_node *kn)
++{
++}
++
+ static inline void sysfs_remove_file_ns(struct kobject *kobj,
+ 					const struct attribute *attr,
+ 					const void *ns)
 
 
