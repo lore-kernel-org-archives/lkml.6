@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFD3C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8D2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE20120658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE20120658
+	by mail.kernel.org (Postfix) with ESMTP id E7A5F20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A5F20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbeICWBw (ORCPT
+        id S1732052AbeICWB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:01:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49412 "EHLO
+        Mon, 3 Sep 2018 18:01:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeICWBw (ORCPT
+        with ESMTP id S1727466AbeICWBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:52 -0400
+        Mon, 3 Sep 2018 18:01:55 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 481BFBC4;
-        Mon,  3 Sep 2018 17:40:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82B1FBAE;
+        Mon,  3 Sep 2018 17:40:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        stable@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.18 113/123] mtd: rawnand: marvell: add suspend and resume hooks
-Date:   Mon,  3 Sep 2018 18:57:37 +0200
-Message-Id: <20180903165724.283945860@linuxfoundation.org>
+Subject: [PATCH 4.18 114/123] mtd: rawnand: qcom: wait for desc completion in all BAM channels
+Date:   Mon,  3 Sep 2018 18:57:38 +0200
+Message-Id: <20180903165724.327444397@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,146 +50,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Mack <daniel@zonque.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
 
-commit bd9c3f9b3c00da322b5e784e820533f1598f690a upstream.
+commit 6f20070d51a20e489ef117603210264c6bcde8a5 upstream.
 
-This patch restores the suspend and resume hooks that the old driver used
-to have. Apart from stopping and starting the clocks, the resume callback
-also nullifies the selected_chip pointer, so the next command that is issued
-will re-select the chip and thereby restore the timing registers.
+The BAM has 3 channels - tx, rx and command. command channel
+is used for register read/writes, tx channel for data writes
+and rx channel for data reads. Currently, the driver assumes the
+transfer completion once it gets all the command descriptors
+completed. Sometimes, there is race condition between data channel
+(tx/rx) and command channel completion. In these cases,
+the data present in buffer is not valid during small window
+between command descriptor completion and data descriptor
+completion.
 
-Factor out some code from marvell_nfc_init() into a new function
-marvell_nfc_reset() and also call it at resume time to reset some registers
-that don't retain their contents during low-power mode.
+This patch generates NAND transfer completion when both
+(Data and Command) DMA channels have completed all its DMA
+descriptors. It assigns completion callback in last
+DMA descriptors of that channel and wait for completion.
 
-Without this patch, a PXA3xx based system would cough up an error similar to
-the one below after resume.
-
-[   44.660162] marvell-nfc 43100000.nand-controller: Timeout waiting for  RB signal
-[   44.671492] ubi0 error: ubi_io_write: error -110 while writing 2048 bytes to PEB 102:38912, written 0 bytes
-[   44.682887] CPU: 0 PID: 1417 Comm: remote-control Not tainted 4.18.0-rc2+ #344
-[   44.691197] Hardware name: Marvell PXA3xx (Device Tree Support)
-[   44.697111] Backtrace:
-[   44.699593] [<c0106458>] (dump_backtrace) from [<c0106718>] (show_stack+0x18/0x1c)
-[   44.708931]  r7:00000800 r6:00009800 r5:00000066 r4:c6139000
-[   44.715833] [<c0106700>] (show_stack) from [<c0678a60>] (dump_stack+0x20/0x28)
-[   44.724206] [<c0678a40>] (dump_stack) from [<c0456cbc>] (ubi_io_write+0x3d4/0x630)
-[   44.732925] [<c04568e8>] (ubi_io_write) from [<c0454428>] (ubi_eba_write_leb+0x690/0x6fc)
-...
-
-Fixes: 02f26ecf8c77 ("mtd: nand: add reworked Marvell NAND controller driver")
+Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
 Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/marvell_nand.c |   73 ++++++++++++++++++++++++++++++------
- 1 file changed, 62 insertions(+), 11 deletions(-)
+ drivers/mtd/nand/raw/qcom_nandc.c |   53 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -2677,6 +2677,21 @@ static int marvell_nfc_init_dma(struct m
- 	return 0;
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -213,6 +213,8 @@ nandc_set_reg(nandc, NAND_READ_LOCATION_
+ #define QPIC_PER_CW_CMD_SGL		32
+ #define QPIC_PER_CW_DATA_SGL		8
+ 
++#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
++
+ /*
+  * Flags used in DMA descriptor preparation helper functions
+  * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
+@@ -245,6 +247,11 @@ nandc_set_reg(nandc, NAND_READ_LOCATION_
+  * @tx_sgl_start - start index in data sgl for tx.
+  * @rx_sgl_pos - current index in data sgl for rx.
+  * @rx_sgl_start - start index in data sgl for rx.
++ * @wait_second_completion - wait for second DMA desc completion before making
++ *			     the NAND transfer completion.
++ * @txn_done - completion for NAND transfer.
++ * @last_data_desc - last DMA desc in data channel (tx/rx).
++ * @last_cmd_desc - last DMA desc in command channel.
+  */
+ struct bam_transaction {
+ 	struct bam_cmd_element *bam_ce;
+@@ -258,6 +265,10 @@ struct bam_transaction {
+ 	u32 tx_sgl_start;
+ 	u32 rx_sgl_pos;
+ 	u32 rx_sgl_start;
++	bool wait_second_completion;
++	struct completion txn_done;
++	struct dma_async_tx_descriptor *last_data_desc;
++	struct dma_async_tx_descriptor *last_cmd_desc;
+ };
+ 
+ /*
+@@ -504,6 +515,8 @@ alloc_bam_transaction(struct qcom_nand_c
+ 
+ 	bam_txn->data_sgl = bam_txn_buf;
+ 
++	init_completion(&bam_txn->txn_done);
++
+ 	return bam_txn;
  }
  
-+static void marvell_nfc_reset(struct marvell_nfc *nfc)
-+{
-+	/*
-+	 * ECC operations and interruptions are only enabled when specifically
-+	 * needed. ECC shall not be activated in the early stages (fails probe).
-+	 * Arbiter flag, even if marked as "reserved", must be set (empirical).
-+	 * SPARE_EN bit must always be set or ECC bytes will not be at the same
-+	 * offset in the read page and this will fail the protection.
-+	 */
-+	writel_relaxed(NDCR_ALL_INT | NDCR_ND_ARB_EN | NDCR_SPARE_EN |
-+		       NDCR_RD_ID_CNT(NFCV1_READID_LEN), nfc->regs + NDCR);
-+	writel_relaxed(0xFFFFFFFF, nfc->regs + NDSR);
-+	writel_relaxed(0, nfc->regs + NDECCCTRL);
+@@ -523,11 +536,33 @@ static void clear_bam_transaction(struct
+ 	bam_txn->tx_sgl_start = 0;
+ 	bam_txn->rx_sgl_pos = 0;
+ 	bam_txn->rx_sgl_start = 0;
++	bam_txn->last_data_desc = NULL;
++	bam_txn->wait_second_completion = false;
+ 
+ 	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
+ 		      QPIC_PER_CW_CMD_SGL);
+ 	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
+ 		      QPIC_PER_CW_DATA_SGL);
++
++	reinit_completion(&bam_txn->txn_done);
 +}
 +
- static int marvell_nfc_init(struct marvell_nfc *nfc)
- {
- 	struct device_node *np = nfc->dev->of_node;
-@@ -2715,17 +2730,7 @@ static int marvell_nfc_init(struct marve
- 	if (!nfc->caps->is_nfcv2)
- 		marvell_nfc_init_dma(nfc);
- 
--	/*
--	 * ECC operations and interruptions are only enabled when specifically
--	 * needed. ECC shall not be activated in the early stages (fails probe).
--	 * Arbiter flag, even if marked as "reserved", must be set (empirical).
--	 * SPARE_EN bit must always be set or ECC bytes will not be at the same
--	 * offset in the read page and this will fail the protection.
--	 */
--	writel_relaxed(NDCR_ALL_INT | NDCR_ND_ARB_EN | NDCR_SPARE_EN |
--		       NDCR_RD_ID_CNT(NFCV1_READID_LEN), nfc->regs + NDCR);
--	writel_relaxed(0xFFFFFFFF, nfc->regs + NDSR);
--	writel_relaxed(0, nfc->regs + NDECCCTRL);
-+	marvell_nfc_reset(nfc);
- 
- 	return 0;
- }
-@@ -2840,6 +2845,51 @@ static int marvell_nfc_remove(struct pla
- 	return 0;
- }
- 
-+static int __maybe_unused marvell_nfc_suspend(struct device *dev)
++/* Callback for DMA descriptor completion */
++static void qpic_bam_dma_done(void *data)
 +{
-+	struct marvell_nfc *nfc = dev_get_drvdata(dev);
-+	struct marvell_nand_chip *chip;
-+
-+	list_for_each_entry(chip, &nfc->chips, node)
-+		marvell_nfc_wait_ndrun(&chip->chip);
-+
-+	clk_disable_unprepare(nfc->reg_clk);
-+	clk_disable_unprepare(nfc->core_clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused marvell_nfc_resume(struct device *dev)
-+{
-+	struct marvell_nfc *nfc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(nfc->core_clk);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!IS_ERR(nfc->reg_clk)) {
-+		ret = clk_prepare_enable(nfc->reg_clk);
-+		if (ret < 0)
-+			return ret;
-+	}
++	struct bam_transaction *bam_txn = data;
 +
 +	/*
-+	 * Reset nfc->selected_chip so the next command will cause the timing
-+	 * registers to be restored in marvell_nfc_select_chip().
++	 * In case of data transfer with NAND, 2 callbacks will be generated.
++	 * One for command channel and another one for data channel.
++	 * If current transaction has data descriptors
++	 * (i.e. wait_second_completion is true), then set this to false
++	 * and wait for second DMA descriptor completion.
 +	 */
-+	nfc->selected_chip = NULL;
++	if (bam_txn->wait_second_completion)
++		bam_txn->wait_second_completion = false;
++	else
++		complete(&bam_txn->txn_done);
+ }
+ 
+ static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
+@@ -756,6 +791,12 @@ static int prepare_bam_async_desc(struct
+ 
+ 	desc->dma_desc = dma_desc;
+ 
++	/* update last data/command descriptor */
++	if (chan == nandc->cmd_chan)
++		bam_txn->last_cmd_desc = dma_desc;
++	else
++		bam_txn->last_data_desc = dma_desc;
 +
-+	/* Reset registers that have lost their contents */
-+	marvell_nfc_reset(nfc);
+ 	list_add_tail(&desc->node, &nandc->desc_list);
+ 
+ 	return 0;
+@@ -1273,10 +1314,20 @@ static int submit_descs(struct qcom_nand
+ 		cookie = dmaengine_submit(desc->dma_desc);
+ 
+ 	if (nandc->props->is_bam) {
++		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
++		bam_txn->last_cmd_desc->callback_param = bam_txn;
++		if (bam_txn->last_data_desc) {
++			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
++			bam_txn->last_data_desc->callback_param = bam_txn;
++			bam_txn->wait_second_completion = true;
++		}
 +
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops marvell_nfc_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(marvell_nfc_suspend, marvell_nfc_resume)
-+};
-+
- static const struct marvell_nfc_caps marvell_armada_8k_nfc_caps = {
- 	.max_cs_nb = 4,
- 	.max_rb_nb = 2,
-@@ -2924,6 +2974,7 @@ static struct platform_driver marvell_nf
- 	.driver	= {
- 		.name		= "marvell-nfc",
- 		.of_match_table = marvell_nfc_of_ids,
-+		.pm		= &marvell_nfc_pm_ops,
- 	},
- 	.id_table = marvell_nfc_platform_ids,
- 	.probe = marvell_nfc_probe,
+ 		dma_async_issue_pending(nandc->tx_chan);
+ 		dma_async_issue_pending(nandc->rx_chan);
++		dma_async_issue_pending(nandc->cmd_chan);
+ 
+-		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
++		if (!wait_for_completion_timeout(&bam_txn->txn_done,
++						 QPIC_NAND_COMPLETION_TIMEOUT))
+ 			return -ETIMEDOUT;
+ 	} else {
+ 		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
 
 
