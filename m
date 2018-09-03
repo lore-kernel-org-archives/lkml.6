@@ -2,184 +2,99 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388E0C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5ACC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54472086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:08:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54472086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CE30420843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:09:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZVrcL687"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE30420843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeICT2e convert rfc822-to-8bit (ORCPT
+        id S1727449AbeICT3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:28:34 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:46546 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICT2d (ORCPT
+        Mon, 3 Sep 2018 15:29:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54074 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbeICT3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:28:33 -0400
-Received: by mail-vk0-f67.google.com with SMTP id b14-v6so286939vke.13;
-        Mon, 03 Sep 2018 08:07:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HPSp+Jn8jv1Vh1YsfpKRDgDd3bmQ8AAw73WdrmW3V5Y=;
-        b=Qw633aw4HPgFKjGwOfuMZ59qefIUkj8fUb5wpiDPEpMSRM6IqqwtbY6KPrs0DZloKK
-         GZwsA0CbxS/cpANq07YgSI4hFNNNbE7J63VNUtSBcV8GI50vOlzk6dcozzPAh09IsjNC
-         nVKhs5AvfxZdbQFWnJiDPon/qa1/SFsi4p8MySryOtbEhs9KP3QqWJ2tImJqxKYoyDPd
-         MgKNGK7pCoCkGrwq/hkjMlg6+RmXOuYWzC0gjdRCZHfhxf9YMAMk7+K8I140RtNMLlK/
-         UMU/n2pO8+uw3wNskYN5E+XBqDvTEX9veXattmK+LA9woWHXNEbdULCIs7Mb8XLq4PKP
-         8GFw==
-X-Gm-Message-State: APzg51CR08Yx4i4jcUSYCUjxTxCuk8J7Mu63IRro/UpEzBNbrxniCv1s
-        xpf2cs/xXg0R5nD/iwpluRQNFY3JUtcHp5tUCkQ=
-X-Google-Smtp-Source: ANB0VdZwrSGUbocz+e7hD7Hi/+8Gop2gS+ScDfXzu9LH8WFlEKRoZCp+/SVu/E4taR+o9fvA7dzr606ru+QiMIPz2zQ=
-X-Received: by 2002:a1f:6307:: with SMTP id x7-v6mr6412045vkb.111.1535987277086;
- Mon, 03 Sep 2018 08:07:57 -0700 (PDT)
+        Mon, 3 Sep 2018 15:29:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rRB2zvy+SrWvjl8bGTlrM/IezEB0Ek6Up3NE+7SHK/I=; b=ZVrcL6873G+MgbpQ2NOZazkbp
+        nXXrPe/G8Wta2CATviyqKWHke+j9cHHV16s/di3ccegNK+BvMY/PwcubhEFK42pD59RYl7PfBwVKN
+        FhxPJsqkVcf0i6q6PpYQ+0SK3iqRFYboL659IjDFhe8ddLEdOI+MHs7EncH9mXQOIy5GU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fwqTX-0000Qd-UH; Mon, 03 Sep 2018 15:09:11 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A5D8811227AE; Mon,  3 Sep 2018 16:09:11 +0100 (BST)
+Date:   Mon, 3 Sep 2018 16:09:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] regulator: Fix useless O^2 complexity in
+ suspend/resume
+Message-ID: <20180903150911.GO10302@sirena.org.uk>
+References: <20180903144937.16507-1-m.szyprowski@samsung.com>
+ <CGME20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a@eucas1p2.samsung.com>
+ <20180903144937.16507-2-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com> <20180902120144.6855-1-jmkrzyszt@gmail.com>
- <20180902120144.6855-2-jmkrzyszt@gmail.com>
-In-Reply-To: <20180902120144.6855-2-jmkrzyszt@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 3 Sep 2018 17:07:44 +0200
-Message-ID: <CAMuHMdXScsLg+LsQDn0dU8qSV30uWaeGQsNDPssm0H5y6UPAWw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        peter.korsgaard@barco.com, Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
-        driverdevel <devel@driverdev.osuosl.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sebastien.bourdelin@savoirfairelinux.com,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GPOl6LAGMgeiWDic"
+Content-Disposition: inline
+In-Reply-To: <20180903144937.16507-2-m.szyprowski@samsung.com>
+X-Cookie: Inside, I'm already SOBBING!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
 
-On Sun, Sep 2, 2018 at 2:01 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> Most users of get/set array functions iterate consecutive bits of data,
-> usually a single integer, while processing array of results obtained
-> from, or building an array of values to be passed to those functions.
-> Save time wasted on those iterations by changing the functions' API to
-> accept bitmaps.
->
-> All current users are updated as well.
->
-> More benefits from the change are expected as soon as planned support
-> for accepting/passing those bitmaps directly from/to respective GPIO
-> chip callbacks if applicable is implemented.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>
-> Cc: Lukas Wunner <lukas@wunner.de>
-> Cc: Peter Korsgaard <peter.korsgaard@barco.com>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Rojhalat Ibrahim <imr@rtschenk.de>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: Russell King <rmk+kernel@armlinux.org.uk>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: Yegor Yefremov <yegorslists@googlemail.com>
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+--GPOl6LAGMgeiWDic
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> --- a/drivers/auxdisplay/hd44780.c
-> +++ b/drivers/auxdisplay/hd44780.c
-> @@ -62,17 +62,12 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
->  /* write to an LCD panel register in 8 bit GPIO mode */
->  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
->  {
-> -       int values[10]; /* for DATA[0-7], RS, RW */
-> -       unsigned int i, n;
-> -
-> -       for (i = 0; i < 8; i++)
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> -       n = 9;
-> -       if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> -               n++;
-> -       }
-> +       DECLARE_BITMAP(values, 10); /* for DATA[0-7], RS, RW */
-> +       unsigned int n;
-> +
-> +       *values = val;
+On Mon, Sep 03, 2018 at 04:49:36PM +0200, Marek Szyprowski wrote:
+> regulator_pm_ops with regulator_suspend and regulator_resume functions are
+> assigned to every regulator device registered in the system, so there is no
+> need to iterate over all again in them. Replace class_for_each_device()
+> construction with direct operation on the rdev embedded in the given
+> regulator device. This saves a lots of useless operations in suspend and
+> resume paths.
 
-Given DECLARE_BITMAP() creates an array, the above line looks a bit funny now.
+This would've been better as the second patch since it's an optimization
+and not so urgent for stable.
 
-IMHO, either you use
+--GPOl6LAGMgeiWDic
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    unsigned long values;
-    values = val;
-    __assign_bit(8, &values, rs);
+-----BEGIN PGP SIGNATURE-----
 
-or
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluNTpYACgkQJNaLcl1U
+h9BGjwgAhqUvyqpcWaCsmLIX1szG4WYuI0Ua2w6alah6E0DCv9DmKhmQIaM1183d
+0zl5xuVGz+r5NJs6y0BcBNwBCeZ0hCMjyBAlEGntirc0MPhhtatDhVnbO89yESEK
+jrIOTDJPDw1A4pZbBdTQ+6Wlr6HP1nABPEYS0bZXVIPC8W3BLcJPqOtM6t4XVULc
+C6eNPp4h54OKLzLVSiiOVx1+NZoF7BMEipOn1KMMTlwjHQVi/foQPO8+pd0j2YSl
+UcTkbxXQnCrc0K09ifDpi7b4TRBZOs6eieSZExbd53TeMSCRzcEP464TU11fcTyN
+ymaU7JRgZq0GtuQ0E2frYjvkhYOJsw==
+=HzOk
+-----END PGP SIGNATURE-----
 
-    DECLARE_BITMAP(values, 10);
-    values[0] = val;
-    __assign_bit(8, values, rs);
-
-Nevertheless, for hd44780.c:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--GPOl6LAGMgeiWDic--
