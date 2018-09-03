@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C660C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD08C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BD020658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC752077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:40:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uP/P+kRP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BD020658
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLBQP2I6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC752077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732063AbeICWCA (ORCPT
+        id S1732071AbeICWCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:02:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51167 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeICWB6 (ORCPT
+        Mon, 3 Sep 2018 18:02:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38946 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbeICWCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:01:58 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1930993wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 10:40:47 -0700 (PDT)
+        Mon, 3 Sep 2018 18:02:01 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o37-v6so1404396wrf.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 10:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cYHF3DuU1Mgm5+iUOEtA+Jn8lKOkDL2loPcAl5A+4tQ=;
-        b=uP/P+kRPdtfp8PcKkjvQDGy/QZcPVmd8/Rg098QWKhjZLKlzZu6qBiX2l8g//Mynzq
-         Twe/jF10Oy66lgQcrlUOWJVu9muFXnBUQLwndcmVfTforz5B+5K6v3C1VzaJsluEimcD
-         doGsFwFxFcGoQJ5ewR9nr1IbUl7MjhSYMWDCpzM9ua+sRecSS/ASFaZ3sIZQ1+IyvVxl
-         X0KGmIiphf3aMtIiFIiaT2DEK/EmgGlMLc3xVXpZ77J9oJoMkVnPteELfcAPxfnIMdwH
-         NViE1cyHyfvdILgCcWq6syk1d66FGGV1WGfDq2Fv3BIyobOu7trnhOfHxdrOMSTUCKWc
-         6X8w==
+        bh=Tdsurv1DugfElh5x13JycDlZAw6FSo15qK8ErGQhW3w=;
+        b=oLBQP2I6kUsIQzppRGkylITmm5VmVELxfbnROqPWfgQHVahlp8OcA0HsKLPN0nPd0g
+         jamHLx76EXqLd6oegjZyvR2LxTCHzywf/9Id9WKNOOODlNPfBGiTcvjzchQjOApQ3NYu
+         TGPXu+Se59SKPw7j7WinCBwLcgTZy4tbpxKInD6PV980d2HR1BI5Sa9d9UdFEnxn283q
+         5vYDMvFCEYuENngzViTz5hvtmIQjzNSvAHwf9OcI7pqolhJcOyPKa4VeUo6RaEy4PmdC
+         HZqHxLrLzPMdtrSpnQilxmLoQi/7S4UZJv5t/t/k1ZcDZaypJLy2zNOr7gcIhuRcj8hO
+         H3Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cYHF3DuU1Mgm5+iUOEtA+Jn8lKOkDL2loPcAl5A+4tQ=;
-        b=N2qVNYDJna0cdHmBpfOhfo9gMmZhlbkFtzOaNOVQInqS4LqDN1ASzT5EPBE1rNQMre
-         THYry87pbCUQnqVuyEPHVejpaOYE4iyHaR9k7JAONjMdbON6aapbWrEZshTfbOZhoK4l
-         R4m2SgH3VD86Dmndf9oQuxiE6HncBv61Jsbonpef5hrIXN+m9rV+jc41Jq/INCnfj2BP
-         TcpO9BzXb4k+PO8G8bLrvXU39SjBV3crJL9//3WFuV60sbAgQ1HEBTbQtWspFQ1Lt1XE
-         TC60gJKE2ZJ2wCbtW0PTp4O77ZqE6IORT62e869V9hwqMMDu3382IHInboL9pQGx+Gu4
-         VG0Q==
-X-Gm-Message-State: APzg51AVcSDUL3CIGxmzux/MUv66VBCz65DhidHDulzt0XqJ5Qj5ToeF
-        yKJUQVS+JBdX2jdcinWHIQ8=
-X-Google-Smtp-Source: ANB0VdbjkGsfwsm5EjcVBQEvRw4IrEAXxVhqWgYM0fEMiSVkVxxI61PDMQ28HoDpb5iJw0VR64P+KQ==
-X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr293545wma.41.1535996446328;
-        Mon, 03 Sep 2018 10:40:46 -0700 (PDT)
+        bh=Tdsurv1DugfElh5x13JycDlZAw6FSo15qK8ErGQhW3w=;
+        b=Apm4EGUxOp8ixN3sPsH49jyJulHwFmppXxoJguIo48mIEatG8R0LGN6F2uw2mDB0vS
+         jFiod9DRZTm3hoN+emrdogqpgBj5/XqtIwow+2wXnTEJL7LBpHx/A2IklmElGG+VZQ+8
+         XljFbBXqHeyTxTG9RoW197crDi6573kTA5P4ly7IyaoD0lWRERB+jcgjuCW35kHBuWPN
+         9fWMqSJc/eObyBE937KSBxMJ4mOmSfQ7kWigsgtE5rgnmI2vjCDzOmiDV9tCgh39g9x3
+         kKI4VUSsGV0VEd7uG+UaBQt+zu3DLLscTjqs2QN3xRO+07oYl33Z6108lULBleqIsNE6
+         zD6Q==
+X-Gm-Message-State: APzg51Ao2XUwv/vE6QuIV2c7Z4yHeTvmHCu9Mj/U9APvkP4hx3dcvZdd
+        tFkQ4EdWypzwLtHIadgUWqg=
+X-Google-Smtp-Source: ANB0Vdb+uSmR4DFIZPGT4zbRvxVm4nzbJAUndnAaulatiZ/nUTwO/UofrzZlGyOXLJrQiPSNOMH2vA==
+X-Received: by 2002:adf:e8c1:: with SMTP id k1-v6mr19127067wrn.43.1535996449304;
+        Mon, 03 Sep 2018 10:40:49 -0700 (PDT)
 Received: from [192.168.43.97] (cst-prg-22-193.cust.vodafone.cz. [46.135.22.193])
-        by smtp.gmail.com with ESMTPSA id j75-v6sm12944181wmj.8.2018.09.03.10.40.44
+        by smtp.gmail.com with ESMTPSA id m8-v6sm28559759wrf.93.2018.09.03.10.40.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 10:40:45 -0700 (PDT)
-Subject: Re: [RESEND PATCH v2 1/3] mtd: spi-nor: add support to non-uniform
- SFDP SPI NOR flash memories
+        Mon, 03 Sep 2018 10:40:48 -0700 (PDT)
+Subject: Re: [RESEND PATCH v2 2/3] mtd: spi-nor: parse SFDP Sector Map
+ Parameter Table
 To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
         cyrille.pitchen@microchip.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, boris.brezillon@bootlin.com,
@@ -70,14 +70,14 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         nicolas.ferre@microchip.com, Cristian.Birsan@microchip.com
 References: <20180827102644.7323-1-tudor.ambarus@microchip.com>
- <20180827102644.7323-2-tudor.ambarus@microchip.com>
+ <20180827102644.7323-3-tudor.ambarus@microchip.com>
 From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <8f25975d-e0d8-dd11-76ce-857e99df9c2c@gmail.com>
-Date:   Mon, 3 Sep 2018 19:37:15 +0200
+Message-ID: <1bfbb5f7-39ee-08cb-8f7b-5c3f441f66a2@gmail.com>
+Date:   Mon, 3 Sep 2018 19:40:13 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180827102644.7323-2-tudor.ambarus@microchip.com>
+In-Reply-To: <20180827102644.7323-3-tudor.ambarus@microchip.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,152 +88,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 08/27/2018 12:26 PM, Tudor Ambarus wrote:
 [...]
-
-> +/* JEDEC JESD216B Standard imposes erase sizes to be power of 2. */
-> +static inline u64
-> +spi_nor_div_by_erase_size(const struct spi_nor_erase_type *erase,
-> +			  u64 dividend, u32 *remainder)
+> +static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt)
 > +{
-> +	*remainder = (u32)dividend & erase->size_mask;
-
-Is the cast really needed ? btw I think there might be a macro doing
-just this, div_by_ or something in include/ .
-
-> +	return dividend >> erase->size_shift;
-> +}
+> +	const u32 *ret = NULL;
+> +	u32 i, addr;
+> +	int err;
+> +	u8 addr_width, read_opcode, read_dummy;
+> +	u8 read_data_mask, data_byte, map_id;
 > +
-> +static const struct spi_nor_erase_type *
-> +spi_nor_find_best_erase_type(const struct spi_nor_erase_map *map,
-> +			     const struct spi_nor_erase_region *region,
-> +			     u64 addr, u32 len)
-> +{
-> +	const struct spi_nor_erase_type *erase;
-> +	u32 rem;
-> +	int i;
-> +	u8 erase_mask = region->offset & SNOR_ERASE_TYPE_MASK;
+> +	addr_width = nor->addr_width;
+> +	read_dummy = nor->read_dummy;
+> +	read_opcode = nor->read_opcode;
 > +
-> +	/*
-> +	 * Erase types are ordered by size, with the biggest erase type at
-> +	 * index 0.
-> +	 */
-> +	for (i = SNOR_ERASE_TYPE_MAX - 1; i >= 0; i--) {
-> +		/* Does the erase region support the tested erase type? */
-> +		if (!(erase_mask & BIT(i)))
-> +			continue;
+> +	map_id = 0;
+> +	i = 0;
+> +	/* Determine if there are any optional Detection Command Descriptors */
+> +	while (!(smpt[i] & SMPT_DESC_TYPE_MAP)) {
+> +		read_data_mask = SMPT_CMD_READ_DATA(smpt[i]);
+> +		nor->addr_width = spi_nor_smpt_addr_width(nor, smpt[i]);
+> +		nor->read_dummy = spi_nor_smpt_read_dummy(nor, smpt[i]);
+> +		nor->read_opcode = SMPT_CMD_OPCODE(smpt[i]);
+> +		addr = smpt[i + 1];
 > +
-> +		erase = &map->erase_type[i];
-> +
-> +		/* Don't erase more than what the user has asked for. */
-> +		if (erase->size > len)
-> +			continue;
-> +
-> +		/* Alignment is not mandatory for overlaid regions */
-> +		if (region->offset & SNOR_OVERLAID_REGION)
-> +			return erase;
-> +
-> +		spi_nor_div_by_erase_size(erase, addr, &rem);
-> +		if (rem)
-> +			continue;
-> +		else
-> +			return erase;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static struct spi_nor_erase_region *
-> +spi_nor_region_next(struct spi_nor_erase_region *region)
-> +{
-> +	if (spi_nor_region_is_last(region))
-> +		return NULL;
-> +	return ++region;
-
-region++ ...
-
-[...]
-
-> +static int spi_nor_cmp_erase_type(const void *a, const void *b)
-> +{
-> +	const struct spi_nor_erase_type *erase1 = a;
-> +	const struct spi_nor_erase_type *erase2 = b;
-> +
-> +	return erase1->size - erase2->size;
-
-What does this function do again ?
-
-> +}
-> +
-> +static void spi_nor_regions_sort_erase_types(struct spi_nor_erase_map *map)
-> +{
-> +	struct spi_nor_erase_region *region = map->regions;
-> +	struct spi_nor_erase_type *erase_type = map->erase_type;
-> +	int i;
-> +	u8 region_erase_mask, ordered_erase_mask;
-> +
-> +	/*
-> +	 * Sort each region's Erase Types in ascending order with the smallest
-> +	 * Erase Type size starting at BIT(0).
-> +	 */
-> +	while (region) {
-> +		region_erase_mask = region->offset & SNOR_ERASE_TYPE_MASK;
+> +		err = spi_nor_read_raw(nor, addr, 1, &data_byte);
+> +		if (err)
+> +			goto out;
 > +
 > +		/*
-> +		 * The region's erase mask indicates which erase types are
-> +		 * supported from the erase types defined in the map.
+> +		 * Build an index value that is used to select the Sector Map
+> +		 * Configuration that is currently in use.
 > +		 */
-> +		ordered_erase_mask = 0;
-> +		for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++)
-> +			if (erase_type[i].size &&
-> +			    region_erase_mask & BIT(erase_type[i].idx))
-> +				ordered_erase_mask |= BIT(i);
+> +		map_id = map_id << 1 | (!(data_byte & read_data_mask) ? 0 : 1);
+
+You can drop the ternary operator part completely ^
+
+> +		i = i + 2;
+> +	}
 > +
-> +		/* Overwrite erase mask. */
-> +		region->offset = (region->offset & ~SNOR_ERASE_TYPE_MASK) |
-> +				 ordered_erase_mask;
+> +	/* Find the matching configuration map */
+> +	while (SMPT_MAP_ID(smpt[i]) != map_id) {
+> +		if (smpt[i] & SMPT_DESC_END)
+> +			goto out;
+> +		/* increment the table index to the next map */
+> +		i += SMPT_MAP_REGION_COUNT(smpt[i]) + 1;
+> +	}
 > +
-> +		region = spi_nor_region_next(region);
+> +	ret = smpt + i;
+> +	/* fall through */
+> +out:
+> +	nor->addr_width = addr_width;
+> +	nor->read_dummy = read_dummy;
+> +	nor->read_opcode = read_opcode;
+> +	return ret;
+> +}
+> +
+> +static void
+> +spi_nor_region_check_overlay(struct spi_nor_erase_region *region,
+> +			     const struct spi_nor_erase_type *erase,
+> +			     const u8 erase_type)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
+> +		if (!(erase_type & BIT(i)))
+> +			continue;
+> +		if (region->size & erase[i].size_mask) {
+> +			spi_nor_region_mark_overlay(region);
+> +			return;
+> +		}
 > +	}
 > +}
 > +
-> +static inline void
-
-Drop the inline
-
-> +spi_nor_init_uniform_erase_map(struct spi_nor_erase_map *map,
-> +			       u8 erase_mask, u64 flash_size)
+> +static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
+> +					      const u32 *smpt)
 > +{
-> +	map->uniform_region.offset = SNOR_ERASE_FLAGS_OFFSET(erase_mask, 1, 0,
-> +							     0);
-> +	map->uniform_region.size = flash_size;
-> +	map->regions = &map->uniform_region;
-> +	map->uniform_erase_type = erase_mask;
-> +}
+> +	struct spi_nor_erase_map *map = &nor->erase_map;
+> +	const struct spi_nor_erase_type *erase = map->erase_type;
+> +	struct spi_nor_erase_region *region;
+> +	u64 offset;
+> +	u32 region_count;
+> +	int i, j;
+> +	u8 erase_type;
 > +
+> +	region_count = SMPT_MAP_REGION_COUNT(*smpt);
+> +	region = devm_kcalloc(nor->dev, region_count, sizeof(*region),
+> +			      GFP_KERNEL);
 
-[...]
-
-> +#define spi_nor_region_is_last(region)  (region->offset & SNOR_LAST_REGION)
-> +
-> +static inline u64 spi_nor_region_end(const struct spi_nor_erase_region *region)
-
-Get rid of the inlines, really.
-
-> +{
-> +	return (region->offset & ~SNOR_ERASE_FLAGS_MASK) + region->size;
-> +}
-> +
-> +static inline bool spi_nor_has_uniform_erase(const struct spi_nor *nor)
-> +{
-> +	return !!nor->erase_map.uniform_erase_type;
-> +}
-> +
->  static inline void spi_nor_set_flash_node(struct spi_nor *nor,
->  					  struct device_node *np)
->  {
-> 
-
-General question, what happens if the multi-block erase fails mid-way ,
-is that handled or reported somehow to the user ?
+Is this memory always correctly free'd ?
 
 -- 
 Best regards,
