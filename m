@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD85C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E33C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9812077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9812077C
+	by mail.kernel.org (Postfix) with ESMTP id C1CE020658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:33:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CE020658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731321AbeICVyi (ORCPT
+        id S1729001AbeICVyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:54:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47658 "EHLO
+        Mon, 3 Sep 2018 17:54:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47664 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729001AbeICVyh (ORCPT
+        with ESMTP id S1730967AbeICVyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:54:37 -0400
+        Mon, 3 Sep 2018 17:54:40 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B913D16;
-        Mon,  3 Sep 2018 17:33:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A28FAD16;
+        Mon,  3 Sep 2018 17:33:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.18 005/123] mei: dont update offset in write
-Date:   Mon,  3 Sep 2018 18:55:49 +0200
-Message-Id: <20180903165719.714898512@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.18 006/123] cifs: add missing support for ACLs in SMB 3.11
+Date:   Mon,  3 Sep 2018 18:55:50 +0200
+Message-Id: <20180903165719.757686460@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,33 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit a103af1b64d74853a5e08ca6c86aeb0e5c6ca4f1 upstream.
+commit c1777df1a5d541cda918ff0450c8adcc8b69c2fd upstream.
 
-MEI enables writes of complete messages only
-while read can be performed in parts, hence
-write should not update the file offset to
-not break interleaving partial reads with writes.
+We were missing the methods for get_acl and friends for the 3.11
+dialect.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/main.c |    1 -
- 1 file changed, 1 deletion(-)
+ fs/cifs/smb2ops.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -312,7 +312,6 @@ static ssize_t mei_write(struct file *fi
- 		}
- 	}
- 
--	*offset = 0;
- 	cb = mei_cl_alloc_cb(cl, length, MEI_FOP_WRITE, file);
- 	if (!cb) {
- 		rets = -ENOMEM;
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -3366,6 +3366,11 @@ struct smb_version_operations smb311_ope
+ 	.query_all_EAs = smb2_query_eas,
+ 	.set_EA = smb2_set_ea,
+ #endif /* CIFS_XATTR */
++#ifdef CONFIG_CIFS_ACL
++	.get_acl = get_smb2_acl,
++	.get_acl_by_fid = get_smb2_acl_by_fid,
++	.set_acl = set_smb2_acl,
++#endif /* CIFS_ACL */
+ 	.next_header = smb2_next_header,
+ };
+ #endif /* CIFS_SMB311 */
 
 
