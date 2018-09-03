@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44203C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DF5C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA47A20862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA47A20862
+	by mail.kernel.org (Postfix) with ESMTP id 1ED242077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED242077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbeICVrL (ORCPT
+        id S1730790AbeICVrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45846 "EHLO
+        Mon, 3 Sep 2018 17:47:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728500AbeICVrJ (ORCPT
+        with ESMTP id S1728500AbeICVrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:09 -0400
+        Mon, 3 Sep 2018 17:47:14 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C60CD24;
-        Mon,  3 Sep 2018 17:26:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 782B3D24;
+        Mon,  3 Sep 2018 17:26:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.14 128/165] udl-kms: avoid division
-Date:   Mon,  3 Sep 2018 18:56:54 +0200
-Message-Id: <20180903165701.990649520@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 129/165] b43legacy/leds: Ensure NUL-termination of LED name string
+Date:   Mon,  3 Sep 2018 18:56:55 +0200
+Message-Id: <20180903165702.033795576@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -50,194 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Michael Buesch <m@bues.ch>
 
-commit 91ba11fb7d7ca0a3bbe8a512e65e666e2ec1e889 upstream.
+commit 4d77a89e3924b12f4a5628b21237e57ab4703866 upstream.
 
-Division is slow, so it shouldn't be done by the pixel generating code.
-The driver supports only 2 or 4 bytes per pixel, so we can replace
-division with a shift.
+strncpy might not NUL-terminate the string, if the name equals the buffer size.
+Use strlcpy instead.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Michael Buesch <m@bues.ch>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/udl/udl_drv.h      |    2 -
- drivers/gpu/drm/udl/udl_fb.c       |   15 ++++++++------
- drivers/gpu/drm/udl/udl_transfer.c |   39 ++++++++++++++++++-------------------
- 3 files changed, 30 insertions(+), 26 deletions(-)
+ drivers/net/wireless/broadcom/b43legacy/leds.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/udl/udl_drv.h
-+++ b/drivers/gpu/drm/udl/udl_drv.h
-@@ -110,7 +110,7 @@ udl_fb_user_fb_create(struct drm_device
- 		      struct drm_file *file,
- 		      const struct drm_mode_fb_cmd2 *mode_cmd);
+--- a/drivers/net/wireless/broadcom/b43legacy/leds.c
++++ b/drivers/net/wireless/broadcom/b43legacy/leds.c
+@@ -101,7 +101,7 @@ static int b43legacy_register_led(struct
+ 	led->dev = dev;
+ 	led->index = led_index;
+ 	led->activelow = activelow;
+-	strncpy(led->name, name, sizeof(led->name));
++	strlcpy(led->name, name, sizeof(led->name));
  
--int udl_render_hline(struct drm_device *dev, int bpp, struct urb **urb_ptr,
-+int udl_render_hline(struct drm_device *dev, int log_bpp, struct urb **urb_ptr,
- 		     const char *front, char **urb_buf_ptr,
- 		     u32 byte_offset, u32 device_byte_offset, u32 byte_width,
- 		     int *ident_ptr, int *sent_ptr);
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -90,7 +90,10 @@ int udl_handle_damage(struct udl_framebu
- 	int bytes_identical = 0;
- 	struct urb *urb;
- 	int aligned_x;
--	int bpp = fb->base.format->cpp[0];
-+	int log_bpp;
-+
-+	BUG_ON(!is_power_of_2(fb->base.format->cpp[0]));
-+	log_bpp = __ffs(fb->base.format->cpp[0]);
- 
- 	if (!fb->active_16)
- 		return 0;
-@@ -125,12 +128,12 @@ int udl_handle_damage(struct udl_framebu
- 
- 	for (i = y; i < y + height ; i++) {
- 		const int line_offset = fb->base.pitches[0] * i;
--		const int byte_offset = line_offset + (x * bpp);
--		const int dev_byte_offset = (fb->base.width * bpp * i) + (x * bpp);
--		if (udl_render_hline(dev, bpp, &urb,
-+		const int byte_offset = line_offset + (x << log_bpp);
-+		const int dev_byte_offset = (fb->base.width * i + x) << log_bpp;
-+		if (udl_render_hline(dev, log_bpp, &urb,
- 				     (char *) fb->obj->vmapping,
- 				     &cmd, byte_offset, dev_byte_offset,
--				     width * bpp,
-+				     width << log_bpp,
- 				     &bytes_identical, &bytes_sent))
- 			goto error;
- 	}
-@@ -149,7 +152,7 @@ int udl_handle_damage(struct udl_framebu
- error:
- 	atomic_add(bytes_sent, &udl->bytes_sent);
- 	atomic_add(bytes_identical, &udl->bytes_identical);
--	atomic_add(width*height*bpp, &udl->bytes_rendered);
-+	atomic_add((width * height) << log_bpp, &udl->bytes_rendered);
- 	end_cycles = get_cycles();
- 	atomic_add(((unsigned int) ((end_cycles - start_cycles)
- 		    >> 10)), /* Kcycles */
---- a/drivers/gpu/drm/udl/udl_transfer.c
-+++ b/drivers/gpu/drm/udl/udl_transfer.c
-@@ -83,12 +83,12 @@ static inline u16 pixel32_to_be16(const
- 		((pixel >> 8) & 0xf800));
- }
- 
--static inline u16 get_pixel_val16(const uint8_t *pixel, int bpp)
-+static inline u16 get_pixel_val16(const uint8_t *pixel, int log_bpp)
- {
--	u16 pixel_val16 = 0;
--	if (bpp == 2)
-+	u16 pixel_val16;
-+	if (log_bpp == 1)
- 		pixel_val16 = *(const uint16_t *)pixel;
--	else if (bpp == 4)
-+	else
- 		pixel_val16 = pixel32_to_be16(*(const uint32_t *)pixel);
- 	return pixel_val16;
- }
-@@ -125,8 +125,9 @@ static void udl_compress_hline16(
- 	const u8 *const pixel_end,
- 	uint32_t *device_address_ptr,
- 	uint8_t **command_buffer_ptr,
--	const uint8_t *const cmd_buffer_end, int bpp)
-+	const uint8_t *const cmd_buffer_end, int log_bpp)
- {
-+	const int bpp = 1 << log_bpp;
- 	const u8 *pixel = *pixel_start_ptr;
- 	uint32_t dev_addr  = *device_address_ptr;
- 	uint8_t *cmd = *command_buffer_ptr;
-@@ -153,12 +154,12 @@ static void udl_compress_hline16(
- 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
- 		raw_pixel_start = pixel;
- 
--		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
--					(unsigned long)(pixel_end - pixel) / bpp,
--					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) * bpp;
-+		cmd_pixel_end = pixel + (min3(MAX_CMD_PIXELS + 1UL,
-+					(unsigned long)(pixel_end - pixel) >> log_bpp,
-+					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) << log_bpp);
- 
- 		prefetch_range((void *) pixel, cmd_pixel_end - pixel);
--		pixel_val16 = get_pixel_val16(pixel, bpp);
-+		pixel_val16 = get_pixel_val16(pixel, log_bpp);
- 
- 		while (pixel < cmd_pixel_end) {
- 			const u8 *const start = pixel;
-@@ -170,7 +171,7 @@ static void udl_compress_hline16(
- 			pixel += bpp;
- 
- 			while (pixel < cmd_pixel_end) {
--				pixel_val16 = get_pixel_val16(pixel, bpp);
-+				pixel_val16 = get_pixel_val16(pixel, log_bpp);
- 				if (pixel_val16 != repeating_pixel_val16)
- 					break;
- 				pixel += bpp;
-@@ -179,10 +180,10 @@ static void udl_compress_hline16(
- 			if (unlikely(pixel > start + bpp)) {
- 				/* go back and fill in raw pixel count */
- 				*raw_pixels_count_byte = (((start -
--						raw_pixel_start) / bpp) + 1) & 0xFF;
-+						raw_pixel_start) >> log_bpp) + 1) & 0xFF;
- 
- 				/* immediately after raw data is repeat byte */
--				*cmd++ = (((pixel - start) / bpp) - 1) & 0xFF;
-+				*cmd++ = (((pixel - start) >> log_bpp) - 1) & 0xFF;
- 
- 				/* Then start another raw pixel span */
- 				raw_pixel_start = pixel;
-@@ -192,14 +193,14 @@ static void udl_compress_hline16(
- 
- 		if (pixel > raw_pixel_start) {
- 			/* finalize last RAW span */
--			*raw_pixels_count_byte = ((pixel-raw_pixel_start) / bpp) & 0xFF;
-+			*raw_pixels_count_byte = ((pixel - raw_pixel_start) >> log_bpp) & 0xFF;
- 		} else {
- 			/* undo unused byte */
- 			cmd--;
- 		}
- 
--		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) / bpp) & 0xFF;
--		dev_addr += ((pixel - cmd_pixel_start) / bpp) * 2;
-+		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) >> log_bpp) & 0xFF;
-+		dev_addr += ((pixel - cmd_pixel_start) >> log_bpp) * 2;
- 	}
- 
- 	if (cmd_buffer_end <= MIN_RLX_CMD_BYTES + cmd) {
-@@ -222,19 +223,19 @@ static void udl_compress_hline16(
-  * (that we can only write to, slowly, and can never read), and (optionally)
-  * our shadow copy that tracks what's been sent to that hardware buffer.
-  */
--int udl_render_hline(struct drm_device *dev, int bpp, struct urb **urb_ptr,
-+int udl_render_hline(struct drm_device *dev, int log_bpp, struct urb **urb_ptr,
- 		     const char *front, char **urb_buf_ptr,
- 		     u32 byte_offset, u32 device_byte_offset,
- 		     u32 byte_width,
- 		     int *ident_ptr, int *sent_ptr)
- {
- 	const u8 *line_start, *line_end, *next_pixel;
--	u32 base16 = 0 + (device_byte_offset / bpp) * 2;
-+	u32 base16 = 0 + (device_byte_offset >> log_bpp) * 2;
- 	struct urb *urb = *urb_ptr;
- 	u8 *cmd = *urb_buf_ptr;
- 	u8 *cmd_end = (u8 *) urb->transfer_buffer + urb->transfer_buffer_length;
- 
--	BUG_ON(!(bpp == 2 || bpp == 4));
-+	BUG_ON(!(log_bpp == 1 || log_bpp == 2));
- 
- 	line_start = (u8 *) (front + byte_offset);
- 	next_pixel = line_start;
-@@ -244,7 +245,7 @@ int udl_render_hline(struct drm_device *
- 
- 		udl_compress_hline16(&next_pixel,
- 			     line_end, &base16,
--			     (u8 **) &cmd, (u8 *) cmd_end, bpp);
-+			     (u8 **) &cmd, (u8 *) cmd_end, log_bpp);
- 
- 		if (cmd >= cmd_end) {
- 			int len = cmd - (u8 *) urb->transfer_buffer;
+ 	led->led_dev.name = led->name;
+ 	led->led_dev.default_trigger = default_trigger;
 
 
