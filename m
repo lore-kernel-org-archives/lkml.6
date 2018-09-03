@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6F0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8E2C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC2420658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC2420658
+	by mail.kernel.org (Postfix) with ESMTP id A35272077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:39:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35272077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbeICWAQ (ORCPT
+        id S1731919AbeICWAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:00:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49072 "EHLO
+        Mon, 3 Sep 2018 18:00:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbeICWAP (ORCPT
+        with ESMTP id S1728885AbeICWA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:00:15 -0400
+        Mon, 3 Sep 2018 18:00:29 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4E5FBAE;
-        Mon,  3 Sep 2018 17:39:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BDF2A95;
+        Mon,  3 Sep 2018 17:39:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Johan Hovold <johan@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: [PATCH 4.18 076/123] soc: qcom: rmtfs-mem: fix memleak in probe error paths
-Date:   Mon,  3 Sep 2018 18:57:00 +0200
-Message-Id: <20180903165722.757028020@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.18 068/123] udl-kms: fix crash due to uninitialized memory
+Date:   Mon,  3 Sep 2018 18:56:52 +0200
+Message-Id: <20180903165722.309243772@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -52,43 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 78ee559d7fc65e37670a46cfbeaaa62cb014af67 upstream.
+commit 09a00abe3a9941c2715ca83eb88172cd2f54d8fd upstream.
 
-Make sure to set the mem device release callback before calling
-put_device() in a couple of probe error paths so that the containing
-object also gets freed.
+We must use kzalloc when allocating the fb_deferred_io structure.
+Otherwise, the field first_io is undefined and it causes a crash.
 
-Fixes: d1de6d6c639b ("soc: qcom: Remote filesystem memory driver")
-Cc: stable <stable@vger.kernel.org>     # 4.15
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/qcom/rmtfs_mem.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/udl/udl_fb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/soc/qcom/rmtfs_mem.c
-+++ b/drivers/soc/qcom/rmtfs_mem.c
-@@ -184,6 +184,7 @@ static int qcom_rmtfs_mem_probe(struct p
- 	device_initialize(&rmtfs_mem->dev);
- 	rmtfs_mem->dev.parent = &pdev->dev;
- 	rmtfs_mem->dev.groups = qcom_rmtfs_mem_groups;
-+	rmtfs_mem->dev.release = qcom_rmtfs_mem_release_device;
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -221,7 +221,7 @@ static int udl_fb_open(struct fb_info *i
  
- 	rmtfs_mem->base = devm_memremap(&rmtfs_mem->dev, rmtfs_mem->addr,
- 					rmtfs_mem->size, MEMREMAP_WC);
-@@ -206,8 +207,6 @@ static int qcom_rmtfs_mem_probe(struct p
- 		goto put_device;
- 	}
+ 		struct fb_deferred_io *fbdefio;
  
--	rmtfs_mem->dev.release = qcom_rmtfs_mem_release_device;
--
- 	ret = of_property_read_u32(node, "qcom,vmid", &vmid);
- 	if (ret < 0 && ret != -EINVAL) {
- 		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
+-		fbdefio = kmalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
++		fbdefio = kzalloc(sizeof(struct fb_deferred_io), GFP_KERNEL);
+ 
+ 		if (fbdefio) {
+ 			fbdefio->delay = DL_DEFIO_WRITE_DELAY;
 
 
