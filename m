@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FCDC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737A5C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D51820868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D51820868
+	by mail.kernel.org (Postfix) with ESMTP id 3205720869
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3205720869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbeICVM5 (ORCPT
+        id S1728404AbeICVNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:12:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36434 "EHLO
+        Mon, 3 Sep 2018 17:13:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36442 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeICVM4 (ORCPT
+        with ESMTP id S1727577AbeICVNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:12:56 -0400
+        Mon, 3 Sep 2018 17:13:00 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2EB1CF3;
-        Mon,  3 Sep 2018 16:51:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BD0BCF3;
+        Mon,  3 Sep 2018 16:52:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 3.18 43/56] fuse: Dont access pipe->buffers without pipe_lock()
-Date:   Mon,  3 Sep 2018 18:49:33 +0200
-Message-Id: <20180903164926.203528598@linuxfoundation.org>
+Subject: [PATCH 3.18 44/56] fuse: Add missed unlock_page() to fuse_readpages_fill()
+Date:   Mon,  3 Sep 2018 18:49:34 +0200
+Message-Id: <20180903164926.251741400@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -50,45 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit a2477b0e67c52f4364a47c3ad70902bc2a61bd4c upstream.
+commit 109728ccc5933151c68d1106e4065478a487a323 upstream.
 
-fuse_dev_splice_write() reads pipe->buffers to determine the size of
-'bufs' array before taking the pipe_lock(). This is not safe as
-another thread might change the 'pipe->buffers' between the allocation
-and taking the pipe_lock(). So we end up with too small 'bufs' array.
+The above error path returns with page unlocked, so this place seems also
+to behave the same.
 
-Move the bufs allocations inside pipe_lock()/pipe_unlock() to fix this.
-
-Fixes: dd3bb14f44a6 ("fuse: support splice() writing to fuse device")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: <stable@vger.kernel.org> # v2.6.35
+Fixes: f8dbdf81821b ("fuse: rework fuse_readpages()")
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/fuse/file.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1913,11 +1913,14 @@ static ssize_t fuse_dev_splice_write(str
- 	if (!fc)
- 		return -EPERM;
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -910,6 +910,7 @@ static int fuse_readpages_fill(void *_da
+ 	}
  
-+	pipe_lock(pipe);
-+
- 	bufs = kmalloc(pipe->buffers * sizeof(struct pipe_buffer), GFP_KERNEL);
--	if (!bufs)
-+	if (!bufs) {
-+		pipe_unlock(pipe);
- 		return -ENOMEM;
-+	}
- 
--	pipe_lock(pipe);
- 	nbuf = 0;
- 	rem = 0;
- 	for (idx = 0; idx < pipe->nrbufs && rem < len; idx++)
+ 	if (WARN_ON(req->num_pages >= req->max_pages)) {
++		unlock_page(page);
+ 		fuse_put_request(fc, req);
+ 		return -EIO;
+ 	}
 
 
