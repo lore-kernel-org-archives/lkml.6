@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA673C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2067BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9262077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9262077C
+	by mail.kernel.org (Postfix) with ESMTP id D12922077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:18:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12922077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbeICVjO (ORCPT
+        id S1730310AbeICVjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:39:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42990 "EHLO
+        Mon, 3 Sep 2018 17:39:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729700AbeICVjN (ORCPT
+        with ESMTP id S1728837AbeICVjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:39:13 -0400
+        Mon, 3 Sep 2018 17:39:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3961BD09;
-        Mon,  3 Sep 2018 17:18:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51D1AD12;
+        Mon,  3 Sep 2018 17:18:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,9 +34,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 022/165] usb: gadget: u_audio: remove cached period bytes value
-Date:   Mon,  3 Sep 2018 18:55:08 +0200
-Message-Id: <20180903165656.142748421@linuxfoundation.org>
+Subject: [PATCH 4.14 023/165] [PATCH 23/82] usb: gadget: u_audio: protect stream runtime fields with stream spinlock
+Date:   Mon,  3 Sep 2018 18:55:09 +0200
+Message-Id: <20180903165656.194828702@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,114 +53,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+[ Upstream commit 56bc61587daadef67712068f251c4ef2e3932d94 ]
 
-[ Upstream commit 773e53d50e227b0c03d0bb434c1636f6c49c75b2 ]
+The change protects almost the whole body of u_audio_iso_complete()
+function by PCM stream lock, this is mainly sufficient to avoid a race
+between USB request completion and stream termination, the change
+prevents a possibility of invalid memory access in interrupt context
+by memcpy():
 
-Substream period size potentially can be changed in runtime, however
-this is not accounted in the data copying routine, the change replaces
-the cached value with an actual value from substream runtime.
+    Unable to handle kernel paging request at virtual address 00004e80
+    pgd = c0004000
+    [00004e80] *pgd=00000000
+    Internal error: Oops: 817 [#1] PREEMPT SMP ARM
+    CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G         C   3.14.54+ #117
+    task: da180b80 ti: da192000 task.ti: da192000
+    PC is at memcpy+0x50/0x330
+    LR is at 0xcdd92b0e
+    pc : [<c029ef30>]    lr : [<cdd92b0e>]    psr: 20000193
+    sp : da193ce4  ip : dd86ae26  fp : 0000b180
+    r10: daf81680  r9 : 00000000  r8 : d58a01ea
+    r7 : 2c0b43e4  r6 : acdfb08b  r5 : 01a271cf  r4 : 87389377
+    r3 : 69469782  r2 : 00000020  r1 : daf82fe0  r0 : 00004e80
+    Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+    Control: 10c5387d  Table: 2b70804a  DAC: 00000015
+    Process ksoftirqd/0 (pid: 3, stack limit = 0xda192238)
 
-As a side effect the change also removes a potential division by zero
-in u_audio_iso_complete() function, if there is a race with
-uac_pcm_hw_free(), which sets prm->period_size to 0.
+Also added a check for potential !runtime condition, commonly it is
+done by PCM_RUNTIME_CHECK(substream) in the beginning, however this
+does not completely prevent from oopses in u_audio_iso_complete(),
+because the proper protection scheme must be implemented in PCM
+library functions.
+
+An example of *not fixed* oops due to substream->runtime->*
+dereference by snd_pcm_running(substream) from
+snd_pcm_period_elapsed(), where substream->runtime is gone while
+waiting the substream lock:
+
+    Unable to handle kernel paging request at virtual address 6b6b6b6b
+    pgd = db7e4000
+    [6b6b6b6b] *pgd=00000000
+    CPU: 0 PID: 193 Comm: klogd Tainted: G         C   3.14.54+ #118
+    task: db5ac500 ti: db60c000 task.ti: db60c000
+    PC is at snd_pcm_period_elapsed+0x48/0xd8 [snd_pcm]
+    LR is at snd_pcm_period_elapsed+0x40/0xd8 [snd_pcm]
+    pc : [<>]    lr : [<>]    psr: 60000193
+    Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment user
+    Control: 10c5387d  Table: 2b7e404a  DAC: 00000015
+    Process klogd (pid: 193, stack limit = 0xdb60c238)
+    [<>] (snd_pcm_period_elapsed [snd_pcm]) from [<>] (udc_irq+0x500/0xbbc)
+    [<>] (udc_irq) from [<>] (ci_irq+0x280/0x304)
+    [<>] (ci_irq) from [<>] (handle_irq_event_percpu+0xa4/0x40c)
+    [<>] (handle_irq_event_percpu) from [<>] (handle_irq_event+0x3c/0x5c)
+    [<>] (handle_irq_event) from [<>] (handle_fasteoi_irq+0xc4/0x110)
+    [<>] (handle_fasteoi_irq) from [<>] (generic_handle_irq+0x20/0x30)
+    [<>] (generic_handle_irq) from [<>] (handle_IRQ+0x80/0xc0)
+    [<>] (handle_IRQ) from [<>] (gic_handle_irq+0x3c/0x60)
+    [<>] (gic_handle_irq) from [<>] (__irq_svc+0x44/0x78)
+
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+[erosca: W/o this patch, with minimal instrumentation [1], I can
+         consistently reproduce BUG: KASAN: use-after-free [2]]
+
+[1] Instrumentation to reproduce issue [2]:
+#  diff --git a/drivers/usb/gadget/function/u_audio.c b/drivers/usb/gadget/function/u_audio.c
+#  index a72295c953bb..bd0b308024fe 100644
+#  --- a/drivers/usb/gadget/function/u_audio.c
+#  +++ b/drivers/usb/gadget/function/u_audio.c
+#  @@ -16,6 +16,7 @@
+#   #include <sound/core.h>
+#   #include <sound/pcm.h>
+#   #include <sound/pcm_params.h>
+#  +#include <linux/delay.h>
+# 
+#   #include "u_audio.h"
+# 
+#  @@ -147,6 +148,8 @@ static void u_audio_iso_complete(struct usb_ep *ep, struct usb_request *req)
+# 
+# 	spin_unlock_irqrestore(&prm->lock, flags);
+# 
+#  +	udelay(500); //delay here to increase probability of parallel activities
+#  +
+# 	/* Pack USB load in ALSA ring buffer */
+# 	pending = prm->dma_bytes - hw_ptr;
+
+[2] After applying [1], below BUG occurs on Rcar-H3-Salvator-X board:
+==================================================================
+BUG: KASAN: use-after-free in u_audio_iso_complete+0x24c/0x520 [u_audio]
+Read of size 8 at addr ffff8006cafcc248 by task swapper/0/0
+
+CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        WC      4.14.47+ #160
+Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (DT)
+Call trace:
+[<ffff2000080925ac>] dump_backtrace+0x0/0x364
+[<ffff200008092924>] show_stack+0x14/0x1c
+[<ffff200008f8dbcc>] dump_stack+0x108/0x174
+[<ffff2000083c71b8>] print_address_description+0x7c/0x32c
+[<ffff2000083c78e8>] kasan_report+0x324/0x354
+[<ffff2000083c6114>] __asan_load8+0x24/0x94
+[<ffff2000021d1b34>] u_audio_iso_complete+0x24c/0x520 [u_audio]
+[<ffff20000152fe50>] usb_gadget_giveback_request+0x480/0x4d0 [udc_core]
+[<ffff200001860ab8>] usbhsg_queue_done+0x100/0x130 [renesas_usbhs]
+[<ffff20000185f814>] usbhsf_pkt_handler+0x1a4/0x298 [renesas_usbhs]
+[<ffff20000185fb38>] usbhsf_irq_ready+0x128/0x178 [renesas_usbhs]
+[<ffff200001859cc8>] usbhs_interrupt+0x440/0x490 [renesas_usbhs]
+[<ffff2000081a0288>] __handle_irq_event_percpu+0x594/0xa58
+[<ffff2000081a07d0>] handle_irq_event_percpu+0x84/0x12c
+[<ffff2000081a0928>] handle_irq_event+0xb0/0x10c
+[<ffff2000081a8384>] handle_fasteoi_irq+0x1e0/0x2ec
+[<ffff20000819e5f8>] generic_handle_irq+0x2c/0x44
+[<ffff20000819f0d0>] __handle_domain_irq+0x190/0x194
+[<ffff20000808177c>] gic_handle_irq+0x80/0xac
+Exception stack(0xffff200009e97c80 to 0xffff200009e97dc0)
+7c80: 0000000000000000 0000000000000000 0000000000000003 ffff200008179298
+7ca0: ffff20000ae1c180 dfff200000000000 0000000000000000 ffff2000081f9a88
+7cc0: ffff200009eb5960 ffff200009e97cf0 0000000000001600 ffff0400041b064b
+7ce0: 0000000000000000 0000000000000002 0000000200000001 0000000000000001
+7d00: ffff20000842197c 0000ffff958c4970 0000000000000000 ffff8006da0d5b80
+7d20: ffff8006d4678498 0000000000000000 000000126bde0a8b ffff8006d4678480
+7d40: 0000000000000000 000000126bdbea64 ffff200008fd0000 ffff8006fffff980
+7d60: 00000000495f0018 ffff200009e97dc0 ffff200008b6c4ec ffff200009e97dc0
+7d80: ffff200008b6c4f0 0000000020000145 ffff8006da0d5b80 ffff8006d4678498
+7da0: ffffffffffffffff ffff8006d4678498 ffff200009e97dc0 ffff200008b6c4f0
+[<ffff200008084034>] el1_irq+0xb4/0x12c
+[<ffff200008b6c4f0>] cpuidle_enter_state+0x818/0x844
+[<ffff200008b6c59c>] cpuidle_enter+0x18/0x20
+[<ffff20000815f2e4>] call_cpuidle+0x98/0x9c
+[<ffff20000815f674>] do_idle+0x214/0x264
+[<ffff20000815facc>] cpu_startup_entry+0x20/0x24
+[<ffff200008fb09d8>] rest_init+0x30c/0x320
+[<ffff2000095f1338>] start_kernel+0x570/0x5b0
+---<-snip->---
 
 Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/gadget/function/u_audio.c |   40 ++++------------------------------
- 1 file changed, 5 insertions(+), 35 deletions(-)
+ drivers/usb/gadget/function/u_audio.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/usb/gadget/function/u_audio.c b/drivers/usb/gadget/function/u_audio.c
+index e9644137f720..d3a639297e06 100644
 --- a/drivers/usb/gadget/function/u_audio.c
 +++ b/drivers/usb/gadget/function/u_audio.c
-@@ -49,8 +49,6 @@ struct uac_rtd_params {
- 
- 	void *rbuf;
- 
--	size_t period_size;
--
- 	unsigned max_psize;	/* MaxPacketSize of endpoint */
- 	struct uac_req *ureq;
- 
-@@ -92,7 +90,6 @@ static void u_audio_iso_complete(struct
+@@ -88,7 +88,7 @@ static const struct snd_pcm_hardware uac_pcm_hardware = {
+ static void u_audio_iso_complete(struct usb_ep *ep, struct usb_request *req)
+ {
  	unsigned pending;
- 	unsigned long flags;
+-	unsigned long flags;
++	unsigned long flags, flags2;
  	unsigned int hw_ptr;
--	bool update_alsa = false;
  	int status = req->status;
  	struct uac_req *ur = req->context;
- 	struct snd_pcm_substream *substream;
-@@ -145,11 +142,6 @@ static void u_audio_iso_complete(struct
- 		req->actual = req->length;
- 	}
+@@ -115,7 +115,14 @@ static void u_audio_iso_complete(struct usb_ep *ep, struct usb_request *req)
+ 	if (!substream)
+ 		goto exit;
  
--	pending = prm->hw_ptr % prm->period_size;
--	pending += req->actual;
--	if (pending >= prm->period_size)
--		update_alsa = true;
--
- 	hw_ptr = prm->hw_ptr;
- 
- 	spin_unlock_irqrestore(&prm->lock, flags);
-@@ -180,14 +172,15 @@ static void u_audio_iso_complete(struct
- 	spin_lock_irqsave(&prm->lock, flags);
- 	/* update hw_ptr after data is copied to memory */
- 	prm->hw_ptr = (hw_ptr + req->actual) % runtime->dma_bytes;
-+	hw_ptr = prm->hw_ptr;
- 	spin_unlock_irqrestore(&prm->lock, flags);
- 
-+	if ((hw_ptr % snd_pcm_lib_period_bytes(substream)) < req->actual)
-+		snd_pcm_period_elapsed(substream);
++	snd_pcm_stream_lock_irqsave(substream, flags2);
 +
- exit:
- 	if (usb_ep_queue(ep, req, GFP_ATOMIC))
- 		dev_err(uac->card->dev, "%d Error!\n", __LINE__);
--
--	if (update_alsa)
--		snd_pcm_period_elapsed(substream);
- }
+ 	runtime = substream->runtime;
++	if (!runtime || !snd_pcm_running(substream)) {
++		snd_pcm_stream_unlock_irqrestore(substream, flags2);
++		goto exit;
++	}
++
+ 	spin_lock_irqsave(&prm->lock, flags);
  
- static int uac_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
-@@ -250,35 +243,12 @@ static snd_pcm_uframes_t uac_pcm_pointer
- static int uac_pcm_hw_params(struct snd_pcm_substream *substream,
- 			       struct snd_pcm_hw_params *hw_params)
- {
--	struct snd_uac_chip *uac = snd_pcm_substream_chip(substream);
--	struct uac_rtd_params *prm;
--	int err;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		prm = &uac->p_prm;
--	else
--		prm = &uac->c_prm;
--
--	err = snd_pcm_lib_malloc_pages(substream,
-+	return snd_pcm_lib_malloc_pages(substream,
- 					params_buffer_bytes(hw_params));
--	if (err >= 0)
--		prm->period_size = params_period_bytes(hw_params);
--
--	return err;
- }
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+@@ -174,6 +181,7 @@ static void u_audio_iso_complete(struct usb_ep *ep, struct usb_request *req)
+ 	prm->hw_ptr = (hw_ptr + req->actual) % runtime->dma_bytes;
+ 	hw_ptr = prm->hw_ptr;
+ 	spin_unlock_irqrestore(&prm->lock, flags);
++	snd_pcm_stream_unlock_irqrestore(substream, flags2);
  
- static int uac_pcm_hw_free(struct snd_pcm_substream *substream)
- {
--	struct snd_uac_chip *uac = snd_pcm_substream_chip(substream);
--	struct uac_rtd_params *prm;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		prm = &uac->p_prm;
--	else
--		prm = &uac->c_prm;
--
--	prm->period_size = 0;
--
- 	return snd_pcm_lib_free_pages(substream);
- }
- 
+ 	if ((hw_ptr % snd_pcm_lib_period_bytes(substream)) < req->actual)
+ 		snd_pcm_period_elapsed(substream);
+-- 
+2.18.0
+
 
 
