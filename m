@@ -2,69 +2,136 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A64C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B015C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E357820869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E357820869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 1DE5220867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 21:40:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LmGOMTo4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE5220867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeIDCAK (ORCPT
+        id S1727454AbeIDCC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 22:00:10 -0400
-Received: from ms.lwn.net ([45.79.88.28]:50394 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeIDCAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 22:00:09 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id C276D72A;
-        Mon,  3 Sep 2018 21:38:05 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 15:38:04 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] docs: kernel-doc: fix parsing of function pointers
-Message-ID: <20180903153804.2b091448@lwn.net>
-In-Reply-To: <b0bff870-c3c1-20e8-6609-f93f59da8624@gmx.de>
-References: <20180903184153.9368-1-xypron.glpk@gmx.de>
-        <20180903130043.059b2e82@lwn.net>
-        <b0bff870-c3c1-20e8-6609-f93f59da8624@gmx.de>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        Mon, 3 Sep 2018 22:02:59 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33563 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeIDCC7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 22:02:59 -0400
+Received: by mail-ed1-f67.google.com with SMTP id d8-v6so1722491edv.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 14:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id;
+        bh=oBNaecQNI5LUR61Xu70h7GexgqExlbs13fOtdKldeaU=;
+        b=LmGOMTo45NB16Wuqs4wFEUWbj/XV6MvVyN8MtsHj6pJU/k81H6UX5oLhZ7em6d8DUq
+         8YYKXB6xVrpc2oDmRWwww/fuQePCQrIYDeT6Xy2kN5uJdoH/UL2gxzcwpHhDIumDJbAZ
+         UW021s/AkSYY+6lSFjAWTBpmW7BtjlGiinbHwce9w2hPXtp0jjKS714Z7OzLzgrjmAMt
+         Q8h67WpLc5d10ncsMrIjII0KTLjxFx8ZwmfQKTblXi7E9erXVYRPF6unwNy3SiXlKVbS
+         cModMqTY4ZOahUJ7BzPytENKtBsZ/M0FlYejU+AmVt6vDFfGwyp4fglBawXD0hnNOUYb
+         t3Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oBNaecQNI5LUR61Xu70h7GexgqExlbs13fOtdKldeaU=;
+        b=pHkW55IyeZ2yJQ3mZFXnG3Qik/y4yqNzXgf4Z1hJROmH+7fFJrUPXVPvz6qfQu6ujO
+         10frs22xcftQnVi9TaoMplSlU3FuH2i0uCybmzQ7PtxdsbZ5M33ZjRZJRRGi0W8CdGXT
+         QAvLH/60td/MXpheONOiOx5jN1WID/637hGJjAGzq73arSwT1/+m9PFxGgEf0S9fRNu2
+         tyKSzS4ZTe5Yf84VJ1zr8+QIm1PEs6NN4BUIBhoJeizbg7S5OUbNANNy/lFArQXjpywy
+         p8xbfKol/jatdliF2LpEIwKh8dHfln6h8S6emD8CUt+AHAq3TCBsHgpT/HqF9FjRdaEK
+         Neqw==
+X-Gm-Message-State: APzg51A13BI19fLd0BpROU4O+dXEkRC4mMFvd1XGr2rPrWk11hKqVPfP
+        syfjvliWMuNWjlegXBOGRxGH1x+3Be0=
+X-Google-Smtp-Source: ANB0VdbDvQarCt9GGU6amhbV3wLmRNHcKEr1TBz2jj4r3dBWncs3iHnU69aqEJmRt5zek15qiOUU5g==
+X-Received: by 2002:a50:898b:: with SMTP id g11-v6mr32460973edg.82.1536010853046;
+        Mon, 03 Sep 2018 14:40:53 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id x44-v6sm8430679edd.1.2018.09.03.14.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 14:40:52 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH] netlink: Make groups check less stupid in netlink_bind()
+Date:   Mon,  3 Sep 2018 22:40:51 +0100
+Message-Id: <20180903214051.4433-1-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018 22:29:00 +0200
-Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
+As Linus noted, the test for 0 is needless, groups type can follow the
+usual kernel style and 8*sizeof(unsigned long) is BITS_PER_LONG:
 
-> >>  	    # pointer-to-function
-> >>  	    $arg =~ tr/#/,/;
-> >> -	    $arg =~ m/[^\(]+\(\*?\s*([\w\.]*)\s*\)/;  
-> 
-> m/[^\(]+\(\*?\s*([\w\.]*)\s*\)/;
->            ^
-> Here we allow for 0..1 asterixes.
-> 
-> If there is no asterix it is not a function pointer. Why should we care
-> for this case?
+> The code [..] isn't technically incorrect...
+> But it is stupid.
+> Why stupid? Because the test for 0 is pointless.
+>
+> Just doing
+>        if (nlk->ngroups < 8*sizeof(groups))
+>                groups &= (1UL << nlk->ngroups) - 1;
+>
+> would have been fine and more understandable, since the "mask by shift
+> count" already does the right thing for a ngroups value of 0. Now that
+> test for zero makes me go "what's special about zero?". It turns out
+> that the answer to that is "nothing".
+[..]
+> The type of "groups" is kind of silly too.
+>
+> Yeah, "long unsigned int" isn't _technically_ wrong. But we normally
+> call that type "unsigned long".
 
-GCC seems to allow that asterisk (asterix is an indomitable Gaul :) to be
-missing; not sure if that's officially allowed by the language or not.  I
-also don't know if any code in the kernel elides it, but *somebody* at
-some point made it optional, presumably with some reason.  It would be
-instructive to take out that "?" and see what changes happen in a docs
-build; I'll try to find a moment to do that.
+Cleanup my piece of pointlessness.
 
-jon
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: netdev@vger.kernel.org
+Fairly-blamed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ net/netlink/af_netlink.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 930d17fa906c..b4a29bcc33b9 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -993,7 +993,7 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
+ 	struct netlink_sock *nlk = nlk_sk(sk);
+ 	struct sockaddr_nl *nladdr = (struct sockaddr_nl *)addr;
+ 	int err = 0;
+-	long unsigned int groups = nladdr->nl_groups;
++	unsigned long groups = nladdr->nl_groups;
+ 	bool bound;
+ 
+ 	if (addr_len < sizeof(struct sockaddr_nl))
+@@ -1011,9 +1011,7 @@ static int netlink_bind(struct socket *sock, struct sockaddr *addr,
+ 			return err;
+ 	}
+ 
+-	if (nlk->ngroups == 0)
+-		groups = 0;
+-	else if (nlk->ngroups < 8*sizeof(groups))
++	if (nlk->ngroups < BITS_PER_LONG)
+ 		groups &= (1UL << nlk->ngroups) - 1;
+ 
+ 	bound = nlk->bound;
+-- 
+2.13.6
+
