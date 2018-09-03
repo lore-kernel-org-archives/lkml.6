@@ -2,117 +2,113 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34144C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3524C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D607420645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D607420645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B6C8C20645
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C8C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726051AbeICMeV (ORCPT
+        id S1726999AbeICMen (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 08:34:21 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39205 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeICMeV (ORCPT
+        Mon, 3 Sep 2018 08:34:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34298 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbeICMen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 08:34:21 -0400
-Received: by mail-qk1-f195.google.com with SMTP id b19-v6so5146437qkc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 01:15:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FHpT9Y1EBeN8VEZdAgYh5ux3KRdWLwuNH0x4RuHBggo=;
-        b=CVJUNDVP2Xt9NmqbijKv+RDtLaHRA7NZTlY6kjdUbphviq+0uF/dqpXkfKGd2lf9tQ
-         5r7mDYDJp8khJny5thKwmKQG6sUaCekGbGuIJQ+tce5xVOtql/mPBmHKigdxnVIjpaho
-         tau6aLlCzBzChteZVGiQHz6JhEc3HGRrIiOuBjFSCiHfod7cGQQX+EFgGIMi2389/utg
-         4KGJ5IyNiCgEYa/3Yh1NPwoFMzlNXyhjlrE+SfhiF3TTv/81D7svGXn+RFjMe1Nba70j
-         zTWaPmQJ2a19Vb+d9LUKKgkvdb5UfpnPFXe2D9xAzuIIk5fmGaOC8X9JAYoRk58EqIph
-         EptQ==
-X-Gm-Message-State: APzg51A4g3STIf2dbsgdgBJYchXbuNb3LnsHaOSudACqDHak+/2MsMWx
-        zCygrBQ+GrzRBeByfCGny333kCLt6H4rEYtgRDQuVw==
-X-Google-Smtp-Source: ANB0VdYmiV/Hg8wDJ+bMYNX2ocDludWxtjs4FxXLsFFJOQ6FW83ZU9hNLeqinb8/OHUVLZGb7oO07GXHPl48M0s8zlA=
-X-Received: by 2002:ae9:c30b:: with SMTP id n11-v6mr9792496qkg.194.1535962519391;
- Mon, 03 Sep 2018 01:15:19 -0700 (PDT)
+        Mon, 3 Sep 2018 08:34:43 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8389Lem047300
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Sep 2018 04:15:41 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m8y0ynjwv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 04:15:40 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 3 Sep 2018 09:15:38 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Sep 2018 09:15:34 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w838FXc339190650
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Sep 2018 08:15:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B9FFA4055;
+        Mon,  3 Sep 2018 11:15:27 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A599A4053;
+        Mon,  3 Sep 2018 11:15:27 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Sep 2018 11:15:27 +0100 (BST)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 25651)
+        id 4121220F5C3; Mon,  3 Sep 2018 10:15:33 +0200 (CEST)
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] timekeeping: Fix declaration of read_persistent_wall_and_boot_offset
+Date:   Mon,  3 Sep 2018 10:15:33 +0200
+X-Mailer: git-send-email 2.17.0
+X-TM-AS-GCONF: 00
+x-cbid: 18090308-0008-0000-0000-0000026B4425
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090308-0009-0000-0000-000021D35375
+Message-Id: <20180903081533.34366-1-borntraeger@de.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-References: <20180830215622.47550-1-hcutts@chromium.org>
-In-Reply-To: <20180830215622.47550-1-hcutts@chromium.org>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 3 Sep 2018 10:15:08 +0200
-Message-ID: <CAO-hwJL6xz=b4wA5WnSeZw1PO+exVgs3isyPO6ZFWVemiJU9yA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Add support for high-resolution scrolling on
- Logitech mice
-To:     hcutts@chromium.org
-Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, jiri.kosina@suse.cz,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-doc@vger.kernel.org, corbet@lwn.net,
-        Jiri Kosina <jikos@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=850 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809030090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Harry,
+it is
+read_persistent_wall_and_boot_offset and not
+read_persistent_clock_and_boot_offset
 
-On Thu, Aug 30, 2018 at 11:56 PM Harry Cutts <hcutts@chromium.org> wrote:
->
-> Hi everyone,
->
-> This is v2 of the patch set adding support for high-resolution scroll
-> wheels on Logitech mice. See the linux-input "Reporting high-resolution
-> scroll events" thread [0] for previous discussion of the evdev changes.
-> I would love to hear your feedback.
+Fixes: 3eca993740b8eb40f51 ("timekeeping: Replace read_boot_clock64() with read_persistent_wall_and_boot_offset()")
 
-Series looks good. I just tested it on a regular Logitech mouse and a
-MX Master with high-res scrolling and everything works as expected.
+CC: Pavel Tatashin <pasha.tatashin@oracle.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+---
+ include/linux/timekeeping.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index 5d738804e3d6..a5a3cfc3c2fa 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -258,8 +258,8 @@ extern void ktime_get_snapshot(struct system_time_snapshot *systime_snapshot);
+ extern int persistent_clock_is_local;
+ 
+ extern void read_persistent_clock64(struct timespec64 *ts);
+-void read_persistent_clock_and_boot_offset(struct timespec64 *wall_clock,
+-					   struct timespec64 *boot_offset);
++void read_persistent_wall_and_boot_offset(struct timespec64 *wall_clock,
++					  struct timespec64 *boot_offset);
+ extern int update_persistent_clock64(struct timespec64 now);
+ 
+ /*
+-- 
+2.17.0
 
-Cheers,
-Benjamin
-
->
-> Thanks,
->
-> Harry Cutts
-> Chrome OS Touch/Input team
->
-> [0]: https://www.spinics.net/lists/linux-input/msg57380.html
->
->
-> Changes in v2:
-> * Changed the REL_WHEEL_HI_RES code to use micrometres (a.k.a. microns)
->   as its units, instead of 256ths of a millimetre.
-> * Removed support for mice connecting over Bluetooth, due to a bug where
->   the mouse's high-res mode and the driver's settings get out of sync
->   when the mouse is power cycled.
-> * Moved the creation of the HID++ 1.0 function and the refactor to use
->   the LDJ_DEVICE macro into separate patches.
-> * Added a couple of explanatory comments to the Logitech driver.
->
-> Harry Cutts (5):
->   Add the `REL_WHEEL_HI_RES` event code
->   Create a utility class for counting scroll events
->   Add function to enable HID++ 1.0 "scrolling acceleration"
->   Enable high-resolution scrolling on Logitech mice
->   Use LDJ_DEVICE macro for existing Logitech mice
->
->  Documentation/input/event-codes.rst    |  11 +-
->  drivers/hid/hid-input.c                |  45 ++++
->  drivers/hid/hid-logitech-hidpp.c       | 311 ++++++++++++++++++++++---
->  include/linux/hid.h                    |  28 +++
->  include/uapi/linux/input-event-codes.h |   1 +
->  5 files changed, 368 insertions(+), 28 deletions(-)
->
-> --
-> 2.19.0.rc0.228.g281dcd1b4d0-goog
->
