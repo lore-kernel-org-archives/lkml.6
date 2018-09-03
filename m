@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ECAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C548C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B8F2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B8F2077C
+	by mail.kernel.org (Postfix) with ESMTP id 1A9B720869
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9B720869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbeICVfs (ORCPT
+        id S1729293AbeICVfw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:35:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42240 "EHLO
+        Mon, 3 Sep 2018 17:35:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42250 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbeICVfr (ORCPT
+        with ESMTP id S1727592AbeICVfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:35:47 -0400
+        Mon, 3 Sep 2018 17:35:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7180D02;
-        Mon,  3 Sep 2018 17:14:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2BC2D09;
+        Mon,  3 Sep 2018 17:14:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Bauer <scott.bauer@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 106/107] cdrom: Fix info leak/OOB read in cdrom_ioctl_drive_status
-Date:   Mon,  3 Sep 2018 18:57:10 +0200
-Message-Id: <20180903165643.982156780@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "linux-kernel@vger.kernel.org, kernel-team@android.com, Daniel Rosenberg" 
+        <drosen@google.com>, Daniel Rosenberg <drosen@google.com>
+Subject: [PATCH 4.9 107/107] staging: android: ion: check for kref overflow
+Date:   Mon,  3 Sep 2018 18:57:11 +0200
+Message-Id: <20180903165644.037696935@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -51,36 +51,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Bauer <scott.bauer@intel.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-commit 8f3fafc9c2f0ece10832c25f7ffcb07c97a32ad4 upstream.
+This patch is against 4.9. It does not apply to master due to a large
+rework of ion in 4.12 which removed the affected functions altogther.
+4c23cbff073f3b9b ("staging: android: ion: Remove import interface")
 
-Like d88b6d04: "cdrom: information leak in cdrom_ioctl_media_changed()"
+Userspace can cause the kref to handles to increment
+arbitrarily high. Ensure it does not overflow.
 
-There is another cast from unsigned long to int which causes
-a bounds check to fail with specially crafted input. The value is
-then used as an index in the slot array in cdrom_slot_status().
-
-Signed-off-by: Scott Bauer <scott.bauer@intel.com>
-Signed-off-by: Scott Bauer <sbauer@plzdonthack.me>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/android/ion/ion.c |   17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2536,7 +2536,7 @@ static int cdrom_ioctl_drive_status(stru
- 	if (!CDROM_CAN(CDC_SELECT_DISC) ||
- 	    (arg == CDSL_CURRENT || arg == CDSL_NONE))
- 		return cdi->ops->drive_status(cdi, CDSL_CURRENT);
--	if (((int)arg >= cdi->capacity))
-+	if (arg >= cdi->capacity)
- 		return -EINVAL;
- 	return cdrom_slot_status(cdi, arg);
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -15,6 +15,7 @@
+  *
+  */
+ 
++#include <linux/atomic.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/file.h>
+@@ -305,6 +306,16 @@ static void ion_handle_get(struct ion_ha
+ 	kref_get(&handle->ref);
  }
+ 
++/* Must hold the client lock */
++static struct ion_handle *ion_handle_get_check_overflow(
++					struct ion_handle *handle)
++{
++	if (atomic_read(&handle->ref.refcount) + 1 == 0)
++		return ERR_PTR(-EOVERFLOW);
++	ion_handle_get(handle);
++	return handle;
++}
++
+ int ion_handle_put_nolock(struct ion_handle *handle)
+ {
+ 	return kref_put(&handle->ref, ion_handle_destroy);
+@@ -347,9 +358,9 @@ struct ion_handle *ion_handle_get_by_id_
+ 
+ 	handle = idr_find(&client->idr, id);
+ 	if (handle)
+-		ion_handle_get(handle);
++		return ion_handle_get_check_overflow(handle);
+ 
+-	return handle ? handle : ERR_PTR(-EINVAL);
++	return ERR_PTR(-EINVAL);
+ }
+ 
+ static bool ion_handle_validate(struct ion_client *client,
+@@ -1110,7 +1121,7 @@ struct ion_handle *ion_import_dma_buf(st
+ 	/* if a handle exists for this buffer just take a reference to it */
+ 	handle = ion_handle_lookup(client, buffer);
+ 	if (!IS_ERR(handle)) {
+-		ion_handle_get(handle);
++		handle = ion_handle_get_check_overflow(handle);
+ 		mutex_unlock(&client->lock);
+ 		goto end;
+ 	}
 
 
