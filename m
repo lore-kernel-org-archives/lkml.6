@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BAEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1C4C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1742086E
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1742086E
+	by mail.kernel.org (Postfix) with ESMTP id F167720862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F167720862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeICVTq (ORCPT
+        id S1728581AbeICVTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:19:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38452 "EHLO
+        Mon, 3 Sep 2018 17:19:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38460 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeICVTq (ORCPT
+        with ESMTP id S1728008AbeICVTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:19:46 -0400
+        Mon, 3 Sep 2018 17:19:52 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 592F8CF5;
-        Mon,  3 Sep 2018 16:58:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 900B0CF5;
+        Mon,  3 Sep 2018 16:58:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Gill <jgill@vmware.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 39/80] scsi: vmw_pvscsi: Return DID_RESET for status SAM_STAT_COMMAND_TERMINATED
-Date:   Mon,  3 Sep 2018 18:49:17 +0200
-Message-Id: <20180903164935.705326858@linuxfoundation.org>
+Subject: [PATCH 4.4 22/80] can: mpc5xxx_can: check of_iomap return before use
+Date:   Mon,  3 Sep 2018 18:49:00 +0200
+Message-Id: <20180903164935.045063546@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
 References: <20180903164934.171677301@linuxfoundation.org>
@@ -51,47 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jim Gill <jgill@vmware.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit e95153b64d03c2b6e8d62e51bdcc33fcad6e0856 ]
+[ Upstream commit b5c1a23b17e563b656cc9bb76ce5323b997d90e8 ]
 
-Commands that are reset are returned with status
-SAM_STAT_COMMAND_TERMINATED. PVSCSI currently returns DID_OK |
-SAM_STAT_COMMAND_TERMINATED which fails the command. Instead, set hostbyte
-to DID_RESET to allow upper layers to retry.
+of_iomap() can return NULL so that return needs to be checked and NULL
+treated as failure. While at it also take care of the missing
+of_node_put() in the error path.
 
-Tested by copying a large file between two pvscsi disks on same adapter
-while performing a bus reset at 1-second intervals. Before fix, commands
-sometimes fail with DID_OK. After fix, commands observed to fail with
-DID_RESET.
-
-Signed-off-by: Jim Gill <jgill@vmware.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/vmw_pvscsi.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/can/mscan/mpc5xxx_can.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -545,9 +545,14 @@ static void pvscsi_complete_request(stru
- 	    (btstat == BTSTAT_SUCCESS ||
- 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED ||
- 	     btstat == BTSTAT_LINKED_COMMAND_COMPLETED_WITH_FLAG)) {
--		cmd->result = (DID_OK << 16) | sdstat;
--		if (sdstat == SAM_STAT_CHECK_CONDITION && cmd->sense_buffer)
--			cmd->result |= (DRIVER_SENSE << 24);
-+		if (sdstat == SAM_STAT_COMMAND_TERMINATED) {
-+			cmd->result = (DID_RESET << 16);
-+		} else {
-+			cmd->result = (DID_OK << 16) | sdstat;
-+			if (sdstat == SAM_STAT_CHECK_CONDITION &&
-+			    cmd->sense_buffer)
-+				cmd->result |= (DRIVER_SENSE << 24);
-+		}
- 	} else
- 		switch (btstat) {
- 		case BTSTAT_SUCCESS:
+--- a/drivers/net/can/mscan/mpc5xxx_can.c
++++ b/drivers/net/can/mscan/mpc5xxx_can.c
+@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct
+ 		return 0;
+ 	}
+ 	cdm = of_iomap(np_cdm, 0);
++	if (!cdm) {
++		of_node_put(np_cdm);
++		dev_err(&ofdev->dev, "can't map clock node!\n");
++		return 0;
++	}
+ 
+ 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
+ 		freq *= 2;
 
 
