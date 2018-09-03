@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1364C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8E4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 665A220862
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 665A220862
+	by mail.kernel.org (Postfix) with ESMTP id 4EB962077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB962077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeICVrT (ORCPT
+        id S1730807AbeICVrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45866 "EHLO
+        Mon, 3 Sep 2018 17:47:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728500AbeICVrS (ORCPT
+        with ESMTP id S1728500AbeICVrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:18 -0400
+        Mon, 3 Sep 2018 17:47:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0050D24;
-        Mon,  3 Sep 2018 17:26:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17121D24;
+        Mon,  3 Sep 2018 17:26:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 130/165] b43/leds: Ensure NUL-termination of LED name string
-Date:   Mon,  3 Sep 2018 18:56:56 +0200
-Message-Id: <20180903165702.082647385@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 098/165] arm64: mm: check for upper PAGE_SHIFT bits in pfn_valid()
+Date:   Mon,  3 Sep 2018 18:56:24 +0200
+Message-Id: <20180903165700.438229557@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -50,32 +50,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Buesch <m@bues.ch>
+From: Greg Hackmann <ghackmann@android.com>
 
-commit 2aa650d1950fce94f696ebd7db30b8830c2c946f upstream.
+commit 5ad356eabc47d26a92140a0c4b20eba471c10de3 upstream.
 
-strncpy might not NUL-terminate the string, if the name equals the buffer size.
-Use strlcpy instead.
+ARM64's pfn_valid() shifts away the upper PAGE_SHIFT bits of the input
+before seeing if the PFN is valid.  This leads to false positives when
+some of the upper bits are set, but the lower bits match a valid PFN.
 
-Signed-off-by: Michael Buesch <m@bues.ch>
+For example, the following userspace code looks up a bogus entry in
+/proc/kpageflags:
+
+    int pagemap = open("/proc/self/pagemap", O_RDONLY);
+    int pageflags = open("/proc/kpageflags", O_RDONLY);
+    uint64_t pfn, val;
+
+    lseek64(pagemap, [...], SEEK_SET);
+    read(pagemap, &pfn, sizeof(pfn));
+    if (pfn & (1UL << 63)) {        /* valid PFN */
+        pfn &= ((1UL << 55) - 1);   /* clear flag bits */
+        pfn |= (1UL << 55);
+        lseek64(pageflags, pfn * sizeof(uint64_t), SEEK_SET);
+        read(pageflags, &val, sizeof(val));
+    }
+
+On ARM64 this causes the userspace process to crash with SIGSEGV rather
+than reading (1 << KPF_NOPAGE).  kpageflags_read() treats the offset as
+valid, and stable_page_flags() will try to access an address between the
+user and kernel address ranges.
+
+Fixes: c1cc1552616d ("arm64: MMU initialisation")
 Cc: stable@vger.kernel.org
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/b43/leds.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/mm/init.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/broadcom/b43/leds.c
-+++ b/drivers/net/wireless/broadcom/b43/leds.c
-@@ -131,7 +131,7 @@ static int b43_register_led(struct b43_w
- 	led->wl = dev->wl;
- 	led->index = led_index;
- 	led->activelow = activelow;
--	strncpy(led->name, name, sizeof(led->name));
-+	strlcpy(led->name, name, sizeof(led->name));
- 	atomic_set(&led->state, 0);
- 
- 	led->led_dev.name = led->name;
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -287,7 +287,11 @@ static void __init zone_sizes_init(unsig
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
+-	return memblock_is_map_memory(pfn << PAGE_SHIFT);
++	phys_addr_t addr = pfn << PAGE_SHIFT;
++
++	if ((addr >> PAGE_SHIFT) != pfn)
++		return 0;
++	return memblock_is_map_memory(addr);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+ #endif
 
 
