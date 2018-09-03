@@ -2,118 +2,78 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3D7C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53804C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BADAC20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097C02086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:19:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpLvUML4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADAC20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VR/L8N2R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097C02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeIDAke (ORCPT
+        id S1728806AbeIDAky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 20:40:34 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35184 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbeIDAkd (ORCPT
+        Mon, 3 Sep 2018 20:40:54 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:33103 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeIDAky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 20:40:33 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p12-v6so590831pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:18:46 -0700 (PDT)
+        Mon, 3 Sep 2018 20:40:54 -0400
+Received: by mail-it0-f44.google.com with SMTP id j198-v6so12101543ita.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 13:19:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B7BT97TJF5MxYBHaW0n5UuNfHBDvgjAHzZYBwswED/U=;
-        b=GpLvUML4DST2BAswoATFSPthvu6JZDhcy5hiWKhj+SqgZQBpu65IhnIyJxSFU/DkQr
-         SJgcAwAyblf2G/kB5MbO1Ut9nOVnxZnRvngPRqegN9DwA4r9pJR6ttUtCK5rili2lM5n
-         /jjfeB9WPD8v4Pz7aK0BzPoTaLR0WgmAObom8=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xh8UY5h12cS5TGPhGboD1hYJlBe9eHNmB7RvBPSJ88k=;
+        b=VR/L8N2R/1QRn5nB/Ph0quTZAuMtGHZXFaV8IanKq0ucxqza8s1fawMQ8Dp9HJRNAV
+         I7zZJgHhP5nmdjOGFQBDfFACDE03GwJBPCuv2znMYDZze7rhfo+ZDaXH7bJnx98ITnqv
+         zjl38aHQrVV2zPcY5d0jAYWwZl6x/M6HjUuvJNOC38/99Xiye0A7DVX8jTk7tK9mCDo8
+         OXmedp5DTZCdWz6ANKaDNNvKIdAKHorXpGo4oRxbVRxt8AzY+qhAbxBeeJyfrs0okXb4
+         2XBMHuvKa/0rzGiBD7Id27qP2FJbh8BWSKoK/7tcGfhZYOZvn49wafia+aXnkmd+dPkY
+         1gSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B7BT97TJF5MxYBHaW0n5UuNfHBDvgjAHzZYBwswED/U=;
-        b=KldlQLItj5QOMWoSfoBwNAUx0kopQVO1CwIGEWrEJeIaNcgRyz1UhtM2mwOtxiKIV5
-         W9ydwzD5/kOXoVT67svK6ogeD7+s8U42owjEWhdLnfhXZkoSZ0iBv+RjfosAEqb3Ehpv
-         gJjrkHiOJ2GqLFPRJ4FVQryY9Fi0hoDuh4d7X+DCxoCF2lQpxQJwH9G+9B46VCU1gP+3
-         gfOA2t8gKuMbebubahbtqiaUJyhziAWlWf8zN/pIha69yGaZaGfYbZVUiB0bj0VO/2S4
-         0LjkJlS02NbhJJ5Rr0fDuxjMkIAMA6zPkRV7aR0sa6ifOKTvTuuqQLKyNgI8MWGoX1Xw
-         JF+g==
-X-Gm-Message-State: APzg51CYAFF8BfcAV6ahH5o4Zxrcb7/Pxcv+S4HzYXQbkc3cVk7a7Q3r
-        vqHK6YNUWgSGBY/DMW35g7du0w==
-X-Google-Smtp-Source: ANB0VdYLTiCHKuT7usxlkfPxwPFg6KuY+h6eKYHRaOb13z9RgcrIP++9TnIKjxenKq81FcwEcpu2+w==
-X-Received: by 2002:a63:ee56:: with SMTP id n22-v6mr27999680pgk.402.1536005926353;
-        Mon, 03 Sep 2018 13:18:46 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id r25-v6sm24698455pgm.59.2018.09.03.13.18.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Sep 2018 13:18:45 -0700 (PDT)
-Date:   Mon, 3 Sep 2018 13:22:39 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] thermal: tsens: Get rid of dead code
-Message-ID: <20180903202239.GP3456@tuxbook-pro>
-References: <cover.1535462942.git.amit.kucheria@linaro.org>
- <c50d9e71fc8cf466b9a7ff32edf7fb9370cca2dd.1535462942.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xh8UY5h12cS5TGPhGboD1hYJlBe9eHNmB7RvBPSJ88k=;
+        b=MdOd0vO0rV/1ha8XC9rzMsuv74L9aJ/aqgUL7EBLQNlq/avLyMmzBb2NY/fQAJPRP2
+         YGS0YOpM5hmtJh2EP2L1K7oveVPimIwD3eNMBPi2+MRX7LJBxdsBCN+fZLzQ+eKpmWrV
+         A7O/ciRXjg7GcvLJNbUWZMVY2RZ3Q7DgcWseg6SnBnZx8ox0OkzfHuk5diEHykMcYUi/
+         AGuPGRFamYPkLv+0KyTg6ZXMH6GqowAZwnDAHMJ1Z9pcqS+ZlIAk91WjOLQ4SUWtQkvz
+         OAgbAzJ/Ofboqwyg698rnSoycNErasCIak0spa1o5JNLMxZ2/jmQKmWMwO1Z3y5HGAob
+         zS9g==
+X-Gm-Message-State: APzg51B3C+w57KstqM+ctk+VRKGV+Vl3M1R35FIr1FB5dDKlt3RKRV4m
+        DQVeT07NtcWb0At6qOqI0xzKvaeAe5sI+bCew18=
+X-Google-Smtp-Source: ANB0VdbGNWJ5RynA0kxWbbLHZFMf9kP1dXJWYjGPMEmZpFU5lLl0rAcF99xogGIAsdLpWlaPeom6yefnIQEmryzhMIs=
+X-Received: by 2002:a24:355:: with SMTP id e82-v6mr5564907ite.64.1536005946301;
+ Mon, 03 Sep 2018 13:19:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c50d9e71fc8cf466b9a7ff32edf7fb9370cca2dd.1535462942.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180903133304.70362-1-mika.westerberg@linux.intel.com> <20180903133304.70362-4-mika.westerberg@linux.intel.com>
+In-Reply-To: <20180903133304.70362-4-mika.westerberg@linux.intel.com>
+From:   Yehezkel Bernat <yehezkelshb@gmail.com>
+Date:   Mon, 3 Sep 2018 23:18:49 +0300
+Message-ID: <CA+CmpXu6NENgWMM-PSge=vFp3OKV1rtWqycqdgY9bmQE2in4JA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] thunderbolt: Add Intel as copyright holder
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, lukas@wunner.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28 Aug 06:38 PDT 2018, Amit Kucheria wrote:
+>   * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
+> + * Copyright (C) 2018, Intel Corporation
 
-> hw_id is dynamically allocated but not used anywhere. Get rid of dead
-> code.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-
-Good catch.
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/thermal/qcom/tsens.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-> index 90bb431cf740..9a8e8f7b4ae1 100644
-> --- a/drivers/thermal/qcom/tsens.c
-> +++ b/drivers/thermal/qcom/tsens.c
-> @@ -80,11 +80,6 @@ static int tsens_register(struct tsens_device *tmdev)
->  {
->  	int i;
->  	struct thermal_zone_device *tzd;
-> -	u32 *hw_id, n = tmdev->num_sensors;
-> -
-> -	hw_id = devm_kcalloc(tmdev->dev, n, sizeof(u32), GFP_KERNEL);
-> -	if (!hw_id)
-> -		return -ENOMEM;
->  
->  	for (i = 0;  i < tmdev->num_sensors; i++) {
->  		tmdev->sensor[i].tmdev = tmdev;
-> -- 
-> 2.17.1
-> 
+Nitpicking: (c) or (C)?
+I can't find anything in the documentation and both are found in various files.
