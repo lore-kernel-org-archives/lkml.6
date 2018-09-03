@@ -6,39 +6,49 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C637C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979ECC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371EC2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371EC2077C
+	by mail.kernel.org (Postfix) with ESMTP id 5D47120658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D47120658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbeICVsS (ORCPT
+        id S1730983AbeICVsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:48:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46106 "EHLO
+        Mon, 3 Sep 2018 17:48:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46180 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbeICVsR (ORCPT
+        with ESMTP id S1730923AbeICVsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:48:17 -0400
+        Mon, 3 Sep 2018 17:48:19 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05EFBD09;
-        Mon,  3 Sep 2018 17:19:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B445CF4;
+        Mon,  3 Sep 2018 17:27:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/165] gpiolib-acpi: make sure we trigger edge events at least once on boot
-Date:   Mon,  3 Sep 2018 18:56:03 +0200
-Message-Id: <20180903165658.957028042@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
+        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
+        linux-arch@vger.kernel.org, rostedt@goodmis.org,
+        schwidefsky@de.ibm.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 147/165] kprobes/arm: Fix %p uses in error messages
+Date:   Mon,  3 Sep 2018 18:57:13 +0200
+Message-Id: <20180903165704.182995394@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -55,210 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit ca876c7483b697b498868b1f575997191b077885 ]
+commit 75b2f5f5911fe7a2fc82969b2b24dde34e8f820d upstream.
 
-On some systems using edge triggered ACPI Event Interrupts, the initial
-state at boot is not setup by the firmware, instead relying on the edge
-irq event handler running at least once to setup the initial state.
+Fix %p uses in error messages by removing it and
+using general dumper.
 
-2 known examples of this are:
-
-1) The Surface 3 has its _LID state controlled by an ACPI operation region
- triggered by a GPIO event:
-
- OperationRegion (GPOR, GeneralPurposeIo, Zero, One)
- Field (GPOR, ByteAcc, NoLock, Preserve)
- {
-     Connection (
-         GpioIo (Shared, PullNone, 0x0000, 0x0000, IoRestrictionNone,
-             "\\_SB.GPO0", 0x00, ResourceConsumer, ,
-             )
-             {   // Pin list
-                 0x004C
-             }
-     ),
-     HELD,   1
- }
-
- Method (_E4C, 0, Serialized)  // _Exx: Edge-Triggered GPE
- {
-     If ((HELD == One))
-     {
-         ^^LID.LIDB = One
-     }
-     Else
-     {
-         ^^LID.LIDB = Zero
-         Notify (LID, 0x80) // Status Change
-     }
-
-     Notify (^^PCI0.SPI1.NTRG, One) // Device Check
- }
-
- Currently, the state of LIDB is wrong until the user actually closes or
- open the cover. We need to trigger the GPIO event once to update the
- internal ACPI state.
-
- Coincidentally, this also enables the Surface 2 integrated HID sensor hub
- which also requires an ACPI gpio operation region to start initialization.
-
-2) Various Bay Trail based tablets come with an external USB mux and
- TI T1210B USB phy to enable USB gadget mode. The mux is controlled by a
- GPIO which is controlled by an edge triggered ACPI Event Interrupt which
- monitors the micro-USB ID pin.
-
- When the tablet is connected to a PC (or no cable is plugged in), the ID
- pin is high and the tablet should be in gadget mode. But the GPIO
- controlling the mux is initialized by the firmware so that the USB data
- lines are muxed to the host controller.
-
- This means that if the user wants to use gadget mode, the user needs to
- first plug in a host-cable to force the ID pin low and then unplug it
- and connect the tablet to a PC, to get the ACPI event handler to run and
- switch the mux to device mode,
-
-This commit fixes both by running the event-handler once on boot.
-
-Note that the running of the event-handler is done from a late_initcall,
-this is done because the handler AML code may rely on OperationRegions
-registered by other builtin drivers. This avoids errors like these:
-
-[    0.133026] ACPI Error: No handler for Region [XSCG] ((____ptrval____)) [GenericSerialBus] (20180531/evregion-132)
-[    0.133036] ACPI Error: Region GenericSerialBus (ID=9) has no handler (20180531/exfldio-265)
-[    0.133046] ACPI Error: Method parse/execution failed \_SB.GPO2._E12, AE_NOT_EXIST (20180531/psparse-516)
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-[hdegoede: Document BYT USB mux reliance on initial trigger]
-[hdegoede: Run event handler from a late_initcall, rather then immediately]
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jon Medhurst <tixy@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Tobin C . Harding <me@tobin.cc>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: acme@kernel.org
+Cc: akpm@linux-foundation.org
+Cc: brueckner@linux.vnet.ibm.com
+Cc: linux-arch@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/lkml/152491905361.9916.15300852365956231645.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpio/gpiolib-acpi.c |   56 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -25,6 +25,7 @@
+---
+ arch/arm/probes/kprobes/core.c      |    4 ++--
+ arch/arm/probes/kprobes/test-core.c |    1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+--- a/arch/arm/probes/kprobes/core.c
++++ b/arch/arm/probes/kprobes/core.c
+@@ -291,8 +291,8 @@ void __kprobes kprobe_handler(struct pt_
+ 				break;
+ 			case KPROBE_REENTER:
+ 				/* A nested probe was hit in FIQ, it is a BUG */
+-				pr_warn("Unrecoverable kprobe detected at %p.\n",
+-					p->addr);
++				pr_warn("Unrecoverable kprobe detected.\n");
++				dump_kprobe(p);
+ 				/* fall through */
+ 			default:
+ 				/* impossible cases */
+--- a/arch/arm/probes/kprobes/test-core.c
++++ b/arch/arm/probes/kprobes/test-core.c
+@@ -1517,7 +1517,6 @@ fail:
+ 	print_registers(&result_regs);
  
- struct acpi_gpio_event {
- 	struct list_head node;
-+	struct list_head initial_sync_list;
- 	acpi_handle handle;
- 	unsigned int pin;
- 	unsigned int irq;
-@@ -50,6 +51,9 @@ struct acpi_gpio_chip {
- 	struct list_head events;
- };
- 
-+static LIST_HEAD(acpi_gpio_initial_sync_list);
-+static DEFINE_MUTEX(acpi_gpio_initial_sync_list_lock);
-+
- static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
- {
- 	if (!gc->parent)
-@@ -142,6 +146,21 @@ static struct gpio_desc *acpi_get_gpiod(
- 	return gpiochip_get_desc(chip, offset);
- }
- 
-+static void acpi_gpio_add_to_initial_sync_list(struct acpi_gpio_event *event)
-+{
-+	mutex_lock(&acpi_gpio_initial_sync_list_lock);
-+	list_add(&event->initial_sync_list, &acpi_gpio_initial_sync_list);
-+	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
-+}
-+
-+static void acpi_gpio_del_from_initial_sync_list(struct acpi_gpio_event *event)
-+{
-+	mutex_lock(&acpi_gpio_initial_sync_list_lock);
-+	if (!list_empty(&event->initial_sync_list))
-+		list_del_init(&event->initial_sync_list);
-+	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
-+}
-+
- static irqreturn_t acpi_gpio_irq_handler(int irq, void *data)
- {
- 	struct acpi_gpio_event *event = data;
-@@ -193,7 +212,7 @@ static acpi_status acpi_gpiochip_request
- 	irq_handler_t handler = NULL;
- 	struct gpio_desc *desc;
- 	unsigned long irqflags;
--	int ret, pin, irq;
-+	int ret, pin, irq, value;
- 
- 	if (!acpi_gpio_get_irq_resource(ares, &agpio))
- 		return AE_OK;
-@@ -228,6 +247,8 @@ static acpi_status acpi_gpiochip_request
- 
- 	gpiod_direction_input(desc);
- 
-+	value = gpiod_get_value(desc);
-+
- 	ret = gpiochip_lock_as_irq(chip, pin);
- 	if (ret) {
- 		dev_err(chip->parent, "Failed to lock GPIO as interrupt\n");
-@@ -269,6 +290,7 @@ static acpi_status acpi_gpiochip_request
- 	event->irq = irq;
- 	event->pin = pin;
- 	event->desc = desc;
-+	INIT_LIST_HEAD(&event->initial_sync_list);
- 
- 	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
- 				   "ACPI:Event", event);
-@@ -283,6 +305,18 @@ static acpi_status acpi_gpiochip_request
- 		enable_irq_wake(irq);
- 
- 	list_add_tail(&event->node, &acpi_gpio->events);
-+
-+	/*
-+	 * Make sure we trigger the initial state of the IRQ when using RISING
-+	 * or FALLING.  Note we run the handlers on late_init, the AML code
-+	 * may refer to OperationRegions from other (builtin) drivers which
-+	 * may be probed after us.
-+	 */
-+	if (handler == acpi_gpio_irq_handler &&
-+	    (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
-+	     ((irqflags & IRQF_TRIGGER_FALLING) && value == 0)))
-+		acpi_gpio_add_to_initial_sync_list(event);
-+
- 	return AE_OK;
- 
- fail_free_event:
-@@ -355,6 +389,8 @@ void acpi_gpiochip_free_interrupts(struc
- 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
- 		struct gpio_desc *desc;
- 
-+		acpi_gpio_del_from_initial_sync_list(event);
-+
- 		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
- 			disable_irq_wake(event->irq);
- 
-@@ -1210,3 +1246,21 @@ bool acpi_can_fallback_to_crs(struct acp
- 
- 	return con_id == NULL;
- }
-+
-+/* Sync the initial state of handlers after all builtin drivers have probed */
-+static int acpi_gpio_initial_sync(void)
-+{
-+	struct acpi_gpio_event *event, *ep;
-+
-+	mutex_lock(&acpi_gpio_initial_sync_list_lock);
-+	list_for_each_entry_safe(event, ep, &acpi_gpio_initial_sync_list,
-+				 initial_sync_list) {
-+		acpi_evaluate_object(event->handle, NULL, NULL, NULL);
-+		list_del_init(&event->initial_sync_list);
-+	}
-+	mutex_unlock(&acpi_gpio_initial_sync_list_lock);
-+
-+	return 0;
-+}
-+/* We must use _sync so that this runs after the first deferred_probe run */
-+late_initcall_sync(acpi_gpio_initial_sync);
+ 	if (mem) {
+-		pr_err("current_stack=%p\n", current_stack);
+ 		pr_err("expected_memory:\n");
+ 		print_memory(expected_memory, mem_size);
+ 		pr_err("result_memory:\n");
 
 
