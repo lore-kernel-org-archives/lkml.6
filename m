@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E81C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4913AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CD862077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD862077C
+	by mail.kernel.org (Postfix) with ESMTP id 0D12E20867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D12E20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbeICVhh (ORCPT
+        id S1729968AbeICVhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:37:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42590 "EHLO
+        Mon, 3 Sep 2018 17:37:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42606 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbeICVhg (ORCPT
+        with ESMTP id S1728463AbeICVhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:37:36 -0400
+        Mon, 3 Sep 2018 17:37:40 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8F749D06;
-        Mon,  3 Sep 2018 17:16:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 390C4D02;
+        Mon,  3 Sep 2018 17:16:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 029/165] netfilter: nf_tables: fix memory leaks on chain rename
-Date:   Mon,  3 Sep 2018 18:55:15 +0200
-Message-Id: <20180903165656.542127492@linuxfoundation.org>
+Subject: [PATCH 4.14 030/165] netfilter: nf_tables: dont allow to rename to already-pending name
+Date:   Mon,  3 Sep 2018 18:55:16 +0200
+Message-Id: <20180903165656.599549018@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,68 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 9f8aac0be21ed5f99bd5ba0ff315d710737d1794 ]
+[ Upstream commit c6cc94df65c3174be92afbee638f11cbb5e606a7 ]
 
-The new name is stored in the transaction metadata, on commit,
-the pointers to the old and new names are swapped.
+Its possible to rename two chains to the same name in one
+transaction:
 
-Therefore in abort and commit case we have to free the
-pointer in the chain_trans container.
+nft add chain t c1
+nft add chain t c2
+nft 'rename chain t c1 c3;rename chain t c2 c3'
 
-In commit case, the pointer can be used by another cpu that
-is currently dumping the renamed chain, thus kfree needs to
-happen after waiting for rcu readers to complete.
+This creates two chains named 'c3'.
 
-Fixes: b7263e071a ("netfilter: nf_tables: Allow chain name of up to 255 chars")
+Appears to be harmless, both chains can still be deleted both
+by name or handle, but, nevertheless, its a bug.
+
+Walk transaction log and also compare vs. the pending renames.
+
+Both chains can still be deleted, but nevertheless it is a bug as
+we don't allow to create chains with identical names, so we should
+prevent this from happening-by-rename too.
+
 Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_tables_api.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ net/netfilter/nf_tables_api.c |   42 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 13 deletions(-)
 
 --- a/net/netfilter/nf_tables_api.c
 +++ b/net/netfilter/nf_tables_api.c
-@@ -5043,6 +5043,9 @@ static void nf_tables_commit_release(str
- 	case NFT_MSG_DELTABLE:
- 		nf_tables_table_destroy(&trans->ctx);
- 		break;
-+	case NFT_MSG_NEWCHAIN:
-+		kfree(nft_trans_chain_name(trans));
-+		break;
- 	case NFT_MSG_DELCHAIN:
- 		nf_tables_chain_destroy(trans->ctx.chain);
- 		break;
-@@ -5100,13 +5103,15 @@ static int nf_tables_commit(struct net *
- 			nf_tables_table_notify(&trans->ctx, NFT_MSG_DELTABLE);
- 			break;
- 		case NFT_MSG_NEWCHAIN:
--			if (nft_trans_chain_update(trans))
-+			if (nft_trans_chain_update(trans)) {
- 				nft_chain_commit_update(trans);
--			else
-+				nf_tables_chain_notify(&trans->ctx, NFT_MSG_NEWCHAIN);
-+				/* trans destroyed after rcu grace period */
-+			} else {
- 				nft_clear(net, trans->ctx.chain);
--
--			nf_tables_chain_notify(&trans->ctx, NFT_MSG_NEWCHAIN);
--			nft_trans_destroy(trans);
-+				nf_tables_chain_notify(&trans->ctx, NFT_MSG_NEWCHAIN);
-+				nft_trans_destroy(trans);
+@@ -1480,7 +1480,6 @@ static int nf_tables_updchain(struct nft
+ 	struct nft_base_chain *basechain;
+ 	struct nft_stats *stats = NULL;
+ 	struct nft_chain_hook hook;
+-	const struct nlattr *name;
+ 	struct nf_hook_ops *ops;
+ 	struct nft_trans *trans;
+ 	int err, i;
+@@ -1531,12 +1530,11 @@ static int nf_tables_updchain(struct nft
+ 			return PTR_ERR(stats);
+ 	}
+ 
++	err = -ENOMEM;
+ 	trans = nft_trans_alloc(ctx, NFT_MSG_NEWCHAIN,
+ 				sizeof(struct nft_trans_chain));
+-	if (trans == NULL) {
+-		free_percpu(stats);
+-		return -ENOMEM;
+-	}
++	if (trans == NULL)
++		goto err;
+ 
+ 	nft_trans_chain_stats(trans) = stats;
+ 	nft_trans_chain_update(trans) = true;
+@@ -1546,19 +1544,37 @@ static int nf_tables_updchain(struct nft
+ 	else
+ 		nft_trans_chain_policy(trans) = -1;
+ 
+-	name = nla[NFTA_CHAIN_NAME];
+-	if (nla[NFTA_CHAIN_HANDLE] && name) {
+-		nft_trans_chain_name(trans) =
+-			nla_strdup(name, GFP_KERNEL);
+-		if (!nft_trans_chain_name(trans)) {
+-			kfree(trans);
+-			free_percpu(stats);
+-			return -ENOMEM;
++	if (nla[NFTA_CHAIN_HANDLE] &&
++	    nla[NFTA_CHAIN_NAME]) {
++		struct nft_trans *tmp;
++		char *name;
++
++		err = -ENOMEM;
++		name = nla_strdup(nla[NFTA_CHAIN_NAME], GFP_KERNEL);
++		if (!name)
++			goto err;
++
++		err = -EEXIST;
++		list_for_each_entry(tmp, &ctx->net->nft.commit_list, list) {
++			if (tmp->msg_type == NFT_MSG_NEWCHAIN &&
++			    tmp->ctx.table == table &&
++			    nft_trans_chain_update(tmp) &&
++			    nft_trans_chain_name(tmp) &&
++			    strcmp(name, nft_trans_chain_name(tmp)) == 0) {
++				kfree(name);
++				goto err;
 +			}
- 			break;
- 		case NFT_MSG_DELCHAIN:
- 			list_del_rcu(&trans->ctx.chain->list);
-@@ -5246,7 +5251,7 @@ static int nf_tables_abort(struct net *n
- 		case NFT_MSG_NEWCHAIN:
- 			if (nft_trans_chain_update(trans)) {
- 				free_percpu(nft_trans_chain_stats(trans));
--
-+				kfree(nft_trans_chain_name(trans));
- 				nft_trans_destroy(trans);
- 			} else {
- 				trans->ctx.table->use--;
+ 		}
++
++		nft_trans_chain_name(trans) = name;
+ 	}
+ 	list_add_tail(&trans->list, &ctx->net->nft.commit_list);
+ 
+ 	return 0;
++err:
++	free_percpu(stats);
++	kfree(trans);
++	return err;
+ }
+ 
+ static int nf_tables_newchain(struct net *net, struct sock *nlsk,
 
 
