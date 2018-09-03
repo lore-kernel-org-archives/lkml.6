@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E30AC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A16C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A3B2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A3B2077C
+	by mail.kernel.org (Postfix) with ESMTP id 2B7BD2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7BD2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbeICVhO (ORCPT
+        id S1729843AbeICVhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:37:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42510 "EHLO
+        Mon, 3 Sep 2018 17:37:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeICVhN (ORCPT
+        with ESMTP id S1727942AbeICVhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:37:13 -0400
+        Mon, 3 Sep 2018 17:37:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFDF3D09;
-        Mon,  3 Sep 2018 17:16:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9CF9D06;
+        Mon,  3 Sep 2018 17:16:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manikanta Pubbisetty <mpubbise@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 006/165] mac80211: add stations tied to AP_VLANs during hw reconfig
-Date:   Mon,  3 Sep 2018 18:54:52 +0200
-Message-Id: <20180903165655.323783610@linuxfoundation.org>
+Subject: [PATCH 4.14 007/165] ext4: clear mmp sequence number when remounting read-only
+Date:   Mon,  3 Sep 2018 18:54:53 +0200
+Message-Id: <20180903165655.374039052@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,80 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "mpubbise@codeaurora.org" <mpubbise@codeaurora.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 19103a4bfb42f320395daa5616ece3e89e759d63 ]
+[ Upstream commit 2dca60d98e241bea686004168f85208f215fc697 ]
 
-As part of hw reconfig, only stations linked to AP interfaces are added
-back to the driver ignoring those which are tied to AP_VLAN interfaces.
+Previously, when an MMP-protected file system is remounted read-only,
+the kmmpd thread would exit the next time it woke up (a few seconds
+later), without resetting the MMP sequence number back to
+EXT4_MMP_SEQ_CLEAN.
 
-It is true that there could be stations tied to the AP_VLAN interface while
-serving 4addr clients or when using AP_VLAN for VLAN operations; we should
-be adding these stations back to the driver as part of hw reconfig, failing
-to do so can cause functional issues.
+Fix this by explicitly killing the MMP thread when the file system is
+remounted read-only.
 
-In the case of ath10k driver, the following errors were observed.
-
-ath10k_pci : failed to install key for non-existent peer XX:XX:XX:XX:XX:XX
-Workqueue: events_freezable ieee80211_restart_work [mac80211]
-(unwind_backtrace) from (show_stack+0x10/0x14)
-(show_stack) (dump_stack+0x80/0xa0)
-(dump_stack) (warn_slowpath_common+0x68/0x8c)
-(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
-(warn_slowpath_null) (ieee80211_enable_keys+0x88/0x154 [mac80211])
-(ieee80211_enable_keys) (ieee80211_reconfig+0xc90/0x19c8 [mac80211])
-(ieee80211_reconfig]) (ieee80211_restart_work+0x8c/0xa0 [mac80211])
-(ieee80211_restart_work) (process_one_work+0x284/0x488)
-(process_one_work) (worker_thread+0x228/0x360)
-(worker_thread) (kthread+0xd8/0xec)
-(kthread) (ret_from_fork+0x14/0x24)
-
-Also while bringing down the AP VAP, WARN_ONs and errors related to peer
-removal were observed.
-
-ath10k_pci : failed to clear all peer wep keys for vdev 0: -2
-ath10k_pci : failed to disassociate station: 8c:fd:f0:0a:8c:f5 vdev 0: -2
-(unwind_backtrace) (show_stack+0x10/0x14)
-(show_stack) (dump_stack+0x80/0xa0)
-(dump_stack) (warn_slowpath_common+0x68/0x8c)
-(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
-(warn_slowpath_null) (sta_set_sinfo+0xb98/0xc9c [mac80211])
-(sta_set_sinfo [mac80211]) (__sta_info_flush+0xf0/0x134 [mac80211])
-(__sta_info_flush [mac80211]) (ieee80211_stop_ap+0xe8/0x390 [mac80211])
-(ieee80211_stop_ap [mac80211]) (__cfg80211_stop_ap+0xe0/0x3dc [cfg80211])
-(__cfg80211_stop_ap [cfg80211]) (cfg80211_stop_ap+0x30/0x44 [cfg80211])
-(cfg80211_stop_ap [cfg80211]) (genl_rcv_msg+0x274/0x30c)
-(genl_rcv_msg) (netlink_rcv_skb+0x58/0xac)
-(netlink_rcv_skb) (genl_rcv+0x20/0x34)
-(genl_rcv) (netlink_unicast+0x11c/0x204)
-(netlink_unicast) (netlink_sendmsg+0x30c/0x370)
-(netlink_sendmsg) (sock_sendmsg+0x70/0x84)
-(sock_sendmsg) (___sys_sendmsg.part.3+0x188/0x228)
-(___sys_sendmsg.part.3) (__sys_sendmsg+0x4c/0x70)
-(__sys_sendmsg) (ret_fast_syscall+0x0/0x44)
-
-These issues got fixed by adding the stations which are
-tied to AP_VLANs back to the driver.
-
-Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/util.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/mmp.c   |    7 ++-----
+ fs/ext4/super.c |    2 ++
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -2068,7 +2068,8 @@ int ieee80211_reconfig(struct ieee80211_
- 		if (!sta->uploaded)
- 			continue;
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -186,11 +186,8 @@ static int kmmpd(void *data)
+ 			goto exit_thread;
+ 		}
  
--		if (sta->sdata->vif.type != NL80211_IFTYPE_AP)
-+		if (sta->sdata->vif.type != NL80211_IFTYPE_AP &&
-+		    sta->sdata->vif.type != NL80211_IFTYPE_AP_VLAN)
- 			continue;
+-		if (sb_rdonly(sb)) {
+-			ext4_warning(sb, "kmmpd being stopped since filesystem "
+-				     "has been remounted as readonly.");
+-			goto exit_thread;
+-		}
++		if (sb_rdonly(sb))
++			break;
  
- 		for (state = IEEE80211_STA_NOTEXIST;
+ 		diff = jiffies - last_update_time;
+ 		if (diff < mmp_update_interval * HZ)
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5163,6 +5163,8 @@ static int ext4_remount(struct super_blo
+ 
+ 			if (sbi->s_journal)
+ 				ext4_mark_recovery_complete(sb, es);
++			if (sbi->s_mmp_tsk)
++				kthread_stop(sbi->s_mmp_tsk);
+ 		} else {
+ 			/* Make sure we can mount this feature set readwrite */
+ 			if (ext4_has_feature_readonly(sb) ||
 
 
