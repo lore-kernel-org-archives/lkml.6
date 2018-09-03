@@ -6,34 +6,50 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97512C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4346C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55F2E20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55F2E20658
+	by mail.kernel.org (Postfix) with ESMTP id 92D8A20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:38:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D8A20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbeICV72 (ORCPT
+        id S1731810AbeICV7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:59:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48896 "EHLO
+        Mon, 3 Sep 2018 17:59:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeICV71 (ORCPT
+        with ESMTP id S1726384AbeICV7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:59:27 -0400
+        Mon, 3 Sep 2018 17:59:32 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEE94C75;
-        Mon,  3 Sep 2018 17:38:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB4F6A95;
+        Mon,  3 Sep 2018 17:38:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Buesch <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.18 071/123] b43/leds: Ensure NUL-termination of LED name string
-Date:   Mon,  3 Sep 2018 18:56:55 +0200
-Message-Id: <20180903165722.496301538@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Will Deacon <will.deacon@arm.com>, acme@kernel.org,
+        akpm@linux-foundation.org, brueckner@linux.vnet.ibm.com,
+        linux-arch@vger.kernel.org, rostedt@goodmis.org,
+        schwidefsky@de.ibm.com
+Subject: [PATCH 4.18 098/123] kprobes: Make list and blacklist root user read only
+Date:   Mon,  3 Sep 2018 18:57:22 +0200
+Message-Id: <20180903165723.658677770@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -50,32 +66,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Buesch <m@bues.ch>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 2aa650d1950fce94f696ebd7db30b8830c2c946f upstream.
+commit f2a3ab36077222437b4826fc76111caa14562b7c upstream.
 
-strncpy might not NUL-terminate the string, if the name equals the buffer size.
-Use strlcpy instead.
+Since the blacklist and list files on debugfs indicates
+a sensitive address information to reader, it should be
+restricted to the root user.
 
-Signed-off-by: Michael Buesch <m@bues.ch>
+Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jon Medhurst <tixy@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tobin C . Harding <me@tobin.cc>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: acme@kernel.org
+Cc: akpm@linux-foundation.org
+Cc: brueckner@linux.vnet.ibm.com
+Cc: linux-arch@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: schwidefsky@de.ibm.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: https://lkml.kernel.org/lkml/152491890171.9916.5183693615601334087.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/b43/leds.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/kprobes.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/broadcom/b43/leds.c
-+++ b/drivers/net/wireless/broadcom/b43/leds.c
-@@ -131,7 +131,7 @@ static int b43_register_led(struct b43_w
- 	led->wl = dev->wl;
- 	led->index = led_index;
- 	led->activelow = activelow;
--	strncpy(led->name, name, sizeof(led->name));
-+	strlcpy(led->name, name, sizeof(led->name));
- 	atomic_set(&led->state, 0);
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -2617,7 +2617,7 @@ static int __init debugfs_kprobe_init(vo
+ 	if (!dir)
+ 		return -ENOMEM;
  
- 	led->led_dev.name = led->name;
+-	file = debugfs_create_file("list", 0444, dir, NULL,
++	file = debugfs_create_file("list", 0400, dir, NULL,
+ 				&debugfs_kprobes_operations);
+ 	if (!file)
+ 		goto error;
+@@ -2627,7 +2627,7 @@ static int __init debugfs_kprobe_init(vo
+ 	if (!file)
+ 		goto error;
+ 
+-	file = debugfs_create_file("blacklist", 0444, dir, NULL,
++	file = debugfs_create_file("blacklist", 0400, dir, NULL,
+ 				&debugfs_kprobe_blacklist_ops);
+ 	if (!file)
+ 		goto error;
 
 
