@@ -2,135 +2,101 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF34C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AECC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21CCB20867
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CCB20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 9788120867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 20:52:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="voTZIglm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9788120867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbeIDBH6 (ORCPT
+        id S1727527AbeIDBOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 21:07:58 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:60195 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728386AbeIDBH5 (ORCPT
+        Mon, 3 Sep 2018 21:14:11 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42380 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbeIDBOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 21:07:57 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fwvjX-0008K5-JB; Mon, 03 Sep 2018 14:46:03 -0600
-Received: from [105.225.206.69] (helo=x220.Home)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fwvjW-0008G7-Eo; Mon, 03 Sep 2018 14:46:03 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-api@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon,  3 Sep 2018 22:44:30 +0200
-Message-Id: <20180903204430.25473-10-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <87musyl3fa.fsf@xmission.com>
-References: <87musyl3fa.fsf@xmission.com>
-X-XM-SPF: eid=1fwvjW-0008G7-Eo;;;mid=<20180903204430.25473-10-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.225.206.69;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/PJw6ciHwovaR0yVOjJNwQpLk6k5BN98c=
-X-SA-Exim-Connect-IP: 105.225.206.69
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 10/10] signal: Remove SEND_SIG_FORCED
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 3 Sep 2018 21:14:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FIYLH8tLAYprgh1OvA1IHzavTiShG49XDUfJ+iNGTpw=; b=voTZIglmiH3y7VIUkxHw6+F4hY
+        morwQvd+yQWVE3sA1uoKM6Yb8Vem5GQ4+PFMbGKbdWiMj7VqrNWy978ryB4dhAtvLAMcU0pspRO6C
+        56JKQ5GfU19481PoVHGUR4yuhAZt71c5JUywK28Ieaco/9SqBlmmWGLWcIjzDK8EKNdmwy9nsTYuJ
+        WwuPJmhmZffra7C8Uewg5NH3xZvQ/Y5ThlsGgqHD4zaOYw0byah+SR+smetbABXdi3gPZU1Wily5b
+        rspuBvNy/3fXz8Df25IwinXHM7n2t6zFWXWt7MbD9kcqFYdt+e+vc5tmLcwVANlyPglhUtw2thqsY
+        U9MwyjyQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fwvpO-0002KJ-7O; Mon, 03 Sep 2018 20:52:06 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] fs/posix_acl.c: fix kernel-doc warnings, formatting, and typo
+Message-ID: <c7a6541c-53e9-f6bd-7589-11f089b57080@infradead.org>
+Date:   Mon, 3 Sep 2018 13:52:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no more users of SEND_SIG_FORCED so it may be safely removed.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Remove the definition of SEND_SIG_FORCED, it's use in is_si_special,
-it's use in TP_STORE_SIGINFO, and it's use in __send_signal as without
-any users the uses of SEND_SIG_FORCED are now unncessary.
+Fix kernel-doc warnings in fs/posic_acl.c.
+Also fix one typo (setgit -> setgid).
 
-This makes the code simpler, easier to understand and use.  Users of
-signal sending functions now no longer need to ask themselves do I
-need to use SEND_SIG_FORCED.
+../fs/posix_acl.c:646: warning: Function parameter or member 'inode' not described in 'posix_acl_update_mode'
+../fs/posix_acl.c:646: warning: Function parameter or member 'mode_p' not described in 'posix_acl_update_mode'
+../fs/posix_acl.c:646: warning: Function parameter or member 'acl' not described in 'posix_acl_update_mode'
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: 073931017b49d ("posix_acl: Clear SGID bit when setting file permissions")
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- include/linux/sched/signal.h  | 1 -
- include/trace/events/signal.h | 3 +--
- kernel/signal.c               | 7 +++----
- 3 files changed, 4 insertions(+), 7 deletions(-)
+ fs/posix_acl.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 9b6968cbde14..9e07f3521549 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -477,7 +477,6 @@ static inline int kill_cad_pid(int sig, int priv)
- /* These can be the second arg to send_sig_info/send_group_sig_info.  */
- #define SEND_SIG_NOINFO ((struct siginfo *) 0)
- #define SEND_SIG_PRIV	((struct siginfo *) 1)
--#define SEND_SIG_FORCED	((struct siginfo *) 2)
+--- lnx-419-rc2.orig/fs/posix_acl.c
++++ lnx-419-rc2/fs/posix_acl.c
+@@ -630,12 +630,15 @@ EXPORT_SYMBOL_GPL(posix_acl_create);
  
- /*
-  * True if we are on the alternate signal stack.
-diff --git a/include/trace/events/signal.h b/include/trace/events/signal.h
-index 86582923d51c..3deeed50ffd0 100644
---- a/include/trace/events/signal.h
-+++ b/include/trace/events/signal.h
-@@ -11,8 +11,7 @@
- 
- #define TP_STORE_SIGINFO(__entry, info)				\
- 	do {							\
--		if (info == SEND_SIG_NOINFO ||			\
--		    info == SEND_SIG_FORCED) {			\
-+		if (info == SEND_SIG_NOINFO) {			\
- 			__entry->errno	= 0;			\
- 			__entry->code	= SI_USER;		\
- 		} else if (info == SEND_SIG_PRIV) {		\
-diff --git a/kernel/signal.c b/kernel/signal.c
-index d7d1adf735f4..ec136fda457a 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -736,7 +736,7 @@ static void flush_sigqueue_mask(sigset_t *mask, struct sigpending *s)
- 
- static inline int is_si_special(const struct siginfo *info)
- {
--	return info <= SEND_SIG_FORCED;
-+	return info <= SEND_SIG_PRIV;
- }
- 
- static inline bool si_fromuser(const struct siginfo *info)
-@@ -1039,7 +1039,7 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
- 
- 	result = TRACE_SIGNAL_IGNORED;
- 	if (!prepare_signal(sig, t,
--			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
-+			from_ancestor_ns || (info == SEND_SIG_PRIV)))
- 		goto ret;
- 
- 	pending = (type != PIDTYPE_PID) ? &t->signal->shared_pending : &t->pending;
-@@ -1057,8 +1057,7 @@ static int __send_signal(int sig, struct siginfo *info, struct task_struct *t,
- 	 * Skip useless siginfo allocation for SIGKILL SIGSTOP,
- 	 * and kernel threads.
- 	 */
--	if ((info == SEND_SIG_FORCED) ||
--	    sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
-+	if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
- 		goto out_set;
- 
- 	/*
--- 
-2.17.1
+ /**
+  * posix_acl_update_mode  -  update mode in set_acl
++ * @inode: target inode
++ * @mode_p: mode (pointer) for update
++ * @acl: acl pointer
+  *
+  * Update the file mode when setting an ACL: compute the new file permission
+  * bits based on the ACL.  In addition, if the ACL is equivalent to the new
+- * file mode, set *acl to NULL to indicate that no ACL should be set.
++ * file mode, set ``*acl`` to NULL to indicate that no ACL should be set.
+  *
+- * As with chmod, clear the setgit bit if the caller is not in the owning group
++ * As with chmod, clear the setgid bit if the caller is not in the owning group
+  * or capable of CAP_FSETID (see inode_change_ok).
+  *
+  * Called from set_acl inode operations.
 
