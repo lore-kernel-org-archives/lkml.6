@@ -6,42 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5BBC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDB2C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C50720843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C50720843
+	by mail.kernel.org (Postfix) with ESMTP id 14BE420843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:09:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14BE420843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbeICVag (ORCPT
+        id S1730042AbeICVak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:30:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40634 "EHLO
+        Mon, 3 Sep 2018 17:30:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40666 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729389AbeICVag (ORCPT
+        with ESMTP id S1729426AbeICVak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:30:36 -0400
+        Mon, 3 Sep 2018 17:30:40 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 156F9D07;
-        Mon,  3 Sep 2018 17:09:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60924D0A;
+        Mon,  3 Sep 2018 17:09:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dominique Leuenberger <dimstar@suse.de>,
-        Adrian Schroeter <adrian@suse.de>,
+        stable@vger.kernel.org, xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>,
+        Christopher Snowhill <kode54@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
         "H . Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH 4.9 067/107] x86/speculation/l1tf: Fix overflow in l1tf_pfn_limit() on 32bit
-Date:   Mon,  3 Sep 2018 18:56:31 +0200
-Message-Id: <20180903165640.547389042@linuxfoundation.org>
+Subject: [PATCH 4.9 068/107] x86/speculation/l1tf: Fix off-by-one error when warning that system has too much RAM
+Date:   Mon,  3 Sep 2018 18:56:32 +0200
+Message-Id: <20180903165640.593016835@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -60,51 +59,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 9df9516940a61d29aedf4d91b483ca6597e7d480 upstream.
+commit b0a182f875689647b014bc01d36b340217792852 upstream.
 
-On 32bit PAE kernels on 64bit hardware with enough physical bits,
-l1tf_pfn_limit() will overflow unsigned long. This in turn affects
-max_swapfile_size() and can lead to swapon returning -EINVAL. This has been
-observed in a 32bit guest with 42 bits physical address size, where
-max_swapfile_size() overflows exactly to 1 << 32, thus zero, and produces
-the following warning to dmesg:
+Two users have reported [1] that they have an "extremely unlikely" system
+with more than MAX_PA/2 memory and L1TF mitigation is not effective. In
+fact it's a CPU with 36bits phys limit (64GB) and 32GB memory, but due to
+holes in the e820 map, the main region is almost 500MB over the 32GB limit:
 
-[    6.396845] Truncating oversized swap area, only using 0k out of 2047996k
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000081effffff] usable
 
-Fix this by using unsigned long long instead.
+Suggestions to use 'mem=32G' to enable the L1TF mitigation while losing the
+500MB revealed, that there's an off-by-one error in the check in
+l1tf_select_mitigation().
+
+l1tf_pfn_limit() returns the last usable pfn (inclusive) and the range
+check in the mitigation path does not take this into account.
+
+Instead of amending the range check, make l1tf_pfn_limit() return the first
+PFN which is over the limit which is less error prone. Adjust the other
+users accordingly.
+
+[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
 
 Fixes: 17dbca119312 ("x86/speculation/l1tf: Add sysfs reporting for l1tf")
-Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
-Reported-by: Dominique Leuenberger <dimstar@suse.de>
-Reported-by: Adrian Schroeter <adrian@suse.de>
+Reported-by: xxxxxx xxxxxx <xxxxxx@xxxxxx.xxx>
+Reported-by: Christopher Snowhill <kode54@gmail.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
 Cc: "H . Peter Anvin" <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Michal Hocko <mhocko@kernel.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180820095835.5298-1-vbabka@suse.cz
+Link: https://lkml.kernel.org/r/20180823134418.17008-1-vbabka@suse.cz
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/processor.h |    4 ++--
- arch/x86/mm/init.c               |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/processor.h |    2 +-
+ arch/x86/mm/init.c               |    2 +-
+ arch/x86/mm/mmap.c               |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/include/asm/processor.h
 +++ b/arch/x86/include/asm/processor.h
-@@ -173,9 +173,9 @@ extern const struct seq_operations cpuin
+@@ -175,7 +175,7 @@ extern void cpu_detect(struct cpuinfo_x8
  
- extern void cpu_detect(struct cpuinfo_x86 *c);
- 
--static inline unsigned long l1tf_pfn_limit(void)
-+static inline unsigned long long l1tf_pfn_limit(void)
+ static inline unsigned long long l1tf_pfn_limit(void)
  {
--	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
-+	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
+-	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
  }
  
  extern void early_cpu_init(void);
@@ -114,19 +118,21 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
  		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
--		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
-+		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
+-		unsigned long long l1tf_limit = l1tf_pfn_limit() + 1;
++		unsigned long long l1tf_limit = l1tf_pfn_limit();
  		/*
  		 * We encode swap offsets also with 3 bits below those for pfn
  		 * which makes the usable limit higher.
-@@ -800,7 +800,7 @@ unsigned long max_swapfile_size(void)
- #if CONFIG_PGTABLE_LEVELS > 2
- 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
- #endif
--		pages = min_t(unsigned long, l1tf_limit, pages);
-+		pages = min_t(unsigned long long, l1tf_limit, pages);
- 	}
- 	return pages;
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -138,7 +138,7 @@ bool pfn_modify_allowed(unsigned long pf
+ 	/* If it's real memory always allow */
+ 	if (pfn_valid(pfn))
+ 		return true;
+-	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
++	if (pfn >= l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
+ 		return false;
+ 	return true;
  }
 
 
