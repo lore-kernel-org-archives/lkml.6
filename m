@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09CFC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33458C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C97420645
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C97420645
+	by mail.kernel.org (Postfix) with ESMTP id DD2B820645
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2B820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbeICVgW (ORCPT
+        id S1729601AbeICVgZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:36:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42364 "EHLO
+        Mon, 3 Sep 2018 17:36:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727876AbeICVgV (ORCPT
+        with ESMTP id S1728054AbeICVgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:36:21 -0400
+        Mon, 3 Sep 2018 17:36:25 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02F0BD02;
-        Mon,  3 Sep 2018 17:15:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E748D02;
+        Mon,  3 Sep 2018 17:15:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 103/107] PM / clk: signedness bug in of_pm_clk_add_clks()
-Date:   Mon,  3 Sep 2018 18:57:07 +0200
-Message-Id: <20180903165643.750630839@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 094/107] s390/numa: move initial setup of node_to_cpumask_map
+Date:   Mon,  3 Sep 2018 18:56:58 +0200
+Message-Id: <20180903165641.952117719@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -50,33 +49,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit 5e2e2f9f76e157063a656351728703cb02b068f1 upstream.
+commit fb7d7518b0d65955f91c7b875c36eae7694c69bd upstream.
 
-"count" needs to be signed for the error handling to work.  I made "i"
-signed as well so they match.
+The numa_init_early initcall sets the node_to_cpumask_map[0] to the
+full cpu_possible_mask. Unfortunately this early_initcall is too late,
+the NUMA setup for numa=emu is done even earlier. The order of calls
+is numa_setup() -> emu_update_cpu_topology(), then the early_initcalls(),
+followed by sched_init_domains().
 
-Fixes: 02113ba93ea4 (PM / clk: Add support for obtaining clocks from device-tree)
-Cc: 4.6+ <stable@vger.kernel.org> # 4.6+
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Starting with git commit 051f3ca02e46432c0965e8948f00c07d8a2f09c0
+"sched/topology: Introduce NUMA identity node sched domain"
+the incorrect node_to_cpumask_map[0] really screws up the domain
+setup and the kernel panics with the follow oops:
+
+Cc: <stable@vger.kernel.org> # v4.15+
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/clock_ops.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/numa/numa.c |   16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
---- a/drivers/base/power/clock_ops.c
-+++ b/drivers/base/power/clock_ops.c
-@@ -185,7 +185,7 @@ EXPORT_SYMBOL_GPL(of_pm_clk_add_clk);
- int of_pm_clk_add_clks(struct device *dev)
+--- a/arch/s390/numa/numa.c
++++ b/arch/s390/numa/numa.c
+@@ -133,6 +133,8 @@ void __init numa_setup(void)
  {
- 	struct clk **clks;
--	unsigned int i, count;
-+	int i, count;
- 	int ret;
+ 	pr_info("NUMA mode: %s\n", mode->name);
+ 	nodes_clear(node_possible_map);
++	/* Initially attach all possible CPUs to node 0. */
++	cpumask_copy(&node_to_cpumask_map[0], cpu_possible_mask);
+ 	if (mode->setup)
+ 		mode->setup();
+ 	numa_setup_memory();
+@@ -140,20 +142,6 @@ void __init numa_setup(void)
+ }
  
- 	if (!dev || !dev->of_node)
+ /*
+- * numa_init_early() - Initialization initcall
+- *
+- * This runs when only one CPU is online and before the first
+- * topology update is called for by the scheduler.
+- */
+-static int __init numa_init_early(void)
+-{
+-	/* Attach all possible CPUs to node 0 for now. */
+-	cpumask_copy(&node_to_cpumask_map[0], cpu_possible_mask);
+-	return 0;
+-}
+-early_initcall(numa_init_early);
+-
+-/*
+  * numa_init_late() - Initialization initcall
+  *
+  * Register NUMA nodes.
 
 
