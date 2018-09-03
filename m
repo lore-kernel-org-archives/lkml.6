@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEE0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C7FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4195E20868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4195E20868
+	by mail.kernel.org (Postfix) with ESMTP id 84A8220868
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A8220868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeICVNm (ORCPT
+        id S1728585AbeICVNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:13:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37934 "EHLO
+        Mon, 3 Sep 2018 17:13:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbeICVNl (ORCPT
+        with ESMTP id S1727682AbeICVNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:13:41 -0400
+        Mon, 3 Sep 2018 17:13:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E704CA8;
-        Mon,  3 Sep 2018 16:52:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7EB02CF5;
+        Mon,  3 Sep 2018 16:52:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Bauer <scott.bauer@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3.18 56/56] cdrom: Fix info leak/OOB read in cdrom_ioctl_drive_status
-Date:   Mon,  3 Sep 2018 18:49:46 +0200
-Message-Id: <20180903164926.889426397@linuxfoundation.org>
+        stable@vger.kernel.org, Calvin Walton <calvin.walton@kepstin.ca>,
+        Len Brown <len.brown@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 27/56] tools/power turbostat: Read extended processor family from CPUID
+Date:   Mon,  3 Sep 2018 18:49:17 +0200
+Message-Id: <20180903164925.442941866@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -51,36 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Bauer <scott.bauer@intel.com>
+From: Calvin Walton <calvin.walton@kepstin.ca>
 
-commit 8f3fafc9c2f0ece10832c25f7ffcb07c97a32ad4 upstream.
+[ Upstream commit 5aa3d1a20a233d4a5f1ec3d62da3f19d9afea682 ]
 
-Like d88b6d04: "cdrom: information leak in cdrom_ioctl_media_changed()"
+This fixes the reported family on modern AMD processors (e.g. Ryzen,
+which is family 0x17). Previously these processors all showed up as
+family 0xf.
 
-There is another cast from unsigned long to int which causes
-a bounds check to fail with specially crafted input. The value is
-then used as an index in the slot array in cdrom_slot_status().
+See the document
+https://support.amd.com/TechDocs/56255_OSRR.pdf
+section CPUID_Fn00000001_EAX for how to calculate the family
+from the BaseFamily and ExtFamily values.
 
-Signed-off-by: Scott Bauer <scott.bauer@intel.com>
-Signed-off-by: Scott Bauer <sbauer@plzdonthack.me>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This matches the code in arch/x86/lib/cpu.c
+
+Signed-off-by: Calvin Walton <calvin.walton@kepstin.ca>
+Signed-off-by: Len Brown <len.brown@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/power/x86/turbostat/turbostat.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2525,7 +2525,7 @@ static int cdrom_ioctl_drive_status(stru
- 	if (!CDROM_CAN(CDC_SELECT_DISC) ||
- 	    (arg == CDSL_CURRENT || arg == CDSL_NONE))
- 		return cdi->ops->drive_status(cdi, CDSL_CURRENT);
--	if (((int)arg >= cdi->capacity))
-+	if (arg >= cdi->capacity)
- 		return -EINVAL;
- 	return cdrom_slot_status(cdi, arg);
- }
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -2009,7 +2009,9 @@ void check_cpuid()
+ 	family = (fms >> 8) & 0xf;
+ 	model = (fms >> 4) & 0xf;
+ 	stepping = fms & 0xf;
+-	if (family == 6 || family == 0xf)
++	if (family == 0xf)
++		family += (fms >> 20) & 0xff;
++	if (family >= 6)
+ 		model += ((fms >> 16) & 0xf) << 4;
+ 
+ 	if (verbose)
 
 
