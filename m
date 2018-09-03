@@ -2,265 +2,248 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA69C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF587C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E87920841
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C02C20856
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 00:52:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WKzrJQTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E87920841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u65quzxh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C02C20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbeICE4M (ORCPT
+        id S1725903AbeICFJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 00:56:12 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:42989 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725762AbeICE4L (ORCPT
+        Mon, 3 Sep 2018 01:09:56 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46395 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725762AbeICFJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 00:56:11 -0400
-Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w830cCLx013268;
-        Mon, 3 Sep 2018 09:38:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w830cCLx013268
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535935093;
-        bh=UuEUtaGF2n8Is/biPI+g3R2SjlZ0EFQFeDUb8ZXx1Lw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=WKzrJQTcGPDBYWHi5OVeY2agH3vZ3VFxGJ4uh24i25OYnoS7mgiVY8j1UZhEWUXLe
-         mZMbDbXaofartSatHra/ZYf6z9xW98QpV0X0fPvmdqtu9o7UeeQvF1bjxGkupSNKdg
-         tUc95Yp1yS2jlRLevWhuGnad8pm6FNyVr6VX7YxoBi7F6dBQpkRm4OECQH6tcjcgTP
-         K2iqg9+9Fb3E9IwfY8wBSYD7QmTrbkT0ZVcCnUzcTY1W+5gX0FEgy2MqMaEs/Jkq6f
-         IUVlobQ7U6nSkpfxWB+FamoJvIZsot5Ri6UloZcMTQw8XYob84fTzialpy/xi0Fs2k
-         UOMizgrfZKw4A==
-X-Nifty-SrcIP: [209.85.213.52]
-Received: by mail-vk0-f52.google.com with SMTP id 125-v6so7201779vke.11;
-        Sun, 02 Sep 2018 17:38:13 -0700 (PDT)
-X-Gm-Message-State: APzg51A5jTqP6SqR8OsWxH3ld7sLLX8/QXqlZxwjstiE1OXu8HlB1gO9
-        rOsWl8OHsWuDpRXj0nByDDnGyvCkbHoFvYJv08k=
-X-Google-Smtp-Source: ANB0VdaQ97yiACfFeMhbxqSa0t9otMULDL2xQwcc4jYyZX1h50HNuNaptuuanQMWyPcQClo87FETUdjmeojeSL5R8xM=
-X-Received: by 2002:a1f:3e47:: with SMTP id l68-v6mr14115810vka.42.1535935092014;
- Sun, 02 Sep 2018 17:38:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7103:0:0:0:0:0 with HTTP; Sun, 2 Sep 2018 17:37:31 -0700 (PDT)
-In-Reply-To: <1535708095-15847-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1535708095-15847-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 3 Sep 2018 09:37:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR=uLF62SmFOrY31+MKRReOUwJ2J=iK8yf=woHa5h-HYg@mail.gmail.com>
-Message-ID: <CAK7LNAR=uLF62SmFOrY31+MKRReOUwJ2J=iK8yf=woHa5h-HYg@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: do not require pkg-config on make {menu,n}config
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Meelis Roos <mroos@linux.ee>, Randy Dunlap <rdunlap@infradead.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Sep 2018 01:09:56 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u24-v6so7883144pfn.13;
+        Sun, 02 Sep 2018 17:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=QALzlleB03IYthe+39ZMS0b1QQZHxNMtkmGfdyep46U=;
+        b=u65quzxhLsyw1Y7iN9qElYyHDG+4XHBDMD1wvELH+7xxCwMBqbOTdFLh7eCyCK5LhC
+         TdDWW0s0kYRr5PBUM+8Tv+MoEBi+2xlzRE6eQ/Q2Rr4WO7VXqV5xAt04dT3I9F5ReIyt
+         53ybZiO/2INRCkIvXARUMbWZO+XYc3dF+Q6Jyt/wSIeXP/jaiB5ju9sjlmsf6jizBekn
+         3vADVPq7jeT2/ghseK4EbJOXnWGDfDRJhxJVMRLmuFg+JfGWqz1BVIHAmBPAGBOo4FsC
+         e296qOTj1xCIlHiTsNeBHnTJLPKtVkZX+o1oDlWHA4gKSncdBALelUBR6pCkIpRxxbKo
+         W9DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QALzlleB03IYthe+39ZMS0b1QQZHxNMtkmGfdyep46U=;
+        b=TUxT9Fza6LON72TtO41ZYKjtupNiCvkwNZ653atG1sMP2pQkqg9ys0pnPYmay8FGL6
+         K88a2LgYc2FkLsWYolCr710MlhxxjV692AmcY9TroR4OQNZvcEbIwR8arIkNI9zU0hig
+         6P9xUDGHyUaAwEy1WbIhbmOqvg61mkD6uRCsVV1EHeMqgZFWqKTAYwVQFeLZAbhUJjUP
+         HVQxhtnO3psAhSsn35D6zuAQ7nFeWParvx97vEBuhtwbj8QGaCnw2mxJwW3IuGgRxjr7
+         YONnzJ6xrI1bL+yjEMavEVeO2fHjvcNedbbGuwgl1F04EoANC2nsl1UduiOeI8vyEx4r
+         h7xA==
+X-Gm-Message-State: APzg51AAaYbJML6vhAxzhSItMsHd5HbuEag4ptX4ffgFW9w8r+TZG5Ro
+        dczOnQh9CtEhp7i4gBtWbmg=
+X-Google-Smtp-Source: ANB0VdZAZtWIfV7BCKqeTMByNFZqt7k7JzyQ6mar4mZFVqhGFw0FgWeJwAB4PAkatQfDIpq5haLTjA==
+X-Received: by 2002:a63:8a41:: with SMTP id y62-v6mr22515253pgd.278.1535935934960;
+        Sun, 02 Sep 2018 17:52:14 -0700 (PDT)
+Received: from localhost.localdomain ([203.160.89.93])
+        by smtp.gmail.com with ESMTPSA id w81-v6sm31487064pfk.92.2018.09.02.17.52.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Sep 2018 17:52:13 -0700 (PDT)
+From:   Kenneth Lee <nek.in.cn@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Cc:     linuxarm@huawei.com
+Subject: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Date:   Mon,  3 Sep 2018 08:51:57 +0800
+Message-Id: <20180903005204.26041-1-nek.in.cn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-31 18:34 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Meelis Roos reported a {menu,n}config regression:
->
->  "I have libncurses devel package installed in the default system
->   location (as do 99%+ on actual developers probably) and in this
->   case, pkg-config is useless.  pkg-config is needed only when
->   libraries and headers are installed in non-default locations but
->   it is bad to require installation of pkg-config on all the machines
->   where make menuconfig would be possibly run."
->
-> For {menu,n}config, do not use pkg-config if it is not installed.
-> For {g,x}config, keep checking pkg-config since we really rely on it
-> for finding the installation paths of the required packages.
->
-> Fixes: 4ab3b80159d4 ("kconfig: check for pkg-config on make {menu,n,g,x}config")
-> Reported-by: Meelis Roos <mroos@linux.ee>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+From: Kenneth Lee <liguozhu@hisilicon.com>
+
+WarpDrive is an accelerator framework to expose the hardware capabilities
+directly to the user space. It makes use of the exist vfio and vfio-mdev
+facilities. So the user application can send request and DMA to the
+hardware without interaction with the kernel. This removes the latency
+of syscall.
+
+WarpDrive is the name for the whole framework. The component in kernel
+is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
+hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
+library of WarpDrive can access it via VFIO interface.
+
+The patchset contains document for the detail. Please refer to it for more
+information.
+
+This patchset is intended to be used with Jean Philippe Brucker's SVA
+patch [1], which enables not only IO side page fault, but also PASID
+support to IOMMU and VFIO.
+
+With these features, WarpDrive can support non-pinned memory and
+multi-process in the same accelerator device.  We tested it in our SoC
+integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
+tree can be found here: [2].
+
+But it is not mandatory. This patchset is tested in the latest mainline
+kernel without the SVA patches.  So it supports only one process for each
+accelerator.
+
+We have noticed the IOMMU aware mdev RFC announced recently [3].
+
+The IOMMU aware mdev has similar idea but different intention comparing to
+WarpDrive. It intends to dedicate part of the hardware resource to a VM.
+And the design is supposed to be used with Scalable I/O Virtualization.
+While sdmdev is intended to share the hardware resource with a big amount
+of processes.  It just requires the hardware supporting address
+translation per process (PCIE's PASID or ARM SMMU's substream ID).
+
+But we don't see serious confliction on both design. We believe they can be
+normalized as one.
+
+The patch 1 is document of the framework. The patch 2 and 3 add sdmdev
+support. The patch 4, 5 and 6 is drivers for Hislicon's ZIP Accelerator
+which is registered to both crypto and warpdrive(sdmdev) and can be
+used from kernel or user space at the same time. The patch 7 is a user
+space sample demonstrating how WarpDrive works.
 
 
-
-Applied to linux-kbuild/fixes.
-
-
->  Documentation/process/changes.rst  |  2 +-
->  scripts/kconfig/Makefile           |  1 -
->  scripts/kconfig/check-pkgconfig.sh |  8 --------
->  scripts/kconfig/gconf-cfg.sh       |  7 +++++++
->  scripts/kconfig/mconf-cfg.sh       | 25 ++++++++++++++-----------
->  scripts/kconfig/nconf-cfg.sh       | 25 ++++++++++++++-----------
->  scripts/kconfig/qconf-cfg.sh       |  7 +++++++
->  7 files changed, 43 insertions(+), 32 deletions(-)
->  delete mode 100644 scripts/kconfig/check-pkgconfig.sh
->
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index 61f918b..d1bf143 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -86,7 +86,7 @@ pkg-config
->
->  The build system, as of 4.18, requires pkg-config to check for installed
->  kconfig tools and to determine flags settings for use in
-> -'make {menu,n,g,x}config'.  Previously pkg-config was being used but not
-> +'make {g,x}config'.  Previously pkg-config was being used but not
->  verified or documented.
->
->  Flex
-> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-> index 4a7bd21..67ed9f6 100644
-> --- a/scripts/kconfig/Makefile
-> +++ b/scripts/kconfig/Makefile
-> @@ -221,7 +221,6 @@ $(obj)/zconf.tab.o: $(obj)/zconf.lex.c
->
->  # check if necessary packages are available, and configure build flags
->  define filechk_conf_cfg
-> -       $(CONFIG_SHELL) $(srctree)/scripts/kconfig/check-pkgconfig.sh; \
->         $(CONFIG_SHELL) $<
->  endef
->
-> diff --git a/scripts/kconfig/check-pkgconfig.sh b/scripts/kconfig/check-pkgconfig.sh
-> deleted file mode 100644
-> index 7a1c40b..0000000
-> --- a/scripts/kconfig/check-pkgconfig.sh
-> +++ /dev/null
-> @@ -1,8 +0,0 @@
-> -#!/bin/sh
-> -# SPDX-License-Identifier: GPL-2.0
-> -# Check for pkg-config presence
-> -
-> -if [ -z $(command -v pkg-config) ]; then
-> -       echo "'make *config' requires 'pkg-config'. Please install it." 1>&2
-> -       exit 1
-> -fi
-> diff --git a/scripts/kconfig/gconf-cfg.sh b/scripts/kconfig/gconf-cfg.sh
-> index 533b3d8..480ecd8 100755
-> --- a/scripts/kconfig/gconf-cfg.sh
-> +++ b/scripts/kconfig/gconf-cfg.sh
-> @@ -3,6 +3,13 @@
->
->  PKG="gtk+-2.0 gmodule-2.0 libglade-2.0"
->
-> +if [ -z "$(command -v pkg-config)" ]; then
-> +       echo >&2 "*"
-> +       echo >&2 "* 'make gconfig' requires 'pkg-config'. Please install it."
-> +       echo >&2 "*"
-> +       exit 1
-> +fi
-> +
->  if ! pkg-config --exists $PKG; then
->         echo >&2 "*"
->         echo >&2 "* Unable to find the GTK+ installation. Please make sure that"
-> diff --git a/scripts/kconfig/mconf-cfg.sh b/scripts/kconfig/mconf-cfg.sh
-> index e6f9fac..c812872d 100755
-> --- a/scripts/kconfig/mconf-cfg.sh
-> +++ b/scripts/kconfig/mconf-cfg.sh
-> @@ -4,20 +4,23 @@
->  PKG="ncursesw"
->  PKG2="ncurses"
->
-> -if pkg-config --exists $PKG; then
-> -       echo cflags=\"$(pkg-config --cflags $PKG)\"
-> -       echo libs=\"$(pkg-config --libs $PKG)\"
-> -       exit 0
-> -fi
-> +if [ -n "$(command -v pkg-config)" ]; then
-> +       if pkg-config --exists $PKG; then
-> +               echo cflags=\"$(pkg-config --cflags $PKG)\"
-> +               echo libs=\"$(pkg-config --libs $PKG)\"
-> +               exit 0
-> +       fi
->
-> -if pkg-config --exists $PKG2; then
-> -       echo cflags=\"$(pkg-config --cflags $PKG2)\"
-> -       echo libs=\"$(pkg-config --libs $PKG2)\"
-> -       exit 0
-> +       if pkg-config --exists $PKG2; then
-> +               echo cflags=\"$(pkg-config --cflags $PKG2)\"
-> +               echo libs=\"$(pkg-config --libs $PKG2)\"
-> +               exit 0
-> +       fi
->  fi
->
-> -# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
-> -# by pkg-config.
-> +# Check the default paths in case pkg-config is not installed.
-> +# (Even if it is installed, some distributions such as openSUSE cannot
-> +# find ncurses by pkg-config.)
->  if [ -f /usr/include/ncursesw/ncurses.h ]; then
->         echo cflags=\"-D_GNU_SOURCE -I/usr/include/ncursesw\"
->         echo libs=\"-lncursesw\"
-> diff --git a/scripts/kconfig/nconf-cfg.sh b/scripts/kconfig/nconf-cfg.sh
-> index 42f5ac7..001559e 100644
-> --- a/scripts/kconfig/nconf-cfg.sh
-> +++ b/scripts/kconfig/nconf-cfg.sh
-> @@ -4,20 +4,23 @@
->  PKG="ncursesw menuw panelw"
->  PKG2="ncurses menu panel"
->
-> -if pkg-config --exists $PKG; then
-> -       echo cflags=\"$(pkg-config --cflags $PKG)\"
-> -       echo libs=\"$(pkg-config --libs $PKG)\"
-> -       exit 0
-> -fi
-> +if [ -n "$(command -v pkg-config)" ]; then
-> +       if pkg-config --exists $PKG; then
-> +               echo cflags=\"$(pkg-config --cflags $PKG)\"
-> +               echo libs=\"$(pkg-config --libs $PKG)\"
-> +               exit 0
-> +       fi
->
-> -if pkg-config --exists $PKG2; then
-> -       echo cflags=\"$(pkg-config --cflags $PKG2)\"
-> -       echo libs=\"$(pkg-config --libs $PKG2)\"
-> -       exit 0
-> +       if pkg-config --exists $PKG2; then
-> +               echo cflags=\"$(pkg-config --cflags $PKG2)\"
-> +               echo libs=\"$(pkg-config --libs $PKG2)\"
-> +               exit 0
-> +       fi
->  fi
->
-> -# Unfortunately, some distributions (e.g. openSUSE) cannot find ncurses
-> -# by pkg-config.
-> +# Check the default paths in case pkg-config is not installed.
-> +# (Even if it is installed, some distributions such as openSUSE cannot
-> +# find ncurses by pkg-config.)
->  if [ -f /usr/include/ncursesw/ncurses.h ]; then
->         echo cflags=\"-D_GNU_SOURCE -I/usr/include/ncursesw\"
->         echo libs=\"-lncursesw -lmenuw -lpanelw\"
-> diff --git a/scripts/kconfig/qconf-cfg.sh b/scripts/kconfig/qconf-cfg.sh
-> index 0862e15..02ccc0a 100755
-> --- a/scripts/kconfig/qconf-cfg.sh
-> +++ b/scripts/kconfig/qconf-cfg.sh
-> @@ -4,6 +4,13 @@
->  PKG="Qt5Core Qt5Gui Qt5Widgets"
->  PKG2="QtCore QtGui"
->
-> +if [ -z "$(command -v pkg-config)" ]; then
-> +       echo >&2 "*"
-> +       echo >&2 "* 'make xconfig' requires 'pkg-config'. Please install it."
-> +       echo >&2 "*"
-> +       exit 1
-> +fi
-> +
->  if pkg-config --exists $PKG; then
->         echo cflags=\"-std=c++11 -fPIC $(pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets)\"
->         echo libs=\"$(pkg-config --libs $PKG)\"
-> --
-> 2.7.4
->
+Change History:
+V2 changed from V1:
+	1. Change kernel framework name from SPIMDEV (Share Parent IOMMU
+	   Mdev) to SDMDEV (Share Domain Mdev).
+	2. Allocate Hardware Resource when a new mdev is created (While
+	   it is allocated when the mdev is openned)
+	3. Unmap pages from the shared domain when the sdmdev iommu group is
+	   detached. (This procedure is necessary, but missed in V1)
+	4. Update document accordingly.
+	5. Rebase to the latest kernel (4.19.0-rc1)
+	
+	According the review comment on RFCv1, We did try to use dma-buf
+	as back end of WarpDrive. It can work properly with the current
+	solution [4], but it cannot make use of process's
+	own memory address space directly. This is important to many
+	acceleration scenario. So dma-buf will be taken as a backup
+	alternative for noiommu scenario, it will be added in the future
+	version. 
 
 
+Refernces:
+[1] https://www.spinics.net/lists/kernel/msg2651481.html
+[2] https://github.com/Kenneth-Lee/linux-kernel-warpdrive/tree/warpdrive-sva-v0.5
+[3] https://lkml.org/lkml/2018/7/22/34
+[4] https://github.com/Kenneth-Lee/linux-kernel-warpdrive/tree/warpdrive-v0.7-dmabuf
+
+Best Regards
+Kenneth Lee
+
+Kenneth Lee (7):
+  vfio/sdmdev: Add documents for WarpDrive framework
+  iommu: Add share domain interface in iommu for sdmdev
+  vfio: add sdmdev support
+  crypto: add hisilicon Queue Manager driver
+  crypto: Add Hisilicon Zip driver
+  crypto: add sdmdev support to Hisilicon QM
+  vfio/sdmdev: add user sample
+
+ Documentation/00-INDEX                    |   2 +
+ Documentation/warpdrive/warpdrive.rst     | 100 +++
+ Documentation/warpdrive/wd-arch.svg       | 728 ++++++++++++++++
+ drivers/crypto/Makefile                   |   2 +-
+ drivers/crypto/hisilicon/Kconfig          |  25 +
+ drivers/crypto/hisilicon/Makefile         |   2 +
+ drivers/crypto/hisilicon/qm.c             | 979 ++++++++++++++++++++++
+ drivers/crypto/hisilicon/qm.h             | 122 +++
+ drivers/crypto/hisilicon/zip/Makefile     |   2 +
+ drivers/crypto/hisilicon/zip/zip.h        |  57 ++
+ drivers/crypto/hisilicon/zip/zip_crypto.c | 353 ++++++++
+ drivers/crypto/hisilicon/zip/zip_crypto.h |   8 +
+ drivers/crypto/hisilicon/zip/zip_main.c   | 195 +++++
+ drivers/iommu/iommu.c                     |  29 +-
+ drivers/vfio/Kconfig                      |   1 +
+ drivers/vfio/Makefile                     |   1 +
+ drivers/vfio/sdmdev/Kconfig               |  10 +
+ drivers/vfio/sdmdev/Makefile              |   3 +
+ drivers/vfio/sdmdev/vfio_sdmdev.c         | 363 ++++++++
+ drivers/vfio/vfio_iommu_type1.c           | 151 +++-
+ include/linux/iommu.h                     |  15 +
+ include/linux/vfio_sdmdev.h               |  96 +++
+ include/uapi/linux/vfio_sdmdev.h          |  29 +
+ samples/warpdrive/AUTHORS                 |   2 +
+ samples/warpdrive/ChangeLog               |   1 +
+ samples/warpdrive/Makefile.am             |   9 +
+ samples/warpdrive/NEWS                    |   1 +
+ samples/warpdrive/README                  |  32 +
+ samples/warpdrive/autogen.sh              |   3 +
+ samples/warpdrive/cleanup.sh              |  13 +
+ samples/warpdrive/configure.ac            |  52 ++
+ samples/warpdrive/drv/hisi_qm_udrv.c      | 223 +++++
+ samples/warpdrive/drv/hisi_qm_udrv.h      |  53 ++
+ samples/warpdrive/test/Makefile.am        |   7 +
+ samples/warpdrive/test/comp_hw.h          |  23 +
+ samples/warpdrive/test/test_hisi_zip.c    | 206 +++++
+ samples/warpdrive/wd.c                    | 309 +++++++
+ samples/warpdrive/wd.h                    | 154 ++++
+ samples/warpdrive/wd_adapter.c            |  74 ++
+ samples/warpdrive/wd_adapter.h            |  43 +
+ 40 files changed, 4470 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/warpdrive/warpdrive.rst
+ create mode 100644 Documentation/warpdrive/wd-arch.svg
+ create mode 100644 drivers/crypto/hisilicon/qm.c
+ create mode 100644 drivers/crypto/hisilicon/qm.h
+ create mode 100644 drivers/crypto/hisilicon/zip/Makefile
+ create mode 100644 drivers/crypto/hisilicon/zip/zip.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
+ create mode 100644 drivers/vfio/sdmdev/Kconfig
+ create mode 100644 drivers/vfio/sdmdev/Makefile
+ create mode 100644 drivers/vfio/sdmdev/vfio_sdmdev.c
+ create mode 100644 include/linux/vfio_sdmdev.h
+ create mode 100644 include/uapi/linux/vfio_sdmdev.h
+ create mode 100644 samples/warpdrive/AUTHORS
+ create mode 100644 samples/warpdrive/ChangeLog
+ create mode 100644 samples/warpdrive/Makefile.am
+ create mode 100644 samples/warpdrive/NEWS
+ create mode 100644 samples/warpdrive/README
+ create mode 100755 samples/warpdrive/autogen.sh
+ create mode 100755 samples/warpdrive/cleanup.sh
+ create mode 100644 samples/warpdrive/configure.ac
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.c
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.h
+ create mode 100644 samples/warpdrive/test/Makefile.am
+ create mode 100644 samples/warpdrive/test/comp_hw.h
+ create mode 100644 samples/warpdrive/test/test_hisi_zip.c
+ create mode 100644 samples/warpdrive/wd.c
+ create mode 100644 samples/warpdrive/wd.h
+ create mode 100644 samples/warpdrive/wd_adapter.c
+ create mode 100644 samples/warpdrive/wd_adapter.h
 
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
