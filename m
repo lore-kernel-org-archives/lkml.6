@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA67C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4F9C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BFF20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BFF20843
+	by mail.kernel.org (Postfix) with ESMTP id 427B720843
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:07:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427B720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbeICV2R (ORCPT
+        id S1729858AbeICV2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:28:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40232 "EHLO
+        Mon, 3 Sep 2018 17:28:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728233AbeICV2Q (ORCPT
+        with ESMTP id S1728233AbeICV2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:28:16 -0400
+        Mon, 3 Sep 2018 17:28:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77EF9D01;
-        Mon,  3 Sep 2018 17:07:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0DD4D02;
+        Mon,  3 Sep 2018 17:07:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Elad Kanfi <eladkan@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Ofer Levi <oferle@mellanox.com>,
+        stable@vger.kernel.org,
+        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 039/107] arc: fix build errors in arc/include/asm/delay.h
-Date:   Mon,  3 Sep 2018 18:56:03 +0200
-Message-Id: <20180903165639.173371982@linuxfoundation.org>
+Subject: [PATCH 4.9 030/107] fscache: Allow cancelled operations to be enqueued
+Date:   Mon,  3 Sep 2018 18:55:54 +0200
+Message-Id: <20180903165638.752152760@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165637.293735109@linuxfoundation.org>
 References: <20180903165637.293735109@linuxfoundation.org>
@@ -55,52 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-[ Upstream commit 2423665ec53f2a29191b35382075e9834288a975 ]
+[ Upstream commit d0eb06afe712b7b103b6361f40a9a0c638524669 ]
 
-Fix build errors in arch/arc/'s delay.h:
-- add "extern unsigned long loops_per_jiffy;"
-- add <asm-generic/types.h> for "u64"
+Alter the state-check assertion in fscache_enqueue_operation() to allow
+cancelled operations to be given processing time so they can be cleaned up.
 
-In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
-../arch/arc/include/asm/delay.h: In function '__udelay':
-../arch/arc/include/asm/delay.h:61:12: error: 'u64' undeclared (first use in this function)
-  loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
-            ^~~
+Also fix a debugging statement that was requiring such operations to have
+an object assigned.
 
-In file included from ../drivers/infiniband/hw/cxgb3/cxio_hal.c:32:
-../arch/arc/include/asm/delay.h: In function '__udelay':
-../arch/arc/include/asm/delay.h:63:37: error: 'loops_per_jiffy' undeclared (first use in this function)
-  loops = ((u64) usecs * 4295 * HZ * loops_per_jiffy) >> 32;
-                                     ^~~~~~~~~~~~~~~
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: Elad Kanfi <eladkan@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Ofer Levi <oferle@mellanox.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+Reported-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/include/asm/delay.h |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/fscache/operation.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arc/include/asm/delay.h
-+++ b/arch/arc/include/asm/delay.h
-@@ -17,8 +17,11 @@
- #ifndef __ASM_ARC_UDELAY_H
- #define __ASM_ARC_UDELAY_H
+--- a/fs/fscache/operation.c
++++ b/fs/fscache/operation.c
+@@ -66,7 +66,8 @@ void fscache_enqueue_operation(struct fs
+ 	ASSERT(op->processor != NULL);
+ 	ASSERT(fscache_object_is_available(op->object));
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+-	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
++	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
++		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
  
-+#include <asm-generic/types.h>
- #include <asm/param.h>		/* HZ */
+ 	fscache_stat(&fscache_n_op_enqueue);
+ 	switch (op->flags & FSCACHE_OP_TYPE) {
+@@ -481,7 +482,8 @@ void fscache_put_operation(struct fscach
+ 	struct fscache_cache *cache;
  
-+extern unsigned long loops_per_jiffy;
-+
- static inline void __delay(unsigned long loops)
- {
- 	__asm__ __volatile__(
+ 	_enter("{OBJ%x OP%x,%d}",
+-	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
++	       op->object ? op->object->debug_id : 0,
++	       op->debug_id, atomic_read(&op->usage));
+ 
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+ 
 
 
