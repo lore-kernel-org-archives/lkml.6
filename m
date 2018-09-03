@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B802C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA6FC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F022077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F022077C
+	by mail.kernel.org (Postfix) with ESMTP id F34DF2077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34DF2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730834AbeICVrd (ORCPT
+        id S1730838AbeICVri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45894 "EHLO
+        Mon, 3 Sep 2018 17:47:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeICVrc (ORCPT
+        with ESMTP id S1728541AbeICVri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:32 -0400
+        Mon, 3 Sep 2018 17:47:38 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C409D24;
-        Mon,  3 Sep 2018 17:26:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFE8ED24;
+        Mon,  3 Sep 2018 17:26:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 101/165] KVM: arm/arm64: Skip updating PTE entry if no change
-Date:   Mon,  3 Sep 2018 18:56:27 +0200
-Message-Id: <20180903165700.585005789@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 102/165] s390/kvm: fix deadlock when killed by oom
+Date:   Mon,  3 Sep 2018 18:56:28 +0200
+Message-Id: <20180903165700.634036258@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -52,41 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-commit 976d34e2dab10ece5ea8fe7090b7692913f89084 upstream.
+commit 306d6c49ac9ded11114cb53b0925da52f2c2ada1 upstream.
 
-When there is contention on faulting in a particular page table entry
-at stage 2, the break-before-make requirement of the architecture can
-lead to additional refaulting due to TLB invalidation.
+When the oom killer kills a userspace process in the page fault handler
+while in guest context, the fault handler fails to release the mm_sem
+if the FAULT_FLAG_RETRY_NOWAIT option is set. This leads to a deadlock
+when tearing down the mm when the process terminates. This bug can only
+happen when pfault is enabled, so only KVM clients are affected.
 
-Avoid this by skipping a page table update if the new value of the PTE
-matches the previous value.
+The problem arises in the rare cases in which handle_mm_fault does not
+release the mm_sem. This patch fixes the issue by manually releasing
+the mm_sem when needed.
 
-Cc: stable@vger.kernel.org
-Fixes: d5d8184d35c9 ("KVM: ARM: Memory virtualization setup")
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 24eb3a824c4f3 ("KVM: s390: Add FAULT_FLAG_RETRY_NOWAIT for guest fault")
+Cc: <stable@vger.kernel.org> # 3.15+
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/mmu.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/s390/mm/fault.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -985,6 +985,10 @@ static int stage2_set_pte(struct kvm *kv
- 	/* Create 2nd stage page table mapping - Level 3 */
- 	old_pte = *pte;
- 	if (pte_present(old_pte)) {
-+		/* Skip page table update if there is no change */
-+		if (pte_val(old_pte) == pte_val(*new_pte))
-+			return 0;
-+
- 		kvm_set_pte(pte, __pte(0));
- 		kvm_tlb_flush_vmid_ipa(kvm, addr);
- 	} else {
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -486,6 +486,8 @@ retry:
+ 	/* No reason to continue if interrupted by SIGKILL. */
+ 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
+ 		fault = VM_FAULT_SIGNAL;
++		if (flags & FAULT_FLAG_RETRY_NOWAIT)
++			goto out_up;
+ 		goto out;
+ 	}
+ 	if (unlikely(fault & VM_FAULT_ERROR))
 
 
