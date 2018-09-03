@@ -2,81 +2,102 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A4BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6B7C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CE620869
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:18:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CE620869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2643C204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 15:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2643C204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbeICTjS (ORCPT
+        id S1727352AbeICTr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:39:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55275 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeICTjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:39:18 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fwqcd-00025Z-M4; Mon, 03 Sep 2018 17:18:35 +0200
-Date:   Mon, 3 Sep 2018 17:18:35 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Jiri Kosina <jikos@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH v2 3/3] x86/speculation: Enable cross-hyperthread spectre
- v2 STIBP mitigation
-In-Reply-To: <20180903143656.GD24142@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1809031716090.1383@nanos.tec.linutronix.de>
-References: <nycvar.YFH.7.76.1809031444160.25787@cbobk.fhfr.pm> <20180903143444.GW24124@hirez.programming.kicks-ass.net> <20180903143656.GD24142@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 3 Sep 2018 15:47:58 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55234 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727136AbeICTr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:47:58 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 08:27:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,325,1531810800"; 
+   d="scan'208";a="88605023"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga002.jf.intel.com with ESMTP; 03 Sep 2018 08:26:16 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 1277E301B65; Mon,  3 Sep 2018 08:26:16 -0700 (PDT)
+Date:   Mon, 3 Sep 2018 08:26:16 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     jsteckli@amazon.de, David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
+        Jim Mattson <jmattson@google.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        kanth.ghatraju@oracle.com, Liran Alon <liran.alon@oracle.com>,
+        Kees Cook <keescook@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+Message-ID: <20180903152616.GE27886@tassilo.jf.intel.com>
+References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+ <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
+ <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018, Peter Zijlstra wrote:
-> On Mon, Sep 03, 2018 at 04:34:44PM +0200, Peter Zijlstra wrote:
-> > On Mon, Sep 03, 2018 at 02:45:31PM +0200, Jiri Kosina wrote:
-> > 
-> > > +static bool __init stibp_needed(void)
-> > > +{
-> > > +	return (cpu_smt_control != CPU_SMT_NOT_SUPPORTED &&
-> > > +			boot_cpu_has(X86_FEATURE_STIBP));
-> > > +}
-> > 
-> > Should that not be:
-> > 
-> > 	((cpu_smt_control != CPU_SMT_NOT_SUPPORTED) ||
+On Sat, Sep 01, 2018 at 02:38:43PM -0700, Linus Torvalds wrote:
+> On Fri, Aug 31, 2018 at 12:45 AM Julian Stecklina <jsteckli@amazon.de> wrote:
+> >
+> > I've been spending some cycles on the XPFO patch set this week. For the
+> > patch set as it was posted for v4.13, the performance overhead of
+> > compiling a Linux kernel is ~40% on x86_64[1]. The overhead comes almost
+> > completely from TLB flushing. If we can live with stale TLB entries
+> > allowing temporary access (which I think is reasonable), we can remove
+> > all TLB flushing (on x86). This reduces the overhead to 2-3% for
+> > kernel compile.
 > 
-> s/||/&&/
+> I have to say, even 2-3% for a kernel compile sounds absolutely horrendous.
 > 
-> > 	 (cpu_smt_control != CPU_SMT_FORCE_DISABLED)) &&
-> > 	boot_cpu_has(X86_FEATURE_STIBP);
-> > 
-> > instead?
+> Kernel bullds are 90% user space at least for me, so a 2-3% slowdown
+> from a kernel is not some small unnoticeable thing.
 
-At least. Ideally we update it when SMT control is switched. There is no
-point to have it enabled when SMT is set to DISABLED, but then we need to
-set it when enabled again. With the minimal logic above its speculatively
-enabled even when not required.
+Also the problem is that depending on the workload everything may fit
+into the TLBs, so the temporary stale TLB entries may be around
+for a long time. Modern CPUs have very large TLBs, and good
+LRU policies. For the kernel entries with global bit set and
+which are used for something there may be no reason ever to evict.
 
-Thanks,
+Julian, I think you would need at least some quantitative perfmon data about
+TLB replacement rates in the kernel to show that it's "reasonable"
+instead of hand waving.
 
-	tglx
+Most likely I suspect you would need a low frequency regular TLB
+flush for the global entries at least, which will increase
+the overhead again.
+
+-Andi
 
