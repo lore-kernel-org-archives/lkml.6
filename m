@@ -2,171 +2,151 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33151C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B05C3C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D587120652
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:50:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qm15cJVd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D587120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C99620652
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 14:52:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C99620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeICTKV (ORCPT
+        id S1726711AbeICTMs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 15:10:21 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45469 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbeICTKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 15:10:20 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180903144949euoutp02b2b360a68b0a026b4d6162e0862ff231~Q600yoHB90409804098euoutp02b;
-        Mon,  3 Sep 2018 14:49:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180903144949euoutp02b2b360a68b0a026b4d6162e0862ff231~Q600yoHB90409804098euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1535986189;
-        bh=BUUIxh6GLuxhAm9EJQctazbXmvE15UgCdUY+B/18qnM=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=qm15cJVdh0bsaYDzBRbEOfN5YSDTy1+XO+bs0JHTi4baIm+s21cJVwOYPflEOu/pY
-         1doB5fiE4iKu1pfuzKAcsGOa/rCQWj1Qi7qucGxkgaIUyhUjaftfrliQERTd2k/mp7
-         A4DSGLc71KO0fSYmrgtoMiWbaALjmReohvX4PeH8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180903144949eucas1p229f119d3452b081709f5cceedcadc158~Q600JeoGb3206732067eucas1p28;
-        Mon,  3 Sep 2018 14:49:49 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 4F.63.04441.C0A4D8B5; Mon,  3
-        Sep 2018 15:49:48 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64~Q60zX3bb03206732067eucas1p25;
-        Mon,  3 Sep 2018 14:49:48 +0000 (GMT)
-X-AuditID: cbfec7f2-a1ae89c000001159-c2-5b8d4a0c6cef
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F2.B9.04284.C0A4D8B5; Mon,  3
-        Sep 2018 15:49:48 +0100 (BST)
-Received: from AMDC2765.digital.local ([106.116.147.25]) by
-        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PEH00LLMIIVL500@eusync4.samsung.com>;
-        Mon, 03 Sep 2018 15:49:48 +0100 (BST)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 2/2] regulator: Fix 'do-nothing' value for regulators
- without suspend state
-Date:   Mon, 03 Sep 2018 16:49:37 +0200
-Message-id: <20180903144937.16507-3-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-reply-to: <20180903144937.16507-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7djPc7o8Xr3RBmenaVlsnLGe1WLqwyds
-        Ft+udDBZXN41h81ixvl9TBZrj9xlt5i86CCrA7vHzll32T02repk87hzbQ+bR9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGV861jMVPBDpOLRq7fMDYxPBLsYOTkkBEwk5s3oZu9i5OIQEljB
-        KHFo6XlWCOczo8SC763sMFW/zvRCJZYxSsxZ+p4Jwmlgkvi27x4bSBWbgKFE19suMFtEIFfi
-        /ZVfbCBFzAIbGSWmPHoPNkpYIFbiTdsCFhCbRUBV4uWzhUwgNq+ArcSExo1sEOvkJVZvOMAM
-        YnMK2Em8/7+XEWSQhEAHm0TDsxdMEEUuElO3/2CBsIUlXh3fAnWrjERnx0EmiIZmRon2GbPY
-        IZweRomtc3ZArbCWOHz8IiuIzSzAJzFp23SgdRxAcV6JjjYhiBIPiZ4fC5kh/pwIDJojW5km
-        MEouYGRYxSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJERiHp/8d/7SD8eulpEOMAhyMSjy8
-        AQa90UKsiWXFlbmHGCU4mJVEeBvdgUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+bTSooUE0hNL
-        UrNTUwtSi2CyTBycUg2MqxM2/79Wls2WVShzN/e4nqLv1OYoRh69G8G7d4jv3zpb6Z79u/WK
-        DerWjC55KyvU2m+nm2abeMa/WXT0oXXZW1POuzx77+V9nqESL7zivK391MAKp02Lhb9tqP4V
-        eb6E+1+I95mF9858NeP8Jv+3i9+s3LXdaJd8yf1Dc1RO3FmXuNyuXsRRiaU4I9FQi7moOBEA
-        9IBytL8CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgluLIzCtJLcpLzFFi42I5/e/4NV0er95og5aT3BYbZ6xntZj68Amb
-        xbcrHUwWl3fNYbOYcX4fk8XaI3fZLSYvOsjqwO6xc9Zddo9NqzrZPO5c28Pm0bdlFaPH501y
-        AaxRXDYpqTmZZalF+nYJXBnfOhYzFfwQqXj06i1zA+MTwS5GTg4JAROJX2d6WbsYuTiEBJYw
-        Spw/1gDlNDFJbL6xhgWkik3AUKLrbRcbiC0ikCux/1onE0gRs8BmRon/uw8wgiSEBWIlpu2e
-        wg5iswioSrx8tpAJxOYVsJWY0LiRDWKdvMTqDQeYQWxOATuJ9//3gvUKAdVcvreKdQIjzwJG
-        hlWMIqmlxbnpucWGesWJucWleel6yfm5mxiB4bPt2M/NOxgvbQw+xCjAwajEwxtg0BstxJpY
-        VlyZe4hRgoNZSYS30R0oxJuSWFmVWpQfX1Sak1p8iFGag0VJnPe8QWWUkEB6YklqdmpqQWoR
-        TJaJg1OqgTG57c+29cr3n9jf3ppb6PFl+bwz3u3clVueN09MZdpklXlD+9zKf/KH2UPMcncW
-        SL21OXi31U2jgcHy289vh+NmZXB6bA298bXm6qU56uaCPl1zX+t9OZ9bFX1K8cUHu0wXLeYt
-        a74tEpeNP6S4j7l7R2+xeXyd8+8mriPRMafu3nH9EVqo56PEUpyRaKjFXFScCAAFJXYvGwIA
-        AA==
-X-CMS-MailID: 20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64
-References: <20180903144937.16507-1-m.szyprowski@samsung.com>
-        <CGME20180903144948eucas1p2232126205868c2ccf5d40b7b0b70ff64@eucas1p2.samsung.com>
+        Mon, 3 Sep 2018 15:12:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725949AbeICTMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 15:12:48 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B2DDC87A50;
+        Mon,  3 Sep 2018 14:52:17 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DBA4A2026D6B;
+        Mon,  3 Sep 2018 14:52:16 +0000 (UTC)
+Date:   Mon, 3 Sep 2018 22:52:13 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180903145213.GG1740@192.168.1.3>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
+ <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+ <20180830152512.GE14702@192.168.1.2>
+ <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
+ <20180903074718.GD1740@192.168.1.3>
+ <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Sep 2018 14:52:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 03 Sep 2018 14:52:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some regulators don't have all states defined and in such cases regulator
-core should not assume anything. However in current implementation
-of of_get_regulation_constraints() DO_NOTHING_IN_SUSPEND enable value was
-set only for regulators which had suspend node defined, otherwise the
-default 0 value was used, what means DISABLE_IN_SUSPEND. This lead to
-broken system suspend/resume on boards, which had simple regulator
-constraints definition (without suspend state nodes).
+On 09/03/18 at 01:26pm, Kirill A. Shutemov wrote:
+> On Mon, Sep 03, 2018 at 03:47:18PM +0800, Baoquan He wrote:
+> > On 09/02/18 at 11:52pm, Kirill A. Shutemov wrote:
+> > > On Thu, Aug 30, 2018 at 11:25:12PM +0800, Baoquan He wrote:
+> > > > Hi Kirill,
+> > > > 
+> > > > I made a new version according to your suggestion, just a little
+> > > > different, I didn't make 1TB as default, just calculate with the actual
+> > > > size, then align up to 1TB boundary.  Just found kcore is printing more
+> > > > entries than before, I thought it's caused by my code, later got it was
+> > > > touchde by other people.
+> > > > 
+> > > > Any comment about this? I can change accordingly.
+> > > 
+> > > Looks good to me.
+> > > 
+> > > But there's corner case when struct page is unreasonably large and
+> > > vmemmap_size will be way to large. We probably have to report an error if
+> > > we cannot fit vmemmap properly into virtual memory layout.
+> > 
+> > Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
+> > system bootup can't go over vmemmap initlization. Except of this, we may
+> > need think about the virtual memory layout which vmemmap can be allowed
+> > to occupy.
+> > 
+> > If KASAN enabled, KASLR disabled,
+> > 4-level 1TB + 1TB hole (2TB)
+> > 5-level 512TB + 2034TB hole (2.5PB)
+> > 
+> > If KASAN disabled, KASLR enabled,
+> > 4-level 1TB + 1TB hole + 16TB  (18TB)
+> > 5-level 512TB + 2034TB hole + 8PB (10.5PB)
+> > 
+> > So, as you can see, if add check in memory KASLR code, we should only
+> > consider KASLR enabled case. We possibly don't need to worry about
+> > 5-level case since the size 10.5PB is even bigger than the maximum
+> > physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
+> > will be 32 times of the current 1TB, then we usually assume 64 as the
+> > default value of sizeof(struct page), then 64*32 == 1024. So we can add
+> > check like this, what do you think? Or any other idea?
+> 
+> Looks reasonable to me.
+> 
+> But I would have the BUILD_BUG_ON() in generic code. If you struct page is
+> more than 1/4 of PAGE_SIZE something is horribly broken.
 
-To avoid further mismatches between the default and uninitialized values
-of the suspend enabled/disabled states, change the values of the them,
-so default '0' means DO_NOTHING_IN_SUSPEND.
+Just the 1/4 of PAGE_SIZE is based on analysis of KASLR case. If
+non-KASLR case, it may not be that value. Not sure if it's OK to put it
+in generic code, and haven't thought of a good place, maybe in
+setup_arch(), just at the beginning?
 
-Fixes: 72069f9957a1: regulator: leave one item to record whether regulator is enabled
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/regulator/core.c          | 2 +-
- drivers/regulator/of_regulator.c  | 2 --
- include/linux/regulator/machine.h | 6 +++---
- 3 files changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 71ba040c7c5b..d1485ed98509 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3161,7 +3161,7 @@ static inline int regulator_suspend_toggle(struct regulator_dev *rdev,
- 	if (!rstate->changeable)
- 		return -EPERM;
- 
--	rstate->enabled = en;
-+	rstate->enabled = (en) ? ENABLE_IN_SUSPEND : DISABLE_IN_SUSPEND;
- 
- 	return 0;
- }
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 638f17d4c848..210fc20f7de7 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -213,8 +213,6 @@ static void of_get_regulation_constraints(struct device_node *np,
- 		else if (of_property_read_bool(suspend_np,
- 					"regulator-off-in-suspend"))
- 			suspend_state->enabled = DISABLE_IN_SUSPEND;
--		else
--			suspend_state->enabled = DO_NOTHING_IN_SUSPEND;
- 
- 		if (!of_property_read_u32(np, "regulator-suspend-min-microvolt",
- 					  &pval))
-diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
-index 3468703d663a..a459a5e973a7 100644
---- a/include/linux/regulator/machine.h
-+++ b/include/linux/regulator/machine.h
-@@ -48,9 +48,9 @@ struct regulator;
-  * DISABLE_IN_SUSPEND	- turn off regulator in suspend states
-  * ENABLE_IN_SUSPEND	- keep regulator on in suspend states
-  */
--#define DO_NOTHING_IN_SUSPEND	(-1)
--#define DISABLE_IN_SUSPEND	0
--#define ENABLE_IN_SUSPEND	1
-+#define DO_NOTHING_IN_SUSPEND	0
-+#define DISABLE_IN_SUSPEND	1
-+#define ENABLE_IN_SUSPEND	2
- 
- /* Regulator active discharge flags */
- enum regulator_active_discharge {
--- 
-2.17.1
-
+> 
+> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> > index 1db8e166455e..776ec759a87c 100644
+> > --- a/arch/x86/mm/kaslr.c
+> > +++ b/arch/x86/mm/kaslr.c
+> > @@ -90,6 +90,7 @@ void __init kernel_randomize_memory(void)
+> >         BUILD_BUG_ON(vaddr_start >= vaddr_end);
+> >         BUILD_BUG_ON(vaddr_end != CPU_ENTRY_AREA_BASE);
+> >         BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
+> > +       BUILD_BUG_ON(sizeof(struct page ) > PAGE_SIZE/4);
+> 
+> Nitpick: redundant space before ')'.
+> 
+> >  
+> >         if (!kaslr_memory_enabled())
+> >                 return;
+> > 
+> > 
+> > For 5-level paging mode, we
+> > may not need to worry about that. Since KASAN 
+> > 
+> > ***4-level***
+> > ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
+> > ... unused hole ...
+> > ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
+> > ... unused hole ...
+> > 
+> > 
+> > 
+> > ***5-level***
+> > ffd4000000000000 - ffd5ffffffffffff (=49 bits) virtual memory map (512TB)
+> > ... unused hole ...
+> > ffdf000000000000 - fffffc0000000000 (=53 bits) kasan shadow memory (8PB) 
+> > 
+> > > 
+> > > -- 
+> > >  Kirill A. Shutemov
+> 
+> -- 
+>  Kirill A. Shutemov
