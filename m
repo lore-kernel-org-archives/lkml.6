@@ -3,328 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CC5C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AF8C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBDC20843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:46:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBDC20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 422B720862
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 10:47:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422B720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbeICPGF (ORCPT
+        id S1727061AbeICPHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 11:06:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45053 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeICPGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 11:06:05 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w83AjoDV3274467
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 3 Sep 2018 03:45:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w83AjnLG3274464;
-        Mon, 3 Sep 2018 03:45:49 -0700
-Date:   Mon, 3 Sep 2018 03:45:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Randy Dunlap <tipbot@zytor.com>
-Message-ID: <tip-4331f4d5ada5684fc77fa16e3f6177f077c9e6ec@git.kernel.org>
-Cc:     tglx@linutronix.de, rdunlap@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        mark.rutland@arm.com
-Reply-To: tglx@linutronix.de, rdunlap@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          mark.rutland@arm.com
-In-Reply-To: <0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org>
-References: <0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86: Fix kernel-doc atomic.h warnings
-Git-Commit-ID: 4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 3 Sep 2018 11:07:21 -0400
+Received: from mga14.intel.com ([192.55.52.115]:58240 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725943AbeICPHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 11:07:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 03:47:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
+   d="scan'208";a="82551486"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Sep 2018 03:47:44 -0700
+Received: from [10.226.39.0] (zhuyixin-mobl.gar.corp.intel.com [10.226.39.0])
+        by linux.intel.com (Postfix) with ESMTP id 49527580372;
+        Mon,  3 Sep 2018 03:47:43 -0700 (PDT)
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com,
+        qi-ming.wu@intel.com
+Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+ <75f8313b-42e6-e741-196d-af27ad1e4f9b@linux.intel.com>
+ <153573545028.93865.1832322708533849519@swboyd.mtv.corp.google.com>
+From:   "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <cb3a0dcd-c9b4-136a-abff-200299186113@linux.intel.com>
+Date:   Mon, 3 Sep 2018 18:47:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <153573545028.93865.1832322708533849519@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
-Gitweb:     https://git.kernel.org/tip/4331f4d5ada5684fc77fa16e3f6177f077c9e6ec
-Author:     Randy Dunlap <rdunlap@infradead.org>
-AuthorDate: Sun, 2 Sep 2018 19:30:53 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 3 Sep 2018 12:41:41 +0200
 
-x86: Fix kernel-doc atomic.h warnings
+On 9/1/2018 1:10 AM, Stephen Boyd wrote:
+> Quoting Zhu, Yi Xin (2018-08-28 23:56:22)
+>> On 8/28/2018 3:09 AM, Stephen Boyd wrote:
+>>> Quoting yixin zhu (2018-08-08 01:52:20)
+>>>> On 8/8/2018 1:50 PM, Stephen Boyd wrote:
+>>>>>> +/* clock flags definition */
+>>>>>> +#define CLOCK_FLAG_VAL_INIT    BIT(16)
+>>>>>> +#define GATE_CLK_HW            BIT(17)
+>>>>>> +#define GATE_CLK_SW            BIT(18)
+>>>>>> +#define GATE_CLK_VT            BIT(19)
+>>>>> What does VT mean? Virtual?
+>>>> Yes. VT means virtual here.
+>>>> Will change to GATE_CLK_VIRT.
+>>>>
+>>> Is it a hardware concept? Or virtualization with hypervisor?
+>> Some peripheral drivers want to use same code cross platforms.
+>>
+>> But not all platforms provide HW gate clock.  So in this case, clock
+>> driver creates
+>>
+>> a virtual gate clock to make it work if no HW gate clock in the SoC.
+> That's not how things are supposed to work. If a clk isn't there in the
+> hardware we don't make them up in software so that the consumer software
+> drivers can keep requesting clks on different platforms. On a different
+> platform, the driver needs to know that the clks aren't there with a
+> different compatible string.
 
-Fix kernel-doc warnings in arch/x86/include/asm/atomic.h that are caused by
-having a #define macro between the kernel-doc notation and the function
-name.  Fixed by moving the #define macro to after the function
-implementation.
-
-Make the same change for atomic64_{32,64}.h for consistency even though
-there were no kernel-doc warnings found in these header files, but there
-would be if they were used in generation of documentation.
-
-Fixes these kernel-doc warnings:
-
-../arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'i' description in 'arch_atomic_sub_and_test'
-../arch/x86/include/asm/atomic.h:84: warning: Excess function parameter 'v' description in 'arch_atomic_sub_and_test'
-../arch/x86/include/asm/atomic.h:96: warning: Excess function parameter 'v' description in 'arch_atomic_inc'
-../arch/x86/include/asm/atomic.h:109: warning: Excess function parameter 'v' description in 'arch_atomic_dec'
-../arch/x86/include/asm/atomic.h:124: warning: Excess function parameter 'v' description in 'arch_atomic_dec_and_test'
-../arch/x86/include/asm/atomic.h:138: warning: Excess function parameter 'v' description in 'arch_atomic_inc_and_test'
-../arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'i' description in 'arch_atomic_add_negative'
-../arch/x86/include/asm/atomic.h:153: warning: Excess function parameter 'v' description in 'arch_atomic_add_negative'
-
-Fixes: 18cc1814d4e7 ("atomics/treewide: Make test ops optional")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Link: https://lkml.kernel.org/r/0a1e678d-c8c5-b32c-2640-ed4e94d399d2@infradead.org
+OK. Will remove virtual gate clock.
 
 
----
- arch/x86/include/asm/atomic.h      | 12 ++++++------
- arch/x86/include/asm/atomic64_32.h |  8 ++++----
- arch/x86/include/asm/atomic64_64.h | 12 ++++++------
- 3 files changed, 16 insertions(+), 16 deletions(-)
+>>
+>>>>>> +}
+>>>>>> +
+>>>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>>>> It provides CPU clock which is used in early boot stage.
+>>>>
+>>> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+>>> frequency? If the driver can be split into two pieces, one to handle the
+>>> really early stuff that must be in place to get timers up and running
+>>> and the other to register the rest of the clks that aren't critical from
+>>> a regular platform driver it would be good. That's preferred model if
+>>> something is super critical.
+>> Yes, CPU clock is providing CPU frequency in the early boot stage.
+>>
+>> Will put the non-critical clocks in the platform driver.
+>>
+>>
+> Sure the CPU clock is handling frequency, but does that matter for early
+> boot to get going? If timers aren't involved here then it doesn't sound
+> like this needs CLK_OF_DECLARE.
 
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index b143717b92b3..ce84388e540c 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -80,11 +80,11 @@ static __always_inline void arch_atomic_sub(int i, atomic_t *v)
-  * true if the result is zero, or false for all
-  * other cases.
-  */
--#define arch_atomic_sub_and_test arch_atomic_sub_and_test
- static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
- {
- 	GEN_BINARY_RMWcc(LOCK_PREFIX "subl", v->counter, "er", i, "%0", e);
- }
-+#define arch_atomic_sub_and_test arch_atomic_sub_and_test
- 
- /**
-  * arch_atomic_inc - increment atomic variable
-@@ -92,12 +92,12 @@ static __always_inline bool arch_atomic_sub_and_test(int i, atomic_t *v)
-  *
-  * Atomically increments @v by 1.
-  */
--#define arch_atomic_inc arch_atomic_inc
- static __always_inline void arch_atomic_inc(atomic_t *v)
- {
- 	asm volatile(LOCK_PREFIX "incl %0"
- 		     : "+m" (v->counter));
- }
-+#define arch_atomic_inc arch_atomic_inc
- 
- /**
-  * arch_atomic_dec - decrement atomic variable
-@@ -105,12 +105,12 @@ static __always_inline void arch_atomic_inc(atomic_t *v)
-  *
-  * Atomically decrements @v by 1.
-  */
--#define arch_atomic_dec arch_atomic_dec
- static __always_inline void arch_atomic_dec(atomic_t *v)
- {
- 	asm volatile(LOCK_PREFIX "decl %0"
- 		     : "+m" (v->counter));
- }
-+#define arch_atomic_dec arch_atomic_dec
- 
- /**
-  * arch_atomic_dec_and_test - decrement and test
-@@ -120,11 +120,11 @@ static __always_inline void arch_atomic_dec(atomic_t *v)
-  * returns true if the result is 0, or false for all other
-  * cases.
-  */
--#define arch_atomic_dec_and_test arch_atomic_dec_and_test
- static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
- {
- 	GEN_UNARY_RMWcc(LOCK_PREFIX "decl", v->counter, "%0", e);
- }
-+#define arch_atomic_dec_and_test arch_atomic_dec_and_test
- 
- /**
-  * arch_atomic_inc_and_test - increment and test
-@@ -134,11 +134,11 @@ static __always_inline bool arch_atomic_dec_and_test(atomic_t *v)
-  * and returns true if the result is zero, or false for all
-  * other cases.
-  */
--#define arch_atomic_inc_and_test arch_atomic_inc_and_test
- static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
- {
- 	GEN_UNARY_RMWcc(LOCK_PREFIX "incl", v->counter, "%0", e);
- }
-+#define arch_atomic_inc_and_test arch_atomic_inc_and_test
- 
- /**
-  * arch_atomic_add_negative - add and test if negative
-@@ -149,11 +149,11 @@ static __always_inline bool arch_atomic_inc_and_test(atomic_t *v)
-  * if the result is negative, or false when
-  * result is greater than or equal to zero.
-  */
--#define arch_atomic_add_negative arch_atomic_add_negative
- static __always_inline bool arch_atomic_add_negative(int i, atomic_t *v)
- {
- 	GEN_BINARY_RMWcc(LOCK_PREFIX "addl", v->counter, "er", i, "%0", s);
- }
-+#define arch_atomic_add_negative arch_atomic_add_negative
- 
- /**
-  * arch_atomic_add_return - add integer and return
-diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
-index ef959f02d070..6a5b0ec460da 100644
---- a/arch/x86/include/asm/atomic64_32.h
-+++ b/arch/x86/include/asm/atomic64_32.h
-@@ -205,12 +205,12 @@ static inline long long arch_atomic64_sub(long long i, atomic64_t *v)
-  *
-  * Atomically increments @v by 1.
-  */
--#define arch_atomic64_inc arch_atomic64_inc
- static inline void arch_atomic64_inc(atomic64_t *v)
- {
- 	__alternative_atomic64(inc, inc_return, /* no output */,
- 			       "S" (v) : "memory", "eax", "ecx", "edx");
- }
-+#define arch_atomic64_inc arch_atomic64_inc
- 
- /**
-  * arch_atomic64_dec - decrement atomic64 variable
-@@ -218,12 +218,12 @@ static inline void arch_atomic64_inc(atomic64_t *v)
-  *
-  * Atomically decrements @v by 1.
-  */
--#define arch_atomic64_dec arch_atomic64_dec
- static inline void arch_atomic64_dec(atomic64_t *v)
- {
- 	__alternative_atomic64(dec, dec_return, /* no output */,
- 			       "S" (v) : "memory", "eax", "ecx", "edx");
- }
-+#define arch_atomic64_dec arch_atomic64_dec
- 
- /**
-  * arch_atomic64_add_unless - add unless the number is a given value
-@@ -245,7 +245,6 @@ static inline int arch_atomic64_add_unless(atomic64_t *v, long long a,
- 	return (int)a;
- }
- 
--#define arch_atomic64_inc_not_zero arch_atomic64_inc_not_zero
- static inline int arch_atomic64_inc_not_zero(atomic64_t *v)
- {
- 	int r;
-@@ -253,8 +252,8 @@ static inline int arch_atomic64_inc_not_zero(atomic64_t *v)
- 			     "S" (v) : "ecx", "edx", "memory");
- 	return r;
- }
-+#define arch_atomic64_inc_not_zero arch_atomic64_inc_not_zero
- 
--#define arch_atomic64_dec_if_positive arch_atomic64_dec_if_positive
- static inline long long arch_atomic64_dec_if_positive(atomic64_t *v)
- {
- 	long long r;
-@@ -262,6 +261,7 @@ static inline long long arch_atomic64_dec_if_positive(atomic64_t *v)
- 			     "S" (v) : "ecx", "memory");
- 	return r;
- }
-+#define arch_atomic64_dec_if_positive arch_atomic64_dec_if_positive
- 
- #undef alternative_atomic64
- #undef __alternative_atomic64
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index 4343d9b4f30e..5f851d92eecd 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -71,11 +71,11 @@ static inline void arch_atomic64_sub(long i, atomic64_t *v)
-  * true if the result is zero, or false for all
-  * other cases.
-  */
--#define arch_atomic64_sub_and_test arch_atomic64_sub_and_test
- static inline bool arch_atomic64_sub_and_test(long i, atomic64_t *v)
- {
- 	GEN_BINARY_RMWcc(LOCK_PREFIX "subq", v->counter, "er", i, "%0", e);
- }
-+#define arch_atomic64_sub_and_test arch_atomic64_sub_and_test
- 
- /**
-  * arch_atomic64_inc - increment atomic64 variable
-@@ -83,13 +83,13 @@ static inline bool arch_atomic64_sub_and_test(long i, atomic64_t *v)
-  *
-  * Atomically increments @v by 1.
-  */
--#define arch_atomic64_inc arch_atomic64_inc
- static __always_inline void arch_atomic64_inc(atomic64_t *v)
- {
- 	asm volatile(LOCK_PREFIX "incq %0"
- 		     : "=m" (v->counter)
- 		     : "m" (v->counter));
- }
-+#define arch_atomic64_inc arch_atomic64_inc
- 
- /**
-  * arch_atomic64_dec - decrement atomic64 variable
-@@ -97,13 +97,13 @@ static __always_inline void arch_atomic64_inc(atomic64_t *v)
-  *
-  * Atomically decrements @v by 1.
-  */
--#define arch_atomic64_dec arch_atomic64_dec
- static __always_inline void arch_atomic64_dec(atomic64_t *v)
- {
- 	asm volatile(LOCK_PREFIX "decq %0"
- 		     : "=m" (v->counter)
- 		     : "m" (v->counter));
- }
-+#define arch_atomic64_dec arch_atomic64_dec
- 
- /**
-  * arch_atomic64_dec_and_test - decrement and test
-@@ -113,11 +113,11 @@ static __always_inline void arch_atomic64_dec(atomic64_t *v)
-  * returns true if the result is 0, or false for all other
-  * cases.
-  */
--#define arch_atomic64_dec_and_test arch_atomic64_dec_and_test
- static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
- {
- 	GEN_UNARY_RMWcc(LOCK_PREFIX "decq", v->counter, "%0", e);
- }
-+#define arch_atomic64_dec_and_test arch_atomic64_dec_and_test
- 
- /**
-  * arch_atomic64_inc_and_test - increment and test
-@@ -127,11 +127,11 @@ static inline bool arch_atomic64_dec_and_test(atomic64_t *v)
-  * and returns true if the result is zero, or false for all
-  * other cases.
-  */
--#define arch_atomic64_inc_and_test arch_atomic64_inc_and_test
- static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
- {
- 	GEN_UNARY_RMWcc(LOCK_PREFIX "incq", v->counter, "%0", e);
- }
-+#define arch_atomic64_inc_and_test arch_atomic64_inc_and_test
- 
- /**
-  * arch_atomic64_add_negative - add and test if negative
-@@ -142,11 +142,11 @@ static inline bool arch_atomic64_inc_and_test(atomic64_t *v)
-  * if the result is negative, or false when
-  * result is greater than or equal to zero.
-  */
--#define arch_atomic64_add_negative arch_atomic64_add_negative
- static inline bool arch_atomic64_add_negative(long i, atomic64_t *v)
- {
- 	GEN_BINARY_RMWcc(LOCK_PREFIX "addq", v->counter, "er", i, "%0", s);
- }
-+#define arch_atomic64_add_negative arch_atomic64_add_negative
- 
- /**
-  * arch_atomic64_add_return - add and return
+Yes, timer is involved here.
+
+CPU frequency get by early stage platform code used in clockevent 
+registration.
+
+
+>
