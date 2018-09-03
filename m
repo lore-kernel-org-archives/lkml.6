@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D75C43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D869C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF9992077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9992077C
+	by mail.kernel.org (Postfix) with ESMTP id D51802077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51802077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbeICVho (ORCPT
+        id S1730013AbeICVhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:37:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42614 "EHLO
+        Mon, 3 Sep 2018 17:37:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42628 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbeICVhn (ORCPT
+        with ESMTP id S1728405AbeICVhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:37:43 -0400
+        Mon, 3 Sep 2018 17:37:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 419FAD02;
-        Mon,  3 Sep 2018 17:16:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DFF6D09;
+        Mon,  3 Sep 2018 17:16:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Peter Shier <pshier@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 031/165] KVM: vmx: use local variable for current_vmptr when emulating VMPTRST
-Date:   Mon,  3 Sep 2018 18:55:17 +0200
-Message-Id: <20180903165656.655632955@linuxfoundation.org>
+Subject: [PATCH 4.14 032/165] tools/power turbostat: fix -S on UP systems
+Date:   Mon,  3 Sep 2018 18:55:18 +0200
+Message-Id: <20180903165656.700922641@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,59 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Len Brown <len.brown@intel.com>
 
-[ Upstream commit 0a06d4256674c4e041945b52044941995fee237d ]
+[ Upstream commit 9d83601a9cc1884d1b5706ee2acc661d558c6838 ]
 
-Do not expose the address of vmx->nested.current_vmptr to
-kvm_write_guest_virt_system() as the resulting __copy_to_user()
-call will trigger a WARN when CONFIG_HARDENED_USERCOPY is
-enabled.
+The -S (system summary) option failed to print any data on a 1-processor system.
 
-Opportunistically clean up variable names in handle_vmptrst()
-to improve readability, e.g. vmcs_gva is misleading as the
-memory operand of VMPTRST is plain memory, not a VMCS.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Tested-by: Peter Shier <pshier@google.com>
-Reviewed-by: Peter Shier <pshier@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ tools/power/x86/turbostat/turbostat.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8108,21 +8108,20 @@ static int handle_vmptrld(struct kvm_vcp
- /* Emulate the VMPTRST instruction */
- static int handle_vmptrst(struct kvm_vcpu *vcpu)
- {
--	unsigned long exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
--	u32 vmx_instruction_info = vmcs_read32(VMX_INSTRUCTION_INFO);
--	gva_t vmcs_gva;
-+	unsigned long exit_qual = vmcs_readl(EXIT_QUALIFICATION);
-+	u32 instr_info = vmcs_read32(VMX_INSTRUCTION_INFO);
-+	gpa_t current_vmptr = to_vmx(vcpu)->nested.current_vmptr;
- 	struct x86_exception e;
-+	gva_t gva;
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -1038,9 +1038,7 @@ void format_all_counters(struct thread_d
+ 	if (!printed || !summary_only)
+ 		print_header("\t");
  
- 	if (!nested_vmx_check_permission(vcpu))
- 		return 1;
+-	if (topo.num_cpus > 1)
+-		format_counters(&average.threads, &average.cores,
+-			&average.packages);
++	format_counters(&average.threads, &average.cores, &average.packages);
  
--	if (get_vmx_mem_address(vcpu, exit_qualification,
--			vmx_instruction_info, true, &vmcs_gva))
-+	if (get_vmx_mem_address(vcpu, exit_qual, instr_info, true, &gva))
- 		return 1;
- 	/* *_system ok, nested_vmx_check_permission has verified cpl=0 */
--	if (kvm_write_guest_virt_system(vcpu, vmcs_gva,
--					(void *)&to_vmx(vcpu)->nested.current_vmptr,
--					sizeof(u64), &e)) {
-+	if (kvm_write_guest_virt_system(vcpu, gva, (void *)&current_vmptr,
-+					sizeof(gpa_t), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
+ 	printed = 1;
+ 
 
 
