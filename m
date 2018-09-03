@@ -2,77 +2,94 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B0DC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539AFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5D520843
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5D520843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id EC9AD2086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9AD2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeICXHN (ORCPT
+        id S1727776AbeICXKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 19:07:13 -0400
-Received: from ms.lwn.net ([45.79.88.28]:49732 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727472AbeICXHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 19:07:13 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 8B4674B7;
-        Mon,  3 Sep 2018 18:45:46 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 12:45:45 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Henrik Austad <henrik@austad.us>
-Cc:     Joe Perches <joe@perches.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RFC] Drop all 00-INDEX files from Documentation/
-Message-ID: <20180903124545.089ead51@lwn.net>
-In-Reply-To: <20180903105542.GA9485@sisyphus.home.austad.us>
-References: <1535545728-8402-1-git-send-email-henrik@austad.us>
-        <58648986219ce0173ff45d34def0da9f9f34b55f.camel@perches.com>
-        <20180903105542.GA9485@sisyphus.home.austad.us>
-Organization: LWN.net
+        Mon, 3 Sep 2018 19:10:42 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.85]:14147 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727493AbeICXKm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 19:10:42 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 0FD24ECA65
+        for <linux-kernel@vger.kernel.org>; Mon,  3 Sep 2018 13:49:14 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id wtu8fgZf2bXuJwtuLf0zWe; Mon, 03 Sep 2018 13:49:13 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.106.191] (port=40570 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fwtu6-002QHE-8M; Mon, 03 Sep 2018 13:48:50 -0500
+Date:   Mon, 3 Sep 2018 13:48:45 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: usbnet: mark expected switch fall-through
+Message-ID: <20180903184845.GA8150@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.191
+X-Source-L: No
+X-Exim-ID: 1fwtu6-002QHE-8M
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.191]:40570
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 27
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018 12:55:42 +0200
-Henrik Austad <henrik@austad.us> wrote:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> On Wed, Aug 29, 2018 at 09:20:30AM -0700, Joe Perches wrote:
-> > On Wed, 2018-08-29 at 14:28 +0200, Henrik Austad wrote:  
-> > > The 00-INDEX files are supposed to give a summary of all files present
-> > > in a directory, but these files are horribly out of date and their
-> > > usefulness is brought into question.
-> > > 
-> > > A few years back it was mentioned that these files were no longer
-> > > needed, and they have since then grown further out of date, so perhaps
-> > > it is time to just throw them out.  
-> > 
-> > Good idea.
-> > 
-> > .rst is becoming more common and these 00-INDEX files
-> > are unnecessary and occasionally misleading.  
-> 
-> Ok, should I respin and clean up all the other files referencing 00-INDEX 
-> and send to a wider audience?
+Addresses-Coverity-ID: 1077614 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/usb/usbnet.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Wider audience might be good.  I've not yet decided whether I think this
-is a good idea or not.  We certainly don't need those files for stuff
-that's in the RST doctree, that's what the index.rst files are for.  But I
-suspect some people might complain about losing them for the rest of the
-content.  I do get patches from people updating them, so some folks do
-indeed look at them...
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 770aa62..73aa333 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1527,6 +1527,7 @@ static void usbnet_bh (struct timer_list *t)
+ 			continue;
+ 		case tx_done:
+ 			kfree(entry->urb->sg);
++			/* fall through */
+ 		case rx_cleanup:
+ 			usb_free_urb (entry->urb);
+ 			dev_kfree_skb (skb);
+-- 
+2.7.4
 
-jon
