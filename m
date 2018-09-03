@@ -2,155 +2,123 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7A3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7DFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2B32077B
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:51:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VFHeThkI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2B32077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DEE220867
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 08:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEE220867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeICNKh (ORCPT
+        id S1727398AbeICNLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 09:10:37 -0400
-Received: from mail-eopbgr50072.outbound.protection.outlook.com ([40.107.5.72]:10688
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725965AbeICNKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 09:10:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MGcjVWAW169y203IFjaffzMZnhH4XE7iTCUStUTGj/U=;
- b=VFHeThkISmMITHMabpnLQLgCiFryTiARlYHRpcuuDeBNKQxh5IF5Z6VmI+LjUK0LOr2aeeVHogXz1LoxEkbmGKD5nJq8co9rOxrsYGsacBbYfk0PDHqo8IkH2RX2NFbVx1X3hYsodzQnark8waWjbTQpr1tePOsTupcmyw1HIJw=
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
- AM6PR0402MB3496.eurprd04.prod.outlook.com (52.133.19.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Mon, 3 Sep 2018 08:51:24 +0000
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::ccea:795:beb3:5637]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::ccea:795:beb3:5637%2]) with mapi id 15.20.1080.020; Mon, 3 Sep 2018
- 08:51:24 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 2/2] tty: serial: imx: add pinctrl sleep/default mode
- switch for suspend
-Thread-Topic: [PATCH 2/2] tty: serial: imx: add pinctrl sleep/default mode
- switch for suspend
-Thread-Index: AQHUL8kvLZA1hsakIU+YlqeE8Nv2ZKTeZvCg
-Date:   Mon, 3 Sep 2018 08:51:23 +0000
-Message-ID: <AM6PR0402MB3911C74F62B845CF83644D6DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-References: <1533809169-24133-1-git-send-email-Anson.Huang@nxp.com>
- <1533809169-24133-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1533809169-24133-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3496;6:4XCeUis5rqH3WF5VrlhIyZ4RY5QRCL9XPUsX8NPbLsz+9ASe09APYlIfjWjw0goCIeNA4bCBJrxc+aFIStshwSWTWoGqssiDNEbzE8BpPxuF2lHhc6gL6qO4bsk71QNfFVzqPhrRM3yY1DfNEh+63Sa03SedVWgAf8+hqFWbDsqCSckojM4m150Ag6yxJV7g/K3wQlh04p/0CzKFLvGShqSjJetBeh5MxDL+aljy9HrLUBKzctMKoltFj6fN1vzzELYo2Kzp1n+2zCIhg+qqUrpTrnbuLQbErim4KbHGQ+BFn36CMP0ilHOsgFQZqyLzBF5f3hl3pkyR+X8gCEA93b6u6X0TwcsmiFFINjQLTaEgv2EfyVrDJBUsDn2ZRMecEII0/Xswq3nLgZVEeCloBR5TH3gSdBSRz63oasd3EnNNa6BToMm+5SbCFKONWO3eCFc3oa/qjNPnsqz9UMfIHg==;5:Ie/nZUtrsWLWguOwPbhyv7sOu9u91gOGmSYXnPRIE4GQlDSDfL0DF0X55cvgw2jzuxAc6VWFRhvxr07SBTc0fF1DXkS8imee/dQ7rZXe44IZUjXndsVV8ZPIE1VfxcsM6h49A3PAyAe3bOoHoEygid2bN31MICt21/LQjP6HQX8=;7:aXPo3I5EjHS1/suPYDTZwBCaHF2nY9pY2JNcVkYXqndgDctoDod06qkOQ27rydLGyi35NWckJpLnA6yGB2j3wiqebUOYoB1zC9ol3PfJvk4i5mSYws/azSF1POVIbZ4enxktWoESJ5zi9rqVPeYq4c9FMGJHzMYtMPYbi6kdvxVLeS1MuRuMeZ+PUm46y/aJbZTfXx/gc2qRz04Gdu3ViKUhgxIlvn6XQG3iAnFoCKQs+PeaUoRyr4j9U63SQ19O
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9828d042-e23b-4038-0794-08d6117a6d8b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3496;
-x-ms-traffictypediagnostic: AM6PR0402MB3496:
-x-microsoft-antispam-prvs: <AM6PR0402MB3496AF419B155DAE183371D5F50C0@AM6PR0402MB3496.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(10201501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:AM6PR0402MB3496;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3496;
-x-forefront-prvs: 0784C803FD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(376002)(346002)(136003)(199004)(13464003)(189003)(8676002)(15650500001)(74316002)(97736004)(14444005)(6116002)(76176011)(14454004)(5250100002)(3846002)(256004)(7696005)(99286004)(486006)(66066001)(5660300001)(305945005)(44832011)(7736002)(2906002)(86362001)(2900100001)(2201001)(68736007)(53936002)(105586002)(11346002)(106356001)(26005)(229853002)(33656002)(186003)(446003)(81156014)(476003)(110136005)(6506007)(53546011)(8936002)(4326008)(316002)(102836004)(2501003)(81166006)(6246003)(478600001)(6436002)(25786009)(55016002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3496;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: sWEfb8FCmZ6OYzu0iAYcJtrChpcOpRFEA8VuFkIW22oG9hl4FnbQMiq6pJ7G9Y0RwG6bblenIendVz1kRxBPZYeJWrpREfhGtO6q25ZUqEKOs55tzrziuLmiHHceBFHqPcLb6LYydfaP6pg/NgRZd34TO/V3YtvfQ4+v0cOjb3OQWyj35injXUSrsU6UhoVhuMfLsBncgks2nPtOnQaadY75ptdRbFJF3AiPU0lh9nHVAIcQO8xfXJ0FdKT55hHr98IooD/RthZV+SRcZm1t/pVNaggTcvcFq374c/Z52rQoQTl5oVfTlt6GE6QXYxIfi+SIra3lGRlDROP5iIj/KT2FQ4yv3cvGuLiQY5sIYbw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Sep 2018 09:11:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34921 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbeICNLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 09:11:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j26-v6so16974443wre.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 01:52:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LkM32dFeruuvjw5kU1aFj7fFPieB4QMQYWiNzTRUt8A=;
+        b=FOjMr7YKIkyHu+cHTtW2913QbuKFXwoBbjUawvjzSFbimVQEJMG0oAnewpwfTVTtI/
+         gH5MRQ0LwO0mJg8hl7q7IvmwqknjYVPLk1GMpGKZREDnGahGAbAqo5AJkLzwIcrKilfO
+         eG8GhuxflFT3PPuLnAH/POsSY7x8IB3qu4ZTuWo+3fgU7Pj26T4vA11lgnP/PaQPHb9f
+         AaUZZ04RukvClkyLMi/Xnk17UASCY8xkifLfoLMF+7YC3u+9FNZAP/RrYessTQ4vhYaD
+         cbW/avBIkrA/4dXjzEgZsP6816xR0ZceQjpFwjImlwDSq9eRJw59mmvCIsodltPfnVdl
+         T7tg==
+X-Gm-Message-State: APzg51BTgl5IvgYscUdCjisTlsIGjSu/vMIBk0c+5Xzh7Gj4h4vZ/4Se
+        AAKwVA9xrI/cV+OYiJ0IxehIHw==
+X-Google-Smtp-Source: ANB0VdYHdRp9wD3z+IAJYJCXYQm/dzYj7yxjiKn0IJ4nRwO8hqnentAWftZ2xj4CXjOiqcOQ+99XnA==
+X-Received: by 2002:adf:9d1c:: with SMTP id k28-v6mr8935386wre.104.1535964728656;
+        Mon, 03 Sep 2018 01:52:08 -0700 (PDT)
+Received: from [10.201.33.51] ([195.166.127.210])
+        by smtp.gmail.com with ESMTPSA id 144-v6sm16799368wma.19.2018.09.03.01.52.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 01:52:08 -0700 (PDT)
+Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async
+ notifier complete
+To:     Bing Bu Cao <bingbu.cao@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org
+References: <20180831152045.9957-1-javierm@redhat.com>
+ <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+ <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
+ <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
+Date:   Mon, 3 Sep 2018 10:52:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9828d042-e23b-4038-0794-08d6117a6d8b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2018 08:51:23.9764
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3496
+In-Reply-To: <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gentle Ping...
+On 09/03/2018 10:49 AM, Bing Bu Cao wrote:
+> 
+> 
+> On 09/03/2018 03:35 PM, Javier Martinez Canillas wrote:
+>> Hi,
+>>
+>> Thanks a lot your feedback.
+>>
+>> On 09/03/2018 09:25 AM, Bing Bu Cao wrote:
+>>>
+>>> On 08/31/2018 11:20 PM, Javier Martinez Canillas wrote:
+>>>> Commit 9832e155f1ed ("[media] media-device: split media initialization and
+>>>> registration") split the media_device_register() function in two, to avoid
+>>>> a race condition that can happen when the media device node is accessed by
+>>>> userpace before the pending subdevices have been asynchronously registered.
+>>>>
+>>>> But the ipu3-cio2 driver calls the media_device_register() function right
+>>>> after calling media_device_init() which defeats the purpose of having two
+>>>> separate functions.
+>>>>
+>>>> In that case, userspace could have a partial view of the media device if
+>>>> it opened the media device node before all the pending devices have been
+>>>> bound. So instead, only register the media device once all pending v4l2
+>>>> subdevices have been registered.
+>>> Javier, Thanks for your patch.
+>>> IMHO, there are no big differences for registering the cio2 before and after all the subdevices are ready.
+>>> User may see a partial view of media graph but it presents what it really is then.
+>>> It indicate that device is not available currently not it is not there.
+>> I disagree that there are no differences. The media graph shouldn't be exposed
+>> until its complete. That's the reason why we have a v4l2 async notifier .bound
+>> and .complete callbacks (otherwise the .bound would be enough).
+>>
+>> It's also the reason why media register was split in _init and _register, as I
+>> mentioned in the commit message.
+> I revisit the commit 9832e155f1ed and understand and agree that.
 
-Anson Huang
-Best Regards!
+Great. Does this mean the patch has your Reviewed-by / Acked-by ?
 
+> Seems like there are some other drivers (such as rcar-vin and omap4iss) still have similar issues.
 
-> -----Original Message-----
-> From: Anson Huang
-> Sent: Thursday, August 9, 2018 6:06 PM
-> To: gregkh@linuxfoundation.org; jslaby@suse.com;
-> linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org
-> Cc: dl-linux-imx <linux-imx@nxp.com>
-> Subject: [PATCH 2/2] tty: serial: imx: add pinctrl sleep/default mode swi=
-tch for
-> suspend
->=20
-> On some i.MX SoCs' low power mode, UART iomux settings may be lost, need
-> to add pinctrl sleep/default mode switch during suspend/resume to make su=
-re
-> UART iomux settings are correct after resume.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/tty/serial/imx.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c index
-> a09ccef..c280d43 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -24,6 +24,7 @@
->  #include <linux/serial.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/rational.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
-> @@ -2447,6 +2448,8 @@ static int imx_uart_suspend_noirq(struct device
-> *dev)
->=20
->  	clk_disable(sport->clk_ipg);
->=20
-> +	pinctrl_pm_select_sleep_state(dev);
-> +
->  	return 0;
->  }
->=20
-> @@ -2455,6 +2458,8 @@ static int imx_uart_resume_noirq(struct device
-> *dev)
->  	struct imx_port *sport =3D dev_get_drvdata(dev);
->  	int ret;
->=20
-> +	pinctrl_pm_select_default_state(dev);
-> +
->  	ret =3D clk_enable(sport->clk_ipg);
->  	if (ret)
->  		return ret;
-> --
-> 2.7.4
+Yes it seems so. I don't have access to hardware with these IP blocks though,
+I'm hesitant to attempt to fix them.
 
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
