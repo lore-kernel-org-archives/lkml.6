@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E42EEC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93140C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A705E2077C
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A705E2077C
+	by mail.kernel.org (Postfix) with ESMTP id 5A7102077C
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:26:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7102077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbeICVrn (ORCPT
+        id S1730859AbeICVrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:47:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45910 "EHLO
+        Mon, 3 Sep 2018 17:47:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728628AbeICVrm (ORCPT
+        with ESMTP id S1728628AbeICVrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:47:42 -0400
+        Mon, 3 Sep 2018 17:47:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 227EDD24;
-        Mon,  3 Sep 2018 17:26:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4503ED30;
+        Mon,  3 Sep 2018 17:26:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        isaacm@codeaurora.org, matt@codeblueprint.co.uk,
-        psodagud@codeaurora.org, pkondeti@codeaurora.org
-Subject: [PATCH 4.14 103/165] stop_machine: Reflow cpu_stop_queue_two_works()
-Date:   Mon,  3 Sep 2018 18:56:29 +0200
-Message-Id: <20180903165700.683519185@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.14 094/165] printk: Split the code for storing a message into the log buffer
+Date:   Mon,  3 Sep 2018 18:56:20 +0200
+Message-Id: <20180903165700.240935200@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -53,110 +53,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Petr Mladek <pmladek@suse.com>
 
-commit b80a2bfce85e1051056d98d04ecb2d0b55cbbc1c upstream.
+commit ba552399954dde1b388f7749fecad5c349216981 upstream.
 
-The code flow in cpu_stop_queue_two_works() is a little arcane; fix this by
-lifting the preempt_disable() to the top to create more natural nesting wrt
-the spinlocks and make the wake_up_q() and preempt_enable() unconditional
-at the end.
+It is just a preparation step. The patch does not change
+the existing behavior.
 
-Furthermore, enable preemption in the -EDEADLK case, such that we spin-wait
-with preemption enabled.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: isaacm@codeaurora.org
-Cc: matt@codeblueprint.co.uk
-Cc: psodagud@codeaurora.org
-Cc: gregkh@linuxfoundation.org
-Cc: pkondeti@codeaurora.org
+Link: http://lkml.kernel.org/r/20180627140817.27764-2-pmladek@suse.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180730112140.GH2494@hirez.programming.kicks-ass.net
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/stop_machine.c |   41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ kernel/printk/printk.c |   43 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -236,13 +236,24 @@ static int cpu_stop_queue_two_works(int
- 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
- 	DEFINE_WAKE_Q(wakeq);
- 	int err;
-+
- retry:
-+	/*
-+	 * The waking up of stopper threads has to happen in the same
-+	 * scheduling context as the queueing.  Otherwise, there is a
-+	 * possibility of one of the above stoppers being woken up by another
-+	 * CPU, and preempting us. This will cause us to not wake up the other
-+	 * stopper forever.
-+	 */
-+	preempt_disable();
- 	raw_spin_lock_irq(&stopper1->lock);
- 	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
- 
--	err = -ENOENT;
--	if (!stopper1->enabled || !stopper2->enabled)
-+	if (!stopper1->enabled || !stopper2->enabled) {
-+		err = -ENOENT;
- 		goto unlock;
-+	}
-+
- 	/*
- 	 * Ensure that if we race with __stop_cpus() the stoppers won't get
- 	 * queued up in reverse order leading to system deadlock.
-@@ -253,36 +264,30 @@ retry:
- 	 * It can be falsely true but it is safe to spin until it is cleared,
- 	 * queue_stop_cpus_work() does everything under preempt_disable().
- 	 */
--	err = -EDEADLK;
--	if (unlikely(stop_cpus_in_progress))
--			goto unlock;
-+	if (unlikely(stop_cpus_in_progress)) {
-+		err = -EDEADLK;
-+		goto unlock;
-+	}
- 
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
--	/*
--	 * The waking up of stopper threads has to happen
--	 * in the same scheduling context as the queueing.
--	 * Otherwise, there is a possibility of one of the
--	 * above stoppers being woken up by another CPU,
--	 * and preempting us. This will cause us to n ot
--	 * wake up the other stopper forever.
--	 */
--	preempt_disable();
-+
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
- 
- 	if (unlikely(err == -EDEADLK)) {
-+		preempt_enable();
-+
- 		while (stop_cpus_in_progress)
- 			cpu_relax();
-+
- 		goto retry;
- 	}
- 
--	if (!err) {
--		wake_up_q(&wakeq);
--		preempt_enable();
--	}
-+	wake_up_q(&wakeq);
-+	preempt_enable();
- 
- 	return err;
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1680,28 +1680,16 @@ static size_t log_output(int facility, i
+ 	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
  }
+ 
+-asmlinkage int vprintk_emit(int facility, int level,
+-			    const char *dict, size_t dictlen,
+-			    const char *fmt, va_list args)
++/* Must be called under logbuf_lock. */
++int vprintk_store(int facility, int level,
++		  const char *dict, size_t dictlen,
++		  const char *fmt, va_list args)
+ {
+ 	static char textbuf[LOG_LINE_MAX];
+ 	char *text = textbuf;
+ 	size_t text_len;
+ 	enum log_flags lflags = 0;
+-	unsigned long flags;
+-	int printed_len;
+-	bool in_sched = false;
+-
+-	if (level == LOGLEVEL_SCHED) {
+-		level = LOGLEVEL_DEFAULT;
+-		in_sched = true;
+-	}
+-
+-	boot_delay_msec(level);
+-	printk_delay();
+ 
+-	/* This stops the holder of console_sem just where we want him */
+-	logbuf_lock_irqsave(flags);
+ 	/*
+ 	 * The printf needs to come first; we need the syslog
+ 	 * prefix which might be passed-in as a parameter.
+@@ -1742,8 +1730,29 @@ asmlinkage int vprintk_emit(int facility
+ 	if (dict)
+ 		lflags |= LOG_PREFIX|LOG_NEWLINE;
+ 
+-	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
++	return log_output(facility, level, lflags,
++			  dict, dictlen, text, text_len);
++}
+ 
++asmlinkage int vprintk_emit(int facility, int level,
++			    const char *dict, size_t dictlen,
++			    const char *fmt, va_list args)
++{
++	int printed_len;
++	bool in_sched = false;
++	unsigned long flags;
++
++	if (level == LOGLEVEL_SCHED) {
++		level = LOGLEVEL_DEFAULT;
++		in_sched = true;
++	}
++
++	boot_delay_msec(level);
++	printk_delay();
++
++	/* This stops the holder of console_sem just where we want him */
++	logbuf_lock_irqsave(flags);
++	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
+ 	logbuf_unlock_irqrestore(flags);
+ 
+ 	/* If called from the scheduler, we can not call up(). */
 
 
