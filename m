@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB94BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BCFC43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E77620868
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E77620868
+	by mail.kernel.org (Postfix) with ESMTP id AA0D920869
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 16:52:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0D920869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbeICVNc (ORCPT
+        id S1728546AbeICVNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:13:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37900 "EHLO
+        Mon, 3 Sep 2018 17:13:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbeICVNb (ORCPT
+        with ESMTP id S1727679AbeICVNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:13:31 -0400
+        Mon, 3 Sep 2018 17:13:35 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BAD7CF3;
-        Mon,  3 Sep 2018 16:52:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBFB8CEE;
+        Mon,  3 Sep 2018 16:52:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-fsdevel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH 3.18 53/56] MIPS: Correct the 64-bit DSP accumulator register size
-Date:   Mon,  3 Sep 2018 18:49:43 +0200
-Message-Id: <20180903164926.744858268@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 54/56] scsi: sysfs: Introduce sysfs_{un,}break_active_protection()
+Date:   Mon,  3 Sep 2018 18:49:44 +0200
+Message-Id: <20180903164926.794622165@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903164924.078355019@linuxfoundation.org>
 References: <20180903164924.078355019@linuxfoundation.org>
@@ -54,71 +51,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit f5958b4cf4fc38ed4583ab83fb7c4cd1ab05f47b upstream.
+commit 2afc9166f79b8f6da5f347f48515215ceee4ae37 upstream.
 
-Use the `unsigned long' rather than `__u32' type for DSP accumulator
-registers, like with the regular MIPS multiply/divide accumulator and
-general-purpose registers, as all are 64-bit in 64-bit implementations
-and using a 32-bit data type leads to contents truncation on context
-saving.
+Introduce these two functions and export them such that the next patch
+can add calls to these functions from the SCSI core.
 
-Update `arch_ptrace' and `compat_arch_ptrace' accordingly, removing
-casts that are similarly not used with multiply/divide accumulator or
-general-purpose register accesses.
-
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: e50c0a8fa60d ("Support the MIPS32 / MIPS64 DSP ASE.")
-Patchwork: https://patchwork.linux-mips.org/patch/19329/
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # 2.6.15+
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/processor.h |    2 +-
- arch/mips/kernel/ptrace.c         |    2 +-
- arch/mips/kernel/ptrace32.c       |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/sysfs/file.c       |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/sysfs.h |   14 ++++++++++++++
+ 2 files changed, 58 insertions(+)
 
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -143,7 +143,7 @@ struct mips_fpu_struct {
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -357,6 +357,50 @@ int sysfs_chmod_file(struct kobject *kob
+ EXPORT_SYMBOL_GPL(sysfs_chmod_file);
  
- #define NUM_DSP_REGS   6
+ /**
++ * sysfs_break_active_protection - break "active" protection
++ * @kobj: The kernel object @attr is associated with.
++ * @attr: The attribute to break the "active" protection for.
++ *
++ * With sysfs, just like kernfs, deletion of an attribute is postponed until
++ * all active .show() and .store() callbacks have finished unless this function
++ * is called. Hence this function is useful in methods that implement self
++ * deletion.
++ */
++struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
++						  const struct attribute *attr)
++{
++	struct kernfs_node *kn;
++
++	kobject_get(kobj);
++	kn = kernfs_find_and_get(kobj->sd, attr->name);
++	if (kn)
++		kernfs_break_active_protection(kn);
++	return kn;
++}
++EXPORT_SYMBOL_GPL(sysfs_break_active_protection);
++
++/**
++ * sysfs_unbreak_active_protection - restore "active" protection
++ * @kn: Pointer returned by sysfs_break_active_protection().
++ *
++ * Undo the effects of sysfs_break_active_protection(). Since this function
++ * calls kernfs_put() on the kernfs node that corresponds to the 'attr'
++ * argument passed to sysfs_break_active_protection() that attribute may have
++ * been removed between the sysfs_break_active_protection() and
++ * sysfs_unbreak_active_protection() calls, it is not safe to access @kn after
++ * this function has returned.
++ */
++void sysfs_unbreak_active_protection(struct kernfs_node *kn)
++{
++	struct kobject *kobj = kn->parent->priv;
++
++	kernfs_unbreak_active_protection(kn);
++	kernfs_put(kn);
++	kobject_put(kobj);
++}
++EXPORT_SYMBOL_GPL(sysfs_unbreak_active_protection);
++
++/**
+  * sysfs_remove_file_ns - remove an object attribute with a custom ns tag
+  * @kobj: object we're acting for
+  * @attr: attribute descriptor
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -200,6 +200,9 @@ int __must_check sysfs_create_files(stru
+ 				   const struct attribute **attr);
+ int __must_check sysfs_chmod_file(struct kobject *kobj,
+ 				  const struct attribute *attr, umode_t mode);
++struct kernfs_node *sysfs_break_active_protection(struct kobject *kobj,
++						  const struct attribute *attr);
++void sysfs_unbreak_active_protection(struct kernfs_node *kn);
+ void sysfs_remove_file_ns(struct kobject *kobj, const struct attribute *attr,
+ 			  const void *ns);
+ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr);
+@@ -299,6 +302,17 @@ static inline int sysfs_chmod_file(struc
+ 	return 0;
+ }
  
--typedef __u32 dspreg_t;
-+typedef unsigned long dspreg_t;
- 
- struct mips_dsp_state {
- 	dspreg_t	dspr[NUM_DSP_REGS];
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -751,7 +751,7 @@ long arch_ptrace(struct task_struct *chi
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -140,7 +140,7 @@ long compat_arch_ptrace(struct task_stru
- 				goto out;
- 			}
- 			dregs = __get_dsp_regs(child);
--			tmp = (unsigned long) (dregs[addr - DSP_BASE]);
-+			tmp = dregs[addr - DSP_BASE];
- 			break;
- 		}
- 		case DSP_CONTROL:
++static inline struct kernfs_node *
++sysfs_break_active_protection(struct kobject *kobj,
++			      const struct attribute *attr)
++{
++	return NULL;
++}
++
++static inline void sysfs_unbreak_active_protection(struct kernfs_node *kn)
++{
++}
++
+ static inline void sysfs_remove_file_ns(struct kobject *kobj,
+ 					const struct attribute *attr,
+ 					const void *ns)
 
 
