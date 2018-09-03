@@ -2,128 +2,332 @@ Return-Path: <SRS0=G629=LR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F5FC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CEEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5D02054F
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:23:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5D02054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 58EEE2054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 07:24:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EEE2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbeICLlf (ORCPT
+        id S1727319AbeICLlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 07:41:35 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:41437 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeICLlf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 07:41:35 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id BB8FEFF81A;
-        Mon,  3 Sep 2018 07:22:40 +0000 (UTC)
-Date:   Mon, 3 Sep 2018 09:22:34 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        ysato@users.sourceforge.jp, dalias@libc.org,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
-Message-ID: <20180903072234.GA4116@w540>
-References: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180831122558.zv7537uyfw5pcnqj@valkosipuli.retiisi.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
-Content-Disposition: inline
-In-Reply-To: <20180831122558.zv7537uyfw5pcnqj@valkosipuli.retiisi.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 3 Sep 2018 07:41:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48343 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726108AbeICLla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 07:41:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 00:22:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,324,1531810800"; 
+   d="scan'208";a="70146901"
+Received: from yhuang-mobile.sh.intel.com ([10.239.196.86])
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 00:22:37 -0700
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V5 09/21] swap: Swapin a THP in one piece
+Date:   Mon,  3 Sep 2018 15:22:02 +0800
+Message-Id: <20180903072214.24602-10-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180903072214.24602-1-ying.huang@intel.com>
+References: <20180903072214.24602-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With this patch, when page fault handler find a PMD swap mapping, it
+will swap in a THP in one piece.  This avoids the overhead of
+splitting/collapsing before/after the THP swapping.  And improves the
+swap performance greatly for reduced page fault count etc.
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+do_huge_pmd_swap_page() is added in the patch to implement this.  It
+is similar to do_swap_page() for normal page swapin.
 
-Hi Sakari,
+If failing to allocate a THP, the huge swap cluster and the PMD swap
+mapping will be split to fallback to normal page swapin.
 
-On Fri, Aug 31, 2018 at 03:25:58PM +0300, Sakari Ailus wrote:
-> Hi Jacopo,
->
-> On Mon, May 28, 2018 at 06:37:06PM +0200, Jacopo Mondi wrote:
-> > Hello,
-> >     this series removes dependencies on the soc_camera based
-> > sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
-> > sensor driver used by one of those boards.
-> >
-> > Hans, this means there are no more user of the soc_camera framework that I know
-> > of in Linux, and I guess we can now plan of to remove that framework.
->
-> What's the status of this set? I think it'd be nice to get it in; the CEU
-> driver is the last using SoC camera framework.
->
+If the huge swap cluster has been split already, the PMD swap mapping
+will be split to fallback to normal page swapin.
 
-There's an open comment from Geert on this series.
-I'll resend, then I guess it can be collected.
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+ include/linux/huge_mm.h |   9 +++
+ mm/huge_memory.c        | 174 ++++++++++++++++++++++++++++++++++++++++++++++++
+ mm/memory.c             |  16 +++--
+ 3 files changed, 193 insertions(+), 6 deletions(-)
 
-> I guess an ack from the SH folks would be needed for these patches to go
-> through the media tree.
->
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 3fdb29bc250c..c2b8ced6fc2b 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -403,4 +403,13 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
++#ifdef CONFIG_THP_SWAP
++extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
++#else /* CONFIG_THP_SWAP */
++static inline int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
++{
++	return 0;
++}
++#endif /* CONFIG_THP_SWAP */
++
+ #endif /* _LINUX_HUGE_MM_H */
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index b14d4bfb06f4..cfbc9f15e020 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -33,6 +33,8 @@
+ #include <linux/page_idle.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/oom.h>
++#include <linux/delayacct.h>
++#include <linux/swap.h>
+ 
+ #include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+@@ -1612,6 +1614,178 @@ static void __split_huge_swap_pmd(struct vm_area_struct *vma,
+ 	pmd_populate(mm, pmd, pgtable);
+ }
+ 
++#ifdef CONFIG_THP_SWAP
++static int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++			       unsigned long address, pmd_t orig_pmd)
++{
++	struct mm_struct *mm = vma->vm_mm;
++	spinlock_t *ptl;
++	int ret = 0;
++
++	ptl = pmd_lock(mm, pmd);
++	if (pmd_same(*pmd, orig_pmd))
++		__split_huge_swap_pmd(vma, address & HPAGE_PMD_MASK, pmd);
++	else
++		ret = -ENOENT;
++	spin_unlock(ptl);
++
++	return ret;
++}
++
++int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
++{
++	struct page *page;
++	struct mem_cgroup *memcg;
++	struct vm_area_struct *vma = vmf->vma;
++	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
++	swp_entry_t entry;
++	pmd_t pmd;
++	int i, locked, exclusive = 0, ret = 0;
++
++	entry = pmd_to_swp_entry(orig_pmd);
++	VM_BUG_ON(non_swap_entry(entry));
++	delayacct_set_flag(DELAYACCT_PF_SWAPIN);
++retry:
++	page = lookup_swap_cache(entry, NULL, vmf->address);
++	if (!page) {
++		page = read_swap_cache_async(entry, GFP_HIGHUSER_MOVABLE, vma,
++					     haddr, false);
++		if (!page) {
++			/*
++			 * Back out if somebody else faulted in this pmd
++			 * while we released the pmd lock.
++			 */
++			if (likely(pmd_same(*vmf->pmd, orig_pmd))) {
++				/*
++				 * Failed to allocate huge page, split huge swap
++				 * cluster, and fallback to swapin normal page
++				 */
++				ret = split_swap_cluster(entry, 0);
++				/* Somebody else swapin the swap entry, retry */
++				if (ret == -EEXIST) {
++					ret = 0;
++					goto retry;
++				/* swapoff occurs under us */
++				} else if (ret == -EINVAL)
++					ret = 0;
++				else
++					goto fallback;
++			}
++			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++			goto out;
++		}
++
++		/* Had to read the page from swap area: Major fault */
++		ret = VM_FAULT_MAJOR;
++		count_vm_event(PGMAJFAULT);
++		count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
++	} else if (!PageTransCompound(page))
++		goto fallback;
++
++	locked = lock_page_or_retry(page, vma->vm_mm, vmf->flags);
++
++	delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++	if (!locked) {
++		ret |= VM_FAULT_RETRY;
++		goto out_release;
++	}
++
++	/*
++	 * Make sure try_to_free_swap or reuse_swap_page or swapoff did not
++	 * release the swapcache from under us.  The page pin, and pmd_same
++	 * test below, are not enough to exclude that.  Even if it is still
++	 * swapcache, we need to check that the page's swap has not changed.
++	 */
++	if (unlikely(!PageSwapCache(page) || page_private(page) != entry.val))
++		goto out_page;
++
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL,
++					&memcg, true)) {
++		ret = VM_FAULT_OOM;
++		goto out_page;
++	}
++
++	/*
++	 * Back out if somebody else already faulted in this pmd.
++	 */
++	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
++	spin_lock(vmf->ptl);
++	if (unlikely(!pmd_same(*vmf->pmd, orig_pmd)))
++		goto out_nomap;
++
++	if (unlikely(!PageUptodate(page))) {
++		ret = VM_FAULT_SIGBUS;
++		goto out_nomap;
++	}
++
++	/*
++	 * The page isn't present yet, go ahead with the fault.
++	 *
++	 * Be careful about the sequence of operations here.
++	 * To get its accounting right, reuse_swap_page() must be called
++	 * while the page is counted on swap but not yet in mapcount i.e.
++	 * before page_add_anon_rmap() and swap_free(); try_to_free_swap()
++	 * must be called after the swap_free(), or it will never succeed.
++	 */
++
++	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
++	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++	pmd = mk_huge_pmd(page, vma->vm_page_prot);
++	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
++		pmd = maybe_pmd_mkwrite(pmd_mkdirty(pmd), vma);
++		vmf->flags &= ~FAULT_FLAG_WRITE;
++		ret |= VM_FAULT_WRITE;
++		exclusive = RMAP_EXCLUSIVE;
++	}
++	for (i = 0; i < HPAGE_PMD_NR; i++)
++		flush_icache_page(vma, page + i);
++	if (pmd_swp_soft_dirty(orig_pmd))
++		pmd = pmd_mksoft_dirty(pmd);
++	do_page_add_anon_rmap(page, vma, haddr,
++			      exclusive | RMAP_COMPOUND);
++	mem_cgroup_commit_charge(page, memcg, true, true);
++	activate_page(page);
++	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, pmd);
++
++	swap_free(entry, HPAGE_PMD_NR);
++	if (mem_cgroup_swap_full(page) ||
++	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
++		try_to_free_swap(page);
++	unlock_page(page);
++
++	if (vmf->flags & FAULT_FLAG_WRITE) {
++		spin_unlock(vmf->ptl);
++		ret |= do_huge_pmd_wp_page(vmf, pmd);
++		if (ret & VM_FAULT_ERROR)
++			ret &= VM_FAULT_ERROR;
++		goto out;
++	}
++
++	/* No need to invalidate - it was non-present before */
++	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
++	spin_unlock(vmf->ptl);
++out:
++	return ret;
++out_nomap:
++	mem_cgroup_cancel_charge(page, memcg, true);
++	spin_unlock(vmf->ptl);
++out_page:
++	unlock_page(page);
++out_release:
++	put_page(page);
++	return ret;
++fallback:
++	delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++	if (!split_huge_swap_pmd(vmf->vma, vmf->pmd, vmf->address, orig_pmd))
++		ret = VM_FAULT_FALLBACK;
++	else
++		ret = 0;
++	if (page)
++		put_page(page);
++	return ret;
++}
++#endif
++
+ /*
+  * Return true if we do MADV_FREE successfully on entire pmd page.
+  * Otherwise, return false.
+diff --git a/mm/memory.c b/mm/memory.c
+index b604f16d031b..9b6fdc18b10e 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4090,13 +4090,17 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 
+ 		barrier();
+ 		if (unlikely(is_swap_pmd(orig_pmd))) {
+-			VM_BUG_ON(thp_migration_supported() &&
+-					  !is_pmd_migration_entry(orig_pmd));
+-			if (is_pmd_migration_entry(orig_pmd))
++			if (thp_migration_supported() &&
++			    is_pmd_migration_entry(orig_pmd)) {
+ 				pmd_migration_entry_wait(mm, vmf.pmd);
+-			return 0;
+-		}
+-		if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
++				return 0;
++			} else if (IS_ENABLED(CONFIG_THP_SWAP)) {
++				ret = do_huge_pmd_swap_page(&vmf, orig_pmd);
++				if (!(ret & VM_FAULT_FALLBACK))
++					return ret;
++			} else
++				VM_BUG_ON(1);
++		} else if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
+ 			if (pmd_protnone(orig_pmd) && vma_is_accessible(vma))
+ 				return do_huge_pmd_numa_page(&vmf, orig_pmd);
+ 
+-- 
+2.16.4
 
-I would have loved to hear from them on this and other media patches
-which are sh-related. It hasn't happen, and as for the previous patches
-removing usage of the old ceu driver for SH boards, I guess this can go in
-through the media tree. But I let Hans decide how to handle this.
-
-> On the sensor driver patches --- please just move the files. The CEU was
-> the last that it was possible to use the drivers with.
->
-
-My understanding was that Hans preferred to do it after all
-dependencies are moved away from soc_camera.
-
-Maybe at ELC-E we should have a status-check and decide how to move
-forward with soc_camera deprecation.
-
-Thanks
-   j
-
-> --
-> Kind regards,
->
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi
-
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbjOEjAAoJEHI0Bo8WoVY827QQAL5BBLuOSE1Usaz9SuA9h0MB
-YGANEAEsK9TKaSpDtRT5mf4IqOAUztETRPnP99kjGV2w2EKQhESRCt7H4wOVHyba
-1cSCzXESbwT0Nnb54jkbb/LJX7Cy/ks+jGQGvSBG9y8zC2fTc8zwWGoeXqquJLgN
-wImMWDdehPiNolJuWQN+9RoXGlXDiYr6Fr9SZuBDtc1THxUToDpGvyXvvs1PfPrP
-8sXtZFD6MAnaDDZMk05g63w8z3Q353WfLub6KMLfn4w4ON3j3SZxcTFqGs3PdZA4
-OsM6kCM3SdHiGxPR7RVmlqVUn/YyoF1DqOV0GZJzHSZ1TBHunly9guhxbHo7+oCZ
-wm0BhHgvH7NvvHTfCR5Qvis26pG4/wkjCq96ylK9mSJ+bJ3bb03beown2b6th7d1
-smv3R9g/5/UOW230Z3RKGVlDsSrd6ebZ8fcS82fNUHjoHlM2YSOohkeympPcnvoT
-UkEJ+AKQ9+XgDZOA5Abrbe+/3owhCMbmd8z1y7in+vPekqwuhCWj05vwilYq6BY1
-hgxQuAY5CjrfJEhhgFJd/FJ5qtj14h+Hps/rrTp+dQYrqoP1LDXYOVoi9tf7YswP
-Oii5YpV6c8dyVN5VXCCLho2uUT3pF0sm7Xc+RZxvRskUgx8jAxr1fSyiZGaAV26Q
-qOXrAaF4G4gIY52Y+jSA
-=yu/f
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
