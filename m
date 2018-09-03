@@ -6,40 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0309C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54B2C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A607820856
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A607820856
+	by mail.kernel.org (Postfix) with ESMTP id 69FAE20873
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 18:05:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69FAE20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbeICW0U (ORCPT
+        id S1728540AbeICW0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 18:26:20 -0400
+        Mon, 3 Sep 2018 18:26:24 -0400
 Received: from mga05.intel.com ([192.55.52.43]:31017 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727687AbeICW0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 18:26:20 -0400
+        id S1727687AbeICW0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Sep 2018 18:26:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 11:05:02 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 11:05:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,326,1531810800"; 
-   d="scan'208";a="88629500"
+   d="scan'208";a="88629547"
 Received: from rajneesh-desk.iind.intel.com ([10.223.86.34])
-  by orsmga002.jf.intel.com with ESMTP; 03 Sep 2018 11:04:59 -0700
+  by orsmga002.jf.intel.com with ESMTP; 03 Sep 2018 11:05:02 -0700
 From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 To:     platform-driver-x86@vger.kernel.org
 Cc:     dvhart@infradead.org, andy@infradead.org,
         linux-kernel@vger.kernel.org, rajneesh.bhardwaj@intel.com,
         souvik.k.chakravarty@intel.com,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Subject: [PATCH 3/4] platform/x86: intel_pmc_core: Decode Snoop / Non Snoop LTR
-Date:   Mon,  3 Sep 2018 23:34:14 +0530
-Message-Id: <20180903180415.31575-3-rajneesh.bhardwaj@linux.intel.com>
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Matt Turner <matt.turner@intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
+Subject: [PATCH 4/4] platform/x86: intel_telemetry: report debugfs failure
+Date:   Mon,  3 Sep 2018 23:34:15 +0530
+Message-Id: <20180903180415.31575-4-rajneesh.bhardwaj@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
 References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
@@ -48,122 +51,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LTR values follow PCIE LTR encoding format and can be decoded as per
-https://pcisig.com/sites/default/files/specification_documents/ECN_LatencyTolnReporting_14Aug08.pdf
+On some Goldmont based systems such as ASRock J3455M the BIOS may not
+enable the IPC1 device that provides access to the PMC and PUNIT. In
+such scenarios, the ioss and pss resources from the platform device can
+not be obtained and result in a invalid telemetry_plt_config.
+This is also applicable to the platforms where the BIOS supports IPC1
+device under debug configurations but IPC1 is disabled by user or the
+policy.
 
-This adds support to translate the raw LTR values as read from the PMC
-to meaningful values in nanosecond units of time.
+This change allows user to know the reason for not seeing entries under
+/sys/kernel/debug/telemetry/* when there is no apparent failure at boot.
 
+Cc: Matt Turner <matt.turner@intel.com>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198779
+
+Acked-by: Matt Turner <matt.turner@intel.com>
 Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_core.c | 62 ++++++++++++++++++++++++++-
- drivers/platform/x86/intel_pmc_core.h | 14 ++++++
- 2 files changed, 74 insertions(+), 2 deletions(-)
+ drivers/platform/x86/intel_telemetry_debugfs.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index c1330a03523d..ffa912a8a5f5 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -651,16 +651,74 @@ static int pmc_core_slps0_dbg_show(struct seq_file *s, void *unused)
- }
- DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
+diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
+index ffd0474b0531..77212e9b22d6 100644
+--- a/drivers/platform/x86/intel_telemetry_debugfs.c
++++ b/drivers/platform/x86/intel_telemetry_debugfs.c
+@@ -951,12 +951,16 @@ static int __init telemetry_debugfs_init(void)
+ 	debugfs_conf = (struct telemetry_debugfs_conf *)id->driver_data;
  
-+static void get_ltr_scale(u32 *val)
-+{
-+	/*
-+	 * As per PCIE specification supprting document
-+	 * ECN_LatencyTolnReporting_14Aug08.pdf the Latency
-+	 * Tolerance Reporting data payload is encoded in a
-+	 * 3 bit scale and 10 bit value fields. Values are
-+	 * multiplied by the indicated scale to yield an absolute time
-+	 * value, expressible in a range from 1 nanosecond to
-+	 * 2^25*(2^10-1) = 34,326,183,936 nanoseconds.
-+	 *
-+	 * scale encoding is as follows:
-+	 *
-+	 * ----------------------------------------------
-+	 * |scale factor	|	Multiplier (ns)	|
-+	 * ----------------------------------------------
-+	 * |	0		|	1		|
-+	 * |	1		|	32		|
-+	 * |	2		|	1024		|
-+	 * |	3		|	32768		|
-+	 * |	4		|	1048576		|
-+	 * |	5		|	33554432	|
-+	 * |	6		|	Invalid		|
-+	 * |	7		|	Invalid		|
-+	 * ----------------------------------------------
-+	 */
-+	if (*val > 5) {
-+		*val = 0;
-+		pr_warn("Invalid LTR scale factor.\n");
-+	} else {
-+		*val = 1U << (5 * (*val));
+ 	err = telemetry_pltconfig_valid();
+-	if (err < 0)
+-		return -ENODEV;
++	if (err < 0) {
++		pr_debug("Invalid pltconfig, ensure IPC1 device is enabled in BIOS\n");
++		goto exit;
 +	}
-+}
-+
- static int pmc_core_ltr_show(struct seq_file *s, void *unused)
- {
- 	struct pmc_dev *pmcdev = s->private;
- 	const struct pmc_bit_map *map = pmcdev->map->ltr_show_sts;
-+	u64 decoded_snoop_ltr = 0, decoded_non_snoop_ltr = 0;
-+	union ltr_payload ltr_data;
-+	u32 scale = 0;
- 	int index;
  
- 	for (index = 0; map[index].name ; index++) {
--		seq_printf(s, "%-32s\tRAW LTR: 0x%x\n",
-+		ltr_data.raw_data = pmc_core_reg_read(pmcdev,
-+						      map[index].bit_mask);
-+
-+		if (ltr_data.bits.non_snoop_req) {
-+			scale = ltr_data.bits.non_snoop_scale;
-+			get_ltr_scale(&scale);
-+			decoded_non_snoop_ltr =
-+				ltr_data.bits.non_snoop_val * scale;
-+		}
-+
-+		if (ltr_data.bits.snoop_req) {
-+			scale = ltr_data.bits.snoop_scale;
-+			get_ltr_scale(&scale);
-+			decoded_snoop_ltr =
-+				ltr_data.bits.snoop_val * scale;
-+		}
-+
-+		seq_printf(s, "%-24s\tRaw LTR: 0x%-16x\t Non-Snoop LTR (ns): %-16llu\t Snoop LTR (ns): %-16llu\n",
- 			   map[index].name,
--			   pmc_core_reg_read(pmcdev, map[index].bit_mask));
-+			   ltr_data.raw_data,
-+			   decoded_non_snoop_ltr,
-+			   decoded_snoop_ltr);
-+
-+		decoded_snoop_ltr = decoded_non_snoop_ltr = 0;
- 	}
- 	return 0;
+ 	err = telemetry_debugfs_check_evts();
+-	if (err < 0)
+-		return -EINVAL;
++	if (err < 0) {
++		pr_debug("telemetry_debugfs_check_evts failed\n");
++		goto exit;
++	}
+ 
+ 	register_pm_notifier(&pm_notifier);
+ 
+@@ -1020,6 +1024,8 @@ static int __init telemetry_debugfs_init(void)
+ 	debugfs_conf->telemetry_dbg_dir = NULL;
+ out_pm:
+ 	unregister_pm_notifier(&pm_notifier);
++exit:
++	pr_debug(pr_fmt(DRIVER_NAME) " Failed\n");
+ 
+ 	return err;
  }
-diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-index 12663c58f122..bbf9a2790548 100644
---- a/drivers/platform/x86/intel_pmc_core.h
-+++ b/drivers/platform/x86/intel_pmc_core.h
-@@ -243,4 +243,18 @@ struct pmc_dev {
- 	struct mutex lock; /* generic mutex lock for PMC Core */
- };
- 
-+union ltr_payload {
-+	u32 raw_data;
-+	struct {
-+	u32 snoop_val : 10;
-+	u32 snoop_scale : 3;
-+	u32 snoop_res : 2;
-+	u32 snoop_req : 1;
-+	u32 non_snoop_val : 10;
-+	u32 non_snoop_scale : 3;
-+	u32 non_snoop_res : 2;
-+	u32 non_snoop_req : 1;
-+	} bits;
-+};
-+
- #endif /* PMC_CORE_H */
 -- 
 2.17.1
 
