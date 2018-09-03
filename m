@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CCEC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49F7C43334
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E243920658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E243920658
+	by mail.kernel.org (Postfix) with ESMTP id 78E2A20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E2A20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbeICVtC (ORCPT
+        id S1731106AbeICVtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:49:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46348 "EHLO
+        Mon, 3 Sep 2018 17:49:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeICVtB (ORCPT
+        with ESMTP id S1728175AbeICVtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:49:01 -0400
+        Mon, 3 Sep 2018 17:49:04 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BECE9CF4;
-        Mon,  3 Sep 2018 17:27:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 002DBD01;
+        Mon,  3 Sep 2018 17:27:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 4.14 157/165] iscsi target: fix session creation failure handling
-Date:   Mon,  3 Sep 2018 18:57:23 +0200
-Message-Id: <20180903165704.962049614@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alberto Panizzo <alberto@amarulasolutions.com>,
+        Anthony Brandon <anthony@amarulasolutions.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.14 158/165] clk: rockchip: fix clk_i2sout parent selection bits on rk3399
+Date:   Mon,  3 Sep 2018 18:57:24 +0200
+Message-Id: <20180903165705.010030509@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
 References: <20180903165655.003605184@linuxfoundation.org>
@@ -51,98 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Christie <mchristi@redhat.com>
+From: Alberto Panizzo <alberto@amarulasolutions.com>
 
-commit 26abc916a898d34c5ad159315a2f683def3c5555 upstream.
+commit a64ad008980c65d38e6cf6858429c78e6b740c41 upstream.
 
-The problem is that iscsi_login_zero_tsih_s1 sets conn->sess early in
-iscsi_login_set_conn_values. If the function fails later like when we
-alloc the idr it does kfree(sess) and leaves the conn->sess pointer set.
-iscsi_login_zero_tsih_s1 then returns -Exyz and we then call
-iscsi_target_login_sess_out and access the freed memory.
+Register, shift and mask were wrong according to datasheet.
 
-This patch has iscsi_login_zero_tsih_s1 either completely setup the
-session or completely tear it down, so later in
-iscsi_target_login_sess_out we can just check for it being set to the
-connection.
-
+Fixes: 115510053e5e ("clk: rockchip: add clock controller for the RK3399")
 Cc: stable@vger.kernel.org
-Fixes: 0957627a9960 ("iscsi-target: Fix sess allocation leak in...")
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Alberto Panizzo <alberto@amarulasolutions.com>
+Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_login.c |   35 ++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ drivers/clk/rockchip/clk-rk3399.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/target/iscsi/iscsi_target_login.c
-+++ b/drivers/target/iscsi/iscsi_target_login.c
-@@ -345,8 +345,7 @@ static int iscsi_login_zero_tsih_s1(
- 		pr_err("idr_alloc() for sess_idr failed\n");
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_sess;
- 	}
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -630,7 +630,7 @@ static struct rockchip_clk_branch rk3399
+ 	MUX(0, "clk_i2sout_src", mux_i2sch_p, CLK_SET_RATE_PARENT,
+ 			RK3399_CLKSEL_CON(31), 0, 2, MFLAGS),
+ 	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "clk_i2sout", mux_i2sout_p, CLK_SET_RATE_PARENT,
+-			RK3399_CLKSEL_CON(30), 8, 2, MFLAGS,
++			RK3399_CLKSEL_CON(31), 2, 1, MFLAGS,
+ 			RK3399_CLKGATE_CON(8), 12, GFLAGS),
  
- 	sess->creation_time = get_jiffies_64();
-@@ -362,20 +361,28 @@ static int iscsi_login_zero_tsih_s1(
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
- 		pr_err("Unable to allocate memory for"
- 				" struct iscsi_sess_ops.\n");
--		kfree(sess);
--		return -ENOMEM;
-+		goto remove_idr;
- 	}
- 
- 	sess->se_sess = transport_init_session(TARGET_PROT_NORMAL);
- 	if (IS_ERR(sess->se_sess)) {
- 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
- 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
--		kfree(sess->sess_ops);
--		kfree(sess);
--		return -ENOMEM;
-+		goto free_ops;
- 	}
- 
- 	return 0;
-+
-+free_ops:
-+	kfree(sess->sess_ops);
-+remove_idr:
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+free_sess:
-+	kfree(sess);
-+	conn->sess = NULL;
-+	return -ENOMEM;
- }
- 
- static int iscsi_login_zero_tsih_s2(
-@@ -1162,13 +1169,13 @@ void iscsi_target_login_sess_out(struct
- 				   ISCSI_LOGIN_STATUS_INIT_ERR);
- 	if (!zero_tsih || !conn->sess)
- 		goto old_sess_out;
--	if (conn->sess->se_sess)
--		transport_free_session(conn->sess->se_sess);
--	if (conn->sess->session_index != 0) {
--		spin_lock_bh(&sess_idr_lock);
--		idr_remove(&sess_idr, conn->sess->session_index);
--		spin_unlock_bh(&sess_idr_lock);
--	}
-+
-+	transport_free_session(conn->sess->se_sess);
-+
-+	spin_lock_bh(&sess_idr_lock);
-+	idr_remove(&sess_idr, conn->sess->session_index);
-+	spin_unlock_bh(&sess_idr_lock);
-+
- 	kfree(conn->sess->sess_ops);
- 	kfree(conn->sess);
- 	conn->sess = NULL;
+ 	/* uart */
 
 
