@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB48CC43334
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D33C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B26DD20658
-	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26DD20658
+	by mail.kernel.org (Postfix) with ESMTP id A25CF20658
+	for <linux-kernel@archiver.kernel.org>; Mon,  3 Sep 2018 17:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25CF20658
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbeICVuY (ORCPT
+        id S1731283AbeICVu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Sep 2018 17:50:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46740 "EHLO
+        Mon, 3 Sep 2018 17:50:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728746AbeICVuY (ORCPT
+        with ESMTP id S1728746AbeICVu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Sep 2018 17:50:24 -0400
+        Mon, 3 Sep 2018 17:50:27 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BA03D24;
-        Mon,  3 Sep 2018 17:29:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 31E01D01;
+        Mon,  3 Sep 2018 17:29:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
         Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.18 010/123] cifs: check kmalloc before use
-Date:   Mon,  3 Sep 2018 18:55:54 +0200
-Message-Id: <20180903165719.924063868@linuxfoundation.org>
+Subject: [PATCH 4.18 011/123] smb3: enumerating snapshots was leaving part of the data off end
+Date:   Mon,  3 Sep 2018 18:55:55 +0200
+Message-Id: <20180903165719.963824553@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180903165719.499675257@linuxfoundation.org>
 References: <20180903165719.499675257@linuxfoundation.org>
@@ -51,38 +50,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Steve French <stfrench@microsoft.com>
 
-commit 126c97f4d0d1b5b956e8b0740c81a2b2a2ae548c upstream.
+commit e02789a53d71334b067ad72eee5d4e88a0158083 upstream.
 
-The kmalloc was not being checked - if it fails issue a warning
-and return -ENOMEM to the caller.
+When enumerating snapshots, the last few bytes of the final
+snapshot could be left off since we were miscalculating the
+length returned (leaving off the sizeof struct SRV_SNAPSHOT_ARRAY)
+See MS-SMB2 section 2.2.32.2. In addition fixup the length used
+to allow smaller buffer to be passed in, in order to allow
+returning the size of the whole snapshot array more easily.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: b8da344b74c8 ("cifs: dynamic allocation of ntlmssp blob")
+Sample userspace output with a kernel patched with this
+(mounted to a Windows volume with two snapshots).
+Before this patch, the second snapshot would be missing a
+few bytes at the end.
+
+~/cifs-2.6# ~/enum-snapshots /mnt/file
+press enter to issue the ioctl to retrieve snapshot information ...
+
+size of snapshot array = 102
+Num snapshots: 2 Num returned: 2 Array Size: 102
+
+Snapshot 0:@GMT-2018.06.30-19.34.17
+Snapshot 1:@GMT-2018.06.30-19.33.37
+
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-cc: Stable <stable@vger.kernel.org>`
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/sess.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/cifs/smb2ops.c |   34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/sess.c
-+++ b/fs/cifs/sess.c
-@@ -398,6 +398,12 @@ int build_ntlmssp_auth_blob(unsigned cha
- 		goto setup_ntlmv2_ret;
- 	}
- 	*pbuffer = kmalloc(size_of_ntlmssp_blob(ses), GFP_KERNEL);
-+	if (!*pbuffer) {
-+		rc = -ENOMEM;
-+		cifs_dbg(VFS, "Error %d during NTLMSSP allocation\n", rc);
-+		*buflen = 0;
-+		goto setup_ntlmv2_ret;
-+	}
- 	sec_blob = (AUTHENTICATE_MESSAGE *)*pbuffer;
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1374,6 +1374,13 @@ smb3_set_integrity(const unsigned int xi
  
- 	memcpy(sec_blob->Signature, NTLMSSP_SIGNATURE, 8);
+ }
+ 
++/* GMT Token is @GMT-YYYY.MM.DD-HH.MM.SS Unicode which is 48 bytes + null */
++#define GMT_TOKEN_SIZE 50
++
++/*
++ * Input buffer contains (empty) struct smb_snapshot array with size filled in
++ * For output see struct SRV_SNAPSHOT_ARRAY in MS-SMB2 section 2.2.32.2
++ */
+ static int
+ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
+ 		   struct cifsFileInfo *cfile, void __user *ioc_buf)
+@@ -1403,14 +1410,27 @@ smb3_enum_snapshots(const unsigned int x
+ 			kfree(retbuf);
+ 			return rc;
+ 		}
+-		if (snapshot_in.snapshot_array_size < sizeof(struct smb_snapshot_array)) {
+-			rc = -ERANGE;
+-			kfree(retbuf);
+-			return rc;
+-		}
+ 
+-		if (ret_data_len > snapshot_in.snapshot_array_size)
+-			ret_data_len = snapshot_in.snapshot_array_size;
++		/*
++		 * Check for min size, ie not large enough to fit even one GMT
++		 * token (snapshot).  On the first ioctl some users may pass in
++		 * smaller size (or zero) to simply get the size of the array
++		 * so the user space caller can allocate sufficient memory
++		 * and retry the ioctl again with larger array size sufficient
++		 * to hold all of the snapshot GMT tokens on the second try.
++		 */
++		if (snapshot_in.snapshot_array_size < GMT_TOKEN_SIZE)
++			ret_data_len = sizeof(struct smb_snapshot_array);
++
++		/*
++		 * We return struct SRV_SNAPSHOT_ARRAY, followed by
++		 * the snapshot array (of 50 byte GMT tokens) each
++		 * representing an available previous version of the data
++		 */
++		if (ret_data_len > (snapshot_in.snapshot_array_size +
++					sizeof(struct smb_snapshot_array)))
++			ret_data_len = snapshot_in.snapshot_array_size +
++					sizeof(struct smb_snapshot_array);
+ 
+ 		if (copy_to_user(ioc_buf, retbuf, ret_data_len))
+ 			rc = -EFAULT;
 
 
