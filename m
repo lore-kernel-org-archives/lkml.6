@@ -2,272 +2,306 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC907C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4119EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C82920843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C82920843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
+	by mail.kernel.org (Postfix) with ESMTP id D9C71206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:27:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=openedev.com header.i=@openedev.com header.b="I5eDeWcV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C71206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openedev.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeIDTwg (ORCPT
+        id S1727751AbeIDTwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:52:36 -0400
-Received: from uhil19pa09.eemsg.mail.mil ([214.24.21.82]:62028 "EHLO
-        uhil19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeIDTwf (ORCPT
+        Tue, 4 Sep 2018 15:52:39 -0400
+Received: from se14t.web-hosting.com ([162.255.118.155]:36282 "EHLO
+        se14t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeIDTwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:52:35 -0400
-X-EEMSG-check-008: 311772770|UHIL19PA09_EEMSG_MP7.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by uhil19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Sep 2018 15:26:52 +0000
-X-IronPort-AV: E=Sophos;i="5.53,329,1531785600"; 
-   d="scan'208";a="17757831"
-IronPort-PHdr: =?us-ascii?q?9a23=3AQ66kGBGzNAYyJuSR/HwwmJ1GYnF86YWxBRYc79?=
- =?us-ascii?q?8ds5kLTJ76oM24bnLW6fgltlLVR4KTs6sC17KJ9fi4EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCa/bL9oMBm6sRjau9ULj4dlNqs/0A?=
- =?us-ascii?q?bCrGFSe+RRy2NoJFaTkAj568yt4pNt8Dletuw4+cJYXqr0Y6o3TbpDDDQ7KG?=
- =?us-ascii?q?81/9HktQPCTQSU+HQRVHgdnwdSDAjE6BH6WYrxsjf/u+Fg1iSWIdH6QLYpUj?=
- =?us-ascii?q?m58axlVAHnhzsGNz4h8WHYlMpwjL5AoBm8oxBz2pPYbJ2JOPZ7eK7Ses4URX?=
- =?us-ascii?q?daXsZJSSNOHp+8YYUID+oEJ+lYro/9rEYKoRaxAQSgAeXixTFShn/ywKY0ze?=
- =?us-ascii?q?IvHw/b1wAkBt4DsXHYodPoP6kQTO+11rHFwyjdYfNY2Tnz64bGfR4urv6OQb?=
- =?us-ascii?q?1+ftHcyVUtGg7fklmctYLoMjGT2+8Qs2ab9e1gVee3hmA6twF+vCCvxscyhY?=
- =?us-ascii?q?nPm4kb11XE+j99wIYxO9K5SFNwbNm/EJRNrCGXLJd2Q8M+TGFovyY20LsGuY?=
- =?us-ascii?q?WhcyQQx5QnwADfZuWBfoOV7BzjU+ORLi15hHJjYL+/gxWy8U2kyuHmUcm0yl?=
- =?us-ascii?q?lKojJKktnNqnAN1wHT5dOdRvRh+Ueh3C6D2BrL6uFcOkA0ja3bK4I7zrEskZ?=
- =?us-ascii?q?oTtELOFTL1lkXulKKaa0op9+ey5+nnf7nqvIGQOoBqhg3kL6gjnNG0D/4iPQ?=
- =?us-ascii?q?gURWeb/Pyx1Ljk/ULkXrpHluY2kqzFsJDCIsQbu7K5DxdV0ok97xa/CC+r0M?=
- =?us-ascii?q?gCknkdLVJFZQmHg5LoO1HILvD4Cuy/jEqwnztx2/DHPqHuApXKLnTZlrfuYa?=
- =?us-ascii?q?195FJGxAo2zNBf44pYCrAHIP3tRk/8rMHUAxA2PgCuw+vrFc9x2p0RVG6RGK?=
- =?us-ascii?q?OVLbvesVqS6eIuJ+mMapUVuDH4K/U9/P7hkGQ5lEQBfaipwZQXaHe4Eu5gI0?=
- =?us-ascii?q?WCe3XgmNgBEWAUvgYmVuzllEWCUSJPZ3a1R68z+y87CYK7DYfAQYCtnqeM3C?=
- =?us-ascii?q?i8Hp1RaWBGDk6DHW30eIWDXvcGcDiSLdN5kjwYSbihTJcs1Qm0uw/nz7pqNf?=
- =?us-ascii?q?LU9TcFtZLnzdR14urTlRYo9TNqFciSz2aNT2RslGMSWzA2xLx/oVB6ylqbyq?=
- =?us-ascii?q?h5g/1ZGsdU5/NVVQs2K4PQw/BnB93zRw7McMuFR026TtimAjw9Usg+ztsTbE?=
- =?us-ascii?q?ljFditlRDO0jGxA74Vlr2LB4Y78qbY33fvPcZx0WzJ1LE5j1k9WstPMnGmhq?=
- =?us-ascii?q?tl+AjSA47FiVmWl6Gvda4Exi7C6H+DzXaSvEFfSANwTaXEXXAeZkTKrtT5/V?=
- =?us-ascii?q?jPQKO0BrQhNQtBz8+CJbdQZd3tl1lJWPDjONHGaWKrh2iwHQqIxq+LbIfyeW?=
- =?us-ascii?q?Ud2yXdCE4enwAR+naGNRIxBiG6o23ACjxjDk7gbFnq8el5rnO7T1M7wBuOb0?=
- =?us-ascii?q?F7y7W1/RsVj+SGS/wPxrIEpDshqzJsEVa/2tLWDMCApxBgfKVHet495k1I1W?=
- =?us-ascii?q?fHuAx8JJCgKLpihlEGeQRto0zuzwl3CplHkcUyqHMqzQxyKb+X0V9YdDOXw4?=
- =?us-ascii?q?rwOrvJJWn25x2vdaHW1U/E0NqM+acA9u44q1P9swGtDEYi9G9n09ZN2XuG+p?=
- =?us-ascii?q?rKFBYSUY72Uksv8xh6prfaYjQy5o/Nzn1jL7W7siLY29IoGOskyg+sf9JYMK?=
- =?us-ascii?q?yZCQ/yF9MVCtOwKOwlhVepdAgIPONM+64uOcOpaf+G1LSsPOZ6kzKslX5H75?=
- =?us-ascii?q?xl0kKQ6yp8TfbF340bzPGC0QuISSzxjFe7vcDznYBFZTcSEnCjxijjAY5bfr?=
- =?us-ascii?q?dycpoTCWeyP823wc1zh4XtWn9Z916sHVcG2Mu3dhqIdlDyxhBQ1UsMoXG8li?=
- =?us-ascii?q?u4yDt0kz4trqWB0yzO2ePidAcfOm5QXmVtkVDsIY2shdAAQEeodxQplAei5U?=
- =?us-ascii?q?vixahUuqp/L2fNQUpTcCj2KGZiUqS0trWcecJA9JQosSBPWuSmfV+aUqL9ow?=
- =?us-ascii?q?cd0y77BWte2Ss7dyq0tZX9mxx3k36SLHFwrHXHY8F83wvQ5NvZRfJLxDUGWT?=
- =?us-ascii?q?FyiSPLCVikI9mp4dKUmo/YveC/WGKhUZtTfDL2woyeryS75HdlARulk/C0gN?=
- =?us-ascii?q?3nHlty7Siu+9xrST/Z5Cjtf4rsyezuPfx2Y0pvGnfz7M11How4mYw10sI+w3?=
- =?us-ascii?q?8f066J8GIHnGG7CtBS3abzfTJZXjIQ68LE6wjinkt4JzSGwJyvBSbV+ddoe9?=
- =?us-ascii?q?TvOjBe4Sk69c0fTfrL4Q=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2ALBQAQo45b/wHyM5BaEwEBBwEBAQQBAQoBAYMkgQ9tE?=
- =?us-ascii?q?iiDcohxjBwBAQEBAQEGgRAleIdriHKGUjCEAUYCg1Y3FQECAQEBAQEBAgFsH?=
- =?us-ascii?q?AyCNSSCXgEBAQECASMVQRALDgoCAiYCAlcGDQYCAQEQB4JHPwGBdAUID6M1g?=
- =?us-ascii?q?S6ELgE9hQwFgQuJZHmBB4ESJwyCKjWDAhkBAQIYhEiCVwKNcY1lCYY0iT8GF?=
- =?us-ascii?q?4FAhDeIYiuKfIoVIjSBISsIAhgIIQ87gmwfggYXg0WFFIVaIzABCY0kAQE?=
-Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 04 Sep 2018 15:26:49 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.infosec.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w84FQbV4001506;
-        Tue, 4 Sep 2018 11:26:37 -0400
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@tycho.nsa.gov>,
-        "russell@coker.com.au" <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>
-References: <000000000000c178e305749daba4@google.com>
- <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
- <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
- <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
- <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
- <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
- <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
-Date:   Tue, 4 Sep 2018 11:28:38 -0400
+        Tue, 4 Sep 2018 15:52:39 -0400
+X-Greylist: delayed 3365 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 15:52:38 EDT
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se14.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jagan@openedev.com>)
+        id 1fxCM2-000CMI-Um; Tue, 04 Sep 2018 07:31:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Q2rJaMISrQdqZdU1O44kefHOeQah8WUTywkLWafh9mM=; b=I5eDeWcVAiwxbTlm6HcmQfDnxJ
+        JJZDGjicaG7klRti9Am5nHj7ZHPFeMN+kHefaVcGx8Wx8MyFzz8skwR8cYCP+sibgANrJpk6kE1h2
+        S/LfiGbWX/IpJI5PuFQXAhJ/wNbBs8/uiqxtS/z/0Dq6lrHbSWTvjuEGeHsebqmaaMnlaKWn3MNYy
+        sWn8DIewE/W6gosNgzQt5YJ2tfckZOjNBlD+38YhCmuBNuYoEQILRNsvvrlmgmVnVLKSu+0OnNOOG
+        QT3GD8F7OHKWbegeSMyb930DjdRNf1k/FCia2zJsYaPIr58wZKxLztQt1ZvmZ4MpkWnFeH/osbxvE
+        7pDItyjg==;
+Received: from [27.7.51.1] (port=55414 helo=[192.168.0.10])
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <jagan@openedev.com>)
+        id 1fxCLs-001gXu-A0; Tue, 04 Sep 2018 10:30:49 -0400
+Subject: Re: [linux-sunxi] Re: [PATCH] arm64: allwinner: h6: Add OrangePi One
+ Plus initial support
+To:     wens@csie.org, Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20180728182615.20845-1-jagan@amarulasolutions.com>
+ <20180730090048.gl7fkduztjkxacqq@flea>
+ <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
+ <CAMty3ZBNM7mdtkBSq5BGuGoa5jKdSuuSVxkOoqPhDJZ-NM2THQ@mail.gmail.com>
+ <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
+ <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
+From:   Jagan Teki <jagan@openedev.com>
+Message-ID: <3f31bff7-689a-3cf6-8e55-cfd98a19ad50@openedev.com>
+Date:   Tue, 4 Sep 2018 20:00:37 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+In-Reply-To: <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.02)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5t1zCI3qHc5wmEx8wuDVHIl602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67rc0diZKnmpMa4igsMUptb3ws
+ 3TRjaC42FtNJuTWwh7xKmH2sfIL+Gt5oALTv4iTezNuDg9qhrek1VDTOXu3/5SyoOv4ayNch+d6T
+ bjnEf/UPlmMF2uxnBmv8AP3A5TPjDxtyIoJXB7URNiYZ50vCiWixanZQ2i7ieK1YvvsTHZEdZUKO
+ 4wuyRglFB/BD6nArChUMJTt5/zUwKtKCX31rG8u/Nx/xqwEVeKEfKL+gGcOZ0jFNVNFK53TFH2ZT
+ TSrEBe1bCawrm8TiglMK9DrLfVMoaMSbUPqhAbNjiOo4N6MEybI1sOftHmSKUCHCvcq0f/1bxtoy
+ dmMxRWzqqOmAYpLOJnypRc2Q/WMdHuO5mB12XN6qAseowdwxD2E3+DaJLnQKyOOdNV2reR3vzxDX
+ NzDt3skp6X1z4vnXAvsYlMbwgn3cxqjQiWJvLJ1LCTkYmgjCa8Q0z411CtB1U74Ub4SbE1l0jCSq
+ wqiEbnL4lT4je/y9FB9UVdGVpQvLSXLC7O13bK8F3Ub7/sMm0uANcEVrS0dDJ9gEsqV0wk3wKYrF
+ WT1ROcYC8FxG576lHCGHG2FxlqBH2d0BjlkdA+pIpmsLhBxQoa5Nf/bcTwDKoqpd+iq1dwuU+8AD
+ kf7k11D33EIdqFl+yO+gMp2pBF4TuimiXv/PFsPAUhXN4WClZ0FzHDeqqFz43py4SDhdaHkWEiOc
+ vT7EI/KlcDFF8GvXQ+uq/i5zcDeTgLCMsytQyvCmpPZh58dtBrikBrVm+7Ub2bRkWbJQMsEazexA
+ znFikT3TcyJU1n9vZrGfKkCHXILSLgsRnqDMxKK4aJOe0I9J6DkTJvbm12Or17A57hFR5tM+m4Wp
+ RRDP6YzwkAPgQJZFTPvCKbcDstvOdJ3nRQv7GfBpLYH9ajYhIn0oWP+NbVMU1O3Z5aBphxOpH0xf
+ AKplpW+KcRDUgx3g3gYkBmOIT6AGhOVtFcFT5KasV9k7aX6m+UeFXprlCOm3BAEbJtDXasD+1yJI
+ 1QyowJGGU9JFhKo8HnFOLjItMeOuxETzQmCI6y95aUyb0ByL/85xvAx7MhTMkYm4d+X1Bs/QNMEN
+ +011qJUxNTwVgnYLaY5oDIFYXeHojjUb1j2h0kB4HvD6IOTrszIaO4dNr4KSu1lT
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 11:02 AM, Dmitry Vyukov wrote:
-> On Tue, Sep 4, 2018 at 2:57 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
->>>>>>>> <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com> wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> syzbot found the following crash on:
->>>>>>>>>
->>>>>>>>> HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
->>>>>>>>> git tree:       net-next
->>>>>>>>> console output:
->>>>>>>>> https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
->>>>>>>>> kernel config:
->>>>>>>>> https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
->>>>>>>>> dashboard link:
->>>>>>>>> https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
->>>>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>>>>>>>
->>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>>>
->>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the
->>>>>>>>> commit:
->>>>>>>>> Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> Hi John, Tyler,
->>>>>>>>
->>>>>>>> I've switched syzbot from selinux to apparmor as we discussed on lss:
->>>>>>>>
->>>>>>>>
->>>>>>>> https://github.com/google/syzkaller/commit/2c6cb254ae6c06f61e3aba21bb89ffb05b5db946
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Sorry, does this mean that you are no longer testing selinux via
->>>>>>> syzbot?
->>>>>>>      That seems unfortunate.  SELinux is default-enabled and used in
->>>>>>> Fedora, RHEL and all derivatives (e.g. CentOS), and mandatory in
->>>>>>> Android
->>>>>>> (and seemingly getting some use in ChromeOS now as well, at least for
->>>>>>> the Android container and possibly wider), so it seems unwise to drop
->>>>>>> it
->>>>>>> from your testing altogether.  I was under the impression that you
->>>>>>> were
->>>>>>> just going to add apparmor to your testing matrix, not drop selinux
->>>>>>> altogether.
+On Monday 03 September 2018 11:05 AM, Chen-Yu Tsai wrote:
+> On Tue, Jul 31, 2018 at 9:42 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>>
+>> On Tue, Jul 31, 2018 at 9:41 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>> On Mon, Jul 30, 2018 at 2:47 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>>>> On Mon, Jul 30, 2018 at 5:00 PM, Maxime Ripard
+>>>> <maxime.ripard@bootlin.com> wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
+>>>>>> OrangePi One Plus is Allwinner H6 based open-source SBC,
+>>>>>> which support:
+>>>>>> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
+>>>>>> - GPU Mali-T720
+>>>>>> - 1GB LPDDR3 RAM
+>>>>>> - AXP805 PMIC
+>>>>>> - 1Gbps GMAC via RTL8211
+>>>>>> - USB 2.0 Host, OTG
+>>>>>> - HDMI port
+>>>>>> - 5V/2A DC power supply
 >>>>>>
+>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>>>> ---
+>>>>>>   arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+>>>>>>   .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
+>>>>>>   2 files changed, 151 insertions(+)
+>>>>>>   create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
 >>>>>>
->>>>>>
->>>>>> It is also important to note that testing with SELinux enabled but no
->>>>>> policy loaded is not going to be very helpful (last we talked that is
->>>>>> what syzbot is/was doing).  While syzbot did uncover some issues
->>>>>> relating to the enabled-no-policy case, those are much less
->>>>>> interesting and less relevant than the loaded-policy case.
+>>>>>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+>>>>>> index 9ffa7a038791..c38f326e7fec 100644
+>>>>>> --- a/arch/arm64/boot/dts/allwinner/Makefile
+>>>>>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+>>>>>> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+>>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+>>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
+>>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+>>>>>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
+>>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+>>>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..0612c19cd994
+>>>>>> --- /dev/null
+>>>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+>>>>>> @@ -0,0 +1,150 @@
+>>>>>> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+>>>>>> +/*
+>>>>>> + * Copyright (C) 2018 Amarula Solutions
+>>>>>> + * Author: Jagan Teki <jagan@amarulasolutions.com>
+>>>>>> + */
+>>>>>> +
+>>>>>> +/dts-v1/;
+>>>>>> +
+>>>>>> +#include "sun50i-h6.dtsi"
+>>>>>> +
+>>>>>> +#include <dt-bindings/gpio/gpio.h>
+>>>>>> +
+>>>>>> +/ {
+>>>>>> +     model = "OrangePi One Plus";
+>>>>>> +     compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
+>>>>>> +
+>>>>>> +     aliases {
+>>>>>> +             serial0 = &uart0;
+>>>>>> +     };
+>>>>>> +
+>>>>>> +     chosen {
+>>>>>> +             stdout-path = "serial0:115200n8";
+>>>>>> +     };
+>>>>>> +};
+>>>>>> +
+>>>>>> +&mmc0 {
+>>>>>> +     pinctrl-names = "default";
+>>>>>> +     pinctrl-0 = <&mmc0_pins>;
+>>>>>> +     vmmc-supply = <&reg_cldo1>;
+>>>>>> +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+>>>>>> +     bus-width = <4>;
+>>>>>> +     status = "okay";
+>>>>>> +};
+>>>>>> +
+>>>>>> +&r_i2c {
+>>>>>> +     status = "okay";
+>>>>>> +
+>>>>>> +     axp805: pmic@36 {
+>>>>>> +             compatible = "x-powers,axp805", "x-powers,axp806";
+>>>>>> +             reg = <0x36>;
+>>>>>> +             interrupt-parent = <&r_intc>;
+>>>>>> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>>>>>> +             interrupt-controller;
+>>>>>> +             #interrupt-cells = <1>;
+>>>>>> +             x-powers,self-working-mode;
+>>>>>> +
+>>>>>> +             regulators {
+>>>>>> +                     reg_aldo1: aldo1 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc-pl";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_aldo2: aldo2 {
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc-ac200";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_aldo3: aldo3 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc25-dram";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_bldo1: bldo1 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <1800000>;
+>>>>>> +                             regulator-max-microvolt = <1800000>;
+>>>>>> +                             regulator-name = "vcc-bias-pll";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_bldo2: bldo2 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <1800000>;
+>>>>>> +                             regulator-max-microvolt = <1800000>;
+>>>>>> +                             regulator-name = "vcc-efuse-pcie-hdmi-io";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_bldo3: bldo3 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <1800000>;
+>>>>>> +                             regulator-max-microvolt = <1800000>;
+>>>>>> +                             regulator-name = "vcc-dcxoio";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     bldo4 {
+>>>>>> +                             /* unused */
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_cldo1: cldo1 {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc-3v3";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_cldo2: cldo2 {
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc-wifi-1";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_cldo3: cldo3 {
+>>>>>> +                             regulator-min-microvolt = <3300000>;
+>>>>>> +                             regulator-max-microvolt = <3300000>;
+>>>>>> +                             regulator-name = "vcc-wifi-2";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_dcdca: dcdca {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <810000>;
+>>>>>> +                             regulator-max-microvolt = <1080000>;
+>>>>>> +                             regulator-name = "vdd-cpu";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_dcdcc: dcdcc {
+>>>>>> +                             regulator-min-microvolt = <810000>;
+>>>>>> +                             regulator-max-microvolt = <1080000>;
+>>>>>> +                             regulator-name = "vdd-gpu";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_dcdcd: dcdcd {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <960000>;
+>>>>>> +                             regulator-max-microvolt = <960000>;
+>>>>>> +                             regulator-name = "vdd-sys";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     reg_dcdce: dcdce {
+>>>>>> +                             regulator-always-on;
+>>>>>> +                             regulator-min-microvolt = <1200000>;
+>>>>>> +                             regulator-max-microvolt = <1200000>;
+>>>>>> +                             regulator-name = "vcc-dram";
+>>>>>> +                     };
+>>>>>> +
+>>>>>> +                     sw {
+>>>>>> +                             /* unused */
+>>>>>> +                     };
 >>>>>
->>>>>
->>>>>
->>>>> I had thought that they had switched over to at least loading a policy
->>>>> but
->>>>> possibly left it in permissive mode because the base distribution didn't
->>>>> properly support SELinux out of the box.  But I may be mistaken.
->>>>> Regardless, the right solution is to migrate to testing with a policy
->>>>> loaded not to stop testing altogether.
->>>>>
->>>>> Optimally, they'd test on at least one distribution/OS where SELinux is
->>>>> in
->>>>> fact supported out of the box, e.g. CentOS, Android, and/or ChromeOS.
+>>>>> Can't we have a DTSI for this PMIC too?
 >>>>
->>>>
->>>>
->>>> Or Fedora, of course.
+>>>> Back when we started adding the regulators, Mark wasn't too happy with
+>>>> all the placeholders we put in the dtsi. I think we got away with it
+>>>> because we had other things in there as well. That's not true for this
+>>>> particular PMIC.
 >>>
->>>
->>> Hi,
->>>
->>> Yes, we switched from selinux to apparmor. The thing is that we
->>> effectively did not test selinux lately, so it's more like just
->>> enabling apparmor rather than disabling selinux.
->>>
->>> The story goes as follows.
->>> We enabled selinux, but did not have policy and selinux wasn't enabled.
->>> Then Paul (I think) pointer that out. After some debugging I figured
->>> out that our debian wheezy actually has a policy, it's just that
->>> selinux utilities were not installed, so init could not load the
->>> policy.
->>> I installed the tools, and we started loading policy.
->>> But then it turned out that wheezy policy does not allows mounting
->>> cgroup2 fs and maybe some others even in non-enforcing mode. As far as
->>> I understand that's because the policy does not have definition for
->>> the fs, and so loading bails out with an error.
->>> We need cgroup2 both for testing and for better sandboxing (no other
->>> way to restrict e.g. memory consumption). Moreover, we did not test
->>> any actual interesting interactions with selinux (there must be some?
->>> but I don't know what are they).
->>> So I had to uninstall the tool and policy is not loaded again.
->>> I investigated building a newer debian image with debootstrap (which
->>> should have newer policy I guess). But they don't work, some cryptic
->>> errors in init. Other people reported the same.
->>> So that's we are. I don't have any ideas left...
+>>> So we need separate dtsi for this PMIC as well?
 >>
->>
->> So why not ask for help from the SELinux community? I've cc'd the selinux
->> list and a couple of folks involved in Debian selinux.  I see a couple of
->> options but I don't know your constraints for syzbot:
->>
->> 1) Run an instance of syzbot on a distro that supports SELinux enabled out
->> of the box like Fedora. Then you don't have to fight with SELinux and can
->> just focus on syzbot, while still testing SELinux enabled and enforcing.
->>
->> 2) Report the problems you are having with enabling SELinux on newer Debian
->> to the selinux list and/or the Debian selinux package maintainers so that
->> someone can help you resolve them.
->>
->> 3) Back-port the cgroup2 policy definitions to your wheezy policy, rebuild
->> it, and install that.  We could help provide guidance on that. I think
->> you'll need to rebuild the base policy on wheezy; in distributions with
->> modern SELinux userspace, one could do it just by adding a CIL module
->> locally.
+>> I don't think we do. We don't gain much.
 > 
-> Thanks, Stephen!
-> 
-> I would like to understand first if failing mount(2) for unknown fs is
-> selinux bug or not. Because if it is and it is fixed, then it would
-> resolve the problem without actually doing anything (well, at least on
-> our side :)).
+> Merged with Maxime's ack, and the subject prefix fixed.
+> Also squashed in the Ethernet patch for this board.
 
-Yes, I think that's a selinux kernel regression, previously reported here:
-https://lkml.org/lkml/2017/10/6/658
-
-Unfortunately I don't think it has been fixed upstream.  Generally 
-people using SELinux with a newer kernel are also using a newer policy. 
-That said, I agree it is a regression and ought to be fixed.
-
->> As for exercising SELinux, you'll exercise SELinux just by enabling it and
->> loading a policy, since it will perform permission checking on all object
->> accesses.   But you can get more extensive coverage by running the
->> selinux-testsuite.  We only test that on Fedora and RHEL however, so getting
->> it to work on Debian might take some effort.
-> 
-> That's good.
-> I just thought that there is some potential in making the policy
-> interact more with what the fuzzer does. With respect to fs accesses,
-> it works within own temp directory, and I guess the policy is actually
-> all the same for everything it does in that directory. There also may
-> be something related to extended attributes, context changes, etc?
-
-Yes, by default, your fuzzer is going to just run in a single security 
-context and all files it creates will have a single security context. 
-So the policy side of things won't be interesting and probably 
-everything will be allowed (if it runs in the unconfined context), but 
-you'll still exercise many code paths.  The selinux-testsuite would 
-trigger many process context changes and create files under varying 
-contexts, so that would be more complete in its coverage.
+H6 EMAC node changes still in ML.
