@@ -2,71 +2,70 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18B0C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E01C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC0A20867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B3C620867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:29:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRnJzdBZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC0A20867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rpq9xabV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3C620867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeIDUyy (ORCPT
+        id S1727817AbeIDUy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:54:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46500 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbeIDUyx (ORCPT
+        Tue, 4 Sep 2018 16:54:59 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45672 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbeIDUy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:54:53 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b129-v6so1904067pga.13;
-        Tue, 04 Sep 2018 09:29:02 -0700 (PDT)
+        Tue, 4 Sep 2018 16:54:57 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so1938897pfo.12;
+        Tue, 04 Sep 2018 09:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tz7EXMRCLNE4Q1a1uk0TzX8yxNperzmq/A51ccPZafM=;
-        b=lRnJzdBZd0jqvH1wsrcHhUickA74fgEk/hWnfTw12CvIKJlXtEY744IieTy4/nMsfn
-         f/NBdHQqY1lOqMnLMzoz4yrJQ8jff5y67OeFz901O+AMrBxRfVjHh/LI8yeMyp+qtlTk
-         v18ZTQGdUamCOb6Ao/83k9k0NOF6KFGdybPBPiD1Gz1NHnvZoYaRKPbswb7H59y5MVPV
-         rsYH8yMDkTXXZmQB0XUMYBiVAT3eDBmYPfzwpXOyxFqkSCLnYoasvqy75cawXpF4VrtR
-         ti4UGg9PRsper5iUQQCej8rBc3WY22VbO4MNiuWEIJsLEREEHY35vUuCnbWngQnvT2vH
-         KaVg==
+        bh=YVm9y4SfLIoeIb6tzbi0LNlfWrw23xbF60BPnM2J73E=;
+        b=rpq9xabVSNpBvi7QCbWzg/q2FUMe3yj4BLlsJWGwYBBPZy+LtBS+lBUCAN5slzlOEx
+         ZUZBXZ2xxiCibtXcuHeueTYGoUfPG0cOh+D2ZkvF2dxQ9vu0FNjfE8ba/qYKVIAowBJe
+         TyvFtROVBVgtJr8oNqw10RmQY1CaaIp3hTAtx9N8s/6BLTNxRPi9IfitghR6BidkO2yL
+         GglPCdEkE8jBRHDVCGOSzdPBXdNBE8LoL63VqWnvZ4AjJfxTX6YozkOHuzLNldRxJiC6
+         bEe9TzcDGKlxfDKFXcrLTVIsS/fWU+RhYEXv9oUB04or8s8vxGxTSyvLeq+jeTDm1n/W
+         ZDkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tz7EXMRCLNE4Q1a1uk0TzX8yxNperzmq/A51ccPZafM=;
-        b=SDsdG419P/prXVypp9mmTJ4Q0cWyzm6LKIBpgYXOC2XJXDyOMv01nFQYc7KNGdKurQ
-         Lcl6ijaNEzdWLIAt+A0Dk1U0HN8uTJqoHsAxA6T69Dd4N6UvFMVPH6F0F5P7e8DjYp1R
-         ZCcCxLvPGX1R2FxDSH0e5RstNcmJRkowetp2gazQl6VgFsV5LQ2LF55CBBBQYBjz4VHD
-         LD3WN8hoLhF9lwcuKpQk+KJUUJ4CHoylsG9B6XJeo91KmOgGLbqYHIuh9gc1KS7hqkoR
-         W80XGlEYmhAoKuPD1f7yNg/AXO4d9RVeJBu2LQDOMvr2ofXMlZ6npFJuJ//FGZeEGnJw
-         9f8Q==
-X-Gm-Message-State: APzg51BJQIt7vT/n1lxJqVeVx+bdoDLHCkHdA/wOTrV8s2GPJtkH7JUL
-        t5mSg++N5Mzuyk2UGdyCPjrchpcE
-X-Google-Smtp-Source: ANB0VdYeOeb4+Oi4litQQfs0elMpXD4CP4SMrciI3ZWCFLhsZs+xpkfhjUzJrre/Vx8j64jYirWFsA==
-X-Received: by 2002:a63:4e5f:: with SMTP id o31-v6mr31931477pgl.256.1536078541712;
-        Tue, 04 Sep 2018 09:29:01 -0700 (PDT)
+        bh=YVm9y4SfLIoeIb6tzbi0LNlfWrw23xbF60BPnM2J73E=;
+        b=A+Saa8+en/LTDeBhOBBiI4t0KrA8SvNsxj7RB8XbWps5tCwDiS9PwzWsdY05wlHS0I
+         IUKLE3hJcsVtsyNc3Aaqnky5dR+aq20SIxotKBq36XebOSzEsOQWYH+g+86jg8knVG9N
+         2dfm7kjR8YXwy6N+/aXo5ytuxe5QC07KDIwGm/47zCPTvEprKzInP/Jr5+Ho0b6ir/yO
+         1rNIYuj+8btB9q7M5LxvWUtLY1EGX/l94QIIC9nVQEsGXEMktn6d8VhRH7nE5OhHBAZW
+         auBTOD/T9Bt5dgUVpvLySAnAybpSOHiTjt+cKiS5AHR0I7/kGcstPLisaJTB0R3XXj/e
+         bbsw==
+X-Gm-Message-State: APzg51BKIq8nHDqhvtzelNJ/t2hyRc3a4UUXgcHV04f9FwXZmw/+ApfA
+        hvLjZKq2FZjcLaY0Mrf9hxPjQccO
+X-Google-Smtp-Source: ANB0VdaVP0XnSZjndv1YUj8lOH0N2r9+x7HiI7kQKkqZAyTEE2Uh0q6USx2K3wcf6f9UFKKp0bm3xA==
+X-Received: by 2002:a63:cf52:: with SMTP id b18-v6mr18665988pgj.194.1536078545665;
+        Tue, 04 Sep 2018 09:29:05 -0700 (PDT)
 Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id j191-v6sm32243827pfc.136.2018.09.04.09.28.57
+        by smtp.googlemail.com with ESMTPSA id j191-v6sm32243827pfc.136.2018.09.04.09.29.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 09:29:00 -0700 (PDT)
+        Tue, 04 Sep 2018 09:29:04 -0700 (PDT)
 From:   sunil.kovvuri@gmail.com
 To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
         andrew@lunn.ch, davem@davemloft.net, netdev@vger.kernel.org,
         Sunil Goutham <sgoutham@marvell.com>
-Subject: [PATCH v3 02/15] soc: octeontx2: Reset all RVU blocks
-Date:   Tue,  4 Sep 2018 21:58:32 +0530
-Message-Id: <1536078525-31534-3-git-send-email-sunil.kovvuri@gmail.com>
+Subject: [PATCH v3 03/15] soc: octeontx2: Gather RVU blocks HW info
+Date:   Tue,  4 Sep 2018 21:58:33 +0530
+Message-Id: <1536078525-31534-4-git-send-email-sunil.kovvuri@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536078525-31534-1-git-send-email-sunil.kovvuri@gmail.com>
 References: <1536078525-31534-1-git-send-email-sunil.kovvuri@gmail.com>
@@ -77,365 +76,612 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sunil Goutham <sgoutham@marvell.com>
 
-Go through all BLKADDRs and check which ones are implemented
-on this silicon and do a HW reset of each implemented block.
-Also added all RVU AF and PF register offsets.
+This patch gathers NPA/NIX/SSO/SSOW/TIM/CPT RVU blocks's
+HW info like number of LFs. Important register offsets
+saved for later use to avoid code duplication for each block.
+A bitmap is allocated for each of the blocks which later
+on will be used to allocate a LF for a RVU PF/VF.
+
+Also added RVU NIX/NPA block registers and few registers
+of other blocks.
 
 Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
 ---
- drivers/soc/marvell/octeontx2/rvu.c        |  78 ++++++++++++++++++++
- drivers/soc/marvell/octeontx2/rvu.h        |  37 ++++++++++
- drivers/soc/marvell/octeontx2/rvu_reg.h    | 113 +++++++++++++++++++++++++++++
- drivers/soc/marvell/octeontx2/rvu_struct.h |  36 +++++++++
- 4 files changed, 264 insertions(+)
- create mode 100644 drivers/soc/marvell/octeontx2/rvu_reg.h
- create mode 100644 drivers/soc/marvell/octeontx2/rvu_struct.h
+ drivers/soc/marvell/octeontx2/rvu.c     | 167 ++++++++++++++++
+ drivers/soc/marvell/octeontx2/rvu.h     |  21 ++
+ drivers/soc/marvell/octeontx2/rvu_reg.h | 335 +++++++++++++++++++++++++++++++-
+ 3 files changed, 518 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index 5af4da6..d40fabf 100644
+index d40fabf..fa5f40b 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.c
 +++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -16,6 +16,7 @@
- #include <linux/sysfs.h>
+@@ -57,6 +57,15 @@ int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero)
+ 	return -EBUSY;
+ }
  
- #include "rvu.h"
-+#include "rvu_reg.h"
- 
- #define DRV_NAME	"octeontx2-af"
- #define DRV_STRING      "Marvell OcteonTX2 RVU Admin Function Driver"
-@@ -33,6 +34,70 @@ MODULE_LICENSE("GPL v2");
- MODULE_VERSION(DRV_VERSION);
- MODULE_DEVICE_TABLE(pci, rvu_id_table);
- 
-+/* Poll a RVU block's register 'offset', for a 'zero'
-+ * or 'nonzero' at bits specified by 'mask'
-+ */
-+int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero)
++int rvu_alloc_bitmap(struct rsrc_bmap *rsrc)
 +{
-+	void __iomem *reg;
-+	int timeout = 100;
-+	u64 reg_val;
-+
-+	reg = rvu->afreg_base + ((block << 28) | offset);
-+	while (timeout) {
-+		reg_val = readq(reg);
-+		if (zero && !(reg_val & mask))
-+			return 0;
-+		if (!zero && (reg_val & mask))
-+			return 0;
-+		udelay(1);
-+		cpu_relax();
-+		timeout--;
-+	}
-+	return -EBUSY;
++	rsrc->bmap = kcalloc(BITS_TO_LONGS(rsrc->max),
++			     sizeof(long), GFP_KERNEL);
++	if (!rsrc->bmap)
++		return -ENOMEM;
++	return 0;
 +}
 +
-+static void rvu_check_block_implemented(struct rvu *rvu)
+ static void rvu_check_block_implemented(struct rvu *rvu)
+ {
+ 	struct rvu_hwinfo *hw = rvu->hw;
+@@ -98,6 +107,157 @@ static void rvu_reset_all_blocks(struct rvu *rvu)
+ 	rvu_block_reset(rvu, BLKADDR_NDC2, NDC_AF_BLK_RST);
+ }
+ 
++static void rvu_free_hw_resources(struct rvu *rvu)
 +{
 +	struct rvu_hwinfo *hw = rvu->hw;
 +	struct rvu_block *block;
-+	int blkid;
-+	u64 cfg;
++	int id;
 +
-+	/* For each block check if 'implemented' bit is set */
-+	for (blkid = 0; blkid < BLK_COUNT; blkid++) {
-+		block = &hw->block[blkid];
-+		cfg = rvupf_read64(rvu, RVU_PF_BLOCK_ADDRX_DISC(blkid));
-+		if (cfg & BIT_ULL(11))
-+			block->implemented = true;
++	/* Free all bitmaps */
++	for (id = 0; id < BLK_COUNT; id++) {
++		block = &hw->block[id];
++		kfree(block->lf.bmap);
 +	}
 +}
 +
-+static void rvu_block_reset(struct rvu *rvu, int blkaddr, u64 rst_reg)
++static int rvu_setup_hw_resources(struct rvu *rvu)
 +{
-+	struct rvu_block *block = &rvu->hw->block[blkaddr];
++	struct rvu_hwinfo *hw = rvu->hw;
++	struct rvu_block *block;
++	int err;
++	u64 cfg;
 +
++	/* Get HW supported max RVU PF & VF count */
++	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_CONST);
++	hw->total_pfs = (cfg >> 32) & 0xFF;
++	hw->total_vfs = (cfg >> 20) & 0xFFF;
++	hw->max_vfs_per_pf = (cfg >> 40) & 0xFF;
++
++	/* Init NPA LF's bitmap */
++	block = &hw->block[BLKADDR_NPA];
 +	if (!block->implemented)
-+		return;
++		goto nix;
++	cfg = rvu_read64(rvu, BLKADDR_NPA, NPA_AF_CONST);
++	block->lf.max = (cfg >> 16) & 0xFFF;
++	block->addr = BLKADDR_NPA;
++	block->lfshift = 8;
++	block->lookup_reg = NPA_AF_RVU_LF_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_NPA_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_NPA_CFG;
++	block->lfcfg_reg = NPA_PRIV_LFX_CFG;
++	block->msixcfg_reg = NPA_PRIV_LFX_INT_CFG;
++	block->lfreset_reg = NPA_AF_LF_RST;
++	sprintf(block->name, "NPA");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
 +
-+	rvu_write64(rvu, blkaddr, rst_reg, BIT_ULL(0));
-+	rvu_poll_reg(rvu, blkaddr, rst_reg, BIT_ULL(63), true);
-+}
++nix:
++	/* Init NIX LF's bitmap */
++	block = &hw->block[BLKADDR_NIX0];
++	if (!block->implemented)
++		goto sso;
++	cfg = rvu_read64(rvu, BLKADDR_NIX0, NIX_AF_CONST2);
++	block->lf.max = cfg & 0xFFF;
++	block->addr = BLKADDR_NIX0;
++	block->lfshift = 8;
++	block->lookup_reg = NIX_AF_RVU_LF_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_NIX_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_NIX_CFG;
++	block->lfcfg_reg = NIX_PRIV_LFX_CFG;
++	block->msixcfg_reg = NIX_PRIV_LFX_INT_CFG;
++	block->lfreset_reg = NIX_AF_LF_RST;
++	sprintf(block->name, "NIX");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
 +
-+static void rvu_reset_all_blocks(struct rvu *rvu)
-+{
-+	/* Do a HW reset of all RVU blocks */
-+	rvu_block_reset(rvu, BLKADDR_NPA, NPA_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_NIX0, NIX_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_NPC, NPC_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_SSO, SSO_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_TIM, TIM_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_CPT0, CPT_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_NDC0, NDC_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_NDC1, NDC_AF_BLK_RST);
-+	rvu_block_reset(rvu, BLKADDR_NDC2, NDC_AF_BLK_RST);
++sso:
++	/* Init SSO group's bitmap */
++	block = &hw->block[BLKADDR_SSO];
++	if (!block->implemented)
++		goto ssow;
++	cfg = rvu_read64(rvu, BLKADDR_SSO, SSO_AF_CONST);
++	block->lf.max = cfg & 0xFFFF;
++	block->addr = BLKADDR_SSO;
++	block->multislot = true;
++	block->lfshift = 3;
++	block->lookup_reg = SSO_AF_RVU_LF_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_SSO_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_SSO_CFG;
++	block->lfcfg_reg = SSO_PRIV_LFX_HWGRP_CFG;
++	block->msixcfg_reg = SSO_PRIV_LFX_HWGRP_INT_CFG;
++	block->lfreset_reg = SSO_AF_LF_HWGRP_RST;
++	sprintf(block->name, "SSO GROUP");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
++
++ssow:
++	/* Init SSO workslot's bitmap */
++	block = &hw->block[BLKADDR_SSOW];
++	if (!block->implemented)
++		goto tim;
++	block->lf.max = (cfg >> 56) & 0xFF;
++	block->addr = BLKADDR_SSOW;
++	block->multislot = true;
++	block->lfshift = 3;
++	block->lookup_reg = SSOW_AF_RVU_LF_HWS_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_SSOW_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_SSOW_CFG;
++	block->lfcfg_reg = SSOW_PRIV_LFX_HWS_CFG;
++	block->msixcfg_reg = SSOW_PRIV_LFX_HWS_INT_CFG;
++	block->lfreset_reg = SSOW_AF_LF_HWS_RST;
++	sprintf(block->name, "SSOWS");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
++
++tim:
++	/* Init TIM LF's bitmap */
++	block = &hw->block[BLKADDR_TIM];
++	if (!block->implemented)
++		goto cpt;
++	cfg = rvu_read64(rvu, BLKADDR_TIM, TIM_AF_CONST);
++	block->lf.max = cfg & 0xFFFF;
++	block->addr = BLKADDR_TIM;
++	block->multislot = true;
++	block->lfshift = 3;
++	block->lookup_reg = TIM_AF_RVU_LF_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_TIM_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_TIM_CFG;
++	block->lfcfg_reg = TIM_PRIV_LFX_CFG;
++	block->msixcfg_reg = TIM_PRIV_LFX_INT_CFG;
++	block->lfreset_reg = TIM_AF_LF_RST;
++	sprintf(block->name, "TIM");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
++
++cpt:
++	/* Init CPT LF's bitmap */
++	block = &hw->block[BLKADDR_CPT0];
++	if (!block->implemented)
++		return 0;
++	cfg = rvu_read64(rvu, BLKADDR_CPT0, CPT_AF_CONSTANTS0);
++	block->lf.max = cfg & 0xFF;
++	block->addr = BLKADDR_CPT0;
++	block->multislot = true;
++	block->lfshift = 3;
++	block->lookup_reg = CPT_AF_RVU_LF_CFG_DEBUG;
++	block->pf_lfcnt_reg = RVU_PRIV_PFX_CPT_CFG;
++	block->vf_lfcnt_reg = RVU_PRIV_HWVFX_CPT_CFG;
++	block->lfcfg_reg = CPT_PRIV_LFX_CFG;
++	block->msixcfg_reg = CPT_PRIV_LFX_INT_CFG;
++	block->lfreset_reg = CPT_AF_LF_RST;
++	sprintf(block->name, "CPT");
++	err = rvu_alloc_bitmap(&block->lf);
++	if (err)
++		return err;
++
++	return 0;
 +}
 +
  static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  {
  	struct device *dev = &pdev->dev;
-@@ -43,6 +108,12 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (!rvu)
- 		return -ENOMEM;
+@@ -156,6 +316,10 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
-+	rvu->hw = devm_kzalloc(dev, sizeof(struct rvu_hwinfo), GFP_KERNEL);
-+	if (!rvu->hw) {
-+		devm_kfree(dev, rvu);
-+		return -ENOMEM;
-+	}
-+
- 	pci_set_drvdata(pdev, rvu);
- 	rvu->pdev = pdev;
- 	rvu->dev = &pdev->dev;
-@@ -80,6 +151,11 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_release_regions;
- 	}
+ 	rvu_reset_all_blocks(rvu);
  
-+	/* Check which blocks the HW supports */
-+	rvu_check_block_implemented(rvu);
-+
-+	rvu_reset_all_blocks(rvu);
++	err = rvu_setup_hw_resources(rvu);
++	if (err)
++		goto err_release_regions;
 +
  	return 0;
  
  err_release_regions:
-@@ -88,6 +164,7 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	pci_disable_device(pdev);
- err_freemem:
- 	pci_set_drvdata(pdev, NULL);
-+	devm_kfree(&pdev->dev, rvu->hw);
- 	devm_kfree(dev, rvu);
- 	return err;
- }
-@@ -100,6 +177,7 @@ static void rvu_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
- 	pci_set_drvdata(pdev, NULL);
+@@ -173,6 +337,9 @@ static void rvu_remove(struct pci_dev *pdev)
+ {
+ 	struct rvu *rvu = pci_get_drvdata(pdev);
  
-+	devm_kfree(&pdev->dev, rvu->hw);
- 	devm_kfree(&pdev->dev, rvu);
- }
- 
++	rvu_reset_all_blocks(rvu);
++	rvu_free_hw_resources(rvu);
++
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+ 	pci_set_drvdata(pdev, NULL);
 diff --git a/drivers/soc/marvell/octeontx2/rvu.h b/drivers/soc/marvell/octeontx2/rvu.h
-index 4a4b0ad..e2c54d0 100644
+index e2c54d0..592b820 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.h
 +++ b/drivers/soc/marvell/octeontx2/rvu.h
-@@ -11,6 +11,8 @@
- #ifndef RVU_H
- #define RVU_H
- 
-+#include "rvu_struct.h"
-+
- /* PCI device IDs */
- #define	PCI_DEVID_OCTEONTX2_RVU_AF		0xA065
- 
-@@ -21,11 +23,46 @@
+@@ -23,11 +23,31 @@
  
  #define NAME_SIZE				32
  
-+struct rvu_block {
-+	bool implemented;
++struct rsrc_bmap {
++	unsigned long *bmap;	/* Pointer to resource bitmap */
++	u16  max;		/* Max resource id or count */
 +};
 +
-+struct rvu_hwinfo {
-+	struct rvu_block block[BLK_COUNT]; /* Block info */
-+};
-+
- struct rvu {
- 	void __iomem		*afreg_base;
- 	void __iomem		*pfreg_base;
- 	struct pci_dev		*pdev;
- 	struct device		*dev;
-+	struct rvu_hwinfo       *hw;
+ struct rvu_block {
++	struct rsrc_bmap lf;
++	bool multislot;
+ 	bool implemented;
++	u8   addr;  /* RVU_BLOCK_ADDR_E */
++	u8   lfshift;
++	u64  lookup_reg;
++	u64  pf_lfcnt_reg;
++	u64  vf_lfcnt_reg;
++	u64  lfcfg_reg;
++	u64  msixcfg_reg;
++	u64  lfreset_reg;
++	unsigned char name[NAME_SIZE];
  };
  
-+static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
-+{
-+	writeq(val, rvu->afreg_base + ((block << 28) | offset));
-+}
+ struct rvu_hwinfo {
++	u8	total_pfs;   /* MAX RVU PFs HW supports */
++	u16	total_vfs;   /* Max RVU VFs HW supports */
++	u16	max_vfs_per_pf; /* Max VFs that can be attached to a PF */
 +
-+static inline u64 rvu_read64(struct rvu *rvu, u64 block, u64 offset)
-+{
-+	return readq(rvu->afreg_base + ((block << 28) | offset));
-+}
-+
-+static inline void rvupf_write64(struct rvu *rvu, u64 offset, u64 val)
-+{
-+	writeq(val, rvu->pfreg_base + offset);
-+}
-+
-+static inline u64 rvupf_read64(struct rvu *rvu, u64 offset)
-+{
-+	return readq(rvu->pfreg_base + offset);
-+}
-+
-+/* Function Prototypes
-+ * RVU
-+ */
-+
-+int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero);
-+
+ 	struct rvu_block block[BLK_COUNT]; /* Block info */
+ };
+ 
+@@ -63,6 +83,7 @@ static inline u64 rvupf_read64(struct rvu *rvu, u64 offset)
+  * RVU
+  */
+ 
++int rvu_alloc_bitmap(struct rsrc_bmap *rsrc);
+ int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero);
+ 
  #endif /* RVU_H */
 diff --git a/drivers/soc/marvell/octeontx2/rvu_reg.h b/drivers/soc/marvell/octeontx2/rvu_reg.h
-new file mode 100644
-index 0000000..e7abd7e
---- /dev/null
+index e7abd7e..a7995d1 100644
+--- a/drivers/soc/marvell/octeontx2/rvu_reg.h
 +++ b/drivers/soc/marvell/octeontx2/rvu_reg.h
-@@ -0,0 +1,113 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ * Marvell OcteonTx2 RVU Admin Function driver
-+ *
-+ * Copyright (C) 2018 Marvell International Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef RVU_REG_H
-+#define RVU_REG_H
-+
-+/* Admin function registers */
-+#define RVU_AF_MSIXTR_BASE                  (0x10)
-+#define RVU_AF_ECO                          (0x20)
-+#define RVU_AF_BLK_RST                      (0x30)
-+#define RVU_AF_PF_BAR4_ADDR                 (0x40)
-+#define RVU_AF_RAS                          (0x100)
-+#define RVU_AF_RAS_W1S                      (0x108)
-+#define RVU_AF_RAS_ENA_W1S                  (0x110)
-+#define RVU_AF_RAS_ENA_W1C                  (0x118)
-+#define RVU_AF_GEN_INT                      (0x120)
-+#define RVU_AF_GEN_INT_W1S                  (0x128)
-+#define RVU_AF_GEN_INT_ENA_W1S              (0x130)
-+#define RVU_AF_GEN_INT_ENA_W1C              (0x138)
-+#define	RVU_AF_AFPF_MBOX0		    (0x02000)
-+#define	RVU_AF_AFPF_MBOX1		    (0x02008)
-+#define RVU_AF_AFPFX_MBOXX(a, b)            (0x2000 | (a) << 4 | (b) << 3)
-+#define RVU_AF_PFME_STATUS                  (0x2800)
-+#define RVU_AF_PFTRPEND                     (0x2810)
-+#define RVU_AF_PFTRPEND_W1S                 (0x2820)
-+#define RVU_AF_PF_RST                       (0x2840)
-+#define RVU_AF_HWVF_RST                     (0x2850)
-+#define RVU_AF_PFAF_MBOX_INT                (0x2880)
-+#define RVU_AF_PFAF_MBOX_INT_W1S            (0x2888)
-+#define RVU_AF_PFAF_MBOX_INT_ENA_W1S        (0x2890)
-+#define RVU_AF_PFAF_MBOX_INT_ENA_W1C        (0x2898)
-+#define RVU_AF_PFFLR_INT                    (0x28a0)
-+#define RVU_AF_PFFLR_INT_W1S                (0x28a8)
-+#define RVU_AF_PFFLR_INT_ENA_W1S            (0x28b0)
-+#define RVU_AF_PFFLR_INT_ENA_W1C            (0x28b8)
-+#define RVU_AF_PFME_INT                     (0x28c0)
-+#define RVU_AF_PFME_INT_W1S                 (0x28c8)
-+#define RVU_AF_PFME_INT_ENA_W1S             (0x28d0)
-+#define RVU_AF_PFME_INT_ENA_W1C             (0x28d8)
-+
-+/* Admin function's privileged PF/VF registers */
-+#define RVU_PRIV_CONST                      (0x8000000)
-+#define RVU_PRIV_GEN_CFG                    (0x8000010)
-+#define RVU_PRIV_CLK_CFG                    (0x8000020)
-+#define RVU_PRIV_ACTIVE_PC                  (0x8000030)
-+#define RVU_PRIV_PFX_CFG(a)                 (0x8000100 | (a) << 16)
-+#define RVU_PRIV_PFX_MSIX_CFG(a)            (0x8000110 | (a) << 16)
-+#define RVU_PRIV_PFX_ID_CFG(a)              (0x8000120 | (a) << 16)
-+#define RVU_PRIV_PFX_INT_CFG(a)             (0x8000200 | (a) << 16)
-+#define RVU_PRIV_PFX_NIX_CFG                (0x8000300)
-+#define RVU_PRIV_PFX_NPA_CFG		    (0x8000310)
-+#define RVU_PRIV_PFX_SSO_CFG                (0x8000320)
-+#define RVU_PRIV_PFX_SSOW_CFG               (0x8000330)
-+#define RVU_PRIV_PFX_TIM_CFG                (0x8000340)
-+#define RVU_PRIV_PFX_CPT_CFG                (0x8000350)
-+#define RVU_PRIV_BLOCK_TYPEX_REV(a)         (0x8000400 | (a) << 3)
-+#define RVU_PRIV_HWVFX_INT_CFG(a)           (0x8001280 | (a) << 16)
-+#define RVU_PRIV_HWVFX_NIX_CFG              (0x8001300)
-+#define RVU_PRIV_HWVFX_NPA_CFG              (0x8001310)
-+#define RVU_PRIV_HWVFX_SSO_CFG              (0x8001320)
-+#define RVU_PRIV_HWVFX_SSOW_CFG             (0x8001330)
-+#define RVU_PRIV_HWVFX_TIM_CFG              (0x8001340)
-+#define RVU_PRIV_HWVFX_CPT_CFG              (0x8001350)
-+
-+/* RVU PF registers */
-+#define	RVU_PF_VFX_PFVF_MBOX0		    (0x00000)
-+#define	RVU_PF_VFX_PFVF_MBOX1		    (0x00008)
-+#define RVU_PF_VFX_PFVF_MBOXX(a, b)         (0x0 | (a) << 12 | (b) << 3)
-+#define RVU_PF_VF_BAR4_ADDR                 (0x10)
-+#define RVU_PF_BLOCK_ADDRX_DISC(a)          (0x200 | (a) << 3)
-+#define RVU_PF_VFME_STATUSX(a)              (0x800 | (a) << 3)
-+#define RVU_PF_VFTRPENDX(a)                 (0x820 | (a) << 3)
-+#define RVU_PF_VFTRPEND_W1SX(a)             (0x840 | (a) << 3)
-+#define RVU_PF_VFPF_MBOX_INTX(a)            (0x880 | (a) << 3)
-+#define RVU_PF_VFPF_MBOX_INT_W1SX(a)        (0x8A0 | (a) << 3)
-+#define RVU_PF_VFPF_MBOX_INT_ENA_W1SX(a)    (0x8C0 | (a) << 3)
-+#define RVU_PF_VFPF_MBOX_INT_ENA_W1CX(a)    (0x8E0 | (a) << 3)
-+#define RVU_PF_VFFLR_INTX(a)                (0x900 | (a) << 3)
-+#define RVU_PF_VFFLR_INT_W1SX(a)            (0x920 | (a) << 3)
-+#define RVU_PF_VFFLR_INT_ENA_W1SX(a)        (0x940 | (a) << 3)
-+#define RVU_PF_VFFLR_INT_ENA_W1CX(a)        (0x960 | (a) << 3)
-+#define RVU_PF_VFME_INTX(a)                 (0x980 | (a) << 3)
-+#define RVU_PF_VFME_INT_W1SX(a)             (0x9A0 | (a) << 3)
-+#define RVU_PF_VFME_INT_ENA_W1SX(a)         (0x9C0 | (a) << 3)
-+#define RVU_PF_VFME_INT_ENA_W1CX(a)         (0x9E0 | (a) << 3)
-+#define RVU_PF_PFAF_MBOX0                   (0xC00)
-+#define RVU_PF_PFAF_MBOX1                   (0xC08)
-+#define RVU_PF_PFAF_MBOXX(a)                (0xC00 | (a) << 3)
-+#define RVU_PF_INT                          (0xc20)
-+#define RVU_PF_INT_W1S                      (0xc28)
-+#define RVU_PF_INT_ENA_W1S                  (0xc30)
-+#define RVU_PF_INT_ENA_W1C                  (0xc38)
-+#define RVU_PF_MSIX_VECX_ADDR(a)            (0x000 | (a) << 4)
-+#define RVU_PF_MSIX_VECX_CTL(a)             (0x008 | (a) << 4)
-+#define RVU_PF_MSIX_PBAX(a)                 (0xF0000 | (a) << 3)
+@@ -101,12 +101,337 @@
+ #define RVU_PF_MSIX_VECX_CTL(a)             (0x008 | (a) << 4)
+ #define RVU_PF_MSIX_PBAX(a)                 (0xF0000 | (a) << 3)
+ 
+-
++/* NPA block's admin function registers */
+ #define NPA_AF_BLK_RST                  (0x0000)
+-#define NIX_AF_BLK_RST                  (0x00B0)
+-#define SSO_AF_BLK_RST                  (0x10f8)
+-#define TIM_AF_BLK_RST                  (0x10)
+-#define CPT_AF_BLK_RST                  (0x46000)
++#define NPA_AF_CONST                    (0x0010)
++#define NPA_AF_CONST1                   (0x0018)
++#define NPA_AF_LF_RST                   (0x0020)
++#define NPA_AF_GEN_CFG                  (0x0030)
++#define NPA_AF_NDC_CFG                  (0x0040)
++#define NPA_AF_INP_CTL                  (0x00D0)
++#define NPA_AF_ACTIVE_CYCLES_PC         (0x00F0)
++#define NPA_AF_AVG_DELAY                (0x0100)
++#define NPA_AF_GEN_INT                  (0x0140)
++#define NPA_AF_GEN_INT_W1S              (0x0148)
++#define NPA_AF_GEN_INT_ENA_W1S          (0x0150)
++#define NPA_AF_GEN_INT_ENA_W1C          (0x0158)
++#define NPA_AF_RVU_INT                  (0x0160)
++#define NPA_AF_RVU_INT_W1S              (0x0168)
++#define NPA_AF_RVU_INT_ENA_W1S          (0x0170)
++#define NPA_AF_RVU_INT_ENA_W1C          (0x0178)
++#define NPA_AF_ERR_INT			(0x0180)
++#define NPA_AF_ERR_INT_W1S		(0x0188)
++#define NPA_AF_ERR_INT_ENA_W1S		(0x0190)
++#define NPA_AF_ERR_INT_ENA_W1C		(0x0198)
++#define NPA_AF_RAS			(0x01A0)
++#define NPA_AF_RAS_W1S			(0x01A8)
++#define NPA_AF_RAS_ENA_W1S		(0x01B0)
++#define NPA_AF_RAS_ENA_W1C		(0x01B8)
++#define NPA_AF_BP_TEST                  (0x0200)
++#define NPA_AF_ECO                      (0x0300)
++#define NPA_AF_AQ_CFG                   (0x0600)
++#define NPA_AF_AQ_BASE                  (0x0610)
++#define NPA_AF_AQ_STATUS		(0x0620)
++#define NPA_AF_AQ_DOOR                  (0x0630)
++#define NPA_AF_AQ_DONE_WAIT             (0x0640)
++#define NPA_AF_AQ_DONE                  (0x0650)
++#define NPA_AF_AQ_DONE_ACK              (0x0660)
++#define NPA_AF_AQ_DONE_INT              (0x0680)
++#define NPA_AF_AQ_DONE_INT_W1S          (0x0688)
++#define NPA_AF_AQ_DONE_ENA_W1S          (0x0690)
++#define NPA_AF_AQ_DONE_ENA_W1C          (0x0698)
++#define NPA_AF_LFX_AURAS_CFG(a)         (0x4000 | (a) << 18)
++#define NPA_AF_LFX_LOC_AURAS_BASE(a)    (0x4010 | (a) << 18)
++#define NPA_AF_LFX_QINTS_CFG(a)         (0x4100 | (a) << 18)
++#define NPA_AF_LFX_QINTS_BASE(a)        (0x4110 | (a) << 18)
++#define NPA_PRIV_AF_INT_CFG             (0x10000)
++#define NPA_PRIV_LFX_CFG		(0x10010)
++#define NPA_PRIV_LFX_INT_CFG		(0x10020)
++#define NPA_AF_RVU_LF_CFG_DEBUG         (0x10030)
 +
 +
-+#define NPA_AF_BLK_RST                  (0x0000)
-+#define NIX_AF_BLK_RST                  (0x00B0)
-+#define SSO_AF_BLK_RST                  (0x10f8)
-+#define TIM_AF_BLK_RST                  (0x10)
-+#define CPT_AF_BLK_RST                  (0x46000)
-+#define NDC_AF_BLK_RST                  (0x002F0)
-+#define NPC_AF_BLK_RST                  (0x00040)
++/* NIX block's admin function registers */
++#define NIX_AF_CFG			(0x0000)
++#define NIX_AF_STATUS			(0x0010)
++#define NIX_AF_NDC_CFG			(0x0018)
++#define NIX_AF_CONST			(0x0020)
++#define NIX_AF_CONST1			(0x0028)
++#define NIX_AF_CONST2			(0x0030)
++#define NIX_AF_CONST3			(0x0038)
++#define NIX_AF_SQ_CONST			(0x0040)
++#define NIX_AF_CQ_CONST			(0x0048)
++#define NIX_AF_RQ_CONST			(0x0050)
++#define NIX_AF_PSE_CONST		(0x0060)
++#define NIX_AF_TL1_CONST		(0x0070)
++#define NIX_AF_TL2_CONST		(0x0078)
++#define NIX_AF_TL3_CONST		(0x0080)
++#define NIX_AF_TL4_CONST		(0x0088)
++#define NIX_AF_MDQ_CONST		(0x0090)
++#define NIX_AF_MC_MIRROR_CONST		(0x0098)
++#define NIX_AF_LSO_CFG			(0x00A8)
++#define NIX_AF_BLK_RST			(0x00B0)
++#define NIX_AF_TX_TSTMP_CFG		(0x00C0)
++#define NIX_AF_RX_CFG			(0x00D0)
++#define NIX_AF_AVG_DELAY		(0x00E0)
++#define NIX_AF_CINT_DELAY		(0x00F0)
++#define NIX_AF_RX_MCAST_BASE		(0x0100)
++#define NIX_AF_RX_MCAST_CFG		(0x0110)
++#define NIX_AF_RX_MCAST_BUF_BASE	(0x0120)
++#define NIX_AF_RX_MCAST_BUF_CFG		(0x0130)
++#define NIX_AF_RX_MIRROR_BUF_BASE	(0x0140)
++#define NIX_AF_RX_MIRROR_BUF_CFG	(0x0148)
++#define NIX_AF_LF_RST			(0x0150)
++#define NIX_AF_GEN_INT			(0x0160)
++#define NIX_AF_GEN_INT_W1S		(0x0168)
++#define NIX_AF_GEN_INT_ENA_W1S		(0x0170)
++#define NIX_AF_GEN_INT_ENA_W1C		(0x0178)
++#define NIX_AF_ERR_INT			(0x0180)
++#define NIX_AF_ERR_INT_W1S		(0x0188)
++#define NIX_AF_ERR_INT_ENA_W1S		(0x0190)
++#define NIX_AF_ERR_INT_ENA_W1C		(0x0198)
++#define NIX_AF_RAS			(0x01A0)
++#define NIX_AF_RAS_W1S			(0x01A8)
++#define NIX_AF_RAS_ENA_W1S		(0x01B0)
++#define NIX_AF_RAS_ENA_W1C		(0x01B8)
++#define NIX_AF_RVU_INT			(0x01C0)
++#define NIX_AF_RVU_INT_W1S		(0x01C8)
++#define NIX_AF_RVU_INT_ENA_W1S		(0x01D0)
++#define NIX_AF_RVU_INT_ENA_W1C		(0x01D8)
++#define NIX_AF_TCP_TIMER		(0x01E0)
++#define NIX_AF_RX_WQE_TAG_CTL		(0x01F0)
++#define NIX_AF_RX_DEF_OL2		(0x0200)
++#define NIX_AF_RX_DEF_OIP4		(0x0210)
++#define NIX_AF_RX_DEF_IIP4		(0x0220)
++#define NIX_AF_RX_DEF_OIP6		(0x0230)
++#define NIX_AF_RX_DEF_IIP6		(0x0240)
++#define NIX_AF_RX_DEF_OTCP		(0x0250)
++#define NIX_AF_RX_DEF_ITCP		(0x0260)
++#define NIX_AF_RX_DEF_OUDP		(0x0270)
++#define NIX_AF_RX_DEF_IUDP		(0x0280)
++#define NIX_AF_RX_DEF_OSCTP		(0x0290)
++#define NIX_AF_RX_DEF_ISCTP		(0x02A0)
++#define NIX_AF_RX_DEF_IPSECX		(0x02B0)
++#define NIX_AF_RX_IPSEC_GEN_CFG		(0x0300)
++#define NIX_AF_RX_CPTX_INST_ADDR	(0x0310)
++#define NIX_AF_NDC_TX_SYNC		(0x03F0)
++#define NIX_AF_AQ_CFG			(0x0400)
++#define NIX_AF_AQ_BASE			(0x0410)
++#define NIX_AF_AQ_STATUS		(0x0420)
++#define NIX_AF_AQ_DOOR			(0x0430)
++#define NIX_AF_AQ_DONE_WAIT		(0x0440)
++#define NIX_AF_AQ_DONE			(0x0450)
++#define NIX_AF_AQ_DONE_ACK		(0x0460)
++#define NIX_AF_AQ_DONE_TIMER		(0x0470)
++#define NIX_AF_AQ_DONE_INT		(0x0480)
++#define NIX_AF_AQ_DONE_INT_W1S		(0x0488)
++#define NIX_AF_AQ_DONE_ENA_W1S		(0x0490)
++#define NIX_AF_AQ_DONE_ENA_W1C		(0x0498)
++#define NIX_AF_RX_LINKX_SLX_SPKT_CNT	(0x0500)
++#define NIX_AF_RX_LINKX_SLX_SXQE_CNT	(0x0510)
++#define NIX_AF_RX_MCAST_JOBSX_SW_CNT	(0x0520)
++#define NIX_AF_RX_MIRROR_JOBSX_SW_CNT	(0x0530)
++#define NIX_AF_RX_LINKX_CFG(a)		(0x0540 | (a) << 16)
++#define NIX_AF_RX_SW_SYNC		(0x0550)
++#define NIX_AF_RX_SW_SYNC_DONE		(0x0560)
++#define NIX_AF_SEB_ECO			(0x0600)
++#define NIX_AF_SEB_TEST_BP		(0x0610)
++#define NIX_AF_NORM_TX_FIFO_STATUS	(0x0620)
++#define NIX_AF_EXPR_TX_FIFO_STATUS	(0x0630)
++#define NIX_AF_SDP_TX_FIFO_STATUS	(0x0640)
++#define NIX_AF_TX_NPC_CAPTURE_CONFIG	(0x0660)
++#define NIX_AF_TX_NPC_CAPTURE_INFO	(0x0670)
 +
-+#endif /* RVU_REG_H */
-diff --git a/drivers/soc/marvell/octeontx2/rvu_struct.h b/drivers/soc/marvell/octeontx2/rvu_struct.h
-new file mode 100644
-index 0000000..4122559
---- /dev/null
-+++ b/drivers/soc/marvell/octeontx2/rvu_struct.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ * Marvell OcteonTx2 RVU Admin Function driver
-+ *
-+ * Copyright (C) 2018 Marvell International Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++#define NIX_AF_DEBUG_NPC_RESP_DATAX(a)          (0x680 | (a) << 3)
++#define NIX_AF_SMQX_CFG(a)                      (0x700 | (a) << 16)
++#define NIX_AF_PSE_CHANNEL_LEVEL                (0x800)
++#define NIX_AF_PSE_SHAPER_CFG                   (0x810)
++#define NIX_AF_TX_EXPR_CREDIT			(0x830)
++#define NIX_AF_MARK_FORMATX_CTL(a)              (0x900 | (a) << 18)
++#define NIX_AF_TX_LINKX_NORM_CREDIT(a)		(0xA00 | (a) << 16)
++#define NIX_AF_TX_LINKX_EXPR_CREDIT(a)		(0xA10 | (a) << 16)
++#define NIX_AF_TX_LINKX_SW_XOFF(a)              (0xA20 | (a) << 16)
++#define NIX_AF_TX_LINKX_HW_XOFF(a)              (0xA30 | (a) << 16)
++#define NIX_AF_SDP_LINK_CREDIT                  (0xa40)
++#define NIX_AF_SDP_SW_XOFFX(a)                  (0xA60 | (a) << 3)
++#define NIX_AF_SDP_HW_XOFFX(a)                  (0xAC0 | (a) << 3)
++#define NIX_AF_TL4X_BP_STATUS(a)                (0xB00 | (a) << 16)
++#define NIX_AF_TL4X_SDP_LINK_CFG(a)             (0xB10 | (a) << 16)
++#define NIX_AF_TL1X_SCHEDULE(a)                 (0xC00 | (a) << 16)
++#define NIX_AF_TL1X_SHAPE(a)                    (0xC10 | (a) << 16)
++#define NIX_AF_TL1X_CIR(a)                      (0xC20 | (a) << 16)
++#define NIX_AF_TL1X_SHAPE_STATE(a)              (0xC50 | (a) << 16)
++#define NIX_AF_TL1X_SW_XOFF(a)                  (0xC70 | (a) << 16)
++#define NIX_AF_TL1X_TOPOLOGY(a)                 (0xC80 | (a) << 16)
++#define NIX_AF_TL1X_GREEN(a)                    (0xC90 | (a) << 16)
++#define NIX_AF_TL1X_YELLOW(a)                   (0xCA0 | (a) << 16)
++#define NIX_AF_TL1X_RED(a)                      (0xCB0 | (a) << 16)
++#define NIX_AF_TL1X_MD_DEBUG0(a)                (0xCC0 | (a) << 16)
++#define NIX_AF_TL1X_MD_DEBUG1(a)                (0xCC8 | (a) << 16)
++#define NIX_AF_TL1X_MD_DEBUG2(a)                (0xCD0 | (a) << 16)
++#define NIX_AF_TL1X_MD_DEBUG3(a)                (0xCD8 | (a) << 16)
++#define NIX_AF_TL1A_DEBUG                       (0xce0)
++#define NIX_AF_TL1B_DEBUG                       (0xcf0)
++#define NIX_AF_TL1_DEBUG_GREEN                  (0xd00)
++#define NIX_AF_TL1_DEBUG_NODE                   (0xd10)
++#define NIX_AF_TL1X_DROPPED_PACKETS(a)          (0xD20 | (a) << 16)
++#define NIX_AF_TL1X_DROPPED_BYTES(a)            (0xD30 | (a) << 16)
++#define NIX_AF_TL1X_RED_PACKETS(a)              (0xD40 | (a) << 16)
++#define NIX_AF_TL1X_RED_BYTES(a)                (0xD50 | (a) << 16)
++#define NIX_AF_TL1X_YELLOW_PACKETS(a)           (0xD60 | (a) << 16)
++#define NIX_AF_TL1X_YELLOW_BYTES(a)             (0xD70 | (a) << 16)
++#define NIX_AF_TL1X_GREEN_PACKETS(a)            (0xD80 | (a) << 16)
++#define NIX_AF_TL1X_GREEN_BYTES(a)              (0xD90 | (a) << 16)
++#define NIX_AF_TL2X_SCHEDULE(a)                 (0xE00 | (a) << 16)
++#define NIX_AF_TL2X_SHAPE(a)                    (0xE10 | (a) << 16)
++#define NIX_AF_TL2X_CIR(a)                      (0xE20 | (a) << 16)
++#define NIX_AF_TL2X_PIR(a)                      (0xE30 | (a) << 16)
++#define NIX_AF_TL2X_SCHED_STATE(a)              (0xE40 | (a) << 16)
++#define NIX_AF_TL2X_SHAPE_STATE(a)              (0xE50 | (a) << 16)
++#define NIX_AF_TL2X_POINTERS(a)                 (0xE60 | (a) << 16)
++#define NIX_AF_TL2X_SW_XOFF(a)                  (0xE70 | (a) << 16)
++#define NIX_AF_TL2X_TOPOLOGY(a)                 (0xE80 | (a) << 16)
++#define NIX_AF_TL2X_PARENT(a)                   (0xE88 | (a) << 16)
++#define NIX_AF_TL2X_GREEN(a)                    (0xE90 | (a) << 16)
++#define NIX_AF_TL2X_YELLOW(a)                   (0xEA0 | (a) << 16)
++#define NIX_AF_TL2X_RED(a)                      (0xEB0 | (a) << 16)
++#define NIX_AF_TL2X_MD_DEBUG0(a)                (0xEC0 | (a) << 16)
++#define NIX_AF_TL2X_MD_DEBUG1(a)                (0xEC8 | (a) << 16)
++#define NIX_AF_TL2X_MD_DEBUG2(a)                (0xED0 | (a) << 16)
++#define NIX_AF_TL2X_MD_DEBUG3(a)                (0xED8 | (a) << 16)
++#define NIX_AF_TL2A_DEBUG                       (0xee0)
++#define NIX_AF_TL2B_DEBUG                       (0xef0)
++#define NIX_AF_TL3X_SCHEDULE(a)                 (0x1000 | (a) << 16)
++#define NIX_AF_TL3X_SHAPE(a)                    (0x1010 | (a) << 16)
++#define NIX_AF_TL3X_CIR(a)                      (0x1020 | (a) << 16)
++#define NIX_AF_TL3X_PIR(a)                      (0x1030 | (a) << 16)
++#define NIX_AF_TL3X_SCHED_STATE(a)              (0x1040 | (a) << 16)
++#define NIX_AF_TL3X_SHAPE_STATE(a)              (0x1050 | (a) << 16)
++#define NIX_AF_TL3X_POINTERS(a)                 (0x1060 | (a) << 16)
++#define NIX_AF_TL3X_SW_XOFF(a)                  (0x1070 | (a) << 16)
++#define NIX_AF_TL3X_TOPOLOGY(a)                 (0x1080 | (a) << 16)
++#define NIX_AF_TL3X_PARENT(a)                   (0x1088 | (a) << 16)
++#define NIX_AF_TL3X_GREEN(a)                    (0x1090 | (a) << 16)
++#define NIX_AF_TL3X_YELLOW(a)                   (0x10A0 | (a) << 16)
++#define NIX_AF_TL3X_RED(a)                      (0x10B0 | (a) << 16)
++#define NIX_AF_TL3X_MD_DEBUG0(a)                (0x10C0 | (a) << 16)
++#define NIX_AF_TL3X_MD_DEBUG1(a)                (0x10C8 | (a) << 16)
++#define NIX_AF_TL3X_MD_DEBUG2(a)                (0x10D0 | (a) << 16)
++#define NIX_AF_TL3X_MD_DEBUG3(a)                (0x10D8 | (a) << 16)
++#define NIX_AF_TL3A_DEBUG                       (0x10e0)
++#define NIX_AF_TL3B_DEBUG                       (0x10f0)
++#define NIX_AF_TL4X_SCHEDULE(a)                 (0x1200 | (a) << 16)
++#define NIX_AF_TL4X_SHAPE(a)                    (0x1210 | (a) << 16)
++#define NIX_AF_TL4X_CIR(a)                      (0x1220 | (a) << 16)
++#define NIX_AF_TL4X_PIR(a)                      (0x1230 | (a) << 16)
++#define NIX_AF_TL4X_SCHED_STATE(a)              (0x1240 | (a) << 16)
++#define NIX_AF_TL4X_SHAPE_STATE(a)              (0x1250 | (a) << 16)
++#define NIX_AF_TL4X_POINTERS(a)                 (0x1260 | (a) << 16)
++#define NIX_AF_TL4X_SW_XOFF(a)                  (0x1270 | (a) << 16)
++#define NIX_AF_TL4X_TOPOLOGY(a)                 (0x1280 | (a) << 16)
++#define NIX_AF_TL4X_PARENT(a)                   (0x1288 | (a) << 16)
++#define NIX_AF_TL4X_GREEN(a)                    (0x1290 | (a) << 16)
++#define NIX_AF_TL4X_YELLOW(a)                   (0x12A0 | (a) << 16)
++#define NIX_AF_TL4X_RED(a)                      (0x12B0 | (a) << 16)
++#define NIX_AF_TL4X_MD_DEBUG0(a)                (0x12C0 | (a) << 16)
++#define NIX_AF_TL4X_MD_DEBUG1(a)                (0x12C8 | (a) << 16)
++#define NIX_AF_TL4X_MD_DEBUG2(a)                (0x12D0 | (a) << 16)
++#define NIX_AF_TL4X_MD_DEBUG3(a)                (0x12D8 | (a) << 16)
++#define NIX_AF_TL4A_DEBUG                       (0x12e0)
++#define NIX_AF_TL4B_DEBUG                       (0x12f0)
++#define NIX_AF_MDQX_SCHEDULE(a)                 (0x1400 | (a) << 16)
++#define NIX_AF_MDQX_SHAPE(a)                    (0x1410 | (a) << 16)
++#define NIX_AF_MDQX_CIR(a)                      (0x1420 | (a) << 16)
++#define NIX_AF_MDQX_PIR(a)                      (0x1430 | (a) << 16)
++#define NIX_AF_MDQX_SCHED_STATE(a)              (0x1440 | (a) << 16)
++#define NIX_AF_MDQX_SHAPE_STATE(a)              (0x1450 | (a) << 16)
++#define NIX_AF_MDQX_POINTERS(a)                 (0x1460 | (a) << 16)
++#define NIX_AF_MDQX_SW_XOFF(a)                  (0x1470 | (a) << 16)
++#define NIX_AF_MDQX_PARENT(a)                   (0x1480 | (a) << 16)
++#define NIX_AF_MDQX_MD_DEBUG(a)                 (0x14C0 | (a) << 16)
++#define NIX_AF_MDQX_PTR_FIFO(a)                 (0x14D0 | (a) << 16)
++#define NIX_AF_MDQA_DEBUG                       (0x14e0)
++#define NIX_AF_MDQB_DEBUG                       (0x14f0)
++#define NIX_AF_TL3_TL2X_CFG(a)                  (0x1600 | (a) << 18)
++#define NIX_AF_TL3_TL2X_BP_STATUS(a)            (0x1610 | (a) << 16)
++#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)         (0x1700 | (a) << 16 | (b) << 3)
++#define NIX_AF_RX_FLOW_KEY_ALGX_FIELDX(a, b)    (0x1800 | (a) << 18 | (b) << 3)
++#define NIX_AF_TX_MCASTX(a)                     (0x1900 | (a) << 15)
++#define NIX_AF_TX_VTAG_DEFX_CTL(a)              (0x1A00 | (a) << 16)
++#define NIX_AF_TX_VTAG_DEFX_DATA(a)             (0x1A10 | (a) << 16)
++#define NIX_AF_RX_BPIDX_STATUS(a)               (0x1A20 | (a) << 17)
++#define NIX_AF_RX_CHANX_CFG(a)                  (0x1A30 | (a) << 15)
++#define NIX_AF_CINT_TIMERX(a)                   (0x1A40 | (a) << 18)
++#define NIX_AF_LSO_FORMATX_FIELDX(a, b)         (0x1B00 | (a) << 16 | (b) << 3)
++#define NIX_AF_LFX_CFG(a)		(0x4000 | (a) << 17)
++#define NIX_AF_LFX_SQS_CFG(a)		(0x4020 | (a) << 17)
++#define NIX_AF_LFX_TX_CFG2(a)		(0x4028 | (a) << 17)
++#define NIX_AF_LFX_SQS_BASE(a)		(0x4030 | (a) << 17)
++#define NIX_AF_LFX_RQS_CFG(a)		(0x4040 | (a) << 17)
++#define NIX_AF_LFX_RQS_BASE(a)		(0x4050 | (a) << 17)
++#define NIX_AF_LFX_CQS_CFG(a)		(0x4060 | (a) << 17)
++#define NIX_AF_LFX_CQS_BASE(a)		(0x4070 | (a) << 17)
++#define NIX_AF_LFX_TX_CFG(a)		(0x4080 | (a) << 17)
++#define NIX_AF_LFX_TX_PARSE_CFG(a)	(0x4090 | (a) << 17)
++#define NIX_AF_LFX_RX_CFG(a)		(0x40A0 | (a) << 17)
++#define NIX_AF_LFX_RSS_CFG(a)		(0x40C0 | (a) << 17)
++#define NIX_AF_LFX_RSS_BASE(a)		(0x40D0 | (a) << 17)
++#define NIX_AF_LFX_QINTS_CFG(a)		(0x4100 | (a) << 17)
++#define NIX_AF_LFX_QINTS_BASE(a)	(0x4110 | (a) << 17)
++#define NIX_AF_LFX_CINTS_CFG(a)		(0x4120 | (a) << 17)
++#define NIX_AF_LFX_CINTS_BASE(a)	(0x4130 | (a) << 17)
++#define NIX_AF_LFX_RX_IPSEC_CFG0(a)	(0x4140 | (a) << 17)
++#define NIX_AF_LFX_RX_IPSEC_CFG1(a)	(0x4148 | (a) << 17)
++#define NIX_AF_LFX_RX_IPSEC_DYNO_CFG(a)	(0x4150 | (a) << 17)
++#define NIX_AF_LFX_RX_IPSEC_DYNO_BASE(a)	(0x4158 | (a) << 17)
++#define NIX_AF_LFX_RX_IPSEC_SA_BASE(a)	(0x4170 | (a) << 17)
++#define NIX_AF_LFX_TX_STATUS(a)		(0x4180 | (a) << 17)
++#define NIX_AF_LFX_RX_VTAG_TYPEX(a, b)	(0x4200 | (a) << 17 | (b) << 3)
++#define NIX_AF_LFX_LOCKX(a, b)		(0x4300 | (a) << 17 | (b) << 3)
++#define NIX_AF_LFX_TX_STATX(a, b)	(0x4400 | (a) << 17 | (b) << 3)
++#define NIX_AF_LFX_RX_STATX(a, b)	(0x4500 | (a) << 17 | (b) << 3)
++#define NIX_AF_LFX_RSS_GRPX(a, b)	(0x4600 | (a) << 17 | (b) << 3)
++#define NIX_AF_RX_NPC_MC_RCV		(0x4700)
++#define NIX_AF_RX_NPC_MC_DROP		(0x4710)
++#define NIX_AF_RX_NPC_MIRROR_RCV	(0x4720)
++#define NIX_AF_RX_NPC_MIRROR_DROP	(0x4730)
++#define NIX_AF_RX_ACTIVE_CYCLES_PCX(a)	(0x4800 | (a) << 16)
 +
-+#ifndef RVU_STRUCT_H
-+#define RVU_STRUCT_H
++#define NIX_PRIV_AF_INT_CFG		(0x8000000)
++#define NIX_PRIV_LFX_CFG		(0x8000010)
++#define NIX_PRIV_LFX_INT_CFG		(0x8000020)
++#define NIX_AF_RVU_LF_CFG_DEBUG		(0x8000030)
 +
-+/*
-+ * RVU Block Address Enumeration
-+ */
-+enum rvu_block_addr_e {
-+	BLKADDR_RVUM    = 0x0ULL,
-+	BLKADDR_LMT     = 0x1ULL,
-+	BLKADDR_MSIX    = 0x2ULL,
-+	BLKADDR_NPA     = 0x3ULL,
-+	BLKADDR_NIX0    = 0x4ULL,
-+	BLKADDR_NIX1    = 0x5ULL,
-+	BLKADDR_NPC     = 0x6ULL,
-+	BLKADDR_SSO     = 0x7ULL,
-+	BLKADDR_SSOW    = 0x8ULL,
-+	BLKADDR_TIM     = 0x9ULL,
-+	BLKADDR_CPT0    = 0xaULL,
-+	BLKADDR_CPT1    = 0xbULL,
-+	BLKADDR_NDC0    = 0xcULL,
-+	BLKADDR_NDC1    = 0xdULL,
-+	BLKADDR_NDC2    = 0xeULL,
-+	BLK_COUNT	= 0xfULL,
-+};
++/* SSO */
++#define SSO_AF_CONST			(0x1000)
++#define SSO_AF_CONST1			(0x1008)
++#define SSO_AF_BLK_RST			(0x10f8)
++#define SSO_AF_LF_HWGRP_RST		(0x10e0)
++#define SSO_AF_RVU_LF_CFG_DEBUG		(0x3800)
++#define SSO_PRIV_LFX_HWGRP_CFG		(0x10000)
++#define SSO_PRIV_LFX_HWGRP_INT_CFG	(0x20000)
 +
-+#endif /* RVU_STRUCT_H */
++/* SSOW */
++#define SSOW_AF_RVU_LF_HWS_CFG_DEBUG	(0x0010)
++#define SSOW_AF_LF_HWS_RST		(0x0030)
++#define SSOW_PRIV_LFX_HWS_CFG		(0x1000)
++#define SSOW_PRIV_LFX_HWS_INT_CFG	(0x2000)
++
++/* TIM */
++#define TIM_AF_CONST			(0x90)
++#define TIM_PRIV_LFX_CFG		(0x20000)
++#define TIM_PRIV_LFX_INT_CFG		(0x24000)
++#define TIM_AF_RVU_LF_CFG_DEBUG		(0x30000)
++#define TIM_AF_BLK_RST			(0x10)
++#define TIM_AF_LF_RST			(0x20)
++
++/* CPT */
++#define CPT_AF_CONSTANTS0		(0x0000)
++#define CPT_PRIV_LFX_CFG		(0x41000)
++#define CPT_PRIV_LFX_INT_CFG		(0x43000)
++#define CPT_AF_RVU_LF_CFG_DEBUG		(0x45000)
++#define CPT_AF_LF_RST			(0x44000)
++#define CPT_AF_BLK_RST			(0x46000)
++
+ #define NDC_AF_BLK_RST                  (0x002F0)
+ #define NPC_AF_BLK_RST                  (0x00040)
+ 
 -- 
 2.7.4
 
