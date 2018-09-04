@@ -2,119 +2,81 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A12C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5496C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B6A5206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:30:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B6A5206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 81A3220836
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:30:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A3220836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeIDVzu (ORCPT
+        id S1727883AbeIDV4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:55:50 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:33391 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeIDVzu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:55:50 -0400
-Received: from localhost.localdomain ([37.4.249.97]) by
- mrelayeu.kundenserver.de (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 0MEmVu-1g7ksb2HGc-00FxPx; Tue, 04 Sep 2018 19:29:39 +0200
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Woojung Huh <woojung.huh@microchip.com>
-Cc:     Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH V2 3/4 next] net: lan78xx: Switch to SPDX identifier
-Date:   Tue,  4 Sep 2018 19:29:11 +0200
-Message-Id: <1536082152-3669-4-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536082152-3669-1-git-send-email-stefan.wahren@i2se.com>
-References: <1536082152-3669-1-git-send-email-stefan.wahren@i2se.com>
-X-Provags-ID: V03:K1:1L1OCBo2KXTeU8ZPU/mZzda47t/PixdybJ0u6jjwjS49ooYomZp
- jhwOBb0zjmqaJzWfQxDW8i8z88Zf7vtdqQYkS8oza0pDPve1Mn/A/NZ3Xegq+6Y1sY30JKl
- egW9lV28m+3Yajf5As9Md9MOSUHc/48vlF3VlpzayoszL5t7bJqTfPBzliKjESDtQA0X/+t
- c7Zj2sabXxRwhjr9YpR2g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/hHFeL8gq24=:kDl/tv/3qdCtZ6+uSZYq2q
- d6SNWVyqIl3NyLvT8mSoHahJ3aX4CgHNXctdkkh88Y4DxSmEEdcpTX5HVRMrTqMF5g3E+lC51
- egEZBjLiS16MGbQDdg9Avnw+uraS/5fbcbiZWDJmB4Dg0qbURydgfjuSvxmL7FieA/+Ag1WaJ
- q/dzUYUYYxoi76Po6NW6CezLhPItzMGE1Dh37pG9A6Wlol4CtAMU5LrkIOqq4xZED6ePDPaPi
- uVNEyS7JnSUPsNy8644rB+PKaidhvQStk+FLO+6Le7cY35j7r5YudFhjz8gYBmW7AKWjhxR57
- 0AgVMicnzf6eG4apsFLxkqEH7gfgdJjpYCslmTYaXaP/5pBjNqYj/n7WnluJvhUey1uvjNRGN
- +S1AA19pkjvIFyDPMKIwbdgqeMeIr+IuAtL9mRJe+kcRpngnzwe1ELojR5FkBylEVOlIwTTzr
- LWlqpxmOCAkZTFtsNg6KN2S9k21hISQW681RPv4VzCJvyqcJxyRCnJHAyut4Xfg0qyi6CHzR9
- t+JWV3kgQKNfOcF5s96SnjRc6WNVIz9ULWvkPPWwvoI2TXBk9qZy21QprtHy3QHGaLc5FCEYm
- SzGzMer8FwRvPDWQEZVdbGzGQnD2cgabHmEVc1E5N53MnFrr/xxHLXJvxNBS4LBjNs5vdor01
- uesiP/ce1Lsr6VaIrqM96mN/38uhsposGym/JMu/sIDU4eu0qt1Oulz7stA23H3CY1xQ=
+        Tue, 4 Sep 2018 17:56:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52124 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbeIDV4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:56:53 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 957F2401C96A;
+        Tue,  4 Sep 2018 17:30:48 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D031E202704B;
+        Tue,  4 Sep 2018 17:30:44 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w84HUi3U015746;
+        Tue, 4 Sep 2018 13:30:44 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w84HUiYj015741;
+        Tue, 4 Sep 2018 13:30:44 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 4 Sep 2018 13:30:44 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Mike Snitzer <snitzer@redhat.com>,
+        jing xia <jing.xia.mail@gmail.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+In-Reply-To: <20180904160732.GO14951@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1809041328320.8875@file01.intranet.prod.int.rdu2.redhat.com>
+References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com> <20180612212007.GA22717@redhat.com> <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com> <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
+ <20180614073153.GB9371@dhcp22.suse.cz> <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com> <alpine.LRH.2.02.1809031816120.27063@file01.intranet.prod.int.rdu2.redhat.com> <20180904070824.GH14951@dhcp22.suse.cz> <20180904151844.GB10112@redhat.com>
+ <20180904160732.GO14951@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 04 Sep 2018 17:30:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 04 Sep 2018 17:30:48 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/net/usb/lan78xx.c | 14 +-------------
- drivers/net/usb/lan78xx.h | 14 +-------------
- 2 files changed, 2 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 3d505c2..e1c055d 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1,18 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (C) 2015 Microchip Technology
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/version.h>
- #include <linux/module.h>
-diff --git a/drivers/net/usb/lan78xx.h b/drivers/net/usb/lan78xx.h
-index 25aa546..968e5e5 100644
---- a/drivers/net/usb/lan78xx.h
-+++ b/drivers/net/usb/lan78xx.h
-@@ -1,18 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Copyright (C) 2015 Microchip Technology
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version 2
-- * of the License, or (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- #ifndef _LAN78XX_H
- #define _LAN78XX_H
--- 
-2.7.4
+On Tue, 4 Sep 2018, Michal Hocko wrote:
 
+> Regarding other other workloads. AFAIR the problem was due to the
+> wait_iff_congested in the direct reclaim. And I've been arguing that
+> special casing __GFP_NORETRY is not a propoer way to handle that case.
+> We have PF_LESS_THROTTLE to handle cases where the caller cannot be
+> really throttled because it is a part of the congestion control. I dunno
+> what happened in that regards since then though.
+> -- 
+> Michal Hocko
+> SUSE Labs
+
+So, could you take this patch https://patchwork.kernel.org/patch/10505523/ 
+and commit it to the kernel?
+
+You agreed with that patch, but you didn't commit it.
+
+Mikulas
