@@ -3,115 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0249C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BD2C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749E42082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:29:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749E42082B
+	by mail.kernel.org (Postfix) with ESMTP id 68B542082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:29:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B542082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeIDVzv (ORCPT
+        id S1727834AbeIDVzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 4 Sep 2018 17:55:51 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:59469 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.10]:49657 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbeIDVzu (ORCPT
+        with ESMTP id S1727057AbeIDVzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 17:55:50 -0400
 Received: from localhost.localdomain ([37.4.249.97]) by
  mrelayeu.kundenserver.de (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 0Lb1ib-1fUpDu40mf-00kdbC; Tue, 04 Sep 2018 19:29:40 +0200
+ id 0MGRCi-1gAUhW1uxE-00DCWl; Tue, 04 Sep 2018 19:29:38 +0200
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 To:     Woojung Huh <woojung.huh@microchip.com>
 Cc:     Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH V2 4/4 next] net: lan78xx: Make declaration style consistent
-Date:   Tue,  4 Sep 2018 19:29:12 +0200
-Message-Id: <1536082152-3669-5-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH V2 0/4 next] net: lan78xx: Minor improvements
+Date:   Tue,  4 Sep 2018 19:29:08 +0200
+Message-Id: <1536082152-3669-1-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536082152-3669-1-git-send-email-stefan.wahren@i2se.com>
-References: <1536082152-3669-1-git-send-email-stefan.wahren@i2se.com>
-X-Provags-ID: V03:K1:A77hTVESIIEQYxz8Sf1Jj08AlI77pYKhh3dmIqk1O8L7BLNAHV5
- aOWXktCunBVGoFOrgBju38c3GO+Ik6JfIHykC6nQ1Xjs1qr9fm18ASvowLTudm7H0xeToQQ
- Qu8sPwKq1BdakBibr6QjC3rEMNcYvgSPMp0y3wXSS7OsIdaA8hOnoRSlKJr4xx8hB9OkXi6
- d5zAxKBFDY0ilx+4Uh5vg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Jm+lOBuXalw=:AeQKnrE5ZxBZZqhZsrjjFT
- 6Xo+hXUSJeWnuV7b3vzoln8V6cij32/nP5r1FmEviIoJKURBcgHd8aRNGN3BXx0aufAf3mgWU
- //aczNFu6ogmD88Dsfh29bwKmagZhSsRVME6T9OZNZUATEsie26CwXwxH7COvUBvyUUiUfXJB
- yY3WHnxrsulNMaJccA2sbzmHlGNsAZGMKprDZU9+CALrJD85wDtiz9yNhgKVtYHMnAUTivT/7
- M1XGyPL4brkGwr84zgStz+YSLpC4uMIKyf52eAC+usUcuYVlW+7BQaHuGZc6y4x+Z4A83CoMu
- kjscUgrThqcy2NBq5Sgb/4m4BZ4M4O1tZTqXH1R4m0jA25zAnLUUWG9pqwqoNtPuvQOM5TyfX
- 5fjXT55hZc2Y6EE8ovpzmvFlXmKREwB7qag0HlBAx5Sxpd6NFfkUE+IEvD8tXwwFp9a1OwIK2
- sbHxJB4zqXGOioqIg7ll5IKMIQvrbyxuZAbaLowi5sRXUd9oMIVJsKLtFuOnfkuSHLpjhaT2c
- YzJ2u6SOchDBaWCzDMkbJVzCstQxeqJP/KIuMevopHtUVFPa53HiisQOnt6aImXi0lOn77e2o
- HE3dZNgyZKd11m9O4RNvdJca5SlQ9bXVdKdaycPXLY8nGQf1BB+CsFy3rjLHfft8egDvKBDYy
- dykMXEkh0rBp3mZRl/hAIA450G0GOjy35GHDbru4YO0AYOfmHoAiaqU8/Q07sKUqkF60=
+X-Provags-ID: V03:K1:neeKdDj8bFNFdaNEaqwkC8QNWr9r2mdhKW3gFLKNEQa01xvMxPR
+ Vp+Zde8DygSU28bWeH2eWHoEUt/6YJrQjkgFRppHZT+cixRIbBSaYMq1lLDxezIcFmHj7hb
+ JdBsQRA+ecwWvaA3Cc3ugCBxekIXpjdP2Utq0Qihf2ZDYEPXdFMVDXKYl5LbFgnXIr0uSqg
+ 7Nb09eathVDi6J1x4+60g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8bH49XuG3EY=:FaxRyIyB1RKRmBcwkLd1Qr
+ ApCkdOdnvoJXQ4RD8TZaU2U3d7QzFl9BlzJYxTXmIk9a4eAdgS5nSCTKm3gzL3UsjDt1i/6gH
+ rIlSSXx9xYyHXrW90zeuNOASlBU6xoMFGR0DW5TEZRicEarCq7VO2HoIdhPHpWe6Bnwzvi/s2
+ smeBifMjD2K3gXHWDh7h5F2f4olXEUBlAH2esjFz7pGNpUcwOh1Kuj8Bn+NPJA+M/afuIwpjx
+ yYLKOiYEXDLJ+vZ7LQoC6+Spy5Rkm91RYhSgAiQaVVgTOTyRSY6iSb+wjLAsg4jd/XHj8kCcF
+ FLxW21rn7MuHMcKIcITpGPKdpjIghfLdjw6uzHvDtpc7QS4kdAb+D8p2CEPs4Kn0LP4bLMhr6
+ AmUvNXxY8xBjCbR04oDS9uQTRPuFFEXRqNDE7FpKA78G+PcpAJ8x2TLY8sJAvKTnhgkx4AKXO
+ st6sXbzhsA90864Uei39MlkFY3J+0C+7VqgKWhPWEOQg5iLOUVvJLeIUZEjDWmYtWlw2NgSJ0
+ QSJZWw2vywT87Xbx/TAM6cCN69YsUblcTlo0Ul0+mRYpE6/6NqDq/bbI+AT7Yzm8Qq34GivnB
+ qpTs4ihlSQEnl8EK4SlUbSFyMmAvtZschS9EIOg3Qxlb76JygKwmDwaUMJu7hs0/JLFi0aSEo
+ A5J0MtDqJHFXR6508ngY6vSUwp7QFlLyMeLbyi6PMD+hG7DCgTBvtEgjXpiK0qMuh1Y4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes some declaration more consistent.
+This patch series contains some minor improvements for the lan78xx
+driver.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Reviewed-by: Raghuram Chary Jallipalli <raghuramchary.jallipalli@microchip.com>
----
- drivers/net/usb/lan78xx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Changes in V2:
+- Keep Copyright comment as multi-line
+- Add Raghuram's Reviewed-by
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index e1c055d..331bc99 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1015,7 +1015,7 @@ static int lan78xx_dataport_write(struct lan78xx_net *dev, u32 ram_select,
- static void lan78xx_set_addr_filter(struct lan78xx_priv *pdata,
- 				    int index, u8 addr[ETH_ALEN])
- {
--	u32	temp;
-+	u32 temp;
- 
- 	if ((pdata) && (index > 0) && (index < NUM_OF_MAF)) {
- 		temp = addr[3];
-@@ -2690,7 +2690,7 @@ static void lan78xx_terminate_urbs(struct lan78xx_net *dev)
- 
- static int lan78xx_stop(struct net_device *net)
- {
--	struct lan78xx_net		*dev = netdev_priv(net);
-+	struct lan78xx_net *dev = netdev_priv(net);
- 
- 	if (timer_pending(&dev->stat_monitor))
- 		del_timer_sync(&dev->stat_monitor);
-@@ -3073,7 +3073,7 @@ static void lan78xx_rx_vlan_offload(struct lan78xx_net *dev,
- 
- static void lan78xx_skb_return(struct lan78xx_net *dev, struct sk_buff *skb)
- {
--	int		status;
-+	int status;
- 
- 	if (test_bit(EVENT_RX_PAUSED, &dev->flags)) {
- 		skb_queue_tail(&dev->rxq_pause, skb);
-@@ -3633,10 +3633,10 @@ static void intr_complete(struct urb *urb)
- 
- static void lan78xx_disconnect(struct usb_interface *intf)
- {
--	struct lan78xx_net		*dev;
--	struct usb_device		*udev;
--	struct net_device		*net;
--	struct phy_device		*phydev;
-+	struct lan78xx_net *dev;
-+	struct usb_device *udev;
-+	struct net_device *net;
-+	struct phy_device *phydev;
- 
- 	dev = usb_get_intfdata(intf);
- 	usb_set_intfdata(intf, NULL);
+Stefan Wahren (4):
+  net: lan78xx: Bail out if lan78xx_get_endpoints fails
+  net: lan78xx: Drop unnecessary strcpy in lan78xx_probe
+  net: lan78xx: Switch to SPDX identifier
+  net: lan78xx: Make declaration style consistent
+
+ drivers/net/usb/lan78xx.c | 34 +++++++++++++---------------------
+ drivers/net/usb/lan78xx.h | 14 +-------------
+ 2 files changed, 14 insertions(+), 34 deletions(-)
+
 -- 
 2.7.4
 
