@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93968C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4604AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E4D20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A8120645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:22:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oCE8hDDx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E4D20645
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SNuLBgKj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A8120645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeIDUse (ORCPT
+        id S1727739AbeIDUsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:48:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53150 "EHLO
+        Tue, 4 Sep 2018 16:48:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53358 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbeIDUse (ORCPT
+        with ESMTP id S1726052AbeIDUsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:48:34 -0400
+        Tue, 4 Sep 2018 16:48:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=F7pwAXk6V9NLOLagO6ozr0EUaPVJb97QK9oinOBSPV0=; b=oCE8hDDxVf4u
-        rARUuU4+QV9b0v9D+UnFLi4eYhJYtL+vtruxX0Zq5VWP69od0P+NEn5dOBcrKR1gwEYy+BUL0q9Y9
-        AfQ0rrla0U2hF/nl+acCtNrQLTf/Zz1PRvXxKiz5qEmpFHgfKQZQmrboCJEToydqihHMk/bCFhLZ6
-        HPZTk=;
+        List-Archive; bh=punHLCxYXCikWb/crrLEBqiI942vmU4QaE7szHqjKHA=; b=SNuLBgKjOWBP
+        XSjkRKZw5WlP1sz9mtm1AkKq0ZtQeVaRa8dajwiWKn3svBJRYANVK+CYxE/5VtKb94UgnBXMYX++R
+        G3XGUIeEX1P2Yc0JLEVc2TuU5uLi5c7gJUffBFeVQlOy6aqDx29RTaIQkdK9mvXh9a0BC2d3noVrB
+        dGUy4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fxE69-0001UT-Ik; Tue, 04 Sep 2018 16:22:37 +0000
+        id 1fxE6L-0001Ug-NE; Tue, 04 Sep 2018 16:22:49 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 538A811227D8; Tue,  4 Sep 2018 17:22:37 +0100 (BST)
+        id 7424B11227D8; Tue,  4 Sep 2018 17:22:49 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: fix kernel-doc for regulator_suspend()" to the regulator tree
-In-Reply-To: 
-Message-Id: <20180904162237.538A811227D8@debutante.sirena.org.uk>
-Date:   Tue,  4 Sep 2018 17:22:37 +0100 (BST)
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: spidev_test: Improve decoded text part of hex dump" to the spi tree
+In-Reply-To:  <20180903173323.7436-1-geert+renesas@glider.be>
+Message-Id: <20180904162249.7424B11227D8@debutante.sirena.org.uk>
+Date:   Tue,  4 Sep 2018 17:22:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,11 +57,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: fix kernel-doc for regulator_suspend()
+   spi: spidev_test: Improve decoded text part of hex dump
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -82,36 +82,46 @@ to this mail.
 Thanks,
 Mark
 
-From 1efef7cc72716a168f37c0cc19889a4bf9ee8603 Mon Sep 17 00:00:00 2001
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Tue, 4 Sep 2018 08:30:05 -0700
-Subject: [PATCH] regulator: fix kernel-doc for regulator_suspend()
+From 35386dfd13b746daf36a393bdf066dbe9b9b7aed Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 3 Sep 2018 19:33:23 +0200
+Subject: [PATCH] spi: spidev_test: Improve decoded text part of hex dump
 
-Fix kernel-doc warning:
+- Print spaces as spaces,
+  - Do not print characters > 126, as they will be shown as garbage
+    in the modern UTF-8 era,
+  - Use a normal period instead of its hexadecimal ASCII value,
+  - Delimit the text part with pipe symbols on both sides (was left side
+    only), without any spaces, to make it clear where the decoded text
+    starts and ends,
+  - Drop a useless comment.
 
-../drivers/regulator/core.c:4479: warning: Excess function parameter 'state' description in 'regulator_suspend'
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/spi/spidev_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index a147871af09b..45fee12b9878 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4466,7 +4466,7 @@ EXPORT_SYMBOL_GPL(regulator_unregister);
- #ifdef CONFIG_SUSPEND
- /**
-  * regulator_suspend - prepare regulators for system wide suspend
-- * @state: system suspend state
-+ * @dev: ``&struct device`` pointer that is passed to _regulator_suspend()
-  *
-  * Configure each regulator with it's suspend operating parameters for state.
-  */
+diff --git a/tools/spi/spidev_test.c b/tools/spi/spidev_test.c
+index 8c590cd1171a..4c12e6aea5d5 100644
+--- a/tools/spi/spidev_test.c
++++ b/tools/spi/spidev_test.c
+@@ -73,12 +73,12 @@ static void hex_dump(const void *src, size_t length, size_t line_size,
+ 				while (i++ % line_size)
+ 					printf("__ ");
+ 			}
+-			printf(" | ");  /* right close */
++			printf(" |");
+ 			while (line < address) {
+ 				c = *line++;
+-				printf("%c", (c < 33 || c == 255) ? 0x2E : c);
++				printf("%c", (c < 32 || c > 126) ? '.' : c);
+ 			}
+-			printf("\n");
++			printf("|\n");
+ 			if (length > 0)
+ 				printf("%s | ", prefix);
+ 		}
 -- 
 2.19.0.rc1
 
