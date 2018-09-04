@@ -2,116 +2,122 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10146C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6543FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93B020645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:13:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZO5NG05"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93B020645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A8AF2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:14:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8AF2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeIDUjn (ORCPT
+        id S1727741AbeIDUkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:39:43 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45772 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeIDUjn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:39:43 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x26-v6so1886102pge.12;
-        Tue, 04 Sep 2018 09:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=W8j1+yLCrGMraFjiLUwPAFVNbacfVjxk+8aTf9fb9Wk=;
-        b=BZO5NG05UFrLGpTath6Pi806KgQDkYsoV0Mnq3H8x+eon8v8qho2O5QDw07CWmJjh0
-         YvDmBraNVDESq0wvLYqhPkz0kUAtgsOwUoV/XvpNajgPceoakdKZfBdRVHAYssjd+T5q
-         l/7rQfdtjDCmp1YpfuhsKUYLscnyz7ogiTF5W+6tVicMX5QQ3P0nH2EM26kT97P12CKr
-         dcU9f6o7aHnxSQ8rrdY7X7f6cteX3EtjnojkzCWxyAvOXktwk/tepCDYO93CyR8g31J0
-         rLPTDkfOn+Z4/2Osq3lxgrIxWO6f4G9YWjwB/K3u1A7KN/QMBI7cWsvKAsGWN06dF+I/
-         dijg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=W8j1+yLCrGMraFjiLUwPAFVNbacfVjxk+8aTf9fb9Wk=;
-        b=hiB3WmcqsDXw88lxrF6PBOan3qc4DbQc/lsknmSxboMuz5EqXv2j1iPb432twaSmNC
-         npwEL4qVRwlnKAyKwbq74yAfTEil+jzOVlOA3/1RdcHpa5Ueym3qBX7bjn2LYlIhuwix
-         EwCQ/L7XczzqUOizt42fVVbsh7r04Yl8R3DdHq5WrPQ09Uw+M9HfoEgFy/hCSWDm+jyi
-         3OkJ7kPKF68rZ142aFen7aeHBB6aj3Q8iJJd8OfHdtLrdyoANBwmhdRocNSstiXssZwg
-         SeRBxkfZuvJjySwq7sc2mYbvRjIeQI6dGLVx7RGKpe5Y5gp3D7IjLd5hsglbnZNguR6x
-         /0lQ==
-X-Gm-Message-State: APzg51C1YeL+G7hAR9/6vmsjTbp5MEuF5BUWnRXkgnKhoMxW3gHCddkC
-        z7HlmBZByLO7MPKvzXA8DbOU8eZW
-X-Google-Smtp-Source: ANB0VdaeGH6hGBlNNc5AXwmaKeGeU2Q1emYlb6YIK5122h7lqiwX/z9zg7Ldq0PXlBKtk65Mf7tNeg==
-X-Received: by 2002:a63:eb53:: with SMTP id b19-v6mr31947131pgk.371.1536077634662;
-        Tue, 04 Sep 2018 09:13:54 -0700 (PDT)
-Received: from dsa-mb.local ([2601:282:800:fd80:1145:f235:fa5f:50ca])
-        by smtp.googlemail.com with ESMTPSA id z11-v6sm48690574pgz.62.2018.09.04.09.13.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 09:13:53 -0700 (PDT)
-Subject: Re: [PATCH net] devlink: Fix devlink_param_driverinit_value_set()
- stub return code
-To:     Moshe Shemesh <moshe@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Jiri Pirko <jiri@mellanox.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1536066265-18641-1-git-send-email-moshe@mellanox.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <2bf31ad0-c3f8-cdfd-8b96-1a8e3280064d@gmail.com>
-Date:   Tue, 4 Sep 2018 10:13:52 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 4 Sep 2018 16:40:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56350 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726347AbeIDUkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:40:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 633C2AD6D;
+        Tue,  4 Sep 2018 16:14:33 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 18:14:31 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Rik van Riel <riel@surriel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Josef Bacik <jbacik@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: slowly shrink slabs with a relatively small number
+ of objects
+Message-ID: <20180904161431.GP14951@dhcp22.suse.cz>
+References: <20180831203450.2536-1-guro@fb.com>
+ <3b05579f964cca1d44551913f1a9ee79d96f198e.camel@surriel.com>
+ <20180831213138.GA9159@tower.DHCP.thefacebook.com>
+ <20180903182956.GE15074@dhcp22.suse.cz>
+ <20180903202803.GA6227@castle.DHCP.thefacebook.com>
+ <20180904070005.GG14951@dhcp22.suse.cz>
+ <20180904153445.GA22328@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <1536066265-18641-1-git-send-email-moshe@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904153445.GA22328@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/18 7:04 AM, Moshe Shemesh wrote:
-> The stub function returned -EOPNOTSUPP while CONFIG_NET_DEVLINK is off.
-> It caused false warning during driver load. Driver needs to update
-> devlink on a parameter value if devlink module is there, if not it
-> doesn't need any error code.
+On Tue 04-09-18 08:34:49, Roman Gushchin wrote:
+> On Tue, Sep 04, 2018 at 09:00:05AM +0200, Michal Hocko wrote:
+> > On Mon 03-09-18 13:28:06, Roman Gushchin wrote:
+> > > On Mon, Sep 03, 2018 at 08:29:56PM +0200, Michal Hocko wrote:
+> > > > On Fri 31-08-18 14:31:41, Roman Gushchin wrote:
+> > > > > On Fri, Aug 31, 2018 at 05:15:39PM -0400, Rik van Riel wrote:
+> > > > > > On Fri, 2018-08-31 at 13:34 -0700, Roman Gushchin wrote:
+> > > > > > 
+> > > > > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > > > > > index fa2c150ab7b9..c910cf6bf606 100644
+> > > > > > > --- a/mm/vmscan.c
+> > > > > > > +++ b/mm/vmscan.c
+> > > > > > > @@ -476,6 +476,10 @@ static unsigned long do_shrink_slab(struct
+> > > > > > > shrink_control *shrinkctl,
+> > > > > > >  	delta = freeable >> priority;
+> > > > > > >  	delta *= 4;
+> > > > > > >  	do_div(delta, shrinker->seeks);
+> > > > > > > +
+> > > > > > > +	if (delta == 0 && freeable > 0)
+> > > > > > > +		delta = min(freeable, batch_size);
+> > > > > > > +
+> > > > > > >  	total_scan += delta;
+> > > > > > >  	if (total_scan < 0) {
+> > > > > > >  		pr_err("shrink_slab: %pF negative objects to delete
+> > > > > > > nr=%ld\n",
+> > > > > > 
+> > > > > > I agree that we need to shrink slabs with fewer than
+> > > > > > 4096 objects, but do we want to put more pressure on
+> > > > > > a slab the moment it drops below 4096 than we applied
+> > > > > > when it had just over 4096 objects on it?
+> > > > > > 
+> > > > > > With this patch, a slab with 5000 objects on it will
+> > > > > > get 1 item scanned, while a slab with 4000 objects on
+> > > > > > it will see shrinker->batch or SHRINK_BATCH objects
+> > > > > > scanned every time.
+> > > > > > 
+> > > > > > I don't know if this would cause any issues, just
+> > > > > > something to ponder.
+> > > > > 
+> > > > > Hm, fair enough. So, basically we can always do
+> > > > > 
+> > > > >     delta = max(delta, min(freeable, batch_size));
+> > > > > 
+> > > > > Does it look better?
+> > > > 
+> > > > Why don't you use the same heuristic we use for the normal LRU raclaim?
+> > > 
+> > > Because we do reparent kmem lru lists on offlining.
+> > > Take a look at memcg_offline_kmem().
+> > 
+> > Then I must be missing something. Why are we growing the number of dead
+> > cgroups then?
 > 
-> Fixes: ec01aeb1803e ("devlink: Add support for get/set driverinit value")
-> Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-> Acked-by: Jiri Pirko <jiri@mellanox.com>
-> ---
->  include/net/devlink.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/net/devlink.h b/include/net/devlink.h
-> index b9b89d6..b467357 100644
-> --- a/include/net/devlink.h
-> +++ b/include/net/devlink.h
-> @@ -781,7 +781,7 @@ static inline bool devlink_dpipe_table_counter_enabled(struct devlink *devlink,
->  devlink_param_driverinit_value_set(struct devlink *devlink, u32 param_id,
->  				   union devlink_param_value init_val)
->  {
-> -	return -EOPNOTSUPP;
-> +	return 0;
->  }
->  
->  static inline void
-> 
+> We do reparent LRU lists, but not objects. Objects (or, more precisely, pages)
+> are still holding a reference to the memcg.
 
-This should be handled by the driver -- check for -EOPNOTSUPP and not
-log an error.
+OK, this is what I missed. I thought that the reparenting includes all
+the pages as well. Is there any strong reason that we cannot do that?
+Performance/Locking/etc.?
 
-devlink is generic infrastructure. If a call is made and the operation
-is not supported, then devlink should return an error.
+Or maybe do not reparent at all and rely on the same reclaim heuristic
+we do for normal pages?
+
+I am not opposing your patch but I am trying to figure out whether that
+is the best approach.
+-- 
+Michal Hocko
+SUSE Labs
