@@ -2,105 +2,97 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7724CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C786DC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBA2206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBA2206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7E3D7206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsmurEDi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3D7206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeIDW7q (ORCPT
+        id S1727878AbeIDW7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:59:46 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55784 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeIDW7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:59:46 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id uwAH3MIH5ESy; Tue,  4 Sep 2018 20:33:08 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EF84D1EC02C1;
-        Tue,  4 Sep 2018 20:33:07 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 20:33:01 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Pu Wen <puwen@hygon.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v5 08/16] x86/apic: add modern APIC support for Hygon
-Message-ID: <20180904183301.GN32615@zn.tnic>
-References: <cover.1535459012.git.puwen@hygon.cn>
- <969a367a0b2d58f3e68bc6f97b6e8238e2390991.1535459013.git.puwen@hygon.cn>
+        Tue, 4 Sep 2018 18:59:54 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44386 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeIDW7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:59:54 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k21-v6so2095832pff.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 11:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=/1b21c7TXXIYptENM3vkWU/LhgwrOe4QldjnsHnHVgY=;
+        b=lsmurEDi1XBXpErBJ0EI+knLZ+QWaqlMXwLARD1pbpL4j6dyGlQ8k+S9uigMNOpyaP
+         Zi2t2XPkjPg7dD4kO54WRhX9XMW/DtD86MJyomGZ4Cv6t0zp2PGMiINICBJBk9hz1Rw/
+         UipVvKqXJYElMHBFb9uYBAj396POUhGQeB47K/varr+Ob11PdjWYmndA9tGLLGtIfLMd
+         0X6hLQo8ZNZROUpfbRHuPZ0o5hu/OGLFTkJlwBIIRQbywY+KNbcjANvkHkbjlWzkRTBB
+         jTgXra5XYOd8CP40MCj0kK1ff+1Crnadc1+cCTagGUxabaQB+glKOk6IQs86CwN/9qdc
+         qfeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=/1b21c7TXXIYptENM3vkWU/LhgwrOe4QldjnsHnHVgY=;
+        b=DhyvHs7ZgEQ8w6uqHYdnVYjVlWo5OP6t4Usa5tbnLQHuSqzIRN9itQMtGR/1aAXMe9
+         awEMJ94e4BeeB+54qu+WqkfkvDekq+R6G6rps2hfGiNBLqYgheKhImaZmk3KpPIWXn8B
+         q2LSxM4C1ZZ60IgrU1nOL8vNQJoSji8aKJochYK4LgNKfxZpTS0FKwhSuHSKn7RFu52/
+         n0phihdzNDSBzAgQ8kTkZEt7bA0paYR5qewlv3AEHmA4edStDtRlwPtKPGyfxRRsQqQ/
+         /UzwZjgO0URBi3WJ7KWdVvI0TTaVgt5BAI2/EackdY1nUAT5ZQFJRL552ZYDylJoIk5m
+         69KQ==
+X-Gm-Message-State: APzg51AgStuf5qXTG2N51HKsXQr8bbxz8W6gIbMRAeK6SliTC91h7xde
+        SSdvLP7amZ4sBGDLBvwbncY8vLTM
+X-Google-Smtp-Source: ANB0VdZYfn5ldnKv8+qots0aALnHztFQw63DqB20Kwb9i8RajiNV6IqGeg0++Mjv/GKOXH4Xo6y5eg==
+X-Received: by 2002:a63:ed4f:: with SMTP id m15-v6mr32376551pgk.147.1536086014665;
+        Tue, 04 Sep 2018 11:33:34 -0700 (PDT)
+Received: from localhost.localdomain (static-50-53-21-37.bvtn.or.frontiernet.net. [50.53.21.37])
+        by smtp.gmail.com with ESMTPSA id x23-v6sm10439168pge.61.2018.09.04.11.33.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 11:33:34 -0700 (PDT)
+Subject: [PATCH 0/2] Address issues slowing memory init
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
+        mhocko@suse.com, akpm@linux-foundation.org, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Date:   Tue, 04 Sep 2018 11:33:32 -0700
+Message-ID: <20180904181550.4416.50701.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <969a367a0b2d58f3e68bc6f97b6e8238e2390991.1535459013.git.puwen@hygon.cn>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 08:44:30PM +0800, Pu Wen wrote:
-> Hygon processors use modern APIC, so just return in modern_apic() and
-> sync_Arb_IDs(). And should break in switch case in detect_init_API().
-> 
-> When running on 32 bit mode, should set bigsmp if there are more than
-> 8 cores.
-> 
-> Signed-off-by: Pu Wen <puwen@hygon.cn>
-> ---
->  arch/x86/kernel/apic/apic.c     | 19 ++++++++++++++-----
->  arch/x86/kernel/apic/probe_32.c |  1 +
->  2 files changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-> index 84132ed..a62968e 100644
-> --- a/arch/x86/kernel/apic/apic.c
-> +++ b/arch/x86/kernel/apic/apic.c
-> @@ -220,10 +220,15 @@ static inline int lapic_is_integrated(void)
->   */
->  static int modern_apic(void)
->  {
-> -	/* AMD systems use old APIC versions, so check the CPU */
-> -	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-> -	    boot_cpu_data.x86 >= 0xf)
-> +	/*
-> +	 * Old AMD systems use old APIC versions, newer AMD systems
-> +	 * and Hygon systems use modern APIC, so check the CPU
-> +	 */
-> +	if ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-> +	     boot_cpu_data.x86 >= 0xf) ||
-> +	     boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
->  		return 1;
+This patch series is meant to address some issues I consider to be
+low-hanging fruit in regards to memory initialization optimization.
 
-Those compound conditionals are not nice to read. Just add yours
-underneath:
+With these two changes I am able to cut the hot-plug memory initialization
+times in my environment in half.
 
-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-	    boot_cpu_data.x86 >= 0xf)
-		return 1;
+---
 
-	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-		return 1;
+Alexander Duyck (2):
+      mm: Move page struct poisoning from CONFIG_DEBUG_VM to CONFIG_DEBUG_VM_PGFLAGS
+      mm: Create non-atomic version of SetPageReserved for init use
 
-Do that where applicable and where it makes sense, syntax-wise to have a
-separate vendor == HYGON check in the other patches too.
 
-Thx.
+ include/linux/page-flags.h |    1 +
+ mm/memblock.c              |    2 +-
+ mm/page_alloc.c            |    4 ++--
+ mm/sparse.c                |    2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+--
