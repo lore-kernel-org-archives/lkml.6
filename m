@@ -2,129 +2,105 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D95C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A3FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0E320867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC82A2086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BrkG6vvd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0E320867
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qyzFuAJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC82A2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeIDSA4 (ORCPT
+        id S1727330AbeIDSHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 14:00:56 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47252 "EHLO
+        Tue, 4 Sep 2018 14:07:33 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47938 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeIDSA4 (ORCPT
+        with ESMTP id S1726281AbeIDSHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 14:00:56 -0400
+        Tue, 4 Sep 2018 14:07:33 -0400
 Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84DZAPl060488;
-        Tue, 4 Sep 2018 08:35:10 -0500
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84DfgBM062185;
+        Tue, 4 Sep 2018 08:41:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536068110;
-        bh=lTFsv033/Pj6kDK5Y6SBWeGfKE8+w9AQ85oNdbUovRc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=BrkG6vvd69V80mmEWVwNsl+dNfbamlCdtmbg8KYnkd43FxwL+IKuGC6DaibB2tRAA
-         XR00DQeCv8DfkL+MhmkC2J4YhcpyIgF0x/nysUIVGDj4+nu9KkYXCsZQ3NuJlm6BQR
-         nNnoRZrVfvEgWtmMmq91EFuBVuCGLBbgLR6SfBqM=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84DZAkp027803;
-        Tue, 4 Sep 2018 08:35:10 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1536068502;
+        bh=QsGteD1wCYVBC4YAKDhItyX/CzEW6FyzuksqpypK8E0=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=qyzFuAJa8PwMkOQbu0pAYK/EFsSqcwXVGXbC7I4mRaVLYdMYYrJ4Md4Osr3E1KZs6
+         x0VcVZIBIe93TgJ+SSBLg0Sgv+e6yBZdDgTIexaoIGs8du147hSablIgpKbm1YW/bu
+         62wtuWbZWFRRsD32n1/uUP0SwXt+Noaj/9fPUUGk=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84Dfgpm006056;
+        Tue, 4 Sep 2018 08:41:42 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 4 Sep
- 2018 08:35:09 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 08:41:42 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 4 Sep 2018 08:35:09 -0500
-Received: from [172.22.184.106] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84DZ9oF008453;
-        Tue, 4 Sep 2018 08:35:09 -0500
-Subject: Re: [PATCH 1/2] ARM: dts: imx6: RDU2: Fix the audio CODEC's reset pin
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180831191732.25504-1-afd@ti.com> <20180903045426.GM3850@dragon>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <5796c470-a533-c010-ba53-7ee785a3b9e8@ti.com>
-Date:   Tue, 4 Sep 2018 08:35:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Tue, 4 Sep 2018 08:41:42 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84DfgOC015444;
+        Tue, 4 Sep 2018 08:41:42 -0500
+Date:   Tue, 4 Sep 2018 08:41:42 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-kernel@vger.kernel.org>, <nsekhar@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Vignesh R <vigneshr@ti.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am65: Change #address-cells and
+ #size-cells of interconnect to 2
+Message-ID: <20180904134142.npoxfimfsllmxdwb@akan>
+References: <20180903095235.13853-1-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180903045426.GM3850@dragon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180903095235.13853-1-kishon@ti.com>
+User-Agent: NeoMutt/20171215
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/2018 11:54 PM, Shawn Guo wrote:
-> On Fri, Aug 31, 2018 at 02:17:31PM -0500, Andrew F. Davis wrote:
->> The correct DT property for specifying a GPIO used for reset
->> is "reset-gpios", fix this here.
->>
->> Fixes: d763762e3b58 ("ARM: dts: imx6: add ZII RDU2 boards")
+On 15:22-20180903, Kishon Vijay Abraham I wrote:
+
+> AM65 has two PCIe controllers and each PCIe controller has '2' address
+> spaces one within the 4GB address space of the SoC and the other above
+> the 4GB address space of the SoC (cbass_main) in addition to the
+> register space. The size of the address space above the 4GB SoC address
+> space is 4GB. These address ranges will be used by CPU/DMA to access
+> the PCIe address space. In order to represent the address space above
+> the 4GB SoC address space and to represent the size of this address
+> space as 4GB, change address-cells and size-cells of interconnect to 2.
 > 
-> This Fixes tag and word 'Fix' in subject is inappropriate to me, as you
-> are not fixing something wrong from the beginning, but actually
-> replacing a deprecated property with new one.
+> Since OSPI has similar need in MCU Domain Memory Map, change
+> address-cells and size-cells of cbass_mcu interconnect also to 2.
 > 
 
+Please add Fixes
 
-reset-gpios was standard before this driver got it backwards, but it
-also wasn't required to be one way or the other as far as I can tell, so
-I can see your point that this isn't technically "broken". I have no
-preference, so I'll change the subject and drop the fixes for v2.
+Vignesh, Sekhar, Tony,
 
-Andrew
+Do we agree this is the right way to go forward? if yes, please
+ack.
 
 
-> Shawn
-> 
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>  arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
->> index 7fff3717cf7c..a0f5cfda0055 100644
->> --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
->> +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
->> @@ -384,7 +384,7 @@
->>  		AVDD-supply = <&reg_3p3v>;
->>  		IOVDD-supply = <&reg_3p3v>;
->>  		DVDD-supply = <&vgen4_reg>;
->> -		gpio-reset = <&gpio1 2 GPIO_ACTIVE_HIGH>;
->> +		reset-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
->>  	};
->>  
->>  	accel@1c {
->> @@ -572,7 +572,7 @@
->>  		AVDD-supply = <&reg_3p3v>;
->>  		IOVDD-supply = <&reg_3p3v>;
->>  		DVDD-supply = <&vgen4_reg>;
->> -		gpio-reset = <&gpio1 0 GPIO_ACTIVE_HIGH>;
->> +		reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
->>  	};
->>  
->>  	touchscreen@20 {
->> -- 
->> 2.18.0
->>
+-- 
+Regards,
+Nishanth Menon
