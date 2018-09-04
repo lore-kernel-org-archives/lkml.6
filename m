@@ -2,200 +2,114 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A234DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F101DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59E5920661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EADC20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5oQkySH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E5920661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TNEI1/43"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EADC20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeIDUpn (ORCPT
+        id S1727624AbeIDUq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:45:43 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54265 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeIDUpn (ORCPT
+        Tue, 4 Sep 2018 16:46:58 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50404 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbeIDUq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:45:43 -0400
-Received: by mail-wm0-f68.google.com with SMTP id b19-v6so5087898wme.3;
-        Tue, 04 Sep 2018 09:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=xXfhCKyEdYmMz9/Nd8prPhZsLoSApiN/wPBbJZJMB/w=;
-        b=d5oQkySHsqdyAL3V7dO+vBDZ+frQIYE0AaAkQo9E+Qoi+cuK4q9ucPY6pv065JJegS
-         PbGGBOjtCmT9+Re01J/6eD2Vj3juWzKDSuh27F1dC+jF/p0RQIDZ8UNdoTXrmnlG4xJV
-         9NIXGITyOHIINqouhwd1C1azHKmYauOf5eAmUt6ecoxJckzpoqSzYVez4JXH0rCbs5Qc
-         ulZogutbbjCgzEpAoFiBLVEjIthzGxKSW9VBIAJ+Y5uzWoEef/JP6e3rr366NkHV0Sml
-         P4vXJmLc4B3gCHr+8Bi49U4/N6ptLQ/KeQrh9mTiUBmqA7fJhmPlwUp6ua3S+oQXbb3p
-         2nsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=xXfhCKyEdYmMz9/Nd8prPhZsLoSApiN/wPBbJZJMB/w=;
-        b=QtFLlc7kIF/wcW/eQLEUWDY1rClUc8tafIPdq33lS7y11tmYqDV6z9B/+WuGJ7LDYw
-         vSKftwrLahDklpglYn9w/Do/apdkerNetgCHkX/aJnvpetH474DdY9oBv2PcaFjZaeMZ
-         ded8QcEU24UWU/csUYJC/zKg8x9+cGcHTvV2f4HqN21m7KkpJBMch7Nbq84TkIaIsIbF
-         ay5Ns4H2RzaMECglWXVyCP6//tp6YMq2xO0/fvWSnR0RmSeiddTA3v/GQ0oiAyFfnDkj
-         6zWE274lMalQ5hVLxdov/y85BKTicdV7iUdsJBKf/BfHHzcT369YtOe2+yXT2s1n4ks1
-         yU9A==
-X-Gm-Message-State: APzg51AliALuazMRXVfRznDZzOa3kyfbb8cZlGrE4R04oZ6V5+Rp1kB9
-        6k9D1x8dLHonCtTtcW/JxA==
-X-Google-Smtp-Source: ANB0Vdbu74OCqzSySia2+bOb+HNU21N2sb9HmVLvHnvopKFF//jzlxpvqSpa6j3SSyPHUAquIM+ooQ==
-X-Received: by 2002:a1c:d141:: with SMTP id i62-v6mr1448899wmg.113.1536077992367;
-        Tue, 04 Sep 2018 09:19:52 -0700 (PDT)
-Received: from Helena.home (host86-176-130-140.range86-176.btcentralplus.com. [86.176.130.140])
-        by smtp.gmail.com with ESMTPSA id h10-v6sm3481836wmf.44.2018.09.04.09.19.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 09:19:51 -0700 (PDT)
-Date:   Tue, 04 Sep 2018 17:19:48 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180904140538.16602-1-srinivas.kandagatla@linaro.org>
-References: <20180904140538.16602-1-srinivas.kandagatla@linaro.org>
+        Tue, 4 Sep 2018 16:46:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K8KRfCaXL5BAW/JxRlzOZdJKnBtcwjtEC8TX8+OYLqo=; b=TNEI1/43fs7tW70248XEa97nY
+        IAqCdIgckP1qy1iwriGaXLk/Bkt3FSPtIyfHktkybdaJF/6tt9czIhD0CFf086eJkzywwf6s5ReL4
+        SsEfNE7i8ZG1BbUR8NW3aP3bR7BEc9jZgDylaUP9QlhczrGSKgc+tTuc96ePhD59jduMw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fxE4c-0001U0-7n; Tue, 04 Sep 2018 16:21:02 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id BD95B11227D8; Tue,  4 Sep 2018 17:21:01 +0100 (BST)
+Date:   Tue, 4 Sep 2018 17:21:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tlv320aic31xx: Add MICBIAS off setting
+Message-ID: <20180904162101.GK12993@sirena.org.uk>
+References: <20180831180507.28867-1-afd@ti.com>
+ <20180903112656.GF10302@sirena.org.uk>
+ <701a066c-33e1-4476-7403-fdb9a3c366d8@ti.com>
+ <20180904144159.GC12993@sirena.org.uk>
+ <7163381a-ae09-ad3b-064d-990c98f13ccb@ti.com>
+ <20180904145503.GD12993@sirena.org.uk>
+ <85973bf4-1acb-1731-d93e-29c8141a3c53@ti.com>
+ <20180904155655.GJ12993@sirena.org.uk>
+ <5e7fdb87-651d-6056-9323-7a29573b6300@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v2] irqchip/gic-v3: Add quirk for msm8996 secured registers
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        marc.zyngier@arm.com
-CC:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org
-From:   Craig Tatlor <ctatlor97@gmail.com>
-Message-ID: <A0BB4E01-1CF6-49B1-9B5C-27FAC1DF821A@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uuKVzAmB+c+zQlhu"
+Content-Disposition: inline
+In-Reply-To: <5e7fdb87-651d-6056-9323-7a29573b6300@ti.com>
+X-Cookie: Times approximate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--uuKVzAmB+c+zQlhu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4 September 2018 15:05:38 BST, Srinivas Kandagatla <srinivas=2Ekandagat=
-la@linaro=2Eorg> wrote:
->Access to GICR_WAKER is restricted on msm8996 SoC in Hypervisor=2E
->Its been more than 2 years of wait for this to be fixed, which has
->no hopes to be fixed=2E This change was introduced for the "lead device"
->on msm8996 platform=2E It looks like all publicly available msm8996
->devices have this implementation=2E
->
->So add a quirk to not access this register on msm8996=2E
->
->With this quirk MSM8996 can at least boot out of mainline,
->which can help community to work with boards based on MSM8996=2E
->
->Without this patch Qualcomm DB820c board reboots when GICR_WAKER
->is accessed=2E
->
->Signed-off-by: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
->---
->Hi Marc,
->
->There is no errata associated with this quirk, so I could not add
->any entries into Documentation/arm64/silicon-errata=2Etxt Or add
->any number to the quirk description=2E
->
->Changes since v1:
->- renamed gic_v3 references to gic
->- added full mask for iidr register match
->
->thanks,
->srini
->
-> drivers/irqchip/irq-gic-v3=2Ec | 29 ++++++++++++++++++++++++++++-
-> 1 file changed, 28 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/irqchip/irq-gic-v3=2Ec
->b/drivers/irqchip/irq-gic-v3=2Ec
->index d5912f1ec884=2E=2E406d4a44c887 100644
->--- a/drivers/irqchip/irq-gic-v3=2Ec
->+++ b/drivers/irqchip/irq-gic-v3=2Ec
->@@ -41,6 +41,8 @@
->=20
-> #include "irq-gic-common=2Eh"
->=20
->+#define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
->+
-> struct redist_region {
-> 	void __iomem		*redist_base;
-> 	phys_addr_t		phys_base;
->@@ -55,6 +57,7 @@ struct gic_chip_data {
-> 	struct irq_domain	*domain;
-> 	u64			redist_stride;
-> 	u32			nr_redist_regions;
->+	u64			flags;
-> 	bool			has_rss;
-> 	unsigned int		irq_nr;
-> 	struct partition_desc	*ppi_descs[16];
->@@ -139,6 +142,9 @@ static void gic_enable_redist(bool enable)
-> 	u32 count =3D 1000000;	/* 1s! */
-> 	u32 val;
->=20
->+	if (gic_data=2Eflags & FLAGS_WORKAROUND_GICR_WAKER_MSM8996)
->+		return;
->+
-> 	rbase =3D gic_data_rdist_rd_base();
->=20
-> 	val =3D readl_relaxed(rbase + GICR_WAKER);
->@@ -1068,13 +1074,31 @@ static const struct irq_domain_ops
->partition_domain_ops =3D {
-> 	=2Eselect =3D gic_irq_domain_select,
-> };
->=20
->+static bool __maybe_unused gic_enable_quirk_msm8996(void *data)
->+{
->+	struct gic_chip_data *d =3D data;
->+
->+	d->flags |=3D FLAGS_WORKAROUND_GICR_WAKER_MSM8996;
->+
->+	return true;
->+}
->+
->+static const struct gic_quirk gic_quirks[] =3D {
->+	{
->+		=2Edesc	=3D "GICv3: Qualcomm MSM8996 skip GICR_WAKER Read/Write",
->+		=2Eiidr	=3D 0x00001070,	/* MSM8996 */
->+		=2Emask	=3D 0xffffffff,
->+		=2Einit	=3D gic_enable_quirk_msm8996,
->+	},
->+};
->+
-> static int __init gic_init_bases(void __iomem *dist_base,
-> 				 struct redist_region *rdist_regs,
-> 				 u32 nr_redist_regions,
-> 				 u64 redist_stride,
-> 				 struct fwnode_handle *handle)
-> {
->-	u32 typer;
->+	u32 typer, iidr;
-> 	int gic_irqs;
-> 	int err;
->=20
->@@ -1130,6 +1154,9 @@ static int __init gic_init_bases(void __iomem
->*dist_base,
-> 	if (IS_ENABLED(CONFIG_ARM_GIC_V3_ITS) && gic_dist_supports_lpis())
-> 		its_init(handle, &gic_data=2Erdists, gic_data=2Edomain);
->=20
->+	iidr =3D readl_relaxed(dist_base + GICD_IIDR);
->+	gic_enable_quirks(iidr, gic_quirks, &gic_data);
->+
-> 	gic_smp_init();
-> 	gic_dist_init();
-> 	gic_cpu_init();
+On Tue, Sep 04, 2018 at 11:02:14AM -0500, Andrew F. Davis wrote:
+> On 09/04/2018 10:56 AM, Mark Brown wrote:
 
-This bug also affects sdm660/630 and probably 8998 but I cant verify so it=
- would probably make sense to loosen up the naming for the quirk=2E
--- 
+> > I'm really having a lot of trouble seeing MICBIAS_OFF as a useful
+> > voltage to specify in DT in the first place.
+
+> I don't see the usefulness in specifying any bias voltage in DT at all,
+> it is a configuration and can be made at runtime, it has no place in DT.
+> But it is already here, so lets allow all available voltages a board may
+> need and the CODEC can supply, even 0.
+
+It is very rare for it to be useful to select the bias voltage at
+runtime - it's usually something that's decided by the electrical
+engineering at system design time and linked to selection of passive
+components rather than something that a user could usefully vary.  I
+suspect in the situations where it is useful to vary it you'd want a
+layer of indirection mapping it onto some user observable behaviour (or
+the system should just do this autonomously as with the various low
+power mic detect solutions out there).  What situations are you aware of
+where runtime configuration is useful?
+
+--uuKVzAmB+c+zQlhu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluOsOwACgkQJNaLcl1U
+h9DYmAf+LCT+vhBXxyGDhabEyFRP6oDBpr/gdW0VYGmGA6gmmSyRJ/FpyQptNoaq
+yIpEeS137gVaflEf50GOe4ir99A2BEm/9bDM/GfWiqVXxVEj7DJJErUbDD/U5GVc
+tmTZRprqQE7mtLDXcabHWZ36NvJDPYSsW4nWY/lECWM/n7WhF6Uj8doy/aB7M4um
+9+IoV+5K72uid4PEJXQW2I4aqJGnGIx8OKe7+0028gC4Rz+P9zpM+e7R/Z7jEpzO
+4ERfDasO9WhLSu+4dqCqSu0eA3yAAkgDaZqbhRmRzgMozN9jHdkEB3aQdL2qf52V
+5NHHRm6HOcIHW2PXOwC7Lwbl9Aad4w==
+=rGwn
+-----END PGP SIGNATURE-----
+
+--uuKVzAmB+c+zQlhu--
