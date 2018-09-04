@@ -2,143 +2,158 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972C4C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6F1C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FA82075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:13:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FA82075E
+	by mail.kernel.org (Postfix) with ESMTP id 4AFC92077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFC92077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeIECks convert rfc822-to-8bit (ORCPT
+        id S1727493AbeIEClQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:40:48 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29214 "EHLO mga14.intel.com"
+        Tue, 4 Sep 2018 22:41:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:33782 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbeIECks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:40:48 -0400
+        id S1726664AbeIEClQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:41:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:13:38 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:14:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
-   d="scan'208";a="87642938"
-Received: from pgsmsx107.gar.corp.intel.com ([10.221.44.105])
-  by orsmga001.jf.intel.com with ESMTP; 04 Sep 2018 15:13:35 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- PGSMSX107.gar.corp.intel.com ([169.254.7.2]) with mapi id 14.03.0319.002;
- Wed, 5 Sep 2018 06:13:34 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
-CC:     "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QIAC8vSAgABkDoCABMj0AIAAzxpQgAB5ToCAAAnrgIAAEkcAgADj9JA=
-Date:   Tue, 4 Sep 2018 22:13:34 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A09893541AF39@PGSMSX112.gar.corp.intel.com>
-References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
- <20180904145451.GA5233@linux.intel.com>
- <20180904153021.GB8344@linux.intel.com>
- <20180904163546.GA5421@linux.intel.com>
-In-Reply-To: <20180904163546.GA5421@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWQwN2RhYWQtNDg0Mi00ZjZmLWE3OTYtYzE5OGMwN2FlOTAzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZVQxNmdQaWR2THNJS0VRdlFsb0QycVN1TkFrUlhqamFcL1wvb2Y5cDk5blpVdnZWcDJTeE82WmFMUW1wMkl0dk5mIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+   d="scan'208";a="70343589"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
+  by orsmga007.jf.intel.com with ESMTP; 04 Sep 2018 15:14:08 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH V3 0/5] Add efi page fault handler to detect and recover
+Date:   Tue,  4 Sep 2018 15:12:24 -0700
+Message-Id: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-> -----Original Message-----
-> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
-> owner@vger.kernel.org] On Behalf Of Sean Christopherson
-> Sent: Wednesday, September 5, 2018 4:36 AM
-> To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
-> x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
-> tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
-> <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> <dave.hansen@intel.com>
-> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-> 
-> On Tue, Sep 04, 2018 at 06:30:21PM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
-> > > I don't see any value in trying to rule out specific causes of
-> > > INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
-> > > and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs
-> > > to be checked for validity as they're a package deal, i.e. they'll
-> > > all be valid or all be reset.  There shouldn't be a limit on retry
-> > > attempts, e.g. the MSRs could theoretically be reset between WRMSR and
-> EINIT.
-> >
-> > Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
-> > are out-of-sync i.e. have been sleeping and then one just needs to do
-> > wrmsrs.
-> 
-> As Kai mentioned, INVALID_TOKEN is returned for other reasons, e.g. a
-> production enclave trying to use a debug token or reserved bits set in the token.
-> And in the KVM case, the hash and token are provided by the guest, so it's
-> entirely possible the enclave/token is not signed with the key specified in the
-> hash.  RDMSR is relatively inexpensive compared to the overall cost of EINIT.
-> Though of course EINIT failure isn't exactly a fast path, so I'm ok if you want to
-> opt for simplicity and retry on INVALID_TOKEN without checking the MSRs, just
-> make sure to add a comment indicating we're intentionally not checking the
-> MSRs.
-> 
-> > I think one retry should be enough given that VMM traps EINIT. One
-> > retry is needed to take care of the guest itself (or host if we are
-> > running on bare metal) having been in a sleep state.
-> 
-> Assuming we do RDMSR(hash0), that should be sufficient to prevent infinite retry
-> and 
+There may exist some buggy UEFI firmware implementations that access efi
+memory regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even after
+the kernel has assumed control of the platform. This violates UEFI
+specification. Hence, provide a debug config option which when enabled
+detects and recovers from page faults caused by buggy firmware.
 
-IMHO probably we need to review this assumption w/ crypto guys, at least Intel internally.
+The above said illegal accesses trigger page fault in ring 0 because
+firmware executes at ring 0 and if unhandled it hangs the kernel.
+Provide an efi specific page fault handler to:
+1. Avoid panics/hangs caused by buggy firmware.
+2. Shout loud that the firmware is buggy and hence is not a kernel bug.
 
-Thanks,
--Kai
+Upon detetcing that the illegally accessed region is any region other
+than EFI_RUNTIME_SERVICES_<CODE/DATA>, the efi page fault handler will
+check if the access is by efi_reset_system().
+1. If so, then the efi page fault handler will reboot the machine
+   through BIOS and not through efi_reset_system().
+2. If not, then the efi page fault handler will freeze efi_rts_wq and
+   schedules a new process.
 
-it protects against the MSRs being lost between WRMSR and EINIT during
-> retry.  That being said, I'm ok retrying only once, especially if you want to omit
-> the RDMSR.  Disabling preemption should prevent the kernel from suspending
-> between WRMSR and EINIT, I'm just being paranoid.
+This issue was reported by Al Stone when he saw that reboot via EFI hangs
+the machine. Upon debugging, I found that it's efi_reset_system() that's
+touching memory regions which it shouldn't. To reproduce the same
+behavior, I have hacked OVMF and made efi_reset_system() buggy. Along
+with efi_reset_system(), I have also modified get_next_high_mono_count()
+and set_virtual_address_map(). They illegally access both boot time and
+other efi regions.
 
+Testing the patch set:
+----------------------
+1. Download buggy firmware from here [1].
+2. Run a qemu instance with this buggy BIOS and boot mainline kernel.
+Add reboot=efi to the kernel command line arguments and after the kernel
+is up and running, type "reboot". The kernel should hang while rebooting.
+3. With the same setup, boot kernel after applying patches and the
+reboot should work fine. Also please notice warning/error messages
+printed by kernel.
+
+Changes from RFC to V1:
+-----------------------
+1. Drop "long jump" technique of dealing with illegal access and instead
+   use scheduling away from efi_rts_wq.
+
+Changes from V1 to V2:
+----------------------
+1. Shortened config name to CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS from
+   CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES.
+2. Made the config option available only to expert users.
+3. efi_free_boot_services() should be called only when
+   CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is not enabled. Previously, this
+   was part of init/main.c file. As it is an architecture agnostic code,
+   moved the change to arch/x86/platform/efi/quirks.c file.
+
+Changes from V2 to V3:
+----------------------
+1. Drop treating illegal access to EFI_BOOT_SERVICES_<CODE/DATA> regions
+   separatley from illegal accesses to other regions like
+   EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>.
+   In previous versions, illegal access to EFI_BOOT_SERVICES_<CODE/DATA>
+   regions were handled by mapping requested region to efi_pgd but from
+   V3 they are handled similar to illegal access to other regions i.e by
+   freezing efi_rts_wq and scheduling new process.
+2. Change __efi_init_fixup attribute to __efi_init.
+
+Note:
+-----
+Patch set based on "next" branch in efi tree.
+
+[1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+
+Sai Praneeth (5):
+  efi: Make efi_rts_work accessible to efi page fault handler
+  efi: Introduce __efi_init attribute
+  x86/efi: Permanently save the EFI_MEMORY_MAP passed by the firmware
+  x86/efi: Add efi page fault handler to recover from the page faults   
+     caused by firmware
+  x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESS
+
+ arch/x86/Kconfig                        |  17 +++
+ arch/x86/include/asm/efi.h              |  11 ++
+ arch/x86/mm/fault.c                     |   9 ++
+ arch/x86/platform/efi/efi.c             |   2 +
+ arch/x86/platform/efi/quirks.c          | 188 ++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/efi.c              |   4 +-
+ drivers/firmware/efi/runtime-wrappers.c |  60 +++-------
+ include/linux/efi.h                     |  51 ++++++++-
+ 8 files changed, 295 insertions(+), 47 deletions(-)
+
+Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Al Stone <astone@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+-- 
+2.7.4
 
