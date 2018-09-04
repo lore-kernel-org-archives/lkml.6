@@ -2,98 +2,80 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57E4C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E733C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 678C32077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:52:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="l9BiacCO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678C32077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E4B842077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B842077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeIDUSQ (ORCPT
+        id S1727638AbeIDUSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:18:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58936 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbeIDUSQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:18:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FlRd+M1rk+NPte8qjDr7LfvbSmlTLRzCPQZ1q+YfT4g=; b=l9BiacCOK46u71uxvniJLgnQ4
-        cmaKnPuc/aCktl5XhFUvXZEROvkidHFvH6RBhjUPr3xqPDkyzE6x+cjRjudLHsQJMP3mzxH2Jd56T
-        O2ueXj7KRtkGlMmJ0DfokA7zpPOfa8mh+nbNhq7+tVDr0+wiXBFHk/qahs5IL4M3u6gOk=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fxDd1-0001T2-F0; Tue, 04 Sep 2018 15:52:31 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2449511227D8; Tue,  4 Sep 2018 16:52:31 +0100 (BST)
-Date:   Tue, 4 Sep 2018 16:52:31 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] ASoC: tlv320aic31xx: Add headphone/headset
- detection
-Message-ID: <20180904155231.GI12993@sirena.org.uk>
-References: <20180904153619.2199-1-afd@ti.com>
- <20180904153619.2199-2-afd@ti.com>
+        Tue, 4 Sep 2018 16:18:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727357AbeIDUSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:18:35 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2005A8830B;
+        Tue,  4 Sep 2018 15:52:53 +0000 (UTC)
+Received: from t450s.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D54EF19489;
+        Tue,  4 Sep 2018 15:52:50 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 09:52:50 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Li Qiang <liq3ea@gmail.com>
+Cc:     eric.auger@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liqiang02@corp.netease.com
+Subject: Re: [PATCH] vfio: fix potential memory leak in vfio_msi_cap_len
+Message-ID: <20180904095250.32e170c5@t450s.home>
+In-Reply-To: <1535374041-3551-1-git-send-email-liq3ea@gmail.com>
+References: <1535374041-3551-1-git-send-email-liq3ea@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="k9xkV0rc9XGsukaG"
-Content-Disposition: inline
-In-Reply-To: <20180904153619.2199-2-afd@ti.com>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 04 Sep 2018 15:52:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 27 Aug 2018 05:47:21 -0700
+Li Qiang <liq3ea@gmail.com> wrote:
 
---k9xkV0rc9XGsukaG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Free the vdev->msi_perm in error path.
+> 
+> Signed-off-by: Li Qiang <liq3ea@gmail.com>
+> ---
+>  drivers/vfio/pci/vfio_pci_config.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+> index 115a36f6f403..62023b4a373b 100644
+> --- a/drivers/vfio/pci/vfio_pci_config.c
+> +++ b/drivers/vfio/pci/vfio_pci_config.c
+> @@ -1180,8 +1180,10 @@ static int vfio_msi_cap_len(struct vfio_pci_device *vdev, u8 pos)
+>  		return -ENOMEM;
+>  
+>  	ret = init_pci_cap_msi_perm(vdev->msi_perm, len, flags);
+> -	if (ret)
+> +	if (ret) {
+> +		kfree(vdev->msi_perm);
+>  		return ret;
+> +	}
+>  
+>  	return len;
+>  }
 
-On Tue, Sep 04, 2018 at 10:36:18AM -0500, Andrew F. Davis wrote:
-> This device can detect the insertion/removal of headphones and headsets.
-> Enable reporting this status by enabling this interrupt and forwarding
-> this to upper-layers if a jack has been defined.
+Fix looks correct to me, I'll queue this for v4.20 with Eric's R-b.
+Thanks,
 
-This doesn't apply against current code (even -next) - please check and
-resend:
-
-$ git am -3 --signoff /tmp/fnord
-Applying: ASoC: tlv320aic31xx: Add overflow detection support
-Applying: ASoC: tlv320aic31xx: Add headphone/headset detection
-error: sha1 information is lacking or useless (sound/soc/codecs/tlv320aic31xx.c).
-error: could not build fake ancestor
-
---k9xkV0rc9XGsukaG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluOqj4ACgkQJNaLcl1U
-h9CxMAf/THZWb0/SH2oJMu2w92+xy94natUzhfHOQ41peMsly/Fzmf18Qt/gvGcp
-FryEEJJW9Fq4cqX8UFR2oy5YxdJZT7CuR7POKZ6Cq/TuA7A7fP9LK9tHA1mE5YWP
-q3ExUgdxQJ5kRmF50t2lbp95LqZgRK7dXjEtqiLgdo1X2uAyyEkHlnuu/WQ6DxmD
-KVmrVFTpai6txY5j46dCamqOn8zsyBFoMLJ69hWdFw5XqJYvcla8c2VKtoleIsZS
-aK2RvcGjdRs5epsGkP5gis7DJ7dXkRbt4cpVHu9tg+J6C4Iqjz8v1bU1GE22EdW6
-Zc16ylStjAWBlzbDkfZPtpth16XgEA==
-=ONEw
------END PGP SIGNATURE-----
-
---k9xkV0rc9XGsukaG--
+Alex
