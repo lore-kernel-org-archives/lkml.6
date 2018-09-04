@@ -3,112 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF25C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5047CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A0620869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:58:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A0620869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F3A5E20867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A5E20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbeIDMWZ (ORCPT
+        id S1726213AbeIDMYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:22:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:27269 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbeIDMWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:22:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 00:58:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="71418189"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga006.jf.intel.com with ESMTP; 04 Sep 2018 00:57:53 -0700
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 00:57:53 -0700
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 00:57:53 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
- Tue, 4 Sep 2018 15:57:50 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Auger Eric <eric.auger@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "christoffer.dall@arm.com" <christoffer.dall@arm.com>
-Subject: RE: [RFC 01/13] iommu: Introduce bind_guest_stage API
-Thread-Topic: [RFC 01/13] iommu: Introduce bind_guest_stage API
-Thread-Index: AQHUOttfqy1SkTByKESItK+VEUbEjaTM7zGAgAxtLACAAAuEgIAGZ4Rg
-Date:   Tue, 4 Sep 2018 07:57:50 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912EFB76@SHSMSX101.ccr.corp.intel.com>
-References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
- <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
- <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
- <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
- <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
-In-Reply-To: <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGU5YTczNmYtYjA0Mi00MzVmLThmYTgtYWM2MjAzM2I5ODUxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoia2dscVh3dWFQU21cL09ZdlROSXdrTlViYTFSVWxsSnhwQldwXC9SNTJoZGJvRzZUWFNsVSsrTE41XC94UlJDYlVxNSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 4 Sep 2018 08:24:30 -0400
+Received: from mail.netline.ch ([148.251.143.178]:49217 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeIDMY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 08:24:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 90EA12A6042;
+        Tue,  4 Sep 2018 10:00:28 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 1wKgb2755Kyt; Tue,  4 Sep 2018 10:00:28 +0200 (CEST)
+Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id D55662A604A;
+        Tue,  4 Sep 2018 10:00:27 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1fx6GB-0007Al-Hz; Tue, 04 Sep 2018 10:00:27 +0200
+Subject: Re: [PATCH 3/5] drm: fix drm_mode_addfb() on big endian machines.
+To:     Ilia Mirkin <imirkin@alum.mit.edu>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
+References: <20180903105756.24912-1-kraxel@redhat.com>
+ <20180903105756.24912-4-kraxel@redhat.com>
+ <20180903164558.GL21634@phenom.ffwll.local>
+ <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <8e8f8cf3-c4d4-6bfd-4e53-536d4d0c79ff@daenzer.net>
+Date:   Tue, 4 Sep 2018 10:00:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBBdWdlciBFcmljDQo+IFNlbnQ6IEZyaWRheSwgQXVndXN0IDMxLCAyMDE4IDk6NTIg
-UE0NCj4gDQo+IEhpIEplYW4tUGhpbGlwcGUsDQo+IA0KPiBPbiAwOC8zMS8yMDE4IDAzOjExIFBN
-LCBKZWFuLVBoaWxpcHBlIEJydWNrZXIgd3JvdGU6DQo+ID4gSGkgRXJpYywNCj4gPg0KPiA+IE9u
-IDIzLzA4LzE4IDE2OjI1LCBBdWdlciBFcmljIHdyb3RlOg0KPiA+Pj4gK2ludCBpb21tdV9iaW5k
-X2d1ZXN0X3N0YWdlKHN0cnVjdCBpb21tdV9kb21haW4gKmRvbWFpbiwgc3RydWN0DQo+IGRldmlj
-ZSAqZGV2LA0KPiA+Pj4gKwkJCSAgIHN0cnVjdCBpb21tdV9ndWVzdF9zdGFnZV9jb25maWcgKmNm
-ZykNCj4gPg0KPiA+IEFib3V0IHRoZSBuYW1lIGNoYW5nZSBmcm9tIGlvbW11X2JpbmRfcGFzaWRf
-dGFibGU6IGlzIHRoZSBpbnRlbnQgdG8NCj4gPiByZXVzZSB0aGlzIEFQSSBmb3IgU01NVXYyLCB3
-aGljaCBzdXBwb3J0cyBuZXN0ZWQgYnV0IG5vdCBQQVNJRD8gU2VlbXMNCj4gPiBsaWtlIGEgZ29v
-ZCBpZGVhIGJ1dCAiaW9tbXVfYmluZF90YWJsZSIgbWF5IGJlIGJldHRlciBzaW5jZSAic3RhZ2Ui
-IGlzDQo+ID4gb25seSB1c2VkIGJ5IEFybS4NCj4gDQo+IEF0IHRoZSBtb21lbnQgSSBkb24ndCB0
-YXJnZXQgU01VdjIgYnV0IGp1c3QgU01NVXYzLiBNeSBmb2N1cyB3YXMgb24NCj4gbmVzdGVkIHN0
-YWdlIGVuYWJsZW1lbnQgd2l0aG91dCBlbmFibGluZyB0aGUgbXVsdGktQ0QgZmVhdHVyZSAoUEFT
-SUQpLA0KPiB3aGlzaCBpcyBub3Qgc3VwcG9ydGVkIGJ5IHRoZSBRRU1VIHZTTU1VdjMuIEFmdGVy
-d2FyZHMgSSByZWFsaXplZCB0aGF0DQo+IGJhc2ljYWxseSB3ZSBhcmUgcG9pbnRpbmcgdG8gYSBD
-RCBvciBQQVNJRCB0YWJsZSBhbmQgdGhhdCdzIGFib3V0IHRoZQ0KPiBzYW1lLiBJIGRvbid0IGhh
-dmUgYSBzdHJvbmcgb3BpbmlvbiBvbiB0aGUgbmFtZSwgaW9tbXVfYmluZF9ndWVzdF90YWJsZQ0K
-PiBvciBpb21tdV9iaW5kX3Bhc2lkX3RhYmxlIHdvdWxkIGJlIGZpbmUgd2l0aCBtZS4gSW5kZWVk
-ICJzdGFnZSIgaXMgQVJNDQo+IHZvY2FibGUgKGxldmVsIGZvciBJbnRlbD8pDQoNCkludGVsIHVz
-ZXMgZmlyc3QgbGV2ZWwvc2Vjb25kIGxldmVsLiANCg0KaW9tbXVfYmluZF90YWJsZSBpcyBhIGJp
-dCBjb25mdXNpbmcuIHdoYXQgc2hvdWxkIHBlb3BsZSB0YWtlIHRhYmxlIGFzPw0KdGhlcmUgaXMg
-UEFTSUQgdGFibGUuIHRoZXJlIGlzIGFsc28gcGFnZSB0YWJsZSBsaW5rZWQgaW4gZWFjaCBzdGFn
-ZS9sZXZlbC4gYW5kDQptYXliZSBvdGhlciB0YWJsZXMgaW4gdmVuZG9yLXNwZWNpZmljIGRlZmlu
-aXRpb24uDQoNCnRvIG1lIGlvbW11X2JpbmRfcGFzaWRfdGFibGUgaXMgc3RpbGwgY2xlYXJlci4g
-YW55d2F5IGluIG90aGVyIHBsYWNlcw0Kd2UndmUgdXNlZCBwYXNpZCBleHBsaWNpdGx5IGluIHZm
-aW8vaW9tbXUgQVBJcywgdGhlbiBpdCBzaG91bGQgYmUgZ2VuZXJhbA0KZW5vdWdoIHRvIHJlcHJl
-c2VudCB2YXJpb3VzIGltcGxlbWVudGF0aW9ucy4NCg0KVGhhbmtzDQpLZXZpbg0KDQoNCg0K
+On 2018-09-03 7:07 p.m., Ilia Mirkin wrote:
+> On Mon, Sep 3, 2018 at 12:45 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> On Mon, Sep 03, 2018 at 12:57:54PM +0200, Gerd Hoffmann wrote:
+>>> Userspace on big endian machhines typically expects the ADDFB ioctl
+>>> returns a big endian framebuffer.  drm_mode_addfb() will call
+>>> drm_mode_addfb2() unconditionally with little endian DRM_FORMAT_*
+>>> values though, which is wrong.  This patch fixes that.
+>>>
+>>> Drivers (both kernel and xorg) have quirks in place to deal with the
+>>> broken drm_mode_addfb() behavior.  Because of this we can't just change
+>>> drm_mode_addfb() behavior for everybody without breaking things.  So add
+>>> a new driver feature flag DRIVER_PREFER_HOST_BYTE_ORDER, so drivers can
+>>> opt-in.
+>>>
+>>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>>> ---
+>>>  include/drm/drm_drv.h             |  1 +
+>>>  drivers/gpu/drm/drm_framebuffer.c | 11 +++++++++++
+>>>  2 files changed, 12 insertions(+)
+>>>
+>>> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+>>> index 46a8009784..9cf12596cd 100644
+>>> --- a/include/drm/drm_drv.h
+>>> +++ b/include/drm/drm_drv.h
+>>> @@ -57,6 +57,7 @@ struct drm_printer;
+>>>  #define DRIVER_KMS_LEGACY_CONTEXT    0x20000
+>>>  #define DRIVER_SYNCOBJ                  0x40000
+>>>  #define DRIVER_PREFER_XBGR_30BPP        0x80000
+>>> +#define DRIVER_PREFER_HOST_BYTE_ORDER   0x100000
+>>
+>> Hm, not a huge fan of using driver_flags for random little quirks. I think
+>> a boolean in sturct drm_mode_config would be much better. Bonus if you
+>> also move the 30bpp hack over to that. Something like
+>> mode_config.quirk_addfb_host_byte_order and
+>> mode_config.quirk_addfb_prefer_xbgr_30bpp or whatever. That has the upside
+>> of giving us a really nice place to put a huge comment about what this is
+>> supposed to do.
+>>
+>> I think otherwise this looks overall rather reasonable. I think the only
+>> other driver that ever cared about big endian was radeon/amdgpu. Would be
+>> good to get at least an ack from amd folks, or a "meh, stopped caring".
+> 
+> and nouveau.
+> 
+> I do believe that ADDFB should be made to always prefer host byte
+> order -- this is how all of the existing implementations work in
+> practice. However e.g. nouveau wants DRM_FORMAT_XRGB8888. But it still
+> treats it as host byte order. This will become more important in a
+> world where ADDFB2 is more common.
+> 
+> So, I think that this change should be applied, drivers (I suspect
+> just nouveau and radeon) fixed up to consume the "new" formats, [...]
+
+As explained before, that would break radeon userspace on big endian hosts.
+
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
