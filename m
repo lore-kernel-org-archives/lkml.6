@@ -2,143 +2,81 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B2FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C77C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E292077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E292077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B0A5620658
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A5620658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbeIEClj (ORCPT
+        id S1726528AbeIECvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:41:39 -0400
-Received: from mga09.intel.com ([134.134.136.24]:33782 "EHLO mga09.intel.com"
+        Tue, 4 Sep 2018 22:51:47 -0400
+Received: from nautica.notk.org ([91.121.71.147]:55251 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbeIEClS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:41:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:14:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
-   d="scan'208";a="70343602"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga007.jf.intel.com with ESMTP; 04 Sep 2018 15:14:11 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V3 2/5] efi: Introduce __efi_init attribute
-Date:   Tue,  4 Sep 2018 15:12:26 -0700
-Message-Id: <1536099149-12564-3-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        id S1725825AbeIECvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:51:47 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 0ECB2C009; Wed,  5 Sep 2018 00:24:37 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 00:24:22 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        James Morse <james.morse@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
+Subject: Re: [PATCH] proc/kcore: fix invalid memory access in multi-page read
+ optimization
+Message-ID: <20180904222422.GB17486@nautica>
+References: <20180828105959.GA29204@nautica>
+ <1535515447-21167-1-git-send-email-asmadeus@codewreck.org>
+ <20180904180352.GA24406@vader>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180904180352.GA24406@vader>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+Omar Sandoval wrote on Tue, Sep 04, 2018:
+> On Wed, Aug 29, 2018 at 06:04:07AM +0200, Dominique Martinet wrote:
+> > The 'm' kcore_list item can point to kclist_head, and it is incorrect to
+> > look at m->addr / m->size in this case.
+> > There is no choice but to run through the list of entries for every address
+> > if we did not find any entry in the previous iteration
+> > 
+> > Fixes: bf991c2231117 ("proc/kcore: optimize multiple page reads")
+> > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> > ---
+> > 
+> > I guess now I'm looking at bf991c2231117 again that it would be slightly
+> > more efficient to remove the !m check and initialize m to point to
+> > kclist_head like this:
+> >  m = list_entry(&kclist_head, struct kcore_list, list);
+> > but it feels a bit forced to me; deferring the choice to others.
+> 
+> Good catch! Sorry I missed this last week, Google decided this was spam
+> for some reason.
 
-Buggy firmware could illegally access some efi regions even after the
-kernel has assumed control of the platform. When
-"CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS" is enabled, the efi page fault
-handler will detect and recover from these illegal accesses.
-efi_md_typeattr_format() and memory_type_name are used by the efi page
-fault handler to print information about memory descriptor that was
-illegally accessed. As the page fault handler is present during/after
-kernel boot it doesn't have an __init attribute, but
-efi_md_typeattr_format() has it and thus during kernel build, "WARNING:
-modpost: Found * section mismatch(es)" build warning is observed. To fix
-it, remove __init attribute for efi_md_typeattr_format().
+Joys of self-hosted emails, it happens from time to time :/
 
-In order to not keep efi_md_typeattr_format() and memory_type_name
-needlessly when "CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS" is not selected, add
-a new __efi_init attribute whose value changes based on whether the
-config option is selected or not.
+> How about fixing it like this? One less conditional in the common
+> case, no hacky list_entry :)
 
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/firmware/efi/efi.c |  4 ++--
- include/linux/efi.h        | 14 +++++++++++++-
- 2 files changed, 15 insertions(+), 3 deletions(-)
+Good idea, I'll send a v2 in a few minutes after rebooting into it, no
+reason it won't work but might as well make earth a slightly warmer
+place along the way.
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index d8a33a781a57..16571429b19c 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -768,7 +768,7 @@ int __init efi_get_fdt_params(struct efi_fdt_params *params)
- }
- #endif /* CONFIG_EFI_PARAMS_FROM_FDT */
- 
--static __initdata char memory_type_name[][20] = {
-+static __efi_initdata char memory_type_name[][20] = {
- 	"Reserved",
- 	"Loader Code",
- 	"Loader Data",
-@@ -786,7 +786,7 @@ static __initdata char memory_type_name[][20] = {
- 	"Persistent Memory",
- };
- 
--char * __init efi_md_typeattr_format(char *buf, size_t size,
-+char * __efi_init efi_md_typeattr_format(char *buf, size_t size,
- 				     const efi_memory_desc_t *md)
- {
- 	char *pos;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 855992b15269..6a07e3166fd1 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1107,10 +1107,22 @@ extern int efi_memattr_apply_permissions(struct mm_struct *mm,
- 	for_each_efi_memory_desc_in_map(&efi.memmap, md)
- 
- /*
-+ * __efi_init - if CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is enabled, remove __init
-+ *		modifier.
-+ */
-+#ifdef CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS
-+#define __efi_init
-+#define __efi_initdata
-+#else
-+#define __efi_init __init
-+#define __efi_initdata __initdata
-+#endif
-+
-+/*
-  * Format an EFI memory descriptor's type and attributes to a user-provided
-  * character buffer, as per snprintf(), and return the buffer.
-  */
--char * __init efi_md_typeattr_format(char *buf, size_t size,
-+char * __efi_init efi_md_typeattr_format(char *buf, size_t size,
- 				     const efi_memory_desc_t *md);
- 
- /**
 -- 
-2.7.4
-
+Dominique
