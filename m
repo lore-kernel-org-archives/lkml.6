@@ -2,249 +2,183 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F4BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B392054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C37A2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="mYtq51sb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B392054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="UWsvUthk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C37A2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeIDVl0 (ORCPT
+        id S1727781AbeIDVmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:41:26 -0400
-Received: from mail-co1nam03on0075.outbound.protection.outlook.com ([104.47.40.75]:19232
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Tue, 4 Sep 2018 17:42:15 -0400
+Received: from mail-sn1nam01on0043.outbound.protection.outlook.com ([104.47.32.43]:16168
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726528AbeIDVlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:41:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
+        id S1726410AbeIDVmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:42:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZC75i6G19FS7IUUzdVw9qmFNfd2GbsrN+kh6nm04M24=;
- b=mYtq51sbwYi8L8FmORrR6IJ2WuvozCzU06LiPdttuE5NQVRF6GWEOGNZ14EuTBz62xh1xKrAh2L5TnH07dr3nRg/pB2YWMEk9vbkYfV8QlnVmrv2rQJzByPJNaTXqo9PTZtOTk2Yfj748ER+Fz1W+shvzZH657VnipJfLF1BuFY=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4984.namprd05.prod.outlook.com (20.177.230.202) with Microsoft SMTP
+ bh=3rQZbmTybWYnlaPiIm5P3hIdm191IuzcYn9DyIu1++E=;
+ b=UWsvUthkfgTurgEuQMRVCyYl7MJ4H0FC877xftMQ/BV9Ms00vOKufTzaRFpQFdyrpzo7bkS5g/BzV2FMlkww+NV/GlLfgjmv4uZSaYMdBLTZoLZ52vFV4JPmvgYO2+qaq/Z1kIaXtEdbBnn2LsnainssDRfh/5RBG751nRYPNWU=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB668.namprd06.prod.outlook.com (10.141.227.26) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.15; Tue, 4 Sep 2018 17:14:27 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::911b:395c:ce8a:38c3]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::911b:395c:ce8a:38c3%3]) with mapi id 15.20.1101.016; Tue, 4 Sep 2018
- 17:14:27 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@redhat.com>
-CC:     X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
-Subject: Re: [PATCH v7 00/10] x86: macrofying inline asm for better
- compilation
-Thread-Topic: [PATCH v7 00/10] x86: macrofying inline asm for better
- compilation
-Thread-Index: AQHUMB4G8Q2B7h5OjUe7mTMkYteFXKTghQ0A
-Date:   Tue, 4 Sep 2018 17:14:27 +0000
-Message-ID: <4EDCB9E5-22C4-4168-A80A-4EC81ECE43EF@vmware.com>
-References: <20180809201554.168804-1-namit@vmware.com>
-In-Reply-To: <20180809201554.168804-1-namit@vmware.com>
+ 15.20.1101.15; Tue, 4 Sep 2018 17:16:07 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1101.016; Tue, 4 Sep 2018
+ 17:16:07 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: Re: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
+ erase
+Thread-Topic: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
+ erase
+Thread-Index: AQHUQS9kK77UY0ca10mNeY2WW/uzcqTZ4p6AgARotACAAZzSgIAAe2gA
+Date:   Tue, 4 Sep 2018 17:16:07 +0000
+Message-ID: <9D0772CA-73AE-41AC-A489-4187185C696D@cnexlabs.com>
+References: <1535722477-31288-1-git-send-email-javier@cnexlabs.com>
+ <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
+ <7FBEB635-C943-484D-A970-D3BF870BAFFB@cnexlabs.com>
+ <95ae2794-c671-5dc7-3a2d-2b062ea86fba@lightnvm.io>
+In-Reply-To: <95ae2794-c671-5dc7-3a2d-2b062ea86fba@lightnvm.io>
 Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [2603:3024:1516:f700:78cb:80c2:2c96:2fa0]
+x-originating-ip: [50.207.153.190]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4984;20:DrzbZ/YTy1t1aosdI+Us/lmtFnFObgk2gnyWtO5FJlnyWQwCMxgwQw9O5SdQU9FyQPny6S4ThMS/o8OptLgLpugJHkd6Xxi42i2rZXRzkE6C1pxwztN8cizJe/K2x4gzSIpUYXRkMxyth0eet/tjZ99S5+WMnVEBe2C5G7962P0=
-x-ms-office365-filtering-correlation-id: 0f6f2184-6261-4cd4-29b3-08d61289deed
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4984;
-x-ms-traffictypediagnostic: BYAPR05MB4984:
-bcl:    0
-x-microsoft-antispam-prvs: <BYAPR05MB4984CBC156E45B6786EC2352D0030@BYAPR05MB4984.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150)(9452136761055)(85827821059158);
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB668;6:OQm0xJElV9Wt/Btv4lCetRevhzbwrDLlt6CSsNfyF0LW9Fa3osq134G6CsvoCbCxw4WLCwIWAJY4mfKM7/L4ytoVyqk+eOCgxM9sDO1wWvU2R/Zt/ghC+XII11/+L26/cCpTrcKOn/SJaaZYKXMoop+YPwG2cAIFMvXkT6kLycE9L1KwIjQfO2gagWmLjMix6XXJL4fgqmVghLv/m/vYSzyx2D3f0ZBDlbHin/C+Xy6pfkMXIeiS+oLOQRXHo8RQkBTAD6FsS2ivSDOtC/g+kCX/G0E6tilgFVfltZFqde+vBHdQdnhTqeUPqd7CIz7Z9U2VQVmekNaZfelhfY99m09glRyFmagsK4eVjLhpLpEp4olMKA+3JQ0yzXUzMsU+5UKBD4k2xQvijSsn9N82vYMvyTdOaH9Kh0tuPrCQT+rszmMa/0JN7UNnB6X3/GM5KhujrMvLy5CB18ucTShvtg==;5:V920MLKjSLtzYvN6Gb/nSoXndLU7InLRGgrvqHfW6xV2CR+f1V9Y4nKXQKOi66fswVmLXED6vyZT9lYZ769npXbVhb5Gys7WMPYAnYHd3ic33YrPRjTk04Au86slOKJ2/hymYkWW8rPcgkDyz0+tZOE781m8p3ZdK6oNsEFJLWg=;7:v2HSUEOIx9dhWTRSVR/Z1pE9BCThvwpxBAYtc2k+CUEplgOdeNX9DvSU+NFa1Kvkj1Ez1bcQj9h5l1Mi8yYDIwcFS/GxZec5vJX4lj13tpM0d+ru7ijFhkmKZYcocKsJO9+DoEYCPKO35dc5QD4wUWhFx9ab8ffO1tlxzROzz6iT/OjVZiqdAe53ZQVUj2dwPinMLMn2BmxoU2f/8lhJizvm1ElY2ltbrb264hB67MDi2W3BS2etu0WlUj4L8oE/
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(346002)(396003)(39830400003)(189003)(199004)(86362001)(26005)(102836004)(66066001)(6346003)(83716003)(4326008)(186003)(5250100002)(6506007)(53546011)(105586002)(54906003)(106356001)(478600001)(316002)(107886003)(6916009)(25786009)(2906002)(6246003)(5660300001)(99936001)(14444005)(256004)(476003)(76176011)(99286004)(6436002)(14454004)(6116002)(33656002)(2616005)(82746002)(6486002)(305945005)(486006)(6512007)(446003)(97736004)(36756003)(81166006)(229853002)(8936002)(53936002)(8676002)(68736007)(3846002)(11346002)(2900100001)(7736002)(93886005)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB668;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 1ac1067f-c92d-4a1b-b4ed-08d6128a1a12
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB668;
+x-ms-traffictypediagnostic: CO2PR06MB668:
+x-microsoft-antispam-prvs: <CO2PR06MB6686A25FB427121C238DE4EBA030@CO2PR06MB668.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(271806183753584);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699016);SRVR:BYAPR05MB4984;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4984;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CO2PR06MB668;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB668;
 x-forefront-prvs: 0785459C39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(366004)(199004)(189003)(305945005)(229853002)(7736002)(7416002)(6486002)(68736007)(76176011)(33656002)(6436002)(99286004)(6306002)(6512007)(8676002)(2616005)(476003)(102836004)(2906002)(6506007)(186003)(14444005)(256004)(8936002)(86362001)(6246003)(966005)(36756003)(39060400002)(25786009)(4326008)(105586002)(46003)(81156014)(5660300001)(82746002)(6916009)(81166006)(106356001)(446003)(14454004)(11346002)(486006)(97736004)(5250100002)(316002)(83716003)(2900100001)(478600001)(53936002)(54906003)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4984;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: i3b85V2hgddLjgMXtJ/Ea1Cy/bvRWH6S4buo8ZXz9Bhzuw786zlCbgyAXxhVIU8dTBqdgj/zSV1Am7BAnQU+dRjY4J6MC0rkmtGXDtUvkTEVj4zzhyOiy4iWe2cJgizb/w2DyFRmiD+fwv6+zH/EcAf3Vkp4Ql589YdTfnRgsuR7e1r9toP1Lo6aeL0QQ7vbx9FOJ8DG1b0PHde/f4QqTprMcC2XbUUERG74i1ajqzypEMced4IqfYptYIQc+6XiAqZHuD1hhvjM77vmWkaOjkDiBFReOUjuZPXvZZ8SnrU3GxfUchzbCrErKUFvw49CJsq9z/F0W0YGb3R7IRvPa9cKvMqhtnRaofcL9cHUQgg=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-microsoft-antispam-message-info: WYURiNx0r1dC4mJ5mIMXPOGQsln9MYZaUO/Yd/yABGrtN6BmEdyAX94f6jHtK5Vnts9cePv9z5fsUlFEOXPEBI4vw1NQ4FHzcFqPaCufY2P7ZGFwyt6S2pWKvwf//NZnDOEX7My4VHOPBknw6JBQ2x7pjKjv54GzxzvXhYUdk3rYizK1KiRJQOP2bx6JvAkMbABv1aOSGzKFhqmOsofvLdmlZmp6nllJZuMAl+Vt5SVoi2PAZ5YbrAIxSYxFWR0Bm3xSI/tLWGiogmhKzw3bG51fcgG40JM8zuw0F8AKfZNFew4Bl0WvYFcZbVkqGLCfwtl/xEoZ9rtn3e5ms3Apz/hxiFJh3ncAs57uwrVfZVs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8130DB4A4A108D4C82A4C993C7853BF8@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_B05885B8-E56F-4085-89AE-4348953D675F";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f6f2184-6261-4cd4-29b3-08d61289deed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2018 17:14:27.5814
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ac1067f-c92d-4a1b-b4ed-08d6128a1a12
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2018 17:16:07.0312
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4984
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB668
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping.
+--Apple-Mail=_B05885B8-E56F-4085-89AE-4348953D675F
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-at 1:15 PM, Nadav Amit <namit@vmware.com> wrote:
+> On 4 Sep 2018, at 02.54, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 09/03/2018 11:16 AM, Javier Gonzalez wrote:
+>>> On 31 Aug 2018, at 15.57, Matias Bj=C3=B8rling <mb@lightnvm.io> =
+wrote:
+>>>=20
+>>> On 08/31/2018 03:34 PM, Javier Gonz=C3=A1lez wrote:
+>>>> Matias,
+>>>> This patchset implements support for retrieving chunk metadata when
+>>>> submitting a reset/erase command. Patches 0 and 1 are small fixes =
+that
+>>>> can be directly merged into your patch:
+>>>>      lightnvm: move bad block and chunk state logic to core
+>>>> Also, note that these do not apply on top of your for-4.20/core due =
+them
+>>>> depending on patches that I sent before that you have not picked up =
+yet.
+>>>> You can see them though in for-4.20/pblk. I'll rebase as patches in =
+the
+>>>> list appear in your tree.
+>>>=20
+>>> Thanks. It is really confusing when you guys maintains an implicit =
+order and posts the patches separately. I will appreciate that patches =
+that are related are posted together, such that I don't have to manually =
+track what comes before another. That makes it less of a pain for me to =
+keep track of and we can keep the reviews together.
+>>>=20
+>>> This is the patches that I have in the pipeline (from before the =
+e-mails from today):
+>>>=20
+>>>  - This serie - Pending review
+>>>  - Serie: pblk: support variable OOB size - Waiting on review from =
+Igor
+>>>  - lightnvm: pblk: recover open lines on 2.0 devices. Which doesn't =
+apply due to the fixes to the pad distance patch.
+>> Yes, I know and I apologize - we should have a better flow. What do =
+you
+>> say that for windows like this, where we have a number of patches =
+that
+>> have dependencies that we post them in meaningful patchsets and point =
+to
+>> a branch where they are ordered, like in a PR? Then we can rebase and
+>> propagate changes properly?
+>=20
+> I am with the patchset posted, that should have the order. I just
+> wanted to mention it. One thing that would be good, if you do have
+> patches you have upstream, feel free to push them in smaller
+> increments, so we can pull them in as we go. Only a nitpick, it is
+> obviously up to you guys how you want to do it :)
+>=20
 
-> This patch-set deals with an interesting yet stupid problem: kernel code
-> that does not get inlined despite its simplicity. There are several
-> causes for this behavior: "cold" attribute on __init, different function
-> optimization levels; conditional constant computations based on
-> __builtin_constant_p(); and finally large inline assembly blocks.
->=20
-> This patch-set deals with the inline assembly problem. I separated these
-> patches from the others (that were sent in the RFC) for easier
-> inclusion. I also separated the removal of unnecessary new-lines which
-> would be sent separately.
->=20
-> The problem with inline assembly is that inline assembly is often used
-> by the kernel for things that are other than code - for example,
-> assembly directives and data. GCC however is oblivious to the content of
-> the blocks and assumes their cost in space and time is proportional to
-> the number of the perceived assembly "instruction", according to the
-> number of newlines and semicolons. Alternatives, paravirt and other
-> mechanisms are affected, causing code not to be inlined, and degrading
-> compilation quality in general.
->=20
-> The solution that this patch-set carries for this problem is to create
-> an assembly macro, and then call it from the inline assembly block.  As
-> a result, the compiler sees a single "instruction" and assigns the more
-> appropriate cost to the code.
->=20
-> To avoid uglification of the code, as many noted, the macros are first
-> precompiled into an assembly file, which is later assembled together
-> with the C files. This also enables to avoid duplicate implementation
-> that was set before for the asm and C code. This can be seen in the
-> exception table changes.
->=20
-> Overall this patch-set slightly increases the kernel size (my build was
-> done using my Ubuntu 18.04 config + localyesconfig for the record):
->=20
->   text	   data	    bss	    dec	    hex	filename
-> 18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-> 18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
->=20
-> The number of static functions in the image is reduced by 379, but
-> actually inlining is even better, which does not always shows in these
-> numbers: a function may be inlined causing the calling function not to
-> be inlined.
->=20
-> I ran some limited number of benchmarks, and in general the performance
-> impact is not very notable. You can still see >10 cycles shaved off some
-> syscalls that manipulate page-tables (e.g., mprotect()), in which
-> paravirt caused many functions not to be inlined. In addition this
-> patch-set can prevent issues such as [1], and improves code readability
-> and maintainability.
->=20
-> [1] https://patchwork.kernel.org/patch/10450037/
->=20
-> v6->v7: * Fix context switch tracking (Ingo)
-> 	* Fix xtensa build error (Ingo)
-> 	* Rebase on 4.18-rc8
->=20
-> v5->v6:	* Removing more code from jump-labels (PeterZ)
-> 	* Fix build issue on i386 (0-day, PeterZ)
->=20
-> v4->v5:	* Makefile fixes (Masahiro, Sam)
->=20
-> v3->v4: * Changed naming of macros in 2 patches (PeterZ)
-> 	* Minor cleanup of the paravirt patch
->=20
-> v2->v3: * Several build issues resolved (0-day)
-> 	* Wrong comments fix (Josh)
-> 	* Change asm vs C order in refcount (Kees)
->=20
-> v1->v2:	* Compiling the macros into a separate .s file, improving
-> 	  readability (Linus)
-> 	* Improving assembly formatting, applying most of the comments
-> 	  according to my judgment (Jan)
-> 	* Adding exception-table, cpufeature and jump-labels
-> 	* Removing new-line cleanup; to be submitted separately
->=20
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Alok Kataria <akataria@vmware.com>
-> Cc: Christopher Li <sparse@chrisli.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jan Beulich <JBeulich@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: linux-sparse@vger.kernel.org
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: virtualization@lists.linux-foundation.org
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: x86@kernel.org
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: linux-xtensa@linux-xtensa.org
->=20
-> Nadav Amit (10):
->  xtensa: defining LINKER_SCRIPT for the linker script
->  Makefile: Prepare for using macros for inline asm
->  x86: objtool: use asm macro for better compiler decisions
->  x86: refcount: prevent gcc distortions
->  x86: alternatives: macrofy locks for better inlining
->  x86: bug: prevent gcc distortions
->  x86: prevent inline distortion by paravirt ops
->  x86: extable: use macros instead of inline assembly
->  x86: cpufeature: use macros instead of inline assembly
->  x86: jump-labels: use macros instead of inline assembly
->=20
-> Makefile                               |  9 ++-
-> arch/x86/Makefile                      | 11 ++-
-> arch/x86/entry/calling.h               |  2 +-
-> arch/x86/include/asm/alternative-asm.h | 20 ++++--
-> arch/x86/include/asm/alternative.h     | 11 +--
-> arch/x86/include/asm/asm.h             | 61 +++++++---------
-> arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
-> arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
-> arch/x86/include/asm/jump_label.h      | 77 ++++++++------------
-> arch/x86/include/asm/paravirt_types.h  | 56 +++++++--------
-> arch/x86/include/asm/refcount.h        | 74 +++++++++++--------
-> arch/x86/kernel/macros.S               | 16 +++++
-> arch/xtensa/kernel/Makefile            |  4 +-
-> include/asm-generic/bug.h              |  8 +--
-> include/linux/compiler.h               | 56 +++++++++++----
-> scripts/Kbuild.include                 |  4 +-
-> scripts/mod/Makefile                   |  2 +
-> 17 files changed, 333 insertions(+), 258 deletions(-)
-> create mode 100644 arch/x86/kernel/macros.S
->=20
-> --=20
-> 2.17.1
+Sure. If we can improve the workflow to make things easier for you, then
+we should.
 
 
+--Apple-Mail=_B05885B8-E56F-4085-89AE-4348953D675F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluOvdQACgkQIX4xUKFR
+nnTi1g//dRvNzCyRxxqd8KxuQNss4wYOojWUYeAaz4hw9Loqp3Kgo0TLCUScWT26
+IJgtxC9MAws2ArCbWTmhEKF4KVbHtnmUHkut9L85BV4L+eCIUqzYfufH9tYNTKEb
+aigmd+6BTdS2G7g60AIBmSoqK0ZDCQgsQfCaavdii24FWOrx47CXT0kzUmcvPhGD
+4mfNRusdSbfZcyoBVDT+tJTRzg3XG+rkY0b6Stxzn+IoVNumCE6HpPCtq9bYPDmx
+VbJfJrL/8kiw0v8cUvjWtOsL3uE+QW/AylzFRHenWWI3fK0O/wdfCfGnhlDJiXdR
+Z02f91WYupNrIL5be5ywBuQ+dYtE2YUotDnxJi7TJHzTcEo0Xq6IoKgJ2faeASgf
+aiOMZwfTYCAXHEuRLF/wTQJfXqBVftF6PNhlpfz0mRPAiDx0rizgKufw9YEiut9o
+ucwgReS/LiF2qjjZCkztjnCCQyxjjaPglODiLtO4UjHSeGvT+ieXx3dBEoc/9gHN
+tgpgJ/a4J2woBSmdlO7OPBWiRRAkCVCORhXfMXF8mBxyndscnN8pKhii1AGGap1U
+wYoAKTcW46v26x3VDVWG13muk0Gc+zEtcfv3rE44TMj7JgPsu7zmpF9ybqPkVCZs
+w4yjJlbcJcRxM+UMgkpw8Nj5G2ATdNqa38TwmPvQwLygyAzoEJE=
+=H9Ci
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_B05885B8-E56F-4085-89AE-4348953D675F--
