@@ -2,197 +2,141 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12BAC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F912C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF3520659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF3520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id 28EF32075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="roQK0eBZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EF32075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeIEAUx (ORCPT
+        id S1728280AbeIEAVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 20:20:53 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35642 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeIEAUw (ORCPT
+        Tue, 4 Sep 2018 20:21:42 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53707 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbeIEAVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:20:52 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o18-v6so5483206wmc.0;
-        Tue, 04 Sep 2018 12:54:13 -0700 (PDT)
+        Tue, 4 Sep 2018 20:21:40 -0400
+Received: by mail-it0-f66.google.com with SMTP id p79-v6so6736796itp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 12:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qlvMIbwcpPiVoUXhiuxxOLJeEXDCxHM0YBWuKTE8niQ=;
+        b=roQK0eBZsv6Sgn6rXJWAlEyKZxpl4Ze85pZ25ChMd2h/Hn6ba2GhhAedjuOpdMLYJY
+         +W+33L/+1OO5Ia3x04n+mu7zLZL+eVAzYfC+5D8sVUoRdZL4v5+TwnxD9t9a5YIc2CMc
+         Cc2FZnJaqeOvdevWnUON73XCPlR1rAqvydJIjP7Xk1EafqsHsbYNkvyxD/yyZ5TusWxd
+         BLKZDEKt30MoZ0+vzp73CwUX90KjfFcBapIs7SM4fqV1KpdumbzDkv2893ux3Yu9nEaD
+         D7QqVUzgmtbC3X9AoDtmutDK69VImVIgZ721tj+JOPkHfwEJC2/JQh6WcHmjlUV99Bum
+         gueA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Vgt87KYeAjeIkoBgyI5+YB6DhGbFDAp74UmjVTyrJkE=;
-        b=Kym8ovVIPdUP2v769U6MtAfwpAbuw9ZtH5YEHLnwuGmdJiMGfrJNlXgBjmXOOrW1AF
-         jZ/FpwQFocuVLCcl+Yx/+cpKFwfWt6jkyifHDjILM/1+AqlMwqM41/cwQSnII7UpS4rE
-         kkOaYYn2ECl08ZuV3cf+lSn0PMeRXRy1Eh1kIfonawz+XYYSm+FBi3VpBh4N39ATfklG
-         JqDL8UH0f9sOu+amVXoegzOoGu7oNYWr7WFmoDIe7eeUne9z+3fAoxf7iVlfscSi4M2/
-         h22s1+6YfhQMEDhM64wpFEVdCGgUJZEbiB82OEXB4zUaXBIERFXSklL5BvAXMg+Q5V4p
-         9DsA==
-X-Gm-Message-State: APzg51CKh9/rg1UdVFMaodHfMi6V8bbFPT2oa2R6z2mH1vNs06zxUkFU
-        FhuVPLHbl1TugW1G7Z1XsnptvfYDagHGzA==
-X-Google-Smtp-Source: ANB0Vdbf246MaZBLp9RfDLYUWS3fM5S4uwp1o6xws8bvroH8HtunxK0ToZbwr4iKcqXUuGEaOYCTUQ==
-X-Received: by 2002:a1c:d702:: with SMTP id o2-v6mr8884305wmg.115.1536090852712;
-        Tue, 04 Sep 2018 12:54:12 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8070:8895:9700:f474:3704:f9a0:fc57])
-        by smtp.gmail.com with ESMTPSA id 144-v6sm99440wma.19.2018.09.04.12.54.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 12:54:12 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, dsahern@gmail.com, fw@strlen.de,
-        ktkhai@virtuozzo.com, lucien.xin@gmail.com,
-        jakub.kicinski@netronome.com, jbenc@redhat.com,
-        nicolas.dichtel@6wind.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next v2 3/9] ipv4: enable IFA_TARGET_NETNSID for RTM_GETADDR
-Date:   Tue,  4 Sep 2018 21:53:49 +0200
-Message-Id: <20180904195355.4695-4-christian@brauner.io>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180904195355.4695-1-christian@brauner.io>
-References: <20180904195355.4695-1-christian@brauner.io>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qlvMIbwcpPiVoUXhiuxxOLJeEXDCxHM0YBWuKTE8niQ=;
+        b=L1t0nBOYVAJN5y64fn/dK6eB8iEI5v6NJFmj6X0Rdc+IvR0p2ozBU8+aTLlrO1axJI
+         lIOPmozvuKyriliCA0LM7tJuTvr/S2ewyMSKxdGwZ44socWIiMOHY6GmgHNvafSbYp8n
+         lZ7hZ+vHZcqNy5aHspTvxXajXz0pqQVvcYTzlZvXYSCtg7MXMBmXjE/llhHByg1icm+J
+         WwFpE/umnLI7wFHCUxQZxIjKbr1sf4JRbvfxFids/p/lFlKmigAxRS8cF5YSh0yfUnw4
+         jjGtsIOEb0FUvX6TEMdVr/YReAkEvfps1ca9dacl7KJDqQuS1MtB4E4wJUC8peIN5MXX
+         qN/g==
+X-Gm-Message-State: APzg51AHK/xkOw/oBH5UY677RXuVcdHKQFHDbkP/DxbQkzeF6Mqb9zxO
+        fzV/sxH7npjIqsHSf/CP33gP0zYqROt8jDUVQAU=
+X-Google-Smtp-Source: ANB0VdZVeFKsZgLlFkdxVlsp2bDGQuHvBsInx6ohQyp0A5Idh8+4BwGYtqCnbZs0yg8nMJtPVcvimrH6xgFV5QejppQ=
+X-Received: by 2002:a24:918d:: with SMTP id i135-v6mr1482904ite.98.1536090902544;
+ Tue, 04 Sep 2018 12:55:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180904181550.4416.50701.stgit@localhost.localdomain>
+ <20180904183339.4416.44582.stgit@localhost.localdomain> <fe84cdb4-7be7-8ad8-58ca-681f46e2e55c@intel.com>
+In-Reply-To: <fe84cdb4-7be7-8ad8-58ca-681f46e2e55c@intel.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Tue, 4 Sep 2018 12:54:50 -0700
+Message-ID: <CAKgT0Uc+UuXfK+KcN=9L2M7i+h7oUX9W912z82q-Vs0TFDJEpg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: Move page struct poisoning from CONFIG_DEBUG_VM
+ to CONFIG_DEBUG_VM_PGFLAGS
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Backwards Compatibility:
-  If userspace wants to determine whether ipv4 RTM_GETADDR requests
-  support the new IFA_TARGET_NETNSID property it should verify that the
-  reply includes the IFA_TARGET_NETNSID property. If it does not
-  userspace should assume that IFA_TARGET_NETNSID is not supported for
-  ipv4 RTM_GETADDR requests on this kernel.
-- From what I gather from current userspace tools that make use of
-  RTM_GETADDR requests some of them pass down struct ifinfomsg when they
-  should actually pass down struct ifaddrmsg. To not break existing
-  tools that pass down the wrong struct we will do the same as for
-  RTM_GETLINK | NLM_F_DUMP requests and not error out when the
-  nlmsg_parse() fails.
+On Tue, Sep 4, 2018 at 12:25 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/04/2018 11:33 AM, Alexander Duyck wrote:
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -1444,7 +1444,7 @@ void * __init memblock_virt_alloc_try_nid_raw(
+> >
+> >       ptr = memblock_virt_alloc_internal(size, align,
+> >                                          min_addr, max_addr, nid);
+> > -#ifdef CONFIG_DEBUG_VM
+> > +#ifdef CONFIG_DEBUG_VM_PGFLAGS
+> >       if (ptr && size > 0)
+> >               memset(ptr, PAGE_POISON_PATTERN, size);
+> >  #endif
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 10b07eea9a6e..0fd9ad5021b0 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -696,7 +696,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+> >               goto out;
+> >       }
+> >
+> > -#ifdef CONFIG_DEBUG_VM
+> > +#ifdef CONFIG_DEBUG_VM_PGFLAGS
+> >       /*
+> >        * Poison uninitialized struct pages in order to catch invalid flags
+> >        * combinations.
+>
+> I think this is the wrong way to do this.  It keeps the setting and
+> checking still rather tenuously connected.  If you were to leave it this
+> way, it needs commenting.  It's also rather odd that we're memsetting
+> the entire 'struct page' for a config option that's supposedly dealing
+> with page->flags.  That deserves _some_ addressing in a comment or
+> changelog.
+>
+> How about:
+>
+> #ifdef CONFIG_DEBUG_VM_PGFLAGS
+> #define VM_BUG_ON_PGFLAGS(cond, page) VM_BUG_ON_PAGE(cond, page)
+> +static inline void poison_struct_pages(struct page *pages, int nr)
+> +{
+> +       memset(pages, PAGE_POISON_PATTERN, size * sizeof(...));
+> +}
+> #else
+> #define VM_BUG_ON_PGFLAGS(cond, page) BUILD_BUG_ON_INVALID(cond)
+> static inline void poison_struct_pages(struct page *pages, int nr) {}
+> #endif
+>
+> That puts the setting and checking in one spot, and also removes a
+> couple of #ifdefs from .c files.
 
-- Security:
-  Callers must have CAP_NET_ADMIN in the owning user namespace of the
-  target network namespace.
+So the only issue with this is the fact that the code here is wrapped
+in a check for CONFIG_DEBUG_VM, so if that isn't defined we end up
+with build errors.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-v1->v2:
-- rename from IFA_IF_NETNSID to IFA_TARGET_NETNSID
+If the goal is to consolidate things I could probably look at adding a
+function in include/linux/page-flags.h, probably next to PagePoisoned.
+I could then probably just look at wrapping the memset call itself
+with the CONFIG_DEBUG_VM_PGFLAGS instead of the entire function. I
+could then place some code documentation in there explaining why it is
+wrapped.
 
-v0->v1:
-- unchanged
----
- net/ipv4/devinet.c | 38 ++++++++++++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 8 deletions(-)
-
-diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
-index ea4bd8a52422..5cb849300b81 100644
---- a/net/ipv4/devinet.c
-+++ b/net/ipv4/devinet.c
-@@ -100,6 +100,7 @@ static const struct nla_policy ifa_ipv4_policy[IFA_MAX+1] = {
- 	[IFA_CACHEINFO]		= { .len = sizeof(struct ifa_cacheinfo) },
- 	[IFA_FLAGS]		= { .type = NLA_U32 },
- 	[IFA_RT_PRIORITY]	= { .type = NLA_U32 },
-+	[IFA_TARGET_NETNSID]	= { .type = NLA_S32 },
- };
- 
- #define IN4_ADDR_HSIZE_SHIFT	8
-@@ -1584,7 +1585,8 @@ static int put_cacheinfo(struct sk_buff *skb, unsigned long cstamp,
- }
- 
- static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
--			    u32 portid, u32 seq, int event, unsigned int flags)
-+			    u32 portid, u32 seq, int event, unsigned int flags,
-+			    int netnsid)
- {
- 	struct ifaddrmsg *ifm;
- 	struct nlmsghdr  *nlh;
-@@ -1601,6 +1603,9 @@ static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
- 	ifm->ifa_scope = ifa->ifa_scope;
- 	ifm->ifa_index = ifa->ifa_dev->dev->ifindex;
- 
-+	if (netnsid >= 0 && nla_put_s32(skb, IFA_TARGET_NETNSID, netnsid))
-+		goto nla_put_failure;
-+
- 	if (!(ifm->ifa_flags & IFA_F_PERMANENT)) {
- 		preferred = ifa->ifa_preferred_lft;
- 		valid = ifa->ifa_valid_lft;
-@@ -1648,6 +1653,9 @@ static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
- static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
- {
- 	struct net *net = sock_net(skb->sk);
-+	struct nlattr *tb[IFA_MAX+1];
-+	struct net *tgt_net = net;
-+	int netnsid = -1;
- 	int h, s_h;
- 	int idx, s_idx;
- 	int ip_idx, s_ip_idx;
-@@ -1660,12 +1668,23 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
- 	s_idx = idx = cb->args[1];
- 	s_ip_idx = ip_idx = cb->args[2];
- 
-+	if (nlmsg_parse(cb->nlh, sizeof(struct ifaddrmsg), tb, IFA_MAX,
-+			ifa_ipv4_policy, NULL) >= 0) {
-+		if (tb[IFA_TARGET_NETNSID]) {
-+			netnsid = nla_get_s32(tb[IFA_TARGET_NETNSID]);
-+
-+			tgt_net = rtnl_get_net_ns_capable(skb->sk, netnsid);
-+			if (IS_ERR(tgt_net))
-+				return PTR_ERR(tgt_net);
-+		}
-+	}
-+
- 	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
- 		idx = 0;
--		head = &net->dev_index_head[h];
-+		head = &tgt_net->dev_index_head[h];
- 		rcu_read_lock();
--		cb->seq = atomic_read(&net->ipv4.dev_addr_genid) ^
--			  net->dev_base_seq;
-+		cb->seq = atomic_read(&tgt_net->ipv4.dev_addr_genid) ^
-+			  tgt_net->dev_base_seq;
- 		hlist_for_each_entry_rcu(dev, head, index_hlist) {
- 			if (idx < s_idx)
- 				goto cont;
-@@ -1680,9 +1699,10 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
- 				if (ip_idx < s_ip_idx)
- 					continue;
- 				if (inet_fill_ifaddr(skb, ifa,
--					     NETLINK_CB(cb->skb).portid,
--					     cb->nlh->nlmsg_seq,
--					     RTM_NEWADDR, NLM_F_MULTI) < 0) {
-+						     NETLINK_CB(cb->skb).portid,
-+						     cb->nlh->nlmsg_seq,
-+						     RTM_NEWADDR, NLM_F_MULTI,
-+						     netnsid) < 0) {
- 					rcu_read_unlock();
- 					goto done;
- 				}
-@@ -1698,6 +1718,8 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
- 	cb->args[0] = h;
- 	cb->args[1] = idx;
- 	cb->args[2] = ip_idx;
-+	if (netnsid >= 0)
-+		put_net(tgt_net);
- 
- 	return skb->len;
- }
-@@ -1715,7 +1737,7 @@ static void rtmsg_ifa(int event, struct in_ifaddr *ifa, struct nlmsghdr *nlh,
- 	if (!skb)
- 		goto errout;
- 
--	err = inet_fill_ifaddr(skb, ifa, portid, seq, event, 0);
-+	err = inet_fill_ifaddr(skb, ifa, portid, seq, event, 0, -1);
- 	if (err < 0) {
- 		/* -EMSGSIZE implies BUG in inet_nlmsg_size() */
- 		WARN_ON(err == -EMSGSIZE);
--- 
-2.17.1
-
+- Alex
