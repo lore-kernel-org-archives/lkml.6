@@ -2,72 +2,83 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DBBC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404A3C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8BB92082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BB92082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E9F0E2077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F0E2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeIDWAt (ORCPT
+        id S1727551AbeIDWBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:00:49 -0400
-Received: from mga07.intel.com ([134.134.136.100]:48591 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbeIDWAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:00:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 10:34:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="88904995"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2018 10:34:31 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id DC657300B65; Tue,  4 Sep 2018 10:34:31 -0700 (PDT)
-Date:   Tue, 4 Sep 2018 10:34:31 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        Tue, 4 Sep 2018 18:01:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43468 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726052AbeIDWBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:01:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5F661AFA0;
+        Tue,  4 Sep 2018 17:35:30 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 19:35:29 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2]: perf util: map data buffer for preserving
- collected data
-Message-ID: <20180904173431.GJ27886@tassilo.jf.intel.com>
-References: <01963930-68b3-ff33-6e05-acaff3efc083@linux.intel.com>
- <2325f44b-d9bf-d8da-2fdb-8b8e87a255fc@linux.intel.com>
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+In-Reply-To: <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
+Message-ID: <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm> <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm> <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2325f44b-d9bf-d8da-2fdb-8b8e87a255fc@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  		.sample		= process_sample_event,
-> @@ -1678,6 +1680,8 @@ static struct option __record_options[] = {
->  			  "signal"),
->  	OPT_BOOLEAN(0, "dry-run", &dry_run,
->  		    "Parse options then exit"),
-> +	OPT_INTEGER(0, "aio", &record.opts.nr_cblocks,
-> +		    "asynchronous trace write operations (min: 1, max: 32, default: 2)"),
+On Tue, 4 Sep 2018, Tim Chen wrote:
 
-would need to be documented in the manpage. But I would rather make it an
-~/.perfconfig option
+> > Current ptrace_may_access() implementation assumes that the 'source' task is
+> > always the caller (current).
+> > 
+> > Expose ___ptrace_may_access() that can be used to apply the check on arbitrary
+> > tasks.
+> 
+> Casey recently has proposed putting the decision making of whether to
+> do IBPB in the security module.
+> 
+> https://lwn.net/ml/kernel-hardening/20180815235355.14908-4-casey.schaufler@intel.com/
+> 
+> That will have the advantage of giving the administrator a more flexibility
+> of when to turn on IBPB.  The policy is very similar to what you have proposed here
+> but I think the security module is a more appropriate place for the security policy.
 
+Yeah, well, honestly, I have a bit hard time buying the "generic 
+sidechannel prevention security module" idea, given how completely 
+different in nature all the mitigations have been so far. I don't see that 
+trying to abstract this somehow provides more clarity.
 
--Andi
+So if this should be done in LSM, it'd probably have to be written by 
+someone else than me :) who actually understands how the "sidechannel LSM" 
+idea works.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
