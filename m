@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D539AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDC5C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5912086E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1635206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jOGtlC4/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5912086E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElU/KFdw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1635206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbeIDOw3 (ORCPT
+        id S1727704AbeIDOwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:52:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43307 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbeIDOwQ (ORCPT
+        Tue, 4 Sep 2018 10:52:50 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40549 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeIDOwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:52:16 -0400
-Received: by mail-wr1-f65.google.com with SMTP id k5-v6so3359988wre.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:27:46 -0700 (PDT)
+        Tue, 4 Sep 2018 10:52:13 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 207-v6so3687394wme.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4xo+LywTGI/NZZfQlD2GoiNmhb+ig1aiyesIHof3m3Q=;
-        b=jOGtlC4/8q2JI6KCwzTpbsS1caY6nByVTMa4hSh08d7tqxhLSunu+1yCBVpwCJuKOO
-         y84HqbnnEfYc0YUKke1zyBYLUAE9vVk5Zjp4wtbrg9WzL2tJQnOjHlBQKxvUcleIib7j
-         gcT0iUYGwvR2miaXqLa5BaT2sWyEEOjGEt8wk=
+        bh=+PVCKznci0AHT6i8Z02ot2xaPHWn52lA5413+yAK5nQ=;
+        b=ElU/KFdwiv+VEO8+hgqr6As7g+5FOuYecqHjOuRmQjppkJK3ae3dkSWMps4ZjM8VDp
+         D2x6BZAHLCBqD+KWGneMLlIkdD9ToVfmBK7AJ2hQiLxluxSd+WsQ+TehpETmjyVlbMk3
+         M7MugfHjdNpse2lIv6LM/kL15/mB6H2SnFCn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4xo+LywTGI/NZZfQlD2GoiNmhb+ig1aiyesIHof3m3Q=;
-        b=C5uZzy/n5oBNfIZt2Yr56XXgctHyGzKuas7MmP2lgn/G04daqY07ltdRIJEzYbaiyl
-         TqLN4sI3P9RphoQ0WEh/51cxUn/Dpxc7M6LhuvvPEgjMIUl2+BXsPZr/vy4uyVNGbj2v
-         wwgPCSQdJHKr5MvpAQJjlCsvyy81yIsr+XkzNaxZN/3UcsJ7uXrQWQRr3toJLIG1alzn
-         egeyWXPQfW6ECTEzZEDuAAm5YpwSi9MGs+euQuwLxERNIts7L7FXJKRSeMvpLydeh9kO
-         IosKEQyh4XSW0Urue+DY0PYsumYOMZFDhrVE5RumbvUzUT8uO+eme80zrkYt8e5hnrfZ
-         oRtA==
-X-Gm-Message-State: APzg51BeZzBEmCb7mIUkl+53N1fEQyklf7XLMu2zLTmLO4cD5fH5PwDI
-        5Q/65Oc2g2MI2ryyPNgm+Y1Rcw==
-X-Google-Smtp-Source: ANB0VdYYmzUNIvADXqK4omdEwitjvpz4M+DkyiwrmF3eCOtBCwEl0qSDMMvldFMfoKsZWy4eiB2Dfw==
-X-Received: by 2002:adf:bbc5:: with SMTP id z5-v6mr21324231wrg.183.1536056865939;
-        Tue, 04 Sep 2018 03:27:45 -0700 (PDT)
+        bh=+PVCKznci0AHT6i8Z02ot2xaPHWn52lA5413+yAK5nQ=;
+        b=Cb93o4PMGToIwq68ePuGE5O3gecPs6UQAyxjsMKbFdJhRCYKGPp0bIs3EFg58SmUdd
+         hyYzoh1UrVkibB4kzVyc6Ulf3ibrH0QllOkSAm8zcjBM16cxMwDzla1If+wDE2yHE8pS
+         bFBm9zaZ5QVo+Lll6ezkvRkna5KyOUzzIGLMCwCYJ6JdZo7gYD0h+rWO6nIWKCtR+dj4
+         iMi9dBCZD82HfSWM13XQpHN7qUtKKqvbAkRfwTnZ9bHsmSF/iQOWn7ZINoeNQSVOY7yD
+         kQ5Ucu/RSx8rqyFkXv/a50WowUniugmkCCZQNzso/lxyu04Zar8cwxInOhAO6OPeUEZE
+         D/Ig==
+X-Gm-Message-State: APzg51AWUwHBqeozOSBltWfYCUOjcKHV79mn6fpVtNsYupm02U8eKEoJ
+        hl+8HkhIxiI7e7LLPBmuxie8Mg==
+X-Google-Smtp-Source: ANB0VdZZUAHey2wpMEwyBOypdJwJc4QgdKmdwZJWD8WAlpVyPLSPAbjE2ewk9PEN6msw9YImoX3bEA==
+X-Received: by 2002:a1c:7f93:: with SMTP id a141-v6mr1935562wmd.45.1536056863739;
+        Tue, 04 Sep 2018 03:27:43 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id g129-v6sm16903325wmf.42.2018.09.04.03.27.44
+        by smtp.gmail.com with ESMTPSA id g129-v6sm16903325wmf.42.2018.09.04.03.27.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 03:27:45 -0700 (PDT)
+        Tue, 04 Sep 2018 03:27:43 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
 Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, bgoswami@codeaurora.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         vkoul@kernel.org, alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 12/13] ASoC: apq8096: add slim support
-Date:   Tue,  4 Sep 2018 11:24:59 +0100
-Message-Id: <20180904102500.30318-13-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 10/13] ASoC: dt-bindings: Add WCD9335 MBHC specific properties
+Date:   Tue,  4 Sep 2018 11:24:57 +0100
+Message-Id: <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
 References: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
@@ -71,106 +71,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch add new bindings required to support MBHC
+(Multi Button Headset Control) block in the codec.
+This block is used for jack insert/removal detection,
+headset type detection and 8 button press/release events.
+
+All these properties are very much specific to board.
+
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/qcom/apq8096.c | 69 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 68 insertions(+), 1 deletion(-)
+ .../bindings/sound/qcom,wcd9335.txt           | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index 1543e85629f8..db07e9b62daf 100644
---- a/sound/soc/qcom/apq8096.c
-+++ b/sound/soc/qcom/apq8096.c
-@@ -9,6 +9,10 @@
- #include <sound/pcm.h>
- #include "common.h"
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
+index 5d6ea66a863f..4d56c3ca9fa8 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
++++ b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
+@@ -55,6 +55,26 @@ Required properties with SLIMbus Interface:
+ 	Value type: <string>
+ 	Definition: Must contain "mclk", "mclk2" and "slimbus" strings.
  
-+#define SLIM_MAX_TX_PORTS 16
-+#define SLIM_MAX_RX_PORTS 16
-+#define WCD9335_DEFAULT_MCLK_RATE	9600000
++- qcom,mbhc-vthreshold:
++	Usage: Optional, only required if headset button support required.
++	Value type: <u32 array>
++	Definition: Must contain an array of 8 threshold voltages in mV for
++		 8 buttons detection on headset.
 +
- static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 				      struct snd_pcm_hw_params *params)
- {
-@@ -19,6 +23,66 @@ static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 
- 	rate->min = rate->max = 48000;
- 	channels->min = channels->max = 2;
-+}
++- qcom,hphl-jack-type-normally-open:
++	Usage: Optional, only required if headset button support required.
++	Value type: <boolean>
++	Definition: present if hphl pin on jack is a NO (Normally Open).
++		If not specified, then its assumed that hphl pin on jack
++		is NC (Normally Closed).
 +
-+static int msm_snd_hw_params(struct snd_pcm_substream *substream,
-+			     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	u32 rx_ch[SLIM_MAX_RX_PORTS], tx_ch[SLIM_MAX_TX_PORTS];
-+	u32 rx_ch_cnt = 0, tx_ch_cnt = 0;
-+	int ret = 0;
++- qcom,gnd-jack-type-normally-open:
++	Usage: Optional, only required if headset button support required.
++	Value type: <boolean>
++	Definition: present if gnd pin on jack is NO (Normally Open).
++		 If not specified, then its assumed that gnd pin on
++		 jack is NC  (Normally Closed).
 +
-+	ret = snd_soc_dai_get_channel_map(codec_dai,
-+				&tx_ch_cnt, tx_ch, &rx_ch_cnt, rx_ch);
-+	if (ret != 0 && ret != -ENOTSUPP) {
-+		pr_err("failed to get codec chan map, err:%d\n", ret);
-+		goto end;
-+	} else if (ret == -ENOTSUPP) {
-+		return 0;
-+	}
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
-+						  rx_ch_cnt, rx_ch);
-+	else
-+		ret = snd_soc_dai_set_channel_map(cpu_dai, tx_ch_cnt, tx_ch,
-+						  0, NULL);
-+	if (ret != 0 && ret != -ENOTSUPP)
-+		pr_err("Failed to set cpu chan map, err:%d\n", ret);
-+	else if (ret == -ENOTSUPP)
-+		ret = 0;
-+end:
-+	return ret;
-+}
-+
-+static struct snd_soc_ops apq8096_ops = {
-+	.hw_params = msm_snd_hw_params,
-+};
-+
-+static int apq8096_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+
-+	/*
-+	 * Codec SLIMBUS configuration
-+	 * RX1, RX2, RX3, RX4, RX5, RX6, RX7, RX8, RX9, RX10, RX11, RX12, RX13
-+	 * TX1, TX2, TX3, TX4, TX5, TX6, TX7, TX8, TX9, TX10, TX11, TX12, TX13
-+	 * TX14, TX15, TX16
-+	 */
-+	unsigned int rx_ch[SLIM_MAX_RX_PORTS] = {144, 145, 146, 147, 148, 149,
-+					150, 151, 152, 153, 154, 155, 156};
-+	unsigned int tx_ch[SLIM_MAX_TX_PORTS] = {128, 129, 130, 131, 132, 133,
-+					    134, 135, 136, 137, 138, 139,
-+					    140, 141, 142, 143};
-+
-+	snd_soc_dai_set_channel_map(codec_dai, ARRAY_SIZE(tx_ch),
-+					tx_ch, ARRAY_SIZE(rx_ch), rx_ch);
-+
-+	snd_soc_dai_set_sysclk(codec_dai, 0, WCD9335_DEFAULT_MCLK_RATE,
-+				SNDRV_PCM_STREAM_PLAYBACK);
- 
- 	return 0;
- }
-@@ -29,8 +93,11 @@ static void apq8096_add_be_ops(struct snd_soc_card *card)
- 	int i, num_links = card->num_links;
- 
- 	for (i = 0; i < num_links; i++) {
--		if (link->no_pcm == 1)
-+		if (link->no_pcm == 1) {
- 			link->be_hw_params_fixup = apq8096_be_hw_params_fixup;
-+			link->init = apq8096_init;
-+			link->ops = &apq8096_ops;
-+		}
- 		link++;
- 	}
- }
+ - vdd-buck-supply:
+ 	Usage: required
+ 	Value type: <phandle>
 -- 
 2.18.0
 
