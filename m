@@ -2,90 +2,119 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0E8C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8A1C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 008DB2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 008DB2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A9FE22086E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:25:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FE22086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeIDVt1 (ORCPT
+        id S1727751AbeIDVvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:49:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52716 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeIDVt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:49:27 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB083CD7;
-        Tue,  4 Sep 2018 17:23:23 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 19:23:21 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     holger@applied-asynchrony.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.18 000/123] 4.18.6-stable review
-Message-ID: <20180904172321.GA16923@kroah.com>
-References: <20180903165719.499675257@linuxfoundation.org>
- <64889a4a-c095-3db8-b496-631acbafcf9a@applied-asynchrony.com>
- <CA+55aFyDZR4SGotsxUA7ahCGCDr+PGnn=_13e_0_W2SnoQbM5w@mail.gmail.com>
+        Tue, 4 Sep 2018 17:51:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726048AbeIDVvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:51:36 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFA52054F;
+        Tue,  4 Sep 2018 17:25:31 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 13:25:29 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-rt-users <linux-rt-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        contact@linuxplumbersconf.org
+Cc:     Julia Cartwright <julia@ni.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Clark Williams <williams@redhat.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Mark Brown <mark.brown@linaro.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Juri Lelli <juri.lelli@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Darren Hart <darren@dvhart.com>
+Subject: [ANNOUNCE] Submit a topic for the RT Microconference at Linux
+ Plumbers
+Message-ID: <20180904132529.6ae7166e@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+55aFyDZR4SGotsxUA7ahCGCDr+PGnn=_13e_0_W2SnoQbM5w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 10:12:13AM -0700, Linus Torvalds wrote:
-> On Mon, Sep 3, 2018 at 11:39 AM Holger Hoffstätte
-> <holger@applied-asynchrony.com> wrote:
-> >
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x76/0xc0
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
-> > ..a few hundred times..
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
-> > Sep  3 20:19:38 ragnarok kernel:  arch_tlb_finish_mmu+0x3a/0x70
-> > Sep  3 20:19:38 ragnarok kernel:  tlb_finish_mmu+0x1f/0x30
-> 
-> Yeah, so what seems to have happened is that commit db7ddef30112 ("mm:
-> move tlb_table_flush to tlb_flush_mmu_free") wasn't applied to the
-> stable tree (because it wasn't an obvious dependency).
-> 
-> And without that, the backport of d86564a2f085 ("mm/tlb, x86/mm:
-> Support invalidating TLB caches for RCU_TABLE_FREE") ends up with
-> recursion from tlb_flush_mmu_tlbonly() calling tlb_table_flush(),
-> which in turn calls tlb_table_invalidate(), which calls back to
-> tlb_flush_mmu_tlbonly().
-> 
-> So you have endless recursion - at least until you run out of stack.
-> Then, if you have VMAP_STACK enabled (x86-64 without KASAN), you get a
-> nice clean kernel stack overflow message like you did.
-> 
-> Or if you have KASAN enabled and no VMAP stack, you just end up with
-> random hangs and huge memory corruption as the recursion stomps all
-> over your memory.
+Hi RT folks!
 
-Ok, I will go queue this patch up now, it was in my very-long "to-apply"
-queue, but I didn't catch the dependancy here.
+The call for proposals (CfP) is now open for the RT Microconference at
+Linux Plumbers in Vancouver, Canada. The topics we are looking at this
+year are:
 
-thanks,
+ - How will PREEMPT_RT be maintained (is it a subsystem?)
 
-greg k-h
+ - Who will maintain it?
+
+ - How do we teach the rest of the kernel developers how not to break PREEMPT_RT?
+
+ - How do we catch when it breaks?
+
+ - What tools can we add into tools/ that other kernel developers can use to test and learn about PREEMPT_RT?
+
+ - What tests can we add into tools/testing/selftests?
+
+ - What kernel boot selftests can be added?
+
+ - How can we modify lockdep to catch problems that can break PREEMPT_RT?
+
+ - Discuss various types of failures that can happen with PREEMPT_RT that normally would not happen in the vanilla kernel.
+
+ - How do we handle stable backports?
+
+ - Interaction with Safety Critical domains?
+
+ - Interrupt threads are RT and are not protected by the RT Throttling.
+   How can we prevent interrupt thread starvation from a rogue RT task?
+
+ - How to determine if a kernel is booted with PREEMPT_RT enabled?
+
+ - librtpi: "solving" long-standing glibc pthread condvar internal lock inversion with a new implementation; motivations, technical details, etc.
+
+ - SCHED_DEADLINE - Lots of research has been made to various issues like CPU affinity, Bandwidth inheritance, cgroup support; but nothing has been done to the kernel. Let's make a commitment and push these ideas forward into mainline.
+
+ - How can we modify lockdep to catch problems that can break PREEMPT_RT?
+
+ - Discuss various types of failures that can happen with PREEMPT_RT that normally would not happen in the vanilla kernel.
+
+If you want to lead one of the above sessions, or if you have a new
+session you want to submit, please do so here:
+
+  https://linuxplumbersconf.org/event/2/abstracts/
+
+Set up an account, and then click "Submit new proposal".
+
+Fill out the "Title", "Content", select the "Authors" as the one leading
+the session (yourself), and then for "Track" select "RT MC Topics CfP".
+Select "Yes" to agree with the anti-harassment policy, and then hit
+Submit.
+
+The RT Microconference is only 4 hours (including breaks), thus we may
+not be able to fit all the topics in. But if a session is not
+submitted, then it will not have any chance of being on the agenda.
+
+Looking forward to seeing you in Vancouver, Canada in November!
+
+-- Steve
