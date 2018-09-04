@@ -2,224 +2,165 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10544C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB08C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC5B2086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC5B2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E792420645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcYZCa2L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E792420645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbeIDQKG (ORCPT
+        id S1727154AbeIDQUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 12:10:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41278 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbeIDQKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:10:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF4CD15BE;
-        Tue,  4 Sep 2018 04:45:19 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1B5D3F93D;
-        Tue,  4 Sep 2018 04:45:19 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A58AD1AE35FF; Tue,  4 Sep 2018 12:45:33 +0100 (BST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, npiggin@gmail.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
-        mhocko@suse.com, aneesh.kumar@linux.vnet.ibm.com
-Subject: [PATCH v2 3/5] asm-generic/tlb: Track which levels of the page tables have been cleared
-Date:   Tue,  4 Sep 2018 12:45:31 +0100
-Message-Id: <1536061533-16188-4-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1536061533-16188-1-git-send-email-will.deacon@arm.com>
-References: <1536061533-16188-1-git-send-email-will.deacon@arm.com>
+        Tue, 4 Sep 2018 12:20:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42473 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbeIDQUD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 12:20:03 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so1545329pgp.9;
+        Tue, 04 Sep 2018 04:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zAO6Tet6gDB/CNPa1hnGxxIMwaV7xyFVyG/ZZBGAyiE=;
+        b=OcYZCa2LDawXZm/av7xnKwFV5UpimbOAeUBrvXLwKg6eOm+5MQLmYaxYkEGmrQXhae
+         K7NeZPvcxGiAYHNIxL1D6bmQRfvFv2K8MBVtjv814qXwFl76ETW5QYljV6VC+MPzUB7u
+         7Lx2u123q3z7a+s1RbmhJV2zPhTTXlexIY9U18aJy8ty/+GxsMWaPLk8tBOtK02LnL3E
+         nwGjSlJtWtpdk4DnsxaKkm9h2OzREZyprAgWxiZE7/t7eQiY+ubK2WZt4ujNkYfBdjUD
+         1k18r3YiyJvYOLg1fbISgW3pB2E0QwGIAlNG3smEV7dsf/XLy4536tL/ItPANdKRG5ee
+         zfrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zAO6Tet6gDB/CNPa1hnGxxIMwaV7xyFVyG/ZZBGAyiE=;
+        b=uEZyIRlxHanfcFdtoNEC5+dhurAGmKt+t423cJ8mPXgcT6q3r8zZpkEEXr639QZW/u
+         GmYP+VTaFgH+lkOOnYODbodcNa9aZAeIHwYhOs07+p2Ee7h14MPT9ZTlAOmAwASK43vc
+         d+rpmjX0E4/jn5BSBZJv9x80XKllQFgZUKxQWUUY9ailcAYPFNpdvHU7OL2LiVnWSU4g
+         KRHrCh13SbD/Q2zhqnhxAa4kkOz3TLh+6X6TDWcFHxJbyejOO7Gfm/FwVW8NJ6VJUQgL
+         jZkBdXbwAgGwtr/YDbliynM6qnC9bFIteUa0IBF855M2klhPq5fdP3qKRs0I1XBhHYGw
+         VmOQ==
+X-Gm-Message-State: APzg51DI/IL8TRL6ZZ0iyGfU10+qMOi9yfLGiPpGi/Mu6yE0T4JNaVCU
+        y8fCS1HEgTg+xj9/qkgYrWYFzL6Q
+X-Google-Smtp-Source: ANB0VdY0hTquZqY/42jbEhsdk1PybZKW1fnEzzjV1zetAxqdit0VOQ8rSL0etPXvJOOyxlJjg32YaQ==
+X-Received: by 2002:a63:f26:: with SMTP id e38-v6mr30119377pgl.354.1536062113495;
+        Tue, 04 Sep 2018 04:55:13 -0700 (PDT)
+Received: from machine421.caveonetworks.com ([115.113.156.2])
+        by smtp.googlemail.com with ESMTPSA id u184-v6sm29740190pgd.46.2018.09.04.04.55.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Sep 2018 04:55:12 -0700 (PDT)
+From:   sunil.kovvuri@gmail.com
+To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
+        andrew@lunn.ch, davem@davemloft.net,
+        Sunil Goutham <sgoutham@marvell.com>
+Subject: [PATCH v2 00/15] soc: octeontx2: Add RVU admin function driver
+Date:   Tue,  4 Sep 2018 17:24:35 +0530
+Message-Id: <1536062090-30446-1-git-send-email-sunil.kovvuri@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is common for architectures with hugepage support to require only a
-single TLB invalidation operation per hugepage during unmap(), rather than
-iterating through the mapping at a PAGE_SIZE increment. Currently,
-however, the level in the page table where the unmap() operation occurs
-is not stored in the mmu_gather structure, therefore forcing
-architectures to issue additional TLB invalidation operations or to give
-up and over-invalidate by e.g. invalidating the entire TLB.
+From: Sunil Goutham <sgoutham@marvell.com>
 
-Ideally, we could add an interval rbtree to the mmu_gather structure,
-which would allow us to associate the correct mapping granule with the
-various sub-mappings within the range being invalidated. However, this
-is costly in terms of book-keeping and memory management, so instead we
-approximate by keeping track of the page table levels that are cleared
-and provide a means to query the smallest granule required for invalidation.
+Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
+multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
+PF0 is called administrative / admin function (AF) and has privilege access
+to registers to provision different RVU functional blocks to each of
+PF/VF.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- include/asm-generic/tlb.h | 58 ++++++++++++++++++++++++++++++++++++++++-------
- mm/memory.c               |  4 +++-
- 2 files changed, 53 insertions(+), 9 deletions(-)
+This admin function (AF) driver acts as a configuration / administrative
+software which provisions functional blocks to a PF/VF on demand for them
+to work as one of the following
+ - A basic network controller (i.e NIC).
+ - NIC with packet filtering, shaping and scheduling capabilities.
+ - A crypto device.
+ - A combination of above etc.
 
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index 2b444ad94566..9791e98122a0 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -116,6 +116,14 @@ struct mmu_gather {
- 	 */
- 	unsigned int		freed_tables : 1;
- 
-+	/*
-+	 * at which levels have we cleared entries?
-+	 */
-+	unsigned int		cleared_ptes : 1;
-+	unsigned int		cleared_pmds : 1;
-+	unsigned int		cleared_puds : 1;
-+	unsigned int		cleared_p4ds : 1;
-+
- 	struct mmu_gather_batch *active;
- 	struct mmu_gather_batch	local;
- 	struct page		*__pages[MMU_GATHER_BUNDLE];
-@@ -150,6 +158,10 @@ static inline void __tlb_reset_range(struct mmu_gather *tlb)
- 		tlb->end = 0;
- 	}
- 	tlb->freed_tables = 0;
-+	tlb->cleared_ptes = 0;
-+	tlb->cleared_pmds = 0;
-+	tlb->cleared_puds = 0;
-+	tlb->cleared_p4ds = 0;
- }
- 
- static inline void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
-@@ -199,6 +211,25 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- }
- #endif
- 
-+static inline unsigned long tlb_get_unmap_shift(struct mmu_gather *tlb)
-+{
-+	if (tlb->cleared_ptes)
-+		return PAGE_SHIFT;
-+	if (tlb->cleared_pmds)
-+		return PMD_SHIFT;
-+	if (tlb->cleared_puds)
-+		return PUD_SHIFT;
-+	if (tlb->cleared_p4ds)
-+		return P4D_SHIFT;
-+
-+	return PAGE_SHIFT;
-+}
-+
-+static inline unsigned long tlb_get_unmap_size(struct mmu_gather *tlb)
-+{
-+	return 1UL << tlb_get_unmap_shift(tlb);
-+}
-+
- /*
-  * In the case of tlb vma handling, we can optimise these away in the
-  * case where we're doing a full MM flush.  When we're doing a munmap,
-@@ -232,13 +263,19 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define tlb_remove_tlb_entry(tlb, ptep, address)		\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->cleared_ptes = 1;				\
- 		__tlb_remove_tlb_entry(tlb, ptep, address);	\
- 	} while (0)
- 
--#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	     \
--	do {							     \
--		__tlb_adjust_range(tlb, address, huge_page_size(h)); \
--		__tlb_remove_tlb_entry(tlb, ptep, address);	     \
-+#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
-+	do {							\
-+		unsigned long _sz = huge_page_size(h);		\
-+		__tlb_adjust_range(tlb, address, _sz);		\
-+		if (_sz == PMD_SIZE)				\
-+			tlb->cleared_pmds = 1;			\
-+		else if (_sz == PUD_SIZE)			\
-+			tlb->cleared_puds = 1;			\
-+		__tlb_remove_tlb_entry(tlb, ptep, address);	\
- 	} while (0)
- 
- /**
-@@ -252,6 +289,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define tlb_remove_pmd_tlb_entry(tlb, pmdp, address)			\
- 	do {								\
- 		__tlb_adjust_range(tlb, address, HPAGE_PMD_SIZE);	\
-+		tlb->cleared_pmds = 1;					\
- 		__tlb_remove_pmd_tlb_entry(tlb, pmdp, address);		\
- 	} while (0)
- 
-@@ -266,6 +304,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define tlb_remove_pud_tlb_entry(tlb, pudp, address)			\
- 	do {								\
- 		__tlb_adjust_range(tlb, address, HPAGE_PUD_SIZE);	\
-+		tlb->cleared_puds = 1;					\
- 		__tlb_remove_pud_tlb_entry(tlb, pudp, address);		\
- 	} while (0)
- 
-@@ -291,7 +330,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define pte_free_tlb(tlb, ptep, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
--		tlb->freed_tables = 1;			\
-+		tlb->freed_tables = 1;				\
-+		tlb->cleared_pmds = 1;				\
- 		__pte_free_tlb(tlb, ptep, address);		\
- 	} while (0)
- #endif
-@@ -300,7 +340,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define pmd_free_tlb(tlb, pmdp, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
--		tlb->freed_tables = 1;			\
-+		tlb->freed_tables = 1;				\
-+		tlb->cleared_puds = 1;				\
- 		__pmd_free_tlb(tlb, pmdp, address);		\
- 	} while (0)
- #endif
-@@ -310,7 +351,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define pud_free_tlb(tlb, pudp, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
--		tlb->freed_tables = 1;			\
-+		tlb->freed_tables = 1;				\
-+		tlb->cleared_p4ds = 1;				\
- 		__pud_free_tlb(tlb, pudp, address);		\
- 	} while (0)
- #endif
-@@ -321,7 +363,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #define p4d_free_tlb(tlb, pudp, address)			\
- 	do {							\
- 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
--		tlb->freed_tables = 1;			\
-+		tlb->freed_tables = 1;				\
- 		__p4d_free_tlb(tlb, pudp, address);		\
- 	} while (0)
- #endif
-diff --git a/mm/memory.c b/mm/memory.c
-index c467102a5cbc..9135f48e8d84 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -267,8 +267,10 @@ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
- {
- 	struct mmu_gather_batch *batch, *next;
- 
--	if (force)
-+	if (force) {
-+		__tlb_reset_range(tlb);
- 		__tlb_adjust_range(tlb, start, end - start);
-+	}
- 
- 	tlb_flush_mmu(tlb);
- 
+PF/VFs communicate with admin function via a shared memory region.
+This patch series adds logic for the following
+ - RVU AF driver with functional blocks provisioning support
+ - Mailbox infrastructure for communication between AF and PFs.
+ - CGX driver which provides information about physcial network
+   interfaces which AF processes and forwards required info to
+   PF/VF drivers.
+
+This is the first set of patches out of 70 odd patches.
+
+Note: This driver neither receives any data nor processes it i.e no I/O,
+      just does the hardware configuration.
+
+Changes from v1:
+ 1 Merged RVU admin function and CGX drivers into a single module
+   - Suggested by Arnd Bergmann
+ 2 Pulled mbox communication APIs into a separate module to remove
+   admin function driver dependency in a VM where AF is not attached.
+   - Suggested by Arnd Bergmann
+
+Aleksey Makarov (2):
+  soc: octeontx2: Add mailbox support infra
+  soc: octeontx2: Convert mbox msg id check to a macro
+
+Geetha sowjanya (1):
+  soc: octeontx2: Reconfig MSIX base with IOVA
+
+Linu Cherian (3):
+  soc: octeontx2: Set RVU PFs to CGX LMACs mapping
+  soc: octeontx2: Add support for CGX link management
+  soc: octeontx2: Register for CGX lmac events
+
+Sunil Goutham (9):
+  soc: octeontx2: Add Marvell OcteonTX2 RVU AF driver
+  soc: octeontx2: Reset all RVU blocks
+  soc: octeontx2: Gather RVU blocks HW info
+  soc: octeontx2: Add mailbox IRQ and msg handlers
+  soc: octeontx2: Scan blocks for LFs provisioned to PF/VF
+  soc: octeontx2: Add RVU block LF provisioning support
+  soc: octeontx2: Configure block LF's MSIX vector offset
+  soc: octeontx2: Add Marvell OcteonTX2 CGX driver
+  MAINTAINERS: Add entry for Marvell OcteonTX2 Admin Function driver
+
+ MAINTAINERS                                |   10 +
+ drivers/soc/Kconfig                        |    1 +
+ drivers/soc/Makefile                       |    1 +
+ drivers/soc/marvell/Kconfig                |   18 +
+ drivers/soc/marvell/Makefile               |    2 +
+ drivers/soc/marvell/octeontx2/Makefile     |   10 +
+ drivers/soc/marvell/octeontx2/cgx.c        |  517 +++++++++
+ drivers/soc/marvell/octeontx2/cgx.h        |   65 ++
+ drivers/soc/marvell/octeontx2/cgx_fw_if.h  |  225 ++++
+ drivers/soc/marvell/octeontx2/mbox.c       |  303 +++++
+ drivers/soc/marvell/octeontx2/mbox.h       |  211 ++++
+ drivers/soc/marvell/octeontx2/rvu.c        | 1637 ++++++++++++++++++++++++++++
+ drivers/soc/marvell/octeontx2/rvu.h        |  158 +++
+ drivers/soc/marvell/octeontx2/rvu_cgx.c    |  194 ++++
+ drivers/soc/marvell/octeontx2/rvu_reg.h    |  442 ++++++++
+ drivers/soc/marvell/octeontx2/rvu_struct.h |   78 ++
+ 16 files changed, 3872 insertions(+)
+ create mode 100644 drivers/soc/marvell/Kconfig
+ create mode 100644 drivers/soc/marvell/Makefile
+ create mode 100644 drivers/soc/marvell/octeontx2/Makefile
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.c
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.h
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx_fw_if.h
+ create mode 100644 drivers/soc/marvell/octeontx2/mbox.c
+ create mode 100644 drivers/soc/marvell/octeontx2/mbox.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu.c
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_cgx.c
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_reg.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_struct.h
+
 -- 
-2.1.4
+2.7.4
 
