@@ -2,296 +2,443 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA42C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7A7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86DAE20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ekS+Ir0Q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ekS+Ir0Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DAE20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 699902086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 699902086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeIDLev (ORCPT
+        id S1727062AbeIDLfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:34:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45180 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeIDLev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:34:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A64C7607B5; Tue,  4 Sep 2018 07:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536045062;
-        bh=V8qtfOB23Zu1bICH27tCZZDWJq86ucrPBC3TVuP0e5g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ekS+Ir0Q8J23T5rZBaXMOVk5hDdWpIkJa1eiIZB9WQf/3wqu9Ho3lRdzZ1oGXbALZ
-         yWGHw8DfjdBmoc60gsEiYXyIr0KehnIvNnHD3ffVIxo2tmtbVSUeLqf3QlaCL+BSC3
-         ad9NHkeu5S6zcaoBOaGBo3z1hYbzVwA2qPZkA6Us=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CDF5560388;
-        Tue,  4 Sep 2018 07:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536045062;
-        bh=V8qtfOB23Zu1bICH27tCZZDWJq86ucrPBC3TVuP0e5g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ekS+Ir0Q8J23T5rZBaXMOVk5hDdWpIkJa1eiIZB9WQf/3wqu9Ho3lRdzZ1oGXbALZ
-         yWGHw8DfjdBmoc60gsEiYXyIr0KehnIvNnHD3ffVIxo2tmtbVSUeLqf3QlaCL+BSC3
-         ad9NHkeu5S6zcaoBOaGBo3z1hYbzVwA2qPZkA6Us=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CDF5560388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     bjorn.andersson@linaro.org, sibis@codeaurora.org,
-        ulf.hansson@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2] remoteproc: q6v5: Add support to vote for rpmh power domains
-Date:   Tue,  4 Sep 2018 12:40:46 +0530
-Message-Id: <20180904071046.8152-1-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 4 Sep 2018 07:35:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:31829 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbeIDLfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:35:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 00:11:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
+   d="scan'208";a="254307895"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 04 Sep 2018 00:11:23 -0700
+Received: from [10.125.251.238] (abudanko-mobl.ccr.corp.intel.com [10.125.251.238])
+        by linux.intel.com (Postfix) with ESMTP id 3DA015803E2;
+        Tue,  4 Sep 2018 00:11:20 -0700 (PDT)
+Subject: [PATCH v5 2/2]: perf record: enable asynchronous trace writing
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <7b3a635a-1789-65b9-31f4-fef5406bc3d5@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <1950a4f0-babf-2dc9-6ff0-3c94d554f1d8@linux.intel.com>
+Date:   Tue, 4 Sep 2018 10:11:19 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <7b3a635a-1789-65b9-31f4-fef5406bc3d5@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With rpmh ARC resources being modelled as power domains with performance
-state,
-we need to proxy vote on these for SDM845.
-Add support to vote on multiple of them, now that genpd supports
-associating
-mutliple power domains to a device.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+record__aio_sync() allocates index of free map->data buffer for 
+a cpu buffer or blocks till completion of any started operation 
+and then proceeds.
+
+Trace file offset is calculated and updated linearly prior
+enqueuing aio write at record__pushfn().
+
+record__mmap_read_sync() implements a barrier for all incomplete
+aio write requests per-cpu per aio data.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
-Changes in v2:
-* Drop the perf vote along with disabling the powerdomain
-* pm_suspend_ignore_children() to not mess with runtime PM of children
-* Detach powerdomains as part of .remove and in error path during probe,
-issue reported by Brian Norris <briannorris@chromium.org>
-* Use dev_pm_domain_attach_by_name() api
+ Changes in v5:
+ - data loss metrics decreased from 25% to 2x in trialed configuration;
+ - avoided nanosleep() prior calling aio_suspend();
+ - switched to per cpu multi record__aio_sync() aio
+ - record_mmap_read_sync() now does global barrier just before 
+   switching trace file or collection stop;
+ - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
+ Changes in v4:
+ - converted void *bf to struct perf_mmap *md in signatures
+ - written comment in perf_mmap__push() just before perf_mmap__get();
+ - written comment in record__mmap_read_sync() on possible restarting 
+   of aio_write() operation and releasing perf_mmap object after all;
+ - added perf_mmap__put() for the cases of failed aio_write();
+ Changes in v3:
+ - written comments about nanosleep(0.5ms) call prior aio_suspend()
+   to cope with intrusiveness of its implementation in glibc;
+ - written comments about rationale behind coping profiling data 
+   into mmap->data buffer;
+---
+ tools/perf/builtin-record.c | 175 +++++++++++++++++++++++++++++++++++++++++++-
+ tools/perf/util/mmap.c      |  57 +++++++++++----
+ tools/perf/util/mmap.h      |   4 +-
+ 3 files changed, 216 insertions(+), 20 deletions(-)
 
- drivers/remoteproc/qcom_q6v5_pil.c | 111 ++++++++++++++++++++++++++++-
- 1 file changed, 109 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d7a4b9eca5d2..f4b3a9b09a5d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -25,6 +25,8 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-@@ -131,6 +133,7 @@ struct rproc_hexagon_res {
- 	char **proxy_clk_names;
- 	char **reset_clk_names;
- 	char **active_clk_names;
-+	char **pd_names;
- 	int version;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-@@ -155,9 +158,11 @@ struct q6v5 {
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
- 	struct clk *proxy_clks[4];
-+	struct device *pd_devs[3];
- 	int active_clk_count;
- 	int reset_clk_count;
- 	int proxy_clk_count;
-+	int pd_count;
- 
- 	struct reg_info active_regs[1];
- 	struct reg_info proxy_regs[3];
-@@ -316,6 +321,40 @@ static void q6v5_clk_disable(struct device *dev,
- 		clk_disable_unprepare(clks[i]);
- }
- 
-+static int q6v5_powerdomain_enable(struct device *dev, struct device **devs,
-+				   int count)
-+{
-+	int i;
-+
-+	if (!count)
-+		return 0;
-+
-+	if (count > 1)
-+		for (i = 0; i < count; i++)
-+			dev_pm_genpd_set_performance_state(devs[i], INT_MAX);
-+	else
-+		dev_pm_genpd_set_performance_state(dev, INT_MAX);
-+
-+	return pm_runtime_get_sync(dev);
-+}
-+
-+static int q6v5_powerdomain_disable(struct device *dev, struct device **devs,
-+				    int count)
-+{
-+	int i;
-+
-+	if (!count)
-+		return 0;
-+
-+	if (count > 1)
-+		for (i = 0; i < count; i++)
-+			dev_pm_genpd_set_performance_state(devs[i], 0);
-+	else
-+		dev_pm_genpd_set_performance_state(dev, 0);
-+
-+	return pm_runtime_put(dev);
-+}
-+
- static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 				   bool remote_owner, phys_addr_t addr,
- 				   size_t size)
-@@ -792,11 +831,18 @@ static int q6v5_start(struct rproc *rproc)
- 
- 	qcom_q6v5_prepare(&qproc->q6v5);
- 
-+	ret = q6v5_powerdomain_enable(qproc->dev, qproc->pd_devs,
-+				      qproc->pd_count);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "failed to enable power domains\n");
-+		goto disable_irqs;
-+	}
-+
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
- 				    qproc->proxy_reg_count);
- 	if (ret) {
- 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
--		goto disable_irqs;
-+		goto disable_powerdomains;
- 	}
- 
- 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
-@@ -920,6 +966,8 @@ static int q6v5_start(struct rproc *rproc)
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
- 
-+disable_powerdomains:
-+	q6v5_powerdomain_disable(qproc->dev, qproc->pd_devs, qproc->pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&qproc->q6v5);
- 
-@@ -972,7 +1020,7 @@ static int q6v5_stop(struct rproc *rproc)
- 			 qproc->active_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->active_regs,
- 			       qproc->active_reg_count);
--
-+	q6v5_powerdomain_disable(qproc->dev, qproc->pd_devs, qproc->pd_count);
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 8eb093f8d4d5..505399faa6a0 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -121,6 +121,84 @@ static int record__write(struct record *rec, void *bf, size_t size)
  	return 0;
  }
  
-@@ -1063,6 +1111,48 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
- 	return i;
- }
- 
-+static int q6v5_powerdomain_attach(struct device *dev, struct device **devs,
-+				   char **pd_names)
++static int record__aio_write(struct aiocb *cblock, int trace_fd,
++		void *buf, size_t size, off_t off)
 +{
-+	int i = 0, num_pds;
++	cblock->aio_fildes = trace_fd;
++	cblock->aio_buf    = buf;
++	cblock->aio_nbytes = size;
++	cblock->aio_offset = off;
++	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
 +
-+	if (!pd_names)
-+		return 0;
++	if (aio_write(cblock) == -1) {
++		cblock->aio_fildes = -1;
++		pr_err("failed to queue perf data, error: %m\n");
++		return -1;
++	}
 +
-+	while (pd_names[i])
-+		i++;
++	return 0;
++}
 +
-+	num_pds = i;
++static int record__aio_sync(struct perf_mmap *md)
++{
++	void *rem_buf;
++	off_t rem_off;
++	size_t rem_size;
++	ssize_t aio_ret, written;
++	int i, aio_errno, do_suspend, idx = -1;
++	struct aiocb **cblocks = md->cblocks;
++	struct timespec timeout = { 0, 1000 * 1000  * 1 }; // 1ms
 +
-+	if (num_pds > 1) {
-+		for (i = 0; i < num_pds; i++) {
-+			devs[i] = dev_pm_domain_attach_by_name(dev,
-+							       pd_names[i]);
-+			if (IS_ERR(devs[i]))
-+				return PTR_ERR(devs[i]);
-+			if (!device_link_add(dev, devs[i], DL_FLAG_STATELESS |
-+					     DL_FLAG_PM_RUNTIME))
-+				return -EINVAL;
++	for (i = 0; i < md->nr_cblocks; ++i)
++		if (cblocks[i]->aio_fildes == -1)
++			return i;
++
++	do {
++		do_suspend = 0;
++		if (aio_suspend((const struct aiocb**)cblocks, md->nr_cblocks, &timeout)) {
++			if (!(errno == EAGAIN || errno == EINTR))
++				pr_err("failed to sync perf data, error: %m\n");
++			do_suspend = 1;
++			continue;
 +		}
-+	}
++		for (i = 0; i < md->nr_cblocks; ++i) {
++			aio_errno = aio_error(cblocks[i]);
++			if (aio_errno == EINPROGRESS)
++				continue;
++			written = aio_ret = aio_return(cblocks[i]);
++			if (aio_ret < 0) {
++				if (aio_errno != EINTR)
++					pr_err("failed to write perf data, error: %m\n");
++				written = 0;
++			}
++			rem_size = cblocks[i]->aio_nbytes - written;
++			if (rem_size == 0) {
++				cblocks[i]->aio_fildes = -1;
++				/* md->refcount is incremented in perf_mmap__push() for
++				 * every enqueued aio write request so decrement it because
++				 * the request is now complete.
++				 */
++				perf_mmap__put(md);
++				if (idx == -1)
++					idx = i;
++			} else {
++				/* aio write request may require restart with the
++				 * reminder if the kernel didn't write whole
++				 * chunk at once.
++				 */
++				rem_off = cblocks[i]->aio_offset + written;
++				rem_buf = (void*)(cblocks[i]->aio_buf + written);
++				record__aio_write(cblocks[i], cblocks[i]->aio_fildes,
++						rem_buf, rem_size, rem_off);
++			}
++		}
++		if (idx == -1)
++			do_suspend = 1;
++	} while (do_suspend);
 +
-+	pm_suspend_ignore_children(dev, true);
-+	pm_runtime_enable(dev);
-+
-+	return num_pds;
-+};
-+
-+static void q6v5_powerdomain_detach(struct q6v5 *qproc)
-+{
-+	int i;
-+
-+	if (qproc->pd_count > 1)
-+		for (i = 0; i < qproc->pd_count; i++)
-+			dev_pm_domain_detach(qproc->pd_devs[i], true);
-+
-+	pm_runtime_disable(qproc->dev);
++	return idx;
 +}
 +
- static int q6v5_init_reset(struct q6v5 *qproc)
- {
- 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
-@@ -1192,6 +1282,14 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
+ static int process_synthesized_event(struct perf_tool *tool,
+ 				     union perf_event *event,
+ 				     struct perf_sample *sample __maybe_unused,
+@@ -130,12 +208,28 @@ static int process_synthesized_event(struct perf_tool *tool,
+ 	return record__write(rec, event, event->header.size);
+ }
  
-+	ret = q6v5_powerdomain_attach(&pdev->dev, qproc->pd_devs,
-+				      desc->pd_names);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to init power domains\n");
-+		goto free_rproc;
+-static int record__pushfn(void *to, void *bf, size_t size)
++static int record__pushfn(void *to, struct aiocb *cblock, void *data, size_t size)
+ {
++	off_t off;
+ 	struct record *rec = to;
++	int ret, trace_fd = rec->session->data->file.fd;
+ 
+ 	rec->samples++;
+-	return record__write(rec, bf, size);
++
++	off =
++	lseek(trace_fd, 0, SEEK_CUR);
++	lseek(trace_fd, off + size, SEEK_SET);
++
++	ret = record__aio_write(cblock, trace_fd, data, size, off);
++	if (!ret) {
++		rec->bytes_written += size;
++		if (switch_output_size(rec))
++			trigger_hit(&switch_output_trigger);
++	} else {
++		lseek(trace_fd, off, SEEK_SET);
 +	}
-+	qproc->pd_count = ret;
 +
- 	ret = q6v5_init_reset(qproc);
- 	if (ret)
- 		goto free_rproc;
-@@ -1219,6 +1317,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	return 0;
++	return ret;
+ }
  
- free_rproc:
-+	q6v5_powerdomain_detach(qproc);
- 	rproc_free(rproc);
+ static volatile int done;
+@@ -511,6 +605,70 @@ static struct perf_event_header finished_round_event = {
+ 	.type = PERF_RECORD_FINISHED_ROUND,
+ };
  
- 	return ret;
-@@ -1228,6 +1327,8 @@ static int q6v5_remove(struct platform_device *pdev)
++static void record__aio_complete(struct perf_mmap *md, int i)
++{
++	int aio_errno;
++	void *rem_buf;
++	off_t rem_off;
++	size_t rem_size;
++	ssize_t aio_ret, written;
++	struct aiocb *cblock = md->cblocks[i];
++	struct timespec timeout = { 0, 1000 * 1000  * 1 }; // 1ms
++
++	if (cblock->aio_fildes == -1)
++		return;
++
++	do {
++		if (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
++			if (!(errno == EAGAIN || errno == EINTR))
++				pr_err("failed to sync perf data, error: %m\n");
++			continue;
++		}
++		aio_errno = aio_error(cblock);
++		if (aio_errno == EINPROGRESS)
++			continue;
++		written = aio_ret = aio_return(cblock);
++		if (aio_ret < 0) {
++			if (!(aio_errno == EINTR))
++				pr_err("failed to write perf data, error: %m\n");
++			written = 0;
++		}
++		rem_size = cblock->aio_nbytes - written;
++		if (rem_size == 0) {
++			cblock->aio_fildes = -1;
++			/* md->refcount is incremented in perf_mmap__push() for
++			 * every enqueued aio write request so decrement it because
++			 * the request is now complete.
++			 */
++			perf_mmap__put(md);
++			return;
++		} else {
++			/* aio write request may require restart with the
++			 * reminder if the kernel didn't write whole
++			 * chunk at once.
++			 */
++			rem_off = cblock->aio_offset + written;
++			rem_buf = (void*)(cblock->aio_buf + written);
++			record__aio_write(cblock, cblock->aio_fildes,
++					rem_buf, rem_size, rem_off);
++		}
++	} while (1);
++}
++
++static void record__mmap_read_sync(struct record *rec)
++{
++	int i, j;
++	struct perf_evlist *evlist = rec->evlist;
++	struct perf_mmap *maps = evlist->mmap;
++
++	for (i = 0; i < evlist->nr_mmaps; i++) {
++		struct perf_mmap *map = &maps[i];
++		if (map->base)
++			for (j = 0; j < map->nr_cblocks; ++j)
++				record__aio_complete(map, j);
++	}
++}
++
+ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
+ 				    bool overwrite)
  {
- 	struct q6v5 *qproc = platform_get_drvdata(pdev);
+@@ -533,7 +691,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 		struct auxtrace_mmap *mm = &maps[i].auxtrace_mmap;
  
-+	q6v5_powerdomain_detach(qproc);
+ 		if (maps[i].base) {
+-			if (perf_mmap__push(&maps[i], rec, record__pushfn) != 0) {
++			/* Call record__aio_sync() to allocate free
++			 * map->data buffer or wait till one of the
++			 * buffers becomes available after previous
++			 * aio write request.
++			 */
++			if (perf_mmap__push(&maps[i], rec, record__aio_sync(&maps[i]),
++				record__pushfn) != 0) {
+ 				rc = -1;
+ 				goto out;
+ 			}
+@@ -1055,6 +1219,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			perf_evlist__toggle_bkw_mmap(rec->evlist, BKW_MMAP_DATA_PENDING);
+ 
+ 		if (record__mmap_read_all(rec) < 0) {
++			record__mmap_read_sync(rec);
+ 			trigger_error(&auxtrace_snapshot_trigger);
+ 			trigger_error(&switch_output_trigger);
+ 			err = -1;
+@@ -1066,6 +1231,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			if (!trigger_is_error(&auxtrace_snapshot_trigger))
+ 				record__read_auxtrace_snapshot(rec);
+ 			if (trigger_is_error(&auxtrace_snapshot_trigger)) {
++				record__mmap_read_sync(rec);
+ 				pr_err("AUX area tracing snapshot failed\n");
+ 				err = -1;
+ 				goto out_child;
+@@ -1084,6 +1250,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			 */
+ 			if (rec->evlist->bkw_mmap_state == BKW_MMAP_RUNNING)
+ 				continue;
 +
- 	rproc_del(qproc->rproc);
++			record__mmap_read_sync(rec);
+ 			trigger_ready(&switch_output_trigger);
  
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
-@@ -1258,6 +1359,12 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			"mnoc_axi",
- 			NULL
- 	},
-+	.pd_names = (char*[]){
-+			"cx",
-+			"mx",
-+			"mss",
-+			NULL
-+	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = true,
- 	.version = MSS_SDM845,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+ 			/*
+@@ -1137,6 +1305,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 			disabled = true;
+ 		}
+ 	}
++	record__mmap_read_sync(rec);
+ 	trigger_off(&auxtrace_snapshot_trigger);
+ 	trigger_off(&switch_output_trigger);
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index ea728db8f460..60a3138ccd58 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -327,12 +327,12 @@ int perf_mmap__read_init(struct perf_mmap *map)
+ 	return __perf_mmap__read_init(map);
+ }
+ 
+-int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size))
++int perf_mmap__push(struct perf_mmap *md, void *to, int idx,
++		    int push(void *to, struct aiocb *cblock, void *data, size_t size))
+ {
+ 	u64 head = perf_mmap__read_head(md);
+ 	unsigned char *data = md->base + page_size;
+-	unsigned long size;
++	unsigned long size, size0 = 0;
+ 	void *buf;
+ 	int rc = 0;
+ 
+@@ -340,31 +340,58 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 	if (rc < 0)
+ 		return (rc == -EAGAIN) ? 0 : -1;
+ 
++	/* md->base data is copied into md->data[idx] buffer to
++	 * release space in the kernel buffer as fast as possible,
++	 * thru perf_mmap__consume() below.
++	 *
++	 * That lets the kernel to proceed with storing more
++	 * profiling data into the kernel buffer earlier than other
++	 * per-cpu kernel buffers are handled.
++	 *
++	 * Coping can be done in two steps in case the chunk of
++	 * profiling data crosses the upper bound of the kernel buffer.
++	 * In this case we first move part of data from md->start
++	 * till the upper bound and then the reminder from the
++	 * beginning of the kernel buffer till the end of
++	 * the data chunk.
++	 */
++
+ 	size = md->end - md->start;
+ 
+ 	if ((md->start & md->mask) + size != (md->end & md->mask)) {
+ 		buf = &data[md->start & md->mask];
+-		size = md->mask + 1 - (md->start & md->mask);
+-		md->start += size;
+-
+-		if (push(to, buf, size) < 0) {
+-			rc = -1;
+-			goto out;
+-		}
++		size0 = md->mask + 1 - (md->start & md->mask);
++		md->start += size0;
++		memcpy(md->data[idx], buf, size0);
+ 	}
+ 
+ 	buf = &data[md->start & md->mask];
+ 	size = md->end - md->start;
+ 	md->start += size;
++	memcpy(md->data[idx] + size0, buf, size);
+ 
+-	if (push(to, buf, size) < 0) {
+-		rc = -1;
+-		goto out;
+-	}
++	/* Increment md->refcount to guard md->data[idx] buffer
++	 * from premature deallocation because md object can be
++	 * released earlier than aio write request started
++	 * on mmap->data[idx] is complete.
++	 *
++	 * perf_mmap__put() is done at record__aio_sync() or
++	 * record__aio_complete() after started request completion.
++	 */
++
++	perf_mmap__get(md);
+ 
+ 	md->prev = head;
+ 	perf_mmap__consume(md);
+-out:
++
++	rc = push(to, md->cblocks[idx], md->data[idx], size0 + size);
++	if (rc) {
++		/* Decrement md->refcount back if aio write
++		 * operation failed to start.
++		 */
++		perf_mmap__put(md);
++	}
++
+ 	return rc;
+ }
+ 
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index 4a9bb0ecae4f..9a106c075172 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -95,8 +95,8 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
+ 
+ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
+ 
+-int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size));
++int perf_mmap__push(struct perf_mmap *md, void *to, int aio_idx,
++		    int push(void *to, struct aiocb *cblock, void *data, size_t size));
+ 
+ size_t perf_mmap__mmap_len(struct perf_mmap *map);
 
