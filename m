@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDC5C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B25C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1635206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94DD206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElU/KFdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1635206BA
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jQZSE9Jv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94DD206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbeIDOwu (ORCPT
+        id S1727723AbeIDOw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:52:50 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40549 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeIDOwN (ORCPT
+        Tue, 4 Sep 2018 10:52:56 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46632 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbeIDOwI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:52:13 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 207-v6so3687394wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:27:44 -0700 (PDT)
+        Tue, 4 Sep 2018 10:52:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a108-v6so3330343wrc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+PVCKznci0AHT6i8Z02ot2xaPHWn52lA5413+yAK5nQ=;
-        b=ElU/KFdwiv+VEO8+hgqr6As7g+5FOuYecqHjOuRmQjppkJK3ae3dkSWMps4ZjM8VDp
-         D2x6BZAHLCBqD+KWGneMLlIkdD9ToVfmBK7AJ2hQiLxluxSd+WsQ+TehpETmjyVlbMk3
-         M7MugfHjdNpse2lIv6LM/kL15/mB6H2SnFCn0=
+        bh=snp87os3BoXyBSDrXywMzeJTbUHiDioia8y01odw9Do=;
+        b=jQZSE9JvbEDTr5o64fXR/v7LzHqCkqpDbWC6FmkTHPse6UZ7Zv88VoPEGtj5R5rKTh
+         icIasow3vbAljuw1aedE6yo0ZvSOqVHWD7WmxEA4CUDuQMVDQrT/Kr4zvXx3hmErJxf4
+         BcDAzXq28XpySbJ83pFJhTpx2tZ9fJNyb8vx8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+PVCKznci0AHT6i8Z02ot2xaPHWn52lA5413+yAK5nQ=;
-        b=Cb93o4PMGToIwq68ePuGE5O3gecPs6UQAyxjsMKbFdJhRCYKGPp0bIs3EFg58SmUdd
-         hyYzoh1UrVkibB4kzVyc6Ulf3ibrH0QllOkSAm8zcjBM16cxMwDzla1If+wDE2yHE8pS
-         bFBm9zaZ5QVo+Lll6ezkvRkna5KyOUzzIGLMCwCYJ6JdZo7gYD0h+rWO6nIWKCtR+dj4
-         iMi9dBCZD82HfSWM13XQpHN7qUtKKqvbAkRfwTnZ9bHsmSF/iQOWn7ZINoeNQSVOY7yD
-         kQ5Ucu/RSx8rqyFkXv/a50WowUniugmkCCZQNzso/lxyu04Zar8cwxInOhAO6OPeUEZE
-         D/Ig==
-X-Gm-Message-State: APzg51AWUwHBqeozOSBltWfYCUOjcKHV79mn6fpVtNsYupm02U8eKEoJ
-        hl+8HkhIxiI7e7LLPBmuxie8Mg==
-X-Google-Smtp-Source: ANB0VdZZUAHey2wpMEwyBOypdJwJc4QgdKmdwZJWD8WAlpVyPLSPAbjE2ewk9PEN6msw9YImoX3bEA==
-X-Received: by 2002:a1c:7f93:: with SMTP id a141-v6mr1935562wmd.45.1536056863739;
-        Tue, 04 Sep 2018 03:27:43 -0700 (PDT)
+        bh=snp87os3BoXyBSDrXywMzeJTbUHiDioia8y01odw9Do=;
+        b=eWc6zEtxBG3RV/7kFnZ+O85n4mG4CMIrbYQrlGeyHde5twegBT483mGWySw9Gbh6vs
+         67BrnFqlrYFEdJ5oPmPVTlVU53wag8eU1joJTjDBwqHr3Iktwvcg9MrtOoctpvqgBnQL
+         Ew6KPk88HGmMAEGbxQrW/MlUS2MjmxdyFFOtgxWweH/ksVT9xn/NxPf1q3To61KNbVks
+         zNLCGaNMs9f0SudKfR1dysy/U8CJzFFiKutys1ZfnECLncXxmcnRVqParvCvtsjjVzPz
+         JRrKTMUJPnrW7akX7mylYksTjithIf4iivuzZ5kdLot/YLI3siAde89CkBAkQ5UJGQ13
+         nInQ==
+X-Gm-Message-State: APzg51BIm/4bbvSyeVLqpdiZYS3/jCGPi3PpZ0JYSKYkpZJwEpOFnC+c
+        SFWeE/L/i+epseLqLvoUhN8azA==
+X-Google-Smtp-Source: ANB0VdYizOdH1HTF+5XGqOAU0wCgwqx0iupn72LMPScnK7B5C///Rda+U5cmMSY4JyIH1Y+9UJSjMQ==
+X-Received: by 2002:a5d:574b:: with SMTP id q11-v6mr11668158wrw.272.1536056856252;
+        Tue, 04 Sep 2018 03:27:36 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id g129-v6sm16903325wmf.42.2018.09.04.03.27.42
+        by smtp.gmail.com with ESMTPSA id g129-v6sm16903325wmf.42.2018.09.04.03.27.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 03:27:43 -0700 (PDT)
+        Tue, 04 Sep 2018 03:27:35 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
 Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, bgoswami@codeaurora.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         vkoul@kernel.org, alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 10/13] ASoC: dt-bindings: Add WCD9335 MBHC specific properties
-Date:   Tue,  4 Sep 2018 11:24:57 +0100
-Message-Id: <20180904102500.30318-11-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 05/13] ASoC: wcd9335: add CLASS-H Controller support
+Date:   Tue,  4 Sep 2018 11:24:52 +0100
+Message-Id: <20180904102500.30318-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
 References: <20180904102500.30318-1-srinivas.kandagatla@linaro.org>
@@ -71,49 +71,714 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add new bindings required to support MBHC
-(Multi Button Headset Control) block in the codec.
-This block is used for jack insert/removal detection,
-headset type detection and 8 button press/release events.
-
-All these properties are very much specific to board.
+CLASS-H controller/Amplifier is common accorss Qualcomm WCD codec series.
+This patchset adds basic CLASS-H controller apis for WCD codecs after
+wcd9335 to use.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 ---
- .../bindings/sound/qcom,wcd9335.txt           | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ sound/soc/codecs/Makefile      |   2 +-
+ sound/soc/codecs/wcd-clsh-v2.c | 577 +++++++++++++++++++++++++++++++++
+ sound/soc/codecs/wcd-clsh-v2.h |  49 +++
+ sound/soc/codecs/wcd9335.c     |  10 +
+ 4 files changed, 637 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/codecs/wcd-clsh-v2.c
+ create mode 100644 sound/soc/codecs/wcd-clsh-v2.h
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-index 5d6ea66a863f..4d56c3ca9fa8 100644
---- a/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-+++ b/Documentation/devicetree/bindings/sound/qcom,wcd9335.txt
-@@ -55,6 +55,26 @@ Required properties with SLIMbus Interface:
- 	Value type: <string>
- 	Definition: Must contain "mclk", "mclk2" and "slimbus" strings.
+diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+index 01410b63daac..847a2e533a2f 100644
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -192,7 +192,7 @@ snd-soc-twl4030-objs := twl4030.o
+ snd-soc-twl6040-objs := twl6040.o
+ snd-soc-uda134x-objs := uda134x.o
+ snd-soc-uda1380-objs := uda1380.o
+-snd-soc-wcd9335-objs := wcd9335.o
++snd-soc-wcd9335-objs := wcd-clsh-v2.o wcd9335.o
+ snd-soc-wl1273-objs := wl1273.o
+ snd-soc-wm-adsp-objs := wm_adsp.o
+ snd-soc-wm0010-objs := wm0010.o
+diff --git a/sound/soc/codecs/wcd-clsh-v2.c b/sound/soc/codecs/wcd-clsh-v2.c
+new file mode 100644
+index 000000000000..d5124bd5dd6a
+--- /dev/null
++++ b/sound/soc/codecs/wcd-clsh-v2.c
+@@ -0,0 +1,577 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
++// Copyright (c) 2017-2018, Linaro Limited
++
++#include <linux/slab.h>
++#include <sound/soc.h>
++#include <linux/kernel.h>
++#include <linux/delay.h>
++#include <linux/mfd/wcd9335/wcd9335.h>
++#include <linux/mfd/wcd9335/registers.h>
++#include "wcd-clsh-v2.h"
++
++struct wcd_clsh_ctrl {
++	int state;
++	int mode;
++	int flyback_users;
++	int buck_users;
++	int clsh_users;
++	int codec_version;
++	struct snd_soc_component *comp;
++};
++
++/* Class-H registers for codecs from and above WCD9335 */
++#define WCD9XXX_A_CDC_RX0_RX_PATH_CFG0			WCD9335_REG(0xB, 0x42)
++#define WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK		BIT(6)
++#define WCD9XXX_A_CDC_RX_PATH_CLSH_ENABLE		BIT(6)
++#define WCD9XXX_A_CDC_RX_PATH_CLSH_DISABLE		0
++#define WCD9XXX_A_CDC_RX1_RX_PATH_CFG0			WCD9335_REG(0xB, 0x56)
++#define WCD9XXX_A_CDC_RX2_RX_PATH_CFG0			WCD9335_REG(0xB, 0x6A)
++#define WCD9XXX_A_CDC_CLSH_K1_MSB			WCD9335_REG(0xC, 0x08)
++#define WCD9XXX_A_CDC_CLSH_K1_MSB_COEF_MASK		GENMASK(3, 0)
++#define WCD9XXX_A_CDC_CLSH_K1_LSB			WCD9335_REG(0xC, 0x09)
++#define WCD9XXX_A_CDC_CLSH_K1_LSB_COEF_MASK		GENMASK(7, 0)
++#define WCD9XXX_A_ANA_RX_SUPPLIES			WCD9335_REG(0x6, 0x08)
++#define WCD9XXX_A_ANA_RX_REGULATOR_MODE_MASK		BIT(1)
++#define WCD9XXX_A_ANA_RX_REGULATOR_MODE_CLS_H		0
++#define WCD9XXX_A_ANA_RX_REGULATOR_MODE_CLS_AB		BIT(1)
++#define WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_MASK		BIT(2)
++#define WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_UHQA		BIT(2)
++#define WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_DEFAULT		0
++#define WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_MASK		BIT(3)
++#define WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_UHQA		BIT(3)
++#define WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_DEFAULT		0
++#define WCD9XXX_A_ANA_RX_VNEG_EN_MASK			BIT(6)
++#define WCD9XXX_A_ANA_RX_VNEG_EN_SHIFT			6
++#define WCD9XXX_A_ANA_RX_VNEG_ENABLE			BIT(6)
++#define WCD9XXX_A_ANA_RX_VNEG_DISABLE			0
++#define WCD9XXX_A_ANA_RX_VPOS_EN_MASK			BIT(7)
++#define WCD9XXX_A_ANA_RX_VPOS_EN_SHIFT			7
++#define WCD9XXX_A_ANA_RX_VPOS_ENABLE			BIT(7)
++#define WCD9XXX_A_ANA_RX_VPOS_DISABLE			0
++#define WCD9XXX_A_ANA_HPH				WCD9335_REG(0x6, 0x09)
++#define WCD9XXX_A_ANA_HPH_PWR_LEVEL_MASK		GENMASK(3, 2)
++#define WCD9XXX_A_ANA_HPH_PWR_LEVEL_UHQA		0x08
++#define WCD9XXX_A_ANA_HPH_PWR_LEVEL_LP			0x04
++#define WCD9XXX_A_ANA_HPH_PWR_LEVEL_NORMAL		0x0
++#define WCD9XXX_A_CDC_CLSH_CRC				WCD9335_REG(0xC, 0x01)
++#define WCD9XXX_A_CDC_CLSH_CRC_CLK_EN_MASK		BIT(0)
++#define WCD9XXX_A_CDC_CLSH_CRC_CLK_ENABLE		BIT(0)
++#define WCD9XXX_A_CDC_CLSH_CRC_CLK_DISABLE		0
++#define WCD9XXX_FLYBACK_EN				WCD9335_REG(0x6, 0xA4)
++#define WCD9XXX_FLYBACK_EN_DELAY_SEL_MASK		GENMASK(6, 5)
++#define WCD9XXX_FLYBACK_EN_DELAY_26P25_US		0x40
++#define WCD9XXX_FLYBACK_EN_RESET_BY_EXT_MASK		BIT(4)
++#define WCD9XXX_FLYBACK_EN_PWDN_WITHOUT_DELAY		BIT(4)
++#define WCD9XXX_FLYBACK_EN_PWDN_WITH_DELAY			0
++#define WCD9XXX_RX_BIAS_FLYB_BUFF			WCD9335_REG(0x6, 0xC7)
++#define WCD9XXX_RX_BIAS_FLYB_VNEG_5_UA_MASK		GENMASK(7, 4)
++#define WCD9XXX_RX_BIAS_FLYB_VPOS_5_UA_MASK		GENMASK(0, 3)
++#define WCD9XXX_HPH_L_EN				WCD9335_REG(0x6, 0xD3)
++#define WCD9XXX_HPH_CONST_SEL_L_MASK			GENMASK(7, 3)
++#define WCD9XXX_HPH_CONST_SEL_BYPASS			0
++#define WCD9XXX_HPH_CONST_SEL_LP_PATH			0x40
++#define WCD9XXX_HPH_CONST_SEL_HQ_PATH			0x80
++#define WCD9XXX_HPH_R_EN				WCD9335_REG(0x6, 0xD6)
++#define WCD9XXX_HPH_REFBUFF_UHQA_CTL			WCD9335_REG(0x6, 0xDD)
++#define WCD9XXX_HPH_REFBUFF_UHQA_GAIN_MASK		GENMASK(2, 0)
++#define WCD9XXX_CLASSH_CTRL_VCL_2                       WCD9335_REG(0x6, 0x9B)
++#define WCD9XXX_CLASSH_CTRL_VCL_2_VREF_FILT_1_MASK	GENMASK(5, 4)
++#define WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_50KOHM	0x20
++#define WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_0KOHM	0x0
++#define WCD9XXX_CDC_RX1_RX_PATH_CTL			WCD9335_REG(0xB, 0x55)
++#define WCD9XXX_CDC_RX2_RX_PATH_CTL			WCD9335_REG(0xB, 0x69)
++#define WCD9XXX_CDC_CLK_RST_CTRL_MCLK_CONTROL		WCD9335_REG(0xD, 0x41)
++#define WCD9XXX_CDC_CLK_RST_CTRL_MCLK_EN_MASK		BIT(0)
++#define WCD9XXX_CDC_CLK_RST_CTRL_MCLK_11P3_EN_MASK	BIT(1)
++#define WCD9XXX_CLASSH_CTRL_CCL_1                       WCD9335_REG(0x6, 0x9C)
++#define WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_MASK	GENMASK(7, 4)
++#define WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA	0x50
++#define WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_30MA	0x30
++
++#define CLSH_REQ_ENABLE		true
++#define CLSH_REQ_DISABLE	false
++#define WCD_USLEEP_RANGE	50
++
++enum {
++	DAC_GAIN_0DB = 0,
++	DAC_GAIN_0P2DB,
++	DAC_GAIN_0P4DB,
++	DAC_GAIN_0P6DB,
++	DAC_GAIN_0P8DB,
++	DAC_GAIN_M0P2DB,
++	DAC_GAIN_M0P4DB,
++	DAC_GAIN_M0P6DB,
++};
++
++static inline void wcd_enable_clsh_block(struct wcd_clsh_ctrl *ctrl,
++					 bool enable)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if ((enable && ++ctrl->clsh_users == 1) ||
++	    (!enable && --ctrl->clsh_users == 0))
++		snd_soc_component_update_bits(comp, WCD9XXX_A_CDC_CLSH_CRC,
++				      WCD9XXX_A_CDC_CLSH_CRC_CLK_EN_MASK,
++				      enable);
++	if (ctrl->clsh_users < 0)
++		ctrl->clsh_users = 0;
++}
++
++static inline bool wcd_clsh_enable_status(struct snd_soc_component *comp)
++{
++	return snd_soc_component_read32(comp, WCD9XXX_A_CDC_CLSH_CRC) &
++					WCD9XXX_A_CDC_CLSH_CRC_CLK_EN_MASK;
++}
++
++static inline void wcd_clsh_set_buck_mode(struct snd_soc_component *comp,
++					  int mode)
++{
++	/* set to HIFI */
++	if (mode == CLS_H_HIFI)
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_MASK,
++					WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_UHQA);
++	else
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_MASK,
++					WCD9XXX_A_ANA_RX_VPOS_PWR_LVL_DEFAULT);
++}
++
++static inline void wcd_clsh_set_flyback_mode(struct snd_soc_component *comp,
++					     int mode)
++{
++	/* set to HIFI */
++	if (mode == CLS_H_HIFI)
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_MASK,
++					WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_UHQA);
++	else
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_MASK,
++					WCD9XXX_A_ANA_RX_VNEG_PWR_LVL_DEFAULT);
++}
++
++static void wcd_clsh_buck_ctrl(struct wcd_clsh_ctrl *ctrl,
++			       int mode,
++			       bool enable)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	/* enable/disable buck */
++	if ((enable && (++ctrl->buck_users == 1)) ||
++	   (!enable && (--ctrl->buck_users == 0)))
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++				WCD9XXX_A_ANA_RX_VPOS_EN_MASK,
++				enable << WCD9XXX_A_ANA_RX_VPOS_EN_SHIFT);
++	/*
++	 * 500us sleep is required after buck enable/disable
++	 * as per HW requirement
++	 */
++	usleep_range(500, 500 + WCD_USLEEP_RANGE);
++}
++
++static void wcd_clsh_flyback_ctrl(struct wcd_clsh_ctrl *ctrl,
++				  int mode,
++				  bool enable)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	/* enable/disable flyback */
++	if ((enable && (++ctrl->flyback_users == 1)) ||
++	   (!enable && (--ctrl->flyback_users == 0))) {
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++				WCD9XXX_A_ANA_RX_VNEG_EN_MASK,
++				enable << WCD9XXX_A_ANA_RX_VNEG_EN_SHIFT);
++		/* 100usec delay is needed as per HW requirement */
++		usleep_range(100, 110);
++	}
++	/*
++	 * 500us sleep is required after flyback enable/disable
++	 * as per HW requirement
++	 */
++	usleep_range(500, 500 + WCD_USLEEP_RANGE);
++}
++
++static void wcd_clsh_set_gain_path(struct wcd_clsh_ctrl *ctrl, int mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++	int val = 0;
++
++	switch (mode) {
++	case CLS_H_NORMAL:
++	case CLS_AB:
++		val = WCD9XXX_HPH_CONST_SEL_BYPASS;
++		break;
++	case CLS_H_HIFI:
++		val = WCD9XXX_HPH_CONST_SEL_HQ_PATH;
++		break;
++	case CLS_H_LP:
++		val = WCD9XXX_HPH_CONST_SEL_LP_PATH;
++		break;
++	};
++
++	snd_soc_component_update_bits(comp, WCD9XXX_HPH_L_EN,
++					WCD9XXX_HPH_CONST_SEL_L_MASK,
++					val);
++
++	snd_soc_component_update_bits(comp, WCD9XXX_HPH_R_EN,
++					WCD9XXX_HPH_CONST_SEL_L_MASK,
++					val);
++}
++
++static void wcd_clsh_set_hph_mode(struct snd_soc_component *comp,
++				  int mode)
++{
++	int val = 0, gain = 0, res_val;
++	int ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
++
++	res_val = WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_0KOHM;
++	switch (mode) {
++	case CLS_H_NORMAL:
++		res_val = WCD9XXX_CLASSH_CTRL_VCL_VREF_FILT_R_50KOHM;
++		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_NORMAL;
++		gain = DAC_GAIN_0DB;
++		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
++		break;
++	case CLS_AB:
++		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_NORMAL;
++		gain = DAC_GAIN_0DB;
++		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
++		break;
++	case CLS_H_HIFI:
++		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_UHQA;
++		gain = DAC_GAIN_M0P2DB;
++		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_50MA;
++		break;
++	case CLS_H_LP:
++		val = WCD9XXX_A_ANA_HPH_PWR_LEVEL_LP;
++		ipeak = WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_30MA;
++		break;
++	};
++
++	snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_HPH,
++					WCD9XXX_A_ANA_HPH_PWR_LEVEL_MASK, val);
++	snd_soc_component_update_bits(comp, WCD9XXX_CLASSH_CTRL_VCL_2,
++				WCD9XXX_CLASSH_CTRL_VCL_2_VREF_FILT_1_MASK,
++				res_val);
++	if (mode != CLS_H_LP)
++		snd_soc_component_update_bits(comp,
++					WCD9XXX_HPH_REFBUFF_UHQA_CTL,
++					WCD9XXX_HPH_REFBUFF_UHQA_GAIN_MASK,
++					gain);
++	snd_soc_component_update_bits(comp, WCD9XXX_CLASSH_CTRL_CCL_1,
++				WCD9XXX_CLASSH_CTRL_CCL_1_DELTA_IPEAK_MASK,
++				ipeak);
++}
++
++static void wcd_clsh_set_flyback_current(struct snd_soc_component *comp,
++					 int mode)
++{
++
++	snd_soc_component_update_bits(comp, WCD9XXX_RX_BIAS_FLYB_BUFF,
++				WCD9XXX_RX_BIAS_FLYB_VPOS_5_UA_MASK, 0x0A);
++	snd_soc_component_update_bits(comp, WCD9XXX_RX_BIAS_FLYB_BUFF,
++				WCD9XXX_RX_BIAS_FLYB_VNEG_5_UA_MASK, 0x0A);
++	/* Sleep needed to avoid click and pop as per HW requirement */
++	usleep_range(100, 110);
++}
++
++static void wcd_clsh_set_buck_regulator_mode(struct snd_soc_component *comp,
++					     int mode)
++{
++	if (mode == CLS_AB)
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_REGULATOR_MODE_MASK,
++					WCD9XXX_A_ANA_RX_REGULATOR_MODE_CLS_AB);
++	else
++		snd_soc_component_update_bits(comp, WCD9XXX_A_ANA_RX_SUPPLIES,
++					WCD9XXX_A_ANA_RX_REGULATOR_MODE_MASK,
++					WCD9XXX_A_ANA_RX_REGULATOR_MODE_CLS_H);
++}
++
++static void wcd_clsh_state_lo(struct wcd_clsh_ctrl *ctrl, int req_state,
++			      bool is_enable, int mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if (mode != CLS_AB) {
++		dev_err(comp->dev, "%s: LO cannot be in this mode: %d\n",
++			__func__, mode);
++		return;
++	}
++
++	if (is_enable) {
++		wcd_clsh_set_buck_regulator_mode(comp, mode);
++		wcd_clsh_set_buck_mode(comp, mode);
++		wcd_clsh_set_flyback_mode(comp, mode);
++		wcd_clsh_flyback_ctrl(ctrl, mode, true);
++		wcd_clsh_set_flyback_current(comp, mode);
++		wcd_clsh_buck_ctrl(ctrl, mode, true);
++	} else {
++		wcd_clsh_buck_ctrl(ctrl, mode, false);
++		wcd_clsh_flyback_ctrl(ctrl, mode, false);
++		wcd_clsh_set_flyback_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_regulator_mode(comp, CLS_H_NORMAL);
++	}
++}
++
++static void wcd_clsh_state_hph_r(struct wcd_clsh_ctrl *ctrl, int req_state,
++				 bool is_enable, int mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if (mode == CLS_H_NORMAL) {
++		dev_err(comp->dev, "%s: Normal mode not applicable for hph_r\n",
++			__func__);
++		return;
++	}
++
++	if (is_enable) {
++		if (mode != CLS_AB) {
++			wcd_enable_clsh_block(ctrl, true);
++			/*
++			 * These K1 values depend on the Headphone Impedance
++			 * For now it is assumed to be 16 ohm
++			 */
++			snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_CLSH_K1_MSB,
++					WCD9XXX_A_CDC_CLSH_K1_MSB_COEF_MASK,
++					0x00);
++			snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_CLSH_K1_LSB,
++					WCD9XXX_A_CDC_CLSH_K1_LSB_COEF_MASK,
++					0xC0);
++			snd_soc_component_update_bits(comp,
++					    WCD9XXX_A_CDC_RX2_RX_PATH_CFG0,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_ENABLE);
++		}
++		wcd_clsh_set_buck_regulator_mode(comp, mode);
++		wcd_clsh_set_flyback_mode(comp, mode);
++		wcd_clsh_flyback_ctrl(ctrl, mode, true);
++		wcd_clsh_set_flyback_current(comp, mode);
++		wcd_clsh_set_buck_mode(comp, mode);
++		wcd_clsh_buck_ctrl(ctrl, mode, true);
++		wcd_clsh_set_hph_mode(comp, mode);
++		wcd_clsh_set_gain_path(ctrl, mode);
++	} else {
++		wcd_clsh_set_hph_mode(comp, CLS_H_NORMAL);
++
++		if (mode != CLS_AB) {
++			snd_soc_component_update_bits(comp,
++					    WCD9XXX_A_CDC_RX2_RX_PATH_CFG0,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_DISABLE);
++			wcd_enable_clsh_block(ctrl, false);
++		}
++		/* buck and flyback set to default mode and disable */
++		wcd_clsh_buck_ctrl(ctrl, CLS_H_NORMAL, false);
++		wcd_clsh_flyback_ctrl(ctrl, CLS_H_NORMAL, false);
++		wcd_clsh_set_flyback_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_regulator_mode(comp, CLS_H_NORMAL);
++	}
++}
++
++static void wcd_clsh_state_hph_l(struct wcd_clsh_ctrl *ctrl, int req_state,
++				 bool is_enable, int mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if (mode == CLS_H_NORMAL) {
++		dev_err(comp->dev, "%s: Normal mode not applicable for hph_l\n",
++			__func__);
++		return;
++	}
++
++	if (is_enable) {
++		if (mode != CLS_AB) {
++			wcd_enable_clsh_block(ctrl, true);
++			/*
++			 * These K1 values depend on the Headphone Impedance
++			 * For now it is assumed to be 16 ohm
++			 */
++			snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_CLSH_K1_MSB,
++					WCD9XXX_A_CDC_CLSH_K1_MSB_COEF_MASK,
++					0x00);
++			snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_CLSH_K1_LSB,
++					WCD9XXX_A_CDC_CLSH_K1_LSB_COEF_MASK,
++					0xC0);
++			snd_soc_component_update_bits(comp,
++					    WCD9XXX_A_CDC_RX1_RX_PATH_CFG0,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_ENABLE);
++		}
++		wcd_clsh_set_buck_regulator_mode(comp, mode);
++		wcd_clsh_set_flyback_mode(comp, mode);
++		wcd_clsh_flyback_ctrl(ctrl, mode, true);
++		wcd_clsh_set_flyback_current(comp, mode);
++		wcd_clsh_set_buck_mode(comp, mode);
++		wcd_clsh_buck_ctrl(ctrl, mode, true);
++		wcd_clsh_set_hph_mode(comp, mode);
++		wcd_clsh_set_gain_path(ctrl, mode);
++	} else {
++		wcd_clsh_set_hph_mode(comp, CLS_H_NORMAL);
++
++		if (mode != CLS_AB) {
++			snd_soc_component_update_bits(comp,
++					    WCD9XXX_A_CDC_RX1_RX_PATH_CFG0,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					    WCD9XXX_A_CDC_RX_PATH_CLSH_DISABLE);
++			wcd_enable_clsh_block(ctrl, false);
++		}
++		/* set buck and flyback to Default Mode */
++		wcd_clsh_buck_ctrl(ctrl, CLS_H_NORMAL, false);
++		wcd_clsh_flyback_ctrl(ctrl, CLS_H_NORMAL, false);
++		wcd_clsh_set_flyback_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_regulator_mode(comp, CLS_H_NORMAL);
++	}
++}
++
++static void wcd_clsh_state_ear(struct wcd_clsh_ctrl *ctrl, int req_state,
++			       bool is_enable, int mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if (mode != CLS_H_NORMAL) {
++		dev_err(comp->dev, "%s: mode: %d cannot be used for EAR\n",
++			__func__, mode);
++		return;
++	}
++
++	if (is_enable) {
++		wcd_enable_clsh_block(ctrl, true);
++		snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_RX0_RX_PATH_CFG0,
++					WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					WCD9XXX_A_CDC_RX_PATH_CLSH_ENABLE);
++		wcd_clsh_set_buck_mode(comp, mode);
++		wcd_clsh_set_flyback_mode(comp, mode);
++		wcd_clsh_flyback_ctrl(ctrl, mode, true);
++		wcd_clsh_set_flyback_current(comp, mode);
++		wcd_clsh_buck_ctrl(ctrl, mode, true);
++	} else {
++		snd_soc_component_update_bits(comp,
++					WCD9XXX_A_CDC_RX0_RX_PATH_CFG0,
++					WCD9XXX_A_CDC_RX_PATH_CLSH_EN_MASK,
++					WCD9XXX_A_CDC_RX_PATH_CLSH_DISABLE);
++		wcd_enable_clsh_block(ctrl, false);
++		wcd_clsh_buck_ctrl(ctrl, mode, false);
++		wcd_clsh_flyback_ctrl(ctrl, mode, false);
++		wcd_clsh_set_flyback_mode(comp, CLS_H_NORMAL);
++		wcd_clsh_set_buck_mode(comp, CLS_H_NORMAL);
++	}
++}
++
++static int _wcd_clsh_ctrl_set_state(struct wcd_clsh_ctrl *ctrl, int req_state,
++				    bool is_enable, int mode)
++{
++	switch (req_state) {
++	case WCD_CLSH_STATE_EAR:
++		wcd_clsh_state_ear(ctrl, req_state, is_enable, mode);
++		break;
++	case WCD_CLSH_STATE_HPHL:
++		wcd_clsh_state_hph_l(ctrl, req_state, is_enable, mode);
++		break;
++	case WCD_CLSH_STATE_HPHR:
++		wcd_clsh_state_hph_r(ctrl, req_state, is_enable, mode);
++		break;
++		break;
++	case WCD_CLSH_STATE_LO:
++		wcd_clsh_state_lo(ctrl, req_state, is_enable, mode);
++		break;
++	default:
++		break;
++	}
++
++	return 0;
++}
++
++/*
++ * Function: wcd_clsh_is_state_valid
++ * Params: state
++ * Description:
++ * Provides information on valid states of Class H configuration
++ */
++static bool wcd_clsh_is_state_valid(int state)
++{
++	switch (state) {
++	case WCD_CLSH_STATE_IDLE:
++	case WCD_CLSH_STATE_EAR:
++	case WCD_CLSH_STATE_HPHL:
++	case WCD_CLSH_STATE_HPHR:
++	case WCD_CLSH_STATE_LO:
++		return true;
++	default:
++		return false;
++	};
++}
++
++/*
++ * Function: wcd_clsh_fsm
++ * Params: ctrl, req_state, req_type, clsh_event
++ * Description:
++ * This function handles PRE DAC and POST DAC conditions of different devices
++ * and updates class H configuration of different combination of devices
++ * based on validity of their states. ctrl will contain current
++ * class h state information
++ */
++int wcd_clsh_ctrl_set_state(struct wcd_clsh_ctrl *ctrl,
++			    enum wcd_clsh_event clsh_event,
++			    int nstate,
++			    enum wcd_clsh_mode mode)
++{
++	struct snd_soc_component *comp = ctrl->comp;
++
++	if (nstate == ctrl->state)
++		return 0;
++
++	if (!wcd_clsh_is_state_valid(nstate)) {
++		dev_err(comp->dev, "Class-H not a valid new state:\n");
++		return -EINVAL;
++	}
++
++	switch (clsh_event) {
++	case WCD_CLSH_EVENT_PRE_DAC:
++		_wcd_clsh_ctrl_set_state(ctrl, nstate, CLSH_REQ_ENABLE, mode);
++		break;
++	case WCD_CLSH_EVENT_POST_PA:
++		_wcd_clsh_ctrl_set_state(ctrl, nstate, CLSH_REQ_DISABLE, mode);
++		break;
++	};
++
++	ctrl->state = nstate;
++	ctrl->mode = mode;
++
++	return 0;
++}
++
++int wcd_clsh_ctrl_get_state(struct wcd_clsh_ctrl *ctrl)
++{
++	return ctrl->state;
++}
++
++struct wcd_clsh_ctrl *wcd_clsh_ctrl_alloc(struct snd_soc_component *comp,
++					  int version)
++{
++	struct wcd_clsh_ctrl *ctrl;
++
++	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
++	if (!ctrl)
++		return ERR_PTR(-ENOMEM);
++
++	ctrl->state = WCD_CLSH_STATE_IDLE;
++	ctrl->comp = comp;
++
++	return ctrl;
++}
++
++void wcd_clsh_ctrl_free(struct wcd_clsh_ctrl *ctrl)
++{
++	kfree(ctrl);
++}
+diff --git a/sound/soc/codecs/wcd-clsh-v2.h b/sound/soc/codecs/wcd-clsh-v2.h
+new file mode 100644
+index 000000000000..a902f9893467
+--- /dev/null
++++ b/sound/soc/codecs/wcd-clsh-v2.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _WCD_CLSH_V2_H_
++#define _WCD_CLSH_V2_H_
++#include <sound/soc.h>
++
++enum wcd_clsh_event {
++	WCD_CLSH_EVENT_PRE_DAC = 1,
++	WCD_CLSH_EVENT_POST_PA,
++};
++
++/*
++ * Basic states for Class H state machine.
++ * represented as a bit mask within a u8 data type
++ * bit 0: EAR mode
++ * bit 1: HPH Left mode
++ * bit 2: HPH Right mode
++ * bit 3: Lineout mode
++ */
++#define	WCD_CLSH_STATE_IDLE	0
++#define	WCD_CLSH_STATE_EAR	BIT(0)
++#define	WCD_CLSH_STATE_HPHL	BIT(1)
++#define	WCD_CLSH_STATE_HPHR	BIT(2)
++#define	WCD_CLSH_STATE_LO	BIT(3)
++#define WCD_CLSH_STATE_MAX	4
++#define NUM_CLSH_STATES_V2	BIT(WCD_CLSH_STATE_MAX)
++
++enum wcd_clsh_mode {
++	CLS_H_NORMAL = 0, /* Class-H Default */
++	CLS_H_HIFI, /* Class-H HiFi */
++	CLS_H_LP, /* Class-H Low Power */
++	CLS_AB, /* Class-AB */
++	CLS_H_LOHIFI, /* LoHIFI */
++	CLS_NONE, /* None of the above modes */
++};
++
++struct wcd_clsh_ctrl;
++
++extern struct wcd_clsh_ctrl *wcd_clsh_ctrl_alloc(
++				struct snd_soc_component *component,
++				int version);
++extern void wcd_clsh_ctrl_free(struct wcd_clsh_ctrl *ctrl);
++extern int wcd_clsh_ctrl_get_state(struct wcd_clsh_ctrl *ctrl);
++extern int wcd_clsh_ctrl_set_state(struct wcd_clsh_ctrl *ctrl,
++				   enum wcd_clsh_event event,
++				   int state,
++				   enum wcd_clsh_mode mode);
++
++#endif /* _WCD_CLSH_V2_H_ */
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 0fa090f0b9d9..ab202b5dfdfa 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -20,6 +20,7 @@
+ #include <sound/info.h>
+ #include <linux/mfd/wcd9335/wcd9335.h>
+ #include <linux/mfd/wcd9335/registers.h>
++#include "wcd-clsh-v2.h"
  
-+- qcom,mbhc-vthreshold:
-+	Usage: Optional, only required if headset button support required.
-+	Value type: <u32 array>
-+	Definition: Must contain an array of 8 threshold voltages in mV for
-+		 8 buttons detection on headset.
+ #define WCD9335_RATES_MASK (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |\
+ 			    SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_48000 |\
+@@ -180,6 +181,7 @@ struct wcd9335_codec {
+ 	int sido_ccl_cnt;
+ 	enum wcd_clock_type clk_type;
+ 
++	struct wcd_clsh_ctrl *clsh_ctrl;
+ 	u32 hph_mode;
+ };
+ 
+@@ -1082,6 +1084,13 @@ static int wcd9335_codec_probe(struct snd_soc_component *component)
+ 	int i;
+ 
+ 	snd_soc_component_init_regmap(component, wcd->regmap);
++	/* Class-H Init*/
++	wcd->clsh_ctrl = wcd_clsh_ctrl_alloc(component, wcd->version);
++	if (IS_ERR(wcd->clsh_ctrl))
++		return PTR_ERR(wcd->clsh_ctrl);
 +
-+- qcom,hphl-jack-type-normally-open:
-+	Usage: Optional, only required if headset button support required.
-+	Value type: <boolean>
-+	Definition: present if hphl pin on jack is a NO (Normally Open).
-+		If not specified, then its assumed that hphl pin on jack
-+		is NC (Normally Closed).
-+
-+- qcom,gnd-jack-type-normally-open:
-+	Usage: Optional, only required if headset button support required.
-+	Value type: <boolean>
-+	Definition: present if gnd pin on jack is NO (Normally Open).
-+		 If not specified, then its assumed that gnd pin on
-+		 jack is NC  (Normally Closed).
-+
- - vdd-buck-supply:
- 	Usage: required
- 	Value type: <phandle>
++	/* Default HPH Mode to Class-H HiFi */
++	wcd->hph_mode = CLS_H_HIFI;
+ 	wcd->component = component;
+ 
+ 	wcd9335_codec_init(component);
+@@ -1096,6 +1105,7 @@ static void wcd9335_codec_remove(struct snd_soc_component *comp)
+ {
+ 	struct wcd9335_codec *wcd = dev_get_drvdata(comp->dev);
+ 
++	wcd_clsh_ctrl_free(wcd->clsh_ctrl);
+ 	free_irq(regmap_irq_get_virq(wcd->irq_data, WCD9335_IRQ_SLIMBUS), wcd);
+ }
+ 
 -- 
 2.18.0
 
