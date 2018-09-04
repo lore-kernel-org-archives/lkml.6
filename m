@@ -2,110 +2,142 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82842C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACC1C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392752086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392752086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0007C20652
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0007C20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeIDLWt (ORCPT
+        id S1726355AbeIDLXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:22:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37062 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726041AbeIDLWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:22:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 636CBAEDA;
-        Tue,  4 Sep 2018 06:59:02 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 08:59:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Douglas Gilbert <dgilbert@interlog.com>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        drorl@infinidat.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: Recent removal of bsg read/write support
-Message-ID: <20180904065901.GF14951@dhcp22.suse.cz>
-References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
- <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
- <6b907fed-d83f-de75-bde4-11270a0b1b0b@interlog.com>
- <20180903122804.GA15074@dhcp22.suse.cz>
- <731941f0-c80d-605a-2750-01c8d5ec4dd9@interlog.com>
+        Tue, 4 Sep 2018 07:23:05 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:60797 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726041AbeIDLXF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:23:05 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.52 with ESMTP; 4 Sep 2018 15:59:19 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO ?10.159.80.93?) (10.159.80.93)
+        by 156.147.1.121 with ESMTP; 4 Sep 2018 15:59:18 +0900
+X-Original-SENDERIP: 10.159.80.93
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Subject: Re: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp
+ functions
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, glider@google.com,
+        dvyukov@google.com, Jason@zx2c4.com, robh@kernel.org,
+        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org
+References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
+ <dff9a2f3-7db5-9e60-072a-312b6cfbe0f0@virtuozzo.com>
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+Message-ID: <ad334e64-28d1-4b91-aeba-8352934a9c46@lge.com>
+Date:   Tue, 4 Sep 2018 15:59:17 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <731941f0-c80d-605a-2750-01c8d5ec4dd9@interlog.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <dff9a2f3-7db5-9e60-072a-312b6cfbe0f0@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-09-18 05:38:21, Douglas Gilbert wrote:
-> On 2018-09-03 02:28 PM, Michal Hocko wrote:
-> > On Sun 02-09-18 21:16:10, Douglas Gilbert wrote:
-> > > On 2018-09-02 01:44 PM, Richard Weinberger wrote:
-> > > > CC'ing relevant people. Otherwise your mail might get lost.
-> > > > 
-> > > > On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
-> > > > > 
-> > > > > Note: I am not subscribed to LKML so please CC replies to this email.
-> > > > > 
-> > > > > Hi,
-> > > > > 
-> > > > > We have an internal tool that uses the bsg read/write interface to
-> > > > > issue SCSI commands as part of a test suite for a storage device.
-> > > > > 
-> > > > > After recently reading on LWN that this interface is to be removed we
-> > > > > tried porting our code to use sg instead. However, that raises new
-> > > > > issues - mainly getting ENOMEM over iSCSI for unknown reasons.
-> > > > > 
-> > > > > Because of this we would like to continue using the bsg interface,
-> > > > > even if some changes are required to meet security concerns.
-> > > > > 
-> > > > > Is there any chance for this removal to be reverted? I saw it was
-> > > > > already included in 4.19-rc1.
-> > > 
-> > > Hi,
-> > > Both bsg and sg are relatively thin shims over the same block layer
-> > > pass-through calls. And neither driver will themselves generate ENOMEM
-> > > unless the CPU is running low of memory.
-> > > 
-> > > In my experience, the main reason for unexpected ENOMEMs *** is from
-> > > blk_rq_map_user_iov() in block/blk_map.c called from both drivers.
-> > > That is a particular resource shortage rather than memory in general.
-> > > I do notice the blk_rq_map_user_iov() is/was called with GFP_KERNEL
-> > > in bsg and GFP_ATOMIC by sg. That suggests when you call write() on
-> > > a sg device and get ENOMEM, then wait a little (depends on your app)
-> > > and try again.
-> > 
-> > Well, what is the reason to use GFP_ATOMIC in the first place? I am not
-> > familiar with the code so I might be easily wrong but sg_start_req which
-> > calls blk_rq_map_user_iov resp. blk_rq_map_user with GFP_ATOMIC uses
-> > mutex. It is a conditional usage so the sleeping context might depend
-> > on the caller. But I guess it would be better to double check. It looks
-> > suspicious to me.
-> 
-> Of the hundreds of 'hacks' on the sg driver over the years, the most
-> common is an expert arguing that GFP_ATOMIC should be changed to GFP_KERNEL.
-> They usually get their way. That is followed around 6 to 9 months later by
-> a sg user complaining about an unexpected broken app. So back it goes to
-> GFP_ATOMIC.
+Hello Andrey,
 
-Then I would strongly recommend to describe the actual reTquirements on
-the allocation context. Why is GFP_ATOMIC really needed? There are
-usually two reasons a) the allocation is called from an atomic context
-b) reclaim is not acceptable or desirable.
--- 
-Michal Hocko
-SUSE Labs
+Thanks for your review.
+
+On 2018-09-03 오후 6:40, Andrey Ryabinin wrote:
+>
+>
+> On 08/23/2018 11:56 AM, Kyeongdon Kim wrote:
+>
+> > diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+> > index c3bd520..61ad7f1 100644
+> > --- a/mm/kasan/kasan.c
+> > +++ b/mm/kasan/kasan.c
+> > @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, 
+> size_t len)
+> >
+> > return __memcpy(dest, src, len);
+> > }
+> > +#ifdef CONFIG_ARM64
+> > +/*
+> > + * Arch arm64 use assembly variant for strcmp/strncmp,
+> > + * xtensa use inline asm operations and x86_64 use c one,
+> > + * so now this interceptors only for arm64 kasan.
+> > + */
+> > +#undef strcmp
+> > +int strcmp(const char *cs, const char *ct)
+> > +{
+> > + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
+> > + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
+> > +
+>
+> Well this is definitely wrong. strcmp() often accesses far more than 
+> one byte.
+>
+> > + return __strcmp(cs, ct);
+> > +}
+> > +#undef strncmp
+> > +int strncmp(const char *cs, const char *ct, size_t len)
+> > +{
+> > + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
+> > + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
+>
+> This will cause false positives. Both 'cs', and 'ct' could be less 
+> than len bytes.
+>
+> There is no need in these interceptors, just use the C implementations 
+> from lib/string.c
+> like you did in your first patch.
+> The only thing that was wrong in the first patch is that assembly 
+> implementations
+> were compiled out instead of being declared week.
+>
+Well, at first I thought so..
+I would remove diff code in /mm/kasan/kasan.c then use C implementations 
+in lib/string.c
+w/ assem implementations as weak :
+
+diff --git a/lib/string.c b/lib/string.c
+index 2c0900a..a18b18f 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -312,7 +312,7 @@ size_t strlcat(char *dest, const char *src, size_t 
+count)
+  EXPORT_SYMBOL(strlcat);
+  #endif
+
+-#ifndef __HAVE_ARCH_STRCMP
++#if (defined(CONFIG_ARM64) && defined(CONFIG_KASAN)) || 
+!defined(__HAVE_ARCH_STRCMP)
+  /**
+   * strcmp - Compare two strings
+   * @cs: One string
+@@ -336,7 +336,7 @@ int strcmp(const char *cs, const char *ct)
+  EXPORT_SYMBOL(strcmp);
+  #endif
+
+-#ifndef __HAVE_ARCH_STRNCMP
++#if (defined(CONFIG_ARM64) && defined(CONFIG_KASAN)) || 
+!defined(__HAVE_ARCH_STRNCMP)
+  /**
+   * strncmp - Compare two length-limited strings
+
+Can I get your opinion wrt this ?
+
+Thanks,
+
