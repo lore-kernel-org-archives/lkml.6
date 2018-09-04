@@ -2,38 +2,38 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59081C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DE9C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA1220645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA1220645
+	by mail.kernel.org (Postfix) with ESMTP id 684E920645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684E920645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeIDU0a (ORCPT
+        id S1728172AbeIDU0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 4 Sep 2018 16:26:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50958 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:51016 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726200AbeIDUYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727716AbeIDUYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 16:24:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D137AB0A1;
-        Tue,  4 Sep 2018 15:59:01 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 1F099B0A6;
+        Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/29] staging: bcm2835-audio: Fix mute controls, volume handling cleanup
-Date:   Tue,  4 Sep 2018 17:58:34 +0200
-Message-Id: <20180904155858.8001-6-tiwai@suse.de>
+Subject: [PATCH 11/29] staging: bcm2835-audio: Use PCM runtime values instead
+Date:   Tue,  4 Sep 2018 17:58:40 +0200
+Message-Id: <20180904155858.8001-12-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,277 +42,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the current code, the mute control is dealt in a special manner,
-modifying the current volume and saving the old volume, etc.  This is
-inconsistent (e.g. change the volume while muted, then unmute), and
-way too complex.
-
-Also, the whole volume handling code has conversion between ALSA
-volume and raw volume values, which can lead to another
-inconsistency and complexity.
-
-This patch simplifies these points:
-- The ALSA volume value is saved in chip->volume
-- volume->mute saves the mute state
-- The mute state is evaluated only when the actual volume is passed to
-  the hardware, bcm2835_audio_set_ctls()
+Some fields in alsa_stream are the values we keep already in PCM
+runtime object, hence they are redundant.  Use the standard PCM
+runtime values instead of the private copies.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../vc04_services/bcm2835-audio/bcm2835-ctl.c | 84 +++++++------------
- .../vc04_services/bcm2835-audio/bcm2835-pcm.c |  6 +-
- .../bcm2835-audio/bcm2835-vchiq.c             | 32 ++-----
- .../vc04_services/bcm2835-audio/bcm2835.h     |  5 +-
- 4 files changed, 45 insertions(+), 82 deletions(-)
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 23 ++++---------------
+ .../vc04_services/bcm2835-audio/bcm2835.h     |  4 ----
+ 2 files changed, 4 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-index d2f0f609f737..e17b72f21a9d 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
-@@ -12,6 +12,21 @@
- #define CTRL_VOL_MAX 400
- #define CTRL_VOL_MIN -10239 /* originally -10240 */
- 
-+static int bcm2835_audio_set_chip_ctls(struct bcm2835_chip *chip)
-+{
-+	int i, err = 0;
-+
-+	/* change ctls for all substreams */
-+	for (i = 0; i < MAX_SUBSTREAMS; i++) {
-+		if (chip->alsa_stream[i]) {
-+			err = bcm2835_audio_set_ctls(chip->alsa_stream[i]);
-+			if (err < 0)
-+				break;
-+		}
-+	}
-+	return err;
-+}
-+
- static int snd_bcm2835_ctl_info(struct snd_kcontrol *kcontrol,
- 				struct snd_ctl_elem_info *uinfo)
- {
-@@ -34,29 +49,6 @@ static int snd_bcm2835_ctl_info(struct snd_kcontrol *kcontrol,
- 	return 0;
- }
- 
--/* toggles mute on or off depending on the value of nmute, and returns
-- * 1 if the mute value was changed, otherwise 0
-- */
--static int toggle_mute(struct bcm2835_chip *chip, int nmute)
--{
--	/* if settings are ok, just return 0 */
--	if (chip->mute == nmute)
--		return 0;
--
--	/* if the sound is muted then we need to unmute */
--	if (chip->mute == CTRL_VOL_MUTE) {
--		chip->volume = chip->old_volume; /* copy the old volume back */
--		audio_info("Unmuting, old_volume = %d, volume = %d ...\n", chip->old_volume, chip->volume);
--	} else /* otherwise we mute */ {
--		chip->old_volume = chip->volume;
--		chip->volume = 26214; /* set volume to minimum level AKA mute */
--		audio_info("Muting, old_volume = %d, volume = %d ...\n", chip->old_volume, chip->volume);
--	}
--
--	chip->mute = nmute;
--	return 1;
--}
--
- static int snd_bcm2835_ctl_get(struct snd_kcontrol *kcontrol,
- 			       struct snd_ctl_elem_value *ucontrol)
- {
-@@ -65,7 +57,7 @@ static int snd_bcm2835_ctl_get(struct snd_kcontrol *kcontrol,
- 	mutex_lock(&chip->audio_mutex);
- 
- 	if (kcontrol->private_value == PCM_PLAYBACK_VOLUME)
--		ucontrol->value.integer.value[0] = chip2alsa(chip->volume);
-+		ucontrol->value.integer.value[0] = chip->volume;
- 	else if (kcontrol->private_value == PCM_PLAYBACK_MUTE)
- 		ucontrol->value.integer.value[0] = chip->mute;
- 	else if (kcontrol->private_value == PCM_PLAYBACK_DEVICE)
-@@ -79,38 +71,26 @@ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
- 				struct snd_ctl_elem_value *ucontrol)
- {
- 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
-+	int val, *valp;
- 	int changed = 0;
- 
--	mutex_lock(&chip->audio_mutex);
--
--	if (kcontrol->private_value == PCM_PLAYBACK_VOLUME) {
--		audio_info("Volume change attempted.. volume = %d new_volume = %d\n", chip->volume, (int)ucontrol->value.integer.value[0]);
--		if (chip->mute == CTRL_VOL_MUTE) {
--			/* changed = toggle_mute(chip, CTRL_VOL_UNMUTE); */
--			changed = 1; /* should return 0 to signify no change but the mixer takes this as the opposite sign (no idea why) */
--			goto unlock;
--		}
--		if (changed || (ucontrol->value.integer.value[0] != chip2alsa(chip->volume))) {
--			chip->volume = alsa2chip(ucontrol->value.integer.value[0]);
--			changed = 1;
--		}
--
--	} else if (kcontrol->private_value == PCM_PLAYBACK_MUTE) {
--		/* Now implemented */
--		audio_info(" Mute attempted\n");
--		changed = toggle_mute(chip, ucontrol->value.integer.value[0]);
-+	if (kcontrol->private_value == PCM_PLAYBACK_VOLUME)
-+		valp = &chip->volume;
-+	else if (kcontrol->private_value == PCM_PLAYBACK_MUTE)
-+		valp = &chip->mute;
-+	else if (kcontrol->private_value == PCM_PLAYBACK_DEVICE)
-+		valp = &chip->dest;
-+	else
-+		return -EINVAL;
- 
--	} else if (kcontrol->private_value == PCM_PLAYBACK_DEVICE) {
--		if (ucontrol->value.integer.value[0] != chip->dest) {
--			chip->dest = ucontrol->value.integer.value[0];
--			changed = 1;
--		}
-+	val = ucontrol->value.integer.value[0];
-+	mutex_lock(&chip->audio_mutex);
-+	if (val != *valp) {
-+		*valp = val;
-+		changed = 1;
-+		if (bcm2835_audio_set_chip_ctls(chip))
-+			dev_err(chip->card->dev, "Failed to set ALSA controls..\n");
- 	}
--
--	if (changed && bcm2835_audio_set_ctls(chip))
--		dev_err(chip->card->dev, "Failed to set ALSA controls..\n");
--
--unlock:
- 	mutex_unlock(&chip->audio_mutex);
- 	return changed;
- }
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index 0be185350f33..9a79d2267df4 100644
+index fc1b345d206c..a3605505cc20 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -280,7 +280,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
- 	bcm2835_audio_setup(alsa_stream);
- 
- 	/* in preparation of the stream, set the controls (volume level) of the stream */
--	bcm2835_audio_set_ctls(alsa_stream->chip);
-+	bcm2835_audio_set_ctls(alsa_stream);
- 
- 	memset(&alsa_stream->pcm_indirect, 0, sizeof(alsa_stream->pcm_indirect));
- 
-@@ -441,7 +441,7 @@ int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, u32 numchannels)
- 	strcpy(pcm->name, "bcm2835 ALSA");
- 	chip->pcm = pcm;
- 	chip->dest = AUDIO_DEST_AUTO;
--	chip->volume = alsa2chip(0);
-+	chip->volume = 0;
- 	chip->mute = CTRL_VOL_UNMUTE; /*disable mute on startup */
- 	/* set operators */
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-@@ -498,7 +498,7 @@ int snd_bcm2835_new_simple_pcm(struct bcm2835_chip *chip,
- 	strcpy(pcm->name, name);
- 	chip->pcm = pcm;
- 	chip->dest = route;
--	chip->volume = alsa2chip(0);
-+	chip->volume = 0;
- 	chip->mute = CTRL_VOL_UNMUTE;
- 
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-index 942a38942c29..8684dc1d0b41 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -460,11 +460,11 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
- 	return ret;
- }
- 
--static int bcm2835_audio_set_ctls_chan(struct bcm2835_alsa_stream *alsa_stream,
--				       struct bcm2835_chip *chip)
-+int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream)
+@@ -206,22 +206,7 @@ static int snd_bcm2835_playback_close(struct snd_pcm_substream *substream)
+ static int snd_bcm2835_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
  {
- 	struct vc_audio_msg m;
- 	struct bcm2835_audio_instance *instance = alsa_stream->instance;
-+	struct bcm2835_chip *chip = alsa_stream->chip;
- 	int status;
- 	int ret;
- 
-@@ -478,7 +478,10 @@ static int bcm2835_audio_set_ctls_chan(struct bcm2835_alsa_stream *alsa_stream,
- 
- 	m.type = VC_AUDIO_MSG_TYPE_CONTROL;
- 	m.u.control.dest = chip->dest;
--	m.u.control.volume = chip->volume;
-+	if (!chip->mute)
-+		m.u.control.volume = CHIP_MIN_VOLUME;
-+	else
-+		m.u.control.volume = alsa2chip(chip->volume);
- 
- 	/* Create the message available completion */
- 	init_completion(&instance->msg_avail_comp);
-@@ -514,27 +517,6 @@ static int bcm2835_audio_set_ctls_chan(struct bcm2835_alsa_stream *alsa_stream,
- 	return ret;
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
+-	int err;
+-
+-	err = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
+-	if (err < 0) {
+-		audio_error
+-			(" pcm_lib_malloc failed to allocated pages for buffers\n");
+-		return err;
+-	}
+-
+-	alsa_stream->channels = params_channels(params);
+-	alsa_stream->params_rate = params_rate(params);
+-	alsa_stream->pcm_format_width = snd_pcm_format_width(params_format(params));
+-
+-	return err;
++	return snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
  }
  
--int bcm2835_audio_set_ctls(struct bcm2835_chip *chip)
--{
--	int i;
--	int ret = 0;
--
--	LOG_DBG(" Setting ALSA dest(%d), volume(%d)\n", chip->dest, chip->volume);
--
--	/* change ctls for all substreams */
--	for (i = 0; i < MAX_SUBSTREAMS; i++) {
--		if (!chip->alsa_stream[i])
--			continue;
--		if (bcm2835_audio_set_ctls_chan(chip->alsa_stream[i], chip) != 0) {
--			LOG_ERR("Couldn't set the controls for stream %d\n", i);
--			ret = -1;
--		} else {
--			LOG_DBG(" Controls set for stream %d\n", i);
--		}
--	}
--	return ret;
--}
--
- int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
- 			     unsigned int channels, unsigned int samplerate,
- 			     unsigned int bps)
-@@ -548,7 +530,7 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
- 		 channels, samplerate, bps);
+ /* hw_free callback */
+@@ -248,11 +233,11 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+ 	if (chip->spdif_status & IEC958_AES0_NONAUDIO)
+ 		channels = 0;
+ 	else
+-		channels = alsa_stream->channels;
++		channels = runtime->channels;
  
- 	/* resend ctls - alsa_stream may not have been open when first send */
--	ret = bcm2835_audio_set_ctls_chan(alsa_stream, alsa_stream->chip);
-+	ret = bcm2835_audio_set_ctls(alsa_stream);
- 	if (ret) {
- 		LOG_ERR(" Alsa controls not supported\n");
- 		return -EINVAL;
+ 	err = bcm2835_audio_set_params(alsa_stream, channels,
+-		alsa_stream->params_rate,
+-		alsa_stream->pcm_format_width);
++				       runtime->rate,
++				       snd_pcm_format_width(runtime->format));
+ 	if (err < 0)
+ 		audio_error(" error setting hw params\n");
+ 
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-index c0e7df4914ed..8ee25a837b08 100644
+index 20f5ff1649e6..3bf128422a6f 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-@@ -74,6 +74,8 @@ enum {
- // convert chip to alsa volume
- #define chip2alsa(vol) -(((vol) * 100) >> 8)
+@@ -121,10 +121,6 @@ struct bcm2835_alsa_stream {
  
-+#define CHIP_MIN_VOLUME		26214 /* minimum level aka mute */
-+
- /* Some constants for values .. */
- enum snd_bcm2835_route {
- 	AUDIO_DEST_AUTO = 0,
-@@ -102,7 +104,6 @@ struct bcm2835_chip {
- 	struct bcm2835_alsa_stream *alsa_stream[MAX_SUBSTREAMS];
+ 	int draining;
  
- 	int volume;
--	int old_volume; /* stores the volume value whist muted */
- 	int dest;
- 	int mute;
- 
-@@ -160,7 +161,7 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
- int bcm2835_audio_setup(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_start(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_stop(struct bcm2835_alsa_stream *alsa_stream);
--int bcm2835_audio_set_ctls(struct bcm2835_chip *chip);
-+int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
- 			unsigned int count,
- 			void *src);
+-	int channels;
+-	int params_rate;
+-	int pcm_format_width;
+-
+ 	unsigned int pos;
+ 	unsigned int buffer_size;
+ 	unsigned int period_size;
 -- 
 2.18.0
 
