@@ -2,91 +2,113 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA2C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411322086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:50:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411322086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AB2920652
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:52:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sed/V6fX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB2920652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeIDLN4 (ORCPT
+        id S1727650AbeIDLQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:13:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51090 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726094AbeIDLN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:13:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3DB020E19;
-        Tue,  4 Sep 2018 06:50:12 +0000 (UTC)
-Received: from localhost (ovpn-204-74.brq.redhat.com [10.40.204.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC7F62166BA8;
-        Tue,  4 Sep 2018 06:50:08 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 08:50:06 +0200
-From:   Jiri Benc <jbenc@redhat.com>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Christian Brauner <christian@brauner.io>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, fw@strlen.de, ktkhai@virtuozzo.com,
-        lucien.xin@gmail.com, jakub.kicinski@netronome.com,
-        nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next v1 3/5] ipv4: enable IFA_IF_NETNSID for
- RTM_GETADDR
-Message-ID: <20180904085006.58c665c0@redhat.com>
-In-Reply-To: <a4282d46-4c17-b395-dec0-7c8ac10cbf97@gmail.com>
-References: <20180903043717.20136-1-christian@brauner.io>
-        <20180903043717.20136-4-christian@brauner.io>
-        <a4282d46-4c17-b395-dec0-7c8ac10cbf97@gmail.com>
+        Tue, 4 Sep 2018 07:16:38 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46178 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbeIDLQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:16:37 -0400
+Received: by mail-lf1-f68.google.com with SMTP id e23-v6so2008232lfc.13;
+        Mon, 03 Sep 2018 23:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MKqd2MXJjhKCgfb1chKUTLu766OFgPj5WqnCVtEcjuE=;
+        b=Sed/V6fXCENGxh4Utevem5L3L3eu2hAawHG+/rNFw8pFDHJgDJDtPECLwxkZ1vttvi
+         3eWvEduS0Pf4n8eAv5ANEssPgbtfqpVBkAsqP8vk6QDWe5tdxtDufoXb0Tgybawi465O
+         /NrQdAv70318igilFRKm4qct7/lk4PdKLUGgXd/zRMcy0nPJ7D9VpjOHI+Vj3YtqdvR8
+         wqrCn7VrDSejOkO2llIVvLHqfUfyDPS0FeT7lNFVfnzJOwy20sZZKKkURWsgYWS0KeZU
+         SElRQXIA5CeQOo7CL+o1upy6W5B6lIkLoQCP21a5+WE3OzAKw6YsU0VkdXk5AZnCjj4O
+         AL+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MKqd2MXJjhKCgfb1chKUTLu766OFgPj5WqnCVtEcjuE=;
+        b=oWiCx6wqCp7YaiGw1c9ds512l2mVWGjGQF68twQ3Y8umq5szbwGx+EHn8LmPfifDYR
+         hd84hAENIYz6ehk3do7K6fs1QpHmpn9aAoX1N585iljokQnOp9CQpmZlXfvvBvjiXkyO
+         EvWII/4Fqhia90xpaAD27fi2eO1IsDVuyBvz0T6+fL2FWq8QnquIINUaMUjhcwn5tyRK
+         dmvWwKbQYvwSZ3dZDi0iP3MFBGDQzBckme8U7oPz63oo4poZk/FAqeYWvzW21w/B3Ck8
+         1JWh57zDCm7NG8g3/A5Yr0SKWioTrzHbKxdtY7auF6D0aELn2jv3de1leqJY1jMkKjPY
+         NWaw==
+X-Gm-Message-State: APzg51AuAf06dagewq11lWhseFG1KQ4Tlt4g4JiJ10x243NXbcQ9Lnbd
+        ix9V4aTHytU13qPLGOuV8XHAIUwncucjxr0JxFg=
+X-Google-Smtp-Source: ANB0VdajitfF62Dd3VkaR5jDzIvUD9rabu/iY0CoHK7xu5k+kxmnNA9GhvccY9g6a7Ax7fOCW7fZT6Q6zf3o5h58IvI=
+X-Received: by 2002:a19:e017:: with SMTP id x23-v6mr13872743lfg.14.1536043973212;
+ Mon, 03 Sep 2018 23:52:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 06:50:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 06:50:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jbenc@redhat.com' RCPT:''
+Received: by 2002:ab3:4c3c:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 23:52:12 -0700 (PDT)
+In-Reply-To: <50e1f7f4673bff9d71936b4eb34cbf2571b0fda9.1533950271.git.baolin.wang@linaro.org>
+References: <50e1f7f4673bff9d71936b4eb34cbf2571b0fda9.1533950271.git.baolin.wang@linaro.org>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Tue, 4 Sep 2018 14:52:12 +0800
+Message-ID: <CAAfSe-tVJ1P30y+aj-2AsEtsbQ=O3vADxZNc_UW6ri92suGMgA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] serial: sprd: Remove unused structure
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jslaby@suse.com,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-serial@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018 21:11:30 -0600, David Ahern wrote:
-> Can only use it once per message type, but NLM_F_DUMP_FILTERED is a flag
-> that can be set to explicitly say the request is filtered as requested.
+On 11 August 2018 at 09:34, Baolin Wang <baolin.wang@linaro.org> wrote:
+> Remove the unused reg_backup structure.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-The problem is that NLM_F_DUMP_FILTERED is too coarse. There's no way
-to determine whether the netnsid was honored or whether it was not but
-other filtering took effect.
+Acked-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 
-This is a general problem with netlink: unknown attributes are ignored.
-We need a way to detect that certain attribute was understood by the
-kernel or was not. And it needs to work retroactively, i.e. the
-application has to be able to determine the currently running kernel
-does not support the feature (because it's too old).
-
-That's why we return back the attribute in responses to a request with
-IFLA_IF_NETNSID present and why we should do the same for
-IFA_IF_NETNSID.
-
-> See 21fdd092acc7e. I would like to see other filters added for addresses
-> in the same release this gets used. The only one that comes to mind for
-> addresses is to only return addresses for devices with master device
-> index N (same intent as 21fdd092acc7e for neighbors).
-
-I also question the statement that IFA_F_NETNSID is a filter: my
-understanding of "filter" is something that limits the output to a
-certain subset. I.e., unfiltered results always contain everything that
-is in a filtered result. While with IFA_F_NETNSID, we get a completely
-different set of data. Does that really constitute a filter? Note that
-we can still filter in the target netns.
-
-Thanks,
-
- Jiri
+> ---
+>  drivers/tty/serial/sprd_serial.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+>
+> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+> index 828f114..1b0e3fb 100644
+> --- a/drivers/tty/serial/sprd_serial.c
+> +++ b/drivers/tty/serial/sprd_serial.c
+> @@ -95,19 +95,8 @@
+>  #define SPRD_IMSR_BREAK_DETECT         BIT(7)
+>  #define SPRD_IMSR_TIMEOUT              BIT(13)
+>
+> -struct reg_backup {
+> -       u32 ien;
+> -       u32 ctrl0;
+> -       u32 ctrl1;
+> -       u32 ctrl2;
+> -       u32 clkd0;
+> -       u32 clkd1;
+> -       u32 dspwait;
+> -};
+> -
+>  struct sprd_uart_port {
+>         struct uart_port port;
+> -       struct reg_backup reg_bak;
+>         char name[16];
+>  };
+>
+> --
+> 1.9.1
+>
