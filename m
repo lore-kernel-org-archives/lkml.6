@@ -2,108 +2,227 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6826EC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C073C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 145872077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E617C20843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:50:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bYqTmw+G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145872077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jxoFJWgB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E617C20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbeIDUOu (ORCPT
+        id S1727447AbeIDUQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:14:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53188 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbeIDUOu (ORCPT
+        Tue, 4 Sep 2018 16:16:03 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:44821 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbeIDUQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:14:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bATRe524EFUiNaxBLR9yeItXec0ebCeqnzahgUg4bys=; b=bYqTmw+Gcv0aYqxzcN5JSY4XF
-        B9qLdwP+XRY4ToeFPC7efLwZ7f0ate5r/bGehllY6nZLoSEEuB5vHclMw7xQemcd+OGpvZRuazVX8
-        FJzzoMrsxPYipXZeQZWxeCKAAxwoT+5e5qtIv9h8n5FyxqHq5WHJ+twqXLLyFn62ZNlxw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fxDZh-0001Sp-Rj; Tue, 04 Sep 2018 15:49:05 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8F35A11227D8; Tue,  4 Sep 2018 16:49:05 +0100 (BST)
-Date:   Tue, 4 Sep 2018 16:49:05 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tlv320aic31xx: Remove regulator notification
- handling
-Message-ID: <20180904154905.GH12993@sirena.org.uk>
-References: <20180831181737.29516-1-afd@ti.com>
- <20180903113038.GG10302@sirena.org.uk>
- <b35860d4-70ec-a23f-41d4-7edc87869ccb@ti.com>
- <20180904145740.GE12993@sirena.org.uk>
- <f6c7df62-a98f-009a-2169-0e5564f4b675@ti.com>
+        Tue, 4 Sep 2018 16:16:03 -0400
+Received: by mail-wr1-f51.google.com with SMTP id v16-v6so4465486wro.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 08:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ca72OBszcaAcTZ51it0B5lmImDUrEqCwJXodEBD/g5o=;
+        b=jxoFJWgBhROd6LZNBxeedTRAZkPAs6BomeK3x8kWAo5gbnHhm0ambOaXIjwprruCas
+         nXQH2MuMwgY6KzjuxVZop2Do9VpBvbpH5ELAGVRnhz0V3cof6WQqHSjnIiVVoC2b4si3
+         1uX3EejranzfymssOZNNUvTn5PoYxlTfGWjBohGxpHfIdhDqeHj3ZinSJ7TAVLratur5
+         XV47KTZdIm2bZy4F+DRhpfHBaGzqYFWLBufBHIGrL3+SqJ9zn6igJEuAp2REN+RaCVxw
+         CvULn+Yuzy4l4XY+Trs87ucgOrZPAbWlFwjR3bmSxYmuUu75okqZMbU0AeUg+u0j9idS
+         CsQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ca72OBszcaAcTZ51it0B5lmImDUrEqCwJXodEBD/g5o=;
+        b=i+xjHlLnysm9FgnR6MWCYZe8YzhNz0U5sKzFh/i/CzYUf0N/zaicSzXnXWFTsfiwQK
+         yA/NqfzCFlEE1+QG437vnM82PnJiSUxZG3/qtIxs1hwBKCSzPDM/49pVuRMuV3I25b9t
+         vla1KdzTkEmpXWnfXjb6czRF6zY/96SX+2YcrXo4GFA7TKhG+YbUYL23RQVItSblLn6F
+         Z8A7CxJHjOu66qwkncdtke72XuA7kKuUeLuG7brUugeSGihgXn/80kO2Wvf6jIO3BZU9
+         v2MoQ8UKxNCcVLuPWpyajBXW7p7TAzAxvT24R7Rt59QZLalSt6Fbehi4JrI7PCt5ifg8
+         SP9g==
+X-Gm-Message-State: APzg51BCSke0x5pzg/u91abs+qGttGazqLw/P9zk3ELtYxntN7nsndJz
+        PCQWC9uBlG9Z3VOvtNw+MIg2YTDpFziAYkAzGr05ug==
+X-Google-Smtp-Source: ANB0VdaCrvFJT9ueP17t65pGdlo8WyQja7nULIVQpF3t2ia4K5OnYB/0Et1NxujeQ9yDaM771/1qehrvmPKcbj8wWOI=
+X-Received: by 2002:adf:c454:: with SMTP id a20-v6mr22803218wrg.20.1536076219852;
+ Tue, 04 Sep 2018 08:50:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aF3LVLvitz/VQU3c"
-Content-Disposition: inline
-In-Reply-To: <f6c7df62-a98f-009a-2169-0e5564f4b675@ti.com>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CABPqkBT0kEMOnTw1-E1kezCvtWNSws7dp2qzCWKVmjGPOEga8Q@mail.gmail.com>
+ <20180904071049.GY24124@hirez.programming.kicks-ass.net> <20180904134218.GA5364@kernel.org>
+In-Reply-To: <20180904134218.GA5364@kernel.org>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Tue, 4 Sep 2018 08:50:07 -0700
+Message-ID: <CABPqkBSm9xgqiPx1hUY2njn3SsPGhxjqK02HbM5Qar8di-q97w@mail.gmail.com>
+Subject: Re: [RFC] perf tool improvement requests
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arnaldo,
 
---aF3LVLvitz/VQU3c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Sep 4, 2018 at 6:42 AM Arnaldo Carvalho de Melo <acme@kernel.org> w=
+rote:
+>
+> Em Tue, Sep 04, 2018 at 09:10:49AM +0200, Peter Zijlstra escreveu:
+> > On Mon, Sep 03, 2018 at 07:45:48PM -0700, Stephane Eranian wrote:
+> > > A few weeks ago, you had asked if I had more requests for the perf to=
+ol.
+>
+> > I have one long standing one; that is IP based data structure
+> > annotation.
+>
+> > When we get an exact IP (using PEBS) and were sampling a data related
+> > event (say L1 misses), we can get the data type from the instruction
+> > itself; that is, through DWARF. We _know_ what type (structure::member)
+> > is read/written to.
+>
+I have been asking this from the compiler people for a long time!
+I don't think it is there. I'd like each load/store to be annotated
+with a data type + offset
+within the type. It would allow data type profiling. This would not be
+bulletproof though
+because of the accessor function problem:
+  void incr(int *v) { (*v)++; }
+  struct foo { int a, int b } bar;
+  incr(&bar.a);
 
-On Tue, Sep 04, 2018 at 10:03:40AM -0500, Andrew F. Davis wrote:
-> On 09/04/2018 09:57 AM, Mark Brown wrote:
+Here the load/store in incr() would see an int pointer, not an int
+inside struct foo at offset 0 which
+is what we want. There are concern with the volume of data that this
+would generate. But my argument
+is that this is just debug binaries, does not make the stripped binary
+any bigger.
 
-> > It's there to save us having to rewrite the register cache if we asked
-> > for the device to be powered down but that didn't actually happen due to
-> > other constraints, we know all the registers are still as we left them.
 
-> I don't see that happening for any other user of this, we will still
-> have to re-write the cache when the device goes from OFF->STANDBY, and
+> > I would love to get that in a pahole style output.
+>
+Yes, me too!
 
-You will?  All the power_off() code seems to do is mark the regmap as
-cache only and turn off the regulators.
+> > Better yet, when you measure both hits and misses, you can get a
+> > structure usage overview, and see what lines are used lots and what
+> > members inside that line are rarely used. Ideal information for data
+> > structure layout optimization.
+>
+> > 1000x more useful than that c2c crap.
+>
 
-> if it stays in standby and never went off, then we are still broken as
-> we switched to using the register cache only, but never turned on real
-> writes again.
+c2c is about something else: more about NUMA issues and false sharing.
 
-regmap can remember which registers were written to while in cache only
-mode and only sync the ones that are actually dirty, or you can
-invalidate the entire cache.
+> > Can we please get that?
+>
+> So, use 'c2c record' to get the samples:
+>
+> [root@jouet ~]# perf c2c record
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 5.152 MB perf.data (4555 samples) ]
+>
+> Events collected:
+>
+> [root@jouet ~]# perf evlist -v
+> cpu/mem-loads,ldlat=3D30/P: type: 4, size: 112, config: 0x1cd, { sample_p=
+eriod, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|ID|CPU|PERIOD|DAT=
+A_SRC|WEIGHT|PHYS_ADDR, read_format: ID, disabled: 1, inherit: 1, mmap: 1, =
+comm: 1, freq: 1, task: 1, precise_ip: 3, mmap_data: 1, sample_id_all: 1, m=
+map2: 1, comm_exec: 1, { bp_addr, config1 }: 0x1f
+> cpu/mem-stores/P: type: 4, size: 112, config: 0x82d0, { sample_period, sa=
+mple_freq }: 4000, sample_type: IP|TID|TIME|ADDR|ID|CPU|PERIOD|DATA_SRC|WEI=
+GHT|PHYS_ADDR, read_format: ID, disabled: 1, inherit: 1, freq: 1, precise_i=
+p: 3, sample_id_all: 1
+>
+>         Then we'll get a 'annotate --hits' option (just cooked up, will
+> polish) that will show the name of the function, info about it globally,
+> i.e.  what annotate already produced, we may get this in CSV for better
+> post processing consumption:
+>
+> [root@jouet ~]# perf annotate --hits kmem_cache_alloc
+> Samples: 20  of event 'cpu/mem-loads,ldlat=3D30/P', 4000 Hz, Event count =
+(approx.): 875, [percent: local period]
+> kmem_cache_alloc() /usr/lib/debug/lib/modules/4.17.17-100.fc27.x86_64/vml=
+inux
+>   4.91   15:   mov    gfp_allowed_mask,%ebx
+>   2.51   51:   mov    (%r15),%r8
+>  17.14   54:   mov    %gs:0x8(%r8),%rdx
+>   6.51   61:   cmpq   $0x0,0x10(%r8)
+>  17.14   66:   mov    (%r8),%r14
+>   6.29   78:   mov    0x20(%r15),%ebx
+>   5.71   7c:   mov    (%r15),%rdi
+>  29.49   85:   xor    0x138(%r15),%rbx
+>   2.86   9d:   lea    (%rdi),%rsi
+>   3.43   d7:   pop    %rbx
+>   2.29   dc:   pop    %r12
+>   1.71   ed:   testb  $0x4,0xb(%rbp)
+> [root@jouet ~]#
+>
+How does this related to what Peter was asking? It has nothing about data t=
+ypes.
 
---aF3LVLvitz/VQU3c
-Content-Type: application/pgp-signature; name="signature.asc"
+What I'd like is a true data type profiler showing you the most
+accesses data types.
+and then an annotate-mode showing you which fields inside the types are mos=
+tly
+read or written with their sizes and alignment. Goal is to improve
+layout based on
+accesses to minimize the number of cachelines moved.
+You need DLA sampling on all loads and stores and then type annotation.
+As I said, I have prototyped this for self-sampling programs but not
+in the perf tool.
+It is harder there because you need type information and heap information.
+I think DWARF is one way to go assuming it is extended to support the right=
+ kind
+of load/store annotations. Another way is to track allocations and
+correlate to data
+types.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluOqXAACgkQJNaLcl1U
-h9C86Qf/VEcpg19JspKkljuF1/FCg29JFROV6OQUtf/6HaeuG7hewgbSgCKqHH7r
-1h50yfxMwwkXqRBNVr4cSY6ArCYRSCPowM+DL9pOON8dc5B3UVSf+cMa38cm6byJ
-4gmOhyqsvnBhz9eNSHV8OZCryegnTr9+05JEQu0i3vuDnHSYcmDkynMLgtzv6Ugi
-UsDgX/q49B4Giu+qgDU8erqhFEawnKFiz5sIes5V2gVXJf8KfSYaA13rXks2b2qh
-b8iMTRCqki1nq6eRguNcO4tCskBk1IAF+2uSpqPx214HnCCoC18M1JhVZHp0tpgs
-upvSuKVMnGskkgkp+E5BsWUMEDSEUQ==
-=fEj5
------END PGP SIGNATURE-----
 
---aF3LVLvitz/VQU3c--
+>         Then I need to get the DW_AT_location stuff parsed in pahole, so
+> that with those offsets (second column, ending with :) with hits (first
+> column, there its local period, but we can ask for some specific metric
+> [1]), I'll be able to figure out what DW_TAG_variable or
+> DW_TAG_formal_parameter is living there at that time, get the offset
+> from the decoded instruction, say that xor, 0x138 offset from the type
+> for %r15 at that offset (85) from kmem_cache_alloc, right?
+>
+> In a first milestone we'd have something like:
+>
+>         perf annotate --hits function | pahole --annotate -C task_struct
+>
+>         perf annotate --hits | pahole --annotate
+>
+I don't want to combine tools. I'd like this to be built into perf.
+
+> Would show all structs with hits, for all functions with hits.
+>
+> Other options would show which struct has more hits, etc.
+>
+> - Arnaldo
+>
+> [1]
+>
+> [root@jouet ~]# perf annotate -h local
+>
+>  Usage: perf annotate [<options>]
+>
+>         --percent-type <local-period>
+>                           Set percent type local/global-period/hits
+>
+> [root@jouet ~]#
+>
+> - Arnaldo
