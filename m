@@ -2,104 +2,243 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695DAC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 230B42086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:04:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGBbUluJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230B42086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0258320843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:04:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0258320843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbeIDN2J (ORCPT
+        id S1727310AbeIDN2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 09:28:09 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51980 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbeIDN2J (ORCPT
+        Tue, 4 Sep 2018 09:28:51 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40149 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbeIDN2v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 09:28:09 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so3553611wma.1;
-        Tue, 04 Sep 2018 02:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=b7nNDJM2C0D5luuhJdE6BH0RUd7f1NUMKPTN746TzmM=;
-        b=CGBbUluJ+EWQU8gkmIMOYH4HLoBbzfv8zucPaP5mHaeXaKYQKO8sCSlavcak/2J+it
-         Gl+c5zCOb0WfeK7ad4AxDJgghgmjrNo0udTbcy/aRPv5+UBEn0TcxkWijTNSSxe5AK04
-         L2Yd0WiuO8Y380OYEho/DwaA33AOveVCqSg1U9B2fa2zB5HRCekuX1INkZgZytOKfJxm
-         mpnSlzV0j6R1Uop6mhfesrSTlhvtQ5nHNA6YcZzAFctZTTPE7MFoYRpCcfdq4h4rLppe
-         P3WTgafXCwHiJQCJtvyOckMZ6sH8PDD4+j2B7LCoI+JrfWv1fTlwPLBMgN7+gs6lCYxP
-         XZoA==
+        Tue, 4 Sep 2018 09:28:51 -0400
+Received: by mail-ed1-f67.google.com with SMTP id j62-v6so2639292edd.7;
+        Tue, 04 Sep 2018 02:04:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b7nNDJM2C0D5luuhJdE6BH0RUd7f1NUMKPTN746TzmM=;
-        b=Ercn7+kp9rXNPIuKwIbOer37wzdNsIUa5hSHhiqB/K4Hv5c8yQP340p0ngY/gSazWz
-         jujPlI2RkOIXPdtIsjR/Ia3mfyPU6ehre/8AP7gmpeXZMlOdVjAoE6I37oZYVQZzh52V
-         VTz2Q4ADgM03uG58e3b2+OnLogRKtgj3e2QoyWjOnPUV23ic/ocUVAzQrn/ZdBWxt0kX
-         1TU3DCwhePqWNC+fP/6mHda/4Ym8KyQQDKtKwciFhq8j9nMVypy4JhYBm0MNV8Jb051y
-         KSVwFxcF9sHPb/z0THtyea5wGWteS6N0A1+2UKBlfEee65BhTcsyyVvpY6IBrul79CTt
-         z3BA==
-X-Gm-Message-State: APzg51BaJ2+GS8FLJgV53lIFcsje/fkNHWQPlq8oYSGgrx9h2sFfBumv
-        Ksvy5XvYzlmGxdVUlk00YrV8tFMS
-X-Google-Smtp-Source: ANB0VdY6Ek5/3oXwoqQw+BFVvkBK4ajfm4Zs2rD8CFCHHZxCSvVwhxMI+HnMiVxJt173+FylN47oPA==
-X-Received: by 2002:a7b:c017:: with SMTP id c23-v6mr7567429wmb.136.1536051836450;
-        Tue, 04 Sep 2018 02:03:56 -0700 (PDT)
-Received: from xux707-tw (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id e133-v6sm26997806wma.33.2018.09.04.02.03.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Sep 2018 02:03:55 -0700 (PDT)
-Date:   Tue, 4 Sep 2018 10:04:07 +0100
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Greg KH <greg@kroah.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the staging tree
-Message-ID: <20180904090406.GB29158@xux707-tw>
-References: <20180903120617.34f4f8cd@canb.auug.org.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tKEJDLP9Rl80+AgawcbhlztMYsylwsvsQmVLRseXZvg=;
+        b=fqHaPUPXiLm4JheoZk8ijTcoAi6IT2DYLItDKB9rhCwDbyzkYAdraRLIahnuIqkN5Z
+         xMqEbFhhtY6ZE2lnYpmg1tAkjq+nIRKNdAACvnw0mYq4rwCo09lhvAKaBhoxZf3K0H4b
+         PiRiqF60l3ZMazB4HpY7eJOMum8xo9VD2hUshU+n7PnQ4VlZEJth8oxg7Y/6V+6Bw7tt
+         F2UKzw7JXUyeJwX89ob+71qPzyjttdcN2JMkPdkH7zogHvt5a86vRfXqYkZcFxtQwe3S
+         8QuOUNk6e+sHR7HRT75Tn7bxYrsG2fp1+c5lQDaO6X2FLmepnI8gBhDycPfefmQ3YD+y
+         3/gw==
+X-Gm-Message-State: APzg51Bsn3C/LYVv4izImsiH4Glw778n8hjs6baWkKXBKfuhu4kMiQBN
+        b1egCnyDQiI/KvU2GbuP5HGglAXPN9E=
+X-Google-Smtp-Source: ANB0VdZGKJeoCzy0nX/gHgzxduAzRzPh+2FvW6yzlX3MdBwKdvdn0VToJB6ez8V2MSrr5WgZ4wiIHw==
+X-Received: by 2002:a50:93c5:: with SMTP id o63-v6mr35365519eda.154.1536051876904;
+        Tue, 04 Sep 2018 02:04:36 -0700 (PDT)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm12924277edb.16.2018.09.04.02.04.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 02:04:35 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id v17-v6so3076063wrr.9;
+        Tue, 04 Sep 2018 02:04:34 -0700 (PDT)
+X-Received: by 2002:adf:f8ca:: with SMTP id f10-v6mr23006053wrq.237.1536051874375;
+ Tue, 04 Sep 2018 02:04:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903120617.34f4f8cd@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-9-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 4 Sep 2018 17:04:21 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
+Message-ID: <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
+Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 12:06:17PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (powerpc
-> allyesconfig) produced this warning:
-> 
-> WARNING: drivers/staging/rtl8192u/r8192u_usb: 'dot11d_init' exported twice. Previous export was in drivers/staging/rtl8192e/rtllib.ko
-> 
-> Introduced by commit
-> 
->   c01f06b7506f ("staging:rtl8192u: Rename Dot11d_Init - Style")
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> Support for mixer0, mixer1, writeback and rotation units is added.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65 ++++++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
+>  2 files changed, 66 insertions(+)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> index bae5ee67a797..4535c1c27d27 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1",   "bus-de",
+>                       0x04, BIT(1), 0);
+>  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
+>                       0x04, BIT(2), 0);
+> +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
+> +                     0x04, BIT(3), 0);
+>
+>  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div",
+>                       0x00, BIT(0), CLK_SET_RATE_PARENT);
+> @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",       "mixer1-div",
+>                       0x00, BIT(1), CLK_SET_RATE_PARENT);
+>  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
+>                       0x00, BIT(2), CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
+> +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+>                    CLK_SET_RATE_PARENT);
+> @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
+>                    CLK_SET_RATE_PARENT);
+>  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+>                    CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
+> +                  CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0, 4,
+>                    CLK_SET_RATE_PARENT);
+> @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
+>  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+>                    CLK_SET_RATE_PARENT);
+>
+> +static struct ccu_common *sun50i_h6_de3_clks[] = {
+> +       &mixer0_clk.common,
+> +       &mixer1_clk.common,
+> +       &wb_clk.common,
+> +
+> +       &bus_mixer0_clk.common,
+> +       &bus_mixer1_clk.common,
+> +       &bus_wb_clk.common,
+> +
+> +       &mixer0_div_clk.common,
+> +       &mixer1_div_clk.common,
+> +       &wb_div_clk.common,
+> +
+> +       &bus_rot_clk.common,
+> +       &rot_clk.common,
+> +       &rot_div_clk.common,
+> +};
+> +
+>  static struct ccu_common *sun8i_a83t_de2_clks[] = {
+>         &mixer0_clk.common,
+>         &mixer1_clk.common,
+> @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+>         &wb_div_clk.common,
+>  };
+>
+> +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks = {
+> +       .hws    = {
+> +               [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> +               [CLK_MIXER1]            = &mixer1_clk.common.hw,
+> +               [CLK_WB]                = &wb_clk.common.hw,
+> +               [CLK_ROT]               = &rot_clk.common.hw,
+> +
+> +               [CLK_BUS_MIXER0]        = &bus_mixer0_clk.common.hw,
+> +               [CLK_BUS_MIXER1]        = &bus_mixer1_clk.common.hw,
+> +               [CLK_BUS_WB]            = &bus_wb_clk.common.hw,
+> +               [CLK_BUS_ROT]           = &bus_rot_clk.common.hw,
+> +
+> +               [CLK_MIXER0_DIV]        = &mixer0_div_clk.common.hw,
+> +               [CLK_MIXER1_DIV]        = &mixer1_div_clk.common.hw,
+> +               [CLK_WB_DIV]            = &wb_div_clk.common.hw,
+> +               [CLK_ROT_DIV]           = &rot_div_clk.common.hw,
+> +       },
+> +       .num    = 12,
 
-Aragh, sorry my bad, and a newbie mistake. I now know to do more of a
-check for exported symbols. If it had occured to me I'd not have touched
-it.
+It's best not to openly code these. It is error prone, like having
+an index beyond .num, which then never gets registered.
 
-I'm not sure what the procedure is, having written my first bug, but I'll
-submit a patch to revert that change.
+Instead, please update CLK_NUMBERS and use that instead. sunxi_ccu_probe()
+can handle holes in .hws.
 
-jwhitmore
+On the other hand, it can't handle holes in the ccu_reset_map. Hope we
+never have to deal with such an instance.
 
+ChenYu
+
+> +};
+> +
+>  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+>         .hws    = {
+>                 [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> @@ -156,6 +200,13 @@ static struct ccu_reset_map sun50i_a64_de2_resets[] = {
+>         [RST_WB]        = { 0x08, BIT(2) },
+>  };
+>
+> +static struct ccu_reset_map sun50i_h6_de3_resets[] = {
+> +       [RST_MIXER0]    = { 0x08, BIT(0) },
+> +       [RST_MIXER1]    = { 0x08, BIT(1) },
+> +       [RST_WB]        = { 0x08, BIT(2) },
+> +       [RST_ROT]       = { 0x08, BIT(3) },
+> +};
+> +
+>  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
+>         .ccu_clks       = sun8i_a83t_de2_clks,
+>         .num_ccu_clks   = ARRAY_SIZE(sun8i_a83t_de2_clks),
+> @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
+>         .num_resets     = ARRAY_SIZE(sun50i_a64_de2_resets),
+>  };
+>
+> +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
+> +       .ccu_clks       = sun50i_h6_de3_clks,
+> +       .num_ccu_clks   = ARRAY_SIZE(sun50i_h6_de3_clks),
+> +
+> +       .hw_clks        = &sun50i_h6_de3_hw_clks,
+> +
+> +       .resets         = sun50i_h6_de3_resets,
+> +       .num_resets     = ARRAY_SIZE(sun50i_h6_de3_resets),
+> +};
+> +
+>  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+>         .ccu_clks       = sun8i_v3s_de2_clks,
+>         .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
+> @@ -296,6 +357,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
+>                 .compatible = "allwinner,sun50i-h5-de2-clk",
+>                 .data = &sun50i_a64_de2_clk_desc,
+>         },
+> +       {
+> +               .compatible = "allwinner,sun50i-h6-de3-clk",
+> +               .data = &sun50i_h6_de3_clk_desc,
+> +       },
+>         { }
+>  };
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> index 530c006e0ae9..27bd88539f42 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> @@ -22,6 +22,7 @@
+>  #define CLK_MIXER0_DIV 3
+>  #define CLK_MIXER1_DIV 4
+>  #define CLK_WB_DIV     5
+> +#define CLK_ROT_DIV    11
+>
+>  #define CLK_NUMBER     (CLK_WB + 1)
+>
+> --
+> 2.18.0
+>
