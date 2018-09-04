@@ -2,74 +2,93 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4169BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFE42077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5567720658
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:40:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A2qwhAHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFE42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SmdduMb2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5567720658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeIECD4 (ORCPT
+        id S1727066AbeIECHo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:03:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34086 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbeIECD4 (ORCPT
+        Tue, 4 Sep 2018 22:07:44 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:56449 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeIECHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:03:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xNyK8kgZjsF4LDwa4XGMoZ980Hde8h6PyNptYxL8Zsk=; b=A2qwhAHdnwZzY1aPUkd7dNpYW
-        +dCMZ+uZ5ZKDGIt/GKPMAbUlwLr+sVpQGazDmkYlhGC8WU9IztkYMosqxQ8aXu0JR812h/rEPdaQm
-        VAu834ufd6N1SoaW1JZoP+3YbhNBvvjpcAjiwjdsNtlp0DU6yR4xkOmzR3SQPn7m3qbdIGlr3IPMH
-        BX+PyOgD1pGdHzHkK+sM5iejheXO3RyiEBitrhZJqL51TJSrX4Pms3ksG7sbO/IpvgC0Hhst0oGEQ
-        hcfI1tEnl//Axb0rVGsNhqUvWl9wU5hJFcNnHc3f4yuXPLAYUKbZjZei+Nhs0MgnR4gcdZI+yzwQx
-        7K1nXR0HQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxJ0I-0002aZ-Dr; Tue, 04 Sep 2018 21:36:54 +0000
-Date:   Tue, 4 Sep 2018 14:36:54 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
+        Tue, 4 Sep 2018 22:07:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536097292; x=1567633292;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=XmgPAlKyoEM9jsC7V/aXgjkPJCBpj1AqnfLdFdxhWpQ=;
+  b=SmdduMb28A9cN1VXDyYr5YPwlktejxBZ3I/+BV8zKviAfdik/TKZrYoy
+   ysgC+oq/7AaHzHVmbC5SyutzoUrqPjKnLEmysPoJpJ4h9WXoHQ0GhFiH8
+   LcwZ9Sc1juvx++k3073yKaV0f/Ie68s/buLHzswOtit9ts8mLh/cLvCgF
+   Q2wq+Yu5PMAmrh/5045z6DqpzhVYza8Syma8Asqn+sUhIAKTn0B6wLdP9
+   ZDvuJfSGLYLR/RItvv0Nh+ogWm/9worVXhwXrnVuMyh5sfj3iKYLgYWCw
+   HCorxGQuS65nC35jrqc2qJj91cay+/HkoqoBmN96i+6xNgzF9LNuZpLpZ
+   g==;
+X-IronPort-AV: E=Sophos;i="5.53,330,1531756800"; 
+   d="scan'208";a="186537548"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2018 05:41:31 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 04 Sep 2018 14:27:28 -0700
+Received: from use204589.ad.shared (HELO [10.86.59.178]) ([10.86.59.178])
+  by uls-op-cesaip01.wdc.com with ESMTP; 04 Sep 2018 14:40:42 -0700
+Subject: Re: [PATCH v2 3/3] RISC-V: Support cpu hotplug.
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "palmer@sifive.com" <palmer@sifive.com>,
         "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "anup@brainfault.org" <anup@brainfault.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "damein@vger.kernel.org" <damein@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] RISC-V: Use Linux logical cpu number instead of
- hartid
-Message-ID: <20180904213654.GB2078@infradead.org>
 References: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
- <1535445370-19004-3-git-send-email-atish.patra@wdc.com>
- <20180831061104.GB19292@infradead.org>
- <ec0819d5-9dc6-6b25-47a9-cd9d9e5099a8@wdc.com>
+ <1535445370-19004-4-git-send-email-atish.patra@wdc.com>
+ <20180831061859.GC19292@infradead.org>
+ <0d439b9d-b3d0-7d2c-117b-abb37adf769c@wdc.com>
+ <20180904213623.GA2078@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <54571707-fd28-3258-fbec-4612f62ad2ad@wdc.com>
+Date:   Tue, 4 Sep 2018 14:40:41 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec0819d5-9dc6-6b25-47a9-cd9d9e5099a8@wdc.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180904213623.GA2078@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 01:35:10PM -0700, Atish Patra wrote:
-> sure. How about this ?
+On 9/4/18 2:36 PM, Christoph Hellwig wrote:
+> On Tue, Sep 04, 2018 at 11:08:35AM -0700, Atish Patra wrote:
+>>
+>> I have kept it here to match all other arch. Same goes for all hotplug
+>> functions in smpboot.c
+>>
+>> I can move them to a separate file if you think that provides better code
+>> readability and structure.
+> 
+> I don't really have a strong opinion, but keeping this code together
+> and reducing the ifdef maze seems worthwile to me.
+> 
+Sure. I will move it a new file accordingly in v3. If nobody else has 
+objection for that, we will keep it that way.
 
-That would work, but why not just keep calling sbi_remove_sfence_vma
-directly from flush_tlb_all?
+Regards,
+Atish
