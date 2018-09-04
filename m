@@ -2,166 +2,148 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD91C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB9C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 508862086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:51:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gXlWnFBP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KKb/fCXA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508862086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 25A16206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A16206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbeIDIOK (ORCPT
+        id S1726497AbeIDIdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 04:14:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbeIDIOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 04:14:10 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B016660708; Tue,  4 Sep 2018 03:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536033061;
-        bh=WNxFlAjiXtNw0S3ADpsV0WUgw3N9yMarJU/lCZLCnu4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gXlWnFBP2dVGejmKebbj+5B8h8OGs9OkxlPaEGeCoVetGUNOVDNdVQflbSuTj20CX
-         2eHcoLpUCqSRqkdUi7gjbsksGcU7a7CYBKeJqAFwYEBiUG5e04RFJIuPYKsRuvbD/f
-         6Jki2IUV7HI5xQVPWo27/DGSDTz6R/t2a63qmYD0=
-Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F9D1603D2;
-        Tue,  4 Sep 2018 03:50:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536033060;
-        bh=WNxFlAjiXtNw0S3ADpsV0WUgw3N9yMarJU/lCZLCnu4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KKb/fCXAHSMZrYYTaxxH03RmEUXsyIisqby77ofqXPvjsDtxTHm/AALr4eC3OKPny
-         lL4/zgJkXFLgnmIAX0RfL8KvOTMOvtpguh2cho8YHSvCrzVGsM29D06zpnfpVdA8P+
-         V3micJlAcAvTNacRQc2HtN+obYXlSVQ+K+mFSrkQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F9D1603D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   Fan Wu <wufan@codeaurora.org>
-To:     mchehab@kernel.org
-Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
-        toshi.kani@hpe.com, tanxiaofei@huawei.com, wanghuiqiang@huawei.com,
-        shiju.jose@huawei.com, Fan Wu <wufan@codeaurora.org>
-Subject: [PATCH v3] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Tue,  4 Sep 2018 03:50:55 +0000
-Message-Id: <1536033055-25522-1-git-send-email-wufan@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 4 Sep 2018 04:33:51 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:58720 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbeIDIdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 04:33:51 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id A092F2041E3;
+        Tue,  4 Sep 2018 06:10:37 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id X3LmNCg0pF9B; Tue,  4 Sep 2018 06:10:31 +0200 (CEST)
+Received: from [192.168.16.56] (unknown [195.69.32.11])
+        by smtp.infotech.no (Postfix) with ESMTPA id EBB25204179;
+        Tue,  4 Sep 2018 06:10:30 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: Recent removal of bsg read/write support
+To:     Dror Levin <drorl@infinidat.com>, torvalds@linux-foundation.org
+Cc:     richard.weinberger@gmail.com, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        hch@infradead.org, axboe@kernel.dk
+References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
+ <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
+ <CA+55aFyLC8PhjZ+iV7MucSZ1aGKMT=S9=EkEAQ6T1=ZRqD-xLA@mail.gmail.com>
+ <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <c3674988-25fe-0a4d-4ce0-ec8aa9a241b4@interlog.com>
+Date:   Tue, 4 Sep 2018 06:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For platforms whose firmwares provide valid module handles
-(SMBIOS type 17) in error records, this patch uses the module
-handles to locate corresponding DIMMs and enables per-DIMM
-error counter update.
+On 2018-09-03 10:34 AM, Dror Levin wrote:
+> On Sun, Sep 2, 2018 at 8:55 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> On Sun, Sep 2, 2018 at 4:44 AM Richard Weinberger
+>> <richard.weinberger@gmail.com> wrote:
+>>>
+>>> CC'ing relevant people. Otherwise your mail might get lost.
+>>
+>> Indeed.
+> 
+> Sorry for that.
+> 
+>>> On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
+>>>>
+>>>> We have an internal tool that uses the bsg read/write interface to
+>>>> issue SCSI commands as part of a test suite for a storage device.
+>>>>
+>>>> After recently reading on LWN that this interface is to be removed we
+>>>> tried porting our code to use sg instead. However, that raises new
+>>>> issues - mainly getting ENOMEM over iSCSI for unknown reasons.
+>>
+>> Is there any chance that you can make more data available?
+> 
+> Sure, I can try.
+> 
+> We use writev() to send up to SG_MAX_QUEUE tasks at a time. Occasionally not
+> all tasks are written at which point we wait for tasks to return before
+> sending more, but then writev() fails with ENOMEM and we see this in the syslog:
+> 
+> Sep  1 20:58:14 gdc-qa-io-017 kernel: sd 441:0:0:5: [sg73]
+> sg_common_write: start_req err=-12
+> 
+> Failing tasks are reads of 128KiB.
+> 
+>> I'd rather fix the sg interface (which while also broken garbage, we
+>> can't get rid of) than re-surrect the bsg interface.
+>>
+>> That said, the removed bsg code looks a hell of a lot prettier than
+>> the nasty sg interface code does, although it also lacks ansolutely
+>> _any_ kind of security checking.
+> 
+> For us the bsg interface also has several advantages over sg:
+> 1. The device name is its HCTL which is nicer than an arbitrary integer.
+> 2. write() supports writing more than one sg_io_v4 struct so we don't have
+>     to resort to writev().
+> 3. Queue size is the device's queue depth and not SG_MAX_QUEUE which is 16.
+> 
+>>>> Because of this we would like to continue using the bsg interface,
+>>>> even if some changes are required to meet security concerns.
+>>
+>> I wonder if we could at least try to unify the bsg/sg code - possibly
+>> by making sg use the prettier bsg code (but definitely have to add all
+>> the security measures).
+>>
+>> And dammit, the SCSI people need to get their heads out of their
+>> arses. This whole "stream random commands over read/write" needs to go
+>> the f*ck away.
+>>
+>> Could we perhaps extend the SG_IO interace to have an async mode?
+>> Instead of "read/write", have "SG_IOSUBMIT" and "SG_IORECEIVE" and
+>> have the SG_IO ioctl just be a shorthand of "both".
+> 
+> Just my two cents - having an interface other than read/write won't allow
+> users to treat this fd as a regular file with epoll() and read(). This is
+> a major bonus for this interface - an sg/bsg device can be used just like
+> a socket or pipe in any reactor (we use boost asio for example).
 
-Signed-off-by: Fan Wu <wufan@codeaurora.org>
-Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
-Tested-by: Toshi Kani <toshi.kani@hpe.com>
-Reviewed-by: Borislav Petkov <bp@alien8.de>
-Reviewed-by: James Morse <james.morse@arm.com>
-Reviewed-by: tanxiaofei <tanxiaofei@huawei.com>
----
+The advantage of having two ioctls is that they can both pass (meta-)data
+bidirectionally. That is hard to do with standard read() and write() calls.
+The command tag is the piece if meta-data that goes against the flow:
+returned from SG_IOSUBMIT, optionally given to SG_IORECEIVE (which might have
+a 'cancel command' flag).
 
-Changes from v2:
-* Fixed coding style glitch
-* Added Tested-by/Reviewed-by
+The sg v1, v2 and v3 interfaces could keep their write()/read() interfaces
+for backward compatibility (to Linux 1.0.0, March 1994 for sg v1). New, clean
+submit and receive paths could be added to the sg driver for the v3 and
+v4 twin ioctl interface. Previously the sg v4 interface was only supported
+by the bsg driver. One advantage of sg v4 over v3 is support for bidi
+commands. Not sure if epoll/poll works with an ioctl, if not we could add a
+"dummy" read() call that notionally returned SCSI status. The SG_IORECEIVE
+ioctl would still be needed to "clean up" the command, and optionally
+transfer the data-in buffer.
 
-Changes from v1:
-*  Changed the new function name to get_dimm_smbios_index
-*  Removed unnecessary checks inside get_dimm_smbios_index
-*  Reverted the change of the DMI handle print
-*  Updated commit message
+Tony Battersby has also requested twin ioctls saying that it is extremely
+tedious ploughing through logs full of SG_IO calls and that clearly
+separating submits from receives would make things somewhat better.
 
----
- drivers/edac/ghes_edac.c | 23 +++++++++++++++++++++++
- include/linux/edac.h     |  2 ++
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 473aeec..ba46160 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -81,6 +81,18 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
- 		(*num_dimm)++;
- }
- 
-+static int get_dimm_smbios_index(u16 handle)
-+{
-+	int i;
-+	struct mem_ctl_info *mci = ghes_pvt->mci;
-+
-+	for (i = 0; i < mci->tot_dimms; i++) {
-+		if (mci->dimms[i]->smbios_handle == handle)
-+			return i;
-+	}
-+	return -1;
-+}
-+
- static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- {
- 	struct ghes_edac_dimm_fill *dimm_fill = arg;
-@@ -177,6 +189,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- 				entry->total_width, entry->data_width);
- 		}
- 
-+		dimm->smbios_handle = entry->handle;
-+
- 		dimm_fill->count++;
- 	}
- }
-@@ -327,12 +341,21 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
- 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
- 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
- 		const char *bank = NULL, *device = NULL;
-+		int index = -1;
-+
- 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
- 		if (bank != NULL && device != NULL)
- 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
- 		else
- 			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
- 				     mem_err->mem_dev_handle);
-+
-+		index = get_dimm_smbios_index(mem_err->mem_dev_handle);
-+		if (index >= 0) {
-+			e->top_layer = index;
-+			e->enable_per_layer_report = true;
-+		}
-+
- 	}
- 	if (p > e->location)
- 		*(p - 1) = '\0';
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index bffb978..a45ce1f 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -451,6 +451,8 @@ struct dimm_info {
- 	u32 nr_pages;			/* number of pages on this dimm */
- 
- 	unsigned csrow, cschannel;	/* Points to the old API data */
-+
-+	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
- };
- 
- /**
--- 
-2.7.4
+Doug Gilbert
 
