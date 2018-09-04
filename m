@@ -2,103 +2,127 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7EFC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32AAC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80AAB20843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:52:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80AAB20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9299720661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:58:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A8MmLPf0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9299720661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeIDVSd (ORCPT
+        id S1727466AbeIDVYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:18:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57565 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeIDVSd (ORCPT
+        Tue, 4 Sep 2018 17:24:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36972 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbeIDVYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:18:33 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxEZ8-0002di-8V; Tue, 04 Sep 2018 18:52:34 +0200
-Date:   Tue, 4 Sep 2018 18:52:33 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Yang, Bin" <bin.yang@intel.com>
-cc:     "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Gross, Mark" <mark.gross@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v3 5/5] x86/mm: add WARN_ON_ONCE() for wrong large page
- mapping
-In-Reply-To: <alpine.DEB.2.21.1809040939400.1462@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1809041835480.3395@nanos.tec.linutronix.de>
-References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>  <1534814186-37067-6-git-send-email-bin.yang@intel.com>  <alpine.DEB.2.21.1809040023450.1462@nanos.tec.linutronix.de> <2ad0ff43ea406005890ad4fcbb7a42da747289d9.camel@intel.com>
- <alpine.DEB.2.21.1809040939400.1462@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 4 Sep 2018 17:24:21 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 2-v6so1965318pgo.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 09:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WQFf6taefzciWoDofkCtPEp2enzeEeaQ6FbWpo2Wb7s=;
+        b=A8MmLPf0aCuQJhQBJUhtzZp8pByHeRt6REV5hw5BaFvo0YGP6RgrZXGk9J1asReWk7
+         TvnFJkRDMAcKkNnUKvE28bgrr0Enz2U5DidxCDhmbHZ/xLJNxKcjfUsFItzGmJdSQ6gt
+         aX5coPyZwi+FyZIp5Jspm4++bTsDVHOyEfiErQptlWxwvnRqmtvFrfOmG65EgnFguSJP
+         lGWc5KhzqdGzMZnoMKvIKxiH2eoPzW3ZXgDRDhJlFuXGy9NQMoEjcPlGafbO+HsY+geS
+         nNSH+ceRuS10659WM3osiN2oZuRth8WqUH3eOumEdZg7SQw7Pd6pNLJegfbzllMmiZMZ
+         Q2hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WQFf6taefzciWoDofkCtPEp2enzeEeaQ6FbWpo2Wb7s=;
+        b=C9jPon5BnvGU9/zOvxETD6TDNApRmHxQCNp6Bhd5/+8fNuw1hK8wxczw/mVo3QaTGT
+         T5hmNT7qXhXJGi+DFCknw28PYzKJ97ePrFmZTfliC4oIzQ+w9NSHND5lVDQcXLXHTUNG
+         xyiFCJWpowSCyvOkfLgn1jbhdgWffs9gFlCQyj9yHBDj9u7q4UDjIJCkpveWjpRU8ZXv
+         0rDU+TQDvCkVci95QvEQ3UzuNh894uCPkLwT5myuyXv4HZ+9FjYJrHNT/iB9AljhtT+f
+         v1sCPfuWT6R0uyvIV1I5K9M2PkE04GBD+VOh0w8bjWTb8wBhKrF75giF09X8arBEcYSy
+         uA8A==
+X-Gm-Message-State: APzg51DD1WXP75+pCk0mBZPhjws4MucvTxFAECFGl6sN0muqbwVcHcLm
+        XQAN+nxl8cXyv8DGsSC21f7RE2Jv8NKZAiHf21bggVDe6QM=
+X-Google-Smtp-Source: ANB0VdbfK4jhlKNgiBStDr/mOkpVbR3ZPIILAx0yD24hf0EiBRcwmUhEdnvJdSuGmSznlu7uGO7BBBohH2wEQGoCyEw=
+X-Received: by 2002:a62:d1b:: with SMTP id v27-v6mr34964668pfi.87.1536080302642;
+ Tue, 04 Sep 2018 09:58:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com> <20180903203316.16183-11-miguel.ojeda.sandonis@gmail.com>
+In-Reply-To: <20180903203316.16183-11-miguel.ojeda.sandonis@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 4 Sep 2018 09:58:11 -0700
+Message-ID: <CAKwvOdk_yMOCGbEWcZH4aPP6ShS4DtSg0Qo6AnU-2+4WKu+Mqw@mail.gmail.com>
+Subject: Re: [PATCH 10/12] Compiler Attributes: KENTRY used twice the "used" attribute
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        luc.vanoostenryck@gmail.com, efriedma@codeaurora.org,
+        sparse@chrisli.org, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        joe@perches.com, asmadeus@codewreck.org,
+        linux-sparse@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018, Thomas Gleixner wrote:
-> On Tue, 4 Sep 2018, Yang, Bin wrote:
-> > On Tue, 2018-09-04 at 00:27 +0200, Thomas Gleixner wrote:
-> > > On Tue, 21 Aug 2018, Bin Yang wrote:
-> > > > @@ -625,6 +625,7 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
-> > > >  
-> > > >  	psize = page_level_size(level);
-> > > >  	pmask = page_level_mask(level);
-> > > > +	addr = address & pmask;
-> > > >  
-> > > >  	/*
-> > > >  	 * Calculate the number of pages, which fit into this large
-> > > > @@ -636,6 +637,12 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
-> > > >  		cpa->numpages = numpages;
-> > > >  
-> > > >  	/*
-> > > > +	 * The old pgprot should not have any protection bit. Otherwise,
-> > > > +	 * the existing mapping is wrong already.
-> > > > +	 */
-> > > > +	WARN_ON_ONCE(needs_static_protections(old_prot, addr, psize, old_pfn));
-> > > 
-> > > The check itself is fine, but it just emits a warning and goes on as if
-> > > nothing happened.
-> > > 
-> > > We really want to think about a proper way to fix that up without overhead
-> > > for the sane case.
-> > 
-> > could we change it as below? I think it should be safe to split large
-> > page if current mapping is wrong already.
-> > 
-> >         if (needs_static_protections(old_prot, addr, psize, old_pfn)) {
-> >                 WARN_ON_ONCE(1);
-> >                 goto out_unlock;
-> >         }
-> 
-> Sure, but what enforces the static protections on the pages which are not
-> in the modified range of the current CPA call? Nothing.
+On Mon, Sep 3, 2018 at 1:34 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> Cc: Eli Friedman <efriedma@codeaurora.org>
+> Cc: Christopher Li <sparse@chrisli.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dominique Martinet <asmadeus@codewreck.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-sparse@vger.kernel.org
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+>  include/linux/compiler.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 4030a2940d6b..17ee9165ca51 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -146,7 +146,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+>         extern typeof(sym) sym;                                 \
+>         static const unsigned long __kentry_##sym               \
+>         __used                                                  \
+> -       __attribute__((__section__("___kentry" "+" #sym ), used))       \
+> +       __attribute__((__section__("___kentry" "+" #sym )))     \
+>         = (unsigned long)&sym;
+>  #endif
+>
+> --
+> 2.17.1
+>
 
-I looked deeper into that. For the PMD split it's rather trivial to do, but
-a PUD split would require a horrible pile of changes as we'd have to remove
-the protections from the new PMD first, go all the way back and rescan the
-new PMDs whether they need to be split up further. But that needs a lot of
-refactoring and I'm not sure if it's worth the trouble right now.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-As we haven't cared about that since CPA got introduced, I think we just do
-the consistency check and warn. That's better what we have now and when it
-ever triggers revisit it.
-
+-- 
 Thanks,
-
-	tglx
+~Nick Desaulniers
