@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F4DC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C032FC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590AF20659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62FC22075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZVSs83M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590AF20659
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFIsZIfR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FC22075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeIDQUj (ORCPT
+        id S1727582AbeIDQUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 12:20:39 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35122 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeIDQUi (ORCPT
+        Tue, 4 Sep 2018 12:20:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45388 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbeIDQUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:20:38 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g2-v6so570310plo.2;
-        Tue, 04 Sep 2018 04:55:49 -0700 (PDT)
+        Tue, 4 Sep 2018 12:20:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x26-v6so1539469pge.12;
+        Tue, 04 Sep 2018 04:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YQxI8bgoG8ef9op6ja9vrZUt2im2vvilVtWt3p1N7oU=;
-        b=LZVSs83MCnhjra1UH9IkqN6bqW1bwMyXXKYg8jifcB1l+WoflisjjoDwQ3RTczA89g
-         3s/CbHI/mg3M8sNoBQdKPo/VrSa1AyFNl5N/6ApALIxaZ8vze1gX0JSH0cPk6VPvAV9l
-         /mfba/nhZ1ykdG4J+iy9OoPkny+iE82UJJQrag+cAhm+vyYdzA9xlaCmRB986zHyuCB7
-         5RD8H/vZix9oJjyPDSAltGZks/t56fo4PsKwEIYjT8DPBSs+/2BmJ9sYT3kVac9fKaPl
-         xlJDx79/Mv9OX5y8JSTiiZMjaE5EpW5l1wU8hxRTokWZurkzC3X2krhJzwjJLQvBnZl9
-         Ouzw==
+        bh=BShs/B7WbmjGF339oaZcnn6uTeYWtvRJSOdxcgoD9c4=;
+        b=YFIsZIfR0yS01JLSovkltn7BAth89jIBEujwaOCkiSSFMG7iX9zPqGTOiEW9F3mke7
+         67uhHzOYeyUV8SCj3gCVtiD5LaTzmSLAtHvz0din7SPcYknx9Rm0Q+nTQ0sUNUaPrpr/
+         0znBtfObYPHRwAMMZSqPUfYkvDqfjuVLfbqRXxUFQm/VEhuTex7lY3NI3RWGUp34/gYw
+         zbBvP9rGLewv0MOLEF++aq/7/N85M3ssab/4kZC+a0tUOWe/KEicTznb5Pdbr2z8JB2p
+         9oDNryd21bBh/X9OXa84W95rfC0QSsutSO0pvuANop9dkxnwNhpblcuWDLAia48/pUa8
+         OulA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YQxI8bgoG8ef9op6ja9vrZUt2im2vvilVtWt3p1N7oU=;
-        b=HcWcj1KQFwjTRyeuAszKSspGsuIe5WoxU1BjFNv26j33qS6uph9v8VvAL2GfJ4WdlJ
-         aUDjEuiDBbWkbKPN2xT14uUD5M0txjPnQKY0ENjguCGxQ8LD6kU2VM41iVIuKM0Fky6+
-         q+akNh3UF8qQF9CCd9tHvyYFVeY/KoRf8UiZ9l6gyRCTzrkZA95iuSoKbmeEjc2axzHx
-         3zvVjHQHS+OG1iDYXBQ50CPKqS66xMLt+Ap5ZlsfjrgH0TBTXG2FCdoiOOPUCZDp/O5c
-         OFs2PC6lBVgFQJPWT8pA9UQopgkcyJwHdlKnC6dcNYwXCGAOlGAlregfBWR71Evn14HH
-         2H7w==
-X-Gm-Message-State: APzg51CzxFPuzsvhYcnRTcet117WHgQwAuvAJaOplvmOyntF+UcVa5F+
-        f27IvtmH3EnlLgLfgaj2vKRSrdBT
-X-Google-Smtp-Source: ANB0VdbdMOvn9XSN+fRHqneAi1bBpwHZhHOl+skXBMzBzTqL2YIhT0UQzB2O45EzF02fI7Esp7wyHw==
-X-Received: by 2002:a17:902:42c3:: with SMTP id h61-v6mr33458371pld.319.1536062148223;
-        Tue, 04 Sep 2018 04:55:48 -0700 (PDT)
+        bh=BShs/B7WbmjGF339oaZcnn6uTeYWtvRJSOdxcgoD9c4=;
+        b=KfhYQAXCh/BkMCtgINxz3RDEpl4chWXoB6ZqvTsUsggWRrgrPu9vrO+vcPpwFjgvTs
+         orrRWcscPspWj8CupfPJNzHVp2HdwW4m3d+1fL/IWgRUUWTtP6hFagJt0LC6/3FtYq4D
+         GeAd7QGWSjWX8tv9Uxmi1uyYctA3mTARg2l05LJ7IW6ZiTMRyuBhPMFrm6jyiXW1WVJH
+         meX5I1xyoZcuvR8aVbBMd/yecynH2/DInSXmeoDCAm/JLmEdm8fZB4zmMOQVJxkBlPpC
+         BMH6TxdXb6AbY4xzXOBDpn0CrOM8U0EUyCue2HWMNdhWc3EcC3xqihfw9AP6AeJGtikw
+         dDNQ==
+X-Gm-Message-State: APzg51CvizHLZOvHGT7f/IrIlSyruloiiElaO+rXFEYNotmB+dOVu/8s
+        /OuuGo0uEn9qY7OhytbtO1NIGXH7
+X-Google-Smtp-Source: ANB0VdY4SQFQNw4DjZVOaPsmnfupYuq3tsc6cbIEjA3AjhIENXdX2plbBdlEaj8k22IaqSXnqy9Jhg==
+X-Received: by 2002:a63:26c6:: with SMTP id m189-v6mr25291699pgm.70.1536062152078;
+        Tue, 04 Sep 2018 04:55:52 -0700 (PDT)
 Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id u184-v6sm29740190pgd.46.2018.09.04.04.55.44
+        by smtp.googlemail.com with ESMTPSA id u184-v6sm29740190pgd.46.2018.09.04.04.55.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 04:55:47 -0700 (PDT)
+        Tue, 04 Sep 2018 04:55:51 -0700 (PDT)
 From:   sunil.kovvuri@gmail.com
 To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
         andrew@lunn.ch, davem@davemloft.net,
+        Geetha sowjanya <gakula@marvell.com>,
         Sunil Goutham <sgoutham@marvell.com>
-Subject: [PATCH v2 09/15] soc: octeontx2: Configure block LF's MSIX vector offset
-Date:   Tue,  4 Sep 2018 17:24:44 +0530
-Message-Id: <1536062090-30446-10-git-send-email-sunil.kovvuri@gmail.com>
+Subject: [PATCH v2 10/15] soc: octeontx2: Reconfig MSIX base with IOVA
+Date:   Tue,  4 Sep 2018 17:24:45 +0530
+Message-Id: <1536062090-30446-11-git-send-email-sunil.kovvuri@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536062090-30446-1-git-send-email-sunil.kovvuri@gmail.com>
 References: <1536062090-30446-1-git-send-email-sunil.kovvuri@gmail.com>
@@ -74,524 +75,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Goutham <sgoutham@marvell.com>
+From: Geetha sowjanya <gakula@marvell.com>
 
-Firmware configures a certain number of MSIX vectors to each of
-enabled RVU PF/VF. When a block LF is attached to a PF/VF, number
-of MSIX vectors needed by that LF are set aside (out of PF/VF's
-total MSIX vectors) and LF's msix_offset is configured in HW.
+HW interprets RVU_AF_MSIXTR_BASE address as an IOVA, hence
+create a IOMMU mapping for the physcial address configured by
+firmware and reconfig RVU_AF_MSIXTR_BASE with IOVA.
 
-Also added support for a RVU PF/VF to retrieve that block LF's
-MSIX vector offset information from AF via mbox.
-
+Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
 ---
- drivers/soc/marvell/octeontx2/mbox.h       |  18 ++
- drivers/soc/marvell/octeontx2/rvu.c        | 333 ++++++++++++++++++++++++++++-
- drivers/soc/marvell/octeontx2/rvu.h        |   7 +
- drivers/soc/marvell/octeontx2/rvu_struct.h |   2 +
- 4 files changed, 357 insertions(+), 3 deletions(-)
+ drivers/soc/marvell/octeontx2/rvu.c | 33 ++++++++++++++++++++++++++++++---
+ drivers/soc/marvell/octeontx2/rvu.h |  1 +
+ 2 files changed, 31 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soc/marvell/octeontx2/mbox.h b/drivers/soc/marvell/octeontx2/mbox.h
-index 7280d49..bedf0ee 100644
---- a/drivers/soc/marvell/octeontx2/mbox.h
-+++ b/drivers/soc/marvell/octeontx2/mbox.h
-@@ -122,6 +122,7 @@ static inline struct mbox_msghdr *otx2_mbox_alloc_msg(struct otx2_mbox *mbox,
- M(READY,		0x001, msg_req, ready_msg_rsp)			\
- M(ATTACH_RESOURCES,	0x002, rsrc_attach, msg_rsp)			\
- M(DETACH_RESOURCES,	0x003, rsrc_detach, msg_rsp)			\
-+M(MSIX_OFFSET,		0x004, msg_req, msix_offset_rsp)		\
- /* CGX mbox IDs (range 0x200 - 0x3FF) */				\
- /* NPA mbox IDs (range 0x400 - 0x5FF) */				\
- /* SSO/SSOW mbox IDs (range 0x600 - 0x7FF) */				\
-@@ -190,4 +191,21 @@ struct rsrc_detach {
- 	u8 cptlfs:1;
- };
- 
-+#define MSIX_VECTOR_INVALID	0xFFFF
-+#define MAX_RVU_BLKLF_CNT	256
-+
-+struct msix_offset_rsp {
-+	struct mbox_msghdr hdr;
-+	u16  npa_msixoff;
-+	u16  nix_msixoff;
-+	u8   sso;
-+	u8   ssow;
-+	u8   timlfs;
-+	u8   cptlfs;
-+	u16  sso_msixoff[MAX_RVU_BLKLF_CNT];
-+	u16  ssow_msixoff[MAX_RVU_BLKLF_CNT];
-+	u16  timlf_msixoff[MAX_RVU_BLKLF_CNT];
-+	u16  cptlf_msixoff[MAX_RVU_BLKLF_CNT];
-+};
-+
- #endif /* MBOX_H */
 diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index 39dc45d..8ac3524 100644
+index 8ac3524..40684c9 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.c
 +++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -24,6 +24,11 @@
- 
- static int rvu_get_hwvf(struct rvu *rvu, int pcifunc);
- 
-+static void rvu_set_msix_offset(struct rvu *rvu, struct rvu_pfvf *pfvf,
-+				struct rvu_block *block, int lf);
-+static void rvu_clear_msix_offset(struct rvu *rvu, struct rvu_pfvf *pfvf,
-+				  struct rvu_block *block, int lf);
-+
- /* Supported devices */
- static const struct pci_device_id rvu_id_table[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVID_OCTEONTX2_RVU_AF) },
-@@ -75,6 +80,45 @@ int rvu_alloc_rsrc(struct rsrc_bmap *rsrc)
- 	return id;
- }
- 
-+static int rvu_alloc_rsrc_contig(struct rsrc_bmap *rsrc, int nrsrc)
-+{
-+	int start;
-+
-+	if (!rsrc->bmap)
-+		return -EINVAL;
-+
-+	start = bitmap_find_next_zero_area(rsrc->bmap, rsrc->max, 0, nrsrc, 0);
-+	if (start >= rsrc->max)
-+		return -ENOSPC;
-+
-+	bitmap_set(rsrc->bmap, start, nrsrc);
-+	return start;
-+}
-+
-+static void rvu_free_rsrc_contig(struct rsrc_bmap *rsrc, int nrsrc, int start)
-+{
-+	if (!rsrc->bmap)
-+		return;
-+	if (start >= rsrc->max)
-+		return;
-+
-+	bitmap_clear(rsrc->bmap, start, nrsrc);
-+}
-+
-+static bool rvu_rsrc_check_contig(struct rsrc_bmap *rsrc, int nrsrc)
-+{
-+	int start;
-+
-+	if (!rsrc->bmap)
-+		return false;
-+
-+	start = bitmap_find_next_zero_area(rsrc->bmap, rsrc->max, 0, nrsrc, 0);
-+	if (start >= rsrc->max)
-+		return false;
-+
-+	return true;
-+}
-+
- void rvu_free_rsrc(struct rsrc_bmap *rsrc, int id)
+@@ -442,9 +442,10 @@ static int rvu_setup_msix_resources(struct rvu *rvu)
  {
- 	if (!rsrc->bmap)
-@@ -103,6 +147,26 @@ int rvu_alloc_bitmap(struct rsrc_bmap *rsrc)
+ 	struct rvu_hwinfo *hw = rvu->hw;
+ 	int pf, vf, numvfs, hwvf, err;
++	int nvecs, offset, max_msix;
+ 	struct rvu_pfvf *pfvf;
+-	int nvecs, offset;
+-	u64 cfg;
++	u64 cfg, phy_addr;
++	dma_addr_t iova;
+ 
+ 	for (pf = 0; pf < hw->total_pfs; pf++) {
+ 		cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_CFG(pf));
+@@ -523,6 +524,22 @@ static int rvu_setup_msix_resources(struct rvu *rvu)
+ 		}
+ 	}
+ 
++	/* HW interprets RVU_AF_MSIXTR_BASE address as an IOVA, hence
++	 * create a IOMMU mapping for the physcial address configured by
++	 * firmware and reconfig RVU_AF_MSIXTR_BASE with IOVA.
++	 */
++	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_CONST);
++	max_msix = cfg & 0xFFFFF;
++	phy_addr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_MSIXTR_BASE);
++	iova = dma_map_single(rvu->dev, (void *)phy_addr,
++			      max_msix * PCI_MSIX_ENTRY_SIZE,
++			      DMA_BIDIRECTIONAL);
++	if (dma_mapping_error(rvu->dev, iova))
++		return -ENOMEM;
++
++	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_MSIXTR_BASE, (u64)iova);
++	rvu->msix_base_iova = iova;
++
  	return 0;
  }
  
-+/* Get block LF's HW index from a PF_FUNC's block slot number */
-+int rvu_get_lf(struct rvu *rvu, struct rvu_block *block, u16 pcifunc, u16 slot)
-+{
-+	int lf;
-+	u16 match = 0;
-+
-+	spin_lock(&rvu->rsrc_lock);
-+	for (lf = 0; lf < block->lf.max; lf++) {
-+		if (block->fn_map[lf] == pcifunc) {
-+			if (slot == match) {
-+				spin_unlock(&rvu->rsrc_lock);
-+				return lf;
-+			}
-+			match++;
-+		}
-+	}
-+	spin_unlock(&rvu->rsrc_lock);
-+	return -ENODEV;
-+}
-+
- /* Convert BLOCK_TYPE_E to a BLOCK_ADDR_E.
-  * Some silicon variants of OcteonTX2 supports
-  * multiple blocks of same type.
-@@ -237,6 +301,16 @@ inline int rvu_get_pf(u16 pcifunc)
- 	return (pcifunc >> RVU_PFVF_PF_SHIFT) & RVU_PFVF_PF_MASK;
- }
- 
-+void rvu_get_pf_numvfs(struct rvu *rvu, int pf, int *numvfs, int *hwvf)
-+{
-+	u64 cfg;
-+
-+	/* Get numVFs attached to this PF and first HWVF */
-+	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_CFG(pf));
-+	*numvfs = (cfg >> 12) & 0xFF;
-+	*hwvf = cfg & 0xFFF;
-+}
-+
- static int rvu_get_hwvf(struct rvu *rvu, int pcifunc)
- {
- 	int pf, func;
-@@ -331,20 +405,150 @@ static void rvu_scan_block(struct rvu *rvu, struct rvu_block *block)
- 		pfvf = rvu_get_pfvf(rvu, (cfg >> 8) & 0xFFFF);
- 		rvu_update_rsrc_map(rvu, pfvf, block,
- 				    (cfg >> 8) & 0xFFFF, lf, true);
-+
-+		/* Set start MSIX vector for this LF within this PF/VF */
-+		rvu_set_msix_offset(rvu, pfvf, block, lf);
- 	}
- }
- 
-+static void rvu_check_min_msix_vec(struct rvu *rvu, int nvecs, int pf, int vf)
-+{
-+	int min_vecs;
-+
-+	if (!vf)
-+		goto check_pf;
-+
-+	if (!nvecs) {
-+		dev_warn(rvu->dev,
-+			 "PF%d:VF%d is configured with zero msix vectors, %d\n",
-+			 pf, vf - 1, nvecs);
-+	}
-+	return;
-+
-+check_pf:
-+	if (pf == 0)
-+		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
-+	else
-+		min_vecs = RVU_PF_INT_VEC_CNT;
-+
-+	if (!(nvecs < min_vecs))
-+		return;
-+	dev_warn(rvu->dev,
-+		 "PF%d is configured with too few vectors, %d, min is %d\n",
-+		 pf, nvecs, min_vecs);
-+}
-+
-+static int rvu_setup_msix_resources(struct rvu *rvu)
-+{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+	int pf, vf, numvfs, hwvf, err;
-+	struct rvu_pfvf *pfvf;
-+	int nvecs, offset;
-+	u64 cfg;
-+
-+	for (pf = 0; pf < hw->total_pfs; pf++) {
-+		cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_CFG(pf));
-+		/* If PF is not enabled, nothing to do */
-+		if (!((cfg >> 20) & 0x01))
-+			continue;
-+
-+		rvu_get_pf_numvfs(rvu, pf, &numvfs, &hwvf);
-+
-+		pfvf = &rvu->pf[pf];
-+		/* Get num of MSIX vectors attached to this PF */
-+		cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_MSIX_CFG(pf));
-+		pfvf->msix.max = ((cfg >> 32) & 0xFFF) + 1;
-+		rvu_check_min_msix_vec(rvu, pfvf->msix.max, pf, 0);
-+
-+		/* Alloc msix bitmap for this PF */
-+		err = rvu_alloc_bitmap(&pfvf->msix);
-+		if (err)
-+			return err;
-+
-+		/* Allocate memory for MSIX vector to RVU block LF mapping */
-+		pfvf->msix_lfmap = devm_kcalloc(rvu->dev, pfvf->msix.max,
-+						sizeof(u16), GFP_KERNEL);
-+		if (!pfvf->msix_lfmap)
-+			return -ENOMEM;
-+
-+		/* For PF0 (AF) firmware will set msix vector offsets for
-+		 * AF, block AF and PF0_INT vectors, so jump to VFs.
-+		 */
-+		if (!pf)
-+			goto setup_vfmsix;
-+
-+		/* Set MSIX offset for PF's 'RVU_PF_INT_VEC' vectors.
-+		 * These are allocated on driver init and never freed,
-+		 * so no need to set 'msix_lfmap' for these.
-+		 */
-+		cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_INT_CFG(pf));
-+		nvecs = (cfg >> 12) & 0xFF;
-+		cfg &= ~0x7FFULL;
-+		offset = rvu_alloc_rsrc_contig(&pfvf->msix, nvecs);
-+		rvu_write64(rvu, BLKADDR_RVUM,
-+			    RVU_PRIV_PFX_INT_CFG(pf), cfg | offset);
-+setup_vfmsix:
-+		/* Alloc msix bitmap for VFs */
-+		for (vf = 0; vf < numvfs; vf++) {
-+			pfvf =  &rvu->hwvf[hwvf + vf];
-+			/* Get num of MSIX vectors attached to this VF */
-+			cfg = rvu_read64(rvu, BLKADDR_RVUM,
-+					 RVU_PRIV_PFX_MSIX_CFG(pf));
-+			pfvf->msix.max = (cfg & 0xFFF) + 1;
-+			rvu_check_min_msix_vec(rvu, pfvf->msix.max, pf, vf + 1);
-+
-+			/* Alloc msix bitmap for this VF */
-+			err = rvu_alloc_bitmap(&pfvf->msix);
-+			if (err)
-+				return err;
-+
-+			pfvf->msix_lfmap =
-+				devm_kcalloc(rvu->dev, pfvf->msix.max,
-+					     sizeof(u16), GFP_KERNEL);
-+			if (!pfvf->msix_lfmap)
-+				return -ENOMEM;
-+
-+			/* Set MSIX offset for HWVF's 'RVU_VF_INT_VEC' vectors.
-+			 * These are allocated on driver init and never freed,
-+			 * so no need to set 'msix_lfmap' for these.
-+			 */
-+			cfg = rvu_read64(rvu, BLKADDR_RVUM,
-+					 RVU_PRIV_HWVFX_INT_CFG(hwvf + vf));
-+			nvecs = (cfg >> 12) & 0xFF;
-+			cfg &= ~0x7FFULL;
-+			offset = rvu_alloc_rsrc_contig(&pfvf->msix, nvecs);
-+			rvu_write64(rvu, BLKADDR_RVUM,
-+				    RVU_PRIV_HWVFX_INT_CFG(hwvf + vf),
-+				    cfg | offset);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static void rvu_free_hw_resources(struct rvu *rvu)
- {
+@@ -531,7 +548,8 @@ static void rvu_free_hw_resources(struct rvu *rvu)
  	struct rvu_hwinfo *hw = rvu->hw;
  	struct rvu_block *block;
-+	struct rvu_pfvf  *pfvf;
- 	int id;
+ 	struct rvu_pfvf  *pfvf;
+-	int id;
++	int id, max_msix;
++	u64 cfg;
  
--	/* Free all bitmaps */
-+	/* Free block LF bitmaps */
+ 	/* Free block LF bitmaps */
  	for (id = 0; id < BLK_COUNT; id++) {
- 		block = &hw->block[id];
- 		kfree(block->lf.bmap);
+@@ -549,6 +567,15 @@ static void rvu_free_hw_resources(struct rvu *rvu)
+ 		pfvf = &rvu->hwvf[id];
+ 		kfree(pfvf->msix.bmap);
  	}
 +
-+	/* Free MSIX bitmaps */
-+	for (id = 0; id < hw->total_pfs; id++) {
-+		pfvf = &rvu->pf[id];
-+		kfree(pfvf->msix.bmap);
-+	}
-+
-+	for (id = 0; id < hw->total_vfs; id++) {
-+		pfvf = &rvu->hwvf[id];
-+		kfree(pfvf->msix.bmap);
-+	}
++	/* Unmap MSIX vector base IOVA mapping */
++	if (!rvu->msix_base_iova)
++		return;
++	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_CONST);
++	max_msix = cfg & 0xFFFFF;
++	dma_unmap_single(rvu->dev, rvu->msix_base_iova,
++			 max_msix * PCI_MSIX_ENTRY_SIZE,
++			 DMA_BIDIRECTIONAL);
  }
  
  static int rvu_setup_hw_resources(struct rvu *rvu)
-@@ -500,6 +704,12 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
- 	if (!rvu->hwvf)
- 		return -ENOMEM;
- 
-+	spin_lock_init(&rvu->rsrc_lock);
-+
-+	err = rvu_setup_msix_resources(rvu);
-+	if (err)
-+		return err;
-+
- 	for (blkid = 0; blkid < BLK_COUNT; blkid++) {
- 		block = &hw->block[blkid];
- 		if (!block->lf.bmap)
-@@ -517,8 +727,6 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
- 		rvu_scan_block(rvu, block);
- 	}
- 
--	spin_lock_init(&rvu->rsrc_lock);
--
- 	return 0;
- }
- 
-@@ -604,6 +812,9 @@ static void rvu_detach_block(struct rvu *rvu, int pcifunc, int blktype)
- 
- 		/* Free the resource */
- 		rvu_free_rsrc(&block->lf, lf);
-+
-+		/* Clear MSIX vector offset for this LF */
-+		rvu_clear_msix_offset(rvu, pfvf, block, lf);
- 	}
- }
- 
-@@ -697,6 +908,9 @@ static void rvu_attach_block(struct rvu *rvu, int pcifunc,
- 			    (lf << block->lfshift), cfg);
- 		rvu_update_rsrc_map(rvu, pfvf, block,
- 				    pcifunc, lf, true);
-+
-+		/* Set start MSIX vector for this LF within this PF/VF */
-+		rvu_set_msix_offset(rvu, pfvf, block, lf);
- 	}
- }
- 
-@@ -872,6 +1086,119 @@ static int rvu_mbox_handler_ATTACH_RESOURCES(struct rvu *rvu,
- 	return err;
- }
- 
-+static u16 rvu_get_msix_offset(struct rvu *rvu, struct rvu_pfvf *pfvf,
-+			       int blkaddr, int lf)
-+{
-+	u16 vec;
-+
-+	if (lf < 0)
-+		return MSIX_VECTOR_INVALID;
-+
-+	for (vec = 0; vec < pfvf->msix.max; vec++) {
-+		if (pfvf->msix_lfmap[vec] == MSIX_BLKLF(blkaddr, lf))
-+			return vec;
-+	}
-+	return MSIX_VECTOR_INVALID;
-+}
-+
-+static void rvu_set_msix_offset(struct rvu *rvu, struct rvu_pfvf *pfvf,
-+				struct rvu_block *block, int lf)
-+{
-+	u16 nvecs, vec, offset;
-+	u64 cfg;
-+
-+	cfg = rvu_read64(rvu, block->addr, block->msixcfg_reg |
-+			 (lf << block->lfshift));
-+	nvecs = (cfg >> 12) & 0xFF;
-+
-+	/* Check and alloc MSIX vectors, must be contiguous */
-+	if (!rvu_rsrc_check_contig(&pfvf->msix, nvecs))
-+		return;
-+
-+	offset = rvu_alloc_rsrc_contig(&pfvf->msix, nvecs);
-+
-+	/* Config MSIX offset in LF */
-+	rvu_write64(rvu, block->addr, block->msixcfg_reg |
-+		    (lf << block->lfshift), (cfg & ~0x7FFULL) | offset);
-+
-+	/* Update the bitmap as well */
-+	for (vec = 0; vec < nvecs; vec++)
-+		pfvf->msix_lfmap[offset + vec] = MSIX_BLKLF(block->addr, lf);
-+}
-+
-+static void rvu_clear_msix_offset(struct rvu *rvu, struct rvu_pfvf *pfvf,
-+				  struct rvu_block *block, int lf)
-+{
-+	u16 nvecs, vec, offset;
-+	u64 cfg;
-+
-+	cfg = rvu_read64(rvu, block->addr, block->msixcfg_reg |
-+			 (lf << block->lfshift));
-+	nvecs = (cfg >> 12) & 0xFF;
-+
-+	/* Clear MSIX offset in LF */
-+	rvu_write64(rvu, block->addr, block->msixcfg_reg |
-+		    (lf << block->lfshift), cfg & ~0x7FFULL);
-+
-+	offset = rvu_get_msix_offset(rvu, pfvf, block->addr, lf);
-+
-+	/* Update the mapping */
-+	for (vec = 0; vec < nvecs; vec++)
-+		pfvf->msix_lfmap[offset + vec] = 0;
-+
-+	/* Free the same in MSIX bitmap */
-+	rvu_free_rsrc_contig(&pfvf->msix, nvecs, offset);
-+}
-+
-+static int rvu_mbox_handler_MSIX_OFFSET(struct rvu *rvu, struct msg_req *req,
-+					struct msix_offset_rsp *rsp)
-+{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+	u16 pcifunc = req->hdr.pcifunc;
-+	struct rvu_pfvf *pfvf;
-+	int lf, slot;
-+
-+	pfvf = rvu_get_pfvf(rvu, pcifunc);
-+	if (!pfvf->msix.bmap)
-+		return 0;
-+
-+	/* Set MSIX offsets for each block's LFs attached to this PF/VF */
-+	lf = rvu_get_lf(rvu, &hw->block[BLKADDR_NPA], pcifunc, 0);
-+	rsp->npa_msixoff = rvu_get_msix_offset(rvu, pfvf, BLKADDR_NPA, lf);
-+
-+	lf = rvu_get_lf(rvu, &hw->block[BLKADDR_NIX0], pcifunc, 0);
-+	rsp->nix_msixoff = rvu_get_msix_offset(rvu, pfvf, BLKADDR_NIX0, lf);
-+
-+	rsp->sso = pfvf->sso;
-+	for (slot = 0; slot < rsp->sso; slot++) {
-+		lf = rvu_get_lf(rvu, &hw->block[BLKADDR_SSO], pcifunc, slot);
-+		rsp->sso_msixoff[slot] =
-+			rvu_get_msix_offset(rvu, pfvf, BLKADDR_SSO, lf);
-+	}
-+
-+	rsp->ssow = pfvf->ssow;
-+	for (slot = 0; slot < rsp->ssow; slot++) {
-+		lf = rvu_get_lf(rvu, &hw->block[BLKADDR_SSOW], pcifunc, slot);
-+		rsp->ssow_msixoff[slot] =
-+			rvu_get_msix_offset(rvu, pfvf, BLKADDR_SSOW, lf);
-+	}
-+
-+	rsp->timlfs = pfvf->timlfs;
-+	for (slot = 0; slot < rsp->timlfs; slot++) {
-+		lf = rvu_get_lf(rvu, &hw->block[BLKADDR_TIM], pcifunc, slot);
-+		rsp->timlf_msixoff[slot] =
-+			rvu_get_msix_offset(rvu, pfvf, BLKADDR_TIM, lf);
-+	}
-+
-+	rsp->cptlfs = pfvf->cptlfs;
-+	for (slot = 0; slot < rsp->cptlfs; slot++) {
-+		lf = rvu_get_lf(rvu, &hw->block[BLKADDR_CPT0], pcifunc, slot);
-+		rsp->cptlf_msixoff[slot] =
-+			rvu_get_msix_offset(rvu, pfvf, BLKADDR_CPT0, lf);
-+	}
-+	return 0;
-+}
-+
- static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
- 				struct mbox_msghdr *req)
- {
 diff --git a/drivers/soc/marvell/octeontx2/rvu.h b/drivers/soc/marvell/octeontx2/rvu.h
-index 0f76704..7435e83 100644
+index 7435e83..92c2022 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.h
 +++ b/drivers/soc/marvell/octeontx2/rvu.h
-@@ -65,6 +65,11 @@ struct rvu_pfvf {
- 	u16		ssow;
- 	u16		cptlfs;
- 	u16		timlfs;
-+
-+	/* Block LF's MSIX vector info */
-+	struct rsrc_bmap msix;      /* Bitmap for MSIX vector alloc */
-+#define MSIX_BLKLF(blkaddr, lf) (((blkaddr) << 8) | ((lf) & 0xFF))
-+	u16		 *msix_lfmap; /* Vector to block LF mapping */
+@@ -99,6 +99,7 @@ struct rvu {
+ 	u16			num_vec;
+ 	char			*irq_name;
+ 	bool			*irq_allocated;
++	dma_addr_t		msix_base_iova;
  };
  
- struct rvu_hwinfo {
-@@ -126,7 +131,9 @@ void rvu_free_rsrc(struct rsrc_bmap *rsrc, int id);
- int rvu_rsrc_free_count(struct rsrc_bmap *rsrc);
- int rvu_get_pf(u16 pcifunc);
- struct rvu_pfvf *rvu_get_pfvf(struct rvu *rvu, int pcifunc);
-+void rvu_get_pf_numvfs(struct rvu *rvu, int pf, int *numvfs, int *hwvf);
- bool is_block_implemented(struct rvu_hwinfo *hw, int blkaddr);
-+int rvu_get_lf(struct rvu *rvu, struct rvu_block *block, u16 pcifunc, u16 slot);
- int rvu_get_blkaddr(struct rvu *rvu, int blktype, u16 pcifunc);
- int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero);
- 
-diff --git a/drivers/soc/marvell/octeontx2/rvu_struct.h b/drivers/soc/marvell/octeontx2/rvu_struct.h
-index 77ac751..f61c862 100644
---- a/drivers/soc/marvell/octeontx2/rvu_struct.h
-+++ b/drivers/soc/marvell/octeontx2/rvu_struct.h
-@@ -58,6 +58,7 @@ enum rvu_af_int_vec_e {
- 	RVU_AF_INT_VEC_PFME   = 0x2,
- 	RVU_AF_INT_VEC_GEN    = 0x3,
- 	RVU_AF_INT_VEC_MBOX   = 0x4,
-+	RVU_AF_INT_VEC_CNT    = 0x5,
- };
- 
- /**
-@@ -71,6 +72,7 @@ enum rvu_pf_int_vec_e {
- 	RVU_PF_INT_VEC_VFPF_MBOX0 = 0x4,
- 	RVU_PF_INT_VEC_VFPF_MBOX1 = 0x5,
- 	RVU_PF_INT_VEC_AFPF_MBOX  = 0x6,
-+	RVU_PF_INT_VEC_CNT	  = 0x7,
- };
- 
- #endif /* RVU_STRUCT_H */
+ static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
 -- 
 2.7.4
 
