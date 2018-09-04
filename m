@@ -2,207 +2,327 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CF8C4321E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E10DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7038020658
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248A020658
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:32:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="gsMAMDno"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7038020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZR6hVkvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248A020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeIDFxZ (ORCPT
+        id S1726205AbeIDFzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 01:53:25 -0400
-Received: from mail-bl2nam02on0082.outbound.protection.outlook.com ([104.47.38.82]:42369
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725837AbeIDFxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 01:53:25 -0400
+        Tue, 4 Sep 2018 01:55:20 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37074 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbeIDFzU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 01:55:20 -0400
+Received: by mail-oi0-f65.google.com with SMTP id p84-v6so3756396oic.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 18:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6tObxVukwyqWeihVatFhIVvDkEbDhPcuBsbQp6yoncs=;
- b=gsMAMDnoOTXUa22HtmP9RaqlzsStK/1xpESQXHE+mV7BACwqppy91w7w/fX2Ne9cN2BL2XNG3JefaUyshwnoMtaqhtpqPw8I3FrjJ064UeXpfdI2W7UKwjnKNUGgQOQfaQYQNEObeCANjM8SVw+jfs6HN6uNC8Wtgth4ap3KeoA=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
- SN6PR12MB2687.namprd12.prod.outlook.com (2603:10b6:805:6f::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.18; Tue, 4 Sep 2018 01:30:03 +0000
-From:   Brijesh Singh <brijesh.singh@amd.com>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v4 4/4] x86/kvm: use __decrypted attribute in shared variables
-Date:   Mon,  3 Sep 2018 20:29:42 -0500
-Message-Id: <1536024582-25700-5-git-send-email-brijesh.singh@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536024582-25700-1-git-send-email-brijesh.singh@amd.com>
-References: <1536024582-25700-1-git-send-email-brijesh.singh@amd.com>
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QQ+dQC1F4sRF6yZA1OQPtlKjVybASrl3Pyh/YTqBWM8=;
+        b=ZR6hVkvLkQ0lioeljFYHqIVeY0f5LmYCFh2plhMIxH7zOWXMk52DywS/D78ezdq5vM
+         jeyRv9JCDPIRpAGoY5z6MjgY1GDb0w2IWlK9/05036E/JMHvYui67+LCvV65gu6m4Ru7
+         4/XvjrBZLa1g4NvWVanSiIyKkGmFDfQXb7GYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QQ+dQC1F4sRF6yZA1OQPtlKjVybASrl3Pyh/YTqBWM8=;
+        b=S3o7Yvz+HRb34vfzf4ziICJB2Iy57BlVEJ3ip7wYaFZLo4V+60s22S8aiI9ZAqUVOl
+         dQmIbsiLOyBZ0Rq49Gx2yyHALZzFa6N6KBaQn7XkW8RHN9t2Yo0iUUMOJKdZjXHDqftg
+         6Zfhy/3hQs/QycM5f8qBjHPZYZsVAYaAJQpKSKPewZ63piRGSMqEBK7IMwvad3qB8hpH
+         siRk5LESg1ul1EsQgxtWCyQv8HcQotXoqpBf9v4M4CYy5c+LLK/893ZCkFrMzMqJ35Ll
+         IrgG8MZ0Y1KUNQu9hK4THTfmGurd+QwFaiIHChQ/TEcqo6vttP6b7k48SmWehcF/MKDH
+         aBGA==
+X-Gm-Message-State: APzg51CJNJuEKusIjlxrqaDcqeVHDSD06Lop8flYnO5xuMUKrsSFBdfs
+        omugEc9a3rZmlGplZhYGenGJeHjgD6k3rtO2WEXltQ==
+X-Google-Smtp-Source: ANB0VdbANUNZzDAcZ9AXu3URXgw3KEc5C8H3mukyeCj87HWLOPcyP+1S2aYikNt+oEO6FBgFlCk/YUJPkwnXMbef8z4=
+X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr23509180oiy.219.1536024755841;
+ Mon, 03 Sep 2018 18:32:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: BN6PR20CA0066.namprd20.prod.outlook.com
- (2603:10b6:404:151::28) To SN6PR12MB2687.namprd12.prod.outlook.com
- (2603:10b6:805:6f::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 57f75fe8-c8a0-4a95-f7a5-08d61205f12f
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2687;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2687;3:5fM6m96X8o8lYB3XQgeIW6SVVRUTzfSGTiJxDAKXjPv1NIwsX+wPxA4uk4sOb4I9x/yxfNWmSQOWGArc4wvghutLa9nnA4dCK9i+X31xqTJkw/wSwsiBTZGMGiHkFReD0WYqRz7WIu1KUBdRaKx7C/orqfWQ3ZA4CVQjealw1isqiVU+YshZ2fZV0m/fHHaDe5MyBmg3RbP4vR+8BZ9GVAd0lnOHh5C7vyU3BikAvkMVYRj6ZfBcdBOSuXqWgcUd;25:iGqbZIY5wljqHETjuhtumXICAoXdXNTGzIkkV1oZWIK3vUZsz7TpjrHFcT21TO0Yasqb20RTPH4ei58WZTWVOTvLAWH6MB0R0ZeUVf929eY2FoDhCowbrUQgxGBlnlam6VOmnKnUSte29vjZ8n11pLvUAk2WEAWXiOQ9Xod38VO19C73/cI5sl/9SAoaLLARnmQVmyRIx6MlWdJ+QtaZRX5zUYB8SXz+w+6Dt0Zjqcp2fr2mF2MAfBilojFg785UllSInuax4VAaOsoR0BcfEWzksj9K8lKjawf0LdIAzv8VLNV78C+kVmEr2pnpH13IdNcMC+zQ8uGpLBa+sI2XAw==;31:xgpPtl2eTGhGd05MNcKOtrtip2+2D8WHjLOcypu63ko7D9v3FWyOt6qIr/sVQa3byk5fkNI84lHiW0eSY1uuYFG5HZgjuZFWObJ1yVrj/st+TywUV79K6V8GXdA3rj9eX22JP5Sy9+4qnYTwnnWbhz5yJ7EMZKV4r8+rrf4Al3MtdkC1ch6qxoJXYrTjT77jRiLWjjLVfKCVYFfSIv4rBz4jIdywAQ2DjCFSHFCPOLw=
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2687:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2687;20:z8JlcFiIBC0adFU6b0BQPEVHQBGozBQsFn0QXOHP44mzOEhS0sLakbso1fZDHz7c6w0VaHBW/CcPaj+lbkNBLFTul+ofgKnx/1ueC6Z59WtnqipZt3LjVZPuJwx8oREW3NilL1TJ04P1ImiM9FaFQiQkdoX8YhEmkkLJwDQO0xkXVw4rsv9HqFPhZQq/CzX7TDhkSfWcIuAhgfrHisTEQ6c8MYftobMdAaqfXcR5KB6TK9f0YUkM9RNP5jNzz721yDkfGJiwR3pW37/5mo9tNf1I7LkgR7E+HYmLc+3NiU39IKOt8MyJ0eXPf1YXWo9Twll1mZplv362vPlJeH6oC6P55U52S6C5aS4hPZk6P5vr3FLNuGOXYemmWfXvxb1zvA8DHkVgyaAN8rX5uNuxC6DmGUPwdQDOqhcOwOJrDXDXkvbWkT7p7rGE8ylHMPOamAKHsvBbQgJKVAxSzgTyS7p9U3vMgeGs1fFKU/4sVuqQWX9pNkNlSlLWeYmm/g9T;4:Om5dtLG7qJAaWqEeWejCEGcAYERzFUfpBBfmckPHC74H6p6u0Pk2blszm9mDnwcBozjR8bFS4QILmYiAo7DJGgi9mkpDOXIkgZL7FwojfcY5azdvtW6zqjbWNYiEw8pu7Oh9meLIbije725BPbTJVwXjn9jRj9pcTnrZawvgZ8Iz4RUd55OaR4iYh5Nvfb0JWziEZs4kzCfVxwHU3NK8QbOznatWXQaksYEG89H77r0diPg7kJ4giNHLNRZrp07wrf8I2lbzbDK8PyBsdkfp/iaelJGJ0A89qd4nXu5HrLPk+DgARUABwZ7OF371Nj8Xqq2otHzYgvvsOH6rNaq7P4xcTwiCAbStPWellTs1DzJzGSkpLf5eYKmQ98IPtU11
-X-Microsoft-Antispam-PRVS: <SN6PR12MB2687AF6F9455FD2DCBC783CDE5030@SN6PR12MB2687.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110)(228905959029699);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699016);SRVR:SN6PR12MB2687;BCL:0;PCL:0;RULEID:;SRVR:SN6PR12MB2687;
-X-Forefront-PRVS: 0785459C39
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(376002)(346002)(199004)(189003)(14444005)(6116002)(105586002)(76176011)(7696005)(47776003)(23676004)(66066001)(68736007)(52116002)(2870700001)(53936002)(53416004)(2906002)(316002)(36756003)(3846002)(97736004)(6486002)(50226002)(4326008)(25786009)(54906003)(106356001)(81166006)(81156014)(8936002)(478600001)(2616005)(6666003)(50466002)(86362001)(8676002)(44832011)(5660300001)(186003)(7736002)(305945005)(16526019)(386003)(486006)(476003)(26005)(446003)(11346002)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2687;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjEyTUIyNjg3OzIzOm9XMXlYQmNmaUUwWG4yRHNpM1R6ZDdXSmR5?=
- =?utf-8?B?WE00T05oeitsL2ZRb3pJMHhOWFYvelpUYkFVSnBQc1huaEhETjBlWE9VK3B1?=
- =?utf-8?B?bEN3bTZCRXVtelJudTBaYXpTU2NPT09yS1AzOWFlcHpZQ2Vyd0RxSkljdndQ?=
- =?utf-8?B?QjhTb0lFbFZ5cnpwdzdMTXFaSlQvdEhJZVVEMURPSGRXeWNSZzBjT0IwRUFH?=
- =?utf-8?B?ZUxFQTNYY2huUDlZQjhHYUhWUVZtVUVSdGgyaEpnYnp2bXV1RCtha0VoSlNo?=
- =?utf-8?B?MFJuZVI1clIrNXdZcU9kZWZrT1Z1MytVWEdMaHlzZU9nQnRSb2NQRTVWWE9B?=
- =?utf-8?B?Wm50ME5ZekdkVitDTXMrU09DWlJhWjlwMGhQZ2FycTlIUk9mSXh2VDdLRHR6?=
- =?utf-8?B?a3QwSERzdlVxUFIyamVCN3JMNVhWclhpTGNLZDJmK0FwU0ZES2hJMWJhSUpI?=
- =?utf-8?B?Vk1pUHY4M0tlcHVpZEdWdkdmYXhtWlpCM1FxK29DbmZENm1WTTFwY2lST3JF?=
- =?utf-8?B?Njh3M1IyUnM0cTVEZ0ZKVUhpeTJHMzRvL2xFaS84ZXZFSFF5YzRudGM0cHFW?=
- =?utf-8?B?MmEyS08vMjNFbyttcmZnc1NOZk1MZ2djMTczTlg5bkRteTdRNGE5eXNIZURx?=
- =?utf-8?B?aDJiVENUN1VrcnE2cGVEcTZzRGFUMnpwRmJuNEN3YllmTU1zREpCZDBSOHUr?=
- =?utf-8?B?WXJzMmdBcTNhdm5ETzhMYVpwbkg1MmpkY3RsS1lnRGNGOUE5TkZQZCtuRHJB?=
- =?utf-8?B?NHEyV212cWQxQzdUcWd0ZWF3TS94WUppK2JpMkwzSXJSTEE1WEMvK25TYUc1?=
- =?utf-8?B?a0RoR01oblh3Y25SLzBydmdtK1NkREtJSHMzMGJtQ1F6c1JuVHAzNzRONElj?=
- =?utf-8?B?TlFtWkhIcXdmU0dqd3puTEN6TGNvdXdSZVNxcmlYYURtWUZlZG5YWlRXSGFS?=
- =?utf-8?B?ZWNTMnkzMFhhTlZaelowVWhxd29KYVhBSzErSXBic0R2VzJ0MlBNdW4zWFA2?=
- =?utf-8?B?azZkRVBrNjZ2STBhN25oVFNYZ202VXRhMjVjU0lpNVRlc2lDcURHZHBiYitv?=
- =?utf-8?B?eVhCZExkN1VTbjJUdHZNU1ZuejUwQ1M5QVFxaVdPVVBNMmRXalZxM3hYTFp1?=
- =?utf-8?B?b1krQWxZOHo3U0RzaGJxK2pUdWYzVkF3Rko4ZUdTQVZ5Y0FuRVhxUFFkNmtU?=
- =?utf-8?B?d1ZWTWJ4aWpqZWxBWVF2bEJVbERoSnZTTFdONDl3S1VVY3hkVGh3eUdDUGVl?=
- =?utf-8?B?UnFVR1RxejlxZTlGWnd5QW9ySWlkTFJ4YjB4MW9oNGNaR1dXM2lyZlhiUXV6?=
- =?utf-8?B?N2plbU5UblMwMkIzbVVqZjZxTUNLbUFQOGpubWpLdGJ2REdsdTN1L3dPSk9k?=
- =?utf-8?B?R1BDWFBvZHdUQUlDNWZ4UHFxTFdNK2h3SU5mand2Z1JmTXNIVitDanJ1ckhW?=
- =?utf-8?B?Z282SnljeDd1SVF5d0tNeE94UTh1VU5ucnVvcjN1eTZRWWMzaXdFYnRoRE9W?=
- =?utf-8?B?TGZ2cVFGUVNBVXZtbFF2eEtkN1ZWUmxWVVRTU0pOdEtDbytTWENLVitOL0g0?=
- =?utf-8?B?MXlvYXplaEJJSklsY2JlT3B5RVNIMERrTTl4Q2tET2NGbitzUXJDTjBYeTJ6?=
- =?utf-8?Q?mrOiaOo4KbrT/oQbyZVf?=
-X-Microsoft-Antispam-Message-Info: 4XxUlP6/MyWIvNWa9LDxTFpUkKd9x0UT0mI+G5mpWGJVn4irVl2LJH5cUR8e4EYDV75cmqDNJ3yTC8ISCuGq/sqS/NrKD85LIn+B1HDpETY/zqABbbA9l+cec4K6W9puaYCkfpntF54I1oMSyPmW6UBFqXTnz52PBloKqlEd8cLECKG8MERDrnbdYV92qjBIIQT+vzIAil0CKheU+udi4tOWE5OwEyRB6pvlaIsDMAnqI/z0hZNUhxRnvaBTCrq414ZHBdPAGiGdxk8p+BwWC7KM1rLoOmBFlPezOMkWcnFswPANXqCqAocfe+BufRImB9yY4TQjzQrr3Sb6+AIX/51LTwmJ4zzcdI9HLWZlqSc=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2687;6:oW38tdx5MQBwrC5pBHYn79/DqDhkzDfcAYmT0SqkvKznV7cgnHNNP5YKjjerQFHU6PB7UtYei5eIJgBWpSM2QI685v/9hikb6Gmbpd1g/eQO9P9/r5UNP9nXJvp9qTUr7Z6AI5wRSY6pNsB39GAJdb0NY3EW978MFL05qReiXwjGeL6X9EyEXBnmuEhnZuAdBgB5qKu9x5DtMt18NP6ht04+pqK95DLhpcaPCbko7RNfZ9ti/coTMEuEL2bGKl95/lzrBiCVpcVqqJYmGLwwcImaw7Y4wZDUxgwP95gSJ4ohFJpJX9KMvp4UYk3bT54y0yNhWg3Bj5RXGprZUiby94eD7RIIPVf4a2/dmgO59m6oRoMKFJsYgs4oy+wepa5YB0YGZzPTsqZNgEs47V9e9FBx7uitigvW4OGH4FPJxITOkvuljRK002SSoGn/WOymyWApSzjh07n7yHlc3tC89w==;5:iujXbbr+Km3KO9ac6k/CBLQ4PNCJyFxQB0jTEv8UaxDhZhTuOhMoRtjpwfmytsPz0mLfFzgQQMdqWKtpCqxleYSUg99FZIvKs4mE5EZ7FRzt6iePk+RF0sfuYOCevO34+0dFMiKQ4ia7tShiyPX88FyRw535KhuAq7WN8fv3gT4=;7:39aJcW+slZR41eUGCsJ2ruCIp7cMToqDN3CQ/sbEScvelZ8ayMhKh+uPtcnTcK96CiiVqJb7wV+BrF9N/GPqUqg11jUcpSX+VxUF5HuBlohxKDMUs96h0zACIspor3ojg3g0I2j9SO1iXj1qZ4T/41V8wR4k0bqzAVOMJsDWZ3iKAzGrcrvCl2W/duOiYl08fwDqY58KqHrGsYd5VyEVLqF8M8y7qV/x33mDQoOCEkDeg9CSoE7prLc/BDsTP+17
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2687;20:fjyHXe2W6jDd9SuJiv47tAxOqosQYx7pmJ4bU3iEaa08tjly/rXGECpxujr78+9y9BT9WuBTC+x23D0FmvjVZkQ+E4lntJ0YW1s9OMYv0B/sME52UDeGtd5Qii0qxKZz8K+LRLBTjRjIMbHOmClnfBKf5VXHVHuWb/EpRIAiE0DfAu39zna9bEDGX9uG3rsSV2OXJk511ZT6SjO2hJuJaTQ1K8Vf+vJlcLOZ8zAAaiPi8PQZoEWw1tmTXEWt9Vy2
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2018 01:30:03.9936 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57f75fe8-c8a0-4a95-f7a5-08d61205f12f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2687
+Received: by 2002:a9d:1d28:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 18:32:35 -0700 (PDT)
+In-Reply-To: <ef266d4a-ba0e-cba6-ae30-ebbf730e28a2@gmail.com>
+References: <e6d4e7be537a4e4d6fce26c6d446703b1910eab9.1535700092.git.baolin.wang@linaro.org>
+ <ef266d4a-ba0e-cba6-ae30-ebbf730e28a2@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 4 Sep 2018 09:32:35 +0800
+Message-ID: <CAMz4ku+h6JmCPDwMqgwm1b7L1dyDfPCoRU+UCweW_tMV0aiiCQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/2] leds: core: Introduce LED pattern trigger
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit: 368a540e0232 (x86/kvmclock: Remove memblock dependency)
-caused SEV guest regression. When SEV is active, we map the shared
-variables (wall_clock and hv_clock_boot) with C=0 to ensure that both
-the guest and the hypervisor are able to access the data. To map the
-variables we use kernel_physical_mapping_init() to split the large pages,
-but splitting large pages requires allocating a new PMD, which fails now
-that kvmclock initialization is called early during boot.
+Hi Jacek,
 
-Recently we added a special .data..decrypted section to hold the shared
-variables. This section is mapped with C=0 early during boot. Use
-__decrypted attribute to put the wall_clock and hv_clock_boot in
-.data..decrypted section so that they are mapped with C=0.
+On 4 September 2018 at 02:58, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> Thank you for the update.
+>
+> Please find my remarks below.
+>
+> On 08/31/2018 09:52 AM, Baolin Wang wrote:
+>> This patch adds one new led trigger that LED device can configure
+>> the software or hardware pattern and trigger it.
+>>
+>> Consumers can write 'pattern' file to enable the software pattern
+>> which alters the brightness for the specified duration with one
+>> software timer.
+>>
+>> Moreover consumers can write 'hw_pattern' file to enable the hardware
+>> pattern for some LED controllers which can autonomously control
+>> brightness over time, according to some preprogrammed hardware
+>> patterns.
+>>
+>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v6:
+>>  - Improve commit message.
+>>  - Optimize the description of the hw_pattern file.
+>>  - Simplify some logics.
+>>
+>> Changes from v5:
+>>  - Add one 'hw_pattern' file for hardware patterns.
+>>
+>> Changes from v4:
+>>  - Change the repeat file to return the originally written number.
+>>  - Improve comments.
+>>  - Fix some build warnings.
+>>
+>> Changes from v3:
+>>  - Reset pattern number to 0 if user provides incorrect pattern string.
+>>  - Support one pattern.
+>>
+>> Changes from v2:
+>>  - Remove hardware_pattern boolen.
+>>  - Chnage the pattern string format.
+>>
+>> Changes from v1:
+>>  - Use ATTRIBUTE_GROUPS() to define attributes.
+>>  - Introduce hardware_pattern flag to determine if software pattern
+>>  or hardware pattern.
+>>  - Re-implement pattern_trig_store_pattern() function.
+>>  - Remove pattern_get() interface.
+>>  - Improve comments.
+>>  - Other small optimization.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-trigger-pattern    |   44 +++
+>>  drivers/leds/trigger/Kconfig                       |    7 +
+>>  drivers/leds/trigger/Makefile                      |    1 +
+>>  drivers/leds/trigger/ledtrig-pattern.c             |  337 ++++++++++++++++++++
+>>  include/linux/leds.h                               |   16 +
+>>  5 files changed, 405 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>>  create mode 100644 drivers/leds/trigger/ledtrig-pattern.c
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> new file mode 100644
+>> index 0000000..f4749d1
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
+>> @@ -0,0 +1,44 @@
+>> +What:                /sys/class/leds/<led>/pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a software pattern for the LED, that supports altering
+>> +             the brightness for the specified duration with one software
+>> +             timer.
+>> +
+>> +             The pattern is given by a series of tuples, of brightness and
+>> +             duration (ms). The LED is expected to traverse the series and
+>> +             each brightness value for the specified duration. Duration of
+>> +             0 means brightness should immediately change to new value.
+>> +
+>> +             The format of the software pattern values should be:
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +             duration_3 ...".
+>> +
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the LED, for LED hardware that
+>> +             supports autonomously controlling brightness over time, according
+>> +             to some preprogrammed hardware patterns.
+>> +
+>> +             Since different LED hardware can have different semantics of
+>> +             hardware patterns, each driver is expected to provide its own
+>> +             description for the hardware patterns as below.
+>
+> And I would cut this description here.
+>
+>> +             For Spreadtrum SC27XX LED controller, it only supports 4 hardware
+>> +             patterns to configure the low time, rise time, high time and fall
+>> +             time for the breathing mode, and each stage duration unit is 125ms.
+>> +             So the format of the hardware pattern values should be:
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +              duration_3 brightness_4 duration_4".
+>
+> This part should go to the separate ABI documentation file, related to
+> the driver for Spreadtrum SC27XX.
 
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kvm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
----
- arch/x86/kernel/kvmclock.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+Ah, sure. Will update in v8. Thanks.
 
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 1e67646..08f5f8a 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -28,6 +28,7 @@
- #include <linux/sched/clock.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
-+#include <linux/set_memory.h>
- 
- #include <asm/hypervisor.h>
- #include <asm/mem_encrypt.h>
-@@ -61,8 +62,8 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
- 	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
- 
- static struct pvclock_vsyscall_time_info
--			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
--static struct pvclock_wall_clock wall_clock;
-+			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __decrypted __aligned(PAGE_SIZE);
-+static struct pvclock_wall_clock wall_clock __decrypted;
- static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
- 
- static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
-@@ -267,10 +268,29 @@ static int kvmclock_setup_percpu(unsigned int cpu)
- 		return 0;
- 
- 	/* Use the static page for the first CPUs, allocate otherwise */
--	if (cpu < HVC_BOOT_ARRAY_SIZE)
-+	if (cpu < HVC_BOOT_ARRAY_SIZE) {
- 		p = &hv_clock_boot[cpu];
--	else
--		p = kzalloc(sizeof(*p), GFP_KERNEL);
-+	} else {
-+		int rc;
-+		unsigned int sz = sizeof(*p);
-+
-+		if (sev_active())
-+			sz = PAGE_ALIGN(sz);
-+
-+		p = kzalloc(sz, GFP_KERNEL);
-+
-+		/*
-+		 * The physical address of per-cpu variable will be shared with
-+		 * the hypervisor. Let's clear the C-bit before we assign the
-+		 * memory to per_cpu variable.
-+		 */
-+		if (p && sev_active()) {
-+			rc = set_memory_decrypted((unsigned long)p, sz >> PAGE_SHIFT);
-+			if (rc)
-+				return rc;
-+			memset(p, 0, sz);
-+		}
-+	}
- 
- 	per_cpu(hv_clock_per_cpu, cpu) = p;
- 	return p ? 0 : -ENOMEM;
+>
+>> +
+>> +What:                /sys/class/leds/<led>/repeat
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a pattern repeat number. 0 means repeat indefinitely.
+>> +
+>> +             This file will always return the originally written repeat
+>> +             number.
+>> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+>> index 4018af7..b76fc3c 100644
+>> --- a/drivers/leds/trigger/Kconfig
+>> +++ b/drivers/leds/trigger/Kconfig
+>> @@ -129,4 +129,11 @@ config LEDS_TRIGGER_NETDEV
+>>         This allows LEDs to be controlled by network device activity.
+>>         If unsure, say Y.
+>>
+>> +config LEDS_TRIGGER_PATTERN
+>> +     tristate "LED Pattern Trigger"
+>> +     help
+>> +       This allows LEDs to be controlled by a software or hardware pattern
+>> +       which is a series of tuples, of brightness and duration (ms).
+>> +       If unsure, say N
+>> +
+>>  endif # LEDS_TRIGGERS
+>> diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+>> index f3cfe19..9bcb64e 100644
+>> --- a/drivers/leds/trigger/Makefile
+>> +++ b/drivers/leds/trigger/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)        += ledtrig-transient.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)    += ledtrig-camera.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_PANIC)     += ledtrig-panic.o
+>>  obj-$(CONFIG_LEDS_TRIGGER_NETDEV)    += ledtrig-netdev.o
+>> +obj-$(CONFIG_LEDS_TRIGGER_PATTERN)   += ledtrig-pattern.o
+>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
+>> new file mode 100644
+>> index 0000000..0179191
+>> --- /dev/null
+>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>> @@ -0,0 +1,337 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/*
+>> + * LED pattern trigger
+>> + *
+>> + * Idea discussed with Pavel Machek. Raphael Teysseyre implemented
+>> + * the first version, Baolin Wang simplified and improved the approach.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/timer.h>
+>> +
+>> +#define MAX_PATTERNS         1024
+>> +
+>> +struct pattern_trig_data {
+>> +     struct led_classdev *led_cdev;
+>> +     struct led_pattern patterns[MAX_PATTERNS];
+>> +     struct led_pattern *curr;
+>> +     struct led_pattern *next;
+>> +     struct mutex lock;
+>> +     u32 npatterns;
+>> +     u32 repeat;
+>> +     u32 last_repeat;
+>> +     bool is_indefinite;
+>> +     bool is_hw_pattern;
+>> +     struct timer_list timer;
+>> +};
+>> +
+>> +static void pattern_trig_update_patterns(struct pattern_trig_data *data)
+>> +{
+>> +     data->curr = data->next;
+>> +     if (!data->is_indefinite && data->curr == data->patterns)
+>> +             data->repeat--;
+>> +
+>> +     if (data->next == data->patterns + data->npatterns - 1)
+>> +             data->next = data->patterns;
+>> +     else
+>> +             data->next++;
+>> +}
+>> +
+>> +static void pattern_trig_timer_function(struct timer_list *t)
+>> +{
+>> +     struct pattern_trig_data *data = from_timer(data, t, timer);
+>> +
+>> +     mutex_lock(&data->lock);
+>> +
+>> +     if (!data->is_indefinite && !data->repeat) {
+>> +             mutex_unlock(&data->lock);
+>> +             return;
+>> +     }
+>> +
+>> +     led_set_brightness(data->led_cdev, data->curr->brightness);
+>> +     mod_timer(&data->timer, jiffies + msecs_to_jiffies(data->curr->delta_t));
+>> +     pattern_trig_update_patterns(data);
+>> +
+>> +     mutex_unlock(&data->lock);
+>> +}
+>> +
+>> +static int pattern_trig_start_pattern(struct led_classdev *led_cdev)
+>> +{
+>> +     struct pattern_trig_data *data = led_cdev->trigger_data;
+>> +
+>> +     if (!data->npatterns)
+>> +             return 0;
+>> +
+>> +     if (data->is_hw_pattern) {
+>> +             return led_cdev->pattern_set(led_cdev, data->patterns,
+>> +                                          data->npatterns, data->repeat);
+>> +     }
+>
+> I have doubts here if it is a good idea to enforce array of tuples
+> as a generic interface for all hw_patterns. It may not fit well for
+> every hw pattern engine. It seems that the only feasible solution will
+> be allowing drivers to come up with their own interfaces, i.e. the
+> approach you proposed at first for your driver. It seems that the
+> ledtrig-pattern with software pattern mechanism will be just
+> a nice side effect of this series :-)
+>
+> Unless someone will propose a better solution.
+>
+> We need a broader consensus here. I'd like to hear Pavel's opinion,
+> since he's been always in favor of common pattern interface, and
+> inspired this work.
+>
+> Pavel?
+>
+> Best regards,
+> Jacek Anaszewski
+
+
+
 -- 
-2.7.4
-
+Baolin Wang
+Best Regards
