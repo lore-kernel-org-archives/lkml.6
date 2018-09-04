@@ -2,100 +2,174 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DATE_IN_FUTURE_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0635C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E64C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 746E320869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746E320869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 3C13720869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:05:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C13720869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeIDHZ7 (ORCPT
+        id S1726199AbeIDH2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 03:25:59 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:40228 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725911AbeIDHZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 03:25:59 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-10 (Coremail) with SMTP id tACowAC3je_T9Y1bYE5IBw--.12281S2;
-        Tue, 04 Sep 2018 11:02:44 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v5 03/16] x86/mtrr: get MTRR number and support TOP_MEM2
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <cover.1535459012.git.puwen@hygon.cn>
- <36ea05160d886ebf8d4a645c0fe8efdc9d6760c3.1535459013.git.puwen@hygon.cn>
- <20180903190438.GF10249@zn.tnic>
-Message-ID: <946157a5-fdb2-a45a-63aa-97e9d602e6f0@hygon.cn>
-Date:   Tue, 4 Sep 2018 11:02:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180903190438.GF10249@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowAC3je_T9Y1bYE5IBw--.12281S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtr17ZFyrZr1kCFyktF43Jrb_yoWDCFb_ur
-        yUCr15t3yqya1FqrZxGr45Jw43Jws09rnY9FyjqrWUCr1fAFy5GanrtrWDKrn2qa1fJw4q
-        kF4vkas09w42vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb2kYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVWUJVW8JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
-        zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx
-        8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK
-        82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
-        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48J
-        MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMI
-        IF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
-        x4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU89ID7UUUUU==
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Tue, 4 Sep 2018 03:28:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:11453 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbeIDH2v (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 03:28:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 20:05:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,327,1531810800"; 
+   d="scan'208";a="87370933"
+Received: from skl.sh.intel.com ([10.239.161.125])
+  by orsmga001.jf.intel.com with ESMTP; 03 Sep 2018 20:05:46 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        eranian@google.com, kan.liang@intel.com, jolsa@kernel.org
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v2] perf/x86/intel/uncore: Provide alias for IIO free-running boxes on SKX
+Date:   Tue,  4 Sep 2018 18:58:17 +0800
+Message-Id: <1536058697-22003-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/4 3:04, Borislav Petkov wrote:
-> It was "Hygon Dhyana" before now "Hygon" only. Can we agree on the
-> naming nomenclature and stick with it.
+For Skylake Server, Linux has supported a number of free running
+counters that collect counts of IO clocks/Bandwidth/Utilization.
 
-OK, agree on it.
+For example, to collect the inbound bandwidth,
 
-...
+root@skx /sys/devices# ls | grep uncore_iio
+uncore_iio_0
+uncore_iio_1
+uncore_iio_2
+uncore_iio_3
+uncore_iio_4
+uncore_iio_5
+uncore_iio_free_running_0
+uncore_iio_free_running_1
+uncore_iio_free_running_2
+uncore_iio_free_running_3
+uncore_iio_free_running_4
+uncore_iio_free_running_5
 
->> -	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) &&
->> -	      (boot_cpu_data.x86 >= 0x0f)))
->> +	if (!((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
->> +	       boot_cpu_data.x86 >= 0x0f) ||
->> +	       boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
-> 
-> Why are you even touching this statement? The function returns early on
-> !X86_VENDOR_AMD.
+root@skx /sys/devices# perf stat -a -e uncore_iio_free_running_2/bw_in_port0/
+^C
+ Performance counter stats for 'system wide':
 
-The statement is briefly equal to !(X86_VENDOR_AMD || X86_VENDOR_HYGON).
-So the function will not return early on !X86_VENDOR_AMD. :-)
+            153.19 MiB  uncore_iio_free_running_2/bw_in_port0/
 
-Also the statement can be changed to:
-+	if (!(boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-+	      boot_cpu_data.x86 >= 0x0f) &&
-+	    !(boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
-or:
-+	if ((boot_cpu_data.x86_vendor != X86_VENDOR_AMD ||
-+	     boot_cpu_data.x86 < 0x0f) &&
-+	    (boot_cpu_data.x86_vendor != X86_VENDOR_HYGON))
+       8.037701069 seconds time elapsed
 
-Which statement is better?
+While it's hard for user to understanding what the box the
+uncore_iio_free_running_N means.
 
-Thanks,
-Pu Wen
+This patch provides aliases for the boxes. With this patch,
+for example,
+
+root@skx /sys/devices# ls | grep uncore_iio
+uncore_iio_0
+uncore_iio_1
+uncore_iio_2
+uncore_iio_3
+uncore_iio_4
+uncore_iio_5
+uncore_iio_cbdma
+uncore_iio_mcp0
+uncore_iio_mcp1
+uncore_iio_pcie0
+uncore_iio_pcie1
+uncore_iio_pcie2
+
+root@skx ~# perf stat -a -e uncore_iio_pcie1/bw_in_port0/
+^C
+ Performance counter stats for 'system wide':
+
+            153.12 MiB  uncore_iio_pcie1/bw_in_port0/
+
+       8.469790720 seconds time elapsed
+
+v2:
+---
+Previously, it used braces around initialized string. For example,
+{ "iio_cbdma" }.
+
+The braces around scalar initializer would cause the build warning.
+In v2, it removes the braces.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ arch/x86/events/intel/uncore.c       |  9 +++++++--
+ arch/x86/events/intel/uncore.h       |  1 +
+ arch/x86/events/intel/uncore_snbep.c | 10 ++++++++++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a4614..6c6615f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -812,8 +812,13 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+ 		else
+ 			sprintf(pmu->name, "uncore");
+ 	} else {
+-		sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
+-			pmu->pmu_idx);
++		if (pmu->type->alias && pmu->pmu_idx < pmu->type->num_boxes) {
++			sprintf(pmu->name, "uncore_%s",
++				pmu->type->alias[pmu->pmu_idx]);
++		} else {
++			sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
++				pmu->pmu_idx);
++		}
+ 	}
+ 
+ 	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab88..db9fd9a 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -44,6 +44,7 @@ struct freerunning_counters;
+ 
+ struct intel_uncore_type {
+ 	const char *name;
++	const char **alias;
+ 	int num_counters;
+ 	int num_boxes;
+ 	int perf_ctr_bits;
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 51d7c11..75f14a3 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3596,8 +3596,18 @@ static const struct attribute_group skx_uncore_iio_freerunning_format_group = {
+ 	.attrs = skx_uncore_iio_freerunning_formats_attr,
+ };
+ 
++static const char *skx_uncore_iio_free_running_aliases[] = {
++	"iio_cbdma",
++	"iio_pcie0",
++	"iio_pcie1",
++	"iio_pcie2",
++	"iio_mcp0",
++	"iio_mcp1",
++};
++
+ static struct intel_uncore_type skx_uncore_iio_free_running = {
+ 	.name			= "iio_free_running",
++	.alias			= skx_uncore_iio_free_running_aliases,
+ 	.num_counters		= 17,
+ 	.num_boxes		= 6,
+ 	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
+-- 
+2.7.4
 
