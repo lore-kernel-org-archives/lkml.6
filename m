@@ -2,91 +2,95 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644B7C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BE3C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 126E620843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:18:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7F0420843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:18:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TA+P8wOM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MYe8UMUi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126E620843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MVzGsrgo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F0420843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeIDMm3 (ORCPT
+        id S1727234AbeIDMm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:42:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48978 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbeIDMm3 (ORCPT
+        Tue, 4 Sep 2018 08:42:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42586 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeIDMm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:42:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 459CD607B5; Tue,  4 Sep 2018 08:18:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536049107;
-        bh=01v315nArOAUZkUXY4v2Ge9RC4zUC9J0450zrvfYbT4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=TA+P8wOM0kEs0RyKqOjn0Jy3aDErfZsz3eFLCfQwunkiSD3oEpUwgW9ejyfEdUTtW
-         +ybisy4pO+guyBV0PjRHAzM/9He4sUZTIMy3PBhuSSw/FcVbXV9qe4qoY1Hum2OJIM
-         X0GvSSX944eMzXlkridJaOYozPHrpONBJxzJYaW4=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9B0A560708;
-        Tue,  4 Sep 2018 08:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536049106;
-        bh=01v315nArOAUZkUXY4v2Ge9RC4zUC9J0450zrvfYbT4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=MYe8UMUim2o7gidHukYPadTKOXjGpvQUBlclSyBAK++4pMuk30KOURTd3SI7SHWmV
-         3WdtwMoDIUwsU9850xu2vOUMC6PJYyDsB4BCF2HbkaNlHkF/968ftnXXKKKrhIfOVN
-         eesJnCfr+Z8Ptwi9vVavZMGIbuWUboJsPQj4Mm5c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B0A560708
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Sep 2018 08:42:57 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so1308472pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sj6O03EtfdBfFDCC1nLS1cLhz+Et8ttgZBGKryIDm78=;
+        b=MVzGsrgoH8t4QV2wC0/dYj+zS7/gJRt8uAoUw/kN3K5Ph0PXI0RvY/SJSKHSAnMQhv
+         qUhLstHzSSuVCD3PuY2VuHDG+jvVmixst9ygl3DKnTWMzQWw6mKDvT39NBEPEHMbpD2Z
+         LMJOUR+1xVSiwvm3QnKHzKzUILQtb6ZdhL1HE2pW/+YWH9iMyQYZ86/liXaBWPxrcUKB
+         JfWND/Nl54YYNBo9vw/emk//T0NM0mlXfAb79P1bCoxVU5s39DgvoTRkHkL8IHMk196B
+         Xn3kcVONKrfq60ds2w6Q+DgPscxLapFlAxDYzwXKh1+qADDk+yfaLcqWVYHFOxHuIyTN
+         jLIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sj6O03EtfdBfFDCC1nLS1cLhz+Et8ttgZBGKryIDm78=;
+        b=LONt1FHPrKJKESqYTQ1Lipix0+rk21CeFeFWRnkoMjNQtFPzVehCSdheNWqZT9oFz4
+         sdm76MdrULi2uUgWw+i8KuomHM+8WDbDQcR6DNBwFXvLlqH7ZJOj3PubmlGvoiilWfQH
+         Cun35Sxzuw3ILtiipOegk9qxdu2VGwBVTkdVQpIkcav6Qg5vDh0Dt8McnWF3qMkDlnrJ
+         spQ7xGYLuOAAghmApefjkdkZMb7reDnOTBMTbBg0+fGGIvJAmx+k025Mhxf5DJga7FHT
+         3O6NCDf2HSI3dImkphboOMsDYGO8ijoZG05oybKqAn6Dv5yomUGaqmsMbQQFeLdehMFy
+         bTdw==
+X-Gm-Message-State: APzg51DgJFvnjq1GCPNZroRynxuNJ4xQlCR5nj+wXnkCTauLvL/Pzl8Y
+        D21WWSLX5GN//c6z+BJOwhjCYv6tw/3fvmw4mYUBPw==
+X-Google-Smtp-Source: ANB0VdY+chIASsnJsD9hgWzS/GisLIGHkYfZ74nPUJG46FjNjOMEkVfbXom6U3ATEVFag+or2wGt8Q9XJDVbPYDTv28=
+X-Received: by 2002:a63:5660:: with SMTP id g32-v6mr29346313pgm.227.1536049134419;
+ Tue, 04 Sep 2018 01:18:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] orinoco_usb: fix spelling mistake in fall-through
- annotation
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180903201752.GA25288@embeddedor.com>
-References: <20180903201752.GA25288@embeddedor.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180904081827.459CD607B5@smtp.codeaurora.org>
-Date:   Tue,  4 Sep 2018 08:18:27 +0000 (UTC)
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 4 Sep 2018 01:18:33
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+YFQfrnvV7XfeCsiQBQ7UicrHE=fadiYdJdPA8=jumW3g@mail.gmail.com>
+References: <000000000000237cc60569ad11c7@google.com> <46b9489e-6986-d512-1276-9da14c96999e@I-love.SAKURA.ne.jp>
+ <CACT4Y+YFQfrnvV7XfeCsiQBQ7UicrHE=fadiYdJdPA8=jumW3g@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 4 Sep 2018 10:18:33 +0200
+Message-ID: <CACT4Y+Zkf-zR30E4DCxzwsn+WhfjG8uzKXmQGvqvu+7SQqWi0Q@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in d_walk
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzbot <syzbot+ae80b790eb412884ca77@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+On Sat, May 19, 2018 at 8:41 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Apr 25, 2018 at 1:05 PM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> OK. Patch is in vfs.git#for-next as 4fb48871409e2fcd.
+>>
+>> #syz fix: restore cond_resched() in shrink_dcache_parent()
+>
+> I see there is another patch titled "fs/dcache.c: re-add
+> cond_resched() in shrink_dcache_parent()" points to this bug:
+> http://lkml.iu.edu/hypermail/linux/kernel/1804.1/06252.html
 
-> Replace "fall though" with a proper "fall through" annotation.
-> 
-> This fix is part of the ongoing efforts to enabling
-> -Wimplicit-fallthrough
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+It seems that that commit was pulled into linux-next and overridden
+Tetsuo's fix command.
+Now it's hopefully has gone from everywhere, so let's remark this with
+the right commit:
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-cf5652c962da orinoco_usb: fix spelling mistake in fall-through annotation
-
--- 
-https://patchwork.kernel.org/patch/10586357/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+#syz fix: restore cond_resched() in shrink_dcache_parent()
