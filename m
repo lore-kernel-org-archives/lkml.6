@@ -2,174 +2,99 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E64C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DBBC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C13720869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C13720869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 21E0320869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:08:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E0320869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbeIDH2w (ORCPT
+        id S1726223AbeIDHbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 03:28:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:11453 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbeIDH2v (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 03:28:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 20:05:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,327,1531810800"; 
-   d="scan'208";a="87370933"
-Received: from skl.sh.intel.com ([10.239.161.125])
-  by orsmga001.jf.intel.com with ESMTP; 03 Sep 2018 20:05:46 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        eranian@google.com, kan.liang@intel.com, jolsa@kernel.org
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2] perf/x86/intel/uncore: Provide alias for IIO free-running boxes on SKX
-Date:   Tue,  4 Sep 2018 18:58:17 +0800
-Message-Id: <1536058697-22003-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 4 Sep 2018 03:31:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36688 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725874AbeIDHbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 03:31:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E35C804B9F1;
+        Tue,  4 Sep 2018 03:08:48 +0000 (UTC)
+Received: from [10.72.12.44] (ovpn-12-44.pek2.redhat.com [10.72.12.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AE4EF2157F45;
+        Tue,  4 Sep 2018 03:08:43 +0000 (UTC)
+Subject: Re: [PATCH] vhost: fix VHOST_GET_BACKEND_FEATURES ioctl request
+ definition
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180903175906.GA11529@glebfm.cloud.tilaa.com>
+ <20180903222127-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <a9ea89ac-4816-96a1-7de4-caf9884da876@redhat.com>
+Date:   Tue, 4 Sep 2018 11:08:40 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180903222127-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 04 Sep 2018 03:08:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 04 Sep 2018 03:08:48 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For Skylake Server, Linux has supported a number of free running
-counters that collect counts of IO clocks/Bandwidth/Utilization.
 
-For example, to collect the inbound bandwidth,
 
-root@skx /sys/devices# ls | grep uncore_iio
-uncore_iio_0
-uncore_iio_1
-uncore_iio_2
-uncore_iio_3
-uncore_iio_4
-uncore_iio_5
-uncore_iio_free_running_0
-uncore_iio_free_running_1
-uncore_iio_free_running_2
-uncore_iio_free_running_3
-uncore_iio_free_running_4
-uncore_iio_free_running_5
+On 2018年09月04日 10:22, Michael S. Tsirkin wrote:
+> On Mon, Sep 03, 2018 at 08:59:13PM +0300, Gleb Fotengauer-Malinovskiy wrote:
+>> The _IOC_READ flag fits this ioctl request more because this request
+>> actually only writes to, but doesn't read from userspace.
+>> See NOTEs in include/uapi/asm-generic/ioctl.h for more information.
+>>
+>> Fixes: 429711aec282 ("vhost: switch to use new message format")
+>> Signed-off-by: Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>
+> Hmm it does make sense, and it's not too late to fix this up.
+> Jason, what's your take on this? Was _IOW intentional?
 
-root@skx /sys/devices# perf stat -a -e uncore_iio_free_running_2/bw_in_port0/
-^C
- Performance counter stats for 'system wide':
+My bad, not intentional. And I agree that fixing this is not too late.
 
-            153.19 MiB  uncore_iio_free_running_2/bw_in_port0/
+So
 
-       8.037701069 seconds time elapsed
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-While it's hard for user to understanding what the box the
-uncore_iio_free_running_N means.
-
-This patch provides aliases for the boxes. With this patch,
-for example,
-
-root@skx /sys/devices# ls | grep uncore_iio
-uncore_iio_0
-uncore_iio_1
-uncore_iio_2
-uncore_iio_3
-uncore_iio_4
-uncore_iio_5
-uncore_iio_cbdma
-uncore_iio_mcp0
-uncore_iio_mcp1
-uncore_iio_pcie0
-uncore_iio_pcie1
-uncore_iio_pcie2
-
-root@skx ~# perf stat -a -e uncore_iio_pcie1/bw_in_port0/
-^C
- Performance counter stats for 'system wide':
-
-            153.12 MiB  uncore_iio_pcie1/bw_in_port0/
-
-       8.469790720 seconds time elapsed
-
-v2:
----
-Previously, it used braces around initialized string. For example,
-{ "iio_cbdma" }.
-
-The braces around scalar initializer would cause the build warning.
-In v2, it removes the braces.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- arch/x86/events/intel/uncore.c       |  9 +++++++--
- arch/x86/events/intel/uncore.h       |  1 +
- arch/x86/events/intel/uncore_snbep.c | 10 ++++++++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 27a4614..6c6615f 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -812,8 +812,13 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
- 		else
- 			sprintf(pmu->name, "uncore");
- 	} else {
--		sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
--			pmu->pmu_idx);
-+		if (pmu->type->alias && pmu->pmu_idx < pmu->type->num_boxes) {
-+			sprintf(pmu->name, "uncore_%s",
-+				pmu->type->alias[pmu->pmu_idx]);
-+		} else {
-+			sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
-+				pmu->pmu_idx);
-+		}
- 	}
- 
- 	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index e17ab88..db9fd9a 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -44,6 +44,7 @@ struct freerunning_counters;
- 
- struct intel_uncore_type {
- 	const char *name;
-+	const char **alias;
- 	int num_counters;
- 	int num_boxes;
- 	int perf_ctr_bits;
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c11..75f14a3 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3596,8 +3596,18 @@ static const struct attribute_group skx_uncore_iio_freerunning_format_group = {
- 	.attrs = skx_uncore_iio_freerunning_formats_attr,
- };
- 
-+static const char *skx_uncore_iio_free_running_aliases[] = {
-+	"iio_cbdma",
-+	"iio_pcie0",
-+	"iio_pcie1",
-+	"iio_pcie2",
-+	"iio_mcp0",
-+	"iio_mcp1",
-+};
-+
- static struct intel_uncore_type skx_uncore_iio_free_running = {
- 	.name			= "iio_free_running",
-+	.alias			= skx_uncore_iio_free_running_aliases,
- 	.num_counters		= 17,
- 	.num_boxes		= 6,
- 	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
--- 
-2.7.4
+>
+>> ---
+>>   include/uapi/linux/vhost.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+>> index b1e22c40c4b6..84c3de89696a 100644
+>> --- a/include/uapi/linux/vhost.h
+>> +++ b/include/uapi/linux/vhost.h
+>> @@ -176,7 +176,7 @@ struct vhost_memory {
+>>   #define VHOST_BACKEND_F_IOTLB_MSG_V2 0x1
+>>   
+>>   #define VHOST_SET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x25, __u64)
+>> -#define VHOST_GET_BACKEND_FEATURES _IOW(VHOST_VIRTIO, 0x26, __u64)
+>> +#define VHOST_GET_BACKEND_FEATURES _IOR(VHOST_VIRTIO, 0x26, __u64)
+>>   
+>>   /* VHOST_NET specific defines */
+>>   
+>>
+>> -- 
+>> glebfm
 
