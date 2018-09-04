@@ -2,105 +2,144 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF81C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6930AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3016420843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3016420843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2118C205F4
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:38:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="lh2GfvMi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2118C205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeIDOCu (ORCPT
+        id S1727381AbeIDODO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:02:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39546 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeIDOCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:02:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC80E7A9;
-        Tue,  4 Sep 2018 02:38:31 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AD5B93F5BC;
-        Tue,  4 Sep 2018 02:38:31 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id AFD881AE3546; Tue,  4 Sep 2018 10:38:45 +0100 (BST)
-Date:   Tue, 4 Sep 2018 10:38:45 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
-Message-ID: <20180904093844.GA12148@arm.com>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
- <20180827110245.14812-3-ard.biesheuvel@linaro.org>
- <20180828170135.GC19825@arm.com>
- <CAKv+Gu-tM9aKZJ3ppt9yLVP_V5YA_yN8D1j_-NtM+qQCdnc6JA@mail.gmail.com>
- <20180904031855.mjpdndeh57lqziuk@gondor.apana.org.au>
+        Tue, 4 Sep 2018 10:03:14 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:46796 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbeIDODN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 10:03:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1536053934; x=1567589934;
+  h=from:to:cc:subject:references:date:in-reply-to:
+   message-id:mime-version;
+  bh=C2Hf41+IEZMk5xpKFP+uDreWWT+A7kXsuHfwxjzf0Cg=;
+  b=lh2GfvMidmkFRXgSAqNoNzvm8YDoROxuqFjDd9ol+J2XxQTbRPaIsvMi
+   ikfTGzcPOdwOGNjy7JjsQiQmQPfcBQTRTdtDvprxtKqmU7qMttREXP0zw
+   15WKVBuk56gCGiYBvhvdiDH+gji7YznhgBRhi3PQd9odi+paWhNCR7DW2
+   4=;
+X-IronPort-AV: E=Sophos;i="5.53,328,1531785600"; 
+   d="scan'208";a="360497512"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Sep 2018 09:38:50 +0000
+Received: from u54ee758033e858cfa736.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w849bVrO039982
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 4 Sep 2018 09:37:34 GMT
+Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w849bSVP025410;
+        Tue, 4 Sep 2018 11:37:29 +0200
+Received: (from jsteckli@localhost)
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w849bPfQ025409;
+        Tue, 4 Sep 2018 11:37:25 +0200
+X-Authentication-Warning: u54ee758033e858cfa736.ant.amazon.com: jsteckli set sender to jsteckli@amazon.de using -f
+From:   Julian Stecklina <jsteckli@amazon.de>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        <deepa.srinivasan@oracle.com>, Jim Mattson <jmattson@google.com>,
+        "Andrew Cooper" <andrew.cooper3@citrix.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-mm <linux-mm@kvack.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <joao.m.martins@oracle.com>, <pradeep.vincent@oracle.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        <kanth.ghatraju@oracle.com>, Liran Alon <liran.alon@oracle.com>,
+        Kees Cook <keescook@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        <chris.hyser@oracle.com>, Tyler Hicks <tyhicks@canonical.com>,
+        John Haxby <john.haxby@oracle.com>,
+        Jon Masters <jcm@redhat.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs in mind (for KVM to isolate its guests per CPU)
+References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+        <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
+        <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+        <20180903152616.GE27886@tassilo.jf.intel.com>
+Date:   Tue, 04 Sep 2018 11:37:25 +0200
+In-Reply-To: <20180903152616.GE27886@tassilo.jf.intel.com> (Andi Kleen's
+        message of "Mon, 3 Sep 2018 08:26:16 -0700")
+Message-ID: <ciirm88t4hhacq.fsf@u54ee758033e858cfa736.ant.amazon.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904031855.mjpdndeh57lqziuk@gondor.apana.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 11:18:55AM +0800, Herbert Xu wrote:
-> On Tue, Aug 28, 2018 at 08:43:35PM +0200, Ard Biesheuvel wrote:
-> > On 28 August 2018 at 19:01, Will Deacon <will.deacon@arm.com> wrote:
-> > > On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
-> > >> Add a CRC32 feature bit and wire it up to the CPU id register so we
-> > >> will be able to use alternatives patching for CRC32 operations.
-> > >>
-> > >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >> ---
-> > >>  arch/arm64/include/asm/cpucaps.h | 3 ++-
-> > >>  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
-> > >>  2 files changed, 11 insertions(+), 1 deletion(-)
-> > >
-> > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > >
-> > > With the minor caveat below...
-> > >
-> > >> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> > >> index ae1f70450fb2..9932aca9704b 100644
-> > >> --- a/arch/arm64/include/asm/cpucaps.h
-> > >> +++ b/arch/arm64/include/asm/cpucaps.h
-> > >> @@ -51,7 +51,8 @@
-> > >>  #define ARM64_SSBD                           30
-> > >>  #define ARM64_MISMATCHED_CACHE_TYPE          31
-> > >>  #define ARM64_HAS_STAGE2_FWB                 32
-> > >> +#define ARM64_HAS_CRC32                              33
-> > >>
-> > >> -#define ARM64_NCAPS                          33
-> > >> +#define ARM64_NCAPS                          34
-> > >
-> > >
-> > > ... if this goes via crypto, you'll almost certainly get a (trivial)
-> > > conflict with arm64, since these numbers get bumped all the time.
-> > >
-> > 
-> > I think the first three patches should go through the arm64 tree. The
-> > last one just removes the now redundant crc32 SIMD driver, and Herbert
-> > could pick that up separately, i.e., it should be totally independent.
-> 
-> Yes let's do that.
+Andi Kleen <ak@linux.intel.com> writes:
 
-Okey doke! In which case, please can we have your Ack on the first patch?
+> On Sat, Sep 01, 2018 at 02:38:43PM -0700, Linus Torvalds wrote:
+>> On Fri, Aug 31, 2018 at 12:45 AM Julian Stecklina <jsteckli@amazon.de> wrote:
+>> >
+>> > I've been spending some cycles on the XPFO patch set this week. For the
+>> > patch set as it was posted for v4.13, the performance overhead of
+>> > compiling a Linux kernel is ~40% on x86_64[1]. The overhead comes almost
+>> > completely from TLB flushing. If we can live with stale TLB entries
+>> > allowing temporary access (which I think is reasonable), we can remove
+>> > all TLB flushing (on x86). This reduces the overhead to 2-3% for
+>> > kernel compile.
+>> 
+>> I have to say, even 2-3% for a kernel compile sounds absolutely horrendous.
+>> 
+>> Kernel bullds are 90% user space at least for me, so a 2-3% slowdown
+>> from a kernel is not some small unnoticeable thing.
+>
+> Also the problem is that depending on the workload everything may fit
+> into the TLBs, so the temporary stale TLB entries may be around
+> for a long time. Modern CPUs have very large TLBs, and good
+> LRU policies. For the kernel entries with global bit set and
+> which are used for something there may be no reason ever to evict.
+>
+> Julian, I think you would need at least some quantitative perfmon data about
+> TLB replacement rates in the kernel to show that it's "reasonable"
+> instead of hand waving.
 
-Cheers,
+That's a fair point. It definitely depends on the workload. My idle
+laptop gnome GUI session still causes ~40k dtlb-load-misses per second
+per core. My idle server (some shells, IRC client) still has ~8k dTLB
+load misses per second per core. Compiling something pushes this to
+millions of misses per second.
 
-Will
+For comparison according to https://www.7-cpu.com/cpu/Skylake_X.html SKX
+can fit 1536 entries into its L2 dTLB.
+
+> Most likely I suspect you would need a low frequency regular TLB
+> flush for the global entries at least, which will increase
+> the overhead again.
+
+Given the tiny experiment above, I don't think this is necessary except
+for highly special usecases. If stale TLB entries are a concern, the
+better intermediate step is to do INVLPG on the core that modified the
+page table.
+
+And even with these shortcomings, XPFO severely limits the data an
+attacker can leak from the kernel.
+
+Julian
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+
