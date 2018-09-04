@@ -2,154 +2,143 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1054C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB66C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651382086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:34:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651382086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 17F9D20867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:39:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UlLxNXbA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17F9D20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbeIDM6U convert rfc822-to-8bit (ORCPT
+        id S1726281AbeIDNDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:58:20 -0400
-Received: from mga05.intel.com ([192.55.52.43]:61179 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbeIDM6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:58:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 01:34:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="254325956"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga005.jf.intel.com with ESMTP; 04 Sep 2018 01:34:14 -0700
-Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 01:34:14 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 01:34:13 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
- Tue, 4 Sep 2018 16:34:12 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Auger Eric <eric.auger@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-CC:     "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "christoffer.dall@arm.com" <christoffer.dall@arm.com>
-Subject: RE: [RFC 01/13] iommu: Introduce bind_guest_stage API
-Thread-Topic: [RFC 01/13] iommu: Introduce bind_guest_stage API
-Thread-Index: AQHUOttfqy1SkTByKESItK+VEUbEjaTM7zGAgAxtLACAAAuEgIAGZ4Rg//+CZACAAIvdQA==
-Date:   Tue, 4 Sep 2018 08:34:11 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912EFCD8@SHSMSX101.ccr.corp.intel.com>
-References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
-        <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
-        <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
-        <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
-        <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1912EFB76@SHSMSX101.ccr.corp.intel.com>
- <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
-In-Reply-To: <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjVmNmMwODktNjBkYS00ZmQxLWIwNjItYTM0MDYxYTUzNGQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNVFlSXF3MXgxRkhWenZGWk1LMGt5aEwwVXZuM3FYdEpvXC90cDJpKzNwSU9zVGZIRDR2bmxHMUFwc01hWUl0VmQifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Sep 2018 09:03:10 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36698 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbeIDNDK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 09:03:10 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180904083902euoutp02f1edcb52144193e334e7f00959fcd413~RJaYLS3-m3198031980euoutp02j
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Sep 2018 08:39:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180904083902euoutp02f1edcb52144193e334e7f00959fcd413~RJaYLS3-m3198031980euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1536050343;
+        bh=oXogvLbhtC+qyHZtoJUbN2r0RPsRvM2WCUFdA7HHbdM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=UlLxNXbALYxrUCpMBiG9Bc4GSUmqCD953BQi3yZ/SWy+p4Bq3UEHdGHFQ6n0E2qXH
+         kjeL7GF+uPDpCn/63xjDQCYI77J0sQwBeHCwdwzEycWbNFuK6sTWM4dbTvBvosvqTa
+         U+jhhjX7noyw4AKDPcLheEaXAD4Rk5GIC/TrBui0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180904083902eucas1p2bbd058f51aeab776a7201bfcb251ac53~RJaXpF3PD3096730967eucas1p2b;
+        Tue,  4 Sep 2018 08:39:02 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id A9.50.04441.6A44E8B5; Tue,  4
+        Sep 2018 09:39:02 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180904083901eucas1p17c35261c6dcfd51381dafb3b9b0dfaf7~RJaWxxuug2416824168eucas1p10;
+        Tue,  4 Sep 2018 08:39:01 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180904083901eusmtrp272c62190cb3b19cce8b56bea9df83717~RJaWfZ3da0256302563eusmtrp2n;
+        Tue,  4 Sep 2018 08:39:01 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-45-5b8e44a6776f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 19.42.04128.5A44E8B5; Tue,  4
+        Sep 2018 09:39:01 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180904083900eusmtip2209fc164f5882ee33568a3ef18c757f9~RJaWLwLAP0129101291eusmtip27;
+        Tue,  4 Sep 2018 08:39:00 +0000 (GMT)
+Subject: Re: [PATCH 1/2] regulator: Fix useless O^2 complexity in
+ suspend/resume
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Tue, 4 Sep 2018 10:39:00 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180903150911.GO10302@sirena.org.uk>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djP87rLXPqiDea0s1lsnLGe1WLqwyds
+        Ft+udDBZXN41h81ixvl9TBaTFx1kdWDz2DnrLrvHplWdbB53ru1h8+jbsorR4/MmuQDWKC6b
+        lNSczLLUIn27BK6MCw87mQumsFe8fnyApYHxGWsXIyeHhICJxOy9V9m6GLk4hARWMEp8/drP
+        BpIQEvjCKHHunxFE4jOjxMHZj+A6uqa9YYJILGeUODNjATOE855R4tnfXUwgVcICQRL9C/vZ
+        QWwRAWWJq9/3soAUMQucYZRY9HctC0iCTcBQouttF9g+FgEViS8zjwDZHByiAjESv3dZg4R5
+        BQQlTs58AlbOKWAssfjMETCbWUBeYvvbOcwQtrjErSfzwS6SEFjGLvFkwjUWiOYyib5XHcwg
+        MyUEXCQunVKA+EBY4tXxLewQtozE/50wvc2MEu0zZrFDOD2MElvn7GCDqLKWOHz8IivIIGYB
+        TYn1u/Qhwo4S11a9ZIOYzydx460gxD18EpO2TYdayyvR0SYEUa0mMev4Ori1By9cYp7AqDQL
+        yZezkHw2C8lnsxD2LmBkWcUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGYeE7/O/5pB+PX
+        S0mHGAU4GJV4eAMMeqOFWBPLiitzDzFKcDArifD68fdFC/GmJFZWpRblxxeV5qQWH2KU5mBR
+        Eufl00qLFhJITyxJzU5NLUgtgskycXBKNTCyLDx7tOllxXJWvg/W4Y1ayyYy/wm5zuwmIbhJ
+        4ZxnupzSrmSP9Jfex7PdD1lLPwpe90z+ydy98zVmVt47Htb+mHX7HoeOtRPab5YdMnm9jWvD
+        xpXO02bPCNjtVXNYPFvxYnZ34X7ttL+FguxvNUM71v0ICnZ4LOcR8pB/C2+dKnvqohWRV58r
+        sRRnJBpqMRcVJwIAChoveTgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7pLXfqiDV53cVhsnLGe1WLqwyds
+        Ft+udDBZXN41h81ixvl9TBaTFx1kdWDz2DnrLrvHplWdbB53ru1h8+jbsorR4/MmuQDWKD2b
+        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MCw87mQum
+        sFe8fnyApYHxGWsXIyeHhICJRNe0N0xdjFwcQgJLGSV+rzvBDpGQkTg5rQGqSFjiz7UuNoii
+        t4wSO07eZQFJCAsESfQv7AdrEBFQlrj6fS9YnFngHKPEunu6EA3vGCUaPk9lBkmwCRhKdL0F
+        mcTJwStgJ/H25D6wDSwCKhJfZh4Bi4sKxEgcndwCVSMocXLmE7ChnALGEovPHIFaYCYxb/ND
+        ZghbXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqX
+        rpecn7uJERht24793LKDsetd8CFGAQ5GJR7eH7q90UKsiWXFlbmHGCU4mJVEeP34+6KFeFMS
+        K6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YCPJK4g1NDc0tLA3Njc2NzSyUxHnPG1RGCQmkJ5ak
+        ZqemFqQWwfQxcXBKNTDqrWu7ffpjCPcrZf7re9dN1lj2evGrg9O/Sq5iY3hR5lD9W8x6Tv7F
+        I5tEFXlcsz+5ZLzf37NH9n27zr8Vj/c1nf8sc0zzkIRQ/PwTn7LMV/xzMTxp9ebromWlrLVH
+        Y1+sYm/fcyWD8/PiRR2JjuYs+92j97IffvboxfZ5LObff13cGKy4+fEOSyWW4oxEQy3mouJE
+        ABhErd/MAgAA
+Message-Id: <20180904083901eucas1p17c35261c6dcfd51381dafb3b9b0dfaf7~RJaWxxuug2416824168eucas1p10@eucas1p1.samsung.com>
+X-CMS-MailID: 20180904083901eucas1p17c35261c6dcfd51381dafb3b9b0dfaf7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a
+References: <20180903144937.16507-1-m.szyprowski@samsung.com>
+        <CGME20180903144947eucas1p26391f4de6bd46d18cf51f075e6f22e2a@eucas1p2.samsung.com>
+        <20180903144937.16507-2-m.szyprowski@samsung.com>
+        <20180903150911.GO10302@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Auger Eric
-> Sent: Tuesday, September 4, 2018 4:11 PM
-> 
-> Hi Kevin,
-> On 09/04/2018 09:57 AM, Tian, Kevin wrote:
-> >> From: Auger Eric
-> >> Sent: Friday, August 31, 2018 9:52 PM
-> >>
-> >> Hi Jean-Philippe,
-> >>
-> >> On 08/31/2018 03:11 PM, Jean-Philippe Brucker wrote:
-> >>> Hi Eric,
-> >>>
-> >>> On 23/08/18 16:25, Auger Eric wrote:
-> >>>>> +int iommu_bind_guest_stage(struct iommu_domain *domain,
-> struct
-> >> device *dev,
-> >>>>> +			   struct iommu_guest_stage_config *cfg)
-> >>>
-> >>> About the name change from iommu_bind_pasid_table: is the intent to
-> >>> reuse this API for SMMUv2, which supports nested but not PASID?
-> Seems
-> >>> like a good idea but "iommu_bind_table" may be better since "stage" is
-> >>> only used by Arm.
-> >>
-> >> At the moment I don't target SMUv2 but just SMMUv3. My focus was on
-> >> nested stage enablement without enabling the multi-CD feature (PASID),
-> >> whish is not supported by the QEMU vSMMUv3. Afterwards I realized
-> that
-> >> basically we are pointing to a CD or PASID table and that's about the
-> >> same. I don't have a strong opinion on the name,
-> iommu_bind_guest_table
-> >> or iommu_bind_pasid_table would be fine with me. Indeed "stage" is
-> ARM
-> >> vocable (level for Intel?)
-> >
-> > Intel uses first level/second level.
-> >
-> > iommu_bind_table is a bit confusing. what should people take table as?
-> > there is PASID table. there is also page table linked in each stage/level.
-> and
-> > maybe other tables in vendor-specific definition.
-> >
-> > to me iommu_bind_pasid_table is still clearer. anyway in other places
-> > we've used pasid explicitly in vfio/iommu APIs, then it should be general
-> > enough to represent various implementations.
-> 
-> Fine for me.
-> 
-> However I I would suggest to rename the original iommu_sva_invalidate
-> into something that is SVA unrelated. iommu_tlb_invalidate is not OK as
-> this API also is used to invalidate context caches - which are not
-> iotlbs -. What about iommu_cache_invalidate?
-> 
-> At least we must clarify that this API can be used for something else
-> than SVA enablement.
-> 
+Hi Mark,
 
-Agree. using SVA is limiting.
+On 2018-09-03 17:09, Mark Brown wrote:
+> On Mon, Sep 03, 2018 at 04:49:36PM +0200, Marek Szyprowski wrote:
+>> regulator_pm_ops with regulator_suspend and regulator_resume functions are
+>> assigned to every regulator device registered in the system, so there is no
+>> need to iterate over all again in them. Replace class_for_each_device()
+>> construction with direct operation on the rdev embedded in the given
+>> regulator device. This saves a lots of useless operations in suspend and
+>> resume paths.
+> This would've been better as the second patch since it's an optimization
+> and not so urgent for stable.
 
-I also agree that iommu_cache_invalidate is better, though I don't think
-you want to pass guest context cache invalidation to host. that information
-is fully under host control. :-)
+Frankly, the slow down caused by this O^2 in case of 40 regulators in the
+system (not that unusual in nowadays mobiles) is noticeable and quite
+annoying. IMHO this is still a good candidate for stable.
 
-Thanks
-Kevin
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
