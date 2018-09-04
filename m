@@ -2,129 +2,167 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4BC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F9C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7D02086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7D02086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 07AB120843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AB120843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeIDMgE convert rfc822-to-8bit (ORCPT
+        id S1727136AbeIDMgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:36:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32809 "EHLO mga01.intel.com"
+        Tue, 4 Sep 2018 08:36:12 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33970 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeIDMgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:36:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 01:12:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="88770545"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2018 01:12:03 -0700
-Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 01:12:03 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 4 Sep 2018 01:12:02 -0700
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.226]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
- Tue, 4 Sep 2018 16:12:01 +0800
-From:   "Peng, DongX" <dongx.peng@intel.com>
-To:     Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        "Wu, Fengguang" <fengguang.wu@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "Liu, Jingqi" <jingqi.liu@intel.com>,
-        "Dong, Eddie" <eddie.dong@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC][PATCH 3/5] [PATCH 3/5] kvm-ept-idle: HVA indexed EPT read
-Thread-Topic: [RFC][PATCH 3/5] [PATCH 3/5] kvm-ept-idle: HVA indexed EPT read
-Thread-Index: AQHUQmOmnZsRsVJTp0KJvY5txETrBqTfPtWAgACKFLA=
-Date:   Tue, 4 Sep 2018 08:12:00 +0000
-Message-ID: <5249147EF0246348BBCB3713DC3757BF8D0D0C@shsmsx102.ccr.corp.intel.com>
-References: <20180901112818.126790961@intel.com>
- <20180901124811.591511876@intel.com>
- <37B30FD3-7955-4C0B-AAB5-544359F4D157@oracle.com>
-In-Reply-To: <37B30FD3-7955-4C0B-AAB5-544359F4D157@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYmJiODY5MWYtYjYyNC00NzBiLTljOWUtMGE3ODE0OTEzNGZmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZW9YMk4zUHhSU0pUcHdVR0daMkRvcmNSZytOYUh0VWZabW1XODBUUzNrWE93OTllQndaTGdLTDRyUnozNjZSaiJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727050AbeIDMgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 08:36:12 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id pH2VgAipDmoF; Tue,  4 Sep 2018 10:11:52 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 32DE81EC0424;
+        Tue,  4 Sep 2018 10:11:52 +0200 (CEST)
+Date:   Tue, 4 Sep 2018 10:11:51 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     linux-crypto@vger.kernel.org, thomas.lendacky@amd.com,
+        Gary Hook <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH crypto-2.6] crypto: ccp: add timeout support in the SEV
+ command
+Message-ID: <20180904081151.GC32615@zn.tnic>
+References: <1534367485-4386-1-git-send-email-brijesh.singh@amd.com>
+ <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kvm_get_kvm() kvm_put_kvm()
+On Wed, Aug 15, 2018 at 04:11:25PM -0500, Brijesh Singh wrote:
+> Currently, the CCP driver assumes that the SEV command issued to the PSP
+> will always return (i.e. it will never hang).  But recently, firmware bugs
+> have shown that a command can hang.  Since of the SEV commands are used
+> in probe routines, this can cause boot hangs and/or loss of virtualization
+> capabilities.
+> 
+> To protect against firmware bugs, add a timeout in the SEV command
+> execution flow.  If a command does not complete within the specified
+> timeout then return -ETIMEOUT and stop the driver from executing any
+> further commands since the state of the SEV firmware is unknown.
+> 
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Gary Hook <Gary.Hook@amd.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+> ---
+>  drivers/crypto/ccp/psp-dev.c | 46 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 41 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
+> index 218739b..72790d8 100644
+> --- a/drivers/crypto/ccp/psp-dev.c
+> +++ b/drivers/crypto/ccp/psp-dev.c
+> @@ -38,6 +38,17 @@ static DEFINE_MUTEX(sev_cmd_mutex);
+>  static struct sev_misc_dev *misc_dev;
+>  static struct psp_device *psp_master;
+>  
+> +static int psp_cmd_timeout = 100;
+> +module_param(psp_cmd_timeout, int, 0644);
+> +MODULE_PARM_DESC(psp_cmd_timeout, " default timeout value, in seconds, for PSP commands");
+> +
+> +static int psp_probe_timeout = 5;
+> +module_param(psp_probe_timeout, int, 0644);
+> +MODULE_PARM_DESC(psp_probe_timeout, " default timeout value, in seconds, during PSP device probe");
 
------Original Message-----
-From: Nikita Leshenko [mailto:nikita.leshchenko@oracle.com] 
-Sent: Tuesday, September 4, 2018 3:57 PM
-To: Wu, Fengguang <fengguang.wu@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>; Linux Memory Management List <linux-mm@kvack.org>; Peng, DongX <dongx.peng@intel.com>; Liu, Jingqi <jingqi.liu@intel.com>; Dong, Eddie <eddie.dong@intel.com>; Hansen, Dave <dave.hansen@intel.com>; Huang, Ying <ying.huang@intel.com>; Brendan Gregg <bgregg@netflix.com>; kvm@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 3/5] [PATCH 3/5] kvm-ept-idle: HVA indexed EPT read
+Just a question: what prevents the user from supplying non-sensical
+values here?
 
-On 1 Sep 2018, at 13:28, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> +static ssize_t ept_idle_read(struct file *file, char *buf,
-> +			     size_t count, loff_t *ppos)
-> +{
-> +	struct task_struct *task = file->private_data;
-> +	struct ept_idle_ctrl *eic;
-> +	unsigned long hva_start = *ppos << BITMAP_BYTE2PVA_SHIFT;
-> +	unsigned long hva_end = hva_start + (count << BITMAP_BYTE2PVA_SHIFT);
+I think we should clamp them to only allowed values because I don't want
+to be debugging some strange bugs due to that.
+
+> +
+> +static bool psp_dead;
+> +static int psp_timeout;
+> +
+>  static struct psp_device *psp_alloc_struct(struct sp_device *sp)
+>  {
+>  	struct device *dev = sp->dev;
+> @@ -82,10 +93,19 @@ static irqreturn_t psp_irq_handler(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static void sev_wait_cmd_ioc(struct psp_device *psp, unsigned int *reg)
+> +static int sev_wait_cmd_ioc(struct psp_device *psp,
+> +			    unsigned int *reg, unsigned int timeout)
+>  {
+> -	wait_event(psp->sev_int_queue, psp->sev_int_rcvd);
 > +	int ret;
 > +
-> +	if (*ppos % IDLE_BITMAP_CHUNK_SIZE ||
-> +	    count % IDLE_BITMAP_CHUNK_SIZE)
-> +		return -EINVAL;
+> +	ret = wait_event_timeout(psp->sev_int_queue,
+> +			psp->sev_int_rcvd, timeout * HZ);
+
+Align args at opening brace.
+
+> +	if (!ret)
+> +		return -ETIMEDOUT;
 > +
-> +	eic = kzalloc(sizeof(*eic), GFP_KERNEL);
-> +	if (!eic)
+>  	*reg = ioread32(psp->io_regs + psp->vdata->cmdresp_reg);
+> +
+> +	return 0;
+>  }
+>  
+>  static int sev_cmd_buffer_len(int cmd)
+> @@ -133,12 +153,15 @@ static int __sev_do_cmd_locked(int cmd, void *data, int *psp_ret)
+>  	if (!psp)
+>  		return -ENODEV;
+>  
+> +	if (psp_dead)
 > +		return -EBUSY;
 > +
-> +	eic->buf = buf;
-> +	eic->buf_size = count;
-> +	eic->kvm = task_kvm(task);
-> +	if (!eic->kvm) {
-> +		ret = -EINVAL;
-> +		goto out_free;
-> +	}
-I think you need to increment the refcount while using kvm, otherwise kvm can be destroyed from another thread while you're walking it.
+>  	/* Get the physical address of the command buffer */
+>  	phys_lsb = data ? lower_32_bits(__psp_pa(data)) : 0;
+>  	phys_msb = data ? upper_32_bits(__psp_pa(data)) : 0;
+>  
+> -	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x\n",
+> -		cmd, phys_msb, phys_lsb);
+> +	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x timeout %us\n",
+> +		cmd, phys_msb, phys_lsb, psp_timeout);
+>  
+>  	print_hex_dump_debug("(in):  ", DUMP_PREFIX_OFFSET, 16, 2, data,
+>  			     sev_cmd_buffer_len(cmd), false);
+> @@ -154,7 +177,18 @@ static int __sev_do_cmd_locked(int cmd, void *data, int *psp_ret)
+>  	iowrite32(reg, psp->io_regs + psp->vdata->cmdresp_reg);
+>  
+>  	/* wait for command completion */
+> -	sev_wait_cmd_ioc(psp, &reg);
+> +	ret = sev_wait_cmd_ioc(psp, &reg, psp_timeout);
+> +	if (ret) {
+> +		if (psp_ret)
+> +			*psp_ret = 0;
+> +
+> +		dev_err(psp->dev, "sev command %#x timed out, disabling PSP \n", cmd);
+									   ^
 
--Nikita
-> +
-> +	ret = ept_idle_walk_hva_range(eic, hva_start, hva_end);
-> +	if (ret)
-> +		goto out_free;
-> +
-> +	ret = eic->bytes_copied;
-> +	*ppos += ret;
-> +out_free:
-> +	kfree(eic);
-> +
-> +	return ret;
-> +}
+Trailing space.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
