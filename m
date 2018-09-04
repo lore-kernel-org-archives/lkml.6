@@ -2,179 +2,498 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA218C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FB4C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE4D20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:03:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE4D20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4656420645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="Nnyl6Gb4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4656420645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=az8.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeIDXaB (ORCPT
+        id S1727945AbeIDXbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:30:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54806 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727072AbeIDXaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:30:01 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00A1F40216E5;
-        Tue,  4 Sep 2018 19:03:34 +0000 (UTC)
-Received: from [10.10.122.126] (ovpn-122-126.rdu2.redhat.com [10.10.122.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F501202704B;
-        Tue,  4 Sep 2018 19:03:33 +0000 (UTC)
-Subject: Re: [PATCHv3] iscsi-target: Don't use stack buffer for scatterlist
-To:     Laura Abbott <labbott@redhat.com>,
-        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Maurizio Lombardi <mlombard@redhat.com>
-References: <20180904184740.11102-1-labbott@redhat.com>
-Cc:     target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-From:   Mike Christie <mchristi@redhat.com>
-Message-ID: <5B8ED704.9010601@redhat.com>
-Date:   Tue, 4 Sep 2018 14:03:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180904184740.11102-1-labbott@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 04 Sep 2018 19:03:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 04 Sep 2018 19:03:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
+        Tue, 4 Sep 2018 19:31:36 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21404 "EHLO
+        sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727315AbeIDXbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 19:31:36 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1536087881; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=SFWlGLKfpBl/7l+hiBPthHD9W4fuE4q0ki/bOYlI6FUPcBa/063es8k14mN1TgBCln1Pxa+HeMQcnDCqfE2QpFPTlYkK7zVSKFxHyF+9hMnzjuJu4qA9g7Y5VYUfyv1xXGFkSyRAy3txxOLJ9Rjnr6pmm8fu+YBvChDIglyKBEQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1536087881; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=j8NnQoUIb++GyItxal7+rbm5Poackp21KcTTbiaDqF8=; 
+        b=XUd2v6md5JD4t/wIRrzxmaN9ot1GcRAa+cRG2NDsfKHS+tp62ldW/PCAKXEQmZO7RrFmX0nbm2wtufb0ZGivQ1QcVATmP7IaeqI2gaHX6oR6WE9VjWO5gXc5GuVItxtPL8fdAGdoY9f+Fdkrm49p9MgcAyUaFFvC7xVy0j/SHlI=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=az8.co;
+        spf=pass  smtp.mailfrom=afonsobordado@az8.co;
+        dmarc=pass header.from=<afonsobordado@az8.co> header.from=<afonsobordado@az8.co>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536087881;
+        s=dkimmail; d=az8.co; i=afonsobordado@az8.co;
+        h=From:To:Cc:Subject:Date:Message-Id; l=11607;
+        bh=j8NnQoUIb++GyItxal7+rbm5Poackp21KcTTbiaDqF8=;
+        b=Nnyl6Gb4kEGwtV5GEdrKKuA0Adi1cvYAYRDLiJBBe94mMms17oKengOQkr96lrjZ
+        mKhhRQqe+DuDAeJ4ItZCn9lgQzl4TG/hHLnUgbzLZmzAzDb43jHGiykWu3vX/BMRke0
+        hwibosdqLeKbTkWJAv9X5FfFiakwltO9V1l7wQBo=
+Received: from localhost (bl9-77-228.dsl.telepac.pt [85.242.77.228]) by mx.zohomail.com
+        with SMTPS id 1536087879682423.2625514002573; Tue, 4 Sep 2018 12:04:39 -0700 (PDT)
+From:   Afonso Bordado <afonsobordado@az8.co>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 1/4] iio: gyro: add support for fxas21002c
+Date:   Tue,  4 Sep 2018 21:04:31 +0100
+Message-Id: <20180904200434.10442-1-afonsobordado@az8.co>
+X-Mailer: git-send-email 2.18.0
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 01:47 PM, Laura Abbott wrote:
-> Fedora got a bug report of a crash with iSCSI:
-> 
-> kernel BUG at include/linux/scatterlist.h:143!
-> ...
-> RIP: 0010:iscsit_do_crypto_hash_buf+0x154/0x180 [iscsi_target_mod]
-> ...
->  Call Trace:
->   ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
->   iscsit_get_rx_pdu+0x4cd/0xa90 [iscsi_target_mod]
->   ? native_sched_clock+0x3e/0xa0
->   ? iscsi_target_tx_thread+0x200/0x200 [iscsi_target_mod]
->   iscsi_target_rx_thread+0x81/0xf0 [iscsi_target_mod]
->   kthread+0x120/0x140
->   ? kthread_create_worker_on_cpu+0x70/0x70
->   ret_from_fork+0x3a/0x50
-> 
-> This is a BUG_ON for using a stack buffer with a scatterlist.
-> There are two cases that trigger this bug. Switch to using a
-> dynamically allocated buffer for one case and do not assign
-> a NULL buffer in another case.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v3: Switched to kcalloc to drop an extra memset call. I was asked
-> offline about kmalloc vs. kmalloc_array and ended up asking about this
-> at the security summit since I was there last week. The preferred style
-> is kmalloc_array for all arrays, even those of one byte characters.
-> I will also switch it if people feel really strongly about this or I've
-> misunderstood the array guidelines.
-> ---
->  drivers/target/iscsi/iscsi_target.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-> index 94bad43c41ff..2a586b58a011 100644
-> --- a/drivers/target/iscsi/iscsi_target.c
-> +++ b/drivers/target/iscsi/iscsi_target.c
-> @@ -1416,7 +1416,8 @@ static void iscsit_do_crypto_hash_buf(struct ahash_request *hash,
->  
->  	sg_init_table(sg, ARRAY_SIZE(sg));
->  	sg_set_buf(sg, buf, payload_length);
-> -	sg_set_buf(sg + 1, pad_bytes, padding);
-> +	if (padding)
-> +		sg_set_buf(sg + 1, pad_bytes, padding);
->  
->  	ahash_request_set_crypt(hash, sg, data_crc, payload_length + padding);
->  
-> @@ -3910,10 +3911,14 @@ static bool iscsi_target_check_conn_state(struct iscsi_conn *conn)
->  static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  {
->  	int ret;
-> -	u8 buffer[ISCSI_HDR_LEN], opcode;
-> +	u8 *buffer, opcode;
->  	u32 checksum = 0, digest = 0;
->  	struct kvec iov;
->  
-> +	buffer = kcalloc(ISCSI_HDR_LEN, sizeof(*buffer), GFP_KERNEL);
-> +	if (!buffer)
-> +		return;
-> +
->  	while (!kthread_should_stop()) {
->  		/*
->  		 * Ensure that both TX and RX per connection kthreads
-> @@ -3921,7 +3926,6 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  		 */
->  		iscsit_thread_check_cpumask(conn, current, 0);
->  
-> -		memset(buffer, 0, ISCSI_HDR_LEN);
->  		memset(&iov, 0, sizeof(struct kvec));
->  
->  		iov.iov_base	= buffer;
-> @@ -3930,7 +3934,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  		ret = rx_data(conn, &iov, 1, ISCSI_HDR_LEN);
->  		if (ret != ISCSI_HDR_LEN) {
->  			iscsit_rx_thread_wait_for_tcp(conn);
-> -			return;
-> +			break;
->  		}
->  
->  		if (conn->conn_ops->HeaderDigest) {
-> @@ -3940,7 +3944,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  			ret = rx_data(conn, &iov, 1, ISCSI_CRC_LEN);
->  			if (ret != ISCSI_CRC_LEN) {
->  				iscsit_rx_thread_wait_for_tcp(conn);
-> -				return;
-> +				break;
->  			}
->  
->  			iscsit_do_crypto_hash_buf(conn->conn_rx_hash, buffer,
-> @@ -3964,7 +3968,7 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  		}
->  
->  		if (conn->conn_state == TARG_CONN_STATE_IN_LOGOUT)
-> -			return;
-> +			break;
->  
->  		opcode = buffer[0] & ISCSI_OPCODE_MASK;
->  
-> @@ -3975,13 +3979,15 @@ static void iscsit_get_rx_pdu(struct iscsi_conn *conn)
->  			" while in Discovery Session, rejecting.\n", opcode);
->  			iscsit_add_reject(conn, ISCSI_REASON_PROTOCOL_ERROR,
->  					  buffer);
-> -			return;
-> +			break;
->  		}
->  
->  		ret = iscsi_target_rx_opcode(conn, buffer);
->  		if (ret < 0)
-> -			return;
-> +			break;
->  	}
-> +
-> +	kfree(buffer);
->  }
->  
->  int iscsi_target_rx_thread(void *arg)
-> 
+FXAS21002C is a 3 axis gyroscope with integrated temperature sensor
 
-Ok.
+Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
+---
+ Changes in v3
+   - Use unsigned int on regmap functions
+   - Remove the export of the regmap config
+   - Fix undefined behaviour on dev_err call
+   - Minor cleanups
 
-Reviewed-by: Mike Christie <mchristi@redhat.com>
+ Changes in v2
+   - Use ANSI C Comments
+   - Minor cleanups
+   - More dscriptive devicetree bindings
+
+ drivers/iio/gyro/Kconfig      |  11 +
+ drivers/iio/gyro/Makefile     |   1 +
+ drivers/iio/gyro/fxas21002c.c | 372 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 384 insertions(+)
+ create mode 100644 drivers/iio/gyro/fxas21002c.c
+
+diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
+index 3126cf05e6b9..d71e33ea9fa4 100644
+--- a/drivers/iio/gyro/Kconfig
++++ b/drivers/iio/gyro/Kconfig
+@@ -73,6 +73,17 @@ config BMG160_SPI
+ 	tristate
+ 	select REGMAP_SPI
+ 
++config FXAS21002C
++	tristate "Freescale FXAS21002C Gyroscope"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  Say yes here to build support for the Freescale FXAS21002C Gyroscope
++	  driver connected via I2C.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called fxas21002c.
++
+ config HID_SENSOR_GYRO_3D
+ 	depends on HID_SENSOR_HUB
+ 	select IIO_BUFFER
+diff --git a/drivers/iio/gyro/Makefile b/drivers/iio/gyro/Makefile
+index 295ec780c4eb..ec3e2aeae92a 100644
+--- a/drivers/iio/gyro/Makefile
++++ b/drivers/iio/gyro/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_ADXRS450) += adxrs450.o
+ obj-$(CONFIG_BMG160) += bmg160_core.o
+ obj-$(CONFIG_BMG160_I2C) += bmg160_i2c.o
+ obj-$(CONFIG_BMG160_SPI) += bmg160_spi.o
++obj-$(CONFIG_FXAS21002C) += fxas21002c.o
+ 
+ obj-$(CONFIG_HID_SENSOR_GYRO_3D) += hid-sensor-gyro-3d.o
+ 
+diff --git a/drivers/iio/gyro/fxas21002c.c b/drivers/iio/gyro/fxas21002c.c
+new file mode 100644
+index 000000000000..1668e6f3fe11
+--- /dev/null
++++ b/drivers/iio/gyro/fxas21002c.c
+@@ -0,0 +1,372 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * FXAS21002C - Digital Angular Rate Gyroscope driver
++ *
++ * Copyright (c) 2018, Afonso Bordado <afonsobordado@az8.co>
++ *
++ * IIO driver for FXAS21002C (7-bit I2C slave address 0x20 or 0x21).
++ * Datasheet: https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf
++ * TODO:
++ *        ODR / Scale Support
++ *        Devicetree
++ *        Power management
++ *        GPIO Reset
++ *        Power supplies
++ *        Mount Matrix
++ *        LowPass/HighPass Filters
++ *        Buffers
++ *        Interrupts
++ *        Alarms
++ *        SPI Support
++ */
++
++#include <linux/i2c.h>
++#include <linux/iio/iio.h>
++#include <linux/iio/sysfs.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++
++#define FXAS21002C_DRV_NAME "fxas21002c"
++
++#define FXAS21002C_MAX_TRANSITION_TIME_MS 61
++
++#define FXAS21002C_CHIP_ID             0xD7
++
++#define FXAS21002C_REG_STATUS          0x00
++#define FXAS21002C_REG_OUT_X_MSB       0x01
++#define FXAS21002C_REG_OUT_X_LSB       0x02
++#define FXAS21002C_REG_OUT_Y_MSB       0x03
++#define FXAS21002C_REG_OUT_Y_LSB       0x04
++#define FXAS21002C_REG_OUT_Z_MSB       0x05
++#define FXAS21002C_REG_OUT_Z_LSB       0x06
++#define FXAS21002C_REG_DR_STATUS       0x07
++#define FXAS21002C_REG_F_STATUS        0x08
++#define FXAS21002C_REG_F_SETUP         0x09
++#define FXAS21002C_REG_F_EVENT         0x0A
++#define FXAS21002C_REG_INT_SRC_FLAG    0x0B
++#define FXAS21002C_REG_WHO_AM_I        0x0C
++#define FXAS21002C_REG_CTRL_REG0       0x0D
++#define FXAS21002C_REG_RT_CFG          0x0E
++#define FXAS21002C_REG_RT_SRC          0x0F
++#define FXAS21002C_REG_RT_THS          0x10
++#define FXAS21002C_REG_RT_COUNT        0x11
++#define FXAS21002C_REG_TEMP            0x12
++
++#define FXAS21002C_REG_CTRL_REG1       0x13
++#define FXAS21002C_RST_BIT             BIT(6)
++#define FXAS21002C_ACTIVE_BIT          BIT(1)
++#define FXAS21002C_READY_BIT           BIT(0)
++
++#define FXAS21002C_REG_CTRL_REG2       0x14
++#define FXAS21002C_REG_CTRL_REG3       0x15
++
++#define FXAS21002C_DEFAULT_ODR_HZ      800
++
++/* 0.0625 deg/s */
++#define FXAS21002C_DEFAULT_SENSITIVITY IIO_DEGREE_TO_RAD(62500)
++
++#define FXAS21002C_TEMP_SCALE          1000
++
++enum {
++	ID_FXAS21002C,
++};
++
++enum fxas21002c_operating_mode {
++	FXAS21002C_OM_BOOT,
++	FXAS21002C_OM_STANDBY,
++	FXAS21002C_OM_READY,
++	FXAS21002C_OM_ACTIVE,
++};
++
++struct fxas21002c_data {
++	struct i2c_client *client;
++	struct regmap *regmap;
++};
++
++static const struct regmap_range fxas21002c_writable_ranges[] = {
++	regmap_reg_range(FXAS21002C_REG_F_SETUP, FXAS21002C_REG_F_SETUP),
++	regmap_reg_range(FXAS21002C_REG_CTRL_REG0, FXAS21002C_REG_RT_CFG),
++	regmap_reg_range(FXAS21002C_REG_RT_THS, FXAS21002C_REG_RT_COUNT),
++	regmap_reg_range(FXAS21002C_REG_CTRL_REG1, FXAS21002C_REG_CTRL_REG3),
++};
++
++static const struct regmap_access_table fxas21002c_writable_table = {
++	.yes_ranges = fxas21002c_writable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(fxas21002c_writable_ranges),
++};
++
++static const struct regmap_range fxas21002c_volatile_ranges[] = {
++	regmap_reg_range(FXAS21002C_REG_STATUS, FXAS21002C_REG_F_STATUS),
++	regmap_reg_range(FXAS21002C_REG_F_EVENT, FXAS21002C_REG_INT_SRC_FLAG),
++	regmap_reg_range(FXAS21002C_REG_RT_COUNT, FXAS21002C_REG_CTRL_REG1),
++};
++
++static const struct regmap_access_table fxas21002c_volatile_table = {
++	.yes_ranges = fxas21002c_volatile_ranges,
++	.n_yes_ranges = ARRAY_SIZE(fxas21002c_volatile_ranges),
++};
++
++const struct regmap_config fxas21002c_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++
++	.max_register = FXAS21002C_REG_CTRL_REG3,
++	/* We don't specify a .rd_table because everything is readable */
++	.wr_table = &fxas21002c_writable_table,
++	.volatile_table = &fxas21002c_volatile_table,
++};
++
++#define FXAS21002C_GYRO_CHAN(_axis) {					\
++	.type = IIO_ANGL_VEL,						\
++	.modified = 1,							\
++	.channel2 = IIO_MOD_ ## _axis,					\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |		\
++				    BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
++	.address = FXAS21002C_REG_OUT_ ## _axis ## _MSB,		\
++}
++
++static const struct iio_chan_spec fxas21002c_channels[] = {
++	{
++		.type = IIO_TEMP,
++		.address = FXAS21002C_REG_TEMP,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++	},
++	FXAS21002C_GYRO_CHAN(X),
++	FXAS21002C_GYRO_CHAN(Y),
++	FXAS21002C_GYRO_CHAN(Z),
++	IIO_CHAN_SOFT_TIMESTAMP(3),
++};
++
++static int fxas21002c_set_operating_mode(struct fxas21002c_data *data,
++					 enum fxas21002c_operating_mode om)
++{
++	int ret;
++	int mask;
++
++	switch (om) {
++	case FXAS21002C_OM_STANDBY:
++		mask = 0;
++		break;
++	case FXAS21002C_OM_READY:
++		mask = FXAS21002C_READY_BIT;
++		break;
++	case FXAS21002C_OM_ACTIVE:
++		mask = FXAS21002C_ACTIVE_BIT;
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	ret = regmap_write(data->regmap, FXAS21002C_REG_CTRL_REG1, mask);
++	if (ret) {
++		dev_err(&data->client->dev,
++			"could not switch operating mode\n");
++		return ret;
++	}
++
++	msleep(FXAS21002C_MAX_TRANSITION_TIME_MS);
++
++	return 0;
++}
++
++static void fxas21002c_standby(void *_data)
++{
++	struct fxas21002c_data *data = _data;
++
++	fxas21002c_set_operating_mode(data, FXAS21002C_OM_STANDBY);
++}
++
++static int fxas21002c_reset(struct fxas21002c_data *data)
++{
++	int ret;
++
++	/*
++	 * On issuing a Software Reset command over an I2C interface,
++	 * the device immediately resets and does not send any
++	 * acknowledgment (ACK) of the written byte to the Master.
++	 *
++	 * This is documented in table 46 on the datasheet. Due to this
++	 * the write will fail with EREMOTEIO.
++	 */
++	ret = regmap_write(data->regmap,
++			   FXAS21002C_REG_CTRL_REG1, FXAS21002C_RST_BIT);
++
++	if (ret != -EREMOTEIO) {
++		dev_err(&data->client->dev, "could not reset device\n");
++		return ret;
++	}
++
++	regcache_mark_dirty(data->regmap);
++
++	/* Wait for device to boot up */
++	msleep(FXAS21002C_MAX_TRANSITION_TIME_MS);
++
++	return 0;
++}
++
++static int fxas21002c_verify_chip(struct fxas21002c_data *data)
++{
++	int ret;
++	unsigned int chip_id;
++
++	ret = regmap_read(data->regmap, FXAS21002C_REG_WHO_AM_I, &chip_id);
++	if (ret) {
++		dev_err(&data->client->dev, "could not read device id\n");
++		return ret;
++	}
++
++	if (chip_id != FXAS21002C_CHIP_ID) {
++		dev_err(&data->client->dev,
++			"unsupported chip id %02x\n", chip_id);
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++static int fxas21002c_read_oneshot(struct fxas21002c_data *data,
++				   struct iio_chan_spec const *chan, int *val)
++{
++	int ret;
++	__be16 bulk_raw;
++	unsigned int uval;
++
++	switch (chan->type) {
++	case IIO_ANGL_VEL:
++		ret = regmap_bulk_read(data->regmap, chan->address,
++				       &bulk_raw, sizeof(bulk_raw));
++		if (ret)
++			return ret;
++
++		*val = sign_extend32(be16_to_cpu(bulk_raw), 15);
++		return IIO_VAL_INT;
++	case IIO_TEMP:
++		ret = regmap_read(data->regmap, chan->address, &uval);
++		if (ret)
++			return ret;
++
++		*val = sign_extend32(uval, 7);
++		return IIO_VAL_INT;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int fxas21002c_read_raw(struct iio_dev *indio_dev,
++			       struct iio_chan_spec const *chan, int *val,
++			       int *val2, long mask)
++{
++	struct fxas21002c_data *data = iio_priv(indio_dev);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		return fxas21002c_read_oneshot(data, chan, val);
++	case IIO_CHAN_INFO_SCALE:
++		switch (chan->type) {
++		case IIO_ANGL_VEL:
++			*val = 0;
++			*val2 = FXAS21002C_DEFAULT_SENSITIVITY;
++
++			return IIO_VAL_INT_PLUS_MICRO;
++		case IIO_TEMP:
++			*val = FXAS21002C_TEMP_SCALE;
++
++			return IIO_VAL_INT;
++		default:
++			return -EINVAL;
++		}
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		if (chan->type != IIO_ANGL_VEL)
++			return -EINVAL;
++
++		*val = FXAS21002C_DEFAULT_ODR_HZ;
++
++		return IIO_VAL_INT;
++	}
++
++	return -EINVAL;
++}
++
++static const struct iio_info fxas21002c_info = {
++	.read_raw		= fxas21002c_read_raw,
++};
++
++static int fxas21002c_probe(struct i2c_client *client,
++			    const struct i2c_device_id *id)
++{
++	int ret;
++	struct iio_dev *indio_dev;
++	struct fxas21002c_data *data;
++
++	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, indio_dev);
++	data = iio_priv(indio_dev);
++	data->client = client;
++
++	data->regmap = devm_regmap_init_i2c(client, &fxas21002c_regmap_config);
++	if (IS_ERR(data->regmap)) {
++		ret = PTR_ERR(data->regmap);
++		dev_err(&client->dev,
++			"Failed to allocate regmap, err: %d\n", ret);
++		return ret;
++	}
++
++	indio_dev->dev.parent = &client->dev;
++	indio_dev->channels = fxas21002c_channels;
++	indio_dev->num_channels = ARRAY_SIZE(fxas21002c_channels);
++	indio_dev->name = id->name;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->info = &fxas21002c_info;
++
++	ret = fxas21002c_verify_chip(data);
++	if (ret < 0)
++		return ret;
++
++	ret = fxas21002c_reset(data);
++	if (ret < 0)
++		return ret;
++
++	ret = fxas21002c_set_operating_mode(data, FXAS21002C_OM_ACTIVE);
++	if (ret < 0)
++		return ret;
++
++	ret = devm_add_action(&client->dev, fxas21002c_standby, data);
++	if (ret < 0) {
++		fxas21002c_standby(data);
++		dev_err(&client->dev, "failed to add standby action\n");
++		return ret;
++	}
++
++	ret = iio_device_register(indio_dev);
++	if (ret < 0)
++		dev_err(&client->dev, "failed to register iio device\n");
++
++	return ret;
++}
++
++static const struct i2c_device_id fxas21002c_id[] = {
++	{"fxas21002c", ID_FXAS21002C},
++	{}
++};
++
++MODULE_DEVICE_TABLE(i2c, fxas21002c_id);
++
++static struct i2c_driver fxas21002c_driver = {
++	.driver = {
++		.name = FXAS21002C_DRV_NAME,
++	},
++	.probe		= fxas21002c_probe,
++	.id_table	= fxas21002c_id,
++};
++
++module_i2c_driver(fxas21002c_driver);
++
++MODULE_AUTHOR("Afonso Bordado <afonsobordado@az8.co>");
++MODULE_DESCRIPTION("FXAS21002C Digital Angular Rate Gyroscope driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.18.0
+
+
