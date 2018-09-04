@@ -2,150 +2,204 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB2CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0732DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0872120843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867DA2077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="piRPp5ab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0872120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkWF8zDp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867DA2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeIDSHh (ORCPT
+        id S1727364AbeIDSKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 14:07:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbeIDSHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 14:07:36 -0400
-Received: from jouet.infradead.org (unknown [189.40.103.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A283A2077C;
-        Tue,  4 Sep 2018 13:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536068544;
-        bh=251mbuOpdC8kdpNzBwzK2uvHGdrb/MhCsB+QHh51gJs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=piRPp5ab6LlcUYZWK5SRAWNHmR0EhcvicA8+R18hmavcptXRyQqtST7vpRuZjWmvF
-         NprUUnobfcGbKZW7gYQAOgtZ3IQr8WRmohXMXa0E5KwFzfik9hN8zCFhgepTzzoRj3
-         cGwz8pyOG1E6mb2hTheOTCQqj9OToEDjWjhyoITs=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 4BB8A141FFC; Tue,  4 Sep 2018 10:42:18 -0300 (-03)
-Date:   Tue, 4 Sep 2018 10:42:18 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+        Tue, 4 Sep 2018 14:10:07 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:40954 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeIDSKH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 14:10:07 -0400
+Received: by mail-lj1-f175.google.com with SMTP id j19-v6so3192210ljc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 06:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D/s6vFcFm1/sDKDSZP6Xii75wDTwwt/WNz86SkndodE=;
+        b=fkWF8zDpbFDbZkmh+GwuCbSW4rUbkVyYdDAp2NAd4JZ0l2sJVFI9ZhN3PYTsY4quVN
+         nbo/zydbaVLZOxSmdhmFItGS5lKKOnRupvZtO+/M4p2TsW4jNPWO4f4YGpX/ilm9S4EQ
+         U+bxtw+zUFISt10QlakxLUjyy9cN1qtnEQbG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D/s6vFcFm1/sDKDSZP6Xii75wDTwwt/WNz86SkndodE=;
+        b=rNZoHqZw/6XBD82Z/ZDwKOHZ7OcbkCVRvWutYWitdBNaMlp8Hdo+LL0WQDeqTqPHrq
+         lIdsd0rbb9PCXoK3Bsdh0zzT1mK88CBYNInUcdY1AinLDoDVjgSX39HZx2SVSxPM3o8Z
+         uRMgolNuIf9X4ugYYyREXsXoDcaudRadEn7FAhASbPrlt3yNvr5KFu3XIjgG2yssDABB
+         nMrbV4tg9z0dVB4jpGGMq1Qji0WbyHikvESWX6206tReulCshSEPP3k6Q1EQwKEaxwB1
+         1CW7xCx19DFt1tkBQ4gwc6sJ3PSki/YL2J35V8rVGFd8e5CWVZwRBomYOHQZ+WWBl9jv
+         nHnA==
+X-Gm-Message-State: APzg51DS4cXZ5lbFNV//SMgI2g8ncbN2etM4brXQLLcsuCjXAhqlB7Qi
+        yXSDO1Yy/VqHyMi5n79q+1jf8XckdFQ=
+X-Google-Smtp-Source: ANB0VdZ/UfPr21q2TTKwPEpy9Z2TDSPZNRypdcnnvLac/eT96oEK1FW2keC87LTm0MDqQPoxbFdmqQ==
+X-Received: by 2002:a2e:85d5:: with SMTP id h21-v6mr20429417ljj.103.1536068692820;
+        Tue, 04 Sep 2018 06:44:52 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id b22-v6sm3924201ljj.93.2018.09.04.06.44.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 06:44:52 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 15:44:50 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [RFC] perf tool improvement requests
-Message-ID: <20180904134218.GA5364@kernel.org>
-References: <CABPqkBT0kEMOnTw1-E1kezCvtWNSws7dp2qzCWKVmjGPOEga8Q@mail.gmail.com>
- <20180904071049.GY24124@hirez.programming.kicks-ass.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kevin Shanahan <kevin@shanahan.id.au>,
+        Siegfried Metz <frame@mailbox.org>,
+        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
+        len.brown@intel.com, rjw@rjwysocki.net, diego.viola@gmail.com,
+        rui.zhang@intel.com, viktor_jaegerskuepper@freenet.de
+Subject: Re: REGRESSION: boot stalls on several old dual core Intel CPUs
+Message-ID: <20180904134450.GA10572@centauri.lan>
+References: <74c5abc8-7430-5bc9-2f8a-a2205608bee7@mailbox.org>
+ <20180830130439.GM24082@hirez.programming.kicks-ass.net>
+ <20180901022125.GO4941@tuon.disenchant.local>
+ <20180903072506.GS24124@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1809030937230.1349@nanos.tec.linutronix.de>
+ <20180903085423.GU24124@hirez.programming.kicks-ass.net>
+ <20180903093305.GC24142@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180904071049.GY24124@hirez.programming.kicks-ass.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180903093305.GC24142@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Sep 04, 2018 at 09:10:49AM +0200, Peter Zijlstra escreveu:
-> On Mon, Sep 03, 2018 at 07:45:48PM -0700, Stephane Eranian wrote:
-> > A few weeks ago, you had asked if I had more requests for the perf tool.
- 
-> I have one long standing one; that is IP based data structure
-> annotation.
- 
-> When we get an exact IP (using PEBS) and were sampling a data related
-> event (say L1 misses), we can get the data type from the instruction
-> itself; that is, through DWARF. We _know_ what type (structure::member)
-> is read/written to.
- 
-> I would love to get that in a pahole style output.
- 
-> Better yet, when you measure both hits and misses, you can get a
-> structure usage overview, and see what lines are used lots and what
-> members inside that line are rarely used. Ideal information for data
-> structure layout optimization.
- 
-> 1000x more useful than that c2c crap.
- 
-> Can we please get that?
+On Mon, Sep 03, 2018 at 11:33:05AM +0200, Peter Zijlstra wrote:
+> On Mon, Sep 03, 2018 at 10:54:23AM +0200, Peter Zijlstra wrote:
+> > On Mon, Sep 03, 2018 at 09:38:15AM +0200, Thomas Gleixner wrote:
+> > > On Mon, 3 Sep 2018, Peter Zijlstra wrote:
+> > > > On Sat, Sep 01, 2018 at 11:51:26AM +0930, Kevin Shanahan wrote:
+> > > > > commit 01548f4d3e8e94caf323a4f664eb347fd34a34ab
+> > > > > Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > > > > Date:   Tue Aug 18 17:09:42 2009 +0200
+> > > > > 
+> > > > >     clocksource: Avoid clocksource watchdog circular locking dependency
+> > > > > 
+> > > > >     stop_machine from a multithreaded workqueue is not allowed because
+> > > > >     of a circular locking dependency between cpu_down and the workqueue
+> > > > >     execution. Use a kernel thread to do the clocksource downgrade.
+> > > > 
+> > > > I cannot find stop_machine usage there; either it went away or I need to
+> > > > like wake up.
+> > > 
+> > > timekeeping_notify() which is involved in switching clock source uses stomp
+> > > machine.
+> > 
+> > ARGH... OK, lemme see if I can come up with something other than
+> > endlessly spawning that kthread.
+> > 
+> > A special purpose kthread_worker would make more sense than that.
+> 
+> Can someone test this?
+> 
+> ---
+>  kernel/time/clocksource.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+> index f74fb00d8064..898976d0082a 100644
+> --- a/kernel/time/clocksource.c
+> +++ b/kernel/time/clocksource.c
+> @@ -112,13 +112,28 @@ static int finished_booting;
+>  static u64 suspend_start;
+>  
+>  #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+> -static void clocksource_watchdog_work(struct work_struct *work);
+> +static void clocksource_watchdog_work(struct kthread_work *work);
+>  static void clocksource_select(void);
+>  
+>  static LIST_HEAD(watchdog_list);
+>  static struct clocksource *watchdog;
+>  static struct timer_list watchdog_timer;
+> -static DECLARE_WORK(watchdog_work, clocksource_watchdog_work);
+> +
+> +/*
+> + * We must use a kthread_worker here, because:
+> + *
+> + *   clocksource_watchdog_work()
+> + *     clocksource_select()
+> + *       __clocksource_select()
+> + *         timekeeping_notify()
+> + *           stop_machine()
+> + *
+> + * cannot be called from a reqular workqueue, because of deadlocks between
+> + * workqueue and stopmachine.
+> + */
+> +static struct kthread_worker *watchdog_worker;
+> +static DEFINE_KTHREAD_WORK(watchdog_work, clocksource_watchdog_work);
+> +
+>  static DEFINE_SPINLOCK(watchdog_lock);
+>  static int watchdog_running;
+>  static atomic_t watchdog_reset_pending;
+> @@ -158,7 +173,7 @@ static void __clocksource_unstable(struct clocksource *cs)
+>  
+>  	/* kick clocksource_watchdog_work() */
+>  	if (finished_booting)
+> -		schedule_work(&watchdog_work);
+> +		kthread_queue_work(watchdog_worker, &watchdog_work);
+>  }
+>  
+>  /**
+> @@ -199,7 +214,7 @@ static void clocksource_watchdog(struct timer_list *unused)
+>  		/* Clocksource already marked unstable? */
+>  		if (cs->flags & CLOCK_SOURCE_UNSTABLE) {
+>  			if (finished_booting)
+> -				schedule_work(&watchdog_work);
+> +				kthread_queue_work(watchdog_worker, &watchdog_work);
+>  			continue;
+>  		}
+>  
+> @@ -269,7 +284,7 @@ static void clocksource_watchdog(struct timer_list *unused)
+>  			 */
+>  			if (cs != curr_clocksource) {
+>  				cs->flags |= CLOCK_SOURCE_RESELECT;
+> -				schedule_work(&watchdog_work);
+> +				kthread_queue_work(watchdog_worker, &watchdog_work);
+>  			} else {
+>  				tick_clock_notify();
+>  			}
+> @@ -418,7 +433,7 @@ static int __clocksource_watchdog_work(void)
+>  	return select;
+>  }
+>  
+> -static void clocksource_watchdog_work(struct work_struct *work)
+> +static void clocksource_watchdog_work(struct kthread_work *work)
+>  {
+>  	mutex_lock(&clocksource_mutex);
+>  	if (__clocksource_watchdog_work())
+> @@ -806,6 +821,7 @@ static int __init clocksource_done_booting(void)
+>  {
+>  	mutex_lock(&clocksource_mutex);
+>  	curr_clocksource = clocksource_default_clock();
+> +	watchdog_worker = kthread_create_worker(0, "cs-watchdog");
 
-So, use 'c2c record' to get the samples:
+Hello Peter,
 
-[root@jouet ~]# perf c2c record
-^C[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 5.152 MB perf.data (4555 samples) ]
+watchdog_worker is only defined if CONFIG_CLOCKSOURCE_WATCHDOG is set,
+so you might want to wrap it with an ifdef to avoid build errors.
 
-Events collected:
+Kind regards,
+Niklas
 
-[root@jouet ~]# perf evlist -v
-cpu/mem-loads,ldlat=30/P: type: 4, size: 112, config: 0x1cd, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|ID|CPU|PERIOD|DATA_SRC|WEIGHT|PHYS_ADDR, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, freq: 1, task: 1, precise_ip: 3, mmap_data: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1, { bp_addr, config1 }: 0x1f
-cpu/mem-stores/P: type: 4, size: 112, config: 0x82d0, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|ID|CPU|PERIOD|DATA_SRC|WEIGHT|PHYS_ADDR, read_format: ID, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-
-	Then we'll get a 'annotate --hits' option (just cooked up, will
-polish) that will show the name of the function, info about it globally,
-i.e.  what annotate already produced, we may get this in CSV for better
-post processing consumption:
-
-[root@jouet ~]# perf annotate --hits kmem_cache_alloc
-Samples: 20  of event 'cpu/mem-loads,ldlat=30/P', 4000 Hz, Event count (approx.): 875, [percent: local period]
-kmem_cache_alloc() /usr/lib/debug/lib/modules/4.17.17-100.fc27.x86_64/vmlinux
-  4.91   15:   mov    gfp_allowed_mask,%ebx
-  2.51   51:   mov    (%r15),%r8
- 17.14   54:   mov    %gs:0x8(%r8),%rdx
-  6.51   61:   cmpq   $0x0,0x10(%r8)
- 17.14   66:   mov    (%r8),%r14
-  6.29   78:   mov    0x20(%r15),%ebx
-  5.71   7c:   mov    (%r15),%rdi
- 29.49   85:   xor    0x138(%r15),%rbx
-  2.86   9d:   lea    (%rdi),%rsi
-  3.43   d7:   pop    %rbx    
-  2.29   dc:   pop    %r12    
-  1.71   ed:   testb  $0x4,0xb(%rbp)
-[root@jouet ~]#
-
-	Then I need to get the DW_AT_location stuff parsed in pahole, so
-that with those offsets (second column, ending with :) with hits (first
-column, there its local period, but we can ask for some specific metric
-[1]), I'll be able to figure out what DW_TAG_variable or
-DW_TAG_formal_parameter is living there at that time, get the offset
-from the decoded instruction, say that xor, 0x138 offset from the type
-for %r15 at that offset (85) from kmem_cache_alloc, right?
-
-In a first milestone we'd have something like:
-
-	perf annotate --hits function | pahole --annotate -C task_struct
-
-	perf annotate --hits | pahole --annotate
-
-Would show all structs with hits, for all functions with hits.
-
-Other options would show which struct has more hits, etc.
-
-- Arnaldo
-
-[1]
-
-[root@jouet ~]# perf annotate -h local
-
- Usage: perf annotate [<options>]
-
-        --percent-type <local-period>
-                          Set percent type local/global-period/hits
-
-[root@jouet ~]# 
-
-- Arnaldo
+>  	finished_booting = 1;
+>  	/*
+>  	 * Run the watchdog first to eliminate unstable clock sources
