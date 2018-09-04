@@ -6,112 +6,87 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DF7C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FA7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86AB42082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:55:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86AB42082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CF7232073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:55:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7232073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeIECWP (ORCPT
+        id S1727429AbeIECWv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:22:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48218 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726864AbeIECWO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:22:14 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E122CBF;
-        Tue,  4 Sep 2018 21:55:11 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 14:55:10 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Larry Chen <lchen@suse.com>
-Cc:     mark@fasheh.com, jlbec@evilplan.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH 1/2] add declaration of ocfs2_free_local_alloc_bits
-Message-Id: <20180904145510.9dd257f40514c8c839745bf4@linux-foundation.org>
-In-Reply-To: <20180904041621.16874-2-lchen@suse.com>
-References: <20180904041621.16874-1-lchen@suse.com>
-        <20180904041621.16874-2-lchen@suse.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Sep 2018 22:22:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54594 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726864AbeIECWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:22:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2B18020731; Tue,  4 Sep 2018 23:55:48 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7D0B7208BE;
+        Tue,  4 Sep 2018 23:55:37 +0200 (CEST)
+Date:   Tue, 4 Sep 2018 23:55:35 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Kurt Kanzenbach <kurt@linutronix.de>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Jagdish Gediya <jagdish.gediya@nxp.com>,
+        Jane Wan <Jane.Wan@nokia.com>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] mtd: rawnand: fsl_ifc: fix SRAM initialization
+ for newer controller
+Message-ID: <20180904235535.165be621@xps13>
+In-Reply-To: <20180813071846.9433-1-kurt@linutronix.de>
+References: <20180813071846.9433-1-kurt@linutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  4 Sep 2018 12:16:20 +0800 Larry Chen <lchen@suse.com> wrote:
+Hi Kurt,
 
-> Signed-off-by: Larry Chen <lchen@suse.com>
-> ---
->  fs/ocfs2/alloc.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+Kurt Kanzenbach <kurt@linutronix.de> wrote on Mon, 13 Aug 2018 09:18:44
++0200:
+
+> Hi,
 > 
-> diff --git a/fs/ocfs2/alloc.h b/fs/ocfs2/alloc.h
-> index 250bcacdf9e9..5770503b0e36 100644
-> --- a/fs/ocfs2/alloc.h
-> +++ b/fs/ocfs2/alloc.h
-> @@ -323,4 +323,10 @@ int ocfs2_find_cpos_for_left_leaf(struct super_block *sb,
->  int ocfs2_find_subtree_root(struct ocfs2_extent_tree *et,
->  			    struct ocfs2_path *left,
->  			    struct ocfs2_path *right);
-> +
-> +int ocfs2_free_local_alloc_bits(struct ocfs2_super *osb,
-> +				handle_t *handle,
-> +				struct ocfs2_alloc_context *ac,
-> +				u32 bit_off,
-> +				u32 num_bits);
->  #endif /* OCFS2_ALLOC_H */
+> this is version two of
+> 
+>  lkml.kernel.org/r/20180806092137.9287-1-kurt@linutronix.de
+> 
+> Changes since v1:
+> 
+>  - Addressed comments from Miquel Raynal
+>    - Changed subject
+>    - Coding style
+>    - Using timeout constants
+>    - Moving version check completely into fsl_ifc_sram_init()
+> 
+> Thanks,
+> Kurt
+> 
+> Kurt Kanzenbach (2):
+>   mtd: rawnand: fsl_ifc: check result of SRAM initialization
+>   mtd: rawnand: fsl_ifc: fixup SRAM init for newer ctrl versions
+> 
+>  drivers/mtd/nand/raw/fsl_ifc_nand.c | 36 ++++++++++++++++++++++++++++++++----
+>  include/linux/fsl_ifc.h             |  2 ++
+>  2 files changed, 34 insertions(+), 4 deletions(-)
+> 
 
-It's already declared in fs/ocfs2/localalloc.h - why not include that?
+Series applied to nand/next.
 
-I did this with the other patch and all seems well:
-
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: fix-clusters-leak-in-ocfs2_defrag_extent-fix
-
-include localalloc.h, reduce scope of data_ac
-
-Cc: Larry Chen <lchen@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/ocfs2/move_extents.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/fs/ocfs2/move_extents.c~fix-clusters-leak-in-ocfs2_defrag_extent-fix
-+++ a/fs/ocfs2/move_extents.c
-@@ -25,6 +25,7 @@
- #include "ocfs2_ioctl.h"
- 
- #include "alloc.h"
-+#include "localalloc.h"
- #include "aops.h"
- #include "dlmglue.h"
- #include "extent_map.h"
-@@ -227,7 +228,6 @@ static int ocfs2_defrag_extent(struct oc
- 	u32 new_phys_cpos, new_len;
- 	u64 phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, phys_cpos);
- 	int need_free = 0;
--	struct ocfs2_alloc_context *data_ac;
- 
- 	if ((ext_flags & OCFS2_EXT_REFCOUNTED) && *len) {
- 		BUG_ON(!ocfs2_is_refcount_inode(inode));
-@@ -345,7 +345,8 @@ static int ocfs2_defrag_extent(struct oc
- 
- out_commit:
- 	if (need_free && context->data_ac) {
--		data_ac = context->data_ac;
-+		struct ocfs2_alloc_context *data_ac = context->data_ac;
-+
- 		if (context->data_ac->ac_which == OCFS2_AC_USE_LOCAL)
- 			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
- 					new_phys_cpos, new_len);
-_
-
+Thanks,
+Miquèl
