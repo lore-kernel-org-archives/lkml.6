@@ -2,106 +2,128 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA9EC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7207BC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98EB20843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:00:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iDPBl8Bw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98EB20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EF972073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:02:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF972073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeIEC1n (ORCPT
+        id S1727408AbeIEC3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:27:43 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:34068 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727442AbeIEC1n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:27:43 -0400
-Received: by mail-yw1-f68.google.com with SMTP id y134-v6so1882599ywg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 15:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=U4fJw3KY25GzMWmJjtGTs5BT5E95exnjBJVpoj4koZw=;
-        b=iDPBl8Bw67yHJ8YIyXEJ0g7FLgvWpgAJH+E+nVbkRKA5Y5pUaNcB+GUA0poGjGbkfy
-         9w4FZMlTtoic96iR3IpI7vwTnFh8Rw2kP0TFLzqzlVV8Pk+ZyxqI+5tzg0fHBE6oOq2k
-         vvPNLpcS93Rcahjn60ML8yItzrVwMX09JV+WU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=U4fJw3KY25GzMWmJjtGTs5BT5E95exnjBJVpoj4koZw=;
-        b=SLd6WWfq66L3atqRtNicYuc4Zs+OPQtZhGvy6AL8HC/1VBc23dB3URRsVV4FkGNxmw
-         JS08YxpKECbbXxPO4CHfm51JEKZuXs7ptJxKs3yP8o5/XGdlmGC/8ovMAaiqa5cKijgh
-         EkZkQdCxjsTZscdPl4NAy/18O2lcNN0NB3a9ylZsYN0MT6R4hwiFPuXvWbpeiJ3xuOLR
-         w8ByEUiFiDMpJlJKH8vIv5uypyz4nQwTeDi3hKuEfi+z1mgK4k4eNQ5/aX42Som45kJs
-         /3IFHlHOX6X4Nuh22q5L+JFNqIMRmqEpLJWqP/JxChBu5wIJiWBDzXsfP4HEXFmLaIZ4
-         rRoQ==
-X-Gm-Message-State: APzg51CPcJhWbIdDoyD9EwehNUOXPmJxOucW8f4DJhJlLqYSk1mJhMM2
-        SyhVMN0rV4Q49Ss0++MnnC3uzw==
-X-Google-Smtp-Source: ANB0VdZmFTt0wzbg015NiRlE4KWdS5xyLATVRDp7mLNSx4/t9n1aEXl0C6SVPBvTg3b+YJflU7NPww==
-X-Received: by 2002:a0d:f0c4:: with SMTP id z187-v6mr19048397ywe.68.1536098438224;
-        Tue, 04 Sep 2018 15:00:38 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id e126-v6sm9681267ywf.72.2018.09.04.15.00.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Sep 2018 15:00:37 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Sep 2018 22:29:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55091 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726944AbeIEC3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:29:24 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B8E652072C; Wed,  5 Sep 2018 00:02:18 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8BC7F208AF;
+        Wed,  5 Sep 2018 00:02:08 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 00:02:07 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Ales Novak <alnovak@suse.cz>,
+        a.zummo@towertech.it, akpm@linux-foundation.org,
+        rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: rtc: fix chardev initialization races
+Message-ID: <20180904220207.GK13888@piout.net>
+References: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
+ <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
+ <nycvar.YFH.7.76.1805221407100.27054@cbobk.fhfr.pm>
+ <20180522133955.jrqijs7xj3cz2lr4@pengutronix.de>
+ <nycvar.YFH.7.76.1805221726300.27054@cbobk.fhfr.pm>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180904210934.GA23990@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, marc.zyngier@arm.com,
-        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, andy.gross@linaro.org,
-        dianders@chromium.org
-References: <20180817191026.32245-1-ilina@codeaurora.org>
- <20180817191026.32245-3-ilina@codeaurora.org>
- <153509896098.28926.3622217918056498792@swboyd.mtv.corp.google.com>
- <20180824171432.GM5081@codeaurora.org>
- <153540005334.129321.18196967002233663397@swboyd.mtv.corp.google.com>
- <20180904210934.GA23990@codeaurora.org>
-Message-ID: <153609843656.119890.7258329648640765778@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC interrupt only
- during suspend
-Date:   Tue, 04 Sep 2018 15:00:36 -0700
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <nycvar.YFH.7.76.1805221726300.27054@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-09-04 14:09:34)
-> On Mon, Aug 27 2018 at 14:01 -0600, Stephen Boyd wrote:
-> >
-> >Can't we just configure a different chained IRQ handler with
-> >irq_set_chained_handler_and_data() for each of the GPIO IRQs that are
-> >handled by PDC to be the interrupts provide by the PDC irq controller
-> >that match the GPIOs? And then set their parent irq with
-> >irq_set_parent() for completeness? And also move those GPIOs from the
-> >existing msm_gpio irqchip to a different PDC gpio irqchip that does
-> >nothing besides push irqchip calls up to the PDC irqchip? Then we don't
-> >even have to think about resending anything and we can rely on PDC to do
-> >all the interrupt sensing all the time but still provide the irqs from
-> >the GPIO controller.
-> >
-> Seems like the irqchips need to be in hierarchy for this to work, which
-> is not the case with TLMM and the PDC, currently.
-> =
+On 22/05/2018 17:33:40+0200, Jiri Kosina wrote:
+> On Tue, 22 May 2018, Uwe Kleine-König wrote:
+> > [adding linux-rtc ML and Alexandre to Cc:]
+> > 
+> > Hello,
+> > 
+> > On Tue, May 22, 2018 at 02:09:36PM +0200, Jiri Kosina wrote:
+> > > On Mon, 21 May 2018, Uwe Kleine-König wrote:
+> > > 
+> > > > > The race looks like that (thanks Jiri):
+> > > > > 
+> > > > > CPU0:                                CPU1:
+> > > > > sys_load_module()
+> > > > >  do_init_module()
+> > > > >   do_one_initcall()
+> > > > >    cmos_do_probe()
+> > > > >     rtc_device_register()
+> > > > >      __register_chrdev()
+> > > > >      cdev->owner = struct module*
+> > > > >                                      open("/dev/rtc0")
+> > > > >     rtc_device_unregister()
+> > > > >   module_put()
+> > > > >   free_module()
+> > > > >    module_free(mod->module_core)
+> > > > >    /* struct module *module is now
+> > > > >       freed */
+> > > > >                                       chrdev_open()
+> > > > >                                        spin_lock(cdev_lock)
+> > > > >                                        cdev_get()
+> > > > >                                         try_module_get()
+> > > > >                                          module_is_live()
+> > > > >                                          /* dereferences already
+> > > > >                                             freed struct module* */
+> > > > 
+> > > > [Context: For a patch to rtc-pcf2127.c Alexandre Belloni asked not to
+> > > > fail after rtc_device_register successfully finished and pointed to this
+> > > > reasoning as explaination.]
+> > > > 
+> > > > If there is really such a race then (I hope) there is
+> > > > something in the cdev code that needs fixing. According to my
+> > > > understanding, when rtc_device_unregister returned, the cdev is gone and
+> > > > so chrdev_open is supposed to fail.
+> > > 
+> > > Oh wow, hello back to 4 years ago!
+> > 
+> > :-)
+> > 
+> 
+> > > Looking at the current code, I don't think there is no such race any more, 
+> > > as the last thing cmos_do_probe() -> __rtc_register_device() does that can 
+> > > potentially fail is the chardev creation itself.
+> > 
+> > OK, so you agree that it's also save to do something in a driver's probe
+> > after rtc_device_register() and call rtc_device_unregister() in the error
+> > path, right? 
+> 
+> Hmm, not really; that's what the code apparently did 4 years ago (judging 
+> from the scenario in the old mail, I of course forgot all the details), 
+> but doesn't do it any more.
+> 
+> Looking at the current code, if you call rtc_device_unregister() in the 
+> probe path, where is the guarantee that cdev_get() will not derefernce 
+> already freed struct module*?
+> 
 
+I've also tried to produce it and couldn't. The whole magic happens in
+kobj_lookup. Freeing the module before ends up with the application
+opening the char dev getting -ENXIO. Freeing the module after
+kobj_lookup is not possible and ends up with -EBUSY.
 
-Why? Does something mandate that the chained irq is also the
-hierarchical parent irqchip?
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
