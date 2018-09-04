@@ -3,27 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7BEC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BDEC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC91420869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC91420869
+	by mail.kernel.org (Postfix) with ESMTP id 7606E20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7606E20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbeIDJEh (ORCPT
+        id S1727216AbeIDJEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:04:37 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:44890 "EHLO hermes.aosc.io"
+        Tue, 4 Sep 2018 05:04:48 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44906 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726093AbeIDJEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:04:37 -0400
+        id S1726093AbeIDJEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:04:47 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id A23635A0D3;
-        Tue,  4 Sep 2018 04:41:13 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 98E555A0D3;
+        Tue,  4 Sep 2018 04:41:24 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -33,59 +34,99 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 00/11] arm64: allwinner: Add A64 DE2 HDMI support
-Date:   Tue,  4 Sep 2018 12:40:42 +0800
-Message-Id: <20180904044053.15425-1-icenowy@aosc.io>
+Subject: [PATCH v4 01/11] clk: sunxi-ng: a64: Add minimal rate for video PLLs
+Date:   Tue,  4 Sep 2018 12:40:43 +0800
+Message-Id: <20180904044053.15425-2-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-A64 behaviour similar to Allwinner A83T where
-Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
-Mixer1 => TCON1 => HDMI
-as per Display System Block Diagram from the A64 user manual.
+According to documentation and experience with other similar SoCs, video
+PLLs don't work stable if their output frequency is set below 192 MHz.
 
-This patchset adds support for the two display pipelines, and enables
-the HDMI output on several boards. The first pipeline is not enabled in
-this patchset yet, although it's added.
+Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
 
-Icenowy Zheng (2):
-  clk: sunxi-ng: a64: Add max. rate constraint to video PLLs
-  dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+Changes for v3..v4:
+- none 
+Changes for v2:
+- New patch
 
-Jagan Teki (8):
-  clk: sunxi-ng: a64: Add minimal rate for video PLLs
-  dt-bindings: display: Add compatible for A64 DE2 display pipeline
-  drm/sun4i: Add support for A64 mixers
-  drm/sun4i: Add support for A64 display engine
-  dt-bindings: display: Add compatible for A64 HDMI
-  dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO0 macro
-  arm64: dts: allwinner: a64: Add display pipeline
-  arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-Jernej Skrabec (1):
-  drm/sun4i: Add support for HDMI voltage regulator
-
- .../bindings/display/sunxi/sun4i-drm.txt      |   9 +
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  34 ++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  34 ++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    |  34 ++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts |  34 ++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  34 ++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts |  34 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 170 ++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |  48 ++---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h         |   4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  17 +-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   2 +
- drivers/gpu/drm/sun4i/sun8i_mixer.c           |  24 +++
- include/dt-bindings/clock/sun50i-a64-ccu.h    |   1 +
- 15 files changed, 456 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index ee9c12cf3f08..d0e30192f0cf 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   BIT(28),	/* lock */
+ 				   CLK_SET_RATE_UNGATE);
+ 
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+-					"osc24M", 0x010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
++					    "osc24M", 0x010,
++					    192000000,	/* Minimum rate */
++					    8, 7,		/* N */
++					    0, 4,		/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x018,
+@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
+ 	},
+ };
+ 
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+-					"osc24M", 0x030,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
++					    "osc24M", 0x030,
++					    192000000,	/* Minimum rate */
++					    8, 7,		/* N */
++					    0, 4,		/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					"osc24M", 0x038,
 -- 
 2.18.0
 
