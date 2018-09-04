@@ -2,114 +2,68 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F101DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5319CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EADC20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TNEI1/43"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EADC20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 19C2520645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:21:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C2520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeIDUq6 (ORCPT
+        id S1727692AbeIDUrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:46:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50404 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbeIDUq5 (ORCPT
+        Tue, 4 Sep 2018 16:47:00 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57519 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbeIDUq7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:46:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K8KRfCaXL5BAW/JxRlzOZdJKnBtcwjtEC8TX8+OYLqo=; b=TNEI1/43fs7tW70248XEa97nY
-        IAqCdIgckP1qy1iwriGaXLk/Bkt3FSPtIyfHktkybdaJF/6tt9czIhD0CFf086eJkzywwf6s5ReL4
-        SsEfNE7i8ZG1BbUR8NW3aP3bR7BEc9jZgDylaUP9QlhczrGSKgc+tTuc96ePhD59jduMw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fxE4c-0001U0-7n; Tue, 04 Sep 2018 16:21:02 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BD95B11227D8; Tue,  4 Sep 2018 17:21:01 +0100 (BST)
-Date:   Tue, 4 Sep 2018 17:21:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tlv320aic31xx: Add MICBIAS off setting
-Message-ID: <20180904162101.GK12993@sirena.org.uk>
-References: <20180831180507.28867-1-afd@ti.com>
- <20180903112656.GF10302@sirena.org.uk>
- <701a066c-33e1-4476-7403-fdb9a3c366d8@ti.com>
- <20180904144159.GC12993@sirena.org.uk>
- <7163381a-ae09-ad3b-064d-990c98f13ccb@ti.com>
- <20180904145503.GD12993@sirena.org.uk>
- <85973bf4-1acb-1731-d93e-29c8141a3c53@ti.com>
- <20180904155655.GJ12993@sirena.org.uk>
- <5e7fdb87-651d-6056-9323-7a29573b6300@ti.com>
+        Tue, 4 Sep 2018 16:46:59 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fxE4b-0002Am-Am; Tue, 04 Sep 2018 18:21:01 +0200
+Date:   Tue, 4 Sep 2018 18:21:00 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jiri Kosina <jikos@kernel.org>
+cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+In-Reply-To: <alpine.DEB.2.21.1809041808370.3395@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1809041819350.3395@nanos.tec.linutronix.de>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm> <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm> <alpine.DEB.2.21.1809041808370.3395@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uuKVzAmB+c+zQlhu"
-Content-Disposition: inline
-In-Reply-To: <5e7fdb87-651d-6056-9323-7a29573b6300@ti.com>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 4 Sep 2018, Thomas Gleixner wrote:
+> On Tue, 4 Sep 2018, Jiri Kosina wrote:
+> > +/**
+> > + * ___ptrace_may_access - variant of ptrace_may_access that can be used
+> > + * between two arbitrary tasks
+> > + * @curr: source task
+> 
+> That's a pretty shitty name, really. If @curr is supposed to be an
+> arbitrary task, then please rename it in a way which makes that entirely
+> clear. curr is too close to current. Just grep for 'task_struct \*curr'.
 
---uuKVzAmB+c+zQlhu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Something like '*tracer' would make it entirely clear what's going on.
 
-On Tue, Sep 04, 2018 at 11:02:14AM -0500, Andrew F. Davis wrote:
-> On 09/04/2018 10:56 AM, Mark Brown wrote:
+Thanks,
 
-> > I'm really having a lot of trouble seeing MICBIAS_OFF as a useful
-> > voltage to specify in DT in the first place.
-
-> I don't see the usefulness in specifying any bias voltage in DT at all,
-> it is a configuration and can be made at runtime, it has no place in DT.
-> But it is already here, so lets allow all available voltages a board may
-> need and the CODEC can supply, even 0.
-
-It is very rare for it to be useful to select the bias voltage at
-runtime - it's usually something that's decided by the electrical
-engineering at system design time and linked to selection of passive
-components rather than something that a user could usefully vary.  I
-suspect in the situations where it is useful to vary it you'd want a
-layer of indirection mapping it onto some user observable behaviour (or
-the system should just do this autonomously as with the various low
-power mic detect solutions out there).  What situations are you aware of
-where runtime configuration is useful?
-
---uuKVzAmB+c+zQlhu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluOsOwACgkQJNaLcl1U
-h9DYmAf+LCT+vhBXxyGDhabEyFRP6oDBpr/gdW0VYGmGA6gmmSyRJ/FpyQptNoaq
-yIpEeS137gVaflEf50GOe4ir99A2BEm/9bDM/GfWiqVXxVEj7DJJErUbDD/U5GVc
-tmTZRprqQE7mtLDXcabHWZ36NvJDPYSsW4nWY/lECWM/n7WhF6Uj8doy/aB7M4um
-9+IoV+5K72uid4PEJXQW2I4aqJGnGIx8OKe7+0028gC4Rz+P9zpM+e7R/Z7jEpzO
-4ERfDasO9WhLSu+4dqCqSu0eA3yAAkgDaZqbhRmRzgMozN9jHdkEB3aQdL2qf52V
-5NHHRm6HOcIHW2PXOwC7Lwbl9Aad4w==
-=rGwn
------END PGP SIGNATURE-----
-
---uuKVzAmB+c+zQlhu--
+	tglx
