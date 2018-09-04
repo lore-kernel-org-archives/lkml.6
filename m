@@ -2,96 +2,79 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD984C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B6AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B4620836
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:41:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B4620836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id AE45F206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE45F206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeIDWHd (ORCPT
+        id S1727186AbeIDWLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:07:33 -0400
-Received: from anholt.net ([50.246.234.109]:40688 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeIDWHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:07:32 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 8968010A18B7;
-        Tue,  4 Sep 2018 10:41:25 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id vsyXNbLumygJ; Tue,  4 Sep 2018 10:41:24 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 5CB7C10A01FF;
-        Tue,  4 Sep 2018 10:41:24 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id DAE3D2FE1B3C; Tue,  4 Sep 2018 10:41:23 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: error when fetching the bcm2835 tree
-In-Reply-To: <20180828074200.440fb5ca@canb.auug.org.au>
-References: <20180828074200.440fb5ca@canb.auug.org.au>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Tue, 04 Sep 2018 10:41:22 -0700
-Message-ID: <87wos1gny5.fsf@anholt.net>
+        Tue, 4 Sep 2018 18:11:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45086 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726052AbeIDWLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:11:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80EA6AF3A;
+        Tue,  4 Sep 2018 17:45:44 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 19:45:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Mike Snitzer <snitzer@redhat.com>,
+        jing xia <jing.xia.mail@gmail.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+Message-ID: <20180904174543.GQ14951@dhcp22.suse.cz>
+References: <20180612212007.GA22717@redhat.com>
+ <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
+ <20180614073153.GB9371@dhcp22.suse.cz>
+ <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
+ <alpine.LRH.2.02.1809031816120.27063@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180904070824.GH14951@dhcp22.suse.cz>
+ <20180904151844.GB10112@redhat.com>
+ <20180904160732.GO14951@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1809041328320.8875@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1809041328320.8875@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Tue 04-09-18 13:30:44, Mikulas Patocka wrote:
+> 
+> 
+> On Tue, 4 Sep 2018, Michal Hocko wrote:
+> 
+> > Regarding other other workloads. AFAIR the problem was due to the
+> > wait_iff_congested in the direct reclaim. And I've been arguing that
+> > special casing __GFP_NORETRY is not a propoer way to handle that case.
+> > We have PF_LESS_THROTTLE to handle cases where the caller cannot be
+> > really throttled because it is a part of the congestion control. I dunno
+> > what happened in that regards since then though.
+> > -- 
+> > Michal Hocko
+> > SUSE Labs
+> 
+> So, could you take this patch https://patchwork.kernel.org/patch/10505523/ 
+> and commit it to the kernel?
+> 
+> You agreed with that patch, but you didn't commit it.
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-
-> [ Unknown signature status ]
-> Hi Eric,
->
-> Fetching the bcm2835 tree (git://github.com/anholt/linux.git#for-next)
-> produces this error:
->
-> fatal: Couldn't find remote ref refs/heads/for-next
-
-I'd passed responsibility for the git tree off to Stefan while I'm
-mostly-unavailable due to new baby.  Maybe Stefan had deleted the branch
-for a bit?
-
-Stefan -- the for-next branch is what linux-next pulls in, and I was
-regenerating it whenever I pushed -next branches.  You can find one set
-of scripts for helping generate a for-next branch at
-git://git.kernel.org/pub/scm/linux/kernel/git/tegra/maint-scripts.git
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAluOw8IACgkQtdYpNtH8
-nuifUA/+KUqbSmr1eyohjjAxRZeeNQwscCYbHxCGp2g2oplwt+73/zTEEHyf7Z8b
-+UgcHhCbjh8jakNJe3jRPRbjgAH6Xq8gomq9Ow3TYoeAxm6JVNEtxWm10kSPAYle
-l29E2GG7iKM529TGYsOVG2AgDFm8GnSrh4JfgP1cfXGuAu03W3Li3vmQuJPVKmGq
-1knwZRYhSbFdOUA7d9H4/6xxuopTKM2iO3JZea12kfJTNK91KTWRbLyzIGjzeHSk
-INNWlIb0HISDDNUdt7OH72tlTGIDtUxYrM1+T5kcoZH3lsPeYCFR/0EsINwiLDTO
-it/7vnDJNsZ/krsHdAr9BugFyx4Q1oFFViJPwLgmr6bFAq9qoTs3jGllZCQ5CwZk
-bBkJ/iOyFMc9Jj4y8j8SL98hvjZjYXD9aBvx5um9SQH44GmKCFf6FNBdl5VgV7x5
-ZP7YOlW0+V+Y51/1K6gEHSuw9xOhe686mYpbRtymzMoRYBIux/Q+wxddGSuNNt1z
-iy9Pw5BVb7nUtLypxBOIg4pyTuU/gauBV/YqNOlW+vd0HLM9556WN0c9PdAFC0ib
-GRebzpmBExj2rt/V1RFV/6OnHk+uUCLfE47puD91y787iIi6SoQf9YQvHKxofrhV
-gXcLWVE9lBfn/fDL/l35xPW+zs5IxuJ8lJcueZQ9bHgFOkG92QM=
-=8Gz9
------END PGP SIGNATURE-----
---=-=-=--
+Because I do not maintain any tree that Linus pulls from. You need to
+involve Andrew Morton to get this to the mm tree and then to Linus.
+-- 
+Michal Hocko
+SUSE Labs
