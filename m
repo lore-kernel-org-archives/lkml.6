@@ -2,129 +2,101 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15248C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D64C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13552086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C10520867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o/AH2cYq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13552086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="I/agJYJ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C10520867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbeIDMYg (ORCPT
+        id S1727049AbeIDMZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:24:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44339 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeIDMYg (ORCPT
+        Tue, 4 Sep 2018 08:25:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32913 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeIDMZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:24:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k21-v6so1279529pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:00:38 -0700 (PDT)
+        Tue, 4 Sep 2018 08:25:20 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d4-v6so1308994pfn.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gWqyMGf/XZ3NzFmcHJxupslVZet5mNzpfcJyocI+nVk=;
-        b=o/AH2cYqcFFOk458XBeyuP77/rLXrQinlc4ezcuVEa/GBBG5vWMgtBC+8R7REOWnCx
-         ljE+7HzQcua1A6zy68FwMo24Tjf2d4j3QSRuFN1IV8U1amaArRgDeZQbq78ZcIPZvIDh
-         GbuvGby1zzoSNOB0ZtWBWak3zxOhJON+DquN7wAiRS7pxe0iCgVuqBYNRINgw2mi1wZA
-         OB2qktFxRSN2EQ22nXFlLo8g2vU8Jz7gSwYutnAX+8HaS+9ZauAhwQkGBfo2w+X5UynU
-         eMVjqxcc08gsrk6BAK8AS8EHaybzIN7GdBeNaNH36DZUz1relaLY/685V75Y4wz+YhUF
-         QENw==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EdKVQ6S8ZH5sycgN24fFDUD/w/OwJLCbuwi4ICBnL6U=;
+        b=I/agJYJ1zgSAVOIalC3LUUMu/vDLNy7/j9/nZydtrvWi7vHQ4MUXMTsEV34trxS8lA
+         3Ad/qna//z4sEtZfoJDPXgKthdgOCf2nOt2qpFvj7wJODfoRr3Lk0tL5CyURcWPRn7jp
+         Tz4B15CVMXcRdzmvK2A76DEBMjAMLMFboNVCQYgzfS5T6cA0TcuuJ7Dg/XB0j79U0Ea4
+         03gAEXMaEk4ETC4SluzrvKxAzLqUL+w4g365twSyh0/+QSezmpWSzBHgdYAV7WGSmCUj
+         aSDEIXEj5Wuvcvf+R/zadLRfe+HyZtW4yUJF3IJfNuHn1tuZvRWQaxdBYRGGhRlb5boi
+         gM0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gWqyMGf/XZ3NzFmcHJxupslVZet5mNzpfcJyocI+nVk=;
-        b=rCyXjib1GMpSxLFrPqt995RES7szEihALF7lTA7VoNhBTxUKdivbhvR1wmwA1rYbne
-         E79L8t5NxhrnXF7p/Rfnj6lhLlDnj7H6PoTKvZaEM6Pv7PBrXijJFKZVtct4xSCgRtOE
-         5MUwbCsxr9PWQutOSXfU4LUSfNqoqXJ3cP3Dh1y/67M6KS8stGS5WvrleH9PSrzHVw9G
-         IXG6oHLf6nU6BUfzp6X4ed3aKDjdshjz11CMwbyZ37EZ/mY+3A2YVsQ+DtnVUHe45zRR
-         Lhj0hWwXcv/LdCIPIsxRnP4C8paJtXQ14C/pMioc6mQwJZkNnj2M1vZo66CfVrGyepaI
-         uW0g==
-X-Gm-Message-State: APzg51CNEiJ6S6rCd0du3GoSPJhYMe7YupHq21nR0fa1xxB0vN7p+t6V
-        qWDkMygKGyNOijYgTyKXDONlFi6Yb+/+bwTCcHFAhA==
-X-Google-Smtp-Source: ANB0VdbKly37fTUw/szTasO46MMooxntSPJmJTD8kKAI+8ld5+2ZVinnxBZT9FVNSvn+QCk7ubuB70oUUUzor4y2fg8=
-X-Received: by 2002:a62:71c4:: with SMTP id m187-v6mr5654232pfc.232.1536048037447;
- Tue, 04 Sep 2018 01:00:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EdKVQ6S8ZH5sycgN24fFDUD/w/OwJLCbuwi4ICBnL6U=;
+        b=naKb1BbNt0wKF/bpQ7TrSJq0jWHEcd1S+a+wX1eINDRHc70aYPM/rUC4+kjA1KoJP7
+         YuPcgikEJojJkxft5ANLBMWnt2lwSB6vrsBhYflxxT3YUfsdHpEI/dREEh7fcZsP2aPT
+         KRYQpZWXAVktp4sanKGHXdX/inJMnW+vNNeTOSKd+KorDrCD8Zr7glG/AwujWaB6R2TR
+         /8FBisXmud0sahOnOokQbrPb7pU/CFCQsgysu3rKsZ8ZC2OG7Z2uvp87OfQUHz845r6T
+         RFj9EYjAgVVCEj3gMn4fH1CKroty3WfiwNquY9OdGIJL2ltxFcbtJ+DGfvYE7EwwBRLy
+         dfWg==
+X-Gm-Message-State: APzg51D4esj1Rjc7+OIdfpV08c1EJ8l3qb+cn2ogs5wGkVa/QdM1K9gy
+        PpaGrmP+7YsoMnn1cacuPIYfXQ==
+X-Google-Smtp-Source: ANB0Vdb5JTX4mz/NSZAUEYwF7663ex3aImAizSW7ATXGTM+uvzhUf1JuP6LIynwCgfZFZE9TbsJG7w==
+X-Received: by 2002:a63:6501:: with SMTP id z1-v6mr15189508pgb.419.1536048082543;
+        Tue, 04 Sep 2018 01:01:22 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
+        by smtp.gmail.com with ESMTPSA id t12-v6sm35157253pgg.72.2018.09.04.01.01.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 01:01:21 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 67455300D89; Tue,  4 Sep 2018 11:01:16 +0300 (+03)
+Date:   Tue, 4 Sep 2018 11:01:16 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        Huang Ying <ying.huang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
+Message-ID: <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
+References: <20180904075510.22338-1-peterx@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 4 Sep 2018 01:00:16
- -0700 (PDT)
-In-Reply-To: <1536042474.25086.1.camel@med.uni-goettingen.de>
-References: <1535875700.17858.3.camel@med.uni-goettingen.de>
- <CAGXu5jJ7kGm-DGUB8uwwhd-Hv7i4WEcSKumTf2MBsj_-yzWcqg@mail.gmail.com>
- <1535960372.32005.1.camel@med.uni-goettingen.de> <CA+55aFy=T6TmG_VcLvSTb02RyKTacxVCxwUALRn8_7cdoic0pA@mail.gmail.com>
- <1536042474.25086.1.camel@med.uni-goettingen.de>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 4 Sep 2018 10:00:16 +0200
-Message-ID: <CACT4Y+bBPRfjpWFXoZmruuot37_KTemZ0PHUNrFfOPW5+6JD7w@mail.gmail.com>
-Subject: Re: VLAs and security
-To:     "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
-Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904075510.22338-1-peterx@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 8:27 AM, Uecker, Martin
-<Martin.Uecker@med.uni-goettingen.de> wrote:
-> Am Montag, den 03.09.2018, 14:28 -0700 schrieb Linus Torvalds:
->> On Mon, Sep 3, 2018 at 12:40 AM Uecker, Martin
->> <Martin.Uecker@med.uni-goettingen.de> wrote:
->> >
->> > But if the true bound is smaller, then IMHO it is really bad advise
->> > to tell programmers to use
->> >
->> > char buf[MAX_SIZE]
->> >
->> > instead of something like
->> >
->> > assert(N <= MAX_SIZE);
->> > char buf[N]
->>
->> No.
->>
->> First off, we don't use asserts in the kernel. Not acceptable. You
->> handle errors, you don't crash.
->
-> Ofcourse. But this is unrelated to my point.
->
->> Secondly, the compiler is usually very stupid, and will generate
->> horrible code for VLA's.
->>
->> Third, there's no guarantee that the compiler will actually even
->> realize that the size is limited, and guarantee that it won't screw up
->> the stack.
->
-> If this is about the quality of the generated code, ok.
->
-> I just don't buy the idea that removing precise type-based
-> information about the size of objects from the source code
-> is good long-term strategy for improving security.
->
->> So no. VLA's are not acceptable in the kernel. Don't do them. We're
->> getting rid of them.
->
-> All right then.
+On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
+> When splitting a huge page, we should set all small pages as dirty if
+> the original huge page has the dirty bit set before.  Otherwise we'll
+> lose the original dirty bit.
 
-Hi Martin,
+We don't lose it. It got transfered to struct page flag:
 
-Compiler and KASAN should still be able to do checking against the
-static array size.
-If you mean that there is some smaller dynamic logical bound n (<N)
-and we are not supposed to use memory beyond that, then KMSAN [1] can
-detect uses of the uninitialized part of the array. So we have some
-coverage on the checking side too.
+	if (pmd_dirty(old_pmd))
+		SetPageDirty(page);
 
-[1] https://github.com/google/kmsan#kmsan-kernelmemorysanitizer
+-- 
+ Kirill A. Shutemov
