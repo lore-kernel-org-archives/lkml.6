@@ -2,167 +2,148 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F9C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F68CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AB120843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:12:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AB120843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 299772086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:13:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="nWaXeQ1a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299772086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeIDMgM (ORCPT
+        id S1726327AbeIDMhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:36:12 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33970 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727050AbeIDMgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:36:12 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id pH2VgAipDmoF; Tue,  4 Sep 2018 10:11:52 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 32DE81EC0424;
-        Tue,  4 Sep 2018 10:11:52 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 10:11:51 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     linux-crypto@vger.kernel.org, thomas.lendacky@amd.com,
-        Gary Hook <Gary.Hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH crypto-2.6] crypto: ccp: add timeout support in the SEV
- command
-Message-ID: <20180904081151.GC32615@zn.tnic>
-References: <1534367485-4386-1-git-send-email-brijesh.singh@amd.com>
- <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
+        Tue, 4 Sep 2018 08:37:21 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35633 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeIDMhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 08:37:21 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so1319735pfh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jqgnbNXqUG887SXlUDeCp8uKIPwg9WkXkw+ZI+Q9gdQ=;
+        b=nWaXeQ1aoZbZlsh801zbhxcdDdB+705Ol9GiKw1q53M7PQJPFVJN22Tl5lU1pM2cMr
+         ZjkZZB/IPJoiorwLHDKnXYowBrp7wotiajY4f8ayDJ4/axE4yKDPUoP7rDRUTbiMvtyR
+         1hJUz8cKZ2NUWIAmnVF0KTW9TaxQBA4gIuCF/XWKRX4u8sSOvD07E7aOfElyrNe0DrZG
+         tZUigmJNZoQyRHXCjuKJt4DqQSnbpZnWrp1w4VhrgK0Q7mGANdjBy13cOTYosBN6k9nD
+         39xlENYSgtZNfH8XeP2CxmfgjL3EDk6EF0wPZpzhrFA54sMr83FshlU9Ha1/UvknN9um
+         B3XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jqgnbNXqUG887SXlUDeCp8uKIPwg9WkXkw+ZI+Q9gdQ=;
+        b=Pu6RitIkmPKYPtGKFXWw8IBLw81n1XoiIG0X0Frr9iv3sjQbCC8y4UBnkfU4BZtzmJ
+         xTD33wN5U/Yp/UlpIbPGlOM+rgfBXqumQF0gxKyUaAldwSMqyP2Sfx8jJ+Gqe80WA9Fg
+         CUSixz3uksl6i4xlULLGSrzeng1TJaj45Jv9TNcc/xNA0lHjOveZapvkjSBPJXWROPc6
+         rNoRg/z5aOSrQ2cktp0NoqhH5HaxSl55OjhPDmW1r79Mb+WZhDBCLoDnousYgiojyfzX
+         i0W2tHXLEYH4Ye+/hJ4aO0QOleiG/Z/TjKXOguQKBY7wWoiuI9d2CKgZty1/Wd9vQsX8
+         tlDA==
+X-Gm-Message-State: APzg51D+kS80NJNif8lfd15nK/8XQJ3tME0+EThcq25DejPNz9mA7VQ9
+        L7n+XTbJ15Jqh/V/4KxpjgpLqg==
+X-Google-Smtp-Source: ANB0Vda7wfvv5BhLSf2EVV1YfsFtntnKmR50wai03AO1hkrgQJIRRbgm2UTbRs7lhbtys8Du/rKm4Q==
+X-Received: by 2002:a63:88c8:: with SMTP id l191-v6mr30092430pgd.340.1536048800205;
+        Tue, 04 Sep 2018 01:13:20 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id x9-v6sm9599959pfd.31.2018.09.04.01.13.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 01:13:19 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 4152E300D89; Tue,  4 Sep 2018 11:13:14 +0300 (+03)
+Date:   Tue, 4 Sep 2018 11:13:14 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180904081314.gdhm55qchhl5irmv@kshutemo-mobl1>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
+ <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+ <20180830152512.GE14702@192.168.1.2>
+ <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
+ <20180903074718.GD1740@192.168.1.3>
+ <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
+ <20180903145213.GG1740@192.168.1.3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1534367485-4386-2-git-send-email-brijesh.singh@amd.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180903145213.GG1740@192.168.1.3>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 04:11:25PM -0500, Brijesh Singh wrote:
-> Currently, the CCP driver assumes that the SEV command issued to the PSP
-> will always return (i.e. it will never hang).  But recently, firmware bugs
-> have shown that a command can hang.  Since of the SEV commands are used
-> in probe routines, this can cause boot hangs and/or loss of virtualization
-> capabilities.
+On Mon, Sep 03, 2018 at 10:52:13PM +0800, Baoquan He wrote:
+> On 09/03/18 at 01:26pm, Kirill A. Shutemov wrote:
+> > On Mon, Sep 03, 2018 at 03:47:18PM +0800, Baoquan He wrote:
+> > > On 09/02/18 at 11:52pm, Kirill A. Shutemov wrote:
+> > > > On Thu, Aug 30, 2018 at 11:25:12PM +0800, Baoquan He wrote:
+> > > > > Hi Kirill,
+> > > > > 
+> > > > > I made a new version according to your suggestion, just a little
+> > > > > different, I didn't make 1TB as default, just calculate with the actual
+> > > > > size, then align up to 1TB boundary.  Just found kcore is printing more
+> > > > > entries than before, I thought it's caused by my code, later got it was
+> > > > > touchde by other people.
+> > > > > 
+> > > > > Any comment about this? I can change accordingly.
+> > > > 
+> > > > Looks good to me.
+> > > > 
+> > > > But there's corner case when struct page is unreasonably large and
+> > > > vmemmap_size will be way to large. We probably have to report an error if
+> > > > we cannot fit vmemmap properly into virtual memory layout.
+> > > 
+> > > Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
+> > > system bootup can't go over vmemmap initlization. Except of this, we may
+> > > need think about the virtual memory layout which vmemmap can be allowed
+> > > to occupy.
+> > > 
+> > > If KASAN enabled, KASLR disabled,
+> > > 4-level 1TB + 1TB hole (2TB)
+> > > 5-level 512TB + 2034TB hole (2.5PB)
+> > > 
+> > > If KASAN disabled, KASLR enabled,
+> > > 4-level 1TB + 1TB hole + 16TB  (18TB)
+> > > 5-level 512TB + 2034TB hole + 8PB (10.5PB)
+> > > 
+> > > So, as you can see, if add check in memory KASLR code, we should only
+> > > consider KASLR enabled case. We possibly don't need to worry about
+> > > 5-level case since the size 10.5PB is even bigger than the maximum
+> > > physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
+> > > will be 32 times of the current 1TB, then we usually assume 64 as the
+> > > default value of sizeof(struct page), then 64*32 == 1024. So we can add
+> > > check like this, what do you think? Or any other idea?
+> > 
+> > Looks reasonable to me.
+> > 
+> > But I would have the BUILD_BUG_ON() in generic code. If you struct page is
+> > more than 1/4 of PAGE_SIZE something is horribly broken.
 > 
-> To protect against firmware bugs, add a timeout in the SEV command
-> execution flow.  If a command does not complete within the specified
-> timeout then return -ETIMEOUT and stop the driver from executing any
-> further commands since the state of the SEV firmware is unknown.
-> 
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Gary Hook <Gary.Hook@amd.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> ---
->  drivers/crypto/ccp/psp-dev.c | 46 +++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 41 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-> index 218739b..72790d8 100644
-> --- a/drivers/crypto/ccp/psp-dev.c
-> +++ b/drivers/crypto/ccp/psp-dev.c
-> @@ -38,6 +38,17 @@ static DEFINE_MUTEX(sev_cmd_mutex);
->  static struct sev_misc_dev *misc_dev;
->  static struct psp_device *psp_master;
->  
-> +static int psp_cmd_timeout = 100;
-> +module_param(psp_cmd_timeout, int, 0644);
-> +MODULE_PARM_DESC(psp_cmd_timeout, " default timeout value, in seconds, for PSP commands");
-> +
-> +static int psp_probe_timeout = 5;
-> +module_param(psp_probe_timeout, int, 0644);
-> +MODULE_PARM_DESC(psp_probe_timeout, " default timeout value, in seconds, during PSP device probe");
+> Just the 1/4 of PAGE_SIZE is based on analysis of KASLR case. If
+> non-KASLR case, it may not be that value.
 
-Just a question: what prevents the user from supplying non-sensical
-values here?
+Even if it technically possible to have struct page larger than
+PAGE_SIZE/4, it's just insane.
 
-I think we should clamp them to only allowed values because I don't want
-to be debugging some strange bugs due to that.
+> Not sure if it's OK to put it in generic code, and haven't thought of a
+> good place, maybe in setup_arch(), just at the beginning?
 
-> +
-> +static bool psp_dead;
-> +static int psp_timeout;
-> +
->  static struct psp_device *psp_alloc_struct(struct sp_device *sp)
->  {
->  	struct device *dev = sp->dev;
-> @@ -82,10 +93,19 @@ static irqreturn_t psp_irq_handler(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> -static void sev_wait_cmd_ioc(struct psp_device *psp, unsigned int *reg)
-> +static int sev_wait_cmd_ioc(struct psp_device *psp,
-> +			    unsigned int *reg, unsigned int timeout)
->  {
-> -	wait_event(psp->sev_int_queue, psp->sev_int_rcvd);
-> +	int ret;
-> +
-> +	ret = wait_event_timeout(psp->sev_int_queue,
-> +			psp->sev_int_rcvd, timeout * HZ);
-
-Align args at opening brace.
-
-> +	if (!ret)
-> +		return -ETIMEDOUT;
-> +
->  	*reg = ioread32(psp->io_regs + psp->vdata->cmdresp_reg);
-> +
-> +	return 0;
->  }
->  
->  static int sev_cmd_buffer_len(int cmd)
-> @@ -133,12 +153,15 @@ static int __sev_do_cmd_locked(int cmd, void *data, int *psp_ret)
->  	if (!psp)
->  		return -ENODEV;
->  
-> +	if (psp_dead)
-> +		return -EBUSY;
-> +
->  	/* Get the physical address of the command buffer */
->  	phys_lsb = data ? lower_32_bits(__psp_pa(data)) : 0;
->  	phys_msb = data ? upper_32_bits(__psp_pa(data)) : 0;
->  
-> -	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x\n",
-> -		cmd, phys_msb, phys_lsb);
-> +	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x timeout %us\n",
-> +		cmd, phys_msb, phys_lsb, psp_timeout);
->  
->  	print_hex_dump_debug("(in):  ", DUMP_PREFIX_OFFSET, 16, 2, data,
->  			     sev_cmd_buffer_len(cmd), false);
-> @@ -154,7 +177,18 @@ static int __sev_do_cmd_locked(int cmd, void *data, int *psp_ret)
->  	iowrite32(reg, psp->io_regs + psp->vdata->cmdresp_reg);
->  
->  	/* wait for command completion */
-> -	sev_wait_cmd_ioc(psp, &reg);
-> +	ret = sev_wait_cmd_ioc(psp, &reg, psp_timeout);
-> +	if (ret) {
-> +		if (psp_ret)
-> +			*psp_ret = 0;
-> +
-> +		dev_err(psp->dev, "sev command %#x timed out, disabling PSP \n", cmd);
-									   ^
-
-Trailing space.
+I don't see an obvious place too. Maybe free_area_init_nodes()?
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+ Kirill A. Shutemov
