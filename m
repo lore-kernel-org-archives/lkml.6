@@ -2,85 +2,71 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31738C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD19C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D87542086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87542086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DF1020869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF1020869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeIDJoI (ORCPT
+        id S1727523AbeIDJou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:44:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726312AbeIDJoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:44:08 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C60898573A;
-        Tue,  4 Sep 2018 05:20:40 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECC06A9EB5;
-        Tue,  4 Sep 2018 05:20:39 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 13:20:36 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
- kernel checking
-Message-ID: <20180904052036.GJ1740@192.168.1.3>
-References: <20180829141624.13985-1-bhe@redhat.com>
- <20180829141624.13985-2-bhe@redhat.com>
- <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
- <20180904034414.GI1740@192.168.1.3>
- <4546fc39-4982-4c91-c812-0df1e9bc9e20@zytor.com>
+        Tue, 4 Sep 2018 05:44:50 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38890 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeIDJot (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:44:49 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fx3m2-0000Ef-13; Tue, 04 Sep 2018 13:21:10 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fx3m1-0003Kd-A2; Tue, 04 Sep 2018 13:21:09 +0800
+Date:   Tue, 4 Sep 2018 13:21:09 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        will.deacon@arm.com, catalin.marinas@arm.com, ebiggers@google.com,
+        suzuki.poulose@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] crypto: arm64/crc32 - remove PMULL based CRC32 driver
+Message-ID: <20180904052109.bprmzgstknh6yecz@gondor.apana.org.au>
+References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
+ <20180827110245.14812-5-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4546fc39-4982-4c91-c812-0df1e9bc9e20@zytor.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 05:20:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 05:20:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <20180827110245.14812-5-ard.biesheuvel@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 at 09:13pm, H. Peter Anvin wrote:
-> On 09/03/18 20:44, Baoquan He wrote:
-> > 
-> > 1) in arch/x86/kernel/relocate_kernel_64.S, we set X86_CR4_LA57 into cr4
-> > if the 1st kernel is in 5-level mode. Then in
-> > arch/x86/boot/compressed/head_64.S, paging_prepare() is called to decide
-> > if 5-level mode will be enabled, and prepare the trampoline. If
-> > kexec/kdump kernel is expected to be in 4-level, e.g with 'nolv5'
-> > specified, it still can handle well. But for the old kernel w/o these
-> >  5-level codes, it will ignore the fact that X86_CR4_LA57 has been set
-> > in CR4 and proceed anyway, then #GP is triggered. That's why XLF_5LEVEL
-> > is used to mark. 
-> > 
+On Mon, Aug 27, 2018 at 01:02:45PM +0200, Ard Biesheuvel wrote:
+> Now that the scalar fallbacks have been moved out of this driver into
+> the core crc32()/crc32c() routines, we are left with a CRC32 crypto API
+> driver for arm64 that is based only on 64x64 polynomial multiplication,
+> which is an optional instruction in the ARMv8 architecture, and is less
+> and less likely to be available on cores that do not also implement the
+> CRC32 instructions, given that those are mandatory in the architecture
+> as of ARMv8.1.
 > 
-> That's what I'm saying, don't do that.  Always jump into the second kernel in
-> 4-level mode, i.e. X86_CR4_LA57 unset.  That's the only sane thing.
+> Since the scalar instructions do not require the special handling that
+> SIMD instructions do, and since they turn out to be considerably faster
+> on some cores (Cortex-A53) as well, there is really no point in keeping
+> this code around so let's just remove it.
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Well, this might not be suggested. Kexec has been a formal feature in
-our distro, our customers usually use it to reboot high end servers
-because those machines may take one hour to boot up from firmware. And
-5-level may be also supported very soon, if people want to do a fast
-reboot from the current kernel in 5-level, and expect to see it's in
-5-level too in the 2nd kernel, this always kexec jumping to the 2nd
-kernel in 4-level mode might be unaccepted.
-
-Thanks
-Baoquan
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
