@@ -2,258 +2,92 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A05C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001F4C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337852075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:51:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337852075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B80732086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80732086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbeIDGOb (ORCPT
+        id S1726247AbeIDGOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 02:14:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725837AbeIDGOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 02:14:30 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3AA1B7A7EC;
-        Tue,  4 Sep 2018 01:51:42 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-66.pek2.redhat.com [10.72.12.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C6C92026D6B;
-        Tue,  4 Sep 2018 01:51:35 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 09:51:31 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     lijiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, kexec@lists.infradead.org,
-        iommu@lists.linux-foundation.org, bhe@redhat.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH 2/5 V6] x86/ioremap: strengthen the logic in
- early_memremap_pgprot_adjust() to adjust encryption mask
-Message-ID: <20180904015131.GA10877@dhcp-128-65.nay.redhat.com>
-References: <20180831081930.31561-1-lijiang@redhat.com>
- <20180831081930.31561-3-lijiang@redhat.com>
- <20180903024512.GA2568@dhcp-128-65.nay.redhat.com>
- <d2229538-51d5-ead7-c7e5-f4afe5b53693@redhat.com>
- <20180904004417.GA9842@dhcp-128-65.nay.redhat.com>
- <20180904012902.GB9842@dhcp-128-65.nay.redhat.com>
+        Tue, 4 Sep 2018 02:14:50 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35574 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725837AbeIDGOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 02:14:49 -0400
+X-UUID: 8c168b5b5a8d44e88bf6a53ca85e8b4f-20180904
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <leilk.liu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 39185782; Tue, 04 Sep 2018 09:51:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 4 Sep 2018 09:51:52 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 4 Sep 2018 09:51:52 +0800
+From:   Leilk Liu <leilk.liu@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <mengqi.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        Leilk Liu <leilk.liu@mediatek.com>
+Subject: [PATCH v2 3/3] arm64: dts: Add spi slave dts
+Date:   Tue, 4 Sep 2018 09:51:46 +0800
+Message-ID: <1536025906-24422-4-git-send-email-leilk.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1536025906-24422-1-git-send-email-leilk.liu@mediatek.com>
+References: <1536025906-24422-1-git-send-email-leilk.liu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180904012902.GB9842@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 01:51:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 01:51:42 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/18 at 09:29am, Dave Young wrote:
-> On 09/04/18 at 08:44am, Dave Young wrote:
-> > On 09/03/18 at 10:06pm, lijiang wrote:
-> > > 在 2018年09月03日 10:45, Dave Young 写道:
-> > > > On 08/31/18 at 04:19pm, Lianbo Jiang wrote:
-> > > >> For kdump kernel, when SME is enabled, the acpi table and dmi table will need
-> > > >> to be remapped without the memory encryption mask. So we have to strengthen
-> > > >> the logic in early_memremap_pgprot_adjust(), which makes us have an opportunity
-> > > >> to adjust the memory encryption mask.
-> > > >>
-> > > >> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> > > >> ---
-> > > >>  arch/x86/mm/ioremap.c | 9 ++++++++-
-> > > >>  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > >>
-> > > >> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> > > >> index e01e6c695add..f9d9a39955f3 100644
-> > > >> --- a/arch/x86/mm/ioremap.c
-> > > >> +++ b/arch/x86/mm/ioremap.c
-> > > >> @@ -689,8 +689,15 @@ pgprot_t __init early_memremap_pgprot_adjust(resource_size_t phys_addr,
-> > > >>  	encrypted_prot = true;
-> > > >>  
-> > > >>  	if (sme_active()) {
-> > > >> +                /*
-> > > >> +                 * In kdump kernel, the acpi table and dmi table will need
-> > > >> +                 * to be remapped without the memory encryption mask. Here
-> > > >> +                 * we have to strengthen the logic to adjust the memory
-> > > >> +                 * encryption mask.
-> > > > 
-> > > > Assume the acpi/dmi tables are identical for both 1st kernel and kdump
-> > > > kernel, I'm not sure what is the difference, why need special handling
-> > > > for kdump. Can you add more explanations?
-> > > > 
-> > > 
-> > > Ok, i will use a dmi example to explain this issue.
-> > > 
-> > > There are significant differences about E820 between the 1st kernel and kdump kernel. I pasted them at bottom.
-> > > 
-> > > Firstly, we need to know how they are called.
-> > > __acpi_map_table()\                                                        / early_memremap_is_setup_data()
-> > >                    |-> early_memremap()-> early_memremap_pgprot_adjust()-> | memremap_is_efi_data()
-> > >  dmi_early_remap()/                                                        \ memremap_should_map_decrypted()-> e820__get_entry_type()
-> > > 
-> > > Secondly, we also need to understand the memremap_should_map_decrypted(), which is illustrated by the fake code.
-> > > static bool memremap_should_map_decrypted(resource_size_t phys_addr,
-> > >                                           unsigned long size)
-> > > {
-> > > 
-> > >     /* code ... */
-> > > 
-> > >     switch (e820__get_entry_type(phys_addr, phys_addr + size - 1)) {
-> > >         case E820_TYPE_RESERVED:
-> > >         case E820_TYPE_ACPI:
-> > >         case E820_TYPE_NVS:
-> > >         case E820_TYPE_UNUSABLE:
-> > >                 /* For SEV, these areas are encrypted */
-> > >                 if (sev_active())
-> > >                         break;
-> > >                 /* Fallthrough */
-> > > 
-> > >         case E820_TYPE_PRAM:
-> > >                 /* For SME, these areas are decrypted */
-> > >                 return true;
-> > >         default:
-> > >                 /* these areas are encrypted by default*/
-> > >                 break;
-> > >     }
-> > > 
-> > >     return false;
-> > > }
-> > > 
-> > > For the dmi case, the dmi base address is 0x6286b000 in my test machine.
-> > > 
-> > > In the 1st kernel, the e820__get_entry_type() can get a valid entry and type by the dmi address, and we can also find the dmi base address from e820.
-> > > (see the 1st kernel log)
-> > > 0x6286b000 ∈ [mem 0x000000006286b000-0x000000006286efff]
-> > > So, these areas are decrypted according to the memremap_should_map_decrypted().
-> > > 
-> > > In kdump kernel, the dmi base address is still 0x6286b000, but we can not find the dmi base address from e820 any more. The e820__get_entry_type() can
-> > > not get a valid entry and type by the dmi base address, it will go into the default branch. That is to say, these areas become encrypted. In fact, these
-> > > areas are also decrypted, so we have to strengthen the logic of adjusting the memory encryption mask.
-> > > 
-> > > 
-> > > The 1st kernel log:
-> > > 
-> > > [    0.000000] BIOS-provided physical RAM map:
-> > > [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000008bfff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x000000000008c000-0x000000000009ffff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000029920fff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x0000000029921000-0x0000000029921fff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000029922000-0x0000000062256fff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x0000000062257000-0x0000000062356fff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000062357000-0x000000006235cfff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x000000006235d000-0x00000000623dbfff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x00000000623dc000-0x000000006261bfff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x000000006261c000-0x000000006263dfff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x000000006263e000-0x000000006269dfff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x000000006269e000-0x00000000627d6fff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627d7000-0x00000000627e3fff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627e4000-0x00000000627e4fff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627e5000-0x00000000627e8fff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627e9000-0x00000000627eafff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627eb000-0x00000000627ebfff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x00000000627ec000-0x000000006286afff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x000000006286b000-0x000000006286efff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x000000006286f000-0x00000000682f8fff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x00000000682f9000-0x0000000068b05fff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b06000-0x0000000068b09fff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b0a000-0x0000000068b1afff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b1b000-0x0000000068b1dfff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b1e000-0x0000000071d1dfff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d1e000-0x0000000071d2dfff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d2e000-0x0000000071d3dfff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d3e000-0x0000000071d4dfff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d4e000-0x0000000077ffffff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x0000000078000000-0x000000008fffffff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x00000000fed80000-0x00000000fed80fff] reserved
-> > > [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000087effffff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x000000087f000000-0x000000087fffffff] reserved
-> > > 
-> > > The kdump kernel log:
-> > > 
-> > > [    0.000000] BIOS-provided physical RAM map:
-> > > [    0.000000] BIOS-e820: [mem 0x0000000000001000-0x000000000008bfff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x0000000052000000-0x0000000061ffffff] usable
-> > > [    0.000000] BIOS-e820: [mem 0x00000000622ee000-0x0000000062300fff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x0000000062301000-0x0000000062301fff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000062703000-0x0000000062703fff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x0000000062735000-0x0000000062737fff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x000000006273a000-0x000000006273afff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b06000-0x0000000068b09fff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000068b1b000-0x0000000068b1dfff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d2e000-0x0000000071d3dfff] ACPI NVS
-> > > [    0.000000] BIOS-e820: [mem 0x0000000071d3e000-0x0000000071d4dfff] ACPI data
-> > > [    0.000000] BIOS-e820: [mem 0x00000007fe000000-0x000000087df70fff] usable
-> > > 
-> > 
-> > Can you provide the efi memmap dmesg?  boot with efi=debug?
-> 
-> The right way should be checking the efi mem types instead of only
-> checking is_kdump_kernel.
-> 
-> Something like below, probably also check the region size with something
-> like efi_mem_range_type(addr, size), return -EINVAL in case cross
-> different type efi memory desc, added efi people in cc:
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index c63a545ec199..4a24e138c0d0 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -527,6 +527,13 @@ static bool memremap_should_map_decrypted(resource_size_t phys_addr,
->  		break;
->  	}
->  
-> +	if (is_kdump_kernel() {
-> +		switch (efi_mem_type(phys_addr)) {
-> +		/* refer to arch/x86/boot/compressed/eboot.c -> setup_e820()*/
-> +		case ...
-> +		}
-> +	}
-> +
->  	return false;
->  }
->  
+This patch adds MT2712 spi slave into device tree.
 
-Hold on, I suppose kexec reboot also need this, but if it works without
-a fix then there might be thing to be made clear.
+Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-kexec-tools will read /proc/iomem and recreate the e820 ranges for 2nd
-kernel so in theory we should be fine without a fix.
+diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+index 75cc0f7..59b3c3c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+@@ -301,6 +301,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	spis1: spi@10013000 {
++		compatible = "mediatek,mt2712-spi-slave";
++		reg = <0 0x10013000 0 0x100>;
++		interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&infracfg CLK_INFRA_AO_SPI1>;
++		clock-names = "spi-clk";
++		assigned-clocks = <&topckgen CLK_TOP_SPISLV_SEL>;
++		assigned-clock-parents = <&topckgen CLK_TOP_UNIVPLL1_D2>;
++		spi-slave;
++		status = "disabled";
++	};
++
+ 	apmixedsys: syscon@10209000 {
+ 		compatible = "mediatek,mt2712-apmixedsys", "syscon";
+ 		reg = <0 0x10209000 0 0x1000>;
+-- 
+1.7.9.5
 
-Can you debug the kexec-tools load process about the e820 creating code
-path?
-
-> 
-> > 
-> > > >> +                 */
-> > > >>  		if (early_memremap_is_setup_data(phys_addr, size) ||
-> > > >> -		    memremap_is_efi_data(phys_addr, size))
-> > > >> +		    memremap_is_efi_data(phys_addr, size) ||
-> > > >> +		    is_kdump_kernel())
-> > > >>  			encrypted_prot = false;
-> > > >>  	}
-> > > >>  
-> > > >> -- 
-> > > >> 2.17.1
-> > > >>
-> > > > 
-> > > > Thanks
-> > > > Dave
-> > > > 
-
-Thanks
-Dave
