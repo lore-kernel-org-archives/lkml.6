@@ -2,97 +2,125 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4245C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7526BC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A38020645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A38020645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 2C04920661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:12:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C04920661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeIDUhF (ORCPT
+        id S1727614AbeIDUhv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:37:05 -0400
-Received: from sauhun.de ([88.99.104.3]:60424 "EHLO pokefinder.org"
+        Tue, 4 Sep 2018 16:37:51 -0400
+Received: from fieldses.org ([173.255.197.46]:56328 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbeIDUhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:37:05 -0400
-Received: from localhost (i577B9DB6.versanet.de [87.123.157.182])
-        by pokefinder.org (Postfix) with ESMTPSA id E80212C0114;
-        Tue,  4 Sep 2018 18:11:15 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 18:11:14 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     shubhrajyoti.datta@gmail.com
-Cc:     linux-i2c@vger.kernel.org, michal.simek@xilinx.com,
-        linux-kernel@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH] i2c: xiic: Make the start and the byte count write atomic
-Message-ID: <20180904161114.GC5000@kunai>
-References: <1535967671-7784-1-git-send-email-shubhrajyoti.datta@gmail.com>
+        id S1726347AbeIDUhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:37:51 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 596301DCB; Tue,  4 Sep 2018 12:12:03 -0400 (EDT)
+Date:   Tue, 4 Sep 2018 12:12:03 -0400
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        R.E.Wolff@bitwizard.nl, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180904161203.GD17478@fieldses.org>
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+ <20180904075347.GH11854@BitWizard.nl>
+ <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
+ <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
+ <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1535967671-7784-1-git-send-email-shubhrajyoti.datta@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 04, 2018 at 11:44:20AM -0400, Jeff Layton wrote:
+> On Tue, 2018-09-04 at 22:56 +0800, 焦晓冬 wrote:
+> > A practical and concrete example may be,
+> > A disk cleaner program that first searches for garbage files that won't be used
+> > anymore and save the list in a file (open()-write()-close()) and wait for the
+> > user to confirm the list of files to be removed.  A writeback error occurs
+> > and the related page/inode/address_space gets evicted while the user is
+> > taking a long thought about it. Finally, the user hits enter and the
+> > cleaner begin
+> > to open() read() the list again. But what gets removed is the old list
+> > of files that
+> > was generated several months ago...
+> > 
+> > Another example may be,
+> > An email editor and a busy mail sender. A well written mail to my boss is
+> > composed by this email editor and is saved in a file (open()-write()-close()).
+> > The mail sender gets notified with the path of the mail file to queue it and
+> > send it later. A writeback error occurs and the related
+> > page/inode/address_space gets evicted while the mail is still waiting in the
+> > queue of the mail sender. Finally, the mail file is open() read() by the sender,
+> > but what is sent is the mail to my girlfriend that was composed yesterday...
+> > 
+> > In both cases, the files are not meant to be persisted onto the disk.
+> > So, fsync()
+> > is not likely to be called.
+> > 
+> 
+> So at what point are you going to give up on keeping the data? The
+> fundamental problem here is an open-ended commitment. We (justifiably)
+> avoid those in kernel development because it might leave the system
+> without a way out of a resource crunch.
 
---wxDdMuZNg1r63Hyj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, I think the point was that in the above examples you'd prefer that
+the read just fail--no need to keep the data.  A bit marking the file
+(or even the entire filesystem) unreadable would satisfy posix, I guess.
+Whether that's practical, I don't know.
 
-On Mon, Sep 03, 2018 at 03:11:11PM +0530, shubhrajyoti.datta@gmail.com wrot=
-e:
-> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
->=20
-> Disable interrupts while configuring the transfer and enable them back.
->=20
-> We have below as the programming sequence
-> 1. start and slave address
-> 2. byte count and stop
->=20
-> In some customer platform there was a lot of interrupts between 1 and 2
-> and after slave address (around 7 clock cyles) if 2 is not executed
-> then the transaction is nacked.
->=20
-> To fix this case make the 2 writes atomic.
->=20
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > - If the following read() could be served by a page in memory, just returns the
+> > data. If the following read() could not be served by a page in memory and the
+> > inode/address_space has a writeback error mark, returns EIO.
+> > If there is a writeback error on the file, and the request data could
+> > not be served
+> > by a page in memory, it means we are reading a (partically) corrupted
+> > (out-of-data)
+> > file. Receiving an EIO is expected.
+> > 
+> 
+> No, an error on read is not expected there. Consider this:
+> 
+> Suppose the backend filesystem (maybe an NFSv3 export) is really r/o,
+> but was mounted r/w. An application queues up a bunch of writes that of
+> course can't be written back (they get EROFS or something when they're
+> flushed back to the server), but that application never calls fsync.
+> 
+> A completely unrelated application is running as a user that can open
+> the file for read, but not r/w. It then goes to open and read the file
+> and then gets EIO back or maybe even EROFS.
+> 
+> Why should that application (which did zero writes) have any reason to
+> think that the error was due to prior writeback failure by a completely
+> separate process? Does EROFS make sense when you're attempting to do a
+> read anyway?
+> 
+> Moreover, what is that application's remedy in this case? It just wants
+> to read the file, but may not be able to even open it for write to issue
+> an fsync to "clear" the error. How do we get things moving again so it
+> can do what it wants?
+> 
+> I think your suggestion would open the floodgates for local DoS attacks.
 
-I assume simply changing the order of the register writes won't fix it?
+Do we really care about processes with write permissions (even only
+local client-side write permissions) being able to DoS readers?  In
+general readers kinda have to trust writers.
 
-I also assume this is stable material?
-
-
---wxDdMuZNg1r63Hyj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluOrqIACgkQFA3kzBSg
-KbapRxAArZeq002KSZpUYsWhatVQEjnYvYcwpQBRDx5hECYdi+eA6jEfmMirD0+Z
-sU0SrQGu4DZ0pTGcB7Jcz68hIiL6E6o9+BBwI/23A/K+IanWMv/5YeDafBkZJpEu
-VXvcXcMB9YuOEl00Oz/kUz4IPDeL2Rs9cCeQFAIU+l8MPGvNTel1/h1r9Q04O6/k
-Bsd4g279d4QueTO+n6UhQYu3ny9d9j5VAF5S1aO/RZqlt29blZ1UX5RTxW3Hii1C
-kOdTVlZknnPD1//4SKC02W403AiVAaieitCZ2COvpoomwQSkluSEIdmohk146ssO
-TTTR+OmNx/bAaMgDYZWasRB+uui6gw2X9ELrermwF/VLWv8ok4zUc/AqAlnpxJgC
-7exqwyXN9SFvETSs77w5PgCmnvMW2inkiS+exKcnYzg/b/vW+PvyALB7M7A23Z9D
-Rmo4U6zI4cdsffbe9DuuOheBYTfndPrMEWjVrxbpjGygGb5ZvXY3ym6yOUDqrYah
-swFRaHVrn7U7oJE42ve6efrvjhN3yWRaqKH4si9csNWQa4msw+LvRABj7kznFraX
-xMFNXzSquz7ZwJ+yZeMomzlbITIhXIlZeQAJe1vNiIGP2zOowpI1t+xTvJsKJqPS
-G+wxa8LNrC99WGL3nV68ajT58GhalGNzu+gsk394zov8ywxrMMg=
-=YYMd
------END PGP SIGNATURE-----
-
---wxDdMuZNg1r63Hyj--
+--b.
