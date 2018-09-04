@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9ACC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 02:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972AAC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 02:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9580020843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 02:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515202086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 02:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCPVzREE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9580020843
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lbkt1Plx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515202086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeIDHIS (ORCPT
+        id S1727389AbeIDHIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 03:08:18 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38531 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeIDHIS (ORCPT
+        Tue, 4 Sep 2018 03:08:23 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40872 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbeIDHIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 03:08:18 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f4-v6so891173pgq.5;
-        Mon, 03 Sep 2018 19:45:23 -0700 (PDT)
+        Tue, 4 Sep 2018 03:08:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s13-v6so906325pfi.7;
+        Mon, 03 Sep 2018 19:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3hQFNTER0lszd0kvVWEV9kMR5sWuq9dK2/YVDi+Idr8=;
-        b=VCPVzREENBfb8A3S3qPc2w/U09HYMnR5XjohbR7s87xH2founlXnJ7O2LxYkSefiuq
-         KsuC0X422xiff0z0Rlrk4+ofOXd4g1EIaYHnlxpKKNux/l7AB3XHg9KKsOkO4P07Rws7
-         hJqi7OObHxBUF2Mb0q1XpiUSrvJegONnM4mZZULdG//xUDPAczorNWMFdhEoAN8mkd5r
-         FXPlZvM7PP2RPTnM19wOnLaGM3+bSK/bN3CM40wstgm9dcjsSGP2xDJoovFMHtcNciL2
-         nPsZIRvd8rg0a4e6qnnO4JXKdGmmAlU++jWLQRlXmfQntrU61+HuBTGxUIK1fUCwTDtz
-         RVng==
+        bh=tRdeqz+78ESzrb/nXjyBB6nqAAwIdJ3C0aGuFwzfOGg=;
+        b=Lbkt1PlxVxfnVteEhPuZCMen61t/VT9dOcKgDaqKWjZ9uaMuAeJC1g2S72yEPZThiH
+         jn/XI/ZimRlTHJ5JUCrUuzijODGVRgV7RwSfAuAuAn3cCwi0OXJSK+bZzA3MhA3ue3oY
+         ykaxoEFwTzDAJQ+wAkTnPJvHL+0BRCoP5pq858TSLFDRjcfTbqFlgsLWvKmQM+HQwnQ7
+         Xehsi9XWThKKXhu/+NOcW2UJyNcJHzOhtB3OTO4mYsfsIPC/Rpe1cpr8st02yfxnYAyT
+         yHPCG7i0rrekINkocDYZ180/nHSZDNCnJK6kxoFz/n+zpvk8K6uyyOrTGHsQyR+nM5qu
+         ul7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3hQFNTER0lszd0kvVWEV9kMR5sWuq9dK2/YVDi+Idr8=;
-        b=iZm5bCcVu/CLRrBoGkONeNYx+dhJiyKI5Dfja/khi5zlvv8VDXUNXWxUWfMqfp1gNa
-         s1Ucb2QFzaRcrdVru2TNknXN4WAa7CyC1ek85CGol9J+BCiSqwtnTSQI9zZBykSzIBF7
-         jh6hDTzS25YkKPX+msfLpXUy9+dylABHSugb9eRxIgmMV+diq8TCLDW3y8WsN7vWFIq5
-         ZX+MWXgNhC12UQyCNGQgUNzbQK0rx5YG3AdFKRkq1V/eYMoLEDZ/7V7JDJYrguz13mLj
-         YxB+zDA9KF5SkDHLYvW9CHs/OFl/yEp/80rg35ibTAIvq8g5G/UnlKuDZiDx46bUXeX+
-         Nhsg==
-X-Gm-Message-State: APzg51AUrWUBlQghUJBI9f8U19+lczC/IRsnQ2rG18bv5c/zHVy4Ec/f
-        1zB4LFU1t8ycJQixYQhj0F8=
-X-Google-Smtp-Source: ANB0VdZGhGrOBh/Fz1lvUWCqJiTMNZnM5DkgqzgQGJrQBIlWSPsVG9V2HnHzIfB07WhBfG8nk/v2/w==
-X-Received: by 2002:a62:6003:: with SMTP id u3-v6mr32916616pfb.114.1536029123060;
-        Mon, 03 Sep 2018 19:45:23 -0700 (PDT)
+        bh=tRdeqz+78ESzrb/nXjyBB6nqAAwIdJ3C0aGuFwzfOGg=;
+        b=EcEhrEXQDJw4Q0Z5svFzTvebzHnnkh/RQJl4agJaxx+S+C9ykapQcIHzs8T9PegzsJ
+         JdOOidp96OHkMtAsDpLGvFTwh5ksiAFcE2ZwpU+kVM+j5Ud95B/F3ob+k8omEKY/Sz9c
+         OUx5mlv5ozU7HL02UHDhG6x1uc6E4rLcl0kwOUC7BlnLllZURzxulOq0Y801U2O6CvOG
+         cokbEkRTfbojlbq9Oy87jIIujyvjUfI+7TnVLDqjBWy/YCBJr+QFDfqUeIxp397WhthS
+         ycoQS+1Jhsk+Ednn8ltBqVzQMbDpiZLQ4NNlXeUSHMU3FYYFOO1A7203hOe0O81yokl6
+         He1w==
+X-Gm-Message-State: APzg51CN9hkIbc9zJobd4D9sinYcAb2SF3HeHzEpjfjC+PxevHiMRWp3
+        FbtuPVtWlnry4qw9xwX/lIU=
+X-Google-Smtp-Source: ANB0VdZxoeKVSzXKlsmQQoJgCTH/oH+q/pdwXVf1VJP0KvD27gLq8E/VdhUMgirGPdI+/A3Z958PYA==
+X-Received: by 2002:a63:e647:: with SMTP id p7-v6mr28111566pgj.218.1536029127255;
+        Mon, 03 Sep 2018 19:45:27 -0700 (PDT)
 Received: from climb.lge.net ([27.122.242.77])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm33663284pfi.101.2018.09.03.19.45.18
+        by smtp.gmail.com with ESMTPSA id w16-v6sm33663284pfi.101.2018.09.03.19.45.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 03 Sep 2018 19:45:22 -0700 (PDT)
+        Mon, 03 Sep 2018 19:45:26 -0700 (PDT)
 From:   Jaejoong Kim <climbbb.kim@gmail.com>
 To:     linux-um@lists.infradead.org, netdev@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-s390@vger.kernel.org,
@@ -67,9 +67,9 @@ To:     linux-um@lists.infradead.org, netdev@vger.kernel.org,
         linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 05/25] tty: hvc: hvc_console: Change return type to void
-Date:   Tue,  4 Sep 2018 11:44:31 +0900
-Message-Id: <1536029091-4426-6-git-send-email-climbbb.kim@gmail.com>
+Subject: [PATCH 06/25] tty: hvc: hvcs: Change return type to void
+Date:   Tue,  4 Sep 2018 11:44:32 +0900
+Message-Id: <1536029091-4426-7-git-send-email-climbbb.kim@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536029091-4426-1-git-send-email-climbbb.kim@gmail.com>
 References: <1536029091-4426-1-git-send-email-climbbb.kim@gmail.com>
@@ -83,35 +83,32 @@ to void. Now apply this and remove the obsolete error check.
 
 Signed-off-by: Jaejoong Kim <climbbb.kim@gmail.com>
 ---
- drivers/tty/hvc/hvc_console.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/tty/hvc/hvcs.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index 5414c4a..13fad62 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -329,7 +329,6 @@ static void hvc_unthrottle(struct tty_struct *tty)
- static int hvc_install(struct tty_driver *driver, struct tty_struct *tty)
- {
- 	struct hvc_struct *hp;
--	int rc;
+diff --git a/drivers/tty/hvc/hvcs.c b/drivers/tty/hvc/hvcs.c
+index cb4db1b..4dfa70c 100644
+--- a/drivers/tty/hvc/hvcs.c
++++ b/drivers/tty/hvc/hvcs.c
+@@ -1140,16 +1140,10 @@ static int hvcs_install(struct tty_driver *driver, struct tty_struct *tty)
+ 		goto err_put;
+ 	}
  
- 	/* Auto increments kref reference if found. */
- 	hp = hvc_get_by_index(tty->index);
-@@ -337,11 +336,9 @@ static int hvc_install(struct tty_driver *driver, struct tty_struct *tty)
- 		return -ENODEV;
+-	retval = tty_port_install(&hvcsd->port, driver, tty);
+-	if (retval)
+-		goto err_irq;
++	tty_port_install(&hvcsd->port, driver, tty);
  
- 	tty->driver_data = hp;
-+	tty_port_install(&hp->port, driver, tty);
+ 	return 0;
+-err_irq:
+-	spin_lock_irqsave(&hvcsd->lock, flags);
+-	vio_disable_interrupts(hvcsd->vdev);
+-	spin_unlock_irqrestore(&hvcsd->lock, flags);
+-	free_irq(irq, hvcsd);
++
+ err_put:
+ 	tty_port_put(&hvcsd->port);
  
--	rc = tty_port_install(&hp->port, driver, tty);
--	if (rc)
--		tty_port_put(&hp->port);
--	return rc;
-+	return 0;
- }
- 
- /*
 -- 
 2.7.4
 
