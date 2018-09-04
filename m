@@ -2,99 +2,136 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C23EC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370CEC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7EA2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7EA2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id D649220869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpQ5/XsS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D649220869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeIDJFi (ORCPT
+        id S1727551AbeIDJFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 4 Sep 2018 05:05:38 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:45027 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727196AbeIDJFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40426 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbeIDJFh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 05:05:37 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 608F7FFA33;
-        Tue,  4 Sep 2018 04:42:15 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 07/11] dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO0 macro
-Date:   Tue,  4 Sep 2018 12:40:49 +0800
-Message-Id: <20180904044053.15425-8-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
+Received: by mail-pl1-f193.google.com with SMTP id s17-v6so1007895plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nYQduDF7NEsG6i8cWnr4XIXTQTH+GoEAWEHuj8R3h0w=;
+        b=GpQ5/XsSU6VJBg+QWu0/UQEffBet7RCg31dofPkeOTO8CpOo3a4ln2Kpo5xhL4jIbZ
+         zUqSxXfBBaTMXFlAvnjYershuVwmTUyswn4WbxCT1Ixme9j75BSzeJ6+UKzFqD3Ag8vK
+         8YLm8rS/VpoqliP//M8kxkzV18fTL67gPLJYk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nYQduDF7NEsG6i8cWnr4XIXTQTH+GoEAWEHuj8R3h0w=;
+        b=RvlAEfKUioLcoDf5cztBcifgi5dTp7XOIXlSJG0dP44ctEyrtJQ6rt0EGs2qQH4hD7
+         IZRROI92Ze5KGj3MV048XU0mJEf3ZmPtAWzxV1Pd7JgqaN6QyTgIgsaKkMye07bO681Z
+         o0j8RFwdzhdK8sIJOXXoLScniZEeiXvTTGMcwhK8k6uuAW0FOsJ2rY5rYc9vAOnjaRUK
+         DENHqDT9r4ABDsmRIXQn8Eho6ZT5d6ZA0KhhuOj6ZC1PWufr/eiTlAB2fZkmblUQSu1r
+         xPvGNMSQLTQZwicZfGROmWFZ2IB8nfTmqoYrYrVGPdNj9qTLKj9YrTLBeaxOhLPBBTII
+         sKKg==
+X-Gm-Message-State: APzg51AJe8n/HkyOGbVyoEJRxpU0YWKUnrZ3ZTH0pVcBBUIjhHqIQPpD
+        X9UrwqoEyQxSPv0+6xQpa0tfcIEOxFY=
+X-Google-Smtp-Source: ANB0VdYy//IkDSdYfAiCxa27cGXc++f7dmO2xTb/l/ZvzdH6Ub/OsC4AWgndbZ1Nc/dkzdg6eiEPrg==
+X-Received: by 2002:a17:902:b7c3:: with SMTP id v3-v6mr31857269plz.238.1536036139417;
+        Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm10280372pfd.110.2018.09.03.21.42.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 2/4] sparc: Replace NR_SYSCALLS macro with __NR_SYSCALLS
+Date:   Tue,  4 Sep 2018 10:11:25 +0530
+Message-Id: <1536036087-15260-3-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org>
+References: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+NR_syscalls macro holds the number of system call exist in SPARC
+architecture. This macro is currently the part of uapi/asm/unistd.h
+file. We have to change the value of NR_syscalls, if we add or
+delete a system call.
 
-Allwinner A64 HDMI PHY clock has PLL_VIDEO0 as a parent.
+One of the patch in this patch series has a script which will generate
+a uapi header based on syscall.tbl file. The syscall.tbl file contains
+the number of system call information. So we have two option to update
+NR_syscalls value.
 
-Include the macro on dt-bindings so-that the same can be used
-while defining CCU clock phandles.
+1. Update NR_syscalls in uapi/asm/unistd.h manually by counting the
+   no.of system calls. No need to update NR_syscalls until we either
+   add a new system call or delete an existing system call.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+2. We can keep this feature it above mentioned script, that'll
+   count the number of syscalls and keep it in a generated file.
+   In this case we don't need to explicitly update NR_syscalls
+   in asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that, I moved the
+NR_syscalls macro from uapi/asm/unistd.h to asm/unistd.h. The macro
+name also changed form NR_syscalls to __NR_syscalls for making the
+name convention same across all architecture. While __NR_syscalls
+isn't strictly part of the uapi, having it as part of the generated
+header to simplifies the implementation.
+
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
-Changes for v4:
-- Dropped PLL_VIDEO1
-Changes for v3.1:
-- none
-Changes for v3:
-- collect Rob r-w-b tag
-Changes for v2:
-- new patch
+ arch/sparc/include/asm/unistd.h      | 2 ++
+ arch/sparc/include/uapi/asm/unistd.h | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 4 +++-
- include/dt-bindings/clock/sun50i-a64-ccu.h | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-index 061b6fbb4f95..a83951cf0224 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-@@ -27,7 +27,9 @@
- #define CLK_PLL_AUDIO_2X		4
- #define CLK_PLL_AUDIO_4X		5
- #define CLK_PLL_AUDIO_8X		6
--#define CLK_PLL_VIDEO0			7
-+
-+/* PLL_VIDEO0 exported for HDMI PHY */
-+
- #define CLK_PLL_VIDEO0_2X		8
- #define CLK_PLL_VE			9
- #define CLK_PLL_DDR0			10
-diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
-index d66432c6e675..a8ac4cfcdcbc 100644
---- a/include/dt-bindings/clock/sun50i-a64-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
-@@ -43,6 +43,7 @@
- #ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
- #define _DT_BINDINGS_CLK_SUN50I_A64_H_
+diff --git a/arch/sparc/include/asm/unistd.h b/arch/sparc/include/asm/unistd.h
+index f120b6b..c8849b7 100644
+--- a/arch/sparc/include/asm/unistd.h
++++ b/arch/sparc/include/asm/unistd.h
+@@ -17,6 +17,8 @@
  
-+#define CLK_PLL_VIDEO0		7
- #define CLK_PLL_PERIPH0		11
+ #include <uapi/asm/unistd.h>
  
- #define CLK_BUS_MIPI_DSI	28
++#define NR_syscalls __NR_syscalls
++
+ #ifndef __32bit_syscall_numbers__
+ #ifndef __arch64__
+ #define __32bit_syscall_numbers__
+diff --git a/arch/sparc/include/uapi/asm/unistd.h b/arch/sparc/include/uapi/asm/unistd.h
+index ccf4bea..e2407b4 100644
+--- a/arch/sparc/include/uapi/asm/unistd.h
++++ b/arch/sparc/include/uapi/asm/unistd.h
+@@ -422,6 +422,6 @@
+ #define __NR_pwritev2		359
+ #define __NR_statx		360
+ 
+-#define NR_syscalls		361
++#define __NR_syscalls		361
+ 
+ #endif /* _UAPI_SPARC_UNISTD_H */
 -- 
-2.18.0
+1.9.1
 
