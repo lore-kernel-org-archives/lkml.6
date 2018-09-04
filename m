@@ -2,210 +2,123 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C5CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59488C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924C42086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:23:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UF2kiaeW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924C42086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1CAD520661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:24:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAD520661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeIDMr4 (ORCPT
+        id S1727079AbeIDMsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:47:56 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41018 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeIDMr4 (ORCPT
+        Tue, 4 Sep 2018 08:48:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726154AbeIDMsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:47:56 -0400
-Received: by mail-lf1-f65.google.com with SMTP id l26-v6so2231297lfc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uUNFNDsjeFhOAuCk7YbTvL3S5bxc0TcJQLIqL+6OC24=;
-        b=UF2kiaeWyHtN4qZGdJ+8Elu8imS2zVgQgvIrDAvJej32Cvet5JxzI/QZTZrBjkxk61
-         CWfWiXiZ76c9NNahqHtDdWLtPcR5rsshf0GsLka5zM9oJ3W+4S4WBNQ/wltWwhUxTQtm
-         Wonl58oRYYxksGsdeOzmTTC5RF+uqOTKijudg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uUNFNDsjeFhOAuCk7YbTvL3S5bxc0TcJQLIqL+6OC24=;
-        b=c/Xxai35zItjooovtnIwoJ8Y2554vIRy6sIKp59lxwyCK8SrOmEV3B9NzUHE+aAiU6
-         vSixAd5wYRp+bjaTJ1ZoQGs23DQBsJLQri2uAdId72e4PluzlyNe9Fw2eUS+npgJJb8c
-         h+Ald8UNrrC7mg3Khiwzc8xjw4YHTDMPlBtqFVeA9XWsIyW/oQsm6llvxl4Ks1ihQvwp
-         jbcG/hIEkPFTk3ReDck9GmgYuJZsO0RJI0zSJeZORInkn0k/qKyvoCZ2pSeVxMBELT3d
-         1ekeBd1LlX7JSpUNx94tB+r9YykQ7V9PSFe9WJ4nQC3jtjPEaxrvanEJP6RRlP0J5wNC
-         ZWTw==
-X-Gm-Message-State: APzg51D8N/0LQdqu+gltch04JSiYpnHg1zIuYu6JGCG1VXGFplfjpYWi
-        Up1y4244AP+0jJEi0dqkW0ripg/U49wnrMRxA1bRsQ==
-X-Google-Smtp-Source: ANB0VdY+V6AbkakeAklLYctxfnGGl4+Fdw941rpnh+xMShfs3DKORRIrZKWqDC25a26MCElXi7Y+XdMtxpn71vuy770=
-X-Received: by 2002:a19:e21b:: with SMTP id z27-v6mr20650264lfg.68.1536049431100;
- Tue, 04 Sep 2018 01:23:51 -0700 (PDT)
+        Tue, 4 Sep 2018 08:48:36 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w848MepL142149
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 04:24:32 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m9nxk1ex6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 04:24:32 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 4 Sep 2018 09:24:29 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Sep 2018 09:24:26 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w848OPL036896968
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Sep 2018 08:24:25 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 06823A4055;
+        Tue,  4 Sep 2018 11:24:19 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20DB5A4057;
+        Tue,  4 Sep 2018 11:24:18 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue,  4 Sep 2018 11:24:17 +0100 (BST)
+Date:   Tue, 4 Sep 2018 01:24:24 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
+ <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a19:180c:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 01:23:50 -0700 (PDT)
-In-Reply-To: <20180903164934.171677301@linuxfoundation.org>
-References: <20180903164934.171677301@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 4 Sep 2018 13:53:50 +0530
-Message-ID: <CA+G9fYvzcUonik6zhJDLbbNnrmEed6nqSOYv6j5Ezi_sQndVhg@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/80] 4.4.154-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090408-4275-0000-0000-000002B4E1D3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090408-4276-0000-0000-000037BDF432
+Message-Id: <20180904082424.GA2090@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-04_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809040088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3 September 2018 at 22:18, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.4.154 release.
-> There are 80 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Sep  5 16:49:18 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.154-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: linux-kernel@vger.kernel.org (open list)
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 4a2e8ca..b1715b8 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1758,9 +1758,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
+>  static __always_inline
+>  unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+>  {
+> -	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
+> -		return sd->smt_gain / sd->span_weight;
+> -
+>  	return SCHED_CAPACITY_SCALE;
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+Without this change, the capacity_orig of an SMT would have been based
+on the number of threads.
+For example on SMT2, capacity_orig would have been 589 and
+for SMT 8, capacity_orig would have been 148.
 
-x86_64 and i386 testing is still on going.
-but qemu_x86_64 and qemu_i386 were finished.
+However after this change, capacity_orig of each SMT thread would be
+1024. For example SMT 8 core capacity_orig would now be 8192.
 
+smt_gain was suppose to make a multi threaded core was slightly more
+powerful than a single threaded core. I suspect if that sometimes hurt
+us when doing load balance between 2 cores i.e at MC or DIE sched
+domain. Even with 2 threads running on a core, the core might look
+lightly loaded 2048/8192. Hence might dissuade movement to a idle core.
 
-Summary
-------------------------------------------------------------------------
+I always wonder why arch_scale_cpu_capacity() is called with NULL
+sched_domain, in scale_rt_capacity(). This way capacity might actually
+be more than the capacity_orig. I am always under an impression that
+capacity_orig > capacity.  Or am I misunderstanding that?
 
-kernel: 4.4.154-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: c9eed05cd5dd6431baa46476df2cf05e3c7a36c8
-git describe: v4.4.153-81-gc9eed05cd5dd
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.153-81-gc9eed05cd5dd
+-- 
+Thanks and Regards
+Srikar Dronamraju
 
-
-No regressions (compared to build v4.4.153-81-gcca2878104c8)
-
-
-Ran 16784 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.154-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.154-rc1-hikey-20180903-275
-git commit: 7048ee43ee3065e53fa65eeed32abe4959e136e3
-git describe: 4.4.154-rc1-hikey-20180903-275
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.154-rc1-hikey-20180903-275
-
-No regressions (compared to build 4.4.154-rc1-hikey-20180903-274)
-
-
-Ran 2722 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
