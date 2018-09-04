@@ -3,154 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D626FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68202C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3DB2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3DB2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AD122086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:53:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD122086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeIDORq (ORCPT
+        id S1727500AbeIDORv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:17:46 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:43649 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeIDORq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:17:46 -0400
-Received: by mail-qt0-f194.google.com with SMTP id g53-v6so3213447qtg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 02:53:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EKhOAflbjSkVcgqo/SiyOIWORqvb9yUQ2/d5GbDajuE=;
-        b=GUr7WfqsQhZhToWW3oZuOBJTMuf0PILZWgs5ZcP0mAG5vh8maicsNAs8jRjtSUnwrZ
-         /8n9hEptS6nbkdh7gVcSThozoBkOc8Ga1dZyMGkl5bt6gtxM4F7v24sNNMV6nXpE+0xH
-         rHp6jxBC/6nBdE0p+x+p+YLXRpCqZR0C+qwelufchDmJgLswxUl+LPgs8YbNuqclDGWG
-         aT6N5rFEdDVnIb5NiWxmG5UQdtQtQsJ0Phyh3GYrGUEvrLMmLxFtidWFdFCqFAAmMp67
-         Zy5nJWcWm5EPCUfRvQyHmkRVxW5kHG2VAbgF72QFx4IaNIF4n1xamD9Lw5lYqZ3KCV+M
-         ERZA==
-X-Gm-Message-State: APzg51CgSj5mZ5IYTau1w6ESlcVAQYJBoUZGeq+r2gAD8fwVrf5n+N2E
-        9ljQPkbwNZXZPBHwAJM3SIDHyqCjQsHb9EZ4pGIXoQ==
-X-Google-Smtp-Source: ANB0VdafFKvG6IU5TbmvA0bMUQyY+svN2QlMGIOvv96cQSuTz+RN14BqYltP6l2dpgnDZm2dmvTkG5S1rEt6VK4Ps+I=
-X-Received: by 2002:ac8:6056:: with SMTP id k22-v6mr28898917qtm.94.1536054804377;
- Tue, 04 Sep 2018 02:53:24 -0700 (PDT)
+        Tue, 4 Sep 2018 10:17:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39752 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727216AbeIDORs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 10:17:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC68D7A9;
+        Tue,  4 Sep 2018 02:53:26 -0700 (PDT)
+Received: from [10.4.13.76] (ostrya.emea.arm.com [10.4.13.76])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 378873F5BC;
+        Tue,  4 Sep 2018 02:53:24 -0700 (PDT)
+Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
+To:     Auger Eric <eric.auger@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Robin Murphy <Robin.Murphy@arm.com>
+Cc:     Marc Zyngier <Marc.Zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        Christoffer Dall <Christoffer.Dall@arm.com>
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+ <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+ <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
+ <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
+ <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912EFB76@SHSMSX101.ccr.corp.intel.com>
+ <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912EFCD8@SHSMSX101.ccr.corp.intel.com>
+ <8da25040-42fe-5ce8-2647-ee6b8d795bc9@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <c05ac969-2921-3166-e715-af3595291666@arm.com>
+Date:   Tue, 4 Sep 2018 10:53:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180831093604.5915-1-benjamin.tissoires@redhat.com> <SN6PR02MB4864D83F3B3FD94CB4741732ED0F0@SN6PR02MB4864.namprd02.prod.outlook.com>
-In-Reply-To: <SN6PR02MB4864D83F3B3FD94CB4741732ED0F0@SN6PR02MB4864.namprd02.prod.outlook.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 4 Sep 2018 11:53:12 +0200
-Message-ID: <CAO-hwJL20efqKS3MP_UttgwgoUxPRW6CaGUDy9=CsqbgHndGWg@mail.gmail.com>
-Subject: Re: [PATCH] Partially revert "HID: generic: create one input report
- per application type"
-To:     Terry.Junge@plantronics.com
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "3.8+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8da25040-42fe-5ce8-2647-ee6b8d795bc9@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Terry,
+On 04/09/2018 09:41, Auger Eric wrote:
+> I think the confusion comes from the different terminology used in VTD
+> and ARM SMMU spec.
+> 
+> Your PASID table ~ ARM SMMU Context Descriptor (CD) table
+> Your Root Entry/Context Entry ~ ARM SMMU Stream Table Entry (STE)
 
-On Fri, Aug 31, 2018 at 7:48 PM Junge, Terry
-<Terry.Junge@plantronics.com> wrote:
->
-> For what it's worth the Report Descriptor is a little questionable
-> which could be causing the collection to split in two
->
-> >-----Original Message-----
-> >From: linux-input-owner@vger.kernel.org [mailto:linux-input-
-> >owner@vger.kernel.org] On Behalf Of Benjamin Tissoires
-> >Sent: Friday, August 31, 2018 2:36 AM
-> >To: Jiri Kosina <jikos@kernel.org>; Dmitry Torokhov
-> ><dmitry.torokhov@gmail.com>
-> >Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Benjamin
-> >Tissoires <benjamin.tissoires@redhat.com>; stable@vger.kernel.org
-> >Subject: [PATCH] Partially revert "HID: generic: create one input report per
-> >application type"
-> >
-> >This partially reverts commit f07b3c1da92db108662f99417a212fc1eddc44d1.
-> >
-> >It looks like some mice are not correctly treated by
-> >HID_QUIRK_INPUT_PER_APP. Those mice have the following
-> >report descriptor:
-> >
-> >0x05, 0x01,                    // Usage Page (Generic Desktop)        0
-> >0x09, 0x02,                    // Usage (Mouse)                       2
-> >0xa1, 0x01,                    // Collection (Application)            4
-> >0x85, 0x01,                    //  Report ID (1)                      6
-> >0x09, 0x01,                    //  Usage (Pointer)                    8
->
-> This physical collection is associated with Generic Desktop:Pointer (0x0001:0x0001)
->
-> >0xa1, 0x00,                    //  Collection (Physical)              10
-> >0x95, 0x05,                    //   Report Count (5)                  12
-> >0x75, 0x01,                    //   Report Size (1)                   14
-> >0x05, 0x09,                    //   Usage Page (Button)               16
->
-> We are now in the Button page
->
-> >0x19, 0x01,                    //   Usage Minimum (1)                 18
-> >0x29, 0x05,                    //   Usage Maximum (5)                 20
-> >0x15, 0x00,                    //   Logical Minimum (0)               22
-> >0x25, 0x01,                    //   Logical Maximum (1)               24
-> >0x81, 0x02,                    //   Input (Data,Var,Abs)              26
-> >...
-> >0xc0,                          //  End Collection                     57
-> >0x85, 0x02,                    //  Report ID (2)                      58
-> >0x09, 0x01,                    //  Usage (Consumer Control)           60
->
-> This physical collection is associated with Button:Button 1 (0x0009:0x0001)
-> not Generic Desktop:Pointer (0x0001:0x0001)
->
-> >0xa1, 0x00,                    //  Collection (Physical)              62
-> >0x75, 0x0c,                    //   Report Size (12)                  64
-> >0x95, 0x02,                    //   Report Count (2)                  66
-> >0x05, 0x01,                    //   Usage Page (Generic Desktop)      68
->
-> Now we're back in the Generic Desktop page
+In past discussions we used "PASID table (entry)" and "device context"
+respectively. For clarity we should probably stick to those names unless
+we discuss arch-specific patches
 
-You are missing one bit in the HID specification. The report
-descriptor is both a stack and a machine with states. The 'usage page'
-can be considered as a 'register' that needs to be associated to the
-'usage' to provide the final usage.
-For example, Usage Page 0x01 (Generic Desktop) plus Usage 0x30 gives
-you the "X" usage.
-While Usage Page 0x0d (digitizer) plus the same Usage 0x30 gives you
-the "Tip Pressure".
-
-So here, there is nothing wrong.
-
-The stack part concerns the collections. You open a collection type
-(physical, or application), and you can close it.
-
-So here, the problem is that the 2 reports with Ids 1 and 2 are part
-of the same application collection "mouse" and should be tied to the
-same input device (at least that is how I thought of the code).
-Unfortunately, the bug makes that these 2 reports each have an input
-node, and this is where things start to mess up.
-
-Cheers,
-Benjamin
-
->
-> >0x09, 0x30,                    //   Usage (X)                         70
-> >0x09, 0x31,                    //   Usage (Y)                         72
-> >0x16, 0x01, 0xf8,              //   Logical Minimum (-2047)           74
-> >0x26, 0xff, 0x07,              //   Logical Maximum (2047)            77
-> >0x81, 0x06,                    //   Input (Data,Var,Rel)              80
-> >0xc0,                          //  End Collection                     82
-> >0xc0,                          // End Collection                      83
-> >...
-> >
+Thanks,
+Jean
