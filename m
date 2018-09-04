@@ -2,38 +2,38 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6430AC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A87C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2829220843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2829220843
+	by mail.kernel.org (Postfix) with ESMTP id D6BD120645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BD120645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeIDUZp (ORCPT
+        id S1728097AbeIDUZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:25:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50972 "EHLO mx1.suse.de"
+        Tue, 4 Sep 2018 16:25:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51022 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727770AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:24:51 -0400
+        id S1727773AbeIDUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:24:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9EB44B0B0;
+        by mx1.suse.de (Postfix) with ESMTP id 51325B0AA;
         Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 21/29] staging: bcm2835-audio: Use card->private_data
-Date:   Tue,  4 Sep 2018 17:58:50 +0200
-Message-Id: <20180904155858.8001-22-tiwai@suse.de>
+Subject: [PATCH 15/29] staging: bcm2835-audio: Drop debug messages in bcm2835-pcm.c
+Date:   Tue,  4 Sep 2018 17:58:44 +0200
+Message-Id: <20180904155858.8001-16-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,137 +42,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of allocating a separate snd_device object, let snd_card_new()
-allocate the private resource.  This simplifies the code.
+These debug messages worsen the code readability a lot while they give
+little debuggability (which we already have via tracing, in anyway).
+
+Let's clean them up.  This allows us to reduce the
+snd_bcm2835_pcm_lib_ioctl() function to be a direct call of the
+snd_pcm_lib_ioctl callback (like most other drivers do), too.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../vc04_services/bcm2835-audio/bcm2835.c     | 91 +++----------------
- 1 file changed, 13 insertions(+), 78 deletions(-)
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 51 +++----------------
+ 1 file changed, 7 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-index 6876a5eadc07..55e7fbc3ec44 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-@@ -86,9 +86,6 @@ static int bcm2835_devm_add_vchi_ctx(struct device *dev)
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+index 41bcaff6358b..1f9c940f1cc3 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+@@ -44,9 +44,7 @@ static const struct snd_pcm_hardware snd_bcm2835_playback_spdif_hw = {
  
- static void snd_bcm2835_release(struct device *dev)
+ static void snd_bcm2835_playback_free(struct snd_pcm_runtime *runtime)
  {
--	struct bcm2835_chip *chip = dev_get_drvdata(dev);
--
--	kfree(chip);
+-	audio_info("Freeing up alsa stream here ..\n");
+ 	kfree(runtime->private_data);
+-	runtime->private_data = NULL;
  }
  
- static struct device *
-@@ -117,69 +114,6 @@ snd_create_device(struct device *parent,
- 	return device;
- }
+ void bcm2835_playback_fifo(struct bcm2835_alsa_stream *alsa_stream)
+@@ -99,7 +97,6 @@ static int snd_bcm2835_playback_open_generic(
+ 	int err;
  
--/* component-destructor
-- * (see "Management of Cards and Components")
-- */
--static int snd_bcm2835_dev_free(struct snd_device *device)
--{
--	struct bcm2835_chip *chip = device->device_data;
--	struct snd_card *card = chip->card;
+ 	mutex_lock(&chip->audio_mutex);
+-	audio_info("Alsa open (%d)\n", substream->number);
+ 	idx = substream->number;
+ 
+ 	if (spdif && chip->opened) {
+@@ -182,8 +179,6 @@ static int snd_bcm2835_playback_close(struct snd_pcm_substream *substream)
+ 	runtime = substream->runtime;
+ 	alsa_stream = runtime->private_data;
+ 
+-	audio_info("Alsa close\n");
 -
--	snd_device_free(card, chip);
+ 	alsa_stream->period_size = 0;
+ 	alsa_stream->buffer_size = 0;
+ 
+@@ -251,10 +246,6 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+ 	alsa_stream->pos = 0;
+ 	alsa_stream->draining = false;
+ 
+-	audio_debug("buffer_size=%d, period_size=%d pos=%d frame_bits=%d\n",
+-		alsa_stream->buffer_size, alsa_stream->period_size,
+-		alsa_stream->pos, runtime->frame_bits);
 -
--	return 0;
--}
--
--/* chip-specific constructor
-- * (see "Management of Cards and Components")
-- */
--static int snd_bcm2835_create(struct snd_card *card,
--			      struct bcm2835_chip **rchip)
--{
--	struct bcm2835_chip *chip;
+  out:
+ 	mutex_unlock(&chip->audio_mutex);
+ 	return err;
+@@ -266,12 +257,8 @@ static void snd_bcm2835_pcm_transfer(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
+ 	void *src = (void *) (substream->runtime->dma_area + rec->sw_data);
 -	int err;
--	static struct snd_device_ops ops = {
--		.dev_free = snd_bcm2835_dev_free,
--	};
 -
--	*rchip = NULL;
+-	err = bcm2835_audio_write(alsa_stream, bytes, src);
+-	if (err)
+-		audio_error(" Failed to transfer to alsa device (%d)\n", err);
+ 
++	bcm2835_audio_write(alsa_stream, bytes, src);
+ }
+ 
+ static int snd_bcm2835_pcm_ack(struct snd_pcm_substream *substream)
+@@ -289,27 +276,18 @@ static int snd_bcm2835_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+ {
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
+-	int err = 0;
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+-		err = bcm2835_audio_start(alsa_stream);
+-		if (err)
+-			audio_error(" Failed to START alsa device (%d)\n", err);
+-		break;
++		return bcm2835_audio_start(alsa_stream);
+ 	case SNDRV_PCM_TRIGGER_DRAIN:
+ 		alsa_stream->draining = true;
+-		break;
++		return 0;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+-		err = bcm2835_audio_stop(alsa_stream);
+-		if (err)
+-			audio_error(" Failed to STOP alsa device (%d)\n", err);
+-		break;
++		return bcm2835_audio_stop(alsa_stream);
+ 	default:
+-		err = -EINVAL;
++		return -EINVAL;
+ 	}
 -
--	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
--	if (!chip)
--		return -ENOMEM;
+-	return err;
+ }
+ 
+ /* pointer callback */
+@@ -319,31 +297,16 @@ snd_bcm2835_pcm_pointer(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
+ 
+-	audio_debug("pcm_pointer... (%d) hwptr=%d appl=%d pos=%d\n", 0,
+-		frames_to_bytes(runtime, runtime->status->hw_ptr),
+-		frames_to_bytes(runtime, runtime->control->appl_ptr),
+-		alsa_stream->pos);
 -
--	chip->card = card;
--	mutex_init(&chip->audio_mutex);
--
--	chip->vchi_ctx = devres_find(card->dev->parent,
--				     bcm2835_devm_free_vchi_ctx, NULL, NULL);
--	if (!chip->vchi_ctx) {
--		kfree(chip);
--		return -ENODEV;
--	}
--
--	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
--	if (err) {
--		kfree(chip);
--		return err;
--	}
--
--	*rchip = chip;
--	return 0;
--}
--
--static struct snd_card *snd_bcm2835_card_new(struct device *dev)
+ 	return snd_pcm_indirect_playback_pointer(substream,
+ 		&alsa_stream->pcm_indirect,
+ 		alsa_stream->pos);
+ }
+ 
+-static int snd_bcm2835_pcm_lib_ioctl(struct snd_pcm_substream *substream,
+-	unsigned int cmd, void *arg)
 -{
--	struct snd_card *card;
--	int ret;
+-	int ret = snd_pcm_lib_ioctl(substream, cmd, arg);
 -
--	ret = snd_card_new(dev, -1, NULL, THIS_MODULE, 0, &card);
--	if (ret)
--		return ERR_PTR(ret);
--
--	return card;
+-	audio_info(" .. substream=%p, cmd=%d, arg=%p (%x) ret=%d\n", substream,
+-		cmd, arg, arg ? *(unsigned int *)arg : 0, ret);
+-	return ret;
 -}
 -
- typedef int (*bcm2835_audio_newpcm_func)(struct bcm2835_chip *chip,
- 					 const char *name,
- 					 enum snd_bcm2835_route route,
-@@ -292,25 +226,26 @@ static int snd_add_child_device(struct device *device,
- 		return PTR_ERR(child);
- 	}
- 
--	card = snd_bcm2835_card_new(child);
--	if (IS_ERR(card)) {
-+	err = snd_card_new(child, -1, NULL, THIS_MODULE, sizeof(*chip), &card);
-+	if (err < 0) {
- 		dev_err(child, "Failed to create card");
--		return PTR_ERR(card);
-+		return err;
- 	}
- 
--	snd_card_set_dev(card, child);
-+	chip = card->private_data;
-+	chip->card = card;
-+	chip->dev = child;
-+	mutex_init(&chip->audio_mutex);
-+
-+	chip->vchi_ctx = devres_find(device,
-+				     bcm2835_devm_free_vchi_ctx, NULL, NULL);
-+	if (!chip->vchi_ctx)
-+		return -ENODEV;
-+
- 	strcpy(card->driver, audio_driver->driver.name);
- 	strcpy(card->shortname, audio_driver->shortname);
- 	strcpy(card->longname, audio_driver->longname);
- 
--	err = snd_bcm2835_create(card, &chip);
--	if (err) {
--		dev_err(child, "Failed to create chip, error %d\n", err);
--		return err;
--	}
--
--	chip->dev = child;
--
- 	err = audio_driver->newpcm(chip, audio_driver->shortname,
- 		audio_driver->route,
- 		numchans);
+ /* operators */
+ static const struct snd_pcm_ops snd_bcm2835_playback_ops = {
+ 	.open = snd_bcm2835_playback_open,
+ 	.close = snd_bcm2835_playback_close,
+-	.ioctl = snd_bcm2835_pcm_lib_ioctl,
++	.ioctl = snd_pcm_lib_ioctl,
+ 	.hw_params = snd_bcm2835_pcm_hw_params,
+ 	.hw_free = snd_bcm2835_pcm_hw_free,
+ 	.prepare = snd_bcm2835_pcm_prepare,
+@@ -355,7 +318,7 @@ static const struct snd_pcm_ops snd_bcm2835_playback_ops = {
+ static const struct snd_pcm_ops snd_bcm2835_playback_spdif_ops = {
+ 	.open = snd_bcm2835_playback_spdif_open,
+ 	.close = snd_bcm2835_playback_close,
+-	.ioctl = snd_bcm2835_pcm_lib_ioctl,
++	.ioctl = snd_pcm_lib_ioctl,
+ 	.hw_params = snd_bcm2835_pcm_hw_params,
+ 	.hw_free = snd_bcm2835_pcm_hw_free,
+ 	.prepare = snd_bcm2835_pcm_prepare,
 -- 
 2.18.0
 
