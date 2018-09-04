@@ -2,508 +2,154 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1672C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90744C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C662086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:00:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AOZtaUsq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C662086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D43F20843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D43F20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbeIDJW7 (ORCPT
+        id S1727397AbeIDJZW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:22:59 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38287 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIDJW6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:22:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so1061784pfh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 21:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nVGI1IVSvX8lwuTeLvBsgIlvl7c2zSEEIUHYKgpRvoI=;
-        b=AOZtaUsqiyTHospL1VPiHgPSx4zSesVi7fPfOljONFIUr+w/MtbV6Ejtya7vpwH6Bc
-         9PYxVHiJRIseKRynV2qz8iPyVVIfkOk7pNnhk0TeDuj+nWkP+oPARaPWJQ1S7DK3H46J
-         /2uMZkElsiSf2SBSaGLCaSXcyROVCB9Zfu7eI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nVGI1IVSvX8lwuTeLvBsgIlvl7c2zSEEIUHYKgpRvoI=;
-        b=bY4xmZB02ReoBrpYgqQSFumNFeCJ3NAm+TxvqmZ0KVZGKKQUVekn/jA2R/K96nnVze
-         0rTrZwXflBCsfUUtHxq63G/XaYGVfO6a7UsL8zAf8a4NCSMkz4zc1Q73AppSoH9DqPZT
-         MwJgJKU+aFcI1OQ+k8F/Gp8vht+KfPNksttZUlyzHH09O6tFLfsqNdFhMnCMIYBGTe4m
-         IktgZ7jFWcuGnwMEroLbY7RMLjeLoNm0BMZiuscWumQN6GHozSS3cnViDZrYsy6fw45a
-         NWvkFo2wGI41FCd5w6BHGLLp1rhXRaXCBcoRpGwBdEEMwNTGQFxlk87IBCM+fe9soJ0S
-         ZCpg==
-X-Gm-Message-State: APzg51A5jhjYOZ0+czonFbzo4I1Fa3UvByrdkslRIRmi5MXz27Cyp4Mg
-        UpzBry8MrMAplBIqsjXqGAmxvA==
-X-Google-Smtp-Source: ANB0VdZ+ZCI/Z6WX8tV6/yuoUjDKn6QLp0WsodjNHK7YPGQas9sgyaq59TMJaqfQb/ls8QhxVG+9gg==
-X-Received: by 2002:a63:344b:: with SMTP id b72-v6mr29574133pga.184.1536037175484;
-        Mon, 03 Sep 2018 21:59:35 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm41180378pfj.22.2018.09.03.21.59.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Sep 2018 21:59:34 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/8] arm64: dts: Add msm8998 SoC and MTP board support
-Date:   Mon,  3 Sep 2018 22:01:16 -0700
-Message-Id: <20180904050123.26601-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180904050123.26601-1-bjorn.andersson@linaro.org>
-References: <20180904050123.26601-1-bjorn.andersson@linaro.org>
+        Tue, 4 Sep 2018 05:25:22 -0400
+Received: from mga05.intel.com ([192.55.52.43]:19820 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726093AbeIDJZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:25:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 22:01:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
+   d="scan'208";a="70356747"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga008.jf.intel.com with ESMTP; 03 Sep 2018 22:01:59 -0700
+Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 3 Sep 2018 22:01:59 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ fmsmsx158.amr.corp.intel.com (10.18.116.75) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 3 Sep 2018 22:01:58 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.226]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
+ Tue, 4 Sep 2018 13:01:56 +0800
+From:   "Qiu, Tian Shu" <tian.shu.qiu@intel.com>
+To:     Javier Martinez Canillas <javierm@redhat.com>,
+        Bing Bu Cao <bingbu.cao@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Zheng, Jian Xu" <jian.xu.zheng@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Zhi, Yong" <yong.zhi@intel.com>,
+        "Cao, Bingbu" <bingbu.cao@intel.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: RE: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2
+ async notifier complete
+Thread-Topic: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2
+ async notifier complete
+Thread-Index: AQHUQT449K1tfdBFQ0WD2/WKLEKJOaTdpeSAgAAC+QCAABSwAIAAAKAAgAHTqBA=
+Date:   Tue, 4 Sep 2018 05:01:56 +0000
+Message-ID: <F4B393EC1A37C8418714AECDAAEF72A93C9A39FC@shsmsx102.ccr.corp.intel.com>
+References: <20180831152045.9957-1-javierm@redhat.com>
+ <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+ <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
+ <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
+ <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
+In-Reply-To: <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmE1YWY3Y2ItODJlOS00YmJlLWJmZmEtZDQ1MzBjMWE3NTAwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNUlqdklIWW00WlpmbEs5Qk1nQzRtckw0Q3FCM0M0TWhoZ3VJTVlic2RvWDBROWpwY0RqUjcxbkFiYjlkRk9rZSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joonwoo Park <joonwoop@codeaurora.org>
+Hi,
 
-Add initial device tree support for the Qualcomm MSM8998 SoC and
-MTP8998 evaluation board.
+Raise my point.
+The case here is that we have multiple sensors connected to CIO2. The sensors work independently. So failure on one sensor should not block the function of the other.
+That is, we should not rely on that all sensors are ready before allowing user to operate on the ready cameras.
+Sometimes due to hardware issues or incompleteness, we did met the case that one sensor is not probing properly. And in this case, the current implementation blocks us using the working one.
+What I can think now to solve this are:
+1. Register multiple media devices. One for each sensor path. This will increase media device count.
+2. Use .bound callback to create the link and register the subdev node for each sensor. Leave .complete empty.
+     Not sure if this breaks the rule of media framework. And also have not found an API to register one single subdev node.
 
-Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
-Signed-off-by: Imran Khan <kimran@codeaurora.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-[bjorn: Restructured, removed its node and moved to SPDX headers]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Thanks
+Tianshu Qiu
 
-Changes since v2:
-- Updated structure of dts to match our discussions
-- Sorted nodes
-- s/MSM 8998/MSM8998/
-- Dropped model from platform dtsi
 
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/msm8998-mtp.dts  |  13 +
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |  18 ++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 346 ++++++++++++++++++++++
- 4 files changed, 378 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-mtp.dts
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998.dtsi
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 9319e74b8906..a658c07652a7 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -6,4 +6,5 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dts b/arch/arm64/boot/dts/qcom/msm8998-mtp.dts
-new file mode 100644
-index 000000000000..66540d2ca13b
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
-+
-+/dts-v1/;
-+
-+#include "msm8998-mtp.dtsi"
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. MSM8998 v1 MTP";
-+	compatible = "qcom,msm8998-mtp";
-+
-+	qcom,board-id = <8 0>;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-new file mode 100644
-index 000000000000..9202824fcb56
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
-+
-+#include "msm8998.dtsi"
-+
-+/ {
-+	aliases {
-+		serial0 = &blsp2_uart1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&blsp2_uart1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-new file mode 100644
-index 000000000000..e52a68421480
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -0,0 +1,346 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+
-+/ {
-+	interrupt-parent = <&intc>;
-+
-+	qcom,msm-id = <292 0x0>;
-+
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	chosen { };
-+
-+	memory {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the reg */
-+		reg = <0 0 0 0>;
-+	};
-+
-+	clocks {
-+		xo_board {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <19200000>;
-+		};
-+
-+		sleep_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32764>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			efficiency = <1024>;
-+			next-level-cache = <&L2_0>;
-+			L2_0: l2-cache {
-+				compatible = "arm,arch-cache";
-+				cache-level = <2>;
-+			};
-+			L1_I_0: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_0: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			efficiency = <1024>;
-+			next-level-cache = <&L2_0>;
-+			L1_I_1: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_1: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x2>;
-+			enable-method = "psci";
-+			efficiency = <1024>;
-+			next-level-cache = <&L2_0>;
-+			L1_I_2: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_2: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x3>;
-+			enable-method = "psci";
-+			efficiency = <1024>;
-+			next-level-cache = <&L2_0>;
-+			L1_I_3: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_3: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x100>;
-+			enable-method = "psci";
-+			efficiency = <1536>;
-+			next-level-cache = <&L2_1>;
-+			L2_1: l2-cache {
-+				compatible = "arm,arch-cache";
-+				cache-level = <2>;
-+			};
-+			L1_I_100: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_100: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x101>;
-+			enable-method = "psci";
-+			efficiency = <1536>;
-+			next-level-cache = <&L2_1>;
-+			L1_I_101: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_101: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x102>;
-+			enable-method = "psci";
-+			efficiency = <1536>;
-+			next-level-cache = <&L2_1>;
-+			L1_I_102: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_102: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		CPU7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,armv8";
-+			reg = <0x0 0x103>;
-+			enable-method = "psci";
-+			efficiency = <1536>;
-+			next-level-cache = <&L2_1>;
-+			L1_I_103: l1-icache {
-+				compatible = "arm,arch-cache";
-+			};
-+			L1_D_103: l1-dcache {
-+				compatible = "arm,arch-cache";
-+			};
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&CPU0>;
-+				};
-+
-+				core1 {
-+					cpu = <&CPU1>;
-+				};
-+
-+				core2 {
-+					cpu = <&CPU2>;
-+				};
-+
-+				core3 {
-+					cpu = <&CPU3>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&CPU4>;
-+				};
-+
-+				core1 {
-+					cpu = <&CPU5>;
-+				};
-+
-+				core2 {
-+					cpu = <&CPU6>;
-+				};
-+
-+				core3 {
-+					cpu = <&CPU7>;
-+				};
-+			};
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc: soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
-+
-+		gcc: clock-controller@100000 {
-+			compatible = "qcom,gcc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x100000 0xb0000>;
-+		};
-+
-+		tlmm: pinctrl@3400000 {
-+			compatible = "qcom,msm8998-pinctrl";
-+			reg = <0x3400000 0xc00000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <0x2>;
-+			interrupt-controller;
-+			#interrupt-cells = <0x2>;
-+		};
-+
-+		spmi_bus: spmi@800f000 {
-+			compatible = "qcom,spmi-pmic-arb";
-+			reg =	<0x800f000 0x1000>,
-+				<0x8400000 0x1000000>,
-+				<0x9400000 0x1000000>,
-+				<0xa400000 0x220000>,
-+				<0x800a000 0x3000>;
-+			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
-+			interrupt-names = "periph_irq";
-+			interrupts = <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,ee = <0>;
-+			qcom,channel = <0>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+			interrupt-controller;
-+			#interrupt-cells = <4>;
-+			cell-index = <0>;
-+		};
-+
-+		blsp2_uart1: serial@c1b0000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0xc1b0000 0x1000>;
-+			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
-+				 <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
-+		timer@17920000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0x17920000 0x1000>;
-+
-+			frame@17921000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17921000 0x1000>,
-+				      <0x17922000 0x1000>;
-+			};
-+
-+			frame@17923000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17923000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17924000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17924000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17925000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17925000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17926000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17926000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17927000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17927000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17928000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17928000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		intc: interrupt-controller@17a00000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0x17a00000 0x10000>,       /* GICD */
-+			      <0x17b00000 0x100000>;      /* GICR * 8 */
-+			#interrupt-cells = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			interrupt-controller;
-+			#redistributor-regions = <1>;
-+			redistributor-stride = <0x0 0x20000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+};
--- 
-2.18.0
-
+> -----Original Message-----
+> From: Javier Martinez Canillas [mailto:javierm@redhat.com]
+> Sent: Monday, September 3, 2018 4:52 PM
+> To: Bing Bu Cao <bingbu.cao@linux.intel.com>; linux-kernel@vger.kernel.org
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; Qiu, Tian Shu <tian.shu.qiu@intel.com>; Zheng, Jian Xu
+> <jian.xu.zheng@intel.com>; Sakari Ailus <sakari.ailus@linux.intel.com>; Zhi, Yong <yong.zhi@intel.com>; Cao, Bingbu
+> <bingbu.cao@intel.com>; linux-media@vger.kernel.org
+> Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async notifier complete
+> 
+> On 09/03/2018 10:49 AM, Bing Bu Cao wrote:
+> >
+> >
+> > On 09/03/2018 03:35 PM, Javier Martinez Canillas wrote:
+> >> Hi,
+> >>
+> >> Thanks a lot your feedback.
+> >>
+> >> On 09/03/2018 09:25 AM, Bing Bu Cao wrote:
+> >>>
+> >>> On 08/31/2018 11:20 PM, Javier Martinez Canillas wrote:
+> >>>> Commit 9832e155f1ed ("[media] media-device: split media initialization and
+> >>>> registration") split the media_device_register() function in two, to avoid
+> >>>> a race condition that can happen when the media device node is accessed by
+> >>>> userpace before the pending subdevices have been asynchronously registered.
+> >>>>
+> >>>> But the ipu3-cio2 driver calls the media_device_register() function right
+> >>>> after calling media_device_init() which defeats the purpose of having two
+> >>>> separate functions.
+> >>>>
+> >>>> In that case, userspace could have a partial view of the media device if
+> >>>> it opened the media device node before all the pending devices have been
+> >>>> bound. So instead, only register the media device once all pending v4l2
+> >>>> subdevices have been registered.
+> >>> Javier, Thanks for your patch.
+> >>> IMHO, there are no big differences for registering the cio2 before and after all the subdevices are ready.
+> >>> User may see a partial view of media graph but it presents what it really is then.
+> >>> It indicate that device is not available currently not it is not there.
+> >> I disagree that there are no differences. The media graph shouldn't be exposed
+> >> until its complete. That's the reason why we have a v4l2 async notifier .bound
+> >> and .complete callbacks (otherwise the .bound would be enough).
+> >>
+> >> It's also the reason why media register was split in _init and _register, as I
+> >> mentioned in the commit message.
+> > I revisit the commit 9832e155f1ed and understand and agree that.
+> 
+> Great. Does this mean the patch has your Reviewed-by / Acked-by ?
+> 
+> > Seems like there are some other drivers (such as rcar-vin and omap4iss) still have similar issues.
+> 
+> Yes it seems so. I don't have access to hardware with these IP blocks though,
+> I'm hesitant to attempt to fix them.
+> 
+> Best regards,
+> --
+> Javier Martinez Canillas
+> Software Engineer - Desktop Hardware Enablement
+> Red Hat
