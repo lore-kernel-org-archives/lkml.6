@@ -2,122 +2,185 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36621C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B807C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA1020843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:15:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA1020843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CF46A20843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:15:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF46A20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeIDTlT (ORCPT
+        id S1727704AbeIDTl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:41:19 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39423 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeIDTlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:41:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 08:15:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="85917137"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2018 08:15:42 -0700
-Date:   Tue, 4 Sep 2018 23:28:18 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH v6 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-Message-ID: <20180904152817.GC17047@intel.com>
+        Tue, 4 Sep 2018 15:41:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40308 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726206AbeIDTl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:41:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 87987B061;
+        Tue,  4 Sep 2018 15:15:52 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 17:15:50 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 10/12] livepatch: Atomic replace and cumulative
+ patches documentation
+In-Reply-To: <20180828143603.4442-11-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1809041709570.3194@pobox.suse.cz>
+References: <20180828143603.4442-1-pmladek@suse.com> <20180828143603.4442-11-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831225616.29221-2-jmkrzyszt@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
+On Tue, 28 Aug 2018, Petr Mladek wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> User documentation for the atomic replace feature. It makes it easier
+> to maintain livepatches using so-called cumulative patches.
 
-[auto build test WARNING on gpio/for-next]
-[also build test WARNING on v4.19-rc2 next-20180831]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+I think the documentation should be updated due to API changes.
+ 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  Documentation/livepatch/cumulative-patches.txt | 105 +++++++++++++++++++++++++
+>  1 file changed, 105 insertions(+)
+>  create mode 100644 Documentation/livepatch/cumulative-patches.txt
+> 
+> diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
+> new file mode 100644
+> index 000000000000..206b7f98d270
+> --- /dev/null
+> +++ b/Documentation/livepatch/cumulative-patches.txt
+> @@ -0,0 +1,105 @@
+> +===================================
+> +Atomic Replace & Cumulative Patches
+> +===================================
+> +
+> +There might be dependencies between livepatches. If multiple patches need
+> +to do different changes to the same function(s) then we need to define
+> +an order in which the patches will be installed. And function implementations
+> +from any newer livepatch must be done on top of the older ones.
+> +
+> +This might become a maintenance nightmare. Especially if anyone would want
+> +to remove a patch that is in the middle of the stack.
+> +
+> +An elegant solution comes with the feature called "Atomic Replace". It allows
+> +to create so called "Cumulative Patches". They include all wanted changes
+> +from all older livepatches and completely replace them in one transition.
+> +
+> +Usage
+> +-----
+> +
+> +The atomic replace can be enabled by setting "replace" flag in struct klp_patch,
+> +for example:
+> +
+> +	static struct klp_patch patch = {
+> +		.mod = THIS_MODULE,
+> +		.objs = objs,
+> +		.replace = true,
+> +	};
+> +
+> +Such a patch is added on top of the livepatch stack when registered. It can
+> +be enabled even when some earlier patches have not been enabled yet.
 
-url:    https://github.com/0day-ci/linux/commits/Janusz-Krzysztofik/gpiolib-speed-up-GPIO-array-processing/20180903-174241
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-:::::: branch date: 9 hours ago
-:::::: commit date: 9 hours ago
+Here.
 
->> drivers/mux/gpio.c:25:9: sparse: Variable length array is used.
---
->> drivers/i2c/muxes/i2c-mux-gpio.c:29:9: sparse: Variable length array is used.
-   include/linux/device.h:685:13: sparse: undefined identifier '__builtin_mul_overflow'
-   include/linux/device.h:685:13: sparse: not a function <noident>
-   include/linux/device.h:685:13: sparse: call with no type!
+> +All processes are then migrated to use the code only from the new patch.
+> +Once the transition is finished, all older patches are removed from the stack
+> +of patches. Even the older not-enabled patches mentioned above. They can
+> +even be unregistered and the related modules unloaded.
 
-# https://github.com/0day-ci/linux/commit/00db98568b73a7b04c5120e5b87934c7355cc015
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 00db98568b73a7b04c5120e5b87934c7355cc015
-vim +25 drivers/mux/gpio.c
+Here.
 
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  21  
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  22  static int mux_gpio_set(struct mux_control *mux, int state)
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  23  {
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  24  	struct mux_gpio *mux_gpio = mux_chip_priv(mux->chip);
-00db98568 drivers/mux/gpio.c     Janusz Krzysztofik 2018-09-01 @25  	DECLARE_BITMAP(value_bitmap, mux_gpio->gpios->ndescs);
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  26  	
-00db98568 drivers/mux/gpio.c     Janusz Krzysztofik 2018-09-01  27  	*value_bitmap = state;
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  28  
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  29  	gpiod_set_array_value_cansleep(mux_gpio->gpios->ndescs,
-00db98568 drivers/mux/gpio.c     Janusz Krzysztofik 2018-09-01  30  				       mux_gpio->gpios->desc, value_bitmap);
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  31  
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  32  	return 0;
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  33  }
-2c089f08e drivers/mux/mux-gpio.c Peter Rosin        2017-05-14  34  
+> +Ftrace handlers are transparently removed from functions that are no
+> +longer modified by the new cumulative patch.
+> +
+> +As a result, the livepatch authors might maintain sources only for one
+> +cumulative patch. It helps to keep the patch consistent while adding or
+> +removing various fixes or features.
+> +
+> +Users could keep only the last patch installed on the system after
+> +the transition to has finished. It helps to clearly see what code is
+> +actually in use. Also the livepatch might then be seen as a "normal"
+> +module that modifies the kernel behavior. The only difference is that
+> +it can be updated at runtime without breaking its functionality.
+> +
+> +
+> +Features
+> +--------
+> +
+> +The atomic replace allows:
+> +
+> +  + Atomically revert some functions in a previous patch while
+> +    upgrading other functions.
+> +
+> +  + Remove eventual performance impact caused by core redirection
+> +    for functions that are no longer patched.
+> +
+> +  + Decrease user confusion about stacking order and what patches are
+> +    currently in effect.
+> +
+> +
+> +Limitations:
+> +------------
+> +
+> +  + Replaced patches can no longer be enabled. But if the transition
+> +    to the cumulative patch was not forced, the kernel modules with
+> +    the older livepatches can be removed and eventually added again.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I'd rewrite even this.
+
+> +    A good practice is to set .replace flag in any released livepatch.
+> +    Then re-adding an older livepatch is equivalent to downgrading
+> +    to that patch. This is safe as long as the livepatches do _not_ do
+> +    extra modifications in (un)patching callbacks or in the module_init()
+> +    or module_exit() functions, see below.
+> +
+> +
+> +  + Only the (un)patching callbacks from the _new_ cumulative livepatch are
+> +    executed. Any callbacks from the replaced patches are ignored.
+> +
+> +    By other words, the cumulative patch is responsible for doing any actions
+> +    that are necessary to properly replace any older patch.
+
+s/By other words/In other words/
+
+> +    As a result, it might be dangerous to replace newer cumulative patches by
+> +    older ones. The old livepatches might not provide the necessary callbacks.
+> +
+> +    This might be seen as a limitation in some scenarios. But it makes the life
+> +    easier in many others. Only the new cumulative livepatch knows what
+> +    fixes/features are added/removed and what special actions are necessary
+> +    for a smooth transition.
+> +
+> +    In each case, it would be a nightmare to think about the order of
+> +    the various callbacks and their interactions if the callbacks from all
+> +    enabled patches were called.
+
+s/In each case/In any case/ ?
+
+> +  + There is no special handling of shadow variables. Livepatch authors
+> +    must create their own rules how to pass them from one cumulative
+> +    patch to the other. Especially they should not blindly remove them
+> +    in module_exit() functions.
+> +
+> +    A good practice might be to remove shadow variables in the post-unpatch
+> +    callback. It is called only when the livepatch is properly disabled.
+
+Miroslav
