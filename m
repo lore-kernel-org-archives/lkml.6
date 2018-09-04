@@ -2,141 +2,129 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5047CC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15248C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A5E20867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A5E20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id C13552086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:00:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o/AH2cYq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13552086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeIDMYa (ORCPT
+        id S1726904AbeIDMYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:24:30 -0400
-Received: from mail.netline.ch ([148.251.143.178]:49217 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeIDMY3 (ORCPT
+        Tue, 4 Sep 2018 08:24:36 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44339 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeIDMYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:24:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 90EA12A6042;
-        Tue,  4 Sep 2018 10:00:28 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 1wKgb2755Kyt; Tue,  4 Sep 2018 10:00:28 +0200 (CEST)
-Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id D55662A604A;
-        Tue,  4 Sep 2018 10:00:27 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1fx6GB-0007Al-Hz; Tue, 04 Sep 2018 10:00:27 +0200
-Subject: Re: [PATCH 3/5] drm: fix drm_mode_addfb() on big endian machines.
-To:     Ilia Mirkin <imirkin@alum.mit.edu>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
-References: <20180903105756.24912-1-kraxel@redhat.com>
- <20180903105756.24912-4-kraxel@redhat.com>
- <20180903164558.GL21634@phenom.ffwll.local>
- <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <8e8f8cf3-c4d4-6bfd-4e53-536d4d0c79ff@daenzer.net>
-Date:   Tue, 4 Sep 2018 10:00:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 4 Sep 2018 08:24:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k21-v6so1279529pff.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gWqyMGf/XZ3NzFmcHJxupslVZet5mNzpfcJyocI+nVk=;
+        b=o/AH2cYqcFFOk458XBeyuP77/rLXrQinlc4ezcuVEa/GBBG5vWMgtBC+8R7REOWnCx
+         ljE+7HzQcua1A6zy68FwMo24Tjf2d4j3QSRuFN1IV8U1amaArRgDeZQbq78ZcIPZvIDh
+         GbuvGby1zzoSNOB0ZtWBWak3zxOhJON+DquN7wAiRS7pxe0iCgVuqBYNRINgw2mi1wZA
+         OB2qktFxRSN2EQ22nXFlLo8g2vU8Jz7gSwYutnAX+8HaS+9ZauAhwQkGBfo2w+X5UynU
+         eMVjqxcc08gsrk6BAK8AS8EHaybzIN7GdBeNaNH36DZUz1relaLY/685V75Y4wz+YhUF
+         QENw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gWqyMGf/XZ3NzFmcHJxupslVZet5mNzpfcJyocI+nVk=;
+        b=rCyXjib1GMpSxLFrPqt995RES7szEihALF7lTA7VoNhBTxUKdivbhvR1wmwA1rYbne
+         E79L8t5NxhrnXF7p/Rfnj6lhLlDnj7H6PoTKvZaEM6Pv7PBrXijJFKZVtct4xSCgRtOE
+         5MUwbCsxr9PWQutOSXfU4LUSfNqoqXJ3cP3Dh1y/67M6KS8stGS5WvrleH9PSrzHVw9G
+         IXG6oHLf6nU6BUfzp6X4ed3aKDjdshjz11CMwbyZ37EZ/mY+3A2YVsQ+DtnVUHe45zRR
+         Lhj0hWwXcv/LdCIPIsxRnP4C8paJtXQ14C/pMioc6mQwJZkNnj2M1vZo66CfVrGyepaI
+         uW0g==
+X-Gm-Message-State: APzg51CNEiJ6S6rCd0du3GoSPJhYMe7YupHq21nR0fa1xxB0vN7p+t6V
+        qWDkMygKGyNOijYgTyKXDONlFi6Yb+/+bwTCcHFAhA==
+X-Google-Smtp-Source: ANB0VdbKly37fTUw/szTasO46MMooxntSPJmJTD8kKAI+8ld5+2ZVinnxBZT9FVNSvn+QCk7ubuB70oUUUzor4y2fg8=
+X-Received: by 2002:a62:71c4:: with SMTP id m187-v6mr5654232pfc.232.1536048037447;
+ Tue, 04 Sep 2018 01:00:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 4 Sep 2018 01:00:16
+ -0700 (PDT)
+In-Reply-To: <1536042474.25086.1.camel@med.uni-goettingen.de>
+References: <1535875700.17858.3.camel@med.uni-goettingen.de>
+ <CAGXu5jJ7kGm-DGUB8uwwhd-Hv7i4WEcSKumTf2MBsj_-yzWcqg@mail.gmail.com>
+ <1535960372.32005.1.camel@med.uni-goettingen.de> <CA+55aFy=T6TmG_VcLvSTb02RyKTacxVCxwUALRn8_7cdoic0pA@mail.gmail.com>
+ <1536042474.25086.1.camel@med.uni-goettingen.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 4 Sep 2018 10:00:16 +0200
+Message-ID: <CACT4Y+bBPRfjpWFXoZmruuot37_KTemZ0PHUNrFfOPW5+6JD7w@mail.gmail.com>
+Subject: Re: VLAs and security
+To:     "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-03 7:07 p.m., Ilia Mirkin wrote:
-> On Mon, Sep 3, 2018 at 12:45 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Mon, Sep 03, 2018 at 12:57:54PM +0200, Gerd Hoffmann wrote:
->>> Userspace on big endian machhines typically expects the ADDFB ioctl
->>> returns a big endian framebuffer.  drm_mode_addfb() will call
->>> drm_mode_addfb2() unconditionally with little endian DRM_FORMAT_*
->>> values though, which is wrong.  This patch fixes that.
->>>
->>> Drivers (both kernel and xorg) have quirks in place to deal with the
->>> broken drm_mode_addfb() behavior.  Because of this we can't just change
->>> drm_mode_addfb() behavior for everybody without breaking things.  So add
->>> a new driver feature flag DRIVER_PREFER_HOST_BYTE_ORDER, so drivers can
->>> opt-in.
->>>
->>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
->>> ---
->>>  include/drm/drm_drv.h             |  1 +
->>>  drivers/gpu/drm/drm_framebuffer.c | 11 +++++++++++
->>>  2 files changed, 12 insertions(+)
->>>
->>> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
->>> index 46a8009784..9cf12596cd 100644
->>> --- a/include/drm/drm_drv.h
->>> +++ b/include/drm/drm_drv.h
->>> @@ -57,6 +57,7 @@ struct drm_printer;
->>>  #define DRIVER_KMS_LEGACY_CONTEXT    0x20000
->>>  #define DRIVER_SYNCOBJ                  0x40000
->>>  #define DRIVER_PREFER_XBGR_30BPP        0x80000
->>> +#define DRIVER_PREFER_HOST_BYTE_ORDER   0x100000
+On Tue, Sep 4, 2018 at 8:27 AM, Uecker, Martin
+<Martin.Uecker@med.uni-goettingen.de> wrote:
+> Am Montag, den 03.09.2018, 14:28 -0700 schrieb Linus Torvalds:
+>> On Mon, Sep 3, 2018 at 12:40 AM Uecker, Martin
+>> <Martin.Uecker@med.uni-goettingen.de> wrote:
+>> >
+>> > But if the true bound is smaller, then IMHO it is really bad advise
+>> > to tell programmers to use
+>> >
+>> > char buf[MAX_SIZE]
+>> >
+>> > instead of something like
+>> >
+>> > assert(N <= MAX_SIZE);
+>> > char buf[N]
 >>
->> Hm, not a huge fan of using driver_flags for random little quirks. I think
->> a boolean in sturct drm_mode_config would be much better. Bonus if you
->> also move the 30bpp hack over to that. Something like
->> mode_config.quirk_addfb_host_byte_order and
->> mode_config.quirk_addfb_prefer_xbgr_30bpp or whatever. That has the upside
->> of giving us a really nice place to put a huge comment about what this is
->> supposed to do.
+>> No.
 >>
->> I think otherwise this looks overall rather reasonable. I think the only
->> other driver that ever cared about big endian was radeon/amdgpu. Would be
->> good to get at least an ack from amd folks, or a "meh, stopped caring".
-> 
-> and nouveau.
-> 
-> I do believe that ADDFB should be made to always prefer host byte
-> order -- this is how all of the existing implementations work in
-> practice. However e.g. nouveau wants DRM_FORMAT_XRGB8888. But it still
-> treats it as host byte order. This will become more important in a
-> world where ADDFB2 is more common.
-> 
-> So, I think that this change should be applied, drivers (I suspect
-> just nouveau and radeon) fixed up to consume the "new" formats, [...]
+>> First off, we don't use asserts in the kernel. Not acceptable. You
+>> handle errors, you don't crash.
+>
+> Ofcourse. But this is unrelated to my point.
+>
+>> Secondly, the compiler is usually very stupid, and will generate
+>> horrible code for VLA's.
+>>
+>> Third, there's no guarantee that the compiler will actually even
+>> realize that the size is limited, and guarantee that it won't screw up
+>> the stack.
+>
+> If this is about the quality of the generated code, ok.
+>
+> I just don't buy the idea that removing precise type-based
+> information about the size of objects from the source code
+> is good long-term strategy for improving security.
+>
+>> So no. VLA's are not acceptable in the kernel. Don't do them. We're
+>> getting rid of them.
+>
+> All right then.
 
-As explained before, that would break radeon userspace on big endian hosts.
+Hi Martin,
 
+Compiler and KASAN should still be able to do checking against the
+static array size.
+If you mean that there is some smaller dynamic logical bound n (<N)
+and we are not supposed to use memory beyond that, then KMSAN [1] can
+detect uses of the uninitialized part of the array. So we have some
+coverage on the checking side too.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+[1] https://github.com/google/kmsan#kmsan-kernelmemorysanitizer
