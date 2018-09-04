@@ -2,107 +2,96 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925F2C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE79C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F862077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F862077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9EEBD2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:07:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="S2CIGOvv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEBD2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeIDWdX (ORCPT
+        id S1727624AbeIDWeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:33:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48834 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726437AbeIDWdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:33:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D35B3B0CA;
-        Tue,  4 Sep 2018 18:07:08 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 20:07:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Rik van Riel <riel@surriel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Josef Bacik <jbacik@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm: slowly shrink slabs with a relatively small number
- of objects
-Message-ID: <20180904180707.GS14951@dhcp22.suse.cz>
-References: <20180831203450.2536-1-guro@fb.com>
- <3b05579f964cca1d44551913f1a9ee79d96f198e.camel@surriel.com>
- <20180831213138.GA9159@tower.DHCP.thefacebook.com>
- <20180903182956.GE15074@dhcp22.suse.cz>
- <20180903202803.GA6227@castle.DHCP.thefacebook.com>
- <20180904070005.GG14951@dhcp22.suse.cz>
- <20180904153445.GA22328@tower.DHCP.thefacebook.com>
- <20180904161431.GP14951@dhcp22.suse.cz>
- <20180904175243.GA4889@tower.DHCP.thefacebook.com>
- <20180904180631.GR14951@dhcp22.suse.cz>
+        Tue, 4 Sep 2018 18:34:06 -0400
+Received: from erza.pados.hu ([176.9.136.194]:49438 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbeIDWeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:34:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
+        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=e2aL5W4lgrcMk481gorzHpDIjeOYOlu5nWqLZqbKXK0=; b=S2CIGOvv6MHvjo23WEkgD2xSOg
+        zVpQUJkfZT6sH+V6fssyitJ+6eAaD7jHEeRHQ44rYoo0leSLslaJZnQYu3Gj4OAK9IQ+fCJMD9dfw
+        A05qOxaEcg5RiirfgkkAziaonzvWZ3PAs8KH81KvYOM6wcpwKcTajt9pjuvYtWY4+WQEsIrHPZegH
+        pAUayyo1Xq+tkt14oojiLj1Dz8J2TsWKA98pdnDAR7591r0UZK+wAn9436JQKw7QISDkkrX/PXw+X
+        wOv4+zRhfcareFi56y+sLmNU2LO0iOePPC5yhidAn8xIFs7Yvotorfc7YdPCOtWY7zkkyWPCs8f4s
+        dwrWEZHQ==;
+Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1fxFjz-0008O5-4Z; Tue, 04 Sep 2018 20:07:51 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904180631.GR14951@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Tue, 04 Sep 2018 18:07:49 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: RainLoop/1.12.0
+From:   "Karoly Pados" <pados@pados.hu>
+Message-ID: <680c039b5fb2beafa48ea12e492341db@pados.hu>
+Subject: Re: [PATCH] USB: serial: ftdi_sio: implement GPIO support for
+ FT230X
+To:     "Johan Hovold" <johan@kernel.org>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Loic Poulain" <loic.poulain@linaro.org>,
+        andy.shevchenko@gmail.com, ajaykuee@gmail.com,
+        daniel.thompson@linaro.org
+In-Reply-To: <2d91567c930ae5770cc55f92c37a9c6d@pados.hu>
+References: <2d91567c930ae5770cc55f92c37a9c6d@pados.hu>
+ <20180904124924.GA7278@localhost> <20180825204744.2307-1-pados@pados.hu>
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  >>> + priv->gc.ngpio = 4; >> >> Shouldn't this be handled
+   the other way round? IIRC there are two FTX >> device types with four pins,
+    and one type where only one pin is >> accessible. > > There are 4 devices
+    with 1 GPIO, 1 device with 2 GPIOs, 2 devices with 4 GPIOs, > and 1 device
+    with 6 GPIOs. Source: http://www.ftdichip.com/FT-X.htm (2nd table) > Do you
+    still want me turn this over? > [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: ftdichip.com]
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[now CC Vladimir for real]
-
-On Tue 04-09-18 20:06:31, Michal Hocko wrote:
-> On Tue 04-09-18 10:52:46, Roman Gushchin wrote:
-> > On Tue, Sep 04, 2018 at 06:14:31PM +0200, Michal Hocko wrote:
-> [...]
-> > > I am not opposing your patch but I am trying to figure out whether that
-> > > is the best approach.
-> > 
-> > I don't think the current logic does make sense. Why should cgroups
-> > with less than 4k kernel objects be excluded from being scanned?
-> 
-> How is it any different from the the LRU reclaim? Maybe it is just not
-> that visible because there usually more pages there. But in principle it
-> is the same issue AFAICS.
-> 
-> > Reparenting of all pages is definitely an option to consider,
-> > but it's not free in any case, so if there is no problem,
-> > why should we? Let's keep it as a last measure. In my case,
-> > the proposed patch works perfectly: the number of dying cgroups
-> > jumps around 100, where it grew steadily to 2k and more before.
-> 
-> Let me emphasise that I am not opposing the patch. I just think that we
-> have made some decisions which are not ideal but I would really like to
-> prevent from building workarounds on top. If we have to reconsider some
-> of those decisions then let's do it. Maybe the priority scaling is just
-> too coarse and what seem to work work for normal LRUs doesn't work for
-> shrinkers.
-> 
-> > I believe that reparenting of LRU lists is required to minimize
-> > the number of LRU lists to scan, but I'm not sure.
-> 
-> Well, we do have more lists to scan for normal LRUs. It is true that
-> shrinkers add multiplining factor to that but in principle I guess we
-> really want to distinguish dead memcgs because we do want to reclaim
-> those much more than the rest. Those objects are basically of no use
-> just eating resources. The pagecache has some chance to be reused at
-> least but I fail to see why we should keep kernel objects around. Sure,
-> some of them might be harder to reclaim due to different life time and
-> internal object management but this doesn't change the fact that we
-> should try hard to reclaim those. So my gut feeling tells me that we
-> should have a way to distinguish them.
-> 
-> Btw. I do not see Vladimir on the CC list. Added (the thread starts
-> here http://lkml.kernel.org/r/20180831203450.2536-1-guro@fb.com)
-
--- 
-Michal Hocko
-SUSE Labs
+>>> + priv->gc.ngpio =3D 4;=0A>> =0A>> Shouldn't this be handled the othe=
+r way round? IIRC there are two FTX=0A>> device types with four pins, and=
+ one type where only one pin is=0A>> accessible.=0A> =0A> There are 4 dev=
+ices with 1 GPIO, 1 device with 2 GPIOs, 2 devices with 4 GPIOs,=0A> and =
+1 device with 6 GPIOs. Source: http://www.ftdichip.com/FT-X.htm (2nd tabl=
+e)=0A> Do you still want me turn this over?=0A> =0A=0AAaah, but those oth=
+er devices are not UART bridges. I see what you mean now.=0AThe point for=
+ me when developing th original patch
