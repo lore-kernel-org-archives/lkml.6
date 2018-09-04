@@ -2,125 +2,163 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03013C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF212C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9986F20867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:54:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="i69rsCq/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9986F20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 75FD32077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:55:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FD32077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbeIDOSt (ORCPT
+        id S1727216AbeIDOUA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:18:49 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33342 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbeIDOSs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:18:48 -0400
-Received: by mail-lf1-f68.google.com with SMTP id m26-v6so2460492lfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 02:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Wtvx+B8HYw0Bv9bEPYWrDOz0YfKqZWVnFMfoxsost9Y=;
-        b=i69rsCq/cvoHTWEuLAMvtQayzQWl9LTcHegH0sg/A6M7AGWACajzVksHVQke+iqizs
-         cIFRBmthu+hUV6DnPfacBETN2tq/XxvUX0pqCAhfKclB6WDpzcX5Pu/XD4mUIeZ3W9fE
-         qPFbfauDElvsyXoyO5yF47IbExMpiSmnpG14hzoLNkZokFEI69RbuaP02CdWLvf1DGaZ
-         ZxNYpN9L8g6qOCxBs3LS2ed1yx+f033pTkcHLiz9/KoEFPyo/26Vmqr6Ty3A991N1rj1
-         moCbo/By+3bzMBKrfBXCmoKnMB12lAskzpYzHPwFbNscqSwqW3/poQCHQjWS7KZVtDOH
-         UFYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Wtvx+B8HYw0Bv9bEPYWrDOz0YfKqZWVnFMfoxsost9Y=;
-        b=HULBo2xmGAyUA0W8YuegGrKFSbB5JxD0FkCxCeWDn7HWIcw8ss4EHMOUNsFZN0y1Rk
-         HX+nvGxVO0fvGh+QJXJf5OR3z/NBjraqJSCw2ffsj5k7EPVifbx9g/sAwmiyWoGLwCWE
-         5np9cnzOCEhXYas8ydOCZokfhoMRlLE6h+v4M9Gu9MxNNIPrLWS0jOfDWaqTqHuF0Zc3
-         gohjwmVWA5IbqUZP1Dc4jLM6J4XXi5f95x7ukrZ6g7NQuwLsuc7WlJ1Ft1lGfvwZ8Ggf
-         UzZzw6JIMYOldSmBgVdDL4Zl8CHU/lp10+eWce4Jbfg0Zkyxn1i/a30O+Qs4sbv8p9tw
-         to9A==
-X-Gm-Message-State: APzg51BXlu3afSxeB0/g0t5i0hyM+fNefuUeJn02KcGDtknnqrLdYTvN
-        EUnzMKqBgMtdzykaJM/svuvcGQ==
-X-Google-Smtp-Source: ANB0VdajGkw4TgQDFjPfiXI8W5I0zpGOUksbjAgLdNVMAoxrM5FzMZPQbwYpXWdkDPvRClcDkxSn4g==
-X-Received: by 2002:a19:655d:: with SMTP id c29-v6mr8230739lfj.138.1536054865402;
-        Tue, 04 Sep 2018 02:54:25 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id f18-v6sm3840277lja.85.2018.09.04.02.54.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 02:54:24 -0700 (PDT)
-Subject: Re: [PATCH 0/4] lightnvm: pblk: add support for chunk metadata on
- erase
-To:     javier@cnexlabs.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hans.holmberg@cnexlabs.com
-References: <1535722477-31288-1-git-send-email-javier@cnexlabs.com>
- <71f5f8b3-66d5-a0e0-85ab-cb22e5ac621c@lightnvm.io>
- <7FBEB635-C943-484D-A970-D3BF870BAFFB@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <95ae2794-c671-5dc7-3a2d-2b062ea86fba@lightnvm.io>
-Date:   Tue, 4 Sep 2018 11:54:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Tue, 4 Sep 2018 10:20:00 -0400
+Received: from mga05.intel.com ([192.55.52.43]:5964 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726208AbeIDOT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 10:19:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 02:55:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
+   d="scan'208";a="88791445"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.32])
+  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2018 02:55:32 -0700
+Date:   Tue, 4 Sep 2018 12:55:31 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     the arch/x86 maintainers <x86@kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
+        serge.ayoun@intel.com, kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180904095531.GA5423@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7FBEB635-C943-484D-A970-D3BF870BAFFB@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2_EgP_-FcLV0g=EU2KuKEwFAmZufjGevMX4j--fJ_0+w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/2018 11:16 AM, Javier Gonzalez wrote:
->> On 31 Aug 2018, at 15.57, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> On 08/31/2018 03:34 PM, Javier González wrote:
->>> Matias,
->>> This patchset implements support for retrieving chunk metadata when
->>> submitting a reset/erase command. Patches 0 and 1 are small fixes that
->>> can be directly merged into your patch:
->>>       lightnvm: move bad block and chunk state logic to core
->>> Also, note that these do not apply on top of your for-4.20/core due them
->>> depending on patches that I sent before that you have not picked up yet.
->>> You can see them though in for-4.20/pblk. I'll rebase as patches in the
->>> list appear in your tree.
->>
->> Thanks. It is really confusing when you guys maintains an implicit order and posts the patches separately. I will appreciate that patches that are related are posted together, such that I don't have to manually track what comes before another. That makes it less of a pain for me to keep track of and we can keep the reviews together.
->>
->> This is the patches that I have in the pipeline (from before the e-mails from today):
->>
->>   - This serie - Pending review
->>   - Serie: pblk: support variable OOB size - Waiting on review from Igor
->>   - lightnvm: pblk: recover open lines on 2.0 devices. Which doesn't apply due to the fixes to the pad distance patch.
->>
+On Mon, Sep 03, 2018 at 03:53:24PM +0200, Jann Horn wrote:
+> On Mon, Sep 3, 2018 at 3:33 PM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+> > Add a function to perform ENCLS(EINIT), which initializes an enclave,
+> > which can be used by a driver for running enclaves and VMMs.
+> >
+> > Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
+> > than normal MSRs, so we use a per-cpu cache to track the last known value
+> > of the MSRs to avoid unnecessarily writing the MSRs with the current value.
+> >
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> [...]
+> > +/**
+> > + * sgx_einit - initialize an enclave
+> > + * @sigstruct:         a pointer to the SIGSTRUCT
+> > + * @token:             a pointer to the EINITTOKEN
+> > + * @secs_page:         a pointer to the SECS EPC page
+> > + * @lepubkeyhash:      the desired value for IA32_SGXLEPUBKEYHASHx MSRs
+> > + *
+> > + * Try to perform EINIT operation. If the MSRs are writable, they are updated
+> > + * according to @lepubkeyhash.
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   -errno on failure
+> > + *   SGX error code if EINIT fails
+> > + */
+> > +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> > +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
+> > +{
+> > +       struct sgx_lepubkeyhash __percpu *cache;
+> > +       bool cache_valid;
+> > +       int i, ret;
+> > +
+> > +       if (!sgx_lc_enabled)
+> > +               return __einit(sigstruct, token, sgx_epc_addr(secs_page));
+> > +
+> > +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
 > 
-> Yes, I know and I apologize - we should have a better flow. What do you
-> say that for windows like this, where we have a number of patches that
-> have dependencies that we post them in meaningful patchsets and point to
-> a branch where they are ordered, like in a PR? Then we can rebase and
-> propagate changes properly?
+> At this point, preemption must be off, because smp_processor_id() is
+> called; I don't think it is off here? If you have hardware/emulation
+> on which you can test this, you may want to test your patches with
+> DEBUG_PREEMPT enabled.
 
-I am with the patchset posted, that should have the order. I just wanted 
-to mention it. One thing that would be good, if you do have patches you 
-have upstream, feel free to push them in smaller increments, so we can 
-pull them in as we go. Only a nitpick, it is obviously up to you guys 
-how you want to do it :)
+Yeah, it really should. Thanks for spotting.
 
 > 
-> For this window, I'll rebase the rest of the patches in for-4.20/pblk on
-> top of your for-4.20/core, then we can propagate changes as they come.
+> > +       if (!cache) {
+> > +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
 > 
-> Javier
-> 
+> But then here you do a GFP_KERNEL allocation, which can sleep.
 
+Yes, of course this would need to be moved outside of the region where
+pre-emption is disabled.
+
+> Also: After "cache" has been allocated in this branch, when do you
+> store the reference to it? As far as I can tell, you never write to
+> sgx_lepubkeyhash_cache, and the allocation just leaks.
+
+I have assignment in my local tree but for some reason it was not
+squashed to this commit :-/
+
+> 
+> > +               if (!cache)
+> > +                       return -ENOMEM;
+> > +       }
+> > +
+> > +       cache_valid = cache->pm_cnt == sgx_pm_cnt;
+> 
+> The cache should probably not be treated as valid if it has just been
+> created and only contains zeroes, right?
+
+The name of the local variable is probably a bit misleading but also
+cached values are compared in the loop.
+
+> 
+> > +       cache->pm_cnt = sgx_pm_cnt;
+> 
+> Can sgx_pm_cnt be modified concurrently? If so, please use at least
+> READ_ONCE() to document that and prevent the compiler from doing weird
+> stuff.
+
+No it cannot.
+
+> 
+> > +       preempt_disable();
+> 
+> And here you turn off preemption, but it should already have been off?
+
+Yes.
+
+I think Sean's suggestion to update cache on SGX_INVALID_TOKEN is way to
+go in this and instead of fixing this I'll change the code to use that
+as a measure to update the cache.
+
+/Jarkko
