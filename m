@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB702C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16795C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB5220645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB5220645
+	by mail.kernel.org (Postfix) with ESMTP id D003D20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:00:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D003D20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbeIDUYu (ORCPT
+        id S1728111AbeIDU0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:24:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51014 "EHLO mx1.suse.de"
+        Tue, 4 Sep 2018 16:26:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50976 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727715AbeIDUYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:24:49 -0400
+        id S1727769AbeIDUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:24:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2D400B0A7;
+        by mx1.suse.de (Postfix) with ESMTP id 68879B0AC;
         Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 12/29] staging: bcm2835-audio: Drop unnecessary pcm indirect setup
-Date:   Tue,  4 Sep 2018 17:58:41 +0200
-Message-Id: <20180904155858.8001-13-tiwai@suse.de>
+Subject: [PATCH 17/29] staging: bcm2835-audio: Add 10ms period constraint
+Date:   Tue,  4 Sep 2018 17:58:46 +0200
+Message-Id: <20180904155858.8001-18-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,27 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hw_queue_size of PCM indirect helper doesn't need to be set up if
-you use the whole given buffer size.  Drop the useless
-initialization, which just confuses readers.
+It seems that the resolution of vc04 callback is in 10 msec; i.e. the
+minimal period size is also 10 msec.
+
+This patch adds the corresponding hw constraint.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index a3605505cc20..c935c6e99633 100644
+index 9659c25b9f9d..6d89db6e14e4 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -280,7 +280,6 @@ static int snd_bcm2835_pcm_ack(struct snd_pcm_substream *substream)
- 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
- 	struct snd_pcm_indirect *pcm_indirect = &alsa_stream->pcm_indirect;
+@@ -145,6 +145,11 @@ static int snd_bcm2835_playback_open_generic(
+ 				   SNDRV_PCM_HW_PARAM_PERIOD_BYTES,
+ 				   16);
  
--	pcm_indirect->hw_queue_size = runtime->hw.buffer_bytes_max;
- 	return snd_pcm_indirect_playback_transfer(substream, pcm_indirect,
- 						  snd_bcm2835_pcm_transfer);
- }
++	/* position update is in 10ms order */
++	snd_pcm_hw_constraint_minmax(runtime,
++				     SNDRV_PCM_HW_PARAM_PERIOD_TIME,
++				     10 * 1000, UINT_MAX);
++
+ 	chip->alsa_stream[idx] = alsa_stream;
+ 
+ 	chip->opened |= (1 << idx);
 -- 
 2.18.0
 
