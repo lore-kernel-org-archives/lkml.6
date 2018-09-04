@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BAAC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92EBC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3E620645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3E620645
+	by mail.kernel.org (Postfix) with ESMTP id 7DB0720843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB0720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeIDUYx (ORCPT
+        id S1727980AbeIDUYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 4 Sep 2018 16:24:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51068 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:51036 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727830AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727781AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 16:24:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 143D1B0B8;
-        Tue,  4 Sep 2018 15:59:03 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id ACDFCB0B1;
+        Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 29/29] staging: bcm2835-audio: Simplify card object management
-Date:   Tue,  4 Sep 2018 17:58:58 +0200
-Message-Id: <20180904155858.8001-30-tiwai@suse.de>
+Subject: [PATCH 22/29] staging: bcm2835-audio: Use standard error print helpers
+Date:   Tue,  4 Sep 2018 17:58:51 +0200
+Message-Id: <20180904155858.8001-23-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,212 +42,241 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of creating a dummy child device to manage the card object,
-just use devm stuff directly for releasing with snd_card_free().
-This results in a lot of code reduction.
-
-Since the dummy child devices are gone, the device object to be passed
-to the memory allocator needs to be adjusted as well.
+For making the whole code more consistent, replace the home-made debug
+print macros with the standard dev_err() & co.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../vc04_services/bcm2835-audio/bcm2835-pcm.c |   2 +-
- .../vc04_services/bcm2835-audio/bcm2835.c     | 120 +++++-------------
- 2 files changed, 33 insertions(+), 89 deletions(-)
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c |  4 +-
+ .../bcm2835-audio/bcm2835-vchiq.c             | 52 ++++++++-----------
+ .../vc04_services/bcm2835-audio/bcm2835.c     |  2 +-
+ .../vc04_services/bcm2835-audio/bcm2835.h     | 43 +--------------
+ 4 files changed, 27 insertions(+), 74 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index 98480d97cc2e..e66da11af5cf 100644
+index 38969b5dfb57..d2373e4a4d53 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -349,7 +349,7 @@ int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, const char *name,
- 			&snd_bcm2835_playback_ops);
+@@ -101,8 +101,8 @@ static int snd_bcm2835_playback_open_generic(
+ 		goto out;
+ 	}
+ 	if (idx >= MAX_SUBSTREAMS) {
+-		audio_error
+-			("substream(%d) device doesn't exist max(%d) substreams allowed\n",
++		dev_err(chip->dev,
++			"substream(%d) device doesn't exist max(%d) substreams allowed\n",
+ 			idx, MAX_SUBSTREAMS);
+ 		err = -ENODEV;
+ 		goto out;
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+index d7e2718e050f..7fff5c63e33f 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+@@ -26,20 +26,8 @@
  
- 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
--		chip->card->dev->parent, 128 * 1024, 128 * 1024);
-+		chip->card->dev, 128 * 1024, 128 * 1024);
+ /* ---- Private Constants and Types ------------------------------------------ */
  
- 	if (spdif)
- 		chip->pcm_spdif = pcm;
+-/* Logging macros (for remapping to other logging mechanisms, i.e., printf) */
+-#ifdef AUDIO_DEBUG_ENABLE
+-#define LOG_ERR(fmt, arg...)   pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
+-#define LOG_WARN(fmt, arg...)  pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
+-#define LOG_INFO(fmt, arg...)  pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
+-#define LOG_DBG(fmt, arg...)   pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
+-#else
+-#define LOG_ERR(fmt, arg...)   pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
+-#define LOG_WARN(fmt, arg...)	 no_printk(fmt, ##arg)
+-#define LOG_INFO(fmt, arg...)	 no_printk(fmt, ##arg)
+-#define LOG_DBG(fmt, arg...)	 no_printk(fmt, ##arg)
+-#endif
+-
+ struct bcm2835_audio_instance {
++	struct device *dev;
+ 	VCHI_SERVICE_HANDLE_T vchi_handle;
+ 	struct completion msg_avail_comp;
+ 	struct mutex vchi_mutex;
+@@ -76,7 +64,8 @@ static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance
+ 	status = vchi_queue_kernel_message(instance->vchi_handle,
+ 					   m, sizeof(*m));
+ 	if (status) {
+-		LOG_ERR("vchi message queue failed: %d, msg=%d\n",
++		dev_err(instance->dev,
++			"vchi message queue failed: %d, msg=%d\n",
+ 			status, m->type);
+ 		return -EIO;
+ 	}
+@@ -84,10 +73,12 @@ static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance
+ 	if (wait) {
+ 		if (!wait_for_completion_timeout(&instance->msg_avail_comp,
+ 						 msecs_to_jiffies(10 * 1000))) {
+-			LOG_ERR("vchi message timeout, msg=%d\n", m->type);
++			dev_err(instance->dev,
++				"vchi message timeout, msg=%d\n", m->type);
+ 			return -ETIMEDOUT;
+ 		} else if (instance->result) {
+-			LOG_ERR("vchi message response error:%d, msg=%d\n",
++			dev_err(instance->dev,
++				"vchi message response error:%d, msg=%d\n",
+ 				instance->result, m->type);
+ 			return -EIO;
+ 		}
+@@ -140,12 +131,12 @@ static void audio_vchi_callback(void *param,
+ 	} else if (m.type == VC_AUDIO_MSG_TYPE_COMPLETE) {
+ 		if (m.u.complete.cookie1 != BCM2835_AUDIO_WRITE_COOKIE1 ||
+ 		    m.u.complete.cookie2 != BCM2835_AUDIO_WRITE_COOKIE2)
+-			LOG_ERR("invalid cookie\n");
++			dev_err(instance->dev, "invalid cookie\n");
+ 		else
+ 			bcm2835_playback_fifo(instance->alsa_stream,
+ 					      m.u.complete.count);
+ 	} else {
+-		LOG_ERR("unexpected callback type=%d\n", m.type);
++		dev_err(instance->dev, "unexpected callback type=%d\n", m.type);
+ 	}
+ }
+ 
+@@ -173,8 +164,9 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
+ 				   &instance->vchi_handle);
+ 
+ 	if (status) {
+-		LOG_ERR("%s: failed to open VCHI service connection (status=%d)\n",
+-			__func__, status);
++		dev_err(instance->dev,
++			"failed to open VCHI service connection (status=%d)\n",
++			status);
+ 		kfree(instance);
+ 		return -EPERM;
+ 	}
+@@ -195,30 +187,30 @@ static void vc_vchi_audio_deinit(struct bcm2835_audio_instance *instance)
+ 	/* Close all VCHI service connections */
+ 	status = vchi_service_close(instance->vchi_handle);
+ 	if (status) {
+-		LOG_DBG("%s: failed to close VCHI service connection (status=%d)\n",
+-			__func__, status);
++		dev_err(instance->dev,
++			"failed to close VCHI service connection (status=%d)\n",
++			status);
+ 	}
+ 
+ 	mutex_unlock(&instance->vchi_mutex);
+ }
+ 
+-int bcm2835_new_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx)
++int bcm2835_new_vchi_ctx(struct device *dev, struct bcm2835_vchi_ctx *vchi_ctx)
+ {
+ 	int ret;
+ 
+ 	/* Initialize and create a VCHI connection */
+ 	ret = vchi_initialise(&vchi_ctx->vchi_instance);
+ 	if (ret) {
+-		LOG_ERR("%s: failed to initialise VCHI instance (ret=%d)\n",
+-			__func__, ret);
+-
++		dev_err(dev, "failed to initialise VCHI instance (ret=%d)\n",
++			ret);
+ 		return -EIO;
+ 	}
+ 
+ 	ret = vchi_connect(NULL, 0, vchi_ctx->vchi_instance);
+ 	if (ret) {
+-		LOG_ERR("%s: failed to connect VCHI instance (ret=%d)\n",
+-			__func__, ret);
++		dev_dbg(dev, "failed to connect VCHI instance (ret=%d)\n",
++			ret);
+ 
+ 		kfree(vchi_ctx->vchi_instance);
+ 		vchi_ctx->vchi_instance = NULL;
+@@ -248,6 +240,7 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
+ 	if (!instance)
+ 		return -ENOMEM;
+ 	mutex_init(&instance->vchi_mutex);
++	instance->dev = alsa_stream->chip->dev;
+ 	instance->alsa_stream = alsa_stream;
+ 	alsa_stream->instance = instance;
+ 
+@@ -394,7 +387,8 @@ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
+ 	}
+ 
+ 	if (status) {
+-		LOG_ERR("failed on %d bytes transfer (status=%d)\n",
++		dev_err(instance->dev,
++			"failed on %d bytes transfer (status=%d)\n",
+ 			size, status);
+ 		err = -EIO;
+ 	}
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-index 2869f310086f..87d56ab1ffa0 100644
+index 55e7fbc3ec44..8a87c33b1ea9 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-@@ -22,38 +22,6 @@ module_param(enable_compat_alsa, bool, 0444);
- MODULE_PARM_DESC(enable_compat_alsa,
- 		 "Enables ALSA compatibility virtual audio device");
+@@ -73,7 +73,7 @@ static int bcm2835_devm_add_vchi_ctx(struct device *dev)
  
--static void snd_devm_unregister_child(struct device *dev, void *res)
--{
--	struct device *childdev = *(struct device **)res;
--	struct bcm2835_chip *chip = dev_get_drvdata(childdev);
--	struct snd_card *card = chip->card;
--
--	snd_card_free(card);
--
--	device_unregister(childdev);
--}
--
--static int snd_devm_add_child(struct device *dev, struct device *child)
--{
--	struct device **dr;
--	int ret;
--
--	dr = devres_alloc(snd_devm_unregister_child, sizeof(*dr), GFP_KERNEL);
--	if (!dr)
--		return -ENOMEM;
--
--	ret = device_add(child);
--	if (ret) {
--		devres_free(dr);
--		return ret;
--	}
--
--	*dr = child;
--	devres_add(dev, dr);
--
--	return 0;
--}
--
- static void bcm2835_devm_free_vchi_ctx(struct device *dev, void *res)
- {
- 	struct bcm2835_vchi_ctx *vchi_ctx = res;
-@@ -84,36 +52,6 @@ static int bcm2835_devm_add_vchi_ctx(struct device *dev)
- 	return 0;
- }
+ 	memset(vchi_ctx, 0, sizeof(*vchi_ctx));
  
--static void snd_bcm2835_release(struct device *dev)
--{
--}
+-	ret = bcm2835_new_vchi_ctx(vchi_ctx);
++	ret = bcm2835_new_vchi_ctx(dev, vchi_ctx);
+ 	if (ret) {
+ 		devres_free(vchi_ctx);
+ 		return ret;
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+index a3c181613374..319c3e5dfbe4 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+@@ -17,47 +17,6 @@
+ 
+ #include "interface/vchi/vchi.h"
+ 
+-/*
+- * #define AUDIO_DEBUG_ENABLE
+- * #define AUDIO_VERBOSE_DEBUG_ENABLE
+- */
 -
--static struct device *
--snd_create_device(struct device *parent,
--		  struct device_driver *driver,
--		  const char *name)
--{
--	struct device *device;
--	int ret;
+-/* Debug macros */
 -
--	device = devm_kzalloc(parent, sizeof(*device), GFP_KERNEL);
--	if (!device)
--		return ERR_PTR(-ENOMEM);
+-#ifdef AUDIO_DEBUG_ENABLE
+-#ifdef AUDIO_VERBOSE_DEBUG_ENABLE
 -
--	device_initialize(device);
--	device->parent = parent;
--	device->driver = driver;
--	device->release = snd_bcm2835_release;
+-#define audio_debug(fmt, arg...) \
+-	pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
 -
--	dev_set_name(device, "%s", name);
+-#define audio_info(fmt, arg...) \
+-	pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
 -
--	ret = snd_devm_add_child(parent, device);
--	if (ret)
--		return ERR_PTR(ret);
+-#else
 -
--	return device;
--}
+-#define audio_debug(fmt, arg...)
 -
- typedef int (*bcm2835_audio_newpcm_func)(struct bcm2835_chip *chip,
- 					 const char *name,
- 					 enum snd_bcm2835_route route,
-@@ -216,40 +154,36 @@ static struct bcm2835_audio_drivers children_devices[] = {
- 	},
- };
- 
--static int snd_add_child_device(struct device *device,
-+static void bcm2835_card_free(void *data)
-+{
-+	snd_card_free(data);
-+}
-+
-+static int snd_add_child_device(struct device *dev,
- 				struct bcm2835_audio_driver *audio_driver,
- 				u32 numchans)
- {
- 	struct snd_card *card;
--	struct device *child;
- 	struct bcm2835_chip *chip;
- 	int err;
- 
--	child = snd_create_device(device, &audio_driver->driver,
--				  audio_driver->driver.name);
--	if (IS_ERR(child)) {
--		dev_err(device,
--			"Unable to create child device %p, error %ld",
--			audio_driver->driver.name,
--			PTR_ERR(child));
--		return PTR_ERR(child);
--	}
+-#define audio_info(fmt, arg...)
 -
--	err = snd_card_new(child, -1, NULL, THIS_MODULE, sizeof(*chip), &card);
-+	err = snd_card_new(dev, -1, NULL, THIS_MODULE, sizeof(*chip), &card);
- 	if (err < 0) {
--		dev_err(child, "Failed to create card");
-+		dev_err(dev, "Failed to create card");
- 		return err;
- 	}
+-#endif /* AUDIO_VERBOSE_DEBUG_ENABLE */
+-
+-#else
+-
+-#define audio_debug(fmt, arg...)
+-
+-#define audio_info(fmt, arg...)
+-
+-#endif /* AUDIO_DEBUG_ENABLE */
+-
+-#define audio_error(fmt, arg...) \
+-	pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
+-
+-#define audio_warning(fmt, arg...) \
+-	pr_warn("%s:%d " fmt, __func__, __LINE__, ##arg)
+-
+-#define audio_alert(fmt, arg...) \
+-	pr_alert("%s:%d " fmt, __func__, __LINE__, ##arg)
+-
+ #define MAX_SUBSTREAMS   (8)
+ #define AVAIL_SUBSTREAMS_MASK  (0xff)
  
- 	chip = card->private_data;
- 	chip->card = card;
--	chip->dev = child;
-+	chip->dev = dev;
- 	mutex_init(&chip->audio_mutex);
+@@ -141,7 +100,7 @@ int snd_bcm2835_new_simple_pcm(struct bcm2835_chip *chip,
+ int snd_bcm2835_new_hdmi_ctl(struct bcm2835_chip *chip);
+ int snd_bcm2835_new_headphones_ctl(struct bcm2835_chip *chip);
  
--	chip->vchi_ctx = devres_find(device,
-+	chip->vchi_ctx = devres_find(dev,
- 				     bcm2835_devm_free_vchi_ctx, NULL, NULL);
--	if (!chip->vchi_ctx)
--		return -ENODEV;
-+	if (!chip->vchi_ctx) {
-+		err = -ENODEV;
-+		goto error;
-+	}
+-int bcm2835_new_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx);
++int bcm2835_new_vchi_ctx(struct device *dev, struct bcm2835_vchi_ctx *vchi_ctx);
+ void bcm2835_free_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx);
  
- 	strcpy(card->driver, audio_driver->driver.name);
- 	strcpy(card->shortname, audio_driver->shortname);
-@@ -259,26 +193,36 @@ static int snd_add_child_device(struct device *device,
- 		audio_driver->route,
- 		numchans);
- 	if (err) {
--		dev_err(child, "Failed to create pcm, error %d\n", err);
--		return err;
-+		dev_err(dev, "Failed to create pcm, error %d\n", err);
-+		goto error;
- 	}
- 
- 	err = audio_driver->newctl(chip);
- 	if (err) {
--		dev_err(child, "Failed to create controls, error %d\n", err);
--		return err;
-+		dev_err(dev, "Failed to create controls, error %d\n", err);
-+		goto error;
- 	}
- 
- 	err = snd_card_register(card);
- 	if (err) {
--		dev_err(child, "Failed to register card, error %d\n", err);
--		return err;
-+		dev_err(dev, "Failed to register card, error %d\n", err);
-+		goto error;
- 	}
- 
--	dev_set_drvdata(child, chip);
--	dev_info(child, "card created with %d channels\n", numchans);
-+	dev_set_drvdata(dev, chip);
- 
-+	err = devm_add_action(dev, bcm2835_card_free, card);
-+	if (err < 0) {
-+		dev_err(dev, "Failed to add devm action, err %d\n", err);
-+		goto error;
-+	}
-+
-+	dev_info(dev, "card created with %d channels\n", numchans);
- 	return 0;
-+
-+ error:
-+	snd_card_free(card);
-+	return err;
- }
- 
- static int snd_add_child_devices(struct device *device, u32 numchans)
+ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream);
 -- 
 2.18.0
 
