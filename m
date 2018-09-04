@@ -2,302 +2,146 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84166C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BB0C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E1B206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828BF206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:23:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e8Nw9jC+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zh5T58I7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E1B206BA
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SQunJ0bh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FnV1vtCC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828BF206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeIEDqt (ORCPT
+        id S1727275AbeIEDuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 23:46:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55238 "EHLO
+        Tue, 4 Sep 2018 23:50:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57836 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbeIEDqs (ORCPT
+        with ESMTP id S1725825AbeIEDuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 23:46:48 -0400
+        Tue, 4 Sep 2018 23:50:18 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EFA2E607DC; Tue,  4 Sep 2018 23:19:27 +0000 (UTC)
+        id 7587960807; Tue,  4 Sep 2018 23:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536103167;
-        bh=0Z6MYvD+2mZNw72p6N/Mu0a7gihqIOcYLeC0jy46yXw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e8Nw9jC+8V6DOWy7ur5Ta+K2Zr1kkXQVbudyleEjpE55ukH3XVIkkKIF6b62d0vz5
-         ysuqzwGb9uiwop1UJt1DRNdGXJGSTVnRunzHauBBTyDR9drsT5LyLy4A5mpsEtoN0a
-         ViMp53b6W29Gk3fZkcOF7CPOcqPshgI4EVWOQ8QE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1DC3C6063A;
-        Tue,  4 Sep 2018 23:19:26 +0000 (UTC)
+        s=default; t=1536103377;
+        bh=kCwNtuuIGGInhmGZQjEZI1x+PJWU1RcH9aO+S0h79GY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SQunJ0bhj+g1j0espZNtJmk2qo7cYjPY1nkMqccuSQkcfkmVqIzYqlN9qM/Vmja/6
+         OtCXAwIY3sxtCeGRnIFC8xlHLIFF3SMaEtp0yXO2NbT4RJnsjqGgDrPVYl4IhDDVz5
+         621voLlKntQIOxmSXl1vleMSeM4iETxpq1LC7NOI=
+Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vnkgutta@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CFE686034F;
+        Tue,  4 Sep 2018 23:22:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536103166;
-        bh=0Z6MYvD+2mZNw72p6N/Mu0a7gihqIOcYLeC0jy46yXw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Zh5T58I78G5NSRfryhza3ccgGoIcwi5eS4UM0d6lvvzJGqdLpFStvPiJJI3qCwjJh
-         DRp9qlRbWlNwV5KDQQgzhUEQ2izlMRCz9Bdx/RcEjxgc4ugPwPuvU6gfWL2qa6NRUp
-         lglgoPQEvftzlvg+HX7j4BF732AyzcZqeCjJPqKs=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 04 Sep 2018 16:19:26 -0700
-From:   vnkgutta@codeaurora.org
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     evgreen@chromium.org, robh@kernel.org, mchehab@kernel.org,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
+        s=default; t=1536103376;
+        bh=kCwNtuuIGGInhmGZQjEZI1x+PJWU1RcH9aO+S0h79GY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FnV1vtCCWstKmiot7fjlRBEryQEm29Q1rXTu/kviPPjHKteUPSbQYcLRgUicU1SKf
+         Jo51bzSMNNtjz+ll3CAiF0WinSUqC1SpsL+qs3cGf6tITSVGA7N/2SbugdpxLarHWn
+         cqsqbbSWySY7nvvT5wF3ZQVP1sNlNyKWuY7hkoNk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CFE686034F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
+From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+To:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
+        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, tsoni@codeaurora.org,
         ckadabi@codeaurora.org, rishabhb@codeaurora.org,
         swboyd@chromium.org, bjorn.andersson@linaro.org
-Subject: Re: [PATCH v3 3/4] drivers: edac: Add EDAC driver support for QCOM
- SoCs
-In-Reply-To: <20180830121137.GD20005@nazgul.tnic>
-References: <1535503347-20507-1-git-send-email-vnkgutta@codeaurora.org>
- <1535503347-20507-4-git-send-email-vnkgutta@codeaurora.org>
- <20180830121137.GD20005@nazgul.tnic>
-Message-ID: <ed22b1a9b894cd0ec323c7596dac27d6@codeaurora.org>
-X-Sender: vnkgutta@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Cc:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Subject: [PATCH v4 0/4] Add EDAC driver for QCOM SoCs
+Date:   Tue,  4 Sep 2018 16:22:21 -0700
+Message-Id: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-30 05:11, Borislav Petkov wrote:
-> On Tue, Aug 28, 2018 at 05:42:26PM -0700, Venkata Narendra Kumar Gutta 
-> wrote:
->> From: Channagoud Kadabi <ckadabi@codeaurora.org>
->> 
->> Add error reporting driver for Single Bit Errors (SBEs) and Double Bit
->> Errors (DBEs). As of now, this driver supports error reporting for
->> Last Level Cache Controller (LLCC) of Tag RAM and Data RAM. Interrupts
->> are triggered when the errors happen in the cache, the driver handles
->> those interrupts and dumps the syndrome registers.
->> 
->> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
->> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
->> Co-developed-by: Venkata Narendra Kumar Gutta 
->> <vnkgutta@codeaurora.org>
->> ---
->>  MAINTAINERS                        |   8 +
->>  drivers/edac/Kconfig               |  22 ++
->>  drivers/edac/Makefile              |   1 +
->>  drivers/edac/qcom_edac.c           | 421 
->> +++++++++++++++++++++++++++++++++++++
->>  include/linux/soc/qcom/llcc-qcom.h |  24 +++
->>  5 files changed, 476 insertions(+)
->>  create mode 100644 drivers/edac/qcom_edac.c
-> 
-> We'd also need an agreement who picks up the whole pile?
+This series implements EDAC driver for QCOM SoCs. As of now, this driver
+supports EDAC for Last Level Cache Controller (LLCC). LLCC EDAC driver is
+to detect and report single and double bit errors on Last Level Cache
+Controller (LLCC) cache. Interrupts are triggered when the errors happen
+in the cache, the driver handles those interrupts and dumps the syndrome
+registers.
 
-Andy should take care of it.
-(Andy Gross <andy.gross@linaro.org> (maintainer:ARM/QUALCOMM SUPPORT))
+The driver functionality is implemented in:
+qcom_edac.c : This platform driver registers to edac framework and
+handles the single and double bit errors in cache by registering
+interrupt handlers.
 
-> 
-> Those guys:
-> 
-> Andy Gross <andy.gross@linaro.org> (maintainer:ARM/QUALCOMM SUPPORT)
-> David Brown <david.brown@linaro.org> (maintainer:ARM/QUALCOMM SUPPORT)
-> 
-> and I ACK the EDAC driver or I do and they ACK the soc pieces.
-> 
-> I have a hunch the prior would be easier...
+llcc-slice.c: It invokes the llcc edac driver and passes platform
+data to it.
 
-You can ACK the EDAC driver, rest should be taken care by
-Andy or Bjorn Andersson <bjorn.andersson@linaro.org>
+This patchset depends on the LLCC driver, which is part of 4.19 release.
+Link: https://patchwork.kernel.org/patch/10422531/
+Link: http://lists-archives.com/linux-kernel/29157082-dt-bindings-documentation-for-qcom-llcc.html
 
+Patch wise description given below:
 
-> 
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 0a23427..0bff713 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -5227,6 +5227,14 @@ L:	linux-edac@vger.kernel.org
->>  S:	Maintained
->>  F:	drivers/edac/ti_edac.c
->> 
->> +EDAC-QUALCOMM
->> +M:	Channagoud Kadabi <ckadabi@codeaurora.org>
->> +M:	Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
->> +L:	linux-arm-msm@vger.kernel.org
->> +L:	linux-edac@vger.kernel.org
->> +S:	Maintained
->> +F:	drivers/edac/qcom_edac.c
->> +
->>  EDIROL UA-101/UA-1000 DRIVER
->>  M:	Clemens Ladisch <clemens@ladisch.de>
->>  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
->> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->> index 57304b2..df58957 100644
->> --- a/drivers/edac/Kconfig
->> +++ b/drivers/edac/Kconfig
->> @@ -460,4 +460,26 @@ config EDAC_TI
->>  	  Support for error detection and correction on the
->>            TI SoCs.
->> 
->> +config EDAC_QCOM
->> +	tristate "QCOM EDAC Controller"
->> +	depends on EDAC
->> +	help
->> +	  Support for error detection and correction on the
->> +	  QCOM SoCs.
->> +
->> +	  This driver reports Single Bit Errors (SBEs) and Double Bit Errors 
->> (DBEs).
->> +	  As of now, it supports error reporting for Last Level Cache 
->> Controller (LLCC)
->> +	  of Tag RAM and Data RAM.
->> +
->> +config EDAC_QCOM_LLCC
->> +	tristate "QCOM EDAC Controller for LLCC Cache"
->> +	depends on EDAC_QCOM && QCOM_LLCC
-> 
-> This is just silly: two EDAC config options for a single driver and 
-> this
-> second one only does:
-> 
-> #ifdef EDAC_QCOM_LLCC
->         { .compatible = "qcom,llcc-edac" },
-> #endif
-> 
-> What for?!
-> 
-> You do this:
-> 
-> config EDAC_QCOM
-> 	depends on <architecture which this driver runs on> && QCOM_LLCC
-> 
-> and that's it.
-> 
+Patch 1 adds the broadcast base regmap for broadcast writes in llcc.
 
-Done, I'll update it the next patch set.
+Patch 2 adds the required changes to register edac driver from llcc driver.
 
-> ...
-> 
->> +/* Dump Syndrome registers data for Tag RAM, Data RAM bit errors*/
->> +static int
->> +dump_syn_reg_values(struct llcc_drv_data *drv, u32 bank, int 
->> err_type)
->> +{
->> +	struct llcc_edac_reg_data reg_data = edac_reg_data[err_type];
->> +	int err_cnt, err_ways, ret, i;
->> +	u32 synd_reg, synd_val;
->> +
->> +	for (i = 0; i < reg_data.reg_cnt; i++) {
->> +		synd_reg = reg_data.synd_reg + (i * 4);
->> +		ret = regmap_read(drv->regmap, drv->offsets[bank] + synd_reg,
->> +				  &synd_val);
->> +		if (ret)
->> +			goto clear;
-> 
-> <----- newline here.
+Patch 3 adds the EDAC driver support for QCOM SoCS.
 
-OK
+Patch 4 updates the dt bindings of llcc.
 
-> 
->> +		edac_printk(KERN_CRIT, EDAC_LLCC, "%s: ECC_SYN%d: 0x%8x\n",
->> +			    reg_data.name, i, synd_val);
->> +	}
->> +
->> +	ret = regmap_read(drv->regmap,
->> +			  drv->offsets[bank] + reg_data.count_status_reg,
->> +			  &err_cnt);
->> +	if (ret)
->> +		goto clear;
->> +
->> +	err_cnt &= reg_data.count_mask;
->> +	err_cnt >>= reg_data.count_shift;
->> +	edac_printk(KERN_CRIT, EDAC_LLCC, "%s: error count: 0x%4x\n",
->> +		    reg_data.name, err_cnt);
->> +
->> +	ret = regmap_read(drv->regmap,
->> +			  drv->offsets[bank] + reg_data.ways_status_reg,
->> +			  &err_ways);
->> +	if (ret)
->> +		goto clear;
->> +
->> +	err_ways &= reg_data.ways_mask;
->> +	err_ways >>= reg_data.ways_shift;
->> +
->> +	edac_printk(KERN_CRIT, EDAC_LLCC, "%s: error ways: 0x%4x\n",
->> +		    reg_data.name, err_ways);
->> +
->> +clear:
->> +	return qcom_llcc_clear_error_status(err_type, drv);
->> +}
->> +
->> +static int
->> +dump_syn_reg(struct edac_device_ctl_info *edev_ctl, int err_type, u32 
->> bank)
->> +{
->> +	struct llcc_drv_data *drv = edev_ctl->pvt_info;
->> +	int ret;
->> +
->> +	ret = dump_syn_reg_values(drv, bank, err_type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	switch (err_type) {
->> +	case LLCC_DRAM_CE:
->> +		edac_device_handle_ce(edev_ctl, 0, bank,
->> +				      "LLCC Data RAM correctable Error");
->> +		break;
->> +	case LLCC_DRAM_UE:
->> +		edac_device_handle_ue(edev_ctl, 0, bank,
->> +				      "LLCC Data RAM uncorrectable Error");
->> +		break;
->> +	case LLCC_TRAM_CE:
->> +		edac_device_handle_ce(edev_ctl, 0, bank,
->> +				      "LLCC Tag RAM correctable Error");
->> +		break;
->> +	case LLCC_TRAM_UE:
->> +		edac_device_handle_ue(edev_ctl, 0, bank,
->> +				      "LLCC Tag RAM uncorrectable Error");
->> +		break;
->> +	default:
->> +		ret = -EINVAL;
->> +		edac_printk(KERN_CRIT, EDAC_LLCC, "Unexpected error type: %d\n",
->> +			    err_type);
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static irqreturn_t
->> +llcc_ecc_irq_handler(int irq, void *edev_ctl)
->> +{
->> +	struct edac_device_ctl_info *edac_dev_ctl = edev_ctl;
->> +	struct llcc_drv_data *drv = edac_dev_ctl->pvt_info;
->> +	irqreturn_t irq_rc = IRQ_NONE;
->> +	u32 drp_error, trp_error, i;
->> +	bool irq_handled;
->> +	int ret;
->> +
->> +	/* Iterate over the banks and look for Tag RAM or Data RAM errors */
->> +	for (i = 0; i < drv->num_banks; i++) {
->> +		ret = regmap_read(drv->regmap,
->> +				  drv->offsets[i] + DRP_INTERRUPT_STATUS,
->> +				  &drp_error);
->> +
->> +		if (!ret && (drp_error & SB_ECC_ERROR)) {
->> +			edac_printk(KERN_CRIT, EDAC_LLCC,
->> +				    "Single Bit Error detected in Data Ram\n");
-> 
-> "RAM" not "Ram". You have a couple of those wrong spellings.
+Changes since v3:
+  * Updated the Kconfig and addressed minor comments in the driver
 
-I'll correct that in the next patchset.
+Changes since v2:
+  * Modified the edac driver and Kconfig
+    -  removed unnecessary header files, typecasting and redundant comments.
+    -  Changed the initialization of reg_data datastructure to static,
+       Also updated the llcc_edac_reg_data member names and datatypes.
+    -  Removed "EDAC_QCOM_LLCC_PANIC_ON_UE" Kconfig variable
 
-> 
-> Otherwise it is starting to look real nice, good!
+Changes since v1:
+  * Modified the edac driver
+    - Removed duplicate functions that are used to dump the syndrome registers,
+      replaced that with a common function and a reg_data datastructure.
+    - Removed structure containing function pointers.
+    - Addressed comments on error handling to clear the interrupt status.
+  * updated Kconfig
+
+Changes since v0:
+  * Added EDAC_QCOM config and updated the driver
+  * Addressed comments related to indentation and other minor ones
+
+Channagoud Kadabi (1):
+  drivers: edac: Add EDAC driver support for QCOM SoCs
+
+Venkata Narendra Kumar Gutta (3):
+  drivers: soc: Add broadcast base for Last Level Cache Controller
+    (LLCC)
+  drivers: soc: Add support to register LLCC EDAC driver
+  dt-bindings: msm: Update documentation of qcom,llcc
+
+ .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  19 +-
+ MAINTAINERS                                        |   8 +
+ drivers/edac/Kconfig                               |  14 +
+ drivers/edac/Makefile                              |   1 +
+ drivers/edac/qcom_edac.c                           | 420 +++++++++++++++++++++
+ drivers/soc/qcom/llcc-slice.c                      |  73 ++--
+ include/linux/soc/qcom/llcc-qcom.h                 |  30 +-
+ 7 files changed, 537 insertions(+), 28 deletions(-)
+ create mode 100644 drivers/edac/qcom_edac.c
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
