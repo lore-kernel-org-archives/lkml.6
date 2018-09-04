@@ -6,67 +6,70 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B125AC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390E0C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5165820869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5165820869
+	by mail.kernel.org (Postfix) with ESMTP id F1A4E20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:22:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A4E20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeIDJpR (ORCPT
+        id S1727575AbeIDJp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:45:17 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:38902 "EHLO
+        Tue, 4 Sep 2018 05:45:27 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38918 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbeIDJpR (ORCPT
+        with ESMTP id S1726312AbeIDJp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:45:17 -0400
+        Tue, 4 Sep 2018 05:45:27 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fx3mT-0000Er-Ko; Tue, 04 Sep 2018 13:21:37 +0800
+        id 1fx3mh-0000Fv-PH; Tue, 04 Sep 2018 13:21:51 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fx3mQ-0003LR-Iz; Tue, 04 Sep 2018 13:21:34 +0800
-Date:   Tue, 4 Sep 2018 13:21:34 +0800
+        id 1fx3mh-0003Lr-Ii; Tue, 04 Sep 2018 13:21:51 +0800
+Date:   Tue, 4 Sep 2018 13:21:51 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, jeff.lien@wdc.com
-Subject: Re: [PATCH 0/2] crypto: arm64/crct10dif - refactor and implement
- non-Crypto Extension version
-Message-ID: <20180904052134.5ax5j374gubxpo4s@gondor.apana.org.au>
-References: <20180827153812.6763-1-ard.biesheuvel@linaro.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Jeff.Lien@wdc.com, ard.biesheuvel@linaro.org,
+        david.darrington@wdc.com, hch@infradead.org, jeff.furlong@wdc.com,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] crypto: Introduce notifier for new crypto
+ algorithms
+Message-ID: <20180904052151.ys2mtoixeax6jj5w@gondor.apana.org.au>
+References: <20180827060918.tfz7ljufqhlej4kq@gondor.apana.org.au>
+ <20180830150016.15661-1-martin.petersen@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827153812.6763-1-ard.biesheuvel@linaro.org>
+In-Reply-To: <20180830150016.15661-1-martin.petersen@oracle.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 05:38:10PM +0200, Ard Biesheuvel wrote:
-> The current arm64 CRC-T10DIF code only runs on cores that implement the
-> 64x64 bit PMULL instructions that are part of the optional Crypto
-> Extensions, and falls back to the highly inefficient C code otherwise.
+On Thu, Aug 30, 2018 at 11:00:14AM -0400, Martin K. Petersen wrote:
+> Introduce a facility that can be used to receive a notification
+> callback when a new algorithm becomes available. This can be used by
+> existing crypto registrations to trigger a switch from a software-only
+> algorithm to a hardware-accelerated version.
 > 
-> Let's provide a SIMD version that is twice as fast as the C code even on
-> a low end core like the Cortex-A53, and is time invariant and much easier
-> on the D-cache.
+> A new CRYPTO_MSG_ALG_LOADED state is introduced to the existing crypto
+> notification chain, and the register/unregister functions are exported
+> so they can be called by subsystems outside of crypto.
 > 
-> Some performance numbers at the bottom.
-> 
-> Ard Biesheuvel (2):
->   crypto: arm64/crct10dif - preparatory refactor for 8x8 PMULL version
->   crypto: arm64/crct10dif - implement non-Crypto Extensions alternative
-> 
->  arch/arm64/crypto/crct10dif-ce-core.S | 314 +++++++++++++++-----
->  arch/arm64/crypto/crct10dif-ce-glue.c |  14 +-
->  2 files changed, 251 insertions(+), 77 deletions(-)
+> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+> Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+>  crypto/algapi.c         |  2 ++
+>  crypto/algboss.c        |  2 ++
+>  crypto/internal.h       |  8 --------
+>  include/crypto/algapi.h | 10 ++++++++++
+>  4 files changed, 14 insertions(+), 8 deletions(-)
 
 All applied.  Thanks.
 -- 
