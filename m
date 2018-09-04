@@ -2,108 +2,140 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74646C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C424C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA3A2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3ABE2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:27:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NKpr7F91"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA3A2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoCbySeM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ABE2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeIEBvX (ORCPT
+        id S1727285AbeIEByb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 21:51:23 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38140 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbeIEBvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 21:51:23 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x17-v6so2317384pfh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 14:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x6uKxs3AEs7EhL+w+SN9yjJKB3/rhDg5u7ESLlqibjc=;
-        b=NKpr7F91h4XNAqM2ywgDC8SO8yqh9z2RWj6MWyF+pw9Rm/d4S+xAY6fV0nmdLsKfAw
-         Ljpfq5BQyITlUIGqGgclj/7dsQmQOGRtgjZU8JF61Bg+XYJs4s1Gj18MahfnawMImcXn
-         4v5dvvgUNM5zKmEjes3K9vPdYgqPMbep+BZn1o1zYFscy8jxbQkN+JBkditcnXy+Q1Sb
-         Urz09WHe8iRnHUxHzRQWFmDwZqiDGtPDLYQUptGJ3BoWSmLazsI+aaKBddM2yRyiR14M
-         k/7Adsq6QQpGFMQOQO6hCKgGcAzA7sPQrbF8smMa1ONENoKz5aH8lNsLy8EmFaN7xv+H
-         37DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x6uKxs3AEs7EhL+w+SN9yjJKB3/rhDg5u7ESLlqibjc=;
-        b=KFWkxp8hQaVG44nEbmVexxeZ74ufs9z1rWMrn61UBmUMsbhHI6L1aeg9+p9fpSWnyV
-         77vW0A5fDCCGmMjIRfyQ62h86gBac73TkWDyWp9RAVGq+SYyNNfma5PglHQeNa1s6hnj
-         uRvrL16HGNf7WQBrQRZvEtdzboV3ehEbeZe/UzSTRmPz/8LAtUzeqHNA6o9dU/we/gsH
-         Gb/Yx7zAZBf1guaTGKhUJKiqfkLZjPFM3K7KIMPhzABhc7w+1XdCNBrYsbpYK4FpFsbu
-         WiozsG4yU2htm7IwAtThcNqApIkjPUii11m8PufiML2P79ZxNXsR0FR1AoGwXnzyAtnJ
-         8iUw==
-X-Gm-Message-State: APzg51A/lhmIjDDswINyQFCYzK0K8qiRyWvMNol0w57hi9Q0CuBGzNHi
-        1VM7W+YbBOgMNgecyEJuYDDbDw==
-X-Google-Smtp-Source: ANB0VdZIztPiwgQj9XXaMT2UaT2YZpweBdczfEqZcHaHQQGWcNX5KVP7WUBetI0aKp03DDEcRKxIDg==
-X-Received: by 2002:a63:e001:: with SMTP id e1-v6mr7150698pgh.380.1536096266618;
-        Tue, 04 Sep 2018 14:24:26 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id r12-v6sm29540136pfh.79.2018.09.04.14.24.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Sep 2018 14:24:26 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fxIoD-0004sN-Dr; Tue, 04 Sep 2018 15:24:25 -0600
-Date:   Tue, 4 Sep 2018 15:24:25 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jann Horn <jannh@google.com>
-Cc:     Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        Sean Hefty <sean.hefty@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/ucma: check fd type in ucma_migrate_id()
-Message-ID: <20180904212425.GD18686@ziepe.ca>
-References: <20180903165414.248309-1-jannh@google.com>
+        Tue, 4 Sep 2018 21:54:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbeIEByb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 21:54:31 -0400
+Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com [74.125.82.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D500C20836
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Sep 2018 21:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536096453;
+        bh=f7LGP/x4uAdxq6LpfzWTq2jucyGoY3eenUq/z4sJbeQ=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=CoCbySeMP11Wh8sOTjG+jOt12goZzqRaK/p7hfHS2G7tzvTQMSAdwIsiTeOrCwlRT
+         EP0hSI3hdVWVyAoPV8hYJjd4Y1YB+3JV5PaXe2qbC344HxDyOHU6BTe+JUUC294Cfp
+         nJUqYplD4Nv/EN2w86T+POjh/AvlkSkPISIzzvG0=
+Received: by mail-wm0-f43.google.com with SMTP id y139-v6so5828569wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 14:27:32 -0700 (PDT)
+X-Gm-Message-State: APzg51B+d4La7w9g9YgS359LYE46mATTRB1HxYhv7OPJkROqbi+iyelS
+        7Hu1wVBJ3IpvrCk90aQRHoiIiQBqElgM5kMx58DVwg==
+X-Google-Smtp-Source: ANB0VdYzx8kjEyujCqnOtPpre32Rk+mUIvSLKajcG4SpSFBHSZh3LnzRRItjcH0KhXQ90+QcYz5okBe4FK0KqXelC84=
+X-Received: by 2002:a7b:c151:: with SMTP id z17-v6mr3525255wmi.162.1536096451347;
+ Tue, 04 Sep 2018 14:27:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903165414.248309-1-jannh@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a1c:5942:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 14:27:10 -0700 (PDT)
+In-Reply-To: <8a62de3e-defa-6681-c853-cd5140c5f0b5@intel.com>
+References: <20180807172920.8766-1-sean.j.christopherson@intel.com>
+ <20180904195030.GA6269@linux.intel.com> <CALCETrU-HXfr_eAfeS1t7JH+-gOh0ZfAoGxjcOckxEX1fN_YDA@mail.gmail.com>
+ <8a62de3e-defa-6681-c853-cd5140c5f0b5@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Sep 2018 14:27:10 -0700
+X-Gmail-Original-Message-ID: <CALCETrUKJ2qYVZRhDQEbVRPkgtj9VEdxc83ON9nAK-S52s7qmg@mail.gmail.com>
+Message-ID: <CALCETrUKJ2qYVZRhDQEbVRPkgtj9VEdxc83ON9nAK-S52s7qmg@mail.gmail.com>
+Subject: Re: [PATCH] x86/pkeys: Explicitly treat PK #PF on kernel address as a
+ bad area
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 06:54:14PM +0200, Jann Horn wrote:
-> The current code grabs the private_data of whatever file descriptor
-> userspace has supplied and implicitly casts it to a `struct ucma_file *`,
-> potentially causing a type confusion.
-> 
-> This is probably fine in practice because the pointer is only used for
-> comparisons, it is never actually dereferenced; and even in the
-> comparisons, it is unlikely that a file from another filesystem would have
-> a ->private_data pointer that happens to also be valid in this context.
-> But ->private_data is not always guaranteed to be a valid pointer to an
-> object owned by the file's filesystem; for example, some filesystems just
-> cram numbers in there.
-> 
-> Check the type of the supplied file descriptor to be safe, analogous to how
-> other places in the kernel do it.
-> 
-> Fixes: 88314e4dda1e ("RDMA/cma: add support for rdma_migrate_id()")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> Only compile-tested, because I don't have an environment in which I
-> could test this.
-> 
->  drivers/infiniband/core/ucma.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Tue, Sep 4, 2018 at 2:21 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+> On 09/04/2018 12:56 PM, Andy Lutomirski wrote:
+>> I have no objection to this patch.
+>>
+>> Dave, why did you think that we could get a PK fault on the vsyscall
+>> page, even on kernels that still marked it executable?  Sure, you
+>> could get an instruction in the vsyscall page to get a PK fault, but
+>> CR2 wouldn't point to the vsyscall page, right?
+>
+> I'm inferring the CR2 value from the page fault trace point.  I see
+> entries like this:
+>
+>  protection_keys-4313  [002] d... 420257.094541: page_fault_user:
+> address=_end ip=_end error_code=0x15
+>
+> But, that's not a PK fault, and it triggers the "misaligned vsyscall
+> (exploit attempt or buggy program)" stuff in dmesg.  It's just the
+> symptom of trying to execute the non-executable vsyscall page.
+>
+> I'm not a super big fan of this particular patch, though.  The
+> fault_in_kernel_space() check is really presuming two things:
+> 1. pkey faults (PF_PK=1) only occur on user pages (_PAGE_USER=1)
+> 2. fault_in_kernel_space()==1 addresses are never user pages
+>
+> #1 is a hardware expectation.  We *can* look for that directly by just
+> making sure that X86_PF_PK is only set when it also comes with
+> X86_PF_USER in the hardware page fault error code.
+>
+> (...
+>         Aside: We should probably explicitly separate out the hardware
+>         error code from the software-munged version, like we do here:
+>         >         if (user_mode(regs)) {
+>         >                 local_irq_enable();
+>         >                 error_code |= X86_PF_USER)
+>
+> But, #2 is a bit of a more loose check.  It wasn't true for the recent
+> vsyscall, and I've also seen goofy drivers map memory out to userspace
+> quite a few times in the kernel address space.
+>
+> So, I'd much rather see a X86_PF_USER check than a X86_PF_USER check.
+>
+> But, as for pkeys...
+>
+> The original intent here was to relay: "protection key faults can never
+> be spurious".  The reason in my silly comment was that we don't do lazy
+> flushing, but that's imprecise: the real reasoning is that we don't ever
+> have kernel pages on which we can take protection key faults.
+>
+> IOW, I think the check here should be for "protection key faults only
+> occur on user pages", and all the *spurious* checking should be looking
+> at *just* user vs. kernel pages, like:
+>
+> static int spurious_fault_check(unsigned long error_code, pte_t *pte)
+> {
+>         /* Only expect spurious faults on kernel pages: */
+>         WARN_ON_ONCE(pte_flags(*pte) & _PAGE_USER);
+>         /* Only expect spurious faults originating from kernel code: */
+>         WARN_ON_ONCE(error_code & X86_PF_USER);
+>         ...
+>
 
-Yep, this looks right to me also, applied to for-rc, thanks
+Want to just send an alternative patch?
 
-Jason
+Also, I doubt it matters right here, but !X86_PF_USER isn't quite the
+same thing as "originating from kernel code" -- it can also be user
+code that does a CPL0 access due to exception delivery or access to a
+descriptor table.  Which you saw plenty of times while debugging
+PTI... :)  I doubt any of those should be spurious, though.
+
+--Andy
