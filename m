@@ -5,104 +5,80 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D4AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B34C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F84920661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:45:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F84920661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F050820661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:49:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F050820661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbeIDMJL (ORCPT
+        id S1726234AbeIDMM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:09:11 -0400
-Received: from mga06.intel.com ([134.134.136.31]:1450 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbeIDMJK (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:09:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 00:45:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="85817873"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.25]) ([10.239.161.25])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2018 00:45:13 -0700
-Subject: Re: [PATCH v2] perf/x86/intel/uncore: Provide alias for IIO
- free-running boxes on SKX
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     acme@kernel.org, mingo@redhat.com, eranian@google.com,
-        kan.liang@intel.com, jolsa@kernel.org,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, yao.jin@intel.com
-References: <1536058697-22003-1-git-send-email-yao.jin@linux.intel.com>
- <20180904071349.GZ24124@hirez.programming.kicks-ass.net>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <3dbfc026-86c2-4523-f690-df45e4ed0643@linux.intel.com>
-Date:   Tue, 4 Sep 2018 15:45:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 08:12:58 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56412 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeIDMM6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 08:12:58 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fx657-0000W5-BF; Tue, 04 Sep 2018 09:49:01 +0200
+Date:   Tue, 4 Sep 2018 09:49:00 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Yang, Bin" <bin.yang@intel.com>
+cc:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 1/5] x86/mm: avoid redundant checking if pgprot has
+ no change
+In-Reply-To: <76cf0aca5a2f8e9b94fd0631274a3d4ad825d077.camel@intel.com>
+Message-ID: <alpine.DEB.2.21.1809040947040.1462@nanos.tec.linutronix.de>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>  <1534814186-37067-2-git-send-email-bin.yang@intel.com>  <alpine.DEB.2.21.1809032127550.1462@nanos.tec.linutronix.de> <76cf0aca5a2f8e9b94fd0631274a3d4ad825d077.camel@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180904071349.GZ24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 9/4/2018 3:13 PM, Peter Zijlstra wrote:
-> On Tue, Sep 04, 2018 at 06:58:17PM +0800, Jin Yao wrote:
->> root@skx /sys/devices# ls | grep uncore_iio
->> uncore_iio_0
->> uncore_iio_1
->> uncore_iio_2
->> uncore_iio_3
->> uncore_iio_4
->> uncore_iio_5
->> uncore_iio_free_running_0
->> uncore_iio_free_running_1
->> uncore_iio_free_running_2
->> uncore_iio_free_running_3
->> uncore_iio_free_running_4
->> uncore_iio_free_running_5
+On Tue, 4 Sep 2018, Yang, Bin wrote:
+> On Mon, 2018-09-03 at 23:57 +0200, Thomas Gleixner wrote:
+> > 
+> > The last patch which does the overlap check is equally broken:
 > 
->> root@skx /sys/devices# ls | grep uncore_iio
->> uncore_iio_0
->> uncore_iio_1
->> uncore_iio_2
->> uncore_iio_3
->> uncore_iio_4
->> uncore_iio_5
->> uncore_iio_cbdma
->> uncore_iio_mcp0
->> uncore_iio_mcp1
->> uncore_iio_pcie0
->> uncore_iio_pcie1
->> uncore_iio_pcie2
+> Sorry that I did not understand the broken of last patch.
+
+I meant 4/5 sorry. That's the one which introduces the overlap check and
+does this:
+
+> > +       /*
+> > +        * Ensure that the requested pgprot does not violate static protection
+> > +        * requirements.
+> > +        */
+> > +       new_prot = static_protections(req_prot, address,
+> > +                                     numpages << PAGE_SHIFT, pfn);
+> > 
+> > It expands new_prot to the whole range even if the protections only
+> > overlap. That should not happen in practice, but we have no checks for that
+> > at all.
 > 
-> I think I'm ok with that, except of course for people that have
-> "free_running_#" in their scripts now and will to wtf when they upgrade
-> their kernel.
-> 
-> Do we care about them?
-> 
+> Below code in patch #3 should cover this check. It will double check
+> new_prot in whole large page range.
 
-Yes, that may be a potential issue but maybe it's not since we really 
-don't know if some people have used uncore_iio_free_running_# in their 
-scripts or not.
+Which is exactly what is wrong. Read again what I wrote.
 
-I write this patch is because I always forget the meaning of 
-uncore_iio_free_running_# so I have to go back to check the document 
-"Intel Xeon Processor Scalable Memory Family Uncore Performance 
-Monitoring" again and again to find the box definition. I guess other 
-people may have similar trouble.
+Thanks,
 
-Maybe we wait some time to see more feedback from community?
-
-Thanks
-Jin Yao
+	tglx
