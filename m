@@ -2,102 +2,122 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D86C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C57C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7092E2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E11E2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 01:51:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pFwEJmqL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7092E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6Ptc+fP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E11E2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeIDGLs (ORCPT
+        id S1726133AbeIDGOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 02:11:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:57655 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbeIDGLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 02:11:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4248rW51PDz9s3Z;
-        Tue,  4 Sep 2018 11:48:57 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536025739;
-        bh=nQFeSLs8ZmIPycboG5ZmHs3bUQl5KhVcelZP1+St+ok=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pFwEJmqLYmUBUX8JXZOlgXshv7ZH9hbnzgvjqS+1G6fZhjIRXAAgPSPW7i+1qrU9g
-         DGHL9pTJPnFEcelWMDt4GC/dRpHWiS+v3CsfKfEsWrHpmhgs5jB9LTBaOxXuvoXfyg
-         2oEnYPUf5ZGtA6aET2RU5VQUwehxEFCacYNTaHv9ZZyTWB7zOJmKvy1hFaSaTVj2ta
-         NCHTrSksGMUALEtv83uCVRQzXROnbtOjGgP0S7JzDGr4GIF4++oMo7RCGCswxih2wm
-         g2AlyXF3A1vZCqk3oPz+LErJR8O3peDJjnmXhONyRoJ6RiazmcoX2KNPghtiUUW6fD
-         rKmHQj81XqN1w==
-Date:   Tue, 4 Sep 2018 11:48:57 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: error fetching the jc_docs tree
-Message-ID: <20180904114857.355920d2@canb.auug.org.au>
-In-Reply-To: <20180903180640.607094ba@lwn.net>
-References: <20180904093049.6e458884@canb.auug.org.au>
-        <20180903180640.607094ba@lwn.net>
+        Tue, 4 Sep 2018 02:14:30 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45466 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbeIDGOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 02:14:30 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x26-v6so815451pge.12;
+        Mon, 03 Sep 2018 18:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M6ncJl9HyZr5cLuYDo+nU0Lfl/cjCiI5Pz5GSaBRt8A=;
+        b=d6Ptc+fP65UlLTeSXdAnIgbv/yGH9hzEUE4MDDu0558z+2A8CN2BPjLrjVwkewiF1O
+         69nwO3M0RDndedJ5CbiGvtGS3E30Xy5Pipmqb+ljdzdWApYb4YJFWlX4vzALHQcUV/zs
+         K1NeC6A6EBrk1dhe8wXl7iCtJdw3gviz2Ml9+Z1IHbgmTIvaS2FmvyefMbdbeE/bGXgd
+         pO2AeMq06gEgdp1ujuRrBfofB2CnCRuk3HhgylZOIstkFa0pFuwbxEWamSXQjcEZgEpz
+         WzLtjdPF70OwQe/sKNRq9iE+aTlwRs5voP7izVJMx19legSb/WBTrhnlXquMVGhph0OL
+         0k7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M6ncJl9HyZr5cLuYDo+nU0Lfl/cjCiI5Pz5GSaBRt8A=;
+        b=tQjdZjC2R5X1JWnWf+18xuivms7dGZ522ZE3pk45juhAD7zxxB6B/mST92NHfdW4fO
+         eqypC5WZyOurSmvDhg3AYh/n72dXcaCUIgF8xggSibTl8niOlKgolOb2oPmbOCoFpoY7
+         JDB2AVkQF6/0buh4F00/6FsZXaSWOQi5Bg1GEu6VOV73rVkTYnXec31Sjd2ghINpLC0d
+         94wbh1/eyx5IqCKKEb3dt3W7BsmIyKi276XUjZ4dcy6dREUaUSytZOxs0vUdI/3iguAY
+         Y6ZxewSyBwcZIIyy+QfJub4PYfm5ANvWUTeDavKkmKP1yQ/4ytUcXrLtJd0PbBKkXeCn
+         4BwA==
+X-Gm-Message-State: APzg51CleRgJWMvhwQ3qIArwuvKPqOyyteRrBvONg/sRTxRscyw8qTck
+        /Y0L+FRNavOhPYZ45cQbNMc=
+X-Google-Smtp-Source: ANB0VdaJniGMKD/AF5P+qM2TDigJ+uRuR0f0yUh713yKMlTzgFhMIiRiRzUN1xA9LGs0WPcJ45ycNw==
+X-Received: by 2002:a63:e811:: with SMTP id s17-v6mr28948883pgh.176.1536025903579;
+        Mon, 03 Sep 2018 18:51:43 -0700 (PDT)
+Received: from localhost ([175.223.26.230])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm43670109pfc.81.2018.09.03.18.51.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Sep 2018 18:51:42 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 10:51:39 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Nathan March <nathan@gt.net>,
+        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
+Subject: Re: [PATCHv2 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
+Message-ID: <20180904015139.GA4251@jagdpanzerIV>
+References: <20180903165257.29227-1-dima@arista.com>
+ <20180903165257.29227-3-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lbFxVlhD5d37Gk326rkYEXl"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903165257.29227-3-dima@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lbFxVlhD5d37Gk326rkYEXl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On (09/03/18 17:52), Dmitry Safonov wrote:
+> 
+> We've seen the following crash on v4.9.108 stable:
+> 
+> BUG: unable to handle kernel paging request at 0000000000002260
+> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+> Workqueue: events_unbound flush_to_ldisc
+> Call Trace:
+>  [..] n_tty_receive_buf2
+>  [..] tty_ldisc_receive_buf
+>  [..] flush_to_ldisc
+>  [..] process_one_work
+>  [..] worker_thread
+>  [..] kthread
+>  [..] ret_from_fork
+> 
+> tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
+> which will protect any reader against line discipline changes.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: stable@vger.kernel.org # depends on commit b027e2298bd5 ("tty: fix
+> data race between tty_init_dev and flush of buf")
 
-Hi Jon,
+I believe there's a "Fixes" tag for that
 
-On Mon, 3 Sep 2018 18:06:40 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
->
-> On Tue, 4 Sep 2018 09:30:49 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Fetching the jc_docs tree (git://git.lwn.net/linux.git#docs-next) today
-> > produced this error:
-> >=20
-> > fatal: remote error: access denied or repository not exported: /linux.g=
-it =20
->=20
-> Funny what happens when you switch to a new server...all should be fixed
-> now.  Sorry for the trouble,
+Fixes: b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
+Cc: stable@vger.kernel.org
 
-Indeed, no worries and thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/lbFxVlhD5d37Gk326rkYEXl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluN5IkACgkQAVBC80lX
-0GxVBwf/UHWCtwGsBDf6WsbQ4bFiRtGiiSWqXd3J2geF+BCrY7vW9YUe9++Of366
-NSS41PEydn4YbWBPqUNIK+V7lEBqoc+YalZeKmvYWLvD5lVCb0i7LfVAmaKyPSHG
-2qMDGxRpRTsDAxCF/mB/nxfd6qD5mVmnN2vrZsNawysyGVgfV9JJNE5XnCX5X+UG
-jYgo5m6Q+pbRRWbrANoGtBiZlm8KRwOQozgNH/448SUbYf2rCEsIw8dhfgpBYtSr
-WySwpjUAQcutQi8Nyr1JGXCCQZtvhZBHLWoufonY2tBJ64uB8OJQqSRkDzoej7c4
-nOPY6MFVu8URvi/OW4dXXgde9AXPNw==
-=ufvj
------END PGP SIGNATURE-----
-
---Sig_/lbFxVlhD5d37Gk326rkYEXl--
+	-ss
