@@ -2,215 +2,274 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0531C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB171C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59133206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:26:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59133206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 67E272082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:28:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="w2s+pfIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67E272082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeIDVwv (ORCPT
+        id S1727186AbeIDVyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:52:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:58565 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726528AbeIDVwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:52:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 10:26:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="85955842"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.135]) ([10.54.74.135])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2018 10:26:43 -0700
-To:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Casey Schaufler <casey.schaufler@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can be
- applied on arbitrary tasks
-Message-ID: <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
-Date:   Tue, 4 Sep 2018 10:26:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Tue, 4 Sep 2018 17:54:55 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41439 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDVyy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:54:54 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17-v6so3843514ljy.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 10:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gt+deXbHZEB0bnH+Y+zxKibrQwTxu82a4o4aLU9k0WM=;
+        b=w2s+pfIySSU/Kwz/u1tlFMmlqLF8O+RUTqFh0spy0lwq7UEC1Zm+tUCVus3QGnhPSx
+         T/P+XBPw62Sae4QKQbLJ/GHlCNHsNzmF0jTnLmiajYPmrNgoy3eI6iQGCQl5mwF+TSlJ
+         2T6AJ9xv3fQWcisMy1k+7/NwdU2e9ygJ4xKbQQAvvqdkA6PgzbYli6kpMgoa/C1l/iWW
+         tHjoVBTwDMsGzQaAiSnikMNqixsPbTbnhcgXhpmw/S8F417WUtqtjeGxK0fC2Gi6NTA0
+         B+2o+QLiyJVby6kd01d6sIv7ABZbxYN0HAkvGpPawGqyU/K36qG1KKn2hROqgkZRbxkX
+         SY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gt+deXbHZEB0bnH+Y+zxKibrQwTxu82a4o4aLU9k0WM=;
+        b=b6O2M7895SMNtcmNLZTJud0/5B0aWyEK5dPaRyQnQf2bXhNExMXfKIu4bnjUspLW4b
+         5Lfg5/6PrrGgizvFDPtKJ35J1XnHSkloAezM4Tj5p2e8CKkxGnUDURa5hjBDzqNcCXZf
+         MskfrCeHnbUje9fg5nesfdBcWoePHlyMw4zGhMzkS1sY4N+TlAePZ3olh6gX3xUBa+Ko
+         Efrcbk3qyQRtzSdBfaRnE6BNDoQIKgf+sAiLWTFePlhkiDoSwevh3zmuctyJVONxvJ3N
+         oDipq+nehUSXhFCh05qQSuC9mut1KIvLb4sNkyASil2pQGozP3ntFbVCRzT2Wv370Xq0
+         hz3A==
+X-Gm-Message-State: APzg51Cn4mqLD9JP13wAxOUJccQatYqu/ZSSEY8cMwCTKAJNZmlGCIPX
+        QaLwlgypZekFY4jAcmtsl27VvVEdkWqaL5sKEnj6bg==
+X-Google-Smtp-Source: ANB0Vdb8Lh7w5bZi8TuNjtVuN8Qg5f6m7iEJb9SfA/Qx1l+rKmASKnp5vY5xSvRLZIB5suXB4DCtVo815BpwtndDjqk=
+X-Received: by 2002:a2e:8e89:: with SMTP id z9-v6mr3550019ljk.155.1536082126681;
+ Tue, 04 Sep 2018 10:28:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a19:175b:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 10:28:45 -0700 (PDT)
+X-Originating-IP: [2620:10d:c090:200::4:a2ee]
+In-Reply-To: <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com>
+References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
+ <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
+ <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com> <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
+ <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
+ <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
+ <CAOesGMgLHx3+j1bWEsMWsN-yjGNZyLOpAjLg0Jut8gG=ADE25g@mail.gmail.com>
+ <CAKv+Gu_x=bS4xJcD_LuEnnN=Lx4Jc87uK8J_ACdA9EeUqtM3Yg@mail.gmail.com> <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Tue, 4 Sep 2018 10:28:45 -0700
+Message-ID: <CAOesGMjU4dKGj8tjexbweNUZWmxiLHwODkHbGaAqabwOGKb=bw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
+To:     Grant Likely <grant.likely@secretlab.ca>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Broadcom Kernel Feedback List 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Alexander Graf <agraf@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 07:40 AM, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> Current ptrace_may_access() implementation assumes that the 'source' task is
-> always the caller (current).
-> 
-> Expose ___ptrace_may_access() that can be used to apply the check on arbitrary
-> tasks.
+On Tue, Sep 4, 2018 at 3:13 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> Hey folks. More comments below, but the short answer is I really don't
+> see what the problem is. Distros cannot easily support platforms that
+> require a dtb= parameter, and so they probably won't. They may or may
+> not disable 'dtb=', depending on whether they see it as valuable for
+> debug.
 
-Casey recently has proposed putting the decision making of whether to
-do IBPB in the security module.
+Sure, I'm all for enterprise distros not wanting to support this, but
+there are boatloads of kernel parameters that they're unlikely to
+already be supporting, including "initrd=" and others. "dtb="
+shouldn't be any different.
 
-https://lwn.net/ml/kernel-hardening/20180815235355.14908-4-casey.schaufler@intel.com/
+Needing to disable it with a config option sounds like an odd approach to this.
 
-That will have the advantage of giving the administrator a more flexibility
-of when to turn on IBPB.  The policy is very similar to what you have proposed here
-but I think the security module is a more appropriate place for the security policy.
+> Vertically integrated platforms are a different beast. We may strongly
+> recommend firmware provides the dtb for all the mentioned good
+> reasons, but they still get to decide their deployment methodology,
+> and it is not burdensome for the kernel to keep the dtb= feature that
+> they are using.
 
-Thanks.
++1
 
-Tim
 
-> 
-> Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> ---
-> 
-> Sorry for the resend, my pine is buggered and broke threading.
-> 
->  include/linux/ptrace.h | 12 ++++++++++++
->  kernel/ptrace.c        | 13 ++++++++++---
->  2 files changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-> index 4f36431c380b..09744d4113fb 100644
-> --- a/include/linux/ptrace.h
-> +++ b/include/linux/ptrace.h
-> @@ -87,6 +87,18 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
->   */
->  extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
->  
-> +/**
-> + * ___ptrace_may_access - variant of ptrace_may_access that can be used
-> + * between two arbitrary tasks
-> + * @curr: source task
-> + * @task: target task
-> + * @mode: selects type of access and caller credentials
-> + *
-> + * Returns true on success, false on denial.
-> + */
-> +extern int ___ptrace_may_access(struct task_struct *curr, struct task_struct *task,
-> +				unsigned int mode);
-> +
->  static inline int ptrace_reparented(struct task_struct *child)
->  {
->  	return !same_thread_group(child->real_parent, child->parent);
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index 21fec73d45d4..07ff6685ebed 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -268,9 +268,10 @@ static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
->  }
->  
->  /* Returns 0 on success, -errno on denial. */
-> -static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
-> +int ___ptrace_may_access(struct task_struct *curr, struct task_struct *task,
-> +		unsigned int mode)
->  {
-> -	const struct cred *cred = current_cred(), *tcred;
-> +	const struct cred *cred, *tcred;
->  	struct mm_struct *mm;
->  	kuid_t caller_uid;
->  	kgid_t caller_gid;
-> @@ -290,9 +291,10 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
->  	 */
->  
->  	/* Don't let security modules deny introspection */
-> -	if (same_thread_group(task, current))
-> +	if (same_thread_group(task, curr))
->  		return 0;
->  	rcu_read_lock();
-> +	cred =  __task_cred(curr);
->  	if (mode & PTRACE_MODE_FSCREDS) {
->  		caller_uid = cred->fsuid;
->  		caller_gid = cred->fsgid;
-> @@ -331,6 +333,11 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
->  	return security_ptrace_access_check(task, mode);
->  }
->  
-> +static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
-> +{
-> +	return ___ptrace_may_access(current, task, mode);
-> +}
-> +
->  bool ptrace_may_access(struct task_struct *task, unsigned int mode)
->  {
->  	int err;
-> 
+> On Tue, Sep 4, 2018 at 7:24 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>
+>> On 2 September 2018 at 04:54, Olof Johansson <olof@lixom.net> wrote:
+>> > On Thu, Aug 30, 2018 at 9:23 AM, Ard Biesheuvel
+>> > <ard.biesheuvel@linaro.org> wrote:
+>> >> On 30 August 2018 at 17:06, Olof Johansson <olof@lixom.net> wrote:
+>> >>> On Wed, Aug 29, 2018 at 10:54 PM, Ard Biesheuvel
+>> >>> <ard.biesheuvel@linaro.org> wrote:
+>> >>>> On 29 August 2018 at 20:59, Scott Branden <scott.branden@broadcom.com> wrote:
+>> >>>>> Hi Olof,
+>> >>>>>
+>> >>>>>
+>> >>>>> On 18-08-29 11:44 AM, Olof Johansson wrote:
+>> >>>>>>
+>> >>>>>> Hi,
+>> >>>>>>
+>> >>>>>> On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
+>> >>>>>> <scott.branden@broadcom.com> wrote:
+>> >>>>>>>
+>> >>>>>>> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
+>> >>>>>>> parameter to function with efi loader.
+>> >>>>>>>
+>> >>>>>>> Required to boot on existing bootloaders that do not support devicetree
+>> >>>>>>> provided by the platform or by the bootloader.
+>> >>>>>>>
+>> >>>>>>> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the
+>> >>>>>>> DTB loader")
+>> >>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>> >>>>>>
+>> >>>>>> Why did Ard create an option for this if it's just going be turned on
+>> >>>>>> in default configs? Doesn't make sense to me.
+>> >>>>>>
+>> >>>>>> It would help to know what firmware still is crippled and how common
+>> >>>>>> it is, since it's been a few years that this has been a requirement by
+>> >>>>>> now.
+>> >>>>>
+>> >>>>> Broadcom NS2 and Stingray in current development and production need this
+>> >>>>> option in the kernel enabled in order to boot.
+>> >>>>
+>> >>>> And these production systems run mainline kernels in a defconfig configuration?
+>> >>>>
+>> >>>> The simply reality is that the DTB loader has been deprecated for a
+>> >>>> good reason: it was only ever intended as a development hack anyway,
+>> >>>> and if we need to treat the EFI stub provided DTB as a first class
+>> >>>> citizen, there are things we need to fix to make things works as
+>> >>>> expected. For instance, GRUB will put a property in the /chosen node
+>> >>>> for the initramfs which will get dropped if you boot with dtb=.
+>> >>>>
+>> >>>> Don't be surprised if some future enhancements of the EFI stub code
+>> >>>> depend on !EFI_ARMSTUB_DTB_LOADER.
+>
+> That's an odd statement to make. The DTB loader code is well contained
+> and with defined semantics... True, the semantics are "I DON'T BELIEVE
+> FIRMWARE", but it is still well defined. What scenario are you
+> envisioning where EFI_ARMSTUB_DTB_LOADER would be explicitly excluded?
+>
+> Conversely, the dtb= argument is an invaluable debug tool during
+> development. As Olof has already said, there are a lot of embedded
+> deployments where there is no desire for grub or any other
+> intermediary loader.
+>
+>> >>>> On UEFI systems, DTBs [or ACPI
+>> >>>> tables] are used by the firmware to describe itself and the underlying
+>> >>>> platform to the OS, and the practice of booting with DTB file images
+>> >>>> (taken from the kernel build as well) conflicts with that view. Note
+>> >>>> that GRUB still permits you to load DTBs from files (and supports more
+>> >>>> sources than just the file system the kernel Image was loaded from).
+>> >>>
+>> >>> Ard,
+>> >>>
+>> >>> Maybe a WARN() splat would be more useful as a phasing-out method than
+>> >>> removing functionality for them that needs to be reinstated through
+>> >>> changing the config?
+>> >>>
+>> >>
+>> >> We don't have any of that in the stub, and inventing new ways to pass
+>> >> such information between the stub and the kernel proper seems like a
+>> >> cart-before-horse kind of thing to me. The EFI stub diagnostic
+>> >> messages you get on the serial console are not recorded in the kernel
+>> >> log buffer, so they only appear if you actually look at the serial
+>> >> output.
+>
+> As an aside, they probably should be recorded. That is probably a
+> question for the UEFI USWG. Grub and the ARMSTUB could probably bodge
+> something together, but that would be non-standard.
 
+Having a way to pass firmware console messages onto the kernel is a
+generic problem; different firmware stacks seem to solve this in
+different ways. Having a unified way of passing, say, a text buffer to
+the kernel filled with the firmware console log would indeed be useful
+for everyone, not just EFI.
+
+
+>> > Ah yeah. I suppose you could do it in the kernel later if you detect
+>> > you've booted through EFI with dtb= on the command line though.
+>> >
+>> >>
+>> >>> Once the stub and the boot method is there, it's hard to undo as we
+>> >>> can see here. Being loud and warn might be more useful, and set a
+>> >>> timeline for hard removal (12 months?).
+>> >>>
+>> >>
+>> >> The dtb= handling is still there, it is just not enabled by default.
+>> >> We can keep it around if people are still using it. But as I pointed
+>> >> out, we may decide to make new functionality available only if it is
+>> >> disabled, and at that point, we'll have to choose between one or the
+>> >> other in defconfig, which is annoying.
+>> >>
+>> >>> Scott; an alternative for you is to do a boot wrapper that bundles a
+>> >>> DT and kernel, and boot that instead of the kernel image (outside of
+>> >>> the kernel tree). Some 32-bit platforms from Marvell use that. That
+>> >>> way the kernel will just see it as a normally passed in DT.
+>> >>>
+>> >>
+>> >> Or use GRUB. It comes wired up in all the distros, and let's you load
+>> >> a DT binary from anywhere you can imagine, as opposed to the EFI stub
+>> >> which can only load it if it happens to reside in the same file system
+>> >> (or even directory - I can't remember) as the kernel image. Note that
+>> >> the same reservations apply to doing that - the firmware is no longer
+>> >> able to describe itself to the OS via the DT, which is really the only
+>> >> conduit it has available on an arm64 system..
+>> >
+>> > So, I've looked at the history here a bit, and dtb= support was
+>> > introduced in 2014. Nowhere does it say that it isn't a recommended
+>> > way of booting.
+>> >
+>> > There are some firmware stacks today that modify and provide a
+>> > runtime-updated devicetree to the kernel, but there are also a bunch
+>> > who don't. Most "real" products will want a firmware that knows how to
+>> > pass in things such as firmware environment variables, or MAC
+>> > addresses, etc, to the kernel, but not all of them need it.
+>> >
+>> > In particular, in a world where you want EFI to be used on embedded
+>> > platforms, requiring another bootloader step such as GRUB to be able
+>> > to reasonably boot said platforms seems like a significant and
+>> > unfortunate new limitation. Documentation/efi-stub.txt has absolutely
+>> > no indication that it is a second-class option that isn't expected to
+>> > be available everywhere. It doesn't really matter what _your_
+>> > intention was around it, if those who use it never found out and now
+>> > rely on it.
+>> >
+>> > Unfortunately the way forward here is to revert 3d7ee348aa4127a.
+>> >
+>>
+>> I agree with your analysis but not with your conclusion.
+>>
+>> Whether or not the option is def_bool y and/or enabled in defconfig is
+>> a matter of policy. ACPI-only distros such as RHEL are definitely
+>> going to disable this option. But in general, supporting DTBs loaded
+>> from files is a huge pain for the distros, so I expect most of them to
+>> disable it as well.
+>
+> I support leaving 3d7ee348 in, and making it def_bool y
+
+Again, with the argument above -- I question its presence at all. We
+usually don't pick up kernel changes just because a distro wants to
+make a policy statement.
+
+In this case, there is no genuine technical motivation for this
+change, especially when the parallel "initrd=" option is still there.
+
+
+-Olof
