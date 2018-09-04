@@ -2,142 +2,96 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30533C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56369C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1A5120645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FBB320645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb+qSzyx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A5120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NSCL4yCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBB320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeIDUbH (ORCPT
+        id S1727748AbeIDUbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:31:07 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42538 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeIDUbH (ORCPT
+        Tue, 4 Sep 2018 16:31:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33748 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDUbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:31:07 -0400
-Received: by mail-qk1-f194.google.com with SMTP id g13-v6so2757585qki.9;
-        Tue, 04 Sep 2018 09:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uLU3lGxnz2rK+Q9Y8ng5fb8dv1R8pDi4V7PCZ74rhUo=;
-        b=Tb+qSzyxCB2x9KzxSjc9TcRaLKpIfjXwp9I8FWfqx8IEfmbsG7APJWPRFQYvQJxn+c
-         VPKAe+K3aEDbjh45FnRYfXDjITLsGm0Q1NtGKRlhqCgTMamlR47igUoA8NCA2NcLdutt
-         CG7ZytWjaK73hE0xe2RcrC0Q1CTzLJ3zIUt88HAGJaIlgHBMfYmGAA2e0DZo/tC92Z+K
-         jggPuPJI5RV5C1CwggXCHFRB7GjzxSSlbuIX4fcAhd6SjEy9ccFfUnI4NMLYz6LaGGbv
-         O7XhW/ZiQ/6P/sv0zk5kchtC1JPL3tvd9Mpd7HPLez0LBCnuG91akVN1gRyUOrppDkx5
-         BbkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uLU3lGxnz2rK+Q9Y8ng5fb8dv1R8pDi4V7PCZ74rhUo=;
-        b=BegK6Mx2npQWtUvHgWhJVsEi0BP6yWMYers7zUaJxB5jD9iP9GyElOiPK9ht32Uokm
-         QCNsgg+tD1GCLQXmWE1wgeaUdykpJAyzFtB01yFgOrlxTVTZy4mdS6TGyi/4eFjAPUA6
-         jcj0Kl4xX0ztEXz/Zp9kEx9o5Ru/UrFUpIK4SAUUuDQ4N67LTFK3yxEh2CUC7m0adOUP
-         1gHxwsKVH0SZc0+DuykAeVyYimoZernOJGtCCeVJMwa04DQNKjqOXzSPsHa3+ZWo/m7J
-         32PZ3YEHZk2aPfNUPO2HlQKzOW6WOXOHxbD92uWO/wIsmaN3zp+ihkGnJmmmROK6US44
-         v1ww==
-X-Gm-Message-State: APzg51AVVXvBSEVLZShBE/9uCj7dVtOpY3YtI6GIL3joAeQ8w5zYqi67
-        jUeNm2hr3OqbixXabduY2eaFZZKDvTDIGcptKfc=
-X-Google-Smtp-Source: ANB0VdYR0BuD9TSgV4yAJ8aKaCBRTsUtqPRdfhxFg/xyMnZ2KZvVeXfP5glZeLJ3HP9WoAqOnjXxoedb1hvNbX45wcA=
-X-Received: by 2002:a37:4c0e:: with SMTP id z14-v6mr29191691qka.233.1536077120575;
- Tue, 04 Sep 2018 09:05:20 -0700 (PDT)
+        Tue, 4 Sep 2018 16:31:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wamesnXEMkJQ7j+0Ah2I7TqKePqH+2af/Qpjxo0f79g=; b=NSCL4yCguGIkPrOQ3VRiNBaNb
+        7sO219YG+6yQkjFC+gQaznTQII3J7hRrTZIBzT2nAzAMiKlo1tXtpHKK/3RnI74WpxcNk8Wt0fMzG
+        +ibWiZI2k+zdmFLF+ozWlunDr7JIyuuWFOCnM6uW/OlsPzs37QoTR9nKnipysoYT4XAUTxUcWGPMs
+        KG8EiQpBa0VuNF+aXjUYNVIYdqe73nw0t8oijyiMwdXjxx3puu58WoWFInW5UCtv8AauHhzjawC/x
+        +pniaHjaHqtznKuf04r5ldX0+oG6eEgi0tvj77lyymG3VKTBmU3kyeVqrlul4Uz48ptA2yzWr0XR/
+        2c6a/w0jQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxDpn-0003VQ-HS; Tue, 04 Sep 2018 16:05:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9838A202AFE0D; Tue,  4 Sep 2018 18:05:41 +0200 (CEST)
+Date:   Tue, 4 Sep 2018 18:05:41 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [RFC] perf tool improvement requests
+Message-ID: <20180904160541.GK24124@hirez.programming.kicks-ass.net>
+References: <CABPqkBT0kEMOnTw1-E1kezCvtWNSws7dp2qzCWKVmjGPOEga8Q@mail.gmail.com>
+ <20180904071049.GY24124@hirez.programming.kicks-ass.net>
+ <20180904134218.GA5364@kernel.org>
+ <CABPqkBSm9xgqiPx1hUY2njn3SsPGhxjqK02HbM5Qar8di-q97w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 Sep 2018 19:05:09 +0300
-Message-ID: <CAHp75VfKdb6fj6EqghEuQazVqGUNJ=FLk+ka+5PyX795-1T-MA@mail.gmail.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
-        serge.ayoun@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBSm9xgqiPx1hUY2njn3SsPGhxjqK02HbM5Qar8di-q97w@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Add a function to perform ENCLS(EINIT), which initializes an enclave,
-> which can be used by a driver for running enclaves and VMMs.
->
-> Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
-> than normal MSRs, so we use a per-cpu cache to track the last known value
-> of the MSRs to avoid unnecessarily writing the MSRs with the current value.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Tue, Sep 04, 2018 at 08:50:07AM -0700, Stephane Eranian wrote:
+> > > When we get an exact IP (using PEBS) and were sampling a data related
+> > > event (say L1 misses), we can get the data type from the instruction
+> > > itself; that is, through DWARF. We _know_ what type (structure::member)
+> > > is read/written to.
+> >
+> I have been asking this from the compiler people for a long time!
+> I don't think it is there. I'd like each load/store to be annotated
+> with a data type + offset
+> within the type. It would allow data type profiling. This would not be
+> bulletproof though
+> because of the accessor function problem:
+>   void incr(int *v) { (*v)++; }
+>   struct foo { int a, int b } bar;
+>   incr(&bar.a);
 
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4]);
+Cute, yes. Also, array accesses are tricky.
 
-This [4] doesn't make any sense in a C when used in function call
-parameter list.
+But I think even with those caveats it would be _very_ useful.
 
-> +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs for each
-> + * CPU. The entries are initialized when they are first used by sgx_einit().
-> + */
-> +struct sgx_lepubkeyhash {
-> +       u64 msrs[4];
+> There are concern with the volume of data that this
+> would generate. But my argument
+> is that this is just debug binaries, does not make the stripped binary
+> any bigger.
 
-4 is MAGIC.
+Right; the alternative is that we build an asm interpreter and follow
+the data types throughout the function, because DWARF can tell us about
+the types at a number of places, like function call arguments etc..
 
-> +       u64 pm_cnt;
-> +};
-
-> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
-
-Same two comments about [4].
-
-> +{
-
-> +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-
-> +       if (!cache) {
-
-How often it's being expected to happen?
-
-> +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
-> +               if (!cache)
-> +                       return -ENOMEM;
-> +       }
-
-> +       for (i = 0; i < 4; i++) {
-
-Same MAGIC?
-
-> +       }
-
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+That is, of course, a terrible lot of work :/
