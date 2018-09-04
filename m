@@ -2,58 +2,57 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B96FC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4ACC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B568220658
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA0D2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:05:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="LKCBk9TW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B568220658
+	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="DxHcfH9n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA0D2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=az8.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeIDXbm (ORCPT
+        id S1728059AbeIDXbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:31:42 -0400
-Received: from sender-of-o52.zoho.com ([135.84.80.217]:21315 "EHLO
+        Tue, 4 Sep 2018 19:31:46 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21320 "EHLO
         sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeIDXbl (ORCPT
+        with ESMTP id S1726507AbeIDXbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:31:41 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1536087890; cv=none; 
+        Tue, 4 Sep 2018 19:31:45 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1536087893; cv=none; 
         d=zoho.com; s=zohoarc; 
-        b=bMLr2icKf0o46ZhT4LFc6R0cbn+l6VXPgZB+tHdggyt2rPmRJcpYT6lr1mESHa81KK+Ea9SbU3g7eu6Gu2tqTgAPXIem5WbIycsRGzIvaFbbNaJ7j26v50utz9uGhv6G3cCuRIziRIQnPBd4VMLfuiKkyeQEF1z2WRbs0WyHE7Q=
+        b=Tzob6UMQyib+vU9cGjSTcZeIEiLJgM/S1F3NWN9pGM6jW2W3W6WgSFkr9YGnUZ3X50dA9curRC1p8NscNfNb4UvbRqVlSZZuJy2Y+AJNZh12vTDq1/I17kQaH1Ex66eQgq0nVC20MXEQiTJV/8V6/4H2Itk80v32sHnx6De2PGg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1536087890; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=GITcJ6S9bZMcJRvgf15Mt/ubxrNrL/QwsCliVzZpygk=; 
-        b=iDPdAMtCjWUsOLU28O9hZpKYAYzIXiwWCpiIktoKjBPFj4hbFtZRWacevw6q8G9EsDquuplZovGlmI0fjWabxScYyVUN2MyXRihR2sJUSG4Rx/c3pN0NZlVOLy1+S62JCVuu6o9sga4grc8F6cIDQsKRg2/ZC6PlSCarobrFSSc=
+        t=1536087893; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=Pf2PRmgsIQHYNQn5EGGqBJisgszcDAV41VbdQqssaeQ=; 
+        b=PbnaATDL0sTi31O9Jo2IY7EkNlzxLUPDGOEPZqRFlC5NuJcsBBOrQrF/7Y1/u0uTrWq/uRppIvpIEMb4FNo8gT/IcZvByrcD8ATbjStUQrxIovQ4UAqkmYBZqm4AbBk6DtstY4sdpBa2iYL/jDM1+MuCidSTosH9XoXmTUbIioA=
 ARC-Authentication-Results: i=1; mx.zoho.com;
         dkim=pass  header.i=az8.co;
         spf=pass  smtp.mailfrom=afonsobordado@az8.co;
         dmarc=pass header.from=<afonsobordado@az8.co> header.from=<afonsobordado@az8.co>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536087889;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536087893;
         s=dkimmail; d=az8.co; i=afonsobordado@az8.co;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=6540; bh=GITcJ6S9bZMcJRvgf15Mt/ubxrNrL/QwsCliVzZpygk=;
-        b=LKCBk9TWH8VB0vXuyKcn0GKnFWU9XDbhoo4rVyEJQSqy0lgVBujhPlWPIEvD8epK
-        lO82KiONbuioEiQSUd3/D24Bc+/hESgfDlCIvEdwqbGUKwfjE2tbq1MylljJ5/kIS4J
-        sov8oYUBWq24vDQZGR+AK1ieiHUqRSYLM40OjQ8E=
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=787;
+        bh=Pf2PRmgsIQHYNQn5EGGqBJisgszcDAV41VbdQqssaeQ=;
+        b=DxHcfH9njXT9+mrLGf9tHH4AryPamUYGh7z4Wu1epVraLPkfVKeRsVscHKC8jKjk
+        4u5zsbd1W3iKbqUiAGEWgL91F/eGu44OVsOiuV7eP8qb88Ur6oxGyeQ1BNNemR2iq5v
+        BuuKYIgfQkzIhh2YwSMXvBzQ91z3Js0Lay2nrVMs=
 Received: from localhost (bl9-77-228.dsl.telepac.pt [85.242.77.228]) by mx.zohomail.com
-        with SMTPS id 1536087889539281.276072519198; Tue, 4 Sep 2018 12:04:49 -0700 (PDT)
+        with SMTPS id 1536087893529337.82404336156753; Tue, 4 Sep 2018 12:04:53 -0700 (PDT)
 From:   Afonso Bordado <afonsobordado@az8.co>
 To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
         pmeerw@pmeerw.net
 Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v3 3/4] iio: fxas21002c: add ODR/Scale support
-Date:   Tue,  4 Sep 2018 21:04:33 +0100
-Message-Id: <20180904200434.10442-3-afonsobordado@az8.co>
+Subject: [PATCH v3 4/4] MAINTAINERS: add entry for fxas21002c gyro driver
+Date:   Tue,  4 Sep 2018 21:04:34 +0100
+Message-Id: <20180904200434.10442-4-afonsobordado@az8.co>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904200434.10442-1-afonsobordado@az8.co>
 References: <20180904200434.10442-1-afonsobordado@az8.co>
@@ -63,240 +62,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for reading/writing ODR/Scale
-
-We don't support the scale boost modes.
+Add entry for fxas21002c gyroscope driver and add myself as
+maintainer of this driver.
 
 Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
 ---
- drivers/iio/gyro/fxas21002c.c | 161 +++++++++++++++++++++++++++++++---
- 1 file changed, 148 insertions(+), 13 deletions(-)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/iio/gyro/fxas21002c.c b/drivers/iio/gyro/fxas21002c.c
-index 18b1f500dd3e..7efef3156fa0 100644
---- a/drivers/iio/gyro/fxas21002c.c
-+++ b/drivers/iio/gyro/fxas21002c.c
-@@ -7,7 +7,7 @@
-  * IIO driver for FXAS21002C (7-bit I2C slave address 0x20 or 0x21).
-  * Datasheet: https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf
-  * TODO:
-- *        ODR / Scale Support
-+ *        Scale boost mode
-  *        Power management
-  *        GPIO Reset
-  *        Power supplies
-@@ -44,7 +44,10 @@
- #define FXAS21002C_REG_F_EVENT         0x0A
- #define FXAS21002C_REG_INT_SRC_FLAG    0x0B
- #define FXAS21002C_REG_WHO_AM_I        0x0C
-+
- #define FXAS21002C_REG_CTRL_REG0       0x0D
-+#define FXAS21002C_SCALE_MASK          GENMASK(1, 0)
-+
- #define FXAS21002C_REG_RT_CFG          0x0E
- #define FXAS21002C_REG_RT_SRC          0x0F
- #define FXAS21002C_REG_RT_THS          0x10
-@@ -56,14 +59,12 @@
- #define FXAS21002C_ACTIVE_BIT          BIT(1)
- #define FXAS21002C_READY_BIT           BIT(0)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2b7b24b145f0..faf5f41b1465 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5838,6 +5838,13 @@ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Maintained
+ F:	drivers/usb/gadget/udc/fsl*
  
-+#define FXAS21002C_ODR_SHIFT           2
-+#define FXAS21002C_ODR_MASK            GENMASK(4, 2)
++FREESCALE FXAS21002C
++M:	Afonso Bordado <afonsobordado@az8.co>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++F:	drivers/iio/gyro/fxas21002.c
++F:	Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt
 +
- #define FXAS21002C_REG_CTRL_REG2       0x14
- #define FXAS21002C_REG_CTRL_REG3       0x15
- 
--#define FXAS21002C_DEFAULT_ODR_HZ      800
--
--/* 0.0625 deg/s */
--#define FXAS21002C_DEFAULT_SENSITIVITY IIO_DEGREE_TO_RAD(62500)
--
- #define FXAS21002C_TEMP_SCALE          1000
- 
- enum {
-@@ -82,6 +83,40 @@ struct fxas21002c_data {
- 	struct regmap *regmap;
- };
- 
-+enum fxas21002c_scale {
-+	FXAS21002C_SCALE_62MDPS,
-+	FXAS21002C_SCALE_31MDPS,
-+	FXAS21002C_SCALE_15MDPS,
-+	FXAS21002C_SCALE_7MDPS,
-+};
-+
-+static const int fxas21002c_anglevel_scale_avail[4][2] = {
-+	[FXAS21002C_SCALE_62MDPS] = { 0, IIO_DEGREE_TO_RAD(62500) },
-+	[FXAS21002C_SCALE_31MDPS] = { 0, IIO_DEGREE_TO_RAD(31250) },
-+	[FXAS21002C_SCALE_15MDPS] = { 0, IIO_DEGREE_TO_RAD(15625) },
-+	[FXAS21002C_SCALE_7MDPS]  = { 0, IIO_DEGREE_TO_RAD(7812) },
-+};
-+
-+enum fxas21002c_odr {
-+	FXAS21002C_ODR_800,
-+	FXAS21002C_ODR_400,
-+	FXAS21002C_ODR_200,
-+	FXAS21002C_ODR_100,
-+	FXAS21002C_ODR_50,
-+	FXAS21002C_ODR_25,
-+	FXAS21002C_ODR_12_5,
-+};
-+
-+static const int fxas21002c_sample_freq_avail[7][2] = {
-+	[FXAS21002C_ODR_800]  = { 800, 0 },
-+	[FXAS21002C_ODR_400]  = { 400, 0 },
-+	[FXAS21002C_ODR_200]  = { 200, 0 },
-+	[FXAS21002C_ODR_100]  = { 100, 0 },
-+	[FXAS21002C_ODR_50]   = { 50, 0 },
-+	[FXAS21002C_ODR_25]   = { 25, 0 },
-+	[FXAS21002C_ODR_12_5] = { 12, 500000 },
-+};
-+
- static const struct regmap_range fxas21002c_writable_ranges[] = {
- 	regmap_reg_range(FXAS21002C_REG_F_SETUP, FXAS21002C_REG_F_SETUP),
- 	regmap_reg_range(FXAS21002C_REG_CTRL_REG0, FXAS21002C_REG_RT_CFG),
-@@ -254,6 +289,49 @@ static int fxas21002c_read_oneshot(struct fxas21002c_data *data,
- 	}
- }
- 
-+static int fxas21002c_scale_read(struct fxas21002c_data *data, int *val,
-+				 int *val2)
-+{
-+	int ret;
-+	unsigned int raw;
-+
-+	ret = regmap_read(data->regmap, FXAS21002C_REG_CTRL_REG0, &raw);
-+	if (ret)
-+		return ret;
-+
-+	raw &= FXAS21002C_SCALE_MASK;
-+
-+	*val = fxas21002c_anglevel_scale_avail[raw][0];
-+	*val2 = fxas21002c_anglevel_scale_avail[raw][1];
-+
-+	return IIO_VAL_INT_PLUS_MICRO;
-+}
-+
-+static int fxas21002c_odr_read(struct fxas21002c_data *data, int *val,
-+			       int *val2)
-+{
-+	int ret;
-+	unsigned int raw;
-+
-+	ret = regmap_read(data->regmap, FXAS21002C_REG_CTRL_REG1, &raw);
-+	if (ret)
-+		return ret;
-+
-+	raw = (raw & FXAS21002C_ODR_MASK) >> FXAS21002C_ODR_SHIFT;
-+
-+	/*
-+	 * We don't use this mode but according to the datasheet its
-+	 * also a 12.5Hz
-+	 */
-+	if (raw == 7)
-+		raw = FXAS21002C_ODR_12_5;
-+
-+	*val = fxas21002c_sample_freq_avail[raw][0];
-+	*val2 = fxas21002c_sample_freq_avail[raw][1];
-+
-+	return IIO_VAL_INT_PLUS_MICRO;
-+}
-+
- static int fxas21002c_read_raw(struct iio_dev *indio_dev,
- 			       struct iio_chan_spec const *chan, int *val,
- 			       int *val2, long mask)
-@@ -266,10 +344,7 @@ static int fxas21002c_read_raw(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_SCALE:
- 		switch (chan->type) {
- 		case IIO_ANGL_VEL:
--			*val = 0;
--			*val2 = FXAS21002C_DEFAULT_SENSITIVITY;
--
--			return IIO_VAL_INT_PLUS_MICRO;
-+			return fxas21002c_scale_read(data, val, val2);
- 		case IIO_TEMP:
- 			*val = FXAS21002C_TEMP_SCALE;
- 
-@@ -281,16 +356,76 @@ static int fxas21002c_read_raw(struct iio_dev *indio_dev,
- 		if (chan->type != IIO_ANGL_VEL)
- 			return -EINVAL;
- 
--		*val = FXAS21002C_DEFAULT_ODR_HZ;
--
--		return IIO_VAL_INT;
-+		return fxas21002c_odr_read(data, val, val2);
- 	}
- 
- 	return -EINVAL;
- }
- 
-+static int fxas21002c_write_raw(struct iio_dev *indio_dev,
-+				struct iio_chan_spec const *chan, int val,
-+				int val2, long mask)
-+{
-+	struct fxas21002c_data *data = iio_priv(indio_dev);
-+	int ret = -EINVAL;
-+	int i;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		for (i = 0; i < ARRAY_SIZE(fxas21002c_sample_freq_avail); i++) {
-+			if (fxas21002c_sample_freq_avail[i][0] == val &&
-+			    fxas21002c_sample_freq_avail[i][1] == val2)
-+				break;
-+		}
-+
-+		if (i == ARRAY_SIZE(fxas21002c_sample_freq_avail))
-+			break;
-+
-+		return regmap_update_bits(data->regmap,
-+					  FXAS21002C_REG_CTRL_REG1,
-+					  FXAS21002C_ODR_MASK,
-+					  i << FXAS21002C_ODR_SHIFT);
-+	case IIO_CHAN_INFO_SCALE:
-+		for (i = 0; i < ARRAY_SIZE(fxas21002c_anglevel_scale_avail);
-+		     i++) {
-+			if (fxas21002c_anglevel_scale_avail[i][0] == val &&
-+			    fxas21002c_anglevel_scale_avail[i][1] == val2)
-+				break;
-+		}
-+
-+		if (i == ARRAY_SIZE(fxas21002c_anglevel_scale_avail))
-+			break;
-+
-+		return regmap_update_bits(data->regmap,
-+					  FXAS21002C_REG_CTRL_REG0,
-+					  FXAS21002C_SCALE_MASK, i);
-+	}
-+
-+	return ret;
-+}
-+
-+static IIO_CONST_ATTR(anglevel_scale_available,
-+		      "0.001090831 "  /* 62.5    mdps */
-+		      "0.000545415 "  /* 31.25   mdps */
-+		      "0.000272708 "  /* 15.625  mdps */
-+		      "0.000136354"); /*  7.8125 mdps */
-+
-+static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("800 400 200 100 50 25 12.5");
-+
-+static struct attribute *fxas21002c_attributes[] = {
-+	&iio_const_attr_anglevel_scale_available.dev_attr.attr,
-+	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group fxas21002c_attribute_group = {
-+	.attrs = fxas21002c_attributes,
-+};
-+
- static const struct iio_info fxas21002c_info = {
- 	.read_raw		= fxas21002c_read_raw,
-+	.write_raw              = fxas21002c_write_raw,
-+	.attrs                  = &fxas21002c_attribute_group,
- };
- 
- static int fxas21002c_probe(struct i2c_client *client,
+ FREEVXFS FILESYSTEM
+ M:	Christoph Hellwig <hch@infradead.org>
+ W:	ftp://ftp.openlinux.org/pub/people/hch/vxfs
 -- 
 2.18.0
 
