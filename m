@@ -3,126 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0852C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A0CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 700ED20659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700ED20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1581D20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1581D20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbeIDRIa (ORCPT
+        id S1727359AbeIDRI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:08:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38902 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeIDRI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:08:29 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AD62D207B4; Tue,  4 Sep 2018 14:43:30 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4BD0C204AE;
-        Tue,  4 Sep 2018 14:43:30 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 14:43:29 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, computersforpeace@gmail.com,
-        frieder.schrempf@exceet.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] spi: spi-mem: Add a driver for NXP FlexSPI
- controller
-Message-ID: <20180904144329.35cf27de@bbrezillon>
-In-Reply-To: <1535711404-29528-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-References: <1535711404-29528-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 4 Sep 2018 13:08:57 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:45128 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726220AbeIDRI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 13:08:56 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowADHrR33fY5b0Y6xBg--.21783S2;
+        Tue, 04 Sep 2018 20:43:36 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 03/16] x86/mtrr: get MTRR number and support TOP_MEM2
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <36ea05160d886ebf8d4a645c0fe8efdc9d6760c3.1535459013.git.puwen@hygon.cn>
+ <20180903190438.GF10249@zn.tnic>
+ <946157a5-fdb2-a45a-63aa-97e9d602e6f0@hygon.cn>
+ <20180904080241.GB32615@zn.tnic>
+Message-ID: <a6895981-6c2e-f570-882d-f5a49dc7255b@hygon.cn>
+Date:   Tue, 4 Sep 2018 20:43:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180904080241.GB32615@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowADHrR33fY5b0Y6xBg--.21783S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYo7k0a2IF6w1UM7kC6x804xWl14x267AK
+        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Jr
+        0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv
+        0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z2
+        80aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY
+        0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s
+        026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_
+        Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20x
+        vEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2
+        jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+        ZFpf9x07UE0PfUUUUU=
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yogesh,
+On 2018/9/4 16:02, Borislav Petkov wrote:
+> shows only old mails so I'm going to assume this got fixed, finally! And
+> you probably have received a *fixed* BIOS even, allegedly.
+>
+> So what's up?
 
-On Fri, 31 Aug 2018 15:59:57 +0530
-Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+I tested the function on Hygon Dhyana platforms with the latest BIOS,
+found that this problem is indeed fixed. So the workaround is not
+needed for Hygon Dhyana platforms any more, and the vendor checking
+for Hygon will be removed in next version of patch.
 
-> - Add a driver for NXP FlexSPI host controller
-> 
->  FlexSPI is a flexsible SPI host controller [1], Chapter 30 page 1475,
->  which supports two SPI channels and up to 4 external devices.
->  Each channel supports Single/Dual/Quad/Octal mode data transfer (1/2/4/8 bidirectional data lines)
->  i.e. FlexSPI acts as an interface to external devices, maximum 4, each with up to 8
->  bidirectional data lines.
-> 
->  FlexSPI controller is similar to the existing Freescale/NXP QuadSPI
->  controller with advanced features.
-> 
-> - Tested this driver with mtd_debug(Erase/Write/Read) utility and JFFS2
->  filesystem mounting and booting on NXP LX2160ARDB[2] and LX2160AQDS targets.
->  LX2160ARDB is having two NOR slave device connected on single bus A
->  i.e. A0 and A1 (CS0 and CS1).
->  LX2160AQDS is having two NOR slave device connected on separate buses
->  one flash on A0 and second on B1 i.e. (CS0 and CS3).
->  Verified this driver on following SPI NOR flashes:
->     Micron, mt35xu512aba[3], [Read - 1 bit mode]
->     Cypress, s25fl512s, [Read - 1/2/4 bit mode]
-> 
-> Patch 1 adds variable size in spi_device struct, to save the
-> size of connected slave device.
-> Patch 2 adds flags for octal I/O data transfer.
-> Support for octal flash commands and other framework changes would going to be done in different
-> patch set.
-> Patch 3 adds a driver for the NXP FlexSPI controller, driver is based on
-> new spi-mem framework.
-
-Can we please omit octa mode support for now and focus on
-single/dual/quad SPI support? That is, drop patch 2, and do not set the
-OCTAL flags in patch 3.
-
-Regards,
-
-Boris
-
-> Patch 4 add binding file for this driver.
-> Patch 5 add device node property for FlexSPI driver for lx2160 SoC.
-> Patch 6 enables the config option.
-> Patch 7 add MAINTAINERS file.
-> 
-> [1] https://www.nxp.com/docs/en/reference-manual/IMXRT1050RM.pdf
-> [2] https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=9721
-> [3] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=63445
-> 
-> This series adds below patches:
-> Yogesh Gaur (7):
->   spi: add slave device size in spi_device struct
->   spi: add flags for octal I/O data transfer
->   spi: spi-mem: Add a driver for NXP FlexSPI controller
->   dt-bindings: spi: add binding file for NXP FlexSPI driver
->   arm64: dts: lx2160a: add fspi node property
->   arm64: defconfig: enable NXP FlexSPI driver
->   MAINTAINERS: add maintainers for the NXP FlexSPI driver
-> 
->  .../devicetree/bindings/spi/spi-nxp-fspi.txt       |   42 +
->  MAINTAINERS                                        |    6 +
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  |   21 +
->  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |   12 +
->  arch/arm64/configs/defconfig                       |    1 +
->  drivers/mtd/devices/m25p80.c                       |    6 +
->  drivers/mtd/spi-nor/spi-nor.c                      |    2 +
->  drivers/spi/Kconfig                                |   10 +
->  drivers/spi/Makefile                               |    1 +
->  drivers/spi/spi-nxp-fspi.c                         | 1242 ++++++++++++++++++++
->  include/linux/spi/spi.h                            |    4 +
->  11 files changed, 1347 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
->  create mode 100644 drivers/spi/spi-nxp-fspi.c
-> 
+Thanks,
+Pu Wen
 
