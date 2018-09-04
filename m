@@ -6,66 +6,69 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD19C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B125AC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF1020869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF1020869
+	by mail.kernel.org (Postfix) with ESMTP id 5165820869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:21:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5165820869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeIDJou (ORCPT
+        id S1727560AbeIDJpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:44:50 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:38890 "EHLO
+        Tue, 4 Sep 2018 05:45:17 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38902 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbeIDJot (ORCPT
+        with ESMTP id S1726312AbeIDJpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:44:49 -0400
+        Tue, 4 Sep 2018 05:45:17 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fx3m2-0000Ef-13; Tue, 04 Sep 2018 13:21:10 +0800
+        id 1fx3mT-0000Er-Ko; Tue, 04 Sep 2018 13:21:37 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fx3m1-0003Kd-A2; Tue, 04 Sep 2018 13:21:09 +0800
-Date:   Tue, 4 Sep 2018 13:21:09 +0800
+        id 1fx3mQ-0003LR-Iz; Tue, 04 Sep 2018 13:21:34 +0800
+Date:   Tue, 4 Sep 2018 13:21:34 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        will.deacon@arm.com, catalin.marinas@arm.com, ebiggers@google.com,
-        suzuki.poulose@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] crypto: arm64/crc32 - remove PMULL based CRC32 driver
-Message-ID: <20180904052109.bprmzgstknh6yecz@gondor.apana.org.au>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
- <20180827110245.14812-5-ard.biesheuvel@linaro.org>
+Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, jeff.lien@wdc.com
+Subject: Re: [PATCH 0/2] crypto: arm64/crct10dif - refactor and implement
+ non-Crypto Extension version
+Message-ID: <20180904052134.5ax5j374gubxpo4s@gondor.apana.org.au>
+References: <20180827153812.6763-1-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827110245.14812-5-ard.biesheuvel@linaro.org>
+In-Reply-To: <20180827153812.6763-1-ard.biesheuvel@linaro.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 01:02:45PM +0200, Ard Biesheuvel wrote:
-> Now that the scalar fallbacks have been moved out of this driver into
-> the core crc32()/crc32c() routines, we are left with a CRC32 crypto API
-> driver for arm64 that is based only on 64x64 polynomial multiplication,
-> which is an optional instruction in the ARMv8 architecture, and is less
-> and less likely to be available on cores that do not also implement the
-> CRC32 instructions, given that those are mandatory in the architecture
-> as of ARMv8.1.
+On Mon, Aug 27, 2018 at 05:38:10PM +0200, Ard Biesheuvel wrote:
+> The current arm64 CRC-T10DIF code only runs on cores that implement the
+> 64x64 bit PMULL instructions that are part of the optional Crypto
+> Extensions, and falls back to the highly inefficient C code otherwise.
 > 
-> Since the scalar instructions do not require the special handling that
-> SIMD instructions do, and since they turn out to be considerably faster
-> on some cores (Cortex-A53) as well, there is really no point in keeping
-> this code around so let's just remove it.
+> Let's provide a SIMD version that is twice as fast as the C code even on
+> a low end core like the Cortex-A53, and is time invariant and much easier
+> on the D-cache.
 > 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Some performance numbers at the bottom.
+> 
+> Ard Biesheuvel (2):
+>   crypto: arm64/crct10dif - preparatory refactor for 8x8 PMULL version
+>   crypto: arm64/crct10dif - implement non-Crypto Extensions alternative
+> 
+>  arch/arm64/crypto/crct10dif-ce-core.S | 314 +++++++++++++++-----
+>  arch/arm64/crypto/crct10dif-ce-glue.c |  14 +-
+>  2 files changed, 251 insertions(+), 77 deletions(-)
 
-Patch applied.  Thanks.
+All applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
