@@ -2,136 +2,93 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AC1C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A8DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06580206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:26:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06580206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ED58206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:27:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED58206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbeIDLuY (ORCPT
+        id S1727159AbeIDLut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:50:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56648 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbeIDLuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:50:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CCE7720726; Tue,  4 Sep 2018 09:26:32 +0200 (CEST)
-Received: from qschulz (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 86CFA203DC;
-        Tue,  4 Sep 2018 09:26:32 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 09:26:30 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        rf@opensource.wolfsonmicro.com
-Subject: Re: [PATCH net-next v2 4/7] net: phy: mscc: read
- 'vsc8531,edge-slowdown' as an u32
-Message-ID: <20180904072630.zc6sdz2xdti5nku4@qschulz>
-References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
- <20180903084853.18092-4-quentin.schulz@bootlin.com>
- <20180903132756.GD4445@lunn.ch>
- <20180903133746.wsvezy3rbdivnjfs@qschulz>
- <20180903200554.GJ4445@lunn.ch>
+        Tue, 4 Sep 2018 07:50:49 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:42897 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbeIDLut (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:50:49 -0400
+Received: from [192.168.178.69] ([109.104.51.230]) by mrelayeu.kundenserver.de
+ (mreue105 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0M5gZk-1fhtEA3LZY-00xcUc; Tue, 04 Sep 2018 09:26:50 +0200
+Subject: Re: [PATCH 3/4 next] net: lan78xx: Switch to SPDX identifier
+To:     RaghuramChary.Jallipalli@microchip.com, Woojung.Huh@microchip.com
+Cc:     UNGLinuxDriver@microchip.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1535994759-8938-1-git-send-email-stefan.wahren@i2se.com>
+ <1535994759-8938-4-git-send-email-stefan.wahren@i2se.com>
+ <0573C9D4B793EF43BF95221F2F4CC8515912C3@CHN-SV-EXMX06.mchp-main.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <21c3f5d9-c884-3c78-6441-dbfd47001ffe@i2se.com>
+Date:   Tue, 4 Sep 2018 09:26:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5cwu2hx3pzag7m4"
-Content-Disposition: inline
-In-Reply-To: <20180903200554.GJ4445@lunn.ch>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <0573C9D4B793EF43BF95221F2F4CC8515912C3@CHN-SV-EXMX06.mchp-main.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:zofeaWntMl2hw1AUzx4rCfEPfpuO7Z2dKaiEyFvXehQ8YPyNHRh
+ XTQJUaXatelBZJx5KX21DaYVd5JThs0cP5mZai+GOYyE33EL9x8qg2cZ6Q5K5zXXfYLN81I
+ 6TfMFGBhhW62dgtXHgca1KEHab2IBIx5tJbBTuVMBs7ayX+y++0beeic7i1ZHowMhqdTi9B
+ fnT8tGOt4HHTXzs9zzZJw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:541SBWQtZb8=:rgVdNqjEYFjGESodd8fuLu
+ LVr/GZFtkogrgOz4HB9fJGWh6U93ttZVTNbmluVLo1TgsoMo5erOqQhO7vZqowoulq5lTBqIK
+ MG+n6HBi1DYxkVX890PILx666DPWG9xFjI842XwuagVgFIWuv8YVyPj3V/T1AQ14TCs8pWZNY
+ NR6y1buwhPOM4Fpc2puRFe5HjhcqCC8Hmk+Nys0xAa06lRct9btVM9XKbBu5bEJ3q4hRff0nI
+ L6cy9yialoY/g4L5ROqXmDKtac+SAqmB/IfkLerZsetBYdc0fzir6eg8ZRG47mF6sOwGdAg5o
+ vttCtLbRC/Saeqy62XRGXAB4IIiIJBpon0E6abyTGiXQEwCNG19zkcKz0yqJyHw/NQC+FgJgW
+ R/JTB+dLkBucIS/u4x/fCON7mAMSVtwd+izI9WFOkYSiaz/jC5MZeUgG/GLh6hFcUYzafPShc
+ bJhhGXw3H1vTSjiaYG98WWogD5pse/VLujkYcwc3mVNiQLpOvvh0e7ZrJLWniAu8N+2TezyA9
+ JvK5znctDZZe20TF8k0RE3S7AUfu/J3DFtitCB+VbEnINgInv97ZYT1lMGdH3OXemwVs6aoiU
+ teASoROQ4GPKsFRUVXG1Rd6TXSpFCT9DrGrAIiuyNOmr3kp8Kvww3zy7+mm4bnbGyFcyREoMS
+ c8wl/bC6AQyXT/Ibko0p7vsdNDsvBTdvdRsKIms/Wp/HW/o64itehwgXg1nw2r3N31wrjdeh2
+ 4f3vihlDy0iTr2vl
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Raghu,
 
---u5cwu2hx3pzag7m4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Am 04.09.2018 um 06:29 schrieb RaghuramChary.Jallipalli@microchip.com:
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/* Copyright (C) 2015 Microchip Technology */
+> Can we merge both in single comment line?
 
-On Mon, Sep 03, 2018 at 10:05:54PM +0200, Andrew Lunn wrote:
-> > Just to be sure, we're talking here about making sure the value stored
-> > in the DT is not bigger than the specified value (here an u8)? If so,
-> > that isn't the reason why I'm suggesting those two patches.
-> >=20
-> > Without /bits 8/ in the DT property, whatever were the values I put in
-> > the property, I'd always get a 0. So I need to fix it either in the DT
-> > (but Rob does not really like it) or in the driver.
->=20
-> Hi Quentin
->=20
-> Ah, you are fixing endian issues. That was not clear to me from the
-> commit message.
->=20
-> I don't know enough about how DT stores values in the blob. Is there
-> type info? Can the DT core tell if a value in the blob is a u8 or a
-> u32?  It would be nice if it warned about reading a u8 from a u32
-> blob.
->=20
+i don't think we can do this. I'm simply following this guideline [1].
 
-=46rom my quick research, the lower bound checking is performed by
-of_property_read_u* functions but not the higher bound checking (the
-internal function of_find_property_value_of_size allows higher bound
-checking but it seems it's never used by those functions (see 0 in
-sz_max of of_property_read_variable_u*_array)).
+How about this:
 
-sz_max is used by of_property_read_variable_u*_array to copy at a
-maximum of sz_max values in the output buffer. If sz_max is 0, it takes
-sz_min so it's an array of definite size.
-So since sz_max is 0 for all calls to of_property_read_variable_u*_array
-by of_property_read_u*_array, we basically know we'll get a buffer of
-sz_min values but we don't actually make use of the higher bound
-checking of of_find_property_value_of_size.
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (C) 2015 Microchip Technology
+ */
 
-We could enforce this higher bound check by, instead of setting sz_max
-to 0, setting sz_max to sz_min in calls to of_property_read_u*_array.
+[1] - https://www.kernel.org/doc/html/v4.18/process/license-rules.html
 
-But I guess there is a reason for sz_max being 0. Rob, Richard (commit
-signer of this code) do you know why? Could you explain?
+>
+>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>> +/* Copyright (C) 2015 Microchip Technology */
+> Here too.
+>
+> Thanks,
+> -Raghu
 
-> Anyway, this change still removes some bounds checking. Are they
-> important? Do they need to be added back?
->=20
-
-The edge-slowdown and the vddmac values are compared against a const
-array so we=B4re fine with those ones.
-
-For the led-X-mode, I added a constant for supported modes that gets
-checked when retrieving the DT property. So we=B4re fine here too.
-
-Quentin
-
---u5cwu2hx3pzag7m4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAluOM6YACgkQhLiadT7g
-8aMXJhAAm/KvY4eM0D09WsqCDIoRlFTLMU8vcJu/e0+nRQla9IJ32QTIwkpKkn2A
-x1ef9cWne+okY4C4iZ138D6dhkBLsx2uCWc8ABNA38xHNZBSFJJXGhApElgcYEW1
-a5CCMBtnHu+PqLTnH9CHdbWQcgA83RZ3htfBPG1RDNVttG1amGMVQfqlRQSOaFPD
-yHJO6zqLFsUvMInF7CMHOBb+NeJm0QM+pTRs+ABNjzmscEXfmqV9hz5rnAwYJWSW
-IRzvsANh1BSY1B+ENh3omoCDSi05xZJlb6Ofz7t/eyMVjN4jbw5kUhba9YlI7V9E
-9XBTS3Ci2CIc/eZsZyZzbYFKWL1RUuLFbtdlHUML3LRfDwu5MVhUGsBFALY6I4yg
-abX+K+uIvA8cMqSlcw7CWUhUKnh3LXMZ3rJWodypdbykg7aLIqczCSlCt0omQUm3
-W7d1wWcbzF0iiDMmvLZC7yqPlu2vU48H/rz3f3p+rkwuzTOMx2DGH0wRDgFjnFp6
-mxaJtaKFbb9x6sb3xyvQZFjTVGiNlrfOkOIMR+SEJIyTvT8VpKPh6UoDKo4gAzm2
-H59Ad1eIFJtux95MXUCyZ47PMts+OFr3PcVpvnEFOajWtkTYCYTWAgkdOlZ1Ftf7
-DXXlrqiNeBfQ2Q3/KnJnXzTY5s2okhS5nc3ODhu+Ied0GIYJOm4=
-=OGAP
------END PGP SIGNATURE-----
-
---u5cwu2hx3pzag7m4--
