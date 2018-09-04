@@ -2,111 +2,122 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750D5C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D751CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2000B20661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2000B20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FF1C2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:22:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cdvrhFXi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YhLMa6yW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF1C2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeIDRpp (ORCPT
+        id S1727310AbeIDRro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:45:45 -0400
-Received: from gateway20.websitewelcome.com ([192.185.49.40]:33128 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727062AbeIDRpp (ORCPT
+        Tue, 4 Sep 2018 13:47:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44810 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeIDRro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:45:45 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 6C847400D403D
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Sep 2018 08:20:38 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id xBFVfqSoMbXuJxBFpfAlox; Tue, 04 Sep 2018 08:20:38 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.106.191] (port=39348 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fxBFU-002Miz-EJ; Tue, 04 Sep 2018 08:20:04 -0500
-Date:   Tue, 4 Sep 2018 08:20:01 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Wetzel <alexander@wetzel-home.de>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mac80211: remove unnecessary NULL check
-Message-ID: <20180904132001.GA31932@embeddedor.com>
+        Tue, 4 Sep 2018 13:47:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 04170607BD; Tue,  4 Sep 2018 13:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536067357;
+        bh=rl3ojnmiDgwDgIZOKyZkBiUFw+ccXyPfIIwTsb8AVz0=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=cdvrhFXiFzR81en8BQIwHbgaaw2uqonoD9zHJIEIadUY3e5kOl+dweGFXhW8BTmyw
+         S3Ky4WN6Lr/bbnWBbiSyv3sHMjOu6h+zyWjPzK9piIpFNGdY/fhmWtlE40EF7oyG79
+         /YmdQ+L2x5PegborDT0hXn3NjgKFzOGeukkVloxg=
+Received: from WUFANW10 (c-71-205-14-210.hsd1.co.comcast.net [71.205.14.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: wufan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3F066044E;
+        Tue,  4 Sep 2018 13:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536067347;
+        bh=rl3ojnmiDgwDgIZOKyZkBiUFw+ccXyPfIIwTsb8AVz0=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=YhLMa6yWmiNra39HCuYsavE4/+NUjGlLT7jtTac9Cz9hHF4k6ChDz18OjG9loRbcV
+         Xq3fs+X4eyaI3GGx696Ypt346vwUXVaJnhD92j9qEg2iVmdjzZUAGPUAbjJZj2d8Vc
+         CXMgDoRaun73xqyRPhF8wxYXJghxII9w6smkx87U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3F066044E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
+From:   "wufan" <wufan@codeaurora.org>
+To:     "'Borislav Petkov'" <bp@alien8.de>
+Cc:     <mchehab@kernel.org>, <james.morse@arm.com>,
+        <baicar.tyler@gmail.com>, <linux-edac@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <john.garry@huawei.com>,
+        <toshi.kani@hpe.com>, <tanxiaofei@huawei.com>,
+        <wanghuiqiang@huawei.com>, <shiju.jose@huawei.com>
+References: <1536033055-25522-1-git-send-email-wufan@codeaurora.org> <20180904072858.GA32615@zn.tnic>
+In-Reply-To: <20180904072858.GA32615@zn.tnic>
+Subject: RE: [PATCH v3] EDAC, ghes: use CPER module handles to locate DIMMs
+Date:   Tue, 4 Sep 2018 07:22:25 -0600
+Message-ID: <003601d44452$531d4060$f957c120$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.191
-X-Source-L: No
-X-Exim-ID: 1fxBFU-002Miz-EJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.191]:39348
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKPRs6m4luRznbEo0Ny3bXcoujxLAHRqk+vo1uJbaA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both old and new cannot be NULL at the same time, hence checking
-new when old is not NULL is unnecessary.
 
-Also, notice that new is being dereferenced before it is checked:
-	
-	idx = new->conf.keyidx;
 
-The above triggers a static code analysis warning.
+> -----Original Message-----
+> From: Borislav Petkov <bp@alien8.de>
+> Sent: Tuesday, September 4, 2018 1:29 AM
+> To: Fan Wu <wufan@codeaurora.org>
+> Cc: mchehab@kernel.org; james.morse@arm.com; baicar.tyler@gmail.com;
+> linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; john.garry@huawei.com; toshi.kani@hpe.com;
+> tanxiaofei@huawei.com; wanghuiqiang@huawei.com;
+> shiju.jose@huawei.com
+> Subject: Re: [PATCH v3] EDAC, ghes: use CPER module handles to locate
+> DIMMs
+> 
+> On Tue, Sep 04, 2018 at 03:50:55AM +0000, Fan Wu wrote:
+> > For platforms whose firmwares provide valid module handles (SMBIOS
+> > type 17) in error records, this patch uses the module handles to
+> > locate corresponding DIMMs and enables per-DIMM error counter update.
+> >
+> > Signed-off-by: Fan Wu <wufan@codeaurora.org>
+> > Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
+> > Tested-by: Toshi Kani <toshi.kani@hpe.com>
+> 
+> Those two tags I did see being given to you ...
+> 
+> > Reviewed-by: Borislav Petkov <bp@alien8.de>
+> > Reviewed-by: James Morse <james.morse@arm.com>
+> > Reviewed-by: tanxiaofei <tanxiaofei@huawei.com>
+>
+> ... but how in the world did you come up with those?
 
-Address this by removing the NULL check on new and adding a code
-comment based on the following piece of code:
+Sorry. Will remove these in v4. 
+Thanks,
+Fan
 
-387        /* caller must provide at least one old/new */
-388        if (WARN_ON(!new && !old))
-389                return 0;
-
-Addresses-Coverity-ID: 1473176 ("Dereference before null check")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/mac80211/key.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/mac80211/key.c b/net/mac80211/key.c
-index d6eeace..4700718 100644
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -401,8 +401,9 @@ static int ieee80211_key_replace(struct ieee80211_sub_if_data *sdata,
- 		 * pairwise keys.*/
- 		ret = ieee80211_hw_key_replace(old, new, pairwise);
- 	} else {
-+		/* new must be provided in case old is not */
- 		idx = new->conf.keyidx;
--		if (new && !new->local->wowlan)
-+		if (!new->local->wowlan)
- 			ret = ieee80211_key_enable_hw_accel(new);
- 		else
- 			ret = 0;
--- 
-2.7.4
+ 
+> Do you understand how Reviewed-by works or do you need to look at
+> Documentation/process/submitting-patches.rst, section 13 ?
+> 
+> --
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
 
