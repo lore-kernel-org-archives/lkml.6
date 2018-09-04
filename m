@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FB0C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA59AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D5B2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D9992075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="QdxziaTD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D5B2075E
+	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="e9nsvXs+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9992075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=az8.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeIDWuJ (ORCPT
+        id S1727814AbeIDWus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:50:09 -0400
-Received: from sender-of-o52.zoho.com ([135.84.80.217]:21470 "EHLO
+        Tue, 4 Sep 2018 18:50:48 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21481 "EHLO
         sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeIDWuJ (ORCPT
+        with ESMTP id S1726708AbeIDWus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:50:09 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1536085402; cv=none; 
+        Tue, 4 Sep 2018 18:50:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1536085444; cv=none; 
         d=zoho.com; s=zohoarc; 
-        b=iPTjlSsOjNWPrMblQrXxA4euQw5cuAFcy2wpoM8zgpzxxL8ix4Pn2VCKTfiNdzIxKP6xlYr4hl3enPE5sCQyZlc4DETUXbYuHUflimuryf8YCOiiJTtbtLWO2bOsPVKgC19rTz0VdHTMjG8NEC3hWE3T3m60b24woZlmG4k92OM=
+        b=BooMJgWTylhSW8JMUL3eFneO90Dljkxi2f/BfQ8D1vvq8iueR8e2jTt1Gq1lG+TdKwOmQWFkSducf3BtM1j5WvXHhv9QCfVxkBTG/HXTuGwNhPmZ7eqAR8zvD8/m0fsJGtZN90P+7z3lFqw9HSnpiZL7hfXNrs5159fOuSOd2GU=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1536085402; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=7EBvUo87W/tz5R4YxFayNZsGFRJfqGthoHAai+9AvAo=; 
-        b=n2mELKrlcChSKGgGqumEwyw+rtGgqkBeB3jWN0x2XLWbNms/13zTRvleApdBAetc32k/Qmdf3vODI5OnLmSXyaTesc0+jVNTV1VVdwXK0VfyXReihALaWUl3AkVZpGgmb3EkpE5T621/Q9YQlp3gBS5DtbJDYeC1r89u1NP/+5I=
+        t=1536085444; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=Clh9eUeHjZMCACf5vUTEtuBkCvWlMSIn7c1WfJt9cbA=; 
+        b=jbuwY6zpfJ5nKfo7OONWLBaS1ccUDmyuXGABDl+iGSDV8bczp9GQ7oiFNiHKcrZd4Il14xj34mtP1byCoq+QQMCAhnY84RPEOYNXoGWajZ1eQ0cgtko4M3XV9sOGtMcSinjJoKFT9YZHqpks6+EOY+FLmJ4z2sClQHBBszsca6M=
 ARC-Authentication-Results: i=1; mx.zoho.com;
         dkim=pass  header.i=az8.co;
         spf=pass  smtp.mailfrom=afonsobordado@az8.co;
         dmarc=pass header.from=<afonsobordado@az8.co> header.from=<afonsobordado@az8.co>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536085402;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536085444;
         s=dkimmail; d=az8.co; i=afonsobordado@az8.co;
         h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:Content-Type:Mime-Version:Content-Transfer-Encoding;
-        l=12856; bh=7EBvUo87W/tz5R4YxFayNZsGFRJfqGthoHAai+9AvAo=;
-        b=QdxziaTDUvJoT42oBzywnHfRW56YuQjPTxMJenl1DPBBJDW9a2NUb+0PnMJHp17f
-        xDRCR/sf2E9kKoujDZ310DVbvk1EPRgpPxwRUQNWrXttLAJYnFNO8U0vQiZyPWgl+fL
-        fLTDimZllhYioIdB6BHjoOENYC7a9mdZxLXdfXoQ=
+        l=13562; bh=Clh9eUeHjZMCACf5vUTEtuBkCvWlMSIn7c1WfJt9cbA=;
+        b=e9nsvXs+hb4MkBCaH4mDmH02kLTTyv8fnFHxzSHWCqDqYctdlf88HWqQbFkqTre4
+        qWDcK3DDXpSABjNaMLh9T9TmbG4E96Fjp5f7rHKqhD1NQ+0P7TQsS2TJIZgRalJpbaN
+        hogvpg85jjEKh/h004q32fTDvql+JeQa+ENpcLvw=
 Received: from AYYLMAO-H (bl9-77-228.dsl.telepac.pt [85.242.77.228]) by mx.zohomail.com
-        with SMTPS id 1536085400099552.2882216129296; Tue, 4 Sep 2018 11:23:20 -0700 (PDT)
-Message-ID: <c6e2adc7df0b9f4146b61cafaf588116e5244530.camel@az8.co>
+        with SMTPS id 153608544220683.31935667855225; Tue, 4 Sep 2018 11:24:02 -0700 (PDT)
+Message-ID: <b08cb6806c2bf466210692be37ac562b744fc660.camel@az8.co>
 Subject: Re: [PATCH v2 1/4] iio: gyro: add support for fxas21002c
 From:   Afonso Bordado <afonsobordado@az8.co>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
 Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
         pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date:   Tue, 04 Sep 2018 20:23:15 +0100
-In-Reply-To: <20180831122504.GA5828@himanshu-Vostro-3559>
+Date:   Tue, 04 Sep 2018 20:23:57 +0100
+In-Reply-To: <20180831153548.GA2679@arch>
 References: <20180830211825.12202-1-afonsobordado@az8.co>
-         <20180831122504.GA5828@himanshu-Vostro-3559>
+         <20180831153548.GA2679@arch>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 
 Mime-Version: 1.0
@@ -66,9 +66,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 17:55 +0530, Himanshu Jha wrote:
-> Hello Afonso,
-> 
+On Fri, 2018-08-31 at 17:35 +0200, Tomasz Duszynski wrote:
 > On Thu, Aug 30, 2018 at 10:18:22PM +0100, Afonso Bordado wrote:
 > > FXAS21002C is a 3 axis gyroscope with integrated temperature sensor
 > > 
@@ -93,7 +91,7 @@ On Fri, 2018-08-31 at 17:55 +0530, Himanshu Jha wrote:
 > > @@ -73,6 +73,17 @@ config BMG160_SPI
 > >  	tristate
 > >  	select REGMAP_SPI
-> >  
+> > 
 > > +config FXAS21002C
 > > +	tristate "Freescale FXAS21002C Gyroscope"
 > > +	depends on I2C
@@ -118,9 +116,9 @@ On Fri, 2018-08-31 at 17:55 +0530, Himanshu Jha wrote:
 > >  obj-$(CONFIG_BMG160_I2C) += bmg160_i2c.o
 > >  obj-$(CONFIG_BMG160_SPI) += bmg160_spi.o
 > > +obj-$(CONFIG_FXAS21002C) += fxas21002c.o
-> >  
+> > 
 > >  obj-$(CONFIG_HID_SENSOR_GYRO_3D) += hid-sensor-gyro-3d.o
-> >  
+> > 
 > > diff --git a/drivers/iio/gyro/fxas21002c.c
 > > b/drivers/iio/gyro/fxas21002c.c
 > > new file mode 100644
@@ -152,11 +150,7 @@ On Fri, 2018-08-31 at 17:55 +0530, Himanshu Jha wrote:
 > > +#include <linux/iio/iio.h>
 > > +#include <linux/iio/sysfs.h>
 > > +#include <linux/regmap.h>
-> 
-> Nit: Alphabetical ordering would be nice.
-
-Sure
-
+> > +
 > > +#define FXAS21002C_DRV_NAME "fxas21002c"
 > > +
 > > +#define FXAS21002C_MAX_TRANSITION_TIME_MS 61
@@ -199,6 +193,13 @@ Sure
 > > +#define FXAS21002C_TEMP_SCALE          1000
 > > +
 > > +enum fxas21002c_id {
+> 
+> It looks like your are not using this named enum anywhere
+> in the code so perhaps drop the name. Besides the name
+> collides with i2c_device_id table's name. Just a suggestion though.
+
+I agree, changed in v3.
+
 > > +	ID_FXAS21002C,
 > > +};
 > > +
@@ -257,16 +258,7 @@ Sure
 > > +	.volatile_table = &fxas21002c_volatile_table,
 > > +};
 > > +EXPORT_SYMBOL(fxas21002c_regmap_config);
-> 
-> Is it necessary to export ?
-> 
-> Well, if you have plans in future to add SPI support
-> then probably it is essential. But for now it isn't.
-> 
-> Also, maybe adding SPI support in TODO ?
-
-Sure
-
+> > +
 > > +#define FXAS21002C_GYRO_CHAN(_axis) {				
 > > 	\
 > > +	.type = IIO_ANGL_VEL,						
@@ -300,16 +292,6 @@ Sure
 > > *data,
 > > +					 enum fxas21002c_operating_mode
 > > om)
-> 
-> If you plan to send a new version, then align this as:
-> 
-> static int fxas21002c_set_operating_mode(struct fxas21002c_data
-> *data,
-> 					 enum fxas21002c_operating_mode
-> om)
-
-See my comment at the bottom.
-
 > > +{
 > > +	int ret;
 > > +	int mask;
@@ -386,15 +368,6 @@ See my comment at the bottom.
 > > +
 > > +	ret = regmap_read(data->regmap, FXAS21002C_REG_WHO_AM_I,
 > > &chip_id);
-> 
-> Is this correct ?
-> regmap_read() needs unsigned int * as a the third agrument. This
-> warning is
-> usually prompted on compilation IIRC and build shall fail!
-
-Thanks. I didn't catch that. And I got no warnings when building it.
-I've switched all calls of regmap_read to use unsigned int
-
 > > +	if (ret) {
 > > +		dev_err(&data->client->dev, "could not read device
 > > id\n");
@@ -404,48 +377,6 @@ I've switched all calls of regmap_read to use unsigned int
 > > +	if (chip_id != FXAS21002C_CHIP_ID) {
 > > +		dev_err(&data->client->dev,
 > > +			"unsupported chip id %02x\n", chip_id);
-> 
-> 						^ %02d ?
-> 
-> I have been skimming through the kernel source for a few a while and
-> have observed often that we ignore "-Wformat-signedness" warnings ?
-> 
-> -Wformat-signedness:
-> https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-> "If -Wformat is specified, also warn if the format string requires
->  an unsigned argument and the argument is signed and vice versa."
-> 
-> And the ISO-C11 Standard says:
-> https://port70.net/~nsz/c/c11/n1570.html#7.21.6.1p9
-> 
->  "If a conversion specification is invalid, the behavior is
-> undefined.
->  If any argument is not the correct type for the corresponding
->  conversion specification, the behavior is *undefined*."
-> 
-> Undefined Behavior:
-> ------------------
-> 
-> In the C community, undefined behavior may be humorously referred to
-> as "nasal demons",
-> after a comp.std.c post that explained undefined behavior as allowing
-> the compiler to
-> do _anything_ it chooses, even "to make demons fly out of your nose"
-> 
-> And Paul E. McKenney comments on compiler writers:
-> https://lwn.net/Articles/508999/
-> 
-> "I have seen the glint in their eyes when they discuss optimization
->  techniques that you would not want your children to know about!"
-> 
-> 
-> You may try and check the compiler warning by building source with
-> "-Wformat-signedness" flag.
-> 
-> Otherwise, you can avoid my comment and call me a language-lawyer ;)
-
-Fixed in v3
-
 > > +		return -ENODEV;
 > > +	}
 > > +
@@ -455,9 +386,7 @@ Fixed in v3
 > > +static int fxas21002c_read_oneshot(struct fxas21002c_data *data,
 > > +				   struct iio_chan_spec const *chan,
 > > int *val)
-> 
-> Similar alignment here.
-> 
+> > +{
 > > +	int ret;
 > > +	__be16 bulk_raw;
 > > +
@@ -485,23 +414,126 @@ Fixed in v3
 > > +			       struct iio_chan_spec const *chan, int
 > > *val,
 > > +			       int *val2, long mask)
-> 
-> Similarly here.
-> 
-> static int fxas21002c_read_raw(struct iio_dev *indio_dev,
-> 			       struct iio_chan_spec const *chan, int
-> *val,
-> 			       int *val2, long mask)
-> 
-
-I don't think these are misaligned, I think they are shown wrongly on
-the diff due to the way tabs are presented when there are preceding
-characters.
-
-If you look at my quote of your aligned function, its also misaligned
-now. I also compared, we have exactly the same whitespace preceding
-struct iio_chan_spec.
-
-> Thanks
+> > +{
+> > +	struct fxas21002c_data *data = iio_priv(indio_dev);
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_RAW:
+> > +		return fxas21002c_read_oneshot(data, chan, val);
+> > +	case IIO_CHAN_INFO_SCALE:
+> > +		switch (chan->type) {
+> > +		case IIO_ANGL_VEL:
+> > +			*val = 0;
+> > +			*val2 = FXAS21002C_DEFAULT_SENSITIVITY;
+> > +
+> > +			return IIO_VAL_INT_PLUS_MICRO;
+> > +		case IIO_TEMP:
+> > +			*val = FXAS21002C_TEMP_SCALE;
+> > +
+> > +			return IIO_VAL_INT;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_SAMP_FREQ:
+> > +		if (chan->type != IIO_ANGL_VEL)
+> > +			return -EINVAL;
+> > +
+> > +		*val = FXAS21002C_DEFAULT_ODR_HZ;
+> > +
+> > +		return IIO_VAL_INT;
+> > +	}
+> > +
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +static const struct iio_info fxas21002c_info = {
+> > +	.read_raw		= fxas21002c_read_raw,
+> > +};
+> > +
+> > +static int fxas21002c_probe(struct i2c_client *client,
+> > +			    const struct i2c_device_id *id)
+> > +{
+> > +	int ret;
+> > +	struct iio_dev *indio_dev;
+> > +	struct fxas21002c_data *data;
+> > +
+> > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	i2c_set_clientdata(client, indio_dev);
+> > +	data = iio_priv(indio_dev);
+> > +	data->client = client;
+> > +
+> > +	data->regmap = devm_regmap_init_i2c(client,
+> > &fxas21002c_regmap_config);
+> > +	if (IS_ERR(data->regmap)) {
+> > +		ret = PTR_ERR(data->regmap);
+> > +		dev_err(&client->dev,
+> > +			"Failed to allocate regmap, err: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	indio_dev->dev.parent = &client->dev;
+> > +	indio_dev->channels = fxas21002c_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(fxas21002c_channels);
+> > +	indio_dev->name = id->name;
+> > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > +	indio_dev->info = &fxas21002c_info;
+> > +
+> > +	ret = fxas21002c_verify_chip(data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = fxas21002c_reset(data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = fxas21002c_set_operating_mode(data,
+> > FXAS21002C_OM_ACTIVE);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = devm_add_action(&client->dev, fxas21002c_standby, data);
+> > +	if (ret < 0) {
+> > +		fxas21002c_standby(data);
+> > +		dev_err(&client->dev, "failed to add standby
+> > action\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = iio_device_register(indio_dev);
+> > +	if (ret < 0)
+> > +		dev_err(&client->dev, "failed to register iio
+> > device\n");
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct i2c_device_id fxas21002c_id[] = {
+> > +	{"fxas21002c", ID_FXAS21002C},
+> > +	{}
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(i2c, fxas21002c_id);
+> > +
+> > +static struct i2c_driver fxas21002c_driver = {
+> > +	.driver = {
+> > +		.name = FXAS21002C_DRV_NAME,
+> > +	},
+> > +	.probe		= fxas21002c_probe,
+> > +	.id_table	= fxas21002c_id,
+> > +};
+> > +
+> > +module_i2c_driver(fxas21002c_driver);
+> > +
+> > +MODULE_AUTHOR("Afonso Bordado <afonsobordado@az8.co>");
+> > +MODULE_DESCRIPTION("FXAS21002C Digital Angular Rate Gyroscope
+> > driver");
+> > +MODULE_LICENSE("GPL v2");
+> > --
+> > 2.18.0
+> > 
+> > 
 
 
