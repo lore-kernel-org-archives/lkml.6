@@ -2,133 +2,133 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C151BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C81C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D7B920659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5vrvJiE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7B920659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 495B520659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495B520659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeIEARE (ORCPT
+        id S1728046AbeIEARI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 20:17:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54714 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbeIEARE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:17:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so5650091wmb.4;
-        Tue, 04 Sep 2018 12:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=f9dzvM2SiV7WpDRR5R4BYaIKH+VOP3+svnLMCWdrwTA=;
-        b=l5vrvJiEntwHjWc4y5h6PtfKJw4Y4kFAALHP/HDHGSLg+yHDUbSdj21Rgc9n5mU4x4
-         2pLUssJkJpJf4wzpkUkL4PI0ICmxTX4tQwPkNuWy52ZX9If9kg2pZtAA7jfi719Q+9P1
-         RqoGHRXkQTkMXyacpvJK3xA3bRb7rniBmXA9RBqSq9Fu/vhx0lGisI1rfN5jArXjQr7E
-         wbJomJRs/Otn0nTiDA+fAxJ5WPkK4FlGOf4hPJUjmSlHW0kLIQ50YQWZ/2AYIb1KBNMs
-         fkNXZOjm4lPo1LgJk7vhUtI6Tf/ddC+86utdWil+DjrhOD565ojfvJ158E0fkf96bIMf
-         iyhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=f9dzvM2SiV7WpDRR5R4BYaIKH+VOP3+svnLMCWdrwTA=;
-        b=SVyDIVAaA5PQqFqBCFbG5ZVigVIk2qOYdju/1p7KB/h/kZ/++t0rXMz4taRG1MZ1bJ
-         U96cWO93eCpMU63fki7YQboafspQwGwd9stDoYUDZBih0aAVJchZLWc/qal78WT2cKur
-         mXBSqVxto3nFt3n7rPsVN6fqLLAf6CBdtC0+f9gbbaCzKMdE1427drFdnPGlq3VLA+t9
-         IIhm2jHAmbWIeOr/CFlBMbT6CtsQD0Kk/4p/1aJgze7KjMQH8J7Si4VIXsjqBXIQXyy5
-         TSTY9UfM1jYpB306Iby1U17CE7aRIPftyGt0T4DnqEUI5suQZl4IBIFJn77FE0hRoS+F
-         WxkQ==
-X-Gm-Message-State: APzg51AtnI506NlkAcmrooW/5MaesiTit6MJkkQr+EvLE+7bkaA9sel3
-        iHiew43aEiJ/L09jSPTDg2E=
-X-Google-Smtp-Source: ANB0VdYdAUFrtmV5C4EfxeDKDxyOZt+FQPLccrzleKVZXM3SIJmLR1/T/+wMmC/yyuGOpxXbSqLatA==
-X-Received: by 2002:a1c:1a48:: with SMTP id a69-v6mr3388014wma.43.1536090626361;
-        Tue, 04 Sep 2018 12:50:26 -0700 (PDT)
-Received: from ubuntu.home ([2a02:8071:6a3:700:e0d3:4061:15a3:10db])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm17194998wrn.58.2018.09.04.12.50.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 12:50:25 -0700 (PDT)
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Trent Piepho <tpiepho@impinj.com>
-Cc:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Subject: [PATCH v3] spi: dw: support 4-16 bits per word
-Date:   Tue,  4 Sep 2018 21:49:44 +0200
-Message-Id: <20180904194944.19721-1-simon.k.r.goldschmidt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
-References: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
+        Tue, 4 Sep 2018 20:17:08 -0400
+Received: from mga07.intel.com ([134.134.136.100]:63929 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726749AbeIEARH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 20:17:07 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 12:50:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
+   d="scan'208";a="259816882"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
+  by fmsmga005.fm.intel.com with ESMTP; 04 Sep 2018 12:50:30 -0700
+Date:   Tue, 4 Sep 2018 12:50:30 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] x86/pkeys: Explicitly treat PK #PF on kernel address as
+ a bad area
+Message-ID: <20180904195030.GA6269@linux.intel.com>
+References: <20180807172920.8766-1-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807172920.8766-1-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The spi-dw driver currently only supports 8 or 16 bits per word.
+Cc-ing Jann and Andy.
 
-Since the hardware supports 4-16 bits per word, adapt the driver
-to also support this.
-
-Tested on socfpga cyclone5 with a 9-bit SPI display.
-
-Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
-Changes in v3
-- remove the check for valid 'bits_per_word' from dw_spi_transfer_one()
-- add reviewed-by tag
-
-Changes in v2:
-- use DIV_ROUND_UP to calculate number of bytes per word instead of
-  if/else range checks
-
- drivers/spi/spi-dw.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index f693bfe95ab9..58a7caf31d59 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -307,15 +307,10 @@ static int dw_spi_transfer_one(struct spi_controller *master,
- 		dws->current_freq = transfer->speed_hz;
- 		spi_set_clk(dws, chip->clk_div);
- 	}
--	if (transfer->bits_per_word == 8) {
--		dws->n_bytes = 1;
--		dws->dma_width = 1;
--	} else if (transfer->bits_per_word == 16) {
--		dws->n_bytes = 2;
--		dws->dma_width = 2;
--	} else {
--		return -EINVAL;
--	}
-+
-+	dws->n_bytes = DIV_ROUND_UP(transfer->bits_per_word, BITS_PER_BYTE);
-+	dws->dma_width = DIV_ROUND_UP(transfer->bits_per_word, BITS_PER_BYTE);
-+
- 	/* Default SPI mode is SCPOL = 0, SCPH = 0 */
- 	cr0 = (transfer->bits_per_word - 1)
- 		| (chip->type << SPI_FRF_OFFSET)
-@@ -493,7 +491,7 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
- 	}
- 
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
--	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
-+	master->bits_per_word_mask =  SPI_BPW_RANGE_MASK(4, 16);
- 	master->bus_num = dws->bus_num;
- 	master->num_chipselect = dws->num_cs;
- 	master->setup = dw_spi_setup;
--- 
-2.17.1
-
+On Tue, Aug 07, 2018 at 10:29:20AM -0700, Sean Christopherson wrote:
+> Kernel addresses are always mapped with _PAGE_USER=0, i.e. PKRU
+> isn't enforced, and so we should never see X86_PF_PK set on a
+> kernel address fault.  WARN once to capture the issue in case we
+> somehow don't die, e.g. the access originated in userspace.
+> 
+> Remove a similar check and its comment from spurious_fault_check().
+> The intent of the comment (and later code[1]) was simply to document
+> that spurious faults due to protection keys should be impossible, but
+> that's irrelevant and a bit of a red herring since we should never
+> get a protection keys fault on a kernel address regardless of the
+> kernel's TLB flushing behavior.
+> 
+> [1] http://lists-archives.com/linux-kernel/28407455-x86-pkeys-new-page-fault-error-code-bit-pf_pk.html
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> ---
+> There's no indication that this condition has ever been encountered.
+> I came across the code in spurious_fault_check() and was confused as
+> to why we would unconditionally treat a protection keys fault as
+> spurious when the comment explicitly stated that such a case should
+> be impossible.
+> 
+> Dave Hansen suggested adding a WARN_ON_ONCE in spurious_fault_check(),
+> but it seemed more appropriate to freak out on any protection keys
+> fault on a kernel address since that would imply a hardware issue or
+> kernel bug.  I omitted a Suggested-by since this isn't necessarily
+> what Dave had in mind.
+> 
+>  arch/x86/mm/fault.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 2aafa6ab6103..f19a55972136 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -1040,12 +1040,6 @@ static int spurious_fault_check(unsigned long error_code, pte_t *pte)
+>  
+>  	if ((error_code & X86_PF_INSTR) && !pte_exec(*pte))
+>  		return 0;
+> -	/*
+> -	 * Note: We do not do lazy flushing on protection key
+> -	 * changes, so no spurious fault will ever set X86_PF_PK.
+> -	 */
+> -	if ((error_code & X86_PF_PK))
+> -		return 1;
+>  
+>  	return 1;
+>  }
+> @@ -1241,6 +1235,14 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+>  	 * protection error (error_code & 9) == 0.
+>  	 */
+>  	if (unlikely(fault_in_kernel_space(address))) {
+> +		/*
+> +		 * We should never encounter a protection keys fault on a
+> +		 * kernel address as kernel address are always mapped with
+> +		 * _PAGE_USER=0, i.e. PKRU isn't enforced.
+> +		 */
+> +		if (WARN_ON_ONCE(error_code & X86_PF_PK))
+> +			goto bad_kernel_address;
+> +
+>  		if (!(error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
+>  			if (vmalloc_fault(address) >= 0)
+>  				return;
+> @@ -1253,6 +1255,8 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
+>  		/* kprobes don't want to hook the spurious faults: */
+>  		if (kprobes_fault(regs))
+>  			return;
+> +
+> +bad_kernel_address:
+>  		/*
+>  		 * Don't take the mm semaphore here. If we fixup a prefetch
+>  		 * fault we could otherwise deadlock:
+> -- 
+> 2.18.0
+> 
