@@ -2,148 +2,133 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C13C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C151BC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71F62082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71F62082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D7B920659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:50:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5vrvJiE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7B920659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeIEAQi (ORCPT
+        id S1728007AbeIEARE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 20:16:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32824 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbeIEAQi (ORCPT
+        Tue, 4 Sep 2018 20:17:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54714 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbeIEARE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:16:38 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4416084B;
-        Tue,  4 Sep 2018 19:50:01 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 12:50:00 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jacek Tomaka <Jacek.Tomaka@poczta.fm>
-Cc:     kirill.shutemov@linux.intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: Hugepages mixed with stacks in process address space
-Message-Id: <20180904125000.e2dd2c5403a965bb249b0a02@linux-foundation.org>
-In-Reply-To: <ptihjzjmxbrcpgbmabkt@xekh>
-References: <ptihjzjmxbrcpgbmabkt@xekh>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Sep 2018 20:17:04 -0400
+Received: by mail-wm0-f66.google.com with SMTP id c14-v6so5650091wmb.4;
+        Tue, 04 Sep 2018 12:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=f9dzvM2SiV7WpDRR5R4BYaIKH+VOP3+svnLMCWdrwTA=;
+        b=l5vrvJiEntwHjWc4y5h6PtfKJw4Y4kFAALHP/HDHGSLg+yHDUbSdj21Rgc9n5mU4x4
+         2pLUssJkJpJf4wzpkUkL4PI0ICmxTX4tQwPkNuWy52ZX9If9kg2pZtAA7jfi719Q+9P1
+         RqoGHRXkQTkMXyacpvJK3xA3bRb7rniBmXA9RBqSq9Fu/vhx0lGisI1rfN5jArXjQr7E
+         wbJomJRs/Otn0nTiDA+fAxJ5WPkK4FlGOf4hPJUjmSlHW0kLIQ50YQWZ/2AYIb1KBNMs
+         fkNXZOjm4lPo1LgJk7vhUtI6Tf/ddC+86utdWil+DjrhOD565ojfvJ158E0fkf96bIMf
+         iyhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=f9dzvM2SiV7WpDRR5R4BYaIKH+VOP3+svnLMCWdrwTA=;
+        b=SVyDIVAaA5PQqFqBCFbG5ZVigVIk2qOYdju/1p7KB/h/kZ/++t0rXMz4taRG1MZ1bJ
+         U96cWO93eCpMU63fki7YQboafspQwGwd9stDoYUDZBih0aAVJchZLWc/qal78WT2cKur
+         mXBSqVxto3nFt3n7rPsVN6fqLLAf6CBdtC0+f9gbbaCzKMdE1427drFdnPGlq3VLA+t9
+         IIhm2jHAmbWIeOr/CFlBMbT6CtsQD0Kk/4p/1aJgze7KjMQH8J7Si4VIXsjqBXIQXyy5
+         TSTY9UfM1jYpB306Iby1U17CE7aRIPftyGt0T4DnqEUI5suQZl4IBIFJn77FE0hRoS+F
+         WxkQ==
+X-Gm-Message-State: APzg51AtnI506NlkAcmrooW/5MaesiTit6MJkkQr+EvLE+7bkaA9sel3
+        iHiew43aEiJ/L09jSPTDg2E=
+X-Google-Smtp-Source: ANB0VdYdAUFrtmV5C4EfxeDKDxyOZt+FQPLccrzleKVZXM3SIJmLR1/T/+wMmC/yyuGOpxXbSqLatA==
+X-Received: by 2002:a1c:1a48:: with SMTP id a69-v6mr3388014wma.43.1536090626361;
+        Tue, 04 Sep 2018 12:50:26 -0700 (PDT)
+Received: from ubuntu.home ([2a02:8071:6a3:700:e0d3:4061:15a3:10db])
+        by smtp.gmail.com with ESMTPSA id o3-v6sm17194998wrn.58.2018.09.04.12.50.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 12:50:25 -0700 (PDT)
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Trent Piepho <tpiepho@impinj.com>
+Cc:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Subject: [PATCH v3] spi: dw: support 4-16 bits per word
+Date:   Tue,  4 Sep 2018 21:49:44 +0200
+Message-Id: <20180904194944.19721-1-simon.k.r.goldschmidt@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
+References: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(cc linux-mm).
+The spi-dw driver currently only supports 8 or 16 bits per word.
 
-And thanks.
+Since the hardware supports 4-16 bits per word, adapt the driver
+to also support this.
 
-On Tue, 04 Sep 2018 17:08:34 +0200 Jacek Tomaka <Jacek.Tomaka@poczta.fm> wrote:
+Tested on socfpga cyclone5 with a 9-bit SPI display.
 
-> Hello, 
-> 
-> I was trying to track down the performance differences of one of my applications 
-> between running it on kernel used in Centos 7.4 and the latest 4.x version. 
-> On 4.x kernels its performance depended on the run and the variability 
-> was more than 30%. 
-> 
-> Bisecting showed that my issue  was introduced by : 
-> fd8526ad14c182605e42b64646344b95befd9f94 :x86/mm: Implement ASLR for 
-> hugetlb mappings
-> 
-> But it was not the ASLR aspect of that commit that created the issue but the 
-> change from bottom-up to top-down unmapped area lookup when allocating 
-> huge pages. 
-> 
-> After that change, the huge page allocations could become intertwined with 
-> stacks. Before, the stacks and huge pages were on the other side of the process 
-> address space. 
-> 
-> The machine i am seeing it on is Knights Landing 7250, with 68 cores x 4 
-> hyper-threads. 
-> 
-> My application spawns 272 threads and each thread allocates its memory - a 
-> couple of 2MB huge pages and does some computation, dominated by memory 
-> accesses. 
-> 
-> My theory is that because KNL has 8-way 2MB TLB,  when the huge pages are 
-> exactly 8 pages apart they collide.  And this is where the variability comes from, 
-> if the stacks come in between, they increase chances of them colliding. 
-> 
-> I do realise that the application is (I am ) doing a few things dubiously:  it
-> allocates memory on each thread and each huge page separately.  But i thought
-> you might want to know about this behaviour change. 
-> 
-> When i allocate all my memory before i start threads, the problem goes away. 
-> 
-> /proc/PID/maps: 
-> After change: 
-> 7f5e06a00000-7f5e06c00000 rw-p 00000000 00:0f 31809                      /anon_hugepage (deleted)
-> 7f5e06c00000-7f5e06e00000 rw-p 00000000 00:0f 29767                      /anon_hugepage (deleted)
-> 7f5e06e00000-7f5e07000000 rw-p 00000000 00:0f 30787                      /anon_hugepage (deleted)
-> 7f5e07000000-7f5e07200000 rw-p 00000000 00:0f 30786                      /anon_hugepage (deleted)
-> 7f5e07200000-7f5e07400000 rw-p 00000000 00:0f 28744                      /anon_hugepage (deleted)
-> 7f5e075ff000-7f5e07600000 ---p 00000000 00:00 0 
-> 7f5e07600000-7f5e07e00000 rw-p 00000000 00:00 0 
-> 7f5e07e00000-7f5e08000000 rw-p 00000000 00:0f 30785                      /anon_hugepage (deleted)
-> 7f5e08000000-7f5e08021000 rw-p 00000000 00:00 0 
-> 7f5e08021000-7f5e0c000000 ---p 00000000 00:00 0 
-> 7f5e0c000000-7f5e0c021000 rw-p 00000000 00:00 0 
-> 7f5e0c021000-7f5e10000000 ---p 00000000 00:00 0 
-> 7f5e10000000-7f5e10021000 rw-p 00000000 00:00 0 
-> 7f5e10021000-7f5e14000000 ---p 00000000 00:00 0 
-> 7f5e14200000-7f5e14400000 rw-p 00000000 00:0f 29765                      /anon_hugepage (deleted)
-> 7f5e14400000-7f5e14600000 rw-p 00000000 00:0f 28743                      /anon_hugepage (deleted)
-> 7f5e14600000-7f5e14800000 rw-p 00000000 00:0f 29764                      /anon_hugepage (deleted)
-> (...)
-> 
-> Before change: 
-> 2aaaaac00000-2aaaaae00000 rw-p 00000000 00:0f 25582                      /anon_hugepage (deleted)
-> 2aaaaae00000-2aaaab000000 rw-p 00000000 00:0f 25583                      /anon_hugepage (deleted)
-> 2aaaab000000-2aaaab200000 rw-p 00000000 00:0f 25584                      /anon_hugepage (deleted)
-> 2aaaab200000-2aaaab400000 rw-p 00000000 00:0f 25585                      /anon_hugepage (deleted)
-> 2aaaab400000-2aaaab600000 rw-p 00000000 00:0f 25601                      /anon_hugepage (deleted)
-> 2aaaab600000-2aaaab800000 rw-p 00000000 00:0f 25599                      /anon_hugepage (deleted)
-> 2aaaab800000-2aaaaba00000 rw-p 00000000 00:0f 25602                      /anon_hugepage (deleted)
-> 2aaaaba00000-2aaaabc00000 rw-p 00000000 00:0f 26652                      /anon_hugepage (deleted)
-> (...)
-> 7fc4f0021000-7fc4f4000000 ---p 00000000 00:00 0 
-> 7fc4f4000000-7fc4f4021000 rw-p 00000000 00:00 0 
-> 7fc4f4021000-7fc4f8000000 ---p 00000000 00:00 0 
-> 7fc4f8000000-7fc4f8021000 rw-p 00000000 00:00 0 
-> 7fc4f8021000-7fc4fc000000 ---p 00000000 00:00 0 
-> 7fc4fc000000-7fc4fc021000 rw-p 00000000 00:00 0 
-> 7fc4fc021000-7fc500000000 ---p 00000000 00:00 0 
-> 7fc500000000-7fc500021000 rw-p 00000000 00:00 0 
-> 7fc500021000-7fc504000000 ---p 00000000 00:00 0 
-> 7fc504000000-7fc504021000 rw-p 00000000 00:00 0 
-> 7fc504021000-7fc508000000 ---p 00000000 00:00 0 
-> 7fc508000000-7fc508021000 rw-p 00000000 00:00 0 
-> 7fc508021000-7fc50c000000 ---p 00000000 00:00 0 
-> (...)
-> 
-> I was wondering if this intertwined stacks and hugepages is an expected 
-> feature of ASLR? If not, maybe mmap's MAP_STACK flag could finally start 
-> to be used by the kernel to keep all the stacks together in process address 
-> space?
-> 
-> Or should users just not allocate huge pages on separate threads?
-> 
-> MAP_STACK could also be used to mark a VMA as a mapping for stack, 
-> (if there are flags left) to re-implement: 
-> 65376df582174ffcec9e6471bf5b0dd79ba05e4a proc: revert /proc/<pid>/maps [stack:TID] annotation
-> correctly, as having these pieces of information in place would greatly 
-> simplify my investigation. 
-> 
-> Regards.
-> Jacek Tomaka
+Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+Changes in v3
+- remove the check for valid 'bits_per_word' from dw_spi_transfer_one()
+- add reviewed-by tag
+
+Changes in v2:
+- use DIV_ROUND_UP to calculate number of bytes per word instead of
+  if/else range checks
+
+ drivers/spi/spi-dw.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
+index f693bfe95ab9..58a7caf31d59 100644
+--- a/drivers/spi/spi-dw.c
++++ b/drivers/spi/spi-dw.c
+@@ -307,15 +307,10 @@ static int dw_spi_transfer_one(struct spi_controller *master,
+ 		dws->current_freq = transfer->speed_hz;
+ 		spi_set_clk(dws, chip->clk_div);
+ 	}
+-	if (transfer->bits_per_word == 8) {
+-		dws->n_bytes = 1;
+-		dws->dma_width = 1;
+-	} else if (transfer->bits_per_word == 16) {
+-		dws->n_bytes = 2;
+-		dws->dma_width = 2;
+-	} else {
+-		return -EINVAL;
+-	}
++
++	dws->n_bytes = DIV_ROUND_UP(transfer->bits_per_word, BITS_PER_BYTE);
++	dws->dma_width = DIV_ROUND_UP(transfer->bits_per_word, BITS_PER_BYTE);
++
+ 	/* Default SPI mode is SCPOL = 0, SCPH = 0 */
+ 	cr0 = (transfer->bits_per_word - 1)
+ 		| (chip->type << SPI_FRF_OFFSET)
+@@ -493,7 +491,7 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
+ 	}
+ 
+ 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
+-	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
++	master->bits_per_word_mask =  SPI_BPW_RANGE_MASK(4, 16);
+ 	master->bus_num = dws->bus_num;
+ 	master->num_chipselect = dws->num_cs;
+ 	master->setup = dw_spi_setup;
+-- 
+2.17.1
+
