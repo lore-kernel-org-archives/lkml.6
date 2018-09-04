@@ -2,205 +2,134 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAC7C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C7CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3839020658
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384A920659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:56:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="PPLCNqVg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3839020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UjlCFeYu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384A920659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeIDWVZ (ORCPT
+        id S1727718AbeIDWWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:21:25 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42886 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbeIDWVY (ORCPT
+        Tue, 4 Sep 2018 18:22:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43324 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeIDWWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:21:24 -0400
-Received: by mail-io0-f195.google.com with SMTP id n18-v6so3733537ioa.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 10:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lfoea8LSSlIaamVDrdlIwHUpP+wIjjOrIkYLNMhEM54=;
-        b=PPLCNqVgSX2rWA3g8vwMUgwzFVO+dWdugloiN2HKQQVlVsGYyg6DuVKMP/JSErTL0+
-         XF9oVoMD9xlFQGYK3jrja0tMUxeAlLF12O4rRUJ3COBaRjQVZf3pmm+G9cJLL/TTMybz
-         QqI99MICIBPkaOoMVzKtok7/Ut5q3qADwKsZGhGkIr+WOHfmX0Ei7B2CfHEl1UBaBI9O
-         e7v3IYu8w/hRoaxkdOWay3ad6LMTylLfcdvEn64xG0mz1UKXwfbKLpt5V7Ebjz7PHfZ9
-         SkLBCKr/eeDTUbBJUBVK0ENfXZL4W7m1UEzhvTnYzSx0AmbTymlcJL64stv0hQTnbC67
-         Dc9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lfoea8LSSlIaamVDrdlIwHUpP+wIjjOrIkYLNMhEM54=;
-        b=JRChuccEJQC4CXR5gKWY7n7tK6MryYdzecpRSpZ6E2kcYe+/xxgVT6gOA9LtTLdHB+
-         G9IVLhCu/6a53Qwf2DfzsqKchk969SkT2jinZ+r4iX3+Re2CJ/g0X1/qao7Y2xe13h/u
-         /fZlbmJSBH7HNZVj+y2/JGPgV1QD5Cg+mtKpV71aUcEbBj+RIZqjOgcPm3vWaXcHk3Uz
-         Av8hqeniTeUZ+kimNf2lMb08epReRxdzdERu4BgV2fh/qgUGJH7v/Syi+bxQCW2RZ84n
-         RyNtNtg9EWvW+lp1Bk6QoRczDSEqXbY4362y8OkdQAGpDh4s9DGBVwrY1P0EmGuUzbtb
-         aACA==
-X-Gm-Message-State: APzg51ArGG9K+6WhWttvmd6Izk9ROIgEGr9zQZM8vuxzK0w3evgGVihq
-        QX+pyNEx7rS7MD8ftgM1tyoLsA==
-X-Google-Smtp-Source: ANB0VdYAVfIfZocASZarJnwWVLEaLFjj4V5xL5l/nsnvje2ADCzrAeiD6ZTqBcIlRcHm56ohhP5UAg==
-X-Received: by 2002:a6b:b445:: with SMTP id d66-v6mr22913613iof.163.1536083713590;
-        Tue, 04 Sep 2018 10:55:13 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id m126-v6sm8714105ioa.79.2018.09.04.10.55.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 10:55:12 -0700 (PDT)
-Subject: Re: divide error in nbd_ioctl
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     syzbot <syzbot+25dbecbec1e62c6b0dd4@syzkaller.appspotmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nbd@other.debian.org, syzkaller-bugs@googlegroups.com
-References: <0000000000006105bf057506ebb9@google.com>
- <dc31a6f0-97c6-9dc0-8676-089e9fd69868@kernel.dk>
- <20180904174810.gp7bd5s3kijhjp5d@destiny>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9571a094-a87f-e6dd-2bdf-f9b4ea500ca9@kernel.dk>
-Date:   Tue, 4 Sep 2018 11:55:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 4 Sep 2018 18:22:31 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w84HrjPF040492;
+        Tue, 4 Sep 2018 17:56:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=LLKOSJjrLwfIdtPxwafP7grqTYqRndZCGCyv4pImstU=;
+ b=UjlCFeYuJH/krsAfj9Mb+Q/hj4Z7CI4jB4Rmwgh2Td7v3YKFo8Bd3ItEdTGZzuHnHIs9
+ TnxmeWOQ+lO24dYGz+EEjzaOCHnatcdmdxNxeuaGz8YYZrVSpovibzAWYy62iX46CVjH
+ ZAktpbn1mdWdCwYCPXiQvM5W2yFUcMlUyop9CF5Iyjy0YDpsRhdELVEjpAIPeBMpF5S3
+ gmywhjNit9MYEUyGcJCCbC5iD17TF5U1CRM1It8DCUgsJXTwM7xNLsaoqcgTtu/I60pA
+ j2nk7CIfSlVT/JDyHNPVqW3Tk1tNirx404rMevn4wPRud1f9DY3bNmZFapAz52UiZLCv pg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m7kdqeq9w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Sep 2018 17:56:03 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w84Hu0ia007349
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Sep 2018 17:56:01 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w84HtuPb005698;
+        Tue, 4 Sep 2018 17:55:56 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Sep 2018 10:55:56 -0700
+Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Matan Barak <matanb@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Dimitri Sivanich <sivanich@sgi.com>
+References: <20180829181424.GB3784@redhat.com>
+ <20180829183906.GF10223@dhcp22.suse.cz> <20180829211106.GC3784@redhat.com>
+ <20180830105616.GD2656@dhcp22.suse.cz> <20180830140825.GA3529@redhat.com>
+ <20180830161800.GJ2656@dhcp22.suse.cz> <20180830165751.GD3529@redhat.com>
+ <e0c0c966-6706-4ca2-4077-e79322756a9b@oracle.com>
+ <20180830183944.GE3529@redhat.com> <20180903055654.GA14951@dhcp22.suse.cz>
+ <20180904140035.GA3526@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <4b275965-3e6e-2a68-4b39-d09902bbc573@oracle.com>
+Date:   Tue, 4 Sep 2018 10:55:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180904174810.gp7bd5s3kijhjp5d@destiny>
+In-Reply-To: <20180904140035.GA3526@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809040178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/18 11:48 AM, Josef Bacik wrote:
-> On Tue, Sep 04, 2018 at 09:07:37AM -0600, Jens Axboe wrote:
->> On 9/4/18 1:51 AM, syzbot wrote:
->>> Hello,
+On 09/04/2018 07:00 AM, Jerome Glisse wrote:
+> On Mon, Sep 03, 2018 at 07:56:54AM +0200, Michal Hocko wrote:
+>> On Thu 30-08-18 14:39:44, Jerome Glisse wrote:
+>>> For all intents and purposes this is not a backport of the original
+>>> patch so maybe we should just drop the commit reference and just
+>>> explains that it is there to fix mmu notifier in respect to huge page
+>>> migration.
 >>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    217c3e019675 disable stringop truncation warnings for now
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=13665da6400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=25dbecbec1e62c6b0dd4
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163e910a400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=169dfe0a400000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+25dbecbec1e62c6b0dd4@syzkaller.appspotmail.com
->>>
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> divide error: 0000 [#1] SMP KASAN
->>> CPU: 0 PID: 4667 Comm: syz-executor024 Not tainted 4.19.0-rc1+ #216
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
->>> Google 01/01/2011
->>> RIP: 0010:div_s64_rem include/linux/math64.h:41 [inline]
->>> RIP: 0010:div_s64 include/linux/math64.h:139 [inline]
->>> RIP: 0010:__nbd_ioctl drivers/block/nbd.c:1242 [inline]
->>> RIP: 0010:nbd_ioctl+0x53c/0xcf0 drivers/block/nbd.c:1303
->>> Code: ea 03 80 3c 02 00 0f 85 1c 07 00 00 48 8b b5 c0 fe ff ff 48 63 8d b8  
->>> fe ff ff 48 8b 86 c8 00 00 00 48 8d be c0 00 00 00 48 99 <48> f7 f9 48 ba  
->>> 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c
->>> RSP: 0018:ffff8801c90bf828 EFLAGS: 00010246
->>> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
->>> RDX: 0000000000000000 RSI: ffff8801ccb23c00 RDI: ffff8801ccb23cc0
->>> RBP: ffff8801c90bf9a0 R08: ffff8801bc502640 R09: ffffed003a62d01d
->>> R10: ffff8801c90bf818 R11: ffff8801d31680ef R12: ffff8801d3168000
->>> R13: 00000000ffffffe7 R14: ffff8801d31680e0 R15: ffff8801d5730840
->>> FS:  00000000015b2880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 000000000043e560 CR3: 00000001b8034000 CR4: 00000000001406f0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> Call Trace:
->>>   __blkdev_driver_ioctl block/ioctl.c:303 [inline]
->>>   blkdev_ioctl+0x9cd/0x2030 block/ioctl.c:601
->>>   block_ioctl+0xee/0x130 fs/block_dev.c:1883
->>>   vfs_ioctl fs/ioctl.c:46 [inline]
->>>   file_ioctl fs/ioctl.c:501 [inline]
->>>   do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
->>>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
->>>   __do_sys_ioctl fs/ioctl.c:709 [inline]
->>>   __se_sys_ioctl fs/ioctl.c:707 [inline]
->>>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
->>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>> RIP: 0033:0x443d29
->>> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
->>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
->>> ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->>> RSP: 002b:00007ffe343644d8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
->>> RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443d29
->>> RDX: 0000000000000000 RSI: 000000000000ab01 RDI: 0000000000000003
->>> RBP: 00000000006ce018 R08: 0000000000000000 R09: 00000000004002e0
->>> R10: 000000000000000f R11: 0000000000000213 R12: 0000000000401a30
->>> R13: 0000000000401ac0 R14: 0000000000000000 R15: 0000000000000000
->>> Modules linked in:
->>> Dumping ftrace buffer:
->>>     (ftrace buffer empty)
->>> ---[ end trace 25c60c4714d4e2ee ]---
->>> RIP: 0010:div_s64_rem include/linux/math64.h:41 [inline]
->>> RIP: 0010:div_s64 include/linux/math64.h:139 [inline]
->>> RIP: 0010:__nbd_ioctl drivers/block/nbd.c:1242 [inline]
->>> RIP: 0010:nbd_ioctl+0x53c/0xcf0 drivers/block/nbd.c:1303
->>> Code: ea 03 80 3c 02 00 0f 85 1c 07 00 00 48 8b b5 c0 fe ff ff 48 63 8d b8  
->>> fe ff ff 48 8b 86 c8 00 00 00 48 8d be c0 00 00 00 48 99 <48> f7 f9 48 ba  
->>> 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c
->>> RSP: 0018:ffff8801c90bf828 EFLAGS: 00010246
->>> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
->>> RDX: 0000000000000000 RSI: ffff8801ccb23c00 RDI: ffff8801ccb23cc0
->>> RBP: ffff8801c90bf9a0 R08: ffff8801bc502640 R09: ffffed003a62d01d
->>> R10: ffff8801c90bf818 R11: ffff8801d31680ef R12: ffff8801d3168000
->>> R13: 00000000ffffffe7 R14: ffff8801d31680e0 R15: ffff8801d5730840
->>> FS:  00000000015b2880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 000000000043e560 CR3: 00000001b8034000 CR4: 00000000001406f0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>> The original patches fix more than this case because newer featurers
+>>> like THP migration, THP swapping, ... added more cases where things
+>>> would have been wrong. But in 4.4 frame there is only huge tlb fs
+>>> migration.
 >>
->> Looks like NBD_SET_BLKSIZE is happy to just take whatever value.
->> We should ensure that it's a power of 2, not zero, and bigger
->> or equal than 512, but smaller or equal to PAGE_SIZE. Something
->> like this?
->>
->>
->> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
->> index 3863c00372bb..14a51254c3db 100644
->> --- a/drivers/block/nbd.c
->> +++ b/drivers/block/nbd.c
->> @@ -1239,6 +1239,9 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
->>  	case NBD_SET_SOCK:
->>  		return nbd_add_socket(nbd, arg, false);
->>  	case NBD_SET_BLKSIZE:
->> +		if (!arg || !is_power_of_2(arg) || arg < 512 ||
->> +		    arg > PAGE_SIZE)
->> +			return -EINVAL;
->>  		nbd_size_set(nbd, arg,
->>  			     div_s64(config->bytesize, arg));
->>  		return 0;
+>> And THP migration is still a problem with 4.4 AFAICS. All other cases
+>> simply split the huge page but THP migration keeps it in one piece and
+>> as such it is theoretically broken as you have explained. So I would
+>> stick with what I posted with some more clarifications in the changelog
+>> if you think it is appropriate (suggestions welcome).
 > 
-> Thanks Jens, you can add
-> 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Reading code there is no THP migration in 4.4 only huge tlb migration.
+> Look at handle_mm_fault which do not know how to handle swap pmd, only
+> the huge tlb fs fault handler knows how to handle those. Hence why i
+> was checking for huge tlb exactly as page_check_address() to only range
+> invalidate for huge tlb fs migration.
 
-Thanks, applied for 4.19.
+I agree with Jérôme that THP migration was added after 4.4.  But, I could
+be missing something.
 
+> But i am fine with doing the range invalidation with all.
+
+Since the shared pmd patch which will ultimately go on top of this needs
+the PageHuge checks, my preference would be Jérôme's patch.
+
+However, IMO I am not certain we really need/want a separate patch.  We
+could just add the notifiers to the shared pmd patch.  Back porting the
+shared pmd patch will also require some fixup.
+
+Either would work.  I'll admit I do not know what stable maintainers would
+prefer.
 -- 
-Jens Axboe
-
+Mike Kravetz
