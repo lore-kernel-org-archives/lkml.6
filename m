@@ -2,159 +2,126 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32ECCC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7354C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA90E2086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA90E2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 725E32086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:55:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="YwE9i9HL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725E32086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeIDTUT (ORCPT
+        id S1727573AbeIDTUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:20:19 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17925 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726004AbeIDTUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:20:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 07:54:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="85910668"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2018 07:54:51 -0700
-Date:   Tue, 4 Sep 2018 07:54:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180904145451.GA5233@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180831121645.GA18075@linux.intel.com>
- <20180831181509.GB21555@linux.intel.com>
- <20180903191926.GC13497@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+        Tue, 4 Sep 2018 15:20:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47280 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbeIDTUe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:20:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SX7LGK0v9KqOk9fkCYu7nbNo/KS7UYeR8nCtItn80rg=; b=YwE9i9HL9VO6cCnaC5WFOQV1o
+        Tnw141O14sxmP4+2ipcHpprcV8R8ULlYnUo1BzZ9Ju0W3nQXMOhU3f5fWTTgWbV5K8KdM9BcVWiWT
+        lgpgYex2vWyUTo/ySzUvDokpGjmSSQjeK4QhykpfdQRAvFUcbWRAFbAnSKv4bHcpk8Xwg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fxCjP-0001RB-PT; Tue, 04 Sep 2018 14:55:03 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 5834C11227D8; Tue,  4 Sep 2018 15:55:03 +0100 (BST)
+Date:   Tue, 4 Sep 2018 15:55:03 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Andrew F. Davis" <afd@ti.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tlv320aic31xx: Add MICBIAS off setting
+Message-ID: <20180904145503.GD12993@sirena.org.uk>
+References: <20180831180507.28867-1-afd@ti.com>
+ <20180903112656.GF10302@sirena.org.uk>
+ <701a066c-33e1-4476-7403-fdb9a3c366d8@ti.com>
+ <20180904144159.GC12993@sirena.org.uk>
+ <7163381a-ae09-ad3b-064d-990c98f13ccb@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lc9FT7cWel8HagAv"
 Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7163381a-ae09-ad3b-064d-990c98f13ccb@ti.com>
+X-Cookie: Times approximate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 04:45:14PM -0700, Huang, Kai wrote:
-> > -----Original Message-----
-> > From: linux-sgx-owner@vger.kernel.org [mailto:linux-sgx-
-> > owner@vger.kernel.org] On Behalf Of Jarkko Sakkinen
-> > Sent: Tuesday, September 4, 2018 7:19 AM
-> > To: Christopherson, Sean J <sean.j.christopherson@intel.com>
-> > Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
-> > x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
-> > tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
-> > <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> > mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> > <dave.hansen@intel.com>
-> > Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-> > 
-> > On Fri, Aug 31, 2018 at 11:15:09AM -0700, Sean Christopherson wrote:
-> > > On Fri, Aug 31, 2018 at 03:17:03PM +0300, Jarkko Sakkinen wrote:
-> > > > On Wed, Aug 29, 2018 at 07:33:54AM +0000, Huang, Kai wrote:
-> > > > > [snip..]
-> > > > >
-> > > > > > > >
-> > > > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
-> > > > > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > > > > +sgx_pm_cnt;
-> > > > > > > > +
-> > > > > > > > +/* The cache for the last known values of
-> > > > > > > > +IA32_SGXLEPUBKEYHASHx MSRs
-> > > > > > > > for each
-> > > > > > > > + * CPU. The entries are initialized when they are first
-> > > > > > > > + used by
-> > > > > > > > sgx_einit().
-> > > > > > > > + */
-> > > > > > > > +struct sgx_lepubkeyhash {
-> > > > > > > > +	u64 msrs[4];
-> > > > > > > > +	u64 pm_cnt;
-> > > > > > >
-> > > > > > > May I ask why do we need pm_cnt here? In fact why do we need
-> > > > > > > suspend staff (namely, sgx_pm_cnt above, and related code in
-> > > > > > > this patch) here in this patch? From the patch commit message
-> > > > > > > I don't see why we need PM staff here. Please give comment why
-> > > > > > > you need PM staff, or you may consider to split the PM staff to another
-> > patch.
-> > > > > >
-> > > > > > Refining the commit message probably makes more sense because
-> > > > > > without PM code sgx_einit() would be broken. The MSRs have been reset
-> > after waking up.
-> > > > > >
-> > > > > > Some kind of counter is required to keep track of the power
-> > > > > > cycle. When going to sleep the sgx_pm_cnt is increased.
-> > > > > > sgx_einit() compares the current value of the global count to
-> > > > > > the value in the cache entry to see whether we are in a new power cycle.
-> > > > >
-> > > > > You mean reset to Intel default? I think we can also just reset
-> > > > > the cached MSR values on each power cycle, which would be simpler,
-> > IMHO?
-> > > >
-> > > > I don't really see that much difference in the complexity.
-> > >
-> > > Tracking the validity of the cache means we're hosed if we miss any
-> > > condition that causes the MSRs to be reset.  I think we're better off
-> > > assuming the cache can be stale at any time, i.e. don't track power
-> > > cyles and instead handle EINIT failure due to INVALID_TOKEN by writing
-> > > the cache+MSRs with the desired hash and retrying EINIT.  EINIT is
-> > > interruptible and its latency is extremely variable in any case, e.g.
-> > > tens of thousands of cycles, so this rarely-hit "slow path" probably
-> > > wouldn't affect the worst case latency of EINIT.
-> > 
-> > Sounds a good refiniment. Pretty good solution to heal from host sleep on the
-> > guest VM and then there is no need for driver changes.
-> 
-> To me either way should be OK, keeping MSR cache or retrying EINIT, since EINIT should not be in performance critical path I think.
-> 
-> But INVALID_TOKEN is not only returned when MSRs are mismatched, so do you plan to check to rule out other cases that cause INVALID_TOKEN before retrying EINIT, or unconditionally  retry EINIT? And we should only retry once?
 
-I don't see any value in trying to rule out specific causes of
-INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
-and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
-be checked for validity as they're a package deal, i.e. they'll all be
-valid or all be reset.  There shouldn't be a limit on retry attempts,
-e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+--lc9FT7cWel8HagAv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> Thanks,
-> -Kai
-> > 
-> > /Jarkko
+On Tue, Sep 04, 2018 at 09:43:03AM -0500, Andrew F. Davis wrote:
+> On 09/04/2018 09:41 AM, Mark Brown wrote:
+
+> >>> If we really want to pay attention to something setting this up we'd
+> >>> need to completely remove the widget - what the code is doing at the
+> >>> minute is setting the voltage that the bias will go to when enabled,
+> >>> there's still a widget for turning it on and off.  There's some chance
+> >>> that this will break existing boards.
+
+> >> Turning on bias is controlled separately, automatically in user-space in
+> >> many cases, not based on the board. The DT needs to have a way to state
+> >> that 0v is the needed bias on this board, without this you can not set
+> >> 0v bias and 2v is chosen by default (which is IMHO should be 0v but that
+> >> would change existing behavior so I won't touch that).
+
+> > Surely turning on MICBIAS at 0V is equivalent to leaving the bias off?
+
+> It is, but DT doesn't control when or why MICBIAS is turned on or off,
+> only what voltage on should be.
+
+The DT controls this in so far as it will arrange for the bias to be
+connected to something, if it's not connected to anything then it will
+only be turned on if the machine driver explicitly forces it on which is
+a potential source of problems but seems comfortably in "you broke it,
+you get to keep the pieces" territory.  If we really want to have a way
+of explicitly specifying that some widgets should never be turned on
+then it feels like rather than have something device and widget specific
+like this we should instead have a higher level way of doing that which
+can be applied to any widget, that is something that could be useful
+especially with things like speaker drivers where there's real potential
+for physical damage to the system.
+
+Like I said in my original reply I'm also worried that this will break
+existing boards by causing them to change to a voltage of 0 when they
+had managed to end up with the default of 2V which happened to work for
+them.
+
+--lc9FT7cWel8HagAv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluOnMYACgkQJNaLcl1U
+h9C5rQf9EitPZEIwdrnRzlotHH90WYdwdgA/c4XcKqOlnJ5fFPBoOhfrODmw2fOS
+zt7IgdjXBPyNeUtWGvAxNJW2IQ1bdwA6pTr5LtB/LPa22N54tCa7i58T3kc4knGM
+TbivsKuBndK2nAgPlA0779KK0LLM6EjSs+lQ5mFWvFCwLUbSQ7fEA9nZ0zVTtq+3
+JP5F6OEvvht98QxHKVm9TwcaED2tMW428RThXmh09soARjGQFhAFD28OLthTQG71
+/yLKFGFgSLgvJT4/rXeGvdAHLBQnbkDc/9VPyrqpdjh7Yc+YrFK9sChK5Y/vBkgI
+YGli/tDAJq71FIS1OPPxfj6qYMFN8g==
+=+cLv
+-----END PGP SIGNATURE-----
+
+--lc9FT7cWel8HagAv--
