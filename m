@@ -2,137 +2,182 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BA1C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E056C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7772086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:48:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7772086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id B43662086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:48:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43662086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbeIDPNL (ORCPT
+        id S1727531AbeIDPNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 11:13:11 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39388 "EHLO mail.skyhub.de"
+        Tue, 4 Sep 2018 11:13:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:40260 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726376AbeIDPNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 11:13:11 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id N_De4pobJ573; Tue,  4 Sep 2018 12:48:19 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CB1131EC0513;
-        Tue,  4 Sep 2018 12:48:18 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 12:48:12 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Pu Wen <puwen@hygon.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v5 05/16] x86/pmu: enable Hygon support to PMU
- infrastructure
-Message-ID: <20180904104812.GF32615@zn.tnic>
-References: <cover.1535459012.git.puwen@hygon.cn>
- <dcd5b900e26e3175e4cafded91ec28e53c79adf8.1535459013.git.puwen@hygon.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dcd5b900e26e3175e4cafded91ec28e53c79adf8.1535459013.git.puwen@hygon.cn>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1726376AbeIDPNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 11:13:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C97BA7A9;
+        Tue,  4 Sep 2018 03:48:39 -0700 (PDT)
+Received: from lakrids.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 93B863F5BC;
+        Tue,  4 Sep 2018 03:48:37 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     mingo@kernel.org
+Cc:     arnd@arndb.de, aryabinin@virtuozzo.com, boqun.feng@gmail.com,
+        catalin.marinas@arm.com, dvyukov@google.com, glider@google.com,
+        linuxdrivers@attotech.com, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, peterz@infradead.org, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCHv3 0/6] atomics: generate atomic headers / instrument arm64
+Date:   Tue,  4 Sep 2018 11:48:24 +0100
+Message-Id: <20180904104830.2975-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 08:43:54PM +0800, Pu Wen wrote:
-> Hygon PMU arch is similar to AMD Family 17h. To support Hygon PMU, the
-> initialization flow for it just call amd_pmu_init() and change PMU name
+Hi Ingo,
 
-That sentence reads funny.
+As previously requested, this is a (trivial) rebase of the remaining generated
+atomic patches atop of v4.19-rc2, avoiding any potential conflict with Peter's
+ldsem atomic cleanup patch that got taken through the tty tree.
 
-> to "HYGON". To share AMD's flow, add code check for Hygon family ID 18h
+Are you still happy to pick this up? Full blurb below.
 
-s/family ID/family/
+This series scripts the generation of the various atomic headers, to ensure
+that the various atomic APIs remain consistent, reducing the risk of human
+error, and simplifying future rework. This fleshes out the instrumented atomics
+such that arm64 can be migrated over to them.
 
-> to run the code path of AMD family 17h in core/uncore functions.
-> 
-> Also it returns the bit offset of the performance counter register and
-> event selection register for Hygon CPU in the similar way as AMD does.
+Since v1 [1]:
+* Use 'p' instead of 'I' for pointer to base int type
+* Use Peter's patch for ldsem
+* Rename atomic acquire/release barriers
+* Handle xchg/cmpxchg variants
+* Typo fixes
+* Migrate arm64 to instrumented atomics
 
-In general, you seem to be explaining *what* your patches do and not
-*why*. This is the wrong. Always explain the *why* - the *what* is
-visible from the diff.
+Since v2 [4]:
+* rebase to v4.19-rc2 to solve potential conflicts with ldsem patch
 
-You probably need to brush up on
-Documentation/process/submitting-patches.rst, section 2.
+The series is based on my atomic API cleanup patches [2], which have been
+queued in the tip locking/core branch.
 
-> Signed-off-by: Pu Wen <puwen@hygon.cn>
-> ---
->  arch/x86/events/amd/core.c             |  6 ++++++
->  arch/x86/events/amd/uncore.c           | 15 ++++++++++-----
->  arch/x86/events/core.c                 |  4 ++++
->  arch/x86/kernel/cpu/perfctr-watchdog.c |  2 ++
->  4 files changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> index c84584b..6c13c9d 100644
-> --- a/arch/x86/events/amd/core.c
-> +++ b/arch/x86/events/amd/core.c
-> @@ -669,6 +669,12 @@ static int __init amd_core_pmu_init(void)
->  		 * We fallback to using default amd_get_event_constraints.
->  		 */
->  		break;
-> +	case 0x18:
-> +		if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-> +			pr_cont("Fam18h ");
+The first six patches clean up some issues with the existing atomic
+instrumentation, with patch six introducing the header generation
+infrastructure. The subsequent three patches migrate to each generated header
+in turn, with the final patch moving arm64 over to the instrumented atomics.
 
-Didn't we agree that you'll verify whether family 0x18 is going to be
-Hygon only?
+The scripts themselves are mostly POSIX sh (modulo local), without bashisms,
+and work in dash and bash.
 
-What happened to that checking?
+Per Linus request that it is possible to use git grep to inspect the atomic
+headers [3], the headers are committed (and not generated by kbuild). Since we
+now expand the fallback definitions inline, each *should* be easier to find
+with grep. Each header also has a comment at the top with a path to the script
+used to generate it. 
 
-> +			/* Using default amd_get_event_constraints. */
-> +			break;
-> +		}
->  	default:
->  		pr_err("core perfctr but no constraints; unknown hardware!\n");
->  		return -ENODEV;
-> diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-> index 981ba5e..9f2eb43 100644
-> --- a/arch/x86/events/amd/uncore.c
-> +++ b/arch/x86/events/amd/uncore.c
-> @@ -507,17 +507,22 @@ static int __init amd_uncore_init(void)
->  {
->  	int ret = -ENODEV;
->  
-> -	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-> +	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-> +	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
->  		return -ENODEV;
->  
->  	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
->  		return -ENODEV;
->  
-> -	if (boot_cpu_data.x86 == 0x17) {
-> +	if ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD &&
-> +	     boot_cpu_data.x86 == 0x17) ||
-> +	    (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON &&
-> +	     boot_cpu_data.x86 == 0x18)) {
+That scripting comes to ~900 lines, and replaces ~1700 lines of hand-written
+boilerplate with ~4700 lines of generated code. Some of that increase in line
+count is due to filling in missing portions of the API (e.g. adding all the
+ordering variants to the instrumented atomics), while some of that is due to
+expanding fallbacks in place, and consistently spreading these across multiple
+lines.
 
-Same here.
+I've build-tested this for x86_64 and arm64 (with and without LSE), and given
+this some basic boot testing.
 
-What's up?
+I've pushed the series out to my atomics/generated branch [3], based atop of
+v4.19-rc2.
+
+Thanks,
+Mark.
+
+[1] https://lkml.kernel.org/r/20180529180746.29684-1-mark.rutland@arm.com
+[2] https://lkml.kernel.org/r/20180621121321.4761-1-mark.rutland@arm.com
+[3] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/generated
+[4] https://lkml.kernel.org/r/20180625105952.3756-1-mark.rutland@arm.com
+
+Mark Rutland (6):
+  atomics: add common header generation files
+  atomics: switch to generated fallbacks
+  atomics: switch to generated atomic-long
+  atomics: switch to generated instrumentation
+  atomics: check generated headers are up-to-date
+  arm64: use instrumented atomics
+
+ Kbuild                                       |   18 +-
+ MAINTAINERS                                  |    1 +
+ arch/arm64/include/asm/atomic.h              |  237 +--
+ arch/arm64/include/asm/atomic_ll_sc.h        |   28 +-
+ arch/arm64/include/asm/atomic_lse.h          |   38 +-
+ arch/arm64/include/asm/cmpxchg.h             |   60 +-
+ arch/arm64/include/asm/sync_bitops.h         |   16 +-
+ include/asm-generic/atomic-instrumented.h    | 1688 ++++++++++++++++---
+ include/asm-generic/atomic-long.h            | 1173 ++++++++++---
+ include/linux/atomic-fallback.h              | 2294 ++++++++++++++++++++++++++
+ include/linux/atomic.h                       | 1241 +-------------
+ scripts/atomic/atomic-tbl.sh                 |  186 +++
+ scripts/atomic/atomics.tbl                   |   41 +
+ scripts/atomic/check-atomics.sh              |   19 +
+ scripts/atomic/fallbacks/acquire             |    9 +
+ scripts/atomic/fallbacks/add_negative        |   16 +
+ scripts/atomic/fallbacks/add_unless          |   16 +
+ scripts/atomic/fallbacks/andnot              |    7 +
+ scripts/atomic/fallbacks/dec                 |    7 +
+ scripts/atomic/fallbacks/dec_and_test        |   15 +
+ scripts/atomic/fallbacks/dec_if_positive     |   15 +
+ scripts/atomic/fallbacks/dec_unless_positive |   14 +
+ scripts/atomic/fallbacks/fence               |   11 +
+ scripts/atomic/fallbacks/fetch_add_unless    |   23 +
+ scripts/atomic/fallbacks/inc                 |    7 +
+ scripts/atomic/fallbacks/inc_and_test        |   15 +
+ scripts/atomic/fallbacks/inc_not_zero        |   14 +
+ scripts/atomic/fallbacks/inc_unless_negative |   14 +
+ scripts/atomic/fallbacks/read_acquire        |    7 +
+ scripts/atomic/fallbacks/release             |    8 +
+ scripts/atomic/fallbacks/set_release         |    7 +
+ scripts/atomic/fallbacks/sub_and_test        |   16 +
+ scripts/atomic/fallbacks/try_cmpxchg         |   11 +
+ scripts/atomic/gen-atomic-fallback.sh        |  181 ++
+ scripts/atomic/gen-atomic-instrumented.sh    |  182 ++
+ scripts/atomic/gen-atomic-long.sh            |  101 ++
+ 36 files changed, 5909 insertions(+), 1827 deletions(-)
+ create mode 100644 include/linux/atomic-fallback.h
+ create mode 100755 scripts/atomic/atomic-tbl.sh
+ create mode 100644 scripts/atomic/atomics.tbl
+ create mode 100755 scripts/atomic/check-atomics.sh
+ create mode 100644 scripts/atomic/fallbacks/acquire
+ create mode 100644 scripts/atomic/fallbacks/add_negative
+ create mode 100644 scripts/atomic/fallbacks/add_unless
+ create mode 100644 scripts/atomic/fallbacks/andnot
+ create mode 100644 scripts/atomic/fallbacks/dec
+ create mode 100644 scripts/atomic/fallbacks/dec_and_test
+ create mode 100644 scripts/atomic/fallbacks/dec_if_positive
+ create mode 100644 scripts/atomic/fallbacks/dec_unless_positive
+ create mode 100644 scripts/atomic/fallbacks/fence
+ create mode 100644 scripts/atomic/fallbacks/fetch_add_unless
+ create mode 100644 scripts/atomic/fallbacks/inc
+ create mode 100644 scripts/atomic/fallbacks/inc_and_test
+ create mode 100644 scripts/atomic/fallbacks/inc_not_zero
+ create mode 100644 scripts/atomic/fallbacks/inc_unless_negative
+ create mode 100644 scripts/atomic/fallbacks/read_acquire
+ create mode 100644 scripts/atomic/fallbacks/release
+ create mode 100644 scripts/atomic/fallbacks/set_release
+ create mode 100644 scripts/atomic/fallbacks/sub_and_test
+ create mode 100644 scripts/atomic/fallbacks/try_cmpxchg
+ create mode 100755 scripts/atomic/gen-atomic-fallback.sh
+ create mode 100755 scripts/atomic/gen-atomic-instrumented.sh
+ create mode 100755 scripts/atomic/gen-atomic-long.sh
 
 -- 
-Regards/Gruss,
-    Boris.
+2.11.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
