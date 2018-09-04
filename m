@@ -2,152 +2,147 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C71C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9433C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3FB206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:23:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mYOade+Z";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mYOade+Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3FB206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 73335206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:26:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73335206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeIEDuW (ORCPT
+        id S1727295AbeIEDyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 23:50:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57960 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeIEDuU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 23:50:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CDED2607DD; Tue,  4 Sep 2018 23:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536103378;
-        bh=g3Sdv6CpVkM0FD+8VN6I1vcE8P5fndxD3Xsg60kjUBM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mYOade+Z/Bt9LwtyLjQn5hGchqUQf4gtkXzlZQeXCscVCCZv+7eUYn9rhlY6V1oh3
-         5+FwWvDy2+cMbPZhkU+rfBtcdINjzDmRqWHgevmNs/zyVQm25ozn95uA1hHIS2TFsq
-         uDedygiVyDvf2MflDEyddG/qJ8H22dx9DV6VWS0o=
-Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vnkgutta@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 702C6607DD;
-        Tue,  4 Sep 2018 23:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536103378;
-        bh=g3Sdv6CpVkM0FD+8VN6I1vcE8P5fndxD3Xsg60kjUBM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mYOade+Z/Bt9LwtyLjQn5hGchqUQf4gtkXzlZQeXCscVCCZv+7eUYn9rhlY6V1oh3
-         5+FwWvDy2+cMbPZhkU+rfBtcdINjzDmRqWHgevmNs/zyVQm25ozn95uA1hHIS2TFsq
-         uDedygiVyDvf2MflDEyddG/qJ8H22dx9DV6VWS0o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 702C6607DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
-From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-To:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
-        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org
-Cc:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: [PATCH v4 2/4] drivers: soc: Add support to register LLCC EDAC driver
-Date:   Tue,  4 Sep 2018 16:22:23 -0700
-Message-Id: <1536103345-1919-3-git-send-email-vnkgutta@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
-References: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
+        Tue, 4 Sep 2018 23:54:16 -0400
+Received: from mga02.intel.com ([134.134.136.20]:51010 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbeIEDyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 23:54:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 16:26:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
+   d="scan'208";a="86041742"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.135]) ([10.54.74.135])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Sep 2018 16:26:54 -0700
+Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can be
+ applied on arbitrary tasks
+To:     Jiri Kosina <jikos@kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
+ <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
+ <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
+ <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
+ <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
+ <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com>
+Date:   Tue, 4 Sep 2018 16:26:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
+MIME-Version: 1.0
+In-Reply-To: <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cache error reporting controller detects and reports single and
-double bit errors on Last Level Cache Controller (LLCC) cache.
-Add required support to register LLCC EDAC driver as platform driver,
-from LLCC driver.
+On 09/04/2018 11:48 AM, Jiri Kosina wrote:
+> On Tue, 4 Sep 2018, Schaufler, Casey wrote:
+> 
+>>> So if this should be done in LSM, it'd probably have to be written by
+>>> someone else than me :) who actually understands how the "sidechannel LSM"
+>>> idea works.
+>>
+>> Yes. That would be me. 
+> 
+> Ok, cool. Then 1/2 and 2/3 can be ignored / replaced by Casey's LSM stuff. 
+> 
+> Some form of 3/3 still should be merged independently on that.
 
-Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
----
- drivers/soc/qcom/llcc-slice.c      | 18 ++++++++++++++++--
- include/linux/soc/qcom/llcc-qcom.h |  2 ++
- 2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index a63640d..09c8bb0 100644
---- a/drivers/soc/qcom/llcc-slice.c
-+++ b/drivers/soc/qcom/llcc-slice.c
-@@ -224,7 +224,7 @@ static int qcom_llcc_cfg_program(struct platform_device *pdev)
- 	u32 attr0_val;
- 	u32 max_cap_cacheline;
- 	u32 sz;
--	int ret;
-+	int ret = 0;
- 	const struct llcc_slice_config *llcc_table;
- 	struct llcc_slice_desc desc;
- 
-@@ -282,6 +282,7 @@ int qcom_llcc_probe(struct platform_device *pdev,
- 	struct resource *llcc_banks_res, *llcc_bcast_res;
- 	void __iomem *llcc_banks_base, *llcc_bcast_base;
- 	int ret, i;
-+	struct platform_device *llcc_edac;
- 
- 	drv_data = devm_kzalloc(dev, sizeof(*drv_data), GFP_KERNEL);
- 	if (!drv_data)
-@@ -341,6 +342,19 @@ int qcom_llcc_probe(struct platform_device *pdev,
- 	mutex_init(&drv_data->lock);
- 	platform_set_drvdata(pdev, drv_data);
- 
--	return qcom_llcc_cfg_program(pdev);
-+	ret = qcom_llcc_cfg_program(pdev);
-+	if (ret)
-+		return ret;
-+
-+	drv_data->ecc_irq = platform_get_irq(pdev, 0);
-+	if (drv_data->ecc_irq >= 0) {
-+		llcc_edac = platform_device_register_data(&pdev->dev,
-+						"qcom_llcc_edac", -1, drv_data,
-+						sizeof(*drv_data));
-+		if (IS_ERR(llcc_edac))
-+			dev_err(dev, "Failed to register llcc edac driver\n");
-+	}
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(qcom_llcc_probe);
-diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-index c681e79..2e4b34d 100644
---- a/include/linux/soc/qcom/llcc-qcom.h
-+++ b/include/linux/soc/qcom/llcc-qcom.h
-@@ -78,6 +78,7 @@ struct llcc_slice_config {
-  * @num_banks: Number of llcc banks
-  * @bitmap: Bit map to track the active slice ids
-  * @offsets: Pointer to the bank offsets array
-+ * @ecc_irq: interrupt for llcc cache error detection and reporting
-  */
- struct llcc_drv_data {
- 	struct regmap *regmap;
-@@ -89,6 +90,7 @@ struct llcc_drv_data {
- 	u32 num_banks;
- 	unsigned long *bitmap;
- 	u32 *offsets;
-+	int ecc_irq;
- };
- 
- #if IS_ENABLED(CONFIG_QCOM_LLCC)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I think STIBP should be an opt in option as it will have significant
+impact on performance.  The attack from neighbor thread is pretty
+difficult to pull off considering you have to know what the sibling
+thread is running and its address allocation.
+
+We could also use a security module to opt in the STIBP policy.
+
+Tim 
+
+> 
+> Thanks,
+> 
 
