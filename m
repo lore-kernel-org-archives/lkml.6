@@ -2,97 +2,95 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECA7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B33C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60F7C20869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60F7C20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+	by mail.kernel.org (Postfix) with ESMTP id BCE222086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:16:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dP3F4u8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE222086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbeIDLjz (ORCPT
+        id S1727154AbeIDLkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:39:55 -0400
-Received: from mx1.unisoc.com ([222.66.158.135]:62159 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbeIDLjz (ORCPT
+        Tue, 4 Sep 2018 07:40:00 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:42780 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeIDLj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:39:55 -0400
-Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-        by SHSQR01.spreadtrum.com with ESMTP id w847DRj5008557
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 4 Sep 2018 15:13:27 +0800 (CST)
-        (envelope-from Chunyan.Zhang@unisoc.com)
-Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 4 Sep 2018 15:14:20
- +0800
-From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeson Gao <jeson.gao@unisoc.com>,
-        Orson Zhai <orson.zhai@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH] thermal: core: using power_efficient_wq for thermal worker
-Date:   Tue, 4 Sep 2018 15:14:08 +0800
-Message-ID: <1536045248-11677-1-git-send-email-chunyan.zhang@unisoc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536043068-11487-1-git-send-email-chunyan.zhang@unisoc.com>
-References: <1536043068-11487-1-git-send-email-chunyan.zhang@unisoc.com>
+        Tue, 4 Sep 2018 07:39:59 -0400
+Received: by mail-lj1-f180.google.com with SMTP id f1-v6so2214549ljc.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 00:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QIwZCtROatCmNKpkEhtjP2HqY0FksC9XnF7GpB0+O9k=;
+        b=dP3F4u8cZP4kgT1fBmIepszFegEESgRM4nxxVoWRzIeG8mEoDlqHiLb24yhXRSecMO
+         ubVZnNZszx+pxZtv5KQ2dMBWHZAocko0nUTetD/tF6p6my2b51omyFztCqG+N1N0/vmb
+         PMQ8hB6g71UW9ig5WSfM6l0Ge23J0BBe6vLjs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QIwZCtROatCmNKpkEhtjP2HqY0FksC9XnF7GpB0+O9k=;
+        b=njGQRRDXYAhxcCLGzsc0GoiUL+bVSMw41ltJ8+Ksquohb+qYEFKl388JoWv6PfwYOK
+         MgJOPFoipq/xHYuRYl3fMKXlTxBjwsgMsZScbmYR15q6D2N1UK2UpyspGaSWVz5nMx3e
+         A3mNoatODoRwunu8878UTQrh9umwYILRD+l3DvIfYjPrc9GO+Q74By4DJfilylc65FbG
+         We8oOMbSDhMwT/Xj59sROoErFlkElPCC7RJEG8F6N9y30dxwPC1tiCo/oMbjXuxUwo2c
+         astIAJmpxz7TH+DiauYK7kHjwQekx6vKUcG6fOjqZdVReVgMci4kEFoh5OVJ+E8THgei
+         dyew==
+X-Gm-Message-State: APzg51Bpgwn99WTeDk4jY4uF+DHa8wl1wnUjITP4coHXs55WILFBtIao
+        xIzFg47x5c0bzV7WfR9iv3QaydFA66cQxUqc+rfBjw==
+X-Google-Smtp-Source: ANB0VdYg+LgU6CLLjmdCHSgsroLa2CKk2RQ7E4KBuNUFaBdU4t5y+6d2/U8ooPmsT7fdbhUrtlp15lTjevfjCG2xXAQ=
+X-Received: by 2002:a2e:5296:: with SMTP id n22-v6mr20522464lje.54.1536045369398;
+ Tue, 04 Sep 2018 00:16:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.93.106]
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com w847DRj5008557
+Received: by 2002:a19:180c:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 00:16:08 -0700 (PDT)
+In-Reply-To: <20180904052428.GA26045@kroah.com>
+References: <20180903165719.499675257@linuxfoundation.org> <20180903165721.576888426@linuxfoundation.org>
+ <CA+G9fYsyr_AxbmuWfD6svin4Cq_5QJOYvOW_ohnS7fUobRU7ZA@mail.gmail.com> <20180904052428.GA26045@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 4 Sep 2018 12:46:08 +0530
+Message-ID: <CA+G9fYukBEWqEj_gFZsMatZ+4Qs7VxMpsrL35jDDKY_ChhukqA@mail.gmail.com>
+Subject: Re: [PATCH 4.18 050/123] mm/tlb, x86/mm: Support invalidating TLB
+ caches for RCU_TABLE_FREE
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeson Gao <jeson.gao@unisoc.com>
+>> Full test log link,
+>> https://lkft.validation.linaro.org/scheduler/job/404027#L4051
+>
+> Does Linus's tree also crash with this patch applied?  Being "bug
+> compatible" is good :)
 
-For SMP systems, thermal worker should use power_efficient_wq in power
-saving mode, that will make scheduler more flexible on selecting an active
-core for running work handler to avoid keeping work handler always
-running on a single core, that will save some power.
+No.
+It did not crash on mainline kernel.
 
-Even if 'power_efficient_wq' relevant configs are disabled
-'system_freezable_power_efficient_wq' is identical to system_freezable_wq,
-behavior is unchanged.
+- Naresh
 
-Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/thermal/thermal_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 6ab9823..99df89f 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -290,10 +290,12 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
- 					    int delay)
- {
- 	if (delay > 1000)
--		mod_delayed_work(system_freezable_wq, &tz->poll_queue,
-+		mod_delayed_work(system_freezable_power_efficient_wq,
-+				 &tz->poll_queue,
- 				 round_jiffies(msecs_to_jiffies(delay)));
- 	else if (delay)
--		mod_delayed_work(system_freezable_wq, &tz->poll_queue,
-+		mod_delayed_work(system_freezable_power_efficient_wq,
-+				 &tz->poll_queue,
- 				 msecs_to_jiffies(delay));
- 	else
- 		cancel_delayed_work(&tz->poll_queue);
--- 
-2.7.4
-
+>
+> thanks,
+>
+> greg k-h
