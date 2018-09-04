@@ -2,120 +2,104 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED216C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F10C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3DD020843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:54:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="YgMlJFis"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DD020843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 55F552086C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:56:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55F552086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727463AbeIDPTG (ORCPT
+        id S1727296AbeIDPVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 11:19:06 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40832 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbeIDPTF (ORCPT
+        Tue, 4 Sep 2018 11:21:31 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:46319 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbeIDPVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 11:19:05 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x26-v6so2557922lfi.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0RO+aW7tuXDYfI8cP4xc7WBlaOD07/tVAbpYO7eMyek=;
-        b=YgMlJFisWyvyMy6QNBGpsK1K3i2miJyknkkeJ6P/NMsbv/IcYPHb7/XlA5DPnYPNRf
-         AmBp7hvqTPn24uBERlRSAmgK8OXzlKPnLb1hs73NUH1JQ84mLbmZNES5M9qHluqkVyMn
-         RvfLwD+uktfU9QrI1XJWNabGXr+4MF3GFrYWrOLJSL8dLpH0oTBjxWlER7hRD9261yXs
-         4ZXsTKbXDRSXmsrXIiNOngf2iUJ3xeddNraDMKcLCLtBkacu8k1cpVHFBsr4DAF5ZxzE
-         mvA8gAcqgBOWISdf5iMGue2HNPLE3HaCFEvwQWb/+2625nC4dd+SD2YFBqI93Lr3k8U8
-         PF/g==
+        Tue, 4 Sep 2018 11:21:30 -0400
+Received: by mail-yb1-f195.google.com with SMTP id y20-v6so1096469ybi.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:56:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0RO+aW7tuXDYfI8cP4xc7WBlaOD07/tVAbpYO7eMyek=;
-        b=XhFpzVvzsPrs7cWCzo7Rzvh8uRz0c8wMd6iXlvVHMq37Pl/y04fnF93xZUPyDV17vz
-         sXMHTsEuYcE4ysK3wL4LTeUWg+SReg79qJAJeobvmLPbbJ79WpgFnek1qJ7JWUTuP/+U
-         ODB1PSE2YZLA7lH6FuZx5HS4NO3Wl6LTivPTINYBNi30u8Ef8CsfoZdyJP0FxHwjfd/A
-         zmjH7GI9kNn58ORDi81csqcQqP8amfR05VuD9Dj21+0bcGgKw0i71CkI4a8xH2nBvic0
-         y7x1rvujfaeTqQ8Kf+eESHz9dW3lIwd7YQiwZeXE7SPnEdyWIQVRcMBt9leQpZKc4rXA
-         PY8A==
-X-Gm-Message-State: APzg51AYdzvqsW2CUPBeV//fpxpoWNTfXkYFWg1a55+ssMS9fMgkqup5
-        xq/dLbwmi/Ht3e1NF5Ujuuc3/gi69SM=
-X-Google-Smtp-Source: ANB0VdbsJ3TZvSo3tsKVqsXISABOMu4NP71gUOBQXPEBldAopocX/J1sgODHTXTsLSWAQOd0JdQ8Ug==
-X-Received: by 2002:a19:1761:: with SMTP id n94-v6mr19777559lfi.64.1536058469190;
-        Tue, 04 Sep 2018 03:54:29 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.83.176])
-        by smtp.gmail.com with ESMTPSA id q81-v6sm4084266lfq.85.2018.09.04.03.54.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 03:54:28 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: i40e: fix build error
-To:     Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
-        jeffrey.t.kirsher@intel.com
-Cc:     jacob.e.keller@intel.com, davem@davemloft.net,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1536054527-34184-1-git-send-email-dongsheng.wang@hxt-semitech.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <84982f95-940e-d278-f6a2-13a9f76823c9@cogentembedded.com>
-Date:   Tue, 4 Sep 2018 13:54:28 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1536054527-34184-1-git-send-email-dongsheng.wang@hxt-semitech.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OprbpS3vhusD9yY8I6Dv1ZZO0fM3KLRhcUIMBCLFvQo=;
+        b=fAeelqIH3bTMyoZ5oJ2IjJAOnSgYVbHYDsZIMFrRZPx/+EQbonh+gE30MJx5CUss/U
+         GC2L1BGJ0qHsta96x+TRNtKiw65UBDchc5ORXUb5ei/5JxH6PKWURS4vuG5MUO/ZqR2p
+         yovEiIRSQVjyvAMfVhzm3PrTt8Pe55CtkV8G0NcyL4QGPJDZX/A6Bz6B3fNf1Pp6Kymp
+         8BOl+hSEuAQOQlhCk870UkOHMiPJ6pXvUihesZnVMTq1e3eJa3RAkpamzzeWWFXZNEMj
+         0m5QkQJKvnY2laA66pL2vDKhzyIk6h1f4Myb2Vt4sUK+SWLag2yN5zZ3OYtQfc9RoNzl
+         3OuA==
+X-Gm-Message-State: APzg51AUlQyT4DN3r1JriGhFho252xjIj/YcuDZa4EQpdlYEak20NSqV
+        ahSnY4vXnQm3OpnhbXpvj1DNJw==
+X-Google-Smtp-Source: ANB0Vdbxgiqu0+FoAfpjCYtVEK5cOx4Ca8PWljxXJGYFfp0Fap8bvLnJGJNVzb9wbhvF/diKH5p2JA==
+X-Received: by 2002:a5b:749:: with SMTP id s9-v6mr10144281ybq.79.1536058614925;
+        Tue, 04 Sep 2018 03:56:54 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-161.dyn6.twc.com. [2606:a000:1100:db::161])
+        by smtp.gmail.com with ESMTPSA id t10-v6sm9253434ywg.74.2018.09.04.03.56.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 03:56:54 -0700 (PDT)
+Message-ID: <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
+Subject: Re: POSIX violation by writeback error
+From:   Jeff Layton <jlayton@redhat.com>
+To:     =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Rogier Wolff <R.E.Wolff@BitWizard.nl>
+Date:   Tue, 04 Sep 2018 06:56:53 -0400
+In-Reply-To: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
+References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/2018 12:48 PM, Wang Dongsheng wrote:
-
-> Remove "inline" from __i40e_add_stat_strings.
+On Tue, 2018-09-04 at 13:42 +0800, 焦晓冬 wrote:
+> Hi,
 > 
-> In file included from
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:0:
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function
-> ‘__i40e_add_stat_strings’:
-> drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error:
-> function ‘__i40e_add_stat_strings’ can never be inlined because it uses
-> variable argument lists
->   static inline void __i40e_add_stat_strings(u8 **p, const struct
-> 					    i40e_stats stats[],
+> After reading several writeback error handling articles from LWN, I
+> begin to be upset about writeback error handling.
 > 
-> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-> ---
->   drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Jlayton's patch is simple but wonderful idea towards correct error
+> reporting. It seems one crucial thing is still here to be fixed. Does
+> anyone have some idea?
 > 
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> index bba1cb0..0290ade 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> @@ -190,7 +190,7 @@ struct i40e_stats {
->    * Format and copy the strings described by stats into the buffer pointed at
->    * by p.
->    **/
-> -static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> The crucial thing may be that a read() after a successful open()-
+> write()-close() may return old data. 
+> That may happen where an async writeback error occurs after close()
+> and the inode/mapping get evicted before read().
+>
+> That violate POSIX as POSIX requires that a read() that can be proved
+> to occur after a write() has returned will return the new data.
 
-    You can't have non-inline function in a header file. Please move it, 
-leaving only prototype here.
+That can happen even before a close(), and it varies by filesystem. Most
+filesystems just pretend the page is clean after writeback failure. It's
+quite possible to do:
 
->   				    const unsigned int size, ...)
->   {
->   	unsigned int i;
+write()
+kernel attempts to write back page and fails
+page is marked clean and evicted from the cache
+read()
 
-MBR, Sergei
+Now your write is gone and there were no calls between the write and
+read.
+
+The question we still need to answer is this:
+
+When we attempt to write back some data from the cache and that fails,
+what should happen to the dirty pages?
+
+Unfortunately, there are no good answers given the write/fsync/read
+model for I/O. I tend to think that in the long run we may need new
+interfaces to handle this better.
+-- 
+Jeff Layton <jlayton@redhat.com>
+
