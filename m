@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD17C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10544C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221B92086C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221B92086C
+	by mail.kernel.org (Postfix) with ESMTP id BEC5B2086C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC5B2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbeIDQKc (ORCPT
+        id S1726344AbeIDQKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 12:10:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:41274 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726199AbeIDQKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 12:10:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41278 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726203AbeIDQKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 12:10:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C165515AD;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF4CD15BE;
         Tue,  4 Sep 2018 04:45:19 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 927423F763;
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1B5D3F93D;
         Tue,  4 Sep 2018 04:45:19 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 97A6D1AE358D; Tue,  4 Sep 2018 12:45:33 +0100 (BST)
+        id A58AD1AE35FF; Tue,  4 Sep 2018 12:45:33 +0100 (BST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, npiggin@gmail.com, linux-mm@kvack.org,
         kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
         mhocko@suse.com, aneesh.kumar@linux.vnet.ibm.com
-Subject: [PATCH v2 2/5] asm-generic/tlb: Track freeing of page-table directories in struct mmu_gather
-Date:   Tue,  4 Sep 2018 12:45:30 +0100
-Message-Id: <1536061533-16188-3-git-send-email-will.deacon@arm.com>
+Subject: [PATCH v2 3/5] asm-generic/tlb: Track which levels of the page tables have been cleared
+Date:   Tue,  4 Sep 2018 12:45:31 +0100
+Message-Id: <1536061533-16188-4-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1536061533-16188-1-git-send-email-will.deacon@arm.com>
 References: <1536061533-16188-1-git-send-email-will.deacon@arm.com>
@@ -46,101 +46,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+It is common for architectures with hugepage support to require only a
+single TLB invalidation operation per hugepage during unmap(), rather than
+iterating through the mapping at a PAGE_SIZE increment. Currently,
+however, the level in the page table where the unmap() operation occurs
+is not stored in the mmu_gather structure, therefore forcing
+architectures to issue additional TLB invalidation operations or to give
+up and over-invalidate by e.g. invalidating the entire TLB.
 
-Some architectures require different TLB invalidation instructions
-depending on whether it is only the last-level of page table being
-changed, or whether there are also changes to the intermediate
-(directory) entries higher up the tree.
+Ideally, we could add an interval rbtree to the mmu_gather structure,
+which would allow us to associate the correct mapping granule with the
+various sub-mappings within the range being invalidated. However, this
+is costly in terms of book-keeping and memory management, so instead we
+approximate by keeping track of the page table levels that are cleared
+and provide a means to query the smallest granule required for invalidation.
 
-Add a new bit to the flags bitfield in struct mmu_gather so that the
-architecture code can operate accordingly if it's the intermediate
-levels being invalidated.
-
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- include/asm-generic/tlb.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ include/asm-generic/tlb.h | 58 ++++++++++++++++++++++++++++++++++++++++-------
+ mm/memory.c               |  4 +++-
+ 2 files changed, 53 insertions(+), 9 deletions(-)
 
 diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index a25e236f7a7f..2b444ad94566 100644
+index 2b444ad94566..9791e98122a0 100644
 --- a/include/asm-generic/tlb.h
 +++ b/include/asm-generic/tlb.h
-@@ -99,12 +99,22 @@ struct mmu_gather {
- #endif
- 	unsigned long		start;
- 	unsigned long		end;
--	/* we are in the middle of an operation to clear
--	 * a full mm and can make some optimizations */
--	unsigned int		fullmm : 1,
--	/* we have performed an operation which
--	 * requires a complete flush of the tlb */
--				need_flush_all : 1;
-+	/*
-+	 * we are in the middle of an operation to clear
-+	 * a full mm and can make some optimizations
-+	 */
-+	unsigned int		fullmm : 1;
-+
-+	/*
-+	 * we have performed an operation which
-+	 * requires a complete flush of the tlb
-+	 */
-+	unsigned int		need_flush_all : 1;
-+
-+	/*
-+	 * we have removed page directories
-+	 */
-+	unsigned int		freed_tables : 1;
+@@ -116,6 +116,14 @@ struct mmu_gather {
+ 	 */
+ 	unsigned int		freed_tables : 1;
  
++	/*
++	 * at which levels have we cleared entries?
++	 */
++	unsigned int		cleared_ptes : 1;
++	unsigned int		cleared_pmds : 1;
++	unsigned int		cleared_puds : 1;
++	unsigned int		cleared_p4ds : 1;
++
  	struct mmu_gather_batch *active;
  	struct mmu_gather_batch	local;
-@@ -139,6 +149,7 @@ static inline void __tlb_reset_range(struct mmu_gather *tlb)
- 		tlb->start = TASK_SIZE;
+ 	struct page		*__pages[MMU_GATHER_BUNDLE];
+@@ -150,6 +158,10 @@ static inline void __tlb_reset_range(struct mmu_gather *tlb)
  		tlb->end = 0;
  	}
-+	tlb->freed_tables = 0;
+ 	tlb->freed_tables = 0;
++	tlb->cleared_ptes = 0;
++	tlb->cleared_pmds = 0;
++	tlb->cleared_puds = 0;
++	tlb->cleared_p4ds = 0;
  }
  
  static inline void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
-@@ -280,6 +291,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+@@ -199,6 +211,25 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+ }
+ #endif
+ 
++static inline unsigned long tlb_get_unmap_shift(struct mmu_gather *tlb)
++{
++	if (tlb->cleared_ptes)
++		return PAGE_SHIFT;
++	if (tlb->cleared_pmds)
++		return PMD_SHIFT;
++	if (tlb->cleared_puds)
++		return PUD_SHIFT;
++	if (tlb->cleared_p4ds)
++		return P4D_SHIFT;
++
++	return PAGE_SHIFT;
++}
++
++static inline unsigned long tlb_get_unmap_size(struct mmu_gather *tlb)
++{
++	return 1UL << tlb_get_unmap_shift(tlb);
++}
++
+ /*
+  * In the case of tlb vma handling, we can optimise these away in the
+  * case where we're doing a full MM flush.  When we're doing a munmap,
+@@ -232,13 +263,19 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+ #define tlb_remove_tlb_entry(tlb, ptep, address)		\
+ 	do {							\
+ 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
++		tlb->cleared_ptes = 1;				\
+ 		__tlb_remove_tlb_entry(tlb, ptep, address);	\
+ 	} while (0)
+ 
+-#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	     \
+-	do {							     \
+-		__tlb_adjust_range(tlb, address, huge_page_size(h)); \
+-		__tlb_remove_tlb_entry(tlb, ptep, address);	     \
++#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
++	do {							\
++		unsigned long _sz = huge_page_size(h);		\
++		__tlb_adjust_range(tlb, address, _sz);		\
++		if (_sz == PMD_SIZE)				\
++			tlb->cleared_pmds = 1;			\
++		else if (_sz == PUD_SIZE)			\
++			tlb->cleared_puds = 1;			\
++		__tlb_remove_tlb_entry(tlb, ptep, address);	\
+ 	} while (0)
+ 
+ /**
+@@ -252,6 +289,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+ #define tlb_remove_pmd_tlb_entry(tlb, pmdp, address)			\
+ 	do {								\
+ 		__tlb_adjust_range(tlb, address, HPAGE_PMD_SIZE);	\
++		tlb->cleared_pmds = 1;					\
+ 		__tlb_remove_pmd_tlb_entry(tlb, pmdp, address);		\
+ 	} while (0)
+ 
+@@ -266,6 +304,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+ #define tlb_remove_pud_tlb_entry(tlb, pudp, address)			\
+ 	do {								\
+ 		__tlb_adjust_range(tlb, address, HPAGE_PUD_SIZE);	\
++		tlb->cleared_puds = 1;					\
+ 		__tlb_remove_pud_tlb_entry(tlb, pudp, address);		\
+ 	} while (0)
+ 
+@@ -291,7 +330,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
  #define pte_free_tlb(tlb, ptep, address)			\
  	do {							\
  		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
+-		tlb->freed_tables = 1;			\
++		tlb->freed_tables = 1;				\
++		tlb->cleared_pmds = 1;				\
  		__pte_free_tlb(tlb, ptep, address);		\
  	} while (0)
  #endif
-@@ -287,7 +299,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #ifndef pmd_free_tlb
+@@ -300,7 +340,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
  #define pmd_free_tlb(tlb, pmdp, address)			\
  	do {							\
--		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-+		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
+ 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
+-		tlb->freed_tables = 1;			\
++		tlb->freed_tables = 1;				\
++		tlb->cleared_puds = 1;				\
  		__pmd_free_tlb(tlb, pmdp, address);		\
  	} while (0)
  #endif
-@@ -297,6 +310,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+@@ -310,7 +351,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
  #define pud_free_tlb(tlb, pudp, address)			\
  	do {							\
  		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
+-		tlb->freed_tables = 1;			\
++		tlb->freed_tables = 1;				\
++		tlb->cleared_p4ds = 1;				\
  		__pud_free_tlb(tlb, pudp, address);		\
  	} while (0)
  #endif
-@@ -306,7 +320,8 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- #ifndef p4d_free_tlb
+@@ -321,7 +363,7 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
  #define p4d_free_tlb(tlb, pudp, address)			\
  	do {							\
--		__tlb_adjust_range(tlb, address, PAGE_SIZE);		\
-+		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
-+		tlb->freed_tables = 1;			\
+ 		__tlb_adjust_range(tlb, address, PAGE_SIZE);	\
+-		tlb->freed_tables = 1;			\
++		tlb->freed_tables = 1;				\
  		__p4d_free_tlb(tlb, pudp, address);		\
  	} while (0)
  #endif
+diff --git a/mm/memory.c b/mm/memory.c
+index c467102a5cbc..9135f48e8d84 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -267,8 +267,10 @@ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ {
+ 	struct mmu_gather_batch *batch, *next;
+ 
+-	if (force)
++	if (force) {
++		__tlb_reset_range(tlb);
+ 		__tlb_adjust_range(tlb, start, end - start);
++	}
+ 
+ 	tlb_flush_mmu(tlb);
+ 
 -- 
 2.1.4
 
