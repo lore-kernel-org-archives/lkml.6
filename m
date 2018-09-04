@@ -2,104 +2,74 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB6EC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589F0C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B14C20867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B14C20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 0C69920867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuczvUzt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C69920867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeIDR6J (ORCPT
+        id S1727573AbeIDR6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:58:09 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:56687 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726355AbeIDR6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:58:09 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-10 (Coremail) with SMTP id tACowAAnLsZ5iY5bBftyBw--.12338S2;
-        Tue, 04 Sep 2018 21:32:42 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v5 05/16] x86/pmu: enable Hygon support to PMU
- infrastructure
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <cover.1535459012.git.puwen@hygon.cn>
- <dcd5b900e26e3175e4cafded91ec28e53c79adf8.1535459013.git.puwen@hygon.cn>
- <20180904104812.GF32615@zn.tnic>
-Message-ID: <f97a0b69-3117-3f59-257e-3aa837f54444@hygon.cn>
-Date:   Tue, 4 Sep 2018 21:32:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 13:58:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726355AbeIDR6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 13:58:10 -0400
+Received: from localhost (unknown [171.61.91.112])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C08D920659;
+        Tue,  4 Sep 2018 13:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536067980;
+        bh=BrHJh3l4UOtaITkskeESl134o+ZNNMzBUyWhnLMFPSM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tuczvUztObCPm/5VWybhfJFtelRGPlrNcMy7vDjJ8FLPUGT3pycpeZyg8LsSJS2Bd
+         a36yUC4s4ZPwvm0H9sItWDhvtONQ13cCdejRzT2he+wTnb7ZtsqMzdcOkkZTgW4m6R
+         7pf+UystGPR/0LNhDz8LK1IfBCgf+gu3epez7qXU=
+Date:   Tue, 4 Sep 2018 19:02:50 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, alsa-devel@alsa-project.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        bgoswami@codeaurora.org, rohitkr@codeaurora.org,
+        lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
+        devicetree@vger.kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH 1/3] ASoC: q6asm-dai: dt-bindings: Add support to
+ compress dais
+Message-ID: <20180904133250.GJ2322@vkoul-mobl>
+References: <20180903123455.9290-1-srinivas.kandagatla@linaro.org>
+ <20180903123455.9290-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180904104812.GF32615@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowAAnLsZ5iY5bBftyBw--.12338S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw18ZF4kAry8XFyftr1kXwb_yoWDtrb_uw
-        4rtFZ0kwsFgr409F4kJF45C39rXr18JryIqas5CasrX39YyanYqr1qkrW8CF4SkFWS9F12
-        kr13Xa1Iy3W7ZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbcAYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWxJr
-        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
-        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
-        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-        42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7ZqXDUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903123455.9290-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/4 18:48, Borislav Petkov wrote:
-> On Wed, Aug 29, 2018 at 08:43:54PM +0800, Pu Wen wrote:
->> Hygon PMU arch is similar to AMD Family 17h. To support Hygon PMU, the
->> initialization flow for it just call amd_pmu_init() and change PMU name
->
-> That sentence reads funny.
+On 03-09-18, 13:34, Srinivas Kandagatla wrote:
+> This patch adds board specific bindings required for dais, In particular
+> for compressed dais and dai direction.
+> 
+> Board specific setup involves setting up some of dais as compressed dais
+> and also specify direction of any dai. Some of the dais might only
+> support capture/playback depending on the board level wiring.
+> 
+> These two new dt properties will allow such flexibilty at board level dts.
 
-Will rewrite this sentence to make it more understandable. :)
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-> In general, you seem to be explaining *what* your patches do and not
-> *why*. This is the wrong. Always explain the *why* - the *what* is
-> visible from the diff.
->
-> You probably need to brush up on
-> Documentation/process/submitting-patches.rst, section 2.
-
-All right, will relearn the document and rework the patch descriptions.
-
->> +	case 0x18:
->> +		if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
->> +			pr_cont("Fam18h ");
->
-> Didn't we agree that you'll verify whether family 0x18 is going to be
-> Hygon only?
->
-> What happened to that checking?
-...
-> Same here.
->
-> What's up?
-
-Will remove all the remaining unneeded Hygon vendor checking through
-the whole patch set to minimize the code modification.
-
-Thanks,
-Pu Wen
-
+-- 
+~Vinod
