@@ -2,153 +2,126 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF603C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 20:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE905C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 20:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950DB2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 20:39:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FXpgMSVL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950DB2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 7469920659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 20:43:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7469920659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengaru.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeIEBGX (ORCPT
+        id S1727077AbeIEBKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 21:06:23 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41307 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbeIEBGX (ORCPT
+        Tue, 4 Sep 2018 21:10:34 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:50294 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeIEBKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 21:06:23 -0400
-Received: by mail-qt0-f195.google.com with SMTP id t39-v6so5612803qtc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 13:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p+LsW6yK5Ha7yWY5W/eKPo9Srat7ATvJzTqj5JMOW2o=;
-        b=FXpgMSVL5EDbO7Yc3vjSBYYbYsW2zYJuj4ZdgqJO1m+r62WvCd41MF4wXjZr7I+t6G
-         FxsUcc406DMjm5mI7DJIoTzzx6argwh8puSG40iOm8TX9KgcatGFXth+GVgrqAxh9fwq
-         vypvimZhRHSoLziwi9PBn2bKpcVHdzhtXQTBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p+LsW6yK5Ha7yWY5W/eKPo9Srat7ATvJzTqj5JMOW2o=;
-        b=TqAV/alPgv3nDR5RdFzShokOAkCyiw81pFgDD5873NfWmD5G1M5aAN8zMoiZbnwmBK
-         r4AVn5Qt4GRwq3T6P6omwYXtUiHDb8PM1und+yt6Icjo+yfYMXlhOyOSLIyv3Dw5YlA6
-         2CmWfWPB7rIuo8i3X+PmqgLncI8SnAXB0CVtzVTbu1IvHkqTgJ54MuuFdPrHNcNKTEfa
-         4caBwsqx4SuE/0ixxW3yCkJ49AScwrZPocKMydN5n4NrAS6nwOeL+HWCOP3+IKfCLLco
-         AOloyh28L1GMjwg6fJ4pN9Zb/B3bT9Vwz2M0hbLHHYjEreor4Wk0aFKC5PNUP9N7Ov9O
-         O7sQ==
-X-Gm-Message-State: APzg51Ce0p5Cp1bnoFvMm/s0ohdOMzZ8kQhoeMWqLXPcitTi8Bj4cTfT
-        QOZ45F3u4MPSg/PvKb4TkcEZmg==
-X-Google-Smtp-Source: ANB0Vdav5G1Fvu2ZNzLGTU+8+6vLNYMRwg1t1lhBj7KuVkM2JvLrTBdAA40sRy6LbxDi31AARbNTHQ==
-X-Received: by 2002:aed:2c27:: with SMTP id f36-v6mr32535246qtd.229.1536093575571;
-        Tue, 04 Sep 2018 13:39:35 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id o10-v6sm14772753qta.54.2018.09.04.13.39.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 13:39:34 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] ARM: dts: NSP: Enable SFP on bcm958625hr
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, andrew@lunn.ch,
-        rmk+kernel@armlinux.org.uk
-References: <20180831192039.11842-1-f.fainelli@gmail.com>
- <20180831192039.11842-2-f.fainelli@gmail.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <68b987de-9229-4606-a972-650b3f486e19@broadcom.com>
-Date:   Tue, 4 Sep 2018 13:39:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 21:10:34 -0400
+X-Greylist: delayed 495 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 21:10:34 EDT
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id 5AA831A403A2; Tue,  4 Sep 2018 13:35:34 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 13:35:34 -0700
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Rogier Wolff <R.E.Wolff@BitWizard.nl>,
+        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180904203534.yumaest6v5p6izln@shells.gnugeneration.com>
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+ <20180904075347.GH11854@BitWizard.nl>
+ <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
+ <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
+ <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+ <20180904161203.GD17478@fieldses.org>
+ <20180904162348.GN17123@BitWizard.nl>
+ <20180904185411.GA22166@fieldses.org>
+ <a9d586a8c520e52bad2396b93f8d5cb8a9fd2071.camel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180831192039.11842-2-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9d586a8c520e52bad2396b93f8d5cb8a9fd2071.camel@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/31/2018 12:20 PM, Florian Fainelli wrote:
-> Enable the SFP connected to port 5 of the switch and wire up all GPIOs
-> to the SFP cage. Because of a hardware limitation of the i2c controller
-> on the iProc SoCs which prevents large i2c (> 63 bytes) transactions to
-> work, we use the i2c-gpio interface instead, which does not have that
-> limitation. This allows us to read the SFP module EEPROM, which would
-> not be possible otherwise since it exceeds that size during a single
-> read transfer.
+On Tue, Sep 04, 2018 at 04:18:18PM -0400, Jeff Layton wrote:
+> On Tue, 2018-09-04 at 14:54 -0400, J. Bruce Fields wrote:
+> > On Tue, Sep 04, 2018 at 06:23:48PM +0200, Rogier Wolff wrote:
+> > > On Tue, Sep 04, 2018 at 12:12:03PM -0400, J. Bruce Fields wrote:
+> > > > Well, I think the point was that in the above examples you'd prefer that
+> > > > the read just fail--no need to keep the data.  A bit marking the file
+> > > > (or even the entire filesystem) unreadable would satisfy posix, I guess.
+> > > > Whether that's practical, I don't know.
+> > > 
+> > > When you would do it like that (mark the whole filesystem as "in
+> > > error") things go from bad to worse even faster. The Linux kernel 
+> > > tries to keep the system up even in the face of errors. 
+> > > 
+> > > With that suggestion, having one application run into a writeback
+> > > error would effectively crash the whole system because the filesystem
+> > > may be the root filesystem and stuff like "sshd" that you need to
+> > > diagnose the problem needs to be read from the disk.... 
+> > 
+> > Well, the absolutist position on posix compliance here would be that a
+> > crash is still preferable to returning the wrong data.  And for the
+> > cases 焦晓冬 gives, that sounds right?  Maybe it's the wrong balance in
+> > general, I don't know.  And we do already have filesystems with
+> > panic-on-error options, so if they aren't used maybe then maybe users
+> > have already voted against that level of strictness.
+> > 
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->   arch/arm/boot/dts/bcm958625hr.dts | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
+> Yeah, idk. The problem here is that this is squarely in the domain of
+> implementation defined behavior. I do think that the current "policy"
+> (if you call it that) of what to do after a wb error is weird and wrong.
+> What we probably ought to do is start considering how we'd like it to
+> behave.
 > 
-> diff --git a/arch/arm/boot/dts/bcm958625hr.dts b/arch/arm/boot/dts/bcm958625hr.dts
-> index ea3fc194f8f3..a53a2f629d74 100644
-> --- a/arch/arm/boot/dts/bcm958625hr.dts
-> +++ b/arch/arm/boot/dts/bcm958625hr.dts
-> @@ -58,6 +58,24 @@
->   		open-source;
->   		priority = <200>;
->   	};
-> +
-> +	/* Hardware I2C block cannot do more than 63 bytes per transfer,
-> +	 * which would prevent reading from a SFP's EEPROM (256 byte).
-> +	 */
-> +	i2c1: i2c {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpioa 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpioa 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +	};
-> +
-> +	sfp: sfp {
-> +		compatible = "sff,sfp";
-> +		i2c-bus = <&i2c1>;
-> +		mod-def0-gpios = <&gpioa 28 GPIO_ACTIVE_LOW>;
-> +		los-gpios = <&gpioa 24 GPIO_ACTIVE_HIGH>;
-> +		tx-fault-gpios = <&gpioa 30 GPIO_ACTIVE_HIGH>;
-> +		tx-disable-gpios = <&gpioa 26 GPIO_ACTIVE_HIGH>;
-> +	};
->   };
->   
->   &amac0 {
-> @@ -210,6 +228,14 @@
->   			reg = <4>;
->   		};
->   
-> +		port@5 {
-> +			label = "sfp";
-> +			phy-mode = "sgmii";
-> +			reg = <5>;
-> +			sfp = <&sfp>;
-> +			managed = "in-band-status";
-> +		};
-> +
->   		port@8 {
->   			ethernet = <&amac2>;
->   			label = "cpu";
+> How about something like this?
+> 
+> Mark the pages as "uncleanable" after a writeback error. We'll satisfy
+> reads from the cached data until someone calls fsync, at which point
+> we'd return the error and invalidate the uncleanable pages.
+> 
+> If no one calls fsync and scrapes the error, we'll hold on to it for as
+> long as we can (or up to some predefined limit) and then after that
+> we'll invalidate the uncleanable pages and start returning errors on
+> reads. If someone eventually calls fsync afterward, we can return to
+> normal operation.
+> 
+> As always though...what about mmap? Would we need to SIGBUS at the point
+> where we'd start returning errors on read()?
+> 
+> Would that approximate the current behavior enough and make sense?
+> Implementing it all sounds non-trivial though...
 > 
 
-Looks good to me. Thanks!
+Here's a crazy and potentially stupid idea:
 
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Implement a new class of swap space for backing dirty pages which fail
+to write back.  Pages in this space survive reboots, essentially backing
+the implicit commitment POSIX establishes in the face of asynchronous
+writeback errors.  Rather than evicting these pages as clean, they are
+swapped out to the persistent swap.
+
+Administrators then decide if they want to throw some cheap storage at
+enabling this coverage, or live with the existing risks.
+
+I think it may be an interesting approach, enabling administrators to
+repair primary storage while operating in a degraded mode.  Then once
+things are corrected, there would be a way to evict pages from
+persistent swap for another shot at writeback to primary storage.
+
+Regards,
+Vito Caputo
