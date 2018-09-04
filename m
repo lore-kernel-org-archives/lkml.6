@@ -2,136 +2,101 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB44C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BC2C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714EC20659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:03:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="ZUSL2uXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714EC20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 99F502077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F502077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeIDWaH (ORCPT
+        id S1727791AbeIDWcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:30:07 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36217 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeIDWaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:30:06 -0400
-Received: by mail-pl1-f193.google.com with SMTP id e11-v6so2000142plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 11:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YIN2ngdGBdqWEH+a3pAkWa+TsoyCP+VfkT0H/MFpK+w=;
-        b=ZUSL2uXOpKMHfYYVrEOajfb436UskAofq8h3Tn+bQyGaxDw+h5In0FyKhQhipgOWMG
-         Or7uAbFTbIBiKxEhTXSroRlEPMwVFbDfNV6DWFPd9/jN56Is/pVYrLTJFCazhQx/cgqB
-         c8BPevVHgR/ULd0HUTkilMFbv3o6ihbF+AIsXikYdlzKTALy1Vxa3ttl+7o7BO6Vm9sn
-         uRJhHIajebVnCs4UtpD20LHeEJ5IS2GLIfTGCQIZTOH/4LS3OzYUamjhIZ1FMytq56Dr
-         OnfN9k/bfVFkG1meVx66IruKnIYheWxY5ny4w+FQtr6azX5HLBOKtZS3Ai+DUIAkBnVg
-         hezQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YIN2ngdGBdqWEH+a3pAkWa+TsoyCP+VfkT0H/MFpK+w=;
-        b=evUJcoi5MFnYGIDcE5N/8THjebBBCb5LE8YVoYeXgFW/t5B3k83r6357njCZkE7SIo
-         vBo7LBLqTRVkI2cxHZylyPI4OSf367UHc0ZXQ6EIPbyiwXH8d73TeBgKa4+lVrQsmzD0
-         CtHJs/YQIFL4JAjB1nbiafpdsUFk0mL/g15ZVUI1MO9Hc6LlDfq8t2hgDBd+3zxSz0K/
-         Fgp5nRfBPkBxJY2TS54H8tncxME45xH4CNio4vJjEzQy6jqFG5Lul/O4z8kXnXJu3l8f
-         dpiTkkIJScMGMJTBYlKuTf5lUfP8ayiMnCYSrgiJGi6Az06UC6dANgOhul3U9JEF4E24
-         mvtg==
-X-Gm-Message-State: APzg51DwsYHV2YJ9L7xO+qMpMpOHmeQECKwnNzTlopslMKMiUSQ89OGx
-        JCW/WK6iTW6Hohhyfz/H31n8ew==
-X-Google-Smtp-Source: ANB0VdYQHHEBlp881mtstYsk/yma25p7oa5yoTnPziurFV0zkiG3+/6S/J9SJw1PsePw37w8lGimVQ==
-X-Received: by 2002:a17:902:3a3:: with SMTP id d32-v6mr34619558pld.294.1536084233647;
-        Tue, 04 Sep 2018 11:03:53 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::7:db7b])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm44480291pfh.2.2018.09.04.11.03.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Sep 2018 11:03:53 -0700 (PDT)
-Date:   Tue, 4 Sep 2018 11:03:52 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: Re: [PATCH] proc/kcore: fix invalid memory access in multi-page read
- optimization
-Message-ID: <20180904180352.GA24406@vader>
-References: <20180828105959.GA29204@nautica>
- <1535515447-21167-1-git-send-email-asmadeus@codewreck.org>
+        Tue, 4 Sep 2018 18:32:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48646 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726437AbeIDWcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:32:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F10F4B0B4;
+        Tue,  4 Sep 2018 18:06:33 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 20:06:31 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Rik van Riel <riel@surriel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Josef Bacik <jbacik@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: slowly shrink slabs with a relatively small number
+ of objects
+Message-ID: <20180904180631.GR14951@dhcp22.suse.cz>
+References: <20180831203450.2536-1-guro@fb.com>
+ <3b05579f964cca1d44551913f1a9ee79d96f198e.camel@surriel.com>
+ <20180831213138.GA9159@tower.DHCP.thefacebook.com>
+ <20180903182956.GE15074@dhcp22.suse.cz>
+ <20180903202803.GA6227@castle.DHCP.thefacebook.com>
+ <20180904070005.GG14951@dhcp22.suse.cz>
+ <20180904153445.GA22328@tower.DHCP.thefacebook.com>
+ <20180904161431.GP14951@dhcp22.suse.cz>
+ <20180904175243.GA4889@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1535515447-21167-1-git-send-email-asmadeus@codewreck.org>
+In-Reply-To: <20180904175243.GA4889@tower.DHCP.thefacebook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 06:04:07AM +0200, Dominique Martinet wrote:
-> The 'm' kcore_list item can point to kclist_head, and it is incorrect to
-> look at m->addr / m->size in this case.
-> There is no choice but to run through the list of entries for every address
-> if we did not find any entry in the previous iteration
+On Tue 04-09-18 10:52:46, Roman Gushchin wrote:
+> On Tue, Sep 04, 2018 at 06:14:31PM +0200, Michal Hocko wrote:
+[...]
+> > I am not opposing your patch but I am trying to figure out whether that
+> > is the best approach.
 > 
-> Fixes: bf991c2231117 ("proc/kcore: optimize multiple page reads")
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
-> 
-> I guess now I'm looking at bf991c2231117 again that it would be slightly
-> more efficient to remove the !m check and initialize m to point to
-> kclist_head like this:
->  m = list_entry(&kclist_head, struct kcore_list, list);
-> but it feels a bit forced to me; deferring the choice to others.
+> I don't think the current logic does make sense. Why should cgroups
+> with less than 4k kernel objects be excluded from being scanned?
 
-Good catch! Sorry I missed this last week, Google decided this was spam
-for some reason. How about fixing it like this? One less conditional in
-the common case, no hacky list_entry :)
+How is it any different from the the LRU reclaim? Maybe it is just not
+that visible because there usually more pages there. But in principle it
+is the same issue AFAICS.
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index ad72261ee3fe..578926032880 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -464,6 +464,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 				ret = -EFAULT;
- 				goto out;
- 			}
-+			m = NULL;
- 		} else if (m->type == KCORE_VMALLOC) {
- 			vread(buf, (char *)start, tsz);
- 			/* we have to zero-fill user buffer even if no read */
+> Reparenting of all pages is definitely an option to consider,
+> but it's not free in any case, so if there is no problem,
+> why should we? Let's keep it as a last measure. In my case,
+> the proposed patch works perfectly: the number of dying cgroups
+> jumps around 100, where it grew steadily to 2k and more before.
 
->  fs/proc/kcore.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index ad72261ee3fe..50036f6e1f52 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -451,7 +451,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->  		 * If this is the first iteration or the address is not within
->  		 * the previous entry, search for a matching entry.
->  		 */
-> -		if (!m || start < m->addr || start >= m->addr + m->size) {
-> +		if (!m || &m->list == &kclist_head || start < m->addr ||
-> +		    start >= m->addr + m->size) {
->  			list_for_each_entry(m, &kclist_head, list) {
->  				if (start >= m->addr &&
->  				    start < m->addr + m->size)
-> -- 
-> 2.17.1
-> 
+Let me emphasise that I am not opposing the patch. I just think that we
+have made some decisions which are not ideal but I would really like to
+prevent from building workarounds on top. If we have to reconsider some
+of those decisions then let's do it. Maybe the priority scaling is just
+too coarse and what seem to work work for normal LRUs doesn't work for
+shrinkers.
+
+> I believe that reparenting of LRU lists is required to minimize
+> the number of LRU lists to scan, but I'm not sure.
+
+Well, we do have more lists to scan for normal LRUs. It is true that
+shrinkers add multiplining factor to that but in principle I guess we
+really want to distinguish dead memcgs because we do want to reclaim
+those much more than the rest. Those objects are basically of no use
+just eating resources. The pagecache has some chance to be reused at
+least but I fail to see why we should keep kernel objects around. Sure,
+some of them might be harder to reclaim due to different life time and
+internal object management but this doesn't change the fact that we
+should try hard to reclaim those. So my gut feeling tells me that we
+should have a way to distinguish them.
+
+Btw. I do not see Vladimir on the CC list. Added (the thread starts
+here http://lkml.kernel.org/r/20180831203450.2536-1-guro@fb.com)
+-- 
+Michal Hocko
+SUSE Labs
