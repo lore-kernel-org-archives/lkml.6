@@ -2,155 +2,162 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E66C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4373DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEC2A20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:58:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC2A20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E5C2320645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:00:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C2320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeIDTYW (ORCPT
+        id S1727567AbeIDTZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:24:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43983 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbeIDTYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:24:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0615A208B9; Tue,  4 Sep 2018 16:58:54 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9BC41206EE;
-        Tue,  4 Sep 2018 16:58:43 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 16:58:42 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, computersforpeace@gmail.com,
-        frieder.schrempf@exceet.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] spi: spi-mem: Add a driver for NXP FlexSPI
- controller
-Message-ID: <20180904165842.774ed960@bbrezillon>
-In-Reply-To: <1535711404-29528-4-git-send-email-yogeshnarayan.gaur@nxp.com>
-References: <1535711404-29528-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <1535711404-29528-4-git-send-email-yogeshnarayan.gaur@nxp.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 4 Sep 2018 15:25:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726015AbeIDTZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:25:55 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CEF3987927;
+        Tue,  4 Sep 2018 15:00:25 +0000 (UTC)
+Received: from redhat.com (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD08863ADC;
+        Tue,  4 Sep 2018 15:00:21 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 11:00:19 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Kenneth Lee <nek.in.cn@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180904150019.GA4024@redhat.com>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180903005204.26041-1-nek.in.cn@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 15:00:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 15:00:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yogesh,
-
-On Fri, 31 Aug 2018 16:00:00 +0530
-Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-> - Add a driver for NXP FlexSPI host controller
+On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
+> From: Kenneth Lee <liguozhu@hisilicon.com>
 > 
-> (0) What is the FlexSPI controller?
->  FlexSPI is a flexsible SPI host controller which supports two SPI
->  channels and up to 4 external devices.
->  Each channel supports Single/Dual/Quad/Octal mode data 
->  transfer (1/2/4/8 bidirectional data lines) 
->  i.e. FlexSPI acts as an interface to external devices,
->  maximum 4, each with up to 8 bidirectional data lines.
+> WarpDrive is an accelerator framework to expose the hardware capabilities
+> directly to the user space. It makes use of the exist vfio and vfio-mdev
+> facilities. So the user application can send request and DMA to the
+> hardware without interaction with the kernel. This removes the latency
+> of syscall.
 > 
->  It uses new SPI memory interface of the SPI framework to issue flash
->  memory operations to up to four connected flash chips (2 buses with
->  2 CS each).
->  Chipselect for each flash can be selected as per address assigned in
->  controller specific registers.
+> WarpDrive is the name for the whole framework. The component in kernel
+> is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
+> hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
+> library of WarpDrive can access it via VFIO interface.
 > 
->  FlexSPI controller is similar to the existing Freescale/NXP QuadSPI
->  controller with advanced features.
-
-Yep, I had a quick look at the code and they really look similar. Why
-not extending the existing driver instead of creating a new one from
-scratch?
-
+> The patchset contains document for the detail. Please refer to it for more
+> information.
 > 
-> (1) The FlexSPI controller is driven by the LUT(Look-up Table)
->  registers.
->  The LUT registers are a look-up-table for sequences of instructions.
->  A valid sequence consists of four LUT registers.
->  Maximum 32 LUT sequences can be programmed simultaneously.
+> This patchset is intended to be used with Jean Philippe Brucker's SVA
+> patch [1], which enables not only IO side page fault, but also PASID
+> support to IOMMU and VFIO.
 > 
-> (2) The definition of the LUT register shows below:
->  ---------------------------------------------------
->  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
->  ---------------------------------------------------
+> With these features, WarpDrive can support non-pinned memory and
+> multi-process in the same accelerator device.  We tested it in our SoC
+> integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
+> tree can be found here: [2].
 > 
->  There are several types of INSTRx, such as:
->  CMD     : the SPI NOR command.
->  ADDR    : the address for the SPI NOR command.
->  DUMMY   : the dummy cycles needed by the SPI NOR command.
->  ....
+> But it is not mandatory. This patchset is tested in the latest mainline
+> kernel without the SVA patches.  So it supports only one process for each
+> accelerator.
 > 
->  There are several types of PADx, such as:
->  PAD1    : use a singe I/O line.
->  PAD2    : use two I/O lines.
->  PAD4    : use quad I/O lines.
->  PAD8    : use octal I/O lines.
->  ....
+> We have noticed the IOMMU aware mdev RFC announced recently [3].
 > 
-> (3) LUTs are being created at run-time based on the commands passed
->  from the spi-mem framework. Thus, using single LUT index.
+> The IOMMU aware mdev has similar idea but different intention comparing to
+> WarpDrive. It intends to dedicate part of the hardware resource to a VM.
+> And the design is supposed to be used with Scalable I/O Virtualization.
+> While sdmdev is intended to share the hardware resource with a big amount
+> of processes.  It just requires the hardware supporting address
+> translation per process (PCIE's PASID or ARM SMMU's substream ID).
 > 
-> (4) Software triggered Flash read/write access by IP Bus.
+> But we don't see serious confliction on both design. We believe they can be
+> normalized as one.
 > 
-> (5) Memory mapped read access by AHB Bus.
 
-Do we really want to have this level of details in the commit message?
-I mean, this is something you can document in the driver, but not here.
+So once again i do not understand why you are trying to do things
+this way. Kernel already have tons of example of everything you
+want to do without a new framework. Moreover i believe you are
+confuse by VFIO. To me VFIO is for VM not to create general device
+driver frame work.
 
-BTW, you might want to have a look at [1]. I think we can get rid of
-the ->size field you're adding if this driver implements the dirmap
-hooks.
+So here is your use case as i understand it. You have a device
+with a limited number of command queues (can be just one) and in
+some case it can support SVA/SVM (when hardware support it and it
+is not disabled). Final requirement is being able to schedule cmds
+from userspace without ioctl. All of this exists already exists
+upstream in few device drivers.
 
-> 
-> (6) Tested this driver with the mtd_debug and JFFS2 filesystem utility
->  on NXP LX2160ARDB and LX2160AQDS targets.
->  LX2160ARDB is having two NOR slave device connected on single bus A
->  i.e. A0 and A1 (CS0 and CS1).
->  LX2160AQDS is having two NOR slave device connected on separate buses
->  one flash on A0 and second on B1 i.e. (CS0 and CS3).
->  Verified this driver on following SPI NOR flashes:
->     Micron, mt35xu512ab, [Read - 1 bit mode]
->     Cypress, s25fl512s, [Read - 1/2/4 bit mode]
 
-Ok, that's good to have in the commit message.
+So here is how every body else is doing it. Please explain why
+this does not work.
 
-> 
-> - Add config option entry in 'spi-nor/Kconfig' for FlexSPI driver.
+1 Userspace open device file driver. Kernel device driver create
+  a context and associate it with on open. This context can be
+  uniq to the process and can bind hardware resources (like a
+  command queue) to the process.
+2 Userspace bind/acquire a commands queue and initialize it with
+  an ioctl on the device file. Through that ioctl userspace can
+  be inform wether either SVA/SVM works for the device. If SVA/
+  SVM works then kernel device driver bind the process to the
+  device as part of this ioctl.
+3 If SVM/SVA does not work userspace do an ioctl to create dma
+  buffer or something that does exactly the same thing.
+4 Userspace mmap the command queue (mmap of the device file by
+  using informations gather at step 2)
+5 Userspace can write commands into the queue it mapped
+6 When userspace close the device file all resources are release
+  just like any existing device drivers.
 
-But this one is useless. If you add a new driver, you have no other
-choice but to add a new entry in the Kconfig file.
+Now if you want to create a device driver framework that expose
+a device file with generic API for all of the above steps fine.
+But it does not need to be part of VFIO whatsoever or explain
+why.
 
-> 
-> - Add entry in the 'spi-nor/Makefile'.
->
 
-Ditto.
+Note that if IOMMU is fully disabled you probably want to block
+userspace from being able to directly scheduling commands onto
+the hardware as it would allow userspace to DMA anywhere and thus
+would open the kernel to easy exploits. In this case you can still
+keeps the same API as above and use page fault tricks to valid
+commands written by userspace into fake commands ring. This will
+be as slow or maybe even slower than ioctl but at least it allows
+you to validate commands.
 
-Before you re-send a new version, I'd like to understand why you think
-you need to create a new driver, and I want you to try to implement the
-dirmap hook and check if you can get rid of the ->size field when doing
-that.
-
-I also seem one extra benefit to having a single driver for both
-FlexSPI and QuadSPI IPs: you'll help Frieder debug the last remaining
-problems you reported on the new QuadSPI driver :-P.
-
-Thanks,
-
-Boris
+Cheers,
+Jérôme
