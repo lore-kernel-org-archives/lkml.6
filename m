@@ -2,117 +2,76 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBC3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63501C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AFD2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:56:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYLpMfRi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AFD2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FC992077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC992077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeIDRVU (ORCPT
+        id S1727386AbeIDR35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:21:20 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42246 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbeIDRVT (ORCPT
+        Tue, 4 Sep 2018 13:29:57 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:46890 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726355AbeIDR35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:21:19 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f1-v6so3034892ljc.9;
-        Tue, 04 Sep 2018 05:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=W4e35L913xDSr0j/xovhj2vcLPquVwCJsUv7PuGFvYU=;
-        b=IYLpMfRi1dgbLag2986Kx1Jsyg9gUkpTcCpaltlCOwgG+BvBkncL4WBvOphT5NZAYl
-         ZVQN6tYboV0K9x5RNtNlk9jCrcVcuHTPSJY2Wr7FU48iWQ7EvwHqW8KOyoRF8gQm/Wcw
-         cZ5EBZk56OF5jyLiHr6JGCV3OsFSYye/cEGDmLhKk88U2g5p87Km8jbZPKE51ohvthbH
-         cV9amOipakYnHOwPtm381RicX7G7iY+S2NpBjQ1mtyp9302UpfU5lYQRAft1uqx2Aexl
-         NyF+hbgKb9/Tned0d9eNSjWZi5/ojNvW19227GFVgvuMZ+yOK69PAfL6Hx5aA/KImJvR
-         adKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W4e35L913xDSr0j/xovhj2vcLPquVwCJsUv7PuGFvYU=;
-        b=i2n7hDsPbk/lKGrwbobpjLXQ+0NfIKaB2gj54/Oqx3IlRInRkFVJNpHpdwQ3QOduVp
-         o+3DwLkhkQy7BTFfzAaRKJzIfwEP+DcSfkcAz609LlyTwFLFMj3/sPvxKlU1YX1b8wPT
-         A6rlsnWtK70NLbuVFWcP7p+i0aSsvwH/Xe8W9a7z4pa8DNJ3Gfn4haHy0DKlVH/0Ovnn
-         GumPo4jBqBNPBELXt7ONCkH+cmTEiwxN76iLzZ4IOgXLJpFoiTElsadVOYKXlt40w8GB
-         LflZFCWc0yaRnImPMvIJpuOO73NNMB2gxEWQ+myfJvE4ER2DGkTw3PGOm/ZioOtPs6dr
-         nBwg==
-X-Gm-Message-State: APzg51D5pZ/xp0Hz+gjn/84Xx8rKhRHmMkeDwIq5ESaOlLTWvwB+3fgG
-        +hvLKYJDuGzbeSbDTaFWapgvUHor
-X-Google-Smtp-Source: ANB0VdaeHYdfhBjUorG+jdUpHjNjdNQVBPZMrh8WbYtBL5coBY8+y1wqTiInyrYcvmAowHDQBW7F1w==
-X-Received: by 2002:a2e:4745:: with SMTP id u66-v6mr7007740lja.76.1536065776240;
-        Tue, 04 Sep 2018 05:56:16 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id p9-v6sm4040926ljh.0.2018.09.04.05.56.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 05:56:15 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fxAsa-0001eB-Dc; Tue, 04 Sep 2018 14:56:24 +0200
-Date:   Tue, 4 Sep 2018 14:56:24 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable <stable@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v2 6/9] net: bcmgenet: fix OF child-node lookup
-Message-ID: <20180904125624.GS28861@localhost>
-References: <20180827082153.22537-1-johan@kernel.org>
- <20180827082153.22537-7-johan@kernel.org>
- <683bdf11-a662-d17e-8bc5-b3cfd238e463@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <683bdf11-a662-d17e-8bc5-b3cfd238e463@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 4 Sep 2018 13:29:57 -0400
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from moshe@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 4 Sep 2018 16:08:53 +0300
+Received: from dev-l-vrt-135-006.mtl.labs.mlnx (dev-l-vrt-135-006.mtl.labs.mlnx [10.134.135.6])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w84D4mna022823;
+        Tue, 4 Sep 2018 16:04:48 +0300
+Received: from dev-l-vrt-135-006.mtl.labs.mlnx (localhost [127.0.0.1])
+        by dev-l-vrt-135-006.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id w84D4mk3018688;
+        Tue, 4 Sep 2018 16:04:48 +0300
+Received: (from moshe@localhost)
+        by dev-l-vrt-135-006.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id w84D4kRY018686;
+        Tue, 4 Sep 2018 16:04:46 +0300
+From:   Moshe Shemesh <moshe@mellanox.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Jiri Pirko <jiri@mellanox.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>
+Subject: [PATCH net] devlink: Fix devlink_param_driverinit_value_set() stub return code
+Date:   Tue,  4 Sep 2018 16:04:25 +0300
+Message-Id: <1536066265-18641-1-git-send-email-moshe@mellanox.com>
+X-Mailer: git-send-email 1.8.4.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 05:47:33PM -0700, Florian Fainelli wrote:
-> On 08/27/2018 01:21 AM, Johan Hovold wrote:
-> > Use the new of_get_compatible_child() helper to lookup the mdio child
-> > node instead of using of_find_compatible_node(), which searches the
-> > entire tree from a given start node and thus can return an unrelated
-> > (i.e. non-child) node.
-> > 
-> > This also addresses a potential use-after-free (e.g. after probe
-> > deferral) as the tree-wide helper drops a reference to its first
-> > argument (i.e. the node of the device being probed).
-> > 
-> > Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-> > Cc: stable <stable@vger.kernel.org>     # 3.15
-> > Cc: Florian Fainelli <f.fainelli@gmail.com>
-> > Cc: David S. Miller <davem@davemloft.net>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> 
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+The stub function returned -EOPNOTSUPP while CONFIG_NET_DEVLINK is off.
+It caused false warning during driver load. Driver needs to update
+devlink on a parameter value if devlink module is there, if not it
+doesn't need any error code.
 
-Thanks for reviewing.
+Fixes: ec01aeb1803e ("devlink: Add support for get/set driverinit value")
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+---
+ include/net/devlink.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Rob's gotten the helper into -rc2:
+diff --git a/include/net/devlink.h b/include/net/devlink.h
+index b9b89d6..b467357 100644
+--- a/include/net/devlink.h
++++ b/include/net/devlink.h
+@@ -781,7 +781,7 @@ static inline bool devlink_dpipe_table_counter_enabled(struct devlink *devlink,
+ devlink_param_driverinit_value_set(struct devlink *devlink, u32 param_id,
+ 				   union devlink_param_value init_val)
+ {
+-	return -EOPNOTSUPP;
++	return 0;
+ }
+ 
+ static inline void
+-- 
+1.8.3.1
 
-	36156f9241cb of: add helper to lookup compatible child node
-
-so feel free to pick this one up directly to whichever net tree you
-prefer. I've been able to trigger crashes after probe deferrals due to
-the use-after-free, but this seems unlikely to be exploitable.
-
-Thanks,
-Johan
