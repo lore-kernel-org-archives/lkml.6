@@ -2,136 +2,275 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 370CEC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2085C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D649220869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpQ5/XsS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D649220869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8CEDB2086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:42:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEDB2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeIDJFi (ORCPT
+        id S1727621AbeIDJFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:05:38 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40426 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeIDJFh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:05:37 -0400
-Received: by mail-pl1-f193.google.com with SMTP id s17-v6so1007895plp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nYQduDF7NEsG6i8cWnr4XIXTQTH+GoEAWEHuj8R3h0w=;
-        b=GpQ5/XsSU6VJBg+QWu0/UQEffBet7RCg31dofPkeOTO8CpOo3a4ln2Kpo5xhL4jIbZ
-         zUqSxXfBBaTMXFlAvnjYershuVwmTUyswn4WbxCT1Ixme9j75BSzeJ6+UKzFqD3Ag8vK
-         8YLm8rS/VpoqliP//M8kxkzV18fTL67gPLJYk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nYQduDF7NEsG6i8cWnr4XIXTQTH+GoEAWEHuj8R3h0w=;
-        b=RvlAEfKUioLcoDf5cztBcifgi5dTp7XOIXlSJG0dP44ctEyrtJQ6rt0EGs2qQH4hD7
-         IZRROI92Ze5KGj3MV048XU0mJEf3ZmPtAWzxV1Pd7JgqaN6QyTgIgsaKkMye07bO681Z
-         o0j8RFwdzhdK8sIJOXXoLScniZEeiXvTTGMcwhK8k6uuAW0FOsJ2rY5rYc9vAOnjaRUK
-         DENHqDT9r4ABDsmRIXQn8Eho6ZT5d6ZA0KhhuOj6ZC1PWufr/eiTlAB2fZkmblUQSu1r
-         xPvGNMSQLTQZwicZfGROmWFZ2IB8nfTmqoYrYrVGPdNj9qTLKj9YrTLBeaxOhLPBBTII
-         sKKg==
-X-Gm-Message-State: APzg51AJe8n/HkyOGbVyoEJRxpU0YWKUnrZ3ZTH0pVcBBUIjhHqIQPpD
-        X9UrwqoEyQxSPv0+6xQpa0tfcIEOxFY=
-X-Google-Smtp-Source: ANB0VdYy//IkDSdYfAiCxa27cGXc++f7dmO2xTb/l/ZvzdH6Ub/OsC4AWgndbZ1Nc/dkzdg6eiEPrg==
-X-Received: by 2002:a17:902:b7c3:: with SMTP id v3-v6mr31857269plz.238.1536036139417;
-        Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm10280372pfd.110.2018.09.03.21.42.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 03 Sep 2018 21:42:19 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     "David S . Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 2/4] sparc: Replace NR_SYSCALLS macro with __NR_SYSCALLS
-Date:   Tue,  4 Sep 2018 10:11:25 +0530
-Message-Id: <1536036087-15260-3-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org>
-References: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org>
+        Tue, 4 Sep 2018 05:05:45 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:45045 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbeIDJFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:05:44 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id AE85FFFA34;
+        Tue,  4 Sep 2018 04:42:19 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
+Date:   Tue,  4 Sep 2018 12:40:50 +0800
+Message-Id: <20180904044053.15425-9-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NR_syscalls macro holds the number of system call exist in SPARC
-architecture. This macro is currently the part of uapi/asm/unistd.h
-file. We have to change the value of NR_syscalls, if we add or
-delete a system call.
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-One of the patch in this patch series has a script which will generate
-a uapi header based on syscall.tbl file. The syscall.tbl file contains
-the number of system call information. So we have two option to update
-NR_syscalls value.
+Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
+TCON is connected to LCD and the second is to HDMI.
 
-1. Update NR_syscalls in uapi/asm/unistd.h manually by counting the
-   no.of system calls. No need to update NR_syscalls until we either
-   add a new system call or delete an existing system call.
+The HDMI controller/PHY pair is similar to the one on H3/H5.
 
-2. We can keep this feature it above mentioned script, that'll
-   count the number of syscalls and keep it in a generated file.
-   In this case we don't need to explicitly update NR_syscalls
-   in asm/unistd.h file.
+Add all required device tree nodes of the display pipeline, including
+the TCON0 LCD one and the TCON1 HDMI one.
 
-The 2nd option will be the recommended one. For that, I moved the
-NR_syscalls macro from uapi/asm/unistd.h to asm/unistd.h. The macro
-name also changed form NR_syscalls to __NR_syscalls for making the
-name convention same across all architecture. While __NR_syscalls
-isn't strictly part of the uapi, having it as part of the generated
-header to simplifies the implementation.
-
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+[Icenowy: refactor commit message and add 1st pipeline]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/sparc/include/asm/unistd.h      | 2 ++
- arch/sparc/include/uapi/asm/unistd.h | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Changes for v4:
+- Misc fixes
+- Dropped second PLL from HDMI PHY clock
+Changes for v3.1:
+- Refactor commit message to make it more clear.
+- Added first pipeline (mixer0 -> tcon0)
+Changes for v3:
+- Squash all pipeline components in one patch
+- Add status for mixer1 and tcon1
+Changes for v2:
+- Change compatibles and other based on previous patch changes
 
-diff --git a/arch/sparc/include/asm/unistd.h b/arch/sparc/include/asm/unistd.h
-index f120b6b..c8849b7 100644
---- a/arch/sparc/include/asm/unistd.h
-+++ b/arch/sparc/include/asm/unistd.h
-@@ -17,6 +17,8 @@
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 170 ++++++++++++++++++
+ 1 file changed, 170 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index b73f9287c3f0..8c7bcae0b8ec 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -121,6 +121,13 @@
+ 		};
+ 	};
  
- #include <uapi/asm/unistd.h>
- 
-+#define NR_syscalls __NR_syscalls
++	de: display-engine {
++		compatible = "allwinner,sun50i-a64-display-engine";
++		allwinner,pipelines = <&mixer0>,
++				      <&mixer1>;
++		status = "disabled";
++	};
 +
- #ifndef __32bit_syscall_numbers__
- #ifndef __arch64__
- #define __32bit_syscall_numbers__
-diff --git a/arch/sparc/include/uapi/asm/unistd.h b/arch/sparc/include/uapi/asm/unistd.h
-index ccf4bea..e2407b4 100644
---- a/arch/sparc/include/uapi/asm/unistd.h
-+++ b/arch/sparc/include/uapi/asm/unistd.h
-@@ -422,6 +422,6 @@
- #define __NR_pwritev2		359
- #define __NR_statx		360
+ 	osc24M: osc24M_clk {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+@@ -203,6 +210,52 @@
+ 				#clock-cells = <1>;
+ 				#reset-cells = <1>;
+ 			};
++
++			mixer0: mixer@100000 {
++				compatible = "allwinner,sun50i-a64-de2-mixer-0";
++				reg = <0x100000 0x100000>;
++				clocks = <&display_clocks CLK_BUS_MIXER0>,
++					 <&display_clocks CLK_MIXER0>;
++				clock-names = "bus",
++					      "mod";
++				resets = <&display_clocks RST_MIXER0>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					mixer0_out: port@1 {
++						reg = <1>;
++
++						mixer0_out_tcon0: endpoint {
++							remote-endpoint = <&tcon0_in_mixer0>;
++						};
++					};
++				};
++			};
++
++			mixer1: mixer@200000 {
++				compatible = "allwinner,sun50i-a64-de2-mixer-1";
++				reg = <0x200000 0x100000>;
++				clocks = <&display_clocks CLK_BUS_MIXER1>,
++					 <&display_clocks CLK_MIXER1>;
++				clock-names = "bus",
++					      "mod";
++				resets = <&display_clocks RST_MIXER1>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					mixer1_out: port@1 {
++						reg = <1>;
++
++						mixer1_out_tcon1: endpoint {
++							remote-endpoint = <&tcon1_in_mixer1>;
++						};
++					};
++				};
++			};
+ 		};
  
--#define NR_syscalls		361
-+#define __NR_syscalls		361
+ 		syscon: syscon@1c00000 {
+@@ -237,6 +290,75 @@
+ 			#dma-cells = <1>;
+ 		};
  
- #endif /* _UAPI_SPARC_UNISTD_H */
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun50i-a64-tcon-lcd",
++				     "allwinner,sun8i-a83t-tcon-lcd";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
++			clock-names = "ahb", "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
++			reset-names = "lcd", "lvds";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun50i-a64-tcon-tv",
++				     "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint {
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun50i-a64-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+@@ -700,6 +826,50 @@
+ 			status = "disabled";
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun50i-a64-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint {
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun8i-h3-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu 7>;
++			clock-names = "bus", "mod", "pll-0";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		rtc: rtc@1f00000 {
+ 			compatible = "allwinner,sun6i-a31-rtc";
+ 			reg = <0x01f00000 0x54>;
 -- 
-1.9.1
+2.18.0
 
