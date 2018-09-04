@@ -2,96 +2,83 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59580C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB1DC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 031692075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:54:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEWi03GU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031692075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C8AD520661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AD520661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeIEDWK (ORCPT
+        id S1727331AbeIEDbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 23:22:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38496 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbeIEDWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 23:22:10 -0400
-Received: by mail-pl1-f196.google.com with SMTP id u11-v6so2313995plq.5;
-        Tue, 04 Sep 2018 15:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nYJDgOv2HWSs3MfcGJiK9WDiPLnBj21A6Plh583WEGY=;
-        b=HEWi03GUMtc5/BXgAzDlBYlqMwUlrOWYXkuBMdFp18O3VXixPsm7tPC9o+Pi+Yr0zM
-         BqUHsW1O5FirtPhH1u4AnKwCMAwT22SfAusyq2nYlpl3niiirJqg89dsMiEu5nmeyzwe
-         EykaYzyC5RDbInU+WpI0YjSq1BINzxFKmtoga0quDV5gnnSJJkk6LuBTD+he04vXuFe/
-         VyH/Rc+2wKQYgrajZfl68lurw+kkxGpc37v9TiV41yYv5VOH6ZBgCIIK5D0CWnFo91Ny
-         tRAojVdv+30T6pFwBs85h0vq3BlJismuavjykHAnn8PjyHSNy+TPrmmPQL02TppehB3X
-         FqXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nYJDgOv2HWSs3MfcGJiK9WDiPLnBj21A6Plh583WEGY=;
-        b=aSOwOaSvIU4fyZz38Iljx/fC5Pzufz3bFIyPXhHH/z04VvGFPAhbpW0m7osAiPTK4w
-         gwbcgs/y3ej9naMpXcGHrtSShIg4zr6gY+6+A3UeoZo+yvgA7hOpIDsXDG7oEDzpU8+E
-         8XaHP3xlmgRAtOWdHEb7KyVOB5QHAaPdmIinstpp1seyryVDYeDtEx5Xp4M22A87yji7
-         qHSTZAKK5jitu2l97AR/bN+NSaHpxboMFgWeP1JJLFiAxOcc/4XmEZvLX1jibP/Y0AFA
-         /ZFJDKPMLZp7Top6+5G0cHjPL0GWuhdtdu+Usihhqk2Dv8sSRpbhLwSUfUmhz7JqLrka
-         w2rg==
-X-Gm-Message-State: APzg51DCz40IhZuAolGFZdNyNQkz2DKvl2tbRj68StCKsHtqXqtjmXsb
-        B/2fESg7dM4TnvkNdXiV6L7DXG2EdxWcHR8ZEZ3FdtAW
-X-Google-Smtp-Source: ANB0Vdactn1Twly+U1b/23urkAO996C4nAsUPeGJezKuLM5rjnlXMY8PEoQu83y9mcEcIRhCpEx+vNhkhyWI8gpEJ48=
-X-Received: by 2002:a17:902:7488:: with SMTP id h8-v6mr35500047pll.16.1536101694584;
- Tue, 04 Sep 2018 15:54:54 -0700 (PDT)
+        Tue, 4 Sep 2018 23:31:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46913 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbeIEDbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 23:31:16 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 16:03:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
+   d="scan'208";a="70592228"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga008.jf.intel.com with ESMTP; 04 Sep 2018 16:02:40 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 88CB9300B65; Tue,  4 Sep 2018 16:02:40 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 16:02:40 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Eduardo Valentin <eduval@amazon.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/1] perf/x86/intel: make error messages less confusing
+Message-ID: <20180904230240.GK27886@tassilo.jf.intel.com>
+References: <20180823150732.11249-1-eduval@amazon.com>
+ <20180904182312.GA11911@u40b0340c692b58f6553c.ant.amazon.com>
 MIME-Version: 1.0
-References: <20180904014559.15765-1-gagallo7@gmail.com> <529ce419-bba7-7e90-cb7d-e9a94fe64ac2@xs4all.nl>
-In-Reply-To: <529ce419-bba7-7e90-cb7d-e9a94fe64ac2@xs4all.nl>
-From:   Guilherme Alcarde Gallo <gagallo7@gmail.com>
-Date:   Tue, 4 Sep 2018 19:54:18 -0300
-Message-ID: <CAF2jNbj+MJV-U9JbwRmfw6Qwbow1n8JzHzP7ZRaMwfqAcHSO4Q@mail.gmail.com>
-Subject: Re: [PATCH v2] media: vimc: implement basic v4l2-ctrls
-To:     hverkuil@xs4all.nl
-Cc:     Helen Koike <helen.koike@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lkcamp@lists.libreplanetbr.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904182312.GA11911@u40b0340c692b58f6553c.ant.amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 3:40 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> Hi Guilherme,
-Hi Hans.
+On Tue, Sep 04, 2018 at 11:23:12AM -0700, Eduardo Valentin wrote:
+> Hello,
+> 
+> On Thu, Aug 23, 2018 at 08:07:32AM -0700, Eduardo Valentin wrote:
+> > On a system with X86_FEATURE_ARCH_PERFMON disabled
+> > and with a model not known by family PMU drivers,
+> > user gets a kernel message log like the following:
+> > [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
+> > 
+> > The "unsupported .. CPU" part may be confusing for some
+> > users leading to wrong understanding that the kernel
+> > does not support the CPU model.
+> > 
+> > This patch rewords the messages on the failure path to:
+> > [ 0.667154] Performance Events: CPU does not support PMU: no PMU driver, software events only.
+> > 
+> 
+> 
+> Gentle ping on this patch, any further comments?
 
->
-> On 09/04/2018 03:45 AM, Guilherme Gallo wrote:
-> > Add brightness, contrast, hue and saturation controls in vimc-sensor
-> >
-> > Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
-> > Signed-off-by: Guilherme Gallo <gagallo7@gmail.com>
->
-> Looks good, but you have (probably unintended) two Signed-off-by lines.
-> Just let me know which one I should use and I'll drop the other one.
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
-Yeah, it was unintended. Sorry for that.
-
-Please pick this one:
-Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
-
-Thanks for pointing that.
-Guilherme
+-Andi
