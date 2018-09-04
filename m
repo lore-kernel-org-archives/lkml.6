@@ -2,144 +2,136 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC1BC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC1B22077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1B22077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id E689A20867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E689A20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeIDO2l (ORCPT
+        id S1727319AbeIDObv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:28:41 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:38373 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbeIDO2l (ORCPT
+        Tue, 4 Sep 2018 10:31:51 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33178 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbeIDObu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:28:41 -0400
-X-Greylist: delayed 1820 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 10:28:40 EDT
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 848D024002B;
-        Tue,  4 Sep 2018 10:04:07 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 12:04:00 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        ysato@users.sourceforge.jp, dalias@libc.org,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Remove sh_mobile_ceu_camera from arch/sh
-Message-ID: <20180904100400.GA28160@w540>
-References: <1527525431-22852-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180831122558.zv7537uyfw5pcnqj@valkosipuli.retiisi.org.uk>
- <20180903072234.GA4116@w540>
- <20180904093358.GK20333@w540>
- <20180904094319.om6qp5rc3k66ukrd@valkosipuli.retiisi.org.uk>
+        Tue, 4 Sep 2018 10:31:50 -0400
+Received: by mail-oi0-f68.google.com with SMTP id 8-v6so5672016oip.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:07:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Eu6OCREN1PM4syjrjLQKSOLqja1ZpMYW2gkFhuueIh0=;
+        b=KZ2SuR26CXJT3mkjTU9x4r4BX1Q8SANE9DVM04K0lwQVytXeWh/eQm9hocUWBEwr4u
+         A/MEwQs7207/XnuP29687JqT2tRw40zaqHeeFbkA1xvN313W9pXi6dSEUe4eqwiBTJDS
+         UG1e60qiJASRMkqBTpGxi1/V8XZeIu34bia25ivjNnPYKsLUVWhNseccyN0WcA2lugbM
+         GRYRFhPDXoeXi3GIDqp7Xq/gMLAKlEl8drRicDB0ZmTIY3SUVyPBCtvhyODEPXrFAY+q
+         AmaSZKO7oAmZLcm4YyhmCy9rIBGsc+PAFSkq0BuPngoEGXD6SeKbvRj1ElBgJzTf6Eu3
+         e55g==
+X-Gm-Message-State: APzg51CjmaAeoT8RSlhCYTDqGSEN7Vc01E95N30Ftm7QUPjulrdVrJul
+        xysj+wqj9BruDTBq262tfu94NB4I6hx5UqZkIofw4g==
+X-Google-Smtp-Source: ANB0VdaNRXzqvkJBp9/AULnzlKJjaOniHSSu5RYLHaQkIW2j9e0fiDsOHTEFRykj+xAtse3Ylh/LONbNXSS5E4Ai2os=
+X-Received: by 2002:aca:4e50:: with SMTP id c77-v6mr22895954oib.254.1536055646433;
+ Tue, 04 Sep 2018 03:07:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <20180904094319.om6qp5rc3k66ukrd@valkosipuli.retiisi.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a4a:2011:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 03:07:25 -0700 (PDT)
+In-Reply-To: <20180904090053.GB1719@techsingularity.net>
+References: <CAE4VaGCQV+cS-vhdLyMwzftbB-xBHPt4Y4chg_0ykLHTE9cRfw@mail.gmail.com>
+ <CAE4VaGDHcZbnDpJ+FiQLfA1DRftY0j_GJSnh3FDRi34OztVH6Q@mail.gmail.com>
+ <20180627084954.73ucqvac62v5gje4@techsingularity.net> <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
+ <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
+ <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
+ <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
+ <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net> <CAE4VaGA_L1AEj+Un0oQEEqZp_jgaFLk+Z=vNoad08oXnU2T1nw@mail.gmail.com>
+ <CAE4VaGDTNgu=JX=N7=uZu0Bz_vUdHszZQ9_SQuwrbjRvFjCwZw@mail.gmail.com> <20180904090053.GB1719@techsingularity.net>
+From:   Jirka Hladky <jhladky@redhat.com>
+Date:   Tue, 4 Sep 2018 12:07:25 +0200
+Message-ID: <CAE4VaGB-mFfAR_rKUbGx01HLDQtyjHQLNOrm3fc+aSq2D2O2Dg@mail.gmail.com>
+Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
+ Stream, Linpack and NAS parallel benchmarks
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
+        Jakub Racek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mel,
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+thanks for sharing the background information! We will check if
+2d4056fafa196e1ab4e7161bae4df76f9602d56d is causing the current
+regression in 4.19 rc1 and let you know the outcome.
 
-Hi Sakari,
+Jirka
 
-On Tue, Sep 04, 2018 at 12:43:19PM +0300, Sakari Ailus wrote:
-> On Tue, Sep 04, 2018 at 11:33:58AM +0200, jacopo mondi wrote:
-> > Hi again Sakari,
-> >    sorry, I'm confusing you
-> >
-> > On Mon, Sep 03, 2018 at 09:22:34AM +0200, jacopo mondi wrote:
-> > > Hi Sakari,
-> > >
-> > > On Fri, Aug 31, 2018 at 03:25:58PM +0300, Sakari Ailus wrote:
-> > > > Hi Jacopo,
-> > > >
-> > > > On Mon, May 28, 2018 at 06:37:06PM +0200, Jacopo Mondi wrote:
-> > > > > Hello,
-> > > > >     this series removes dependencies on the soc_camera based
-> > > > > sh_mobile_ceu_camera driver from 3 board files in arch/sh and from one
-> > > > > sensor driver used by one of those boards.
-> > > > >
-> > > > > Hans, this means there are no more user of the soc_camera framework that I know
-> > > > > of in Linux, and I guess we can now plan of to remove that framework.
-> > > >
-> > > > What's the status of this set? I think it'd be nice to get it in; the CEU
-> > > > driver is the last using SoC camera framework.
-> > > >
-> >
-> > The series went in in the media tree in late June and I now see it in
-> > v4.19-rc2.
+On Tue, Sep 4, 2018 at 11:00 AM, Mel Gorman <mgorman@techsingularity.net> wrote:
+> On Mon, Sep 03, 2018 at 05:07:15PM +0200, Jirka Hladky wrote:
+>> Resending in the plain text mode.
+>>
+>> > My own testing completed and the results are within expectations and I
+>> > saw no red flags. Unfortunately, I consider it unlikely they'll be merged
+>> > for 4.18. Srikar Dronamraju's series is likely to need another update
+>> > and I would need to rebase my patches on top of that. Given the scope
+>> > and complexity, I find it unlikely they would be accepted for an -rc,
+>> > particularly this late of an rc. Whether we hit the 4.19 merge window or
+>> > not will depend on when Srikar's series gets updated.
+>>
+>>
+>> Hi Mel,
+>>
+>> we have collaborated back in July on the scheduler patch, improving
+>> the performance by allowing faster memory migration. You came up with
+>> the "sched-numa-fast-crossnode-v1r12" series here:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
+>>
+>> which has shown good performance results both in your and our testing.
+>>
 >
-> Oh; I missed this entirely. I thought it'd be merge later as there were
-> comments. Anyway it's good it's in. :-)
+> I remember.
 >
-> >
-> > Sorry for the confusion.
-> >
-> > The other soc_camera series which is pending for approval is the one
-> > removing dependencies on the framework from some SH defconfigs:
-> > https://lkml.org/lkml/2018/7/4/323
+>> Do you have some update on the latest status? Is there any plan to
+>> merge this series into 4.19 kernel? We have just tested 4.19.0-0.rc1.1
+>> and based on the results it seems that the patch is not included (and
+>> I don't see it listed in  git shortlog v4.18..v4.19-rc1
+>> ./kernel/sched)
+>>
 >
-> Given this series is in the current Linus's tree, that seems like a
-> no-brainer now.
-
-Why I don't see it? (just pulled v4.19-rc2).
-The only patch that has been collected from that series is
-"media: sh: migor: Remove stale soc_camera include"
-
-I don't see the defconfig related ones though.
-
+> Srikar's series that mine depended upon was only partially merged due to
+> a review bottleneck. He posted a v2 but it was during the merge window
+> and likely will need a v3 to avoid falling through the cracks. When it
+> is merged, I'll rebase my series on top and post it. While I didn't
+> check against 4.19-rc1, I did find that rebasing on top of the partial
+> series in 4.18 did not have as big an improvement.
 >
-> >
-> > Mauro was exitant to take this one through the media tree, and he's
-> > probably right SH maintainers should at least ack the series. So far,
-> > I haven't heard from them.
-> >
-> > I'll try to rebase it on latest version and re-send.
+>> With 4.19rc1 we see performance drop
+>>   * up to 40% (NAS bench) relatively to  4.18 + sched-numa-fast-crossnode-v1r12
+>>   * up to 20% (NAS, Stream, SPECjbb2005, SPECjvm2008) relatively to 4.18 vanilla
+>> The performance is dropping. It's quite unclear what are the next
+>> steps - should we wait for "sched-numa-fast-crossnode-v1r12" to be
+>> merged or should we start looking at what has caused the drop in
+>> performance going from 4.19rc1 to 4.18?
+>>
 >
-> If you have further changes, please make them in separate patches.
+> Both are valid options. If you take the latter option, I suggest looking
+> at whether 2d4056fafa196e1ab4e7161bae4df76f9602d56d is the source of the
+> issue as at least one auto-bisection found that it may be problematic.
+> Whether it is an issue or not depends heavily on the number of threads
+> relative to a socket size.
 >
 > --
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbjliQAAoJEHI0Bo8WoVY8GOEP/31Mg/WFqloSaLBUrZa/UcGA
-19/Ewd+7Djfjgc0+r6gqFtHyvARY7lhKVK++5WcZT9GBX1jRXv0tfoCzm9KoY6Rh
-MwhJnwYRTS5+hQfRVD7PAk2g89SptrTBbos2uwBjxtCLSErg8W3luS42KwsMjCfk
-CEYf7fbIYKkoa4YaLH08yhI3rjbvLUJhb0xAweqXf0hRDwQVgMHn0hkBJTwJIBsT
-WgeGa+xfKyfV7x0sY41mUea6R2IVl3zdHm61QPTgEyYMJdv9KnTt4qoe1JOAF5pK
-2TykLPQ5L6r6LwBLPAdWtBJHHiqr744qcdEQyeQIerwtEmYJyASy4NSrDFzBD4Rr
-qsRLUqNZqvgN5fBdT/BVBsiW57V1dE62AeT5QamZBrmujV/uoTWjzAy84Bv+5pSm
-ieBVR0KVITWWwWTaS5LDihLg8JtTTJeyXNRQjL48P8eZipdqeakooLn3z0FCclGM
-nU/DEm/qre4ZnPn4ajBOGDptJWJHOPWAQHbEH84hB/S2cRwHlKcf64yPy0B3oynw
-aaLch46iYKMiaL1ES2VnmW+R92VC7F80Euc/z9zis2nKTypckZd1exztJslQN23+
-B+rCB1z+wDnXdzZq6PWtEl0CHC4s8Z3WwA1S1A/lUGqHb9jUbsTNei+H+5rxMPxI
-ybHs9khWWN7CIXX0Lx/A
-=CrMl
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+> Mel Gorman
+> SUSE Labs
