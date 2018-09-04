@@ -2,116 +2,127 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F08C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72C8C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3667120869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF692086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdHYiuR7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3667120869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LDqzS9Pm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF692086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeIDMTf (ORCPT
+        id S1726212AbeIDMVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:19:35 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40619 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeIDMTf (ORCPT
+        Tue, 4 Sep 2018 08:21:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45242 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeIDMVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:19:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l63-v6so1253382pga.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 00:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=rpuNrMeZj+C1saLa9Rc3chGpIRtRdC3Dqo4K5f6mVEo=;
-        b=BdHYiuR71OBf5MZDZwP82pSQb0UFdgRN3nKrEvsGYQeKWLQfNEZzvhds5jkrwOpi4B
-         A4zhcRKbw5TtBJnCi3oyivQdiz/gzunjiju7Mbkc8gkcBhmpRreH2yKZg/j0GeA04Dtb
-         9ZBDp3CnbD15J/95azytkamohXzMcGSBn0muRqBwLQajPFpetLUvdL8NuEVz/m9gmZ2/
-         cBNQ4oO+fpIxrUmt+0BUlDkoYo5qJI6Wzs4E71GbUXnPnJ4DCGf5qxWN8KtzhkQRouu9
-         UYOSx8JYIz43L6nfjr9E2rOK38fVQqasJIdViIaRDvxr3aAoxxd9PafS2kjXBB/M7476
-         bYYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=rpuNrMeZj+C1saLa9Rc3chGpIRtRdC3Dqo4K5f6mVEo=;
-        b=fw5VdfOl5wNkQgv1eigMv1K46ZFgg+RbnwYTfykHMOOb4fzdZ8C6C3TcTbtkp9K45v
-         uXy4g+ey44/m4NqQjR8XseGtfM4K0S+jxRR1PYa4MdDqvwF41IiJtSmPWYsUjLJgO/EO
-         tA4hh/WwmzWuWZYbjq92ayBfnv+vlpSNXqHx/3KHVPwmDnYHp2ahHGYO2y6UPqLjsa7c
-         ig+XmVkEGKfL1REvUXr9ioCPxHlDuiyZGEAi3im3uDeh+ku+T+7doayGhGnBjeuMw1pS
-         0ppjjxpp9u9FvcfLY4RO4tUvQWKmJCaCRkfosYqnRmYNl5y4U3HVT8jhD4g1vIwoEi+L
-         nBcw==
-X-Gm-Message-State: APzg51Ax0tjItUMRZt5tfZqon8XuBlEl+rydJmWwPJW6ROgTplXQ97at
-        vbe+Deu6LJKv8fBjTj84F7EtmnA8
-X-Google-Smtp-Source: ANB0VdbHWPQB7R2NDbbHoZjXHpGWNPCxKDgRKBWjoUxtr0Rlz2ZqNnYpJ54JVSf97XxpzDrKIRiMZQ==
-X-Received: by 2002:a63:a40a:: with SMTP id c10-v6mr15344042pgf.346.1536047738602;
-        Tue, 04 Sep 2018 00:55:38 -0700 (PDT)
-Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm28170693pfh.113.2018.09.04.00.55.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 00:55:38 -0700 (PDT)
-From:   Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To:     greentime@andestech.com, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, mhiramat@kernel.org
-Subject: [PATCH] nds32: linker script: GCOV kernel may refers data in __exit
-Date:   Tue,  4 Sep 2018 15:54:19 +0800
-Message-Id: <20180904075419.2994-1-greentime@andestech.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 4 Sep 2018 08:21:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w847s4de136185;
+        Tue, 4 Sep 2018 07:57:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=+oMCoao0zulnlMU2aSZRrMMBwELOLGqK5pPOEryTBHQ=;
+ b=LDqzS9Pm13gMp1Ao1VFNYxA79KCoRjeZsCU4PNJi46+NkYpk3nUZ0PjDROOEp1EL8YSi
+ PailTk7+3Gam3bPG0nYWCooDO3DUMTLkcUMniZcGc688WoM7pbIHK7TcCQk0K7G4KUSV
+ tCIs5GlY/1zcT+QpjsTBrsDqMxDeNlyUgKDstm+052WRo0Qe24WoC9vdvMeThstbI0ll
+ jqqD1WiOwJt0hn/wfTBC2Y08/A7WnwllUmuX2v2GJ8eWyJU9KZyXdZhSALZZxROcBETh
+ /PoyJZo6MuxmRmowhp+dPt46C/oWIRt+1gZkvkRFcIDc/x94YgjV1GLj6bVbeQX8P6em Mg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2m7jqpbahf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Sep 2018 07:57:07 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w847v62H014847
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Sep 2018 07:57:06 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w847v5bw029815;
+        Tue, 4 Sep 2018 07:57:05 GMT
+Received: from ravellos-mbp.lan (/87.214.231.131)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Sep 2018 00:57:05 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [RFC][PATCH 3/5] [PATCH 3/5] kvm-ept-idle: HVA indexed EPT read
+From:   Nikita Leshenko <nikita.leshchenko@oracle.com>
+In-Reply-To: <20180901124811.591511876@intel.com>
+Date:   Tue, 4 Sep 2018 09:57:01 +0200
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Peng DongX <dongx.peng@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Brendan Gregg <bgregg@netflix.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <37B30FD3-7955-4C0B-AAB5-544359F4D157@oracle.com>
+References: <20180901112818.126790961@intel.com>
+ <20180901124811.591511876@intel.com>
+To:     Fengguang Wu <fengguang.wu@intel.com>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9005 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=718
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809040084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is used to fix nds32 allmodconfig/allyesconfig build error
-because GCOV kernel embeds counters in the kernel for each line
-and a part of that embed in __exit text. So we need to keep the
-EXIT_TEXT and EXIT_DATA  if CONFIG_GCOV_KERNEL=y.
+On 1 Sep 2018, at 13:28, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> +static ssize_t ept_idle_read(struct file *file, char *buf,
+> +			     size_t count, loff_t *ppos)
+> +{
+> +	struct task_struct *task = file->private_data;
+> +	struct ept_idle_ctrl *eic;
+> +	unsigned long hva_start = *ppos << BITMAP_BYTE2PVA_SHIFT;
+> +	unsigned long hva_end = hva_start + (count << BITMAP_BYTE2PVA_SHIFT);
+> +	int ret;
+> +
+> +	if (*ppos % IDLE_BITMAP_CHUNK_SIZE ||
+> +	    count % IDLE_BITMAP_CHUNK_SIZE)
+> +		return -EINVAL;
+> +
+> +	eic = kzalloc(sizeof(*eic), GFP_KERNEL);
+> +	if (!eic)
+> +		return -EBUSY;
+> +
+> +	eic->buf = buf;
+> +	eic->buf_size = count;
+> +	eic->kvm = task_kvm(task);
+> +	if (!eic->kvm) {
+> +		ret = -EINVAL;
+> +		goto out_free;
+> +	}
+I think you need to increment the refcount while using kvm,
+otherwise kvm can be destroyed from another thread while you're
+walking it.
 
-Link: https://lkml.org/lkml/2018/9/1/125
-Signed-off-by: Greentime Hu <greentime@andestech.com>
----
- arch/nds32/kernel/vmlinux.lds.S | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/nds32/kernel/vmlinux.lds.S b/arch/nds32/kernel/vmlinux.lds.S
-index 288313b886ef..9e90f30a181d 100644
---- a/arch/nds32/kernel/vmlinux.lds.S
-+++ b/arch/nds32/kernel/vmlinux.lds.S
-@@ -13,14 +13,26 @@ OUTPUT_ARCH(nds32)
- ENTRY(_stext_lma)
- jiffies = jiffies_64;
- 
-+#if defined(CONFIG_GCOV_KERNEL)
-+#define NDS32_EXIT_KEEP(x)	x
-+#else
-+#define NDS32_EXIT_KEEP(x)
-+#endif
-+
- SECTIONS
- {
- 	_stext_lma = TEXTADDR - LOAD_OFFSET;
- 	. = TEXTADDR;
- 	__init_begin = .;
- 	HEAD_TEXT_SECTION
-+	.exit.text : {
-+		NDS32_EXIT_KEEP(EXIT_TEXT)
-+	}
- 	INIT_TEXT_SECTION(PAGE_SIZE)
- 	INIT_DATA_SECTION(16)
-+	.exit.data : {
-+		NDS32_EXIT_KEEP(EXIT_DATA)
-+	}
- 	PERCPU_SECTION(L1_CACHE_BYTES)
- 	__init_end = .;
- 
--- 
-2.18.0
-
+-Nikita
+> +
+> +	ret = ept_idle_walk_hva_range(eic, hva_start, hva_end);
+> +	if (ret)
+> +		goto out_free;
+> +
+> +	ret = eic->bytes_copied;
+> +	*ppos += ret;
+> +out_free:
+> +	kfree(eic);
+> +
+> +	return ret;
+> +}
