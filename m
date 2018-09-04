@@ -2,167 +2,154 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC16C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1054C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 397132077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 397132077C
+	by mail.kernel.org (Postfix) with ESMTP id 651382086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651382086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbeIDMz3 (ORCPT
+        id S1726363AbeIDM6U convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:55:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59225 "EHLO mga07.intel.com"
+        Tue, 4 Sep 2018 08:58:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:61179 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbeIDMz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:55:29 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1725990AbeIDM6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 08:58:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 01:31:24 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 01:34:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="80692463"
-Received: from dbxu-mobl.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.212.218])
-  by orsmga003.jf.intel.com with ESMTP; 04 Sep 2018 01:31:20 -0700
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1fx6k3-0006In-K0; Tue, 04 Sep 2018 16:31:19 +0800
-Date:   Tue, 4 Sep 2018 16:31:19 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        dongx.peng@intel.com, jingqi.liu@intel.com, eddie.dong@intel.com,
-        dave.hansen@intel.com, ying.huang@intel.com, bgregg@netflix.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 1/5] [PATCH 1/5] kvm: register in task_struct
-Message-ID: <20180904083119.t5zhv5m3slnossq6@wfg-t540p.sh.intel.com>
-References: <D3FBF73C-3C33-4F94-8BBB-CE6C70B81A70@oracle.com>
- <0ef9ccdc-3eae-f0b9-5304-8552cb94d166@de.ibm.com>
- <20180904002818.nq2ejxlsn4o34anl@wfg-t540p.sh.intel.com>
- <20180904004621.aqhemgpefwtq3kif@wfg-t540p.sh.intel.com>
- <F0A5145C-E401-43E8-9FE9-56A4470CD13E@oracle.com>
- <20180904071552.f4cmxo7hwtjw22dc@wfg-t540p.sh.intel.com>
- <45efb10a-a55a-b917-589c-de55e88ec18f@de.ibm.com>
+   d="scan'208";a="254325956"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga005.jf.intel.com with ESMTP; 04 Sep 2018 01:34:14 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 4 Sep 2018 01:34:14 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 4 Sep 2018 01:34:13 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
+ Tue, 4 Sep 2018 16:34:12 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Auger Eric <eric.auger@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+CC:     "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        "christoffer.dall@arm.com" <christoffer.dall@arm.com>
+Subject: RE: [RFC 01/13] iommu: Introduce bind_guest_stage API
+Thread-Topic: [RFC 01/13] iommu: Introduce bind_guest_stage API
+Thread-Index: AQHUOttfqy1SkTByKESItK+VEUbEjaTM7zGAgAxtLACAAAuEgIAGZ4Rg//+CZACAAIvdQA==
+Date:   Tue, 4 Sep 2018 08:34:11 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912EFCD8@SHSMSX101.ccr.corp.intel.com>
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+        <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+        <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
+        <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
+        <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1912EFB76@SHSMSX101.ccr.corp.intel.com>
+ <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
+In-Reply-To: <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjVmNmMwODktNjBkYS00ZmQxLWIwNjItYTM0MDYxYTUzNGQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNVFlSXF3MXgxRkhWenZGWk1LMGt5aEwwVXZuM3FYdEpvXC90cDJpKzNwSU9zVGZIRDR2bmxHMUFwc01hWUl0VmQifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45efb10a-a55a-b917-589c-de55e88ec18f@de.ibm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 09:43:50AM +0200, Christian Borntraeger wrote:
->
->
->On 09/04/2018 09:15 AM, Fengguang Wu wrote:
->> On Tue, Sep 04, 2018 at 08:37:03AM +0200, Nikita Leshenko wrote:
->>> On 4 Sep 2018, at 2:46, Fengguang Wu <fengguang.wu@intel.com> wrote:
->>>>
->>>> Here it goes:
->>>>
->>>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->>>> index 99ce070e7dcb..27c5446f3deb 100644
->>>> --- a/include/linux/mm_types.h
->>>> +++ b/include/linux/mm_types.h
->>>> @@ -27,6 +27,7 @@ typedef int vm_fault_t;
->>>> struct address_space;
->>>> struct mem_cgroup;
->>>> struct hmm;
->>>> +struct kvm;
->>>> /*
->>>> * Each physical page in the system has a struct page associated with
->>>> @@ -489,10 +490,19 @@ struct mm_struct {
->>>>     /* HMM needs to track a few things per mm */
->>>>     struct hmm *hmm;
->>>> #endif
->>>> +#if IS_ENABLED(CONFIG_KVM)
->>>> +    struct kvm *kvm;
->>>> +#endif
->>>> } __randomize_layout;
->>>> extern struct mm_struct init_mm;
->>>> +#if IS_ENABLED(CONFIG_KVM)
->>>> +static inline struct kvm *mm_kvm(struct mm_struct *mm) { return mm->kvm; }
->>>> +#else
->>>> +static inline struct kvm *mm_kvm(struct mm_struct *mm) { return NULL; }
->>>> +#endif
->>>> +
->>>> static inline void mm_init_cpumask(struct mm_struct *mm)
->>>> {
->>>> #ifdef CONFIG_CPUMASK_OFFSTACK
->>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->>>> index 0c483720de8d..dca6156a7b35 100644
->>>> --- a/virt/kvm/kvm_main.c
->>>> +++ b/virt/kvm/kvm_main.c
->>>> @@ -3892,7 +3892,7 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
->>>>     if (type == KVM_EVENT_CREATE_VM) {
->>>>         add_uevent_var(env, "EVENT=create");
->>>>         kvm->userspace_pid = task_pid_nr(current);
->>>> -        current->kvm = kvm;
->>>> +        current->mm->kvm = kvm;
->>> I think you also need to reset kvm to NULL once the VM is
->>> destroyed, otherwise it would point to dangling memory.
->>
->> Good point! Here is the incremental patch:
->>
->> --- a/virt/kvm/kvm_main.c
->> +++ b/virt/kvm/kvm_main.c
->> @@ -3894,6 +3894,7 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm)
->>                kvm->userspace_pid = task_pid_nr(current);
->>                current->mm->kvm = kvm;
->>        } else if (type == KVM_EVENT_DESTROY_VM) {
->> +               current->mm->kvm = NULL;
->>                add_uevent_var(env, "EVENT=destroy");
->>        }
->>        add_uevent_var(env, "PID=%d", kvm->userspace_pid);
->
->I think you should put both code snippets somewhere else. This has probably nothing to do
->with the uevent. Instead this should go into kvm_destroy_vm and kvm_create_vm. Make sure
->to take care of the error handling.
+> From: Auger Eric
+> Sent: Tuesday, September 4, 2018 4:11 PM
+> 
+> Hi Kevin,
+> On 09/04/2018 09:57 AM, Tian, Kevin wrote:
+> >> From: Auger Eric
+> >> Sent: Friday, August 31, 2018 9:52 PM
+> >>
+> >> Hi Jean-Philippe,
+> >>
+> >> On 08/31/2018 03:11 PM, Jean-Philippe Brucker wrote:
+> >>> Hi Eric,
+> >>>
+> >>> On 23/08/18 16:25, Auger Eric wrote:
+> >>>>> +int iommu_bind_guest_stage(struct iommu_domain *domain,
+> struct
+> >> device *dev,
+> >>>>> +			   struct iommu_guest_stage_config *cfg)
+> >>>
+> >>> About the name change from iommu_bind_pasid_table: is the intent to
+> >>> reuse this API for SMMUv2, which supports nested but not PASID?
+> Seems
+> >>> like a good idea but "iommu_bind_table" may be better since "stage" is
+> >>> only used by Arm.
+> >>
+> >> At the moment I don't target SMUv2 but just SMMUv3. My focus was on
+> >> nested stage enablement without enabling the multi-CD feature (PASID),
+> >> whish is not supported by the QEMU vSMMUv3. Afterwards I realized
+> that
+> >> basically we are pointing to a CD or PASID table and that's about the
+> >> same. I don't have a strong opinion on the name,
+> iommu_bind_guest_table
+> >> or iommu_bind_pasid_table would be fine with me. Indeed "stage" is
+> ARM
+> >> vocable (level for Intel?)
+> >
+> > Intel uses first level/second level.
+> >
+> > iommu_bind_table is a bit confusing. what should people take table as?
+> > there is PASID table. there is also page table linked in each stage/level.
+> and
+> > maybe other tables in vendor-specific definition.
+> >
+> > to me iommu_bind_pasid_table is still clearer. anyway in other places
+> > we've used pasid explicitly in vfio/iommu APIs, then it should be general
+> > enough to represent various implementations.
+> 
+> Fine for me.
+> 
+> However I I would suggest to rename the original iommu_sva_invalidate
+> into something that is SVA unrelated. iommu_tlb_invalidate is not OK as
+> this API also is used to invalidate context caches - which are not
+> iotlbs -. What about iommu_cache_invalidate?
+> 
+> At least we must clarify that this API can be used for something else
+> than SVA enablement.
+> 
 
-OK. Will set the pointer late and reset it early like this. Since
-there are several error conditions after kvm_create_vm(), it may be
-more convenient to set it in kvm_dev_ioctl_create_vm(), when there are
-no more errors to handle:
+Agree. using SVA is limiting.
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -724,6 +724,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
-        struct mm_struct *mm = kvm->mm;
+I also agree that iommu_cache_invalidate is better, though I don't think
+you want to pass guest context cache invalidation to host. that information
+is fully under host control. :-)
 
-        kvm_uevent_notify_change(KVM_EVENT_DESTROY_VM, kvm);
-+       current->mm->kvm = NULL;
-        kvm_destroy_vm_debugfs(kvm);
-        kvm_arch_sync_events(kvm);
-        spin_lock(&kvm_lock);
-@@ -3206,6 +3207,7 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
-                fput(file);
-                return -ENOMEM;
-        }
-+       current->mm->kvm = kvm;
-        kvm_uevent_notify_change(KVM_EVENT_CREATE_VM, kvm);
-
-        fd_install(r, file);
-
->Can you point us to the original discussion about the why and what you are
->trying to achieve?
-
-It's the initial RFC post. [PATCH 0] describes some background info.
-
-Basically we're implementing /proc/PID/idle_bitmap for user space to
-walk page tables and get "accessed" bits. Since VM's "accessed" bits
-will be reflected in EPT (or AMD NPT), we'll need to walk EPT when
-detected it is QEMU main process. 
-
-Thanks,
-Fengguang
+Thanks
+Kevin
