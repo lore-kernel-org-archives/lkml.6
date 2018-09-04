@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF19C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC94320867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FA2720843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:17:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oZ3iCyn7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EKf8CK9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC94320867
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qc20k0HO";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y3tx4ZTP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA2720843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeIDOmJ (ORCPT
+        id S1727530AbeIDOmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:42:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39932 "EHLO
+        Tue, 4 Sep 2018 10:42:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40152 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbeIDOmJ (ORCPT
+        with ESMTP id S1726208AbeIDOmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:42:09 -0400
+        Tue, 4 Sep 2018 10:42:14 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B8A36606CF; Tue,  4 Sep 2018 10:17:41 +0000 (UTC)
+        id 0E926605BD; Tue,  4 Sep 2018 10:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536056261;
-        bh=4QRhb3wKa9spvTGJWaF0t041fLrfKKxD50/GB9eCLXg=;
+        s=default; t=1536056267;
+        bh=vcwJKc6DIeKDKAzOSUSJjXPsxjhl65GIRbKNIBnDBNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oZ3iCyn7x6fRmQWpSCdw5SeBbpSkPAS08vhV3RrsVc5imX1NoSwbf7436vDhMIfvf
-         f6ATGi3dGVqPQFzP/shW+ztTzEFA+J14xrzx2i8JKAXhewCiWPd96wVA/JqXt9+/aa
-         2J/kuQaBGnl0GgRyjffgNKoEm3iT8jthicZfabHU=
+        b=Qc20k0HOLlL5Arxe2j2yQgH7gPs1/QZpFxzcDfvhTQpERGtYWTUvLZVJfFidJu3EP
+         94Y1A3PJdsF8imik3+HtSItk8NF4eXiry98P0KbgxwCg3Bwlc85c4J1zIjfQGH8ND0
+         UVCBQQQZx5xDy2OHo71KpyqCX+2ADeZ6zhDqMYvI=
 Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B17986044E;
-        Tue,  4 Sep 2018 10:17:36 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC26D607B9;
+        Tue,  4 Sep 2018 10:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536056260;
-        bh=4QRhb3wKa9spvTGJWaF0t041fLrfKKxD50/GB9eCLXg=;
+        s=default; t=1536056264;
+        bh=vcwJKc6DIeKDKAzOSUSJjXPsxjhl65GIRbKNIBnDBNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKf8CK9Jc/6oRlRC5WutgH9hIFKvw3tK/0mIr2QyRu2gt1V7vPe7J2dt4JkPpOC2A
-         W5Y0YoHOfXuipo2HACEylLAKJX53NGMmQ98iA1r8rQ7TOQcVa/EPCbScOsWSdRNXQ+
-         dt4pwCWoO2Yuszk7ufODkly5hX78IzBV7ciBqEpM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B17986044E
+        b=Y3tx4ZTP3LNxHEIhGC14XSD6ziIkpZoH1TMA/DzdG3Ve3Fct0CxeuCepGVBFASShY
+         1w7tmhu6KIT2N/LrRAjK2vvkfkZJRPuRVOyV396iDNbCU7xbYKhTAPtfbCiXkIc1RA
+         saPuKsSOCmmgRq+jeUwFAHK3jpTLr5HWlO3Ca/yU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC26D607B9
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
 From:   Vivek Gautam <vivek.gautam@codeaurora.org>
@@ -58,9 +58,9 @@ To:     kishon@ti.com, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
 Cc:     subhashj@codeaurora.org, bjorn.andersson@linaro.org,
         evgreen@chromium.org, linux-arm-msm@vger.kernel.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 2/3] scsi/ufs: qcom: Remove ufs_qcom_phy_*() calls from host
-Date:   Tue,  4 Sep 2018 15:47:18 +0530
-Message-Id: <20180904101719.18049-3-vivek.gautam@codeaurora.org>
+Subject: [PATCH 3/3] phy: qcom-ufs: Declare 20nm qcom ufs qmp phy as Broken
+Date:   Tue,  4 Sep 2018 15:47:19 +0530
+Message-Id: <20180904101719.18049-4-vivek.gautam@codeaurora.org>
 X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 In-Reply-To: <20180904101719.18049-1-vivek.gautam@codeaurora.org>
 References: <20180904101719.18049-1-vivek.gautam@codeaurora.org>
@@ -69,155 +69,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The host makes direct calls into phy using ufs_qcom_phy_*()
-APIs. These APIs are only defined for 20nm qcom-ufs-qmp phy
-which is not being used by any architecture as yet. Future
-architectures too are not going to use 20nm ufs phy.
-So remove these ufs_qcom_phy_*() calls from host to let further
-change declare the 20nm phy as broken.
-Also remove couple of stale enum defines for ufs phy.
+Fork out separate configs for 14nm and 20nm qcom ufs qmp phys
+to declare the 20nm phy as broken.
 
 Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 ---
- drivers/phy/qualcomm/phy-qcom-ufs-i.h |  2 +-
- drivers/scsi/ufs/ufs-qcom.c           | 28 +---------------------------
- drivers/scsi/ufs/ufs-qcom.h           |  5 -----
- include/linux/phy/phy-qcom-ufs.h      | 24 ------------------------
- 4 files changed, 2 insertions(+), 57 deletions(-)
- delete mode 100644 include/linux/phy/phy-qcom-ufs.h
+ drivers/phy/qualcomm/Kconfig  | 17 +++++++++++++++++
+ drivers/phy/qualcomm/Makefile |  4 ++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-index 822c83b8efcd..681644e43248 100644
---- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-+++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-@@ -17,9 +17,9 @@
+diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
+index 632a0e73ee10..32f7d34eb784 100644
+--- a/drivers/phy/qualcomm/Kconfig
++++ b/drivers/phy/qualcomm/Kconfig
+@@ -50,6 +50,23 @@ config PHY_QCOM_UFS
+ 	help
+ 	  Support for UFS PHY on QCOM chipsets.
  
- #include <linux/module.h>
- #include <linux/clk.h>
-+#include <linux/phy/phy.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
--#include <linux/phy/phy-qcom-ufs.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 75ee5906b966..3dc4501c6945 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -16,7 +16,6 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
--#include <linux/phy/phy-qcom-ufs.h>
- 
- #include "ufshcd.h"
- #include "ufshcd-pltfrm.h"
-@@ -189,22 +188,9 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
- 
- static int ufs_qcom_link_startup_post_change(struct ufs_hba *hba)
- {
--	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
--	struct phy *phy = host->generic_phy;
- 	u32 tx_lanes;
--	int err = 0;
--
--	err = ufs_qcom_get_connected_tx_lanes(hba, &tx_lanes);
--	if (err)
--		goto out;
- 
--	err = ufs_qcom_phy_set_tx_lane_enable(phy, tx_lanes);
--	if (err)
--		dev_err(hba->dev, "%s: ufs_qcom_phy_set_tx_lane_enable failed\n",
--			__func__);
--
--out:
--	return err;
-+	return ufs_qcom_get_connected_tx_lanes(hba, &tx_lanes);
- }
- 
- static int ufs_qcom_check_hibern8(struct ufs_hba *hba)
-@@ -932,10 +918,8 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
- {
- 	u32 val;
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
--	struct phy *phy = host->generic_phy;
- 	struct ufs_qcom_dev_params ufs_qcom_cap;
- 	int ret = 0;
--	int res = 0;
- 
- 	if (!dev_req_params) {
- 		pr_err("%s: incoming dev_req_params is NULL\n", __func__);
-@@ -1002,12 +986,6 @@ static int ufs_qcom_pwr_change_notify(struct ufs_hba *hba,
- 		}
- 
- 		val = ~(MAX_U32 << dev_req_params->lane_tx);
--		res = ufs_qcom_phy_set_tx_lane_enable(phy, val);
--		if (res) {
--			dev_err(hba->dev, "%s: ufs_qcom_phy_set_tx_lane_enable() failed res = %d\n",
--				__func__, res);
--			ret = res;
--		}
- 
- 		/* cache the power mode parameters to use internally */
- 		memcpy(&host->dev_req_params,
-@@ -1264,10 +1242,6 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- 		}
- 	}
- 
--	/* update phy revision information before calling phy_init() */
--	ufs_qcom_phy_save_controller_version(host->generic_phy,
--		host->hw_ver.major, host->hw_ver.minor, host->hw_ver.step);
--
- 	err = ufs_qcom_init_lane_clks(host);
- 	if (err)
- 		goto out_variant_clear;
-diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
-index 295f4bef6a0e..c114826316eb 100644
---- a/drivers/scsi/ufs/ufs-qcom.h
-+++ b/drivers/scsi/ufs/ufs-qcom.h
-@@ -129,11 +129,6 @@ enum {
- 	MASK_CLK_NS_REG                     = 0xFFFC00,
- };
- 
--enum ufs_qcom_phy_init_type {
--	UFS_PHY_INIT_FULL,
--	UFS_PHY_INIT_CFG_RESTORE,
--};
--
- /* QCOM UFS debug print bit mask */
- #define UFS_QCOM_DBG_PRINT_REGS_EN	BIT(0)
- #define UFS_QCOM_DBG_PRINT_ICE_REGS_EN	BIT(1)
-diff --git a/include/linux/phy/phy-qcom-ufs.h b/include/linux/phy/phy-qcom-ufs.h
-deleted file mode 100644
-index 9dd85071bcce..000000000000
---- a/include/linux/phy/phy-qcom-ufs.h
-+++ /dev/null
-@@ -1,24 +0,0 @@
--/*
-- * Copyright (c) 2013-2015, Linux Foundation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
--
--#ifndef PHY_QCOM_UFS_H_
--#define PHY_QCOM_UFS_H_
--
--#include "phy.h"
--
--int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes);
--void ufs_qcom_phy_save_controller_version(struct phy *phy,
--			u8 major, u16 minor, u16 step);
--
--#endif /* PHY_QCOM_UFS_H_ */
++if PHY_QCOM_UFS
++
++config PHY_QCOM_UFS_14NM
++	tristate
++	default PHY_QCOM_UFS
++	help
++	  Support for 14nm UFS QMP phy present on QCOM chipsets.
++
++config PHY_QCOM_UFS_20NM
++	tristate
++	default PHY_QCOM_UFS
++	depends on BROKEN
++	help
++	  Support for 20nm UFS QMP phy present on QCOM chipsets.
++
++endif
++
+ config PHY_QCOM_USB_HS
+ 	tristate "Qualcomm USB HS PHY module"
+ 	depends on USB_ULPI_BUS
+diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
+index deb831f453ae..c56efd3af205 100644
+--- a/drivers/phy/qualcomm/Makefile
++++ b/drivers/phy/qualcomm/Makefile
+@@ -5,7 +5,7 @@ obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
+ obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
+ obj-$(CONFIG_PHY_QCOM_QUSB2)		+= phy-qcom-qusb2.o
+ obj-$(CONFIG_PHY_QCOM_UFS)		+= phy-qcom-ufs.o
+-obj-$(CONFIG_PHY_QCOM_UFS)		+= phy-qcom-ufs-qmp-14nm.o
+-obj-$(CONFIG_PHY_QCOM_UFS)		+= phy-qcom-ufs-qmp-20nm.o
++obj-$(CONFIG_PHY_QCOM_UFS_14NM)		+= phy-qcom-ufs-qmp-14nm.o
++obj-$(CONFIG_PHY_QCOM_UFS_20NM)		+= phy-qcom-ufs-qmp-20nm.o
+ obj-$(CONFIG_PHY_QCOM_USB_HS) 		+= phy-qcom-usb-hs.o
+ obj-$(CONFIG_PHY_QCOM_USB_HSIC) 	+= phy-qcom-usb-hsic.o
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
