@@ -2,153 +2,126 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5462C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6B8C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A865D2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A865D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 8518820843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:06:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aB6TeOSk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8518820843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeIDN3p (ORCPT
+        id S1727136AbeIDNax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 09:29:45 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45396 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbeIDN3p (ORCPT
+        Tue, 4 Sep 2018 09:30:53 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40052 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbeIDNax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 09:29:45 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p52-v6so2617123eda.12;
-        Tue, 04 Sep 2018 02:05:33 -0700 (PDT)
+        Tue, 4 Sep 2018 09:30:53 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x26-v6so2322879lfi.7;
+        Tue, 04 Sep 2018 02:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:user-agent:cc:references:in-reply-to
+         :mime-version:content-transfer-encoding:content-disposition
+         :message-id;
+        bh=Xo/9ODQ1eP0jXKBoNDINSBpq5qNIp8iTqqMDjfd6kAk=;
+        b=aB6TeOSkoV7c/l3oDWK/mF56N/m8Hc4A7kS7Mw5gZ7lwhYiN+OnixA7iOzfZcpkUay
+         uxa9r0DNs+hCZE61m2+ACR33QHyPuM8YpEYHXaBPqEdR5cs8Kmwxcfx2x6/OLsQUQLB3
+         /P32glb0PDSKoY1kl2hbT1BftKXI9KsMIu5canJA8rbMOjXEpCDHnuGpuxlUsXqoXsrT
+         OXXFWQJuNLYoiGsQ6OLXZLNKclEElaBHPeDZLxODxCHohfemaj7QkO/0EPP5m0t2owRN
+         /46MnAm0zeiZt7x8U1b0xkkuClHs5VIV26Lt/DPea7qt6C61akE0g3G+KrM/IFn4S5kD
+         HxOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GmPlO1sgJIbeSvaxL+ZJmZOcbaS6EypK9oQ1dK6HKas=;
-        b=O4IygNj4bHKN9B3jXMasRHHro/n5EAegv/pFo5XyCJr3bmIGavgyBfCjBR+Oo+ogAs
-         Lb0lF3pE7E+U+HnVWomc7wChqqL3q5rhSrdXPCriUutHes4OxA++9F36tMyBqg2/PRVr
-         7hiiUJgDsCW51Q5MHzAuTjOIjuPj4VKyreNlWcnkPODxuSAjtQW6AxewDX3NV+2a6CWH
-         YfEkEmnFNlzJDEjx0hNrhUpRdNGRoiuzad7A1pGPD6MWF4lEu15jL3gIwkbsb8dr2wUN
-         wdDRClZnNK2D4B3qYbdnODOpPGLyaIk/Mu5XV79ItyJTtE6zsZbFFZoJ9HR/t2CGQIWX
-         +aag==
-X-Gm-Message-State: APzg51DaQoIKjxBUyKUTBNLlc6tsJb6RBCFD1tQgtJai/eOyzM3jIS2M
-        cmJqrvWgQBnWL97b0DGUtbPCAU8gyt4=
-X-Google-Smtp-Source: ANB0VdbP/xGiIfNXxBVSxSElrKo7itmwkXS3o6k4xHO4Mqx5TZ8jIZKzYLzL28srzzYHb6S8duZwmg==
-X-Received: by 2002:a50:a105:: with SMTP id 5-v6mr34308337edj.186.1536051932485;
-        Tue, 04 Sep 2018 02:05:32 -0700 (PDT)
-Received: from mail-wm0-f43.google.com (mail-wm0-f43.google.com. [74.125.82.43])
-        by smtp.gmail.com with ESMTPSA id u53-v6sm14445746edm.51.2018.09.04.02.05.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 02:05:31 -0700 (PDT)
-Received: by mail-wm0-f43.google.com with SMTP id q8-v6so3470697wmq.4;
-        Tue, 04 Sep 2018 02:05:30 -0700 (PDT)
-X-Received: by 2002:a7b:c04c:: with SMTP id u12-v6mr1847653wmc.24.1536051930478;
- Tue, 04 Sep 2018 02:05:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:user-agent:cc:references
+         :in-reply-to:mime-version:content-transfer-encoding
+         :content-disposition:message-id;
+        bh=Xo/9ODQ1eP0jXKBoNDINSBpq5qNIp8iTqqMDjfd6kAk=;
+        b=qC/3NyylPlH934L428R4aFKEX8NXk/YMwOwPWHHFgrad12C80ns9Kur2BlYbt+N5Xx
+         3KwL9HP5ZsI1T9hLYiEciWMJHlPxXf0AQOiBBByfaKgRbf7HNzyQjLXdHs/aCw03ATsA
+         WQv22aKtyxF0oheuH/Omaq5cPFKk6FhZzUVto1P8xQGw6u8HLyK0+VQVd7odCqpkz7ER
+         pjndvE86H8N0Srmw+wnMK2vaZ9EQnSHqYdld6XrlI9b7Zo9pejHwd0NWSLrF5xFK/UzZ
+         NsUJgqzCAKnSq2pcTVEjtNgucoM78nP6ZIz53LnjHz33dGb52pSmhUVMo/NIdv7ChL/H
+         mbXw==
+X-Gm-Message-State: APzg51Btp8JpXf5OSc/D1F1lWZTCDPWiUJrp1dPp8PbCsPHUCqf7C82l
+        dLIyjaYO66YW6/hoLDbmZfc=
+X-Google-Smtp-Source: ANB0VdYSs9YrQGVyAaS4QTwVSffs6FcijFRxHY+blJvgFENdJD1LxQo2wc9pv29KON7l8GyZSCTXuQ==
+X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr20941333lfl.136.1536051999551;
+        Tue, 04 Sep 2018 02:06:39 -0700 (PDT)
+Received: from dimatab (109-252-90-13.nat.spd-mgts.ru. [109.252.90.13])
+        by smtp.gmail.com with ESMTPSA id h90-v6sm4183193lji.66.2018.09.04.02.06.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 02:06:38 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Date:   Tue, 4 Sep 2018 12:06:36 +0300
+User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830184210.5369-1-digetx@gmail.com> <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com> <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-8-jernej.skrabec@siol.net> <CAGb2v65AsKzEH3AgmQi+RRvVa6AO-cpAckGnNkvWwONsCCsoxw@mail.gmail.com>
-In-Reply-To: <CAGb2v65AsKzEH3AgmQi+RRvVa6AO-cpAckGnNkvWwONsCCsoxw@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 4 Sep 2018 17:05:16 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67udJ1_668Q4MFb3MbEQXzukNBKtEu3FYHsw+QyVA9J2Q@mail.gmail.com>
-Message-ID: <CAGb2v67udJ1_668Q4MFb3MbEQXzukNBKtEu3FYHsw+QyVA9J2Q@mail.gmail.com>
-Subject: Re: [PATCH 07/27] dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201809041206.37080.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 4:59 PM Chen-Yu Tsai <wens@csie.org> wrote:
+On Monday 03 September 2018 11:01:11 Peter De Schrijver wrote:
+> On Fri, Aug 31, 2018 at 12:45:17PM +0300, Dmitry Osipenko wrote:
+> > On 8/31/18 12:29 PM, Peter De Schrijver wrote:
+> > > On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+> > >> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+> > >> a lock-status bit. The lock-status polling was disabled ~7 years ago
+> > >> because PLLE was failing to lock and was a suspicion that other PLLs
+> > >> might be faulty too. Other PLLs are okay, hence enable the lock-status
+> > >> polling for them. This reduces delay of any operation that require PLL
+> > >> to lock.
+> > >>
+> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > >> ---
+> > >>
+> > >> Changelog:
+> > >>
+> > >> v2:	Don't enable polling for PLLE as it known to not being able to
+> > >> lock.
+> > >
+> > > This isn't correct. The lock bit of PLLE can declare lock too early,
+> > > but the PLL itself does lock.
+> >
+> > Indeed, it locks but can't be polled for the lock-status as it doesn't
+> > have the lock-status bit.
+> >
+> > Do you want me to adjust the commit description or it is fine as is?
 >
-> Hi,
->
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> >
-> > This commit adds necessary description and dt includes for H6 DE3 clock.
-> > It is very similar to others, but memory region has some additional
-> > registers not found in DE2.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> >  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
-> >  include/dt-bindings/clock/sun8i-de2.h                 | 3 +++
-> >  include/dt-bindings/reset/sun8i-de2.h                 | 1 +
-> >  3 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > index e94582e8b8a9..41a52c2acffd 100644
-> > --- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > +++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > @@ -1,5 +1,5 @@
-> > -Allwinner Display Engine 2.0 Clock Control Binding
-> > ---------------------------------------------------
-> > +Allwinner Display Engine 2.0/3.0 Clock Control Binding
-> > +------------------------------------------------------
-> >
-> >  Required properties :
-> >  - compatible: must contain one of the following compatibles:
-> > @@ -8,6 +8,7 @@ Required properties :
-> >                 - "allwinner,sun8i-v3s-de2-clk"
-> >                 - "allwinner,sun50i-a64-de2-clk"
-> >                 - "allwinner,sun50i-h5-de2-clk"
-> > +               - "allwinner,sun50i-h6-de3-clk"
-> >
-> >  - reg: Must contain the registers base address and length
-> >  - clocks: phandle to the clocks feeding the display engine subsystem.
-> > diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
-> > index 3bed63b524aa..7768f73b051e 100644
-> > --- a/include/dt-bindings/clock/sun8i-de2.h
-> > +++ b/include/dt-bindings/clock/sun8i-de2.h
-> > @@ -15,4 +15,7 @@
-> >  #define CLK_MIXER1             7
-> >  #define CLK_WB                 8
-> >
-> > +#define CLK_BUS_ROT            9
-> > +#define CLK_ROT                        10
-> > +
-> >  #endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
-> > diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
-> > index 9526017432f0..1c36a6ac86d6 100644
-> > --- a/include/dt-bindings/reset/sun8i-de2.h
-> > +++ b/include/dt-bindings/reset/sun8i-de2.h
-> > @@ -10,5 +10,6 @@
-> >  #define RST_MIXER0     0
-> >  #define RST_MIXER1     1
-> >  #define RST_WB         2
-> > +#define RST_ROT                3
->
-> Looking at the DE 2.0 register guide, the "Rotate" related fields are also
-> found on the A83T. So this is not DE 3.0 specific. And you could also have
-> the H6 DE3 compatible fall back to the A83T for the common parts.
+> I think it's better to adjust it.
 
-I take that back. The A83T has a different clock tree structure because it
-lacks the DE mod clock, so it's not compatible.
+Okay. I expect to get a review from you for the other clock (and related) 
+patches too and will send the new version once all the current patches will 
+be reviewed. Please take a look at them once you'll have some free time, 
+thanks.
 
-> ChenYu
+> > It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
 >
-> >
-> >  #endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
-> > --
-> > 2.18.0
-> >
+> That seems odd yes..
+
+:)
