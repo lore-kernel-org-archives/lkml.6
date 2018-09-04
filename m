@@ -2,111 +2,107 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400FAC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D66DC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB56C2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:40:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB56C2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 1DFCB2086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:40:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DFCB2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeIDLEH (ORCPT
+        id S1727686AbeIDLEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:04:07 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:41175 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727321AbeIDLEG (ORCPT
+        Tue, 4 Sep 2018 07:04:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52426 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727665AbeIDLEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:04:06 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id x50efMVMCnJnWx50hf0WwM; Tue, 04 Sep 2018 08:40:24 +0200
-Subject: Re: [PATCH v2] media: vimc: implement basic v4l2-ctrls
-To:     Guilherme Gallo <gagallo7@gmail.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     lkcamp@lists.libreplanetbr.org
-References: <20180904014559.15765-1-gagallo7@gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <529ce419-bba7-7e90-cb7d-e9a94fe64ac2@xs4all.nl>
-Date:   Tue, 4 Sep 2018 08:40:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 4 Sep 2018 07:04:08 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w846dJav162994
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 02:40:26 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m9m1u23tq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 02:40:26 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 4 Sep 2018 07:40:24 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Sep 2018 07:40:22 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w846eLFu45547738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Sep 2018 06:40:21 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8B81AE051;
+        Tue,  4 Sep 2018 09:39:45 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2C50AE05A;
+        Tue,  4 Sep 2018 09:39:44 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue,  4 Sep 2018 09:39:44 +0100 (BST)
+Date:   Mon, 3 Sep 2018 23:40:20 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 2/4] sched/numa: remove unused nr_running field
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
+ <1535548752-4434-3-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180904014559.15765-1-gagallo7@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKdcstj5XslJjgtPgHw5mIW1PVBwG9/Ml7sj2C11L8I3jrrh8AobqDigwKW1I5OHT8/V1ogp4VoPk7vss5LeWTNxic4Yg0OFXx8ZWI8xi+549Lcfe197
- j0mysxSMJ1T8YuDmxHRxm+QggtEvtMtuV65+SAEK+wl60rlsoxgURTV1UVfOnHg2Vpxmp4ahps1nQWMswsSRaPvslYDeDBjdqvYtnJCEJ5ic79DX55Gk2P9d
- d/FF/kNJOEIFbj3farqXfbNjdhkqkuHOJb1pYMjdaYgFIpMXjffCYFuJVujmT3+d3oZfrK0rbb/MUAqXBjEhMzgB3PEY7y6uWJf95bhXdth1VxeavqFxfBya
- boY0t1tU
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1535548752-4434-3-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090406-4275-0000-0000-000002B4D532
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090406-4276-0000-0000-000037BDE6D1
+Message-Id: <20180904064019.GB61288@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-04_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=905 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809040070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guilherme,
+* Vincent Guittot <vincent.guittot@linaro.org> [2018-08-29 15:19:10]:
 
-On 09/04/2018 03:45 AM, Guilherme Gallo wrote:
-> Add brightness, contrast, hue and saturation controls in vimc-sensor
+> nr_running in struct numa_stats is not used anywhere in the code.
 > 
-> Signed-off-by: Guilherme Alcarde Gallo <gagallo7@gmail.com>
-> Signed-off-by: Guilherme Gallo <gagallo7@gmail.com>
-
-Looks good, but you have (probably unintended) two Signed-off-by lines.
-Just let me know which one I should use and I'll drop the other one.
-
-Regards,
-
-	Hans
-
+> Remove it.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: linux-kernel@vger.kernel.org (open list)
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
->  drivers/media/platform/vimc/vimc-sensor.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
-> index b2b89315e7ba..edf4c85ae63d 100644
-> --- a/drivers/media/platform/vimc/vimc-sensor.c
-> +++ b/drivers/media/platform/vimc/vimc-sensor.c
-> @@ -317,6 +317,18 @@ static int vimc_sen_s_ctrl(struct v4l2_ctrl *ctrl)
->  	case V4L2_CID_VFLIP:
->  		tpg_s_vflip(&vsen->tpg, ctrl->val);
->  		break;
-> +	case V4L2_CID_BRIGHTNESS:
-> +		tpg_s_brightness(&vsen->tpg, ctrl->val);
-> +		break;
-> +	case V4L2_CID_CONTRAST:
-> +		tpg_s_contrast(&vsen->tpg, ctrl->val);
-> +		break;
-> +	case V4L2_CID_HUE:
-> +		tpg_s_hue(&vsen->tpg, ctrl->val);
-> +		break;
-> +	case V4L2_CID_SATURATION:
-> +		tpg_s_saturation(&vsen->tpg, ctrl->val);
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -378,6 +390,14 @@ static int vimc_sen_comp_bind(struct device *comp, struct device *master,
->  			  V4L2_CID_VFLIP, 0, 1, 1, 0);
->  	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
->  			  V4L2_CID_HFLIP, 0, 1, 1, 0);
-> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-> +			  V4L2_CID_BRIGHTNESS, 0, 255, 1, 128);
-> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-> +			  V4L2_CID_CONTRAST, 0, 255, 1, 128);
-> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-> +			  V4L2_CID_HUE, -128, 127, 1, 0);
-> +	v4l2_ctrl_new_std(&vsen->hdl, &vimc_sen_ctrl_ops,
-> +			  V4L2_CID_SATURATION, 0, 255, 1, 128);
->  	vsen->sd.ctrl_handler = &vsen->hdl;
->  	if (vsen->hdl.error) {
->  		ret = vsen->hdl.error;
-> 
+>  kernel/sched/fair.c | 3 ---
+>  1 file changed, 3 deletions(-)
+
+Looks good to me.
+
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+-- 
+Thanks and Regards
+Srikar Dronamraju
 
