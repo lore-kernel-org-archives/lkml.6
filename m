@@ -6,216 +6,235 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37583C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B865C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBEB92073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:32:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEB92073D
+	by mail.kernel.org (Postfix) with ESMTP id 218872073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218872073D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeIDX7B (ORCPT
+        id S1728109AbeIDX7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:59:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60664 "EHLO
+        Tue, 4 Sep 2018 19:59:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60674 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbeIDX7B (ORCPT
+        with ESMTP id S1726437AbeIDX7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:59:01 -0400
+        Tue, 4 Sep 2018 19:59:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4990C96;
-        Tue,  4 Sep 2018 19:32:27 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 21:32:25 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 485B9C96;
+        Tue,  4 Sep 2018 19:32:49 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 21:32:46 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Naresh Kamboju <naresh.kamboju@linaro.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux- stable <stable@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.18 050/123] mm/tlb, x86/mm: Support invalidating TLB
- caches for RCU_TABLE_FREE
-Message-ID: <20180904193225.GA17846@kroah.com>
-References: <20180903165719.499675257@linuxfoundation.org>
- <20180903165721.576888426@linuxfoundation.org>
- <CA+G9fYsyr_AxbmuWfD6svin4Cq_5QJOYvOW_ohnS7fUobRU7ZA@mail.gmail.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.14 000/165] 4.14.68-stable review
+Message-ID: <20180904193246.GB17846@kroah.com>
+References: <20180903165655.003605184@linuxfoundation.org>
+ <CA+G9fYtAu2Hs5vpT0+P03LRfa_cvwresMT48HgH0HsHQEaEujQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYsyr_AxbmuWfD6svin4Cq_5QJOYvOW_ohnS7fUobRU7ZA@mail.gmail.com>
+In-Reply-To: <CA+G9fYtAu2Hs5vpT0+P03LRfa_cvwresMT48HgH0HsHQEaEujQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 10:08:13AM +0530, Naresh Kamboju wrote:
-> On 3 September 2018 at 22:26, Greg Kroah-Hartman
+On Tue, Sep 04, 2018 at 09:49:43AM +0530, Naresh Kamboju wrote:
+> On 3 September 2018 at 22:24, Greg Kroah-Hartman
 > <gregkh@linuxfoundation.org> wrote:
-> > 4.18-stable review patch.  If anyone has any objections, please let me know.
+> > This is the start of the stable review cycle for the 4.14.68 release.
+> > There are 165 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > >
-> > ------------------
+> > Responses should be made by Wed Sep  5 16:56:19 UTC 2018.
+> > Anything received after that time might be too late.
 > >
-> > From: Peter Zijlstra <peterz@infradead.org>
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.68-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
 > >
-> > commit d86564a2f085b79ec046a5cba90188e612352806 upstream.
+> > thanks,
 > >
-> > Jann reported that x86 was missing required TLB invalidates when he
-> > hit the !*batch slow path in tlb_remove_table().
-> >
-> > This is indeed the case; RCU_TABLE_FREE does not provide TLB (cache)
-> > invalidates, the PowerPC-hash where this code originated and the
-> > Sparc-hash where this was subsequently used did not need that. ARM
-> > which later used this put an explicit TLB invalidate in their
-> > __p*_free_tlb() functions, and PowerPC-radix followed that example.
-> >
-> > But when we hooked up x86 we failed to consider this. Fix this by
-> > (optionally) hooking tlb_remove_table() into the TLB invalidate code.
-> >
-> > NOTE: s390 was also needing something like this and might now
-> >       be able to use the generic code again.
-> >
-> > [ Modified to be on top of Nick's cleanups, which simplified this patch
-> >   now that tlb_flush_mmu_tlbonly() really only flushes the TLB - Linus ]
-> >
-> > Fixes: 9e52fc2b50de ("x86/mm: Enable RCU based page table freeing (CONFIG_HAVE_RCU_TABLE_FREE=y)")
-> > Reported-by: Jann Horn <jannh@google.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Acked-by: Rik van Riel <riel@surriel.com>
-> > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > Cc: David Miller <davem@davemloft.net>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: stable@kernel.org
-> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >
-> > ---
-> >  arch/Kconfig     |    3 +++
-> >  arch/x86/Kconfig |    1 +
-> >  mm/memory.c      |   18 ++++++++++++++++++
-> >  3 files changed, 22 insertions(+)
-> >
-> > --- a/arch/Kconfig
-> > +++ b/arch/Kconfig
-> > @@ -354,6 +354,9 @@ config HAVE_ARCH_JUMP_LABEL
-> >  config HAVE_RCU_TABLE_FREE
-> >         bool
-> >
-> > +config HAVE_RCU_TABLE_INVALIDATE
-> > +       bool
-> > +
-> >  config ARCH_HAVE_NMI_SAFE_CMPXCHG
-> >         bool
-> >
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -179,6 +179,7 @@ config X86
-> >         select HAVE_PERF_REGS
-> >         select HAVE_PERF_USER_STACK_DUMP
-> >         select HAVE_RCU_TABLE_FREE
-> > +       select HAVE_RCU_TABLE_INVALIDATE        if HAVE_RCU_TABLE_FREE
-> >         select HAVE_REGS_AND_STACK_ACCESS_API
-> >         select HAVE_RELIABLE_STACKTRACE         if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
-> >         select HAVE_STACKPROTECTOR              if CC_HAS_SANE_STACKPROTECTOR
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -330,6 +330,21 @@ bool __tlb_remove_page_size(struct mmu_g
-> >   * See the comment near struct mmu_table_batch.
-> >   */
-> >
-> > +/*
-> > + * If we want tlb_remove_table() to imply TLB invalidates.
-> > + */
-> > +static inline void tlb_table_invalidate(struct mmu_gather *tlb)
-> > +{
-> > +#ifdef CONFIG_HAVE_RCU_TABLE_INVALIDATE
-> > +       /*
-> > +        * Invalidate page-table caches used by hardware walkers. Then we still
-> > +        * need to RCU-sched wait while freeing the pages because software
-> > +        * walkers can still be in-flight.
-> > +        */
-> > +       tlb_flush_mmu_tlbonly(tlb);
-> > +#endif
-> > +}
-> > +
-> >  static void tlb_remove_table_smp_sync(void *arg)
-> >  {
-> >         /* Simply deliver the interrupt */
-> > @@ -366,6 +381,7 @@ void tlb_table_flush(struct mmu_gather *
-> >         struct mmu_table_batch **batch = &tlb->batch;
-> >
-> >         if (*batch) {
-> > +               tlb_table_invalidate(tlb);
-> >                 call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
-> >                 *batch = NULL;
-> >         }
-> > @@ -387,11 +403,13 @@ void tlb_remove_table(struct mmu_gather
-> >         if (*batch == NULL) {
-> >                 *batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
-> >                 if (*batch == NULL) {
-> > +                       tlb_table_invalidate(tlb);
-> >                         tlb_remove_table_one(table);
-> >                         return;
-> >                 }
-> >                 (*batch)->nr = 0;
-> >         }
-> > +
-> >         (*batch)->tables[(*batch)->nr++] = table;
-> >         if ((*batch)->nr == MAX_TABLE_BATCH)
-> >                 tlb_table_flush(tlb);
-> >
-> >
+> > greg k-h
 > 
-> Kernel crashed on x86 device running LTP fcntl34 test case on 4.18.6-rc1,
-> fcntl34.c:58: INFO: waiting for '12' threads
+> Running kselftest
+> selftests: bpf: test_tunnel.sh reported kernel crash on i386 device
+> running 4.14.68-rc1
+> and similar issue reported on 4.18.6-rc1.
 > 
-> [ 1075.624862] BUG: stack guard page was hit at 0000000079c81098
-> (stack is 000000002c7d6db4..00000000d386d6df)
-> [ 1075.634606] kernel stack overflow (double-fault): 0000 [#2] SMP PTI
-> [ 1075.640871] CPU: 3 PID: 17735 Comm: fcntl34_64 Tainted: G      D W
->        4.18.6-rc1 #1
-> [ 1075.648954] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> [   92.244007] low stack detected by irq handler
+> [   92.244145] BUG: unable to handle kernel paging request at c4fb1f64
+> [   92.244161] IP: __call_rcu.constprop.76+0x27/0x4b0
+> [   92.244164] *pde = 35c05063 *pte = 04fb1161
+> [   92.244172] Oops: 0003 [#1] SMP
+> [   92.244176] Modules linked in: veth x86_pkg_temp_thermal fuse
+> [   92.244187] CPU: 2 PID: 19 Comm: ksoftirqd/2 Not tainted 4.14.68-rc1 #1
+> [   92.244190] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
 > 2.0b 07/27/2017
-> [ 1075.656428] RIP: 0010:flush_tlb_func_common.constprop.14+0x29c/0x4d0
-> [ 1075.662776] Code: 03 1d 70 e3 da 4e 83 c2 01 0f b7 d2 49 0f ab 13
-> eb b5 0f 1f 44 00 00 e9 70 fe ff ff 65 ff 05 6b 40 db 4e 48 8b 05 bc
-> e8 8f 01 <e8> ff 95 08 00 85 c0 74 0d 80 3d ee c5 8f 01 00 0f 84 4a 01
-> 00 00
-> [ 1075.681645] RSP: 0018:ffffbd2482cbc000 EFLAGS: 00010083
-> [ 1075.686863] RAX: 0000000000000000 RBX: ffff98915adf0002 RCX: ffffbd2482cbc010
-> [ 1075.693986] RDX: 0000000000000803 RSI: 00007f5aae00a000 RDI: ffffbd2482cbc080
-> [ 1075.701124] RBP: ffffbd2482cbc060 R08: ffffffffb2b86c00 R09: 0000008000000000
-> [ 1075.708287] R10: 000000000002161a R11: 2008188a00000121 R12: 0000000000000162
-> [ 1075.715410] R13: 0000000000000003 R14: 00007f5aae00a000 R15: 00007f5aae000000
-> [ 1075.722536] FS:  00007f5aaeff3740(0000) GS:ffff98916fd80000(0000)
-> knlGS:0000000000000000
-> [ 1075.730619] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 1075.736357] CR2: ffffbd2482cbbff8 CR3: 000000045368c003 CR4: 00000000003606e0
-> [ 1075.743481] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [ 1075.750606] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [ 1075.757730] Call Trace:
-> [ 1075.760176]  flush_tlb_mm_range+0x119/0x130
-> [ 1075.764358]  ? flush_tlb_mm_range+0x119/0x130
-> [ 1075.768711]  tlb_flush_mmu_tlbonly+0x6e/0xd0
-> [ 1075.772984]  ? tlb_flush_mmu_tlbonly+0x6e/0xd0
-> [ 1075.777428]  tlb_table_flush.part.113+0x12/0x30
-> [ 1075.781954]  tlb_flush_mmu_tlbonly+0x4b/0xd0
-> [ 1075.786224]  tlb_table_flush.part.113+0x12/0x30
-> [ 1075.790749]  tlb_flush_mmu_tlbonly+0x4b/0xd0
+> [   92.244192] task: f5db8000 task.stack: f5db4000
+> [   92.244198] EIP: __call_rcu.constprop.76+0x27/0x4b0
+> [   92.244201] EFLAGS: 00210246 CPU: 2
+> [   92.244204] EAX: 00000000 EBX: c4fb17a0 ECX: c5c2d640 EDX: c4fb17a0
+> [   92.244206] ESI: c4fb1f60 EDI: c4fb1f60 EBP: f5db5ee4 ESP: f5db5eb0
+> [   92.244209]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> [   92.244212] CR0: 80050033 CR2: c4fb1f64 CR3: 05dff000 CR4: 003406d0
+> [   92.244215] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> [   92.244216] DR6: fffe0ff0 DR7: 00000400
+> [   92.244218] Call Trace:
+> [   92.244228]  ? rcu_process_callbacks+0x200/0xdd0
+> [   92.244234]  ? __lock_is_held+0x48/0x80
+> [   92.244242]  ? tlb_table_flush.part.118+0x10/0x30
+> [   92.244248]  call_rcu_sched+0x14/0x20
+> [   92.244252]  tlb_table_flush.part.118+0x1d/0x30
+> [   92.244257]  ? rcu_process_callbacks+0x254/0xdd0
+> [   92.244264]  ? finish_task_switch+0x87/0x1d0
+> [   92.244276]  __do_softirq+0xac/0x426
+> [   92.244288]  run_ksoftirqd+0x1f/0x60
+> [   92.244295]  smpboot_thread_fn+0x120/0x1d0
+> [   92.244300]  kthread+0xfa/0x110
+> [   92.244305]  ? sort_range+0x20/0x20
+> [   92.244310]  ? kthread_create_on_node+0x20/0x20
+> [   92.244316]  ret_from_fork+0x2e/0x38
+> [   92.244325] Code: 00 00 00 00 3e 8d 74 26 00 55 89 e5 57 56 53 89
+> c6 89 d3 83 ec 28 8b 45 08 f7 c6 03 00 00 00 89 4d ec 89 45 e4 0f 85
+> 39 03 00 00 <89> 5e 04 c7 06 00 00 00 00 9c 8f 45 f0 fa e8 66 69 fd ff
+> 8b 55
+> [   92.244413] EIP: __call_rcu.constprop.76+0x27/0x4b0 SS:ESP: 0068:f5db5eb0
+> [   92.244415] CR2: 00000000c4fb1f64
+> [   92.244425] ---[ end trace df3b7c276e7f3926 ]---
+> [   92.244427] Kernel panic - not syncing: Fatal exception in interrupt
+> [   92.432150] CPU: 0 PID: 2388 Comm: named Tainted: G      D
+> 4.14.68-rc1 #1
+> [   92.439620] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> 2.0b 07/27/2017
+> [   92.447090] Call Trace:
+> [   92.449535]  <IRQ>
+> [   92.451547]  dump_stack+0x66/0x92
+> [   92.454865]  print_stack_overflow+0x17/0x30
+> [   92.459052]  call_on_stack+0x45/0x50
+> [   92.462628]  </IRQ>
+> [   92.464730] Kernel Offset: 0x3e00000 from 0xc1000000 (relocation
+> range: 0xc0000000-0xf7bfdfff)
+> [   92.473333] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+> [   92.480458] sched: Unexpected reschedule of offline CPU#3!
+> [   92.485943] ------------[ cut here ]------------
+> [   92.490563] WARNING: CPU: 2 PID: 19 at
+> /srv/oe/build/tmp-rpb-glibc/work-shared/intel-core2-32/kernel-source/arch/x86/kernel/smp.c:128
+> native_smp_send_reschedule+0x33/0x40
+> [   92.505752] Modules linked in: veth x86_pkg_temp_thermal fuse
+> [   92.511490] CPU: 2 PID: 19 Comm: ksoftirqd/2 Tainted: G      D
+>    4.14.68-rc1 #1
+> [   92.519305] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> 2.0b 07/27/2017
+> [   92.526779] task: f5db8000 task.stack: f5db4000
+> [   92.531303] EIP: native_smp_send_reschedule+0x33/0x40
+> [   92.536355] EFLAGS: 00210086 CPU: 2
+> [   92.539837] EAX: 0000002e EBX: 00000003 ECX: f61d9900 EDX: f61d2d34
+> [   92.546095] ESI: f5d85500 EDI: f5d85500 EBP: f5db5b44 ESP: f5db5b3c
+> [   92.552352]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> [   92.557744] CR0: 80050033 CR2: c4fb1f64 CR3: 05dff000 CR4: 003406d0
+> [   92.563998] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> [   92.570256] DR6: fffe0ff0 DR7: 00000400
+> [   92.574087] Call Trace:
+> [   92.576534]  resched_curr+0x59/0x180
+> [   92.580112]  check_preempt_curr+0x8d/0xb0
+> [   92.584115]  ttwu_do_wakeup+0x17/0x240
+> [   92.587857]  ? activate_task+0x52/0xc0
+> [   92.591602]  ttwu_do_activate+0x6c/0x90
+> [   92.595433]  try_to_wake_up+0x2ed/0x570
+> [   92.599265]  default_wake_function+0x10/0x20
+> [   92.603536]  autoremove_wake_function+0x14/0x40
+> [   92.608059]  __wake_up_common+0x68/0x110
+> [   92.611978]  __wake_up_common_lock+0x57/0x80
+> [   92.616243]  __wake_up+0x12/0x20
+> [   92.619476]  wake_up_klogd_work_func+0x3c/0x60
+> [   92.623920]  irq_work_run_list+0x38/0x60
+> [   92.627836]  irq_work_tick+0x31/0x40
+> [   92.631408]  update_process_times+0x3a/0x50
+> [   92.635586]  tick_sched_handle+0x40/0x60
+> [   92.639511]  tick_sched_timer+0x38/0x90
+> [   92.643342]  __hrtimer_run_queues+0xe0/0x490
+> [   92.647606]  ? tick_sched_do_timer+0x60/0x60
+> [   92.651878]  hrtimer_interrupt+0x8f/0x190
+> [   92.655884]  smp_apic_timer_interrupt+0x68/0x290
+> [   92.660501]  apic_timer_interrupt+0x3a/0x40
+> [   92.664678] EIP: panic+0x186/0x1cc
+> [   92.668073] EFLAGS: 00200246 CPU: 2
+> [   92.671558] EAX: c5ad3108 EBX: 00000000 ECX: f61d2d30 EDX: 00000000
+> [   92.677815] ESI: 00000000 EDI: 00000000 EBP: f5db5d8c ESP: f5db5d78
+> [   92.684072]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> [   92.689465]  ? freeze_processes+0x3b/0xe0
+> [   92.693477]  oops_end+0xa3/0xb0
+> [   92.696614]  no_context+0xd9/0x200
+> [   92.700010]  ? tlb_table_flush.part.118+0x14/0x30
+> [   92.704706]  ? find_busiest_group+0x29/0x520
+> [   92.708971]  ? tlb_table_flush.part.118+0x14/0x30
+> [   92.713668]  __bad_area_nosemaphore+0xa4/0x130
+> [   92.718107]  bad_area_nosemaphore+0x12/0x20
+> [   92.722284]  __do_page_fault+0xb5/0x4b0
+> [   92.726116]  ? __lock_acquire+0x1fe/0x1130
+> [   92.730213]  ? tlb_table_flush.part.118+0x14/0x30
+> [   92.734910]  ? tlb_table_flush.part.118+0x14/0x30
+> [   92.739607]  do_page_fault+0x20/0x240
+> [   92.743265]  ? tlb_flush_mmu_free+0x50/0x50
+> [   92.747442]  ? tlb_table_flush.part.118+0x10/0x30
+> [   92.752138]  ? __do_page_fault+0x4b0/0x4b0
+> [   92.756229]  common_exception+0x7c/0x82
+> [   92.760061] EIP: __call_rcu.constprop.76+0x27/0x4b0
+> [   92.764930] EFLAGS: 00210246 CPU: 2
+> [   92.768415] EAX: 00000000 EBX: c4fb17a0 ECX: c5c2d640 EDX: c4fb17a0
+> [   92.774671] ESI: c4fb1f60 EDI: c4fb1f60 EBP: f5db5ee4 ESP: f5db5eb0
+> [   92.780928]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> [   92.786320]  ? tlb_flush_mmu_free+0x50/0x50
+> [   92.790497]  ? tlb_flush_mmu_free+0x50/0x50
+> [   92.794674]  ? tlb_table_flush.part.118+0x10/0x30
+> [   92.799371]  ? tlb_table_flush.part.118+0x10/0x30
+> [   92.804069]  ? __init_swait_queue_head+0x3b/0x40
+> [   92.808686]  ? __do_page_fault+0x4b0/0x4b0
+> [   92.812778]  ? rcu_process_callbacks+0x200/0xdd0
+> [   92.817388]  ? __lock_is_held+0x48/0x80
+> [   92.821219]  ? tlb_table_flush.part.118+0x10/0x30
+> [   92.825916]  call_rcu_sched+0x14/0x20
+> [   92.829574]  tlb_table_flush.part.118+0x1d/0x30
+> [   92.834098]  ? rcu_process_callbacks+0x254/0xdd0
+> [   92.838715]  ? finish_task_switch+0x87/0x1d0
+> [   92.842981]  __do_softirq+0xac/0x426
+> [   92.846551]  run_ksoftirqd+0x1f/0x60
+> [   92.850122]  smpboot_thread_fn+0x120/0x1d0
+> [   92.854213]  kthread+0xfa/0x110
+> [   92.857359]  ? sort_range+0x20/0x20
+> [   92.860840]  ? kthread_create_on_node+0x20/0x20
+> [   92.865365]  ret_from_fork+0x2e/0x38
+> [   92.868938] Code: 0f a3 05 dc da ce c5 73 17 8b 0d 20 d6 ba c5 ba
+> fd 00 00 00 ff 51 58 c9 c3 8d b4 26 00 00 00 00 50 68 e0 cc ac c5 e8
+> 0a fa 07 00 <0f> 0b 58 5a c9 c3 8d b4 26 00 00 00 00 3e 8d 74 26 00 8b
+> 15 f0
+> [   92.887724] ---[ end trace df3b7c276e7f3927 ]---
 > 
-> Full test log link,
-> https://lkft.validation.linaro.org/scheduler/job/404027#L4051
+> Details for test full run,
+> 
+> 4.14 run,
+> https://lkft.validation.linaro.org/scheduler/job/404796
+> 
+> 4.18.6-rc1 run,
+> https://lkft.validation.linaro.org/scheduler/job/404027#L3244
 
-I have pushed out a -rc2 that should fix this problem.
+I have pushed out a -rc2 to hopefully fix this problem.
 
 thanks,
 
