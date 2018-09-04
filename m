@@ -3,109 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8688EC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C516C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B34120843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B34120843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 9EF4B20843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:49:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF4B20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeIDOJj (ORCPT
+        id S1727272AbeIDON3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 10:09:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:39006 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeIDOJj (ORCPT
+        Tue, 4 Sep 2018 10:13:29 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:36449 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726203AbeIDON2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 10:09:39 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fx7tI-00041K-1x; Tue, 04 Sep 2018 17:44:56 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fx7tH-0003cw-Fx; Tue, 04 Sep 2018 17:44:55 +0800
-Date:   Tue, 4 Sep 2018 17:44:55 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
-Message-ID: <20180904094455.cxafsiiquipjgkaz@gondor.apana.org.au>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
- <20180827110245.14812-3-ard.biesheuvel@linaro.org>
- <20180828170135.GC19825@arm.com>
- <CAKv+Gu-tM9aKZJ3ppt9yLVP_V5YA_yN8D1j_-NtM+qQCdnc6JA@mail.gmail.com>
- <20180904031855.mjpdndeh57lqziuk@gondor.apana.org.au>
- <20180904093844.GA12148@arm.com>
+        Tue, 4 Sep 2018 10:13:28 -0400
+X-ASG-Debug-ID: 1536054535-093b7e636b113490001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 5zRlLBeMC85CPmo0 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Tue, 04 Sep 2018 17:48:55 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from localhost.localdomain.localdomain (10.5.21.103) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 4 Sep 2018 17:49:01 +0800
+From:   Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+To:     <jeffrey.t.kirsher@intel.com>
+CC:     <jacob.e.keller@intel.com>, <davem@davemloft.net>,
+        <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Subject: [PATCH] net: ethernet: i40e: fix build error
+Date:   Tue, 4 Sep 2018 17:48:47 +0800
+X-ASG-Orig-Subj: [PATCH] net: ethernet: i40e: fix build error
+Message-ID: <1536054527-34184-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904093844.GA12148@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.5.21.103]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1536054535
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6628 1.0000 1.1043
+X-Barracuda-Spam-Score: 1.10
+X-Barracuda-Spam-Status: No, SCORE=1.10 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.56851
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 10:38:45AM +0100, Will Deacon wrote:
-> On Tue, Sep 04, 2018 at 11:18:55AM +0800, Herbert Xu wrote:
-> > On Tue, Aug 28, 2018 at 08:43:35PM +0200, Ard Biesheuvel wrote:
-> > > On 28 August 2018 at 19:01, Will Deacon <will.deacon@arm.com> wrote:
-> > > > On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
-> > > >> Add a CRC32 feature bit and wire it up to the CPU id register so we
-> > > >> will be able to use alternatives patching for CRC32 operations.
-> > > >>
-> > > >> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > >> ---
-> > > >>  arch/arm64/include/asm/cpucaps.h | 3 ++-
-> > > >>  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
-> > > >>  2 files changed, 11 insertions(+), 1 deletion(-)
-> > > >
-> > > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > > >
-> > > > With the minor caveat below...
-> > > >
-> > > >> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> > > >> index ae1f70450fb2..9932aca9704b 100644
-> > > >> --- a/arch/arm64/include/asm/cpucaps.h
-> > > >> +++ b/arch/arm64/include/asm/cpucaps.h
-> > > >> @@ -51,7 +51,8 @@
-> > > >>  #define ARM64_SSBD                           30
-> > > >>  #define ARM64_MISMATCHED_CACHE_TYPE          31
-> > > >>  #define ARM64_HAS_STAGE2_FWB                 32
-> > > >> +#define ARM64_HAS_CRC32                              33
-> > > >>
-> > > >> -#define ARM64_NCAPS                          33
-> > > >> +#define ARM64_NCAPS                          34
-> > > >
-> > > >
-> > > > ... if this goes via crypto, you'll almost certainly get a (trivial)
-> > > > conflict with arm64, since these numbers get bumped all the time.
-> > > >
-> > > 
-> > > I think the first three patches should go through the arm64 tree. The
-> > > last one just removes the now redundant crc32 SIMD driver, and Herbert
-> > > could pick that up separately, i.e., it should be totally independent.
-> > 
-> > Yes let's do that.
-> 
-> Okey doke! In which case, please can we have your Ack on the first patch?
+Remove "inline" from __i40e_add_stat_strings.
 
-Sure, I have just sent an ack for that patch.
+In file included from
+drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:0:
+drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function
+‘__i40e_add_stat_strings’:
+drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error:
+function ‘__i40e_add_stat_strings’ can never be inlined because it uses
+variable argument lists
+ static inline void __i40e_add_stat_strings(u8 **p, const struct
+					    i40e_stats stats[],
 
-Cheers,
+Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+---
+ drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+index bba1cb0..0290ade 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+@@ -190,7 +190,7 @@ struct i40e_stats {
+  * Format and copy the strings described by stats into the buffer pointed at
+  * by p.
+  **/
+-static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
++static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+ 				    const unsigned int size, ...)
+ {
+ 	unsigned int i;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.8.3.1
+
