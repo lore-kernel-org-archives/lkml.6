@@ -2,75 +2,72 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E42C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC79C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 076F520658
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:09:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076F520658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 4149E206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:13:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4149E206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeIDXgS (ORCPT
+        id S1727881AbeIDXkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:36:18 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:49453 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727782AbeIDXgS (ORCPT
+        Tue, 4 Sep 2018 19:40:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58182 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeIDXkB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:36:18 -0400
-Received: (qmail 19288 invoked by uid 500); 4 Sep 2018 15:09:49 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 4 Sep 2018 15:09:49 -0400
-Date:   Tue, 4 Sep 2018 15:09:49 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-cc:     Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <peterz@infradead.org>, <boqun.feng@gmail.com>,
-        <npiggin@gmail.com>, <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>,
-        <luc.maranget@inria.fr>, <akiyks@gmail.com>
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-In-Reply-To: <20180904081144.GA4137@andrea>
-Message-ID: <Pine.LNX.4.44L0.1809041503470.17060-100000@netrider.rowland.org>
+        Tue, 4 Sep 2018 19:40:01 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7341CCAA;
+        Tue,  4 Sep 2018 19:13:32 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 21:13:30 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joe Jin <joe.jin@oracle.com>
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        "DONGLI.ZHANG" <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] xen-swiotlb: use actually allocated size on check
+ physical contiguous
+Message-ID: <20180904191330.GA16532@kroah.com>
+References: <d578b69a-848b-2c86-175a-1b1933d82a36@oracle.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d578b69a-848b-2c86-175a-1b1933d82a36@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018, Andrea Parri wrote:
-> Heh, your confusion might be the reflection of mine... ;-)  That was
-> indeed a long and not conclusive discussion (meaning there're pending
-> issues); and I cannot claim to find "arguments" such as:
+On Tue, Sep 04, 2018 at 11:16:58AM -0700, Joe Jin wrote:
+> xen_swiotlb_{alloc,free}_coherent() actually allocate/free size by order
+> but used the required size to check if address is physical contiguous,
+> if first pages are physical contiguous also passed
+> range_straddles_page_boundary() check, but others were not it will
+> lead kernel panic.
 > 
->   "More than one kernel developer has expressed the opinion that
->    the LKMM should enforce ordering of writes by locking."
+> Signed-off-by: Joe Jin <joe.jin@oracle.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> ---
+>  drivers/xen/swiotlb-xen.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> particularly helpful (I do tend to be convinced by arguments rather
-> than by opinions).  In fact, you can take the following as my only
-> current "constructive argument" against the patch [1,2]:
-> 
->   THE COMMIT MESSAGE IS RIDICULOUS; PLEASE EXPAND ON IT, AND DO
->   SO BY LEVERAGING BOTH PROS AND CONS OF THE APPLIED CHANGES
 
-Do you have any concrete suggestions (i.e., some actual text) for 
-improvements to the patch description?  Earlier in your message you 
-mentioned that Will's comment:
+<formletter>
 
-	LKMM offers stronger guarantees that can portably be relied upon
-	in the codebase.
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-would make a good addition.  Suitably edited, it could be added to the
-description.  I can think of a few other things myself, but I'd like to 
-hear your thoughts.  Anything else?
-
-Alan
-
+</formletter>
