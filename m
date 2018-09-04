@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6306BC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D58C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2779B20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2779B20645
+	by mail.kernel.org (Postfix) with ESMTP id C9F6120843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F6120843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbeIDUYv (ORCPT
+        id S1728037AbeIDUZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:24:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50960 "EHLO mx1.suse.de"
+        Tue, 4 Sep 2018 16:25:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51024 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727783AbeIDUYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:24:50 -0400
+        id S1727775AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:24:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BAF76B0B2;
+        by mx1.suse.de (Postfix) with ESMTP id 75FFBB0AD;
         Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 23/29] staging: bcm2835-audio: Remove unnecessary header file includes
-Date:   Tue,  4 Sep 2018 17:58:52 +0200
-Message-Id: <20180904155858.8001-24-tiwai@suse.de>
+Subject: [PATCH 18/29] staging: bcm2835-audio: Make single vchi handle
+Date:   Tue,  4 Sep 2018 17:58:47 +0200
+Message-Id: <20180904155858.8001-19-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,73 +42,411 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yet a few header files are included unnecessarily.  Drop them.
-
-Also remove trivial comments.
+The bcm2835_audio_instance object contains the array of
+VCHI_SERVICE_HANDLE_T, while the code assumes and uses only the first
+element explicitly.  Let's reduce to a single vchi handle for
+simplifying the code.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../bcm2835-audio/bcm2835-vchiq.c             | 19 -------------------
- .../vc04_services/bcm2835-audio/bcm2835.h     |  6 ------
- 2 files changed, 25 deletions(-)
+ .../bcm2835-audio/bcm2835-vchiq.c             | 170 ++++++------------
+ 1 file changed, 58 insertions(+), 112 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-index 7fff5c63e33f..1d756f467eb8 100644
+index 488e676e25e1..be76f97705f4 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -1,31 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright 2011 Broadcom Corporation.  All rights reserved. */
+@@ -44,8 +44,7 @@
+ #endif
  
--#include <linux/device.h>
--#include <sound/core.h>
--#include <sound/initval.h>
--#include <sound/pcm.h>
--#include <linux/io.h>
--#include <linux/interrupt.h>
--#include <linux/fs.h>
--#include <linux/file.h>
--#include <linux/mm.h>
--#include <linux/syscalls.h>
--#include <linux/uaccess.h>
- #include <linux/slab.h>
--#include <linux/delay.h>
--#include <linux/atomic.h>
- #include <linux/module.h>
- #include <linux/completion.h>
--
- #include "bcm2835.h"
--
--/* ---- Include Files -------------------------------------------------------- */
--
- #include "vc_vchi_audioserv_defs.h"
- 
--/* ---- Private Constants and Types ------------------------------------------ */
--
  struct bcm2835_audio_instance {
- 	struct device *dev;
- 	VCHI_SERVICE_HANDLE_T vchi_handle;
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-index 319c3e5dfbe4..4e41069dc22a 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-@@ -5,16 +5,10 @@
- #define __SOUND_ARM_BCM2835_H
+-	unsigned int num_connections;
+-	VCHI_SERVICE_HANDLE_T vchi_handle[VCHI_MAX_NUM_CONNECTIONS];
++	VCHI_SERVICE_HANDLE_T vchi_handle;
+ 	struct completion msg_avail_comp;
+ 	struct mutex vchi_mutex;
+ 	struct bcm2835_alsa_stream *alsa_stream;
+@@ -202,12 +201,12 @@ static void audio_vchi_callback(void *param,
+ 		BUG();
+ 		return;
+ 	}
+-	if (!instance->vchi_handle[0]) {
+-		LOG_ERR(" .. instance->vchi_handle[0] is null\n");
++	if (!instance->vchi_handle) {
++		LOG_ERR(" .. instance->vchi_handle is null\n");
+ 		BUG();
+ 		return;
+ 	}
+-	status = vchi_msg_dequeue(instance->vchi_handle[0],
++	status = vchi_msg_dequeue(instance->vchi_handle,
+ 				  &m, sizeof(m), &msg_len, VCHI_FLAGS_NONE);
+ 	if (m.type == VC_AUDIO_MSG_TYPE_RESULT) {
+ 		LOG_DBG(" .. instance=%p, m.type=VC_AUDIO_MSG_TYPE_RESULT, success=%d\n",
+@@ -237,102 +236,61 @@ static void audio_vchi_callback(void *param,
  
- #include <linux/device.h>
--#include <linux/list.h>
--#include <linux/interrupt.h>
- #include <linux/wait.h>
- #include <sound/core.h>
--#include <sound/initval.h>
- #include <sound/pcm.h>
--#include <sound/pcm_params.h>
- #include <sound/pcm-indirect.h>
--#include <linux/workqueue.h>
+ static struct bcm2835_audio_instance *
+ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
+-		   VCHI_CONNECTION_T **vchi_connections,
+-		   unsigned int num_connections)
++		   VCHI_CONNECTION_T *vchi_connection)
+ {
+-	unsigned int i;
++	SERVICE_CREATION_T params = {
++		.version		= VCHI_VERSION_EX(VC_AUDIOSERV_VER, VC_AUDIOSERV_MIN_VER),
++		.service_id		= VC_AUDIO_SERVER_NAME,
++		.connection		= vchi_connection,
++		.rx_fifo_size		= 0,
++		.tx_fifo_size		= 0,
++		.callback		= audio_vchi_callback,
++		.want_unaligned_bulk_rx = 1, //TODO: remove VCOS_FALSE
++		.want_unaligned_bulk_tx = 1, //TODO: remove VCOS_FALSE
++		.want_crc		= 0
++	};
+ 	struct bcm2835_audio_instance *instance;
+ 	int status;
+-	int ret;
 -
- #include "interface/vchi/vchi.h"
+-	LOG_DBG("%s: start", __func__);
  
- #define MAX_SUBSTREAMS   (8)
+-	if (num_connections > VCHI_MAX_NUM_CONNECTIONS) {
+-		LOG_ERR("%s: unsupported number of connections %u (max=%u)\n",
+-			__func__, num_connections, VCHI_MAX_NUM_CONNECTIONS);
+-
+-		return ERR_PTR(-EINVAL);
+-	}
+ 	/* Allocate memory for this instance */
+ 	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+ 	if (!instance)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	instance->num_connections = num_connections;
+-
+ 	/* Create a lock for exclusive, serialized VCHI connection access */
+ 	mutex_init(&instance->vchi_mutex);
+ 	/* Open the VCHI service connections */
+-	for (i = 0; i < num_connections; i++) {
+-		SERVICE_CREATION_T params = {
+-			.version		= VCHI_VERSION_EX(VC_AUDIOSERV_VER, VC_AUDIOSERV_MIN_VER),
+-			.service_id		= VC_AUDIO_SERVER_NAME,
+-			.connection		= vchi_connections[i],
+-			.rx_fifo_size		= 0,
+-			.tx_fifo_size		= 0,
+-			.callback		= audio_vchi_callback,
+-			.callback_param		= instance,
+-			.want_unaligned_bulk_rx = 1, //TODO: remove VCOS_FALSE
+-			.want_unaligned_bulk_tx = 1, //TODO: remove VCOS_FALSE
+-			.want_crc		= 0
+-		};
+-
+-		LOG_DBG("%s: about to open %i\n", __func__, i);
+-		status = vchi_service_open(vchi_instance, &params,
+-					   &instance->vchi_handle[i]);
+-
+-		LOG_DBG("%s: opened %i: %p=%d\n", __func__, i, instance->vchi_handle[i], status);
+-		if (status) {
+-			LOG_ERR("%s: failed to open VCHI service connection (status=%d)\n",
+-				__func__, status);
+-			ret = -EPERM;
+-			goto err_close_services;
+-		}
+-		/* Finished with the service for now */
+-		vchi_service_release(instance->vchi_handle[i]);
+-	}
++	params.callback_param = instance,
+ 
+-	LOG_DBG("%s: okay\n", __func__);
+-	return instance;
++	status = vchi_service_open(vchi_instance, &params,
++				   &instance->vchi_handle);
+ 
+-err_close_services:
+-	for (i = 0; i < instance->num_connections; i++) {
+-		LOG_ERR("%s: closing %i: %p\n", __func__, i, instance->vchi_handle[i]);
+-		if (instance->vchi_handle[i])
+-			vchi_service_close(instance->vchi_handle[i]);
++	if (status) {
++		LOG_ERR("%s: failed to open VCHI service connection (status=%d)\n",
++			__func__, status);
++		kfree(instance);
++		return ERR_PTR(-EPERM);
+ 	}
+ 
+-	kfree(instance);
+-	LOG_ERR("%s: error\n", __func__);
++	/* Finished with the service for now */
++	vchi_service_release(instance->vchi_handle);
+ 
+-	return ERR_PTR(ret);
++	return instance;
+ }
+ 
+ static int vc_vchi_audio_deinit(struct bcm2835_audio_instance *instance)
+ {
+-	unsigned int i;
+-
+-	if (!instance) {
+-		LOG_ERR("%s: invalid handle %p\n", __func__, instance);
+-
+-		return -1;
+-	}
++	int status;
+ 
+-	LOG_DBG(" .. about to lock (%d)\n", instance->num_connections);
+ 	mutex_lock(&instance->vchi_mutex);
+ 
+ 	/* Close all VCHI service connections */
+-	for (i = 0; i < instance->num_connections; i++) {
+-		int status;
+-
+-		LOG_DBG(" .. %i:closing %p\n", i, instance->vchi_handle[i]);
+-		vchi_service_use(instance->vchi_handle[i]);
++	vchi_service_use(instance->vchi_handle);
+ 
+-		status = vchi_service_close(instance->vchi_handle[i]);
+-		if (status) {
+-			LOG_DBG("%s: failed to close VCHI service connection (status=%d)\n",
+-				__func__, status);
+-		}
++	status = vchi_service_close(instance->vchi_handle);
++	if (status) {
++		LOG_DBG("%s: failed to close VCHI service connection (status=%d)\n",
++			__func__, status);
+ 	}
+ 
+ 	mutex_unlock(&instance->vchi_mutex);
+@@ -383,19 +341,9 @@ static int bcm2835_audio_open_connection(struct bcm2835_alsa_stream *alsa_stream
+ 		(struct bcm2835_audio_instance *)alsa_stream->instance;
+ 	struct bcm2835_vchi_ctx *vhci_ctx = alsa_stream->chip->vchi_ctx;
+ 
+-	LOG_INFO("%s: start\n", __func__);
+-	BUG_ON(instance);
+-	if (instance) {
+-		LOG_ERR("%s: VCHI instance already open (%p)\n",
+-			__func__, instance);
+-		instance->alsa_stream = alsa_stream;
+-		alsa_stream->instance = instance;
+-		return 0;
+-	}
+-
+ 	/* Initialize an instance of the audio service */
+ 	instance = vc_vchi_audio_init(vhci_ctx->vchi_instance,
+-				      &vhci_ctx->vchi_connection, 1);
++				      vhci_ctx->vchi_connection);
+ 
+ 	if (IS_ERR(instance)) {
+ 		LOG_ERR("%s: failed to initialize audio service\n", __func__);
+@@ -407,8 +355,6 @@ static int bcm2835_audio_open_connection(struct bcm2835_alsa_stream *alsa_stream
+ 	instance->alsa_stream = alsa_stream;
+ 	alsa_stream->instance = instance;
+ 
+-	LOG_DBG(" success !\n");
+-
+ 	return 0;
+ }
+ 
+@@ -431,12 +377,12 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
+ 	LOG_DBG(" instance (%p)\n", instance);
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	m.type = VC_AUDIO_MSG_TYPE_OPEN;
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -450,7 +396,7 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 
+ free_wq:
+@@ -472,7 +418,7 @@ int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream)
+ 		 chip->dest, chip->volume);
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	instance->result = -1;
+ 
+@@ -487,7 +433,7 @@ int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream)
+ 	init_completion(&instance->msg_avail_comp);
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -511,7 +457,7 @@ int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream)
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 
+ 	return ret;
+@@ -537,7 +483,7 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
+ 	}
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	instance->result = -1;
+ 
+@@ -550,7 +496,7 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
+ 	init_completion(&instance->msg_avail_comp);
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -574,7 +520,7 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 
+ 	return ret;
+@@ -588,12 +534,12 @@ static int bcm2835_audio_start_worker(struct bcm2835_alsa_stream *alsa_stream)
+ 	int ret;
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	m.type = VC_AUDIO_MSG_TYPE_START;
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -607,7 +553,7 @@ static int bcm2835_audio_start_worker(struct bcm2835_alsa_stream *alsa_stream)
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 	return ret;
+ }
+@@ -620,13 +566,13 @@ static int bcm2835_audio_stop_worker(struct bcm2835_alsa_stream *alsa_stream)
+ 	int ret;
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	m.type = VC_AUDIO_MSG_TYPE_STOP;
+ 	m.u.stop.draining = alsa_stream->draining;
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -640,7 +586,7 @@ static int bcm2835_audio_stop_worker(struct bcm2835_alsa_stream *alsa_stream)
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 	return ret;
+ }
+@@ -655,7 +601,7 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
+ 	my_workqueue_quit(alsa_stream);
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	m.type = VC_AUDIO_MSG_TYPE_CLOSE;
+ 
+@@ -663,7 +609,7 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
+ 	init_completion(&instance->msg_avail_comp);
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -687,7 +633,7 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 
+ 	/* Stop the audio service */
+@@ -708,10 +654,10 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
+ 	LOG_INFO(" Writing %d bytes from %p\n", count, src);
+ 
+ 	mutex_lock(&instance->vchi_mutex);
+-	vchi_service_use(instance->vchi_handle[0]);
++	vchi_service_use(instance->vchi_handle);
+ 
+ 	if (instance->peer_version == 0 &&
+-	    vchi_get_peer_version(instance->vchi_handle[0], &instance->peer_version) == 0)
++	    vchi_get_peer_version(instance->vchi_handle, &instance->peer_version) == 0)
+ 		LOG_DBG("%s: client version %d connected\n", __func__, instance->peer_version);
+ 
+ 	m.type = VC_AUDIO_MSG_TYPE_WRITE;
+@@ -723,7 +669,7 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
+ 	m.u.write.silence = src == NULL;
+ 
+ 	/* Send the message to the videocore */
+-	status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++	status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 					&m, sizeof(m));
+ 
+ 	if (status) {
+@@ -736,7 +682,7 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
+ 	if (!m.u.write.silence) {
+ 		if (!m.u.write.max_packet) {
+ 			/* Send the message to the videocore */
+-			status = vchi_bulk_queue_transmit(instance->vchi_handle[0],
++			status = vchi_bulk_queue_transmit(instance->vchi_handle,
+ 							  src, count,
+ 							  0 * VCHI_FLAGS_BLOCK_UNTIL_QUEUED
+ 							  +
+@@ -746,7 +692,7 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
+ 			while (count > 0) {
+ 				int bytes = min_t(int, m.u.write.max_packet, count);
+ 
+-				status = bcm2835_vchi_msg_queue(instance->vchi_handle[0],
++				status = bcm2835_vchi_msg_queue(instance->vchi_handle,
+ 								src, bytes);
+ 				src = (char *)src + bytes;
+ 				count -= bytes;
+@@ -763,7 +709,7 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
+ 	ret = 0;
+ 
+ unlock:
+-	vchi_service_release(instance->vchi_handle[0]);
++	vchi_service_release(instance->vchi_handle);
+ 	mutex_unlock(&instance->vchi_mutex);
+ 	return ret;
+ }
 -- 
 2.18.0
 
