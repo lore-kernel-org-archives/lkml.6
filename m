@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 544AFC4321E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D55C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A1020645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A1020645
+	by mail.kernel.org (Postfix) with ESMTP id F2E2A20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E2A20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeIDUYu (ORCPT
+        id S1728009AbeIDUYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:24:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50960 "EHLO mx1.suse.de"
+        Tue, 4 Sep 2018 16:24:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51016 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727615AbeIDUYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:24:49 -0400
+        id S1727802AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:24:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D88D1B0A2;
-        Tue,  4 Sep 2018 15:59:01 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id ECF2EB0B6;
+        Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/29] staging: bcm2835-audio: Remove redundant function calls
-Date:   Tue,  4 Sep 2018 17:58:35 +0200
-Message-Id: <20180904155858.8001-7-tiwai@suse.de>
+Subject: [PATCH 27/29] staging: bcm2835-audio: Simplify PCM creation helpers
+Date:   Tue,  4 Sep 2018 17:58:56 +0200
+Message-Id: <20180904155858.8001-28-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,97 +42,199 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bcm2835_audio_setup(), bcm2835_audio_flush_buffers() and
-bcm2835_audio_flush_playback_buffers() functions do implement
-nothing.
-
-Also, bcm2835_audio_set_ctls() is already called inside
-bcm2835_audio_set_params(), so the later call is superfluous.
-
-This patch removes these superfluous implementations.
+All three functions to create PCM objects are fairly resemble, and can
+be unified to a single common helper.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../vc04_services/bcm2835-audio/bcm2835-pcm.c |  5 -----
- .../bcm2835-audio/bcm2835-vchiq.c             | 21 -------------------
- .../vc04_services/bcm2835-audio/bcm2835.h     |  3 ---
- 3 files changed, 29 deletions(-)
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 87 ++++---------------
+ .../vc04_services/bcm2835-audio/bcm2835.c     | 17 +++-
+ .../vc04_services/bcm2835-audio/bcm2835.h     |  9 +-
+ 3 files changed, 32 insertions(+), 81 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index 9a79d2267df4..a3ab5bfea08a 100644
+index 5ddb8ee93cb2..98480d97cc2e 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -277,11 +277,6 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
- 	if (err < 0)
- 		audio_error(" error setting hw params\n");
+@@ -324,91 +324,36 @@ static const struct snd_pcm_ops snd_bcm2835_playback_spdif_ops = {
+ };
  
--	bcm2835_audio_setup(alsa_stream);
+ /* create a pcm device */
+-int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, u32 numchannels)
++int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, const char *name,
++			int idx, enum snd_bcm2835_route route,
++			u32 numchannels, bool spdif)
+ {
+ 	struct snd_pcm *pcm;
+ 	int err;
+ 
+-	err = snd_pcm_new(chip->card, "bcm2835 ALSA", 0, numchannels, 0, &pcm);
+-	if (err < 0)
+-		return err;
+-	pcm->private_data = chip;
+-	pcm->nonatomic = true;
+-	strcpy(pcm->name, "bcm2835 ALSA");
+-	chip->pcm = pcm;
+-	chip->dest = AUDIO_DEST_AUTO;
+-	chip->volume = 0;
+-	chip->mute = CTRL_VOL_UNMUTE; /*disable mute on startup */
+-	/* set operators */
+-	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
+-			&snd_bcm2835_playback_ops);
 -
--	/* in preparation of the stream, set the controls (volume level) of the stream */
--	bcm2835_audio_set_ctls(alsa_stream);
--
- 	memset(&alsa_stream->pcm_indirect, 0, sizeof(alsa_stream->pcm_indirect));
- 
- 	alsa_stream->pcm_indirect.hw_buffer_size =
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-index 8684dc1d0b41..488e676e25e1 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -580,12 +580,6 @@ int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
- 	return ret;
- }
- 
--int bcm2835_audio_setup(struct bcm2835_alsa_stream *alsa_stream)
--{
+-	/* pre-allocation of buffers */
+-	/* NOTE: this may fail */
+-	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
+-					      chip->card->dev->parent,
+-					      snd_bcm2835_playback_hw.buffer_bytes_max,
+-					      snd_bcm2835_playback_hw.buffer_bytes_max);
 -
 -	return 0;
 -}
 -
- static int bcm2835_audio_start_worker(struct bcm2835_alsa_stream *alsa_stream)
+-int snd_bcm2835_new_spdif_pcm(struct bcm2835_chip *chip)
+-{
+-	struct snd_pcm *pcm;
+-	int err;
+-
+-	err = snd_pcm_new(chip->card, "bcm2835 ALSA", 1, 1, 0, &pcm);
+-	if (err < 0)
+-		return err;
+-
+-	pcm->private_data = chip;
+-	pcm->nonatomic = true;
+-	strcpy(pcm->name, "bcm2835 IEC958/HDMI");
+-	chip->pcm_spdif = pcm;
+-	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
+-			&snd_bcm2835_playback_spdif_ops);
+-
+-	/* pre-allocation of buffers */
+-	/* NOTE: this may fail */
+-	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
+-		chip->card->dev->parent,
+-		snd_bcm2835_playback_spdif_hw.buffer_bytes_max, snd_bcm2835_playback_spdif_hw.buffer_bytes_max);
+-
+-	return 0;
+-}
+-
+-int snd_bcm2835_new_simple_pcm(struct bcm2835_chip *chip,
+-			       const char *name,
+-			       enum snd_bcm2835_route route,
+-			       u32 numchannels)
+-{
+-	struct snd_pcm *pcm;
+-	int err;
+-
+-	err = snd_pcm_new(chip->card, name, 0, numchannels,
+-			  0, &pcm);
++	err = snd_pcm_new(chip->card, name, idx, numchannels, 0, &pcm);
+ 	if (err)
+ 		return err;
+ 
+ 	pcm->private_data = chip;
+ 	pcm->nonatomic = true;
+ 	strcpy(pcm->name, name);
+-	chip->pcm = pcm;
+-	chip->dest = route;
+-	chip->volume = 0;
+-	chip->mute = CTRL_VOL_UNMUTE;
++	if (!spdif) {
++		chip->dest = route;
++		chip->volume = 0;
++		chip->mute = CTRL_VOL_UNMUTE;
++	}
+ 
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
++			spdif ? &snd_bcm2835_playback_spdif_ops :
+ 			&snd_bcm2835_playback_ops);
+ 
+-	snd_pcm_lib_preallocate_pages_for_all(
+-		pcm,
+-		SNDRV_DMA_TYPE_DEV,
+-		chip->card->dev->parent,
+-		snd_bcm2835_playback_hw.buffer_bytes_max,
+-		snd_bcm2835_playback_hw.buffer_bytes_max);
++	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
++		chip->card->dev->parent, 128 * 1024, 128 * 1024);
+ 
++	if (spdif)
++		chip->pcm_spdif = pcm;
++	else
++		chip->pcm = pcm;
+ 	return 0;
+ }
+-
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+index 8a87c33b1ea9..2869f310086f 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+@@ -138,17 +138,26 @@ static int bcm2835_audio_alsa_newpcm(struct bcm2835_chip *chip,
  {
- 	struct vc_audio_msg m;
-@@ -774,21 +768,6 @@ static int bcm2835_audio_write_worker(struct bcm2835_alsa_stream *alsa_stream,
- 	return ret;
+ 	int err;
+ 
+-	err = snd_bcm2835_new_pcm(chip, numchannels - 1);
++	err = snd_bcm2835_new_pcm(chip, "bcm2835 ALSA", 0, AUDIO_DEST_AUTO,
++				  numchannels - 1, false);
+ 	if (err)
+ 		return err;
+ 
+-	err = snd_bcm2835_new_spdif_pcm(chip);
++	err = snd_bcm2835_new_pcm(chip, "bcm2835 IEC958/HDMI", 1, 0, 1, true);
+ 	if (err)
+ 		return err;
+ 
+ 	return 0;
  }
  
--/**
-- * Returns all buffers from arm->vc
-- */
--void bcm2835_audio_flush_buffers(struct bcm2835_alsa_stream *alsa_stream)
--{
--}
--
--/**
-- * Forces VC to flush(drop) its filled playback buffers and
-- * return them the us. (VC->ARM)
-- */
--void bcm2835_audio_flush_playback_buffers(struct bcm2835_alsa_stream *alsa_stream)
--{
--}
--
- unsigned int bcm2835_audio_retrieve_buffers(struct bcm2835_alsa_stream *alsa_stream)
- {
- 	unsigned int count = atomic_read(&alsa_stream->retrieved);
++static int bcm2835_audio_simple_newpcm(struct bcm2835_chip *chip,
++				       const char *name,
++				       enum snd_bcm2835_route route,
++				       u32 numchannels)
++{
++	return snd_bcm2835_new_pcm(chip, name, 0, route, numchannels, false);
++}
++
+ static struct bcm2835_audio_driver bcm2835_audio_alsa = {
+ 	.driver = {
+ 		.name = "bcm2835_alsa",
+@@ -169,7 +178,7 @@ static struct bcm2835_audio_driver bcm2835_audio_hdmi = {
+ 	.shortname = "bcm2835 HDMI",
+ 	.longname  = "bcm2835 HDMI",
+ 	.minchannels = 1,
+-	.newpcm = snd_bcm2835_new_simple_pcm,
++	.newpcm = bcm2835_audio_simple_newpcm,
+ 	.newctl = snd_bcm2835_new_hdmi_ctl,
+ 	.route = AUDIO_DEST_HDMI
+ };
+@@ -182,7 +191,7 @@ static struct bcm2835_audio_driver bcm2835_audio_headphones = {
+ 	.shortname = "bcm2835 Headphones",
+ 	.longname  = "bcm2835 Headphones",
+ 	.minchannels = 1,
+-	.newpcm = snd_bcm2835_new_simple_pcm,
++	.newpcm = bcm2835_audio_simple_newpcm,
+ 	.newctl = snd_bcm2835_new_headphones_ctl,
+ 	.route = AUDIO_DEST_HEADPHONES
+ };
 diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-index 8ee25a837b08..d2441916960d 100644
+index 4e41069dc22a..e13435d1c205 100644
 --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
 +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-@@ -158,7 +158,6 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_set_params(struct bcm2835_alsa_stream *alsa_stream,
- 			     unsigned int channels, unsigned int samplerate,
- 			     unsigned int bps);
--int bcm2835_audio_setup(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_start(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_stop(struct bcm2835_alsa_stream *alsa_stream);
- int bcm2835_audio_set_ctls(struct bcm2835_alsa_stream *alsa_stream);
-@@ -167,7 +166,5 @@ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
- 			void *src);
- void bcm2835_playback_fifo(struct bcm2835_alsa_stream *alsa_stream);
- unsigned int bcm2835_audio_retrieve_buffers(struct bcm2835_alsa_stream *alsa_stream);
--void bcm2835_audio_flush_buffers(struct bcm2835_alsa_stream *alsa_stream);
--void bcm2835_audio_flush_playback_buffers(struct bcm2835_alsa_stream *alsa_stream);
+@@ -84,12 +84,9 @@ struct bcm2835_alsa_stream {
+ };
  
- #endif /* __SOUND_ARM_BCM2835_H */
+ int snd_bcm2835_new_ctl(struct bcm2835_chip *chip);
+-int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, u32 numchannels);
+-int snd_bcm2835_new_spdif_pcm(struct bcm2835_chip *chip);
+-int snd_bcm2835_new_simple_pcm(struct bcm2835_chip *chip,
+-			       const char *name,
+-			       enum snd_bcm2835_route route,
+-			       u32 numchannels);
++int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, const char *name,
++			int idx, enum snd_bcm2835_route route,
++			u32 numchannels, bool spdif);
+ 
+ int snd_bcm2835_new_hdmi_ctl(struct bcm2835_chip *chip);
+ int snd_bcm2835_new_headphones_ctl(struct bcm2835_chip *chip);
 -- 
 2.18.0
 
