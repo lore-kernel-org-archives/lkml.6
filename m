@@ -2,142 +2,105 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACC1C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91022C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0007C20652
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:59:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0007C20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D33620652
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:00:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D33620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbeIDLXF (ORCPT
+        id S1727093AbeIDLXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:23:05 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:60797 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726041AbeIDLXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:23:05 -0400
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.52 with ESMTP; 4 Sep 2018 15:59:19 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-Received: from unknown (HELO ?10.159.80.93?) (10.159.80.93)
-        by 156.147.1.121 with ESMTP; 4 Sep 2018 15:59:18 +0900
-X-Original-SENDERIP: 10.159.80.93
-X-Original-MAILFROM: kyeongdon.kim@lge.com
-Subject: Re: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp
- functions
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, glider@google.com,
-        dvyukov@google.com, Jason@zx2c4.com, robh@kernel.org,
-        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org
-References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
- <dff9a2f3-7db5-9e60-072a-312b6cfbe0f0@virtuozzo.com>
-From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
-Message-ID: <ad334e64-28d1-4b91-aeba-8352934a9c46@lge.com>
-Date:   Tue, 4 Sep 2018 15:59:17 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 07:23:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726041AbeIDLXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:23:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2FF5AAEFD;
+        Tue,  4 Sep 2018 07:00:07 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 09:00:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Rik van Riel <riel@surriel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Josef Bacik <jbacik@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: slowly shrink slabs with a relatively small number
+ of objects
+Message-ID: <20180904070005.GG14951@dhcp22.suse.cz>
+References: <20180831203450.2536-1-guro@fb.com>
+ <3b05579f964cca1d44551913f1a9ee79d96f198e.camel@surriel.com>
+ <20180831213138.GA9159@tower.DHCP.thefacebook.com>
+ <20180903182956.GE15074@dhcp22.suse.cz>
+ <20180903202803.GA6227@castle.DHCP.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <dff9a2f3-7db5-9e60-072a-312b6cfbe0f0@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903202803.GA6227@castle.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andrey,
+On Mon 03-09-18 13:28:06, Roman Gushchin wrote:
+> On Mon, Sep 03, 2018 at 08:29:56PM +0200, Michal Hocko wrote:
+> > On Fri 31-08-18 14:31:41, Roman Gushchin wrote:
+> > > On Fri, Aug 31, 2018 at 05:15:39PM -0400, Rik van Riel wrote:
+> > > > On Fri, 2018-08-31 at 13:34 -0700, Roman Gushchin wrote:
+> > > > 
+> > > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > > > index fa2c150ab7b9..c910cf6bf606 100644
+> > > > > --- a/mm/vmscan.c
+> > > > > +++ b/mm/vmscan.c
+> > > > > @@ -476,6 +476,10 @@ static unsigned long do_shrink_slab(struct
+> > > > > shrink_control *shrinkctl,
+> > > > >  	delta = freeable >> priority;
+> > > > >  	delta *= 4;
+> > > > >  	do_div(delta, shrinker->seeks);
+> > > > > +
+> > > > > +	if (delta == 0 && freeable > 0)
+> > > > > +		delta = min(freeable, batch_size);
+> > > > > +
+> > > > >  	total_scan += delta;
+> > > > >  	if (total_scan < 0) {
+> > > > >  		pr_err("shrink_slab: %pF negative objects to delete
+> > > > > nr=%ld\n",
+> > > > 
+> > > > I agree that we need to shrink slabs with fewer than
+> > > > 4096 objects, but do we want to put more pressure on
+> > > > a slab the moment it drops below 4096 than we applied
+> > > > when it had just over 4096 objects on it?
+> > > > 
+> > > > With this patch, a slab with 5000 objects on it will
+> > > > get 1 item scanned, while a slab with 4000 objects on
+> > > > it will see shrinker->batch or SHRINK_BATCH objects
+> > > > scanned every time.
+> > > > 
+> > > > I don't know if this would cause any issues, just
+> > > > something to ponder.
+> > > 
+> > > Hm, fair enough. So, basically we can always do
+> > > 
+> > >     delta = max(delta, min(freeable, batch_size));
+> > > 
+> > > Does it look better?
+> > 
+> > Why don't you use the same heuristic we use for the normal LRU raclaim?
+> 
+> Because we do reparent kmem lru lists on offlining.
+> Take a look at memcg_offline_kmem().
 
-Thanks for your review.
-
-On 2018-09-03 오후 6:40, Andrey Ryabinin wrote:
->
->
-> On 08/23/2018 11:56 AM, Kyeongdon Kim wrote:
->
-> > diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-> > index c3bd520..61ad7f1 100644
-> > --- a/mm/kasan/kasan.c
-> > +++ b/mm/kasan/kasan.c
-> > @@ -304,6 +304,29 @@ void *memcpy(void *dest, const void *src, 
-> size_t len)
-> >
-> > return __memcpy(dest, src, len);
-> > }
-> > +#ifdef CONFIG_ARM64
-> > +/*
-> > + * Arch arm64 use assembly variant for strcmp/strncmp,
-> > + * xtensa use inline asm operations and x86_64 use c one,
-> > + * so now this interceptors only for arm64 kasan.
-> > + */
-> > +#undef strcmp
-> > +int strcmp(const char *cs, const char *ct)
-> > +{
-> > + check_memory_region((unsigned long)cs, 1, false, _RET_IP_);
-> > + check_memory_region((unsigned long)ct, 1, false, _RET_IP_);
-> > +
->
-> Well this is definitely wrong. strcmp() often accesses far more than 
-> one byte.
->
-> > + return __strcmp(cs, ct);
-> > +}
-> > +#undef strncmp
-> > +int strncmp(const char *cs, const char *ct, size_t len)
-> > +{
-> > + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
-> > + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
->
-> This will cause false positives. Both 'cs', and 'ct' could be less 
-> than len bytes.
->
-> There is no need in these interceptors, just use the C implementations 
-> from lib/string.c
-> like you did in your first patch.
-> The only thing that was wrong in the first patch is that assembly 
-> implementations
-> were compiled out instead of being declared week.
->
-Well, at first I thought so..
-I would remove diff code in /mm/kasan/kasan.c then use C implementations 
-in lib/string.c
-w/ assem implementations as weak :
-
-diff --git a/lib/string.c b/lib/string.c
-index 2c0900a..a18b18f 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -312,7 +312,7 @@ size_t strlcat(char *dest, const char *src, size_t 
-count)
-  EXPORT_SYMBOL(strlcat);
-  #endif
-
--#ifndef __HAVE_ARCH_STRCMP
-+#if (defined(CONFIG_ARM64) && defined(CONFIG_KASAN)) || 
-!defined(__HAVE_ARCH_STRCMP)
-  /**
-   * strcmp - Compare two strings
-   * @cs: One string
-@@ -336,7 +336,7 @@ int strcmp(const char *cs, const char *ct)
-  EXPORT_SYMBOL(strcmp);
-  #endif
-
--#ifndef __HAVE_ARCH_STRNCMP
-+#if (defined(CONFIG_ARM64) && defined(CONFIG_KASAN)) || 
-!defined(__HAVE_ARCH_STRNCMP)
-  /**
-   * strncmp - Compare two length-limited strings
-
-Can I get your opinion wrt this ?
-
-Thanks,
-
+Then I must be missing something. Why are we growing the number of dead
+cgroups then?
+-- 
+Michal Hocko
+SUSE Labs
