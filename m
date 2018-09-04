@@ -2,162 +2,154 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4373DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 710E3C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C2320645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:00:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C2320645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 146B520652
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146B520652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeIDTZz (ORCPT
+        id S1727361AbeIDT1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:25:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726015AbeIDTZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:25:55 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CEF3987927;
-        Tue,  4 Sep 2018 15:00:25 +0000 (UTC)
-Received: from redhat.com (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD08863ADC;
-        Tue,  4 Sep 2018 15:00:21 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 11:00:19 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <nek.in.cn@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180904150019.GA4024@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+        Tue, 4 Sep 2018 15:27:46 -0400
+Received: from mail.netline.ch ([148.251.143.178]:39716 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDT1q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:27:46 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id BF45E2A6049;
+        Tue,  4 Sep 2018 17:02:14 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id UjSA1bCL47W9; Tue,  4 Sep 2018 17:02:13 +0200 (CEST)
+Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 3B9D82A6042;
+        Tue,  4 Sep 2018 17:02:13 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1fxCqK-0001Ab-63; Tue, 04 Sep 2018 17:02:12 +0200
+Subject: Re: [PATCH 3/5] drm: fix drm_mode_addfb() on big endian machines.
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180903105756.24912-1-kraxel@redhat.com>
+ <20180903105756.24912-4-kraxel@redhat.com>
+ <20180903164558.GL21634@phenom.ffwll.local>
+ <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
+ <8e8f8cf3-c4d4-6bfd-4e53-536d4d0c79ff@daenzer.net>
+ <CAKb7UvicP594ASs4QutRH4oW1XZ2gTA5Fa=w8FPQzzKaSzDQuw@mail.gmail.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <4262e9d1-75c9-1be3-08bd-1ef842a13f2f@daenzer.net>
+Date:   Tue, 4 Sep 2018 17:02:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAKb7UvicP594ASs4QutRH4oW1XZ2gTA5Fa=w8FPQzzKaSzDQuw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180903005204.26041-1-nek.in.cn@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 15:00:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 15:00:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
-> From: Kenneth Lee <liguozhu@hisilicon.com>
+On 2018-09-04 3:05 p.m., Ilia Mirkin wrote:
+> On Tue, Sep 4, 2018 at 4:00 AM, Michel DÃ¤nzer <michel@daenzer.net> wrote:
+>> On 2018-09-03 7:07 p.m., Ilia Mirkin wrote:
+>>> On Mon, Sep 3, 2018 at 12:45 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>> On Mon, Sep 03, 2018 at 12:57:54PM +0200, Gerd Hoffmann wrote:
+>>>>> Userspace on big endian machhines typically expects the ADDFB ioctl
+>>>>> returns a big endian framebuffer.  drm_mode_addfb() will call
+>>>>> drm_mode_addfb2() unconditionally with little endian DRM_FORMAT_*
+>>>>> values though, which is wrong.  This patch fixes that.
+>>>>>
+>>>>> Drivers (both kernel and xorg) have quirks in place to deal with the
+>>>>> broken drm_mode_addfb() behavior.  Because of this we can't just change
+>>>>> drm_mode_addfb() behavior for everybody without breaking things.  So add
+>>>>> a new driver feature flag DRIVER_PREFER_HOST_BYTE_ORDER, so drivers can
+>>>>> opt-in.
+>>>>>
+>>>>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>>>>> ---
+>>>>>  include/drm/drm_drv.h             |  1 +
+>>>>>  drivers/gpu/drm/drm_framebuffer.c | 11 +++++++++++
+>>>>>  2 files changed, 12 insertions(+)
+>>>>>
+>>>>> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+>>>>> index 46a8009784..9cf12596cd 100644
+>>>>> --- a/include/drm/drm_drv.h
+>>>>> +++ b/include/drm/drm_drv.h
+>>>>> @@ -57,6 +57,7 @@ struct drm_printer;
+>>>>>  #define DRIVER_KMS_LEGACY_CONTEXT    0x20000
+>>>>>  #define DRIVER_SYNCOBJ                  0x40000
+>>>>>  #define DRIVER_PREFER_XBGR_30BPP        0x80000
+>>>>> +#define DRIVER_PREFER_HOST_BYTE_ORDER   0x100000
+>>>>
+>>>> Hm, not a huge fan of using driver_flags for random little quirks. I think
+>>>> a boolean in sturct drm_mode_config would be much better. Bonus if you
+>>>> also move the 30bpp hack over to that. Something like
+>>>> mode_config.quirk_addfb_host_byte_order and
+>>>> mode_config.quirk_addfb_prefer_xbgr_30bpp or whatever. That has the upside
+>>>> of giving us a really nice place to put a huge comment about what this is
+>>>> supposed to do.
+>>>>
+>>>> I think otherwise this looks overall rather reasonable. I think the only
+>>>> other driver that ever cared about big endian was radeon/amdgpu. Would be
+>>>> good to get at least an ack from amd folks, or a "meh, stopped caring".
+>>>
+>>> and nouveau.
+>>>
+>>> I do believe that ADDFB should be made to always prefer host byte
+>>> order -- this is how all of the existing implementations work in
+>>> practice. However e.g. nouveau wants DRM_FORMAT_XRGB8888. But it still
+>>> treats it as host byte order. This will become more important in a
+>>> world where ADDFB2 is more common.
+>>>
+>>> So, I think that this change should be applied, drivers (I suspect
+>>> just nouveau and radeon) fixed up to consume the "new" formats, [...]
+>>
+>> As explained before, that would break radeon userspace on big endian hosts.
 > 
-> WarpDrive is an accelerator framework to expose the hardware capabilities
-> directly to the user space. It makes use of the exist vfio and vfio-mdev
-> facilities. So the user application can send request and DMA to the
-> hardware without interaction with the kernel. This removes the latency
-> of syscall.
+> We last discussed this about a year ago, so I hope you'll forgive my
+> lapse in memory...
 > 
-> WarpDrive is the name for the whole framework. The component in kernel
-> is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
-> hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
-> library of WarpDrive can access it via VFIO interface.
-> 
-> The patchset contains document for the detail. Please refer to it for more
-> information.
-> 
-> This patchset is intended to be used with Jean Philippe Brucker's SVA
-> patch [1], which enables not only IO side page fault, but also PASID
-> support to IOMMU and VFIO.
-> 
-> With these features, WarpDrive can support non-pinned memory and
-> multi-process in the same accelerator device.  We tested it in our SoC
-> integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
-> tree can be found here: [2].
-> 
-> But it is not mandatory. This patchset is tested in the latest mainline
-> kernel without the SVA patches.  So it supports only one process for each
-> accelerator.
-> 
-> We have noticed the IOMMU aware mdev RFC announced recently [3].
-> 
-> The IOMMU aware mdev has similar idea but different intention comparing to
-> WarpDrive. It intends to dedicate part of the hardware resource to a VM.
-> And the design is supposed to be used with Scalable I/O Virtualization.
-> While sdmdev is intended to share the hardware resource with a big amount
-> of processes.  It just requires the hardware supporting address
-> translation per process (PCIE's PASID or ARM SMMU's substream ID).
-> 
-> But we don't see serious confliction on both design. We believe they can be
-> normalized as one.
-> 
+> There's userspace that uses ADDFB2 with DRM_FORMAT_XRGB8888 but
+> expects it to be host-endian?
 
-So once again i do not understand why you are trying to do things
-this way. Kernel already have tons of example of everything you
-want to do without a new framework. Moreover i believe you are
-confuse by VFIO. To me VFIO is for VM not to create general device
-driver frame work.
-
-So here is your use case as i understand it. You have a device
-with a limited number of command queues (can be just one) and in
-some case it can support SVA/SVM (when hardware support it and it
-is not disabled). Final requirement is being able to schedule cmds
-from userspace without ioctl. All of this exists already exists
-upstream in few device drivers.
-
-
-So here is how every body else is doing it. Please explain why
-this does not work.
-
-1 Userspace open device file driver. Kernel device driver create
-  a context and associate it with on open. This context can be
-  uniq to the process and can bind hardware resources (like a
-  command queue) to the process.
-2 Userspace bind/acquire a commands queue and initialize it with
-  an ioctl on the device file. Through that ioctl userspace can
-  be inform wether either SVA/SVM works for the device. If SVA/
-  SVM works then kernel device driver bind the process to the
-  device as part of this ioctl.
-3 If SVM/SVA does not work userspace do an ioctl to create dma
-  buffer or something that does exactly the same thing.
-4 Userspace mmap the command queue (mmap of the device file by
-  using informations gather at step 2)
-5 Userspace can write commands into the queue it mapped
-6 When userspace close the device file all resources are release
-  just like any existing device drivers.
-
-Now if you want to create a device driver framework that expose
-a device file with generic API for all of the above steps fine.
-But it does not need to be part of VFIO whatsoever or explain
-why.
+ADDFB, not ADDFB2. The latter probably didn't even exist yet when this
+was made to work. :)
 
 
-Note that if IOMMU is fully disabled you probably want to block
-userspace from being able to directly scheduling commands onto
-the hardware as it would allow userspace to DMA anywhere and thus
-would open the kernel to easy exploits. In this case you can still
-keeps the same API as above and use page fault tricks to valid
-commands written by userspace into fake commands ring. This will
-be as slow or maybe even slower than ioctl but at least it allows
-you to validate commands.
-
-Cheers,
-Jérôme
+-- 
+Earthling Michel DÃ¤nzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
