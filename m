@@ -2,103 +2,108 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E2CC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06744C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C575F20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:06:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jG89lFEe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C575F20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A6B8620645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B8620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeIDUcY (ORCPT
+        id S1727552AbeIDUej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:32:24 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37199 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeIDUcX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:32:23 -0400
-Received: by mail-qt0-f194.google.com with SMTP id n6-v6so4582744qtl.4;
-        Tue, 04 Sep 2018 09:06:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MQGn3b9dcfwdP2p0w9uJac7HrY2amUtgOZR6sQnMh4E=;
-        b=jG89lFEeQrA7b5L2wywqIGiCgHqJZdt2IYPyVWH7Opl1GTS7Wd8Hk24sLOhW8IbA3E
-         M0Vqh6Sg6nzLxRGSpPHyiKVKlv6GPrtbeIJEevdpH6QZaSDiFO88d58ju6EHdVOTNrdb
-         GYC4vE1a8X4RcaSVIDzJgWQ6cMdmFraMgn34YQ/sexVjFz9R88LxM0b+Ur928+Pi545K
-         kFDAFk4leemup9KuABSTelSrT5PUYhrKpIQKr71wfxXxBtP1WaU9sH7s2FUazOE4prHw
-         Vq8MMR0fKGiKSKDoiAt/DmBsGaflJKhppt04YH04spwaG4ce4p8Txfi9X/H+g+KCjDBV
-         /8WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MQGn3b9dcfwdP2p0w9uJac7HrY2amUtgOZR6sQnMh4E=;
-        b=dmlQghRHDeAtzOKIrDEJ9c1h9ArXraAr8SUspCBxoc1XolVmnRtzo2MGFPQjiMGfga
-         v43d3R9WDFnNyKruBMcGcMKT/URfAla/iXRl6zYCATFVYzl4+Loywp+ZxIcmgArLg5Kv
-         q7EFWXWSbDnC7kbmnVrjenG+WVURWB4kZup7P2XgUdcfqUuoIgsBXBIXZhKVD+rq9wwf
-         +lYNetyBzYurPP0MppeSh9w833zvaHqCSsmk+QybKARDlQIgGchVGCwi5xU3I1Y+s9Tm
-         oyInXih100MKYnjqJB50Bi1kz8bsC3cNuOIaTaTr/3yBs1kJby1XR3HQwEahWMq1J9lA
-         3hJQ==
-X-Gm-Message-State: APzg51DxSeqBlOkoy5aRX3RELlXasysve4vhjcmOo+E6Crp3tp/5ekeo
-        OCUzXKZjO7Pp0UZiCgdfbFdmHG0QMFvpBsDBN/g=
-X-Google-Smtp-Source: ANB0VdYZoiWg74oot/Upu8SbaS2AkcdsM4shvcgdVm9Sdt4g0Iey412yGg6EwPjgyd5hKsTTHv+UpQx0cfpN1u8YfxY=
-X-Received: by 2002:ac8:435e:: with SMTP id a30-v6mr30427040qtn.261.1536077197329;
- Tue, 04 Sep 2018 09:06:37 -0700 (PDT)
+        Tue, 4 Sep 2018 16:34:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55166 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726377AbeIDUei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:34:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BD44EAE1F;
+        Tue,  4 Sep 2018 16:08:50 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 18:08:49 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        jing xia <jing.xia.mail@gmail.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+Message-ID: <20180904160732.GO14951@dhcp22.suse.cz>
+References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com>
+ <20180612212007.GA22717@redhat.com>
+ <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
+ <20180614073153.GB9371@dhcp22.suse.cz>
+ <CAN=25QNrENVFbb9UAAAJJqKsEeMY+qNs5cQA4EGwgB2dMYTZug@mail.gmail.com>
+ <alpine.LRH.2.02.1809031816120.27063@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180904070824.GH14951@dhcp22.suse.cz>
+ <20180904151844.GB10112@redhat.com>
 MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com> <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
- <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
-In-Reply-To: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 Sep 2018 19:06:26 +0300
-Message-ID: <CAHp75VfqFAgPbHDLBdDF_VRFRoGuBBMtA0HuOeDTZtNgFe-8yQ@mail.gmail.com>
-Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904151844.GB10112@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 7:04 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
-> >> +       EBLOCK  = 0x9,
-> >> +       EPA     = 0xA,
-> >> +       EWB     = 0xB,
-> >> +       ETRACK  = 0xC,
-> >> +       EAUG    = 0xD,
-> >> +       EMODPR  = 0xE,
-> >> +       EMODT   = 0xF,
-> >> +};
-> > Hmm... This E prefix confuses me with (system wide) error codes. Has
-> > it been discussed before? If so, can you point on the conclusion why
-> > the current format is good?
->
-> Making them SGX_EWHATEVER isn't a horrible idea.
+On Tue 04-09-18 11:18:44, Mike Snitzer wrote:
+> On Tue, Sep 04 2018 at  3:08am -0400,
+> Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Mon 03-09-18 18:23:17, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Wed, 1 Aug 2018, jing xia wrote:
+> > > 
+> > > > We reproduced this issue again and found out the root cause.
+> > > > dm_bufio_prefetch() with dm_bufio_lock enters the direct reclaim and
+> > > > takes a long time to do the soft_limit_reclaim, because of the huge
+> > > > number of memory excess of the memcg.
+> > > > Then, all the task who do shrink_slab() wait for  dm_bufio_lock.
+> > > > 
+> > > > Any suggestions for this?Thanks.
+> > > 
+> > > There's hardly any solution because Michal Hocko refuses to change 
+> > > __GFP_NORETRY behavior.
+> > > 
+> > > The patches 41c73a49df31151f4ff868f28fe4f129f113fa2c and 
+> > > d12067f428c037b4575aaeb2be00847fc214c24a could reduce the lock contention 
+> > > on the dm-bufio lock - the patches don't fix the high CPU consumption 
+> > > inside the memory allocation, but the kernel code should wait less on the 
+> > > bufio lock.
+> > 
+> > If you actually looked at the bottom line of the problem then you would
+> > quickly find out that dm-bufio lock is the least of the problem with the
+> > soft limit reclaim. This is a misfeature which has been merged and we
+> > have to live with it. All we can do is to discourage people from using
+> > it and use much more saner low limit instead.
+> > 
+> > So please stop this stupid blaming, try to understand the reasoning
+> > behind my arguments.
+> 
+> Yes, this bickering isn't productive.  Michal, your responses are pretty
+> hard to follow.  I'm just trying to follow along on what it is you're
+> saying should be done.  It isn't clear to me.
+> 
+> PLEASE, restate what we should be doing differently.  Or what changes
+> need to happen outside of DM, etc.
 
-+1 here. Namespace will not shadow SDM naming scheme.
+For this particular case I can only recommend to not use the memcg soft
+limit. This is guaranteed to stall and there is no way around it because
+this is the semantic of the soft limit. Sad, I know.
 
+Regarding other other workloads. AFAIR the problem was due to the
+wait_iff_congested in the direct reclaim. And I've been arguing that
+special casing __GFP_NORETRY is not a propoer way to handle that case.
+We have PF_LESS_THROTTLE to handle cases where the caller cannot be
+really throttled because it is a part of the congestion control. I dunno
+what happened in that regards since then though.
 -- 
-With Best Regards,
-Andy Shevchenko
+Michal Hocko
+SUSE Labs
