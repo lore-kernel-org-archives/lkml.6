@@ -2,104 +2,111 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C85C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DEDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C8D420659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:56:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C8D420659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 029222077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:57:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/rQC2eX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029222077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeIDWWj (ORCPT
+        id S1727662AbeIDWYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:22:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49431 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeIDWWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:22:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2A0CD20797; Tue,  4 Sep 2018 19:56:28 +0200 (CEST)
-Received: from qschulz (LFbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DE02220379;
-        Tue,  4 Sep 2018 19:56:27 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 19:56:26 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, allan.nielsen@microchip.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next v2 1/7] net: phy: mscc: factorize code for LEDs
- mode
-Message-ID: <20180904175626.4xagnrkjtmtovxsr@qschulz>
-References: <20180903084853.18092-1-quentin.schulz@bootlin.com>
- <20180904.104827.447303663667237271.davem@davemloft.net>
+        Tue, 4 Sep 2018 18:24:05 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37275 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeIDWYF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:24:05 -0400
+Received: by mail-io0-f195.google.com with SMTP id v14-v6so3763932iob.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 10:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WfJIpNIBcJFhZzF66AaGNnJaEezM3BGzn5y88uenBc0=;
+        b=C/rQC2eXtgD7L0Ec0cvWeAL2/G5hlqR03LdWvbbFoDQOErp84BWvaGhZ4ZTmp5+wX6
+         pjRr3H9EnmL/Ddwq0ar3XJ4fB8rQ9b2JRlZREan7KbdmOBFCAKBFlMMaBGwWG3Zzv3wm
+         AkDvna3Dh+0XuFMaVa850vjnHYBs0h5MRPMASZMrh2BVkqBa+soaGIyWJEz+rvfgVTNs
+         57sFVrZtzH6H5xfzSewhRLobYhXQqubn4bZNDCBfz/i+zVNRc1nxExOGH9iQ9bZli4K8
+         nHzViRociHkpITeT5kpPS6VHddlMC44og9ojFJZOTJHdQoqjL3i8rKWtVerjAQRhKY6K
+         dNeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WfJIpNIBcJFhZzF66AaGNnJaEezM3BGzn5y88uenBc0=;
+        b=HrnT/2GleGZ7FnzuavAY92wysWF+lGRlF20LQB/CVnOCRSEX4HVbEDnxmlXdbFir9o
+         Vm874F3B7r/XtsN7MAIZkLVZ6JhFuu2vDmSRDuFXYB7Ux06ZB4ZGN0PQjIIQi4AMX8K9
+         xrXmg14tABO6uyXKK1RW09p9Zc05rdNW9J/43H/LVtUfV3IsNSUpnfmsbz32udJZ0lFO
+         SCNM23ImwaRSHpvQbLTc+eMsiq50HoLBcyR0/fPAhxni9ds4vvuBG51DmwPY9/lukB3g
+         ibngaGGn6cOAOuKWTZABR4IU7EleFodt/fb1Etxc/a6Z4Yo3n+5GqfS/3rhWTFBhnp6U
+         CZ9Q==
+X-Gm-Message-State: APzg51BXRG8xXWjN//HR9iK6GBGyPcKEOL8GjO329pPZpQcT37x11btv
+        IuYnG1D8H69aTmYaF7nag6Gogec3kLUOVBDDojQzqw==
+X-Google-Smtp-Source: ANB0VdY+oMOijOwSsY9dGHWEkF3sVmjQM5O/a957o21avynIGODBhhUiiH3v2T3k69uEO59m8hGM2jV0iKvmt2rrUUA=
+X-Received: by 2002:a6b:ee13:: with SMTP id i19-v6mr23727164ioh.132.1536083873826;
+ Tue, 04 Sep 2018 10:57:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xvphf3rb6p6p2tuv"
-Content-Disposition: inline
-In-Reply-To: <20180904.104827.447303663667237271.davem@davemloft.net>
-User-Agent: NeoMutt/20171215
+References: <20180829021754.21850-1-bhe@redhat.com> <20180829114940.k36272hhxa7fznva@kshutemo-mobl1>
+In-Reply-To: <20180829114940.k36272hhxa7fznva@kshutemo-mobl1>
+From:   Thomas Garnier <thgarnie@google.com>
+Date:   Tue, 4 Sep 2018 10:57:42 -0700
+Message-ID: <CAJcbSZGgyirW5E5cvz=oi0BhtcqfjJEw5xThQrm=irnqesFrNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/mm/KASLR: Fix the wrong calculation of kalsr
+ region initial size
+To:     kirill@shutemov.name
+Cc:     Baoquan He <bhe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks Baoquan!
 
---xvphf3rb6p6p2tuv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Thomas Garnier <thgarnie@google.com>
 
-Hi David,
+On Wed, Aug 29, 2018 at 4:49 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Wed, Aug 29, 2018 at 10:17:53AM +0800, Baoquan He wrote:
+> > In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
+> > initial size of the direct mapping region. This is right in the
+> > old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+> > 46bit, and only 4-level mode was supported.
+> >
+> > Later, in commit:
+> > b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
+> > __PHYSICAL_MASK_SHIFT was changed to be 52 always, no matter it's
+> > 5-level or 4-level. This is wrong for 4-level paging. Then when
+> > adapt phyiscal memory region size based on available memory, it
+> > will overflow if the amount of system RAM and the padding is bigger
+> > than 64TB.
+> >
+> > In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
+> > by replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
+> >
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+>
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>
+> --
+>  Kirill A. Shutemov
 
-On Tue, Sep 04, 2018 at 10:48:27AM -0700, David Miller wrote:
-> From: Quentin Schulz <quentin.schulz@bootlin.com>
-> Date: Mon,  3 Sep 2018 10:48:47 +0200
->=20
-> > LEDs modes are set the same way, except they are offset by 4 times the
-> > index of the LED.
-> >=20
-> > Let's factorize all the code so that it's easier to add support for the
-> > 4 LEDs of the VSC8584 PHY.
-> >=20
-> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
->=20
-> Entire series applied to net-next.
->=20
 
-Thanks!
 
-> Please provide a proper "0/N ..." cover letter next time.
->=20
-
-Sure, will do.
-
-Quentin
-
---xvphf3rb6p6p2tuv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAluOx0kACgkQhLiadT7g
-8aOHFw//bLoKQWrointP4ck4O7wPLZHJZ3RO1Np6mhWiNgR+FjviVlmJEsOPSz7o
-EjFNeXtQ9n2VgHWGErpln72ucO8aON5MM107XTuOrGN6wr6HORrHxSfhEoQ8kVJ1
-1j/uPXVWvZHw7k200wWI1qisu9KZI934USBxWS17Ietayzn+TZPMm7cBibog0GuQ
-GDfEZblvT1bhZS91sQKx+TMRsIfA1Wf51XphrP8uwzxwU5xFT5RNb+2o1FIp7ZwD
-VC+dHdpeRV4RpWnH8wVR8FBmrulYCqU0tN90b2ap+K6lcQ8b0wZUY2aCvMezy8Bh
-eBg5o/2B+NFL3Umc+Z+RM+X5b/QICVdx/RDFIKVIN0yKEFA0kr7sh7lNTDksBLS5
-S6jVjHRPtvu59mrRzscsVtyPI8cMv/Twqu1IfwYvdLfWDk/3vBu8z9DYRwneQTwB
-ig5aCaLVTJpkvQaG6+sYS2KXsGFd5arTa5CrgRi8xWV9MYIaD8h+x5sZhl6XX4eZ
-I5msnimRJl4CoOLqxQzAh+LtueVWlszfm25IzQlZvwNuSMKrFSx/N+Nau9VH8qed
-/8dy0eeq6SoFjgaPeHVrIeZwN9iUJbsGHwVIvkeCN1+qxETqwuvSybXNglSVrnDB
-LHWu7iFZHkNe5u81oMG+SD/RjwimcLEVodZ1b82rwE7qLgqJitg=
-=Pz88
------END PGP SIGNATURE-----
-
---xvphf3rb6p6p2tuv--
+-- 
+Thomas
