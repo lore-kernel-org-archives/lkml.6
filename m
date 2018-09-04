@@ -2,121 +2,144 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D55FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B049EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182AE2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:08:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rMfS7P27"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182AE2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 68F332073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:10:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F332073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeIDWet (ORCPT
+        id S1727466AbeIDWhD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:34:49 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:15937 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeIDWet (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:34:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536084533; x=1567620533;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=u4l4GxPJcwl+AYCWX5A8MqnPygmQri6ytFL921wx0cU=;
-  b=rMfS7P27KFSAALgZQHPxfFPwfPnFLIqevEAPOLmBH/i4D4K7UOaYSHfS
-   VnnK/Z+mwhkERwaMVNQA8zaZv9EZ7RmZOmNzeP4f0D4kszWZvA6r7HQ8d
-   IXHxhGoz9z/zkAxtEqn4j0zRn+HFleb9bzzAVGEq6KXBAX1s50GCWkszx
-   AaXaP2cipTbe/SDQtTMpitJJ9Ly5jrQCQCuOAzoxspSmDo8D8dcQepewi
-   DG2jL7By2cO65rlKNn5FmnfXskOGCd7uuYw6RrbJuApgxjZxogfEvofkE
-   n4BJeTxnp4OPL89K8u0DlY9sgRZoeXyHj/VbbennujrVaNOsMeMLNbWdF
-   g==;
-X-IronPort-AV: E=Sophos;i="5.53,330,1531756800"; 
-   d="scan'208";a="186525257"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2018 02:08:52 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 04 Sep 2018 10:55:21 -0700
-Received: from use204589.ad.shared (HELO [10.86.59.178]) ([10.86.59.178])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Sep 2018 11:08:36 -0700
-Subject: Re: [PATCH v2 3/3] RISC-V: Support cpu hotplug.
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Tue, 4 Sep 2018 18:37:03 -0400
+Received: from mga18.intel.com ([134.134.136.126]:41057 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726304AbeIDWhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:37:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 11:10:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
+   d="scan'208";a="77929420"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Sep 2018 11:10:48 -0700
+Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
+ ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 4 Sep 2018 11:10:48 -0700
+Received: from orsmsx107.amr.corp.intel.com ([169.254.1.245]) by
+ ORSMSX151.amr.corp.intel.com ([169.254.7.211]) with mapi id 14.03.0319.002;
+ Tue, 4 Sep 2018 11:10:48 -0700
+From:   "Schaufler, Casey" <casey.schaufler@intel.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "damein@vger.kernel.org" <damein@vger.kernel.org>
-References: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
- <1535445370-19004-4-git-send-email-atish.patra@wdc.com>
- <20180831061859.GC19292@infradead.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <0d439b9d-b3d0-7d2c-117b-abb37adf769c@wdc.com>
-Date:   Tue, 4 Sep 2018 11:08:35 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180831061859.GC19292@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        "x86@kernel.org" <x86@kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Subject: RE: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+Thread-Topic: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+Thread-Index: AQHURHR5V11JrRcNJkuXhYQimpS2TqTg18iA//+QVJA=
+Date:   Tue, 4 Sep 2018 18:10:47 +0000
+Message-ID: <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
+ <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
+ <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
+ <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWZhNDQ2YzAtYzZhOC00NDA4LThhYjMtYWJmNDcwYjBmNDI3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiY3BHV3V3akVrVzQ4YXh6XC9haSt2MWlWM2MxdVAwSmZsWXhpMG1VMkNiMW91MHVIY2JVUUZxRkt5RytXVTVHMTAifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/18 11:19 PM, Christoph Hellwig wrote:
->> +#else
->> +static inline bool can_hotplug_cpu(void) { return 0; }
->> +static inline void arch_send_call_wakeup_ipi(int cpu) { }
+> -----Original Message-----
+> From: Jiri Kosina [mailto:jikos@kernel.org]
+> Sent: Tuesday, September 04, 2018 10:35 AM
+> To: Tim Chen <tim.c.chen@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar <mingo@redhat.com>;
+> Peter Zijlstra <peterz@infradead.org>; Josh Poimboeuf
+> <jpoimboe@redhat.com>; Andrea Arcangeli <aarcange@redhat.com>;
+> Woodhouse, David <dwmw@amazon.co.uk>; Oleg Nesterov
+> <oleg@redhat.com>; Schaufler, Casey <casey.schaufler@intel.com>; linux-
+> kernel@vger.kernel.org; x86@kernel.org
+> Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+> be applied on arbitrary tasks
 > 
-> Please use normal coding style for these stubs.
-
-Done.
+> On Tue, 4 Sep 2018, Tim Chen wrote:
 > 
->>   #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
->> +#define get_scause(cause)	(cause & ~INTERRUPT_CAUSE_FLAG)
+> > > Current ptrace_may_access() implementation assumes that the 'source'
+> task is
+> > > always the caller (current).
+> > >
+> > > Expose ___ptrace_may_access() that can be used to apply the check on
+> arbitrary
+> > > tasks.
+> >
+> > Casey recently has proposed putting the decision making of whether to
+> > do IBPB in the security module.
+> >
+> > https://lwn.net/ml/kernel-hardening/20180815235355.14908-4-
+> casey.schaufler@intel.com/
+> >
+> > That will have the advantage of giving the administrator a more flexibility
+> > of when to turn on IBPB.  The policy is very similar to what you have proposed
+> here
+> > but I think the security module is a more appropriate place for the security
+> policy.
 > 
-> I think this helper is misleading - the cause includes the interrupt
-> flag.  I'd rather open code this in the other place as well.
+> Yeah, well, honestly, I have a bit hard time buying the "generic
+> sidechannel prevention security module" idea, given how completely
+> different in nature all the mitigations have been so far. I don't see that
+> trying to abstract this somehow provides more clarity.
+
+The real reason to use an LSM based approach is that overloading ptrace
+checks is a Really Bad Idea. Ptrace is a user interface. Side-channel is a
+processor interface. Even if ptrace_may_access() does exactly what you
+want it to for side-channel mitigation today it would be incredibly
+inappropriate to tie the two together for eternity. You don't want to restrict
+the ptrace checks to only those things that are also good for side-channel,
+and vice versa. 
+
+
+> So if this should be done in LSM, it'd probably have to be written by
+> someone else than me :) who actually understands how the "sidechannel LSM"
+> idea works.
+
+Yes. That would be me. 
+
 > 
-
-ok. Done.
-
->> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
->> index d7c6ca7c..cb209139 100644
->> --- a/arch/riscv/kernel/process.c
->> +++ b/arch/riscv/kernel/process.c
->> @@ -42,6 +42,13 @@ void arch_cpu_idle(void)
->>   	local_irq_enable();
->>   }
->>   
->> +#ifdef CONFIG_HOTPLUG_CPU
->> +void arch_cpu_idle_dead(void)
->> +{
->> +	cpu_play_dead();
->> +}
->> +#endif
+> Thanks,
 > 
-> I wonder if it might be worth to introduce a small
-> arch/riscv/kernel/cpu-hotplug.c file for the various CONFIG_HOTPLUG_CPU
-> only functions.
-> 
+> --
+> Jiri Kosina
+> SUSE Labs
 
-I have kept it here to match all other arch. Same goes for all hotplug 
-functions in smpboot.c
-
-I can move them to a separate file if you think that provides better 
-code readability and structure.
-
-
-Regards,
-Atish 		
