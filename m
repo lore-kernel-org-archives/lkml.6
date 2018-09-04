@@ -2,248 +2,195 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A27C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5773B20661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:04:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5773B20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0811C206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:13:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J+fZxYR1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0811C206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeIEDbV (ORCPT
+        id S1727145AbeIEDlD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 23:31:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56820 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbeIEDbU (ORCPT
+        Tue, 4 Sep 2018 23:41:03 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48606 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbeIEDlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 23:31:20 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BDA40CB5;
-        Tue,  4 Sep 2018 23:04:02 +0000 (UTC)
-Date:   Tue, 04 Sep 2018 16:04:01 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-Subject:  mmotm 2018-09-04-16-03 uploaded
-Message-ID: <20180904230401.QR8dL%akpm@linux-foundation.org>
-User-Agent: s-nail v14.9.6
+        Tue, 4 Sep 2018 23:41:03 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w84N8vl4111460;
+        Tue, 4 Sep 2018 23:13:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ijy4bSRxN3VBVL6dKmesoFAmGh+KFc4f4cNr9vLQdV8=;
+ b=J+fZxYR1EQ/qpnGF+CDLod391K0gyPxFIqO2N7USyVdYdAIWaO+Io8a/xPPYBA1+N5j+
+ E/5Hv4M9KjWq5iUvTbXrFttgxi8qbwAXR6+U7dwfIh2wpRpoHLc09nkeuzs4T2sj2n6z
+ R8pihClrAzs/se+VgUyAY4y7J7VXxgjwYxGz7MoNP07pX+mnEyuUGRW5oXaEA76L9uJa
+ VI6k3LcNlTT4E9EqfB0IwaZjCg5yF2lqPZCgNyQYQA2ftUmjnzehMWDQlNyz0cs7FiC/
+ hkN9UK9wQ/g0yUX7bNsUumYhPQkVApw35FFRJF60bXoVDvi11VdjKcivF+C1gCEPWFPf BA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2m7j6tg6nw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Sep 2018 23:13:41 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w84NDeOl000617
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Sep 2018 23:13:40 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w84NDe4c016757;
+        Tue, 4 Sep 2018 23:13:40 GMT
+Received: from [10.182.70.168] (/10.182.70.168)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Sep 2018 23:13:40 +0000
+Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: use actually allocated size on
+ check physical contiguous
+To:     "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+References: <d578b69a-848b-2c86-175a-1b1933d82a36@oracle.com>
+Cc:     Joe Jin <joe.jin@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <f3befca2-fc65-81b8-c9ed-311de7967958@oracle.com>
+Date:   Wed, 5 Sep 2018 07:14:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <d578b69a-848b-2c86-175a-1b1933d82a36@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809040231
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-09-04-16-03 has been uploaded to
+Below module would help people reproduce the issue to understand the symptom:
 
-   http://www.ozlabs.org/~akpm/mmotm/
+https://github.com/finallyjustice/patchset/blob/master/xen-swiotlb-panic.c
 
-mmotm-readme.txt says
+In addition, on the xen hypervisor side, the memory_exchange() in xen hypervisor
+does not check if the the pfn of input mfn belong to the same extent are
+continuous in guest domain. As a result, the wrong page is stolen from guest domain.
 
-README for mm-of-the-moment:
+Can we assume it is fine to not check if pfn of mfn are continuous in xen
+hypervisor?
 
-http://www.ozlabs.org/~akpm/mmotm/
+I think it is OK as the guest domain is responsible to maintain its memory
+pages. xen is happy to serve any operations from guest domain, unless such
+operation is harmful to xen hypervisor or other domains. In the worst cause, the
+dom0 (or domU with passthrough) would panic itself.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+ 496 static long memory_exchange(...
+... ...
+ 609         /* Steal a chunk's worth of input pages from the domain. */
+ 610         for ( j = 0; j < (1UL << in_chunk_order); j++ )
+ 611         {
+ 612             if ( unlikely(__copy_from_guest_offset(
+ 613                 &gmfn, exch.in.extent_start, (i<<in_chunk_order)+j, 1)) )
+ 614             {
+ 615                 rc = -EFAULT;
+ 616                 goto fail;
+ 617             }
+ 618
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+ -------> not checking if the gfn of gmfn are continuous in below 'for loop' for
+each extent.
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+ 619             for ( k = 0; k < (1UL << exch.in.extent_order); k++ )
+ 620             {
+ 621 #ifdef CONFIG_X86
+ 622                 p2m_type_t p2mt;
+ 623
+ 624                 /* Shared pages cannot be exchanged */
+ 625                 mfn = get_gfn_unshare(d, gmfn + k, &p2mt);
+ 626                 if ( p2m_is_shared(p2mt) )
+ 627                 {
+ 628                     put_gfn(d, gmfn + k);
+ 629                     rc = -ENOMEM;
+ 630                     goto fail;
+ 631                 }
+ 632 #else /* !CONFIG_X86 */
+ 633                 mfn = gfn_to_mfn(d, _gfn(gmfn + k));
+ 634 #endif
+ 635                 if ( unlikely(!mfn_valid(mfn)) )
+ 636                 {
+ 637                     put_gfn(d, gmfn + k);
+ 638                     rc = -EINVAL;
+ 639                     goto fail;
+ 640                 }
+ 641
+ 642                 page = mfn_to_page(mfn);
+ 643
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+-----> As a result, the wrong page is stolen.
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+ 644                 rc = steal_page(d, page, MEMF_no_refcount);
+ 645                 if ( unlikely(rc) )
+ 646                 {
+ 647                     put_gfn(d, gmfn + k);
+ 648                     goto fail;
+ 649                 }
+ 650
+ 651                 page_list_add(page, &in_chunk_list);
+ 652                 put_gfn(d, gmfn + k);
+ 653             }
+ 654         }
 
 
-This mmotm tree contains the following patches against 4.19-rc2:
-(patches marked "*" will be included in linux-next)
+Dongli Zhang
 
-  origin.patch
-* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
-* mm-oom-fix-missing-tlb_finish_mmu-in-__oom_reap_task_mm.patch
-* mm-respect-arch_dup_mmap-return-value.patch
-* kmemleak-always-register-debugfs-file.patch
-* tools-vm-slabinfoc-fix-sign-compare-warning.patch
-* tools-vm-page-typesc-fix-defined-but-not-used-warning.patch
-* mm-utilc-improve-kvfree-kerneldoc.patch
-* mm-hugetlb-filter-out-hugetlb-pages-if-hugepage-migration-is-not-supported.patch
-* ipc-shm-properly-return-eidrm-in-shm_lock.patch
-* checkpatch-add-optional-static-const-to-blank-line-declarations-test.patch
-* memory_hotplug-fix-kernel_panic-on-offline-page-processing.patch
-* uapi-linux-keyctlh-dont-use-c-reserved-keyword-as-a-struct-member-name.patch
-* mm-fix-bug_on-in-vmf_insert_pfn_pud-from-vm_mixedmap-removal.patch
-* checkpatch-add-__ro_after_init-to-known-attribute.patch
-* lib-fix-three-typos-in-kconfig-help-text.patch
-* device-dax-convert-variable-to-vm_fault_t-type.patch
-* nilfs2-convert-to-spdx-license-tags.patch
-* proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization.patch
-* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
-* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5.patch
-* fix-crash-on-ocfs2_duplicate_clusters_by_page-v5-checkpatch-fixes.patch
-* fork-report-pid-exhaustion-correctly.patch
-* mm-disable-deferred-struct-page-for-32-bit-arches.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
-* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
-* ocfs2-dlmglue-clean-up-timestamp-handling.patch
-* fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent.patch
-* fix-clusters-leak-in-ocfs2_defrag_extent-fix.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* fs-iomap-change-return-type-to-vm_fault_t.patch
-* fs-convert-return-type-int-to-vm_fault_t.patch
-* fs-convert-return-type-int-to-vm_fault_t-v2.patch
-  mm.patch
-* mm-slubc-switch-to-bitmap_zalloc.patch
-* mm-rework-memcg-kernel-stack-accounting.patch
-* mm-drain-memcg-stocks-on-css-offlining.patch
-* mm-dont-miss-the-last-page-because-of-round-off-error.patch
-* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry.patch
-* mmpage_alloc-pf_wq_worker-threads-must-sleep-at-should_reclaim_retry-fix.patch
-* xen-gntdev-fix-up-blockable-calls-to-mn_invl_range_start.patch
-* mm-mmu_notifier-be-explicit-about-range-invalition-non-blocking-mode.patch
-* revert-mm-mmu_notifier-annotate-mmu-notifiers-with-blockable-invalidate-callbacks.patch
-* kmemleak-add-module-param-to-print-warnings-to-dmesg.patch
-* swap-use-__try_to_reclaim_swap-in-free_swap_and_cache.patch
-* swap-call-free_swap_slot-in-__swap_entry_free.patch
-* swap-clear-si-swap_map-in-swap_free_cluster.patch
-* mm-page_alloc-clean-up-check_for_memory.patch
-* mm-conveted-to-use-vm_fault_t.patch
-* mm-remove-vm_insert_mixed.patch
-* mm-introduce-vmf_insert_pfn_prot.patch
-* x86-convert-vdso-to-use-vm_fault_t.patch
-* mm-make-vm_insert_pfn_prot-static.patch
-* mm-remove-references-to-vm_insert_pfn.patch
-* mm-remove-vm_insert_pfn.patch
-* mm-inline-vm_insert_pfn_prot-into-caller.patch
-* mm-convert-__vm_insert_mixed-to-vm_fault_t.patch
-* mm-convert-insert_pfn-to-vm_fault_t.patch
-* cramfs-convert-to-use-vmf_insert_mixed-v2.patch
-* mm-cow-dont-bother-write-protectig-already-write-protected-huge-pages.patch
-* mm-cow-optimise-pte-dirty-accessed-bits-handling-in-fork.patch
-* mm-optimise-pte-dirty-accessed-bit-setting-by-demand-based-pte-insertion.patch
-* hexagon-switch-to-no_bootmem.patch
-* of-ignore-sub-page-memory-regions.patch
-* nios2-use-generic-early_init_dt_add_memory_arch.patch
-* nios2-switch-to-no_bootmem.patch
-* um-setup_physmem-stop-using-global-variables.patch
-* um-switch-to-no_bootmem.patch
-* unicore32-switch-to-no_bootmem.patch
-* alpha-switch-to-no_bootmem.patch
-* userfaultfd-allow-get_mempolicympol_f_nodempol_f_addr-to-trigger-userfaults.patch
-* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
-* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix-fix.patch
-* mm-memblock-introduce-memblock_search_pfn_regions.patch
-* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
-* mm-memblock-introduce-pfn_valid_region.patch
-* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
-* z3fold-fix-wrong-handling-of-headless-pages.patch
-* mm-make-memmap_init-a-proper-function.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
-* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
-* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* lib-bitmapc-remove-wrong-documentation.patch
-* linux-bitmaph-handle-constant-zero-size-bitmaps-correctly.patch
-* linux-bitmaph-remove-redundant-uses-of-small_const_nbits.patch
-* linux-bitmaph-fix-type-of-nbits-in-bitmap_shift_right.patch
-* linux-bitmaph-relax-comment-on-compile-time-constant-nbits.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix.patch
-* lib-bitmapc-fix-remaining-space-computation-in-bitmap_print_to_pagebuf-fix-fix.patch
-* lib-bitmapc-simplify-bitmap_print_to_pagebuf.patch
-* lib-parserc-switch-match_strdup-over-to-use-kmemdup_nul.patch
-* lib-parserc-switch-match_u64int-over-to-use-match_strdup.patch
-* checkpatch-remove-gcc_binary_constant-warning.patch
-* init-do_mountsc-add-root=partlabel=name-support.patch
-* hfsplus-prevent-btree-data-loss-on-root-split.patch
-* hfsplus-fix-bug-on-bnode-parent-update.patch
-* hfsplus-prevent-btree-data-loss-on-enospc.patch
-* hfs-prevent-btree-data-loss-on-root-split.patch
-* hfs-fix-bug-on-bnode-parent-update.patch
-* hfs-prevent-btree-data-loss-on-enospc.patch
-* reiserfs-propagate-errors-from-fill_with_dentries-properly.patch
-* bfs-add-sanity-check-at-bfs_fill_super.patch
-  linux-next.patch
-* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+
+
+On 09/05/2018 02:16 AM, Joe Jin wrote:
+> xen_swiotlb_{alloc,free}_coherent() actually allocate/free size by order
+> but used the required size to check if address is physical contiguous,
+> if first pages are physical contiguous also passed
+> range_straddles_page_boundary() check, but others were not it will
+> lead kernel panic.
+> 
+> Signed-off-by: Joe Jin <joe.jin@oracle.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> ---
+>  drivers/xen/swiotlb-xen.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index a6f9ba85dc4b..aa081f806728 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -303,6 +303,9 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+>  	*/
+>  	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+>  
+> +	/* Convert the size to actually allocated. */
+> +	size = 1UL << (order + XEN_PAGE_SHIFT);
+> +
+>  	/* On ARM this function returns an ioremap'ped virtual address for
+>  	 * which virt_to_phys doesn't return the corresponding physical
+>  	 * address. In fact on ARM virt_to_phys only works for kernel direct
+> @@ -351,6 +354,9 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+>  	 * physical address */
+>  	phys = xen_bus_to_phys(dev_addr);
+>  
+> +	/* Convert the size to actually allocated. */
+> +	size = 1UL << (order + XEN_PAGE_SHIFT);
+> +
+>  	if (((dev_addr + size - 1 <= dma_mask)) ||
+>  	    range_straddles_page_boundary(phys, size))
+>  		xen_destroy_contiguous_region(phys, order);
+> 
